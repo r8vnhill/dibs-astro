@@ -1,0 +1,32 @@
+/*
+ * Defines base colors for the <html> element, including background and text.
+ * These values provide a consistent default theme across the app.
+ *
+ * The light theme uses a soft off-white background and dark gray text.
+ * The dark theme reverses this with a near-black background and white text.
+ *
+ * These variables can be reused elsewhere via var(--base-background-color), etc.
+ */
+
+:root {
+  /* Soft off-white background to reduce glare in light mode */
+  --base-background-color: hsl(0, 0%, 95%);
+  /* Dark gray text for readability */
+  --base-text-color: hsl(240, 4%, 20%);
+}
+
+:root.dark {
+  /* Near-black background for dark mode */
+  --base-background-color: hsl(240, 4%, 11%);
+  /* White text for contrast in dark mode */
+  --base-text-color: hsl(0, 0%, 100%);
+}
+
+/*
+ * Applies the background and text colors directly to the <html> element.
+ * This ensures consistent theming before Tailwind classes take effect.
+ */
+html {
+  background-color: var(--base-background-color);
+  color: var(--base-text-color);
+}

@@ -1,5 +1,41 @@
 {
+  // Extends Astro’s strict TypeScript configuration
   "extends": "astro/tsconfigs/strict",
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  // Files to include in type checking
+  "include": [
+    ".astro/types.d.ts", // Astro-generated types for routes and components
+    "src", // Main source directory
+    "astro.config.ts" // Astro configuration file
+  ],
+  // Files and folders to exclude from type checking
+  "exclude": [
+    "dist", // Build output
+    "node_modules" // Dependencies
+  ],
+  "compilerOptions": {
+    // Use modern JSX transform
+    "jsx": "react-jsx",
+    // Set JSX source to Preact (used with @astrojs/preact integration)
+    "jsxImportSource": "preact",
+    // Enable cleaner import paths like ~/
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    },
+    // Astro-specific types
+    "types": [
+      "astro/client",
+    ],
+    // Recommended settings for Vite and Astro compatibility
+    "target": "ESNext", // Use latest JavaScript features
+    "module": "ESNext", // Use native module syntax
+    "moduleResolution": "Bundler", // Required for Vite module resolution
+    // Additional helpful options
+    "allowJs": true, // Allow JavaScript files in the project
+    "resolveJsonModule": true, // Enable importing JSON files
+    "esModuleInterop": true, // Allow CommonJS imports in ESM style
+    "strict": true // Enable all strict type-checking options
+  }
 }

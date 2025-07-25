@@ -1,0 +1,20 @@
+/* File: src/styles/utilities/border-outline.css
+ *
+ * Utility classes for border and outline colors based on the primary color scale.
+ * These classes use HSL values derived from CSS custom properties defined in theme.css.
+ *
+ * The values are consistent with the primary base color (no variations), typically used for focus
+ * indicators, active elements, or semantic UI boundaries.
+ */
+
+@layer utilities {
+  /* Border color using the primary base color */
+  .border-primary {
+    border-color: var(--theme-color-primary);
+  }
+
+  /* Outline color using the primary base color (e.g. focus ring) */
+  .outline-primary {
+    outline-color: var(--theme-color-primary);
+  }
+}

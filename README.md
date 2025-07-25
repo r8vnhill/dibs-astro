@@ -1,47 +1,25 @@
-# Astro Starter Kit: Minimal
+# dibs-astro: Diseño e Implementación de Bibliotecas de Software
 
-```sh
-pnpm create astro@latest -- --template minimal
-```
+[![Framework](https://img.shields.io/badge/framework-Astro-blue)](https://astro.build)
+[![Build](https://img.shields.io/badge/build-pnpm-yellowgreen)](https://pnpm.io)
+[![Plataforma](https://img.shields.io/badge/plataforma-Cloudflare%20Workers-orange)](https://workers.cloudflare.com)
+[![Licencia](https://img.shields.io/badge/licencia-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
+[![Propósito](https://img.shields.io/badge/propósito-educacional-yellow)](https://dibs.ravenhill.cl)
+[![Estado](https://img.shields.io/badge/estado-estable-brightgreen)]()
+[![Sitio de DIBS](https://img.shields.io/badge/sitio-dibs.ravenhill.cl-purple)](https://dibs.ravenhill.cl)
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+Próximamente...
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🛡️ Licencia
 
-## 🚀 Project Structure
+Este proyecto está licenciado bajo la **[Licencia BSD de 2 Cláusulas](./LICENSE)**.
 
-Inside of your Astro project, you'll see the following folders and files:
+Puedes usar, adaptar y compartir este código libremente con fines personales, académicos o educativos, siempre que se dé la atribución correspondiente.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## 🌐 Sitio del curso DIBS
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+El curso completo — *Diseño e Implementación de Bibliotecas de Software* — está disponible en:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+👉 [https://dibs.ravenhill.cl](https://dibs.ravenhill.cl)
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Ahí encontrarás lecciones completas, diapositivas, ejercicios y recursos complementarios (en español).

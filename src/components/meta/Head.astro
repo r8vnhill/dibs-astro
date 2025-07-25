@@ -1,0 +1,46 @@
+---
+/**
+ * Destructure default metadata values from Astro.props.
+ * These can be overridden when the component is used.
+ */
+const {
+  title = "DIBS",
+  description = "Diseño e Implementación de Bibliotecas de Software",
+  url = "https://dibs.ravenhill.cl",
+  type = "website",
+} = Astro.props;
+---
+
+<!-- Character encoding -->
+<meta charset="utf-8" />
+
+<!-- Browser tab title -->
+<title>{title}</title>
+
+<!-- SEO: Meta description used by search engines -->
+<meta name="description" content={description} />
+
+<!-- Sitemap for search engine indexing -->
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<!-- Open Graph (OG) metadata for link previews on social platforms -->
+<!-- Title shown on social shares -->
+<meta property="og:title" content={title} />
+<!-- Type of content, e.g., website, article -->
+<meta property="og:type" content={type} />
+<!-- Canonical URL of the page -->
+<meta property="og:url" content={url} />
+<!-- Description shown on social shares -->
+<meta property="og:description" content={description} />
+<!-- Name of the website -->
+<meta property="og:site_name" content="DIBS" />
+<!-- Locale for language and region -->
+<meta property="og:locale" content="es_CL" />
+
+<!-- Twitter Card metadata for richer sharing -->
+<!-- Card type for preview -->
+<meta name="twitter:card" content="summary_large_image" />
+<!-- Title for Twitter preview -->
+<meta name="twitter:title" content={title} />
+<!-- Description for Twitter preview -->
+<meta name="twitter:description" content={description} />

@@ -1,0 +1,88 @@
+/*
+ * Navigation component styles layered into Tailwind's `components` layer.
+ * These utility-based classes abstract common navigation styles into semantic class names.
+ * 
+ * This improves readability and maintainability by avoiding long `class` attributes in markup.
+ */
+
+@layer components {
+  /*
+   * Styles for the main <nav> container in the header.
+   * Creates a horizontal flex layout with proper spacing and padding.
+   */
+  .header-nav {
+    @apply flex items-center justify-between px-4 py-3 sm:px-8;
+  }
+
+  /*
+   * Branding link (e.g., site name or logo).
+   * Uses the primary color and bold text styling.
+   */
+  .header-brand {
+    @apply text-primary text-xl font-bold;
+  }
+
+  /*
+   * Container for right-aligned navigation links.
+   * Displays items in a horizontal row with spacing between them.
+   */
+  .nav-links {
+    @apply flex items-center space-x-4;
+  }
+
+  /*
+   * Individual navigation links.
+   * Styled with base font, gray color, and hover transition to primary color.
+   */
+  .nav-link {
+    @apply hover:text-primary text-sm text-gray-500 transition-colors;
+  }
+
+  /*
+   * Desktop navigation list container.
+   * Displays items in a horizontal row with spacing between them.
+   */
+  .desktop-nav-list {
+    @apply hidden items-center gap-4 sm:flex;
+  }
+
+  /*
+   * Individual desktop navigation item.
+   * Uses larger text size and medium font weight for better visibility.
+   */
+  .desktop-nav-item {
+    @apply hover:text-primary text-base font-medium text-gray-700 transition-colors;
+  }
+
+  /*
+   * Full-screen translucent overlay shown behind mobile menu.
+   * Ensures focus and disables interaction with background content.
+   */
+  .mobile-nav-overlay {
+    @apply fixed inset-0 z-40 bg-black/30 backdrop-blur-sm sm:hidden;
+  }
+
+  /*
+   * Container for mobile navigation list.
+   * Appears as a floating box with transition animations and responsive visibility.
+   */
+  .mobile-nav-list {
+    @apply fixed inset-x-4 top-20 z-50 transform rounded-md border bg-white p-4 shadow-lg transition-all duration-300 sm:hidden;
+  }
+
+  /*
+   * Individual mobile navigation link.
+   * Block-level links with padding and subtle hover feedback.
+   */
+  .mobile-nav-item {
+    @apply block rounded px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-100;
+  }
+
+  /*
+   * Toggle button for mobile menu (hamburger/X icon).
+   * Visible only on small screens, with focus and hover accessibility styles.
+   */
+  .toggle-button {
+    @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border border-transparent p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
+  }
+}

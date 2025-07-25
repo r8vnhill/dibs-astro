@@ -1,0 +1,71 @@
+/* 
+ * Defines base typography settings using CSS custom properties (variables).
+ * This includes font families and a typographic scale based on a Major Third ratio (~1.25×).
+ * Variables can be reused in other styles or Tailwind extensions for consistency.
+ */
+
+:root {
+  /* Font families for body text, headings, and monospace content */
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Fira Code", monospace;
+  --font-heading: "Space Grotesk", sans-serif;
+
+  /* Text sizes based on a modular scale (Major Third ~1.25x increments) */
+  --text-xs: 0.75rem; /* Extra small - captions, legal text */
+  --text-sm: 0.875rem; /* Small - fine print or secondary UI text */
+  --text-base: 1rem; /* Base size - used in body text */
+  --text-lg: 1.25rem; /* Large - subtitles or large buttons */
+  --text-xl: 1.6rem; /* Extra large - h3 or section titles */
+  --text-2xl: 2rem; /* h2 or important section headings */
+  --text-3xl: 2.5rem; /* h1 or page titles */
+}
+
+/* Default body text styles */
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6; /* Comfortable reading line height */
+}
+
+/* Heading-specific font sizes */
+h1 {
+  font-size: var(--text-3xl);
+}
+h2 {
+  font-size: var(--text-2xl);
+}
+h3 {
+  font-size: var(--text-xl);
+}
+h4 {
+  font-size: var(--text-lg);
+}
+h5 {
+  font-size: var(--text-base);
+}
+h6 {
+  font-size: var(--text-sm);
+}
+
+/* Shared styles for all headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 600; /* Medium-bold for emphasis */
+  line-height: 1.3; /* Tighter spacing for headings */
+  margin-top: 1.5em; /* Spacing above headings */
+  margin-bottom: 0.5em; /* Spacing below headings */
+  color: var(--theme-color-primary); /* Primary theme color */
+}
+
+/* Code and preformatted text */
+code,
+pre {
+  font-family: var(--font-mono);
+  font-variant-ligatures: contextual; /* Enables ligatures in supported fonts */
+  text-rendering: optimizeLegibility; /* Improves font rendering on some browsers */
+}

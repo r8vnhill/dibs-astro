@@ -1,0 +1,27 @@
+/*
+ * Transition classes for slide and fade animations.
+ *
+ * These classes are intended to be used in components that require smooth entrance/exit animations,
+ * such as dropdowns or mobile navigation menus.
+ *
+ * Defined within Tailwind’s `@layer components` to allow composition with utilities.
+ */
+
+@layer components {
+  /*
+   * Shows the element with full opacity and scale.
+   * Also restores interactivity by enabling pointer events.
+   */
+  .slide-fade-in {
+    @apply pointer-events-auto translate-y-0 scale-100 opacity-100;
+  }
+
+  /*
+   * Hides the element by reducing opacity and scale,
+   * slightly translating it upwards to create a smooth exit effect.
+   * Also disables interactivity via pointer-events.
+   */
+  .slide-fade-out {
+    @apply pointer-events-none -translate-y-2 scale-95 opacity-0;
+  }
+}

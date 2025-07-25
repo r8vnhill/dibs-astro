@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Fira+Code&family=Space+Grotesk:wght@400..700&display=swap');
+@import "tailwindcss";
+@import './theme/index.css';
+@import './utilities/index.css';
+@import './components/index.css';
+
+body {
+  margin: 0;
+  width: 100%;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}

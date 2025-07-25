@@ -1,0 +1,57 @@
+# ================================================
+# 📂 .gitattributes for dibs-astro
+# ================================================
+
+# Set LF as the standard line ending
+* text=auto eol=lf
+
+# Markdown and textual content treated as text
+*.md text
+*.mdx text
+*.html text
+*.css text
+*.js text
+*.ts text
+*.astro text
+*.json text
+*.yml text
+*.yaml text
+*.toml text
+
+# Configuration files
+*.gitignore text
+*.gitattributes text
+*.editorconfig text
+*.npmrc text
+
+# Rendered documentation files (don't accidentally overwrite)
+*.pdf binary
+
+# Image files (binary, do not normalize)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg text
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Lockfiles — do not modify lines automatically
+pnpm-lock.yaml text eol=lf
+
+# Force Markdown language for GitHub linguist
+*.md linguist-language=Markdown
+
+# Force Astro language for statistics
+*.astro linguist-language=Astro
+
+# Avoid conflicts when merging lockfiles
+pnpm-lock.yaml merge=union
+
+# ================================================
+# End of .gitattributes file
+# ================================================

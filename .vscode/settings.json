@@ -1,0 +1,29 @@
+{
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#450971",
+        "titleBar.activeBackground": "#610D9E",
+        "titleBar.activeForeground": "#FDFBFF"
+    },
+    "cSpell.words": [
+        "donotpresent",
+        "dotenv",
+        "ehthumbs",
+        "entregable",
+        "esktop",
+        "eslintcache",
+        "frontmatter",
+        "fseventsd",
+        "icns",
+        "ionide",
+        "lockfiles",
+        "lucide",
+        "postcss",
+        "solucion",
+        "stackdump",
+        "stylelintcache",
+        "tailwindcss",
+        "theming",
+        "timemachine",
+        "tsconfigs"
+    ]
+}
