@@ -6,21 +6,6 @@
  */
 
 @layer components {
-  /*
-   * Styles for the main <nav> container in the header.
-   * Creates a horizontal flex layout with proper spacing and padding.
-   */
-  .header-nav {
-    @apply flex items-center justify-between px-4 py-3 sm:px-8;
-  }
-
-  /*
-   * Branding link (e.g., site name or logo).
-   * Uses the primary color and bold text styling.
-   */
-  .header-brand {
-    @apply text-primary text-xl font-bold;
-  }
 
   /*
    * Container for right-aligned navigation links.

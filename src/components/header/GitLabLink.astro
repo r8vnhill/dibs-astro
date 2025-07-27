@@ -1,15 +1,43 @@
 ---
+/**
+ * Reusable component that renders a link to a GitLab repository with an icon.
+ * Internally wraps the `IconLink` component and passes it the GitLab logo and the desired props.
+ */
+
 import GitLabLogo from "~/assets/img/logos/gitlab-logo.svg";
 import IconLink from "./IconLink.astro";
 
+/**
+ * Props accepted by the `GitLabLink` component.
+ */
 interface GitLabLinkProps {
+  /**
+   * GitLab username or organization name.
+   */
   username: string;
+
+  /**
+   * GitLab repository name.
+   */
   repo: string;
+
+  /**
+   * Accessible label for screen readers.
+   */
   label?: string;
+
+  /**
+   * Additional Tailwind classes for the outer link.
+   */
   className?: string;
+
+  /**
+   * Additional Tailwind classes for the icon.
+   */
   iconClass?: string;
 }
 
+// Destructure and apply default values to props
 const {
   username,
   repo,
@@ -18,9 +46,11 @@ const {
   iconClass = "",
 } = Astro.props as GitLabLinkProps;
 
+// Construct full GitLab repository URL
 const link = `https://gitlab.com/${username}/${repo}`;
 ---
 
+<!-- GitLab icon link rendered using the reusable IconLink component -->
 <IconLink
   href={link}
   label={label}

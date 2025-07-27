@@ -1,20 +1,76 @@
 ---
-import ThemeSwitcher from '~/components/ui/theme/ThemeSwitcher';
-import HeaderNav from './nav/HeaderNav';
-import GitLabLink from './GitLabLink.astro';
+/**
+ * Header component for the site.
+ *
+ * Displays a site title, main navigation, a theme switcher, and optional links to GitLab and GitHub
+ * repositories.
+ *
+ * @property title - The site title displayed as a link to the homepage.
+ * @property gitlab - Optional GitLab username and repo.
+ * @property github - Optional GitHub username and repo.
+ */
+
+import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
+import HeaderNav from "./nav/HeaderNav";
+import GitLabLink from "./GitLabLink.astro";
+import GitHubLink from "./GitHubLink.astro";
+
+type Props = {
+  title: string;
+  gitlab?: { username: string; repo: string };
+  github?: { username: string; repo: string };
+};
+
+const { title, gitlab, github } = Astro.props as Props;
 ---
 
-<header class="header-bar">
-  <nav class="header-nav" role="navigation">
-    <div class="flex items-center space-x-6">
-      <a href="/" class="header-brand">DIBS</a>
+<!-- Header with themed background, border, and shadow -->
+<header
+  class:list={[
+    "border-b", // Bottom border
+    "shadow", // Box shadow for depth
+    "text-header-text", // Text color (from theme)
+    "bg-header-fill", // Background color (from theme)
+    "border-header-border", // Border color (from theme)
+  ]}
+>
+  <!-- Main navigation container -->
+  <nav
+    class:list={[
+      "container", // Responsive container
+      "mx-auto", // Center horizontally
+      "flex", // Flexbox layout
+      "items-center", // Vertically align items
+      "justify-between", // Space between left and right sections
+      "px-4", // Horizontal padding (mobile)
+      "py-3", // Vertical padding
+      "sm:px-8", // More padding on larger screens
+    ]}
+    role="navigation"
+    aria-label="Main site navigation"
+  >
+    <!-- Left section: title and nav links -->
+    <div class:list={["flex", "items-center", "gap-6"]}>
+      <!-- Site title linking to homepage -->
+      <a href="/" class:list={["text-xl", "font-bold", "text-primary"]}>
+        <span class="sr-only">Go to homepage</span>
+        {title}
+      </a>
+
+      <!-- Main navigation component -->
       <HeaderNav client:load />
     </div>
 
-    <div class="flex items-center gap-4">
+    <!-- Right section: theme switcher and repository links -->
+    <div class:list={["flex", "items-center", "gap-4"]}>
+      <!-- Dark/light mode toggle -->
       <ThemeSwitcher client:load />
-      <GitLabLink username="r8vnhill" repo="dibs-astro" />
-      <a href="…" class="nav-link">github</a>
+
+      <!-- GitLab repository link (optional) -->
+      {gitlab && <GitLabLink {...gitlab} />}
+
+      <!-- GitHub repository link (optional) -->
+      {github && <GitHubLink {...github} />}
     </div>
   </nav>
 </header>

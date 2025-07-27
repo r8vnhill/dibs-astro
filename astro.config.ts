@@ -28,6 +28,7 @@ export default defineConfig({
     // Custom plugin to trigger HMR when specific files change
     devServerFileWatcher([
       "./config/**", // Watch all custom integration and plugin files
+      "./src/assets/**", // Watch all assets for changes
     ]),
 
     // Adds Preact support to render UI components with lightweight runtime

@@ -1,0 +1,48 @@
+---
+/**
+ * Renders a GitHub icon link pointing to a specific repository.
+ *
+ * This component wraps the generic `<IconLink />` component and injects the GitHub logo along with
+ * repository-specific metadata.
+ *
+ * @property username - GitHub username or organization.
+ * @property repo - Repository name under the given username.
+ * @property label - Optional accessible label (defaults to "Repositorio GitHub").
+ * @property className - Optional classes applied to the outer anchor.
+ * @property iconClass - Optional classes applied to the SVG icon.
+ */
+
+import GitHubLogo from "~/assets/img/logos/github-logo.svg";
+import IconLink from "./IconLink.astro";
+
+// Define the expected props for this component
+interface GitHubLinkProps {
+  username: string;
+  repo: string;
+  label?: string;
+  className?: string;
+  iconClass?: string;
+}
+
+// Extract and assign default values from props
+const {
+  username,
+  repo,
+  label = "Repositorio GitHub",
+  className = "",
+  iconClass = "",
+} = Astro.props as GitHubLinkProps;
+
+// Construct the full GitHub repository URL
+const link = `https://github.com/${username}/${repo}`;
+---
+
+<!-- Render the link using the IconLink component -->
+<IconLink
+  href={link}
+  label={label}
+  icon={GitHubLogo}
+  newTab
+  className={className}
+  iconClass={iconClass}
+/>

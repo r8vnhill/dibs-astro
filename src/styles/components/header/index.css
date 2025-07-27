@@ -1,9 +1,3 @@
-@layer components {
-  .header-bar {
-    @apply border-header-border bg-header-fill text-header-text border-b shadow;
-  }
-}
-
 @import './nav.css';
 @import './slide.css';
 @import './theme-select.css';

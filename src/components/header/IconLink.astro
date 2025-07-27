@@ -59,15 +59,7 @@ const externalLinkAttrs = newTab
   {...externalLinkAttrs}
 >
   <!-- Icon with adjustable scaling and custom styles -->
-  <Icon
-    class:list={[
-      "w-5", // Base width
-      "h-5", // Base height
-      "scale-[1.75]", // Scale for better visibility
-      "origin-center", // Ensure scaling is centered
-      iconClass, // Custom icon classes from props
-    ]}
-  />
+  <Icon class:list={["w-6", "h-6", "origin-center", iconClass]} />
 
   <!-- Accessible label for screen readers -->
   <span class="sr-only">{label}</span>
