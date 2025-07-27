@@ -1,0 +1,71 @@
+import clsx from 'clsx';
+import { useEffect, useRef, useState, type Dispatch, type StateUpdater } from 'preact/hooks';
+import type { JSX } from 'preact/jsx-runtime';
+import * as utils from '~/utils';
+import { useDisclosure, useOutsideClick } from '~/hooks';
+import { ThemeSwitcherButton } from './ThemeSwitcherButton';
+import { applyTheme, type Theme } from '~/utils';
+import { ThemeList } from './ThemeList';
+
+export default function ThemeSwitcher(): JSX.Element {
+  const [theme, setTheme] = useState<Theme>(utils.theme.DEFAULT);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { isOpen, toggle, close } = useDisclosure();
+
+  useOutsideClick(dropdownRef, close);
+  useInitializeTheme(setTheme);
+  useAutoThemeSync(theme);
+
+  return (
+    <div class={clsx('relative', 'inline-block', 'text-left')} ref={dropdownRef}>
+      <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} />
+
+      {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} />}
+    </div>
+  );
+}
+
+/**
+ * React hook to initialize the application's theme on first render.
+ *
+ * This hook retrieves the user's previously selected theme from `localStorage`.
+ * If no theme is stored, it falls back to the default theme.
+ * It then updates the internal state and applies the theme to the document.
+ *
+ * @param setTheme - State updater function to set the current theme.
+ */
+function useInitializeTheme(setTheme: Dispatch<StateUpdater<Theme>>): void {
+  useEffect(() => {
+    const stored = (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme) || utils.theme.DEFAULT;
+
+    setTheme(stored);
+    applyTheme(stored);
+  }, []);
+}
+
+/**
+ * React hook that keeps the theme in sync with the system preference when `'auto'` is selected.
+ *
+ * This hook listens for changes in the user's system color scheme (e.g., switching between light
+ * and dark modes in the OS).
+ * If the current theme is set to `'auto'`, the hook ensures the application reflects those changes
+ * immediately.
+ *
+ * @param theme - The current theme selection.
+ */
+function useAutoThemeSync(theme: Theme): void {
+  useEffect(() => {
+    if (theme !== utils.theme.AUTO) return;
+
+    const media = utils.getColorSchemeMediaQuery();
+
+    // Define a listener that reapplies the 'auto' theme when the preference changes
+    const listener = () => applyTheme(utils.theme.AUTO);
+
+    const themeChangeEvent = 'change';
+    media.addEventListener(themeChangeEvent, listener);
+
+    // Clean up the event listener on component unmount or dependency change
+    return () => media.removeEventListener(themeChangeEvent, listener);
+  }, [theme]);
+}

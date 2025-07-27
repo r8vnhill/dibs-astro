@@ -4,10 +4,10 @@
  * These can be overridden when the component is used.
  */
 const {
-  title = "DIBS",
-  description = "Diseño e Implementación de Bibliotecas de Software",
-  url = "https://dibs.ravenhill.cl",
-  type = "website",
+  title = 'DIBS',
+  description = 'Diseño e Implementación de Bibliotecas de Software',
+  url = 'https://dibs.ravenhill.cl',
+  type = 'website',
 } = Astro.props;
 ---
 
@@ -19,6 +19,15 @@ const {
 
 <!-- SEO: Meta description used by search engines -->
 <meta name="description" content={description} />
+
+<!-- Favicon for browser tab icon -->
+<link rel="icon" href="/online-library.ico" type="image/x-icon" />
+
+<!-- Responsive design -->
+<meta name="viewport" content="width=device-width" />
+
+<!-- Generator metadata for Astro -->
+<meta name="generator" content={Astro.generator} />
 
 <!-- Sitemap for search engine indexing -->
 <link rel="sitemap" href="/sitemap-index.xml" />

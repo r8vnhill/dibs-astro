@@ -1,9 +1,18 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import ToDo from '~/components/utils/ToDo.tsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-const title = "DIBS";
+const title = 'DIBS';
 ---
 
 <BaseLayout pageTitle={title}>
-  <h2>My awesome blog subtitle</h2>
+  <h2>Diseño e Implementación de Bibliotecas de Software</h2>
+
+  <ToDo
+    metadata={{
+      title,
+      description: 'Página de inicio del curso DIBS',
+      tasks: ['Tarjetas de presentación del curso'],
+    }}
+  />
 </BaseLayout>

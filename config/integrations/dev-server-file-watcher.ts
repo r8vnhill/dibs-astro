@@ -1,6 +1,6 @@
-import type { AstroIntegration } from "astro";
-import fg from "fast-glob";
-import { pathToFileURL } from "url";
+import type { AstroIntegration } from 'astro';
+import fg from 'fast-glob';
+import { pathToFileURL } from 'url';
 
 /**
  * Creates an Astro integration that watches specified file patterns during development and triggers
@@ -11,10 +11,10 @@ import { pathToFileURL } from "url";
  */
 export function devServerFileWatcher(patterns: string[]): AstroIntegration {
   return {
-    name: "dev-server-file-watcher",
+    name: 'dev-server-file-watcher',
 
     hooks: {
-      async "astro:config:setup"({ addWatchFile, config }) {
+      async 'astro:config:setup'({ addWatchFile, config }) {
         const root = config.root;
 
         const filePaths = await fg(patterns, {

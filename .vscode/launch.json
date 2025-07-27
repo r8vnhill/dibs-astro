@@ -24,10 +24,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "pnpm",
-      "args": [
-        "run",
-        "deploy"
-      ],
+      "args": ["run", "deploy"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
     }

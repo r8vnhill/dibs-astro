@@ -25,7 +25,7 @@ type NavListProps = {
    * Optional callback triggered when a navigation item is clicked.
    * Useful for closing the menu, tracking events, etc.
    */
-  onItemClick?: (item: NavItem) => void;
+  onToggle?: (item: NavItem) => void;
 };
 
 /**
@@ -43,7 +43,7 @@ type NavListProps = {
  * @param onItemClick - Optional callback triggered when a nav item is clicked.
  * @returns A JSX element representing the mobile navigation menu.
  */
-export function MobileNavList({ isOpen, items, onItemClick }: NavListProps): JSX.Element {
+export function MobileNavList({ isOpen, items, onToggle: onItemClick }: NavListProps): JSX.Element {
   return (
     <ul
       id="mainNavMobile"

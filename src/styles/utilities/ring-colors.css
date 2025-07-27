@@ -20,7 +20,7 @@
     --tw-ring-color: var(--theme-color-primary-darker);
   }
   .focus\:ring-primary-darkest:focus {
-    --tw-ring-color: var(--theme-color-primary-darkest)
+    --tw-ring-color: var(--theme-color-primary-darkest);
   }
 
   /* Lighter variations of the primary ring color */

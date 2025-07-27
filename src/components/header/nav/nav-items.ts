@@ -20,9 +20,9 @@ export interface NavItem {
  * by components such as `<Header />` or `<NavToggle />`.
  */
 export const navItems: NavItem[] = [
-  { href: "/", label: "Inicio" },
-  { href: "/notes/", label: "Apuntes" },
-  { href: "/lessons/", label: "Clases" },
-  { href: "/syllabus/", label: "Temario" },
-  { href: "/assignments/", label: "Tareas" },
+  { href: '/', label: 'Inicio' },
+  { href: '/notes/', label: 'Apuntes' },
+  { href: '/lessons/', label: 'Clases' },
+  { href: '/syllabus/', label: 'Temario' },
+  { href: '/assignments/', label: 'Tareas' },
 ];

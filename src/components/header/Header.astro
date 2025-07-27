@@ -1,16 +1,17 @@
 ---
-import HeaderNav from './nav/HeaderNav.tsx';
+import ThemeSwitcher from '~/components/ui/theme/ThemeSwitcher';
+import HeaderNav from './nav/HeaderNav';
 ---
 
-<header class="bg-white shadow">
+<header class="header-bar">
   <nav class="header-nav" role="navigation">
     <div class="flex items-center space-x-6">
       <a href="/" class="header-brand">DIBS</a>
       <HeaderNav client:load />
     </div>
 
-    <div class="nav-links">
-      <button class="nav-link">🌓</button>
+    <div class="flex items-center gap-4">
+      <ThemeSwitcher client:load />
       <a href="…" class="nav-link">gitlab</a>
       <a href="…" class="nav-link">github</a>
     </div>

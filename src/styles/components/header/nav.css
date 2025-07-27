@@ -35,7 +35,7 @@
    * Styled with base font, gray color, and hover transition to primary color.
    */
   .nav-link {
-    @apply hover:text-primary text-sm text-gray-500 transition-colors;
+    @apply hover:text-primary text-header-text text-sm transition-colors;
   }
 
   /*
@@ -48,10 +48,10 @@
 
   /*
    * Individual desktop navigation item.
-   * Uses larger text size and medium font weight for better visibility.
+   * Uses Tailwind's utility classes for hover effects and text styling.
    */
   .desktop-nav-item {
-    @apply hover:text-primary text-base font-medium text-gray-700 transition-colors;
+    @apply hover:text-primary text-header-text text-base font-medium transition-colors;
   }
 
   /*
@@ -67,7 +67,7 @@
    * Appears as a floating box with transition animations and responsive visibility.
    */
   .mobile-nav-list {
-    @apply fixed inset-x-4 top-20 z-50 transform rounded-md border bg-white p-4 shadow-lg transition-all duration-300 sm:hidden;
+    @apply bg-header-fill fixed inset-x-4 top-20 z-50 transform rounded-md border p-4 shadow-lg transition-all duration-300 sm:hidden;
   }
 
   /*
@@ -75,7 +75,7 @@
    * Block-level links with padding and subtle hover feedback.
    */
   .mobile-nav-item {
-    @apply block rounded px-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-100;
+    @apply text-header-text hover:bg-primary block rounded px-4 py-2 text-base font-medium;
   }
 
   /*

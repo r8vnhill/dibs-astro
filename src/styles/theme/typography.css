@@ -6,9 +6,9 @@
 
 :root {
   /* Font families for body text, headings, and monospace content */
-  --font-body: "Inter", sans-serif;
-  --font-mono: "Fira Code", monospace;
-  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --font-heading: 'Space Grotesk', sans-serif;
 
   /* Text sizes based on a modular scale (Major Third ~1.25x increments) */
   --text-xs: 0.75rem; /* Extra small - captions, legal text */

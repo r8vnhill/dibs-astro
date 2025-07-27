@@ -18,7 +18,7 @@ Puedes usar, adaptar y compartir este código libremente con fines personales, a
 
 ## 🌐 Sitio del curso DIBS
 
-El curso completo — *Diseño e Implementación de Bibliotecas de Software* — está disponible en:
+El curso completo — _Diseño e Implementación de Bibliotecas de Software_ — está disponible en:
 
 👉 [https://dibs.ravenhill.cl](https://dibs.ravenhill.cl)
 

@@ -1,0 +1,13 @@
+@layer components {
+  .theme-options__icon {
+    @apply inline h-4 w-4;
+  }
+
+  .theme-switcher__button {
+    @apply bg-base-background inline-flex items-center gap-1 rounded border px-3 py-1;
+  }
+
+  .theme-select {
+    @apply bg-base-background text-base-text rounded border px-2 py-1 text-sm transition-colors;
+  }
+}

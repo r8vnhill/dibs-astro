@@ -20,14 +20,15 @@
     // Enable cleaner import paths like ~/
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
+      "~/*": ["src/*"],
+      "$components/*": ["src/components/*"],
+      "$layouts/*": ["src/layouts/*"],
+      "$styles/*": ["src/styles/*"],
+      "$utils/*": ["src/utils/*"],
+      "$hooks/*": ["src/hooks/*"]
     },
     // Astro-specific types
-    "types": [
-      "astro/client",
-    ],
+    "types": ["astro/client"],
     // Recommended settings for Vite and Astro compatibility
     "target": "ESNext", // Use latest JavaScript features
     "module": "ESNext", // Use native module syntax

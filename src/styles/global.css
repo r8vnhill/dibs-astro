@@ -1,15 +1,51 @@
+/**
+ * Global stylesheet for the DIBS site.
+ *
+ * This file defines global styles, font imports, Tailwind base layers, custom variants, and
+ * structured imports for theme, utilities, and components.
+ * It ensures consistent layout, font rendering, and utility behavior across the application.
+ */
+
+/* === Font Imports ===
+ * Import fonts from Google Fonts for global typography:
+ * - Inter: General-purpose UI font (weights 400–700).
+ * - Fira Code: Monospaced font for code snippets.
+ * - Space Grotesk: Modern sans-serif for headings or branding.
+ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Fira+Code&family=Space+Grotesk:wght@400..700&display=swap');
-@import "tailwindcss";
+
+/* === Tailwind CSS Base Layer ===
+ * Imports Tailwind's base styles (including preflight, utilities, and components).
+ * This must appear before any custom layers to ensure proper layering order.
+ */
+@import 'tailwindcss';
+
+/* === Custom Variant ===
+ * Defines a custom `dark` variant using Tailwind's `@custom-variant` directive.
+ * Applies styles when either `.dark` or any of its descendants is targeted.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* === Structured CSS Imports ===
+ * Import modular CSS groupings for better maintainability:
+ * - Theme styles: CSS variables for colors, spacing, etc.
+ * - Utility classes: Reusable helpers not covered by Tailwind.
+ * - Component styles: Custom Tailwind component extensions.
+ */
 @import './theme/index.css';
 @import './utilities/index.css';
 @import './components/index.css';
 
+/* === Base Element Styling === */
+
+/* Remove default margin/padding from the body and ensure full width. */
 body {
   margin: 0;
   width: 100%;
   padding: 0;
 }
 
+/* Apply `border-box` sizing globally for predictable box models. */
 * {
   box-sizing: border-box;
 }
