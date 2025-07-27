@@ -1,0 +1,74 @@
+---
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+
+/**
+ * Props for the `IconLink` component.
+ */
+interface IconLinkProps {
+  /**
+   * Destination URL for the link.
+   */
+  href: string;
+  /**
+   * Accessible label for the link, used in `aria-label` and screen readers.
+   */
+  label: string;
+  /**
+   * Astro component to render as the icon.
+   */
+  icon: AstroComponentFactory;
+  /**
+   * Whether the link should open in a new tab (default: false).
+   */
+  newTab?: boolean;
+  /**
+   * Optional Tailwind classes for the anchor element.
+   */
+  className?: string;
+  /**
+   * Optional Tailwind classes for the icon element.
+   */
+  iconClass?: string;
+}
+
+const {
+  href,
+  label,
+  icon: Icon,
+  newTab = false,
+  className = "",
+  iconClass = "",
+} = Astro.props as IconLinkProps;
+
+const externalLinkAttrs = newTab
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {};
+---
+
+<!-- Reusable accessible link component with icon support -->
+<a
+  href={href}
+  aria-label={label}
+  class:list={[
+    "inline-flex", // Display icon and text inline
+    "items-center", // Vertically center content
+    "hover:opacity-80", // Visual feedback on hover
+    "transition-opacity", // Smooth transition effect
+    className, // Custom classes from props
+  ]}
+  {...externalLinkAttrs}
+>
+  <!-- Icon with adjustable scaling and custom styles -->
+  <Icon
+    class:list={[
+      "w-5", // Base width
+      "h-5", // Base height
+      "scale-[1.75]", // Scale for better visibility
+      "origin-center", // Ensure scaling is centered
+      iconClass, // Custom icon classes from props
+    ]}
+  />
+
+  <!-- Accessible label for screen readers -->
+  <span class="sr-only">{label}</span>
+</a>

@@ -1,7 +1,7 @@
 {
   "name": "dibs-astro",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -10,6 +10,7 @@
     "deploy": "astro build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.0",
     "@astrojs/preact": "^4.1.0",
     "@lucide/astro": "^0.526.0",
     "astro": "5.12.3",

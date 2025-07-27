@@ -1,6 +1,7 @@
 ---
 import ThemeSwitcher from '~/components/ui/theme/ThemeSwitcher';
 import HeaderNav from './nav/HeaderNav';
+import GitLabLink from './GitLabLink.astro';
 ---
 
 <header class="header-bar">
@@ -12,7 +13,7 @@ import HeaderNav from './nav/HeaderNav';
 
     <div class="flex items-center gap-4">
       <ThemeSwitcher client:load />
-      <a href="…" class="nav-link">gitlab</a>
+      <GitLabLink username="r8vnhill" repo="dibs-astro" />
       <a href="…" class="nav-link">github</a>
     </div>
   </nav>

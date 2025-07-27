@@ -1,0 +1,31 @@
+---
+import GitLabLogo from "~/assets/img/logos/gitlab-logo.svg";
+import IconLink from "./IconLink.astro";
+
+interface GitLabLinkProps {
+  username: string;
+  repo: string;
+  label?: string;
+  className?: string;
+  iconClass?: string;
+}
+
+const {
+  username,
+  repo,
+  label = "Repositorio GitLab",
+  className = "",
+  iconClass = "",
+} = Astro.props as GitLabLinkProps;
+
+const link = `https://gitlab.com/${username}/${repo}`;
+---
+
+<IconLink
+  href={link}
+  label={label}
+  icon={GitLabLogo}
+  newTab
+  className={className}
+  iconClass={iconClass}
+/>
