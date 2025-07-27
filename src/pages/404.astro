@@ -1,0 +1,76 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { pickRandom } from "~/utils/random";
+
+/**
+ * Randomizes the page title:
+ * - Has a very low probability (~0.0001%) of showing a special "One Piece" Easter egg.
+ * - Otherwise, selects from a pool of themed 404 messages, referencing games, movies, anime, etc.
+ */
+const pageTitle =
+  Math.random() < 1e-6
+    ? "¡Has encontrado el One Piece!"
+    : pickRandom([
+        "¿Qué haces aquí? Esta página no existe.",
+        "¡Esta página explotó!",
+        "La princesa está en otro castillo.",
+        "404: The page is a lie.",
+        "I'm sorry, Dave. I'm afraid I can't do that.",
+        "This is not the page you are looking for.",
+        "¡Hey! Tú no deberías estar aquí.",
+        "You Can (Not) Find This Page",
+      ]);
+---
+
+<BaseLayout>
+  <main
+    class:list={[
+      "flex",
+      "flex-col",
+      "justify-center",
+      "items-center",
+      "h-[80vh]",
+      "text-center",
+      "px-4",
+    ]}
+  >
+    <h1
+      class:list={[
+        "text-4xl", // Base font size for small screens
+        "sm:text-5xl", // Medium screens
+        "md:text-6xl", // Larger screens
+        "font-extrabold", // Emphasize the title
+        "text-primary", // Use themed color
+        "tracking-tight", // Tighter letter spacing
+        "drop-shadow-md", // Subtle text shadow for depth
+        "font-404-title", // Custom font for 404 pages
+        "animate-fade-in", // Smooth fade-in animation
+      ]}
+    >
+      {pageTitle}
+    </h1>
+  </main>
+</BaseLayout>
+
+<style scoped>
+  /* 
+    Fade-in animation for a more dynamic entrance.
+    Defined within @layer utilities to keep Tailwind separation.
+  */
+  @layer utilities {
+    .animate-fade-in {
+      animation: fade-in 0.8s ease-out both;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px); /* Slide up slightly */
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+</style>

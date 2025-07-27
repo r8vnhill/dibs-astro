@@ -13,6 +13,7 @@
  * - Space Grotesk: Modern sans-serif for headings or branding.
  */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400..700&family=Fira+Code&family=Space+Grotesk:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 /* === Tailwind CSS Base Layer ===
  * Imports Tailwind's base styles (including preflight, utilities, and components).

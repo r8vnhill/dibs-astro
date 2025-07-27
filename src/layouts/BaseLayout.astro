@@ -5,6 +5,11 @@ import Head from "$components/meta/Head.astro";
 import "$styles/global.css";
 
 const { pageTitle } = Astro.props;
+
+const repoInfo = {
+  username: "r8vnhill",
+  repo: "dibs-astro",
+};
 ---
 
 <html lang="en">
@@ -23,18 +28,10 @@ const { pageTitle } = Astro.props;
     <Head title={pageTitle} />
   </head>
   <body class="bg-base-background text-base-text">
-    <Header
-      title={pageTitle}
-      gitlab={{ username: "r8vnhill", repo: "dibs-astro" }}
-      github={{ username: "r8vnhill", repo: "dibs-astro" }}
-    />
+    <Header title="DIBS" gitlab={repoInfo} github={repoInfo} />
 
     <main class="px-4 mx-auto max-w-prose">
-      <h1>{pageTitle}</h1>
-
       <slot />
     </main>
-
-    <Footer />
   </body>
 </html>
