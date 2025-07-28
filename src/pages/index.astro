@@ -1,8 +1,8 @@
 ---
-import ToDo from '~/components/utils/ToDo.tsx';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import ToDo from "~/components/utils/ToDo.tsx";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const title = 'DIBS';
+const title = "DIBS";
 ---
 
 <BaseLayout pageTitle={title}>
@@ -11,8 +11,9 @@ const title = 'DIBS';
   <ToDo
     metadata={{
       title,
-      description: 'Página de inicio del curso DIBS',
-      tasks: ['Tarjetas de presentación del curso'],
+      description: "Página de inicio del curso DIBS",
+      tasks: ["Tarjetas de presentación del curso"],
     }}
+    client:only="preact"
   />
 </BaseLayout>

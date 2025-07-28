@@ -14,17 +14,20 @@
       "type": "node-terminal"
     },
     {
-      "command": "./node_modules/.bin/astro preview",
-      "name": "Preview server",
-      "request": "launch",
-      "type": "node-terminal"
-    },
-    {
       "name": "Deploy (build + wrangler deploy)",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "pnpm",
       "args": ["run", "deploy"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Preview (build + wrangler dev)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "pnpm",
+      "args": ["run", "preview"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
     }

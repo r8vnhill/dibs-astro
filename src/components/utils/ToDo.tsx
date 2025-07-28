@@ -1,63 +1,57 @@
-import { useMemo, useEffect } from "preact/hooks";
+import { useLayoutEffect, useState } from "preact/hooks";
 import type { JSX } from "preact/jsx-runtime";
+import { todoImages } from "~/data/todo-images";
 import { pickRandom } from "~/utils";
-
-/**
- * Dynamically imports all images from the specified folder as static URLs.
- *
- * - `eager: true` ensures the images are bundled immediately.
- * - `as: 'url'` transforms file paths into URL strings for use in <img> tags.
- */
-const imageMap = import.meta.glob(
-  "/src/assets/img/why/todo/*.{jpg,jpeg,png,webp}",
-  {
-    query: "?url",
-    import: "default",
-    eager: true,
-  }
-);
-
-/**
- * Converts the globbed image map into an array of URL strings.
- */
-const images = Object.values(imageMap) as string[];
 
 /**
  * Props for the <ToDo /> component.
  */
 export interface ToDoProps {
   /**
-   * Optional debug metadata, not rendered in the UI.
+   * Optional debug metadata (e.g., title, tasks, etc.).
+   * This is not rendered in the UI but can help with debugging.
    */
   metadata?: Record<string, unknown>;
 
   /**
-   * Optional message shown under the image.
-   * Defaults to a friendly placeholder.
+   * Optional message to display below the image.
+   * Defaults to a friendly placeholder note.
    */
   message?: string;
 
   /**
-   * Optional alt text for the image.
+   * Alternative text for the image.
    * Defaults to "Meme".
    */
   altText?: string;
 }
 
 /**
- * Placeholder component indicating that content is under construction.
- * Displays a random image and message, and logs a warning to the console.
+ * <ToDo /> is a visual placeholder component indicating that content is under construction.
+ *
+ * It displays:
+ * - A randomly selected image from a predefined set.
+ * - A default or custom message.
+ * - A warning in the developer console to flag this component as a temporary stub.
+ *
+ * This component is client-only and uses `useLayoutEffect` instead of `useEffect` to ensure the
+ * random image is selected and rendered *before* the browser paints.
+ * This avoids potential layout shifts or race conditions in Astro islands where `useEffect` may not
+ * reliably run after hydration.
  */
 export default function ToDo({
   metadata,
   message = "TODO: Estamos (estoy) trabajando para ustedes c:",
   altText = "Meme",
 }: ToDoProps): JSX.Element {
-  // Pick a random image once on mount
-  const imageSrc = useMemo(() => pickRandom(images) ?? "", []);
+  // Holds the selected image URL or null while loading
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
 
-  // Warn on mount that this is a placeholder
-  useEffect(() => {
+  // Select a random image and emit a console warning before the first paint
+  useLayoutEffect(() => {
+    const randomImage = pickRandom(todoImages);
+    setImageSrc(randomImage ?? null);
+
     console.warn(
       "⚠️ [ToDo]: This component is a placeholder. Replace it with real content.",
       metadata
@@ -69,16 +63,21 @@ export default function ToDo({
       aria-describedby="todo-message"
       class="border-primary flex flex-col items-center gap-4 rounded border border-dashed p-4"
     >
-      {imageSrc ? (
+      {/* Show status based on the selected image */}
+      {imageSrc === null ? (
+        <div class="text-sm text-gray-500 italic">Cargando imagen...</div>
+      ) : imageSrc === "" ? (
+        <div class="text-sm text-red-600">⚠️ Imagen no disponible</div>
+      ) : (
         <img
+          key={imageSrc}
           src={imageSrc}
           alt={altText}
           class="w-full max-w-xs rounded shadow"
-          loading="lazy"
         />
-      ) : (
-        <div class="text-sm text-red-600">⚠️ Imagen no disponible</div>
       )}
+
+      {/* Display the custom or default message */}
       <figcaption id="todo-message" class="text-center text-sm italic">
         {message}
       </figcaption>
