@@ -1,43 +1,53 @@
 ---
 import NotFound from "~/components/utils/NotFound";
-import BaseLayout from "~/layouts/BaseLayout.astro";
+import "~/styles/global.css";
 ---
 
-<BaseLayout pageTitle="Page Not Found">
-  <main
-    class:list={[
-      "flex",
-      "flex-col",
-      "justify-center",
-      "items-center",
-      "h-[80vh]",
-      "text-center",
-      "px-4",
-    ]}
-  >
-    <NotFound client:load />
-  </main>
-</BaseLayout>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Página no encontrada</title>
 
-<style scoped>
-  /* 
-    Fade-in animation for a more dynamic entrance.
-    Defined within @layer utilities to keep Tailwind separation.
-  */
-  @layer utilities {
-    .animate-fade-in {
-      animation: fade-in 0.8s ease-out both;
-    }
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    />
+    <style>
+      .font-404-title {
+        font-family: "Press Start 2P", monospace;
+      }
 
-    @keyframes fade-in {
-      from {
-        opacity: 0;
-        transform: translateY(8px); /* Slide up slightly */
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      .animate-fade-in {
+        animation: fade-in 0.8s ease-out both;
       }
-    }
-  }
-</style>
+    </style>
+  </head>
+  <body class="font-sans bg-neutral-950 text-primary">
+    <main
+      class="flex flex-col justify-center items-center h-[80vh] text-center px-4 gap-6"
+    >
+      <NotFound client:load />
+
+      <a
+        href="/"
+        class="text-base underline transition-colors duration-200 sm:text-lg underline-offset-4 hover:text-secondary"
+      >
+        ← Volver al inicio
+      </a>
+    </main>
+  </body>
+</html>
