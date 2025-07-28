@@ -1,15 +1,34 @@
-import clsx from 'clsx';
-import { useEffect, useRef, useState, type Dispatch, type StateUpdater } from 'preact/hooks';
-import type { JSX } from 'preact/jsx-runtime';
-import * as utils from '~/utils';
-import { useDisclosure, useOutsideClick } from '~/hooks';
-import { ThemeSwitcherButton } from './ThemeSwitcherButton';
-import { applyTheme, type Theme } from '~/utils';
-import { ThemeList } from './ThemeList';
+import clsx from "clsx";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type StateUpdater,
+} from "preact/hooks";
+import type { JSX } from "preact/jsx-runtime";
+import * as utils from "~/utils";
+import { useDisclosure, useOutsideClick } from "~/hooks";
+import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
+import { applyTheme, type Theme } from "~/utils";
+import { ThemeList } from "./ThemeList";
 
+/**
+ * <ThemeSwitcher /> is a dropdown component that allows users to toggle between themes (e.g.,
+ * light, dark, system).
+ *
+ * Features:
+ * - Initializes the current theme from local storage or system preferences.
+ * - Detects outside clicks to close the dropdown.
+ * - Syncs the theme state with other browser tabs.
+ * - Displays a toggle button and a list of selectable themes.
+ */
 export default function ThemeSwitcher(): JSX.Element {
   const [theme, setTheme] = useState<Theme>(utils.theme.DEFAULT);
+
+  // Reference to the dropdown wrapper to detect outside clicks
   const dropdownRef = useRef<HTMLDivElement>(null);
+
   const { isOpen, toggle, close } = useDisclosure();
 
   useOutsideClick(dropdownRef, close);
@@ -17,9 +36,14 @@ export default function ThemeSwitcher(): JSX.Element {
   useAutoThemeSync(theme);
 
   return (
-    <div class={clsx('relative', 'inline-block', 'text-left')} ref={dropdownRef}>
+    <div
+      class={clsx("relative", "inline-block", "text-left")}
+      ref={dropdownRef}
+    >
+      {/* Toggle button for the theme dropdown */}
       <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} />
 
+      {/* Conditionally render the dropdown list of themes */}
       {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} />}
     </div>
   );
@@ -36,7 +60,9 @@ export default function ThemeSwitcher(): JSX.Element {
  */
 function useInitializeTheme(setTheme: Dispatch<StateUpdater<Theme>>): void {
   useEffect(() => {
-    const stored = (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme) || utils.theme.DEFAULT;
+    const stored =
+      (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme) ||
+      utils.theme.DEFAULT;
 
     setTheme(stored);
     applyTheme(stored);
@@ -62,7 +88,7 @@ function useAutoThemeSync(theme: Theme): void {
     // Define a listener that reapplies the 'auto' theme when the preference changes
     const listener = () => applyTheme(utils.theme.AUTO);
 
-    const themeChangeEvent = 'change';
+    const themeChangeEvent = "change";
     media.addEventListener(themeChangeEvent, listener);
 
     // Clean up the event listener on component unmount or dependency change
