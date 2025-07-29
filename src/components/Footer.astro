@@ -1,18 +1,60 @@
 ---
-import Social from './Social.astro';
+/**
+ * Displays author attribution and build tool credit at the bottom of a page.
+ */
 
-const username = 'r8vnhill';
+import { site } from "~/utils";
+
+interface FooterProps {
+  year?: number;
+  author?: { name: string; url: string };
+  builtWith?: { name: string; url: string };
+}
+
+// Destructure props with default fallbacks
+const {
+  year = new Date().getFullYear(),
+  author = site.COPYRIGHT_HOLDER,
+  builtWith = { name: "Astro", url: "https://astro.build" },
+} = Astro.props as FooterProps;
 ---
 
-<style>
-  footer {
-    display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-</style>
-
-<footer>
-  <Social platform="gitlab" username={username} />
-  <Social platform="github" username={username} />
+<footer
+  role="contentinfo"
+  class:list={[
+    "mt-12", // Add top margin for visual separation from content
+    "border-t", // Draw a top border line
+    "border-base-border", // Theme-adapted border color (light/dark)
+    "text-sm", // Use small font for subtlety
+    "text-base-subtle", // Slightly muted text color based on theme
+    "py-8", // Vertical padding (top and bottom)
+    "px-4", // Horizontal padding
+    "text-center", // Center the text inside the footer
+  ]}
+>
+  <div class="space-y-2">
+    <p class="mt-2">
+      © {year}{" "}
+      <a
+        href={author.url}
+        aria-label={`Sitio de ${author.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-style"
+      >
+        {author.name}
+      </a>.
+    </p>
+    <p>
+      Hecho con{" "}
+      <a
+        href={builtWith.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-style"
+      >
+        {builtWith.name}
+      </a>.
+    </p>
+  </div>
 </footer>

@@ -1,36 +1,63 @@
 ---
-import Header from "$components/header/Header.astro";
-import Head from "$components/meta/Head.astro";
-import "$styles/global.css";
+/**
+ * Base layout shared across pages in the DIBS site.
+ *
+ * Responsibilities:
+ * - Sets up the HTML structure and common metadata.
+ * - Applies the theme class early to prevent FOUC (Flash Of Unstyled Content).
+ * - Includes global CSS and site-wide Header and Footer components.
+ * - Provides layout styling for consistent spacing and readability.
+ */
+import Footer from "~/components/Footer.astro";
+import Header from "~/components/header/Header.astro";
+import Head from "~/components/meta/Head.astro";
+import "~/styles/global.css"; // Loads Tailwind styles and CSS variables
+import { site } from "~/utils";
 
+// Props passed into the layout
 const { pageTitle } = Astro.props;
 
+// Repository info for GitHub/GitLab links in the header
 const repoInfo = {
   username: "r8vnhill",
   repo: "dibs-astro",
-};
+} as const;
+
+// Construct the full title for the <title> tag
+const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
 ---
+
+<!--
+  Applies the appropriate theme class to <html> before styles load.
+  This prevents a flash of incorrect theme (e.g., light before dark loads).
+  `is:inline` ensures the script runs early and doesn't wait for hydration.
+-->
+<script is:inline>
+  const DARK = "dark";
+  const AUTO = "auto";
+
+  const theme = localStorage.theme;
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isDark = theme === DARK || (theme === AUTO && prefersDark);
+
+  document.documentElement.classList.toggle(DARK, isDark);
+</script>
 
 <html lang="en">
   <head>
-    <script>
-      import * as utils from "~/utils";
-
-      (function () {
-        const theme = localStorage.theme;
-        const isDark =
-          theme === utils.theme.DARK ||
-          (theme === utils.theme.AUTO && utils.isDarkModePreferred());
-        document.documentElement.classList.toggle(utils.theme.DARK, isDark);
-      })();
-    </script>
-    <Head title={pageTitle} />
+    <!-- Includes metadata, favicons, and dynamic <title> -->
+    <Head title={fullTitle} />
   </head>
   <body class="bg-base-background text-base-text">
-    <Header title="DIBS" gitlab={repoInfo} github={repoInfo} />
+    <!-- Site-wide header with title and repo links -->
+    <Header title={site.SHORT_TITLE} gitlab={repoInfo} github={repoInfo} />
 
+    <!-- Main content area with padding and width limit for readability -->
     <main class="px-4 mx-auto max-w-prose">
       <slot />
     </main>
+
+    <!-- Footer with author and technology attribution -->
+    <Footer />
   </body>
 </html>
