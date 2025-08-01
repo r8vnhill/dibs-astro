@@ -1,0 +1,31 @@
+---
+import Abstract from "~/components/ui/callouts/Abstract.astro";
+import ToDo from "~/components/utils/ToDo";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+
+const title = "¿Cómo usar este apunte?";
+---
+
+<NotesLayout title={title}>
+  <Abstract headingLevel="h2" class="mt-6">
+    <p>
+      Este apunte sirve como guía de referencia rápida y complemento a las
+      clases. Está diseñado para ayudarte a profundizar en los temas cuando lo
+      necesites.
+    </p>
+    <p>
+      Aquí encontrarás explicaciones detalladas, ejemplos ilustrativos y
+      problemas prácticos que facilitarán tu aprendizaje. Aunque las clases
+      (diapositivas) suelen ser suficientes para comprender los conceptos, este
+      apunte ofrece una mirada más profunda para reforzar y aplicar lo
+      aprendido.
+    </p>
+  </Abstract>
+
+  <ToDo
+    metadata={{
+      title,
+    }}
+    client:only="preact"
+  />
+</NotesLayout>

@@ -1,6 +1,6 @@
 {
   // Extends Astro’s strict TypeScript configuration
-  "extends": "astro/tsconfigs/strict",
+  "extends": "astro/tsconfigs/strictest",
   // Files to include in type checking
   "include": [
     ".astro/types.d.ts", // Astro-generated types for routes and components

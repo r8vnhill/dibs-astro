@@ -1,0 +1,158 @@
+---
+/**
+ * A small, reusable heading row for callout/admonition components.
+ */
+
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import type { HeadingLevel } from "~/utils";
+import FilledIcon from "./FilledIcon.astro";
+
+/** Public props for the CalloutHeading component. */
+export interface CalloutHeadingProps {
+  /**
+   * Icon component to render (e.g., from @lucide/astro).
+   */
+  Icon: AstroComponentFactory;
+
+  /**
+   * Plain string fallback for the heading content; you can also use the default slot.
+   */
+  heading?: string;
+
+  /**
+   * Semantic heading level that controls the actual HTML tag.
+   */
+  headingLevel?: Exclude<HeadingLevel, "h1">;
+
+  /**
+   * Optional id for the heading element.
+   * If omitted, a stable id is generated (useful for aria-labelledby in the parent).
+   */
+  headingId?: string;
+
+  /**
+   * Extra classes for the outer heading element.
+   */
+  class?: string;
+
+  /**
+   * Extra classes for the icon wrapper (forwarded to <FilledIcon />).
+   */
+  iconClass?: string;
+
+  /**
+   * Props forwarded to the icon component (e.g., { strokeWidth: 1.5 }).
+   */
+  iconProps?: Record<string, any>;
+
+  /**
+   * Visual variant for the icon.
+   * - "outline" (default): normal Lucide-style stroke.
+   * - "solid": force filled look (simulated by FilledIcon).
+   */
+  iconVariant?: "outline" | "solid";
+
+  /**
+   * If true (default) the icon is treated as decorative (aria-hidden).
+   * Set to false and provide an aria-label on the wrapper if it conveys meaning.
+   */
+  iconDecorative?: boolean;
+}
+
+/* -------------------- Resolve props & defaults -------------------- */
+const {
+  Icon,
+  heading,
+  headingLevel = "h3",
+  headingId,
+  class: className = "",
+  iconClass = "",
+  iconProps = {},
+  iconVariant = "outline",
+  iconDecorative = true,
+} = Astro.props as CalloutHeadingProps;
+
+/**
+ * HeadingTag is the actual HTML tag rendered (<h2>..<h6>).
+ * Casting to `any` is acceptable here because Astro templates accept dynamic tags.
+ */
+const HeadingTag = (headingLevel ?? "h3") as unknown as any;
+
+/**
+ * If the caller didn't provide an explicit id, generate a stable one.
+ * Parents can use this id in `aria-labelledby` to label regions/sections.
+ */
+const resolvedHeadingId = headingId ?? `callout-${crypto.randomUUID()}`;
+---
+
+<!--
+  The heading node. We set the text color via CSS variables so the parent/container controls the
+  palette without breaking scoped CSS.
+
+  Tailwind classes used:
+  - flex items-center gap-2: icon + text on one line with spacing.
+  - font-semibold leading-6: readable weight/line-height for headings in body text.
+  - text-base sm:text-[1.0625rem]: slightly larger than body; responsive bump.
+  - mb-2: small separation from the following content.
+-->
+<HeadingTag
+  id={resolvedHeadingId}
+  class:list={[
+    "callout__title",
+    "flex items-center gap-2 font-semibold leading-6",
+    "text-base sm:text-[1.0625rem] mb-2",
+    className,
+  ]}
+  style={{
+    /* Title color controlled by the parent; fallback to inherited color. */
+    color: "var(--callout-title-color, inherit)",
+  }}
+>
+  <!--
+    ICON SLOT
+    ---------
+    Consumers can replace the entire icon by providing a named "icon" slot.
+    If not provided and `Icon` exists, we render a <FilledIcon /> wrapper.
+  -->
+  <slot name="icon">
+    {
+      Icon && (
+        <FilledIcon
+          Icon={Icon}
+          class={iconClass}
+          variant={iconVariant}
+          decorative={iconDecorative}
+          iconProps={iconProps}
+          style={{
+            /* Icon color; defaults to currentColor so it matches the title. */
+            color: "var(--callout-icon-color, currentColor)",
+          }}
+        />
+      )
+    }
+  </slot>
+
+  <!--
+    DEFAULT SLOT
+    ------------
+    Heading text/content. If the slot is empty, we fall back to the `heading` prop.
+  -->
+  <slot>{heading}</slot>
+
+  <!--
+    ACTIONS SLOT (right-aligned)
+    ----------------------------
+    Space for optional actions like a link or a small button (e.g., “Details”).
+    The `ml-auto` pushes it to the far right; keep it lightweight to avoid wrapping.
+  -->
+  <div class="ml-auto flex items-center gap-2">
+    <slot name="actions" />
+  </div>
+</HeadingTag>
+
+<style scoped>
+  /* A small, consistent bottom margin that respects prose rhythm */
+  .callout__title {
+    margin: 0 0 0.5rem;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+/**
+ * Small, reusable wrapper for SVG icon components (e.g., from @lucide/astro).
+ * 
+ * We import `AstroComponentFactory` from a local barrel (`~/types/astro-component`)
+ * to avoid coupling to Astro's internal module paths. Swap that barrel if your setup changes.
+ */
+
+import type { AstroComponentFactory } from "~/types/astro-component";
+
+/** Public API for the FilledIcon wrapper. */
+export interface FilledIconProps {
+  /** Icon component to render (e.g., `Brain` from @lucide/astro). */
+  Icon: AstroComponentFactory;
+
+  /** Icon size in px (applied to SVG width/height). */
+  size?: number | string;
+
+  /** Extra classes for the outer <span> wrapper. */
+  class?: string;
+
+  /** Extra classes applied to the rendered <svg>. */
+  iconClass?: string;
+
+  /**
+   * Visual variant:
+   *  - "outline" (default): standard Lucide stroke look.
+   *  - "solid": simulate a filled look (forces `fill: currentColor`, removes stroke).
+   */
+  variant?: "outline" | "solid";
+
+  /**
+   * When true (default), the icon is purely decorative and is hidden from screen readers.
+   * Set to false and provide an accessible name (e.g., `aria-label`) if the icon conveys meaning.
+   */
+  decorative?: boolean;
+
+  /** Arbitrary props forwarded to the icon component (<Icon />), e.g. { strokeWidth: 1.5 }. */
+  iconProps?: Record<string, any>;
+}
+
+/* -------------------- Resolve props & defaults -------------------- */
+const {
+  Icon,
+  size = 20,
+  class: className = "",
+  iconClass = "",
+  variant = "outline",
+  decorative = true,
+  iconProps = {},
+  // Any other attributes (id, title, data-*, aria-*, etc.) are passed to the wrapper <span>.
+  ...rest
+} = Astro.props as FilledIconProps & Record<string, any>;
+---
+
+<!--
+  Wrapper element:
+  - inline-flex centers the svg both horizontally and vertically.
+  - Color comes from --icon-color if provided, otherwise falls back to currentColor.
+  - `fi--solid` toggles the CSS that simulates a filled icon.
+  - `aria-hidden` is added when `decorative` is true to keep SR output clean.
+-->
+<span
+  class:list={[
+    "fi inline-flex items-center justify-center",
+    "text-[var(--icon-color, currentColor)]",
+    variant === "solid" && "fi--solid",
+    className,
+  ]}
+  {...(decorative ? { "aria-hidden": "true" } : {})}
+  {...rest}
+>
+  <!--
+    Render the actual icon component.
+    - We set width/height from `size` to maintain aspect ratio.
+    - `iconClass` is merged for additional control.
+    - `iconProps` forwards extra svg attributes (strokeWidth, style, etc.).
+  -->
+  <Icon
+    width={size}
+    height={size}
+    class:list={["fi__icon", iconClass]}
+    {...iconProps}
+  />
+</span>
+
+<style scoped>
+  /* Keep the wrapper tight so the icon aligns visually with text baselines. */
+  .fi { line-height: 1; }
+
+  /* "Solid" variant:
+     Force fill with the current color and remove strokes.
+     Note: Lucide icons are authored for strokes; this heuristic yields a solid feel
+     for many icons but may not produce perfect silhouettes in all cases. */
+  .fi--solid :is(svg, path, circle, ellipse, polygon, polyline, rect, line) {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* Default/outline case:
+     Ensure the svg stroke follows currentColor for consistent theming. */
+  .fi :is(svg) {
+    stroke: currentColor;
+  }
+</style>

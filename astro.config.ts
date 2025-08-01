@@ -4,6 +4,8 @@ import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
 
+import expressiveCode from "astro-expressive-code";
+
 /**
  * Astro configuration for the DIBS site.
  *
@@ -30,9 +32,13 @@ export default defineConfig({
       "./config/**", // Watch all custom integration and plugin files
       "./src/assets/**", // Watch all assets for changes
     ]),
-
     // Adds Preact support to render UI components with lightweight runtime
     preact(),
+    // Adds syntax highlighting and code formatting capabilities
+    expressiveCode({
+      themes: ["dracula", "solarized-light"],
+      shiki: {},
+    }),
   ],
 
   vite: {

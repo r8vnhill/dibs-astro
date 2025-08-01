@@ -53,7 +53,9 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
     <Header title={site.SHORT_TITLE} gitlab={repoInfo} github={repoInfo} />
 
     <!-- Main content area with padding and width limit for readability -->
-    <main class="px-4 mx-auto max-w-prose">
+    <main
+      class="px-4 mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl"
+    >
       <slot />
     </main>
 
