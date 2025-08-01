@@ -1,0 +1,19 @@
+---
+/**
+ * ReadingTime.astro
+ * -----------------
+ * Astro wrapper that hydrates the Preact island on the client.
+ * Also wraps the widget with ExcludeFromReadingTime so it doesn't affect the count.
+ */
+
+import ExcludeFromReadingTime from "./ExcludeFromReadingTime.astro";
+import ReadingTimeIsland, { type ReadingTimeProps } from "./ReadingTime.tsx";
+
+export interface Props extends ReadingTimeProps {}
+
+const props = Astro.props as Props;
+---
+
+<ExcludeFromReadingTime>
+  <ReadingTimeIsland client:load {...props} />
+</ExcludeFromReadingTime>

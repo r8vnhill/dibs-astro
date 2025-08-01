@@ -1,0 +1,21 @@
+---
+/**
+ * ExcludeFromReadingTime.astro
+ * ----------------------------
+ * Wraps any content that should NOT be considered by the reading-time analyzer.
+ *
+ * This is static (no hydration). The class "exclude-from-reading-time" is what the analyzer uses to
+ * filter nodes out when cloning the DOM.
+ */
+export interface Props {
+  /** Extra classes for the wrapper <div>. */
+  class?: string;
+}
+
+const { class: className = "", ...rest } = Astro.props as Props &
+  Record<string, any>;
+---
+
+<div class:list={["exclude-from-reading-time", className]} {...rest}>
+  <slot />
+</div>
