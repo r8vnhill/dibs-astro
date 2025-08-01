@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { Menu, X } from 'lucide-preact';
 import type { SetStateAction } from 'preact/compat';
 import type { Dispatch } from 'preact/hooks';

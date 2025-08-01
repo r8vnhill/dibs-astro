@@ -1,0 +1,110 @@
+---
+import { ChevronDown, MoreHorizontal } from "@lucide/astro";
+import CalloutHeading from "./CalloutHeading.astro";
+import type { BaseCalloutProps } from "./shared";
+
+type MoreProps = BaseCalloutProps;
+
+const {
+  title = "Más información",
+  icon: Icon = MoreHorizontal,
+  headingLevel = "h3",
+  headingId,
+  class: className = "",
+  headingClass = "",
+  iconClass = "",
+  ariaLabel,
+  compact = false,
+  prose = true,
+  ...rest
+} = Astro.props as MoreProps & Record<string, any>;
+
+const resolvedHeadingId = headingId ?? `more-${crypto.randomUUID()}`;
+
+const passthrough = Object.fromEntries(
+  Object.entries(rest).filter(
+    ([k]) =>
+      ["id"].includes(k) || k.startsWith("data-") || k.startsWith("aria-")
+  )
+);
+---
+
+<section
+  class:list={[
+    "more relative rounded-md shadow-sm",
+    compact ? "px-4 py-3" : "px-5 py-4",
+    className,
+  ]}
+  style={{
+    "--callout-title-color": "var(--more__title-color)",
+    "--callout-icon-color": "var(--more__title-color)",
+  }}
+  role="region"
+  aria-labelledby={resolvedHeadingId}
+  {...ariaLabel ? { "aria-label": ariaLabel } : {}}
+  {...passthrough}
+>
+  <details class="group [&[open]]:pb-1.5">
+    <summary
+      class="cursor-pointer list-none flex items-center justify-between gap-2 font-semibold text-[var(--callout-title-color)]"
+      id={resolvedHeadingId}
+    >
+      <CalloutHeading
+        Icon={Icon}
+        heading={title}
+        headingLevel={headingLevel}
+        headingId={resolvedHeadingId}
+        class={`more__title ${headingClass}`}
+        iconClass={`more__icon ${iconClass}`}
+      />
+      <span
+        class="ml-auto transition-transform duration-200 group-open:rotate-180"
+      >
+        <ChevronDown size={20} />
+      </span>
+    </summary>
+
+    <div
+      class:list={[
+        "more__body mt-3",
+        prose &&
+          "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed",
+      ]}
+    >
+      <slot />
+    </div>
+  </details>
+</section>
+
+<style scoped>
+  :root {
+    --more__bg-color: #f5f5f5;
+    --more__border-color: #cccccc;
+    --more__title-color: #333333;
+  }
+
+  :root.dark {
+    --more__bg-color: #1e1e1e;
+    --more__border-color: #444444;
+    --more__title-color: #e0e0e0;
+  }
+
+  .more {
+    background-color: var(--more__bg-color);
+    border-left: 4px solid var(--more__border-color);
+    margin-top: 1rem;
+  }
+
+  :global([data-theme="dark"]) :where(.more) {
+    background-color: var(--more__bg-color-dark);
+    border-left-color: var(--more__border-color-dark);
+  }
+
+  .more__body :where(p:first-child) {
+    margin-top: 0;
+  }
+
+  .more__body :where(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

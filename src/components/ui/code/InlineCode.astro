@@ -1,0 +1,43 @@
+---
+/**
+ * InlineCode.astro
+ *
+ * Renders inline code using two Shiki-highlighted themes: one for light mode and one for dark mode.
+ * It uses Tailwind’s `dark:` variant to toggle between the two themes based on the user’s system preference.
+ *
+ * This approach avoids relying on global styles and ensures that inline code appears correctly styled
+ * in both light and dark color schemes.
+ *
+ * @property {string} code - The code snippet to highlight.
+ * @property {string} lang - The programming language of the code (e.g., 'kt', 'ts', 'js').
+ */
+
+import { Code } from "astro:components";
+
+const { code, lang } = Astro.props;
+---
+
+<!--
+  Render the code with the light theme (catppuccin-latte).
+  This block is visible only in light mode (`dark:hidden`).
+  We ensure it displays inline using `inline` or `inline-block`.
+-->
+<Code
+  code={code}
+  lang={lang}
+  inline
+  theme="catppuccin-latte"
+  class="inline dark:hidden"
+/>
+
+<!--
+  Render the code with the dark theme (catppuccin-mocha).
+  This block is hidden by default and only shown in dark mode (`dark:inline`).
+-->
+<Code
+  code={code}
+  lang={lang}
+  inline
+  theme="catppuccin-mocha"
+  class="hidden dark:inline"
+/>

@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { Sun, Moon, Monitor } from 'lucide-preact';
 import type { JSX } from 'preact/jsx-runtime';
 import type { Theme } from '~/utils';

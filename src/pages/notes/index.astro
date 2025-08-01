@@ -1,5 +1,11 @@
 ---
+import { getEntry, render } from "astro:content";
+import TableFloat from "~/components/floats/TableFloat.astro";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
+import Important from "~/components/ui/callouts/Important.astro";
+import More from "~/components/ui/callouts/More.astro";
+import Note from "~/components/ui/callouts/Note.astro";
+import InlineCode from "~/components/ui/code/InlineCode.astro";
 import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 
@@ -21,6 +27,96 @@ const title = "¿Cómo usar este apunte?";
       aprendido.
     </p>
   </Abstract>
+
+  <Important title="Mejor en pantallas grandes">
+    El sitio está pensado principalmente para usarse en computadoras. Aunque
+    tratamos de que funcione bien en dispositivos móviles, algunos contenidos
+    pueden no adaptarse del todo a pantallas pequeñas.
+  </Important>
+
+  <section title="Estructura del apunte">
+    <h2 id="estructura-apunte" class="text-2xl font-semibold mb-4">
+      📚 Estructura de los apuntes
+    </h2>
+
+    <p class="mb-4">
+      Cada apunte está organizado en lecciones que abordan un tema específico de
+      forma gradual y práctica. Cada lección puede incluir distintas secciones,
+      diseñadas para apoyar diversos estilos de aprendizaje:
+    </p>
+
+    <TableFloat caption="Secciones comunes que puede contener una lección.">
+      <table
+        class="not-prose w-full table-auto border-collapse text-sm sm:text-base"
+      >
+        <thead>
+          <tr
+            class="border-b border-gray-500/30 dark:border-gray-500/20 text-left"
+          >
+            <th scope="col" class="pb-2 pr-4 font-semibold">📌 Sección</th>
+            <th scope="col" class="pb-2 font-semibold">📖 Contenido</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-300/20 dark:divide-gray-600/20">
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Conceptos</td>
+            <td class="py-2"
+              >Explicaciones detalladas de los temas clave y su motivación.</td
+            >
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Ejemplos</td>
+            <td class="py-2"
+              >Fragmentos de código que ilustran cómo aplicar lo aprendido.</td
+            >
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Ejercicios</td>
+            <td class="py-2"
+              >Problemas para poner en práctica los conceptos estudiados.</td
+            >
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Soluciones</td>
+            <td class="py-2"
+              >Explicaciones y respuestas a los ejercicios propuestos.</td
+            >
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Referencias</td>
+            <td class="py-2"
+              >Recursos adicionales para profundizar el estudio.</td
+            >
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-semibold">Ejemplos en otros lenguajes</td>
+            <td class="py-2"
+              >Comparaciones entre Kotlin y otros lenguajes de programación.</td
+            >
+          </tr>
+        </tbody>
+      </table>
+    </TableFloat>
+
+    <Note>
+      No todas las secciones estarán presentes en todas las lecciones: el
+      contenido se adapta a cada tema.
+    </Note>
+  </section>
+
+  <section title="cajita == opcional">
+    <h2 id="cajita-opcional" class="text-2xl font-semibold mb-4">
+      <span aria-hidden="true">📦</span>
+      <span class="sr-only">Contenido opcional</span>
+      <InlineCode lang="kt" code="cajita == opcional" />
+    </h2>
+    
+    <p>Todo lo que esté en una caja como la siguiente:</p>
+
+    <More title="es opcional">
+      Soy una cajita opcional, gracias por leerme c:
+    </More>
+  </section>
 
   <ToDo
     metadata={{

@@ -5,6 +5,7 @@
     "titleBar.activeForeground": "#FDFBFF"
   },
   "cSpell.words": [
+    "catppuccin",
     "cloudflare",
     "donotpresent",
     "dotenv",
@@ -20,11 +21,14 @@
     "ionide",
     "lockfiles",
     "lucide",
+    "markdoc",
+    "Markdoc",
     "navs",
     "pagefind",
     "postcss",
     "preact",
     "prerendered",
+    "shiki",
     "solucion",
     "stackdump",
     "stylelintcache",
