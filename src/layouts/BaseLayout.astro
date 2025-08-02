@@ -48,18 +48,12 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
     <!-- Includes metadata, favicons, and dynamic <title> -->
     <Head title={fullTitle} />
   </head>
-  <body class="text-base-text
-      bg-base-background">
+  <body class="min-h-screen bg-base-background text-base-text">
     <!-- Site-wide header with title and repo links -->
     <Header title={site.SHORT_TITLE} gitlab={repoInfo} github={repoInfo} />
 
     <!-- Main content area with padding and width limit for readability -->
-    <main
-      class="max-w-screen-md
-        px-4 mx-auto pt-16
-        md:max-w-screen-lg
-        lg:max-w-screen-xl"
-    >
+    <main class="w-full pt-16">
       <slot />
     </main>
 

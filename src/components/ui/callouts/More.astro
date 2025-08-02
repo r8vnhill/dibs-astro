@@ -1,13 +1,12 @@
 ---
-import { ChevronDown, MoreHorizontal } from "@lucide/astro";
 import CalloutHeading from "./CalloutHeading.astro";
 import type { BaseCalloutProps } from "./shared";
-
+import * as icons from "~/assets/img/icons";
 type MoreProps = BaseCalloutProps;
 
 const {
   title = "Más información",
-  icon: Icon = MoreHorizontal,
+  icon: Icon = icons.DotsThreeOutline,
   headingLevel = "h3",
   headingId,
   class: className = "",
@@ -60,7 +59,7 @@ const passthrough = Object.fromEntries(
       <span
         class="ml-auto transition-transform duration-200 group-open:rotate-180"
       >
-        <ChevronDown size={20} />
+        <icons.CaretDown class="w-5 h-5 text-[var(--callout-title-color)]" />
       </span>
     </summary>
 

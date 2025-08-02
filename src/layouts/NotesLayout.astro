@@ -1,123 +1,128 @@
 ---
-/**
- * NotesLayout.astro
- * -----------------
- * Layout used for rendering course note pages with consistent structure, reading time estimation,
- * and optional navigation buttons (previous/next lesson).
- */
-
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import * as icons from "~/assets/img/icons";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
+import * as icons from "~/assets/img/icons";
+import { courseStructure } from "~/data/course-structure";
+import LessonSidebar from "~/components/navigation/LessonSidebar";
 
-// Define the interface for the props expected by this layout
 interface Props {
-  /**
-   * Title of the page, displayed in the <h1> element.
-   */
   title: string;
-
-  /**
-   * Optional metadata for the next lesson (title + href).
-   */
-  next?: {
-    title: string;
-    href: string;
-  };
-  /**
-   * Optional metadata for the previous lesson (title + href).
-   */
-  previous?: {
-    title: string;
-    href: string;
-  };
+  next?: { title: string; href: string };
+  previous?: { title: string; href: string };
 }
 
-/**
- * Ensures navigation URLs are normalized:
- * - Always start with a forward slash (`/`)
- * - Always end with a trailing slash (`/`), except for root (`/`)
- *
- * This prevents issues with inconsistent URL patterns and broken relative links.
- */
+function normalizeHref(href: string): string {
+  let result = href.startsWith("/") ? href : `/${href}`;
+  if (result.length > 1 && !result.endsWith("/")) result += "/";
+  return result;
+}
+
 function normalizeNavigation(
   next?: Props["next"],
   previous?: Props["previous"]
 ) {
-  function normalizeHref(href: string): string {
-    // Ensure it starts with '/'
-    let result = href.startsWith("/") ? href : `/${href}`;
-    // Ensure it ends with '/' (unless it's just '/')
-    if (result.length > 1 && !result.endsWith("/")) {
-      result += "/";
-    }
-    return result;
-  }
-
   return {
     normalizedNext: next
-      ? {
-          ...next,
-          href: normalizeHref(next.href),
-        }
+      ? { ...next, href: normalizeHref(next.href) }
       : undefined,
     normalizedPrevious: previous
-      ? {
-          ...previous,
-          href: normalizeHref(previous.href),
-        }
+      ? { ...previous, href: normalizeHref(previous.href) }
       : undefined,
   };
 }
 
-// Destructure props and normalize navigation links
 const { title, next, previous } = Astro.props as Props;
-const { normalizedNext, normalizedPrevious } = normalizeNavigation(next, previous);
+const { normalizedNext, normalizedPrevious } = normalizeNavigation(
+  next,
+  previous
+);
 ---
 
-<!-- Base layout wraps page with shared layout (header, footer, etc.) -->
 <BaseLayout pageTitle={title}>
-  <!-- Page title -->
-  <h1>{title}</h1>
+  <div class="flex">
+    <div class="flex-none">
+      <LessonSidebar client:load lessons={courseStructure} />
+    </div>
 
-  <!-- Component that estimates reading time based on content length -->
-  <ReadingTime />
+    <div class="flex-1 px-4 md:px-8 max-w-screen-xl mx-auto">
+      <h1>{title}</h1>
+      <ReadingTime />
+      <slot />
 
-  <!-- Main content injected from Markdown file or page using this layout -->
-  <slot />
+      {
+        (normalizedNext || normalizedPrevious) && (
+          <nav class="mt-12 flex flex-col sm:flex-row justify-between gap-4 border-t border-base-border pt-6">
+            {normalizedPrevious ? (
+              <NavigationButton
+                href={normalizedPrevious.href}
+                label={normalizedPrevious.title}
+                iconPosition="left"
+              >
+                <icons.ArrowLeft class="w-5 h-5" slot="icon" />
+              </NavigationButton>
+            ) : (
+              <span />
+            )}
 
-  <!-- Navigation between lessons (conditionally rendered) -->
-  {
-    (normalizedNext || normalizedPrevious) && (
-      <nav class="mt-12 flex flex-col sm:flex-row justify-between gap-4 border-t border-base-border pt-6">
-        <!-- Previous button (if available) -->
-        {normalizedPrevious ? (
-          <NavigationButton
-            href={normalizedPrevious.href}
-            label={normalizedPrevious.title}
-            iconPosition="left"
-          >
-            <!-- Slot content: left-pointing arrow icon -->
-            <icons.ArrowLeft class="w-5 h-5" slot="icon" />
-          </NavigationButton>
-        ) : (
-          // Placeholder to maintain layout symmetry when previous button is missing
-          <span />
-        )}
-
-        <!-- Next button (if available) -->
-        {normalizedNext && (
-          <NavigationButton
-            href={normalizedNext.href}
-            label={normalizedNext.title}
-            iconPosition="right"
-          >
-            <!-- Slot content: right-pointing arrow icon -->
-            <icons.ArrowRight class="w-5 h-5" slot="icon" />
-          </NavigationButton>
-        )}
-      </nav>
-    )
-  }
+            {normalizedNext && (
+              <NavigationButton
+                href={normalizedNext.href}
+                label={normalizedNext.title}
+                iconPosition="right"
+              >
+                <icons.ArrowRight class="w-5 h-5" slot="icon" />
+              </NavigationButton>
+            )}
+          </nav>
+        )
+      }
+    </div>
+  </div>
 </BaseLayout>
+
+<style is:global>
+  .sidebar {
+    width: 16rem;
+    min-width: 16rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 1rem;
+    background: var(--color-base-background);
+    border-right: 1px solid var(--color-base-border);
+    flex-shrink: 0;
+    min-height: 100%;
+    height: 100%;
+  }
+
+  .lesson-tree ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lesson-tree li {
+    line-height: 1.3;
+  }
+
+  .lesson-tree a {
+    display: inline-block;
+    padding: 2px 0;
+  }
+
+  .lesson-tree a.text-primary {
+    position: relative;
+  }
+
+  .lesson-tree a.text-primary::before {
+    content: "";
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    background: var(--color-primary);
+    border-radius: 2px;
+  }
+</style>
