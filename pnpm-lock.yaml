@@ -81,6 +81,9 @@ importers:
       shiki:
         specifier: ^3.9.1
         version: 3.9.1
+      shiki-transformer-copy-button:
+        specifier: ^0.0.5
+        version: 0.0.5
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
@@ -2398,6 +2401,9 @@ packages:
   sharp@0.33.5:
     resolution: {integrity: sha512-haPVm1EkS9pgvHrQ/F3Xy+hgcuMV0Wm9vfIBSiwZ05k+xgb0PkBQpGsAA/oWdDobNaZTH5ppvHtzCFbnSEwHVw==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+
+  shiki-transformer-copy-button@0.0.5:
+    resolution: {integrity: sha512-PQYu6muxUC42ULWIDp2Fq80Mktt7Qy5JAdDHJV5VEEzMIcMcHu1VW8hYo4XLXVFcOwCQBJB7wjH9ImJjoDiD+g==}
 
   shiki@3.9.1:
     resolution: {integrity: sha512-HogZ8nMnv9VAQMrG+P7BleJFhrKHm3fi6CYyHRbUu61gJ0lpqLr6ecYEui31IYG1Cn9Bad7N2vf332iXHnn0bQ==}
@@ -5522,6 +5528,10 @@ snapshots:
       '@img/sharp-wasm32': 0.33.5
       '@img/sharp-win32-ia32': 0.33.5
       '@img/sharp-win32-x64': 0.33.5
+
+  shiki-transformer-copy-button@0.0.5:
+    dependencies:
+      hastscript: 9.0.1
 
   shiki@3.9.1:
     dependencies:

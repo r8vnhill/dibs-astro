@@ -1,0 +1,49 @@
+---
+/**
+ * CodeBlock.astro
+ * ---------------
+ * Renders a general-purpose code block with optional filename and title.
+ * It wraps the shared `CodeLayout` component and applies neutral surface styles for a light/dark
+ * background using Tailwind utility classes.
+ *
+ * Useful for rendering source code examples in documentation or UI previews.
+ */
+
+import CodeLayout, { type CodeProps } from "./CodeLayout.astro";
+
+/**
+ * Props for CodeBlock component.
+ */
+type CodeBlockProps = {
+  /**
+   * Optional filename to be displayed as a source label.
+   */
+  filename?: string;
+} & CodeProps;
+
+// Destructure and default Astro props
+const {
+  code,
+  lang = "text", // default to plain text
+  class: className = "",
+  title,
+  filename,
+  icon: Icon,
+} = Astro.props as CodeBlockProps;
+
+// Style for neutral surface backgrounds
+const classes = ["bg-surface-50", "dark:bg-surface-800"];
+---
+
+<!-- Render the shared CodeLayout component -->
+<CodeLayout
+  class:list={[...classes, className]}
+  title={title}
+  icon={Icon}
+  source={filename}
+  code={code}
+  lang={lang}
+  {...title
+    ? { "aria-label": `${title}${filename ? ` – ${filename}` : ""}` }
+    : {}}
+/>

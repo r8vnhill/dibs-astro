@@ -16,6 +16,8 @@ import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
+import ShellBlock from "~/components/ui/code/ShellBlock.astro";
+import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 
 const title = "¿Cómo usar este apunte?";
 ---
@@ -174,7 +176,7 @@ const title = "¿Cómo usar este apunte?";
       </List>
     </section>
 
-    <section>
+    <section title="Útil para el desarrollo de bibliotecas">
       <Heading Icon={icons.PuzzlePiece} headingLevel="h3">
         Útil para el desarrollo de bibliotecas
       </Heading>
@@ -206,6 +208,88 @@ const title = "¿Cómo usar este apunte?";
           <b>Reducir errores</b> al minimizar instrucciones manuales.
         </ListItem>
       </List>
+    </section>
+
+    <section title="Ejemplo">
+      <Heading Icon={null} headingLevel="h3">Ejemplo</Heading>
+
+      <p>Esta tarea puede hacerse en la terminal en unas pocas líneas:</p>
+
+      <ShellBlock
+        code={`
+          mkdir my-lib
+          cd my-lib
+          gradle init
+        `}
+        lang="bash"
+        title="Desde la terminal"
+      />
+
+      <p>
+        Sin embargo, podemos encapsular esa lógica en un script como este en
+        PowerShell:
+      </p>
+
+      <CodeBlock
+        code={`
+          [CmdletBinding()]
+          param (
+            [Parameter(Mandatory)]
+            [ValidateNotNullOrEmpty()]
+            [string] $ProjectRoot
+          )
+
+          try {
+            $fullPath = Resolve-Path -Path $ProjectRoot -ErrorAction SilentlyContinue
+
+            if (-not $fullPath) {
+              Write-Verbose "Creating '$ProjectRoot'"
+              $null = New-Item -Path $ProjectRoot -ItemType Directory -Force
+              $fullPath = Resolve-Path $ProjectRoot
+            }
+
+            Set-Location $fullPath
+            Write-Verbose "Running 'gradle init' in '$fullPath'"
+            & gradle init
+          }
+          catch {
+            Write-Error "❌ Gradle init failed: $_"
+          }
+        `}
+        lang="powershell"
+        title="Script en PowerShell"
+        icon={icons.PowerShell}
+        filename="Initialize-GradleProject.ps1"
+      />
+
+      <p>...o este equivalente en Bash:</p>
+
+      <CodeBlock
+        code={`
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          project_root=$1
+
+          if [ ! -d "$project_root" ]; then
+            echo "📁 Creating directory '$project_root'"
+            mkdir -p "$project_root"
+          fi
+
+          cd "$project_root"
+          echo "🚀 Running 'gradle init' in $(pwd)"
+          gradle init
+        `}
+        lang="bash"
+        title="Script en Bash"
+        icon={icons.Bash}
+        filename="initialize_gradle_project.sh"
+      />
+
+      <p>
+        Estos scripts permiten enseñar <strong>scripting real</strong> y construir
+        herramientas robustas que pueden crecer junto con el proyecto.
+      </p>
     </section>
   </section>
 

@@ -21,3 +21,6 @@ export { default as Terminal } from "./terminal.svg";
 export { default as TreeStructure } from "./tree-structure.svg";
 export { default as WarningCircle } from "./warning-circle.svg";
 export { default as X } from "./x.svg";
+export { default as PowerShell } from "./powershell.svg";
+export { default as Bash } from "./bash.svg";
+export { default as Copy } from "./copy.svg";

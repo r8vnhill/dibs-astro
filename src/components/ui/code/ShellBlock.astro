@@ -1,0 +1,43 @@
+---
+/**
+ * ShellBlock.astro
+ * ----------------
+ * Specialized code block for shell-like languages (e.g., bash or PowerShell).
+ * Uses a visual style with primary color background and an icon.
+ *
+ * Built on top of the shared `CodeLayout` component.
+ */
+
+import * as icons from "~/assets/img/icons";
+import CodeLayout, { type CodeProps } from "./CodeLayout.astro";
+
+/**
+ * Props for ShellBlock component.
+ */
+type ShellBlockProps = {
+  /**
+   * Required shell language ('bash', 'powershell', 'sh', 'ps').
+   */
+  lang: "bash" | "powershell" | "sh" | "ps";
+} & CodeProps;
+
+// Destructure and default Astro props
+const {
+  code,
+  lang,
+  class: className = "",
+  title = "Desde la terminal",
+  icon: Icon = icons.TerminalWindow,
+} = Astro.props as ShellBlockProps;
+---
+
+<!-- Render the shared CodeLayout with shell-specific styles -->
+<CodeLayout
+  class:list={["bg-primary/5", "dark:bg-primary/10", className]}
+  title={title}
+  icon={Icon}
+  titleClasses="uppercase"
+  code={code}
+  lang={lang}
+  {...{ "aria-label": title }}
+/>

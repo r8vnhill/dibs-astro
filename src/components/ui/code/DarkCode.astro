@@ -1,0 +1,46 @@
+---
+/**
+ * DarkCode.astro
+ * --------------
+ * Renders a Shiki-highlighted code block using the *catppuccin-mocha* theme (for dark mode).
+ *
+ * This component is hidden by default and shown only in dark mode (`dark:block`).
+ * Used internally by the `CodeLayout` wrapper to provide a dark mode variant.
+ *
+ * Props:
+ * - `code`: The raw code string to highlight.
+ * - `lang`: The language to use for syntax highlighting (must match one in `availableLanguages`).
+ * - `codeClasses`: Optional Tailwind classes to further style the `<Code>` component.
+ */
+
+import { Code } from "astro:components";
+import { availableLanguages } from "~/lib/shiki/highlighter";
+
+// Component props definition
+type Props = {
+  code: string;
+  lang: (typeof availableLanguages)[number];
+  codeClasses?: string;
+};
+
+// Destructure and default props
+const { code, lang, codeClasses } = Astro.props;
+---
+
+<!-- Render the code block for dark mode using the catppuccin-mocha theme -->
+<Code
+  code={code}
+  theme="catppuccin-mocha"
+  lang={lang}
+  class:list={[
+    "hidden dark:block", // Only show in dark mode
+    "transition-colors", // Smooth color theme transitions
+    "duration-200", // Duration for transitions
+    "p-4", // Padding inside the code area
+    "text-sm", // Font size
+    "font-mono", // Monospaced font
+    codeClasses, // Allow overrides from parent component
+  ]}
+  role="code"
+  wrap
+/>
