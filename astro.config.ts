@@ -7,6 +7,9 @@ import { devServerFileWatcher } from "./config/integrations/dev-server-file-watc
 import expressiveCode from "astro-expressive-code";
 
 import markdoc from "@astrojs/markdoc";
+import flowbiteReact from "flowbite-react/plugin/astro";
+
+import react from "@astrojs/react";
 
 /**
  * Astro configuration for the DIBS site.
@@ -28,16 +31,23 @@ export default defineConfig({
   // Enables full static prerendering of the site
   output: "static",
 
-  integrations: [// Custom plugin to trigger HMR when specific files change
-  devServerFileWatcher([
-    "./config/**", // Watch all custom integration and plugin files
-    "./src/assets/**", // Watch all assets for changes
-  ]), // Adds Preact support to render UI components with lightweight runtime
-  preact(), // Adds syntax highlighting and code formatting capabilities
-  expressiveCode({
-    themes: ["dracula", "solarized-light"],
-    shiki: {},
-  }), markdoc()],
+  integrations: [
+    // Custom plugin to trigger HMR when specific files change
+    // Adds Preact support to render UI components with lightweight runtime
+    // Adds syntax highlighting and code formatting capabilities
+    devServerFileWatcher([
+      "./config/**", // Watch all custom integration and plugin files
+      "./src/assets/**", // Watch all assets for changes
+    ]),
+    preact(),
+    expressiveCode({
+      themes: ["dracula", "solarized-light"],
+      shiki: {},
+    }),
+    markdoc(),
+    flowbiteReact(),
+    react(),
+  ],
 
   vite: {
     plugins: [
@@ -52,5 +62,5 @@ export default defineConfig({
   image: {
     // Use sharp for image transformations during build (prerendered only)
     service: sharpImageService(),
-  }
+  },
 });

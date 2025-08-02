@@ -1,4 +1,4 @@
-import type { JSX } from 'preact/jsx-runtime';
+import type { JSX } from 'react';
 import type { NavItem } from './nav-items';
 
 /**

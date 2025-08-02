@@ -21,6 +21,8 @@
 * This must appear before any custom layers to ensure proper layering order.
 */
 @import 'tailwindcss';
+@plugin 'flowbite-react/plugin/tailwindcss';
+@source '../../.flowbite-react/class-list.json';
 
 /* === Custom Variant ===
 * Defines a custom `dark` variant using Tailwind's `@custom-variant` directive.

@@ -5,6 +5,7 @@
     "titleBar.activeForeground": "#FDFBFF"
   },
   "cSpell.words": [
+    "cajita",
     "catppuccin",
     "cloudflare",
     "donotpresent",
@@ -14,6 +15,7 @@
     "esktop",
     "eslintcache",
     "Flexbox",
+    "flowbite",
     "FOUC",
     "frontmatter",
     "fseventsd",
@@ -24,6 +26,7 @@
     "markdoc",
     "Markdoc",
     "navs",
+    "overrideable",
     "pagefind",
     "postcss",
     "preact",
@@ -37,5 +40,23 @@
     "theming",
     "timemachine",
     "tsconfigs"
+  ],
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "theme"
+  ],
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "twMerge\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ],
+    [
+      "createTheme(?:<\\w+>)?\\s*\\(([^)]*)\\)",
+      "{?\\s?[\\w].*:\\s*?[\"'`]([^\"'`]*).*?,?\\s?}?"
+    ]
   ]
 }

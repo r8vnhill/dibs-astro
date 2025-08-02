@@ -1,0 +1,11 @@
+export { default as ChatText } from "./chat-text.svg";
+export { default as CheckCircle } from "./check-circle.svg";
+export { default as ListNumbers } from "./list-numbers.svg";
+export { default as Package } from "./package.svg";
+export { default as SlidersHorizontal } from "./sliders-horizontal.svg";
+export { default as Star } from "./star.svg";
+export { default as Student } from "./student.svg";
+export { default as TerminalWindow } from "./terminal-window.svg";
+export { default as Terminal } from "./terminal.svg";
+export { default as TreeStructure } from "./tree-structure.svg";
+export { default as WarningCircle } from "./warning-circle.svg";

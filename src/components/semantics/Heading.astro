@@ -1,0 +1,39 @@
+---
+import type { AstroComponentFactory } from "~/types/astro-component";
+import type { HeadingLevel } from "~/utils";
+import FilledIcon from "../ui/callouts/FilledIcon.astro";
+
+type Props = {
+  Icon: AstroComponentFactory | null;
+  headingLevel?: Exclude<HeadingLevel, "h1">;
+};
+
+const {
+  Icon,
+  headingLevel = "h3",
+  class: className = "",
+} = Astro.props as Props & Record<string, any>;
+
+const HeadingTag = (headingLevel ?? "h3") as unknown as any;
+---
+
+<HeadingTag class={`flex items-center gap-2 ${className}`}>
+  <slot name="icon">
+    {Icon && (
+      <FilledIcon
+        Icon={Icon}
+        class="inline-block mr-2 text-[currentColor]" 
+        iconClass="flex-shrink-0"
+        style={{
+          color: "var(--callout-icon-color, currentColor)",
+          fontSize: "1em",
+        }}
+        size="1em" 
+        variant="outline"
+        decorative={true}
+      />
+    )}
+  </slot>
+
+  <slot />
+</HeadingTag>

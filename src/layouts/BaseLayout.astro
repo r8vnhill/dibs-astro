@@ -13,6 +13,7 @@ import Header from "~/components/header/Header.astro";
 import Head from "~/components/meta/Head.astro";
 import "~/styles/global.css"; // Loads Tailwind styles and CSS variables
 import { site } from "~/utils";
+import { createTheme, ThemeModeScript, ThemeProvider } from "flowbite-react";
 
 // Props passed into the layout
 const { pageTitle } = Astro.props;
@@ -47,14 +48,19 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
   <head>
     <!-- Includes metadata, favicons, and dynamic <title> -->
     <Head title={fullTitle} />
+    <ThemeModeScript />
   </head>
-  <body class="bg-base-background text-base-text">
+  <body class="text-base-text
+      bg-base-background">
     <!-- Site-wide header with title and repo links -->
     <Header title={site.SHORT_TITLE} gitlab={repoInfo} github={repoInfo} />
 
     <!-- Main content area with padding and width limit for readability -->
     <main
-      class="px-4 mx-auto max-w-screen-md md:max-w-screen-lg lg:max-w-screen-xl"
+      class="max-w-screen-md
+        px-4 mx-auto pt-16
+        md:max-w-screen-lg
+        lg:max-w-screen-xl"
     >
       <slot />
     </main>

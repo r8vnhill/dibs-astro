@@ -1,0 +1,34 @@
+---
+// List.astro
+// Generic list container. Can be ordered or unordered, and supports nesting naturally by
+// putting <List nested> inside a <ListItem>.
+//
+// Props:
+//   - ordered: render an <ol> instead of <ul>
+//   - nested: when true, adds indentation appropriate for a nested list (you can also nest manually)
+//   - class: extra classes to customize
+//   - ...rest: forwarded attributes
+const {
+  ordered = false,
+  nested = false,
+  class: className = "",
+  ...rest
+} = Astro.props;
+
+const Tag = ordered ? "ol" : "ul";
+
+// Base classes: vertical spacing, reset outer margin, and indent when nested.
+const classes = [
+  ordered ? "list-decimal" : "list-disc",
+  nested ? "mt-1 ps-5" : "mt-2 ps-5",
+  "space-y-1", // vertical gap between items
+  "text-base-text", // inherit text color
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<Tag class={classes} {...rest}>
+  <slot />
+</Tag>

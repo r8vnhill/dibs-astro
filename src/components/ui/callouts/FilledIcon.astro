@@ -1,7 +1,12 @@
 ---
 /**
  * Small, reusable wrapper for SVG icon components (e.g., from @lucide/astro).
- * 
+ *
+ * Renders an inline <span> wrapper with a customizable icon inside. By default:
+ * - Icon scales with font size (`1em`).
+ * - Color inherits from surrounding text (`currentColor`).
+ * - Can simulate a "filled" look with `variant = "solid"`.
+ *
  * We import `AstroComponentFactory` from a local barrel (`~/types/astro-component`)
  * to avoid coupling to Astro's internal module paths. Swap that barrel if your setup changes.
  */
@@ -13,7 +18,11 @@ export interface FilledIconProps {
   /** Icon component to render (e.g., `Brain` from @lucide/astro). */
   Icon: AstroComponentFactory;
 
-  /** Icon size in px (applied to SVG width/height). */
+  /**
+   * Icon size applied via `font-size` on the wrapper element.
+   * Accepts a string (e.g., "1.25em") or number (in px).
+   * Defaults to "1em" so icon scales with surrounding text.
+   */
   size?: number | string;
 
   /** Extra classes for the outer <span> wrapper. */
@@ -30,76 +39,57 @@ export interface FilledIconProps {
   variant?: "outline" | "solid";
 
   /**
-   * When true (default), the icon is purely decorative and is hidden from screen readers.
-   * Set to false and provide an accessible name (e.g., `aria-label`) if the icon conveys meaning.
+   * Whether the icon is purely decorative (default: true).
+   * Set to false and add `aria-label` on the wrapper for meaningful icons.
    */
   decorative?: boolean;
 
-  /** Arbitrary props forwarded to the icon component (<Icon />), e.g. { strokeWidth: 1.5 }. */
+  /** Arbitrary props forwarded to the icon component (<Icon />), e.g. `{ strokeWidth: 1.5 }`. */
   iconProps?: Record<string, any>;
 }
 
 /* -------------------- Resolve props & defaults -------------------- */
 const {
   Icon,
-  size = 20,
-  class: className = "",
-  iconClass = "",
-  variant = "outline",
-  decorative = true,
-  iconProps = {},
-  // Any other attributes (id, title, data-*, aria-*, etc.) are passed to the wrapper <span>.
+  size = "1em",              // Scales with text by default
+  class: className = "",     // Wrapper <span> classes
+  iconClass = "",            // SVG <Icon> classes
+  variant = "outline",       // Default visual variant
+  decorative = true,         // Default: hidden from screen readers
+  iconProps = {},            // Extra props to <Icon />
+  // Remaining props (e.g. `aria-label`, `id`) forwarded to wrapper <span>
   ...rest
 } = Astro.props as FilledIconProps & Record<string, any>;
 ---
 
-<!--
-  Wrapper element:
-  - inline-flex centers the svg both horizontally and vertically.
-  - Color comes from --icon-color if provided, otherwise falls back to currentColor.
-  - `fi--solid` toggles the CSS that simulates a filled icon.
-  - `aria-hidden` is added when `decorative` is true to keep SR output clean.
+<!-- 
+  Outer wrapper element for the icon. 
+  - Uses `inline-flex` to align with text.
+  - Applies `font-size` to scale the <svg> using `1em`.
 -->
 <span
   class:list={[
-    "fi inline-flex items-center justify-center",
-    "text-[var(--icon-color, currentColor)]",
-    variant === "solid" && "fi--solid",
+    "fi inline-flex items-center justify-center flex-shrink-0",
+    "text-[var(--icon-color, currentColor)]",   // Allow parent control of icon color
+    variant === "solid" && "fi--solid",         // Apply solid style if selected
     className,
   ]}
   {...(decorative ? { "aria-hidden": "true" } : {})}
   {...rest}
+  style={{
+    // If size is a number (e.g. 20), assume px; otherwise use string as-is
+    fontSize: typeof size === "string" ? size : `${size}px`,
+    
+  }}
 >
-  <!--
-    Render the actual icon component.
-    - We set width/height from `size` to maintain aspect ratio.
-    - `iconClass` is merged for additional control.
-    - `iconProps` forwards extra svg attributes (strokeWidth, style, etc.).
+  <!-- 
+    The actual icon (SVG component).
+    - Width/height set to 1em so it scales with font-size.
   -->
   <Icon
-    width={size}
-    height={size}
+    width="1em"
+    height="1em"
     class:list={["fi__icon", iconClass]}
     {...iconProps}
   />
 </span>
-
-<style scoped>
-  /* Keep the wrapper tight so the icon aligns visually with text baselines. */
-  .fi { line-height: 1; }
-
-  /* "Solid" variant:
-     Force fill with the current color and remove strokes.
-     Note: Lucide icons are authored for strokes; this heuristic yields a solid feel
-     for many icons but may not produce perfect silhouettes in all cases. */
-  .fi--solid :is(svg, path, circle, ellipse, polygon, polyline, rect, line) {
-    fill: currentColor;
-    stroke: none;
-  }
-
-  /* Default/outline case:
-     Ensure the svg stroke follows currentColor for consistent theming. */
-  .fi :is(svg) {
-    stroke: currentColor;
-  }
-</style>

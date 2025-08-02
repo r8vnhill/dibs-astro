@@ -27,11 +27,15 @@ const { title, gitlab, github } = Astro.props as Props;
 <!-- Header with themed background, border, and shadow -->
 <header
   class:list={[
-    "border-b", // Bottom border
-    "shadow", // Box shadow for depth
-    "text-header-text", // Text color (from theme)
-    "bg-header-fill", // Background color (from theme)
-    "border-header-border", // Border color (from theme)
+    "fixed",
+    "top-0",
+    "inset-x-0",
+    "z-50",
+    "border-b",
+    "shadow",
+    "text-header-text",
+    "bg-header-fill",
+    "border-header-border",
   ]}
 >
   <!-- Main navigation container -->

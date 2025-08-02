@@ -1,14 +1,14 @@
 ---
-import { Notebook } from "@lucide/astro";
 import CalloutHeading from "./CalloutHeading.astro";
 import type { BaseCalloutProps } from "./shared";
+import { default as NoteIcon } from "~/assets/img/icons/note.svg";
 
 type NoteProps = BaseCalloutProps;
 
 /* -------------------- Resolve props & defaults -------------------- */
 const {
   title = "Nota",
-  icon: Icon = Notebook,
+  icon: Icon = NoteIcon,
   headingLevel = "h3",
   headingId,
   class: className = "",

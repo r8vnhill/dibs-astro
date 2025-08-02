@@ -1,5 +1,4 @@
-import { useLayoutEffect, useState } from "preact/hooks";
-import type { JSX } from "preact/jsx-runtime";
+import { useLayoutEffect, useState, type JSX } from "react";
 import { todoImages } from "~/data/todo-images";
 import { pickRandom } from "~/utils";
 
@@ -61,24 +60,51 @@ export default function ToDo({
   return (
     <figure
       aria-describedby="todo-message"
-      class="border-primary flex flex-col items-center gap-4 rounded border border-dashed p-4"
+      className="
+        flex flex-col
+        p-4
+        border-primary border border-dashed
+        items-center gap-4 rounded
+      "
     >
       {/* Show status based on the selected image */}
       {imageSrc === null ? (
-        <div class="text-sm text-gray-500 italic">Cargando imagen...</div>
+        <div
+          className="
+            text-sm text-gray-500
+            italic
+          "
+        >
+          Cargando imagen...
+        </div>
       ) : imageSrc === "" ? (
-        <div class="text-sm text-red-600">⚠️ Imagen no disponible</div>
+        <div
+          className="
+            text-sm text-red-600
+          "
+        >
+          ⚠️ Imagen no disponible
+        </div>
       ) : (
         <img
           key={imageSrc}
           src={imageSrc}
           alt={altText}
-          class="w-full max-w-xs rounded shadow"
+          className="
+            w-full max-w-xs
+            rounded shadow
+          "
         />
       )}
 
       {/* Display the custom or default message */}
-      <figcaption id="todo-message" class="text-center text-sm italic">
+      <figcaption
+        id="todo-message"
+        className="
+          text-center text-sm
+          italic
+        "
+      >
         {message}
       </figcaption>
     </figure>

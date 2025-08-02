@@ -1,43 +1,50 @@
 {
-  // Extends Astro’s strict TypeScript configuration
   "extends": "astro/tsconfigs/strictest",
-  // Files to include in type checking
   "include": [
-    ".astro/types.d.ts", // Astro-generated types for routes and components
-    "src", // Main source directory
-    "astro.config.ts" // Astro configuration file
+    ".astro/types.d.ts",
+    "src",
+    "astro.config.ts"
   ],
-  // Files and folders to exclude from type checking
   "exclude": [
-    "dist", // Build output
-    "node_modules" // Dependencies
+    "dist",
+    "node_modules"
   ],
   "compilerOptions": {
-    // Use modern JSX transform
     "jsx": "react-jsx",
-    // Set JSX source to Preact (used with @astrojs/preact integration)
-    "jsxImportSource": "preact",
-    // Enable cleaner import paths like ~/
+    "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "$components/*": ["src/components/*"],
-      "$layouts/*": ["src/layouts/*"],
-      "$styles/*": ["src/styles/*"],
-      "$utils/*": ["src/utils/*"],
-      "$hooks/*": ["src/hooks/*"],
-      "$assets/*": ["src/assets/*"],
+      "~/*": [
+        "src/*"
+      ],
+      "$components/*": [
+        "src/components/*"
+      ],
+      "$layouts/*": [
+        "src/layouts/*"
+      ],
+      "$styles/*": [
+        "src/styles/*"
+      ],
+      "$utils/*": [
+        "src/utils/*"
+      ],
+      "$hooks/*": [
+        "src/hooks/*"
+      ],
+      "$assets/*": [
+        "src/assets/*"
+      ]
     },
-    // Astro-specific types
-    "types": ["astro/client"],
-    // Recommended settings for Vite and Astro compatibility
-    "target": "ESNext", // Use latest JavaScript features
-    "module": "ESNext", // Use native module syntax
-    "moduleResolution": "Bundler", // Required for Vite module resolution
-    // Additional helpful options
-    "allowJs": true, // Allow JavaScript files in the project
-    "resolveJsonModule": true, // Enable importing JSON files
-    "esModuleInterop": true, // Allow CommonJS imports in ESM style
-    "strict": true // Enable all strict type-checking options
+    "types": [
+      "astro/client"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true
   }
 }

@@ -1,0 +1,33 @@
+---
+const {
+  icon: Icon = null,
+  iconSize = "1em",
+  iconColor = "currentColor",
+  class: className = "",
+  ...rest
+} = Astro.props;
+---
+
+<li class={`flex flex-col items-start gap-1 ${className}`} {...rest}>
+  <div class="flex items-start gap-2">
+    {
+      Icon && (
+        <span
+          class="flex-shrink-0"
+          style={{
+            fontSize: "1.25em",
+            color: "currentColor",
+            lineHeight: 1,
+            marginTop: "3px",
+          }}
+          aria-hidden="true"
+        >
+          <Icon width="1em" height="1em" class="text-primary" />
+        </span>
+      )
+    }
+    <div class="flex-1">
+      <slot />
+    </div>
+  </div>
+</li>

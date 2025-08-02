@@ -1,13 +1,21 @@
 ---
-import { getEntry, render } from "astro:content";
+import TreeStructure from "~/assets/img/icons/tree-structure.svg";
+import Package from "~/assets/img/icons/package.svg";
+import TerminalWindow from "~/assets/img/icons/terminal-window.svg";
+import * as icons from "~/assets/img/icons";
+
 import TableFloat from "~/components/floats/TableFloat.astro";
+import Heading from "~/components/semantics/Heading.astro";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
 import Important from "~/components/ui/callouts/Important.astro";
 import More from "~/components/ui/callouts/More.astro";
 import Note from "~/components/ui/callouts/Note.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
 import ToDo from "~/components/utils/ToDo";
+
 import NotesLayout from "~/layouts/NotesLayout.astro";
+import List from "~/components/ui/list/List.astro";
+import ListItem from "~/components/ui/list/ListItem.astro";
 
 const title = "¿Cómo usar este apunte?";
 ---
@@ -35,9 +43,9 @@ const title = "¿Cómo usar este apunte?";
   </Important>
 
   <section title="Estructura del apunte">
-    <h2 id="estructura-apunte" class="text-2xl font-semibold mb-4">
-      📚 Estructura de los apuntes
-    </h2>
+    <Heading Icon={TreeStructure} headingLevel="h2"
+      >Estructura del apunte</Heading
+    >
 
     <p class="mb-4">
       Cada apunte está organizado en lecciones que abordan un tema específico de
@@ -105,12 +113,11 @@ const title = "¿Cómo usar este apunte?";
   </section>
 
   <section title="cajita == opcional">
-    <h2 id="cajita-opcional" class="text-2xl font-semibold mb-4">
-      <span aria-hidden="true">📦</span>
+    <Heading Icon={Package} headingLevel="h2">
       <span class="sr-only">Contenido opcional</span>
       <InlineCode lang="kt" code="cajita == opcional" />
-    </h2>
-    
+    </Heading>
+
     <p>Todo lo que esté en una caja como la siguiente:</p>
 
     <More title="es opcional">
@@ -118,10 +125,59 @@ const title = "¿Cómo usar este apunte?";
     </More>
   </section>
 
+  <section title="¿Por qué usamos scripts para tareas simples?">
+    <Heading Icon={TerminalWindow} headingLevel="h2">
+      ¿Por qué usamos scripts para tareas simples?
+    </Heading>
+
+    A lo largo de estos apuntes encontrarás scripts que, a primera vista,
+    podrían parecer innecesarios. Muchas tareas se pueden resolver con un par de
+    líneas en la terminal. Sin embargo, preferimos scripts más detallados por
+    razones <b>didácticas y prácticas</b>.
+
+    <section title="Valor didáctico">
+      <Heading Icon={icons.Student} headingLevel="h3">Valor didáctico</Heading>
+      <List>
+        <ListItem icon={icons.ListNumbers}>
+          Nos permite <b>mostrar cada paso de forma clara y controlada</b>.
+        </ListItem>
+
+        <ListItem icon={icons.Terminal} class="flex flex-col items-start gap-2">
+          <div class="flex items-center gap-2">
+            Introduce gradualmente conceptos importantes de scripting como:
+          </div>
+          <List nested class="mt-1">
+            <ListItem icon={icons.SlidersHorizontal}
+              >Validación de parámetros.</ListItem
+            >
+            <ListItem icon={icons.ChatText}>
+              Mensajes informativos (<InlineCode lang="sh" code="echo" />, <InlineCode
+                lang="ps"
+                code="Write-Verbose"
+              />, etc.).
+            </ListItem>
+            <ListItem icon={icons.WarningCircle}>
+              Manejo de errores con <InlineCode lang="ps" code="try/catch" /> en
+              PowerShell o <InlineCode lang="sh" code="set -e" /> / <InlineCode
+                lang="sh"
+                code="trap"
+              /> en Bash.
+            </ListItem>
+          </List>
+        </ListItem>
+
+        <ListItem icon={icons.CheckCircle}>
+          Refuerza buenas prácticas que serán útiles más adelante al automatizar
+          tareas complejas.
+        </ListItem>
+      </List>
+    </section>
+  </section>
+
   <ToDo
     metadata={{
       title,
     }}
-    client:only="preact"
+    client:only="react"
   />
 </NotesLayout>
