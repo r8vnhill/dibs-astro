@@ -1,18 +1,123 @@
 ---
+/**
+ * NotesLayout.astro
+ * -----------------
+ * Layout used for rendering course note pages with consistent structure, reading time estimation,
+ * and optional navigation buttons (previous/next lesson).
+ */
+
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import * as icons from "~/assets/img/icons";
+import NavigationButton from "~/components/navigation/NavigationButton.astro";
 
+// Define the interface for the props expected by this layout
 interface Props {
+  /**
+   * Title of the page, displayed in the <h1> element.
+   */
   title: string;
+
+  /**
+   * Optional metadata for the next lesson (title + href).
+   */
+  next?: {
+    title: string;
+    href: string;
+  };
+  /**
+   * Optional metadata for the previous lesson (title + href).
+   */
+  previous?: {
+    title: string;
+    href: string;
+  };
 }
 
-const { title } = Astro.props as Props;
+/**
+ * Ensures navigation URLs are normalized:
+ * - Always start with a forward slash (`/`)
+ * - Always end with a trailing slash (`/`), except for root (`/`)
+ *
+ * This prevents issues with inconsistent URL patterns and broken relative links.
+ */
+function normalizeNavigation(
+  next?: Props["next"],
+  previous?: Props["previous"]
+) {
+  function normalizeHref(href: string): string {
+    // Ensure it starts with '/'
+    let result = href.startsWith("/") ? href : `/${href}`;
+    // Ensure it ends with '/' (unless it's just '/')
+    if (result.length > 1 && !result.endsWith("/")) {
+      result += "/";
+    }
+    return result;
+  }
+
+  return {
+    normalizedNext: next
+      ? {
+          ...next,
+          href: normalizeHref(next.href),
+        }
+      : undefined,
+    normalizedPrevious: previous
+      ? {
+          ...previous,
+          href: normalizeHref(previous.href),
+        }
+      : undefined,
+  };
+}
+
+// Destructure props and normalize navigation links
+const { title, next, previous } = Astro.props as Props;
+const { normalizedNext, normalizedPrevious } = normalizeNavigation(next, previous);
 ---
 
+<!-- Base layout wraps page with shared layout (header, footer, etc.) -->
 <BaseLayout pageTitle={title}>
+  <!-- Page title -->
   <h1>{title}</h1>
 
+  <!-- Component that estimates reading time based on content length -->
   <ReadingTime />
 
+  <!-- Main content injected from Markdown file or page using this layout -->
   <slot />
+
+  <!-- Navigation between lessons (conditionally rendered) -->
+  {
+    (normalizedNext || normalizedPrevious) && (
+      <nav class="mt-12 flex flex-col sm:flex-row justify-between gap-4 border-t border-base-border pt-6">
+        <!-- Previous button (if available) -->
+        {normalizedPrevious ? (
+          <NavigationButton
+            href={normalizedPrevious.href}
+            label={normalizedPrevious.title}
+            iconPosition="left"
+          >
+            <!-- Slot content: left-pointing arrow icon -->
+            <icons.ArrowLeft class="w-5 h-5" slot="icon" />
+          </NavigationButton>
+        ) : (
+          // Placeholder to maintain layout symmetry when previous button is missing
+          <span />
+        )}
+
+        <!-- Next button (if available) -->
+        {normalizedNext && (
+          <NavigationButton
+            href={normalizedNext.href}
+            label={normalizedNext.title}
+            iconPosition="right"
+          >
+            <!-- Slot content: right-pointing arrow icon -->
+            <icons.ArrowRight class="w-5 h-5" slot="icon" />
+          </NavigationButton>
+        )}
+      </nav>
+    )
+  }
 </BaseLayout>

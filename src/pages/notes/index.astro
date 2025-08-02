@@ -11,7 +11,6 @@ import Important from "~/components/ui/callouts/Important.astro";
 import More from "~/components/ui/callouts/More.astro";
 import Note from "~/components/ui/callouts/Note.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
-import ToDo from "~/components/utils/ToDo";
 
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import List from "~/components/ui/list/List.astro";
@@ -22,7 +21,12 @@ import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 const title = "¿Cómo usar este apunte?";
 ---
 
-<NotesLayout title={title}>
+<NotesLayout title={title}
+  next={{
+    title: "Herramientas necesarias y recomendadas",
+    href: "/notes/installation/"
+  }}
+>
   <Abstract headingLevel="h2" class="mt-6">
     <p>
       Este apunte sirve como guía de referencia rápida y complemento a las
@@ -211,7 +215,7 @@ const title = "¿Cómo usar este apunte?";
     </section>
 
     <section title="Ejemplo">
-      <Heading Icon={null} headingLevel="h3">Ejemplo</Heading>
+      <Heading Icon={icons.Terminal} headingLevel="h3">Ejemplo</Heading>
 
       <p>Esta tarea puede hacerse en la terminal en unas pocas líneas:</p>
 
@@ -293,10 +297,127 @@ const title = "¿Cómo usar este apunte?";
     </section>
   </section>
 
-  <ToDo
-    metadata={{
-      title,
-    }}
-    client:only="react"
-  />
+  <section title="Estrategia de lectura">
+    <Heading Icon={icons.MagnifyingGlass} headingLevel="h2">
+      Estrategia de lectura
+    </Heading>
+
+    <p>
+      Te recomendamos usar la técnica de <strong>lectura diagonal</strong> para obtener
+      una visión general del contenido sin necesidad de leer cada palabra. Esta técnica
+      consiste en mover los ojos en forma diagonal por la página, enfocándote en
+      elementos clave como títulos, palabras en <strong>negrita</strong>, listas
+      y frases destacadas.
+    </p>
+    <p>
+      Su objetivo es ayudarte a captar la idea principal del texto, entender su
+      estructura y decidir en qué secciones profundizar. Es una estrategia
+      especialmente útil para revisar materiales extensos, buscar información
+      específica o hacerte una idea general antes de una lectura detallada.
+    </p>
+
+    <section title="Cómo aplicar la lectura diagonal">
+      <Heading Icon={icons.Scan} headingLevel="h3">
+        Cómo aplicar la lectura diagonal
+      </Heading>
+
+      <List>
+        <ListItem icon={icons.TextAa}>
+          <strong>1. Lee los títulos y subtítulos</strong>: ofrecen una visión
+          general de la estructura del contenido.
+        </ListItem>
+        <ListItem icon={icons.Paragraph}>
+          <strong>2. Revisa los primeros párrafos</strong>: suelen contener el
+          mensaje clave de cada sección.
+        </ListItem>
+        <ListItem icon={icons.Target}>
+          <strong>3. Ve directo a la conclusión</strong>: te permite anticipar
+          los puntos clave de la lección.
+        </ListItem>
+        <ListItem icon={icons.HighlighterCircle}>
+          <strong>4. Escanea elementos destacados</strong>: como listas,
+          palabras en <strong>negrita</strong> o bloques de código.
+        </ListItem>
+      </List>
+    </section>
+  </section>
+
+  <section title="Consejos de estudio">
+    <Heading Icon={icons.BookOpen} headingLevel="h2"
+      >Consejos de estudio</Heading
+    >
+
+    <p>
+      Aquí te dejamos algunas recomendaciones para estudiar de forma más
+      efectiva:
+    </p>
+
+    <List>
+      <ListItem icon={icons.ClockCountdown}>
+        <strong>Organiza tu tiempo</strong>: Estudia en sesiones cortas
+        distribuidas a lo largo del tiempo. Por ejemplo, 30 minutos al día son
+        más efectivos que tres horas seguidas.
+      </ListItem>
+      <ListItem icon={icons.Flask}>
+        <strong>Practica de forma activa</strong>: Haz ejercicios y resuelve
+        problemas. Es mucho más eficaz que limitarte a leer teoría.
+      </ListItem>
+      <ListItem icon={icons.ChalkboardTeacher}>
+        <strong>Enseña lo que aprendes</strong>: Explicar conceptos a otra
+        persona refuerza tu comprensión y detecta vacíos.
+      </ListItem>
+      <ListItem icon={icons.Coffee}>
+        <strong>Toma descansos</strong>: Las pausas entre sesiones ayudan a tu
+        cerebro a procesar y consolidar la información.
+      </ListItem>
+    </List>
+  </section>
+
+  <section title="Planificación del tiempo">
+    <Heading Icon={icons.ClockCountdown} headingLevel="h2">
+      Planificación del tiempo
+    </Heading>
+
+    <p>
+      Cada lección incluye una estimación de tiempo recomendada para ayudarte a
+      organizar tu estudio. Sin embargo, este tiempo puede variar según tu nivel
+      de experiencia y conocimientos previos.
+    </p>
+    <p>
+      No te preocupes si tardas más de lo previsto: lo importante es comprender
+      los conceptos y saber aplicarlos correctamente. La mayoría de las
+      estimaciones están pensadas con margen suficiente, por lo que es posible
+      que termines antes de lo indicado.
+    </p>
+  </section>
+
+  <section title="¿Tienes ideas para mejorar estos apuntes?">
+    <Heading Icon={icons.Lightbulb} headingLevel="h2">
+      ¿Tienes ideas para mejorar estos apuntes?
+    </Heading>
+
+    <p>Tu ayuda es más que bienvenida. Puedes:</p>
+
+    <List class="mb-6">
+      <ListItem icon={icons.Bug}>
+        <strong>Reportar errores</strong>
+        <a
+          href="https://gitlab.com/r8vnhill/dibs-astro/issues"
+          target="_blank"
+          rel="noopener noreferrer">abriendo un issue en GitLab</a
+        >.
+      </ListItem>
+      <ListItem icon={icons.GitPullRequest}>
+        <strong>Sugerir mejoras</strong> mediante un <em>merge request</em> o un <em
+          >issue</em
+        >.
+      </ListItem>
+      <ListItem icon={icons.ShareFat}>
+        <strong>Compartir estos apuntes</strong> con otrxs que puedan beneficiarse
+        de ellos.
+      </ListItem>
+    </List>
+
+    <p>🎉 ¡Gracias por ser parte de esta comunidad de aprendizaje! 🚀</p>
+  </section>
 </NotesLayout>
