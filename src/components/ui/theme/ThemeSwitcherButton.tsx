@@ -1,7 +1,7 @@
 import clsx from 'clsx';
-import type { JSX } from 'preact/jsx-runtime';
 import { themeOptions } from './ThemeOptions';
 import type { StyledComponent, Theme } from '~/utils';
+import type { JSX } from 'react';
 
 /**
  * Props for the ThemeSwitcherButton component.
@@ -53,7 +53,7 @@ export function ThemeSwitcherButton({
   return (
     <button
       type="button"
-      class={clsx(
+      className={clsx(
         'bg-base-background inline-flex items-center gap-1 rounded border px-3 py-1',
         className // allows external class overrides
       )}
@@ -64,7 +64,7 @@ export function ThemeSwitcherButton({
     >
       {option.icon}
       {/* Screen-reader only label for accessibility */}
-      <span class="sr-only">Tema actual:</span>
+      <span className="sr-only">Tema actual:</span>
       {option.label}
     </button>
   );

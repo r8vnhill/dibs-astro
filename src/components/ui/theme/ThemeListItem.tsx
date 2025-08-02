@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import type { JSX } from 'preact/jsx-runtime';
+import type { JSX } from 'react';
 import type { Theme } from '~/utils';
 
 /**
@@ -50,7 +50,7 @@ export function ThemeListItem({
       <button
         type="button"
         onClick={() => onSelect(value)} // Notify parent of selection
-        class={clsx(
+        className={clsx(
           'flex w-full items-center gap-2 rounded px-3 py-1 text-left',
           'hover:bg-gray-300 dark:hover:bg-gray-700', // Visual feedback on hover
           isSelected && 'font-semibold' // Bold text if this is the selected theme

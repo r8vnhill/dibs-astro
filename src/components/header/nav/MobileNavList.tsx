@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import type { JSX } from 'preact/jsx-runtime';
 import type { NavItem } from './nav-items';
+import type { JSX } from 'react';
 
 /**
  * Props for a navigation list component, typically used for mobile or collapsible menus.

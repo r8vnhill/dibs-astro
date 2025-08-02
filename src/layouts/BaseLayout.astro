@@ -13,7 +13,6 @@ import Header from "~/components/header/Header.astro";
 import Head from "~/components/meta/Head.astro";
 import "~/styles/global.css"; // Loads Tailwind styles and CSS variables
 import { site } from "~/utils";
-import { createTheme, ThemeModeScript, ThemeProvider } from "flowbite-react";
 
 // Props passed into the layout
 const { pageTitle } = Astro.props;
@@ -48,7 +47,6 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
   <head>
     <!-- Includes metadata, favicons, and dynamic <title> -->
     <Head title={fullTitle} />
-    <ThemeModeScript />
   </head>
   <body class="text-base-text
       bg-base-background">

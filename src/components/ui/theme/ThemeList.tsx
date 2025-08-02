@@ -1,7 +1,7 @@
 import { applyTheme, type Theme } from "~/utils";
 import { themeOptions } from "./ThemeOptions";
 import { ThemeListItem } from "./ThemeListItem";
-import type { JSX } from "preact/jsx-runtime";
+import type { JSX } from "react";
 
 /**
  * Props for the ThemeList component.

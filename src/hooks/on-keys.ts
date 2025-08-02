@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 
 /**
  * Calls a callback function when the Escape key is pressed, if the `active` flag is true.

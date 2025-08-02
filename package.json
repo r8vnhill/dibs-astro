@@ -1,7 +1,7 @@
 {
   "name": "dibs-astro",
   "type": "module",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -13,7 +13,6 @@
     "@astrojs/check": "^0.9.4",
     "@astrojs/cloudflare": "^12.6.0",
     "@astrojs/markdoc": "^0.15.4",
-    "@astrojs/preact": "^4.1.0",
     "@lucide/astro": "^0.526.0",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
@@ -21,10 +20,8 @@
     "astro-expressive-code": "^0.41.3",
     "clsx": "^2.1.1",
     "flowbite-react": "^0.12.5",
-    "lucide-preact": "^0.526.0",
     "lucide-react": "^0.536.0",
-    "phosphor-react": "^1.4.1",
-    "preact": "^10.26.9"
+    "phosphor-react": "^1.4.1"
   },
   "devDependencies": {
     "@astrojs/react": "^4.3.0",

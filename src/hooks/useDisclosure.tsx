@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Represents the return type of the `useDisclosure` hook.

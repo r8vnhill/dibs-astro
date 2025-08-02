@@ -1,4 +1,4 @@
-import type { JSX } from 'astro/jsx-runtime';
+import type { JSX } from 'react';
 import { DesktopNavList } from './DesktopNavList';
 import { MobileNavList } from './MobileNavList';
 import { navItems, type NavItem } from './nav-items';

@@ -1,7 +1,5 @@
-import { Menu, X } from 'lucide-preact';
-import type { SetStateAction } from 'preact/compat';
-import type { Dispatch } from 'preact/hooks';
-import type { JSX } from 'preact/jsx-runtime';
+import type { Dispatch, JSX, SetStateAction } from "react";
+import { X, List } from "phosphor-react";
 
 /**
  * Props used to control the open/close state of a UI component, such as a mobile navigation menu.
@@ -30,14 +28,20 @@ export function ToggleButton({ isOpen, setIsOpen }: IsOpenProps): JSX.Element {
   return (
     <button
       type="button"
-      aria-label={isOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+      aria-label={
+        isOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"
+      }
       aria-controls="mainNavMobile" // ID of the nav container this button controls
       aria-expanded={isOpen} // Indicates the current state of the collapsible nav
       aria-haspopup="true" // Signals the presence of a popup-like component
       onClick={() => setIsOpen((prev) => !prev)} // Toggle the menu visibility
       className="toggle-button"
     >
-      {isOpen ? <X size={24} /> : <Menu size={24} />}
+      {isOpen ? (
+        <X width={24} height={24} />
+      ) : (
+        <List width={24} height={24} />
+      )}
     </button>
   );
 }

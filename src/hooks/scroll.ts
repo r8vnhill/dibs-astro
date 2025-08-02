@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 
 /**
  * Locks or unlocks the `<body>` scroll based on a boolean flag.

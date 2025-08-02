@@ -12,7 +12,7 @@ const { title } = Astro.props as Props;
 <BaseLayout pageTitle={title}>
   <h1>{title}</h1>
 
-  <ReadingTime client:only="preact" />
+  <ReadingTime />
 
   <slot />
 </BaseLayout>

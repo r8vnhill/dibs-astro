@@ -1,17 +1,10 @@
 import clsx from "clsx";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type Dispatch,
-  type StateUpdater,
-} from "preact/hooks";
-import type { JSX } from "preact/jsx-runtime";
 import * as utils from "~/utils";
 import { useDisclosure, useOutsideClick } from "~/hooks";
 import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
 import { applyTheme, type Theme } from "~/utils";
 import { ThemeList } from "./ThemeList";
+import { useEffect, useRef, useState, type Dispatch, type JSX, type SetStateAction } from "react";
 
 /**
  * <ThemeSwitcher /> is a dropdown component that allows users to toggle between themes (e.g.,
@@ -37,7 +30,7 @@ export default function ThemeSwitcher(): JSX.Element {
 
   return (
     <div
-      class={clsx("relative", "inline-block", "text-left")}
+      className={clsx("relative", "inline-block", "text-left")}
       ref={dropdownRef}
     >
       {/* Toggle button for the theme dropdown */}
@@ -58,7 +51,7 @@ export default function ThemeSwitcher(): JSX.Element {
  *
  * @param setTheme - State updater function to set the current theme.
  */
-function useInitializeTheme(setTheme: Dispatch<StateUpdater<Theme>>): void {
+function useInitializeTheme(setTheme: Dispatch<SetStateAction<utils.Theme>>): void {
   useEffect(() => {
     const stored =
       (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme) ||

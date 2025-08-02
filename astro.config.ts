@@ -1,5 +1,4 @@
 import { defineConfig, sharpImageService } from "astro/config";
-import preact from "@astrojs/preact";
 import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
@@ -15,7 +14,7 @@ import react from "@astrojs/react";
  * Astro configuration for the DIBS site.
  *
  * This setup includes:
- * - Preact for interactive UI components.
+ * - React for interactive UI components.
  * - TailwindCSS for utility-first styling.
  * - Cloudflare as the deployment adapter.
  * - Sharp image service for image optimization during build time.
@@ -33,13 +32,11 @@ export default defineConfig({
 
   integrations: [
     // Custom plugin to trigger HMR when specific files change
-    // Adds Preact support to render UI components with lightweight runtime
     // Adds syntax highlighting and code formatting capabilities
     devServerFileWatcher([
       "./config/**", // Watch all custom integration and plugin files
       "./src/assets/**", // Watch all assets for changes
     ]),
-    preact(),
     expressiveCode({
       themes: ["dracula", "solarized-light"],
       shiki: {},

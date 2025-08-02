@@ -1,10 +1,10 @@
 /**
  * useReadingTime.ts
  * -----------------
- * Preact hook + helpers to compute an estimated reading time for a container.
+ * React hook + helpers to compute an estimated reading time for a container.
  */
 
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from "react";
 
 export interface ReadingTimeOptions {
   /** Average words per minute. Default: 250. */
@@ -52,7 +52,7 @@ export function computeReadingTimeFromText(
 }
 
 /**
- * Preact hook that:
+ * React hook that:
  * - grabs a container,
  * - extracts relevant text,
  * - computes minutes with a multiplier,

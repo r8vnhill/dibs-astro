@@ -1,6 +1,6 @@
-import { Sun, Moon, Monitor } from 'lucide-preact';
-import type { JSX } from 'preact/jsx-runtime';
+import type { ReactNode } from 'react';
 import type { Theme } from '~/utils';
+import { Monitor, Moon, Sun } from 'phosphor-react';
 
 /**
  * CSS class string used for styling icon elements with inline display, height of 1rem (h-4), and
@@ -16,14 +16,14 @@ const ICON_CLASS = 'inline h-4 w-4';
  * @template Theme - The set of possible theme keys.
  */
 export type ThemeOptions = {
-  [key in Theme]: { label: string; icon: JSX.Element };
+  [key in Theme]: { label: string; icon: ReactNode };
 };
 
 /**
  * An object mapping theme keys to their respective display options.
  */
 export const themeOptions: ThemeOptions = {
-  light: { label: 'Claro', icon: <Sun class={ICON_CLASS} /> },
-  dark: { label: 'Oscuro', icon: <Moon class={ICON_CLASS} /> },
-  auto: { label: 'Auto', icon: <Monitor class={ICON_CLASS} /> },
+  light: { label: 'Claro', icon: <Sun className={ICON_CLASS} /> },
+  dark: { label: 'Oscuro', icon: <Moon className={ICON_CLASS} /> },
+  auto: { label: 'Auto', icon: <Monitor className={ICON_CLASS} /> },
 };

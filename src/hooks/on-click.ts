@@ -1,5 +1,4 @@
-import { useEffect } from "preact/hooks";
-import type { RefObject } from "preact";
+import { useEffect, type RefObject } from "react";
 
 /**
  * Detects clicks outside the specified element and invokes the provided callback.
@@ -10,7 +9,7 @@ import type { RefObject } from "preact";
  * @param onClickOutside A callback function triggered when a click occurs outside the element.
  */
 export function useOutsideClick<T extends HTMLElement>(
-  ref: RefObject<T>,
+  ref: RefObject<T | null>,
   onClickOutside: () => void
 ): void {
   useEffect(() => {

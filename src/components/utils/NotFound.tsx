@@ -1,6 +1,5 @@
 import clsx from "clsx";
-import { useLayoutEffect, useState } from "preact/hooks";
-import type { JSX } from "preact/jsx-runtime";
+import { useLayoutEffect, useState, type JSX } from "react";
 import { notFoundMessages, ultraRareMessage } from "~/data/not-found-messages";
 import { pickRandom, type StyledComponent } from "~/utils";
 
