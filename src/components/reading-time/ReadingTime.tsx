@@ -9,7 +9,6 @@
  */
 import type { FC, ReactNode } from "react";
 import { useReadingTime } from "./useReadingTime";
-import * as icons from "~/assets/img/icons";
 import { clsx } from "clsx";
 import { Clock } from "phosphor-react";
 

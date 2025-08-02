@@ -1,22 +1,64 @@
 ---
+import type { AstroComponentFactory } from "~/types/astro-component";
+
+/**
+ * Props for the ListItem component.
+ */
+type ListItemProps = {
+  /**
+   * Optional icon component to render (e.g., an imported SVG as Astro island).
+   */
+  icon?: AstroComponentFactory;
+
+  /**
+   * CSS size for the icon (e.g., "1.25em"). Defaults to "1.25em".
+   */
+  iconSize?: string;
+
+  /**
+   * Icon color (defaults to "currentColor" so it inherits text color).
+   */
+  iconColor?: string;
+
+  /**
+   * Additional classes for the <li> wrapper.
+   */
+  class?: string;
+};
+
+// Extract and assign default values for props
 const {
   icon: Icon = null,
-  iconSize = "1em",
+  iconSize = "1.25em",
   iconColor = "currentColor",
   class: className = "",
   ...rest
-} = Astro.props;
+} = Astro.props as ListItemProps;
 ---
 
-<li class={`flex flex-col items-start gap-1 ${className}`} {...rest}>
-  <div class="flex items-start gap-2">
+<!-- 
+  List item container with vertical spacing.
+  Uses Tailwind classes and supports additional custom classes.
+-->
+<li
+  class:list={["flex", "flex-col", "items-start", "gap-1", className]}
+  {...rest}
+>
+  <!-- Row for icon + content -->
+  <div class:list={["flex", "items-start", "gap-2"]}>
     {
       Icon && (
+        /**
+         * Icon wrapper:
+         * - Shrinks to fit content
+         * - Uses inline styles for dynamic font size/color
+         * - Adds top margin to align visually with multiline content
+         */
         <span
           class="flex-shrink-0"
           style={{
-            fontSize: "1.25em",
-            color: "currentColor",
+            fontSize: iconSize,
+            color: iconColor,
             lineHeight: 1,
             marginTop: "3px",
           }}
@@ -26,6 +68,8 @@ const {
         </span>
       )
     }
+
+    <!-- Main slot content -->
     <div class="flex-1">
       <slot />
     </div>

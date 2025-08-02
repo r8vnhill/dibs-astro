@@ -38,7 +38,7 @@ export default defineConfig({
       "./src/assets/**", // Watch all assets for changes
     ]),
     expressiveCode({
-      themes: ["dracula", "solarized-light"],
+      themes: ["catppuccin-latte", "catppuccin-mocha"],
       shiki: {},
     }),
     markdoc(),

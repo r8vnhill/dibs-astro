@@ -137,19 +137,20 @@ const title = "¿Cómo usar este apunte?";
 
     <section title="Valor didáctico">
       <Heading Icon={icons.Student} headingLevel="h3">Valor didáctico</Heading>
+
       <List>
         <ListItem icon={icons.ListNumbers}>
-          Nos permite <b>mostrar cada paso de forma clara y controlada</b>.
+          Permite <b>mostrar cada paso de forma clara y controlada</b>.
         </ListItem>
 
         <ListItem icon={icons.Terminal} class="flex flex-col items-start gap-2">
           <div class="flex items-center gap-2">
-            Introduce gradualmente conceptos importantes de scripting como:
+            Introduce gradualmente conceptos clave de scripting:
           </div>
           <List nested class="mt-1">
-            <ListItem icon={icons.SlidersHorizontal}
-              >Validación de parámetros.</ListItem
-            >
+            <ListItem icon={icons.SlidersHorizontal}>
+              Validación de parámetros.
+            </ListItem>
             <ListItem icon={icons.ChatText}>
               Mensajes informativos (<InlineCode lang="sh" code="echo" />, <InlineCode
                 lang="ps"
@@ -158,7 +159,7 @@ const title = "¿Cómo usar este apunte?";
             </ListItem>
             <ListItem icon={icons.WarningCircle}>
               Manejo de errores con <InlineCode lang="ps" code="try/catch" /> en
-              PowerShell o <InlineCode lang="sh" code="set -e" /> / <InlineCode
+              PowerShell o <InlineCode lang="sh" code="set -e" />, <InlineCode
                 lang="sh"
                 code="trap"
               /> en Bash.
@@ -167,8 +168,42 @@ const title = "¿Cómo usar este apunte?";
         </ListItem>
 
         <ListItem icon={icons.CheckCircle}>
-          Refuerza buenas prácticas que serán útiles más adelante al automatizar
-          tareas complejas.
+          Refuerza buenas prácticas útiles para la automatización de tareas más
+          complejas.
+        </ListItem>
+      </List>
+    </section>
+
+    <section>
+      <Heading Icon={icons.PuzzlePiece} headingLevel="h3">
+        Útil para el desarrollo de bibliotecas
+      </Heading>
+
+      <p>
+        En el desarrollo de bibliotecas reutilizables, especialmente cuando se
+        integran múltiples herramientas, es común enfrentar <b
+          >casos no cubiertos por los sistemas de construcción</b
+        > (como Gradle o npm). En esos casos, los scripts permiten:
+      </p>
+
+      <List>
+        <ListItem icon={icons.Sliders}>
+          <b>Personalizar el proceso de construcción</b> según las necesidades específicas
+          del proyecto.
+        </ListItem>
+        <ListItem icon={icons.PlugsConnected}>
+          <b>Integrar herramientas externas</b> que no están directamente soportadas
+          por el sistema de construcción principal.
+        </ListItem>
+        <ListItem icon={icons.GearSix}>
+          <b>Automatizar tareas auxiliares</b>, como validaciones previas,
+          configuraciones iniciales o pasos de instalación personalizada.
+        </ListItem>
+        <ListItem icon={icons.Repeat}>
+          <b>Hacer los procesos reproducibles</b> y fáciles de seguir.
+        </ListItem>
+        <ListItem icon={icons.ShieldCheck}>
+          <b>Reducir errores</b> al minimizar instrucciones manuales.
         </ListItem>
       </List>
     </section>
