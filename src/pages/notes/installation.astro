@@ -1,0 +1,136 @@
+---
+import Heading from "~/components/semantics/Heading.astro";
+import Abstract from "~/components/ui/callouts/Abstract.astro";
+import List from "~/components/ui/list/List.astro";
+import ListItem from "~/components/ui/list/ListItem.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+
+import * as icons from "~/assets/img/icons";
+---
+
+<NotesLayout title="Herramientas necesarias y recomendadas">
+  <Abstract>
+    Antes de comenzar a construir bibliotecas de software poderosas, necesitamos
+    preparar nuestro taller. Piensa en estas herramientas como compañeras de
+    aventura: te ayudarán a escribir código con confianza, colaborar con otrxs,
+    automatizar tareas y concentrarte en lo que realmente importa: diseñar
+    soluciones elegantes y funcionales. Esta sección te guiará para dejar todo
+    listo en tu sistema operativo favorito. Algunas herramientas son
+    <strong>imprescindibles</strong>; otras, <strong
+      >opcionales pero recomendadas</strong
+    > para mejorar tu experiencia y flujo de trabajo.
+  </Abstract>
+
+  <section class="notes-section" title="Herramientas imprescindibles">
+    <Heading Icon={icons.GearSix} headingLevel="h2">
+      Herramientas imprescindibles
+    </Heading>
+
+    <List>
+      <ListItem icon={icons.GitBranch}>
+        <a
+          href="https://git-scm.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Git
+        </a>:&nbsp;Control de versiones para gestionar cambios y colaborar con
+        otrxs desarrolladorxs.
+      </ListItem>
+
+      <ListItem icon={icons.BracketsCurly}>
+        <a
+          href="https://www.java.com/es/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Java Development Kit (JDK)
+        </a>:&nbsp;Entorno necesario para ejecutar Kotlin. Se recomienda la
+        versión 8 o superior.
+      </ListItem>
+
+      <ListItem icon={icons.Lightning}>
+        <a
+          href="https://kotlinlang.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Kotlin
+        </a>:&nbsp;Lenguaje de programación principal del curso.
+      </ListItem>
+
+      <ListItem icon={icons.Package}>
+        <a href="https://gradle.org/" target="_blank" rel="noopener noreferrer">
+          Gradle
+        </a>:&nbsp;Herramienta para compilar proyectos y gestionar dependencias.
+      </ListItem>
+    </List>
+  </section>
+
+  <section class="notes-section" title="Herramientas recomendadas">
+    <Heading Icon={icons.Toolbox} headingLevel="h2">
+      Herramientas recomendadas
+    </Heading>
+
+    <List>
+      <ListItem icon={icons.MonitorPlay}>
+        <a
+          href="https://www.jetbrains.com/idea/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          IntelliJ IDEA
+        </a>:&nbsp;Entorno de desarrollo recomendado para Kotlin.
+      </ListItem>
+
+      <ListItem icon={icons.Terminal}>
+        <a
+          href="https://gitlab.com/gitlab-org/cli"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitLab CLI
+        </a>:&nbsp;Facilita la interacción con GitLab desde la terminal.
+      </ListItem>
+
+      <ListItem icon={icons.RocketLaunch}>
+        <a
+          href="https://www.jetbrains.com/fleet/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          JetBrains Fleet
+        </a>:&nbsp;Alternativa ligera a IntelliJ.
+      </ListItem>
+
+      <ListItem icon={icons.Sparkle}>
+        <a
+          href="https://ohmyposh.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Oh My Posh
+        </a>:&nbsp;Mejora la apariencia y funcionalidad de la terminal en
+        Windows.
+      </ListItem>
+    </List>
+  </section>
+
+  <section class="notes-section" title="Guía de Instalación">
+    <Heading Icon={icons.Wrench} headingLevel="h2"> Guía de instalación </Heading>
+
+    <p>
+      Aquí encontrarás una guía para instalar las herramientas necesarias en tu
+      sistema operativo, junto con sugerencias para personalizar tu entorno de
+      desarrollo.
+    </p>
+    <p>
+      Si alguna instrucción no funciona o tienes problemas, revisa la
+      documentación oficial de la herramienta o abre un <em>issue</em> en el <a
+        href="https://gitlab.com/r8vnhill/dibs-astro"
+        target="_blank"
+        rel="noopener noreferrer">repositorio del curso</a
+      > y con gusto te ayudaremos.
+    </p>
+  </section>
+</NotesLayout>

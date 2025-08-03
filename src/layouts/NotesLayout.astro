@@ -1,58 +1,89 @@
 ---
+/**
+ * NotesLayout.astro
+ * -----------------
+ * This layout component renders the full lesson view, including:
+ * - The title and reading time
+ * - Sidebar navigation (based on course structure)
+ * - Content slot (lesson body)
+ * - Automatic or manual previous/next navigation buttons
+ */
+
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
 import * as icons from "~/assets/img/icons";
 import { courseStructure } from "~/data/course-structure";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
+import { normalizeNavigation, resolveAutoNav } from "~/utils";
 
+// Props passed to the layout (can optionally override next/previous buttons)
 interface Props {
+  /**
+   * The title of the current lesson page.
+   */
   title: string;
+  /**
+   * Optional next lesson navigation data.
+   * If not provided, will attempt to auto-resolve based on course structure.
+   */
   next?: { title: string; href: string };
+  /**
+   * Optional previous lesson navigation data.
+   * If not provided, will attempt to auto-resolve based on course structure.
+   */
   previous?: { title: string; href: string };
 }
 
-function normalizeHref(href: string): string {
-  let result = href.startsWith("/") ? href : `/${href}`;
-  if (result.length > 1 && !result.endsWith("/")) result += "/";
-  return result;
-}
-
-function normalizeNavigation(
-  next?: Props["next"],
-  previous?: Props["previous"]
-) {
-  return {
-    normalizedNext: next
-      ? { ...next, href: normalizeHref(next.href) }
-      : undefined,
-    normalizedPrevious: previous
-      ? { ...previous, href: normalizeHref(previous.href) }
-      : undefined,
-  };
-}
-
+// Extract current page data and fallback navigation resolution
 const { title, next, previous } = Astro.props as Props;
+const pathname = Astro.url.pathname;
+
+// Attempt to auto-resolve previous/next from course structure
+const autoNav = resolveAutoNav(pathname, courseStructure);
+
+// Allow manual override from frontmatter (if provided)
+const effectivePrevious = previous ?? autoNav.previous ?? undefined;
+const effectiveNext = next ?? autoNav.next ?? undefined;
+
+// Normalize hrefs for consistency (e.g. ensure trailing slashes)
 const { normalizedNext, normalizedPrevious } = normalizeNavigation(
-  next,
-  previous
+  effectiveNext,
+  effectivePrevious
 );
 ---
 
 <BaseLayout pageTitle={title}>
   <div class="flex">
+    <!-- Sidebar with course structure navigation -->
     <div class="flex-none">
       <LessonSidebar client:load lessons={courseStructure} />
     </div>
 
+    <!-- Main content area -->
     <div class="flex-1 px-4 md:px-8 max-w-screen-xl mx-auto">
       <h1>{title}</h1>
+
       <ReadingTime />
+
       <slot />
 
       {
         (normalizedNext || normalizedPrevious) && (
-          <nav class="mt-12 flex flex-col sm:flex-row justify-between gap-4 border-t border-base-border pt-6">
+          <nav
+            aria-label="Siguiente o anterior lección"
+            class:list={[
+              "mt-12",
+              "flex",
+              "flex-col",
+              "sm:flex-row",
+              "justify-between",
+              "gap-4",
+              "border-t",
+              "border-base-border",
+              "pt-6",
+            ]}
+          >
             {normalizedPrevious ? (
               <NavigationButton
                 href={normalizedPrevious.href}
@@ -82,19 +113,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 </BaseLayout>
 
 <style is:global>
-  .sidebar {
-    width: 16rem;
-    min-width: 16rem;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1rem;
-    background: var(--color-base-background);
-    border-right: 1px solid var(--color-base-border);
-    flex-shrink: 0;
-    min-height: 100%;
-    height: 100%;
-  }
-
+  /* Sidebar navigation styles */
   .lesson-tree ul {
     list-style: none;
     margin: 0;
@@ -110,6 +129,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     padding: 2px 0;
   }
 
+  /* Highlight current page in sidebar */
   .lesson-tree a.text-primary {
     position: relative;
   }
@@ -124,5 +144,31 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     height: 60%;
     background: var(--color-primary);
     border-radius: 2px;
+  }
+
+  /* ----------- */
+  .lesson-tree li::before {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    left: 0.5rem;
+    width: 1px;
+    height: 100%;
+    background-color: var(--color-base-border);
+    opacity: 0.5;
+  }
+
+  .lesson-tree li:last-child::before {
+    height: 0.8rem;
+  }
+
+  .lesson-tree .group {
+    padding-left: 0.75rem; /* extra space for the tree line */
+  }
+
+  .lesson-tree .tree-separator {
+    border-top: 1px solid var(--color-base-border);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
   }
 </style>

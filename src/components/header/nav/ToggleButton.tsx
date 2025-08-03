@@ -1,47 +1,23 @@
-import type { Dispatch, JSX, SetStateAction } from "react";
+import type { JSX } from "react";
 import { X, List } from "phosphor-react";
 
-/**
- * Props used to control the open/close state of a UI component, such as a mobile navigation menu.
- */
-type IsOpenProps = {
-  /** Whether the navigation menu is currently open */
+type ToggleButtonProps = {
   isOpen: boolean;
-
-  /** Setter to update the `isOpen` state, typically from `useState` */
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  toggle: () => void;
 };
 
-/**
- * A button component that toggles the mobile navigation menu.
- *
- * It displays a hamburger (Menu) icon when closed and an "X" (Close) icon when open.
- * The button is hidden on larger screens (`sm:hidden`) and styled using Tailwind CSS.
- *
- * Accessibility attributes are included to enhance screen reader support.
- *
- * @param isOpen - Whether the mobile navigation menu is currently open.
- * @param setIsOpen - Function to toggle the `isOpen` state.
- * @returns A JSX button element that toggles the navigation state.
- */
-export function ToggleButton({ isOpen, setIsOpen }: IsOpenProps): JSX.Element {
+export function ToggleButton({ isOpen, toggle }: ToggleButtonProps): JSX.Element {
   return (
     <button
       type="button"
-      aria-label={
-        isOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"
-      }
-      aria-controls="mainNavMobile" // ID of the nav container this button controls
-      aria-expanded={isOpen} // Indicates the current state of the collapsible nav
-      aria-haspopup="true" // Signals the presence of a popup-like component
-      onClick={() => setIsOpen((prev) => !prev)} // Toggle the menu visibility
+      aria-label={isOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+      aria-controls="mainNavMobile"
+      aria-expanded={isOpen}
+      aria-haspopup="true"
+      onClick={toggle}
       className="toggle-button"
     >
-      {isOpen ? (
-        <X width={24} height={24} />
-      ) : (
-        <List width={24} height={24} />
-      )}
+      {isOpen ? <X width={24} height={24} /> : <List width={24} height={24} />}
     </button>
   );
 }

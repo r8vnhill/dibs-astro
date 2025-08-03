@@ -5,21 +5,17 @@ import type { Lesson } from "~/data/course-structure";
 import { LessonTree } from "./LessonTree";
 import { useMediaQuery } from "~/hooks/use-media-query";
 
-/**
- * Props:
- *  - lessons: estructura de lecciones
- */
 interface Props {
   lessons: Lesson[];
 }
 
 export const LessonSidebar: FC<Props> = ({ lessons }) => {
-  const isSmall = useMediaQuery("(max-width: 1024px)"); // colapsa en pantallas pequeñas (ej. lg abajo)
+  const isSmall = useMediaQuery("(max-width: 1024px)");
   const [hydrated, setHydrated] = useState(false);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    setHydrated(true); // ya podemos confiar en el valor de `isSmall`
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
@@ -29,11 +25,10 @@ export const LessonSidebar: FC<Props> = ({ lessons }) => {
     if (stored !== null) {
       setVisible(stored === "true");
     } else {
-      setVisible(!isSmall); // solo decidir visibilidad una vez que sabemos el tamaño
+      setVisible(!isSmall);
     }
   }, [hydrated, isSmall]);
 
-  // Sincronizar media query: si entra en small y no hay preferencia, colapsar
   useEffect(() => {
     if (isSmall) {
       const stored = localStorage.getItem("sidebar-visible");
@@ -41,7 +36,6 @@ export const LessonSidebar: FC<Props> = ({ lessons }) => {
         setVisible(false);
       }
     } else {
-      // en pantallas grandes, mostrar si no se ha guardado override
       const stored = localStorage.getItem("sidebar-visible");
       if (stored === null) {
         setVisible(true);
@@ -49,7 +43,6 @@ export const LessonSidebar: FC<Props> = ({ lessons }) => {
     }
   }, [isSmall]);
 
-  // Persistir cuando cambie
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("sidebar-visible", visible ? "true" : "false");
@@ -59,7 +52,6 @@ export const LessonSidebar: FC<Props> = ({ lessons }) => {
   return (
     <div className="relative flex-shrink-0">
       <div className="relative flex-shrink-0 flex">
-        {/* Mostrar barra solo una vez hidratado */}
         {hydrated && !isSmall && (
           <div
             onClick={() => setVisible((v) => !v)}
@@ -70,11 +62,22 @@ export const LessonSidebar: FC<Props> = ({ lessons }) => {
 
         <div
           className={clsx(
-            "sidebar transition-all duration-200",
+            "w-72", // antes: w-64
+            "min-w-72", // antes: min-w-64
+            "p-4",
+            "border-r",
+            "border-base-border",
+            "bg-base-background",
+            "overflow-y-auto",
+            "overflow-x-hidden",
+            "shrink-0",
+            "h-full",
+            "transition-all",
+            "duration-200",
             visible ? "opacity-100" : "pointer-events-none opacity-0",
             hydrated && isSmall
-              ? "fixed inset-y-0 left-0 z-50 w-64 bg-base-background shadow-lg"
-              : "w-64"
+              ? "fixed inset-y-0 left-0 z-40 w-72 bg-base-background shadow-lg" // también cambia w-64 aquí
+              : "w-72"
           )}
         >
           <div className="overflow-y-auto h-full py-2">

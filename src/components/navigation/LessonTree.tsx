@@ -50,7 +50,7 @@ export const LessonTree: FC<Props> = ({ lessons, depth = 0 }) => {
   return (
     <nav aria-label="Lesson navigation" className="lesson-tree">
       <ul role="tree" className="space-y-1">
-        {lessons.map((lesson) => {
+        {lessons.map((lesson, index) => {
           const isActive = currentPath === lesson.href;
           const hasChildren = !!lesson.children?.length;
           const isOpen = open[lesson.href] ?? true;
@@ -60,7 +60,12 @@ export const LessonTree: FC<Props> = ({ lessons, depth = 0 }) => {
               key={lesson.href}
               role="treeitem"
               aria-expanded={hasChildren ? isOpen : undefined}
-              className={clsx("group", indentPadding(depth), "relative")}
+              className={clsx(
+                "group",
+                indentPadding(depth),
+                "relative",
+                depth === 0 && index > 0 && "tree-separator"
+              )}
             >
               <div className="flex items-center gap-2">
                 {hasChildren ? (
@@ -82,10 +87,8 @@ export const LessonTree: FC<Props> = ({ lessons, depth = 0 }) => {
                 <a
                   href={lesson.href}
                   className={clsx(
-                    "flex-1 truncate transition-colors underline underline-offset-2 hover:text-primary",
-                    isActive
-                      ? "text-primary font-semibold"
-                      : "text-base-text"
+                    "flex-1 transition-colors underline underline-offset-2 hover:text-primary",
+                    isActive ? "text-primary font-semibold" : "text-base-text"
                   )}
                 >
                   {lesson.title}

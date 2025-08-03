@@ -13,6 +13,10 @@ export const notFoundMessages = [
   "This is not the page you are looking for.",
   "¡Hey! Tú no deberías estar aquí.",
   "You Can (Not) Find This Page",
+  `I'm the invisible page
+I'm the invisible page
+Incredible how you can
+See right through me`,
 ];
 
 /**

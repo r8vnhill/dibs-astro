@@ -7,6 +7,9 @@ export {
   getColorSchemeMediaQuery,
   isDarkModePreferred,
   theme,
-  type Theme
+  type Theme,
 } from "./theme.ts";
-
+export {
+  normalizeNavigation,
+  resolveAutoNav,
+} from "./navigation.ts";
