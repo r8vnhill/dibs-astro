@@ -1,14 +1,18 @@
 ---
+import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
+import More from "~/components/ui/callouts/More.astro";
+import Tip from "~/components/ui/callouts/Tip.astro";
+import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
+import DevEnv from "~/content/installation/DevEnv.astro";
+import JDK21Note from "~/content/installation/JDK21Note.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
-
-import * as icons from "~/assets/img/icons";
 ---
 
-<NotesLayout title="Herramientas necesarias y recomendadas">
+<NotesLayout title="Herramientas necesarias y recomendadas" timeMultiplier={3}>
   <Abstract>
     Antes de comenzar a construir bibliotecas de software poderosas, necesitamos
     preparar nuestro taller. Piensa en estas herramientas como compañeras de
@@ -117,7 +121,9 @@ import * as icons from "~/assets/img/icons";
   </section>
 
   <section class="notes-section" title="Guía de Instalación">
-    <Heading Icon={icons.Wrench} headingLevel="h2"> Guía de instalación </Heading>
+    <Heading Icon={icons.Wrench} headingLevel="h2">
+      Guía de instalación
+    </Heading>
 
     <p>
       Aquí encontrarás una guía para instalar las herramientas necesarias en tu
@@ -132,5 +138,254 @@ import * as icons from "~/assets/img/icons";
         rel="noopener noreferrer">repositorio del curso</a
       > y con gusto te ayudaremos.
     </p>
+
+    <section class="notes-section" title="Instalación en Windows">
+      <Heading Icon={icons.WindowsLogo} headingLevel="h3">
+        Instalación en Windows
+      </Heading>
+
+      <section class="notes-section" title="Scoop">
+        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+          Instalando Scoop (gestor de paquetes)
+        </Heading>
+
+        Scoop es un gestor de paquetes para Windows que facilita la instalación
+        de herramientas desde la terminal. Puedes obtener más información en su <a
+          href="https://scoop.sh/"
+          target="_blank"
+          rel="noopener noreferrer">sitio oficial</a
+        >. Para instalarlo, ejecuta lo siguiente en PowerShell:
+
+        <ShellBlock
+          lang="powershell"
+          code={`
+            # This allows running scripts downloaded from the internet
+            Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+            # This installs Scoop
+            Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+          `}
+          title="Instalación de Scoop"
+          icon={icons.Powershell}
+        />
+
+        Verifica que la instalación se haya realizado correctamente:
+
+        <ShellBlock
+          lang="powershell"
+          code="scoop --version"
+          title="Verificación de Scoop"
+          icon={icons.Powershell}
+        />
+      </section>
+
+      <section title="Mejorando la terminal" class="notes-section">
+        <Heading Icon={icons.TerminalWindow} headingLevel="h4">
+          Mejorando la terminal
+        </Heading>
+
+        <p>
+          Windows incluye una terminal básica, pero puedes mejorar tu
+          experiencia instalando <strong>Windows Terminal</strong> y personalizándola
+          con <a
+            href="https://ohmyposh.dev/"
+            target="_blank"
+            rel="noopener noreferrer">Oh My Posh</a
+          >.
+        </p>
+
+        <List>
+          <ListItem icon={icons.Storefront}>
+            Descárgala desde la <a
+              href="https://www.microsoft.com/es-mx/p/windows-terminal/9n0dx20hk701"
+              target="_blank"
+              rel="noopener noreferrer">Microsoft Store</a
+            >.
+          </ListItem>
+          <ListItem icon={icons.Sparkle}>
+            <strong>Opcional:</strong> agrega estilos y funcionalidad extra con <a
+              href="https://ohmyposh.dev/"
+              target="_blank"
+              rel="noopener noreferrer">Oh My Posh</a
+            >.
+          </ListItem>
+        </List>
+
+        <ShellBlock
+          lang="powershell"
+          code={`
+            scoop install oh-my-posh
+            oh-my-posh init pwsh | Invoke-Expression
+          `}
+          title="Instalación de Oh My Posh"
+          icon={icons.Powershell}
+        />
+
+        <More title="Configuración avanzada de Oh My Posh">
+          Para una mejor experiencia visual, te recomendamos <a
+            href="https://ohmyposh.dev/docs/installation/fonts"
+            target="_blank"
+            rel="noopener noreferrer">instalar una fuente compatible</a
+          > con símbolos y ligaduras, como Fira Code.
+
+          <ShellBlock
+            lang="powershell"
+            code={`oh-my-posh font install FiraCode`}
+            title="Instalar Fira Code"
+            icon={icons.Powershell}
+          />
+
+          Luego, configura tu terminal para que utilice la fuente instalada.
+          Consulta la <a
+            href="https://ohmyposh.dev/docs/installation/fonts#configuration"
+            target="_blank"
+            rel="noopener noreferrer">guía de configuración de fuente</a
+          >. Puedes elegir un tema visual para el prompt desde la <a
+            href="https://ohmyposh.dev/docs/themes"
+            target="_blank"
+            rel="noopener noreferrer">galería de temas disponibles</a
+          >. Para aplicar la configuración automáticamente cada vez que abras
+          PowerShell, edita tu perfil:
+
+          <ShellBlock
+            lang="powershell"
+            code={`
+              # Create the profile if it does not exist
+              if (-not Test-Path $PROFILE) {
+                  New-Item -Type File -Path $PROFILE -Force
+              }
+              notepad $PROFILE
+            `}
+            title="Editar perfil de PowerShell"
+            icon={icons.Powershell}
+          />
+
+          Dentro del archivo, agrega la siguiente línea para inicializar Oh My
+          Posh automáticamente con tu tema preferido:
+
+          <ShellBlock
+            lang="powershell"
+            code={`
+              oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\\emodipt-extend.omp.json" |
+                  Invoke-Expression
+            `}
+            title="Inicialización automática"
+            icon={icons.Powershell}
+          />
+
+          Guarda el archivo y reinicia la terminal para que los cambios surtan
+          efecto. Para una personalización aún más completa, consulta la <a
+            href="https://ohmyposh.dev/docs/installation/customize"
+            target="_blank"
+            rel="noopener noreferrer">documentación oficial de Oh My Posh</a
+          >.
+        </More>
+      </section>
+
+      <section
+        title="Instalación de herramientas esenciales"
+        class="notes-section"
+      >
+        <Heading Icon={icons.Hammer} headingLevel="h4">
+          Instalación de herramientas esenciales
+        </Heading>
+
+        <p>
+          Puedes instalar <strong>Git</strong>, <strong>GitLab CLI</strong>, <strong
+            >OpenJDK 21</strong
+          >, <strong>Gradle</strong> y <strong>JetBrains Toolbox</strong> con un
+          solo comando usando <code>scoop</code>:
+        </p>
+
+        <ShellBlock
+          lang="powershell"
+          code={`scoop install git glab openjdk21 gradle jetbrains-toolbox`}
+          title="Instalar herramientas esenciales"
+          icon={icons.Powershell}
+        />
+
+        <JDK21Note />
+      </section>
+
+      <DevEnv />
+    </section>
+
+    <section title="Instalación en macOS" class="notes-section">
+      <Heading Icon={icons.AppleLogo} headingLevel="h3">
+        Instalación en macOS
+      </Heading>
+
+      <section
+        title="Instalación de Homebrew (Gestor de paquetes)"
+        class="notes-section"
+      >
+        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+          Instalación de Homebrew (gestor de paquetes)
+        </Heading>
+
+        En sistemas macOS y Linux, <strong>Homebrew</strong> es una herramienta popular
+        para instalar software desde la terminal. Su uso facilita la gestión de herramientas
+        como Git, JDK o Gradle. Instálalo con el siguiente comando:
+
+        <ShellBlock
+          lang="bash"
+          code={`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`}
+          title="Instalación de Homebrew"
+          icon={icons.Bash}
+        />
+
+        Verifica que la instalación fue exitosa:
+
+        <ShellBlock
+          lang="bash"
+          code="brew --version"
+          title="Verificación de Homebrew"
+          icon={icons.Bash}
+        />
+
+        <Tip>
+          <span slot="title">¿Usas Linux?</span>
+          Si estás en Linux, asegúrate de seguir las instrucciones específicas para
+          tu distribución en la <a
+            href="https://docs.brew.sh/Homebrew-on-Linux"
+            target="_blank"
+            rel="noopener noreferrer"
+            >documentación oficial de Homebrew para Linux</a
+          >.
+        </Tip>
+      </section>
+
+      <section
+        title="Instalación de herramientas esenciales"
+        class="notes-section"
+      >
+        <Heading Icon={icons.Hammer} headingLevel="h4">
+          Instalación de herramientas esenciales
+        </Heading>
+
+        Con <strong>Homebrew</strong> puedes instalar las herramientas necesarias
+        para el curso con los siguientes comandos. Esto incluye Git, GitLab CLI, el JDK 21,
+        Gradle y JetBrains Toolbox.
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            brew install git glab temurin@21 gradle
+            brew install --cask jetbrains-toolbox
+          `}
+          title="Instalar herramientas esenciales"
+          icon={icons.Bash}
+        />
+
+        <JDK21Note />
+      </section>
+
+      <DevEnv />
+    </section>
+
+    <section title="Instalación en Linux" class="notes-section">
+      <Heading Icon={icons.LinuxLogo} headingLevel="h3">
+        Instalación en Linux
+      </Heading>
+    </section>
   </section>
 </NotesLayout>

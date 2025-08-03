@@ -1,7 +1,7 @@
 {
   "name": "dibs-astro",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "scripts": {
     "generate-icons": "node generate-icons-index.js",
     "dev": "node generate-icons-index.js && astro dev",
@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.6.2",
     "@astrojs/markdoc": "^0.15.4",
     "@lucide/astro": "^0.536.0",
     "@types/react": "^19.1.9",
@@ -20,7 +19,6 @@
     "astro": "5.12.8",
     "astro-expressive-code": "^0.41.3",
     "clsx": "^2.1.1",
-    "flowbite-react": "^0.12.5",
     "lucide-react": "^0.536.0",
     "phosphor-react": "^1.4.1"
   },

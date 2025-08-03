@@ -33,10 +33,15 @@ interface Props {
    * If not provided, will attempt to auto-resolve based on course structure.
    */
   previous?: { title: string; href: string };
+  /**
+   * Optional multiplier for reading time calculation.
+   * Can be used to adjust the estimated reading time based on content complexity.
+   */
+  timeMultiplier: number;
 }
 
 // Extract current page data and fallback navigation resolution
-const { title, next, previous } = Astro.props as Props;
+const { title, next, previous, timeMultiplier = 1.5 } = Astro.props as Props;
 const pathname = Astro.url.pathname;
 
 // Attempt to auto-resolve previous/next from course structure
@@ -64,7 +69,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     <div class="flex-1 px-4 md:px-8 max-w-screen-xl mx-auto">
       <h1>{title}</h1>
 
-      <ReadingTime />
+      <ReadingTime multiplier={timeMultiplier} />
 
       <slot />
 
@@ -148,7 +153,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 
   /* ----------- */
   .lesson-tree li::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0.75rem;
     left: 0.5rem;

@@ -1,0 +1,22 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import Tip from "~/components/ui/callouts/Tip.astro";
+---
+
+<section title="Configurando el entorno de desarrollo" class="notes-section">
+  <Heading Icon={icons.DesktopTower} headingLevel="h4">
+    Configurando el entorno de desarrollo
+  </Heading>
+
+  Para programar en Kotlin, te recomendamos usar <strong
+    >JetBrains Toolbox</strong
+  > para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), el entorno
+  de desarrollo más completo para este lenguaje.
+
+  <Tip>
+    <span slot="title">¿Prefieres algo más ligero?</span>
+    <strong>Fleet</strong> es una alternativa más rápida y minimalista, ideal para
+    proyectos pequeños. También puedes instalarla desde JetBrains Toolbox.
+  </Tip>
+</section>

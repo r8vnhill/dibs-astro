@@ -1,12 +1,10 @@
 import { defineConfig, sharpImageService } from "astro/config";
-import cloudflare from "@astrojs/cloudflare";
 import tailwindcss from "@tailwindcss/vite";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
 
 import expressiveCode from "astro-expressive-code";
 
 import markdoc from "@astrojs/markdoc";
-import flowbiteReact from "flowbite-react/plugin/astro";
 
 import react from "@astrojs/react";
 
@@ -16,7 +14,6 @@ import react from "@astrojs/react";
  * This setup includes:
  * - React for interactive UI components.
  * - TailwindCSS for utility-first styling.
- * - Cloudflare as the deployment adapter.
  * - Sharp image service for image optimization during build time.
  * - A custom dev server watcher to reload when config files change.
  */
@@ -36,13 +33,13 @@ export default defineConfig({
     devServerFileWatcher([
       "./config/**", // Watch all custom integration and plugin files
       "./src/assets/**", // Watch all assets for changes
+      "./src/data/**", // Watch all data files for changes
     ]),
     expressiveCode({
       themes: ["catppuccin-latte", "catppuccin-mocha"],
       shiki: {},
     }),
     markdoc(),
-    flowbiteReact(),
     react(),
   ],
 
@@ -52,9 +49,6 @@ export default defineConfig({
       tailwindcss(),
     ],
   },
-
-  // Cloudflare adapter to deploy as a Cloudflare Pages Worker
-  adapter: cloudflare(),
 
   image: {
     // Use sharp for image transformations during build (prerendered only)
