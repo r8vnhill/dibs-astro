@@ -28,8 +28,8 @@ export const courseStructure: Lesson[] = [
   { title: "¿Cómo usar este apunte?", href: "/notes/" },
   { title: "Herramientas necesarias y recomendadas", href: "/notes/installation/" },
   {
-    title: "Unidad 1",
-    href: "/unidad-1/",
+    title: "Unidad 1 - Fundamentos de tipos y representaciones de datos",
+    href: "/type-fundamentals/",
     children: [
       {
         title: "Contenido 1",

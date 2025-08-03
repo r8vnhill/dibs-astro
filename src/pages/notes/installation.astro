@@ -1,28 +1,38 @@
 ---
 import * as icons from "~/assets/img/icons";
+import TableFloat from "~/components/floats/TableFloat.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
+import Info from "~/components/ui/callouts/Info.astro";
 import More from "~/components/ui/callouts/More.astro";
+import Note from "~/components/ui/callouts/Note.astro";
 import Tip from "~/components/ui/callouts/Tip.astro";
+import Warning from "~/components/ui/callouts/Warning.astro";
+import CodeBlock from "~/components/ui/code/CodeBlock.astro";
+import InlineCode from "~/components/ui/code/InlineCode.astro";
 import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
 import DevEnv from "~/content/installation/DevEnv.astro";
 import JDK21Note from "~/content/installation/JDK21Note.astro";
+import PreferFleet from "~/content/installation/PreferFleet.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
-<NotesLayout title="Herramientas necesarias y recomendadas" timeMultiplier={3}>
+<NotesLayout
+  title="Herramientas necesarias y recomendadas"
+  timeMultiplier={2.5}
+>
   <Abstract>
     Antes de comenzar a construir bibliotecas de software poderosas, necesitamos
     preparar nuestro taller. Piensa en estas herramientas como compañeras de
     aventura: te ayudarán a escribir código con confianza, colaborar con otrxs,
     automatizar tareas y concentrarte en lo que realmente importa: diseñar
     soluciones elegantes y funcionales. Esta sección te guiará para dejar todo
-    listo en tu sistema operativo favorito. Algunas herramientas son
-    <strong>imprescindibles</strong>; otras, <strong
-      >opcionales pero recomendadas</strong
-    > para mejorar tu experiencia y flujo de trabajo.
+    listo en tu sistema operativo favorito. Algunas herramientas son <strong
+      >imprescindibles</strong
+    >, otras son <strong>opcionales pero recomendadas</strong> para mejorar tu experiencia
+    y flujo de trabajo.
   </Abstract>
 
   <section class="notes-section" title="Herramientas imprescindibles">
@@ -363,8 +373,8 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Heading>
 
         Con <strong>Homebrew</strong> puedes instalar las herramientas necesarias
-        para el curso con los siguientes comandos. Esto incluye Git, GitLab CLI, el JDK 21,
-        Gradle y JetBrains Toolbox.
+        para el curso con los siguientes comandos. Esto incluye Git, GitLab CLI,
+        el JDK 21, Gradle y JetBrains Toolbox.
 
         <ShellBlock
           lang="bash"
@@ -382,10 +392,349 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
       <DevEnv />
     </section>
 
-    <section title="Instalación en Linux" class="notes-section">
+    <section title="Instalación en Linux (Debian/Ubuntu)" class="notes-section">
       <Heading Icon={icons.LinuxLogo} headingLevel="h3">
-        Instalación en Linux
+        Instalación en Linux (Debian/Ubuntu)
       </Heading>
+
+      <Warning>
+        <span slot="title">¿Y si no uso Debian/Ubuntu? 😭</span>
+
+        Entiendo que existen muchas distribuciones de Linux, pero para mantener
+        el enfoque y la claridad, decidimos centrarnos en Debian/Ubuntu por ser
+        las más populares. Aun así, la mayoría de las instrucciones deberían ser
+        fácilmente adaptables a otras distribuciones con gestores de paquetes
+        similares. Si lo deseas, puedes contribuir con una guía para tu
+        distribución favorita en el repositorio del curso. No puedo garantizar
+        que se incluya oficialmente ni que su contenido se mantenga actualizado,
+        pero sin duda puede ser útil para otrxs.
+      </Warning>
+
+      <section title="Instalación de Git">
+        <Heading Icon={icons.GitBranch} headingLevel="h4">
+          Instalación de Git
+        </Heading>
+
+        Para instalar Git en Debian o Ubuntu, ejecuta los siguientes comandos:
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            sudo apt update
+            sudo apt install git
+          `}
+          title="Instalación de Git"
+          icon={icons.Bash}
+        />
+      </section>
+
+      <section title="Instalación de GitLab CLI">
+        <Heading Icon={icons.GitlabLogo} headingLevel="h4">
+          Instalación de GitLab CLI
+        </Heading>
+
+        <p>
+          Guarda el siguiente script como <InlineCode
+            code="install_glab.sh"
+            lang="bash"
+          />:
+        </p>
+
+        <CodeBlock
+          lang="bash"
+          filename="install_glab.sh"
+          code={`
+            #!/bin/bash
+            set -e
+
+            # Prefer /usr/local/bin, but if not running as root, fallback to ~/.local/bin
+            INSTALL_DIR=/usr/local/bin
+            if [ "$(id -u)" -ne 0 ]; then
+              echo "Warning: not running as root; installing to ~/.local/bin instead"
+              INSTALL_DIR="$HOME/.local/bin"
+              mkdir -p "$INSTALL_DIR"
+            fi
+
+            # Map uname to release naming
+            arch=$(uname -m)
+            case "$arch" in
+              x86_64) arch_label="amd64" ;;
+              aarch64) arch_label="arm64" ;;
+              *) echo "Unsupported architecture: $arch"; exit 1 ;;
+            esac
+
+            # Fetch latest release tag from GitLab API
+            project="gitlab-org%2Fcli"
+            tag=$(curl -s "https://gitlab.com/api/v4/projects/\${project}/releases?per_page=1" \\
+              | grep -o '"tag_name":"v[0-9.]\\+"' | head -n1 | cut -d '"' -f4)
+
+            if [ -z "$tag" ]; then
+              echo "Failed to fetch latest release tag."
+              exit 1
+            fi
+
+            ver_no_v="\${tag#v}"
+            file="glab_\${ver_no_v}_linux_\${arch_label}.tar.gz"
+            url="https://gitlab.com/gitlab-org/cli/-/releases/\${tag}/downloads/\${file}"
+            tmp=\$(mktemp -d)
+
+            echo "Downloading \${file}..."
+            curl -sL "$url" | tar -xz -C "$tmp"
+
+            # Find the extracted binary
+            binary=$(find "$tmp" -maxdepth 3 -type f -name glab -perm /u=x | head -n1)
+            if [ -z "$binary" ]; then
+              echo "glab binary not found after extraction."
+              rm -rf "$tmp"
+              exit 1
+            fi
+
+            # Install it
+            install -m755 "$binary" "\${INSTALL_DIR}/glab"
+            rm -rf "$tmp"
+
+            echo "glab \${tag} installed in \${INSTALL_DIR}"
+          `}
+          ><span slot="title"
+            >Script de instalación de GitLab CLI (requiere <InlineCode
+              code="curl"
+              lang="bash"
+            />)</span
+          ></CodeBlock
+        >
+
+        <p>Hazlo ejecutable y corre el instalador:</p>
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            chmod +x install_glab.sh
+            sudo ./install_glab.sh # or ./install_glab.sh if you don't use sudo and accept installation in ~/.local/bin
+          `}
+        />
+      </section>
+
+      <section
+        title="Instalación de SDKMAN! (Gestor de SDKs como Java y Gradle)"
+      >
+        <Heading Icon={icons.Toolbox} headingLevel="h4">
+          Instalación de SDKMAN! (gestor de SDKs como Java y Gradle)
+        </Heading>
+
+        <Info>
+          <span slot="title">¿Qué es SDKMAN!?</span>
+          SDKMAN! es una herramienta de línea de comandos para instalar, gestionar
+          y cambiar versiones de SDKs como Java, Gradle, Maven, entre otros. Es especialmente
+          útil para mantener múltiples versiones de herramientas en entornos de desarrollo.
+        </Info>
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            curl -s "https://get.sdkman.io" | bash
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+          `}
+          title="Instalación de SDKMAN!"
+          icon={icons.Bash}
+        />
+
+        <ShellBlock
+          lang="bash"
+          code="sdk version"
+          title="Verificación de SDKMAN!"
+          icon={icons.Bash}
+        />
+
+        <Note>
+          <span slot="title">¿Qué SDKs puedo instalar?</span>
+          Con SDKMAN! puedes instalar versiones específicas de Java, Gradle, Kotlin,
+          Scala y muchas otras herramientas populares. Puedes listarlas con <InlineCode
+            code="sdk list"
+          />.
+        </Note>
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            sdk install java
+            sdk install gradle
+          `}
+          title="Instalar Java y Gradle"
+          icon={icons.Bash}
+        />
+
+        <ShellBlock
+          lang="bash"
+          code={`
+            java --version
+            gradle --version
+          `}
+          title="Verificar versiones instaladas"
+          icon={icons.Bash}
+        />
+      </section>
+
+      <section title="Configurando el entorno de desarrollo">
+        <Heading Icon={icons.DesktopTower} headingLevel="h4">
+          Configurando el entorno de desarrollo
+        </Heading>
+
+        Para programar en Kotlin, te recomendamos usar <strong
+          >JetBrains Toolbox</strong
+        > para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), el
+        entorno de desarrollo más completo para este lenguaje. Puedes descargar JetBrains
+        Toolbox desde su <a
+          href="https://www.jetbrains.com/toolbox-app/download/"
+          target="_blank"
+          rel="noopener noreferrer">sitio oficial</a
+        >.
+
+        <PreferFleet />
+      </section>
+    </section>
+
+    <section title="Resumen de instalación por sistema operativo">
+      <Heading Icon={icons.ListChecks} headingLevel="h3">
+        Resumen de instalación por sistema operativo
+      </Heading>
+
+      <TableFloat maxWidth="none">
+        <span slot="caption">
+          Comandos recomendados para instalar las herramientas necesarias en
+          cada sistema operativo.
+        </span>
+
+        <table class="not-prose w-full border-collapse text-sm sm:text-base">
+          <colgroup>
+            <col class="w-[28%]" />
+            <col class="w-[24%]" />
+            <col class="w-[24%]" />
+            <col class="w-[24%]" />
+          </colgroup>
+          <thead
+            class="border-b border-gray-500/30 dark:border-gray-400/20 text-primary"
+          >
+            <tr>
+              <th class="text-left align-middle py-3 px-4 font-semibold">
+                <div class="flex items-center gap-2">
+                  <icons.Toolbox class="h-4 w-4" />
+                  <span>Herramienta</span>
+                </div>
+              </th>
+              <th class="text-left align-middle py-3 px-4 font-semibold">
+                <div class="flex items-center gap-2">
+                  <icons.WindowsLogo class="h-4 w-4" />
+                  <span>Windows (Scoop)</span>
+                </div>
+              </th>
+              <th class="text-left align-middle py-3 px-4 font-semibold">
+                <div class="flex items-center gap-2">
+                  <icons.AppleLogo class="h-4 w-4" />
+                  <span>macOS (Homebrew)</span>
+                </div>
+              </th>
+              <th class="text-left align-middle py-3 px-4 font-semibold">
+                <div class="flex items-center gap-2">
+                  <icons.LinuxLogo class="h-4 w-4" />
+                  <span>Linux (SDKMAN!)</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-300/20 dark:divide-gray-600/20">
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4">Git</td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="scoop install git" lang="powershell" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="brew install git" lang="bash" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="sudo apt install git" lang="bash" />
+              </td>
+            </tr>
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4">GitLab CLI</td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="scoop install glab" lang="powershell" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="brew install glab" lang="bash" />
+              </td>
+              <td class="py-2.5 px-4 italic text-gray-500 dark:text-gray-400">
+                Ver script arriba
+              </td>
+            </tr>
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4">JDK</td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="scoop install openjdk21" lang="powershell" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="brew install temurin@21" lang="bash" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="sdk install java" lang="bash" />
+              </td>
+            </tr>
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4">Gradle</td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="scoop install gradle" lang="powershell" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="brew install gradle" lang="bash" />
+              </td>
+              <td class="py-2.5 px-4">
+                <InlineCode code="sdk install gradle" lang="bash" />
+              </td>
+            </tr>
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4"
+                >IntelliJ IDEA</td
+              >
+              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
+              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
+              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
+            </tr>
+            <tr>
+              <td class="text-primary font-semibold py-2.5 px-4">Alternativa</td
+              >
+              <td class="py-2.5 px-4 font-bold text-accent">Fleet</td>
+              <td class="py-2.5 px-4 font-bold text-accent">Fleet</td>
+              <td class="py-2.5 px-4 font-bold text-accent">Fleet</td>
+            </tr>
+          </tbody>
+        </table>
+      </TableFloat>
+    </section>
+
+    <section title="Verificación final del entorno">
+      <Heading Icon={icons.CheckCircle} headingLevel="h3">
+        Verificación final del entorno
+      </Heading>
+
+      Asegúrate de que todas las herramientas necesarias están correctamente
+      instaladas ejecutando el siguiente comando:
+
+      <ShellBlock
+        lang="bash"
+        code={`git --version && glab --version && java -version && gradle -v`}
+        title="Verificación del entorno"
+        icon={icons.TerminalWindow}
+      />
+
+      Si el comando se ejecuta sin errores, ¡felicitaciones! Tu entorno de
+      desarrollo está listo para comenzar a programar en Kotlin.
     </section>
   </section>
+
+  <Note>
+    <span slot="title">Accesibilidad</span>
+
+    Si usas un lector de pantalla o tienes alguna necesidad particular respecto
+    al entorno de desarrollo, por favor comunícalo para que podamos ayudarte a
+    configurar una alternativa accesible.
+  </Note>
 </NotesLayout>

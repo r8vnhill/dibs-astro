@@ -37,11 +37,11 @@ interface Props {
    * Optional multiplier for reading time calculation.
    * Can be used to adjust the estimated reading time based on content complexity.
    */
-  timeMultiplier: number;
+  timeMultiplier?: number;
 }
 
 // Extract current page data and fallback navigation resolution
-const { title, next, previous, timeMultiplier = 1.5 } = Astro.props as Props;
+const { title, next, previous, timeMultiplier } = Astro.props as Props;
 const pathname = Astro.url.pathname;
 
 // Attempt to auto-resolve previous/next from course structure
@@ -69,7 +69,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     <div class="flex-1 px-4 md:px-8 max-w-screen-xl mx-auto">
       <h1>{title}</h1>
 
-      <ReadingTime multiplier={timeMultiplier} />
+      <ReadingTime multiplier={timeMultiplier ?? 1.5} />
 
       <slot />
 

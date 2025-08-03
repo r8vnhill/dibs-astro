@@ -20,7 +20,7 @@ export interface Props {
 }
 
 // Destructure and apply defaults for props
-const { caption, maxWidth = "700px", className = "", style = {} } = Astro.props;
+const { caption, maxWidth = "1000px", className = "", style = {} } = Astro.props;
 
 // Merge maxWidth with other styles
 const mergedStyle = { maxWidth, ...style };
@@ -59,7 +59,7 @@ const mergedStyle = { maxWidth, ...style };
       Conditionally rendered caption, centered and visually styled as a note.
     -->
     {
-      caption && (
+      (Astro.slots.caption || caption) && (
         <figcaption
           class:list={[
             "px-4",
@@ -70,7 +70,12 @@ const mergedStyle = { maxWidth, ...style };
             "dark:text-gray-400",
           ]}
         >
-          <strong class="mr-1">Tab.</strong> <span>{caption}</span>
+          <strong class="mr-1">Tab.</strong>
+          {Astro.slots.caption ? (
+            <slot name="caption" />
+          ) : (
+            <span>{caption}</span>
+          )}
         </figcaption>
       )
     }
