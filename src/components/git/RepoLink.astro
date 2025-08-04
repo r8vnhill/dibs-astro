@@ -1,0 +1,36 @@
+---
+import * as Icons from "~/assets/img/icons";
+
+export interface Props {
+    user: string;
+    repo: string;
+    platform: "github" | "gitlab";
+}
+
+const { user, repo, platform } = Astro.props;
+
+const urls = {
+    github: `https://github.com/${user}/${repo}`,
+    gitlab: `https://gitlab.com/${user}/${repo}`,
+};
+
+const Icon = platform === "github" ? Icons.GithubLogo : Icons.GitlabLogo;
+---
+
+<a
+    href={urls[platform]}
+    target="_blank"
+    rel="noopener noreferrer"
+    class:list={[
+        "inline-flex",
+        "items-center",
+        "gap-2",
+        "text-blue-600",
+        "dark:text-blue-400",
+        "hover:underline",
+        "text-sm",
+    ]}
+>
+    <Icon class="h-4 w-4 shrink-0" />
+    <span class="truncate">{user}/{repo}</span>
+</a>

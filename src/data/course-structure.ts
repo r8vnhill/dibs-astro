@@ -29,11 +29,11 @@ export const courseStructure: Lesson[] = [
   { title: "Herramientas necesarias y recomendadas", href: "/notes/installation/" },
   {
     title: "Unidad 1 - Fundamentos de tipos y representaciones de datos",
-    href: "/type-fundamentals/",
+    href: "/notes/type-fundamentals/",
     children: [
       {
-        title: "Contenido 1",
-        href: "/unidad-1/contenido-1/",
+        title: "Kotlin",
+        href: "/notes/type-fundamentals/basics/",
         children: [
           { title: "Subcontenido 1", href: "/unidad-1/contenido-1/sub1/" },
         ],

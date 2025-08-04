@@ -16,6 +16,8 @@ import * as icons from "~/assets/img/icons";
 import { courseStructure } from "~/data/course-structure";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import { normalizeNavigation, resolveAutoNav } from "~/utils";
+import RepoLinks from "~/components/git/RepoLinks.astro";
+import RepoLink from "~/components/git/RepoLink.astro";
 
 // Props passed to the layout (can optionally override next/previous buttons)
 interface Props {
@@ -38,10 +40,18 @@ interface Props {
    * Can be used to adjust the estimated reading time based on content complexity.
    */
   timeMultiplier?: number;
+  /**
+   * Optional repository information for the lesson.
+   * If provided, will render a link to the repository.
+   */
+  git?: {
+    user: string;
+    repo: string;
+  };
 }
 
 // Extract current page data and fallback navigation resolution
-const { title, next, previous, timeMultiplier } = Astro.props as Props;
+const { title, next, previous, timeMultiplier, git } = Astro.props as Props;
 const pathname = Astro.url.pathname;
 
 // Attempt to auto-resolve previous/next from course structure
@@ -54,7 +64,7 @@ const effectiveNext = next ?? autoNav.next ?? undefined;
 // Normalize hrefs for consistency (e.g. ensure trailing slashes)
 const { normalizedNext, normalizedPrevious } = normalizeNavigation(
   effectiveNext,
-  effectivePrevious
+  effectivePrevious,
 );
 ---
 
@@ -66,10 +76,49 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     </div>
 
     <!-- Main content area -->
-    <div class="flex-1 px-4 md:px-8 max-w-screen-xl mx-auto">
+    <div
+      class:list={["flex-1", "px-4", "md:px-8", "max-w-screen-xl", "mx-auto"]}
+    >
       <h1>{title}</h1>
 
       <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+
+      {
+        git && (
+          <div
+            class:list={[
+              "rounded-md",
+              "border",
+              "px-4",
+              "py-3",
+              "text-sm",
+              "bg-purple-50",
+              "text-purple-800",
+              "border-purple-300",
+              "dark:bg-purple-950/40",
+              "dark:text-purple-200",
+              "dark:border-purple-700/50",
+              "mt-2",
+            ]}
+          >
+            <span class="font-semibold">
+              Encuentra el código de la lección:
+            </span>
+            <div
+              class:list={[
+                "mt-2",
+                "flex",
+                "flex-wrap",
+                "gap-4",
+                "items-center",
+              ]}
+            >
+              <RepoLink {...git} platform="gitlab" />
+              <RepoLink {...git} platform="github" />
+            </div>
+          </div>
+        )
+      }
 
       <slot />
 

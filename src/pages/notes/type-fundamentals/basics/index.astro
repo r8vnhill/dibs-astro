@@ -1,0 +1,32 @@
+---
+import NotesLayout from "~/layouts/NotesLayout.astro";
+
+const title = "Kotlin: Un lenguaje pragmático y moderno";
+---
+
+<NotesLayout
+  title={title}
+  git={{
+    user: "r8vnhill",
+    repo: "intro-kt",
+  }}
+>
+  <div class:list={["my-6", "flex", "justify-center"]}>
+    <img
+      src="/src/assets/img/kotlin.jpg"
+      alt="El gato se llama Kotlin"
+      class:list={["max-w-full", "rounded-md", "border", "border-gray-300", "dark:border-gray-700", "shadow-sm"]}
+    />
+  </div>
+
+  <Abstract>
+    Kotlin es un lenguaje moderno que se destaca por su **pragmatismo**, **claridad** y fuerte **enfoque en la seguridad**. En los últimos años ha ganado gran popularidad gracias a su capacidad para combinar de forma efectiva los paradigmas de **programación orientada a objetos** y **programación funcional**, todo dentro de una sintaxis concisa y expresiva.
+
+    En este curso exploraremos Kotlin como una herramienta para el **diseño e implementación de bibliotecas de software reutilizables**. Su interoperabilidad con Java, su modelo seguro frente a valores nulos, el soporte para **funciones de extensión**, **corrutinas** y otras características modernas lo convierten en una excelente opción para construir componentes **modulares**, **mantenibles** y **multiplataforma**.
+
+    Esta primera lección ofrece una **introducción al lenguaje y a su filosofía**. Veremos cómo se escribe en Kotlin, en qué se diferencia de otros lenguajes, y qué ventajas ofrece a quienes buscan escribir código **expresivo**, **seguro** y **pragmático** desde el comienzo.
+
+    A través de ejemplos simples y comparaciones prácticas, comenzaremos a sentar las bases que guiarán el resto del curso.
+  </Abstract>
+</NotesLayout>
+
