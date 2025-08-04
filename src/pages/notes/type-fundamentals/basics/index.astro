@@ -7,6 +7,9 @@ import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
+import Cons from "~/components/ui/procons/Cons.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 
 const title = "Kotlin: Un lenguaje pragmático y moderno";
@@ -21,7 +24,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
 >
   <div class:list={["my-6", "flex", "justify-center"]}>
     <img
-      src="/src/assets/img/kotlin.jpg"
+      src="/img/kotlin.jpg"
       alt="El gato se llama Kotlin"
       class:list={[
         "max-w-full",
@@ -320,4 +323,14 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       </ListItem>
     </List>
   </section>
+
+  <ProCons>
+    <Pros>
+      <ul>
+        <li>a</li>
+        <li>b</li>
+      </ul>
+    </Pros>
+    <Cons></Cons>
+  </ProCons>
 </NotesLayout>

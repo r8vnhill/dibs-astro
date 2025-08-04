@@ -1,0 +1,13 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div
+  class={`flex flex-wrap gap-8 my-8 justify-between items-start overflow-hidden ${className ?? ""}`}
+>
+  <slot />
+</div>

@@ -1,0 +1,19 @@
+---
+import ContentBlock from "./ContentBlock.astro";
+
+export interface Props {
+  title?: string;
+  defaultTitle?: string;
+  class?: string;
+}
+
+const { title, defaultTitle = "Beneficios", class: className } = Astro.props;
+---
+
+<ContentBlock
+  title={title}
+  defaultTitle={defaultTitle}
+  class={`border-l-4 border-green-500 pl-4 text-green-800 dark:text-green-300 ${className ?? ""}`}
+>
+  <slot />
+</ContentBlock>
