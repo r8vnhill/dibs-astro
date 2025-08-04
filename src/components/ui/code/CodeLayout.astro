@@ -143,33 +143,34 @@ const normalizedCode = normalizeIndentation(code);
 
 <!-- Code block container -->
 <div class:list={[...baseClasses, className]}>
-  {(Astro.slots.title || title) && (
-  <div class:list={[...baseTitleClasses, titleClasses]}>
-    {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
-    {Astro.slots.title ? (
-      <div class="truncate">
-        <slot name="title" />
+  {
+    (Astro.slots.title || title) && (
+      <div class:list={[...baseTitleClasses, titleClasses]}>
+        {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
+        {Astro.slots.title ? (
+          <div class="truncate">
+            <slot name="title" />
+          </div>
+        ) : (
+          <span class="truncate">{title}</span>
+        )}
+        {source && (
+          <span
+            class:list={[
+              "ml-auto",
+              "text-s",
+              "font-mono",
+              "text-primary/60",
+              "italic",
+              "truncate",
+            ]}
+          >
+            {source}
+          </span>
+        )}
       </div>
-    ) : (
-      <span class="truncate">{title}</span>
-    )}
-    {source && (
-      <span
-        class:list={[
-          "ml-auto",
-          "text-s",
-          "font-mono",
-          "text-primary/60",
-          "italic",
-          "truncate",
-        ]}
-      >
-        {source}
-      </span>
-    )}
-  </div>
-)}
-
+    )
+  }
 
   <!-- Button container: positions the copy button separately -->
   <div class="relative">

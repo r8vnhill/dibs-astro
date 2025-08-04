@@ -15,6 +15,7 @@
 
 import { Code } from "astro:components";
 import { availableLanguages } from "~/lib/shiki/highlighter";
+import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 
 // Component props definition
 type Props = {
@@ -43,4 +44,5 @@ const { code, lang, codeClasses } = Astro.props;
   ]}
   role="code"
   wrap
+  transformers={[transformerColorizedBrackets()]}
 />

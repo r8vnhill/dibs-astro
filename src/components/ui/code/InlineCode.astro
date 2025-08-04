@@ -2,42 +2,67 @@
 /**
  * InlineCode.astro
  *
- * Renders inline code using two Shiki-highlighted themes: one for light mode and one for dark mode.
- * It uses Tailwind’s `dark:` variant to toggle between the two themes based on the user’s system preference.
- *
- * This approach avoids relying on global styles and ensures that inline code appears correctly styled
- * in both light and dark color schemes.
- *
- * @property {string} code - The code snippet to highlight.
- * @property {string} lang - The programming language of the code (e.g., 'kt', 'ts', 'js').
+ * Displays inline code with dual Shiki themes (light/dark) using Astro's <Code /> component.
+ * Ensures good typography, accessibility, and theming consistency using Tailwind utilities.
  */
 
+import type { CodeLanguage } from "astro";
 import { Code } from "astro:components";
 
-const { code, lang } = Astro.props;
+type Props = {
+  /**
+   * Code snippet to render inline.
+   */
+  code: string;
+  /**
+   * Language for syntax highlighting.
+   */
+  lang: CodeLanguage;
+  /**
+   * Additional Tailwind classes.
+   */
+  class?: string;
+};
+
+const { code, lang, class: className = "" } = Astro.props as Props;
+
+const safeLang = lang || "txt";
+const baseStyle = `
+  text-[0.95em]
+  font-mono
+  rounded
+  px-1.5
+  py-[1px]
+  whitespace-nowrap
+  bg-transparent
+`;
 ---
 
-<!--
-  Render the code with the light theme (catppuccin-latte).
-  This block is visible only in light mode (`dark:hidden`).
-  We ensure it displays inline using `inline` or `inline-block`.
--->
-<Code
-  code={code}
-  lang={lang}
-  inline
-  theme="catppuccin-latte"
-  class="inline dark:hidden"
-/>
-
-<!--
-  Render the code with the dark theme (catppuccin-mocha).
-  This block is hidden by default and only shown in dark mode (`dark:inline`).
--->
-<Code
-  code={code}
-  lang={lang}
-  inline
-  theme="catppuccin-mocha"
-  class="hidden dark:inline"
-/>
+<code
+  class:list={[
+    "inline-block",
+    "align-[0.05em]",
+    "leading-[1.4]",
+    baseStyle,
+    className,
+  ]}
+>
+  <span class="dark:hidden">
+    <Code
+      code={code}
+      lang={safeLang}
+      inline
+      theme="catppuccin-latte"
+      class:list={["!bg-transparent", "!shadow-none"]}
+    />
+  </span>
+  <span class="hidden dark:inline">
+    <Code
+      code={code}
+      lang={safeLang}
+      inline
+      theme="catppuccin-mocha"
+      class:list={["!bg-transparent", "!shadow-none"]}
+    />
+  </span>
+</code>

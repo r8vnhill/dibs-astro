@@ -1,4 +1,12 @@
 ---
+import * as Icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import Abstract from "~/components/ui/callouts/Abstract.astro";
+import Explanation from "~/components/ui/callouts/Explanation.astro";
+import CodeBlock from "~/components/ui/code/CodeBlock.astro";
+import InlineCode from "~/components/ui/code/InlineCode.astro";
+import List from "~/components/ui/list/List.astro";
+import ListItem from "~/components/ui/list/ListItem.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 
 const title = "Kotlin: Un lenguaje pragmático y moderno";
@@ -15,18 +23,301 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     <img
       src="/src/assets/img/kotlin.jpg"
       alt="El gato se llama Kotlin"
-      class:list={["max-w-full", "rounded-md", "border", "border-gray-300", "dark:border-gray-700", "shadow-sm"]}
+      class:list={[
+        "max-w-full",
+        "rounded-md",
+        "border",
+        "border-gray-300",
+        "dark:border-gray-700",
+        "shadow-sm",
+      ]}
     />
   </div>
 
   <Abstract>
-    Kotlin es un lenguaje moderno que se destaca por su **pragmatismo**, **claridad** y fuerte **enfoque en la seguridad**. En los últimos años ha ganado gran popularidad gracias a su capacidad para combinar de forma efectiva los paradigmas de **programación orientada a objetos** y **programación funcional**, todo dentro de una sintaxis concisa y expresiva.
-
-    En este curso exploraremos Kotlin como una herramienta para el **diseño e implementación de bibliotecas de software reutilizables**. Su interoperabilidad con Java, su modelo seguro frente a valores nulos, el soporte para **funciones de extensión**, **corrutinas** y otras características modernas lo convierten en una excelente opción para construir componentes **modulares**, **mantenibles** y **multiplataforma**.
-
-    Esta primera lección ofrece una **introducción al lenguaje y a su filosofía**. Veremos cómo se escribe en Kotlin, en qué se diferencia de otros lenguajes, y qué ventajas ofrece a quienes buscan escribir código **expresivo**, **seguro** y **pragmático** desde el comienzo.
-
-    A través de ejemplos simples y comparaciones prácticas, comenzaremos a sentar las bases que guiarán el resto del curso.
+    <p>
+      Kotlin es un lenguaje moderno que destaca por su <strong
+        >pragmatismo</strong
+      >,
+      <strong>claridad</strong> y un fuerte <strong
+        >enfoque en la seguridad</strong
+      >. En los últimos años ha ganado gran popularidad gracias a su capacidad
+      para combinar de forma eficaz los paradigmas de
+      <strong>programación orientada a objetos</strong> y <strong
+        >programación funcional</strong
+      >, todo dentro de una sintaxis concisa y expresiva.
+    </p>
+    <p>
+      En este curso exploraremos Kotlin como una herramienta para el <strong
+        >diseño e implementación de bibliotecas de software reutilizables</strong
+      >. Su interoperabilidad con Java, su modelo seguro frente a valores nulos,
+      el soporte para
+      <strong>funciones de extensión</strong>, <strong>corrutinas</strong> y otras
+      características modernas lo convierten en una excelente opción para construir
+      componentes <strong>modulares</strong>,
+      <strong>mantenibles</strong> y <strong>multiplataforma</strong>.
+    </p>
+    <p>
+      Esta primera lección ofrece una <strong
+        >introducción al lenguaje y a su filosofía</strong
+      >. Veremos cómo se escribe en Kotlin, en qué se diferencia de otros
+      lenguajes, y qué ventajas ofrece a quienes buscan escribir código <strong
+        >expresivo</strong
+      >, <strong>seguro</strong> y <strong>pragmático</strong> desde el comienzo.
+    </p>
+    <p>
+      A través de ejemplos simples y comparaciones prácticas, comenzaremos a
+      sentar las bases que guiarán el resto del curso.
+    </p>
   </Abstract>
-</NotesLayout>
 
+  <section title="¿Qué aprenderás en este módulo?">
+    <Heading headingLevel="h2" Icon={Icons.BookOpen}>
+      ¿Qué aprenderás en este módulo?
+    </Heading>
+
+    <p>
+      En este módulo introductorio conocerás los fundamentos esenciales de
+      Kotlin y cómo aplicarlos para crear software reutilizable y expresivo. A
+      lo largo de estas lecciones:
+    </p>
+
+    <List>
+      <ListItem icon={Icons.Compass}>
+        Descubrirás qué es Kotlin, cuál es su filosofía y por qué es una
+        excelente opción para construir bibliotecas modernas.
+      </ListItem>
+      <ListItem icon={Icons.Code}>
+        Aprenderás a declarar funciones y variables, y a diferenciar entre
+        valores mutables e inmutables.
+      </ListItem>
+      <ListItem icon={Icons.SplitHorizontal}>
+        Comprenderás la diferencia entre expresiones y declaraciones, y cómo
+        aprovecharla para escribir código más claro y conciso.
+      </ListItem>
+      <ListItem icon={Icons.FlowArrow}>
+        Explorarás estructuras de control como condicionales, ciclos y rangos, y
+        su sintaxis idiomática en Kotlin.
+      </ListItem>
+      <ListItem icon={Icons.PlayCircle}>
+        Verás cómo funciona el <strong>punto de entrada</strong> de un programa Kotlin
+        y cómo ejecutar tu primer proyecto con Gradle.
+      </ListItem>
+    </List>
+
+    <p class="mt-4">
+      Este módulo sentará las bases conceptuales y prácticas para lo que sigue:
+      técnicas para diseñar bibliotecas reutilizables, seguras y fáciles de
+      mantener.
+    </p>
+  </section>
+
+  <section title="Objetivos de aprendizaje">
+    <Heading headingLevel="h2" Icon={Icons.Target}
+      >Objetivos de aprendizaje</Heading
+    >
+
+    <p>Al finalizar este módulo, serás capaz de:</p>
+
+    <List>
+      <ListItem icon={Icons.BookOpenText}>
+        Explicar qué es Kotlin, cuál es su filosofía y por qué es una excelente
+        opción para desarrollar bibliotecas reutilizables y multiplataforma.
+      </ListItem>
+      <ListItem icon={Icons.CodeSimple}>
+        Declarar funciones y variables, comprendiendo la diferencia entre <InlineCode
+          code={`val`}
+          lang="kt"
+        /> y <InlineCode code={`var`} lang="kt" />, así como el uso de tipos
+        básicos.
+      </ListItem>
+      <ListItem icon={Icons.GitBranch}>
+        Utilizar expresiones condicionales para modelar decisiones de forma
+        clara, concisa e idiomática.
+      </ListItem>
+      <ListItem icon={Icons.Repeat}>
+        Aplicar ciclos y rangos para recorrer colecciones y estructuras
+        repetitivas siguiendo las convenciones del lenguaje.
+      </ListItem>
+      <ListItem icon={Icons.Terminal}>
+        Identificar la estructura general de un programa en Kotlin y su punto de
+        entrada.
+      </ListItem>
+      <ListItem icon={Icons.TextAa}>
+        Emplear interpolación de cadenas para construir mensajes dinámicos de
+        manera expresiva.
+      </ListItem>
+    </List>
+
+    <p class="mt-4">
+      Estos objetivos te permitirán construir una base sólida para abordar temas
+      más avanzados como tipos algebraicos, control de flujo funcional y diseño
+      orientado a la composición.
+    </p>
+  </section>
+
+  <section title="¿Qué es Kotlin?">
+    <Heading headingLevel="h2" Icon={Icons.Cat}>¿Qué es Kotlin?</Heading>
+
+    <p>
+      <strong>Kotlin</strong> es un lenguaje de programación <strong
+        >moderno y multiplataforma</strong
+      > desarrollado por <strong>JetBrains</strong>. Combina características de
+      la <strong>programación orientada a objetos</strong> y de la <strong
+        >programación funcional</strong
+      >, y se destaca por su <strong>sintaxis concisa</strong>, su <strong
+        >enfoque en la seguridad</strong
+      > y su capacidad para compilar a múltiples plataformas:
+    </p>
+
+    <List>
+      <ListItem icon={Icons.Globe}>
+        <strong>JavaScript (JS)</strong> y <strong>WebAssembly (WASM)</strong> para
+        ejecución en navegadores.
+      </ListItem>
+      <ListItem icon={Icons.Stack}>
+        <strong>Java Virtual Machine (JVM)</strong> para aplicaciones de servidor
+        y desarrollo en Android.
+      </ListItem>
+      <ListItem icon={Icons.Cpu}>
+        <strong>LLVM</strong> para aplicaciones nativas en escritorio, iOS y sistemas
+        embebidos.
+      </ListItem>
+    </List>
+
+    <p class="mt-4">
+      En este curso nos enfocaremos en <strong>Kotlin sobre la JVM</strong>, la
+      plataforma más consolidada del ecosistema. Sin embargo, los conceptos que
+      aprenderás son altamente <strong>transferibles</strong> a las demás plataformas
+      compatibles y aplicables en muchos otros <strong
+        >lenguajes modernos</strong
+      >.
+    </p>
+  </section>
+
+  <section title="A Taste of Kotlin">
+    <Heading headingLevel="h2" Icon={Icons.Code}> A Taste of Kotlin </Heading>
+
+    <p>
+      A continuación, te mostramos un ejemplo sencillo en Kotlin para que te
+      familiarices con su sintaxis expresiva y concisa:
+    </p>
+
+    <CodeBlock
+      icon={Icons.Kotlin}
+      code={`
+        data class Person(
+            val name: String,
+            val age: Int? = null
+        )
+
+        fun main() {
+            val persons = listOf(
+                Person("Harrier Du Bois"),
+                Person("Kim Kitsuragi", age = 43)
+            )
+            val youngest = persons.minByOrNull { it.age ?: Int.MAX_VALUE }
+            println("The youngest is: $youngest")
+        }
+        // Output: The youngest is: Person(name=Kim Kitsuragi, age=43)
+      `}
+      lang="kt"
+      ><span slot="title">Primer programa: filtrar y mostrar datos</span
+      ></CodeBlock
+    >
+
+    <Explanation>
+      <List>
+        <ListItem icon={Icons.Users}>
+          Se define una <InlineCode code="data class" lang="kt" /> llamada <InlineCode
+            code="Person"
+            lang="kt"
+          />
+          con dos propiedades: <InlineCode code="name" lang="kt" /> de tipo <InlineCode
+            code="String"
+            lang="kt"
+          />
+          y <InlineCode code="age" lang="kt" /> de tipo <InlineCode
+            code="Int?"
+            lang="kt"
+          /> (puede ser nulo).
+        </ListItem>
+
+        <ListItem icon={Icons.SlidersHorizontal}>
+          La propiedad <InlineCode code="age" lang="kt" /> tiene un valor por defecto
+          (<InlineCode code="null" lang="kt" />), lo que permite omitirla al
+          crear una instancia.
+        </ListItem>
+
+        <ListItem icon={Icons.ListBullets}>
+          Se crea una lista inmutable con <InlineCode
+            code="listOf"
+            lang="kt"
+          />, que contiene dos objetos <InlineCode code="Person" lang="kt" />.
+        </ListItem>
+
+        <ListItem icon={Icons.PencilSimple}>
+          En la segunda instancia se utiliza una <strong
+            >asignación nombrada</strong
+          > (<InlineCode code="age = 43" lang="kt" />) para mayor claridad y
+          legibilidad.
+        </ListItem>
+
+        <ListItem icon={Icons.ArrowDown}>
+          Se emplea <InlineCode code="minByOrNull" lang="kt" /> junto con el operador
+          Elvis (<InlineCode code="?:" lang="kt" />) para ignorar los valores
+          nulos y encontrar la persona más joven.
+        </ListItem>
+
+        <ListItem icon={Icons.Warning}>
+          Si todas las edades fueran nulas, se usa <InlineCode
+            code="Int.MAX_VALUE"
+            lang="kt"
+          /> como valor de reemplazo para evitar errores.
+        </ListItem>
+
+        <ListItem icon={Icons.TextAa}>
+          Finalmente, se imprime el resultado usando <strong
+            >interpolación de cadenas</strong
+          >.
+        </ListItem>
+      </List>
+    </Explanation>
+  </section>
+
+  <section title="Filosofía de Kotlin">
+    <Heading headingLevel="h2" Icon={Icons.BracketsAngle}
+      >Filosofía de Kotlin</Heading
+    >
+
+    <p>
+      Kotlin fue diseñado con el propósito de hacer la programación más
+      sencilla, segura y expresiva, sin renunciar a la flexibilidad ni a la
+      potencia. En lugar de introducir ideas experimentales o radicales, adopta
+      prácticas consolidadas de otros lenguajes modernos y las integra de forma
+      coherente y pragmática.
+    </p>
+    <p>Entre sus principios fundamentales se encuentran:</p>
+    <List>
+      <ListItem icon={Icons.Wrench}>
+        <strong>Pragmatismo</strong>: resuelve problemas reales de forma
+        efectiva, priorizando la practicidad sobre las restricciones
+        artificiales.
+      </ListItem>
+      <ListItem icon={Icons.AlignLeft}>
+        <strong>Concisión y legibilidad</strong>: su sintaxis reduce la
+        verbosidad sin sacrificar claridad.
+      </ListItem>
+      <ListItem icon={Icons.ShieldCheck}>
+        <strong>Seguridad</strong>: previene errores comunes en tiempo de
+        compilación —como las referencias nulas— y fomenta un código más
+        robusto.
+      </ListItem>
+      <ListItem icon={Icons.Eye}>
+        <strong>Claridad intencional</strong>: promueve un estilo en el que la
+        intención del código es explícita y fácil de comprender para otras
+        personas.
+      </ListItem>
+    </List>
+  </section>
+</NotesLayout>
