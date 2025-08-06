@@ -1,0 +1,27 @@
+---
+/**
+ * BashScript.astro
+ * ----------------
+ * A specialized code block component for displaying Bash scripts with appropriate styling
+ * and iconography. This component leverages the generic CodeBlock component, pre-configured for
+ * Bash code.
+ */
+import { CodeBlock } from "~/components/ui/code";
+import * as Icons from "~/assets/img/icons";
+
+const { code, class: className = "" } = Astro.props;
+---
+
+<CodeBlock
+  lang="bash"
+  icon={Icons.Bash}
+  code={code}
+  class={className}
+>
+  <span slot="title">
+    <slot name="title" />
+  </span>
+  <span slot="source">
+    <slot name="source" />
+  </span>
+</CodeBlock>

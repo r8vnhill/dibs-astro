@@ -1,0 +1,17 @@
+---
+import ShellBlock from "../ShellBlock.astro";
+import * as Icons from "~/assets/img/icons";
+
+const { code, class: className = "" } = Astro.props;
+---
+
+<ShellBlock
+  lang="bash"
+  icon={Icons.Bash}
+  code={code}
+  class={className}
+>
+  <span slot="title">
+    <slot name="title" />
+  </span>
+</ShellBlock>

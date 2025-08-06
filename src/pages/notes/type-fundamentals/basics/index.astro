@@ -1,5 +1,6 @@
 ---
 import * as Icons from "~/assets/img/icons";
+import InitializeKotlinApplicationPs1 from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationPs1.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import {
   TableCaption,
@@ -20,7 +21,6 @@ import Definition from "~/components/ui/callouts/Definition.astro";
 import Explanation from "~/components/ui/callouts/Explanation.astro";
 import More from "~/components/ui/callouts/More.astro";
 import Tip from "~/components/ui/callouts/Tip.astro";
-import { PowerShellBlock, PowerShellTerminal } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
 import List from "~/components/ui/list/List.astro";
@@ -29,6 +29,7 @@ import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
 import Pros from "~/components/ui/procons/Pros.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
+import InitializeKotlinApplicationBash from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationBash.astro";
 
 const title = "Kotlin: Un lenguaje pragmático y moderno";
 ---
@@ -713,63 +714,12 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         <TabsTrigger value="linux">Linux (Bash)</TabsTrigger>
       </TabsList>
       <TabsContent value="windows">
-        <PowerShellBlock
-          code={`
-            # Enable advanced parameter binding and metadata support
-            [CmdletBinding()]
-            param (
-                # Name of the project directory to create and initialize
-                [Parameter(Mandatory)]
-                [string]
-                $ProjectName
-            )
-
-            # Build the full path to the new project directory
-            $projectPath = Join-Path -Path (Get-Location) -ChildPath $ProjectName
-
-            # Create the project directory if it doesn't exist
-            if (-not (Test-Path -Path $projectPath)) {
-                New-Item -Path $projectPath -ItemType Directory | Out-Null
-            } else {
-                Write-Warning "Directory '$ProjectName' already exists. Reusing it."
-            }
-
-            # Change into the project directory
-            Push-Location -Path $projectPath
-            try {
-                # Run Gradle to initialize a basic Kotlin application project
-                & gradle init --use-defaults --type kotlin-application
-            } finally {
-                # Return to the original directory after initialization
-                Pop-Location
-            }
-          `}
-        >
-          <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
-          <a
-            slot="source"
-            href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/scripts/windows/Initialize-KotlinApplication.ps1?ref_type=heads"
-            target="_blank"
-            rel="noopener noreferrer"
-            >scripts\Initialize-KotlinApplication.ps1</a
-          >
-        </PowerShellBlock>
-        <p>
-          Guarda este script como <InlineCode
-            code="Initialize-KotlinApplication.ps1"
-            lang="bash"
-          /> y ejecútalo en la terminal:
-        </p>
-        <PowerShellTerminal
-          code={`
-            .\\scripts\\Initialize-KotlinApplication.ps1 -ProjectName "intro-kt"
-          `}
-          ><Fragment slot="title">Ejecutar Script</Fragment></PowerShellTerminal
-        >
+        <InitializeKotlinApplicationPs1 />
       </TabsContent>
       <TabsContent value="macos">
-        The React framework for production-grade applications that scale.
+        <InitializeKotlinApplicationBash />
       </TabsContent>
     </Tabs>
   </section>
 </NotesLayout>
+ 
