@@ -17,6 +17,7 @@ import { Code } from "astro:components";
 import { availableLanguages } from "~/lib/shiki/highlighter";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { ShikiTransformer } from "shiki";
+import { transformerNotationFocus } from "@shikijs/transformers";
 
 // Component props definition
 type Props = {
@@ -44,7 +45,19 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
     "font-mono", // Monospaced font
     codeClasses, // Allow overrides from parent component
   ]}
-  transformers={[transformerColorizedBrackets(), ...transformers]}
+  transformers={[transformerColorizedBrackets(), transformerNotationFocus(), ...transformers]}
   role="code"
   wrap
 />
+
+<style is:global>
+  pre.has-focused .line:not(.focused) {
+    filter: blur(1px);
+    transition: filter 0.2s ease;
+  }
+
+  pre.has-focused:hover .line:not(.focused) {
+    filter: none;
+  }
+</style>
+

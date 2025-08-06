@@ -40,16 +40,16 @@ if (title) {
 >
   {
     Astro.slots.title && (
-      <div slot="title">
+      <Fragment slot="title">
         <slot name="title" />
-      </div>
+      </Fragment>
     )
   }
   {
     Astro.slots.source && (
-      <div slot="source">
+      <Fragment slot="source">
         <slot name="source" />
-      </div>
+      </Fragment>
     )
   }
 </CodeLayout>

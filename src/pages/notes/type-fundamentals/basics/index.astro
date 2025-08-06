@@ -155,8 +155,8 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       <ListItem icon={Icons.CodeSimple}>
         Declarar funciones y variables, comprendiendo la diferencia entre <InlineCode
           code={`val`}
-          lang="kt"
-        /> y <InlineCode code={`var`} lang="kt" />, así como el uso de tipos
+          lang="kotlin"
+        /> y <InlineCode code={`var`} lang="kotlin" />, así como el uso de tipos
         básicos.
       </ListItem>
       <ListItem icon={Icons.GitBranch}>
@@ -249,7 +249,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         }
         // Output: The youngest is: Person(name=Kim Kitsuragi, age=43)
       `}
-      lang="kt"
+      lang="kotlin"
       ><span slot="title">Primer programa: filtrar y mostrar datos</span
       ></CodeBlock
     >
@@ -257,50 +257,50 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     <Explanation>
       <List>
         <ListItem icon={Icons.Users}>
-          Se define una <InlineCode code="data class" lang="kt" /> llamada <InlineCode
+          Se define una <InlineCode code="data class" lang="kotlin" /> llamada <InlineCode
             code="Person"
-            lang="kt"
+            lang="kotlin"
           />
-          con dos propiedades: <InlineCode code="name" lang="kt" /> de tipo <InlineCode
+          con dos propiedades: <InlineCode code="name" lang="kotlin" /> de tipo <InlineCode
             code="String"
-            lang="kt"
+            lang="kotlin"
           />
-          y <InlineCode code="age" lang="kt" /> de tipo <InlineCode
+          y <InlineCode code="age" lang="kotlin" /> de tipo <InlineCode
             code="Int?"
-            lang="kt"
+            lang="kotlin"
           /> (puede ser nulo).
         </ListItem>
 
         <ListItem icon={Icons.SlidersHorizontal}>
-          La propiedad <InlineCode code="age" lang="kt" /> tiene un valor por defecto
-          (<InlineCode code="null" lang="kt" />), lo que permite omitirla al
+          La propiedad <InlineCode code="age" lang="kotlin" /> tiene un valor por defecto
+          (<InlineCode code="null" lang="kotlin" />), lo que permite omitirla al
           crear una instancia.
         </ListItem>
 
         <ListItem icon={Icons.ListBullets}>
           Se crea una lista inmutable con <InlineCode
             code="listOf"
-            lang="kt"
-          />, que contiene dos objetos <InlineCode code="Person" lang="kt" />.
+            lang="kotlin"
+          />, que contiene dos objetos <InlineCode code="Person" lang="kotlin" />.
         </ListItem>
 
         <ListItem icon={Icons.PencilSimple}>
           En la segunda instancia se utiliza una <strong
             >asignación nombrada</strong
-          > (<InlineCode code="age = 43" lang="kt" />) para mayor claridad y
+          > (<InlineCode code="age = 43" lang="kotlin" />) para mayor claridad y
           legibilidad.
         </ListItem>
 
         <ListItem icon={Icons.ArrowDown}>
-          Se emplea <InlineCode code="minByOrNull" lang="kt" /> junto con el operador
-          Elvis (<InlineCode code="?:" lang="kt" />) para ignorar los valores
+          Se emplea <InlineCode code="minByOrNull" lang="kotlin" /> junto con el operador
+          Elvis (<InlineCode code="?:" lang="kotlin" />) para ignorar los valores
           nulos y encontrar la persona más joven.
         </ListItem>
 
         <ListItem icon={Icons.Warning}>
           Si todas las edades fueran nulas, se usa <InlineCode
             code="Int.MAX_VALUE"
-            lang="kt"
+            lang="kotlin"
           /> como valor de reemplazo para evitar errores.
         </ListItem>
 
@@ -374,7 +374,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             <strong>Seguridad frente a nulls</strong> → Su sistema de tipos previene
             errores comunes como <InlineCode
               code="NullPointerException"
-              lang="kt"
+              lang="kotlin"
             />, reforzando la robustez de las APIs y facilitando contratos más
             confiables.
           </ListItem>
@@ -420,7 +420,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
           <ListItem icon={Icons.Scan}>
             <strong>Ausencia de pattern matching exhaustivo</strong> → Kotlin no
             cuenta con un sistema de <em>pattern matching</em> tan expresivo como
-            Scala, Rust o Haskell. Aunque <InlineCode code="when" lang="kt" /> y
+            Scala, Rust o Haskell. Aunque <InlineCode code="when" lang="kotlin" /> y
             las jerarquías selladas permiten cierto control, no existe una sintaxis
             declarativa para hacer match de estructuras anidadas ni extraer múltiples
             valores simultáneamente.
@@ -506,33 +506,33 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       <TableBody>
         <TableRow>
           <TableCell>
-            <InlineCode code="val x = 5" lang="kt" />
+            <InlineCode code="val x = 5" lang="kotlin" />
           </TableCell>
           <TableCell>Declaración</TableCell>
           <TableCell>No</TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
-            <InlineCode code="5" lang="kt" />
+            <InlineCode code="5" lang="kotlin" />
           </TableCell>
           <TableCell>Expresión</TableCell>
-          <TableCell>Sí, el valor <InlineCode code="5" lang="kt" /></TableCell>
+          <TableCell>Sí, el valor <InlineCode code="5" lang="kotlin" /></TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
-            <InlineCode code="if (a > b) a else b" lang="kt" />
+            <InlineCode code="if (a > b) a else b" lang="kotlin" />
           </TableCell>
           <TableCell>Expresión</TableCell>
           <TableCell
-            >Sí, el valor de <InlineCode code="a" lang="kt" /> o <InlineCode
+            >Sí, el valor de <InlineCode code="a" lang="kotlin" /> o <InlineCode
               code="b"
-              lang="kt"
+              lang="kotlin"
             /></TableCell
           >
         </TableRow>
         <TableRow>
           <TableCell>
-            <InlineCode code="fun greet() { println() }" lang="kt" />
+            <InlineCode code="fun greet() { println() }" lang="kotlin" />
           </TableCell>
           <TableCell>Declaración</TableCell>
           <TableCell>No</TableCell>
@@ -568,23 +568,23 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     <p>
       La interpolación de cadenas —también conocida como string templates— es
       una característica de Kotlin que permite insertar valores o expresiones
-      directamente dentro de un <InlineCode code="String" lang="kt" /> usando el
-      símbolo <InlineCode code="$" lang="kt" />.
+      directamente dentro de un <InlineCode code="String" lang="kotlin" /> usando el
+      símbolo <InlineCode code="$" lang="kotlin" />.
     </p>
     <p>
       Para insertar una variable, basta con escribir <InlineCode
         code="$variable"
-        lang="kt"
+        lang="kotlin"
       />. En el caso de expresiones, se deben usar llaves: <InlineCode
         code="${expresión}"
-        lang="kt"
+        lang="kotlin"
       />.
     </p>
     <section title="Ejemplo">
       <Heading headingLevel="h3" Icon={Icons.Sword}>Ejemplo</Heading>
       <p>
         En el siguiente ejemplo, mostramos el estado de un personaje según sus
-        puntos de vida (<InlineCode code="hp" lang="kt" />):
+        puntos de vida (<InlineCode code="hp" lang="kotlin" />):
       </p>
       <CodeBlock
         icon={Icons.Kotlin}
@@ -594,7 +594,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
 
           println("Unit: $name | Status: \${if (hp <= 0) "defeated" else "active"}")
         `}
-        lang="kt"
+        lang="kotlin"
         ><span slot="title">Interpolación de cadenas en acción</span></CodeBlock
       >
       <p>Esto imprimirá:</p>
@@ -608,7 +608,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         dinámicos de forma <strong>más clara, concisa y expresiva</strong>,
         evitando la concatenación manual con operadores como <InlineCode
           code="+"
-          lang="kt"
+          lang="kotlin"
         />.
       </p>
       <p>
@@ -638,12 +638,12 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       </Tip>
       <More>
         <span slot="title">
-          ¿Qué es un <InlineCode code="StringBuilder" lang="kt" />?
+          ¿Qué es un <InlineCode code="StringBuilder" lang="kotlin" />?
         </span>
         <p>
           Cuando interpolamos cadenas en Kotlin, el compilador genera código que
           usa internamente un
-          <strong><InlineCode code="StringBuilder" lang="kt" /></strong>, una
+          <strong><InlineCode code="StringBuilder" lang="kotlin" /></strong>, una
           clase optimizada para construir texto de forma eficiente <strong
             >sin crear múltiples objetos intermedios</strong
           >.
@@ -651,15 +651,15 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         <p>
           Esto es relevante porque en Kotlin (y en Java), las cadenas (<InlineCode
             code="String"
-            lang="kt"
+            lang="kotlin"
           />) son <strong>inmutables</strong>: cada vez que concatenas con <InlineCode
             code="+"
-            lang="kt"
+            lang="kotlin"
           />, se crea una nueva instancia, lo cual puede degradar el rendimiento
           en operaciones repetidas o dentro de bucles.
         </p>
         <p>
-          Un <InlineCode code="StringBuilder" lang="kt" />, en cambio, permite <strong
+          Un <InlineCode code="StringBuilder" lang="kotlin" />, en cambio, permite <strong
             >modificar la cadena en memoria</strong
           >, agregando, insertando o eliminando texto sin copiar constantemente.
         </p>
@@ -671,7 +671,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             val status = "active"
             val message = "Unit: $name | Status: $status"
           `}
-          lang="kt"
+          lang="kotlin"
           ><span slot="title">Interpolación de cadenas</span></CodeBlock
         >
         <p>Se traduce internamente a algo similar a esto:</p>
@@ -687,7 +687,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             sb.append(status)
             val message = sb.toString()
           `}
-          lang="kt"
+          lang="kotlin"
           ><span slot="title">Traducción interna usando StringBuilder</span
           ></CodeBlock
         >
@@ -695,7 +695,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
           Gracias a esta conversión, la interpolación en Kotlin es <strong
             >más legible</strong
           > que la concatenación manual y <strong>más eficiente</strong> que usar
-          <InlineCode code="+" lang="kt" /> repetidamente.
+          <InlineCode code="+" lang="kotlin" /> repetidamente.
         </p>
       </More>
     </section>
@@ -797,7 +797,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         >.
       </p>
       <p>
-        No se trata de un simple <InlineCode code=`"Hello, World"` lang="kt" />,
+        No se trata de un simple <InlineCode code=`"Hello, World"` lang="kotlin" />,
         sino de una frase que te represente. Algunas ideas:
       </p>
       <List>
@@ -829,7 +829,8 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             package org.example
 
             class App {
-                val greeting: String // [!code focus]
+                // [!code focus:2]
+                val greeting: String
                     get() = "Ladies and Gentlemen, I give you Rose Red's killer..."
             }
 
@@ -839,15 +840,15 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
           `}
           lang="kotlin"
           icon={Icons.Kotlin}
-          transformers={[transformerNotationFocus()]}
-        />
+        >
+          <a
+            slot="source"
+            href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/app/src/main/kotlin/org/example/App.kt?ref_type=heads"
+            target="_blank"
+            rel="noopener noreferrer"
+          >app/src/main/kotlin/org/example/App.kt</a>
+        </CodeBlock>
       </Solution>
     </Exercise>
   </section>
 </NotesLayout>
-
-<style is:global>
-  pre.has-focused .line:not(.focused) {
-    filter: blur(1px);
-  }
-</style>
