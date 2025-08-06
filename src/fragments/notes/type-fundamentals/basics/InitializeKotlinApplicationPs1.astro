@@ -4,56 +4,21 @@ import {
   PowerShellBlock,
   PowerShellTerminal,
 } from "~/components/ui/code";
+import { psScript } from "./code";
+import ScriptLink from "./ScriptLink.astro";
+
+const filename = "Initialize-KotlinApplication.ps1";
+const source = `scripts\\windows\\${filename}`;
 ---
 
-<PowerShellBlock
-  code={`
-    # Enable advanced parameter binding and metadata support
-    [CmdletBinding()]
-    param (
-        # Name of the project directory to create and initialize
-        [Parameter(Mandatory)]
-        [string]
-        $ProjectName
-    )
-
-    # Build the full path to the new project directory
-    $projectPath = Join-Path -Path (Get-Location) -ChildPath $ProjectName
-
-    # Create the project directory if it doesn't exist
-    if (-not (Test-Path -Path $projectPath)) {
-        New-Item -Path $projectPath -ItemType Directory | Out-Null
-    } else {
-        Write-Warning "Directory '$ProjectName' already exists. Reusing it."
-    }
-
-    # Change into the project directory
-    Push-Location -Path $projectPath
-    try {
-        # Run Gradle to initialize a basic Kotlin application project
-        & gradle init --use-defaults --type kotlin-application
-    } finally {
-        # Return to the original directory after initialization
-        Pop-Location
-    }
-`}
->
+<PowerShellBlock code={psScript}>
   <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
-  <a
-    slot="source"
-    href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/scripts/windows/Initialize-KotlinApplication.ps1?ref_type=heads"
-    target="_blank"
-    rel="noopener noreferrer"
-    >scripts\windows\Initialize-KotlinApplication.ps1</a
-  >
+  <ScriptLink slot="source" source={source} />
 </PowerShellBlock>
 <p>
-  Guarda este script como <InlineCode
-    code="Initialize-KotlinApplication.ps1"
-    lang="bash"
-  /> y ejecútalo en la terminal:
+  Guarda este script como <InlineCode code={filename} lang="bash" /> y ejecútalo
+  en la terminal:
 </p>
-<PowerShellTerminal
-  code={`.\\scripts\\windows\\Initialize-KotlinApplication.ps1 -ProjectName "intro-kt"`}
+<PowerShellTerminal code={`.\\${source} -ProjectName "intro-kt"`}
   ><Fragment slot="title">Ejecutar Script</Fragment></PowerShellTerminal
 >

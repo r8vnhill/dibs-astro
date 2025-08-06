@@ -73,6 +73,6 @@ const classes = [
   Renders the ordered or unordered list with computed styles.
   All additional attributes are forwarded via {...rest}.
 -->
-<Tag role="list" class={classes} {...rest}>
+<Tag role="list" class:list={["mb-4", classes]} {...rest}>
   <slot />
 </Tag>

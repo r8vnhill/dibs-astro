@@ -14,6 +14,7 @@ import LightCode from "./LightCode.astro";
 import type { availableLanguages } from "~/lib/shiki/highlighter";
 import DarkCode from "./DarkCode.astro";
 import CopyButton from "./CopyButton";
+import type { ShikiTransformer } from "shiki";
 
 /**
  * Props for the CodeLayout component.
@@ -23,41 +24,38 @@ export interface CodeProps {
    * The code content to display.
    */
   code: string;
-
   /**
    * The language used for syntax highlighting.
    */
   lang: (typeof availableLanguages)[number];
-
   /**
    * Extra classes for the wrapper container.
    */
   class?: string;
-
   /**
    * Optional title shown in a header above the code block.
    */
   title?: string;
-
   /**
    * Optional icon component to display next to the title.
    */
   icon?: AstroComponentFactory;
-
   /**
    * Optional extra classes for styling the title bar.
    */
   titleClasses?: string;
-
   /**
    * Optional source label, e.g. filename or origin.
    */
   source?: string;
-
   /**
    * Optional extra classes for the code area.
    */
   codeClasses?: string;
+  /**
+   * Optional Shiki transformers for custom syntax highlighting.
+   */
+  transformers?: ShikiTransformer[];
 }
 
 /**
@@ -136,6 +134,7 @@ const {
   source,
   code,
   lang,
+  transformers = [],
 } = Astro.props as CodeProps;
 
 // Normalize the code content before rendering
@@ -178,7 +177,7 @@ const normalizedCode = normalizeIndentation(code);
     <CopyButton client:load code={normalizedCode} />
 
     <!-- Code blocks get extra padding-right -->
-    <LightCode {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
-    <DarkCode {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
+    <LightCode transformers={transformers} {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
+    <DarkCode transformers={transformers} {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
   </div>
 </div>

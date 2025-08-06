@@ -1,14 +1,13 @@
 ---
 import * as Icons from "~/assets/img/icons";
-import InitializeKotlinApplicationPs1 from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationPs1.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-  TableCaption,
   Table,
+  TableBody,
+  TableCaption,
+  TableCell,
   TableHeader,
   TableRow,
-  TableCell,
-  TableBody,
 } from "~/components/starwind/table";
 import {
   Tabs,
@@ -16,20 +15,27 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/components/starwind/tabs";
-import Abstract from "~/components/ui/callouts/Abstract.astro";
-import Definition from "~/components/ui/callouts/Definition.astro";
-import Explanation from "~/components/ui/callouts/Explanation.astro";
-import More from "~/components/ui/callouts/More.astro";
-import Tip from "~/components/ui/callouts/Tip.astro";
+import {
+  Abstract,
+  Definition,
+  Exercise,
+  Explanation,
+  More,
+  Solution,
+  Tip,
+} from "~/components/ui/callouts";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
+import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
 import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
 import Pros from "~/components/ui/procons/Pros.astro";
-import NotesLayout from "~/layouts/NotesLayout.astro";
 import InitializeKotlinApplicationBash from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationBash.astro";
+import InitializeKotlinApplicationPs1 from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationPs1.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import { transformerNotationFocus } from "@shikijs/transformers";
 
 const title = "Kotlin: Un lenguaje pragmático y moderno";
 ---
@@ -705,6 +711,12 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       >, el sistema de construcción que usaremos durante el curso.
     </p>
     <p>
+      Gradle es una herramienta de automatización de construcción flexible y
+      ampliamente utilizada en el ecosistema Kotlin y Java. Nos permitirá
+      compilar, probar y empaquetar nuestras aplicaciones y bibliotecas de forma
+      reproducible.
+    </p>
+    <p class="mb-4">
       Te proporcionamos instrucciones específicas para Windows, Linux y macOS:
     </p>
     <Tabs defaultValue="windows">
@@ -717,9 +729,125 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         <InitializeKotlinApplicationPs1 />
       </TabsContent>
       <TabsContent value="macos">
-        <InitializeKotlinApplicationBash />
+        <InitializeKotlinApplicationBash os="macos" />
+      </TabsContent>
+      <TabsContent value="linux">
+        <InitializeKotlinApplicationBash os="linux" />
       </TabsContent>
     </Tabs>
+    <p class="mt-4">
+      Por ahora, crearemos una <strong>aplicación de consola</strong> para probar
+      nuestro código. Más adelante aprenderemos a utilizar Gradle para construir
+      <strong>bibliotecas de software</strong> reutilizables.
+    </p>
+    <p>
+      Una vez creado el proyecto, puedes abrirlo con <strong
+        >IntelliJ IDEA</strong
+      >, <strong>Fleet</strong> u otro editor. Aún no necesitas comprender a fondo
+      la estructura del proyecto, pero es útil tener en cuenta sus directorios principales:
+    </p>
+    <List>
+      <ListItem icon={Icons.FolderOpen}>
+        El código fuente está en <InlineCode
+          code="app/src/main/kotlin"
+          lang="bash"
+        />.
+      </ListItem>
+      <ListItem icon={Icons.Flask}>
+        Las pruebas se ubican en <InlineCode
+          code="app/src/test/kotlin"
+          lang="bash"
+        />.
+      </ListItem>
+    </List>
+    <p>
+      Si estás usando IntelliJ IDEA y tienes disponible la herramienta <InlineCode
+        code="idea"
+        lang="bash"
+      /> en tu terminal, puedes abrir el proyecto con el siguiente comando:
+    </p>
+    <ShellBlock code="idea intro-kt" lang="bash">
+      <span slot="title">Abrir proyecto en IntelliJ IDEA</span>
+    </ShellBlock>
+    <Explanation>
+      Este comando abre el proyecto actual en IntelliJ IDEA, siempre que tengas
+      habilitado el <a
+        href="https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html"
+        target="_blank"
+        rel="noopener noreferrer">Command Line Launcher</a
+      > (<InlineCode code="idea" lang="bash" />). Puedes activarlo desde el menú <InlineCode
+        code="Tools > Create Command-line Launcher"
+        lang="plaintext"
+      />.
+    </Explanation>
+  </section>
+  <section title="Ejercicio">
+    <Exercise headingLevel="h2">
+      <Fragment slot="title"> Un “Hello, World” con sentido </Fragment>
+      <p>
+        Ya creaste tu primer proyecto en Kotlin. Ahora es momento de <strong
+          >darle voz propia</strong
+        >.
+      </p>
+      <p>
+        Tu tarea es <strong>explorar la estructura del proyecto</strong>,
+        encontrar el <strong>punto de entrada del programa</strong> y modificarlo
+        para que imprima un mensaje <strong
+          >auténtico y significativo para ti</strong
+        >.
+      </p>
+      <p>
+        No se trata de un simple <InlineCode code=`"Hello, World"` lang="kt" />,
+        sino de una frase que te represente. Algunas ideas:
+      </p>
+      <List>
+        <ListItem icon={Icons.GameController}>
+          Una línea de tu videojuego favorito
+        </ListItem>
+        <ListItem icon={Icons.Quotes}> Una cita que te inspira </ListItem>
+        <ListItem icon={Icons.Smiley}> Un meme que te haga reír </ListItem>
+        <ListItem icon={Icons.Pencil}>
+          Una frase que hayas escrito tú mismx
+        </ListItem>
+      </List>
+      <ShellBlock code="./gradlew :app:run" lang="bash">
+        <span slot="title">Ejecutar el programa</span>
+      </ShellBlock>
+      <p>
+        Si todo está bien configurado, tu mensaje aparecerá en la consola ✨
+      </p>
+      <Tip>
+        <Fragment slot="title">Recuerda</Fragment>
+        <p>
+          No necesitas crear clases nuevas ni preocuparte por la estructura
+          ideal. Simplemente disfruta de escribir tu primer programa en Kotlin.
+        </p>
+      </Tip>
+      <Solution>
+        <CodeBlock
+          code={`
+            package org.example
+
+            class App {
+                val greeting: String // [!code focus]
+                    get() = "Ladies and Gentlemen, I give you Rose Red's killer..."
+            }
+
+            fun main() {
+                println(App().greeting)
+            }
+          `}
+          lang="kotlin"
+          icon={Icons.Kotlin}
+          transformers={[transformerNotationFocus()]}
+        />
+      </Solution>
+    </Exercise>
   </section>
 </NotesLayout>
- 
+
+<style is:global>
+  pre.has-focused .line:not(.focused) {
+    filter: blur(1px);
+  }
+</style>

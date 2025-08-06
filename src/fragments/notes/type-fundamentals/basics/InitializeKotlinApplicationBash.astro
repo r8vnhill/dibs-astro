@@ -1,54 +1,31 @@
 ---
 import { BashScript, BashTerminal, InlineCode } from "~/components/ui/code";
+import { bashScript } from "./code";
+import ScriptLink from "./ScriptLink.astro";
+
+type Props = {
+  os: "macos" | "linux";
+};
+
+const { os } = Astro.props as Props;
+
+const filename = "initialize_kotlin_application.sh";
+const source = `scripts/${os}/${filename}`;
 ---
 
-<BashScript
-  code={`
-    #!/usr/bin/env bash
-    set -euo pipefail  # Exit on error, unset vars, or failed pipe
-
-    # Require exactly one argument (project name)
-    if [[ $# -ne 1 ]]; then
-        echo "Usage: $0 <ProjectName>" >&2
-        exit 1
-    fi
-
-    PROJECT_NAME=$1
-    PROJECT_PATH="\${PWD}/\${PROJECT_NAME}"
-
-    # Create project directory if it doesn't exist
-    if [[ ! -d $PROJECT_PATH ]]; then
-        mkdir -p "$PROJECT_PATH"
-    else
-        echo "Warning: Directory '$PROJECT_NAME' already exists. Reusing it." >&2
-    fi
-
-    # Change into project directory and initialize Kotlin app with Gradle
-    # This creates a subshell to isolate the directory change
-    (
-        cd "$PROJECT_PATH"
-        gradle init --use-defaults --type kotlin-application
-    )
-  `}
->
+<BashScript code={bashScript}>
   <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
-  <a
-    slot="source"
-    href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/scripts/macos/initialize_kotlin_application.sh?ref_type=heads"
-    target="_blank"
-    rel="noopener noreferrer">scripts/macos/initialize_kotlin_application.sh</a
-  >
+  <ScriptLink slot="source" source={source} />
 </BashScript>
 <p>
   Guarda este script como <InlineCode
-    code="initialize_kotlin_application.sh"
+    code={filename}
     lang="bash"
   /> y ejecútalo en la terminal:
 </p>
 <BashTerminal
   code={`
-    chmod +x ./scripts/macos/initialize_kotlin_application.sh
-    ./scripts/macos/initialize_kotlin_application.sh "intro-kt"
-  `}
-  ><Fragment slot="title">Ejecutar Script</Fragment></BashTerminal
+    chmod +x ./${source}
+    ./${source} "intro-kt"
+  `}><Fragment slot="title">Ejecutar Script</Fragment></BashTerminal
 >

@@ -16,16 +16,18 @@
 import { Code } from "astro:components";
 import { availableLanguages } from "~/lib/shiki/highlighter";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
+import type { ShikiTransformer } from "shiki";
 
 // Component props definition
 type Props = {
   code: string;
   lang: (typeof availableLanguages)[number];
   codeClasses?: string;
+  transformers?: ShikiTransformer[];
 };
 
 // Destructure and default props
-const { code, lang, codeClasses } = Astro.props;
+const { code, lang, codeClasses, transformers = [] } = Astro.props;
 ---
 
 <!-- Render the code block for dark mode using the catppuccin-mocha theme -->
@@ -44,5 +46,5 @@ const { code, lang, codeClasses } = Astro.props;
   ]}
   role="code"
   wrap
-  transformers={[transformerColorizedBrackets()]}
+  transformers={[transformerColorizedBrackets(), ...transformers]}
 />
