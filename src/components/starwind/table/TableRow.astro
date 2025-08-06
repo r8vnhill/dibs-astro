@@ -1,16 +1,55 @@
 ---
+/**
+ * TableRow.astro – Starwind Table row
+ * -----------------------------------
+ * Renders a <tr> with optional state styling.
+ * Supports visual feedback on hover and selection.
+ */
+
 import type { HTMLAttributes } from "astro/types";
 import { tv, type VariantProps } from "tailwind-variants";
 
+/**
+ * Props accepted by the TableRow component.
+ */
 type Props = HTMLAttributes<"tr"> & VariantProps<typeof tableRow>;
 
+/**
+ * Tailwind Variants for table rows, enabling
+ * selection, hover states, and optional sizing.
+ */
 const tableRow = tv({
-  base: "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+  base: [
+    "border-b transition-colors",
+    "hover:bg-muted/50",
+    "data-[state=selected]:bg-muted",
+  ],
+  variants: {
+    intent: {
+      default: "",
+      clickable: "cursor-pointer hover:bg-accent/30",
+      highlight: "bg-yellow-50",
+    },
+    size: {
+      sm: "[&_td]:px-2 [&_td]:py-1",
+      md: "[&_td]:px-4 [&_td]:py-2",
+      lg: "[&_td]:px-6 [&_td]:py-3",
+    },
+  },
+  defaultVariants: {
+    intent: "default",
+    size: "md",
+  },
 });
 
-const { class: className, ...rest } = Astro.props;
+const { class: className, intent, size, ...rest } = Astro.props;
 ---
 
-<tr data-table-row class={tableRow({ class: className })} {...rest} role="row">
+<tr
+  data-table-row
+  class={tableRow({ class: className, intent, size })}
+  role="row"
+  {...rest}
+>
   <slot />
 </tr>

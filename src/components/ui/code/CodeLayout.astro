@@ -145,7 +145,7 @@ const normalizedCode = normalizeIndentation(code);
 <!-- Code block container -->
 <div class:list={[...baseClasses, className]}>
   {
-    (Astro.slots.title || title) && (
+    (Astro.slots.title || Astro.slots.source || title || source) && (
       <div class:list={[...baseTitleClasses, titleClasses]}>
         {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
         {Astro.slots.title ? (
@@ -155,7 +155,7 @@ const normalizedCode = normalizeIndentation(code);
         ) : (
           <span class="truncate">{title}</span>
         )}
-        {source && (
+        {(Astro.slots.source || source) && (
           <span
             class:list={[
               "ml-auto",
@@ -166,7 +166,7 @@ const normalizedCode = normalizeIndentation(code);
               "truncate",
             ]}
           >
-            {source}
+            {Astro.slots.source ? <slot name="source" /> : source}
           </span>
         )}
       </div>

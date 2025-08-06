@@ -40,4 +40,12 @@ const {
   code={code}
   lang={lang}
   {...{ "aria-label": title }}
-/>
+>
+  {
+    Astro.slots.title && (
+      <Fragment slot="title">
+        <slot name="title" />
+      </Fragment>
+    )
+  }
+</CodeLayout>

@@ -1,16 +1,48 @@
 ---
+/**
+ * TableHeader.astro – Starwind Table header
+ * -----------------------------------------
+ * Renders the <thead> element of a table with optional styling and variants.
+ * Includes default border and layout behavior using Tailwind utilities.
+ */
+
 import type { HTMLAttributes } from "astro/types";
 import { tv, type VariantProps } from "tailwind-variants";
 
+/**
+ * Props supported by the TableHeader component.
+ */
 type Props = HTMLAttributes<"thead"> & VariantProps<typeof tableHeader>;
 
+/**
+ * Tailwind Variants config for styling the <thead> element.
+ */
 const tableHeader = tv({
-  base: "[&_tr]:border-b",
+  base: [
+    "[&_tr]:border-b", // Apply border to <tr> inside <thead>
+    "[&_th]:px-4 [&_th]:py-2", // Padding for <th> elements
+    "[&_th]:text-left [&_th]:font-medium", // Typography
+    "bg-muted text-muted-foreground", // Visual separation from body
+  ],
+  variants: {
+    size: {
+      sm: "[&_th]:px-2 [&_th]:py-1 text-sm",
+      md: "[&_th]:px-4 [&_th]:py-2 text-base",
+      lg: "[&_th]:px-6 [&_th]:py-3 text-lg",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
 });
 
-const { class: className, ...rest } = Astro.props;
+const { class: className, size, ...rest } = Astro.props;
 ---
 
-<thead data-table-header class={tableHeader({ class: className })} {...rest}>
+<thead
+  data-table-header
+  class={tableHeader({ class: className, size })}
+  {...rest}
+>
   <slot />
 </thead>

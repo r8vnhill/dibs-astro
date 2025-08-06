@@ -1,16 +1,45 @@
 ---
+/**
+ * TableCaption.astro – Starwind Table caption
+ * -------------------------------------------
+ * Renders a <caption> element with consistent styling for accessibility and context.
+ */
+
 import type { HTMLAttributes } from "astro/types";
 import { tv, type VariantProps } from "tailwind-variants";
 
+/**
+ * Props supported by TableCaption component.
+ */
 type Props = HTMLAttributes<"caption"> & VariantProps<typeof tableCaption>;
 
+/**
+ * Tailwind Variants configuration for TableCaption.
+ */
 const tableCaption = tv({
-  base: "text-muted-foreground mt-4 text-sm",
+  base: [
+    "text-muted-foreground text-sm",
+    "mt-4 text-center", // Centered by default for common layout
+  ],
+  variants: {
+    align: {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+    },
+  },
+  defaultVariants: {
+    align: "center",
+  },
 });
 
-const { class: className, ...rest } = Astro.props;
+const { class: className, align, ...rest } = Astro.props;
 ---
 
-<caption data-table-caption class={tableCaption({ class: className })} {...rest}>
+<caption
+  data-table-caption
+  class={tableCaption({ class: className, align })}
+  {...rest}
+>
   <slot />
 </caption>

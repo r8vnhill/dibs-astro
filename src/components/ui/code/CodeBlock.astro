@@ -41,4 +41,11 @@ if (title) {
       </div>
     )
   }
+  {
+    Astro.slots.source && (
+      <div slot="source">
+        <slot name="source" />
+      </div>
+    )
+  }
 </CodeLayout>
