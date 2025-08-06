@@ -20,7 +20,12 @@ export interface Props {
 }
 
 // Destructure and apply defaults for props
-const { caption, maxWidth = "1000px", className = "", style = {} } = Astro.props;
+const {
+  caption,
+  maxWidth = "1000px",
+  className = "",
+  style = {},
+} = Astro.props;
 
 // Merge maxWidth with other styles
 const mergedStyle = { maxWidth, ...style };
@@ -37,14 +42,10 @@ const mergedStyle = { maxWidth, ...style };
   -->
   <div
     class:list={[
-      "mx-auto",
-      "rounded-lg",
-      "border",
-      "border-gray-300/40",
-      "dark:border-gray-700/40",
-      "bg-white/30",
-      "dark:bg-gray-800/30",
-      "shadow-sm",
+      "mx-auto rounded-lg overflow-hidden shadow-sm",
+      "border border-gray-200 dark:border-gray-700",
+      "bg-gray-50 dark:bg-gray-900" /* ← full opacity, stronger separation */,
+      className,
     ]}
     style={mergedStyle}
   >

@@ -1,0 +1,18 @@
+---
+import { CodeBlock } from "~/components/ui/code";
+import * as Icons from "~/assets/img/icons";
+
+const { code, class: className = "", filename } = Astro.props;
+---
+
+<CodeBlock
+  lang="powershell"
+  icon={Icons.Powershell}
+  source={filename}
+  code={code}
+  class={className}
+>
+  <span slot="title">
+    <slot name="title" />
+  </span>
+</CodeBlock>

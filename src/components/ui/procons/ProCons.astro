@@ -1,13 +1,36 @@
 ---
+/**
+ * ProCons.astro
+ * -------------
+ * Layout wrapper component that arranges its children (typically Pros and Cons sections) in a
+ * responsive two-column grid using Tailwind CSS.
+ *
+ * This component is useful for displaying contrasting sections like "Pros" and "Cons" side-by-side
+ * on wider screens and stacked on smaller viewports.
+ */
+
 export interface Props {
+  /**
+   * Optional Tailwind CSS classes for additional layout customization.
+   */
   class?: string;
 }
 
+// Destructure props with alias for Tailwind compatibility
 const { class: className } = Astro.props;
 ---
 
+<!-- Responsive grid container -->
 <div
-  class={`flex flex-wrap gap-8 my-8 justify-between items-start overflow-hidden ${className ?? ""}`}
+  class:list={[
+    "grid",
+    "grid-cols-1",
+    "md:grid-cols-2",
+    "gap-8",
+    "my-8",
+    className,
+  ]}
 >
+  <!-- Render nested content, typically <Pros /> and <Cons /> -->
   <slot />
 </div>

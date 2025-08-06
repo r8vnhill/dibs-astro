@@ -55,7 +55,9 @@ const passthrough = Object.fromEntries(
         headingId={resolvedHeadingId}
         class={`more__title ${headingClass}`}
         iconClass={`more__icon ${iconClass}`}
-      />
+      >
+        <slot name="title">{title}</slot>
+      </CalloutHeading>
       <span
         class="ml-auto transition-transform duration-200 group-open:rotate-180"
       >

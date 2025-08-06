@@ -70,6 +70,7 @@ export interface CodeProps {
  * @returns The normalized code string.
  */
 export function normalizeIndentation(code: string): string {
+  if (!code) throw new Error("Code content is required");
   const lines = code.split("\n");
 
   // Remove leading blank lines

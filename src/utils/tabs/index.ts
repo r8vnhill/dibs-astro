@@ -1,0 +1,1 @@
+export { initStarwindTabs } from "./init";

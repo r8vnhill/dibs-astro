@@ -18,7 +18,7 @@ import react from "@astrojs/react";
  * - A custom dev server watcher to reload when config files change.
  */
 export default defineConfig({
-  // Used to generate correct absolute URLs during build
+	// Used to generate correct absolute URLs during build
   site: "https://dibs.ravenhill.cl",
 
   // Ensures that all routes have trailing slashes (e.g., /page/ instead of /page)

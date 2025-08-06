@@ -1,23 +1,60 @@
 ---
+/**
+ * Props for the ContentBlock component.
+ *
+ * This component renders a styled section with a title and slot content.
+ * It is used as a wrapper for modular content blocks such as "Pros" or "Cons".
+ */
 export interface Props {
+  /**
+   * Custom title for the section (overrides defaultTitle if provided).
+   */
   title?: string | undefined;
+  /**
+   * Fallback title when no custom title is specified.
+   */
   defaultTitle?: string | undefined;
+  /**
+   * Additional Tailwind CSS classes for the section container.
+   */
   class?: string | undefined;
+  /**
+   * Additional Tailwind CSS classes for the title element.
+   */
+  titleClass?: string | undefined;
 }
 
+// Destructure and apply default values from incoming props
 const {
   title,
-  defaultTitle = "Untitled Section",
-  class: className,
+  defaultTitle = "Sin título", // Default title when `title` is not provided
+  class: className, // Optional custom container styles
+  titleClass = "", // Optional custom title styles
 } = Astro.props;
+
+// Choose between provided title or fallback
 const resolvedTitle = title ?? defaultTitle;
 ---
 
+<!-- Main section wrapper. -->
 <section
-  class={`flex-1 min-w-[280px] break-words overflow-wrap break-word ${className ?? ""}`}
+  class:list={["pt-0", "pb-4", "px-4", "flex", "flex-col", "gap-2", className]}
   aria-label={resolvedTitle}
+  id={resolvedTitle.toLowerCase().replace(/\s+/g, "-")}
 >
-  <h3 class="text-[1.25rem] mb-3">{resolvedTitle}</h3>
+  <!-- Title block with responsive size and tracking, customizable via `titleClass` -->
+  <div
+    class:list={[
+      "text-lg",
+      "sm:text-xl",
+      "font-semibold",
+      "tracking-tight",
+      titleClass,
+    ]}
+  >
+    {resolvedTitle}
+  </div>
+
+  <!-- Content slot: allows consumers of this component to inject arbitrary HTML -->
   <slot />
 </section>
-

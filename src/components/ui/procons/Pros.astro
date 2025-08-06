@@ -1,19 +1,54 @@
 ---
-import ContentBlock from "./ContentBlock.astro";
+/**
+ * Pros.astro
+ * ----------
+ * Renders a stylized "Pros" section using the ContentBlock component.
+ * This component is designed to be used within a pros/cons layout, applying green coloring and a
+ * left border to match the "positive" context.
+ *
+ * The visual styles are controlled through Tailwind classes and centralized in `blockVariants` to
+ * allow consistent theming.
+ */
 
+import ContentBlock from "./ContentBlock.astro";
+import { blockVariants } from "./shared";
+
+/**
+ * Props interface for the Pros block.
+ */
 export interface Props {
+  /**
+   * Optional custom title to override the default.
+   */
   title?: string;
+  /**
+   * Fallback title when `title` is not provided.
+   */
   defaultTitle?: string;
+  /**
+   * Additional Tailwind CSS classes for the container.
+   */
   class?: string;
 }
 
-const { title, defaultTitle = "Beneficios", class: className } = Astro.props;
+// Destructure Astro props and assign default values.
+const {
+  title,
+  defaultTitle = "Beneficios",
+  class: className,
+} = Astro.props as Props;
+
+// Select the "pros" style variant from shared config
+const variant = "pros";
 ---
 
+<!-- Render a reusable ContentBlock component. -->
 <ContentBlock
   title={title}
   defaultTitle={defaultTitle}
-  class={`border-l-4 border-green-500 pl-4 text-green-800 dark:text-green-300 ${className ?? ""}`}
+  class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
+  titleClass={blockVariants[variant].title}
 >
+  <!-- Render the section content -->
   <slot />
 </ContentBlock>

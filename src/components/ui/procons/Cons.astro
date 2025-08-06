@@ -1,19 +1,46 @@
 ---
+/**
+ * Cons.astro
+ * ----------
+ * Renders a "Cons" (Limitations) section using the shared `ContentBlock` component.
+ * Styling is driven by the `blockVariants` configuration for consistency.
+ *
+ * This component is designed to be themable and flexible via props and Tailwind classes.
+ */
+
 import ContentBlock from "./ContentBlock.astro";
+import { blockVariants } from "./shared";
 
 export interface Props {
+  /**
+   * Optional custom title for the section.
+   */
   title?: string;
+  /**
+   * Fallback title if no custom title is provided.
+   * Defaults to "Limitaciones".
+   */
   defaultTitle?: string;
+  /**
+   * Additional Tailwind CSS classes to apply to the outer section.
+   */
   class?: string;
 }
 
-const { title, defaultTitle = "Limitaciones", class: className } = Astro.props;
+// Extract props with fallback values
+const { title, defaultTitle = "Limitaciones", class: className } = Astro.props as Props;
+
+// Define the variant key for the "cons" block
+const variant = "cons";
 ---
 
+<!-- Renders the shared ContentBlock with styling specific to the "cons" variant. -->
 <ContentBlock
   title={title}
   defaultTitle={defaultTitle}
-  class={`bg-red-50 dark:bg-red-900 text-red-900 dark:text-red-50 border border-red-200 dark:border-red-700 ${className ?? ""}`}
+  class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
+  titleClass={blockVariants[variant].title}
 >
+  <!-- Slot for injecting section content -->
   <slot />
 </ContentBlock>

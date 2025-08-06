@@ -1,0 +1,65 @@
+---
+/**
+ * TabsTrigger.astro – Starwind Tabs trigger button.
+ * -------------------------------------------------
+ * Represents a single tab button. Should be used inside a TabsList.
+ * Automatically styled based on active/inactive state via data attributes.
+ */
+
+import type { HTMLAttributes } from "astro/types";
+import { tv } from "tailwind-variants";
+
+/**
+ * Props accepted by the TabsTrigger component.
+ * Inherits all button attributes except those controlled internally.
+ */
+interface Props extends Omit<HTMLAttributes<"button">, "type" | "id" | "role"> {
+  /**
+   * The tab's associated value.
+   */
+  value: string;
+}
+
+/**
+ * Tailwind Variants for the trigger styling.
+ */
+const tabsTrigger = tv({
+  base: [
+    "starwind-transition-colors",
+    "inline-flex grow items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 font-medium",
+    "data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+    "focus-visible:outline-outline focus-visible:outline-2 focus-visible:outline-offset-2",
+    "disabled:pointer-events-none disabled:opacity-50",
+  ],
+  variants: {
+    size: {
+      sm: "text-sm px-2.5 py-1",
+      md: "text-base px-3 py-1.5",
+      lg: "text-lg px-4 py-2",
+    },
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
+
+const {
+  value,
+  class: className,
+  "aria-selected": ariaSelected = "false",
+  ...rest
+} = Astro.props;
+---
+
+<button
+  class={tabsTrigger({ class: className })}
+  type="button"
+  data-tabs-trigger
+  data-value={value}
+  data-state="inactive"
+  role="tab"
+  aria-selected={ariaSelected}
+  {...rest}
+>
+  <slot />
+</button>
