@@ -2,7 +2,20 @@
 import * as Icons from "~/assets/img/icons";
 import TableFloat from "~/components/floats/TableFloat.astro";
 import Heading from "~/components/semantics/Heading.astro";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
+import {
+  TableCaption,
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "~/components/starwind/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/starwind/tabs";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
 import Definition from "~/components/ui/callouts/Definition.astro";
 import Explanation from "~/components/ui/callouts/Explanation.astro";
@@ -473,69 +486,53 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
       errores más fácilmente.
     </p>
     <p>A continuación, una tabla con ejemplos representativos:</p>
-    <TableFloat>
-      <span slot="caption"
-        >Ejemplos de expresiones y declaraciones en Kotlin</span
+    <Table>
+      <TableCaption
+        >Ejemplos de expresiones y declaraciones en Kotlin</TableCaption
       >
-
-      <table
-        class:list={[
-          "w-full",
-          "text-left",
-          "border-collapse",
-          "divide-y",
-          "divide-gray-200",
-          "dark:divide-gray-600",
-          "[&>tbody>tr:nth-child(even)]:bg-gray-50",
-          "dark:[&>tbody>tr:nth-child(even)]:bg-gray-800",
-          "[&>tbody>tr:hover]:!bg-gray-100",
-          "dark:[&>tbody>tr:hover]:!bg-gray-700",
-        ]}
-      >
-        <thead class="bg-gray-100 dark:bg-gray-800">
-          <tr>
-            <th class="px-4 py-1 whitespace-nowrap">Ejemplo</th>
-            <th class="px-4 py-1 whitespace-nowrap"
-              >¿Expresión o declaración?</th
-            >
-            <th class="px-4 py-1 whitespace-nowrap">¿Devuelve valor?</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="px-4 py-1"><InlineCode code="val x = 5" lang="kt" /></td>
-            <td class="px-4 py-1">Declaración</td>
-            <td class="px-4 py-1">No</td>
-          </tr>
-          <tr>
-            <td class="px-4 py-1"><InlineCode code="5" lang="kt" /></td>
-            <td class="px-4 py-1">Expresión</td>
-            <td class="px-4 py-1"
-              >Sí, el valor <InlineCode code="5" lang="kt" /></td
-            >
-          </tr>
-          <tr>
-            <td class="px-4 py-1"
-              ><InlineCode code="if (a > b) a else b" lang="kt" /></td
-            >
-            <td class="px-4 py-1">Expresión</td>
-            <td class="px-4 py-1"
-              >Sí, el valor de <InlineCode code="a" lang="kt" /> o <InlineCode
-                code="b"
-                lang="kt"
-              /></td
-            >
-          </tr>
-          <tr>
-            <td class="px-4 py-2"
-              ><InlineCode code="fun greet() { println() }" lang="kt" /></td
-            >
-            <td class="px-4 py-2">Declaración</td>
-            <td class="px-4 py-2">No</td>
-          </tr>
-        </tbody>
-      </table>
-    </TableFloat>
+      <TableHeader>
+        <TableRow>
+          <TableCell>Ejemplo</TableCell>
+          <TableCell>¿Expresión o declaración?</TableCell>
+          <TableCell>¿Devuelve valor?</TableCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <InlineCode code="val x = 5" lang="kt" />
+          </TableCell>
+          <TableCell>Declaración</TableCell>
+          <TableCell>No</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <InlineCode code="5" lang="kt" />
+          </TableCell>
+          <TableCell>Expresión</TableCell>
+          <TableCell>Sí, el valor <InlineCode code="5" lang="kt" /></TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <InlineCode code="if (a > b) a else b" lang="kt" />
+          </TableCell>
+          <TableCell>Expresión</TableCell>
+          <TableCell
+            >Sí, el valor de <InlineCode code="a" lang="kt" /> o <InlineCode
+              code="b"
+              lang="kt"
+            /></TableCell
+          >
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <InlineCode code="fun greet() { println() }" lang="kt" />
+          </TableCell>
+          <TableCell>Declaración</TableCell>
+          <TableCell>No</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <Tip>
       <span slot="title">En resumen</span>
       <p>
