@@ -1,0 +1,58 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { tv } from "tailwind-variants";
+
+type Props = HTMLAttributes<"div"> & {
+  /**
+   * Time in milliseconds to wait before showing the tooltip
+   */
+  openDelay?: number;
+  /**
+   * Time in milliseconds to wait before hiding the tooltip
+   */
+  closeDelay?: number;
+  /**
+   * When true, prevents the tooltip from staying open when hovering over its content
+   */
+  disableHoverableContent?: boolean;
+};
+
+const tooltip = tv({ base: "starwind-tooltip relative inline-block" });
+
+const {
+  openDelay = 200,
+  closeDelay = 200,
+  disableHoverableContent = false,
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class={tooltip({ class: className })}
+  data-state="closed"
+  data-open-delay={openDelay}
+  data-close-delay={closeDelay}
+  {...!disableHoverableContent && { "data-content-hoverable": "" }}
+>
+  <slot />
+</div>
+
+<script>
+  import { TooltipController } from "~/utils/tooltip";
+
+  // Store instances in a WeakMap to avoid memory leaks
+  const tooltipInstances = new WeakMap<HTMLElement, TooltipController>();
+
+  const setupTooltips = () => {
+    document
+      .querySelectorAll<HTMLElement>(".starwind-tooltip")
+      .forEach((tooltip, idx) => {
+        if (!tooltipInstances.has(tooltip)) {
+          tooltipInstances.set(tooltip, new TooltipController(tooltip, idx));
+        }
+      });
+  };
+
+  setupTooltips();
+  document.addEventListener("astro:after-swap", setupTooltips);
+</script>

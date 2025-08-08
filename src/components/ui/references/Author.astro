@@ -1,0 +1,49 @@
+---
+export type AuthorProps = {
+  /**
+   * Full display name, used for authors with no clear first/last name distinction (e.g., "OpenAI").
+   */
+  fullName?: string;
+  /**
+   * The author's given name.
+   */
+  firstName?: string;
+  /**
+   * The author's family name, used for sorting and display.
+   */
+  lastName?: string;
+  /**
+   * Optional URL to the author's profile or personal page.
+   */
+  url?: string;
+  /**
+   * Additional CSS classes to apply to the author's name.
+   */
+  className?: string;
+};
+
+const {
+  fullName,
+  firstName,
+  lastName,
+  url,
+  className = "",
+}: AuthorProps = Astro.props;
+
+const resolvedName = fullName || `${firstName || ""} ${lastName || ""}`.trim();
+---
+
+{
+  url ? (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={className}
+    >
+      {resolvedName}
+    </a>
+  ) : (
+    <span class={className}>{resolvedName}</span>
+  )
+}

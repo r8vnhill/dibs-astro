@@ -1,0 +1,58 @@
+---
+/**
+ * OfficialDocs.astro
+ * ------------------
+ * A wrapper component that shows a tooltip when hovering or focusing the slotted content.
+ * Useful to display contextual labels such as "Documentación oficial".
+ */
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/starwind/tooltip";
+
+// Component props
+type Props = {
+  /**
+   * Optional custom tooltip text. Defaults to "Documentación oficial".
+   */
+  tooltip?: string;
+  /**
+   * Optional Tailwind classes to apply to the wrapper around the trigger content.
+   */
+  triggerClass?: string;
+  /**
+   * Optional Tailwind classes to apply to the tooltip content.
+   */
+  contentClass?: string;
+};
+
+// Destructure props with defaults
+const {
+  tooltip = "Documentación oficial",
+  triggerClass = "",
+  contentClass = "",
+}: Props = Astro.props;
+---
+
+<Tooltip>
+  <TooltipTrigger>
+    <span class={triggerClass}>
+      <slot />
+    </span>
+  </TooltipTrigger>
+
+  <TooltipContent
+    class:list={[
+      "bg-muted",
+      "text-foreground",
+      "px-2",
+      "py-1",
+      "rounded",
+      contentClass,
+    ]}
+  >
+    {tooltip}
+  </TooltipContent>
+</Tooltip>

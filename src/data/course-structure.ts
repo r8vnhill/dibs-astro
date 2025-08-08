@@ -35,10 +35,9 @@ export const courseStructure: Lesson[] = [
         title: "Kotlin",
         href: "/notes/type-fundamentals/basics/",
         children: [
-          { title: "Subcontenido 1", href: "/unidad-1/contenido-1/sub1/" },
+          { title: "Funciones", href: "/notes/type-fundamentals/basics/functions/" },
         ],
       },
-      { title: "Contenido 2", href: "/unidad-1/contenido-2/" },
     ],
   },
 ];

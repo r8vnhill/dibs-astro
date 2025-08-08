@@ -1,0 +1,72 @@
+---
+/**
+ * WebPage.astro
+ * -------------
+ * Renders a reference to an external webpage, typically used inside a list of learning resources.
+ * It accepts optional metadata such as location (e.g. "Kotlin Docs"), author, and a description.
+ */
+
+import { ListItem } from "~/components/ui/list";
+import * as icons from "~/assets/img/icons";
+
+// Define props and destructure them from Astro.props
+type Props = {
+  /**
+   * The external URL to link to.
+   */
+  url: string;
+  /**
+   * The title of the page (if not passed via slot).
+   */
+  title?: string;
+  /**
+   * The source or site where this page is published (if not passed via slot).
+   */
+  location?: string;
+  /**
+   * Author or contributor name (if not passed via slot).
+   */
+  author?: string;
+};
+
+const { url, title, location, author }: Props = Astro.props;
+---
+
+<ListItem icon={icons.Globe}>
+  “<a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="hover:underline underline-offset-2"
+  >
+    <slot name="title">{title}</slot>
+  </a>”
+
+  {
+    Astro.slots.location || location ? (
+      <span>
+        {" "}
+        <span class="text-muted-foreground">en</span>{" "}
+        <slot name="location">{location}</slot>
+      </span>
+    ) : null
+  }
+
+  {
+    Astro.slots.author || author ? (
+      <span>
+        {" "}
+        <span class="text-muted-foreground">por</span>{" "}
+        <slot name="author">{author}</slot>
+      </span>
+    ) : null
+  }
+
+  {
+    Astro.slots.description ? (
+      <div class="text-muted-foreground block">
+        <slot name="description" />
+      </div>
+    ) : null
+  }
+</ListItem>
