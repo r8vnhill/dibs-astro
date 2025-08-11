@@ -2,28 +2,36 @@
   --exercise__bg-color: #e8f0fe;
   --exercise__border-color: #4285f4;
   --exercise__title-color: #1a73e8;
-  
   --solution__bg-color: #e0f2f1;
   --solution__border-color: #26a69a;
   --solution__title-color: #004d40;
+  --danger__bg-color: #fff5f5;
+  --danger__border-color: #e53e3e;
+  --danger__title-color: #c53030;
 }
 
 :root.dark {
   --exercise__bg-color: #1a2a3f;
   --exercise__border-color: #5a9bff;
   --exercise__title-color: #aecbfa;
-
   --solution__bg-color: #004d40;
   --solution__border-color: #26a69a;
   --solution__title-color: #b2dfdb;
+  --danger__bg-color: #3b0d0c;
+  --danger__border-color: #f87171;
+  --danger__title-color: #fca5a5;
 }
 
 @theme inline {
   --color-exercise-bg: var(--exercise__bg-color);
   --color-exercise-border: var(--exercise__border-color);
   --color-exercise-title: var(--exercise__title-color);
-
+  
   --color-solution-bg: var(--solution__bg-color);
   --color-solution-border: var(--solution__border-color);
   --color-solution-title: var(--solution__title-color);
+  
+  --color-danger-bg: var(--danger__bg-color);
+  --color-danger-border: var(--danger__border-color);
+  --color-danger-title: var(--danger__title-color);
 }

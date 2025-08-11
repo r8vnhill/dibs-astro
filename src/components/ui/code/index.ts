@@ -1,6 +1,10 @@
 export { default as CodeBlock } from "./CodeBlock.astro";
 export { default as InlineCode } from "./InlineCode.astro";
+export { default as InlineKotlin } from "./kt/InlineKotlin.astro";
+export { default as KotlinBlock } from "./kt/KotlinBlock.astro";
+export { default as InlinePowerShell } from "./ps1/InlinePowerShell.astro";
 export { default as PowerShellBlock } from "./ps1/PowerShellBlock.astro";
 export { default as PowerShellTerminal } from "./ps1/PowerShellTerminal.astro";
 export { default as BashScript } from "./sh/BashScript.astro";
 export { default as BashTerminal } from "./sh/BashTerminal.astro";
+export { default as InlineBash } from "./sh/InlineBash.astro";

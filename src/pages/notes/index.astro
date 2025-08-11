@@ -1,22 +1,36 @@
 ---
-import TreeStructure from "~/assets/img/icons/tree-structure.svg";
+import * as icons from "~/assets/img/icons";
 import Package from "~/assets/img/icons/package.svg";
 import TerminalWindow from "~/assets/img/icons/terminal-window.svg";
-import * as icons from "~/assets/img/icons";
-
-import TableFloat from "~/components/floats/TableFloat.astro";
+import TreeStructure from "~/assets/img/icons/tree-structure.svg";
 import Heading from "~/components/semantics/Heading.astro";
-import Abstract from "~/components/ui/callouts/Abstract.astro";
-import Important from "~/components/ui/callouts/Important.astro";
-import More from "~/components/ui/callouts/More.astro";
-import Note from "~/components/ui/callouts/Note.astro";
-import InlineCode from "~/components/ui/code/InlineCode.astro";
-
-import NotesLayout from "~/layouts/NotesLayout.astro";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "~/components/starwind/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/starwind/tabs";
+import { Abstract, Important, More, Note } from "~/components/ui/callouts";
+import { BashScript } from "~/components/ui/code";
+import { PowerShellBlock } from "~/components/ui/code";
+import {
+  InlineBash,
+  InlineKotlin,
+  InlinePowerShell,
+} from "~/components/ui/code";
+import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
-import ShellBlock from "~/components/ui/code/ShellBlock.astro";
-import CodeBlock from "~/components/ui/code/CodeBlock.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
 
 const title = "¿Cómo usar este apunte?";
 ---
@@ -24,99 +38,97 @@ const title = "¿Cómo usar este apunte?";
 <NotesLayout title={title}>
   <Abstract headingLevel="h2" class="mt-6">
     <p>
-      Este apunte sirve como guía de referencia rápida y complemento a las
-      clases. Está diseñado para ayudarte a profundizar en los temas cuando lo
+      Este apunte es una guía de referencia rápida y un complemento a las
+      clases, pensado para que puedas profundizar en los temas cuando lo
       necesites.
     </p>
     <p>
-      Aquí encontrarás explicaciones detalladas, ejemplos ilustrativos y
-      problemas prácticos que facilitarán tu aprendizaje. Aunque las clases
-      (diapositivas) suelen ser suficientes para comprender los conceptos, este
-      apunte ofrece una mirada más profunda para reforzar y aplicar lo
-      aprendido.
+      Incluye explicaciones detalladas, ejemplos ilustrativos y problemas
+      prácticos para facilitar tu aprendizaje. Aunque las clases (diapositivas)
+      suelen ser suficientes para comprender los conceptos, este apunte ofrece
+      una mirada más profunda para reforzar y aplicar lo aprendido.
     </p>
   </Abstract>
 
   <Important title="Mejor en pantallas grandes">
-    El sitio está pensado principalmente para usarse en computadoras. Aunque
-    tratamos de que funcione bien en dispositivos móviles, algunos contenidos
-    pueden no adaptarse del todo a pantallas pequeñas.
+    El sitio está optimizado para su uso en computadoras. Aunque procuramos que
+    funcione correctamente en dispositivos móviles, algunos contenidos pueden no
+    adaptarse por completo a pantallas pequeñas.
   </Important>
 
-  <section title="Estructura del apunte">
-    <Heading Icon={TreeStructure} headingLevel="h2"
-      >Estructura del apunte</Heading
-    >
+  <NotesSection id="estructura-del-apunte">
+    <Heading Icon={TreeStructure} headingLevel="h2" slot="heading">
+      Estructura del apunte
+    </Heading>
 
     <p class="mb-4">
-      Cada apunte está organizado en lecciones que abordan un tema específico de
-      forma gradual y práctica. Cada lección puede incluir distintas secciones,
-      diseñadas para apoyar diversos estilos de aprendizaje:
+      Cada unidad se organiza en lecciones que desarrollan un tema específico de
+      manera gradual y práctica. Estas lecciones pueden incluir distintas
+      secciones, pensadas para apoyar diversos estilos de aprendizaje:
     </p>
 
-    <TableFloat caption="Secciones comunes que puede contener una lección.">
-      <table
-        class="not-prose w-full table-auto border-collapse text-sm sm:text-base"
-      >
-        <thead>
-          <tr
-            class="border-b border-gray-500/30 dark:border-gray-500/20 text-left"
-          >
-            <th scope="col" class="pb-2 pr-4 font-semibold">📌 Sección</th>
-            <th scope="col" class="pb-2 font-semibold">📖 Contenido</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-300/20 dark:divide-gray-600/20">
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Conceptos</td>
-            <td class="py-2"
-              >Explicaciones detalladas de los temas clave y su motivación.</td
-            >
-          </tr>
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Ejemplos</td>
-            <td class="py-2"
-              >Fragmentos de código que ilustran cómo aplicar lo aprendido.</td
-            >
-          </tr>
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Ejercicios</td>
-            <td class="py-2"
-              >Problemas para poner en práctica los conceptos estudiados.</td
-            >
-          </tr>
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Soluciones</td>
-            <td class="py-2"
-              >Explicaciones y respuestas a los ejercicios propuestos.</td
-            >
-          </tr>
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Referencias</td>
-            <td class="py-2"
-              >Recursos adicionales para profundizar el estudio.</td
-            >
-          </tr>
-          <tr>
-            <td class="py-2 pr-4 font-semibold">Ejemplos en otros lenguajes</td>
-            <td class="py-2"
-              >Comparaciones entre Kotlin y otros lenguajes de programación.</td
-            >
-          </tr>
-        </tbody>
-      </table>
-    </TableFloat>
+    <Table>
+      <TableCaption>
+        Secciones habituales que puede contener una lección.
+      </TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableCell>📌 Sección</TableCell>
+          <TableCell>📖 Contenido</TableCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell class="font-semibold">Conceptos</TableCell>
+          <TableCell>
+            Explicaciones detalladas de los temas clave y su motivación.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-semibold">Ejemplos</TableCell>
+          <TableCell>
+            Fragmentos de código que muestran cómo aplicar lo aprendido.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-semibold">Ejercicios</TableCell>
+          <TableCell>
+            Problemas diseñados para poner en práctica los conceptos estudiados.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-semibold">Soluciones</TableCell>
+          <TableCell>
+            Respuestas y explicaciones de los ejercicios propuestos.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-semibold">Referencias</TableCell>
+          <TableCell>
+            Recursos adicionales para profundizar en el estudio.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell class="font-semibold">
+            Ejemplos en otros lenguajes
+          </TableCell>
+          <TableCell>
+            Comparaciones entre Kotlin y otros lenguajes de programación.
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
 
     <Note>
-      No todas las secciones estarán presentes en todas las lecciones: el
-      contenido se adapta a cada tema.
+      No todas las secciones aparecerán en todas las lecciones; el contenido se
+      adapta a las necesidades de cada tema.
     </Note>
-  </section>
+  </NotesSection>
 
-  <section title="cajita == opcional">
-    <Heading Icon={Package} headingLevel="h2">
+  <NotesSection id="contenido-opcional">
+    <Heading Icon={Package} headingLevel="h2" slot="heading">
       <span class="sr-only">Contenido opcional</span>
-      <InlineCode lang="kt" code="cajita == opcional" />
+      <InlineKotlin code="cajita == opcional" />
     </Heading>
 
     <p>Todo lo que esté en una caja como la siguiente:</p>
@@ -124,24 +136,30 @@ const title = "¿Cómo usar este apunte?";
     <More title="es opcional">
       Soy una cajita opcional, gracias por leerme c:
     </More>
-  </section>
+  </NotesSection>
 
-  <section title="¿Por qué usamos scripts para tareas simples?">
-    <Heading Icon={TerminalWindow} headingLevel="h2">
+  <NotesSection id="por-que-usamos-scripts">
+    <Heading Icon={TerminalWindow} headingLevel="h2" slot="heading">
       ¿Por qué usamos scripts para tareas simples?
     </Heading>
 
-    A lo largo de estos apuntes encontrarás scripts que, a primera vista,
-    podrían parecer innecesarios. Muchas tareas se pueden resolver con un par de
-    líneas en la terminal. Sin embargo, preferimos scripts más detallados por
-    razones <b>didácticas y prácticas</b>.
+    <p>
+      A lo largo de estos apuntes verás scripts que, a primera vista, podrían
+      parecer innecesarios, ya que muchas tareas se pueden resolver con unas
+      pocas líneas en la terminal. Sin embargo, optamos por scripts más
+      detallados por razones
+      <strong> didácticas y prácticas</strong>.
+    </p>
 
-    <section title="Valor didáctico">
-      <Heading Icon={icons.Student} headingLevel="h3">Valor didáctico</Heading>
+    <NotesSection id="didactic-value">
+      <Heading Icon={icons.Student} headingLevel="h3">
+        Valor didáctico
+      </Heading>
 
       <List>
         <ListItem icon={icons.ListNumbers}>
-          Permite <b>mostrar cada paso de forma clara y controlada</b>.
+          Permite <strong>mostrar cada paso de forma clara y controlada</strong
+          >.
         </ListItem>
 
         <ListItem icon={icons.Terminal} class="flex flex-col items-start gap-2">
@@ -153,17 +171,16 @@ const title = "¿Cómo usar este apunte?";
               Validación de parámetros.
             </ListItem>
             <ListItem icon={icons.ChatText}>
-              Mensajes informativos (<InlineCode lang="sh" code="echo" />, <InlineCode
-                lang="ps"
+              Mensajes informativos (<InlineBash code="echo" />, <InlinePowerShell
                 code="Write-Verbose"
               />, etc.).
             </ListItem>
             <ListItem icon={icons.WarningCircle}>
-              Manejo de errores con <InlineCode lang="ps" code="try/catch" /> en
-              PowerShell o <InlineCode lang="sh" code="set -e" />, <InlineCode
-                lang="sh"
-                code="trap"
-              /> en Bash.
+              Manejo de errores con <InlinePowerShell
+                code="try"
+              />/<InlinePowerShell code="catch" /> en PowerShell o <InlineBash
+                code="set -e"
+              />, <InlineBash code="trap" /> en Bash.
             </ListItem>
           </List>
         </ListItem>
@@ -173,44 +190,47 @@ const title = "¿Cómo usar este apunte?";
           complejas.
         </ListItem>
       </List>
-    </section>
+    </NotesSection>
 
-    <section title="Útil para el desarrollo de bibliotecas">
-      <Heading Icon={icons.PuzzlePiece} headingLevel="h3">
+    <NotesSection id="useful-for-library-development">
+      <Heading Icon={icons.PuzzlePiece} headingLevel="h3" slot="heading">
         Útil para el desarrollo de bibliotecas
       </Heading>
 
       <p>
         En el desarrollo de bibliotecas reutilizables, especialmente cuando se
-        integran múltiples herramientas, es común enfrentar <b
-          >casos no cubiertos por los sistemas de construcción</b
-        > (como Gradle o npm). En esos casos, los scripts permiten:
+        integran múltiples herramientas, es común enfrentar
+        <strong>casos no cubiertos por los sistemas de construcción</strong>
+        (como Gradle o npm). En esos casos, los scripts permiten:
       </p>
 
       <List>
         <ListItem icon={icons.Sliders}>
-          <b>Personalizar el proceso de construcción</b> según las necesidades específicas
-          del proyecto.
+          <strong>Personalizar el proceso de construcción</strong> según las necesidades
+          específicas del proyecto.
         </ListItem>
         <ListItem icon={icons.PlugsConnected}>
-          <b>Integrar herramientas externas</b> que no están directamente soportadas
-          por el sistema de construcción principal.
+          <strong>Integrar herramientas externas</strong> que no están directamente
+          soportadas por el sistema de construcción principal.
         </ListItem>
         <ListItem icon={icons.GearSix}>
-          <b>Automatizar tareas auxiliares</b>, como validaciones previas,
-          configuraciones iniciales o pasos de instalación personalizada.
+          <strong>Automatizar tareas auxiliares</strong>, como validaciones
+          previas, configuraciones iniciales o pasos de instalación
+          personalizados.
         </ListItem>
         <ListItem icon={icons.Repeat}>
-          <b>Hacer los procesos reproducibles</b> y fáciles de seguir.
+          <strong>Hacer los procesos reproducibles</strong> y fáciles de seguir.
         </ListItem>
         <ListItem icon={icons.ShieldCheck}>
-          <b>Reducir errores</b> al minimizar instrucciones manuales.
+          <strong>Reducir errores</strong> al minimizar instrucciones manuales.
         </ListItem>
       </List>
-    </section>
+    </NotesSection>
 
-    <section title="Ejemplo">
-      <Heading Icon={icons.Terminal} headingLevel="h3">Ejemplo</Heading>
+    <NotesSection id="scripts-example">
+      <Heading Icon={icons.Terminal} headingLevel="h3" slot="heading">
+        Ejemplo
+      </Heading>
 
       <p>Esta tarea puede hacerse en la terminal en unas pocas líneas:</p>
 
@@ -221,198 +241,206 @@ const title = "¿Cómo usar este apunte?";
           gradle init
         `}
         lang="bash"
-        title="Desde la terminal"
-      />
+      >
+        <Fragment slot="title">Desde la terminal</Fragment>
+      </ShellBlock>
 
-      <p>
-        Sin embargo, podemos encapsular esa lógica en un script como este en
-        PowerShell:
+      <p class="mb-4">
+        Sin embargo, encapsular esta lógica en un script permite añadir
+        validaciones, mensajes claros y manejo de errores:
       </p>
 
-      <CodeBlock
-        code={`
-          [CmdletBinding()]
-          param (
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $ProjectRoot
-          )
+      <Tabs defaultValue="powershell">
+        <TabsList>
+          <TabsTrigger value="powershell">En PowerShell</TabsTrigger>
+          <TabsTrigger value="bash">O en Bash</TabsTrigger>
+        </TabsList>
 
-          try {
-            $fullPath = Resolve-Path -Path $ProjectRoot -ErrorAction SilentlyContinue
+        <TabsContent value="powershell">
+          <PowerShellBlock
+            code={`
+              [CmdletBinding()]
+              param (
+                [Parameter(Mandatory)]
+                [ValidateNotNullOrEmpty()]
+                [string] $ProjectRoot
+              )
 
-            if (-not $fullPath) {
-              Write-Verbose "Creating '$ProjectRoot'"
-              $null = New-Item -Path $ProjectRoot -ItemType Directory -Force
-              $fullPath = Resolve-Path $ProjectRoot
-            }
+              try {
+                if (-not (Test-Path $ProjectRoot)) {
+                  Write-Verbose "📁 Creating directory '$ProjectRoot'"
+                  New-Item -Path $ProjectRoot -ItemType Directory -Force | Out-Null
+                }
 
-            Set-Location $fullPath
-            Write-Verbose "Running 'gradle init' in '$fullPath'"
-            & gradle init
-          }
-          catch {
-            Write-Error "❌ Gradle init failed: $_"
-          }
-        `}
-        lang="powershell"
-        title="Script en PowerShell"
-        icon={icons.Powershell}
-        filename="Initialize-GradleProject.ps1"
-      />
+                $fullPath = Resolve-Path -Path $ProjectRoot
+                Set-Location $fullPath
 
-      <p>...o este equivalente en Bash:</p>
+                Write-Verbose "🚀 Running 'gradle init' in '$fullPath'"
+                & gradle init
+              }
+              catch {
+                Write-Error "❌ Gradle init failed: $_"
+                exit 1
+              }
+            `}
+          >
+            <Fragment slot="title">Script en PowerShell</Fragment>
+            <Fragment slot="source">Initialize-GradleProject.ps1</Fragment>
+          </PowerShellBlock>
+        </TabsContent>
 
-      <CodeBlock
-        code={`
-          #!/usr/bin/env bash
-          set -euo pipefail
+        <TabsContent value="bash">
+          <BashScript
+            code={`
+              #!/usr/bin/env bash
+              set -euo pipefail
 
-          project_root=$1
+              if [ "$#" -ne 1 ] || [ -z "$1" ]; then
+                echo "❌ Usage: $0 <project_root>" >&2
+                exit 1
+              fi
 
-          if [ ! -d "$project_root" ]; then
-            echo "📁 Creating directory '$project_root'"
-            mkdir -p "$project_root"
-          fi
+              project_root="$1"
 
-          cd "$project_root"
-          echo "🚀 Running 'gradle init' in $(pwd)"
-          gradle init
-        `}
-        lang="bash"
-        title="Script en Bash"
-        icon={icons.Bash}
-        filename="initialize_gradle_project.sh"
-      />
+              if [ ! -d "\${project_root}" ]; then
+                echo "📁 Creating directory '\${project_root}'"
+                mkdir -p "\${project_root}"
+              fi
 
-      <p>
-        Estos scripts permiten enseñar <strong>scripting real</strong> y construir
-        herramientas robustas que pueden crecer junto con el proyecto.
+              cd "\${project_root}"
+              echo "🚀 Running 'gradle init' in \$(pwd)"
+              gradle init
+            `}
+          >
+            <Fragment slot="title">Script en Bash</Fragment>
+            <Fragment slot="source">initialize_gradle_project.sh</Fragment>
+          </BashScript>
+        </TabsContent>
+      </Tabs>
+
+      <p class="mt-4">
+        Así, incluso para tareas simples, se enseña <strong
+          >scripting real</strong
+        >, validación de parámetros y prácticas seguras que facilitan la
+        evolución del proyecto.
       </p>
-    </section>
-  </section>
+    </NotesSection>
+  </NotesSection>
 
-  <section title="Estrategia de lectura">
-    <Heading Icon={icons.MagnifyingGlass} headingLevel="h2">
+  <NotesSection id="reading-strategy">
+    <Heading Icon={icons.MagnifyingGlass} headingLevel="h2" slot="heading">
       Estrategia de lectura
     </Heading>
 
     <p>
-      Te recomendamos usar la técnica de <strong>lectura diagonal</strong> para obtener
-      una visión general del contenido sin necesidad de leer cada palabra. Esta técnica
-      consiste en mover los ojos en forma diagonal por la página, enfocándote en
-      elementos clave como títulos, palabras en <strong>negrita</strong>, listas
-      y frases destacadas.
-    </p>
-    <p>
-      Su objetivo es ayudarte a captar la idea principal del texto, entender su
-      estructura y decidir en qué secciones profundizar. Es una estrategia
-      especialmente útil para revisar materiales extensos, buscar información
-      específica o hacerte una idea general antes de una lectura detallada.
+      La <strong>lectura diagonal</strong> es una técnica rápida para obtener una
+      visión general del contenido sin leer cada palabra. Consiste en mover los ojos
+      en diagonal por la página, prestando atención a <strong>títulos</strong>,
+      <strong>palabras en negrita</strong>, <strong>listas</strong> y frases destacadas.
     </p>
 
-    <section title="Cómo aplicar la lectura diagonal">
-      <Heading Icon={icons.Scan} headingLevel="h3">
+    <p>
+      Esta estrategia te ayuda a identificar las ideas principales, entender la
+      estructura del texto y decidir en qué partes profundizar. Es especialmente
+      útil para <strong>revisar materiales extensos</strong>, <strong
+        >buscar información puntual</strong
+      > o <strong>prepararte para una lectura más detallada</strong>.
+    </p>
+
+    <NotesSection id="diagonal-reading">
+      <Heading Icon={icons.Scan} headingLevel="h3" slot="heading">
         Cómo aplicar la lectura diagonal
       </Heading>
 
       <List>
         <ListItem icon={icons.TextAa}>
-          <strong>1. Lee los títulos y subtítulos</strong>: ofrecen una visión
-          general de la estructura del contenido.
+          <strong>1. Lee títulos y subtítulos</strong> para obtener una visión general
+          de la estructura.
         </ListItem>
         <ListItem icon={icons.Paragraph}>
-          <strong>2. Revisa los primeros párrafos</strong>: suelen contener el
+          <strong>2. Revisa los primeros párrafos</strong>, donde suele estar el
           mensaje clave de cada sección.
         </ListItem>
         <ListItem icon={icons.Target}>
-          <strong>3. Ve directo a la conclusión</strong>: te permite anticipar
-          los puntos clave de la lección.
+          <strong>3. Ve a la conclusión</strong> para anticipar los puntos clave
+          antes de leer en detalle.
         </ListItem>
         <ListItem icon={icons.HighlighterCircle}>
-          <strong>4. Escanea elementos destacados</strong>: como listas,
-          palabras en <strong>negrita</strong> o bloques de código.
+          <strong>4. Escanea elementos destacados</strong> como listas, texto en
+          <strong> negrita</strong> o bloques de código.
         </ListItem>
       </List>
-    </section>
-  </section>
+    </NotesSection>
+  </NotesSection>
 
-  <section title="Consejos de estudio">
-    <Heading Icon={icons.BookOpen} headingLevel="h2"
-      >Consejos de estudio</Heading
-    >
+  <NotesSection id="study-tips">
+    <Heading Icon={icons.BookOpen} headingLevel="h2" slot="heading">
+      Consejos de estudio
+    </Heading>
 
-    <p>
-      Aquí te dejamos algunas recomendaciones para estudiar de forma más
-      efectiva:
-    </p>
+    <p>Sigue estas recomendaciones para estudiar de forma más efectiva:</p>
 
     <List>
       <ListItem icon={icons.ClockCountdown}>
-        <strong>Organiza tu tiempo</strong>: Estudia en sesiones cortas
-        distribuidas a lo largo del tiempo. Por ejemplo, 30 minutos al día son
-        más efectivos que tres horas seguidas.
+        <strong>Organiza tu tiempo</strong>: estudia en sesiones cortas y
+        regulares. Por ejemplo, 30 minutos al día son más efectivos que tres
+        horas seguidas.
       </ListItem>
       <ListItem icon={icons.Flask}>
-        <strong>Practica de forma activa</strong>: Haz ejercicios y resuelve
-        problemas. Es mucho más eficaz que limitarte a leer teoría.
+        <strong>Practica de forma activa</strong>: realiza ejercicios y resuelve
+        problemas, en lugar de limitarte a leer teoría.
       </ListItem>
       <ListItem icon={icons.ChalkboardTeacher}>
-        <strong>Enseña lo que aprendes</strong>: Explicar conceptos a otra
-        persona refuerza tu comprensión y detecta vacíos.
+        <strong>Enseña lo que aprendes</strong>: explicar conceptos a otra
+        persona refuerza tu comprensión y te ayuda a detectar vacíos.
       </ListItem>
       <ListItem icon={icons.Coffee}>
-        <strong>Toma descansos</strong>: Las pausas entre sesiones ayudan a tu
-        cerebro a procesar y consolidar la información.
+        <strong>Toma descansos</strong>: las pausas entre sesiones facilitan que
+        tu cerebro procese y consolide la información.
       </ListItem>
     </List>
-  </section>
+  </NotesSection>
 
-  <section title="Planificación del tiempo">
-    <Heading Icon={icons.ClockCountdown} headingLevel="h2">
+  <NotesSection id="time-planning">
+    <Heading Icon={icons.ClockCountdown} headingLevel="h2" slot="heading">
       Planificación del tiempo
     </Heading>
 
     <p>
-      Cada lección incluye una estimación de tiempo recomendada para ayudarte a
-      organizar tu estudio. Sin embargo, este tiempo puede variar según tu nivel
-      de experiencia y conocimientos previos.
+      Cada lección incluye una estimación de tiempo para ayudarte a organizar tu
+      estudio. Esta puede variar según tu experiencia y conocimientos previos.
     </p>
     <p>
-      No te preocupes si tardas más de lo previsto: lo importante es comprender
-      los conceptos y saber aplicarlos correctamente. La mayoría de las
-      estimaciones están pensadas con margen suficiente, por lo que es posible
-      que termines antes de lo indicado.
+      No pasa nada si tardas más: lo importante es comprender los conceptos y
+      poder aplicarlos correctamente. Muchas estimaciones incluyen margen, así
+      que también podrías terminar antes.
     </p>
-  </section>
+  </NotesSection>
 
-  <section title="¿Tienes ideas para mejorar estos apuntes?">
+  <NotesSection id="improve-notes">
     <Heading Icon={icons.Lightbulb} headingLevel="h2">
       ¿Tienes ideas para mejorar estos apuntes?
     </Heading>
 
-    <p>Tu ayuda es más que bienvenida. Puedes:</p>
+    <p>Tu colaboración es más que bienvenida. Puedes:</p>
 
     <List class="mb-6">
       <ListItem icon={icons.Bug}>
-        <strong>Reportar errores</strong>
+        <strong>Reportar errores</strong> o proponer cambios abriendo un
         <a
           href="https://gitlab.com/r8vnhill/dibs-astro/issues"
           target="_blank"
-          rel="noopener noreferrer">abriendo un issue en GitLab</a
+          rel="noopener noreferrer">issue en GitLab</a
         >.
       </ListItem>
       <ListItem icon={icons.GitPullRequest}>
-        <strong>Sugerir mejoras</strong> mediante un <em>merge request</em> o un <em
-          >issue</em
-        >.
+        <strong>Enviar mejoras</strong> mediante un <em>merge request</em>.
       </ListItem>
       <ListItem icon={icons.ShareFat}>
-        <strong>Compartir estos apuntes</strong> con otrxs que puedan beneficiarse
-        de ellos.
+        <strong>Compartir estos apuntes</strong> con otrxs que puedan beneficiarse.
       </ListItem>
     </List>
 
     <p>🎉 ¡Gracias por ser parte de esta comunidad de aprendizaje! 🚀</p>
-  </section>
+  </NotesSection>
 </NotesLayout>

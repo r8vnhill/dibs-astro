@@ -1,4 +1,5 @@
 export { default as Abstract } from "./Abstract.astro";
+export { default as Danger } from "./Danger.astro";
 export { default as Definition } from "./Definition.astro";
 export { default as Exercise } from "./Exercise.astro";
 export { default as Explanation } from "./Explanation.astro";

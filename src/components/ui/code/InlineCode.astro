@@ -6,6 +6,7 @@
  * Ensures good typography, accessibility, and theming consistency using Tailwind utilities.
  */
 
+import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { CodeLanguage } from "astro";
 import { Code } from "astro:components";
 
@@ -54,6 +55,7 @@ const baseStyle = `
       inline
       theme="catppuccin-latte"
       class:list={["!bg-transparent", "!shadow-none"]}
+      transformers={[transformerColorizedBrackets()]}
     />
   </span>
   <span class="hidden dark:inline">
@@ -63,6 +65,7 @@ const baseStyle = `
       inline
       theme="catppuccin-mocha"
       class:list={["!bg-transparent", "!shadow-none"]}
+      transformers={[transformerColorizedBrackets()]}
     />
   </span>
 </code>

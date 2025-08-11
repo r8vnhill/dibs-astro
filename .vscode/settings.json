@@ -10,6 +10,7 @@
     "cloudflare",
     "comunícalo",
     "corrutinas",
+    "covariante",
     "Dmitry",
     "donotpresent",
     "dotenv",
@@ -69,6 +70,8 @@
     "timemachine",
     "tsconfigs",
     "unist",
+    "vararg",
+    "variádicas",
     "viewports"
   ],
   "files.associations": {
