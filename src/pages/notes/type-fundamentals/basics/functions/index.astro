@@ -2,10 +2,12 @@
 import Heading from "~/components/semantics/Heading.astro";
 import {
   Abstract,
+  Exercise,
   Explanation,
   Info,
   More,
   Note,
+  Solution,
   Tip,
   Warning,
 } from "~/components/ui/callouts";
@@ -25,6 +27,21 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/starwind/tooltip";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "~/components/starwind/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/starwind/tabs";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 
 const title = "Declaración de funciones";
 ---
@@ -702,6 +719,287 @@ const title = "Declaración de funciones";
           >.
         </p>
       </Info>
+
+      <More>
+        <Fragment slot="title">
+          <InlineKotlin code="Array<T>" /> vs. <InlineKotlin code="List<T>" />
+        </Fragment>
+
+        <p>
+          Tanto <InlineKotlin code="Array<T>" /> como <InlineKotlin
+            code="List<T>"
+          />
+          representan <strong>colecciones de tamaño fijo</strong> e
+          <strong> inmutables en cuanto a estructura</strong> (no puedes agregar
+          ni quitar elementos). Sin embargo, tienen <strong
+            >propósitos diferentes</strong
+          >: un
+          <InlineKotlin code="Array<T>" /> es mutable en sus elementos y está más
+          orientado a la eficiencia y la interoperabilidad con Java, mientras que
+          <InlineKotlin code="List<T>" /> es más expresiva y está pensada para un
+          estilo idiomático y funcional.
+        </p>
+
+        <List>
+          <ListItem icon={icons.Cpu}>
+            <InlineKotlin code="Array<T>" /> es una <strong
+              >estructura de bajo nivel</strong
+            >, más cercana al funcionamiento de los arreglos en lenguajes como
+            Java.
+          </ListItem>
+          <ListItem icon={icons.FlowArrow}>
+            <InlineKotlin code="List<T>" /> es parte de la API de colecciones de
+            Kotlin, más expresiva y flexible para la programación funcional.
+          </ListItem>
+        </List>
+
+        <Table class="align-middle">
+          <TableCaption>
+            Comparativa entre <InlineKotlin code="Array<T>" /> y
+            <InlineKotlin code="List<T>" /> en Kotlin
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableCell>Característica</TableCell>
+              <TableCell><InlineKotlin code="Array<T>" /></TableCell>
+              <TableCell><InlineKotlin code="List<T>" /></TableCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Mutable</TableCell>
+              <TableCell>
+                Sí (<InlineKotlin code="array[i] = ..." />)
+              </TableCell>
+              <TableCell>
+                No (estructura inmutable, pero sus elementos pueden ser
+                mutables)
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Tamaño fijo</TableCell>
+              <TableCell>Sí</TableCell>
+              <TableCell>
+                Sí (<InlineKotlin code="List" />, no en <InlineKotlin
+                  code="MutableList"
+                />)
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Posiciones accesibles</TableCell>
+              <TableCell>
+                Por índice (<InlineKotlin code="array[i]" />)
+              </TableCell>
+              <TableCell>
+                Por índice (<InlineKotlin code="list[i]" />)
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Métodos funcionales</TableCell>
+              <TableCell>Limitados</TableCell>
+              <TableCell>Amplia API funcional</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Uso común</TableCell>
+              <TableCell>Eficiencia, interoperabilidad con Java</TableCell>
+              <TableCell>Estilo idiomático, programación funcional</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Conversión</TableCell>
+              <TableCell>
+                <InlineKotlin code="array.toList()" />
+              </TableCell>
+              <TableCell>
+                <InlineKotlin code="list.toTypedArray()" />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+
+        <Tip>
+          <Fragment slot="title">En resumen</Fragment>
+          <List>
+            <ListItem icon={icons.FlowArrow}>
+              Usa <InlineKotlin code="List<T>" /> para la mayoría de los casos, especialmente
+              si buscas <strong>inmutabilidad lógica</strong> y una API más rica
+              y expresiva para manipulación de datos.
+            </ListItem>
+            <ListItem icon={icons.Cpu}>
+              Usa <InlineKotlin code="Array<T>" /> cuando necesites interoperar con
+              código Java o cuando el rendimiento en acceso/modificación por índice
+              sea crítico.
+            </ListItem>
+          </List>
+        </Tip>
+      </More>
     </NotesSection>
   </NotesSection>
+  <Exercise headingLevel="h2">
+    <Fragment slot="title">Duplicar niveles de poder</Fragment>
+    <p>
+      Vamos a practicar la declaración de funciones en Kotlin aplicando una
+      transformación sobre una lista. Supón que tienes una lista de niveles de
+      poder (<InlineKotlin code="Int" />) y quieres duplicar cada uno de ellos
+      usando <InlineKotlin code="map()" />.
+    </p>
+    <p>
+      Como recordatorio, <InlineKotlin code="map()" /> aplica una función a cada
+      elemento de una colección y devuelve una nueva colección con los resultados:
+    </p>
+    <KotlinBlock
+      code={`
+        fun <T, R> List<T>.map(transform: (T) -> R): List<R>
+        fun <T, R> Array<out T>.map(transform: (T) -> R): List<R>
+      `}
+    >
+      <Fragment slot="title">Firma de <InlineKotlin code="map()" /></Fragment>
+    </KotlinBlock>
+    <p>
+      Tu tarea es definir una función llamada <InlineKotlin
+        code="doublePowers"
+      /> que reciba una lista de enteros (<InlineKotlin code="List<Int>" />) o
+      bien una cantidad variable de argumentos (<InlineKotlin code="vararg" />)
+      y devuelva una nueva lista con cada valor duplicado.
+    </p>
+    <More>
+      <Fragment slot="title">Ejemplos de uso</Fragment>
+      <Tabs defaultValue="Lista" syncKey="exercise">
+        <TabsList>
+          <TabsTrigger value="Lista">Input como lista</TabsTrigger>
+          <TabsTrigger value="Vararg"
+            >Input como <InlineKotlin code="vararg" /></TabsTrigger
+          >
+        </TabsList>
+        <TabsContent value="Lista">
+          <KotlinBlock
+            code={`
+              doublePowers(listOf(5, 10, 15)) 
+              // devuelve: [10, 20, 30]
+            `}
+          >
+            <Fragment slot="title">Ejemplo de uso como lista</Fragment>
+          </KotlinBlock>
+        </TabsContent>
+        <TabsContent value="Vararg">
+          <KotlinBlock
+            code={`
+              doublePowers(5, 10, 15)
+              // devuelve: [10, 20, 30]
+              doublePowers(*intArrayOf(5, 10, 15))
+              // devuelve: [10, 20, 30]
+            `}
+          >
+            <Fragment slot="title"
+              >Ejemplo de uso como <InlineKotlin code="vararg" /></Fragment
+            >
+          </KotlinBlock>
+        </TabsContent>
+      </Tabs>
+    </More>
+    <p class="mt-4">
+      Ambas versiones son equivalentes en funcionalidad, pero difieren en cómo
+      se pasan los argumentos al invocar la función.
+    </p>
+    <Solution>
+      <Tabs defaultValue="Lista" syncKey="exercise">
+        <TabsList>
+          <TabsTrigger value="Lista">Input como lista</TabsTrigger>
+          <TabsTrigger value="Vararg"
+            >Input como <InlineKotlin code="vararg" /></TabsTrigger
+          >
+        </TabsList>
+        <TabsContent value="Lista">
+          <KotlinBlock
+            code={`
+              fun doublePowers(powers: List<Int>): List<Int> =
+                  powers.map { it * 2 }
+            `}
+          >
+            <Fragment slot="title">Solución: Input como lista</Fragment>
+            <Fragment slot="source">
+              functions/src/main/kotlin/cl/ravenhill/math/doublePowers.kt
+            </Fragment>
+          </KotlinBlock>
+        </TabsContent>
+        <TabsContent value="Vararg">
+          <KotlinBlock
+            code={`
+              fun doublePowers(vararg powers: Int): List<Int> =
+                  powers.map { it * 2 }
+            `}
+          >
+            <Fragment slot="title"
+              >Solución: Input como <InlineKotlin code="vararg" /></Fragment
+            >
+            <Fragment slot="source">
+              functions/src/main/kotlin/cl/ravenhill/math/doublePowers.kt
+            </Fragment>
+          </KotlinBlock>
+        </TabsContent>
+      </Tabs>
+    </Solution>
+  </Exercise>
+
+  <ConclusionsLayout>
+    <Fragment slot="conclusions">
+      En esta lección aprendimos la sintaxis básica para declarar funciones en
+      Kotlin, un componente esencial para escribir código <strong
+        >reutilizable</strong
+      >,
+      <strong>expresivo</strong> y <strong>mantenible</strong>. También
+      exploramos variantes idiomáticas como la
+      <strong>inferencia de tipos</strong>, las <strong
+        >funciones variádicas</strong
+      >
+      y las diferencias clave entre colecciones como
+      <InlineKotlin code="Array<T>" /> y <InlineKotlin code="List<T>" />.
+    </Fragment>
+
+    <Fragment slot="key-points">
+      <ListItem icon={icons.Function}>
+        Las funciones se declaran con la palabra clave <InlineKotlin
+          code="fun"
+        />
+        y pueden tener <strong>parámetros con valores por defecto</strong>.
+      </ListItem>
+      <ListItem icon={icons.MagicWand}>
+        El tipo de retorno puede <strong>inferirse automáticamente</strong> si la
+        función se reduce a una sola expresión.
+      </ListItem>
+      <ListItem icon={icons.DotsThree}>
+        <InlineKotlin code="vararg" /> permite definir funciones que aceptan una
+        <strong>cantidad variable de argumentos</strong>.
+      </ListItem>
+      <ListItem icon={icons.HandPointing}>
+        Es posible requerir al menos un argumento junto a <InlineKotlin
+          code="vararg"
+        />, combinándolos en la firma.
+      </ListItem>
+      <ListItem icon={icons.SquaresFour}>
+        <InlineKotlin code="Array<T>" /> y <InlineKotlin code="List<T>" /> parecen
+        similares, pero tienen <strong
+          >diferencias clave en mutabilidad y uso</strong
+        >.
+      </ListItem>
+      <ListItem icon={icons.PencilLine}>
+        Kotlin favorece un estilo conciso, pero también
+        <strong>explícito y claro</strong> cuando la función es pública o compleja.
+      </ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+      <p>
+        Esta lección fue tu <strong>primer paso</strong> en el sistema de funciones
+        de Kotlin.
+      </p>
+      <p>
+        No es necesario memorizar cada detalle ahora: usa este material como
+        <strong>referencia rápida</strong> cuando lo necesites.
+      </p>
+      <p>
+        Retomaremos estos conceptos más adelante, profundizando según lo
+        requiera cada unidad.
+      </p>
+    </Fragment>
+  </ConclusionsLayout>
 </NotesLayout>

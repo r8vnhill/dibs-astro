@@ -2,23 +2,26 @@
 import Heading from "~/components/semantics/Heading.astro";
 import * as Icons from "~/assets/img/icons";
 import List from "~/components/ui/list/List.astro";
+import NotesSection from "./NotesSection.astro";
 ---
 
-<section title="Conclusiones">
-  <Heading headingLevel="h2" Icon={Icons.SealCheck}>Conclusiones</Heading>
+<NotesSection id="conclusions">
+  <Heading headingLevel="h2" Icon={Icons.SealCheck} slot="heading"
+    >Conclusiones</Heading
+  >
 
   <slot name="conclusions" />
 
-  <section title="Puntos clave">
+  <NotesSection id="key-points">
     <Heading headingLevel="h3" Icon={Icons.PushPin}>Puntos clave</Heading>
     <List>
       <slot name="key-points" />
     </List>
-  </section>
+  </NotesSection>
 
-  <section title="¿Qué nos llevamos?">
+  <NotesSection id="takeaways">
     <Heading headingLevel="h3" Icon={Icons.Toolbox}>¿Qué nos llevamos?</Heading>
 
     <slot name="takeaways" />
-  </section>
-</section>
+  </NotesSection>
+</NotesSection>
