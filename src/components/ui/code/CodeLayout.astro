@@ -15,6 +15,11 @@ import type { availableLanguages } from "~/lib/shiki/highlighter";
 import DarkCode from "./DarkCode.astro";
 import CopyButton from "./CopyButton";
 import type { ShikiTransformer } from "shiki";
+import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
+import {
+  transformerNotationErrorLevel,
+  transformerNotationFocus,
+} from "@shikijs/transformers";
 
 /**
  * Props for the CodeLayout component.
@@ -123,7 +128,7 @@ const baseTitleClasses = [
   "font-semibold",
   "tracking-wide",
   "dark:border-primary/40",
-  "bg-base-background"
+  "bg-base-background",
 ];
 
 // Destructure and default props
@@ -140,6 +145,12 @@ const {
 
 // Normalize the code content before rendering
 const normalizedCode = normalizeIndentation(code);
+
+const commonTransformers = [
+  transformerColorizedBrackets(),
+  transformerNotationFocus(),
+  transformerNotationErrorLevel(),
+];
 ---
 
 <!-- Code block container -->
@@ -178,7 +189,13 @@ const normalizedCode = normalizeIndentation(code);
     <CopyButton client:load code={normalizedCode} />
 
     <!-- Code blocks get extra padding-right -->
-    <LightCode transformers={transformers} {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
-    <DarkCode transformers={transformers} {...{ code: normalizedCode, lang, codeClasses: "pr-12" }} />
+    <LightCode
+      transformers={[...commonTransformers, ...transformers]}
+      {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+    />
+    <DarkCode
+      transformers={[...commonTransformers, ...transformers]}
+      {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+    />
   </div>
 </div>

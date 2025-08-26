@@ -1,0 +1,392 @@
+---
+import { Abstract, Danger, Explanation, Tip } from "~/components/ui/callouts";
+import {
+  InlineKotlin,
+  InlineRust,
+  KotlinBlock,
+  RustBlock,
+} from "~/components/ui/code";
+import { List, ListItem } from "~/components/ui/list";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import * as icons from "~/assets/img/icons";
+import NotesSection from "~/layouts/NotesSection.astro";
+import Heading from "~/components/semantics/Heading.astro";
+import { Link } from "~/components/ui/links";
+
+const title = "Declaración de variables";
+---
+
+<NotesLayout
+  title={title}
+  git={{
+    user: "r8vnhill",
+    repo: "intro-kt",
+  }}
+>
+  <Abstract>
+    <p>
+      En la mayoría de los lenguajes las variables son simples contenedores de
+      datos. En Kotlin, en cambio, son <strong>propiedades</strong> que pueden incluir
+      lógica de acceso, validación y encapsulamiento.
+    </p>
+    <p>
+      Este enfoque convierte incluso a las declaraciones más simples en <strong
+        >herramientas poderosas de diseño</strong
+      >, especialmente al crear bibliotecas reutilizables.
+    </p>
+    <p>En esta lección aprenderás a:</p>
+    <List>
+      <ListItem icon={icons.PencilSimple}>
+        Declarar variables con <InlineKotlin code="val" /> y
+        <InlineKotlin code="var" />, entendiendo las diferencias entre
+        <strong>referencias inmutables</strong> y <strong>mutables</strong>.
+      </ListItem>
+      <ListItem icon={icons.Lock}>
+        Encapsular el acceso a los datos mediante <strong
+          >getters y setters personalizados</strong
+        >.
+      </ListItem>
+      <ListItem icon={icons.ShieldCheck}>
+        Proteger las invariantes internas de tus estructuras sin perder
+        expresividad hacia quienes usan tu API.
+      </ListItem>
+    </List>
+    <p>
+      Lo harás con un enfoque práctico, apoyado en
+      <strong>buenas prácticas de diseño</strong>, para escribir código claro,
+      seguro y mantenible.
+    </p>
+  </Abstract>
+  <NotesSection id="variable-declaration">
+    <Heading headingLevel="h2" Icon={icons.Archive} slot="heading">
+      Declaración de variables
+    </Heading>
+
+    <p>
+      En Kotlin existen dos formas principales de declarar variables, según
+      necesites inmutabilidad o mutabilidad:
+    </p>
+
+    <List>
+      <ListItem icon={icons.LockSimple}>
+        <InlineKotlin code="val" />→ <strong>referencia inmutable</strong>: su
+        valor no puede reasignarse una vez inicializado.
+      </ListItem>
+      <ListItem icon={icons.PencilSimple}>
+        <InlineKotlin code="var" />→ <strong>referencia mutable</strong>: su
+        valor puede cambiar después de la declaración.
+      </ListItem>
+    </List>
+
+    <KotlinBlock
+      code={`
+        (val|var) nombreVariable: Tipo = valor
+
+        // Examples:
+        val pi: Double = 3.14159
+        var counter: Int = 0
+      `}
+    >
+      <Fragment slot="title">Sintaxis general y ejemplos</Fragment>
+    </KotlinBlock>
+
+    <Tip>
+      <Fragment slot="title">Inferencia de tipos</Fragment>
+
+      <p>
+        En variables locales o privadas puedes omitir el tipo si el compilador
+        lo infiere a partir del valor asignado. Esto mejora la legibilidad sin
+        perder seguridad de tipos.
+      </p>
+      <p>
+        En propiedades y funciones <strong>públicas</strong> de una biblioteca, en
+        cambio, es <Link
+          href="https://kotlinlang.org/docs/coding-conventions.html#coding-conventions-for-libraries"
+          content="recomendable declarar explícitamente el tipo"
+        />: hace más clara la API, reduce la fragilidad frente a cambios y
+        facilita el mantenimiento a largo plazo.
+      </p>
+    </Tip>
+
+    <NotesSection id="immutable-references">
+      <Heading headingLevel="h3" Icon={icons.LockSimple} slot="heading">
+        Sólo lectura: <InlineKotlin code="val" />
+      </Heading>
+
+      <p>
+        Usa <InlineKotlin code="val" /> cuando <strong>la referencia</strong> de
+        la variable no cambiará después de su asignación. Una vez inicializada, no
+        podrás volver a asignarle otro valor.
+      </p>
+
+      <KotlinBlock
+        code={`
+          val hero = "Mr. Incredible"
+          // [!code error:1]
+          hero = "Elastigirl"   // Error: no se puede reasignar un 'val'
+
+          val sidekick: String
+          sidekick = "Dash"     // Correcto: asignación diferida (una sola vez)
+          // [!code error:1]
+          sidekick = "Violet"   // Error: la referencia no puede cambiar
+        `}
+      >
+        <Fragment slot="title"
+          >Ejemplos de uso de <InlineKotlin code="val" /></Fragment
+        >
+      </KotlinBlock>
+
+      <Explanation>
+        <List>
+          <ListItem icon={icons.XCircle}>
+            <strong><InlineKotlin code="hero" /></strong> se declara con
+            <InlineKotlin code="val" /> e inicia de inmediato. Reasignarla provoca
+            un error de compilación.
+          </ListItem>
+          <ListItem icon={icons.CheckCircle}>
+            <strong><InlineKotlin code="sidekick" /></strong> también es una
+            <InlineKotlin code="val" />, pero Kotlin permite una
+            <strong>asignación diferida</strong> siempre que sea única.
+          </ListItem>
+        </List>
+      </Explanation>
+
+      <p>
+        Estas variables son <strong>referencias inmutables</strong> o <strong
+          >propiedades de solo lectura</strong
+        >: su referencia no puede cambiar una vez asignada. Sin embargo, el
+        valor al que apuntan puede ser mutable (por ejemplo, una lista
+        modificable).
+      </p>
+
+      <p>
+        Más adelante veremos las <strong
+          >constantes en tiempo de compilación</strong
+        >
+        declaradas con <InlineKotlin code="const val" />, que deben conocerse en
+        compilación. Por ahora, basta con distinguir entre
+        <InlineKotlin code="var" /> y <InlineKotlin code="val" />.
+      </p>
+    </NotesSection>
+
+    <NotesSection id="mutable-references">
+      <Heading headingLevel="h3" Icon={icons.PencilSimple} slot="heading">
+        Lectura y escritura: <InlineKotlin code="var" />
+      </Heading>
+
+      <p>
+        Usa <InlineKotlin code="var" /> cuando necesites <strong
+          >cambiar el valor o reasignar la referencia</strong
+        > de una variable después de declararla.
+      </p>
+
+      <KotlinBlock
+        code={`
+          var codename = "Mr. Incredible"
+          codename = "Elastigirl"             // ✅ Reasignación: la referencia cambia
+
+          var energy = 10
+          energy = energy + 5                 // ✅ Suma explícita
+          energy += 5                         // ✅ Operador compuesto
+          energy++                            // ✅ Incremento en 1
+
+          // También puedes reasignar a otro objeto del mismo tipo
+          var gadgets = listOf("Tracker", "Comms")
+          gadgets = listOf("Grapple", "Inviso-Goggles") // ✅ Nueva lista
+        `}
+      >
+        <Fragment slot="title">Variables de lectura y escritura</Fragment>
+      </KotlinBlock>
+
+      <Explanation>
+        <List>
+          <ListItem icon={icons.ArrowsClockwise}>
+            <InlineKotlin code="codename" /> es <strong>mutable</strong>: puedes
+            reasignar la referencia a otro valor del mismo tipo.
+          </ListItem>
+          <ListItem icon={icons.PlusMinus}>
+            <InlineKotlin code="energy" /> muestra distintas formas de actualizar
+            números: reasignación directa, operadores compuestos (<InlineKotlin
+              code="+="
+            />) e incremento (<InlineKotlin code="++" />).
+          </ListItem>
+          <ListItem icon={icons.Stack}>
+            En <InlineKotlin code="gadgets" />, la <strong>referencia</strong>
+            cambia a una nueva lista.
+          </ListItem>
+        </List>
+      </Explanation>
+
+      <Danger headingLevel="h4">
+        <Fragment slot="title"
+          >Inmutabilidad referencial ≠ inmutabilidad del objeto</Fragment
+        >
+
+        <p>
+          En Kotlin, declarar una variable con <InlineKotlin code="val" />
+          <strong>no garantiza</strong> que el <em>contenido</em> sea inmutable:
+          significa que <strong>la referencia no puede cambiar</strong>. Si el
+          objeto apuntado es mutable, <strong>puedes modificar su estado</strong
+          >.
+        </p>
+
+        <KotlinBlock
+          code={`
+            val lista = mutableListOf(1, 2, 3)
+            lista.add(4)                      // válido: cambia el contenido, no la referencia
+            lista[0] = 99                     // también válido
+
+            val otra = listOf(1, 2, 3)        // Lista de solo lectura (interfaz), no garantiza inmutabilidad profunda
+            // [!code error:1]
+            otra.add(4)                       // no compila: la API no expone mutación
+
+            // [!code error:1]
+            lista = mutableListOf(5, 6, 7)    // Error: no se puede reasignar un 'val'
+          `}
+        >
+          <Fragment slot="title">
+            Kotlin: <InlineKotlin code="val" /> fija la referencia, no necesariamente
+            el estado interno
+          </Fragment>
+        </KotlinBlock>
+
+        <p>
+          En lenguajes como <strong>Rust</strong>, la inmutabilidad por defecto <strong
+            >sí aplica al valor</strong
+          >; para mutar necesitas declarar explícitamente con <InlineRust
+            code="mut"
+          />:
+        </p>
+
+        <RustBlock
+          code={`
+            let mut lista = vec![1, 2, 3];
+            lista.push(4); // permitido gracias a 'mut'
+
+            let lista_fija = vec![1, 2, 3];
+            // [!code error:1]
+            lista_fija.push(4); // error: no se puede modificar un valor inmutable
+          `}
+        >
+          <Fragment slot="title"
+            >Rust: inmutabilidad del valor por defecto</Fragment
+          >
+        </RustBlock>
+      </Danger>
+
+      <Tip headingLevel="h4">
+        <Fragment slot="title"
+          >Prefiere <InlineKotlin code="val" /> siempre que sea posible</Fragment
+        >
+
+        <p>
+          Siempre que puedas, <strong
+            >usa <InlineKotlin code="val" /> en lugar de <InlineKotlin
+              code="var"
+            /></strong
+          >. La inmutabilidad mejora la legibilidad, facilita el mantenimiento
+          del código y
+          <strong>hace más sencillo el razonamiento formal</strong> sobre su comportamiento.
+          Recurre a <InlineKotlin code="var" /> solo cuando el valor deba <strong
+            >cambiar con el tiempo</strong
+          >.
+        </p>
+
+        <KotlinBlock
+          code={`
+            // Mejor con val: expresa intención clara, el valor no cambia (más seguro y legible)
+            val basePower = 42
+            val bonus = 8
+            val total = basePower + bonus
+
+            // Menos claro con var: sugiere que el valor podría seguir cambiando
+            // [!code warning:2]
+            var total = 42
+            total += 8
+          `}
+        >
+          <Fragment slot="title">
+            Expresividad e intención: mejor con <InlineKotlin code="val" /> que con
+            <InlineKotlin code="var" />
+          </Fragment>
+        </KotlinBlock>
+
+        <p>
+          En el primer caso, <InlineKotlin code="total" /> es un resultado fijo y
+          predecible. En el segundo, el uso de <InlineKotlin code="var" /> puede
+          dar la impresión de que
+          <InlineKotlin code="total" />
+          <strong>seguirá cambiando</strong>, aunque no sea así.
+        </p>
+      </Tip>
+    </NotesSection>
+
+    <NotesSection id="when-to-use-var">
+      <Heading headingLevel="h3" Icon={icons.Scales} slot="heading"
+        >¿Cuándo usar <InlineKotlin code="var" />?</Heading
+      >
+      <p>
+        Aunque <strong
+          ><InlineKotlin code="val" /> debería ser tu primera opción</strong
+        >, hay casos donde <InlineKotlin code="var" /> resulta más apropiado:
+      </p>
+
+      <List>
+        <ListItem icon={icons.ArrowsClockwise}>
+          Cuando una <strong
+            >variable representa el estado interno mutable</strong
+          > de una clase.
+        </ListItem>
+        <ListItem icon={icons.PlusCircle}>
+          Cuando necesitas <strong
+            >acumular resultados de forma incremental</strong
+          > en un bucle o función.
+        </ListItem>
+        <ListItem icon={icons.Gear}>
+          Cuando implementas <strong>algoritmos imperativos</strong> donde el cambio
+          de estado es más natural y legible.
+        </ListItem>
+        <ListItem icon={icons.Flask}>
+          Cuando escribes <strong>tests o scripts</strong> en los que la simplicidad
+          y claridad pesan más que la inmutabilidad.
+        </ListItem>
+      </List>
+    </NotesSection>
+  </NotesSection>
+
+  <NotesSection>
+    <Heading headingLevel="h2" Icon={icons.Key} slot="heading">
+      Propiedades en Kotlin: más que campos
+    </Heading>
+    <p>
+      En Kotlin, <InlineKotlin code="val" /> y <InlineKotlin code="var" /> no solo
+      declaran campos como en otros lenguajes: en realidad definen <strong
+        >propiedades</strong
+      > con acceso controlado a través de <strong>getters y setters</strong>.
+    </p>
+    <!-- 
+
+Esto permite encapsular lógica sin perder expresividad:
+
+```kotlin showLineNumbers title="Propiedades en Kotlin"
+val soloLectura: Tipo = inicializador
+    get() = campoPersonalizado // Getter implícito o redefinido
+
+var lecturaEscritura: Tipo = inicializador
+    get() = campoPersonalizado
+    set(value) {
+        // lógica adicional antes de asignar
+        field = value
+    }
+```
+
+<Explanation>
+    - `val` genera solo un **getter**, lo que impide modificar la propiedad desde fuera.
+    - `var` genera tanto **getter como setter**, permitiendo control total sobre la lectura y escritura.
+    - Puedes personalizar estos métodos si necesitas validación, transformación u otros efectos colaterales.
+</Explanation>
+
+En el contexto de **bibliotecas**, esto permite definir APIs que exponen información de forma segura, mientras internamente conservan flexibilidad para evolucionar o proteger invariantes.
+ -->
+  </NotesSection>
+</NotesLayout>

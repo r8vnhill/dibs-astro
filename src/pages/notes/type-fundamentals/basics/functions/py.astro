@@ -1,0 +1,875 @@
+---
+import Heading from "~/components/semantics/Heading.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+
+import {
+  Abstract,
+  Danger,
+  Explanation,
+  Info,
+  More,
+  Note,
+  Tip,
+  Warning,
+} from "~/components/ui/callouts";
+
+import {
+  CodeBlock,
+  InlineCode,
+  InlinePython,
+  PythonBlock,
+} from "~/components/ui/code";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "~/components/starwind/table";
+
+import { List, ListItem } from "~/components/ui/list";
+import * as icons from "~/assets/img/icons";
+import ToDo from "~/components/utils/ToDo";
+
+const title = "Declaración de funciones en Python";
+---
+
+<NotesLayout title={title} git={{ user: "r8vnhill", repo: "python-dibs" }}>
+  <NotesSection id="typing-and-functions">
+    <Heading headingLevel="h2" Icon={icons.TextAa} slot="heading">
+      Tipado y funciones: estático vs. dinámico
+    </Heading>
+
+    <p>
+      Un recordatorio rápido de cómo se diferencian Kotlin y Python en cuanto al
+      sistema de tipos:
+    </p>
+
+    <List>
+      <ListItem icon={icons.ShieldCheck}>
+        <strong>Kotlin</strong>: tipado estático con inferencia y nulabilidad
+        explícita. Los errores de tipo se detectan en compilación.
+      </ListItem>
+      <ListItem icon={icons.MagicWand}>
+        <strong>Python</strong>: tipado dinámico en tiempo de ejecución. Cuenta
+        con <em>type hints</em> (<a
+          href="https://peps.python.org/pep-0484/"
+          target="_blank"
+          rel="noopener noreferrer">PEP 484</a
+        >), opcionales, que pueden validarse con herramientas como
+        <a
+          href="https://docs.astral.sh/ty/"
+          target="_blank"
+          rel="noopener noreferrer">ty</a
+        >,
+        <a
+          href="https://mypy-lang.org/"
+          target="_blank"
+          rel="noopener noreferrer">mypy</a
+        > o
+        <a
+          href="https://github.com/microsoft/pyright"
+          target="_blank"
+          rel="noopener noreferrer">Pyright</a
+        >.
+      </ListItem>
+    </List>
+
+    <PythonBlock
+      code={`
+      def function_name(param_1: Type1, param_2: Type2) -> ReturnType:
+          # cuerpo de la función
+          return result
+    `}
+    >
+      <Fragment slot="title">Estructura general en Python</Fragment>
+    </PythonBlock>
+
+    <Explanation>
+      <Fragment slot="title">Explicación de la sintaxis</Fragment>
+      <List>
+        <ListItem icon={icons.CodeSimple}>
+          <InlinePython code="def" />: palabra clave para declarar una función.
+        </ListItem>
+        <ListItem icon={icons.TextAa}>
+          <InlinePython code="function_name" />: nombre en
+          <strong>snake_case</strong>.
+        </ListItem>
+        <ListItem icon={icons.BracketsRound}>
+          <InlinePython code="(param: Type)" />: parámetros opcionales con
+          anotaciones de tipo.
+        </ListItem>
+        <ListItem icon={icons.ArrowElbowRight}>
+          <InlinePython code="-> ReturnType" />: tipo de retorno, opcional.
+        </ListItem>
+        <ListItem icon={icons.BracketsCurly}>
+          <strong>Cuerpo</strong>: bloque indentado; usa
+          <InlinePython code="return" /> para devolver valores.
+        </ListItem>
+      </List>
+    </Explanation>
+
+    <Info headingLevel="h3">
+      <Fragment slot="title">Comparación rápida con Kotlin</Fragment>
+      <p>
+        En Python, las anotaciones de tipo son <strong>sugerencias</strong> que pueden
+        validarse con herramientas externas, pero el intérprete las
+        <strong>ignora en tiempo de ejecución</strong>.
+      </p>
+      <p>
+        Kotlin, en cambio, <strong
+          >sí valida los tipos y la nulabilidad en compilación</strong
+        >, ofreciendo seguridad antes de ejecutar el programa.
+      </p>
+    </Info>
+
+    <Tip headingLevel="h3">
+      <Fragment slot="title">Estilo de nombres</Fragment>
+
+      <p>
+        En Python, <strong
+          >las funciones y variables deben nombrarse usando la convención
+          <span class="font-mono font-bold">snake_case</span></strong
+        >, de acuerdo a las guías de estilo de <a
+          href="https://peps.python.org/pep-0008/"
+          target="_blank"
+          rel="noopener noreferrer">PEP 8</a
+        >.
+      </p>
+
+      <ul class="list-disc pl-6 mt-2">
+        <li>
+          El nombre comienza con una <strong>letra minúscula</strong>.
+        </li>
+        <li>
+          Cada palabra siguiente se separa con un <strong>guion bajo</strong>.
+        </li>
+      </ul>
+
+      <p class="mt-2">
+        <icons.CheckCircle class="inline w-5" /> Ejemplos correctos:
+      </p>
+
+      <List>
+        <ListItem icon={icons.Check}>
+          <InlinePython code="calculate_total" />
+        </ListItem>
+        <ListItem icon={icons.Check}>
+          <InlinePython code="print_message" />
+        </ListItem>
+        <ListItem icon={icons.Check}>
+          <InlinePython code="main" />
+        </ListItem>
+      </List>
+
+      <p>
+        Usar un estilo de nombres consistente <strong
+          >mejora la legibilidad</strong
+        > y asegura que tu código esté alineado con las <strong
+          >prácticas idiomáticas de Python</strong
+        >.
+      </p>
+
+      <Danger headingLevel="h4">
+        <Fragment slot="title">Estilos incorrectos</Fragment>
+
+        <p>
+          Evita estilos heredados de otros lenguajes o que no son válidos en
+          Python:
+        </p>
+
+        <List>
+          <ListItem icon={icons.X}>
+            <InlinePython code="CalculateTotal" /> — <strong>PascalCase</strong
+            >, reservado para <strong>clases</strong>.
+          </ListItem>
+          <ListItem icon={icons.X}>
+            <InlinePython code="calculateTotal" /> — <strong>camelCase</strong>,
+            típico en Java/Kotlin, <strong>no se utiliza</strong> en funciones de
+            Python.
+          </ListItem>
+          <ListItem icon={icons.X}>
+            <InlinePython code="calculate-total" /> — <strong>kebab-case</strong
+            >, <strong>inválido</strong> como identificador.
+          </ListItem>
+          <ListItem icon={icons.X}>
+            <InlinePython code="CALCULATE_TOTAL" /> — <strong
+              >UPPER_SNAKE_CASE</strong
+            >, reservado para <strong>constantes</strong>.
+          </ListItem>
+        </List>
+      </Danger>
+    </Tip>
+
+    <NotesSection>
+      <Heading headingLevel="h3" Icon={icons.Plus} slot="heading">
+        Ejemplo: Sumar dos números
+      </Heading>
+
+      <PythonBlock
+        code={`
+          # [!code focus:2]
+          def add(a: int, b: int) -> int:
+              return a + b
+
+          if __name__ == "__main__":
+              # Example usage of the add function
+              print("Adding 2 and 3 gives:", add(2, 3))  # ➜ 5
+              # [!code focus:4]
+              # At runtime, Python allows this and produces '12' (concatenation).
+              # However, ty/mypy/pyright will flag a *type error* (expected ints).
+              print("Adding '1' and '2' gives:", add("1", "2")) # ➜ 12
+        `}
+      >
+        <Fragment slot="title">Función con tipos y doctest</Fragment>
+        <a
+          slot="source"
+          href="https://gitlab.com/r8vnhill/python-dibs/-/blob/main/type-fundamentals/basics/functions/typing.py"
+          target="_blank"
+          rel="noopener noreferrer"
+          >type-fundamentals/basics/functions/typing.py</a
+        >
+      </PythonBlock>
+    </NotesSection>
+
+    <NotesSection>
+      <Heading headingLevel="h3" Icon={icons.Equals} slot="heading"
+        >Argumentos por defecto y nombrados</Heading
+      >
+      <p>
+        Puedes definir valores por defecto y usar argumentos nombrados para
+        mejorar la legibilidad:
+      </p>
+      <PythonBlock
+        code={`
+          # [!code focus:2]
+          def summon(character: str, location: str = "Rivendell") -> str:
+              return f"{character} has been summoned to {location}."
+          
+
+          if __name__ == "__main__":
+              print(summon("Gandalf"))  # ➜ Gandalf has been summoned to Rivendell.
+              print(
+                  summon(character="Aragorn", location="Minas Tirith")
+              )  # ➜ Aragorn has been summoned to Minas Tirith.
+        `}
+      >
+        <Fragment slot="title">Función con parámetros por defecto</Fragment>
+        <a
+          slot="source"
+          href="https://gitlab.com/r8vnhill/python-dibs/-/blob/main/type-fundamentals/basics/functions/default.py"
+          target="_blank"
+          rel="noopener noreferrer"
+          >type-fundamentals/basics/functions/default.py</a
+        >
+      </PythonBlock>
+
+      <Danger>
+        <Fragment slot="title"
+          >Valores por defecto mutables: bug clásico</Fragment
+        >
+
+        <p>
+          En Python, los valores por defecto de los parámetros se <strong
+            >evalúan una sola vez</strong
+          > al definir la función. Si usas una lista, dict o set como valor por defecto,
+          <strong>se compartirá entre invocaciones</strong> y acumulará estado.
+        </p>
+
+        <PythonBlock
+          code={`
+            from typing import Any
+
+            # [!code focus:5]
+            def log_event(
+                event: dict[str, Any], buffer: list[dict[str, Any]] = []
+            ) -> list[dict[str, Any]]:
+                buffer.append(event)
+                return buffer
+
+
+            if __name__ == "__main__":
+                event_a = {
+                    "trainer": "Brendan",
+                    "action": "catch",
+                    "pokemon": "Ralts",
+                    "location": "Route 102",
+                }
+                event_b = {
+                    "trainer": "May",
+                    "action": "badge",
+                    "badge": "Stone Badge",
+                    "gym": "Rustboro City",
+                }
+
+                # [!code focus:6]
+                a = log_event(event_a)
+                b = log_event(event_b)
+
+                print(a is b)  # → True; same shared object
+                print(len(b))  # → 2; Brendan and May's events mixed
+                print([e["trainer"] for e in b])  # → ['Brendan', 'May']
+          `}
+        >
+          <Fragment slot="title"
+            >Problema con valores por defecto mutables</Fragment
+          >
+          <a
+            slot="source"
+            href="https://gitlab.com/r8vnhill/python-dibs/-/blob/main/type-fundamentals/basics/functions/default.py"
+            target="_blank"
+            rel="noopener noreferrer"
+            >type-fundamentals/basics/functions/default.py</a
+          >
+        </PythonBlock>
+
+        <More>
+          <Fragment slot="title">Cómo solucionarlo</Fragment>
+
+          <PythonBlock
+            code={`
+                from typing import Any
+
+                # [!code focus:8]
+                def buffer_event_safe(
+                    event: dict[str, Any],
+                    buffer: list[dict[str, Any]] | None = None,
+                ) -> list[dict[str, Any]]:
+                    if buffer is None:
+                        buffer = []
+                    buffer.append(event)
+                    return buffer
+
+
+                if __name__ == "__main__":
+                    event_a = {
+                        "trainer": "Brendan",
+                        "action": "catch",
+                        "pokemon": "Ralts",
+                        "location": "Route 102",
+                    }
+                    event_b = {
+                        "trainer": "May",
+                        "action": "badge",
+                        "badge": "Stone Badge",
+                        "gym": "Rustboro City",
+                    }
+
+                    # [!code focus:6]
+                    safe_a = buffer_event_safe(event_a)
+                    safe_b = buffer_event_safe(event_b)
+
+                    print(safe_a is safe_b)                 # → False; different objects
+                    print(len(safe_b))                      # → 1; only May's event
+                    print([e["trainer"] for e in safe_b])   # → ['May']
+              `}
+          >
+            <Fragment slot="title">
+              Patrón del centinela con <InlineCode code="None" lang="python" />
+              (<a
+                href="https://python-patterns.guide/python/sentinel-object/"
+                target="_blank"
+                rel="noopener noreferrer">referencia</a
+              >)
+            </Fragment>
+            <a
+              slot="source"
+              href="https://gitlab.com/r8vnhill/python-dibs/-/blob/main/type-fundamentals/basics/functions/default.py"
+              target="_blank"
+              rel="noopener noreferrer"
+              >type-fundamentals/basics/functions/default.py</a
+            >
+          </PythonBlock>
+
+          <Explanation>
+            <List>
+              <ListItem icon={icons.Repeat}>
+                Los objetos mutables como valores por defecto se evalúan una
+                sola vez y se comparten entre invocaciones.
+              </ListItem>
+              <ListItem icon={icons.Key}>
+                El uso de <InlineCode code="None" lang="python" /> como centinela
+                permite crear una nueva lista en cada llamada.
+              </ListItem>
+              <ListItem icon={icons.CheckCircle}>
+                La anotación <InlineCode
+                  code="list[dict[str, Any]] | None"
+                  lang="python"
+                /> mantiene la intención clara y verificable por herramientas de
+                análisis estático como ty, mypy o Pyright.
+              </ListItem>
+              <ListItem icon={icons.HandPointing}>
+                Si se pasa un buffer explícito, la mutación es intencional; si
+                no, se crea una lista fresca de manera segura.
+              </ListItem>
+            </List>
+          </Explanation>
+        </More>
+      </Danger>
+    </NotesSection>
+  </NotesSection>
+  <NotesSection>
+    <Heading headingLevel="h2" Icon={icons.DotsThreeCircle} slot="heading">
+      Funciones variádicas (<InlinePython code="*args" /> y <InlinePython
+        code="**kwargs"
+      />)
+    </Heading>
+
+    <p>
+      En Python, <InlinePython code="*args" /> captura argumentos posicionales variables
+      en una <strong>tupla</strong>, y <InlinePython code="**kwargs" /> (<strong
+        >k</strong
+      >ey<strong>w</strong>ord <strong>arg</strong>ument<strong>s</strong>)
+      captura argumentos con nombre en un <strong>diccionario</strong>.
+    </p>
+    <PythonBlock
+      code={`
+        from datetime import datetime
+
+
+        # [!code focus:5]
+        def log_event(event: str, *details: str, **metadata: str | int) -> str:
+            timestamp = datetime.now().isoformat(timespec="seconds")
+            details_str = " | ".join(details) if details else "no details"
+            meta_str = ", ".join(map(lambda kv: f"{kv[0]}={kv[1]}", metadata.items())) or "no metadata"
+            return f"[{timestamp}] {event.upper()}: {details_str} ({meta_str})"
+
+
+        if __name__ == "__main__":
+            print(
+                log_event(
+                    "sighting",
+                    "Celty spotted on her black bike",
+                    "Near Ikebukuro Station",
+                    level="info",
+                    reports=3,
+                )
+            )
+
+            print(
+                log_event(
+                    "altercation",
+                    "Clash reported on Sunshine 60 Street",
+                    "Parties: Shizuo Heiwajima vs Izaya Orihara",
+                    level="warning",
+                    damages=5,
+                )
+            )
+      `}
+    />
+    <ToDo
+      client:only="react"
+      metadata={{
+        title: 'No me convence el ejemplo, quizás sería mejor separar en 2 ejemplos, uno sobre *args y otro sobre **kwargs y evitar el uso de variables',
+      }}
+    />
+    <Explanation>
+      <p>
+        Construye una línea de log con <strong>marca de tiempo</strong>,
+        <strong>detalles</strong> y <strong>metadatos</strong> usando composición
+        con <InlinePython code="join" /> y <InlinePython code="map" />.
+      </p>
+
+      <List>
+        <ListItem icon={icons.Clock}>
+          <InlinePython code="timestamp" />: <InlinePython
+            code="datetime.now().isoformat(timespec='seconds')"
+          />.
+        </ListItem>
+        <ListItem icon={icons.TextAlignLeft}>
+          <InlinePython code="details_str" />: <InlinePython
+            code='" | ".join(details)'
+          /> o <em>"no details"</em> si está vacío.
+        </ListItem>
+        <ListItem icon={icons.BracketsCurly}>
+          <InlinePython code="meta_str" />: <InlinePython
+            code='", ".join(map(lambda kv: f"{kv[0]}={kv[1]}", metadata.items()))'
+          /> o <em>"no metadata"</em>.
+        </ListItem>
+      </List>
+
+      <p>Tipos:</p>
+
+      <List>
+        <ListItem icon={icons.BracketsRound}>
+          <InlinePython code="*details: str" /> → <InlinePython
+            code="tuple[str, ...]"
+          /> de descripciones libres.
+        </ListItem>
+        <ListItem icon={icons.BracketsCurly}>
+          <InlinePython code="**metadata: str | int" /> → <InlinePython
+            code="dict[str, str | int]"
+          /> de pares clave–valor.
+        </ListItem>
+      </List>
+
+      <Info>
+        <InlinePython code="join" /> actúa como un <em>fold</em> sobre secuencias;
+        <InlinePython code="map" /> transforma
+        <InlinePython code="(k, v)" /> en <InlinePython code="k=v" /> sin bucles
+        explícitos.
+      </Info>
+    </Explanation>
+
+    <!-- 
+
+    <Explanation>
+      <ul>
+        <li>
+          <InlinePython code="*args" /> se recibe como <em>tuple</em>: útil para
+          una cantidad variable de datos.
+        </li>
+        <li>
+          <InlinePython code="**kwargs" /> se recibe como <em>dict</em>: ideal
+          para parámetros opcionales con nombre.
+        </li>
+        <li>
+          Puedes <strong>desempaquetar</strong> secuencias y diccionarios al llamar:
+          <InlinePython code="f(*lista)" /> y <InlinePython
+            code="g(**opciones)"
+          />.
+        </li>
+      </ul>
+    </Explanation>
+
+    <PythonBlock
+      title="Desempaquetado al llamar"
+      code={`
+def sumar(a: int, b: int, c: int) -> int:
+    return a + b + c
+
+nums = [1, 2, 3]
+print(sumar(*nums))          # 6
+
+opciones = {"sep": " | ", "end": "\\n\\n"}
+print("A", "B", "C", **opciones)  # A | B | C
+    `}
+    />
+
+    <Tip headingLevel="h4">
+      <Fragment slot="title">Combina *args y **kwargs con colecciones</Fragment>
+      <p>
+        Un patrón común en bibliotecas es aceptar múltiples colecciones y
+        permitir
+        <em>overrides</em> por nombre. El siguiente ejemplo implementa una función
+        que
+        <strong>fusiona múltiples diccionarios</strong> y además permite sobrescribir
+        claves específicas vía <InlinePython code="**overrides" />.
+      </p>
+      <PythonBlock
+        title="merge_dicts: fusión con sobrescritura puntual"
+        code={`
+from typing import Mapping, MutableMapping, TypeVar
+
+T = TypeVar("T")
+
+def merge_dicts(*dicts: Mapping[str, T], **overrides: T) -> dict[str, T]:
+    \"\"\"Fusiona N diccionarios, aplicando overrides al final.
+    El orden importa: los últimos dicts tienen precedencia sobre los primeros,
+    y finalmente se aplican los overrides con nombre.
+    \"\"\"
+    merged: dict[str, T] = {}
+    for d in dicts:
+        merged.update(d)
+    merged.update(overrides)
+    return merged
+
+base = {"timeout": 10, "retries": 3}
+env  = {"timeout": 20}
+print(merge_dicts(base, env, retries=5))  # {'timeout': 20, 'retries': 5}
+      `}
+      />
+    </Tip>
+
+    <PythonBlock
+      title="Operar sobre colecciones: group_by"
+      code={`
+from collections import defaultdict
+from typing import Callable, DefaultDict, Hashable, Iterable, TypeVar
+
+T = TypeVar("T")
+K = TypeVar("K", bound=Hashable)
+
+def group_by(items: Iterable[T], key: Callable[[T], K]) -> dict[K, list[T]]:
+    \"\"\"Agrupa elementos por una llave derivada (similar a 'groupBy' en otros lenguajes).\"\"\"
+    groups: DefaultDict[K, list[T]] = defaultdict(list)
+    for item in items:
+        groups[key(item)].append(item)
+    return dict(groups)
+
+palabras = ["kotlin", "koto", "python", "pydantic", "scala"]
+# Agrupar por primera letra
+print(group_by(palabras, key=lambda s: s[0]))
+# {'k': ['kotlin', 'koto'], 'p': ['python', 'pydantic'], 's': ['scala']}
+    `}
+    />
+
+    <Callout type="info" title="Reglas prácticas">
+      <ul>
+        <li>
+          Usa <InlinePython code="*args" /> cuando el número de argumentos posicionales
+          sea variable.
+        </li>
+        <li>
+          Usa <InlinePython code="**kwargs" /> para opciones con nombre y valores
+          por defecto.
+        </li>
+        <li>
+          Para funciones que combinan estructuras (p. ej., <InlinePython
+            code="dict"
+          />), acepta <InlinePython code="*dicts" /> y <InlinePython
+            code="**overrides"
+          />.
+        </li>
+      </ul>
+    </Callout> -->
+  </NotesSection>
+
+  <!--
+  <NotesSection id="colecciones">
+    <Heading headingLevel="h2" Icon={icons.Stack} slot="heading">
+      Colecciones y operaciones funcionales
+    </Heading>
+
+    <Explanation>
+      <p>
+        Python ofrece contenedores incorporados (<InlineCode code="list" lang="python" />, <InlineCode code="tuple" lang="python" />,
+        <InlineCode code="dict" lang="python" />, <InlineCode code="set" lang="python" />) y comprensiones concisas.
+        Dispone de <InlineCode code="map" lang="python" />, <InlineCode code="filter" lang="python" />, <InlineCode code="sum" lang="python" />,
+        <InlineCode code="any" lang="python" />, <InlineCode code="all" lang="python" /> y <InlineCode code="functools.reduce" lang="python" />.
+      </p>
+    </Explanation>
+
+    <CodeBlock
+      icon={icons.Python}
+      lang="python"
+      code={`# Python: comprensiones y expresiones generadoras
+nums = [1, 2, 3, 4, 5]
+squares = [n*n for n in nums]              # lista
+evens   = {n for n in nums if n % 2 == 0}  # set
+mapping = {n: n*n for n in nums}           # dict
+total   = sum(n*n for n in nums)           # generador (lazy)
+`}
+    >
+      <Fragment slot="title">Python: comprensiones</Fragment>
+    </CodeBlock>
+
+    <Info>
+      <Fragment slot="title">Diferencia clave</Fragment>
+      <p>
+        Python carece de inmutabilidad estructural por defecto (las listas son mutables).
+        Puedes usar <InlineCode code="tuple" lang="python" /> para secuencias inmutables, pero no es una “colección funcional”
+        al estilo de una librería puramente inmutable.
+      </p>
+    </Info>
+  </NotesSection>
+
+  <NotesSection id="protocolos-y-duck-typing">
+    <Heading headingLevel="h2" Icon={icons.HandPointing} slot="heading">
+      Protocolos (PEP 544), duck typing y sobrecarga
+    </Heading>
+
+    <CodeBlock
+      icon={icons.Python}
+      lang="python"
+      code={`# Python: duck typing con Protocol (subtyping estructural)
+from typing import Protocol
+
+class Greeter(Protocol):
+    def greet(self, name: str) -> str: ...
+
+class ConsoleGreeter:
+    def greet(self, name: str) -> str:
+        return f"Hello, {name}"
+
+def welcome(g: Greeter) -> None:
+    print(g.greet("World"))
+
+welcome(ConsoleGreeter())  # OK sin herencia explícita
+`}
+    >
+      <Fragment slot="title">Python: Protocol (subtipado estructural)</Fragment>
+    </CodeBlock>
+
+    <CodeBlock
+      icon={icons.Python}
+      lang="python"
+      code={`# Python: "sobrecarga" mediante despacho por tipo del 1er argumento
+from functools import singledispatch
+
+@singledispatch
+def to_json(value):
+    raise TypeError("Unsupported")
+
+@to_json.register
+def _(value: int):
+    return {"type": "int", "value": value}
+
+@to_json.register
+def _(value: str):
+    return {"type": "str", "value": value}
+`}
+    >
+      <Fragment slot="title">Python: singledispatch</Fragment>
+    </CodeBlock>
+
+    <Note>
+      <Fragment slot="title">Diferencia clave</Fragment>
+      <p>
+        Python permite <strong>subtipado estructural</strong> vía <InlineCode code="Protocol" lang="python" />
+        y despacho por tipo en tiempo de ejecución con <InlineCode code="singledispatch" lang="python" />.
+        Además, soporta <strong>herencia múltiple</strong> de clases.
+      </p>
+    </Note>
+  </NotesSection>
+
+  <NotesSection id="concurrencia-y-rendimiento">
+    <Heading headingLevel="h2" Icon={icons.SpinnerGap} slot="heading">
+      Concurrencia y rendimiento
+    </Heading>
+
+    <CodeBlock
+      icon={icons.Python}
+      lang="python"
+      code={`# Python: IO concurrente con asyncio (no paralelo por CPU)
+import asyncio
+import httpx
+
+async def fetch(url: str) -> int:
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url)
+        return r.status_code
+
+async def main():
+    codes = await asyncio.gather(
+        fetch("https://example.org"),
+        fetch("https://httpbin.org/get"),
+    )
+    print(codes)
+
+asyncio.run(main())
+`}
+    >
+      <Fragment slot="title">Python: asyncio para IO-bound</Fragment>
+    </CodeBlock>
+
+    <Warning>
+      <Fragment slot="title">GIL y CPU-bound</Fragment>
+      <p>
+        En CPython, el <strong>GIL</strong> impide que múltiples hilos ejecuten bytecode
+        de Python en paralelo. Para trabajo <em>CPU-bound</em> se suele optar por
+        <InlineCode code="multiprocessing" lang="python" />, extensiones C/Cython/NumPy o runtimes alternativos.
+      </p>
+    </Warning>
+
+    <Info>
+      <Fragment slot="title">Diferencia clave</Fragment>
+      <p>
+        Python brilla en <em>prototipado rápido</em>, scripting y ciencia de datos con ecosistema C/NumPy.
+        Kotlin compila a bytecode (JVM) o nativo y puede ofrecer desempeño más predecible en servicios y bibliotecas.
+      </p>
+    </Info>
+  </NotesSection>
+
+  <NotesSection id="ecosistema-y-empacado">
+    <Heading headingLevel="h2" Icon={icons.Package} slot="heading">
+      Packaging, herramientas y despliegue
+    </Heading>
+
+    <Table>
+      <TableCaption>Panorama general</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableCell>Tema</TableCell>
+          <TableCell>Python</TableCell>
+          <TableCell>Notas</TableCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Gestión de dependencias</TableCell>
+          <TableCell>
+            <InlineCode code="pip" lang="bash" />, <InlineCode code="poetry" lang="bash" />, <InlineCode code="pipenv" lang="bash" />
+          </TableCell>
+          <TableCell>
+            Entornos virtuales: <InlineCode code="venv" lang="bash" />.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Empaquetado</TableCell>
+          <TableCell>
+            <InlineCode code="pyproject.toml" lang="bash" />, <InlineCode code="setuptools" lang="bash" />
+          </TableCell>
+          <TableCell>
+            Publicación en <InlineCode code="PyPI" lang="bash" />.
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Distribución ejecutable</TableCell>
+          <TableCell>
+            <InlineCode code="pipx" lang="bash" />, <InlineCode code="pex" lang="bash" />, <InlineCode code="shiv" lang="bash" />
+          </TableCell>
+          <TableCell>
+            “Zipapps” y lanzadores para CLIs.
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+
+    <CodeBlock
+      icon={icons.Bash}
+      lang="bash"
+      code={`# Proyecto Python mínimo
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+pip install requests
+
+# pyproject.toml + build
+pip install build
+python -m build
+`}
+    >
+      <Fragment slot="title">Python: entorno y build básicos</Fragment>
+    </CodeBlock>
+  </NotesSection>
+
+  <ConclusionsLayout>
+    <Fragment slot="conclusions">
+      <p>
+        <strong>Python</strong> ofrece flexibilidad dinámica, una sintaxis concisa para colecciones
+        y herramientas potentes (decoradores, pattern matching estructural, herencia múltiple).
+        Por su parte, Kotlin aporta garantías de tipo y nulabilidad en compilación.
+      </p>
+      <p>
+        Si buscas <em>prototipado rápido, scripting, ciencia de datos o extensibilidad dinámica</em>, Python es excelente.
+        Si necesitas <em>APIs estables, verificación de tipos fuerte y rendimiento consistente en JVM</em>, Kotlin es una gran elección.
+      </p>
+    </Fragment>
+
+    <Fragment slot="key-points">
+      <ListItem icon={icons.Scales}>
+        Python: tipado dinámico con <em>type hints</em> opcionales; decoradores, monkey patching y herencia múltiple.
+      </ListItem>
+      <ListItem icon={icons.ShieldCheck}>
+        Kotlin: tipado estático y nulabilidad explícita; mayor seguridad en compilación.
+      </ListItem>
+      <ListItem icon={icons.BracketsAngle}>
+        Python: pattern matching estructural; comprensiones y generadores muy expresivos.
+      </ListItem>
+      <ListItem icon={icons.SpinnerGap}>
+        Python + <InlineCode code="asyncio" lang="python" />: excelente para IO concurrente (GIL limita CPU paralelo).
+      </ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+      <p>
+        Conoce las fortalezas de cada uno y elige según el contexto:
+        <em>dinamismo y rapidez</em> (Python) vs. <em>seguridad estática e interoperabilidad JVM</em> (Kotlin).
+      </p>
+    </Fragment>
+  </ConclusionsLayout> -->
+</NotesLayout>

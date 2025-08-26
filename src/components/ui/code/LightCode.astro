@@ -45,7 +45,11 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
     "font-mono", // Monospaced font
     codeClasses, // Allow overrides from parent component
   ]}
-  transformers={[transformerColorizedBrackets(), transformerNotationFocus(), ...transformers]}
+  transformers={[
+    transformerColorizedBrackets(),
+    transformerNotationFocus(),
+    ...transformers,
+  ]}
   role="code"
   wrap
 />
@@ -55,9 +59,38 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
     filter: blur(1px);
     transition: filter 0.2s ease;
   }
-
   pre.has-focused:hover .line:not(.focused) {
     filter: none;
   }
-</style>
 
+  pre .line {
+    position: relative;
+    padding-left: 0.75rem; /* espacio para el borde izquierdo */
+  }
+
+  pre.has-highlighted .line.highlighted {
+    background-color: color-mix(in oklab, var(--muted), transparent 70%);
+    transition:
+      background-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  pre.has-highlighted .line.highlighted.error {
+    background-color: color-mix(in oklab, var(--error), transparent 88%);
+    box-shadow: inset 2px 0 0 0 var(--error);
+  }
+
+  pre.has-highlighted .line.highlighted.warning {
+    background-color: color-mix(in oklab, var(--warning), transparent 86%);
+    box-shadow: inset 2px 0 0 0 var(--warning);
+  }
+
+  pre.has-highlighted .line.highlighted.error code,
+  pre.has-highlighted .line.highlighted.error .token {
+    color: var(--error-foreground);
+  }
+  pre.has-highlighted .line.highlighted.warning code,
+  pre.has-highlighted .line.highlighted.warning .token {
+    color: var(--warning-foreground);
+  }
+</style>

@@ -42,6 +42,9 @@ import {
   TabsTrigger,
 } from "~/components/starwind/tabs";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LangLink from "~/components/ui/links/LangLink.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
+import { OfficialDocs, References, WebPage } from "~/components/ui/references";
 
 const title = "Declaración de funciones";
 ---
@@ -1002,4 +1005,37 @@ const title = "Declaración de funciones";
       </p>
     </Fragment>
   </ConclusionsLayout>
+
+  <LinksLayout>
+    <LangLink
+      href="/notes/type-fundamentals/basics/functions/py/"
+      src="https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png"
+      name="Python"
+    />
+  </LinksLayout>
+
+  <References>
+    <Fragment slot="recommended">
+      <WebPage
+        title="Functions"
+        url="https://kotlinlang.org/docs/functions.html"
+      >
+        <OfficialDocs slot="location">Kotlin docs</OfficialDocs>
+        <Fragment slot="description">
+          Esta documentación ofrece una guía exhaustiva sobre la declaración y
+          uso de funciones en Kotlin. Aborda desde conceptos básicos como la
+          sintaxis con <InlineKotlin code="fun" />, el uso de parámetros con
+          tipo explícito y valores por defecto, hasta temas más avanzados como
+          funciones variádicas (<InlineKotlin code="vararg" />), argumentos
+          nombrados, funciones de una sola expresión, inferencia de tipos,
+          funciones infijas (<InlineKotlin code="infix" />), genéricas y
+          recursivas de cola (<InlineKotlin code="tailrec" />). También detalla
+          cómo declarar funciones a nivel superior, funciones locales, de
+          miembro y de extensión, promoviendo un estilo conciso, idiomático y
+          expresivo. Es una fuente esencial para comprender el modelo funcional
+          y flexible de funciones en Kotlin.
+        </Fragment>
+      </WebPage>
+    </Fragment>
+  </References>
 </NotesLayout>

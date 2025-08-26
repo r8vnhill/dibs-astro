@@ -36,6 +36,7 @@ export const courseStructure: Lesson[] = [
         href: "/notes/type-fundamentals/basics/",
         children: [
           { title: "Funciones", href: "/notes/type-fundamentals/basics/functions/" },
+          { title: "Variables", href: "/notes/type-fundamentals/basics/variables/" }
         ],
       },
     ],

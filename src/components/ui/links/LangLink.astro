@@ -1,0 +1,87 @@
+---
+export interface Props {
+  href: string;
+  name: string;
+  src?: string; // optional bitmap/svg
+  alt?: string;
+  class?: string; // additional classes from the caller
+  ariaLabel?: string;
+  external?: boolean;
+  size?: "sm" | "md";
+  variant?: "ghost" | "soft";
+}
+
+const {
+  href,
+  name,
+  src,
+  alt = "",
+  class: className = "",
+  ariaLabel,
+  external,
+  size = "md",
+  variant = "ghost",
+}: Props = Astro.props;
+
+const isExternal =
+  typeof external === "boolean"
+    ? external
+    : /^https?:\/\//.test(href) || href.startsWith("//");
+
+const base =
+  "group inline-flex items-center gap-2 rounded-md font-medium transition-colors focus-visible:outline-none";
+const sizes = {
+  sm: "text-sm px-2 py-1",
+  md: "text-sm px-3 py-2",
+}[size];
+
+const variants = {
+  ghost:
+    // text-emphasis, subtle hover
+    "text-base-text hover:text-primary hover:bg-primary-lightest/40 dark:hover:bg-primary-dark/10",
+  soft:
+    // subtle filled chip
+    "text-base-text bg-primary-lightest/40 hover:bg-primary-light/40 dark:bg-primary-dark/10 dark:hover:bg-primary-dark/20",
+}[variant];
+
+const focus =
+  "focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-base-background";
+
+const label =
+  variant === "ghost"
+    ? "underline-offset-2 group-hover:underline"
+    : "underline-offset-2"; // no underline by default in "soft"
+
+const iconClass = size === "sm" ? "h-4 w-4" : "h-5 w-5";
+---
+
+<a
+  href={href}
+  target={isExternal ? "_blank" : undefined}
+  rel={isExternal ? "noopener noreferrer" : undefined}
+  aria-label={ariaLabel ?? name}
+  title={name}
+  class:list={[base, sizes, variants, focus, className]}
+>
+  {/* Prefer provided SVG via slot */}
+  <slot name="icon" />
+  {
+    src && (
+      <img
+        src={src}
+        alt={alt}
+        class:list={[iconClass, "object-contain"]}
+        loading="lazy"
+        decoding="async"
+        aria-hidden={alt ? undefined : "true"}
+      />
+    )
+  }
+  <span class={label}>{name}</span>
+
+  {/* Optional trailing adornment via slot (e.g., chevron) */}
+  <slot />
+
+  {/* SR-only hint for external links */}
+  {isExternal && <span class="sr-only">(opens in a new tab)</span>}
+</a>
