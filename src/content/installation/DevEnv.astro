@@ -1,18 +1,25 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import PreferFleet from "./PreferFleet.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+
+type Props = {
+  env: string;
+};
+
+const { env }: Props = Astro.props;
 ---
 
-<section title="Configurando el entorno de desarrollo" class="notes-section">
-  <Heading Icon={icons.DesktopTower} headingLevel="h4">
-    Configurando el entorno de desarrollo
+<NotesSection id={`${env}-env-config`}>
+  <Heading Icon={icons.DesktopTower} headingLevel="h4" slot="heading">
+    Configurar el entorno de desarrollo
   </Heading>
 
-  Para programar en Kotlin, te recomendamos usar <strong
-    >JetBrains Toolbox</strong
-  > para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), el entorno
-  de desarrollo más completo para este lenguaje.
-
-  <PreferFleet />
-</section>
+  <p>
+    Para programar en Kotlin, se recomienda usar <strong
+      >JetBrains Toolbox</strong
+    >
+    para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), la opción
+    más completa y optimizada para este lenguaje.
+  </p>
+</NotesSection>

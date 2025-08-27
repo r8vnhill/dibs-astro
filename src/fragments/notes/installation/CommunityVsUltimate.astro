@@ -1,0 +1,33 @@
+---
+import { Info, Tip } from "~/components/ui/callouts";
+import { Link } from "~/components/ui/links";
+---
+
+<Info>
+  <span slot="title">Community vs Ultimate</span>
+  <ul class="list-outside list-disc pl-5">
+    <li>
+      <strong>IntelliJ IDEA Community</strong> es <em
+        >gratuita y de código abierto</em
+      >
+      (ver repositorio público) y es <strong>suficiente para el curso</strong>.
+      No utilizaremos funcionalidades exclusivas de Ultimate.
+    </li>
+    <li>
+      <strong>IntelliJ IDEA Ultimate</strong> incluye características avanzadas (por
+      ejemplo, soporte web y enterprise). Si eres estudiante, puedes obtenerla sin
+      costo mediante el
+      <Link href="https://www.jetbrains.com/academy/student-pack/"
+        >Student Pack</Link
+      >.
+    </li>
+  </ul>
+  <Tip>
+    <Fragment slot="title">¿Cuál elegir?</Fragment>
+    <p>
+      Si eres estudiante, aprovecha la
+      <strong>Ultimate</strong> ya que tendrás licencia gratuita. En caso contrario,
+      <strong>Community</strong> es totalmente suficiente para este curso.
+    </p>
+  </Tip>
+</Info>
