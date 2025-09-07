@@ -354,39 +354,120 @@ const title = "Declaración de variables";
     </NotesSection>
   </NotesSection>
 
-  <NotesSection>
+  <NotesSection id="properties">
     <Heading headingLevel="h2" Icon={icons.Key} slot="heading">
-      Propiedades en Kotlin: más que campos
+      Propiedades en Kotlin: más que simples campos
     </Heading>
+
     <p>
-      En Kotlin, <InlineKotlin code="val" /> y <InlineKotlin code="var" /> no solo
-      declaran campos como en otros lenguajes: en realidad definen <strong
-        >propiedades</strong
-      > con acceso controlado a través de <strong>getters y setters</strong>.
+      En Kotlin, <InlineKotlin code="val" /> y <InlineKotlin code="var" /> van más
+      allá de declarar simples campos: definen <strong>propiedades</strong> con acceso
+      controlado mediante <strong>getters y setters</strong>.
     </p>
-    <!-- 
 
-Esto permite encapsular lógica sin perder expresividad:
+    <p>Esto permite encapsular lógica sin perder expresividad:</p>
 
-```kotlin showLineNumbers title="Propiedades en Kotlin"
-val soloLectura: Tipo = inicializador
-    get() = campoPersonalizado // Getter implícito o redefinido
+    <KotlinBlock
+      code={`
+      // Propiedad de solo lectura (val)
+      val soloLectura: Tipo
+          get() = campoPersonalizado // lógica al obtener el valor
 
-var lecturaEscritura: Tipo = inicializador
-    get() = campoPersonalizado
-    set(value) {
-        // lógica adicional antes de asignar
-        field = value
-    }
-```
+      // Propiedad de lectura y escritura (var)
+      var lecturaEscritura: Tipo
+          get() = campoPersonalizado
+          set(value) {
+              // lógica antes de asignar
+              field = value
+          }
+    `}
+    >
+      <Fragment slot="title">Propiedades en Kotlin</Fragment>
+    </KotlinBlock>
 
-<Explanation>
-    - `val` genera solo un **getter**, lo que impide modificar la propiedad desde fuera.
-    - `var` genera tanto **getter como setter**, permitiendo control total sobre la lectura y escritura.
-    - Puedes personalizar estos métodos si necesitas validación, transformación u otros efectos colaterales.
-</Explanation>
+    <Explanation>
+      <List>
+        <ListItem icon={icons.LockSimple}>
+          <InlineKotlin code="val" /> genera solo un <strong>getter</strong>, lo
+          que impide modificar la propiedad desde fuera.
+        </ListItem>
+        <ListItem icon={icons.PencilSimple}>
+          <InlineKotlin code="var" /> genera <strong>getter y setter</strong>,
+          permitiendo tanto lectura como escritura controlada.
+        </ListItem>
+        <ListItem icon={icons.Wrench}>
+          Puedes <strong>personalizar</strong> los métodos para añadir validación,
+          transformación u otros efectos colaterales.
+        </ListItem>
+      </List>
+    </Explanation>
 
-En el contexto de **bibliotecas**, esto permite definir APIs que exponen información de forma segura, mientras internamente conservan flexibilidad para evolucionar o proteger invariantes.
- -->
+    <p>
+      En el contexto de <strong>bibliotecas</strong>, esto permite exponer APIs
+      seguras que muestran información de forma controlada, mientras el diseño
+      interno conserva la flexibilidad necesaria para evolucionar o proteger
+      invariantes.
+    </p>
+
+    <NotesSection>
+      <Heading headingLevel="h3" Icon={icons.List} slot="heading">
+        Listas inmutables con campos de respaldo
+      </Heading>
+
+      <p>
+        Al diseñar una biblioteca, es común tener estructuras internas mutables
+        que
+        <strong>no deben exponerse directamente</strong>. En Kotlin, esto se
+        resuelve fácilmente mediante un <strong>campo de respaldo</strong> con convención
+        de prefijo <InlineKotlin code="_" />:
+      </p>
+
+      <KotlinBlock
+        code={`
+          private val _party: MutableList<String> = mutableListOf("Balthier", "Vaan")
+
+          val party: List<String>
+              get() = _party
+
+          fun addMember(name: String) {
+              _party.add(name) // mutación interna permitida
+          }
+        `}
+      >
+        <Fragment slot="title">Lista inmutable con campo de respaldo</Fragment>
+        <Link
+          slot="source"
+          href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/variables/src/main/kotlin/cl/ravenhill/Battle.kt?ref_type=heads"
+        >
+          variables/src/main/kotlin/com/github/username/Battle.kt
+        </Link>
+      </KotlinBlock>
+
+      <Explanation>
+        <List>
+          <ListItem icon={icons.FolderSimpleLock}>
+            <InlineKotlin code="_party" /> es el campo de respaldo: privado, almacena
+            los datos reales y permite modificaciones internas.
+          </ListItem>
+          <ListItem icon={icons.Eye}>
+            <InlineKotlin code="party" /> es la propiedad pública de solo lectura
+            que expone <strong>una vista inmutable</strong>.
+          </ListItem>
+          <ListItem icon={icons.HandPalm}>
+            Al devolver <InlineKotlin code="List<String>" />, evitamos que otras
+            personas modifiquen el contenido desde fuera de la biblioteca.
+          </ListItem>
+          <ListItem icon={icons.ShieldCheck}>
+            Este patrón garantiza que la API pública sea segura y predecible.
+          </ListItem>
+        </List>
+      </Explanation>
+
+      <p>
+        Es una práctica común en bibliotecas bien diseñadas: <strong
+          >exponer lo mínimo necesario</strong
+        > mientras se <strong>protegen las invariantes internas</strong>.
+      </p>
+    </NotesSection>
   </NotesSection>
 </NotesLayout>
