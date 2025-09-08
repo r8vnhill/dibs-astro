@@ -1,5 +1,13 @@
 ---
-import { Abstract, Danger, Explanation, Tip } from "~/components/ui/callouts";
+import {
+  Abstract,
+  Danger,
+  Exercise,
+  Explanation,
+  Info,
+  Note,
+  Tip,
+} from "~/components/ui/callouts";
 import {
   InlineKotlin,
   InlineRust,
@@ -411,7 +419,7 @@ const title = "Declaración de variables";
 
     <NotesSection>
       <Heading headingLevel="h3" Icon={icons.List} slot="heading">
-        Listas inmutables con campos de respaldo
+        Ejemplo práctico: Listas inmutables con campos de respaldo
       </Heading>
 
       <p>
@@ -469,5 +477,112 @@ const title = "Declaración de variables";
         > mientras se <strong>protegen las invariantes internas</strong>.
       </p>
     </NotesSection>
+    <NotesSection>
+      <Heading headingLevel="h3" Icon={icons.SlidersHorizontal} slot="heading">
+        Ejemplo práctico: Encapsular lógica de asignación en el setter
+      </Heading>
+
+      <p>
+        Cuando diseñamos una biblioteca, puede ser necesario que ciertos valores
+        no se asignen directamente, sino que pasen por validaciones o
+        transformaciones. Esto se logra mediante un <em>setter</em> personalizado.
+      </p>
+      <KotlinBlock
+        code={`
+          private val semverRegex = Regex("""^\\d+\\.\\d+\\.\\d+$""")
+
+          var version: String = "1.0.0"
+              set(value) {
+                  val v = value.trim()
+                  require(semverRegex.matches(v)) {
+                      "Version must be in the format X.Y.Z (integers)."
+                  }
+                  field = v
+              }
+        `}
+      >
+        <Fragment slot="title">Setter personalizado con validación</Fragment>
+        <Link
+          slot="source"
+          href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/variables/src/main/kotlin/cl/ravenhill/Config.kt?ref_type=heads"
+        >
+          variables/src/main/kotlin/com/github/username/Config.kt
+        </Link>
+      </KotlinBlock>
+      <Explanation>
+        <List>
+          <ListItem icon={icons.MagicWand}>
+            <InlineKotlin code="version" /> aplica <strong>normalización</strong
+            > (trim) y <strong>validación</strong> en su <em>setter</em>.
+          </ListItem>
+          <ListItem icon={icons.BracketsCurly}>
+            El patrón <InlineKotlin code="semverRegex" /> se <strong
+              >precompila</strong
+            > y requiere <InlineKotlin code="X.Y.Z" /> con enteros. <InlineKotlin
+              code="^"
+            /> y <InlineKotlin code="$" /> aseguran que toda la cadena coincida (inicio
+            y fin respectivamente).
+          </ListItem>
+          <ListItem icon={icons.ShieldCheck}>
+            <InlineKotlin code="require(...)" /> lanza <InlineKotlin
+              code="IllegalArgumentException"
+            />
+            si el valor no es válido.
+          </ListItem>
+        </List>
+      </Explanation>
+      <p>
+        Este patrón permite crear APIs <strong>intuitivas pero seguras</strong>,
+        combinando accesibilidad con control sobre las invariantes internas.
+      </p>
+      <Note>
+        <Fragment slot="title">
+          Funciones de validación estándar: <InlineKotlin code="require()" />, <InlineKotlin
+            code="check()"
+          /> y <InlineKotlin code="error()" />
+        </Fragment>
+
+        <List>
+          <ListItem icon={icons.SignIn}>
+            <InlineKotlin code="require(Boolean, () -> Any): Unit" /> — valida
+            <strong>argumentos de entrada</strong>. Lanza <InlineKotlin
+              code="IllegalArgumentException"
+            />. El mensaje <em>solo se calcula si falla</em>.
+          </ListItem>
+          <ListItem icon={icons.Gear}>
+            <InlineKotlin code="check(Boolean, () -> Any): Unit" /> — valida el <strong
+              >estado interno</strong
+            >. Lanza <InlineKotlin code="IllegalStateException" /> (evaluación diferida
+            del mensaje).
+          </ListItem>
+          <ListItem icon={icons.WarningCircle}>
+            <InlineKotlin code="error(Any): Nothing" /> — lanza incondicionalmente
+            <InlineKotlin code="IllegalStateException" />.
+          </ListItem>
+        </List>
+      </Note>
+
+      <Tip>
+        <Fragment slot="title">Setter privado</Fragment>
+
+        <p>
+          Una propiedad puede tener un <em>getter público</em> y un <em
+            >setter privado</em
+          >. Esto permite que el valor se lea desde fuera, pero solo se
+          modifique dentro del mismo contexto (<em
+            >clase, objeto, interfaz o nivel superior</em
+          >).
+        </p>
+        <KotlinBlock
+          code={`
+            var score: Int = 0
+                private set // setter privado
+          `}
+        />
+      </Tip>
+    </NotesSection>
   </NotesSection>
+  <Exercise>
+    <Fragment slot="title">Ejercicios prácticos</Fragment>
+  </Exercise>
 </NotesLayout>
