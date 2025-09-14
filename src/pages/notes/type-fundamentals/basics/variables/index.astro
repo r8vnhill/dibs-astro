@@ -4,8 +4,10 @@ import {
   Danger,
   Exercise,
   Explanation,
+  Hints,
   Info,
   Note,
+  Solution,
   Tip,
 } from "~/components/ui/callouts";
 import {
@@ -583,6 +585,48 @@ const title = "Declaración de variables";
     </NotesSection>
   </NotesSection>
   <Exercise>
-    <Fragment slot="title">Ejercicios prácticos</Fragment>
+    <Fragment slot="title">
+      Controlar el nivel de dificultad desde el motor
+    </Fragment>
+
+    <p>
+      Supón que estás diseñando una biblioteca para un motor de juego. Quieres
+      exponer el <strong>nivel de dificultad actual</strong> para que otras personas
+      puedan consultarlo, pero <strong>solo el motor</strong> debe poder modificarlo.
+    </p>
+    <p>Declara una propiedad <InlineKotlin code="difficultyLevel" /> que:</p>
+    <List>
+      <ListItem icon={null}
+        >Sea de tipo <InlineKotlin code="String" />.</ListItem
+      >
+      <ListItem icon={null}
+        >Permita valores como <InlineKotlin code=`"easy"` />, <InlineKotlin
+          code=`"normal"`
+        /> o <InlineKotlin code=`"hard"` />.</ListItem
+      >
+      <ListItem icon={null}
+        >Pueda leerse públicamente desde cualquier parte.</ListItem
+      >
+      <ListItem icon={null}
+        >Solo pueda modificarse <strong>desde dentro del módulo</strong>, y con
+        validación.</ListItem
+      >
+    </List>
+    <Hints>
+      Puedes usar el operador <InlineKotlin code="in" /> para verificar que un valor se encuentre dentro de un conjunto de la forma <InlineKotlin code="x in setOf(...)" />.
+    </Hints>
+    <Solution>
+      <KotlinBlock
+        code={`
+          var difficultyLevel: String = "normal"
+              private set(value) {
+                  require(value in setOf("easy", "normal", "hard")) {
+                      "Difficulty level must be one of: easy, normal, hard."
+                  }
+                  field = value
+              }
+          `}>
+      </KotlinBlock>
+    </Solution>
   </Exercise>
 </NotesLayout>

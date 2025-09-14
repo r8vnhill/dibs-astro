@@ -352,6 +352,94 @@ const title = "Declaración de funciones";
     </NotesSection>
 
     <NotesSection>
+      <Heading headingLevel="h3" slot="heading" Icon={icons.BracketsCurly}>
+        Trailing lambdas (λ al final)
+      </Heading>
+
+      <p>
+        En Kotlin, si el <strong>último parámetro</strong> de una función es otra
+        función (un <em>function type</em>), puedes pasar la lambda <strong
+          >fuera de los paréntesis</strong
+        >. Si además es el <em>único</em> parámetro, puedes <strong
+          >omitir los paréntesis</strong
+        >. Esto mejora la legibilidad, especialmente con operaciones sobre
+        colecciones y DSLs.
+      </p>
+
+      <KotlinBlock
+        code={`
+          // Sin trailing lambda
+          list.filter({ x -> x > 10 }).map({ x -> x * 2 })
+
+          // Con trailing lambda: paréntesis opcionales
+          list.filter() { x -> x > 10 }.map() { x -> x * 2 }
+
+          // Con trailing lambda: la lambda sale de los paréntesis
+          list.filter { x -> x > 10 }.map { x -> x * 2 }
+        `}
+      >
+        <Fragment slot="title">Sintaxis básica</Fragment>
+      </KotlinBlock>
+
+      <Explanation>
+        <List>
+          <ListItem icon={icons.HandPointing}>
+            <strong>Último parámetro funcional</strong> → la lambda puede ir fuera
+            de <InlineKotlin code="(...)" />.
+          </ListItem>
+          <ListItem icon={icons.MinusCircle}>
+            <strong>Único parámetro</strong> → puedes omitir por completo <InlineKotlin
+              code="(...)"
+            />.
+          </ListItem>
+          <ListItem icon={icons.SlidersHorizontal}>
+            Útil en <InlineKotlin code="map" />, <InlineKotlin code="filter" />, <InlineKotlin
+              code="fold"
+            />, DSLs (<InlineKotlin code="apply" />, <InlineKotlin
+              code="with"
+            />, <InlineKotlin code="buildString" />), etc.
+          </ListItem>
+        </List>
+      </Explanation>
+
+      <Tip>
+        <Fragment slot="title">Lectura fluida</Fragment>
+        Prefiere trailing lambdas cuando la <strong>acción principal</strong> es
+        la lambda: p.ej., <InlineKotlin code="list.map { ... }" /> introduce menos
+        "ruido visual" que <InlineKotlin code="list.map({ ... })" />.
+      </Tip>
+
+      <Warning>
+        <Fragment slot="title">Ambigüedades y sobrecargas</Fragment>
+        Si una función tiene varias sobrecargas o parámetros con valores por defecto,
+        el trailing lambda puede volver <em>ambigua</em> la llamada. En esos casos,
+        añade
+        <strong>parámetros con nombre</strong> o vuelve a poner la lambda dentro
+        de
+        <InlineKotlin code="(...)" />.
+      </Warning>
+
+      <More>
+        <Fragment slot="title">Retornos desde lambdas</Fragment>
+        <p>
+          Dentro de una lambda, <InlineKotlin code="return" /> intenta salir de la
+          <em>función envolvente</em> (no de la lambda) en lambdas en línea. Para
+          volver desde la propia lambda, usa <InlineKotlin
+            code="return@nombre"
+          />:
+        </p>
+        <KotlinBlock
+          code={`
+        users.forEach {
+            if (it.age < 0) return@forEach  // solo salta esta iteración
+            println(it.name)
+        }
+      `}
+        />
+      </More>
+    </NotesSection>
+
+    <NotesSection>
       <Heading headingLevel="h3" slot="heading" Icon={icons.Asterisk}>
         Funciones variádicas (<InlineKotlin code="vararg" />)
       </Heading>

@@ -10,3 +10,4 @@ export { default as Note } from "./Note.astro";
 export { default as Solution } from "./Solution.astro";
 export { default as Tip } from "./Tip.astro";
 export { default as Warning } from "./Warning.astro";
+export { default as Hints } from "./Hints.astro";

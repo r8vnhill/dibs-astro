@@ -28,7 +28,15 @@ export const courseStructure: Lesson[] = [
   { title: "¿Cómo usar este apunte?", href: "/notes/" },
   { title: "Herramientas necesarias y recomendadas", href: "/notes/installation/" },
   {
-    title: "Unidad 1 - Fundamentos de tipos y representaciones de datos",
+    title: "Unidad 1 - Introducción al desarrollo de bibliotecas de software",
+    href: "/notes/software-libraries/",
+    children: [
+      { title: "Bibliotecas de software", href: "/notes/software-libraries/what-is/" },
+      { title: "Principios de diseño", href: "/notes/software-libraries/design-principles/" },
+    ],
+  },
+  {
+    title: "Unidad 2 - Fundamentos de tipos y representaciones de datos",
     href: "/notes/type-fundamentals/",
     children: [
       {

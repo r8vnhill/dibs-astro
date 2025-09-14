@@ -7,10 +7,12 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import {
   Abstract,
   Danger,
+  Exercise,
   Explanation,
   Info,
   More,
   Note,
+  Solution,
   Tip,
   Warning,
 } from "~/components/ui/callouts";
@@ -34,6 +36,7 @@ import {
 import { List, ListItem } from "~/components/ui/list";
 import * as icons from "~/assets/img/icons";
 import ToDo from "~/components/utils/ToDo";
+import { Link } from "~/components/ui/links";
 
 const title = "Declaración de funciones en Python";
 ---
@@ -412,7 +415,7 @@ const title = "Declaración de funciones en Python";
       </Danger>
     </NotesSection>
   </NotesSection>
-  <NotesSection>
+  <NotesSection id="h2-variadic-functions">
     <Heading headingLevel="h2" Icon={icons.DotsThreeCircle} slot="heading">
       Funciones variádicas (<InlinePython code="*args" /> y <InlinePython
         code="**kwargs"
@@ -420,101 +423,121 @@ const title = "Declaración de funciones en Python";
     </Heading>
 
     <p>
-      En Python, <InlinePython code="*args" /> captura argumentos posicionales variables
-      en una <strong>tupla</strong>, y <InlinePython code="**kwargs" /> (<strong
-        >k</strong
-      >ey<strong>w</strong>ord <strong>arg</strong>ument<strong>s</strong>)
-      captura argumentos con nombre en un <strong>diccionario</strong>.
+      En Python, los argumentos posicionales capturados por <InlinePython
+        code="*args"
+      />
+      se agrupan en una <strong>tupla</strong>, y los argumentos con nombre
+      capturados por
+      <InlinePython code="**kwargs" /> se agrupan en un <strong
+        >diccionario</strong
+      >. Es decir, la llamada se transforma internamente en estos contenedores
+      estándar.
     </p>
-    <PythonBlock
-      code={`
-        from datetime import datetime
+
+    <p>
+      Veamos un ejemplo centrado en <em>tipos</em>: distingue el tipo del
+      contenedor (<InlinePython code="tuple" /> / <InlinePython code="dict" />)
+      y el tipo de cada elemento almacenado en ellos.
+    </p>
+
+    <Exercise headingLevel="h3">
+      <Fragment slot="title">¿Qué imprime el siguiente código?</Fragment>
+
+      <PythonBlock
+        code={`
+          def variadic_types(*args: int, **kwargs: int | str) -> str:
+              return "\\n".join(
+                  (
+                      f"args: {type(args)}",    # type of "*args"
+                      *map(lambda a: f"{a}: {type(a)}", args),    # type of each element in "*args"
+                      f"kwargs: {type(kwargs)}",  # type of "**kwargs"
+                      *map(
+                          # type of each key-value pair in "**kwargs"
+                          lambda kv: f"({kv[0]}: {type(kv[0])}) -> ({kv[1]}: {type(kv[1])})",
+                          kwargs.items(),
+                      ),
+                  )
+              )
 
 
-        # [!code focus:5]
-        def log_event(event: str, *details: str, **metadata: str | int) -> str:
-            timestamp = datetime.now().isoformat(timespec="seconds")
-            details_str = " | ".join(details) if details else "no details"
-            meta_str = ", ".join(map(lambda kv: f"{kv[0]}={kv[1]}", metadata.items())) or "no metadata"
-            return f"[{timestamp}] {event.upper()}: {details_str} ({meta_str})"
+          if __name__ == "__main__":
+              print(
+                  variadic_types(1, 2, k1="v1", k2=3)
+              )
+        `}
+      >
+        <Fragment slot="title">Función con *args y **kwargs</Fragment>
+        <Link
+          slot="source"
+          href="https://gitlab.com/r8vnhill/python-dibs/-/blob/main/type-fundamentals/basics/functions/variadic_types.py?ref_type=heads"
+        >
+          type-fundamentals/basics/functions/variadic_types.py
+        </Link>
+      </PythonBlock>
+
+      <Explanation>
+        <Fragment slot="title">Explicación mínima</Fragment>
+        <p>
+          <InlinePython code='"\\n".join(...)"' /> concatena líneas en un único <InlinePython
+            code="str"
+          />.
+          <InlinePython code="map(f, iterable)" /> aplica <em>f</em> a cada elemento
+          para producir las líneas sin usar bucles. <InlinePython
+            code="kwargs.items()"
+          /> recorre las parejas clave–valor como tuplas <InlinePython
+            code="(key, value)"
+          />.
+        </p>
+        <p>
+          El objetivo es evidenciar cómo <strong>*args</strong> y <strong
+            >**kwargs</strong
+          >
+          empaquetan los argumentos (tupla/diccionario) y cómo inspeccionar el tipo
+          de cada elemento.
+        </p>
+      </Explanation>
+
+      <CodeBlock
+        code={`
+          # [!code focus:0]
+          args: <class 'tuple'>
+          1: <class 'int'>
+          2: <class 'int'>
+          Kwargs: <class 'dict'>
+          (k1: <class 'str'>) -> (v1: <class 'str'>)
+          (k2: <class 'str'>) -> (3: <class 'int'>)
+        `}
+        lang="plaintext"
+      >
+        <Fragment slot="title">Salida del programa</Fragment>
+      </CodeBlock>
+    </Exercise>
+
+    <NotesSection>
+      <Heading headingLevel="h3" Icon={null} slot="heading">
+        TODO: completar esta sección
+      </Heading>
+
+      <ToDo client:only="react" />
+
+      <PythonBlock
+        code={`
+        from functools import reduce
+        from operator import add
+
+        # [!code focus:3]
+        def sum_positives(*nums: int) -> int:
+            print(type(nums))   # Outputs: <class 'tuple'>
+            return reduce(add, filter(lambda n: n > 0, nums), 0)
 
 
         if __name__ == "__main__":
-            print(
-                log_event(
-                    "sighting",
-                    "Celty spotted on her black bike",
-                    "Near Ikebukuro Station",
-                    level="info",
-                    reports=3,
-                )
-            )
-
-            print(
-                log_event(
-                    "altercation",
-                    "Clash reported on Sunshine 60 Street",
-                    "Parties: Shizuo Heiwajima vs Izaya Orihara",
-                    level="warning",
-                    damages=5,
-                )
-            )
-      `}
-    />
-    <ToDo
-      client:only="react"
-      metadata={{
-        title: 'No me convence el ejemplo, quizás sería mejor separar en 2 ejemplos, uno sobre *args y otro sobre **kwargs y evitar el uso de variables',
-      }}
-    />
-    <Explanation>
-      <p>
-        Construye una línea de log con <strong>marca de tiempo</strong>,
-        <strong>detalles</strong> y <strong>metadatos</strong> usando composición
-        con <InlinePython code="join" /> y <InlinePython code="map" />.
-      </p>
-
-      <List>
-        <ListItem icon={icons.Clock}>
-          <InlinePython code="timestamp" />: <InlinePython
-            code="datetime.now().isoformat(timespec='seconds')"
-          />.
-        </ListItem>
-        <ListItem icon={icons.TextAlignLeft}>
-          <InlinePython code="details_str" />: <InlinePython
-            code='" | ".join(details)'
-          /> o <em>"no details"</em> si está vacío.
-        </ListItem>
-        <ListItem icon={icons.BracketsCurly}>
-          <InlinePython code="meta_str" />: <InlinePython
-            code='", ".join(map(lambda kv: f"{kv[0]}={kv[1]}", metadata.items()))'
-          /> o <em>"no metadata"</em>.
-        </ListItem>
-      </List>
-
-      <p>Tipos:</p>
-
-      <List>
-        <ListItem icon={icons.BracketsRound}>
-          <InlinePython code="*details: str" /> → <InlinePython
-            code="tuple[str, ...]"
-          /> de descripciones libres.
-        </ListItem>
-        <ListItem icon={icons.BracketsCurly}>
-          <InlinePython code="**metadata: str | int" /> → <InlinePython
-            code="dict[str, str | int]"
-          /> de pares clave–valor.
-        </ListItem>
-      </List>
-
-      <Info>
-        <InlinePython code="join" /> actúa como un <em>fold</em> sobre secuencias;
-        <InlinePython code="map" /> transforma
-        <InlinePython code="(k, v)" /> en <InlinePython code="k=v" /> sin bucles
-        explícitos.
-      </Info>
-    </Explanation>
-
+            print(sum_positives(1, -2, 3, 4, -5))  # Outputs: 8
+            print(sum_positives())  # Outputs: 0
+            print(sum_positives(-1, -2, -3))  # Outputs: 0
+        `}
+      />
+    </NotesSection>
     <!-- 
 
     <Explanation>

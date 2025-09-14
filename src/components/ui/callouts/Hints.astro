@@ -2,12 +2,11 @@
 import CalloutHeading from "./CalloutHeading.astro";
 import type { BaseCalloutProps } from "./shared";
 import * as icons from "~/assets/img/icons";
-
-type SolutionProps = BaseCalloutProps;
+type HintsProps = BaseCalloutProps;
 
 const {
-  title = "Solución",
-  icon: Icon = icons.CheckCircle,
+  title = "Hints",
+  icon: Icon = icons.Compass,
   headingLevel = "h3",
   headingId,
   class: className = "",
@@ -17,9 +16,9 @@ const {
   compact = false,
   prose = true,
   ...rest
-} = Astro.props as SolutionProps & Record<string, any>;
+} = Astro.props as HintsProps & Record<string, any>;
 
-const resolvedHeadingId = headingId ?? `solution-${crypto.randomUUID()}`;
+const resolvedHeadingId = headingId ?? `hints-${crypto.randomUUID()}`;
 
 const passthrough = Object.fromEntries(
   Object.entries(rest).filter(
@@ -31,13 +30,13 @@ const passthrough = Object.fromEntries(
 
 <section
   class:list={[
-    "solution relative rounded-md shadow-sm",
+    "hints relative rounded-md shadow-sm",
     compact ? "px-4 py-3" : "px-5 py-4",
     className,
   ]}
   style={{
-    "--callout-title-color": "var(--solution__title-color)",
-    "--callout-icon-color": "var(--solution__title-color)",
+    "--callout-title-color": "var(--hints__title-color)",
+    "--callout-icon-color": "var(--hints__title-color)",
   }}
   role="region"
   aria-labelledby={resolvedHeadingId}
@@ -54,8 +53,8 @@ const passthrough = Object.fromEntries(
         heading={title}
         headingLevel={headingLevel}
         headingId={resolvedHeadingId}
-        class={`solution__title ${headingClass}`}
-        iconClass={`solution__icon ${iconClass}`}
+        class={`hints__title ${headingClass}`}
+        iconClass={`hints__icon ${iconClass}`}
       >
         <slot name="title">{title}</slot>
       </CalloutHeading>
@@ -68,7 +67,7 @@ const passthrough = Object.fromEntries(
 
     <div
       class:list={[
-        "solution__body mt-3",
+        "hints__body mt-3",
         prose &&
           "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed",
       ]}
@@ -79,22 +78,22 @@ const passthrough = Object.fromEntries(
 </section>
 
 <style scoped>
-  .solution {
-    background-color: var(--solution__bg-color);
-    border-left: 4px solid var(--solution__border-color);
+  .hints {
+    background-color: var(--hints__bg-color);
+    border-left: 4px solid var(--hints__border-color);
     margin-top: 1rem;
   }
 
-  :global([data-theme="dark"]) :where(.solution) {
-    background-color: var(--solution__bg-color);
-    border-left-color: var(--solution__border-color);
+  :global([data-theme="dark"]) :where(.hints) {
+    background-color: var(--hints__bg-color-dark);
+    border-left-color: var(--hints__border-color-dark);
   }
 
-  .solution__body :where(p:first-child) {
+  .hints__body :where(p:first-child) {
     margin-top: 0;
   }
 
-  .solution__body :where(p:last-child) {
+  .hints__body :where(p:last-child) {
     margin-bottom: 0;
   }
 </style>
