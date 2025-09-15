@@ -1,110 +1,188 @@
 ---
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract } from "~/components/ui/callouts";
+import { Abstract, Explanation, Tip } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 import * as icons from "~/assets/img/icons";
+import { List, ListItem } from "~/components/ui/list";
+import { Link } from "~/components/ui/links";
+import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
 ---
 
 <NotesLayout title="Principios de Diseño de Bibliotecas de Software">
   <Abstract>
-    <ToDo
-      client:only="react"
-      metadata={{
-        title: "Principios de Diseño de Bibliotecas de Software",
-      }}
-    />
+    Cuando pensamos en bibliotecas de software, en realidad estamos pensando en
+    sus <strong>APIs</strong>: la superficie que otras personas van a usar. Por
+    eso, los mismos principios que guían el diseño de una buena API —claridad,
+    consistencia, simplicidad y estabilidad— son también los que determinan la
+    calidad de una biblioteca. Una API bien diseñada facilita la adopción y
+    reduce errores; una biblioteca bien diseñada, al exponer esa API, se
+    convierte en una herramienta confiable y reutilizable. En esta sección
+    veremos qué hace que una API (y por extensión una biblioteca) sea buena, y
+    cómo estos criterios nos servirán de guía al diseñar nuestras propias
+    bibliotecas.
   </Abstract>
 
-  <NotesSection id="good-api">
-    <Heading headingLevel="h2" slot="heading" Icon={icons.CheckCircle}>
-      Características de una Buena API
+  <NotesSection id="model-the-problem">
+    <Heading headingLevel="h3" slot="heading" Icon={icons.PuzzlePiece}>
+      Modelar el Problema Correctamente
+    </Heading>
+    <p>
+      Una API bien diseñada debe proporcionar una <strong
+        >abstracción clara y efectiva</strong
+      > del problema que resuelve.
+    </p>
+
+    <List>
+      <ListItem icon={icons.Target}>
+        <strong>Propósito claro</strong> → Cada función, clase y variable debe tener
+        una intención explícita y única.
+      </ListItem>
+      <ListItem icon={icons.Rows}>
+        <strong>Consistencia</strong> → Nombres, estructuras y convenciones uniformes
+        reducen la carga cognitiva.
+      </ListItem>
+      <ListItem icon={icons.BracketsCurly}>
+        <strong>Tipos primero</strong> → Prefiere <em>tipos de dominio</em> por sobre
+        primitivas para evitar ambigüedades.
+      </ListItem>
+    </List>
+
+    <KotlinBlock
+      code={`
+        val now: Instant = Clock.System.now()
+        val localDateTime: LocalDateTime = now.toLocalDateTime(TimeZone.UTC)
+      `}
+    >
+      <Fragment slot="title"
+        >Ejemplo real: <Link href="https://github.com/Kotlin/kotlinx-datetime"
+          >kotlinx-datetime (Kotlin)</Link
+        ></Fragment
+      >
+    </KotlinBlock>
+    <Explanation>
+      <InlineKotlin code="Instant" />, <InlineKotlin code="LocalDateTime" /> y <InlineKotlin
+        code="TimeZone"
+      /> son tipos distintos que reflejan conceptos diferentes del tiempo. Esto evita
+      ambigüedades comunes como mezclar milisegundos, fechas locales o zonas horarias
+      en un mismo valor. La API ya viene diseñada para guiar al usuario hacia un
+      modelo correcto del problema.
+    </Explanation>
+    <Tip>
+      <Fragment slot="title">Resultado</Fragment>
+      <List>
+        <ListItem icon={icons.ShieldCheck}>
+          El dominio del tiempo queda representado de forma clara y segura.
+        </ListItem>
+        <ListItem icon={icons.BugDroid}>
+          Se reducen los errores derivados de confusiones entre formatos o zonas
+          horarias.
+        </ListItem>
+        <ListItem icon={icons.Signpost}>
+          La API transmite la intención directamente a través de sus tipos.
+        </ListItem>
+      </List>
+    </Tip>
+  </NotesSection>
+
+  <NotesSection id="hide-implementation-details">
+    <Heading headingLevel="h3" slot="heading" Icon={icons.EyeSlash}>
+      Ocultar Detalles de Implementación
     </Heading>
 
     <p>
-      Cuando pensamos en bibliotecas de software, en realidad estamos pensando
-      en sus <strong>APIs</strong>: la superficie que otras personas van a usar. Por
-      eso, los mismos principios que guían el diseño de una buena API —claridad,
-      consistencia, simplicidad y estabilidad— son también los que determinan la
-      calidad de una biblioteca. Una API bien diseñada facilita la adopción y
-      reduce errores; una biblioteca bien diseñada, al exponer esa API, se
-      convierte en una herramienta confiable y reutilizable. En esta sección
-      veremos qué hace que una API (y por extensión una biblioteca) sea buena, y
-      cómo estos criterios nos servirán de guía al diseñar nuestras propias
-      bibliotecas.
+      Una API debe <strong>esconder los detalles internos</strong>, de modo que
+      pueda evolucionar o modificarse sin afectar a quienes la consumen. Esto
+      reduce la complejidad percibida y aumenta la estabilidad de su uso.
     </p>
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Modelar el Problema Correctamente
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Modelar el Problema Correctamente",
-        }}
-      />
-    </NotesSection>
+    <List>
+      <ListItem icon={icons.Lock}>
+        <strong>Encapsulamiento</strong> → Expone solo lo necesario mediante métodos
+        públicos y protege la lógica interna.
+      </ListItem>
+      <ListItem icon={icons.Plug}>
+        <strong>Interfaz clara</strong> → Facilita la interacción sin que el usuario
+        deba conocer la implementación interna.
+      </ListItem>
+      <ListItem icon={icons.Folders}>
+        <strong>Separación de preocupaciones</strong> → Divide la API en módulos
+        bien definidos, lo que facilita su comprensión y mantenimiento.
+      </ListItem>
+    </List>
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Ocultar Detalles de Implementación
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Ocultar Detalles de Implementación",
-        }}
-      />
-    </NotesSection>
+    <KotlinBlock
+      code={`
+// El usuario solo ve una interfaz sencilla para lanzar una corrutina
+GlobalScope.launch {
+    println("Trabajo en segundo plano")
+}
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Diseño Basado en la Simplicidad
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Diseño Basado en la Simplicidad",
-        }}
-      />
-    </NotesSection>
+// Los detalles de scheduling, hilos y colas internas 
+// quedan completamente ocultos tras la API.
+`}
+    >
+      <Fragment slot="title">
+        Ejemplo real: <Link href="https://github.com/Kotlin/kotlinx.coroutines"
+          >kotlinx.coroutines</Link
+        >
+      </Fragment>
+    </KotlinBlock>
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Fácil de Usar y Difícil de Usar Incorrectamente
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Fácil de Usar y Difícil de Usar Incorrectamente",
-        }}
-      />
-    </NotesSection>
+    <Explanation>
+      La API de corrutinas expone funciones simples como <code>launch</code> o
+      <code>async</code>, ocultando la complejidad de la planificación de
+      tareas, gestión de hilos y estructuras internas. El usuario trabaja con un
+      modelo claro sin preocuparse de la implementación.
+    </Explanation>
+  </NotesSection>
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Cohesión Alta y Bajo Acoplamiento
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Cohesión Alta y Bajo Acoplamiento",
-        }}
-      />
-    </NotesSection>
+  <NotesSection id="">
+    <Heading headingLevel="h3" slot="heading" Icon={null}>
+      Diseño Basado en la Simplicidad
+    </Heading>
+    <ToDo
+      client:only="react"
+      metadata={{
+        title: "Diseño Basado en la Simplicidad",
+      }}
+    />
+  </NotesSection>
 
-    <NotesSection id="">
-      <Heading headingLevel="h3" slot="heading" Icon={null}>
-        Estabilidad, Documentación y Pruebas
-      </Heading>
-      <ToDo
-        client:only="react"
-        metadata={{
-          title: "Estabilidad, Documentación y Pruebas",
-        }}
-      />
-    </NotesSection>
+  <NotesSection id="">
+    <Heading headingLevel="h3" slot="heading" Icon={null}>
+      Fácil de Usar y Difícil de Usar Incorrectamente
+    </Heading>
+    <ToDo
+      client:only="react"
+      metadata={{
+        title: "Fácil de Usar y Difícil de Usar Incorrectamente",
+      }}
+    />
+  </NotesSection>
+
+  <NotesSection id="">
+    <Heading headingLevel="h3" slot="heading" Icon={null}>
+      Cohesión Alta y Bajo Acoplamiento
+    </Heading>
+    <ToDo
+      client:only="react"
+      metadata={{
+        title: "Cohesión Alta y Bajo Acoplamiento",
+      }}
+    />
+  </NotesSection>
+
+  <NotesSection id="">
+    <Heading headingLevel="h3" slot="heading" Icon={null}>
+      Estabilidad, Documentación y Pruebas
+    </Heading>
+    <ToDo
+      client:only="react"
+      metadata={{
+        title: "Estabilidad, Documentación y Pruebas",
+      }}
+    />
   </NotesSection>
 </NotesLayout>
