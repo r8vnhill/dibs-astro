@@ -12,3 +12,5 @@ export { default as RustBlock } from "./rs/RustBlock.astro";
 export { default as BashScript } from "./sh/BashScript.astro";
 export { default as BashTerminal } from "./sh/BashTerminal.astro";
 export { default as InlineBash } from "./sh/InlineBash.astro";
+export { default as CBlock } from "./c/CBlock.astro";
+export { default as CInline } from "./c/CInline.astro";

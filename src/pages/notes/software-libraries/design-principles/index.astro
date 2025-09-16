@@ -1,6 +1,6 @@
 ---
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Tip } from "~/components/ui/callouts";
+import { Abstract, Explanation, Note, Tip } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -24,6 +24,17 @@ import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
     bibliotecas.
   </Abstract>
 
+  <Note>
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          'No es una lista exhaustiva ni son reglas rígidas; son herramientas para analizar y mejorar el diseño.',
+          'Los ejemplos son para contextualizar los principios, no son la única forma de aplicarlos.',
+        ]
+      }}
+    />
+  </Note>
   <NotesSection id="model-the-problem">
     <Heading headingLevel="h3" slot="heading" Icon={icons.PuzzlePiece}>
       Modelar el Problema Correctamente
@@ -114,28 +125,48 @@ import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
 
     <KotlinBlock
       code={`
-// El usuario solo ve una interfaz sencilla para lanzar una corrutina
-GlobalScope.launch {
-    println("Trabajo en segundo plano")
-}
+        // El usuario solo ve una interfaz sencilla para lanzar una corrutina
+        GlobalScope.launch {
+            println("Trabajo en segundo plano")
+        }
 
-// Los detalles de scheduling, hilos y colas internas 
-// quedan completamente ocultos tras la API.
-`}
+        // Los detalles de scheduling, hilos y colas internas 
+        // quedan completamente ocultos tras la API.
+      `}
     >
       <Fragment slot="title">
-        Ejemplo real: <Link href="https://github.com/Kotlin/kotlinx.coroutines"
-          >kotlinx.coroutines</Link
+        Ejemplo real: <Link href="https://github.com/Kotlin/kotlinx.coroutines">
+          kotlinx.coroutines</Link
         >
       </Fragment>
     </KotlinBlock>
 
     <Explanation>
-      La API de corrutinas expone funciones simples como <code>launch</code> o
-      <code>async</code>, ocultando la complejidad de la planificación de
-      tareas, gestión de hilos y estructuras internas. El usuario trabaja con un
-      modelo claro sin preocuparse de la implementación.
+      La API de <code>kotlinx.coroutines</code> ofrece primitivas simples como
+      <InlineKotlin code="launch { ... }" /> y <InlineKotlin
+        code="async { ... }"
+      /> que abstraen toda la complejidad de la planificación de tareas y la gestión
+      de hilos. Quien usa la biblioteca no necesita conocer los mecanismos internos
+      de colas, despachadores o cooperatividad, lo que le permite concentrarse en
+      el problema a resolver y no en la infraestructura.
     </Explanation>
+
+    <Tip>
+      <Fragment slot="title">Resultado</Fragment>
+      <List>
+        <ListItem icon={icons.CheckCircle}>
+          El usuario trabaja con una interfaz limpia y estable.
+        </ListItem>
+        <ListItem icon={icons.ArrowBendDownRight}>
+          Los cambios internos en la implementación no rompen el contrato
+          público.
+        </ListItem>
+        <ListItem icon={icons.GearSix}>
+          La biblioteca puede evolucionar internamente sin afectar a sus
+          consumidores.
+        </ListItem>
+      </List>
+    </Tip>
   </NotesSection>
 
   <NotesSection id="">

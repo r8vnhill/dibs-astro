@@ -1,0 +1,777 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/starwind/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/starwind/tooltip";
+import {
+  Abstract,
+  Danger,
+  Important,
+  Info,
+  Note,
+  Tip,
+  Warning,
+} from "~/components/ui/callouts";
+import {
+  CBlock,
+  InlineKotlin,
+  InlinePowerShell,
+  InlinePython,
+  KotlinBlock,
+  PythonBlock,
+} from "~/components/ui/code";
+import CInline from "~/components/ui/code/c/CInline.astro";
+import { Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import {
+  AuthorList,
+  Book,
+  References,
+  WebPage,
+} from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout title="Introducción a los Modelos de Dominio">
+  <Abstract>
+    <p>
+      Esta lección introduce el <strong>modelado de dominio</strong> como la práctica
+      de representar en el código los conceptos, reglas y relaciones reales del problema
+      que buscamos resolver. El objetivo no es solo que el software funcione, sino
+      que exprese con claridad el lenguaje del dominio, reduciendo ambigüedades y
+      errores.
+    </p>
+    <p class="mt-3">
+      A través de ejemplos contrastantes (como el manejo de fechas en Python y
+      Kotlin) exploramos cómo los <em>tipos ricos</em> y los <strong
+        >nombres expresivos</strong
+      >
+      hacen que el código sea más seguro, predecible y fácil de mantener. Finalmente,
+      destacamos cómo <strong>Kotlin</strong> entrega herramientas —como null safety,
+      data classes, sealed classes, value classes, funciones de extensión y DSLs—
+      que potencian el modelado de dominios y permiten construir bibliotecas claras,
+      consistentes y sostenibles.
+    </p>
+  </Abstract>
+
+  <NotesSection id="what-is-domain-model">
+    <Heading headingLevel="h2" slot="heading" Icon={icons.TreeStructure}>
+      ¿Qué es un Modelo de Dominio?
+    </Heading>
+
+    <p>
+      Un <strong>modelo de dominio</strong> es la representación explícita de los
+      conceptos, reglas y relaciones que definen el problema que un sistema busca
+      resolver. Su objetivo no es describir la infraestructura técnica, sino capturar
+      el <em>lenguaje del dominio</em> y expresarlo de forma clara en el código.
+    </p>
+
+    <p>
+      Modelar el dominio implica identificar <strong>entidades</strong>,
+      <strong>valores</strong> y <strong>comportamientos</strong> relevantes, y organizarlos
+      con tipos y estructuras que comuniquen su propósito sin ambigüedad. De esta
+      manera, el software refleja el mundo real que intenta representar.
+    </p>
+
+    <Tip>
+      <Fragment slot="title">Idea central</Fragment>
+      Un buen modelo de dominio conecta directamente las necesidades del negocio
+      con el diseño del código, permitiendo que ambos evolucionen en sintonía.
+    </Tip>
+  </NotesSection>
+
+  <NotesSection id="why-domain-model">
+    <Heading headingLevel="h2" slot="heading" Icon={icons.Target}>
+      ¿Por qué es importante modelar el dominio?
+    </Heading>
+
+    <p>
+      Modelar el dominio hace que el código <strong>exprese el problema</strong>
+      con precisión. Cuando usamos tipos y nombres de dominio, el código se vuelve
+      más claro, difícil de usar mal y más fácil de evolucionar. Para verlo, comparemos
+      cómo representamos una fecha/hora.
+    </p>
+
+    <Info>
+      <Fragment slot="title">Caso de estudio: fechas y horas</Fragment>
+      Mostramos tres variantes: (A) Python sin modelo de dominio (usando
+      <code>time</code>, basado en primitivas), (B) Python con anotaciones de
+      tipos pero aún con primitivas, y (C) Kotlin con un modelo de dominio
+      explícito usando
+      <code>kotlinx-datetime</code>.
+    </Info>
+
+    <Tabs>
+      <TabsList>
+        <TabsTrigger value="a">A) Python · sin modelo</TabsTrigger>
+        <TabsTrigger value="b">B) Python · tipos, sin dominio</TabsTrigger>
+        <TabsTrigger value="c">C) Kotlin · modelo de dominio</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="a">
+        <PythonBlock
+          code={`
+            now = time.time()                 # segundos desde epoch
+            local_date_time = time.ctime(now) # representación textual
+          `}
+        >
+          <Fragment slot="title">
+            <strong>Sin modelo de dominio:</strong>
+            <InlinePython code={`now`} /> es un <InlinePython code={`float`} /> cualquiera
+            y <InlinePython code={`local_date_time`} /> es solo texto. Ambigüedad
+            de unidades/zonas y pocas garantías.
+          </Fragment>
+        </PythonBlock>
+
+        <Warning class="mt-3">
+          <Fragment slot="title">Problemas</Fragment>
+          Semántica débil (¿zona horaria? ¿unidades?), fácil mezclar con otros
+          <InlinePython code={`float`} />, formato libre en <InlinePython
+            code={`str`}
+          />, errores tardíos.
+        </Warning>
+      </TabsContent>
+
+      <TabsContent value="b">
+        <PythonBlock
+          code={`
+            now: float = time.time()               # segundos desde epoch
+            local_date_time: str = time.ctime(now) # representación textual
+          `}
+        >
+          <Fragment slot="title">
+            <strong>Tipos estáticos sin dominio:</strong> las anotaciones ayudan
+            a herramientas, pero el significado sigue siendo implícito; no evita
+            estados inválidos.
+          </Fragment>
+        </PythonBlock>
+
+        <Note>
+          <Fragment slot="title">Observación</Fragment>
+          El tipado estático <em>ayuda</em>, pero sin tipos de dominio seguimos
+          con ambigüedades (zona, formato, operaciones válidas).
+        </Note>
+      </TabsContent>
+
+      <TabsContent value="c">
+        <KotlinBlock
+          code={`
+            val now: Instant = Clock.System.now()
+            val localDateTime: LocalDateTime = now.toLocalDateTime(TimeZone.UTC)
+          `}
+        >
+          <Fragment slot="title">
+            <strong>Modelo de dominio:</strong>
+            <InlineKotlin code={`Instant`} /> y <InlineKotlin
+              code={`LocalDateTime`}
+            />
+            comunican semántica y habilitan operaciones seguras (zona horaria, conversión,
+            validación).
+          </Fragment>
+        </KotlinBlock>
+
+        <Tip>
+          <Fragment slot="title">Mejoras</Fragment>
+          Semántica explícita, API descubierta, menor espacio para errores, validaciones
+          incorporadas, tests más claros y código autoexplicativo.
+        </Tip>
+
+        <Important class="mt-3">
+          El problema aquí no es Python como lenguaje, sino la biblioteca
+          <InlinePython code={`time`} />, que expone primitivas. Python también
+          incluye
+          <InlinePython code={`datetime`} />, que ofrece un modelo de dominio
+          más expresivo y cercano a la idea de <InlineKotlin code={`Instant`} />
+          y
+          <InlineKotlin code={`LocalDateTime`} /> en Kotlin.
+        </Important>
+      </TabsContent>
+    </Tabs>
+
+    <NotesSection id="modeling-benefits">
+      <Heading headingLevel="h3" slot="heading" Icon={icons.Gear}>
+        Beneficios de Modelar el Dominio
+      </Heading>
+      <List>
+        <ListItem icon={icons.Tag}>
+          <strong>Claridad</strong> — nombres y tipos cuentan la historia del dominio.
+        </ListItem>
+        <ListItem icon={icons.Lock}>
+          <strong>Seguridad</strong> — es más difícil representar estados inválidos.
+        </ListItem>
+        <ListItem icon={icons.Sliders}>
+          <strong>Evolución</strong> — cambios guiados por el lenguaje ubicuo del
+          equipo.
+        </ListItem>
+        <ListItem icon={icons.ListMagnifyingGlass}>
+          <strong>Descubribilidad</strong> — la API sugiere operaciones válidas (autocompletado).
+        </ListItem>
+      </List>
+
+      <Tip>
+        <Fragment slot="title">Tipos primero</Fragment>
+        Usar tipos de dominio en lugar de primitivas genéricas (como <InlineKotlin
+          code="Int"
+        />, <InlineKotlin code="String" /> o <InlinePython code="float" />)
+        reduce ambigüedades y errores. Cada tipo captura un concepto específico
+        del dominio, haciendo el código más expresivo y seguro.
+      </Tip>
+    </NotesSection>
+  </NotesSection>
+
+  <NotesSection id="naming-in-domain-model">
+    <Heading headingLevel="h2" slot="heading" Icon={icons.TextT}>
+      La importancia de los nombres en el modelado de dominios
+    </Heading>
+
+    <p>
+      En el modelado de dominios, los <strong>nombres son fundamentales</strong
+      >. Un buen nombre expresa con claridad la intención detrás de una función,
+      clase o variable. No se trata solo de estilo: la consistencia y
+      expresividad de los nombres determinan la facilidad de comprensión,
+      mantenimiento y colaboración en el código.
+    </p>
+
+    <NotesSection id="consistency">
+      <Heading headingLevel="h3" slot="heading" Icon={icons.ArrowsLeftRight}>
+        Consistencia
+      </Heading>
+
+      <p>
+        La <strong>consistencia</strong> en nombres, estructuras y convenciones es
+        clave para que un modelo de dominio sea fácil de leer y mantener. Si cada
+        parte del código usa un estilo distinto, la persona que lo lee debe hacer
+        un esfuerzo adicional para entender si las diferencias son intencionales
+        o accidentales. En cambio, cuando seguimos patrones claros y uniformes, el
+        código se vuelve más predecible y menos propenso a errores.
+      </p>
+
+      <Tabs>
+        <TabsList>
+          <TabsTrigger value="bad-consistency"
+            >Ejemplo inconsistente</TabsTrigger
+          >
+          <TabsTrigger value="good-consistency">Ejemplo consistente</TabsTrigger
+          >
+        </TabsList>
+
+        <TabsContent value="bad-consistency">
+          <KotlinBlock
+            code={`
+              class PackageManager {
+                  // [!code focus:1]
+                  fun addPackage(p: Package): Unit =
+                      TODO("Register a package in the system")
+                  // [!code focus:1]
+                  fun uninstallDependency(dep: Package): Unit =
+                      TODO("Remove a package from the system")
+                  // [!code focus:1]
+                  fun batchInstallPkgs(pkgs: List<Package>): Unit =
+                      TODO("Install multiple packages at once")
+                  // [!code focus:1]
+                  fun removeBatch(pkgs: List<Package>): Unit =
+                      TODO("Uninstall multiple packages at once")
+              }
+            `}
+          >
+            <Fragment slot="title">
+              <strong>Inconsistencia</strong>.
+            </Fragment>
+          </KotlinBlock>
+
+          <Danger>
+            <Fragment slot="title">Problemas</Fragment>
+            Verbos mezclados (<InlineKotlin code="add" />/<InlineKotlin
+              code="remove"
+            />/<InlineKotlin code="uninstall" />/<InlineKotlin
+              code="install"
+            />), sustantivos cambiantes (<InlineKotlin
+              code="Package"
+            />/<InlineKotlin code="Dependency" />/<InlineKotlin code="Pkgs" />),
+            pluralización irregular, y prefijos (<InlineKotlin code="batch" />)
+            usados de forma asimétrica.
+          </Danger>
+        </TabsContent>
+
+        <TabsContent value="good-consistency">
+          <KotlinBlock
+            code={`
+              class PackageManager {
+                  // [!code focus:1]
+                  fun installPackage(pkg: Package): Unit =
+                      TODO("Register a package in the system")
+                  // [!code focus:1]
+                  fun uninstallPackage(pkg: Package): Unit =
+                      TODO("Remove a package from the system")
+                  // [!code focus:1]
+                  fun batchInstallPackages(packages: List<Package>): Unit =
+                      TODO("Install multiple packages at once")
+                  // [!code focus:1]
+                  fun batchUninstallPackages(packages: List<Package>): Unit =
+                      TODO("Uninstall multiple packages at once")
+              }
+            `}
+          >
+            <Fragment slot="title"> Consistente. </Fragment>
+          </KotlinBlock>
+
+          <Tip>
+            <Fragment slot="title">Mejoras</Fragment>
+            <p>
+              Usa verbos uniformes: si existen varias formas de nombrar algo,
+              elige una y sé consistente. Evita mezclar <InlineKotlin
+                code="install"
+              /> con
+              <InlineKotlin code="remove" />, o <InlineKotlin code="add" /> con
+              <InlineKotlin code="uninstall" />. Quienes usan la API deben poder
+              anticipar el verbo complementario de forma natural: si existe
+              <InlineKotlin code="install" />, esperarán <InlineKotlin
+                code="uninstall"
+              />, no <InlineKotlin code="remove" />. Y si conviven <InlineKotlin
+                code="install"
+              />
+              y <InlineKotlin code="add" />, surge la duda: ¿son sinónimos? ¿por
+              qué hay dos formas de expresar lo mismo? ¿o significan cosas
+              distintas? Estas ambigüedades generan fricción y confusión que
+              podemos evitar con consistencia.
+            </p>
+            <p class="mt-2">
+              Cuando los términos del dominio sean parecidos o ambiguos,
+              conviene documentar y estandarizar las convenciones del equipo.
+              Una buena referencia es la guía de verbos aprobados de
+              <Link
+                href="https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands"
+                >PowerShell</Link
+              >, que diferencia, por ejemplo, entre
+              <InlinePowerShell code="Get" /> (obtener acceso a un recurso) y
+              <InlinePowerShell code="Read" /> (abrir un recurso y extraer su contenido).
+              Así, <InlinePowerShell code="Get-File" /> devuelve un handle mientras
+              que
+              <InlinePowerShell code="Read-File" /> lee el archivo.
+            </p>
+            <p class="mt-2">
+              Prefiere además sustantivos claros, plurales regulares y evita
+              abreviaciones crípticas; si usas prefijos o sufijos, hazlo siempre
+              de forma simétrica.
+            </p>
+          </Tip>
+        </TabsContent>
+      </Tabs>
+
+      <Tip class="mt-3">
+        <Fragment slot="title">Regla práctica</Fragment>
+        Si dos nombres distintos significan lo mismo, unifica. Si dos nombres similares
+        significan cosas distintas, clarifícalo.
+      </Tip>
+    </NotesSection>
+
+    <NotesSection id="expressiveness">
+      <Heading headingLevel="h3" slot="heading" Icon={icons.Highlighter}>
+        Expresividad
+      </Heading>
+
+      <p>
+        Los nombres deben describir su propósito sin necesidad de comentarios
+        adicionales. Un buen nombre actúa como
+        <em>documentación implícita</em>
+      </p>
+      <Tip>
+        Evita usar nombres secuenciales como <code>a1</code>, <code>a2</code>,
+        ..., <code>aN</code>, ya que no aportan información sobre el propósito o
+        contenido de las variables.
+      </Tip>
+      <Tabs>
+        <TabsList>
+          <TabsTrigger value="bad-expressiveness"
+            >Ejemplo poco expresivo</TabsTrigger
+          >
+          <TabsTrigger value="good-expressiveness"
+            >Ejemplo más expresivo</TabsTrigger
+          >
+        </TabsList>
+
+        <TabsContent value="bad-expressiveness">
+          <KotlinBlock
+            code={`
+              fun copyChars(a1: CharArray, a2: CharArray) {
+                  for (i in a1.indices) {
+                      a2[i] = a1[i]
+                  }
+              }
+            `}
+          >
+            <Fragment slot="title">
+              <strong>Poco expresivo</strong>.
+            </Fragment>
+          </KotlinBlock>
+
+          <Danger>
+            <Fragment slot="title">Problemas</Fragment>
+            Nombres como <InlineKotlin code="a1" /> y
+            <InlineKotlin code="a2" /> no aportan contexto ni ayudan a entender la
+            función.
+          </Danger>
+        </TabsContent>
+
+        <TabsContent value="good-expressiveness">
+          <KotlinBlock
+            code={`
+              fun copyChars(source: CharArray, destination: CharArray) {
+                  for (i in source.indices) {
+                      destination[i] = source[i]
+                  }
+              }
+            `}
+          >
+            <Fragment slot="title"> Más expresivo. </Fragment>
+          </KotlinBlock>
+
+          <Tip>
+            <Fragment slot="title">Mejoras</Fragment>
+            Nombres como <InlineKotlin code="source" /> y
+            <InlineKotlin code="destination" /> dejan claro el propósito de cada
+            argumento.
+          </Tip>
+        </TabsContent>
+      </Tabs>
+    </NotesSection>
+    <NotesSection>
+      <Heading headingLevel="h3" slot="heading" Icon={icons.Textbox}>
+        Claridad sobre brevedad
+      </Heading>
+
+      <p>
+        Ahorrar caracteres en los nombres puede parecer práctico en el corto
+        plazo, pero suele ser un error costoso: <strong
+          >cada abreviación reduce la claridad y aumenta la carga cognitiva</strong
+        >.
+        <Tooltip>
+          <TooltipTrigger>
+            <span style="text-decoration: underline;"
+              >Es preferible un nombre largo pero claro que uno corto y ambiguo.</span
+            >
+          </TooltipTrigger>
+          <TooltipContent>
+            <img
+              src="/img/bycicle_abbreviations_meme.jpg"
+              alt="Usar abreviaciones puede ser dispararse en el pie"
+              class:list={[
+                "max-w-full",
+                "rounded-md",
+                "border",
+                "border-gray-300",
+                "dark:border-gray-700",
+                "shadow-sm",
+              ]}
+            />
+          </TooltipContent>
+        </Tooltip>
+      </p>
+
+      <Tip>
+        Las abreviaciones solo deberían usarse cuando son <em
+          >ampliamente conocidas y compartidas por todo el equipo</em
+        >. Aun así, mientras más abreviaciones se introduzcan, más conceptos
+        nuevos debe memorizar cada persona que se une al proyecto. Siempre que
+        sea posible, <strong>prefiere nombres completos y expresivos</strong>.
+      </Tip>
+
+      <Tabs>
+        <TabsList>
+          <TabsTrigger value="with-abbreviations">Usa abreviaciones</TabsTrigger
+          >
+          <TabsTrigger value="with-full-names"
+            >Usa nombres completos</TabsTrigger
+          >
+        </TabsList>
+
+        <TabsContent value="with-abbreviations">
+          <KotlinBlock
+            code={`
+              fun cx(cxPb: Prob): Gt {
+                  // ...
+              }
+            `}
+          >
+            <Fragment slot="title">
+              Abreviaciones crípticas: difíciles de leer y recordar.
+            </Fragment>
+          </KotlinBlock>
+        </TabsContent>
+
+        <TabsContent value="with-full-names">
+          <KotlinBlock
+            code={`
+              fun performCrossover(crossoverProbability: Probability): Genotype {
+                  // ...
+              }
+            `}
+          >
+            <Fragment slot="title">
+              Nombres completos: más largos pero claros y autoexplicativos.
+            </Fragment>
+          </KotlinBlock>
+        </TabsContent>
+      </Tabs>
+    </NotesSection>
+    <NotesSection>
+      <Heading headingLevel="h3" slot="heading" Icon={icons.ChatCircleText}>
+        Pronunciabilidad
+      </Heading>
+
+      <p>
+        Como dice Robert C. Martin en <em>Clean Code</em>:
+      </p>
+
+      <blockquote
+        class="border-l-4 border-primary pl-4 italic text-gray-700 dark:text-gray-300 my-4"
+      >
+        “Si no puedes pronunciarlo, no puedes hablar de ello sin sonar como un
+        tonto. (…) Esto importa porque la programación es una actividad social.”
+      </blockquote>
+
+      <p>
+        Los nombres difíciles de pronunciar o recordar generan fricción en las
+        conversaciones técnicas y ralentizan el trabajo en equipo. Un buen
+        nombre debería poder leerse en voz alta de manera natural y sin
+        ambigüedades.
+      </p>
+
+      <Tip>
+        Prefiere nombres completos y pronunciables, incluso si son más largos.
+        Esto hace que el código sea más fácil de explicar en discusiones y
+        mantener en el tiempo. Ejemplos históricos de la librería estándar de
+        C/C++, como
+        <CInline code="strtok" /> o <CInline code="memcpy" />, nacieron de
+        limitaciones técnicas, pero hoy resultan poco expresivos.
+      </Tip>
+
+      <Tabs>
+        <TabsList>
+          <TabsTrigger value="cryptic">Nombres crípticos</TabsTrigger>
+          <TabsTrigger value="expressive">Nombres expresivos</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="cryptic">
+          <CBlock
+            code={`
+              char *strtok(char *str, const char *delim); // "tokenize string"
+              void *memcpy(void *dest, const void *src, size_t n); // "copy memory"
+            `}
+          >
+            <Fragment slot="title">
+              Difíciles de pronunciar y recordar. Su significado no es evidente
+              sin consultar documentación.
+            </Fragment>
+          </CBlock>
+        </TabsContent>
+
+        <TabsContent value="expressive">
+          <KotlinBlock
+            code={`
+              fun split(input: String, delimiter: String): List<String> { /* ... */ }
+              fun copyMemory(destination: ByteArray, source: ByteArray, length: Int) { /* ... */ }
+            `}
+          >
+            <Fragment slot="title">
+              Nombres claros y pronunciables que comunican su propósito sin
+              ambigüedades.
+            </Fragment>
+          </KotlinBlock>
+        </TabsContent>
+      </Tabs>
+    </NotesSection>
+  </NotesSection>
+  <NotesSection id="kotlin-domain-modeling">
+    <Heading headingLevel="h2" slot="heading" Icon={icons.Cube}>
+      ¿Cómo aporta Kotlin al modelado de dominios?
+    </Heading>
+
+    <p>
+      <Link href="/notes/type-fundamentals/basics/">Kotlin</Link> combina la <strong
+        >programación orientada a objetos</strong
+      > y la
+      <strong>programación funcional</strong> (aunque aún no de manera tan completa
+      como Scala o Haskell), lo que le permite ofrecer un conjunto muy completo de
+      herramientas para construir <em
+        >modelos de dominio expresivos y seguros</em
+      >. El objetivo no es aprender todos estos conceptos de inmediato, sino
+      reconocer que el lenguaje pone a disposición mecanismos potentes que
+      iremos explorando a lo largo del curso.
+    </p>
+
+    <List>
+      <ListItem icon={icons.Cube}>
+        <strong>Tipos ricos:</strong> el sistema de tipos de Kotlin permite expresar
+        mejor la semántica del dominio mediante <InlineKotlin
+          code="data class"
+        />, <InlineKotlin code="sealed class" />, <InlineKotlin
+          code="value class"
+        /> y más. Incluso se proyecta incluir <Link
+          href="https://en.wikipedia.org/wiki/Union_type"
+          ><em>union types</em></Link
+        > para <Link href="https://youtu.be/IUrA3mDSWZQ">modelar errores</Link> de
+        manera más precisa.
+      </ListItem>
+      <ListItem icon={icons.TreeStructure}>
+        <strong>Abstracciones flexibles:</strong> interfaces, clases abstractas,
+        typeclasses a través de <Link
+          href="https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md#context-oriented-dispatch--externally-implemented-interface--type-classes"
+          ><em>context parameters</em></Link
+        > y jerarquías bien estructuradas.
+      </ListItem>
+      <ListItem icon={icons.PlusCircle}>
+        <strong>Funciones de extensión:</strong> permiten añadir comportamientos
+        a tipos ya existentes sin romper la encapsulación, enriqueciendo el dominio
+        de forma local y clara.
+      </ListItem>
+      <ListItem icon={icons.ShieldCheck}>
+        <strong>Null safety:</strong> la separación explícita entre tipos anulables
+        y no anulables reduce errores comunes y hace que la semántica sea más explícita.
+      </ListItem>
+      <ListItem icon={icons.Code}>
+        <strong>DSLs (Domain-Specific Languages):</strong> la sintaxis flexible de
+        Kotlin facilita construir APIs internas que reflejen directamente el lenguaje
+        del dominio.
+      </ListItem>
+      <ListItem icon={icons.TrendUp}>
+        <strong>Expresividad creciente:</strong> el ecosistema evoluciona constantemente
+        y cada nueva característica busca dar más precisión y seguridad al modelado.
+      </ListItem>
+    </List>
+
+    <Tip>
+      Kotlin no solo permite escribir código que <em>funcione</em>, sino que
+      incentiva a escribir código que <em>exprese con claridad</em> el dominio. Esta
+      capacidad de modelar directamente el problema en el lenguaje hace que las bibliotecas
+      sean más fáciles de usar, mantener y evolucionar.
+    </Tip>
+  </NotesSection>
+
+  <ConclusionsLayout>
+    <Fragment slot="conclusions">
+      <p>
+        A lo largo de esta lección vimos que <strong>modelar el dominio</strong>
+        no es un lujo, sino una necesidad para que el software refleje con claridad
+        los conceptos y reglas del problema que busca resolver. El uso de <em
+          >tipos ricos</em
+        >, nombres consistentes y expresivos, y las herramientas que ofrece
+        Kotlin nos permite reducir ambigüedades, evitar errores y construir
+        sistemas que evolucionen de manera sostenible.
+      </p>
+      <p class="mt-3">
+        Un buen modelo de dominio conecta el lenguaje del equipo con el diseño
+        del código: cuanto más clara sea esa conexión, más fácil será
+        comunicarse, colaborar y extender el sistema en el futuro.
+      </p>
+    </Fragment>
+
+    <Fragment slot="key-points">
+      <ListItem icon={icons.Cube}>
+        <strong>Tipos de dominio:</strong> reemplazar primitivas genéricas por tipos
+        específicos (p. ej. <InlineKotlin code="Instant" /> en lugar de <InlinePython
+          code="float"
+        />) mejora la expresividad y la seguridad.
+      </ListItem>
+      <ListItem icon={icons.TextT}>
+        <strong>Nombres claros y consistentes:</strong> evitan ambigüedades y actúan
+        como documentación implícita.
+      </ListItem>
+      <ListItem icon={icons.Highlighter}>
+        <strong>Expresividad sobre brevedad:</strong> abreviaciones crípticas reducen
+        la claridad; los nombres completos facilitan el mantenimiento y la colaboración.
+      </ListItem>
+      <ListItem icon={icons.ChatCircleText}>
+        <strong>Pronunciabilidad:</strong> los nombres deben poder usarse de forma
+        natural en conversaciones técnicas.
+      </ListItem>
+      <ListItem icon={icons.TrendUp}>
+        <strong>Kotlin como aliado:</strong> con null safety, data classes, sealed
+        classes, value classes, funciones de extensión y DSLs, el lenguaje entrega
+        múltiples mecanismos para construir modelos de dominio expresivos.
+      </ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+      <p>
+        El modelado de dominios no se trata solo de escribir código correcto,
+        sino de
+        <strong
+          >escribir código que cuente una historia clara del problema</strong
+        >. Kotlin nos da las herramientas para hacerlo: depende de nosotrxs
+        decidir usarlas con consistencia, claridad y expresividad.
+      </p>
+      <p class="mt-3">
+        Al final, un buen modelo de dominio es una inversión: reduce errores,
+        facilita la comunicación y prolonga la vida útil de las bibliotecas que
+        construimos.
+      </p>
+    </Fragment>
+  </ConclusionsLayout>
+
+  <References>
+    <Fragment slot="recommended">
+      <Book
+        chapter="Meaningful Names"
+        bookTitle="Clean Code: A Handbook of Agile Software Craftsmanship"
+      >
+        <AuthorList
+          slot="authors"
+          authors={[
+            {
+              lastName: "Martin",
+              firstName: "Robert C.",
+              url: "https://en.wikipedia.org/wiki/Robert_C._Martin",
+            },
+          ]}
+        />
+        <Fragment slot="description">
+          Guía práctica para nombrar bien en código: cómo elegir nombres que
+          revelen intención, eviten desinformar, hagan distinciones
+          significativas, sean pronunciables y buscables, y no dependan de
+          codificaciones (HN, prefijos). Muestra anti-ejemplos (“a1”, “d”,
+          “getThem”) y su refactor a nombres claros (“elapsedTimeInDays”,
+          “getFlaggedCells”, source/destination). Insiste en consistencia léxica
+          (un verbo por concepto), evitar juegos de palabras y añadir contexto
+          mediante tipos/abstracciones en lugar de sufijos vacíos (“Info”,
+          “Data”). Complementa la lección al dar criterios concretos para
+          alinear nombres con el modelo de dominio, reduciendo ambigüedad y
+          errores y haciendo el código más legible y mantenible.
+        </Fragment>
+      </Book>
+      <Book
+        chapter="Communication and the Use of Language"
+        bookTitle="Domain-Driven Design: Tackling Complexity in the Heart of Software"
+        pages={[24, 36]}
+      >
+        <AuthorList
+          slot="authors"
+          authors={[{ lastName: "Evans", firstName: "Eric" }]}
+        />
+        <Fragment slot="description">
+          Expone la importancia de un <strong>lenguaje ubicuo</strong> en proyectos
+          de software: un vocabulario compartido entre desarrolladores y expertxs
+          de dominio, basado en el modelo del dominio, que se use en el código, en
+          las conversaciones, en la documentación y en los diagramas. Señala los
+          riesgos de depender de traducciones entre jergas distintas (malentendidos,
+          refactorizaciones innecesarias, software inconsistente) y muestra cómo
+          el compromiso con un lenguaje común impulsa el refinamiento del modelo
+          y una comunicación más fluida. Además, reflexiona sobre el rol de diagramas,
+          documentos y modelos explicativos como apoyos a la comunicación, siempre
+          subordinados al lenguaje compartido y al código.
+        </Fragment>
+      </Book>
+    </Fragment>
+  </References>
+</NotesLayout>

@@ -32,7 +32,7 @@ export const courseStructure: Lesson[] = [
     href: "/notes/software-libraries/",
     children: [
       { title: "Bibliotecas de software", href: "/notes/software-libraries/what-is/" },
-      { title: "Principios de diseño", href: "/notes/software-libraries/design-principles/" },
+      { title: "Modelos de dominio", href: "/notes/software-libraries/domain-models/" },
     ],
   },
   {
