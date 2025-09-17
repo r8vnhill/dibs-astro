@@ -32,6 +32,7 @@ export const courseStructure: Lesson[] = [
     href: "/notes/software-libraries/",
     children: [
       { title: "Bibliotecas de software", href: "/notes/software-libraries/what-is/" },
+      { title: "Lógica de negocio y aplicación", href: "/notes/software-libraries/business-vs-app/" },
       { title: "Modelos de dominio", href: "/notes/software-libraries/domain-models/" },
     ],
   },
