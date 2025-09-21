@@ -1,0 +1,71 @@
+---
+import { reset } from "./counter";
+
+/**
+ * Footnotes.astro
+ * ---------------
+ * Envuelve la lista de notas y resetea el contador por render.
+ */
+interface Props {
+  title?: string; // Título accesible del bloque
+  class?: string; // Clases extra para el <section>
+}
+
+const { title = "Notas", class: className = "" } = Astro.props as Props;
+
+// Resetea contador de notas al inicio del bloque
+reset();
+---
+
+<section
+  class={`footnotes mt-10 border-t border-base-border pt-6 ${className}`}
+  aria-labelledby="fn-label"
+>
+  <h2 id="fn-label" class="sr-only">{title}</h2>
+  <ol class="list-decimal pl-6 space-y-3">
+    <slot />
+  </ol>
+</section>
+
+<style is:global>
+  /* ----- Footnotes styling (global para que aplique donde se use) ----- */
+
+  .footnotes ol > li::marker {
+    color: var(--color-primary);
+    opacity: 0.9;
+  }
+
+  .footnotes li {
+    position: relative;
+  }
+
+  .footnotes li > p:first-child {
+    /* caja leve para la primera línea de cada nota */
+    background: color-mix(in oklab, var(--color-muted) 40%, transparent);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .dark .footnotes li > p:first-child {
+    background: color-mix(in oklab, var(--color-muted) 20%, transparent);
+  }
+
+  .footnotes a {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+
+  .footnote-backref {
+    margin-left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-muted-foreground);
+    transition: color 0.15s ease;
+  }
+
+  .footnote-backref:hover {
+    color: var(--color-foreground);
+  }
+</style>

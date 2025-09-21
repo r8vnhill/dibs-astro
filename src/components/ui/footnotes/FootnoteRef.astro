@@ -1,0 +1,26 @@
+---
+import { next } from "./counter";
+
+/**
+ * FootnoteRef.astro
+ * -----------------
+ * Inserta una referencia numerada en el texto.
+ * ¡Importante! Debe renderizarse en el mismo "ciclo" que las notas,
+ * por eso lo normal es invocarlo antes de <Footnotes/> o dentro del mismo layout.
+ *
+ * Props:
+ * - index?: number -> Si no se pasa, usa el siguiente número del contador
+ *                     PERO si usas <FootnoteRef> antes de <Footnotes>, te conviene
+ *                     pasar índices manuales para mantener correspondencia.
+ */
+interface Props {
+  index?: number;
+}
+
+const { index } = Astro.props as Props;
+const n = index ?? next();
+---
+
+<sup id={`fnref-${n}`} class="align-super text-xs no-underline">
+  <a href={`#fn-${n}`} class="footnote-ref underline decoration-dotted">{n}</a>
+</sup>

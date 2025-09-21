@@ -1,0 +1,31 @@
+---
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/starwind/tooltip";
+---
+
+<Tooltip>
+  <TooltipTrigger>
+    <span style="text-decoration: underline; cursor: help;">multiplataforma</span>
+  </TooltipTrigger>
+  <TooltipContent
+    side="top"
+    align="center"
+    class="max-w-xs sm:max-w-sm md:max-w-md break-words"
+  >
+    <p>
+      En software, <strong>multiplataforma</strong> describe la capacidad de una
+      tecnología o biblioteca de ejecutarse en distintos entornos o sistemas
+      operativos.
+    </p>
+    <p class="mt-2">
+      El significado exacto depende del ecosistema: en
+      <strong>Kotlin</strong> implica soportar <em>JVM</em>,
+      <em>JavaScript/Wasm</em> y <em>Kotlin/Native</em>. En otros casos, puede
+      significar compilar el mismo código para <em>Windows</em>, <em>Linux</em> y
+      <em>macOS</em>, o ejecutarse tanto en entornos móviles como de escritorio.
+    </p>
+  </TooltipContent>
+</Tooltip>

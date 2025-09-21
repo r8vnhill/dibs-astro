@@ -1,0 +1,38 @@
+---
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/starwind/tooltip";
+---
+
+<Tooltip>
+  <TooltipTrigger>
+    <span style="text-decoration: underline; cursor: help;">ecosistema JavaScript</span>
+  </TooltipTrigger>
+  <TooltipContent
+    side="top"
+    align="center"
+    class="max-w-xs sm:max-w-sm md:max-w-md break-words"
+  >
+    <p>
+      El <strong>ecosistema JavaScript</strong> abarca las tecnologías,
+      herramientas y comunidades construidas en torno a <em>JavaScript</em> y{" "}
+      <em>TypeScript</em>.
+    </p>
+    <p class="mt-2">
+      Incluye <strong>entornos de ejecución</strong> como navegadores y
+      <em> Node.js</em>, <strong>lenguajes y transpiladores</strong> como
+      <em>TypeScript</em> o <em>Babel</em>, <strong>frameworks</strong> para
+      frontend (<em>React</em>, <em>Vue</em>, <em>Angular</em>) y backend
+      (<em>Express</em>, <em>NestJS</em>), además de gestores de paquetes como{" "}
+      <em>npm</em>, <em>pnpm</em> y <em>yarn</em>.
+    </p>
+    <p class="mt-2">
+      Este ecosistema se caracteriza por su <strong>rápida evolución</strong>,
+      amplia comunidad, y su capacidad de abarcar aplicaciones
+      <em> web</em>, <em>móviles</em>, <em>de escritorio</em> e incluso{" "}
+      <em>serverless</em>.
+    </p>
+  </TooltipContent>
+</Tooltip>

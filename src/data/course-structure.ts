@@ -26,14 +26,40 @@ export interface Lesson {
  */
 export const courseStructure: Lesson[] = [
   { title: "¿Cómo usar este apunte?", href: "/notes/" },
-  { title: "Herramientas necesarias y recomendadas", href: "/notes/installation/" },
+  {
+    title: "Herramientas necesarias y recomendadas",
+    href: "/notes/installation/",
+  },
   {
     title: "Unidad 1 - Introducción al desarrollo de bibliotecas de software",
     href: "/notes/software-libraries/",
     children: [
-      { title: "Bibliotecas de software", href: "/notes/software-libraries/what-is/" },
-      { title: "Lógica de negocio y aplicación", href: "/notes/software-libraries/business-vs-app/" },
-      { title: "Modelos de dominio", href: "/notes/software-libraries/domain-models/" },
+      {
+        title: "Bibliotecas de software",
+        href: "/notes/software-libraries/what-is/",
+      },
+      {
+        title: "Scripting 101",
+        href: "/notes/software-libraries/scripting/",
+      },
+      {
+        title: "Sistemas de construcción",
+        href: "/notes/software-libraries/build-systems/",
+        children: [
+          {
+            title: "Veritas: Ep. 1",
+            href: "/notes/software-libraries/build-systems/veritas-1/",
+          },
+        ],
+      },
+      {
+        title: "Lógica de negocio y aplicación",
+        href: "/notes/software-libraries/business-vs-app/",
+      },
+      {
+        title: "Modelos de dominio",
+        href: "/notes/software-libraries/domain-models/",
+      },
     ],
   },
   {
@@ -44,8 +70,14 @@ export const courseStructure: Lesson[] = [
         title: "Kotlin",
         href: "/notes/type-fundamentals/basics/",
         children: [
-          { title: "Funciones", href: "/notes/type-fundamentals/basics/functions/" },
-          { title: "Variables", href: "/notes/type-fundamentals/basics/variables/" }
+          {
+            title: "Funciones",
+            href: "/notes/type-fundamentals/basics/functions/",
+          },
+          {
+            title: "Variables",
+            href: "/notes/type-fundamentals/basics/variables/",
+          },
         ],
       },
     ],

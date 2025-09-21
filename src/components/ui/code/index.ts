@@ -14,3 +14,4 @@ export { default as BashTerminal } from "./sh/BashTerminal.astro";
 export { default as InlineBash } from "./sh/InlineBash.astro";
 export { default as CBlock } from "./c/CBlock.astro";
 export { default as CInline } from "./c/CInline.astro";
+export { default as Terminals } from "./Terminals.astro";

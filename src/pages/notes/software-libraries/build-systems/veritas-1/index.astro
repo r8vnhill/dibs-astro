@@ -1,0 +1,1060 @@
+---
+import * as icons from "~/assets/img/icons";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import ToDo from "~/components/utils/ToDo.tsx";
+import { Abstract, Definition, More, Tip } from "~/components/ui/callouts";
+import Heading from "~/components/semantics/Heading.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import { InlineBash, InlinePowerShell, Terminals } from "~/components/ui/code";
+import { List, ListItem } from "~/components/ui/list";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import Footnotes from "~/components/ui/footnotes/Footnotes.astro";
+import { Footnote, FootnoteRef } from "~/components/ui/footnotes";
+---
+
+<NotesLayout title="Veritas Ep. 1: Tu primer proyecto con Gradle">
+  <Abstract>
+    <ToDo client:only="react" />
+  </Abstract>
+
+  <NotesSection id="veritas-intro">
+    <Heading headingLevel="h2" Icon={icons.ListChecks}>
+      Hello my name is: Veritas
+    </Heading>
+
+    <p>
+      <strong>Veritas</strong> es una biblioteca de validación de datos que construiremos
+      de manera incremental a lo largo del curso. Su objetivo es ofrecer una API
+      clara y extensible para <em>declarar reglas</em>, <em
+        >componer validaciones</em
+      > y
+      <em> obtener resultados expresivos</em>, facilitando su uso tanto en
+      aplicaciones como en otras bibliotecas. Iremos viendo cómo lograr estos
+      objetivos paso a paso.
+    </p>
+
+    <p>
+      Comenzar un proyecto desde cero puede sentirse <strong>abrumador</strong>,
+      incluso aterrador. Muchas veces no sabemos por dónde empezar, tropezamos
+      en el camino y nos enfrentamos a decisiones que parecen correctas en un
+      momento, pero de las que luego podemos arrepentirnos.
+    </p>
+
+    <p>
+      Por eso, <strong>Veritas no es solo una biblioteca</strong>: es también
+      una historia que contaremos juntos. Una historia que nos servirá de guía
+      para recorrer el proceso completo de creación de una biblioteca desde
+      cero.
+    </p>
+
+    <p>
+      Veritas es, en última instancia, una <strong
+        >excusa para aprender haciendo</strong
+      >: para experimentar, equivocarnos, corregir el rumbo y descubrir cómo se
+      construyen bibliotecas sólidas y reutilizables en el mundo real.
+    </p>
+  </NotesSection>
+
+  <NotesSection id="project-scaffold">
+    <Heading headingLevel="h2" Icon={icons.FolderOpen}>
+      Estructura inicial de proyectos del curso
+    </Heading>
+
+    <p class="mb-4">
+      Comencemos creando una organización básica para los proyectos del curso.
+      Esta carpeta puede ser compartida entre otros proyectos; si decides no
+      usarla, solo tendrás que adaptar las rutas en los comandos posteriores.
+    </p>
+
+    <Terminals
+      powerShellCode={`
+        $dibs     = 'dibs'           # raíz de proyectos del curso
+        $scripts  = 'scripts'        # scripts de terminal
+        $path     = Join-Path $dibs $scripts
+
+        New-Item -ItemType Directory -Path $path -Force | Out-Null
+        # Alternativas:
+        # (New-Item -ItemType Directory -Path $path -Force) >$null
+        # $null = (New-Item -ItemType Directory -Path $path -Force)
+      `}
+      bashCode={`
+        DIBS="dibs"         # raíz de proyectos del curso
+        SCRIPTS="scripts"   # scripts de terminal
+        PATH_DIR="$DIBS/$SCRIPTS"
+
+        mkdir -p "$PATH_DIR"
+      `}
+    >
+      <List slot="powershell-explanation">
+        <ListItem icon={icons.ArrowsMerge}>
+          <InlinePowerShell code="Join-Path" />: compone rutas de forma portable
+          (evita problemas con separadores <InlinePowerShell code="\\" /> o <InlinePowerShell
+            code="/"
+          />).
+        </ListItem>
+
+        <ListItem icon={icons.FolderPlus}>
+          <InlinePowerShell code="New-Item -ItemType Directory" />: crea la
+          carpeta destino (y las intermedias si faltan).
+          <List>
+            <ListItem icon={icons.Path}>
+              <InlinePowerShell code="-Path $path" />: ruta objetivo construida
+              con <InlinePowerShell code="Join-Path" />.
+            </ListItem>
+            <ListItem icon={icons.CheckCircle}>
+              <InlinePowerShell code="-Force" />: permite repetir el comando sin
+              error si la carpeta ya existe.
+            </ListItem>
+            <ListItem icon={icons.SpeakerSimpleX}>
+              <InlinePowerShell code="|" /> es el operador de <em>pipeline</em>:
+              envía la salida del comando de la izquierda como entrada al de la
+              derecha. En
+              <InlinePowerShell code="| Out-Null" /> esa salida se descarta para
+              mantener la terminal limpia.<br />
+              <strong>Alternativas</strong>: <InlinePowerShell
+                code="(comando) >$null"
+              /> o <InlinePowerShell code="$null = (comando)" />; en este apunte
+              preferimos la forma con <InlinePowerShell code="|" /> por ser más explícita.
+            </ListItem>
+          </List>
+        </ListItem>
+      </List>
+      <List slot="bash-explanation">
+        <ListItem icon={icons.FolderPlus}>
+          <InlineBash code={`mkdir -p "$DIBS/$SCRIPTS"`} />: crea la ruta
+          completa si no existe y no falla si ya está creada.
+        </ListItem>
+        <ListItem icon={icons.Path}>
+          <InlineBash code={`"$DIBS/$SCRIPTS"`} />: ruta destino donde
+          guardaremos scripts compartidos del curso.
+        </ListItem>
+      </List>
+    </Terminals>
+
+    <More>
+      <Fragment slot="title">(Opcional) Integrar con Git</Fragment>
+
+      <p class="mb-4">
+        Si quieres versionar tu estructura desde el inicio, puedes crear el
+        repositorio local y el remoto en GitLab de forma automatizada. Te
+        sugiero ejecutar primero un <strong>ensayo</strong> con
+        <InlinePowerShell code="-WhatIf" /> (PowerShell) o
+        <InlineBash code="--dry-run" /> (Bash) para validar qué va a ocurrir.
+      </p>
+
+      <Terminals
+        powerShellCode={`
+          #Requires -Version 7.0
+          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+          param(
+              [ValidateNotNullOrEmpty()]
+              [Parameter(Mandatory)]
+              [string] $User,
+
+              [ValidateNotNullOrEmpty()]
+              [string] $RepositoryDirectory = $PWD.Path,
+
+              [string] $RepositoryName,
+              [string] $Prefix
+          )
+
+          $ErrorActionPreference = 'Stop'
+
+          # Normalizar ruta (soporta relativa) y validar que sea carpeta
+          $RepositoryDirectory = (Resolve-Path -LiteralPath $RepositoryDirectory -ErrorAction Stop).Path
+          $repoDirInfo = Get-Item -LiteralPath $RepositoryDirectory
+          if (-not $repoDirInfo.PSIsContainer) {
+              throw "The path '$RepositoryDirectory' is not a directory."
+          }
+
+          # Derivar nombre/prefijo si faltan
+          if (-not $RepositoryName -or [string]::IsNullOrWhiteSpace($RepositoryName)) {
+              $RepositoryName = $repoDirInfo.Name.ToLower()
+          }
+          if (-not $Prefix -and $repoDirInfo.Parent) {
+              $Prefix = $repoDirInfo.Parent.Name.ToLower()
+          }
+
+          # Nombre final del proyecto remoto
+          $target = if ([string]::IsNullOrWhiteSpace($Prefix)) { $RepositoryName } else { "$Prefix-$RepositoryName" }
+
+          # Crear remoto en GitLab
+          if ($PSCmdlet.ShouldProcess($target, 'Create GitLab repository')) {
+              Push-Location -LiteralPath $repoDirInfo.FullName
+              try {
+                  git init
+                  glab repo create $target --public
+                  if ($LASTEXITCODE) { throw "glab exited with code $LASTEXITCODE." }
+                  git remote add origin "https://gitlab.com/$User/$target.git"
+              }
+              finally {
+                  Pop-Location
+              }
+          }
+        `}
+        bashCode={`
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          USER=""
+          REPO_DIR="$(pwd)"
+          REPO_NAME=""
+          PREFIX=""
+          DRY_RUN=false
+
+          usage() {
+            echo "Usage: $0 -u <user> [-d <directory>] [-n <repo_name>] [-p <prefix>] [--dry-run]"
+            exit 1
+          }
+
+          while [[ $# -gt 0 ]]; do
+            case $1 in
+              -u|--user) USER="$2"; shift 2 ;;
+              -d|--dir) REPO_DIR="$2"; shift 2 ;;
+              -n|--name) REPO_NAME="$2"; shift 2 ;;
+              -p|--prefix) PREFIX="$2"; shift 2 ;;
+              --dry-run) DRY_RUN=true; shift ;;
+              *) usage ;;
+            esac
+          done
+
+          if [[ -z "$USER" ]]; then
+            echo "Error: user is required"; usage
+          fi
+
+          if [[ ! -d "$REPO_DIR" ]]; then
+            echo "Error: '$REPO_DIR' is not a directory"
+            exit 1
+          fi
+
+          # Derivar nombre/prefijo
+          if [[ -z "$REPO_NAME" ]]; then
+            REPO_NAME="$(basename "$REPO_DIR" | tr '[:upper:]' '[:lower:]')"
+          fi
+          if [[ -z "$PREFIX" ]]; then
+            PARENT="$(dirname "$REPO_DIR")"
+            PREFIX="$(basename "$PARENT" | tr '[:upper:]' '[:lower:]')"
+          fi
+
+          TARGET="$REPO_NAME"
+          if [[ -n "$PREFIX" ]]; then
+            TARGET="$PREFIX-$REPO_NAME"
+          fi
+
+          echo "Repositorio remoto: $TARGET"
+
+          run() {
+            if $DRY_RUN; then
+              echo "[dry-run] $*"
+            else
+              eval "$@"
+            fi
+          }
+
+          (
+            cd "$REPO_DIR"
+            run "git init"
+            run "glab repo create $TARGET --public"
+            run "git remote add origin https://gitlab.com/$USER/$TARGET.git"
+          )
+        `}
+      >
+        <!-- PowerShell -->
+        <Fragment slot="powershell-title">
+          Script de PowerShell (ensayo con <code>-WhatIf</code>)
+        </Fragment>
+        <DibsSourceLink
+          repo="scripts"
+          file="ps1/New-GitLabRepository.ps1"
+          slot="powershell-source"
+        />
+        <Fragment slot="powershell-explanation">
+          <List>
+            <ListItem icon={icons.Hash}>
+              <InlinePowerShell code="#Requires -Version 7.0" />: asegura
+              PowerShell&nbsp;7+.
+            </ListItem>
+
+            <ListItem icon={icons.Info}>
+              <InlinePowerShell
+                code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
+              /> habilita
+              <InlinePowerShell code="-WhatIf" /> y <InlinePowerShell
+                code="-Confirm"
+              />. Úsalo primero con
+              <InlinePowerShell code="-WhatIf" />.
+            </ListItem>
+
+            <ListItem icon={icons.Folder}>
+              <InlinePowerShell code="$RepositoryDirectory = $PWD.Path" /> +
+              <InlinePowerShell code="Resolve-Path -LiteralPath" />: acepta
+              rutas relativas y las normaliza; luego se obtiene <InlinePowerShell
+                code="Get-Item"
+              /> para validar que sea carpeta.
+            </ListItem>
+
+            <ListItem icon={icons.TextB}>
+              <InlinePowerShell code="$RepositoryName" /> y <InlinePowerShell
+                code="$Prefix"
+              /> se derivan del directorio si no los pasas; el nombre remoto final
+              es
+              <InlinePowerShell code="$Prefix-$RepositoryName" /> (o solo el nombre
+              si no hay prefijo).
+            </ListItem>
+
+            <ListItem icon={icons.Stack}>
+              <InlinePowerShell code="Push-Location" /> y <InlinePowerShell
+                code="Pop-Location"
+              />: cambian el directorio de trabajo temporalmente.
+              <InlinePowerShell code="try { ... } finally { ... }" /> asegura que
+              siempre se regrese al directorio original.
+            </ListItem>
+
+            <ListItem icon={icons.CloudArrowUp}>
+              <InlinePowerShell code="glab repo create $target --public" />:
+              crea el proyecto remoto en GitLab de forma pública (cambia a <InlinePowerShell
+                code="--private"
+              /> si prefieres).
+            </ListItem>
+
+            <ListItem icon={icons.WarningCircle}>
+              <InlinePowerShell code="if ($LASTEXITCODE) { throw ... }" />: si
+              <InlinePowerShell code="glab" /> falla, se lanza una excepción para
+              que el script termine con error.
+            </ListItem>
+
+            <ListItem icon={icons.Link}>
+              <InlinePowerShell code="git remote add origin ..." />: agrega el
+              remoto llamado <InlinePowerShell code="origin" /> apuntando al repo
+              recién creado.
+            </ListItem>
+          </List>
+        </Fragment>
+
+        <!-- Bash/Zsh -->
+        <Fragment slot="bash-title">
+          Script de Bash/Zsh (ensayo con <code>--dry-run</code>)
+        </Fragment>
+        <DibsSourceLink
+          repo="scripts"
+          file="sh/new-gitlab-repository.sh"
+          slot="bash-source"
+        />
+        <Fragment slot="bash-explanation">
+          <List>
+            <ListItem icon={icons.Hash}>
+              <InlineBash code="#!/usr/bin/env bash" />: indica al sistema que
+              use Bash (o la shell compatible que encuentre en el PATH).
+            </ListItem>
+
+            <ListItem icon={icons.ShieldCheck}>
+              <InlineBash code="set -euo pipefail" />:
+              <List>
+                <ListItem icon={icons.Bomb}>
+                  <InlineBash code="-e" /> termina el script si algún comando falla.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                  <InlineBash code="-u" /> termina si se usa una variable no definida.
+                </ListItem>
+                <ListItem icon={icons.ArrowsLeftRight}>
+                  <InlineBash code="-o pipefail" /> asegura que los fallos en pipelines
+                  no pasen desapercibidos.
+                </ListItem>
+              </List>
+            </ListItem>
+
+            <ListItem icon={icons.Terminal}>
+              Bloque <InlineBash code="usage() {}" />: define la ayuda y
+              parámetros válidos (<code>-u</code>, <code>-d</code>, <code
+                >-n</code
+              >,
+              <code>-p</code>, <code>--dry-run</code>).
+            </ListItem>
+
+            <ListItem icon={icons.Code}>
+              <p>
+                <InlineBash code="while [[ $# -gt 0 ]]; do case ... esac" />:
+                <InlineBash code="$#" /> representa el número de argumentos posicionales
+                que recibió el script.
+              </p>
+              <List>
+                <ListItem icon={icons.Terminal}>
+                  Si el script se invoca como <InlineBash
+                    code="./script.sh -u alice -d ./repo"
+                  />, entonces <InlineBash code="$#" /> vale <code>4</code> (cada
+                  flag y cada valor cuentan).
+                </ListItem>
+
+                <ListItem icon={icons.Repeat}>
+                  El bucle <InlineBash code="while [[ $# -gt 0 ]]" /> se repite mientras
+                  queden argumentos por procesar.
+                </ListItem>
+
+                <ListItem icon={icons.CursorText}>
+                  Dentro, <InlineBash code="case $1 in ... esac" /> evalúa el primer
+                  argumento (<InlineBash code="$1" />), lo asigna a una variable
+                  y luego <InlineBash code="shift" /> avanza, reduciendo
+                  <InlineBash code="$#" /> en 1 (o en 2 si es flag con valor).
+                </ListItem>
+              </List>
+
+              <p>
+                De esta forma se recorren y procesan todos los parámetros
+                pasados al script.
+              </p>
+            </ListItem>
+
+            <ListItem icon={icons.WarningCircle}>
+              Validación: si no se pasa <InlineBash code="--user" /> se muestra error.
+              También se valida que <InlineBash code="$REPO_DIR" /> sea un directorio
+              existente.
+            </ListItem>
+
+            <ListItem icon={icons.TextB}>
+              <p>Derivación de nombres:</p>
+              <List>
+                <ListItem icon={icons.Folder}>
+                  <InlineBash code="basename" /> obtiene el nombre de la carpeta
+                  actual como <InlineBash code="$REPO_NAME" />.
+                </ListItem>
+
+                <ListItem icon={icons.TreeStructure}>
+                  <InlineBash code="dirname" /> y <InlineBash code="basename" />
+                  del padre dan <InlineBash code="$PREFIX" />.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                  Ambos se transforman a minúsculas con <InlineBash
+                    code="tr '[:upper:]' '[:lower:]'"
+                  />.
+                </ListItem>
+              </List>
+
+              <p>
+                El nombre final del repo es <InlineBash
+                  code="$PREFIX-$REPO_NAME"
+                /> (o solo el nombre si no hay prefijo).
+              </p>
+            </ListItem>
+
+            <ListItem icon={icons.Target}>
+              Se imprime <InlineBash code=`"Repositorio remoto: $TARGET"` /> para
+              mostrar qué nombre tendrá en GitLab antes de ejecutar nada.
+            </ListItem>
+
+            <ListItem icon={icons.Function}>
+              <p>
+                Función <InlineBash code="run() { }" />:
+              </p>
+              <List>
+                <ListItem icon={icons.Eye}>
+                  Si está activo <InlineBash code="--dry-run" />, solo imprime
+                  el comando.
+                </ListItem>
+
+                <ListItem icon={icons.Play}>
+                  Si no, lo ejecuta realmente con <InlineBash code="eval" />. <InlineBash
+                    code="$@"
+                  /> representa todos los argumentos pasados a la función.
+                </ListItem>
+              </List>
+            </ListItem>
+
+            <ListItem icon={icons.Folder}>
+              Subshell <InlineBash code=`( cd "$REPO_DIR" ... )` />: cambia de
+              directorio solo dentro del bloque de paréntesis para no alterar la
+              sesión actual.
+            </ListItem>
+
+            <ListItem icon={icons.Stack}>
+              <p>Dentro del subshell:</p>
+              <List>
+                <ListItem icon={icons.GitCommit}>
+                  <InlineBash code="git init" /> inicializa el repositorio local.
+                </ListItem>
+
+                <ListItem icon={icons.CloudArrowUp}>
+                  <InlineBash code="glab repo create $TARGET --public" /> crea el
+                  repositorio en GitLab (usa <InlineBash code="--private" /> si quieres).
+                </ListItem>
+
+                <ListItem icon={icons.Link}>
+                  <InlineBash
+                    code="git remote add origin https://gitlab.com/$USER/$TARGET.git"
+                  /> conecta el repo local con el remoto.
+                </ListItem>
+              </List>
+            </ListItem>
+          </List>
+        </Fragment>
+      </Terminals>
+
+      <Heading headingLevel="h3" Icon={icons.ListChecks}>
+        Flujo sugerido (con ensayo primero)
+      </Heading>
+
+      <Terminals
+        powerShellCode={`
+          Set-Location 'dibs'
+          $gitlabUser = '<TU-USUARIO>' # <- Reemplaza aquí
+          .\\scripts\\ps1\\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryDirectory .\\scripts -WhatIf
+          .\\scripts\\ps1\\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryName index -Prefix dibs -WhatIf
+        `}
+        bashCode={`
+          cd dibs
+          GITLAB_USER="<TU-USUARIO>" # <- Reemplaza aquí
+          ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -d ./scripts --dry-run
+          ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -n index -p dibs --dry-run
+        `}
+      >
+        <Fragment slot="powershell-explanation">
+          <p>
+            El flag <InlinePowerShell code="-WhatIf" /> simula la ejecución sin hacer
+            nada. Si todo luce bien, repite los comandos sin <InlinePowerShell
+              code="-WhatIf"
+            />.
+          </p>
+          Cuando se te pregunte elige <strong>no</strong> crear una carpeta local
+          para el proyecto remoto (<code>n</code>), ya que el script ya se
+          encarga de eso.
+        </Fragment>
+        <Fragment slot="bash-explanation">
+          <InlineBash code="--dry-run" /> imprime los comandos en lugar de ejecutarlos.
+          Si luce bien, repite sin
+          <InlineBash code="--dry-run" />.
+        </Fragment>
+      </Terminals>
+
+      <Tip class="my-4">
+        <Fragment slot="title">.gitignore</Fragment>
+        Genera un <code>.gitignore</code> adecuado para cada repo; puede ayudarte:
+        <Link href="https://www.toptal.com/developers/gitignore/"
+          >toptal.com/developers/gitignore</Link
+        >.
+      </Tip>
+
+      <Terminals
+        powerShellCode={`
+          # Commit y push del repo 'dibs/scripts', luego agregarlo como submódulo en 'dibs/index'
+          Push-Location '.\\scripts'
+          git add .
+          git commit -m "chore(scripts): initial scaffolding and GitLab integration utilities"
+          git push -u origin main
+          Pop-Location
+          # Commit y push del repo 'dibs/index'
+          git submodule add "https://gitlab.com/$gitlabUser/dibs-scripts.git" scripts
+          git add .gitmodules scripts
+          git commit -m "chore(index): add scripts as submodule"
+          git push -u origin main
+        `}
+        bashCode={`
+          # Commit y push del repo 'dibs/scripts', luego agregarlo como submódulo en 'dibs/index'
+          (
+            cd scripts
+            git add .
+            git commit -m "chore(scripts): initial scaffolding and GitLab integration utilities"
+            git push -u origin main
+          )
+
+          # Commit y push del repo 'dibs/index'
+          git submodule add "https://gitlab.com/$GITLAB_USER/dibs-scripts.git" scripts
+          git add .gitmodules scripts
+          git commit -m "chore(index): add scripts as submodule"
+          git push -u origin main
+        `}
+      >
+        <Fragment slot="powershell-explanation">
+          <List>
+            <ListItem icon={icons.CloudArrowUp}>
+              Primer bloque: versiona y sube el repo <code>dibs/scripts</code>.
+            </ListItem>
+            <ListItem icon={icons.Link}>
+              Segundo bloque: añade <code>dibs/scripts</code> como submódulo en
+              <code>dibs/index</code> y lo sube al remoto.
+            </ListItem>
+          </List>
+        </Fragment>
+        <Fragment slot="bash-explanation">
+          <List>
+            <ListItem icon={icons.CloudArrowUp}>
+              El bloque entre paréntesis crea un subshell que entra a
+              <code>scripts</code>, hace commit inicial y lo sube a GitLab.
+            </ListItem>
+            <ListItem icon={icons.Link}>
+              Luego, desde <code>dibs/index</code>, se añade el submódulo,
+              actualiza <code>.gitmodules</code> y se sube todo al remoto.
+            </ListItem>
+          </List>
+        </Fragment>
+      </Terminals>
+      <Definition class="my-4">
+        <Fragment slot="title">Submódulos Git</Fragment>
+        <p>
+          Un submódulo es un repositorio independiente enlazado dentro de otro
+          repositorio. Se usa cuando quieres mantener el historial y la
+          evolución de un proyecto externo (o de otro repo tuyo) sin copiar su
+          contenido. Así, el repo principal guarda solo una referencia fija a un
+          commit del submódulo. Puedes actualizar esa referencia cuando quieras,
+          pero los cambios en el submódulo se gestionan por separado.
+        </p>
+        <p>
+          Aprende más sobre submódulos en la <Link
+            href="https://www.atlassian.com/git/tutorials/git-submodule"
+            >documentación de Atlassian.</Link
+          >
+        </p>
+      </Definition>
+    </More>
+  </NotesSection>
+
+  <NotesSection id="gradle-init">
+    <Heading headingLevel="h2" Icon={icons.Rocket}
+      >Inicializar un proyecto con Gradle</Heading
+    >
+
+    <p class="mb-4">
+      Crearemos un script mínimo para generar un esqueleto de proyecto donde tú
+      elijas. La clave es <em>normalizar la ruta</em> (soporta relativas) y ejecutar
+      <code>gradle init</code> en ese directorio. Recomiendo probar<FootnoteRef
+        index={1}
+      />&nbsp;con <InlinePowerShell code="-WhatIf" /> / <InlineBash
+        code="--dry-run"
+      /> antes.
+    </p>
+
+    <Definition>
+      <Fragment slot="title">
+        <code>gradle init</code>
+      </Fragment>
+      <p>
+        El comando <code>gradle init</code> crea la estructura inicial de un proyecto
+        Gradle de manera guiada: puedes elegir tipo de proyecto (aplicación, biblioteca,
+        etc.), DSL (<em>Kotlin</em> o
+        <em>Groovy</em>) y nombre del proyecto, entre otros.
+      </p>
+    </Definition>
+
+    <Terminals
+      powerShellCode={`
+        #Requires -Version 7.0
+        [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+        param(
+            [Parameter(Mandatory)]
+            [ValidateNotNullOrEmpty()]
+            [string] $ProjectRoot,
+            [string[]] $GradleOptions = @()
+        )
+
+        $ErrorActionPreference = 'Stop'
+
+        # Normalize the absolute path based on the current directory
+        $root = \`
+            if ([IO.Path]::IsPathRooted($ProjectRoot)) { $ProjectRoot } \`
+            else { Join-Path -Path $PWD.Path -ChildPath $ProjectRoot }
+
+        # Create directory if missing
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+            if ($PSCmdlet.ShouldProcess($root, 'Create directory')) {
+                New-Item -ItemType Directory -Path $root -Force | Out-Null
+            }
+        }
+
+        # Run gradle init in the correct path
+        $gradle = (Get-Command gradle -ErrorAction Stop).Source
+        if ($PSCmdlet.ShouldProcess($root, 'gradle init')) {
+            Write-Verbose "Running 'gradle init' in '$root'"
+            & $gradle -p $root init @GradleOptions
+            if ($LASTEXITCODE) { throw "Gradle exited with code $LASTEXITCODE." }
+        }
+      `}
+      bashCode={`
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        PROJECT_ROOT="\${1:-}"
+        shift || true
+        GRADLE_OPTS=( "$@" )
+
+        if [[ -z "\${PROJECT_ROOT}" ]]; then
+          echo "Usage: initialize-gradle-project.sh <project-root> [gradle options...]" >&2
+          exit 1
+        fi
+
+        # Normalize to absolute path
+        case "\${PROJECT_ROOT}" in
+          /*|?:/*) ROOT="\${PROJECT_ROOT}" ;;   # Unix abs or Windows drive abs (e.g., C:/)
+          *)       ROOT="\${PWD}/\${PROJECT_ROOT}" ;;
+        esac
+
+        run () {
+          if [[ "\${DRY_RUN:-false}" == "true" ]]; then
+            echo "[dry-run] \$*"
+          else
+            eval "\$@"
+          fi
+        }
+
+        # Create directory if missing
+        if [[ ! -d "\${ROOT}" ]]; then
+          run "mkdir -p \"\${ROOT}\""
+        fi
+
+        # Ensure gradle exists
+        if ! command -v gradle >/dev/null 2>&1; then
+          echo "Gradle not found in PATH" >&2
+          exit 127
+        fi
+
+        # Run gradle init in the correct path
+        run "gradle -p \"\${ROOT}\" init \${GRADLE_OPTS[*]}"
+      `}
+    >
+      <Fragment slot="powershell-title">Inicializar proyecto Gradle</Fragment>
+      <DibsSourceLink
+        repo="scripts"
+        file="ps1/Initialize-GradleProject.ps1"
+        slot="powershell-source"
+      />
+      <Fragment slot="powershell-explanation">
+        <p>
+          Esta explicación es más larga a propósito: es nuestro primer script y
+          queremos revisar cada detalle con calma. Más adelante iremos omitiendo
+          lo que ya hayamos aprendido.
+        </p>
+
+        <List>
+          <ListItem icon={icons.Hash}>
+            <InlinePowerShell code="#Requires -Version 7.0" />: asegura que el
+            script se ejecute con PowerShell&nbsp;7+.<FootnoteRef index={2} />
+          </ListItem>
+
+          <ListItem icon={icons.Info}>
+            <InlinePowerShell
+              code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
+            />: habilita ensayos seguros con <InlinePowerShell code="-WhatIf" />
+            (simula) y <InlinePowerShell code="-Confirm" /> (pide confirmación).<FootnoteRef
+              index={3}
+            />
+          </ListItem>
+
+          <ListItem icon={icons.Terminal}>
+            <InlinePowerShell code="param(...)" />: define los
+            <strong>parámetros de entrada</strong>.
+            <InlinePowerShell code="$ProjectRoot" /> es la carpeta del proyecto (obligatoria).
+            <InlinePowerShell code="$GradleOptions" /> permite pasar banderas extra
+            a
+            <InlinePowerShell code="gradle init" />.<FootnoteRef index={4} />
+          </ListItem>
+
+          <ListItem icon={icons.ShieldCheck}>
+            <InlinePowerShell code="$ErrorActionPreference = 'Stop'" />: si algo
+            falla, se detiene inmediatamente.
+          </ListItem>
+
+          <ListItem icon={icons.Path}>
+            Normaliza la ruta: convierte <InlinePowerShell
+              code="$ProjectRoot"
+            /> en absoluta con <InlinePowerShell
+              code="Join-Path"
+            />.<FootnoteRef index={5} />
+          </ListItem>
+
+          <ListItem icon={icons.FolderPlus}>
+            Comprueba si la carpeta existe con <InlinePowerShell
+              code="Test-Path"
+            /> y solo la crea si falta.<FootnoteRef index={6} />
+          </ListItem>
+
+          <ListItem icon={icons.Rocket}>
+            <InlinePowerShell
+              code="$gradle = (Get-Command gradle -ErrorAction Stop).Source"
+            />: localiza el ejecutable de Gradle en el sistema.<FootnoteRef
+              index={7}
+            />
+          </ListItem>
+
+          <ListItem icon={icons.Rocket}>
+            <InlinePowerShell code="& $gradle -p $root init @GradleOptions" />:
+            ejecuta <code>gradle init</code> en la carpeta correcta.<FootnoteRef
+              index={8}
+            />
+          </ListItem>
+
+          <ListItem icon={icons.WarningCircle}>
+            <InlinePowerShell code="$LASTEXITCODE" />: verifica que Gradle
+            terminó con éxito (0).<FootnoteRef index={9} />
+          </ListItem>
+
+          <ListItem icon={icons.SpeakerHigh}>
+            <InlinePowerShell code="Write-Verbose" /> muestra mensajes adicionales
+            cuando corres con <InlinePowerShell code="-Verbose" />.<FootnoteRef
+              index={10}
+            />
+          </ListItem>
+        </List>
+      </Fragment>
+
+      <Fragment slot="bash-title">Inicializar proyecto Gradle</Fragment>
+      <DibsSourceLink
+        repo="scripts"
+        file="sh/initialize-gradle-project.sh"
+        slot="bash-source"
+      />
+      <Fragment slot="bash-explanation">
+        <p>
+          Esta explicación es más larga a propósito: es nuestro primer script y
+          queremos revisar cada detalle con calma. Más adelante iremos omitiendo
+          lo que ya hayamos aprendido.
+        </p>
+        <List>
+          <ListItem icon={icons.Hash}>
+            <InlineBash code="#!/usr/bin/env bash" />: indica al sistema que use
+            Bash (o la shell compatible que encuentre en el PATH).
+          </ListItem>
+
+          <ListItem icon={icons.Bug}>
+            <InlineBash code="set -euo pipefail" /> refuerza la seguridad del script:
+            <List>
+              <ListItem icon={icons.WarningCircle}>
+                <InlineBash code="-e" />: termina de inmediato si un comando
+                falla.
+              </ListItem>
+              <ListItem icon={icons.Question}>
+                <InlineBash code="-u" />: falla si se usa una variable no
+                definida.
+              </ListItem>
+              <ListItem icon={icons.ArrowsLeftRight}>
+                <InlineBash code="-o pipefail" />: en un <em>pipeline</em>,
+                propaga el error del primer comando que falle en lugar de
+                ocultarlo.
+              </ListItem>
+            </List>
+          </ListItem>
+
+          <ListItem icon={icons.Terminal}>
+            <InlineBash code='PROJECT_ROOT="${1:-}"' />: guarda el primer
+            argumento del script en la variable <InlineBash
+              code="PROJECT_ROOT"
+            />.
+            <InlineBash code="$1" /> representa el primer parámetro recibido al ejecutar
+            el script. La sintaxis <InlineBash code=":-" /> indica “usa este valor,
+            o cadena vacía si no existe”. Así evitamos que la variable quede sin
+            definir cuando no se pasa ningún argumento.
+          </ListItem>
+
+          <ListItem icon={icons.Terminal}>
+            <InlineBash code="shift || true" /> avanza los argumentos posicionales
+            una posición (descarta <InlineBash code="$1" />, ya usado como <InlineBash
+              code="PROJECT_ROOT"
+            />). El <InlineBash code="|| true" /> evita que el script termine con
+            error si ya no hay más argumentos que desplazar.
+          </ListItem>
+
+          <ListItem icon={icons.Code}>
+            <InlineBash code='GRADLE_OPTS=( "$@" )' /> guarda todos los argumentos
+            restantes en un arreglo llamado <InlineBash code="GRADLE_OPTS" />.
+            La sintaxis <InlineBash code='"$@"' /> preserva cada argumento como un
+            elemento separado (respetando espacios). Así, cualquier flag adicional
+            se pasa intacta luego a
+            <InlineBash code="gradle init" />.
+          </ListItem>
+
+          <ListItem icon={icons.WarningCircle}>
+            <InlineBash code='if [[ -z "${PROJECT_ROOT}" ]]; then ... fi' /> valida
+            que la variable <InlineBash code="PROJECT_ROOT" /> no esté vacía.
+            <InlineBash code="[[ ... ]]" /> es la forma moderna de test en Bash,
+            más robusta que <InlineBash code="[ ... ]" />.
+            <InlineBash code="-z" /> comprueba si la cadena está vacía.
+            <InlineBash code=">&2" /> redirige el mensaje de error al flujo estándar
+            de errores (stderr) en lugar de stdout, para distinguirlo de la salida
+            normal.
+          </ListItem>
+
+          <ListItem icon={icons.Path}>
+            Normaliza la ruta del proyecto usando <InlineBash code="$PWD" />.
+            <InlineBash code="$PWD" /> es una variable automática de Bash que siempre
+            contiene la ruta del directorio actual desde donde ejecutas el script.
+            Si <InlineBash code="PROJECT_ROOT" /> es relativo, se antepone <InlineBash
+              code="$PWD"
+            />
+            para convertirlo en absoluto y asegurar que el proyecto se cree en la
+            carpeta correcta.
+          </ListItem>
+
+          <ListItem icon={icons.Path}>
+            <p>
+              <InlineBash code="case ... in ... esac" /> evalúa un valor contra varios
+              patrones de texto. Es parecido a una cadena de <code
+                >if / else if</code
+              > que compara con expresiones regulares simples, no equivale a un <em
+                >pattern matching</em
+              > completo como en Scala o Python.
+            </p>
+            <List>
+              <ListItem>
+                <InlineBash code="/*|?:/*)" />: si el valor empieza con <code
+                  >/</code
+                >
+                (ruta absoluta en Unix) o con <code>C:/</code> (ruta absoluta en
+                Windows), se toma tal cual (<InlineBash
+                  code="ROOT=${PROJECT_ROOT}"
+                />).
+              </ListItem>
+              <ListItem>
+                <InlineBash code="*)" />: el asterisco es un comodín que captura
+                cualquier otro caso. Aquí tratamos la ruta como relativa y la
+                volvemos absoluta anteponiendo <InlineBash code="$PWD" /> (directorio
+                actual en Bash).
+              </ListItem>
+            </List>
+            <p>
+              <InlineBash code=";;" /> marca el final de cada rama dentro del bloque
+              <code>case</code>.
+            </p>
+          </ListItem>
+
+          <ListItem icon={icons.Eye}>
+            Ensayo seguro: activa <InlineBash code="DRY_RUN=true" /> para ver qué
+            haría el script sin ejecutar cambios reales.
+          </ListItem>
+          <ListItem icon={icons.Rocket}>
+            Ejecuta <InlineBash
+              code='gradle -p "$ROOT" init ${GRADLE_OPTS[*]}'
+            /> en el directorio correcto sin moverte de carpeta.
+          </ListItem>
+        </List>
+      </Fragment>
+    </Terminals>
+
+    <Terminals
+      powerShellCode={`.\scripts\ps1\Initialize-GradleProject.ps1 -ProjectRoot veritas -WhatIf`}
+      bashCode={`...`}
+    >
+      <Fragment slot="powershell-title">Ejecutar con ensayo (-WhatIf)</Fragment>
+      <DibsSourceLink
+        repo="scripts"
+        file="ps1/Initialize-GradleProject.ps1"
+        slot="powershell-source"
+      />
+      <Fragment slot="powershell-explanation"> ... </Fragment>
+
+      <Fragment slot="bash-title">...</Fragment>
+      <DibsSourceLink
+        repo="scripts"
+        file="sh/initialize-gradle-project.sh"
+        slot="bash-source"
+      />
+      <Fragment slot="bash-explanation"> ... </Fragment>
+    </Terminals>
+  </NotesSection>
+
+  <Footnotes>
+    <Footnote index={1}>
+      <div>
+        <p class="mb-2">
+          Al usar <InlinePowerShell code="DirectoryInfo" /> con rutas relativas,
+          PowerShell puede resolverlas respecto a otra base (p. ej., el perfil).
+          Con <InlinePowerShell
+            code="Join-Path -Path $PWD.Path -ChildPath ..."
+          />
+          anclamos la ruta al directorio actual y evitamos crear el proyecto en
+          <em>otra</em> ubicación.
+        </p>
+
+        <p>
+          <strong>
+            El error original apareció al no usar <InlinePowerShell
+              code="Join-Path"
+            />:
+          </strong>
+        </p>
+
+        <pre
+          class="bg-base-200 text-sm rounded p-3 overflow-x-auto">
+What if: Performing the operation "Create Directory" on target "Destination: C:\Users\usuario\veritas".
+What if: Performing the operation "gradle init" on target "C:\Users\usuario\veritas".
+        </pre>
+
+        <p>
+          Gracias a <InlinePowerShell code="-WhatIf" /> /
+          <InlineBash code="--dry-run" />, detectamos al instante que apuntaba a
+          <code>C:\Users\...</code> en vez de <code>E:\...\Dibs</code>. El
+          ensayo reveló el fallo y la <em>corrección segura</em> fue normalizar la
+          ruta antes de <code>gradle init</code>.
+        </p>
+      </div>
+    </Footnote>
+
+    <Footnote index={2}>
+      Puedes ajustar <InlinePowerShell code="#Requires" /> a otra versión, pero no
+      garantizamos compatibilidad con PowerShell anterior.
+    </Footnote>
+
+    <Footnote index={3}>
+      <InlinePowerShell code="ConfirmImpact='Medium'" /> indica que la acción es
+      importante y puede requerir confirmación en entornos sensibles.
+    </Footnote>
+
+    <Footnote index={4}>
+      <ul class="list-disc pl-5">
+        <li>
+          <InlinePowerShell code="[Parameter(Mandatory)]" /> marca
+          <InlinePowerShell code="$ProjectRoot" /> como obligatorio.
+        </li>
+        <li>
+          <InlinePowerShell code="[ValidateNotNullOrEmpty()]" /> asegura que no sea
+          nulo o vacío.
+        </li>
+        <li>
+          <InlinePowerShell code="[string]" />: tipo de dato de la variable.
+        </li>
+      </ul>
+      <p class="mt-2">
+        Ejemplo de uso:
+        <InlinePowerShell
+          code='.\\Initialize-GradleProject.ps1 -ProjectRoot foo -GradleOptions "--type kotlin-application","--dsl kotlin"'
+        />.
+      </p>
+    </Footnote>
+
+    <Footnote index={5}>
+      <InlinePowerShell code="$PWD" /> es una variable automática que guarda el directorio
+      actual.
+    </Footnote>
+
+    <Footnote index={6}>
+      <InlinePowerShell code="-LiteralPath" /> evita que caracteres especiales se
+      interpreten como comodines. <InlinePowerShell
+        code="-PathType Container"
+      />
+      asegura que sea carpeta, no archivo. <InlinePowerShell
+        code="$PSCmdlet.ShouldProcess"
+      />
+      permite ensayar acciones con <InlinePowerShell code="-WhatIf" /> o
+      <InlinePowerShell code="-Confirm" />.
+    </Footnote>
+
+    <Footnote index={7}>
+      <InlinePowerShell code="Get-Command" /> encuentra el ejecutable real, aunque
+      haya alias. <InlinePowerShell code="-ErrorAction Stop" /> corta si no se encuentra.
+    </Footnote>
+
+    <Footnote index={8}>
+      <InlinePowerShell code="&" /> es el <em>call operator</em>: ejecuta la
+      ruta guardada en <InlinePowerShell code="$gradle" />.
+      <InlinePowerShell code="-p" /> fija el directorio del proyecto.
+      <InlinePowerShell code="@GradleOptions" /> usa <em>splatting</em> para expandir
+      el arreglo como argumentos separados.
+    </Footnote>
+
+    <Footnote index={9}>
+      Por convención, 0 significa éxito; cualquier otro código indica error.
+    </Footnote>
+
+    <Footnote index={10}>
+      <InlinePowerShell code="[CmdletBinding()]" /> habilita parámetros comunes como
+      <InlinePowerShell code="-Verbose" /> y
+      <InlinePowerShell code="-Debug" />.
+    </Footnote>
+  </Footnotes>
+</NotesLayout>

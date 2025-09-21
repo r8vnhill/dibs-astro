@@ -1,0 +1,36 @@
+---
+import * as icons from "~/assets/img/icons";
+import { next } from "./counter";
+
+/**
+ * Footnote.astro
+ * --------------
+ * Renderiza un <li> numerado automáticamente y un back-ref con ícono Phosphor.
+ *
+ * Props:
+ * - index?: number  -> Permite fijar índice manual (opcional). Si no viene, usa contador.
+ * - refId?: string  -> ID de la referencia en el texto. Por defecto, "fnref-{index}".
+ */
+interface Props {
+  index?: number;
+  refId?: string;
+  class?: string;
+}
+
+const props = Astro.props as Props;
+const idx = props.index ?? next();
+const refId = props.refId ?? `fnref-${idx}`;
+const cls = props.class ?? "";
+---
+
+<li id={`fn-${idx}`} class={cls}>
+  <slot />
+  <a
+    href={`#${refId}`}
+    class="footnote-backref"
+    aria-label="Volver a la referencia"
+  >
+    <span class="sr-only">Volver</span>
+    <icons.ArrowBendUpLeft class="inline h-4 w-4 align-[-0.1em]" aria-hidden="true" />
+  </a>
+</li>

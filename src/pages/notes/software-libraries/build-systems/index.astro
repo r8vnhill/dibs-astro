@@ -1,0 +1,320 @@
+---
+import * as icons from "~/assets/img/icons";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import { Abstract, Important, Info, Tip } from "~/components/ui/callouts";
+import Heading from "~/components/semantics/Heading.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import { List, ListItem } from "~/components/ui/list";
+import LowLevelTooltip from "~/fragments/tooltips/LowLevelTooltip.astro";
+import MultiplatformTooltip from "~/fragments/tooltips/MultiplatformTooltip.astro";
+import JsEcosystemTooltip from "~/fragments/tooltips/JsEcosystemTooltip.astro";
+import JvmTooltip from "~/fragments/tooltips/JvmTooltip.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Cons from "~/components/ui/procons/Cons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+---
+
+<NotesLayout title="Sistemas de construcción">
+  <Abstract>
+    <p>
+      A medida que los proyectos crecen, un <em>build system</em> se vuelve tan importante
+      como el propio código. No solo compila archivos: <strong
+        >automatiza y orquesta</strong
+      > tareas de compilación, pruebas, validación, empaquetado y publicación.
+    </p>
+    <p>
+      Esta automatización permite <strong
+        >gestionar dependencias, estructurar proyectos complejos y garantizar
+        consistencia</strong
+      > en diferentes entornos. En proyectos con múltiples módulos —como una biblioteca
+      y la aplicación que la consume—, el <em>build system</em> es el engranaje que
+      mantiene todas las piezas funcionando en conjunto.
+    </p>
+    <p>
+      En resumen, es el <strong>motor silencioso</strong> que transforma tu código
+      en software <em>reproducible, distribuible y profesional</em>.
+    </p>
+  </Abstract>
+
+  <NotesSection id="build-system">
+    <Heading headingLevel="h2" Icon={icons.Hammer}>
+      ¿Qué es un sistema de construcción (build system)?
+    </Heading>
+
+    <p>
+      Un <em>build system</em> es una herramienta que <strong
+        >automatiza las tareas necesarias para construir software</strong
+      >. Su objetivo es evitar procesos manuales repetitivos y asegurar que el
+      proyecto pueda compilarse, probarse y distribuirse de manera consistente
+      en diferentes entornos.
+    </p>
+
+    <Info>
+      <Fragment slot="title">Tareas típicas de un build system</Fragment>
+      <List>
+        <ListItem icon={icons.Code}>Compilar el código fuente.</ListItem>
+        <ListItem icon={icons.Flask}>Ejecutar pruebas automatizadas.</ListItem>
+        <ListItem icon={icons.Bug}>
+          Analizar el código en busca de errores, advertencias o problemas de
+          estilo.
+        </ListItem>
+        <ListItem icon={icons.Package}>
+          Empaquetar el código en formatos distribuibles (<code>.jar</code>, <code
+            >.aar</code
+          >, <code>.zip</code>, etc.).
+        </ListItem>
+        <ListItem icon={icons.BookOpen}>Generar documentación.</ListItem>
+        <ListItem icon={icons.CloudArrowUp}
+          >Publicar artefactos en repositorios.</ListItem
+        >
+      </List>
+    </Info>
+
+    <p>
+      Aunque muchas de estas tareas pueden realizarse manualmente, mantener un
+      proyecto profesional sin automatización <strong
+        >pronto se vuelve inviable</strong
+      >. Un
+      <em>build system</em> permite ejecutar todo el proceso de forma
+      <strong>reproducible, coherente y automatizada</strong>, tanto en el
+      entorno local como en sistemas de integración continua (CI).
+    </p>
+
+    <Tip>
+      <Fragment slot="title">Ejemplos de build systems</Fragment>
+      <List>
+        <ListItem icon={icons.Gear}>
+          <strong>Make</strong>, <strong>CMake</strong> y <strong>Bazel</strong>
+          son comunes en proyectos de <LowLevelTooltip /> o <MultiplatformTooltip
+          />.
+        </ListItem>
+        <ListItem icon={icons.BracketsCurly}>
+          <strong>pnpm</strong> y <strong>Nx</strong> se utilizan en proyectos modernos
+          del <JsEcosystemTooltip />.
+        </ListItem>
+        <ListItem icon={icons.Coffee}>
+          <strong>Gradle</strong>, <strong>Maven</strong> y <strong>sbt</strong>
+          son habituales en entornos basados en la <JvmTooltip />.
+        </ListItem>
+      </List>
+    </Tip>
+  </NotesSection>
+
+  <NotesSection id="build-system-importance">
+    <Heading headingLevel="h2" Icon={icons.Package}>
+      ¿Por qué es importante en bibliotecas de software?
+    </Heading>
+
+    <p>
+      Diseñar una biblioteca no consiste solo en escribir funciones
+      reutilizables: también implica <strong
+        >organizar, validar y distribuir</strong
+      > ese código de forma profesional. Para lograrlo, el <em>build system</em>
+      se convierte en una herramienta clave a lo largo de todo el ciclo de desarrollo.
+    </p>
+
+    <p>En particular, un <em>build system</em> permite:</p>
+    <List>
+      <ListItem icon={icons.Stack}>
+        <strong>Organizar el proyecto en módulos independientes</strong>,
+        separando la lógica de negocio de la lógica de aplicación.
+      </ListItem>
+      <ListItem icon={icons.Gear}>
+        <strong>Aplicar convenciones compartidas</strong>, garantizando
+        consistencia entre múltiples proyectos o submódulos.
+      </ListItem>
+      <ListItem icon={icons.Bug}>
+        <strong>Integrar herramientas de validación</strong>, como análisis
+        estático, pruebas automatizadas y generación de documentación.
+      </ListItem>
+      <ListItem icon={icons.CloudArrowUp}>
+        <strong>Automatizar el empaquetado y la publicación</strong>,
+        facilitando la distribución de la biblioteca en otros sistemas.
+      </ListItem>
+    </List>
+
+    <p>
+      En otras palabras, un <em>build system</em> no solo ayuda a <em
+        >construir</em
+      > una biblioteca, sino también a <em
+        >estructurarla, verificarla y distribuirla</em
+      > de forma
+      <strong> robusta, coherente y profesional</strong>.
+    </p>
+
+    <ProCons>
+      <Cons title="Sin un build system">Una biblioteca es solo código.</Cons>
+      <Pros title="Con un build system"
+        >Una biblioteca se convierte en una herramienta <strong
+          >lista para ser utilizada.</strong
+        ></Pros
+      >
+    </ProCons>
+  </NotesSection>
+
+  <NotesSection id="gradle-overview">
+    <Heading headingLevel="h2" Icon={icons.Gear}> ¿Qué es Gradle? </Heading>
+
+    <p>
+      Existen múltiples <em>build systems</em>, pero no todos están diseñados
+      con un enfoque en la <strong
+        >modularidad, extensibilidad y expresividad</strong
+      >.
+      <strong>Gradle</strong> adopta estos principios y se ha consolidado como una
+      de las opciones más potentes en el ecosistema de la JVM.
+    </p>
+
+    <p>
+      Gradle nació como respuesta a limitaciones de herramientas previas como
+      <a href="https://maven.apache.org/" target="_blank" rel="noreferrer">
+        Apache Maven</a
+      >, que, si bien popularizó convenciones y ciclos de vida basados en fases,
+      depende de configuraciones extensas en XML. Gradle retoma buenas ideas
+      (fases, convenciones) y las combina con una sintaxis más expresiva y un <em
+        >runtime</em
+      > altamente personalizable basado en tareas.
+    </p>
+
+    <Important>
+      <Fragment slot="title">¿Por qué Gradle?</Fragment>
+      <p>
+        Elegimos <strong>Gradle</strong> porque ofrece un <strong
+          >DSL basado en Kotlin</strong
+        >. No necesitas aprender otro lenguaje para definir tareas, configurar
+        módulos o declarar dependencias: puedes usar las mismas construcciones y
+        herramientas que empleas al desarrollar tu biblioteca.
+      </p>
+    </Important>
+
+    <p>
+      Los DSL permiten expresar configuraciones de forma natural dentro de un
+      dominio. En Gradle, tanto personas expertas como colaboradoras nuevas
+      trabajan con un lenguaje claro y extensible. Además, <strong
+        >los plugins pueden extender el DSL</strong
+      >, añadiendo bloques personalizados que simplifican configuraciones
+      complejas.
+    </p>
+
+    <Info>
+      <Fragment slot="title">Gradle vs. otros build systems</Fragment>
+      <p>
+        Otros sistemas como <strong>Bazel</strong> requieren aprender <em
+          >Starlark</em
+        > (inspirado en Python), y <strong>CMake</strong> usa su propio lenguaje
+        imperativo con sintaxis poco convencional. Eso implica dominar <em
+          >dos lenguajes</em
+        >: uno para tu biblioteca (p. ej., C/C++) y otro para describir cómo
+        construirla. Con Gradle puedes usar <strong>Kotlin</strong> para desarrollar
+        y automatizar, lo que <strong>reduce la carga cognitiva</strong> y mejora
+        la coherencia del entorno.
+      </p>
+    </Info>
+
+    <Tip title="Gradle se alinea con los objetivos del curso">
+      <List>
+        <ListItem icon={icons.Rocket}
+          >Automatiza todo el ciclo: compilación → pruebas → publicación.</ListItem
+        >
+        <ListItem icon={icons.Stack}
+          >Facilita proyectos multi-módulo (más eficiente para proyectos
+          grandes).</ListItem
+        >
+        <ListItem icon={icons.Gear}
+          >Permite compartir convenciones entre proyectos/submódulos.</ListItem
+        >
+        <ListItem icon={icons.Bug}
+          >Integra análisis estático, pruebas y generación de docs.</ListItem
+        >
+        <ListItem icon={icons.PlusCircle}
+          >Es extensible: tareas, plugins y configuraciones reutilizables.</ListItem
+        >
+      </List>
+    </Tip>
+
+    <p>Gradle está diseñado para ser:</p>
+
+    <List>
+      <ListItem icon={icons.SlidersHorizontal}
+        ><strong>Flexible</strong>: cada parte del proceso se puede
+        personalizar.</ListItem
+      >
+      <ListItem icon={icons.BookOpen}>
+        <strong>Declarativo</strong>: describes el <em>qué</em> y Gradle resuelve
+        el <em>cómo</em>.</ListItem
+      >
+      <ListItem icon={icons.ListChecks}>
+        <strong>Basado en tareas</strong>: el trabajo se modela como tareas con
+        dependencias.</ListItem
+      >
+      <ListItem icon={icons.PuzzlePiece}>
+        <strong>Extensible</strong>: compone lógicas con clases, funciones y
+        plugins.</ListItem
+      >
+      <ListItem icon={icons.Stack}>
+        <strong>Escalable</strong>: soporte nativo para proyectos grandes y
+        multi-módulo.</ListItem
+      >
+    </List>
+
+    <p>
+      Hoy, Gradle es ampliamente utilizado para aplicaciones y bibliotecas en <strong
+        >Kotlin</strong
+      > y
+      <strong> Java</strong>, con integración nativa en <strong
+        >IntelliJ IDEA</strong
+      >, <strong>Android Studio</strong>,
+      <strong> Eclipse</strong> y <strong>VS Code</strong>.
+    </p>
+  </NotesSection>
+
+  <ConclusionsLayout>
+    <Fragment slot="conclusions">
+      <p>
+        Los <em>build systems</em> son mucho más que un apoyo para compilar código:
+        constituyen la base que permite <strong
+          >estructurar, validar y distribuir</strong
+        >
+        software de manera profesional. En el contexto de bibliotecas, esta capa
+        de automatización asegura que el trabajo no quede en simples funciones reutilizables,
+        sino que evolucione hacia artefactos robustos y listos para ser compartidos.
+      </p>
+      <p>
+        Gradle, en particular, se distingue por su <strong
+          >flexibilidad, modularidad y expresividad</strong
+        >, apoyándose en un DSL en Kotlin que reduce la carga cognitiva y ofrece
+        un entorno coherente. Su adopción permite alinear la práctica cotidiana
+        de desarrollo con la enseñanza de principios sólidos de diseño de
+        bibliotecas.
+      </p>
+    </Fragment>
+
+    <Fragment slot="key-points">
+      <ListItem icon={icons.Hammer}>
+        Un <em>build system</em> automatiza compilación, pruebas, análisis, empaquetado
+        y publicación.
+      </ListItem>
+      <ListItem icon={icons.Package}>
+        Es fundamental en bibliotecas: organiza, valida y distribuye el código
+        de manera profesional.
+      </ListItem>
+      <ListItem icon={icons.Gear}>
+        Gradle destaca por su DSL en Kotlin, su extensibilidad y su capacidad
+        para manejar proyectos grandes.
+      </ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+      <p>
+        Integrar un <em>build system</em> en el flujo de trabajo es un paso decisivo
+        hacia la
+        <strong>madurez profesional</strong> en el desarrollo de bibliotecas. Permite
+        pasar de escribir código que “funciona” a construir soluciones que son <em
+          >reproducibles, mantenibles y escalables</em
+        >. Gradle ejemplifica cómo la herramienta adecuada potencia no solo el
+        producto final, sino también la experiencia de quienes colaboran en el
+        proyecto.
+      </p>
+    </Fragment>
+  </ConclusionsLayout>
+</NotesLayout>

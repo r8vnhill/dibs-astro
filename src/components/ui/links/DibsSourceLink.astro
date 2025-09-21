@@ -1,0 +1,17 @@
+---
+import Link from "./Link.astro";
+
+type Props = {
+  repo: string;
+  file: string;
+  title?: string;
+};
+
+const { repo, file, title }: Props = Astro.props;
+
+const href = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/main/${file}?ref_type=heads`;
+---
+
+<Link href={href}>
+  <slot>{title ?? `${repo}/${file}`}</slot>
+</Link>

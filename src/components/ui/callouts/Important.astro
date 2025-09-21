@@ -58,7 +58,9 @@ const passthrough = Object.fromEntries(
     headingId={resolvedHeadingId}
     class={`important__title ${headingClass}`}
     iconClass={`important__icon ${iconClass}`}
-  />
+  >
+    <slot name="title">{title}</slot>
+  </CalloutHeading>
 
   <!-- Body content. Enable `prose` when you want Typography styles. -->
   <div
