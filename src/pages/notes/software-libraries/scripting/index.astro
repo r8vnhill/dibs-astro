@@ -11,20 +11,169 @@ import Heading from "~/components/semantics/Heading.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 ---
 
-<NotesLayout title="Scripting para automatización de tareas">
-
+<NotesLayout title="Scripting para automatización de tareas básicas">
   <Abstract>
     <ToDo
       client:only="react"
       metadata={{
-        tasks: [
-          "...",
-        ],
+        tasks: ["..."],
       }}
     />
   </Abstract>
 
-  
+  <NotesSection id="task-automation">
+    <Heading headingLevel="h2" Icon={icons.Gear}
+      >Automatización de tareas</Heading
+    >
+
+    La automatización convierte actividades repetitivas en procesos <em
+      >predecibles, rápidos y auditables</em
+    >. En bibliotecas de software esto impacta directamente en la calidad de los
+    lanzamientos, la confianza de quienes contribuyen y la velocidad de
+    iteración.
+
+    <Definition>
+      <Fragment slot="title">¿Qué entendemos por “tarea”?</Fragment>
+      Una tarea es una unidad de trabajo con <strong>entrada</strong> conocida, <strong
+        >pasos</strong
+      > definidos y <strong>salida</strong> verificable. Automatizar es describir
+      esa unidad de forma que cualquier persona del equipo pueda ejecutarla con el
+      mismo resultado en cualquier entorno.
+    </Definition>
+
+    <NotesSection id="why-automate">
+      <Heading headingLevel="h3" Icon={icons.Lightbulb}>
+        ¿Por qué automatizar?
+      </Heading>
+
+      <p>
+        Automatizar evita errores humanos en tareas repetitivas y libera tiempo
+        que, acumulado, puede ser significativo. Además, estandariza procesos,
+        asegurando que todas las personas trabajen bajo las mismas reglas y con
+        resultados consistentes.
+      </p>
+
+      <p>
+        Esto no solo mejora la calidad del software, sino que también facilita
+        la colaboración en equipo, permitiendo concentrarse en el diseño y
+        evolución de la biblioteca en lugar de en pasos mecánicos.
+      </p>
+    </NotesSection>
+
+    <NotesSection id="...">
+    <Heading headingLevel="h3" Icon={icons.PuzzlePiece}
+      >¿Por qué es importante para bibliotecas de software?</Heading
+    >
+    <ToDo
+    <List>
+      <ListItem icon={icons.Broom}
+        >Formateo y estilo: mantener el código consistente sin discusiones.</ListItem
+      >
+      <ListItem icon={icons.MagnifyingGlass}
+        >Revisión estática y pruebas: validar calidad antes de integrar cambios.</ListItem
+      >
+      <ListItem icon={icons.Package}
+        >Construcción y empaquetado: generar artefactos listos para publicar.</ListItem
+      >
+      <ListItem icon={icons.Notebook}
+        >Documentación: generar y verificar ejemplos de uso de forma continua.</ListItem
+      >
+      <ListItem icon={icons.Tag}
+        >Versionado y notas de lanzamiento: aplicar reglas claras (semánticas) y
+        producir changelog.</ListItem
+      >
+      <ListItem icon={icons.CloudArrowUp}
+        >Publicación: distribuir la biblioteca de forma segura y trazable.</ListItem
+      >
+    </List>
+    </NotesSection>
+
+    <Heading headingLevel="h3" Icon={icons.Sliders}
+      >Niveles de automatización</Heading
+    >
+    <List>
+      <ListItem icon={icons.Hand}
+        >Manual guiado: checklist claro y pasos documentados (base mínima).</ListItem
+      >
+      <ListItem icon={icons.Terminal}
+        >Automatización local: comandos encapsulados y repetibles en el entorno
+        del desarrollador.</ListItem
+      >
+      <ListItem icon={icons.Cpu}
+        >Orquestación: herramientas que definen dependencias, orden y resultados
+        esperados (incluye cacheo e incrementalidad).</ListItem
+      >
+      <ListItem icon={icons.Rocket}
+        >Integración y entrega continuas: ejecuta tareas en cada cambio y
+        consolida artefactos y reportes.</ListItem
+      >
+    </List>
+
+    <Heading headingLevel="h3" Icon={icons.Compass}
+      >Principios de diseño</Heading
+    >
+    <List>
+      <ListItem icon={icons.Target}>
+        <strong>Idempotencia</strong>: ejecutar varias veces produce el mismo
+        estado final.
+      </ListItem>
+      <ListItem icon={icons.Eye}>
+        <strong>Ensayo seguro</strong>: modo “simular” para ver acciones antes
+        de aplicarlas.
+      </ListItem>
+      <ListItem icon={icons.Path}>
+        <strong>Rutas y entornos deterministas</strong>: no depender de estados
+        “misteriosos” en la máquina.
+      </ListItem>
+      <ListItem icon={icons.FileMagnifyingGlass}>
+        <strong>Observabilidad</strong>: logs útiles, códigos de salida claros y
+        artefactos verificables.
+      </ListItem>
+      <ListItem icon={icons.ArrowsLeftRight}>
+        <strong>Composición</strong>: tareas pequeñas que se combinan en flujos
+        más grandes.
+      </ListItem>
+      <ListItem icon={icons.GlobeHemisphereWest}>
+        <strong>Portabilidad</strong>: mismas instrucciones para todos los
+        sistemas del equipo.
+      </ListItem>
+    </List>
+
+    <Heading headingLevel="h3" Icon={icons.MapTrifold}
+      >Cómo pensar una tarea</Heading
+    >
+    <List>
+      <ListItem icon={icons.PlayCircle}
+        ><strong>Disparador</strong>: ¿cuándo corre? (local, pre-commit, en CI,
+        antes de publicar).</ListItem
+      >
+      <ListItem icon={icons.FolderOpen}
+        ><strong>Entradas/salidas</strong>: archivos, rutas, artefactos; qué se
+        produce y dónde queda.</ListItem
+      >
+      <ListItem icon={icons.WarningCircle}
+        ><strong>Precondiciones</strong>: requisitos que deben cumplirse antes
+        de ejecutar.</ListItem
+      >
+      <ListItem icon={icons.Checks}
+        ><strong>Criterios de éxito</strong>: cómo sabrás que terminó bien (y
+        qué hacer si no).</ListItem
+      >
+      <ListItem icon={icons.Gauge}
+        ><strong>Performance</strong>: incrementalidad, cache y paralelismo
+        cuando tenga sentido.</ListItem
+      >
+    </List>
+
+    <Tip class="my-4">
+      <Fragment slot="title">Resultado esperado</Fragment>
+      Al terminar este módulo tendrás un vocabulario común y un mapa mental para
+      identificar qué automatizar, por qué y con qué nivel de rigurosidad. En la
+      siguiente sección usaremos estas ideas para estructurar procesos de construcción
+      y publicación de forma práctica.
+    </Tip>
+  </NotesSection>
+
   <NotesSection id="scripting-101">
     <Heading headingLevel="h2" Icon={icons.Terminal}
       >Scripting 101: PowerShell y Bash</Heading
@@ -336,16 +485,20 @@ What if: Performing the operation "gradle init" on target "C:\Users\usuario\veri
     </Footnotes>
   </NotesSection>
   <NotesSection id="...">
-    <Heading headingLevel="h2" Icon={icons.GitBranch}>Inicializa y versiona con GitLab (ensayo primero)</Heading>
+    <Heading headingLevel="h2" Icon={icons.GitBranch}
+      >Inicializa y versiona con GitLab (ensayo primero)</Heading
+    >
 
-<p class="mb-4">
-  Si quieres versionar tu estructura desde el inicio, automatiza la creación del repo local y remoto en GitLab. 
-  <strong>Primero ensaya</strong> con <InlinePowerShell code="-WhatIf" /> (PowerShell) o 
-  <InlineBash code="--dry-run" /> (Bash) para ver qué ocurrirá sin realizar cambios.
-</p>
+    <p class="mb-4">
+      Si quieres versionar tu estructura desde el inicio, automatiza la creación
+      del repo local y remoto en GitLab.
+      <strong>Primero ensaya</strong> con <InlinePowerShell code="-WhatIf" /> (PowerShell)
+      o
+      <InlineBash code="--dry-run" /> (Bash) para ver qué ocurrirá sin realizar cambios.
+    </p>
 
-<Terminals
-  powerShellCode={`
+    <Terminals
+      powerShellCode={`
 #Requires -Version 7.0
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param(
@@ -394,7 +547,7 @@ if ($PSCmdlet.ShouldProcess($target, 'Create GitLab repository')) {
   }
 }
   `}
-  bashCode={`#!/usr/bin/env bash
+      bashCode={`#!/usr/bin/env bash
 set -euo pipefail
 
 USER=""
@@ -453,88 +606,125 @@ run() {
   run "git remote add origin https://gitlab.com/$USER/$TARGET.git"
 )
   `}
->
-  <Fragment slot="powershell-title">PowerShell: crear repo local + remoto en GitLab (con <code>-WhatIf</code>)</Fragment>
-  <DibsSourceLink repo="scripts" file="ps1/New-GitLabRepository.ps1" slot="powershell-source" />
-  <Fragment slot="powershell-explanation">
-    <List>
-      <ListItem icon={icons.Info}>
-        <InlinePowerShell code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]" /> habilita 
-        <InlinePowerShell code="-WhatIf" />/<InlinePowerShell code="-Confirm" /> para ensayar cambios antes de aplicarlos.
-      </ListItem>
-      <ListItem icon={icons.Path}>
-        <InlinePowerShell code="Resolve-Path -LiteralPath" /> normaliza rutas y evita comodines; 
-        luego se valida que sea carpeta con <InlinePowerShell code="Get-Item" />.
-      </ListItem>
-      <ListItem icon={icons.TextB}>
-        Si faltan <InlinePowerShell code="$RepositoryName" /> o <InlinePowerShell code="$Prefix" />, se derivan del árbol de carpetas.
-      </ListItem>
-      <ListItem icon={icons.CloudArrowUp}>
-        <InlinePowerShell code="glab repo create $target --public" /> crea el remoto; si falla (<InlinePowerShell code="$LASTEXITCODE" /> ≠ 0) se aborta con mensaje claro.
-      </ListItem>
-    </List>
-  </Fragment>
+    >
+      <Fragment slot="powershell-title"
+        >PowerShell: crear repo local + remoto en GitLab (con <code
+          >-WhatIf</code
+        >)</Fragment
+      >
+      <DibsSourceLink
+        repo="scripts"
+        file="ps1/New-GitLabRepository.ps1"
+        slot="powershell-source"
+      />
+      <Fragment slot="powershell-explanation">
+        <List>
+          <ListItem icon={icons.Info}>
+            <InlinePowerShell
+              code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
+            /> habilita
+            <InlinePowerShell code="-WhatIf" />/<InlinePowerShell
+              code="-Confirm"
+            /> para ensayar cambios antes de aplicarlos.
+          </ListItem>
+          <ListItem icon={icons.Path}>
+            <InlinePowerShell code="Resolve-Path -LiteralPath" /> normaliza rutas
+            y evita comodines; luego se valida que sea carpeta con <InlinePowerShell
+              code="Get-Item"
+            />.
+          </ListItem>
+          <ListItem icon={icons.TextB}>
+            Si faltan <InlinePowerShell code="$RepositoryName" /> o <InlinePowerShell
+              code="$Prefix"
+            />, se derivan del árbol de carpetas.
+          </ListItem>
+          <ListItem icon={icons.CloudArrowUp}>
+            <InlinePowerShell code="glab repo create $target --public" /> crea el
+            remoto; si falla (<InlinePowerShell code="$LASTEXITCODE" /> ≠ 0) se aborta
+            con mensaje claro.
+          </ListItem>
+        </List>
+      </Fragment>
 
-  <Fragment slot="bash-title">Bash/Zsh: crear repo local + remoto en GitLab (con <code>--dry-run</code>)</Fragment>
-  <DibsSourceLink repo="scripts" file="sh/new-gitlab-repository.sh" slot="bash-source" />
-  <Fragment slot="bash-explanation">
-    <List>
-      <ListItem icon={icons.Bug}>
-        <InlineBash code="set -euo pipefail" />: aborta en errores, variables no definidas y fallos en pipelines.
-      </ListItem>
-      <ListItem icon={icons.Terminal}>
-        Flags: <InlineBash code="-u/--user" />, <InlineBash code="-d/--dir" />, <InlineBash code="-n/--name" />, 
-        <InlineBash code="-p/--prefix" />, <InlineBash code="--dry-run" />.
-      </ListItem>
-      <ListItem icon={icons.Eye}>
-        <InlineBash code="DRY_RUN=true" /> imprime acciones (no las ejecuta). Quita <InlineBash code="--dry-run" /> para aplicar.
-      </ListItem>
-      <ListItem icon={icons.TextB}>
-        Deriva <InlineBash code="TARGET" /> como <code>prefix-name</code> si hay prefijo; útil para estandarizar nombres.
-      </ListItem>
-    </List>
-  </Fragment>
-</Terminals>
+      <Fragment slot="bash-title"
+        >Bash/Zsh: crear repo local + remoto en GitLab (con <code
+          >--dry-run</code
+        >)</Fragment
+      >
+      <DibsSourceLink
+        repo="scripts"
+        file="sh/new-gitlab-repository.sh"
+        slot="bash-source"
+      />
+      <Fragment slot="bash-explanation">
+        <List>
+          <ListItem icon={icons.Bug}>
+            <InlineBash code="set -euo pipefail" />: aborta en errores,
+            variables no definidas y fallos en pipelines.
+          </ListItem>
+          <ListItem icon={icons.Terminal}>
+            Flags: <InlineBash code="-u/--user" />, <InlineBash
+              code="-d/--dir"
+            />, <InlineBash code="-n/--name" />,
+            <InlineBash code="-p/--prefix" />, <InlineBash code="--dry-run" />.
+          </ListItem>
+          <ListItem icon={icons.Eye}>
+            <InlineBash code="DRY_RUN=true" /> imprime acciones (no las ejecuta).
+            Quita <InlineBash code="--dry-run" /> para aplicar.
+          </ListItem>
+          <ListItem icon={icons.TextB}>
+            Deriva <InlineBash code="TARGET" /> como <code>prefix-name</code> si
+            hay prefijo; útil para estandarizar nombres.
+          </ListItem>
+        </List>
+      </Fragment>
+    </Terminals>
 
-<Heading headingLevel="h3" Icon={icons.ListChecks}>Flujo sugerido (ensayo → aplicar)</Heading>
+    <Heading headingLevel="h3" Icon={icons.ListChecks}
+      >Flujo sugerido (ensayo → aplicar)</Heading
+    >
 
-<Terminals
-  powerShellCode={`
+    <Terminals
+      powerShellCode={`
 Set-Location 'dibs'
 $gitlabUser = '<TU-USUARIO>'  # <- reemplaza aquí
 .\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryDirectory .\scripts -WhatIf
 .\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryName index -Prefix dibs -WhatIf
 # Si el ensayo luce bien, repite sin -WhatIf
   `}
-  bashCode={`
+      bashCode={`
 cd dibs
 GITLAB_USER="<TU-USUARIO>"  # <- reemplaza aquí
 ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -d ./scripts --dry-run
 ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -n index -p dibs --dry-run
 # Si el ensayo luce bien, repite sin --dry-run
   `}
->
-  <Fragment slot="powershell-explanation">
-    <p>
-      Elige <strong>no</strong> crear carpeta local adicional cuando el asistente de <InlinePowerShell code="glab" /> lo pregunte;
-      el script ya opera dentro de tu estructura.
-    </p>
-  </Fragment>
-  <Fragment slot="bash-explanation">
-    <p>
-      Revisa la salida de <InlineBash code="DRY_RUN" />. Si todo se ve bien, ejecuta de nuevo sin <InlineBash code="--dry-run" />.
-    </p>
-  </Fragment>
-</Terminals>
+    >
+      <Fragment slot="powershell-explanation">
+        <p>
+          Elige <strong>no</strong> crear carpeta local adicional cuando el asistente
+          de <InlinePowerShell code="glab" /> lo pregunte; el script ya opera dentro
+          de tu estructura.
+        </p>
+      </Fragment>
+      <Fragment slot="bash-explanation">
+        <p>
+          Revisa la salida de <InlineBash code="DRY_RUN" />. Si todo se ve bien,
+          ejecuta de nuevo sin <InlineBash code="--dry-run" />.
+        </p>
+      </Fragment>
+    </Terminals>
 
-<Tip class="my-4">
-  <Fragment slot="title">.gitignore</Fragment>
-  Genera un <code>.gitignore</code> adecuado para cada repo; útil:
-  <Link href="https://www.toptal.com/developers/gitignore/">toptal.com/developers/gitignore</Link>.
-</Tip>
+    <Tip class="my-4">
+      <Fragment slot="title">.gitignore</Fragment>
+      Genera un <code>.gitignore</code> adecuado para cada repo; útil:
+      <Link href="https://www.toptal.com/developers/gitignore/"
+        >toptal.com/developers/gitignore</Link
+      >.
+    </Tip>
 
-<Terminals
-  powerShellCode={`
+    <Terminals
+      powerShellCode={`
 # Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
 Push-Location '.\scripts'
 git add .
@@ -547,7 +737,7 @@ git add .gitmodules scripts
 git commit -m "chore(index): add scripts as submodule"
 git push -u origin main
   `}
-  bashCode={`
+      bashCode={`
 # Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
 (
   cd scripts
@@ -561,10 +751,13 @@ git add .gitmodules scripts
 git commit -m "chore(index): add scripts as submodule"
 git push -u origin main
   `}
->
-  <Fragment slot="powershell-title">Versionar y añadir como submódulo (PowerShell)</Fragment>
-  <Fragment slot="bash-title">Versionar y añadir como submódulo (Bash/Zsh)</Fragment>
-</Terminals>
-
+    >
+      <Fragment slot="powershell-title"
+        >Versionar y añadir como submódulo (PowerShell)</Fragment
+      >
+      <Fragment slot="bash-title"
+        >Versionar y añadir como submódulo (Bash/Zsh)</Fragment
+      >
+    </Terminals>
   </NotesSection>
 </NotesLayout>
