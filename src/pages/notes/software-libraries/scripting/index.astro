@@ -2,7 +2,12 @@
 import * as icons from "~/assets/img/icons";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import ToDo from "~/components/utils/ToDo.tsx";
-import { Abstract, Definition, More, Tip } from "~/components/ui/callouts";
+import {
+  Abstract,
+  Definition,
+  More,
+  Tip,
+} from "~/components/ui/callouts";
 import { InlineBash, InlinePowerShell, Terminals } from "~/components/ui/code";
 import { FootnoteRef, Footnotes, Footnote } from "~/components/ui/footnotes";
 import { List, ListItem } from "~/components/ui/list";
@@ -20,159 +25,6 @@ import { DibsSourceLink, Link } from "~/components/ui/links";
       }}
     />
   </Abstract>
-
-  <NotesSection id="task-automation">
-    <Heading headingLevel="h2" Icon={icons.Gear}
-      >Automatización de tareas</Heading
-    >
-
-    La automatización convierte actividades repetitivas en procesos <em
-      >predecibles, rápidos y auditables</em
-    >. En bibliotecas de software esto impacta directamente en la calidad de los
-    lanzamientos, la confianza de quienes contribuyen y la velocidad de
-    iteración.
-
-    <Definition>
-      <Fragment slot="title">¿Qué entendemos por “tarea”?</Fragment>
-      Una tarea es una unidad de trabajo con <strong>entrada</strong> conocida, <strong
-        >pasos</strong
-      > definidos y <strong>salida</strong> verificable. Automatizar es describir
-      esa unidad de forma que cualquier persona del equipo pueda ejecutarla con el
-      mismo resultado en cualquier entorno.
-    </Definition>
-
-    <NotesSection id="why-automate">
-      <Heading headingLevel="h3" Icon={icons.Lightbulb}>
-        ¿Por qué automatizar?
-      </Heading>
-
-      <p>
-        Automatizar evita errores humanos en tareas repetitivas y libera tiempo
-        que, acumulado, puede ser significativo. Además, estandariza procesos,
-        asegurando que todas las personas trabajen bajo las mismas reglas y con
-        resultados consistentes.
-      </p>
-
-      <p>
-        Esto no solo mejora la calidad del software, sino que también facilita
-        la colaboración en equipo, permitiendo concentrarse en el diseño y
-        evolución de la biblioteca en lugar de en pasos mecánicos.
-      </p>
-    </NotesSection>
-
-    <NotesSection id="...">
-    <Heading headingLevel="h3" Icon={icons.PuzzlePiece}
-      >¿Por qué es importante para bibliotecas de software?</Heading
-    >
-    <ToDo
-    <List>
-      <ListItem icon={icons.Broom}
-        >Formateo y estilo: mantener el código consistente sin discusiones.</ListItem
-      >
-      <ListItem icon={icons.MagnifyingGlass}
-        >Revisión estática y pruebas: validar calidad antes de integrar cambios.</ListItem
-      >
-      <ListItem icon={icons.Package}
-        >Construcción y empaquetado: generar artefactos listos para publicar.</ListItem
-      >
-      <ListItem icon={icons.Notebook}
-        >Documentación: generar y verificar ejemplos de uso de forma continua.</ListItem
-      >
-      <ListItem icon={icons.Tag}
-        >Versionado y notas de lanzamiento: aplicar reglas claras (semánticas) y
-        producir changelog.</ListItem
-      >
-      <ListItem icon={icons.CloudArrowUp}
-        >Publicación: distribuir la biblioteca de forma segura y trazable.</ListItem
-      >
-    </List>
-    </NotesSection>
-
-    <Heading headingLevel="h3" Icon={icons.Sliders}
-      >Niveles de automatización</Heading
-    >
-    <List>
-      <ListItem icon={icons.Hand}
-        >Manual guiado: checklist claro y pasos documentados (base mínima).</ListItem
-      >
-      <ListItem icon={icons.Terminal}
-        >Automatización local: comandos encapsulados y repetibles en el entorno
-        del desarrollador.</ListItem
-      >
-      <ListItem icon={icons.Cpu}
-        >Orquestación: herramientas que definen dependencias, orden y resultados
-        esperados (incluye cacheo e incrementalidad).</ListItem
-      >
-      <ListItem icon={icons.Rocket}
-        >Integración y entrega continuas: ejecuta tareas en cada cambio y
-        consolida artefactos y reportes.</ListItem
-      >
-    </List>
-
-    <Heading headingLevel="h3" Icon={icons.Compass}
-      >Principios de diseño</Heading
-    >
-    <List>
-      <ListItem icon={icons.Target}>
-        <strong>Idempotencia</strong>: ejecutar varias veces produce el mismo
-        estado final.
-      </ListItem>
-      <ListItem icon={icons.Eye}>
-        <strong>Ensayo seguro</strong>: modo “simular” para ver acciones antes
-        de aplicarlas.
-      </ListItem>
-      <ListItem icon={icons.Path}>
-        <strong>Rutas y entornos deterministas</strong>: no depender de estados
-        “misteriosos” en la máquina.
-      </ListItem>
-      <ListItem icon={icons.FileMagnifyingGlass}>
-        <strong>Observabilidad</strong>: logs útiles, códigos de salida claros y
-        artefactos verificables.
-      </ListItem>
-      <ListItem icon={icons.ArrowsLeftRight}>
-        <strong>Composición</strong>: tareas pequeñas que se combinan en flujos
-        más grandes.
-      </ListItem>
-      <ListItem icon={icons.GlobeHemisphereWest}>
-        <strong>Portabilidad</strong>: mismas instrucciones para todos los
-        sistemas del equipo.
-      </ListItem>
-    </List>
-
-    <Heading headingLevel="h3" Icon={icons.MapTrifold}
-      >Cómo pensar una tarea</Heading
-    >
-    <List>
-      <ListItem icon={icons.PlayCircle}
-        ><strong>Disparador</strong>: ¿cuándo corre? (local, pre-commit, en CI,
-        antes de publicar).</ListItem
-      >
-      <ListItem icon={icons.FolderOpen}
-        ><strong>Entradas/salidas</strong>: archivos, rutas, artefactos; qué se
-        produce y dónde queda.</ListItem
-      >
-      <ListItem icon={icons.WarningCircle}
-        ><strong>Precondiciones</strong>: requisitos que deben cumplirse antes
-        de ejecutar.</ListItem
-      >
-      <ListItem icon={icons.Checks}
-        ><strong>Criterios de éxito</strong>: cómo sabrás que terminó bien (y
-        qué hacer si no).</ListItem
-      >
-      <ListItem icon={icons.Gauge}
-        ><strong>Performance</strong>: incrementalidad, cache y paralelismo
-        cuando tenga sentido.</ListItem
-      >
-    </List>
-
-    <Tip class="my-4">
-      <Fragment slot="title">Resultado esperado</Fragment>
-      Al terminar este módulo tendrás un vocabulario común y un mapa mental para
-      identificar qué automatizar, por qué y con qué nivel de rigurosidad. En la
-      siguiente sección usaremos estas ideas para estructurar procesos de construcción
-      y publicación de forma práctica.
-    </Tip>
-  </NotesSection>
 
   <NotesSection id="scripting-101">
     <Heading headingLevel="h2" Icon={icons.Terminal}

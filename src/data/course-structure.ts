@@ -39,6 +39,10 @@ export const courseStructure: Lesson[] = [
         href: "/notes/software-libraries/what-is/",
       },
       {
+        title: "Automatización de tareas",
+        href: "/notes/software-libraries/task-automation/",
+      },
+      {
         title: "Scripting 101",
         href: "/notes/software-libraries/scripting/",
       },
