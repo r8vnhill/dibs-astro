@@ -5,18 +5,36 @@ import ToDo from "~/components/utils/ToDo.tsx";
 import {
   Abstract,
   Definition,
+  Explanation,
+  Important,
   More,
+  Note,
   Tip,
 } from "~/components/ui/callouts";
-import { InlineBash, InlinePowerShell, Terminals } from "~/components/ui/code";
+import {
+  BashScript,
+  CodeBlock,
+  InlineBash,
+  InlineCode,
+  InlinePowerShell,
+  PowerShellBlock,
+  Terminals,
+} from "~/components/ui/code";
 import { FootnoteRef, Footnotes, Footnote } from "~/components/ui/footnotes";
 import { List, ListItem } from "~/components/ui/list";
 import NotesSection from "~/layouts/NotesSection.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "~/components/starwind/tabs";
+import Question from "~/components/ui/callouts/Question.astro";
 ---
 
-<NotesLayout title="Scripting 101: PowerShell y Bash">
+<NotesLayout title="Scripting 101: PowerShell y Bash" timeMultiplier={0.75}>
   <Abstract>
     <ToDo
       client:only="react"
@@ -26,43 +44,356 @@ import { DibsSourceLink, Link } from "~/components/ui/links";
     />
   </Abstract>
 
-  <NotesSection id="...">
-    <Heading headingLevel="h2" Icon={null}>
-      ...
+  <NotesSection id="intro-scripting">
+    <Heading headingLevel="h2" Icon={icons.Terminal}>
+      Scripting con PowerShell y Bash
     </Heading>
-  
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: [
-          "Definir id",
-          "Definir el título y su ícono",
-          "La idea aquí es introducir el concepto de scripting y presentar PowerShell y Bash",
-          "Explicar por qué elegimos estos lenguajes vs. otros (por ejemplo, hacer scripts en PowerShell o Bash requiere menos setup que Python o Node.js)",
-          "Notar que esto no significa que sea mejor o peor, como en todo, va a depender de las necesidades y contexto del proyecto",
-        ],
-      }}
-    />
-  </NotesSection>
-
-  <NotesSection id="scripting-101">
-    <Heading headingLevel="h2" Icon={icons.Terminal}
-      >Scripting 101: PowerShell y Bash</Heading
-    >
 
     <Definition>
-      <Fragment slot="title">El patrón de ensayo seguro</Fragment>
-      <p>
-        Siempre que un script <em>cambie cosas</em>, ensaya primero: en
-        PowerShell con
-        <InlinePowerShell code="-WhatIf" /> y en Bash activando <InlineBash
-          code="DRY_RUN=true"
-        />. Así ves lo que haría sin tocar nada.<FootnoteRef index={101} />
-      </p>
+      <Fragment slot="title">¿Qué es scripting?</Fragment>
+
+      Por <strong>scripting</strong> entendemos la práctica de escribir pequeños
+      programas destinados a <em>automatizar tareas repetitivas</em>. A
+      diferencia de una aplicación completa, un script suele ser breve,
+      orientado a ejecutar comandos del sistema, manipular archivos o coordinar
+      herramientas ya existentes. Su valor está en reducir pasos manuales y
+      hacer que procesos cotidianos sean <em>repetibles y confiables</em>.
     </Definition>
 
-    <Terminals
-      powerShellCode={`
+    <p>
+      En este curso usaremos <strong>PowerShell</strong> (Windows, también disponible
+      en macOS/Linux) y
+      <strong>Bash</strong> (Linux y macOS, disponible en Windows con WSL). Los elegimos
+      porque requieren <em>cero o casi cero configuración</em>: ya vienen
+      instalados o se obtienen en minutos. Para tareas operativas —crear
+      carpetas, mover archivos, invocar CLIs como Git o Gradle— son directos,
+      rápidos y portables. Alternativas como <strong>Python</strong> o <strong
+        >Node.js</strong
+      > son excelentes, pero suelen requerir gestionar intérpretes, entornos virtuales
+      y paquetes, lo que añade fricción inicial.
+    </p>
+
+    <Important>
+      Esto no significa que PowerShell/Bash sean “mejores” en términos
+      absolutos. La elección depende del <em>contexto</em> y las <em
+        >necesidades</em
+      >: para lógica compleja, bibliotecas específicas o procesamiento de datos,
+      Python o Node pueden ser más adecuados. Aquí priorizamos
+      <strong>arranque rápido</strong>, <strong>pocos requisitos</strong> y <strong
+        >portabilidad</strong
+      > para automatizar el día a día del proyecto.
+    </Important>
+
+    <Tip>
+      <Fragment slot="title">¿Cuándo usar cada uno?</Fragment>
+      <List>
+        <ListItem icon={icons.WindowsLogo}>
+          <strong>PowerShell</strong>: integración nativa con Windows, soporte
+          multiplataforma desde la versión 7+, y un enfoque orientado a objetos.<FootnoteRef
+            index={1}
+          />&nbsp; En lugar de trabajar solo con texto plano, cada comando
+          devuelve objetos con propiedades y métodos. Esto permite encadenar
+          resultados de forma más estructurada y reduce la necesidad de <em
+            >“reinventar la rueda”</em
+          > en muchos casos.
+        </ListItem>
+
+        <ListItem icon={icons.LinuxLogo}>
+          <strong>Bash</strong>: estándar de facto en Linux y macOS, diseñado
+          bajo la especificación <strong>POSIX</strong>. Esto significa que sus
+          comandos y utilidades siguen reglas comunes en la mayoría de sistemas
+          Unix, asegurando portabilidad. Su fortaleza está en combinar
+          herramientas clásicas como
+          <code>grep</code>, <code>awk</code> o <code>sed</code> para construir soluciones
+          rápidas y flexibles.
+        </ListItem>
+      </List>
+
+      <p>
+        Para los efectos de este curso no nos adentraremos en lo que los hace
+        distintos. Nos limitaremos a usar funcionalidades mayormente
+        equivalentes entre ambos, de modo que los ejemplos sean portables y
+        fáciles de adaptar.
+      </p>
+    </Tip>
+  </NotesSection>
+
+  <NotesSection id="workspace-scaffold">
+    <Heading headingLevel="h2" Icon={icons.FolderOpen}>
+      Estructura base del “workspace”
+    </Heading>
+
+    <p class="mb-4">
+      Comencemos creando una organización básica para los proyectos del curso.
+      Esta carpeta puede compartirse entre varios proyectos; si decides no
+      usarla, solo tendrás que adaptar las rutas en los comandos posteriores.
+    </p>
+
+    <p class="mb-4">
+      Este puede ser tu primer contacto con PowerShell/Bash. Haremos un repaso
+      mínimo de sintaxis pensando en que ya conoces conceptos generales
+      (condicionales, bucles, funciones, objetos).
+    </p>
+
+    <Tabs defaultValue="powershell" syncKey="terminal-choice">
+      <TabsList>
+        <TabsTrigger value="powershell">PowerShell</TabsTrigger>
+        <TabsTrigger value="bash">Bash/Zsh</TabsTrigger>
+      </TabsList>
+
+      <!-- PowerShell -->
+      <TabsContent value="powershell">
+        <PowerShellBlock
+          code={`
+            $dibs         = 'dibs'           # raíz de proyectos del curso
+            $scripts      = 'scripts'        # scripts de terminal
+            $scriptsPath  = Join-Path $dibs $scripts
+
+            New-Item -ItemType Directory -Path $scriptsPath -Force | Out-Null
+          `}
+        >
+          <Fragment slot="title">Desde la terminal de PowerShell</Fragment>
+        </PowerShellBlock>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.TextT}>
+              Asignación con <InlinePowerShell code="$nombre = 'valor'" />. Las
+              variables comienzan con <InlinePowerShell code="$" /> y pueden contener
+              strings, números u objetos.
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsMerge}>
+              <InlinePowerShell code="Join-Path" /> compone rutas de forma portable
+              (evita preocuparte por <InlinePowerShell code="\\" /> vs
+              <InlinePowerShell code="/" />).
+            </ListItem>
+
+            <ListItem icon={icons.FolderPlus}>
+              <InlinePowerShell code="New-Item -ItemType Directory -Path ..." />
+              crea carpetas. Usar <InlinePowerShell code="-Force" /> permite repetir
+              el comando sin error si ya existen, lo cual es importante para respetar
+              el principio de <span class="font-black">idempotencia</span>.
+            </ListItem>
+
+            <ListItem icon={icons.FlowArrow}>
+              <strong>Pipelines en PowerShell</strong>: el operador
+              <InlinePowerShell code="|" /> pasa <em>objetos</em> al siguiente comando.
+              Aquí usamos <InlinePowerShell code="| Out-Null" /> para descartar la
+              salida y mantener la terminal limpia. A diferencia de Bash, no son
+              cadenas de texto, sino objetos con propiedades.
+            </ListItem>
+
+            <ListItem icon={icons.Terminal}>
+              <strong>Aliases</strong>: PowerShell incluye <em>alias</em> que hacen
+              que la experiencia sea más parecida a Bash o CMD (por ejemplo,
+              <InlinePowerShell code="ls" /> en vez de
+              <InlinePowerShell code="Get-ChildItem" />). Son útiles para
+              escribir rápido en la terminal, pero <span class="font-black"
+                >no los usaremos en este apunte</span
+              > ya que en scripts y documentación las formas completas son más claras
+              y fáciles de leer.
+            </ListItem>
+          </List>
+
+          <More>
+            <Fragment slot="title">Alternativas</Fragment>
+            <p>
+              También se puede suprimir la salida con <InlinePowerShell
+                code="(comando) >$null"
+              /> o
+              <InlinePowerShell code="$null = (comando)" />. En este apunte
+              preferimos <InlinePowerShell code="| Out-Null" /> por ser explícito
+              y fácil de leer.
+            </p>
+            <PowerShellBlock
+              code={`
+                New-Item -ItemType Directory -Path $scriptsPath -Force >$null
+                $null = New-Item -ItemType Directory -Path $scriptsPath -Force
+              `}
+            >
+              <Fragment slot="title">Otras formas de suprimir salida</Fragment>
+            </PowerShellBlock>
+          </More>
+
+          <More>
+            <Fragment slot="title">Pipelines: mini-ejemplo</Fragment>
+            <PowerShellBlock
+              code={`
+                  # Lista objetos de tipo FileSystemInfo y luego filtra por carpetas
+                  Get-ChildItem -Path $dibs |
+                    Where-Object -FilterScript { $PSItem.PSIsContainer } |
+                    Select-Object -Property Name
+                `}
+            >
+              <Fragment slot="title">Encadenar comandos con objetos</Fragment>
+            </PowerShellBlock>
+
+            <p class="mt-2">
+              En este ejemplo cada comando del pipeline recibe y devuelve <em
+                >objetos</em
+              >, no texto plano:
+            </p>
+
+            <List>
+              <ListItem icon={icons.FolderOpen}>
+                <InlinePowerShell code="Get-ChildItem $dibs" /> produce objetos
+                <code>FileSystemInfo</code> con propiedades como
+                <InlinePowerShell code="Name" /> y
+                <InlinePowerShell code="PSIsContainer" />.
+              </ListItem>
+
+              <ListItem icon={icons.Funnel}>
+                <InlinePowerShell
+                  code="Where-Object -FilterScript { $PSItem.PSIsContainer }"
+                /> filtra y deja pasar solo carpetas. Fuera de un contexto de pipeline
+                o de un bloque que reciba desde el pipeline, <InlinePowerShell
+                  code="$PSItem"
+                /> no tiene significado.
+              </ListItem>
+
+              <ListItem icon={icons.ListBullets}>
+                <InlinePowerShell code="Select-Object -Property Name" /> proyecta
+                la propiedad
+                <InlinePowerShell code="Name" /> para mostrar únicamente el nombre
+                de cada carpeta.
+              </ListItem>
+            </List>
+
+            <p class="mt-2">
+              Puedes pensarlo como una “tabla” de objetos: cada fila es un
+              archivo/carpeta y cada columna una propiedad. <InlinePowerShell
+                code="Where-Object"
+              /> filtra filas según una condición sobre el <InlinePowerShell
+                code="$PSItem"
+              /> actual, y
+              <InlinePowerShell code="Select-Object" /> elige qué columnas mostrar.
+              Al operar con objetos (y no con strings), el pipeline es más expresivo
+              y menos propenso a errores.
+            </p>
+          </More>
+
+          <More>
+            <Fragment slot="title">Aliases: inspeccionar equivalencias</Fragment
+            >
+            <PowerShellBlock
+              code={`
+                # Buscar los aliases que apuntan a un comando específico
+                Get-Alias -Definition Set-Location
+              `}
+            >
+              <Fragment slot="title"
+                >Inspeccionando aliases de Set-Location</Fragment
+              >
+            </PowerShellBlock>
+            <p class="mt-2">
+              En este caso <InlinePowerShell code="Set-Location" /> (que cambia el
+              directorio actual) tiene 2 aliases disponibles:
+            </p>
+            <CodeBlock
+              code={`
+                CommandType     Name                  Version    Source
+                -----------     ----                  -------    ------
+                Alias           chdir -> Set-Location
+                Alias           sl    -> Set-Location
+              `}
+              language="plaintext"
+            />
+          </More>
+        </Explanation>
+      </TabsContent>
+
+      <!-- Bash -->
+      <TabsContent value="bash">
+        <BashScript
+          code={`
+            DIBS="dibs"         # raíz de proyectos del curso
+            SCRIPTS="scripts"   # scripts de terminal
+            SCRIPTS_PATH="$DIBS/$SCRIPTS"
+
+            mkdir -p "$SCRIPTS_PATH"
+          `}
+        >
+          <Fragment slot="title">Desde la terminal de Bash</Fragment>
+        </BashScript>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.TextT}>
+              Asignación con <InlineBash code='NOMBRE="valor"' /> (sin espacios alrededor
+              de
+              <InlineBash code="=" />). Referencia con <InlineBash
+                code="$NOMBRE"
+              />.
+            </ListItem>
+
+            <ListItem icon={icons.FolderPlus}>
+              <InlineBash code='mkdir -p "$SCRIPTS_PATH"' /> crea la ruta completa
+              si falta y no falla si ya existe (<InlineBash code="-p" /> es portable).
+            </ListItem>
+
+            <ListItem icon={icons.FlowArrow}>
+              <strong>Pipelines en Bash</strong>: <InlineBash code="|" /> pasa
+              <em>texto</em> (stdout) al siguiente comando. A diferencia de PowerShell,
+              aquí fluyen cadenas, no objetos.
+            </ListItem>
+          </List>
+
+          <Tip>
+            <Fragment slot="title">Portabilidad</Fragment>
+            No uses <InlineBash code="ls" /> para obtener nombres de archivos y luego
+            procesar su salida como texto (parsear). Es frágil y depende de la distro.
+            En su lugar, usa globbing de Bash (<InlineBash code='"$DIR"/*/' />),
+            expansión de parámetros (<InlineBash code="${var##*/}" />) y
+            utilidades POSIX como <InlineBash code="head" /> y <InlineBash
+              code="grep"
+            />. Esto evita crear scripts distintos por distribución, reduce
+            costos, facilita el mantenimiento y previene errores.
+          </Tip>
+
+          <More>
+            <Fragment slot="title">Pipelines: mini-ejemplo</Fragment>
+            <BashScript
+              code={`
+                # Listar directorios, quedarnos con los primeros 10 y ordenarlos alfabéticamente
+                for d in */; do
+                  [ -d "$d" ] && printf '%s\\n' "\${d%/}"
+                done | head -n 10 | sort
+              `}
+            >
+              <Fragment slot="title">Encadenar utilidades</Fragment>
+            </BashScript>
+            <p class="mt-2">
+              Más que entender cada comando, lo importante es <strong
+                >visualizar el flujo</strong
+              >: la salida del bucle (<em>lista de directorios</em>) pasa por
+              <InlineBash code="head -n 10" /> (<em>recorte</em>) y luego por
+              <InlineBash code="sort" /> (<em>orden</em>). Un paso produce texto
+              que el siguiente consume; esa es la esencia de un pipeline.
+            </p>
+          </More>
+        </Explanation>
+      </TabsContent>
+    </Tabs>
+
+    <NotesSection id="scripting-101">
+      <Heading headingLevel="h2" Icon={icons.Terminal}
+        >Scripting 101: PowerShell y Bash</Heading
+      >
+
+      <Definition>
+        <Fragment slot="title">El patrón de ensayo seguro</Fragment>
+        <p>
+          Siempre que un script <em>cambie cosas</em>, ensaya primero: en
+          PowerShell con
+          <InlinePowerShell code="-WhatIf" /> y en Bash activando <InlineBash
+            code="DRY_RUN=true"
+          />. Así ves lo que haría sin tocar nada.<FootnoteRef index={101} />
+        </p>
+      </Definition>
+
+      <Terminals
+        powerShellCode={`
 # PowerShell — script esqueleto con ensayo seguro
 #Requires -Version 7.0
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]
@@ -80,7 +411,7 @@ if (-not (Test-Path -LiteralPath $Target -PathType Container)) {
 
 Write-Verbose "All good at '$Target'"
     `}
-      bashCode={`#!/usr/bin/env bash
+        bashCode={`#!/usr/bin/env bash
 # Bash — script esqueleto con DRY_RUN
 set -euo pipefail
 
@@ -101,81 +432,82 @@ run () {
 [[ -d "\${TARGET}" ]] || run "mkdir -p \"\${TARGET}\""
 echo "All good at '\${TARGET}'"
     `}
-    >
-      <Fragment slot="powershell-title"
-        >Plantilla mínima de PowerShell (con <code>-WhatIf</code>)</Fragment
       >
-      <Fragment slot="powershell-explanation">
-        <icons.List>
-          <ListItem icon={icons.Info}>
-            <InlinePowerShell code="[CmdletBinding(SupportsShouldProcess)]" /> convierte
-            el script en
-            <em>cmdlet avanzado</em> y habilita <InlinePowerShell
-              code="-WhatIf"
-            /> /
-            <InlinePowerShell code="-Confirm" />.
-          </ListItem>
-          <ListItem icon={icons.FolderPlus}>
-            <InlinePowerShell
-              code="Test-Path -LiteralPath ... -PathType Container"
-            /> comprueba la carpeta sin interpretar comodines. <InlinePowerShell
-              code="$PSCmdlet.ShouldProcess"
-            /> anuncia y controla la acción (puedes simular con <InlinePowerShell
-              code="-WhatIf"
-            />).
-          </ListItem>
-          <ListItem icon={icons.SpeakerHigh}>
-            <InlinePowerShell code="Write-Verbose" /> aparece al ejecutar con <InlinePowerShell
-              code="-Verbose"
-            />.
-          </ListItem>
-        </icons.List>
-      </Fragment>
+        <Fragment slot="powershell-title"
+          >Plantilla mínima de PowerShell (con <code>-WhatIf</code>)</Fragment
+        >
+        <Fragment slot="powershell-explanation">
+          <icons.List>
+            <ListItem icon={icons.Info}>
+              <InlinePowerShell code="[CmdletBinding(SupportsShouldProcess)]" />
+              convierte el script en
+              <em>cmdlet avanzado</em> y habilita <InlinePowerShell
+                code="-WhatIf"
+              /> /
+              <InlinePowerShell code="-Confirm" />.
+            </ListItem>
+            <ListItem icon={icons.FolderPlus}>
+              <InlinePowerShell
+                code="Test-Path -LiteralPath ... -PathType Container"
+              /> comprueba la carpeta sin interpretar comodines. <InlinePowerShell
+                code="$PSCmdlet.ShouldProcess"
+              /> anuncia y controla la acción (puedes simular con <InlinePowerShell
+                code="-WhatIf"
+              />).
+            </ListItem>
+            <ListItem icon={icons.SpeakerHigh}>
+              <InlinePowerShell code="Write-Verbose" /> aparece al ejecutar con <InlinePowerShell
+                code="-Verbose"
+              />.
+            </ListItem>
+          </icons.List>
+        </Fragment>
 
-      <Fragment slot="bash-title"
-        >Plantilla mínima de Bash (con <code>DRY_RUN</code>)</Fragment
+        <Fragment slot="bash-title"
+          >Plantilla mínima de Bash (con <code>DRY_RUN</code>)</Fragment
+        >
+        <Fragment slot="bash-explanation">
+          <icons.List>
+            <ListItem icon={icons.Bug}>
+              <InlineBash code="set -euo pipefail" /> endurece el script:
+              <icons.List>
+                <ListItem icon={icons.WarningCircle}
+                  ><InlineBash code="-e" /> aborta si un comando falla.</ListItem
+                >
+                <ListItem icon={icons.Question}
+                  ><InlineBash code="-u" /> falla si usas variables sin definir.</ListItem
+                >
+                <ListItem icon={icons.ArrowsLeftRight}
+                  ><InlineBash code="-o pipefail" /> propaga errores en <em
+                    >pipelines</em
+                  >.</ListItem
+                >
+              </icons.List>
+            </ListItem>
+            <ListItem icon={icons.Function}>
+              <InlineBash code="run(){ ... }" /> centraliza ejecución real o simulada
+              con <InlineBash code="DRY_RUN=true" />.
+            </ListItem>
+            <ListItem icon={icons.WarningCircle}>
+              Validación de argumentos: <InlineBash
+                code='if [[ -z "${1:-}" ]]; then ... fi'
+              /> imprime <em>usage</em> en <InlineBash code="stderr" /> y sale.
+            </ListItem>
+          </icons.List>
+        </Fragment>
+      </Terminals>
+
+      <Heading headingLevel="h3" Icon={icons.Path}>Rutas y portabilidad</Heading
       >
-      <Fragment slot="bash-explanation">
-        <icons.List>
-          <ListItem icon={icons.Bug}>
-            <InlineBash code="set -euo pipefail" /> endurece el script:
-            <icons.List>
-              <ListItem icon={icons.WarningCircle}
-                ><InlineBash code="-e" /> aborta si un comando falla.</ListItem
-              >
-              <ListItem icon={icons.Question}
-                ><InlineBash code="-u" /> falla si usas variables sin definir.</ListItem
-              >
-              <ListItem icon={icons.ArrowsLeftRight}
-                ><InlineBash code="-o pipefail" /> propaga errores en <em
-                  >pipelines</em
-                >.</ListItem
-              >
-            </icons.List>
-          </ListItem>
-          <ListItem icon={icons.Function}>
-            <InlineBash code="run(){ ... }" /> centraliza ejecución real o simulada
-            con <InlineBash code="DRY_RUN=true" />.
-          </ListItem>
-          <ListItem icon={icons.WarningCircle}>
-            Validación de argumentos: <InlineBash
-              code='if [[ -z "${1:-}" ]]; then ... fi'
-            /> imprime <em>usage</em> en <InlineBash code="stderr" /> y sale.
-          </ListItem>
-        </icons.List>
-      </Fragment>
-    </Terminals>
-
-    <Heading headingLevel="h3" Icon={icons.Path}>Rutas y portabilidad</Heading>
-    <Terminals
-      powerShellCode={`
+      <Terminals
+        powerShellCode={`
 # Normalizar una ruta relativa con base en el directorio actual
 $root = if ([IO.Path]::IsPathRooted($ProjectRoot)) { $ProjectRoot }
         else { Join-Path -Path $PWD.Path -ChildPath $ProjectRoot }
 
 Write-Verbose "Root: $root"
     `}
-      bashCode={`#!/usr/bin/env bash
+        bashCode={`#!/usr/bin/env bash
 set -euo pipefail
 
 PROJECT_ROOT="\${1:-}"
@@ -185,135 +517,134 @@ case "\${PROJECT_ROOT}" in
 esac
 echo "Root: \${ROOT}"
     `}
-    >
-      <Fragment slot="powershell-title"
-        >PowerShell: normalización de rutas</Fragment
       >
-      <Fragment slot="powershell-explanation">
-        <icons.List>
-          <ListItem icon={icons.Path}
-            ><InlinePowerShell code="Join-Path $PWD.Path ..." /> convierte rutas
-            relativas en absolutas.</ListItem
-          >
-          <ListItem icon={icons.Hash}
-            ><InlinePowerShell code="$PWD" /> es el directorio actual.</ListItem
-          >
-        </icons.List>
-      </Fragment>
+        <Fragment slot="powershell-title"
+          >PowerShell: normalización de rutas</Fragment
+        >
+        <Fragment slot="powershell-explanation">
+          <icons.List>
+            <ListItem icon={icons.Path}
+              ><InlinePowerShell code="Join-Path $PWD.Path ..." /> convierte rutas
+              relativas en absolutas.</ListItem
+            >
+            <ListItem icon={icons.Hash}
+              ><InlinePowerShell code="$PWD" /> es el directorio actual.</ListItem
+            >
+          </icons.List>
+        </Fragment>
 
-      <Fragment slot="bash-title">Bash: normalización de rutas</Fragment>
-      <Fragment slot="bash-explanation">
-        <icons.List>
-          <ListItem icon={icons.Path}
-            ><InlineBash code="$PWD" /> es el directorio actual.</ListItem
-          >
-          <ListItem icon={icons.Terminal}>
-            <InlineBash code="case ... in ... esac" /> compara texto con patrones;
-            usamos
-            <InlineBash code="/*|?:/*" /> para rutas absolutas, y el comodín <InlineBash
-              code="*"
-            /> para relativas.
-          </ListItem>
-        </icons.List>
-      </Fragment>
-    </Terminals>
+        <Fragment slot="bash-title">Bash: normalización de rutas</Fragment>
+        <Fragment slot="bash-explanation">
+          <icons.List>
+            <ListItem icon={icons.Path}
+              ><InlineBash code="$PWD" /> es el directorio actual.</ListItem
+            >
+            <ListItem icon={icons.Terminal}>
+              <InlineBash code="case ... in ... esac" /> compara texto con patrones;
+              usamos
+              <InlineBash code="/*|?:/*" /> para rutas absolutas, y el comodín <InlineBash
+                code="*"
+              /> para relativas.
+            </ListItem>
+          </icons.List>
+        </Fragment>
+      </Terminals>
 
-    <Heading headingLevel="h3" Icon={icons.Rocket}
-      >Ejecutar herramientas de forma segura</Heading
-    >
-    <Terminals
-      powerShellCode={`
+      <Heading headingLevel="h3" Icon={icons.Rocket}
+        >Ejecutar herramientas de forma segura</Heading
+      >
+      <Terminals
+        powerShellCode={`
 # Localizar el ejecutable correcto y ejecutar con argumentos
 $gradle = (Get-Command gradle -ErrorAction Stop).Source
 & $gradle -p $root init @GradleOptions
 if ($LASTEXITCODE) { throw "Gradle exited with code $LASTEXITCODE." }
     `}
-      bashCode={`#!/usr/bin/env bash
+        bashCode={`#!/usr/bin/env bash
 set -euo pipefail
 
 command -v gradle >/dev/null 2>&1 || { echo "Gradle not found" >&2; exit 127; }
 gradle -p "\${ROOT}" init "\${GRADLE_OPTS[@]}"
     `}
-    >
-      <Fragment slot="powershell-title"
-        >PowerShell: localizar y ejecutar</Fragment
       >
-      <Fragment slot="powershell-explanation">
-        <icons.List>
-          <ListItem icon={icons.MagnifyingGlass}
-            ><InlinePowerShell code="Get-Command ... .Source" /> obtiene la ruta
-            real del ejecutable (evita alias).</ListItem
-          >
-          <ListItem icon={icons.Terminal}
-            ><InlinePowerShell code="&" /> es el <em>call operator</em> (ejecuta
-            la ruta). <InlinePowerShell code="@Args" /> = <em>splatting</em> de arrays.</ListItem
-          >
-          <ListItem icon={icons.WarningCircle}
-            ><InlinePowerShell code="$LASTEXITCODE" /> contiene el código de salida
-            del último proceso nativo (0 = OK).</ListItem
-          >
-        </icons.List>
-      </Fragment>
+        <Fragment slot="powershell-title"
+          >PowerShell: localizar y ejecutar</Fragment
+        >
+        <Fragment slot="powershell-explanation">
+          <icons.List>
+            <ListItem icon={icons.MagnifyingGlass}
+              ><InlinePowerShell code="Get-Command ... .Source" /> obtiene la ruta
+              real del ejecutable (evita alias).</ListItem
+            >
+            <ListItem icon={icons.Terminal}
+              ><InlinePowerShell code="&" /> es el <em>call operator</em> (ejecuta
+              la ruta). <InlinePowerShell code="@Args" /> = <em>splatting</em> de
+              arrays.</ListItem
+            >
+            <ListItem icon={icons.WarningCircle}
+              ><InlinePowerShell code="$LASTEXITCODE" /> contiene el código de salida
+              del último proceso nativo (0 = OK).</ListItem
+            >
+          </icons.List>
+        </Fragment>
 
-      <Fragment slot="bash-title">Bash: validar y ejecutar</Fragment>
-      <Fragment slot="bash-explanation">
-        <icons.List>
-          <ListItem icon={icons.MagnifyingGlass}
-            ><InlineBash code="command -v gradle" /> valida que exista en <InlineBash
-              code="$PATH"
-            />.</ListItem
-          >
-          <ListItem icon={icons.Code}
-            ><InlineBash code='"${GRADLE_OPTS[@]}"' /> preserva cada flag como elemento
-            (no rompe espacios).</ListItem
-          >
-        </icons.List>
-      </Fragment>
-    </Terminals>
+        <Fragment slot="bash-title">Bash: validar y ejecutar</Fragment>
+        <Fragment slot="bash-explanation">
+          <icons.List>
+            <ListItem icon={icons.MagnifyingGlass}
+              ><InlineBash code="command -v gradle" /> valida que exista en <InlineBash
+                code="$PATH"
+              />.</ListItem
+            >
+            <ListItem icon={icons.Code}
+              ><InlineBash code='"${GRADLE_OPTS[@]}"' /> preserva cada flag como
+              elemento (no rompe espacios).</ListItem
+            >
+          </icons.List>
+        </Fragment>
+      </Terminals>
 
-    <Heading headingLevel="h3" Icon={icons.Gear}
-      >Buenas prácticas express</Heading
-    >
-    <icons.List>
-      <ListItem icon={icons.CheckCircle}>
-        <strong>Siempre ensaya</strong>: <InlinePowerShell code="-WhatIf" /> o <InlineBash
-          code="DRY_RUN=true"
-        />.
-      </ListItem>
-      <ListItem icon={icons.CheckCircle}>
-        <strong>Valida entradas</strong>: parámetros obligatorios (PS) / <InlineBash
-          code="if [[ -z ... ]]"
-        /> (Bash).
-      </ListItem>
-      <ListItem icon={icons.CheckCircle}>
-        <strong>Falla rápido</strong>: <InlinePowerShell
-          code="$ErrorActionPreference='Stop'"
-        /> /
-        <InlineBash code="set -euo pipefail" />.
-      </ListItem>
-      <ListItem icon={icons.CheckCircle}>
-        <strong>Rutas seguras</strong>: <InlinePowerShell code="Join-Path" /> y <InlineBash
-          code="$PWD"
-        /> para absolutas.
-      </ListItem>
-      <ListItem icon={icons.CheckCircle}>
-        <strong>Mensajería útil</strong>: usa <InlinePowerShell
-          code="Write-Verbose"
-        /> y escribe <em>usage</em> a <InlineBash code="stderr" />.
-      </ListItem>
-    </icons.List>
+      <Heading headingLevel="h3" Icon={icons.Gear}
+        >Buenas prácticas express</Heading
+      >
+      <icons.List>
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Siempre ensaya</strong>: <InlinePowerShell code="-WhatIf" /> o
+          <InlineBash code="DRY_RUN=true" />.
+        </ListItem>
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Valida entradas</strong>: parámetros obligatorios (PS) / <InlineBash
+            code="if [[ -z ... ]]"
+          /> (Bash).
+        </ListItem>
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Falla rápido</strong>: <InlinePowerShell
+            code="$ErrorActionPreference='Stop'"
+          /> /
+          <InlineBash code="set -euo pipefail" />.
+        </ListItem>
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Rutas seguras</strong>: <InlinePowerShell code="Join-Path" /> y
+          <InlineBash code="$PWD" /> para absolutas.
+        </ListItem>
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Mensajería útil</strong>: usa <InlinePowerShell
+            code="Write-Verbose"
+          /> y escribe <em>usage</em> a <InlineBash code="stderr" />.
+        </ListItem>
+      </icons.List>
 
-    <More>
-      <Fragment slot="title">Reutilizar utilidades</Fragment>
-      <p>
-        Extrae helpers a archivos reutilizables para mantener los scripts
-        simples. Ej.: un
-        <InlineBash code="run.sh" /> que encapsule ejecución real o simulada con
-        <InlineBash code="DRY_RUN" />, y un módulo de PowerShell que exporte
-        funciones con <InlinePowerShell code="SupportsShouldProcess" />.
-      </p>
-      <Terminals
-        powerShellCode={`
+      <More>
+        <Fragment slot="title">Reutilizar utilidades</Fragment>
+        <p>
+          Extrae helpers a archivos reutilizables para mantener los scripts
+          simples. Ej.: un
+          <InlineBash code="run.sh" /> que encapsule ejecución real o simulada con
+          <InlineBash code="DRY_RUN" />, y un módulo de PowerShell que exporte
+          funciones con <InlinePowerShell code="SupportsShouldProcess" />.
+        </p>
+        <Terminals
+          powerShellCode={`
 # Module.psm1 (extracto)
 function Invoke-Safely {
   [CmdletBinding(SupportsShouldProcess)]
@@ -322,54 +653,55 @@ function Invoke-Safely {
 }
 Export-ModuleMember -Function Invoke-Safely
       `}
-        bashCode={`#!/usr/bin/env bash
+          bashCode={`#!/usr/bin/env bash
 # run.sh — reutilizable
 set -euo pipefail
 if [[ "\${DRY_RUN:-false}" == "true" ]]; then echo "[dry-run] $*"; else eval "$@"; fi
       `}
-      >
-        <Fragment slot="powershell-title"
-          >PowerShell: helper reutilizable</Fragment
         >
-        <Fragment slot="bash-title">Bash: runner reutilizable</Fragment>
-      </Terminals>
-    </More>
+          <Fragment slot="powershell-title"
+            >PowerShell: helper reutilizable</Fragment
+          >
+          <Fragment slot="bash-title">Bash: runner reutilizable</Fragment>
+        </Terminals>
+      </More>
 
-    <Footnotes>
-      <Footnote index={101}>
-        <p class="mb-2">
-          Ejemplo de <strong>error detectado por el ensayo</strong> al no normalizar
-          ruta en PowerShell:
-        </p>
-        <pre
-          class="bg-base-200 text-xs rounded p-3 overflow-x-auto">
+      <Footnotes>
+        <Footnote index={101}>
+          <p class="mb-2">
+            Ejemplo de <strong>error detectado por el ensayo</strong> al no normalizar
+            ruta en PowerShell:
+          </p>
+          <pre
+            class="bg-base-200 text-xs rounded p-3 overflow-x-auto">
 What if: Performing the operation "Create Directory" on target "Destination: C:\Users\usuario\veritas".
 What if: Performing the operation "gradle init" on target "C:\Users\usuario\veritas".
       </pre>
-        <p class="mt-2">
-          La corrección fue usar <InlinePowerShell
-            code="Join-Path -Path $PWD.Path -ChildPath ..."
-          /> para anclar al directorio actual. En Bash el equivalente práctico es
-          anteponer <InlineBash code="$PWD" />.
-        </p>
-      </Footnote>
-    </Footnotes>
-  </NotesSection>
-  <NotesSection id="...">
-    <Heading headingLevel="h2" Icon={icons.GitBranch}
-      >Inicializa y versiona con GitLab (ensayo primero)</Heading
-    >
+          <p class="mt-2">
+            La corrección fue usar <InlinePowerShell
+              code="Join-Path -Path $PWD.Path -ChildPath ..."
+            /> para anclar al directorio actual. En Bash el equivalente práctico
+            es anteponer <InlineBash code="$PWD" />.
+          </p>
+        </Footnote>
+      </Footnotes>
+    </NotesSection>
+    <NotesSection id="...">
+      <Heading headingLevel="h2" Icon={icons.GitBranch}
+        >Inicializa y versiona con GitLab (ensayo primero)</Heading
+      >
 
-    <p class="mb-4">
-      Si quieres versionar tu estructura desde el inicio, automatiza la creación
-      del repo local y remoto en GitLab.
-      <strong>Primero ensaya</strong> con <InlinePowerShell code="-WhatIf" /> (PowerShell)
-      o
-      <InlineBash code="--dry-run" /> (Bash) para ver qué ocurrirá sin realizar cambios.
-    </p>
+      <p class="mb-4">
+        Si quieres versionar tu estructura desde el inicio, automatiza la
+        creación del repo local y remoto en GitLab.
+        <strong>Primero ensaya</strong> con <InlinePowerShell code="-WhatIf" /> (PowerShell)
+        o
+        <InlineBash code="--dry-run" /> (Bash) para ver qué ocurrirá sin realizar
+        cambios.
+      </p>
 
-    <Terminals
-      powerShellCode={`
+      <Terminals
+        powerShellCode={`
 #Requires -Version 7.0
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param(
@@ -418,7 +750,7 @@ if ($PSCmdlet.ShouldProcess($target, 'Create GitLab repository')) {
   }
 }
   `}
-      bashCode={`#!/usr/bin/env bash
+        bashCode={`#!/usr/bin/env bash
 set -euo pipefail
 
 USER=""
@@ -477,125 +809,127 @@ run() {
   run "git remote add origin https://gitlab.com/$USER/$TARGET.git"
 )
   `}
-    >
-      <Fragment slot="powershell-title"
-        >PowerShell: crear repo local + remoto en GitLab (con <code
-          >-WhatIf</code
-        >)</Fragment
       >
-      <DibsSourceLink
-        repo="scripts"
-        file="ps1/New-GitLabRepository.ps1"
-        slot="powershell-source"
-      />
-      <Fragment slot="powershell-explanation">
-        <List>
-          <ListItem icon={icons.Info}>
-            <InlinePowerShell
-              code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
-            /> habilita
-            <InlinePowerShell code="-WhatIf" />/<InlinePowerShell
-              code="-Confirm"
-            /> para ensayar cambios antes de aplicarlos.
-          </ListItem>
-          <ListItem icon={icons.Path}>
-            <InlinePowerShell code="Resolve-Path -LiteralPath" /> normaliza rutas
-            y evita comodines; luego se valida que sea carpeta con <InlinePowerShell
-              code="Get-Item"
-            />.
-          </ListItem>
-          <ListItem icon={icons.TextB}>
-            Si faltan <InlinePowerShell code="$RepositoryName" /> o <InlinePowerShell
-              code="$Prefix"
-            />, se derivan del árbol de carpetas.
-          </ListItem>
-          <ListItem icon={icons.CloudArrowUp}>
-            <InlinePowerShell code="glab repo create $target --public" /> crea el
-            remoto; si falla (<InlinePowerShell code="$LASTEXITCODE" /> ≠ 0) se aborta
-            con mensaje claro.
-          </ListItem>
-        </List>
-      </Fragment>
+        <Fragment slot="powershell-title"
+          >PowerShell: crear repo local + remoto en GitLab (con <code
+            >-WhatIf</code
+          >)</Fragment
+        >
+        <DibsSourceLink
+          repo="scripts"
+          file="ps1/New-GitLabRepository.ps1"
+          slot="powershell-source"
+        />
+        <Fragment slot="powershell-explanation">
+          <List>
+            <ListItem icon={icons.Info}>
+              <InlinePowerShell
+                code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
+              /> habilita
+              <InlinePowerShell code="-WhatIf" />/<InlinePowerShell
+                code="-Confirm"
+              /> para ensayar cambios antes de aplicarlos.
+            </ListItem>
+            <ListItem icon={icons.Path}>
+              <InlinePowerShell code="Resolve-Path -LiteralPath" /> normaliza rutas
+              y evita comodines; luego se valida que sea carpeta con <InlinePowerShell
+                code="Get-Item"
+              />.
+            </ListItem>
+            <ListItem icon={icons.TextB}>
+              Si faltan <InlinePowerShell code="$RepositoryName" /> o <InlinePowerShell
+                code="$Prefix"
+              />, se derivan del árbol de carpetas.
+            </ListItem>
+            <ListItem icon={icons.CloudArrowUp}>
+              <InlinePowerShell code="glab repo create $target --public" /> crea
+              el remoto; si falla (<InlinePowerShell code="$LASTEXITCODE" /> ≠ 0)
+              se aborta con mensaje claro.
+            </ListItem>
+          </List>
+        </Fragment>
 
-      <Fragment slot="bash-title"
-        >Bash/Zsh: crear repo local + remoto en GitLab (con <code
-          >--dry-run</code
-        >)</Fragment
+        <Fragment slot="bash-title"
+          >Bash/Zsh: crear repo local + remoto en GitLab (con <code
+            >--dry-run</code
+          >)</Fragment
+        >
+        <DibsSourceLink
+          repo="scripts"
+          file="sh/new-gitlab-repository.sh"
+          slot="bash-source"
+        />
+        <Fragment slot="bash-explanation">
+          <List>
+            <ListItem icon={icons.Bug}>
+              <InlineBash code="set -euo pipefail" />: aborta en errores,
+              variables no definidas y fallos en pipelines.
+            </ListItem>
+            <ListItem icon={icons.Terminal}>
+              Flags: <InlineBash code="-u/--user" />, <InlineBash
+                code="-d/--dir"
+              />, <InlineBash code="-n/--name" />,
+              <InlineBash code="-p/--prefix" />, <InlineBash
+                code="--dry-run"
+              />.
+            </ListItem>
+            <ListItem icon={icons.Eye}>
+              <InlineBash code="DRY_RUN=true" /> imprime acciones (no las ejecuta).
+              Quita <InlineBash code="--dry-run" /> para aplicar.
+            </ListItem>
+            <ListItem icon={icons.TextB}>
+              Deriva <InlineBash code="TARGET" /> como <code>prefix-name</code> si
+              hay prefijo; útil para estandarizar nombres.
+            </ListItem>
+          </List>
+        </Fragment>
+      </Terminals>
+
+      <Heading headingLevel="h3" Icon={icons.ListChecks}
+        >Flujo sugerido (ensayo → aplicar)</Heading
       >
-      <DibsSourceLink
-        repo="scripts"
-        file="sh/new-gitlab-repository.sh"
-        slot="bash-source"
-      />
-      <Fragment slot="bash-explanation">
-        <List>
-          <ListItem icon={icons.Bug}>
-            <InlineBash code="set -euo pipefail" />: aborta en errores,
-            variables no definidas y fallos en pipelines.
-          </ListItem>
-          <ListItem icon={icons.Terminal}>
-            Flags: <InlineBash code="-u/--user" />, <InlineBash
-              code="-d/--dir"
-            />, <InlineBash code="-n/--name" />,
-            <InlineBash code="-p/--prefix" />, <InlineBash code="--dry-run" />.
-          </ListItem>
-          <ListItem icon={icons.Eye}>
-            <InlineBash code="DRY_RUN=true" /> imprime acciones (no las ejecuta).
-            Quita <InlineBash code="--dry-run" /> para aplicar.
-          </ListItem>
-          <ListItem icon={icons.TextB}>
-            Deriva <InlineBash code="TARGET" /> como <code>prefix-name</code> si
-            hay prefijo; útil para estandarizar nombres.
-          </ListItem>
-        </List>
-      </Fragment>
-    </Terminals>
 
-    <Heading headingLevel="h3" Icon={icons.ListChecks}
-      >Flujo sugerido (ensayo → aplicar)</Heading
-    >
-
-    <Terminals
-      powerShellCode={`
+      <Terminals
+        powerShellCode={`
 Set-Location 'dibs'
 $gitlabUser = '<TU-USUARIO>'  # <- reemplaza aquí
 .\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryDirectory .\scripts -WhatIf
 .\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryName index -Prefix dibs -WhatIf
 # Si el ensayo luce bien, repite sin -WhatIf
   `}
-      bashCode={`
+        bashCode={`
 cd dibs
 GITLAB_USER="<TU-USUARIO>"  # <- reemplaza aquí
 ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -d ./scripts --dry-run
 ./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -n index -p dibs --dry-run
 # Si el ensayo luce bien, repite sin --dry-run
   `}
-    >
-      <Fragment slot="powershell-explanation">
-        <p>
-          Elige <strong>no</strong> crear carpeta local adicional cuando el asistente
-          de <InlinePowerShell code="glab" /> lo pregunte; el script ya opera dentro
-          de tu estructura.
-        </p>
-      </Fragment>
-      <Fragment slot="bash-explanation">
-        <p>
-          Revisa la salida de <InlineBash code="DRY_RUN" />. Si todo se ve bien,
-          ejecuta de nuevo sin <InlineBash code="--dry-run" />.
-        </p>
-      </Fragment>
-    </Terminals>
+      >
+        <Fragment slot="powershell-explanation">
+          <p>
+            Elige <strong>no</strong> crear carpeta local adicional cuando el asistente
+            de <InlinePowerShell code="glab" /> lo pregunte; el script ya opera dentro
+            de tu estructura.
+          </p>
+        </Fragment>
+        <Fragment slot="bash-explanation">
+          <p>
+            Revisa la salida de <InlineBash code="DRY_RUN" />. Si todo se ve
+            bien, ejecuta de nuevo sin <InlineBash code="--dry-run" />.
+          </p>
+        </Fragment>
+      </Terminals>
 
-    <Tip class="my-4">
-      <Fragment slot="title">.gitignore</Fragment>
-      Genera un <code>.gitignore</code> adecuado para cada repo; útil:
-      <Link href="https://www.toptal.com/developers/gitignore/"
-        >toptal.com/developers/gitignore</Link
-      >.
-    </Tip>
+      <Tip class="my-4">
+        <Fragment slot="title">.gitignore</Fragment>
+        Genera un <code>.gitignore</code> adecuado para cada repo; útil:
+        <Link href="https://www.toptal.com/developers/gitignore/"
+          >toptal.com/developers/gitignore</Link
+        >.
+      </Tip>
 
-    <Terminals
-      powerShellCode={`
+      <Terminals
+        powerShellCode={`
 # Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
 Push-Location '.\scripts'
 git add .
@@ -608,7 +942,7 @@ git add .gitmodules scripts
 git commit -m "chore(index): add scripts as submodule"
 git push -u origin main
   `}
-      bashCode={`
+        bashCode={`
 # Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
 (
   cd scripts
@@ -622,13 +956,990 @@ git add .gitmodules scripts
 git commit -m "chore(index): add scripts as submodule"
 git push -u origin main
   `}
-    >
-      <Fragment slot="powershell-title"
-        >Versionar y añadir como submódulo (PowerShell)</Fragment
       >
-      <Fragment slot="bash-title"
-        >Versionar y añadir como submódulo (Bash/Zsh)</Fragment
-      >
-    </Terminals>
+        <Fragment slot="powershell-title"
+          >Versionar y añadir como submódulo (PowerShell)</Fragment
+        >
+        <Fragment slot="bash-title"
+          >Versionar y añadir como submódulo (Bash/Zsh)</Fragment
+        >
+      </Terminals>
+    </NotesSection>
+
+    <NotesSection id="first-script">
+      <Heading headingLevel="h2" Icon={icons.FileText}>
+        Primer script: generar un <code>README.md</code> básico
+      </Heading>
+
+      <p class="mb-4">
+        Hasta ahora hemos trabajado ejecutando comandos de forma directa en la
+        terminal. El siguiente paso es encapsular esa lógica en un <em
+          >script</em
+        > sencillo y reutilizable, guardado dentro de <code>dibs/scripts</code>.
+        Nuestro ejemplo genera el contenido inicial de un <code>README.md</code>
+        para un proyecto, con dos implementaciones paralelas (PowerShell y Bash).
+        Ambas incluyen parámetros obligatorios y una opción de <em>verbosity</em
+        > para mostrar mensajes adicionales durante la ejecución. Recomendamos editar
+        y mantener estos scripts en un entorno cómodo como
+        <strong>Visual Studio Code (VS Code)</strong>, que ofrece resaltado de
+        sintaxis, integración con terminal y depuración básica.
+      </p>
+
+      <Tabs defaultValue="powershell" syncKey="terminal-choice">
+        <TabsList>
+          <TabsTrigger value="powershell">PowerShell</TabsTrigger>
+          <TabsTrigger value="bash">Bash</TabsTrigger>
+        </TabsList>
+
+        <!-- PowerShell -->
+        <TabsContent value="powershell">
+          <PowerShellBlock
+            code={`
+              #Requires -Version 7.0
+              [CmdletBinding()]
+              [OutputType([string])]
+              param(
+                  [Parameter(Mandatory)]
+                  [ValidateNotNullOrEmpty()]
+                  [string] $Name
+              )
+
+              Write-Verbose "Creating README.md for project '$Name'"
+
+              return @"
+              # $Name
+
+              Project initialized on $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss').
+
+              Learn more about READMEs at https://www.makeareadme.com/.
+              "@
+            `}
+          >
+            <Fragment slot="title"
+              >Generar <code>README.md</code> con PowerShell</Fragment
+            >
+            <DibsSourceLink
+              repo="scripts"
+              file="New-Readme.ps1"
+              slot="source"
+            />
+          </PowerShellBlock>
+
+          <Explanation>
+            <List>
+              <ListItem icon={icons.Hash}>
+                <InlinePowerShell code="#Requires -Version 7.0" />: asegura que
+                el script se ejecute con PowerShell&nbsp;7+.<FootnoteRef
+                  index={2}
+                />
+              </ListItem>
+
+              <ListItem icon={icons.Info}>
+                <InlinePowerShell code="[CmdletBinding()]" /> convierte el script
+                en un <Link
+                  href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_cmdletbindingattribute"
+                  >cmdlet avanzado</Link
+                >. Esto agrega características extra, como permitir el uso de <InlinePowerShell
+                  code="-Verbose"
+                /> para mostrar mensajes de diagnóstico opcionales al ejecutar el
+                script. Luego, <InlinePowerShell code="Write-Verbose" /> emite esos
+                mensajes solo si se invoca con <InlinePowerShell
+                  code="-Verbose"
+                />.
+              </ListItem>
+
+              <ListItem icon={icons.TextT}>
+                <InlinePowerShell code="[OutputType([string])]" /> declara que el
+                script devuelve una cadena. Esto no cambia la ejecución, pero sirve
+                como documentación y ayuda a herramientas de análisis y autocompletado
+                a entender mejor el resultado esperado.
+              </ListItem>
+
+              <ListItem icon={icons.ListChecks}>
+                El bloque <InlinePowerShell code="param(...)" /> define los parámetros
+                del script. La sintaxis <InlinePowerShell
+                  code="[Atributo1][Atributo2][Tipo] $Parametro"
+                /> aplica metadatos y validaciones sobre cada parámetro:
+                <ul class="list-disc pl-6 mt-2 space-y-1">
+                  <li>
+                    <InlinePowerShell code="[Parameter(Mandatory)]" /> indica que
+                    el argumento es obligatorio y debe proporcionarse al invocar
+                    la función.
+                  </li>
+                  <li>
+                    <InlinePowerShell code="[ValidateNotNullOrEmpty()]" /> asegura
+                    que no se acepte un valor vacío o <InlinePowerShell
+                      code="$null"
+                    />.
+                  </li>
+                  <li>
+                    <InlinePowerShell code="[string]" /> define el tipo estático
+                    del parámetro, lo que mejora la validación y la autocompletación.
+                  </li>
+                </ul>
+              </ListItem>
+
+              <ListItem icon={icons.FileText}>
+                Usa un <em>here-string</em> para devolver texto multilínea listo
+                para escribir a archivo. La sintaxis con <InlinePowerShell
+                  code='@" ... "@'
+                /> define una cadena que preserva saltos de línea e interpolación
+                de variables y expresiones (por ejemplo, <InlinePowerShell
+                  code="$Name"
+                /> o
+                <InlinePowerShell code="$(Get-Date ...)" />). También existe la
+                variante <InlinePowerShell code="@' ... '@" /> que no expande variables,
+                tratándolas como texto literal.<FootnoteRef index={4} />
+              </ListItem>
+            </List>
+          </Explanation>
+
+          <PowerShellBlock
+            code={`
+              # Desde dibs/scripts:
+              .\\New-Readme.ps1 -Name 'Utility Scripts - DIBS' -Verbose | 
+                Set-Content -Path README.md -Encoding UTF8 -Force
+            `}
+          >
+            <Fragment slot="title">Desde la terminal de PowerShell</Fragment>
+          </PowerShellBlock>
+
+          <Explanation>
+            <List>
+              <ListItem icon={icons.FolderOpen}>
+                <InlinePowerShell code="Set-Location -Path $scriptsPath" /> cambia
+                el directorio actual a <code>dibs/scripts</code>, donde vive el
+                script.
+              </ListItem>
+
+              <ListItem icon={icons.PlayCircle}>
+                <InlinePowerShell code=".\\New-Readme.ps1 -Name '...'" /> ejecuta
+                el script en la carpeta actual. El parámetro <InlinePowerShell
+                  code="-Name"
+                /> es obligatorio.
+              </ListItem>
+
+              <ListItem icon={icons.Info}>
+                <InlinePowerShell code="-Verbose" /> muestra mensajes de diagnóstico
+                (habilitado por <InlinePowerShell code="[CmdletBinding()]" /> dentro
+                del script).
+              </ListItem>
+
+              <ListItem icon={icons.FlowArrow}>
+                El resultado (texto del README) se envía por <em>pipeline</em> a
+                <InlinePowerShell code="Set-Content" />, que escribe el archivo
+                en disco.
+              </ListItem>
+
+              <ListItem icon={icons.FileText}>
+                <InlinePowerShell
+                  code="Set-Content -Path README.md -Encoding UTF8 -Force"
+                /> crea o sobrescribe <code>README.md</code> con codificación UTF-8.
+              </ListItem>
+            </List>
+          </Explanation>
+
+          <Note>
+            Por simplicidad omitiremos la documentación formal de los scripts,
+            pero en un entorno real conviene incluir comentarios y ayuda
+            integrados. Revisa
+            <Link
+              href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help"
+              >Comment-Based Help</Link
+            >.
+          </Note>
+        </TabsContent>
+
+        <!-- Bash -->
+        <TabsContent value="bash">
+          <BashScript
+            code={`
+              #!/usr/bin/env bash
+              usage() {
+                echo "Usage: $0 -n NAME [-v]" >&2
+                exit 1
+              }
+
+              NAME=""
+              VERBOSE=0
+
+              while getopts ":n:v" opt; do
+                case "$opt" in
+                  n) NAME="$OPTARG" ;;
+                  v) VERBOSE=1 ;;
+                  *) usage ;;
+                esac
+              done
+
+              [ -z "$NAME" ] && usage
+
+              [ "$VERBOSE" -eq 1 ] &&
+                echo "Creating README.md for project '$NAME'" >&2
+
+              cat <<EOF
+              # $NAME
+
+              Project initialized on $(date +"%Y-%m-%d %H:%M:%S").
+
+              Learn more about READMEs at https://www.makeareadme.com/.
+              EOF
+            `}
+          >
+            <Fragment slot="title">
+              Generar <code>README.md</code> con Bash
+            </Fragment>
+            <DibsSourceLink repo="scripts" file="new_readme.sh" slot="source" />
+          </BashScript>
+
+          <Explanation>
+            <List>
+              <ListItem icon={icons.Hash}>
+                <InlineBash code="#!/usr/bin/env bash" /> asegura que el script se
+                ejecute con Bash usando la ruta del entorno.
+              </ListItem>
+
+              <ListItem icon={icons.Function}>
+                En Bash, una función se define con la sintaxis
+                <InlineBash code="nombre() { }" />. En este caso,
+                <InlineBash code="usage()" /> imprime un mensaje de ayuda a
+                <InlineBash code="stderr" /> (<InlineBash code=">&2" />) y luego
+                invoca <InlineBash code="exit 1" />, que termina el script con
+                un código de salida 1. Ese valor distinto de cero indica error o
+                uso incorrecto, lo que permite a otras herramientas detectar que
+                la ejecución falló. Dentro del mensaje, <InlineBash code="$0" />
+                representa el nombre con el que se llamó al script, por lo que al
+                mostrarlo en la ayuda el usuario sabe exactamente qué comando debe
+                escribir.
+              </ListItem>
+
+              <ListItem icon={icons.ListChecks}>
+                <InlineBash code="getopts" /> es la forma estándar en Bash de procesar
+                argumentos de línea de comando.<FootnoteRef
+                  index={5}
+                />&nbsp;Funciona dentro de un bucle que recorre los parámetros
+                uno a uno:
+                <List>
+                  <ListItem icon={icons.TextT}>
+                    La cadena <InlineBash code=":n:v" /> define qué opciones son
+                    válidas:
+                    <InlineBash code="-n" /> requiere un valor (el nombre del proyecto)
+                    y
+                    <InlineBash code="-v" /> es un flag sin valor.
+                  </ListItem>
+                  <ListItem icon={icons.Repeat}>
+                    Dentro del bucle <InlineBash code="while" />, la variable
+                    <InlineBash code="$opt" /> toma cada opción encontrada.
+                  </ListItem>
+                  <ListItem icon={icons.GitBranch}>
+                    El bloque <InlineBash code="case ... esac" /> funciona como un
+                    <InlineCode code="match" lang="scala" /> en Scala, aunque no
+                    es tan poderoso: en Bash solo compara cadenas simples, mientras
+                    que en Scala
+                    <InlineCode code="match" lang="scala" /> es un verdadero
+                    <em>pattern matching</em> estructural que permite deconstruir
+                    objetos, trabajar con tipos y aplicar condiciones más ricas.
+                    <List>
+                      <ListItem icon={icons.TextT}>
+                        <InlineBash code='n) NAME="$OPTARG" ;;' /> asigna el valor
+                        pasado a
+                        <InlineBash code="-n" /> a la variable <code>NAME</code
+                        >.
+                      </ListItem>
+                      <ListItem icon={icons.Info}>
+                        <InlineBash code="v) VERBOSE=1 ;;" /> activa el modo detallado
+                        si se pasa <InlineBash code="-v" />.
+                      </ListItem>
+                      <ListItem icon={icons.Warning}>
+                        <InlineBash code="*) usage ;;" /> es el caso por defecto:
+                        si llega una opción inválida, se llama a <InlineBash
+                          code="usage"
+                        /> y el programa termina con error.
+                      </ListItem>
+                    </List>
+                  </ListItem>
+                </List>
+              </ListItem>
+
+              <ListItem icon={icons.Warning}>
+                La línea <InlineBash code='[ -z "$NAME" ] && usage' /> combina una
+                comprobación con una acción condicional:
+                <List>
+                  <ListItem icon={icons.BracketsSquare}>
+                    <InlineBash code="[ ... ]" /> es la sintaxis de Bash para evaluar
+                    una condición lógica (equivalente a un <code>if</code>).
+                  </ListItem>
+                  <ListItem icon={icons.TextT}>
+                    <InlineBash code="-z" /> comprueba si la cadena está vacía; en
+                    este caso, si <InlineBash code="$NAME" /> no tiene valor.
+                  </ListItem>
+                  <ListItem icon={icons.FlowArrow}>
+                    <InlineBash code="&&" /> significa “y entonces”: solo ejecuta
+                    el comando a la derecha si la condición fue verdadera.
+                  </ListItem>
+                </List>
+                Así, si el usuario no pasó un nombre con <InlineBash
+                  code="-n"
+                />, se llama a la función <InlineBash code="usage" /> para mostrar
+                la ayuda y terminar con error.
+              </ListItem>
+
+              <ListItem icon={icons.Info}>
+                La condición <InlineBash code='[ "$VERBOSE" -eq 1 ]' /> evalúa si
+                el modo detallado está activo. Si lo está, el comando a la derecha
+                de
+                <InlineBash code="&&" /> se ejecuta e imprime un mensaje con
+                <InlineBash code="echo" />. La parte <InlineBash code=">&2" /> redirige
+                la salida a
+                <em>stderr</em> (canal 2) en lugar de <em>stdout</em> (canal 1).
+                Esto es importante porque el contenido principal del script (el README)
+                fluye por
+                <em>stdout</em> y puede enviarse a un archivo o a un pipeline. Así,
+                los mensajes de diagnóstico no se mezclan con el contenido real.
+              </ListItem>
+
+              <ListItem icon={icons.FileText}>
+                El bloque <InlineBash code="cat <<EOF ... EOF" /> es un
+                <em>here document</em>, una forma de escribir texto multilínea
+                directamente en el script.
+                <List>
+                  <ListItem icon={icons.FlowArrow}>
+                    <InlineBash code="<<" /> indica que el contenido hasta la marca
+                    final (<InlineBash code="EOF" />) se enviará como entrada a
+                    <InlineBash code="cat" />, que lo imprime por <em>stdout</em
+                    >.
+                  </ListItem>
+                  <ListItem icon={icons.TextT}>
+                    Dentro del here-doc se expanden variables (como
+                    <InlineBash code="$NAME" />) y comandos en
+                    <InlineBash code="$( ... )" />, igual que en una cadena con
+                    comillas dobles.
+                  </ListItem>
+                  <ListItem icon={icons.Warning}>
+                    La palabra de cierre <InlineBash code="EOF" /> debe aparecer
+                    sola, al inicio de una línea. <InlineBash code="EOF" /> viene
+                    de
+                    <em>end of file</em>, pero no es obligatorio usar
+                    exactamente ese identificador: puedes elegir cualquier
+                    palabra (p.&nbsp;ej.
+                    <InlineBash code="END" /> o <InlineBash code="FIN" />),
+                    siempre que coincida en la apertura y el cierre.
+                  </ListItem>
+                </List>
+              </ListItem>
+            </List>
+          </Explanation>
+
+          <BashScript
+            code={`
+              # Desde dibs/scripts:
+              ./new_readme.sh -n "Utility Scripts - DIBS" -v |
+                tee README.md > /dev/null
+            `}
+          >
+            <Fragment slot="title">Desde la terminal de Bash</Fragment>
+          </BashScript>
+
+          <Explanation>
+            <List>
+              <ListItem icon={icons.PlayCircle}>
+                <InlineBash
+                  code="./new_readme.sh -n 'Utility Scripts - DIBS'"
+                /> ejecuta el script con el parámetro obligatorio <InlineBash
+                  code="-n"
+                />, que define el nombre del proyecto.
+              </ListItem>
+              <ListItem icon={icons.FlowArrow}>
+                El operador <InlineBash code="|" /> conecta la salida del script
+                con <InlineBash code="tee" /> en un <em>pipeline</em>.
+              </ListItem>
+              <ListItem icon={icons.FileText}>
+                <InlineBash code="tee README.md" /> escribe el contenido en
+                <code>README.md</code> y al mismo tiempo lo muestra en pantalla.
+              </ListItem>
+              <ListItem icon={icons.SpeakerSimpleX}>
+                <InlineBash code="> /dev/null" /> descarta la salida estándar de
+                <InlineBash code="tee" />, dejando únicamente el archivo creado.
+                Esto evita imprimir el contenido en la terminal.
+              </ListItem>
+            </List>
+          </Explanation>
+        </TabsContent>
+      </Tabs>
+    </NotesSection>
   </NotesSection>
+
+  <NotesSection id="patron-ensayo-seguro">
+    <Heading headingLevel="h2" Icon={icons.ShieldCheck}>
+      Patrón de ensayo seguro (simular antes de ejecutar)
+    </Heading>
+
+    <p class="mb-4">
+      Antes de modificar archivos o crear estructuras, es buena práctica hacer
+      un “ensayo” que muestre <em>qué</em> se haría sin hacerlo realmente. En PowerShell
+      esto se logra con <InlinePowerShell code="-WhatIf" /> (vía
+      <InlinePowerShell code="SupportsShouldProcess" />); en Bash, con una
+      bandera o variable tipo <InlineBash code="DRY_RUN" /> que activa mensajes en
+      lugar de acciones. Así evitamos efectos no deseados y ganamos confianza en
+      el script.
+    </p>
+
+    <Tabs defaultValue="powershell" syncKey="terminal-choice">
+      <TabsList>
+        <TabsTrigger value="powershell">PowerShell</TabsTrigger>
+        <TabsTrigger value="bash">Bash</TabsTrigger>
+      </TabsList>
+
+      <!-- PowerShell -->
+      <TabsContent value="powershell">
+        <PowerShellBlock
+          code={`
+          #Requires -Version 7.0
+          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+          param(
+              [Parameter(Mandatory)]
+              [ValidateNotNullOrEmpty()]
+              [string] $Name,
+
+              [string] $Path
+          )
+
+          $target = [System.IO.Path]::GetFullPath(($Path ?? $Name), (Get-Location).Path)
+
+          if ($PSCmdlet.ShouldProcess($target, 'Initialize project and create README.md')) {
+              New-Item -Path $target -ItemType Directory -Force | Out-Null
+
+              $helperPath = Join-Path -Path $PSScriptRoot -ChildPath 'New-Readme.ps1'
+              & $helperPath -Name $Name -Verbose:$VerbosePreference |
+                  Set-Content -Path (Join-Path -Path $target -ChildPath 'README.md') -Encoding UTF8 -Force
+          }
+        `}
+        >
+          <Fragment slot="title"
+            >Initialize-Project (con <code>-WhatIf</code>)</Fragment
+          >
+          <DibsSourceLink
+            repo="scripts"
+            file="Initialize-Project.ps1"
+            slot="source"
+          />
+        </PowerShellBlock>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.Shield}>
+              <InlinePowerShell code="SupportsShouldProcess" /> habilita
+              <InlinePowerShell code="-WhatIf" /> y <InlinePowerShell
+                code="-Confirm"
+              />, permitiendo simular u obligar confirmación antes de actuar.
+              Además, con <InlinePowerShell code="ConfirmImpact = 'Medium'" />
+              indicamos la “gravedad” de la operación: PowerShell solo pedirá confirmación
+              automática si la preferencia del usuario (<InlinePowerShell
+                code="$ConfirmPreference"
+              />) es igual o más baja.
+              <List>
+                <ListItem icon={icons.CheckCircle}>
+                  <InlinePowerShell code="Low" /> → operaciones triviales, casi nunca
+                  piden confirmación.
+                </ListItem>
+                <ListItem icon={icons.FolderPlus}>
+                  <InlinePowerShell code="Medium" /> → operaciones que crean o modifican
+                  archivos (nuestro caso: inicializar un proyecto).
+                </ListItem>
+                <ListItem icon={icons.Trash}>
+                  <InlinePowerShell code="High" /> → operaciones destructivas, como
+                  borrar datos críticos.
+                </ListItem>
+              </List>
+              Usar <code>Medium</code> comunica que el script modifica el sistema
+              de forma relevante (crea carpetas y archivos), pero sin ser una acción
+              destructiva.
+            </ListItem>
+
+            <ListItem icon={icons.Path}>
+              La variable <InlinePowerShell code="$target" /> se calcula con
+              <InlinePowerShell code="[System.IO.Path]::GetFullPath" />, un
+              método de la API de .NET que convierte una ruta relativa en
+              absoluta y la normaliza (quitando <code>..</code>, <code>.</code>,
+              etc.).
+              <List>
+                <ListItem icon={icons.TextT}>
+                  El operador <InlinePowerShell code="??" /> devuelve <InlinePowerShell
+                    code="$Path"
+                  /> si fue pasado como argumento, o en su defecto el valor de
+                  <InlinePowerShell code="$Name" />.
+                </ListItem>
+                <ListItem icon={icons.FolderOpen}>
+                  El segundo parámetro (<InlinePowerShell
+                    code="(Get-Location).Path"
+                  />) indica el directorio base desde el cual se resuelve la
+                  ruta, normalmente el directorio actual.
+                </ListItem>
+              </List>
+            </ListItem>
+
+            <ListItem icon={icons.ShieldCheck}>
+              <InlinePowerShell code="$PSCmdlet.ShouldProcess(...)" /> consulta si
+              la acción debe ejecutarse.
+              <InlinePowerShell code="$PSCmdlet" /> representa el contexto del cmdlet
+              actual, y
+              <InlinePowerShell code="ShouldProcess" /> habilita soportar
+              <InlinePowerShell code="-WhatIf" /> y <InlinePowerShell
+                code="-Confirm"
+              />, permitiendo simular o pedir confirmación antes de modificar el
+              sistema.
+            </ListItem>
+
+            <ListItem icon={icons.FolderOpen}>
+              <InlinePowerShell code="$PSScriptRoot" /> contiene la ruta absoluta
+              de la carpeta donde se encuentra el script actual. Es útil para construir
+              rutas relativas seguras (por ejemplo, a otros scripts o recursos en
+              el mismo directorio), en lugar de depender del directorio desde el
+              que se ejecuta PowerShell.
+            </ListItem>
+
+            <ListItem icon={icons.Terminal}>
+              <InlinePowerShell
+                code="& $helperPath -Name $Name -Verbose:$VerbosePreference | Set-Content ..."
+              /> ejecuta otro script y redirige su salida a archivo.
+              <List>
+                <ListItem icon={icons.PlayCircle}>
+                  <InlinePowerShell code="&" /> es el <em>call operator</em>:
+                  permite invocar el script cuya ruta está en <InlinePowerShell
+                    code="$helperPath"
+                  />.<FootnoteRef index={6} />
+                </ListItem>
+                <ListItem icon={icons.ToggleRight}>
+                  <InlinePowerShell code=":" /> se usa en
+                  <InlinePowerShell code="-Verbose:$VerbosePreference" /> para pasar
+                  el valor booleano de la preferencia global <InlinePowerShell
+                    code="$VerbosePreference"
+                  />, activada si se invoca con <InlinePowerShell
+                    code="-Verbose"
+                  />.
+                </ListItem>
+              </List>
+            </ListItem>
+          </List>
+        </Explanation>
+
+        <PowerShellBlock
+          code={`
+              # Desde dibs:
+              .\\scripts\\Initialize-Project.ps1 -Name "Test" -Path "test" -Verbose -WhatIf
+            `}
+        >
+          <Fragment slot="title">Desde la terminal de PowerShell</Fragment>
+        </PowerShellBlock>
+
+        <CodeBlock
+          code={`
+              What if: Performing the operation "Initialize project and create README.md" on target "C:\\path\\to\\dibs\\test".
+            `}
+          language="plaintext"
+        >
+          <Fragment slot="title"
+            >Salida con <InlinePowerShell code="-WhatIf" /></Fragment
+          >
+        </CodeBlock>
+
+        <Question>
+          Cambia <InlinePowerShell
+            code="[System.IO.Path]::GetFullPath(($Path ?? $Name), (Get-Location).Path)"
+          /> por: <InlinePowerShell
+            code="[System.IO.Path]::GetFullPath(($Path ?? $Name))"
+          />. ¿Qué sucedería si ejecutas eso sin <InlinePowerShell
+            code="-WhatIf"
+          />?
+        </Question>
+      </TabsContent>
+
+      <!-- Bash -->
+      <TabsContent value="bash">
+        Primero, definiremos un par de scripts utilitarios para algunas tareas
+        comunes:
+
+        <BashScript
+          code={`
+            #!/usr/bin/env bash
+            log() {
+                [ "\${VERBOSE:-0}" -eq 1 ] && printf '%s\\n' "$*" >&2 || true
+            }
+          `}
+        >
+          <Fragment slot="title">
+            <code>log</code> (con <code>VERBOSE</code>)
+          </Fragment>
+          <DibsSourceLink repo="scripts" file="lib/log.sh" slot="source" />
+        </BashScript>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.Sliders}>
+              <InlineBash code=`"\${VERBOSE:-0}"` />: expansión por defecto. Si <InlineBash
+                code=`VERBOSE`
+              /> no existe o está vacío, usa <InlineBash code=`0` />; si existe,
+              usa su valor. Así evitamos errores en comparaciones numéricas.
+            </ListItem>
+
+            <ListItem icon={icons.Code}>
+              <strong>
+                <InlineBash code={`printf`} /> vs <InlineBash code={`echo`} />
+              </strong>:
+              <InlineBash code={`printf`} /> es más predecible (sin sorpresas con
+              escapes, espacios o <InlineBash code={`-n`} />) y nos permite
+              controlar el salto de línea con <InlineBash code={`\\n`} />. El
+              especificador <InlineBash code={`%s`} /> indica “imprime la cadena
+              tal como viene”, sustituyéndolo por el argumento correspondiente.
+              <br />
+              Es preferible para scripts porque nos da un formato consistente y controlado.
+            </ListItem>
+
+            <ListItem icon={icons.Quotes}>
+              <InlineBash code={`"$*"`} />: expande <strong
+                >todos los argumentos como una sola cadena</strong
+              >, separados por el primer carácter de
+              <InlineBash code="IFS" /> (la variable especial <em
+                >Input Field Separator</em
+              >, que por defecto es un espacio). En este caso sirve para mostrar
+              el mensaje completo en una sola línea.
+              <br />
+              Si en cambio queremos preservar la separación entre argumentos (cada
+              uno como unidad independiente), debemos usar
+              <InlineBash code={`"$@"`} />.</ListItem
+            >
+
+            <ListItem icon={icons.CheckCircle}
+              ><InlineBash code={`|| true`} />: garantiza que, si la parte
+              izquierda no ejecuta nada (por ejemplo cuando <InlineBash
+                code="VERBOSE=0"
+              />), la función igualmente devuelva éxito. Es una forma sencilla
+              de decir “si no se cumple la condición, haz nada pero considera
+              que salió bien”.</ListItem
+            >
+          </List>
+        </Explanation>
+
+        <BashScript
+          code={`
+            #!/usr/bin/env bash
+            absolute_path() {
+                local path="$1"
+                case "$path" in
+                /*) printf '%s\\n' "$path" ;;
+                *)  printf '%s/%s\\n' "$(pwd -P)" "$path" ;;
+                esac
+            }
+          `}
+        >
+          <Fragment slot="title">
+            <code>absolute_path</code> (versión simple de <code>realpath</code
+            >/<code>grealpath</code>)
+          </Fragment>
+          <DibsSourceLink
+            repo="scripts"
+            file="lib/absolute_path.sh"
+            slot="source"
+          />
+        </BashScript>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.Pencil}
+              ><InlineBash code='local path="$1"' />: <InlineBash
+                code="local"
+              /> limita la variable al ámbito de la función. <InlineBash
+                code="$1"
+              /> es el <strong>primer argumento</strong> recibido.</ListItem
+            >
+
+            <ListItem icon={icons.GitBranch}
+              ><InlineBash code="case ... esac" /> selecciona por patrones:
+
+              <List>
+                <ListItem icon={icons.FolderOpen}
+                  ><InlineBash code="/*)" /> → ya es ruta absoluta (<InlineBash
+                    code="/"
+                  /> seguido de cualquier cosa); se imprime tal cual.</ListItem
+                >
+
+                <ListItem icon={icons.Link}
+                  ><InlineBash code="*)" /> → ruta relativa; se antepone el directorio
+                  actual.</ListItem
+                >
+              </List></ListItem
+            >
+
+            <ListItem icon={icons.Compass}
+              ><InlineBash code="pwd -P" /> devuelve el <em
+                >directorio actual físico</em
+              > (resuelve <Link
+                href="https://en.wikipedia.org/wiki/Symbolic_link"
+                >symlinks</Link
+              >). Es una elección simple y portable para construir rutas
+              absolutas en ejemplos básicos.<FootnoteRef index={7} /></ListItem
+            >
+          </List>
+
+          En conjunto, la función convierte rutas relativas en absolutas sin
+          depender de <InlineBash code="realpath" />/<InlineBash
+            code="grealpath"
+          />. Mantiene la simplicidad: no normaliza <InlineBash
+            code="."
+          />/<InlineBash code=".." /> ni resuelve rutas de elementos que aún no existen,
+          lo que sirve como punto de partida para discutir mejoras futuras.
+        </Explanation>
+
+        <BashScript
+          code={`
+            #!/usr/bin/env bash
+            usage() {
+              echo "Usage: $0 -n NAME [-p PATH] [-v]" >&2
+              exit 1
+            }
+
+            NAME=""
+            PATH_DIR=""
+            VERBOSE=0
+
+            while getopts ":n:p:v" opt; do
+              case "$opt" in
+                n) NAME="$OPTARG" ;;
+                p) PATH_DIR="$OPTARG" ;;
+                v) VERBOSE=1 ;;
+                *) usage ;;
+              esac
+            done
+
+            [ -z "$NAME" ] && usage
+
+            # Rutas base del script y librerías
+            SCRIPT_DIR="$(cd -- "$(dirname -- "\${BASH_SOURCE[0]}")" && pwd -P)"
+            LIB_DIR="$SCRIPT_DIR/lib"
+
+            # Cargar utilidades compartidas
+            . "$LIB_DIR/log.sh"
+            . "$LIB_DIR/dry_run.sh"
+
+            # Resolver destino absoluto (aunque no exista todavía)
+            TARGET="\${PATH_DIR:-$NAME}"
+            TARGET="$(realpath -m -- "$TARGET")"
+
+            log "Destino: $TARGET"
+            dry_run mkdir -p "$TARGET"
+
+            dry_run bash -c "\\"$SCRIPT_DIR/new_readme.sh\\" -n \\"$NAME\\" \${VERBOSE:+-v} | tee \\"$TARGET/README.md\\" >/dev/null"
+
+            log "OK: proyecto '$NAME' en $TARGET"
+          `}
+        >
+          <Fragment slot="title"
+            ><code>initialize_project.sh</code> (con <code>DRY_RUN</code> y <code
+              >tee</code
+            >)</Fragment
+          >
+          <DibsSourceLink
+            repo="scripts"
+            file="initialize_project.sh"
+            slot="source"
+          />
+        </BashScript>
+
+        <Explanation>
+          <List>
+            <ListItem icon={icons.Path}
+              ><InlineBash
+                code={`SCRIPT_DIR="$(cd -- "$(dirname -- "\${BASH_SOURCE[0]}")" && pwd -P)"`}
+              />: guarda en <InlineBash code="SCRIPT_DIR" /> la ruta absoluta y real
+              del directorio donde está el script.
+              <List>
+                <ListItem icon={icons.Minus}>
+                  <InlineBash code="--" />: marca el final de las opciones para
+                  <InlineBash code="cd" />. Así, aunque el directorio se llame
+                  por ejemplo <code>-n</code> o <code>-v</code>, no se
+                  interpreta como un flag sino como un nombre de carpeta.
+                </ListItem>
+
+                <ListItem icon={icons.FolderOpen}
+                  ><InlineBash code="dirname" />: recibe una ruta de archivo y
+                  devuelve solo su carpeta contenedora. Aquí lo usamos sobre <InlineBash
+                    code="\${BASH_SOURCE[0]}"
+                  />.</ListItem
+                >
+
+                <ListItem icon={icons.FileCode}>
+                  <InlineBash code="\${BASH_SOURCE[0]}" />: se expande a la ruta
+                  del script que se está ejecutando, incluso si fue invocado
+                  mediante un <Link
+                    href="https://en.wikipedia.org/wiki/Symbolic_link"
+                    >symlink</Link
+                  > o con <InlineBash code="source" />.
+                </ListItem>
+
+                <ListItem icon={icons.Compass}>
+                  <InlineBash code="pwd -P" />: muestra la ruta absoluta
+                  <em>resuelta</em>, sin symlinks y normalizando <InlineBash
+                    code="."
+                  /> y
+                  <InlineBash code=".." />. Así aseguramos una ruta limpia y
+                  estable.
+                </ListItem>
+
+                <ListItem icon={icons.Quotes}>
+                  Todo el bloque <InlineBash code={`cd ... && pwd -P`} /> está dentro
+                  de <InlineBash code="$()" />, que captura su salida como una
+                  cadena. De esta forma el resultado se asigna directamente a
+                  <InlineBash code="SCRIPT_DIR" />.
+                </ListItem>
+              </List>
+
+              En conjunto, esto garantiza que <InlineBash code="SCRIPT_DIR" /> siempre
+              apunte al directorio real del script, sin depender del directorio actual
+              desde el que se ejecute.
+            </ListItem>
+
+            <ListItem icon={icons.Link}>
+              <InlineBash code={`. "ruta/al/script.sh"`} /> (<em>source</em>):
+              carga funciones/variables en el shell actual.
+            </ListItem>
+
+            <ListItem icon={icons.Compass}>
+              <InlineBash code={`realpath -m -- "$TARGET"`} />: obtiene una ruta
+              absoluta <em>normalizada</em> (resolviendo
+              <InlineBash code="." />, <InlineBash code=".." /> y enlaces simbólicos).
+              El flag <InlineBash code="-m" /> permite hacerlo aunque la ruta aún
+              no exista; sin él, <InlineBash code="realpath" /> daría error. Así
+              <InlineBash code="TARGET" /> queda siempre en una forma absoluta y
+              estable, incluso antes de crear el directorio.
+            </ListItem>
+
+            <ListItem icon={icons.ToggleRight}>
+              <InlineBash code={`\${VERBOSE:+-v}`} />: expande a
+              <InlineBash code={`-v`} />
+              <em>si y solo si</em>
+              <InlineBash code={`VERBOSE`} /> está <strong
+                >definida y no vacía</strong
+              >.
+              <strong>Nota:</strong> en este script <InlineBash
+                code={`VERBOSE`}
+              /> siempre está definida (inicializada en <InlineBash
+                code={`0`}
+              />), por lo que la expansión activaría <InlineBash code={`-v`} /> incluso
+              con <InlineBash code={`0`} />. Dos alternativas:
+              <List>
+                <ListItem icon={icons.Lightbulb}>
+                  No inicializar <InlineBash code={`VERBOSE`} /> (déjala sin setear)
+                  y solo setearla con <InlineBash code={`-v`} />; así la
+                  expansión funciona tal cual.
+                </ListItem>
+                <ListItem icon={icons.Wrench}>
+                  <!-- O bien: <code>[ "$VERBOSE" -eq 1 ] &amp;&amp; VFLAG=-v; dry_run ... "$SCRIPT_DIR/new_readme.sh" -n "$NAME" \${VFLAG:+$VFLAG}</code>. -->
+                </ListItem>
+              </List>
+            </ListItem>
+            <ListItem icon={icons.Terminal}>
+              <code>| tee "$TARGET/README.md" &gt;/dev/null</code>: <code
+                >tee</code
+              > guarda la salida en el archivo y la enviaría también a <code
+                >stdout</code
+              >; redirigimos a <code>/dev/null</code> para no imprimirla en pantalla.
+            </ListItem>
+            <ListItem icon={icons.EyeSlash}>
+              <strong>Modo DRY_RUN:</strong> se imprimirá el pipeline completo (incluyendo
+              <code>tee</code>) sin crear archivos ni ejecutar el generador.
+            </ListItem>
+          </List>
+        </Explanation>
+
+        <BashScript
+          code={`
+    # Desde dibs:
+    DRY_RUN=1 ./scripts/initialize_project.sh -n "Test" -p "test" -v
+  `}
+        >
+          <Fragment slot="title">Desde la terminal de Bash</Fragment>
+        </BashScript>
+
+        <CodeBlock
+          code={`
+    [DRY_RUN] mkdir -p /ruta/absoluta/a/dibs/test
+    [DRY_RUN] ./scripts/new_readme.sh -n "Test" -v | tee /ruta/absoluta/a/dibs/test/README.md >/dev/null
+  `}
+          language="plaintext"
+        >
+          <Fragment slot="title"
+            >Salida con <InlineBash code="DRY_RUN=1" /></Fragment
+          >
+        </CodeBlock>
+      </TabsContent>
+    </Tabs>
+  </NotesSection>
+
+  <NotesSection id="...">
+    <Heading headingLevel="h2" Icon={null}> ... </Heading>
+
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          "Definir id",
+          "Definir el título y su ícono",
+          `Agregar texto "al rededor" del código para contextualizar`,
+          `Manejo de errores:
+            - PowerShell: try/catch, $ErrorActionPreference, $LASTEXITCODE
+            - Bash: set -euo pipefail, trap, manejo de códigos de salida`,
+        ],
+      }}
+    />
+  </NotesSection>
+
+  <Footnotes>
+    <Footnote index={1}>
+      A diferencia de los shells tradicionales, PowerShell trata todo como
+      objetos de .NET. Esto habilita capacidades como composición, herencia,
+      manejo de excepciones y tipado más estricto, lo que acerca la experiencia
+      a la de un lenguaje de programación completo. Además, permite cierto nivel
+      de compatibilidad con C#, lo que facilita integrar scripts con bibliotecas
+      y funcionalidades del ecosistema .NET para resolver tareas más complejas.
+    </Footnote>
+
+    <Footnote index={2}>
+      Puedes ajustar <InlinePowerShell code="#Requires" /> a otra versión, pero no
+      garantizamos compatibilidad con PowerShell anterior.
+    </Footnote>
+
+    <Footnote index={3}>
+      Microsoft define una lista de verbos recomendados en
+      <Link
+        href="https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands"
+        >Approved Verbs for Windows PowerShell Commands</Link
+      >.
+    </Footnote>
+
+    <Footnote index={4}>
+      Recuerda que el cierre <InlinePowerShell code='"@' /> debe estar al comienzo
+      de una línea, lo que a veces arruina la estética de un script bien indentado.
+      Pero no tener que escapar caracteres puede ser una buena compensación en muchos
+      casos.
+    </Footnote>
+
+    <Footnote index={5}>
+      Puedes encontrar más detalles en <Link
+        href="https://man7.org/linux/man-pages/man1/getopts.1p.html"
+        >getopts(1p)</Link
+      >.
+    </Footnote>
+
+    <Footnote index={6}>
+      <InlinePowerShell code="&" /> ejecuta un script en un nuevo contexto, sin compartir
+      variables locales. En cambio, <InlinePowerShell code="." /> (dot-sourcing)
+      carga el script en el contexto actual, permitiendo que sus funciones y variables
+      permanezcan disponibles después de la ejecución.
+    </Footnote>
+
+    <Footnote index={7}>
+      También podrías usar <InlineBash code="$PWD" /> (variable de entorno con el
+      directorio “lógico”); aquí preferimos <InlineBash code="pwd -P" /> para evitar
+      sorpresas cuando hay enlaces simbólicos.
+    </Footnote>
+  </Footnotes>
 </NotesLayout>

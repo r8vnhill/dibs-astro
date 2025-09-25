@@ -14,6 +14,10 @@
   --hints__bg-color: #f3e8ff;
   --hints__border-color: #a855f7;
   --hints__title-color: #6b21a8;
+
+  --question__bg-color: #f5f3ff;
+  --question__border-color: #8b5cf6;
+  --question__title-color: #5b21b6;
 }
 
 :root.dark {
@@ -32,6 +36,10 @@
   --hints__bg-color: #2a0e36;
   --hints__border-color: #c084fc;
   --hints__title-color: #e9d5ff;
+
+  --question__bg-color: #2e1065;
+  --question__border-color: #c084fc;
+  --question__title-color: #ede9fe;
 }
 
 @theme inline {
@@ -50,4 +58,8 @@
   --color-hints-bg: var(--hints__bg-color);
   --color-hints-border: var(--hints__border-color);
   --color-hints-title: var(--hints__title-color);
+
+  --color-question-bg: var(--question__bg-color);
+  --color-question-border: var(--question__border-color);
+  --color-question-title: var(--question__title-color);
 }

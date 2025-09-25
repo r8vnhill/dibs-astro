@@ -4,6 +4,7 @@ import {
   type TabsSyncEvent,
   type TabValue,
 } from "./events";
+import { nextTabsId } from "./init";
 import { TabState } from "./state";
 
 /**
@@ -36,7 +37,7 @@ export class TabsController {
   constructor(tabs: HTMLElement, idx: number) {
     this.tabs = tabs;
     this.triggers = Array.from(
-      tabs.querySelectorAll("[data-tabs-list] > [data-tabs-trigger]")
+      tabs.querySelectorAll("[data-tabs-list] [data-tabs-trigger]")
     );
     this.contents = Array.from(tabs.querySelectorAll("[data-tabs-content]"));
     this.tabsId = `starwind-tabs${idx}`;
@@ -259,11 +260,14 @@ export class TabsController {
     });
 
     // Initialize any nested tab groups inside the activated content
-    content.querySelectorAll(".starwind-tabs").forEach((nested, idx) => {
-      if (nested instanceof HTMLElement && !tabInstances.has(nested)) {
-        tabInstances.set(nested, new TabsController(nested, 1000 + idx));
-      }
-    });
+    content
+      .querySelectorAll<HTMLElement>(".starwind-tabs")
+      .forEach((nested) => {
+        if (!tabInstances.has(nested)) {
+          const id = nextTabsId();
+          tabInstances.set(nested, new TabsController(nested, id));
+        }
+      });
   }
 
   /**

@@ -6,7 +6,6 @@ import {
   TabsTrigger,
 } from "~/components/starwind/tabs";
 import { Explanation } from "../callouts";
-import ToDo from "~/components/utils/ToDo";
 import PowerShellBlock from "./ps1/PowerShellBlock.astro";
 import { BashScript } from ".";
 
@@ -28,38 +27,24 @@ const { powerShellCode, bashCode, className }: Props = Astro.props;
   <TabsContent value="powershell">
     <PowerShellBlock code={powerShellCode}>
       <slot name="powershell-title" slot="title">
-        Desde PowerShell
+        Desde la terminal de PowerShell
       </slot>
       <slot name="powershell-source" slot="source" />
     </PowerShellBlock>
 
     <Explanation>
-      <slot name="powershell-explanation">
-        <ToDo
-          client:only="react"
-          metadata={{
-            tasks: ["Explicar cada comando"],
-          }}
-        />
-      </slot>
+      <slot name="powershell-explanation" />
     </Explanation>
   </TabsContent>
 
   <TabsContent value="bash">
     <BashScript code={bashCode}>
-      <slot name="bash-title" slot="title">Desde Bash/Zsh</slot>
+      <slot name="bash-title" slot="title">Desde la terminal de Bash/Zsh</slot>
       <slot name="bash-source" slot="source" />
     </BashScript>
 
     <Explanation>
-      <slot name="bash-explanation">
-        <ToDo
-          client:only="react"
-          metadata={{
-            tasks: ["Explicar cada comando"],
-          }}
-        />
-      </slot>
+      <slot name="bash-explanation" />
     </Explanation>
   </TabsContent>
 </Tabs>

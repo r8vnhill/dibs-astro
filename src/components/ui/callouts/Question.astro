@@ -1,0 +1,103 @@
+---
+import CalloutHeading from "./CalloutHeading.astro";
+import type { BaseCalloutProps } from "./shared";
+import * as icons from "~/assets/img/icons";
+
+type QuestionProps = BaseCalloutProps;
+
+/* -------------------- Resolve props & defaults -------------------- */
+const {
+  title = "Piensa rápido",
+  icon: Icon = icons.Question,
+  headingLevel = "h3",
+  headingId,
+  class: className = "",
+  headingClass = "",
+  iconClass = "",
+  ariaLabel,
+  compact = false,
+  prose = true,
+  // Any other attributes will be filtered and forwarded to <section>
+  ...rest
+} = Astro.props as QuestionProps & Record<string, any>;
+
+const resolvedHeadingId = headingId ?? `question-${crypto.randomUUID()}`;
+
+/**
+ * Forward only safe/expected attributes to the <section> (e.g., id, data-*, aria-*).
+ * This keeps the component flexible without opening it to accidental attribute leakage.
+ */
+const passthrough = Object.fromEntries(
+  Object.entries(rest).filter(
+    ([k]) => k === "id" || k.startsWith("data-") || k.startsWith("aria-")
+  )
+);
+---
+
+<section
+  class:list={[
+    "question relative rounded-md shadow-sm",
+    compact ? "px-4 py-3" : "px-5 py-4",
+    className,
+  ]}
+  style={{
+    // Pass resolved colors down to the child heading through CSS variables.
+    "--callout-title-color": "var(--question__title-color)",
+    "--callout-icon-color": "var(--question__icon-color)",
+  }}
+  role="region"
+  aria-labelledby={resolvedHeadingId}
+  {...ariaLabel ? { "aria-label": ariaLabel } : {}}
+  {...passthrough}
+>
+  <!-- Heading row (icon + title). -->
+  <CalloutHeading
+    Icon={Icon}
+    heading={title}
+    headingLevel={headingLevel}
+    headingId={resolvedHeadingId}
+    class={`question__title ${headingClass}`}
+    iconClass={`question__icon ${iconClass}`}
+  >
+    <slot name="title">{title}</slot>
+  </CalloutHeading>
+
+  <!-- Body content. Enable `prose` when you want Typography styles. -->
+  <div
+    class:list={[
+      "question__body",
+      prose &&
+        "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed",
+    ]}
+  >
+    <slot />
+  </div>
+</section>
+
+<style scoped>
+  .question {
+    padding: 1rem 1.25rem;
+    border-radius: 0.375rem;
+    margin: 1rem 0;
+    background-color: var(--question__bg-color);
+    border-left: 4px solid var(--question__border-color);
+  }
+
+  /* NOTE:
+     The rule below assumes you define *-dark variables globally (e.g., in a tokens.css).
+     If you rely entirely on :root.dark overrides above, you can remove this block. */
+  :global([data-theme="dark"]) :where(.question) {
+    background-color: var(--question__bg-color-dark);
+    border-left-color: var(--question__border-color-dark);
+  }
+
+  /* ------------------------------------------------------------
+     Body rhythm adjustments
+     ------------------------------------------------------------ */
+  .question__body :where(p:first-child) {
+    margin-top: 0;
+  }
+  .question__body :where(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

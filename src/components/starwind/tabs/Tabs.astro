@@ -63,10 +63,6 @@ const {
 } = Astro.props;
 ---
 
-<!--
-  Outer visual container for the tabs component.
-  You can safely customize this wrapper (e.g., to add padding, background, border).
--->
 <div
   class:list={[
     "starwind-tabs-container",
@@ -79,15 +75,10 @@ const {
     "dark:bg-neutral-900",
   ]}
 >
-  <!--
-    Root tablist container.
-    `data-default-value` and `data-sync-key` are read by TabsController on initialization.
-  -->
   <div
     class={tabs({ class: className })}
     data-default-value={defaultValue}
     data-sync-key={syncKey}
-    role="tablist"
     aria-orientation={orientation}
     {...rest}
   >
@@ -96,16 +87,13 @@ const {
 </div>
 
 <script>
-  /**
-   * Dynamically initialize tab behavior on client load and page swaps.
-   */
   import { initStarwindTabs } from "~/utils/tabs";
 
   if (typeof window !== "undefined") {
-    // Initialize all non-nested .starwind-tabs instances
+    // Initializes **all** instances (including nested ones),
+    // but each one scoped to its own root.
     initStarwindTabs();
 
-    // Re-initialize tabs after Astro navigation (hydration)
     const controller = new AbortController();
     document.addEventListener("astro:after-swap", initStarwindTabs, {
       signal: controller.signal,

@@ -17,6 +17,7 @@ import Tip from "~/components/ui/callouts/Tip.astro";
 import Warning from "~/components/ui/callouts/Warning.astro";
 import {
   BashScript,
+  InlineBash,
   InlinePowerShell,
   PowerShellBlock,
 } from "~/components/ui/code";
@@ -26,9 +27,12 @@ import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import { Link } from "~/components/ui/links";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
+import ToDo from "~/components/utils/ToDo";
 import DevEnv from "~/content/installation/DevEnv.astro";
 import JDK21Note from "~/content/installation/JDK21Note.astro";
 import CommunityVsUltimate from "~/fragments/notes/installation/CommunityVsUltimate.astro";
+import IntelliJCommunityNote from "~/fragments/notes/installation/IntelliJCommunityNote.astro";
+import StudentPack from "~/fragments/notes/installation/StudentPack.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -44,7 +48,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
       escribir código con confianza, colaborar de forma efectiva, automatizar
       tareas y concentrarte en lo esencial: diseñar soluciones elegantes y
       funcionales.
-    </p><p>
+    </p>
+    <p>
       Esta sección te guiará para dejar todo listo en tu sistema operativo
       favorito. Algunas herramientas son <strong>imprescindibles</strong>,
       mientras que otras son <strong>opcionales pero recomendadas</strong> para mejorar
@@ -59,25 +64,31 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <List>
       <ListItem icon={icons.GitBranch}>
-        <Link href="https://git-scm.com/">Git</Link>:&nbsp;Sistema de control de
+        <Link href="https://git-scm.com/">Git</Link>: Sistema de control de
         versiones para gestionar cambios y colaborar en equipo.
       </ListItem>
 
       <ListItem icon={icons.BracketsCurly}>
-        <Link href="https://openjdk.org/">
-          Java Development Kit (JDK)
-        </Link>:&nbsp;Entorno requerido para ejecutar Kotlin. Se recomienda la
-        versión 21 (LTS) o superior.
+        <Link href="https://openjdk.org/">Java Development Kit (JDK)</Link>:
+        Entorno requerido para ejecutar Kotlin. Se recomienda la versión 21
+        (LTS) o superior.
       </ListItem>
 
       <ListItem icon={icons.Lightning}>
-        <Link href="https://kotlinlang.org/"> Kotlin </Link>:&nbsp;Lenguaje de
+        <Link href="https://kotlinlang.org/">Kotlin</Link>: Lenguaje de
         programación principal del curso.
       </ListItem>
 
       <ListItem icon={icons.Package}>
-        <Link href="https://gradle.org/"> Gradle </Link>:&nbsp;Herramienta para
+        <Link href="https://gradle.org/">Gradle</Link>: Herramienta para
         compilar proyectos y gestionar dependencias.
+      </ListItem>
+
+      <ListItem icon={icons.Terminal}>
+        <Link href="https://learn.microsoft.com/en-us/powershell/"
+          >PowerShell</Link
+        >: Lenguaje de scripting y shell multiplataforma que usaremos para
+        automatizar tareas y unificar ejemplos en todos los sistemas operativos.
       </ListItem>
     </List>
   </NotesSection>
@@ -89,20 +100,32 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <List>
       <ListItem icon={icons.MonitorPlay}>
-        <Link href="https://www.jetbrains.com/idea/">IntelliJ IDEA</Link>:&nbsp;
+        <Link href="https://www.jetbrains.com/idea/">IntelliJ IDEA</Link>:
         Entorno de desarrollo más completo y recomendado para Kotlin.
       </ListItem>
 
-      <ListItem icon={icons.Terminal}>
-        <Link href="https://gitlab.com/gitlab-org/cli">GitLab CLI</Link>:&nbsp;
-        Permite interactuar con GitLab directamente desde la terminal, sin
-        necesidad de usar el navegador.
+      <ListItem icon={icons.Code}>
+        <Link href="https://code.visualstudio.com/">Visual Studio Code</Link>:
+        Editor ligero, extensible y multiplataforma. Útil si prefieres algo más
+        liviano que IntelliJ.
+      </ListItem>
+
+      <ListItem icon={icons.GitlabLogo}>
+        <Link href="https://gitlab.com/gitlab-org/cli">GitLab CLI</Link>:
+        Interfaz de línea de comandos para interactuar con GitLab directamente
+        desde la terminal, sin depender del navegador.
       </ListItem>
 
       <ListItem icon={icons.Sparkle}>
-        <Link href="https://ohmyposh.dev/">Oh My Posh</Link>:&nbsp; Personaliza
-        y mejora la apariencia y productividad de la terminal (especialmente
-        útil en Windows).
+        <Link href="https://ohmyposh.dev/">Oh My Posh</Link>: Personalizador de
+        PowerShell que mejora la apariencia y la productividad.
+      </ListItem>
+
+      <ListItem icon={icons.TerminalWindow}>
+        <Link href="https://apps.microsoft.com/detail/9n0dx20hk701"
+          >Windows Terminal</Link
+        >: Terminal moderna para Windows que soporta múltiples pestañas y shells
+        (incluyendo PowerShell).
       </ListItem>
     </List>
   </NotesSection>
@@ -117,7 +140,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
       necesarias en tu sistema operativo y personalizar tu entorno de
       desarrollo.
     </p>
-    <p>
+    <p class="mb-4">
       Si alguna instrucción no funciona o surge un problema, consulta la
       documentación oficial de la herramienta o abre un <em>issue</em> en el
       <Link href="https://gitlab.com/r8vnhill/dibs-astro/-/issues"
@@ -125,111 +148,387 @@ import NotesSection from "~/layouts/NotesSection.astro";
       >. Estaremos atentos para ayudarte.
     </p>
 
-    <NotesSection id="windows-installation">
-      <Heading Icon={icons.WindowsLogo} headingLevel="h3" slot="heading">
-        Instalación en Windows
-      </Heading>
+    <Tabs defaultValue="windows">
+      <TabsList>
+        <TabsTrigger value="windows">Windows</TabsTrigger>
+        <TabsTrigger value="linux">Linux</TabsTrigger>
+        <TabsTrigger value="macos">macOS</TabsTrigger>
+      </TabsList>
 
-      <NotesSection id="scoop-installation">
-        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
-          Instalar Scoop (gestor de paquetes)
-        </Heading>
+      <TabsContent value="windows">
+        <NotesSection id="installation-windows">
+          <Heading Icon={icons.WindowsLogo} headingLevel="h3">
+            Instalación en Windows
+          </Heading>
 
-        <p>
-          Scoop es un gestor de paquetes para Windows que simplifica la
-          instalación de herramientas desde la terminal. Más detalles en su
-          <Link href="https://scoop.sh/">sitio oficial</Link>.
-        </p>
+          <NotesSection id="scoop-installation">
+            <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+              Instalar Scoop (gestor de paquetes)
+            </Heading>
 
-        <p>Para instalarlo, ejecuta lo siguiente en PowerShell:</p>
+            <p>
+              <strong>Scoop</strong> es el gestor de paquetes recomendado en Windows.
+              Permite instalar aplicaciones de línea de comando y gráficas de forma
+              sencilla desde PowerShell. Más detalles en su
+              <Link href="https://scoop.sh/">sitio oficial</Link>.
+            </p>
 
-        <PowerShellBlock
-          code={`
-            # Permite ejecutar scripts descargados de internet para el usuario actual
+            <PowerShellBlock
+              code={`
             Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-            # Instala Scoop
             Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
           `}
-        >
-          <Fragment slot="title">Instalación de Scoop</Fragment>
-        </PowerShellBlock>
+            >
+              <Fragment slot="title">Instalar Scoop</Fragment>
+            </PowerShellBlock>
 
-        <p>Verifica que la instalación se haya realizado correctamente:</p>
+            <PowerShellBlock code="scoop --version">
+              <Fragment slot="title">Verificar instalación</Fragment>
+            </PowerShellBlock>
+          </NotesSection>
 
-        <PowerShellBlock code="scoop --version">
-          <Fragment slot="title">Verificación de Scoop</Fragment>
-        </PowerShellBlock>
-      </NotesSection>
+          <NotesSection id="tools-installation-windows">
+            <Heading Icon={icons.Hammer} headingLevel="h4">
+              Instalar herramientas
+            </Heading>
 
-      <NotesSection id="terminal-improvements">
-        <Heading Icon={icons.TerminalWindow} headingLevel="h4" slot="heading">
-          Personalizar la terminal
+            <p>
+              Con <strong>Scoop</strong> puedes instalar todas las herramientas necesarias
+              para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA y Visual
+              Studio Code.
+            </p>
+
+            <CommunityVsUltimate />
+
+            <Tabs defaultValue="community">
+              <TabsList>
+                <TabsTrigger value="community"
+                  >IntelliJ IDEA Community</TabsTrigger
+                >
+                <TabsTrigger value="ultimate"
+                  >IntelliJ IDEA Ultimate</TabsTrigger
+                >
+              </TabsList>
+
+              <TabsContent value="community">
+                <PowerShellBlock
+                  code={`scoop install git glab openjdk21 gradle idea vscode`}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Community)</Fragment
+                  >
+                </PowerShellBlock>
+                <IntelliJCommunityNote />
+              </TabsContent>
+
+              <TabsContent value="ultimate">
+                <PowerShellBlock
+                  code={`scoop install git glab openjdk21 gradle idea-ultimate vscode`}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Ultimate)</Fragment
+                  >
+                </PowerShellBlock>
+                <StudentPack />
+              </TabsContent>
+            </Tabs>
+          </NotesSection>
+        </NotesSection>
+      </TabsContent>
+
+      <TabsContent value="linux"> ... </TabsContent>
+
+      <TabsContent value="macos"> ... </TabsContent>
+    </Tabs>
+
+    <!-- macOS -->
+    <NotesSection id="installation-macos">
+      <Heading Icon={icons.AppleLogo} headingLevel="h3">
+        Instalación en macOS
+      </Heading>
+
+      <NotesSection id="homebrew-installation">
+        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+          Instalar Homebrew (gestor de paquetes)
         </Heading>
 
         <p>
-          Windows incluye una terminal básica, pero puedes mejorar tu
-          experiencia instalando <strong>Windows Terminal</strong> y añadiendo personalización
-          con <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
+          En <strong>macOS</strong>, <strong>Homebrew</strong> es el gestor de paquetes
+          recomendado. Permite instalar tanto herramientas de línea de comando como
+          aplicaciones gráficas con una sintaxis sencilla.
         </p>
 
-        <List>
-          <ListItem icon={icons.Storefront}>
-            Descarga <strong>Windows Terminal</strong> desde la
-            <Link
-              href="https://www.microsoft.com/es-mx/p/windows-terminal/9n0dx20hk701"
-            >
-              Microsoft Store
-            </Link>.
-          </ListItem>
-          <ListItem icon={icons.Sparkle}>
-            <strong>Opcional:</strong> añade estilos y funcionalidades adicionales
-            con
-            <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
-          </ListItem>
-        </List>
+        <BashScript
+          code={`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`}
+        >
+          <Fragment slot="title">Instalar Homebrew</Fragment>
+        </BashScript>
 
-        <PowerShellBlock
+        <BashScript code="brew --version">
+          <Fragment slot="title">Verificar instalación</Fragment>
+        </BashScript>
+      </NotesSection>
+
+      <NotesSection id="tools-installation-macos">
+        <Heading Icon={icons.Hammer} headingLevel="h4">
+          Instalar herramientas
+        </Heading>
+
+        <p>
+          Con <strong>Homebrew</strong> puedes instalar todas las herramientas necesarias
+          para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA, PowerShell
+          y Visual Studio Code.
+        </p>
+
+        <CommunityVsUltimate />
+
+        <Tabs defaultValue="community">
+          <TabsList>
+            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
+            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="community">
+            <BashScript
+              code={`
+                brew install git glab openjdk@21 gradle
+                brew install --cask intellij-idea-ce powershell visual-studio-code`}
+            >
+              <Fragment slot="title"
+                >Instalar herramientas esenciales (Community)</Fragment
+              >
+            </BashScript>
+            <IntelliJCommunityNote />
+          </TabsContent>
+
+          <TabsContent value="ultimate">
+            <BashScript
+              code={`
+                brew install git glab openjdk@21 gradle
+                brew install --cask intellij-idea powershell visual-studio-code
+              `}
+            >
+              <Fragment slot="title"
+                >Instalar herramientas esenciales (Ultimate)</Fragment
+              >
+            </BashScript>
+            <StudentPack />
+          </TabsContent>
+        </Tabs>
+
+        <Info>
+          <slot slot="title">Sobre <InlineBash code="--cask" /></slot>
+
+          La opción <InlineBash code="--cask" /> instala aplicaciones gráficas (como
+          IntelliJ o VS Code).
+        </Info>
+
+        <JDK21Note />
+      </NotesSection>
+    </NotesSection>
+
+    <!-- Linux -->
+    <NotesSection id="installation-linux">
+      <Heading Icon={icons.LinuxLogo} headingLevel="h3">
+        Instalación en Linux
+      </Heading>
+
+      <NotesSection id="nix-installation">
+        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+          Instalar Nix (gestor de paquetes)
+        </Heading>
+
+        <p>
+          <Link href="https://nixos.org">Nix</Link> nos permite usar las mismas instrucciones
+          en distintas distribuciones de Linux (Debian/Ubuntu, Fedora, Arch, openSUSE,
+          etc.) para instalar todas las herramientas del curso.
+        </p>
+
+        <BashScript
+          code={`sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon`}
+        >
+          <Fragment slot="title">Instalar Nix (multiusuario)</Fragment>
+        </BashScript>
+
+        <BashScript
           code={`
+            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+            nix --version
+          `}
+        >
+          <Fragment slot="title">Configurar sesión y verificar</Fragment>
+        </BashScript>
+      </NotesSection>
+
+      <NotesSection id="tools-installation-linux">
+        <Heading Icon={icons.Hammer} headingLevel="h4">
+          Instalar herramientas
+        </Heading>
+
+        <p>
+          Con <strong>Nix</strong> puedes instalar todas las herramientas necesarias
+          para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA, PowerShell
+          y Visual Studio Code.
+        </p>
+
+        <BashScript
+          code={`
+            mkdir -p ~/.config/nix ~/.config/nixpkgs
+            grep -qs 'experimental-features' ~/.config/nix/nix.conf \\
+              || echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
+            [ -f ~/.config/nixpkgs/config.nix ] \\
+              || printf '%s\\n' '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
+          `}
+        >
+          <Fragment slot="title"
+            >Habilitar características y paquetes unfree</Fragment
+          >
+        </BashScript>
+
+        <CommunityVsUltimate />
+
+        <Tabs defaultValue="community">
+          <TabsList>
+            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
+            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="community">
+            <BashScript
+              code={`
+                NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                nixpkgs#git \\
+                nixpkgs#glab \\
+                nixpkgs#openjdk21 \\
+                nixpkgs#gradle \\
+                nixpkgs#powershell \\
+                nixpkgs#jetbrains.idea-community \\
+                nixpkgs#vscode
+              `}
+            >
+              <Fragment slot="title"
+                >Instalar herramientas esenciales (Community)</Fragment
+              >
+            </BashScript>
+            <IntelliJCommunityNote />
+          </TabsContent>
+
+          <TabsContent value="ultimate">
+            <BashScript
+              code={`
+                NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                nixpkgs#git \\
+                nixpkgs#glab \\
+                nixpkgs#openjdk21 \\
+                nixpkgs#gradle \\
+                nixpkgs#powershell \\
+                nixpkgs#jetbrains.idea-ultimate \\
+                nixpkgs#vscode
+              `}
+            >
+              <Fragment slot="title"
+                >Instalar herramientas esenciales (Ultimate)</Fragment
+              >
+            </BashScript>
+            <StudentPack />
+          </TabsContent>
+        </Tabs>
+
+        <JDK21Note />
+      </NotesSection>
+    </NotesSection>
+
+    <!-- Verificación final -->
+    <NotesSection id="final-verification">
+      <Heading Icon={icons.CheckCircle} headingLevel="h3">
+        Verificación final del entorno
+      </Heading>
+
+      <p>
+        Asegúrate de que todas las herramientas necesarias están correctamente
+        instaladas ejecutando el siguiente comando:
+      </p>
+
+      <ShellBlock
+        lang="bash"
+        code={`git --version && glab --version && java -version && gradle -v`}
+        title="Verificación del entorno"
+        icon={icons.TerminalWindow}
+      />
+
+      <p>
+        Si el comando se ejecuta sin errores, ¡felicitaciones! Tu entorno de
+        desarrollo está listo para comenzar a trabajar en el curso.
+      </p>
+    </NotesSection>
+  </NotesSection>
+
+  <NotesSection id="terminal-improvements">
+    <Heading Icon={icons.TerminalWindow} headingLevel="h2" slot="heading">
+      Personalizar la terminal
+    </Heading>
+
+    <p>
+      Windows incluye una terminal básica, pero puedes mejorar tu experiencia
+      instalando <strong>Windows Terminal</strong> y añadiendo personalización con
+      <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
+    </p>
+
+    <List>
+      <ListItem icon={icons.Storefront}>
+        Descarga <strong>Windows Terminal</strong> desde la
+        <Link
+          href="https://www.microsoft.com/es-mx/p/windows-terminal/9n0dx20hk701"
+        >
+          Microsoft Store
+        </Link>.
+      </ListItem>
+      <ListItem icon={icons.Sparkle}>
+        <strong>Opcional:</strong> añade estilos y funcionalidades adicionales con
+        <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
+      </ListItem>
+    </List>
+
+    <PowerShellBlock
+      code={`
             # Instalar Oh My Posh con Scoop
             scoop install oh-my-posh
             # Inicializarlo en PowerShell
             oh-my-posh init pwsh | Invoke-Expression
           `}
-        >
-          <Fragment slot="title">Instalación de Oh My Posh</Fragment>
-        </PowerShellBlock>
+    >
+      <Fragment slot="title">Instalación de Oh My Posh</Fragment>
+    </PowerShellBlock>
 
-        <More title="Configuración avanzada">
-          <p>
-            Para una mejor experiencia visual, te recomendamos
-            <Link href="https://ohmyposh.dev/docs/installation/fonts">
-              instalar una fuente compatible
-            </Link> con símbolos y ligaduras, como Fira Code.
-          </p>
+    <More title="Configuración avanzada">
+      <p>
+        Para una mejor experiencia visual, te recomendamos
+        <Link href="https://ohmyposh.dev/docs/installation/fonts">
+          instalar una fuente compatible
+        </Link> con símbolos y ligaduras, como Fira Code.
+      </p>
 
-          <PowerShellBlock code={`oh-my-posh font install FiraCode`}>
-            <Fragment slot="title">Instalar Fira Code</Fragment>
-          </PowerShellBlock>
+      <PowerShellBlock code={`oh-my-posh font install FiraCode`}>
+        <Fragment slot="title">Instalar Fira Code</Fragment>
+      </PowerShellBlock>
 
-          <p>
-            Luego, configura tu terminal para usar la nueva fuente. Consulta la
-            <Link
-              href="https://ohmyposh.dev/docs/installation/fonts#configuration"
-            >
-              guía de configuración
-            </Link>.
-          </p>
+      <p>
+        Luego, configura tu terminal para usar la nueva fuente. Consulta la
+        <Link href="https://ohmyposh.dev/docs/installation/fonts#configuration">
+          guía de configuración
+        </Link>.
+      </p>
 
-          <p>
-            También puedes elegir un tema visual desde la
-            <Link href="https://ohmyposh.dev/docs/themes">
-              galería de temas disponibles
-            </Link>. Para que se aplique automáticamente al abrir PowerShell,
-            edita tu perfil:
-          </p>
+      <p>
+        También puedes elegir un tema visual desde la
+        <Link href="https://ohmyposh.dev/docs/themes">
+          galería de temas disponibles
+        </Link>. Para que se aplique automáticamente al abrir PowerShell, edita
+        tu perfil:
+      </p>
 
-          <PowerShellBlock
-            code={`
+      <PowerShellBlock
+        code={`
               # Crear el perfil si no existe
               if (-not Test-Path $PROFILE) {
                   New-Item -Type File -Path $PROFILE -Force
@@ -244,570 +543,71 @@ import NotesSection from "~/layouts/NotesSection.astro";
                   notepad $PROFILE
               }
             `}
-          >
-            <Fragment slot="title">Editar perfil de PowerShell</Fragment>
-          </PowerShellBlock>
+      >
+        <Fragment slot="title">Editar perfil de PowerShell</Fragment>
+      </PowerShellBlock>
 
-          <Explanation>
-            <p>
-              En PowerShell, el <strong>perfil</strong> es un archivo de configuración
-              que se ejecuta automáticamente cada vez que abres la terminal. Allí
-              puedes agregar comandos o configuraciones que quieras tener siempre
-              activas (por ejemplo, inicializar <code>Oh My Posh</code> con tu tema
-              favorito).
-            </p>
+      <Explanation>
+        <p>
+          En PowerShell, el <strong>perfil</strong> es un archivo de configuración
+          que se ejecuta automáticamente cada vez que abres la terminal. Allí puedes
+          agregar comandos o configuraciones que quieras tener siempre activas (por
+          ejemplo, inicializar <code>Oh My Posh</code> con tu tema favorito).
+        </p>
 
-            <p>
-              La variable <InlinePowerShell code="$PROFILE" /> apunta a la ruta de
-              ese archivo en tu sistema. Si el archivo aún no existe, el script lo
-              crea automáticamente.
-            </p>
+        <p>
+          La variable <InlinePowerShell code="$PROFILE" /> apunta a la ruta de ese
+          archivo en tu sistema. Si el archivo aún no existe, el script lo crea automáticamente.
+        </p>
 
-            <List>
-              <ListItem icon={icons.File}>
-                <strong>Crear el archivo:</strong> si <InlineCode
-                  code="$PROFILE"
-                  lang="powershell"
-                /> no existe, se genera con <InlineCode
-                  code="New-Item -Force"
-                  lang="powershell"
-                />.
-              </ListItem>
-              <ListItem icon={icons.MagnifyingGlass}>
-                <strong>Elegir editor:</strong> el script busca primero <em
-                  >VS Code Insiders</em
-                >, luego <em>VS Code</em>, y si no encuentra ninguno, abre el
-                perfil con <em>Notepad</em>.
-              </ListItem>
-              <ListItem icon={icons.PencilSimple}>
-                <strong>Editar:</strong> una vez abierto, puedes añadir tus configuraciones
-                personalizadas, como inicializar <InlineCode
-                  code="oh-my-posh"
-                  lang="plaintext"
-                />.
-              </ListItem>
-            </List>
-          </Explanation>
+        <List>
+          <ListItem icon={icons.File}>
+            <strong>Crear el archivo:</strong> si <InlineCode
+              code="$PROFILE"
+              lang="powershell"
+            /> no existe, se genera con <InlineCode
+              code="New-Item -Force"
+              lang="powershell"
+            />.
+          </ListItem>
+          <ListItem icon={icons.MagnifyingGlass}>
+            <strong>Elegir editor:</strong> el script busca primero <em
+              >VS Code Insiders</em
+            >, luego <em>VS Code</em>, y si no encuentra ninguno, abre el perfil
+            con <em>Notepad</em>.
+          </ListItem>
+          <ListItem icon={icons.PencilSimple}>
+            <strong>Editar:</strong> una vez abierto, puedes añadir tus configuraciones
+            personalizadas, como inicializar <InlineCode
+              code="oh-my-posh"
+              lang="plaintext"
+            />.
+          </ListItem>
+        </List>
+      </Explanation>
 
-          <p>
-            Dentro del archivo, agrega la siguiente línea para inicializar Oh My
-            Posh con tu tema preferido:
-          </p>
+      <p>
+        Dentro del archivo, agrega la siguiente línea para inicializar Oh My
+        Posh con tu tema preferido:
+      </p>
 
-          <PowerShellBlock
-            code={`
+      <PowerShellBlock
+        code={`
               oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\\emodipt-extend.omp.json" |
                   Invoke-Expression
             `}
-          >
-            <Fragment slot="title">Inicialización automática</Fragment>
-          </PowerShellBlock>
-
-          <p>
-            Guarda el archivo y reinicia la terminal. Para una personalización
-            más completa, revisa la
-            <Link href="https://ohmyposh.dev/docs/installation/customize">
-              documentación oficial
-            </Link>.
-          </p>
-        </More>
-      </NotesSection>
-
-      <NotesSection id="essential-tools-installation-windows">
-        <Heading Icon={icons.Hammer} headingLevel="h4" slot="heading">
-          Instalar herramientas esenciales
-        </Heading>
-
-        <p>
-          En Windows puedes instalar <strong>Git</strong>, <strong
-            >GitLab CLI</strong
-          >,
-          <strong>OpenJDK 21</strong>, <strong>Gradle</strong> e
-          <strong>IntelliJ IDEA</strong> con un solo comando usando
-          <InlinePowerShell code="scoop" />.
-        </p>
-
-        <CommunityVsUltimate />
-
-        <Tabs defaultValue="community">
-          <TabsList>
-            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
-            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="community">
-            <PowerShellBlock
-              code={`scoop install git glab openjdk21 gradle idea`}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Community)</Fragment
-              >
-            </PowerShellBlock>
-            <Note>
-              <Fragment slot="title"
-                >Repositorio de IntelliJ IDEA Community</Fragment
-              >
-              El código fuente está disponible públicamente:
-              <Link href="https://github.com/JetBrains/intellij-community"
-                >intellij-community</Link
-              >.
-            </Note>
-          </TabsContent>
-
-          <TabsContent value="ultimate">
-            <PowerShellBlock
-              code={`scoop install git glab openjdk21 gradle idea-ultimate`}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Ultimate)</Fragment
-              >
-            </PowerShellBlock>
-            <Tip icon={icons.Student}>
-              <Fragment slot="title"> ¿Eres estudiante?</Fragment>
-              <p>
-                Solicita una licencia educativa:
-                <Link href="https://www.jetbrains.com/academy/student-pack/"
-                  >Student Pack</Link
-                >.
-              </p>
-            </Tip>
-          </TabsContent>
-        </Tabs>
-      </NotesSection>
-    </NotesSection>
-
-    <NotesSection id="installation-macos">
-      <Heading Icon={icons.AppleLogo} headingLevel="h3" slot="heading">
-        Instalación en macOS
-      </Heading>
-
-      <NotesSection id="installation-homebrew">
-        <Heading Icon={icons.DownloadSimple} headingLevel="h4" slot="heading">
-          Instalar Homebrew (gestor de paquetes)
-        </Heading>
-
-        <p>
-          En <strong>macOS</strong>, <strong>Homebrew</strong> es la forma más popular
-          de instalar software desde la terminal. También está disponible en Linux
-          como alternativa a los gestores de paquetes nativos. Con Homebrew puedes
-          instalar fácilmente herramientas como Git, JDK o Gradle.
-        </p>
-
-        <p>Ejecuta el siguiente comando para instalarlo:</p>
-
-        <BashScript
-          code={`
-            # Descargar e instalar Homebrew
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          `}
-        >
-          <Fragment slot="title">Instalación de Homebrew</Fragment>
-        </BashScript>
-
-        <p>Verifica que la instalación se haya realizado correctamente:</p>
-
-        <BashScript code="brew --version">
-          <Fragment slot="title">Verificación de Homebrew</Fragment>
-        </BashScript>
-      </NotesSection>
-
-      <NotesSection id="essential-tools-installation-macos">
-        <Heading Icon={icons.Hammer} headingLevel="h4">
-          Instalación de herramientas esenciales
-        </Heading>
-
-        Con <strong>Homebrew</strong> puedes instalar las herramientas necesarias
-        para el curso con los siguientes comandos. Esto incluye Git, GitLab CLI,
-        el JDK 21, Gradle e IntelliJ IDEA.
-
-        <CommunityVsUltimate />
-        
-        <Tabs defaultValue="community">
-          <TabsList>
-            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
-            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="community">
-            <BashScript
-              code={`
-                brew install git glab temurin@21 gradle
-                brew install --cask intellij-idea-ce
-              `}
-            >
-              <Fragment slot="title">
-                Instalar herramientas esenciales (Community)
-              </Fragment>
-            </BashScript>
-            <Note>
-              <Fragment slot="title"
-                >Repositorio de IntelliJ IDEA Community</Fragment
-              >
-              El código fuente está disponible públicamente:
-              <Link href="https://github.com/JetBrains/intellij-community">
-                intellij-community
-              </Link>.
-            </Note>
-          </TabsContent>
-
-          <TabsContent value="ultimate">
-            <BashScript
-              code={`
-                brew install git glab temurin@21 gradle
-                brew install --cask intellij-idea
-              `}
-            >
-              <Fragment slot="title">
-                Instalar herramientas esenciales (Ultimate)
-              </Fragment>
-            </BashScript>
-            <Tip icon={icons.Student}>
-              <Fragment slot="title">¿Eres estudiante?</Fragment>
-              <p>
-                Solicita una licencia educativa gratuita con el
-                <Link href="https://www.jetbrains.com/academy/student-pack/">
-                  Student Pack
-                </Link>.
-              </p>
-            </Tip>
-          </TabsContent>
-        </Tabs>
-
-        <JDK21Note />
-      </NotesSection>
-
-      <DevEnv env="macos" />
-    </NotesSection>
-
-    <section title="Instalación en Linux (Debian/Ubuntu)" class="notes-section">
-      <Heading Icon={icons.LinuxLogo} headingLevel="h3">
-        Instalación en Linux (Debian/Ubuntu)
-      </Heading>
-
-      <Warning>
-        <span slot="title">¿Y si no uso Debian/Ubuntu? 😭</span>
-
-        Entiendo que existen muchas distribuciones de Linux, pero para mantener
-        el enfoque y la claridad, decidimos centrarnos en Debian/Ubuntu por ser
-        las más populares. Aun así, la mayoría de las instrucciones deberían ser
-        fácilmente adaptables a otras distribuciones con gestores de paquetes
-        similares. Si lo deseas, puedes contribuir con una guía para tu
-        distribución favorita en el repositorio del curso. No puedo garantizar
-        que se incluya oficialmente ni que su contenido se mantenga actualizado,
-        pero sin duda puede ser útil para otrxs.
-      </Warning>
-
-      <section title="Instalación de Git">
-        <Heading Icon={icons.GitBranch} headingLevel="h4">
-          Instalación de Git
-        </Heading>
-
-        Para instalar Git en Debian o Ubuntu, ejecuta los siguientes comandos:
-
-        <ShellBlock
-          lang="bash"
-          code={`
-            sudo apt update
-            sudo apt install git
-          `}
-          title="Instalación de Git"
-          icon={icons.Bash}
-        />
-      </section>
-
-      <section title="Instalación de GitLab CLI">
-        <Heading Icon={icons.GitlabLogo} headingLevel="h4">
-          Instalación de GitLab CLI
-        </Heading>
-
-        <p>
-          Guarda el siguiente script como <InlineCode
-            code="install_glab.sh"
-            lang="bash"
-          />:
-        </p>
-
-        <CodeBlock
-          lang="bash"
-          filename="install_glab.sh"
-          icon={icons.Bash}
-          code={`
-            #!/bin/bash
-            set -e
-
-            # Prefer /usr/local/bin, but if not running as root, fallback to ~/.local/bin
-            INSTALL_DIR=/usr/local/bin
-            if [ "$(id -u)" -ne 0 ]; then
-              echo "Warning: not running as root; installing to ~/.local/bin instead"
-              INSTALL_DIR="$HOME/.local/bin"
-              mkdir -p "$INSTALL_DIR"
-            fi
-
-            # Map uname to release naming
-            arch=$(uname -m)
-            case "$arch" in
-              x86_64) arch_label="amd64" ;;
-              aarch64) arch_label="arm64" ;;
-              *) echo "Unsupported architecture: $arch"; exit 1 ;;
-            esac
-
-            # Fetch latest release tag from GitLab API
-            project="gitlab-org%2Fcli"
-            tag=$(curl -s "https://gitlab.com/api/v4/projects/\${project}/releases?per_page=1" \\
-              | grep -o '"tag_name":"v[0-9.]\\+"' | head -n1 | cut -d '"' -f4)
-
-            if [ -z "$tag" ]; then
-              echo "Failed to fetch latest release tag."
-              exit 1
-            fi
-
-            ver_no_v="\${tag#v}"
-            file="glab_\${ver_no_v}_linux_\${arch_label}.tar.gz"
-            url="https://gitlab.com/gitlab-org/cli/-/releases/\${tag}/downloads/\${file}"
-            tmp=\$(mktemp -d)
-
-            echo "Downloading \${file}..."
-            curl -sL "$url" | tar -xz -C "$tmp"
-
-            # Find the extracted binary
-            binary=$(find "$tmp" -maxdepth 3 -type f -name glab -perm /u=x | head -n1)
-            if [ -z "$binary" ]; then
-              echo "glab binary not found after extraction."
-              rm -rf "$tmp"
-              exit 1
-            fi
-
-            # Install it
-            install -m755 "$binary" "\${INSTALL_DIR}/glab"
-            rm -rf "$tmp"
-
-            echo "glab \${tag} installed in \${INSTALL_DIR}"
-          `}
-          ><span slot="title"
-            >Script de instalación de GitLab CLI (requiere <InlineCode
-              code="curl"
-              lang="bash"
-            />)</span
-          ></CodeBlock
-        >
-
-        <p>Hazlo ejecutable y corre el instalador:</p>
-
-        <ShellBlock
-          lang="bash"
-          code={`
-            chmod +x install_glab.sh
-            sudo ./install_glab.sh # or ./install_glab.sh if you don't use sudo and accept installation in ~/.local/bin
-          `}
-        />
-      </section>
-
-      <section
-        title="Instalación de SDKMAN! (Gestor de SDKs como Java y Gradle)"
       >
-        <Heading Icon={icons.Toolbox} headingLevel="h4">
-          Instalación de SDKMAN! (gestor de SDKs como Java y Gradle)
-        </Heading>
+        <Fragment slot="title">Inicialización automática</Fragment>
+      </PowerShellBlock>
 
-        <Info>
-          <span slot="title">¿Qué es SDKMAN!?</span>
-          SDKMAN! es una herramienta de línea de comandos para instalar, gestionar
-          y cambiar versiones de SDKs como Java, Gradle, Maven, entre otros. Es especialmente
-          útil para mantener múltiples versiones de herramientas en entornos de desarrollo.
-        </Info>
-
-        <ShellBlock
-          lang="bash"
-          code={`
-            curl -s "https://get.sdkman.io" | bash
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
-          `}
-          title="Instalación de SDKMAN!"
-          icon={icons.Bash}
-        />
-
-        <ShellBlock
-          lang="bash"
-          code="sdk version"
-          title="Verificación de SDKMAN!"
-          icon={icons.Bash}
-        />
-
-        <Note>
-          <span slot="title">¿Qué SDKs puedo instalar?</span>
-          Con SDKMAN! puedes instalar versiones específicas de Java, Gradle, Kotlin,
-          Scala y muchas otras herramientas populares. Puedes listarlas con <InlineCode
-            code="sdk list"
-            lang="bash"
-          />.
-        </Note>
-
-        <ShellBlock
-          lang="bash"
-          code={`
-            sdk install java
-            sdk install gradle
-          `}
-          title="Instalar Java y Gradle"
-          icon={icons.Bash}
-        />
-
-        <ShellBlock
-          lang="bash"
-          code={`
-            java --version
-            gradle --version
-          `}
-          title="Verificar versiones instaladas"
-          icon={icons.Bash}
-        />
-      </section>
-
-      <section title="Configurando el entorno de desarrollo">
-        <Heading Icon={icons.DesktopTower} headingLevel="h4">
-          Configurando el entorno de desarrollo
-        </Heading>
-
-        Para programar en Kotlin, te recomendamos usar <strong
-          >JetBrains Toolbox</strong
-        > para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), el
-        entorno de desarrollo más completo para este lenguaje. Puedes descargar JetBrains
-        Toolbox desde su <a
-          href="https://www.jetbrains.com/toolbox-app/download/"
-          target="_blank"
-          rel="noopener noreferrer">sitio oficial</a
-        >.
-      </section>
-    </section>
-
-    <section title="Resumen de instalación por sistema operativo">
-      <Heading Icon={icons.ListChecks} headingLevel="h3">
-        Resumen de instalación por sistema operativo
-      </Heading>
-
-      <TableFloat maxWidth="none">
-        <span slot="caption">
-          Comandos recomendados para instalar las herramientas necesarias en
-          cada sistema operativo.
-        </span>
-
-        <table class="not-prose w-full border-collapse text-sm sm:text-base">
-          <colgroup>
-            <col class="w-[28%]" />
-            <col class="w-[24%]" />
-            <col class="w-[24%]" />
-            <col class="w-[24%]" />
-          </colgroup>
-          <thead
-            class="border-b border-gray-500/30 dark:border-gray-400/20 text-primary"
-          >
-            <tr>
-              <th class="text-left align-middle py-3 px-4 font-semibold">
-                <div class="flex items-center gap-2">
-                  <icons.Toolbox class="h-4 w-4" />
-                  <span>Herramienta</span>
-                </div>
-              </th>
-              <th class="text-left align-middle py-3 px-4 font-semibold">
-                <div class="flex items-center gap-2">
-                  <icons.WindowsLogo class="h-4 w-4" />
-                  <span>Windows (Scoop)</span>
-                </div>
-              </th>
-              <th class="text-left align-middle py-3 px-4 font-semibold">
-                <div class="flex items-center gap-2">
-                  <icons.AppleLogo class="h-4 w-4" />
-                  <span>macOS (Homebrew)</span>
-                </div>
-              </th>
-              <th class="text-left align-middle py-3 px-4 font-semibold">
-                <div class="flex items-center gap-2">
-                  <icons.LinuxLogo class="h-4 w-4" />
-                  <span>Linux (SDKMAN!)</span>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-300/20 dark:divide-gray-600/20">
-            <tr>
-              <td class="text-primary font-semibold py-2.5 px-4">Git</td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="scoop install git" lang="powershell" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="brew install git" lang="bash" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="sudo apt install git" lang="bash" />
-              </td>
-            </tr>
-            <tr>
-              <td class="text-primary font-semibold py-2.5 px-4">GitLab CLI</td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="scoop install glab" lang="powershell" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="brew install glab" lang="bash" />
-              </td>
-              <td class="py-2.5 px-4 italic text-gray-500 dark:text-gray-400">
-                Ver script arriba
-              </td>
-            </tr>
-            <tr>
-              <td class="text-primary font-semibold py-2.5 px-4">JDK</td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="scoop install openjdk21" lang="powershell" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="brew install temurin@21" lang="bash" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="sdk install java" lang="bash" />
-              </td>
-            </tr>
-            <tr>
-              <td class="text-primary font-semibold py-2.5 px-4">Gradle</td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="scoop install gradle" lang="powershell" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="brew install gradle" lang="bash" />
-              </td>
-              <td class="py-2.5 px-4">
-                <InlineCode code="sdk install gradle" lang="bash" />
-              </td>
-            </tr>
-            <tr>
-              <td class="text-primary font-semibold py-2.5 px-4"
-                >IntelliJ IDEA</td
-              >
-              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
-              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
-              <td class="py-2.5 px-4 text-white">JetBrains Toolbox</td>
-            </tr>
-          </tbody>
-        </table>
-      </TableFloat>
-    </section>
-
-    <section title="Verificación final del entorno">
-      <Heading Icon={icons.CheckCircle} headingLevel="h3">
-        Verificación final del entorno
-      </Heading>
-
-      Asegúrate de que todas las herramientas necesarias están correctamente
-      instaladas ejecutando el siguiente comando:
-
-      <ShellBlock
-        lang="bash"
-        code={`git --version && glab --version && java -version && gradle -v`}
-        title="Verificación del entorno"
-        icon={icons.TerminalWindow}
-      />
-
-      Si el comando se ejecuta sin errores, ¡felicitaciones! Tu entorno de
-      desarrollo está listo para comenzar a programar en Kotlin.
-    </section>
+      <p>
+        Guarda el archivo y reinicia la terminal. Para una personalización más
+        completa, revisa la
+        <Link href="https://ohmyposh.dev/docs/installation/customize">
+          documentación oficial
+        </Link>.
+      </p>
+    </More>
   </NotesSection>
 
   <Note>

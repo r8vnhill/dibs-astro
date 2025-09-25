@@ -1,0 +1,14 @@
+---
+import { Tip } from "~/components/ui/callouts";
+import * as icons from "~/assets/img/icons";
+import { Link } from "~/components/ui/links";
+---
+
+<Tip icon={icons.Student}>
+  <span slot="title">¿Eres estudiante?</span>
+
+  Solicita una licencia educativa gratuita con el
+  <Link href="https://www.jetbrains.com/academy/student-pack/">
+    Student Pack
+  </Link>.
+</Tip>
