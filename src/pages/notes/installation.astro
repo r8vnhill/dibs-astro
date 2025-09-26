@@ -1,6 +1,5 @@
 ---
 import * as icons from "~/assets/img/icons";
-import TableFloat from "~/components/floats/TableFloat.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import {
   Tabs,
@@ -8,10 +7,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/components/starwind/tabs";
-import { Explanation, Important } from "~/components/ui/callouts";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
 import Info from "~/components/ui/callouts/Info.astro";
-import More from "~/components/ui/callouts/More.astro";
 import Note from "~/components/ui/callouts/Note.astro";
 import Tip from "~/components/ui/callouts/Tip.astro";
 import Warning from "~/components/ui/callouts/Warning.astro";
@@ -23,14 +20,10 @@ import {
 } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
-import ShellBlock from "~/components/ui/code/ShellBlock.astro";
-import OutputBlock from "~/components/ui/code/txt/OutputBlock.astro";
 import { Img } from "~/components/ui/figures";
 import { Link } from "~/components/ui/links";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
-import ToDo from "~/components/utils/ToDo";
-import DevEnv from "~/content/installation/DevEnv.astro";
 import JDK21Note from "~/content/installation/JDK21Note.astro";
 import CommunityVsUltimate from "~/fragments/notes/installation/CommunityVsUltimate.astro";
 import IntelliJCommunityNote from "~/fragments/notes/installation/IntelliJCommunityNote.astro";
@@ -1013,7 +1006,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <PowerShellBlock
           code={`
-            # [!code ++:9]
+            # [!code ++:7]
             # Cargar módulos
             Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue
             Import-Module -Name z -ErrorAction SilentlyContinue
