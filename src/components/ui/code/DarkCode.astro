@@ -4,22 +4,22 @@
  * --------------
  * Renders a Shiki-highlighted code block using the *catppuccin-mocha* theme (for dark mode).
  *
- * This component is hidden by default and shown only in dark mode (`dark:block`).
- * Used internally by the `CodeLayout` wrapper to provide a dark mode variant.
- *
  * Props:
  * - `code`: The raw code string to highlight.
- * - `lang`: The language to use for syntax highlighting (must match one in `availableLanguages`).
- * - `codeClasses`: Optional Tailwind classes to further style the `<Code>` component.
+ * - `lang`: The language to use for syntax highlighting.
+ * - `codeClasses`: Optional Tailwind classes for styling the <Code> component.
+ * - `transformers`: Optional extra Shiki transformers.
  */
 
 import { Code } from "astro:components";
 import { availableLanguages } from "~/lib/shiki/highlighter";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { ShikiTransformer } from "shiki";
-import { transformerNotationFocus } from "@shikijs/transformers";
+import {
+  transformerNotationDiff,
+  transformerNotationFocus,
+} from "@shikijs/transformers";
 
-// Component props definition
 type Props = {
   code: string;
   lang: (typeof availableLanguages)[number];
@@ -27,34 +27,34 @@ type Props = {
   transformers?: ShikiTransformer[];
 };
 
-// Destructure and default props
 const { code, lang, codeClasses, transformers = [] } = Astro.props;
 ---
 
-<!-- Render the code block for dark mode using the catppuccin-mocha theme -->
 <Code
   code={code}
   theme="catppuccin-mocha"
   lang={lang}
   class:list={[
-    "hidden dark:block", // Only show in dark mode
-    "transition-colors", // Smooth color theme transitions
-    "duration-200", // Duration for transitions
-    "p-4", // Padding inside the code area
-    "text-sm", // Font size
-    "font-mono", // Monospaced font
-    codeClasses, // Allow overrides from parent component
+    "hidden dark:block",
+    "transition-colors",
+    "duration-200",
+    "p-4",
+    "text-sm",
+    "font-mono",
+    codeClasses,
   ]}
   role="code"
   wrap
   transformers={[
     transformerColorizedBrackets(),
     transformerNotationFocus(),
+    transformerNotationDiff(),
     ...transformers,
   ]}
 />
 
 <style is:global>
+  /* Focus */
   pre.has-focused .line:not(.focused) {
     filter: blur(1px);
     transition: filter 0.2s ease;
@@ -63,28 +63,27 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props;
     filter: none;
   }
 
+  /* Base lines */
   pre .line {
     position: relative;
-    padding-left: 0.75rem; /* espacio para el borde izquierdo */
+    padding-left: 0.75rem;
   }
 
+  /* Highlighted lines */
   pre.has-highlighted .line.highlighted {
     background-color: color-mix(in oklab, var(--muted), transparent 70%);
     transition:
       background-color 0.2s ease,
       box-shadow 0.2s ease;
   }
-
   pre.has-highlighted .line.highlighted.error {
     background-color: color-mix(in oklab, var(--error), transparent 88%);
     box-shadow: inset 2px 0 0 0 var(--error);
   }
-
   pre.has-highlighted .line.highlighted.warning {
     background-color: color-mix(in oklab, var(--warning), transparent 86%);
     box-shadow: inset 2px 0 0 0 var(--warning);
   }
-
   pre.has-highlighted .line.highlighted.error code,
   pre.has-highlighted .line.highlighted.error .token {
     color: var(--error-foreground);
@@ -92,5 +91,82 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props;
   pre.has-highlighted .line.highlighted.warning code,
   pre.has-highlighted .line.highlighted.warning .token {
     color: var(--warning-foreground);
+  }
+
+  /* === Diff styling (transformerNotationDiff) === */
+  :root {
+    --diff-add-bg: color-mix(in oklab, #22c55e 18%, transparent 88%);
+    --diff-add-border: #22c55e;
+    --diff-add-fg: #14532d;
+
+    --diff-remove-bg: color-mix(in oklab, #ef4444 16%, transparent 88%);
+    --diff-remove-border: #ef4444;
+    --diff-remove-fg: #7f1d1d;
+
+    --diff-gutter-w: 1rem;
+    --diff-gutter-fg: color-mix(in oklab, currentColor 60%, transparent 40%);
+  }
+
+  .dark {
+    --diff-add-bg: color-mix(in oklab, #22c55e 22%, transparent 88%);
+    --diff-add-border: #16a34a;
+    --diff-add-fg: #dcfce7;
+
+    --diff-remove-bg: color-mix(in oklab, #ef4444 20%, transparent 88%);
+    --diff-remove-border: #f87171;
+    --diff-remove-fg: #fee2e2;
+
+    --diff-gutter-fg: color-mix(in oklab, currentColor 70%, transparent 30%);
+  }
+
+  pre.has-diff .line {
+    padding-left: calc(0.75rem + var(--diff-gutter-w));
+  }
+
+  pre.has-diff .line.diff.add {
+    background: var(--diff-add-bg);
+    box-shadow: inset 3px 0 0 0 var(--diff-add-border);
+    color: var(--diff-add-fg);
+  }
+  pre.has-diff .line.diff.remove {
+    background: var(--diff-remove-bg);
+    box-shadow: inset 3px 0 0 0 var(--diff-remove-border);
+    color: var(--diff-remove-fg);
+  }
+
+  pre.has-diff .line.diff.add::before,
+  pre.has-diff .line.diff.remove::before {
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--diff-gutter-w) - 0.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: 700;
+    color: var(--diff-gutter-fg);
+    user-select: none;
+    pointer-events: none;
+  }
+  pre.has-diff .line.diff.add::before {
+    content: "+";
+  }
+  pre.has-diff .line.diff.remove::before {
+    content: "−";
+  }
+
+  pre.has-diff .line.diff.add,
+  pre.has-diff .line.diff.remove {
+    transition:
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  pre.has-highlighted .line.diff.add.highlighted {
+    background: color-mix(in oklab, var(--diff-add-bg) 70%, transparent);
+  }
+  pre.has-highlighted .line.diff.remove.highlighted {
+    background: color-mix(in oklab, var(--diff-remove-bg) 70%, transparent);
   }
 </style>

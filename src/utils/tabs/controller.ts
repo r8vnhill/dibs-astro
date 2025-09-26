@@ -36,10 +36,21 @@ export class TabsController {
    */
   constructor(tabs: HTMLElement, idx: number) {
     this.tabs = tabs;
-    this.triggers = Array.from(
-      tabs.querySelectorAll("[data-tabs-list] [data-tabs-trigger]")
+
+    // Solo la lista de triggers directamente bajo este grupo
+    const list = tabs.querySelector<HTMLElement>(":scope > [data-tabs-list]");
+
+    this.triggers = list
+      ? Array.from(
+          list.querySelectorAll<HTMLButtonElement>("[data-tabs-trigger]")
+        )
+      : [];
+
+    // Solo los contenidos directamente bajo este grupo
+    this.contents = Array.from(
+      tabs.querySelectorAll<HTMLElement>(":scope > [data-tabs-content]")
     );
-    this.contents = Array.from(tabs.querySelectorAll("[data-tabs-content]"));
+
     this.tabsId = `starwind-tabs${idx}`;
     this.syncKey = tabs.dataset.syncKey;
 
@@ -47,7 +58,6 @@ export class TabsController {
       ? `${TAB_SYNC_EVENT_PREFIX}-${this.tabsId}-${this.syncKey}`
       : `${TAB_SYNC_EVENT_PREFIX}-${this.tabsId}`;
 
-    // Map values to their corresponding elements
     this.triggers.forEach((trigger) => {
       const value = trigger.getAttribute("data-value") ?? "";
       this.valueToTriggerMap.set(value, trigger);

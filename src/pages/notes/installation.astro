@@ -8,7 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "~/components/starwind/tabs";
-import { Explanation } from "~/components/ui/callouts";
+import { Explanation, Important } from "~/components/ui/callouts";
 import Abstract from "~/components/ui/callouts/Abstract.astro";
 import Info from "~/components/ui/callouts/Info.astro";
 import More from "~/components/ui/callouts/More.astro";
@@ -24,6 +24,8 @@ import {
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
 import ShellBlock from "~/components/ui/code/ShellBlock.astro";
+import OutputBlock from "~/components/ui/code/txt/OutputBlock.astro";
+import { Img } from "~/components/ui/figures";
 import { Link } from "~/components/ui/links";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
@@ -148,11 +150,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
       >. Estaremos atentos para ayudarte.
     </p>
 
+    <Warning>
+      No ejecutes los comandos de inmediato. Antes de instalar cada herramienta,
+      verifica si ya la tienes instalada para evitar conflictos.
+    </Warning>
+
     <Tabs defaultValue="windows">
       <TabsList>
         <TabsTrigger value="windows">Windows</TabsTrigger>
-        <TabsTrigger value="linux">Linux</TabsTrigger>
         <TabsTrigger value="macos">macOS</TabsTrigger>
+        <TabsTrigger value="linux">Linux</TabsTrigger>
       </TabsList>
 
       <TabsContent value="windows">
@@ -175,9 +182,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <PowerShellBlock
               code={`
-            Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-            Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
-          `}
+                Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+                Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+              `}
             >
               <Fragment slot="title">Instalar Scoop</Fragment>
             </PowerShellBlock>
@@ -212,10 +219,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
               <TabsContent value="community">
                 <PowerShellBlock
-                  code={`scoop install git glab openjdk21 gradle idea vscode`}
+                  code={`scoop install git glab openjdk21 gradle idea vscode pwsh`}
                 >
                   <Fragment slot="title"
-                    >Instalar herramientas esenciales (Community)</Fragment
+                    >Instalar herramientas (Community)</Fragment
                   >
                 </PowerShellBlock>
                 <IntelliJCommunityNote />
@@ -223,10 +230,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
               <TabsContent value="ultimate">
                 <PowerShellBlock
-                  code={`scoop install git glab openjdk21 gradle idea-ultimate vscode`}
+                  code={`scoop install git glab openjdk21 gradle idea-ultimate vscode pwsh`}
                 >
                   <Fragment slot="title"
-                    >Instalar herramientas esenciales (Ultimate)</Fragment
+                    >Instalar herramientas (Ultimate)</Fragment
                   >
                 </PowerShellBlock>
                 <StudentPack />
@@ -236,207 +243,217 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </NotesSection>
       </TabsContent>
 
-      <TabsContent value="linux"> ... </TabsContent>
+      <TabsContent value="macos">
+        <NotesSection id="installation-macos">
+          <Heading Icon={icons.AppleLogo} headingLevel="h3">
+            Instalación en macOS
+          </Heading>
 
-      <TabsContent value="macos"> ... </TabsContent>
+          <NotesSection id="homebrew-installation">
+            <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+              Instalar Homebrew (gestor de paquetes)
+            </Heading>
+
+            <p>
+              En <strong>macOS</strong>, <strong>Homebrew</strong> es el gestor de
+              paquetes recomendado. Permite instalar tanto herramientas de línea
+              de comando como aplicaciones gráficas con una sintaxis sencilla.
+            </p>
+
+            <BashScript
+              code={`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`}
+            >
+              <Fragment slot="title">Instalar Homebrew</Fragment>
+            </BashScript>
+
+            <BashScript code="brew --version">
+              <Fragment slot="title">Verificar instalación</Fragment>
+            </BashScript>
+          </NotesSection>
+
+          <NotesSection id="tools-installation-macos">
+            <Heading Icon={icons.Hammer} headingLevel="h4">
+              Instalar herramientas
+            </Heading>
+
+            <p>
+              Con <strong>Homebrew</strong> puedes instalar todas las herramientas
+              necesarias para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ
+              IDEA, PowerShell y Visual Studio Code.
+            </p>
+
+            <CommunityVsUltimate />
+
+            <Tabs defaultValue="community">
+              <TabsList>
+                <TabsTrigger value="community"
+                  >IntelliJ IDEA Community</TabsTrigger
+                >
+                <TabsTrigger value="ultimate"
+                  >IntelliJ IDEA Ultimate</TabsTrigger
+                >
+              </TabsList>
+
+              <TabsContent value="community">
+                <BashScript
+                  code={`
+                    brew install git glab openjdk@21 gradle
+                    brew install --cask intellij-idea-ce powershell visual-studio-code
+                  `}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Community)</Fragment
+                  >
+                </BashScript>
+
+                <IntelliJCommunityNote />
+              </TabsContent>
+
+              <TabsContent value="ultimate">
+                <BashScript
+                  code={`
+                    brew install git glab openjdk@21 gradle
+                    brew install --cask intellij-idea powershell visual-studio-code
+                  `}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Ultimate)</Fragment
+                  >
+                </BashScript>
+
+                <StudentPack />
+              </TabsContent>
+            </Tabs>
+
+            <Info>
+              <slot slot="title">Sobre <InlineBash code="--cask" /></slot>
+
+              La opción <InlineBash code="--cask" /> instala aplicaciones gráficas
+              (como IntelliJ o VS Code).
+            </Info>
+
+            <JDK21Note />
+          </NotesSection>
+        </NotesSection>
+      </TabsContent>
+
+      <TabsContent value="linux">
+        <NotesSection id="installation-linux">
+          <Heading Icon={icons.LinuxLogo} headingLevel="h3">
+            Instalación en Linux
+          </Heading>
+
+          <NotesSection id="nix-installation">
+            <Heading Icon={icons.DownloadSimple} headingLevel="h4">
+              Instalar Nix (gestor de paquetes)
+            </Heading>
+
+            <p>
+              <Link href="https://nixos.org">Nix</Link> nos permite usar las mismas
+              instrucciones en distintas distribuciones de Linux (Debian/Ubuntu,
+              Fedora, Arch, openSUSE, etc.) para instalar todas las herramientas
+              del curso.
+            </p>
+
+            <BashScript
+              code={`sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon`}
+            >
+              <Fragment slot="title">Instalar Nix (multiusuario)</Fragment>
+            </BashScript>
+
+            <BashScript
+              code={`
+                . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+                nix --version
+              `}
+            >
+              <Fragment slot="title">Configurar sesión y verificar</Fragment>
+            </BashScript>
+          </NotesSection>
+
+          <NotesSection id="tools-installation-linux">
+            <Heading Icon={icons.Hammer} headingLevel="h4">
+              Instalar herramientas
+            </Heading>
+
+            <p>
+              Con <strong>Nix</strong> puedes instalar todas las herramientas necesarias
+              para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA, PowerShell
+              y Visual Studio Code.
+            </p>
+
+            <BashScript
+              code={`
+                mkdir -p ~/.config/nix ~/.config/nixpkgs
+                grep -qs 'experimental-features' ~/.config/nix/nix.conf \\
+                  || echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
+                [ -f ~/.config/nixpkgs/config.nix ] \\
+                  || printf '%s\\n' '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
+              `}
+            >
+              <Fragment slot="title"
+                >Habilitar características y paquetes unfree</Fragment
+              >
+            </BashScript>
+
+            <CommunityVsUltimate />
+
+            <Tabs defaultValue="community">
+              <TabsList>
+                <TabsTrigger value="community"
+                  >IntelliJ IDEA Community</TabsTrigger
+                >
+                <TabsTrigger value="ultimate"
+                  >IntelliJ IDEA Ultimate</TabsTrigger
+                >
+              </TabsList>
+
+              <TabsContent value="community">
+                <BashScript
+                  code={`
+                    NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                        nixpkgs#git \\
+                        nixpkgs#glab \\
+                        nixpkgs#openjdk21 \\
+                        nixpkgs#gradle \\
+                        nixpkgs#powershell \\
+                        nixpkgs#jetbrains.idea-community \\
+                        nixpkgs#vscode
+                  `}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Community)</Fragment
+                  >
+                </BashScript>
+                <IntelliJCommunityNote />
+              </TabsContent>
+
+              <TabsContent value="ultimate">
+                <BashScript
+                  code={`
+                    NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                        nixpkgs#git \\
+                        nixpkgs#glab \\
+                        nixpkgs#openjdk21 \\
+                        nixpkgs#gradle \\
+                        nixpkgs#powershell \\
+                        nixpkgs#jetbrains.idea-ultimate \\
+                        nixpkgs#vscode
+                  `}
+                >
+                  <Fragment slot="title"
+                    >Instalar herramientas esenciales (Ultimate)</Fragment
+                  >
+                </BashScript>
+                <StudentPack />
+              </TabsContent>
+            </Tabs>
+
+            <JDK21Note />
+          </NotesSection>
+        </NotesSection>
+      </TabsContent>
     </Tabs>
-
-    <!-- macOS -->
-    <NotesSection id="installation-macos">
-      <Heading Icon={icons.AppleLogo} headingLevel="h3">
-        Instalación en macOS
-      </Heading>
-
-      <NotesSection id="homebrew-installation">
-        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
-          Instalar Homebrew (gestor de paquetes)
-        </Heading>
-
-        <p>
-          En <strong>macOS</strong>, <strong>Homebrew</strong> es el gestor de paquetes
-          recomendado. Permite instalar tanto herramientas de línea de comando como
-          aplicaciones gráficas con una sintaxis sencilla.
-        </p>
-
-        <BashScript
-          code={`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`}
-        >
-          <Fragment slot="title">Instalar Homebrew</Fragment>
-        </BashScript>
-
-        <BashScript code="brew --version">
-          <Fragment slot="title">Verificar instalación</Fragment>
-        </BashScript>
-      </NotesSection>
-
-      <NotesSection id="tools-installation-macos">
-        <Heading Icon={icons.Hammer} headingLevel="h4">
-          Instalar herramientas
-        </Heading>
-
-        <p>
-          Con <strong>Homebrew</strong> puedes instalar todas las herramientas necesarias
-          para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA, PowerShell
-          y Visual Studio Code.
-        </p>
-
-        <CommunityVsUltimate />
-
-        <Tabs defaultValue="community">
-          <TabsList>
-            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
-            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="community">
-            <BashScript
-              code={`
-                brew install git glab openjdk@21 gradle
-                brew install --cask intellij-idea-ce powershell visual-studio-code`}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Community)</Fragment
-              >
-            </BashScript>
-            <IntelliJCommunityNote />
-          </TabsContent>
-
-          <TabsContent value="ultimate">
-            <BashScript
-              code={`
-                brew install git glab openjdk@21 gradle
-                brew install --cask intellij-idea powershell visual-studio-code
-              `}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Ultimate)</Fragment
-              >
-            </BashScript>
-            <StudentPack />
-          </TabsContent>
-        </Tabs>
-
-        <Info>
-          <slot slot="title">Sobre <InlineBash code="--cask" /></slot>
-
-          La opción <InlineBash code="--cask" /> instala aplicaciones gráficas (como
-          IntelliJ o VS Code).
-        </Info>
-
-        <JDK21Note />
-      </NotesSection>
-    </NotesSection>
-
-    <!-- Linux -->
-    <NotesSection id="installation-linux">
-      <Heading Icon={icons.LinuxLogo} headingLevel="h3">
-        Instalación en Linux
-      </Heading>
-
-      <NotesSection id="nix-installation">
-        <Heading Icon={icons.DownloadSimple} headingLevel="h4">
-          Instalar Nix (gestor de paquetes)
-        </Heading>
-
-        <p>
-          <Link href="https://nixos.org">Nix</Link> nos permite usar las mismas instrucciones
-          en distintas distribuciones de Linux (Debian/Ubuntu, Fedora, Arch, openSUSE,
-          etc.) para instalar todas las herramientas del curso.
-        </p>
-
-        <BashScript
-          code={`sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon`}
-        >
-          <Fragment slot="title">Instalar Nix (multiusuario)</Fragment>
-        </BashScript>
-
-        <BashScript
-          code={`
-            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-            nix --version
-          `}
-        >
-          <Fragment slot="title">Configurar sesión y verificar</Fragment>
-        </BashScript>
-      </NotesSection>
-
-      <NotesSection id="tools-installation-linux">
-        <Heading Icon={icons.Hammer} headingLevel="h4">
-          Instalar herramientas
-        </Heading>
-
-        <p>
-          Con <strong>Nix</strong> puedes instalar todas las herramientas necesarias
-          para el curso: Git, GitLab CLI, JDK 21, Gradle, IntelliJ IDEA, PowerShell
-          y Visual Studio Code.
-        </p>
-
-        <BashScript
-          code={`
-            mkdir -p ~/.config/nix ~/.config/nixpkgs
-            grep -qs 'experimental-features' ~/.config/nix/nix.conf \\
-              || echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
-            [ -f ~/.config/nixpkgs/config.nix ] \\
-              || printf '%s\\n' '{ allowUnfree = true; }' > ~/.config/nixpkgs/config.nix
-          `}
-        >
-          <Fragment slot="title"
-            >Habilitar características y paquetes unfree</Fragment
-          >
-        </BashScript>
-
-        <CommunityVsUltimate />
-
-        <Tabs defaultValue="community">
-          <TabsList>
-            <TabsTrigger value="community">IntelliJ IDEA Community</TabsTrigger>
-            <TabsTrigger value="ultimate">IntelliJ IDEA Ultimate</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="community">
-            <BashScript
-              code={`
-                NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
-                nixpkgs#git \\
-                nixpkgs#glab \\
-                nixpkgs#openjdk21 \\
-                nixpkgs#gradle \\
-                nixpkgs#powershell \\
-                nixpkgs#jetbrains.idea-community \\
-                nixpkgs#vscode
-              `}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Community)</Fragment
-              >
-            </BashScript>
-            <IntelliJCommunityNote />
-          </TabsContent>
-
-          <TabsContent value="ultimate">
-            <BashScript
-              code={`
-                NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
-                nixpkgs#git \\
-                nixpkgs#glab \\
-                nixpkgs#openjdk21 \\
-                nixpkgs#gradle \\
-                nixpkgs#powershell \\
-                nixpkgs#jetbrains.idea-ultimate \\
-                nixpkgs#vscode
-              `}
-            >
-              <Fragment slot="title"
-                >Instalar herramientas esenciales (Ultimate)</Fragment
-              >
-            </BashScript>
-            <StudentPack />
-          </TabsContent>
-        </Tabs>
-
-        <JDK21Note />
-      </NotesSection>
-    </NotesSection>
 
     <!-- Verificación final -->
     <NotesSection id="final-verification">
@@ -445,176 +462,643 @@ import NotesSection from "~/layouts/NotesSection.astro";
       </Heading>
 
       <p>
-        Asegúrate de que todas las herramientas necesarias están correctamente
-        instaladas ejecutando el siguiente comando:
+        Para los siguientes pasos, abre <strong>PowerShell 7+</strong>. En
+        Windows es posible que tengas también instalada
+        <em>Windows PowerShell 5.1</em>, pero asegúrate de usar la versión
+        moderna.
       </p>
 
-      <ShellBlock
-        lang="bash"
-        code={`git --version && glab --version && java -version && gradle -v`}
-        title="Verificación del entorno"
-        icon={icons.TerminalWindow}
+      <p>
+        Desde cualquier terminal (CMD, Bash u otra versión de PowerShell) puedes
+        iniciar PowerShell 7+ escribiendo
+        <InlineCode code="pwsh" lang="shell" />. Deberías ver una interfaz como
+        esta:
+      </p>
+
+      <Img
+        image={{
+          src: "/img/installation/pwsh_light.png",
+          darkSrc: "/img/installation/pwsh_dark.png",
+          alt: "Interfaz de PowerShell 7+",
+        }}
+        caption="Interfaz inicial de PowerShell 7+"
       />
 
       <p>
-        Si el comando se ejecuta sin errores, ¡felicitaciones! Tu entorno de
-        desarrollo está listo para comenzar a trabajar en el curso.
+        Por ahora la terminal se ve sencilla, pero en la siguiente sección
+        veremos cómo personalizarla para que sea más práctica y atractiva.
+      </p>
+
+      <p>
+        Asegúrate de que todas las herramientas necesarias están correctamente
+        instaladas ejecutando este comando (mostrará las versiones detectadas):
+      </p>
+
+      <PowerShellBlock
+        code={`git --version && glab --version && java -version && gradle -v`}
+      >
+        <span slot="title">Verificación de herramientas</span>
+      </PowerShellBlock>
+
+      <p>
+        Luego, confirma que tus IDEs están en el <em>PATH</em> ejecutando:
+      </p>
+
+      <PowerShellBlock code={`idea && code`}>
+        <span slot="title">Abrir IntelliJ IDEA y VS Code</span>
+      </PowerShellBlock>
+
+      <p>
+        Si todos los comandos se ejecutan sin errores, ¡felicitaciones! Tu
+        entorno de desarrollo está listo para comenzar a trabajar en el curso.
+      </p>
+
+      <p>
+        La próxima sección es opcional, pero personalizar tu terminal no es solo
+        cuestión estética: también puede ayudarte a resaltar información
+        importante (como la rama de Git o errores de compilación), reducir
+        distracciones y mejorar la productividad.
       </p>
     </NotesSection>
   </NotesSection>
 
-  <NotesSection id="terminal-improvements">
+  <NotesSection id="h2-terminal-improvements">
     <Heading Icon={icons.TerminalWindow} headingLevel="h2" slot="heading">
-      Personalizar la terminal
+      Personalizar la terminal con Oh My Posh
+    </Heading>
+
+    <NotesSection id="h3-oh-my-posh">
+      <Heading headingLevel="h3" Icon={icons.Sparkle}>
+        ¿Qué es Oh&nbsp;My&nbsp;Posh y cómo instalarlo?
+      </Heading>
+
+      <p class="mb-4">
+        <strong>Oh&nbsp;My&nbsp;Posh</strong> es un motor de <em>prompts</em> para
+        la terminal que muestra información útil (branch de Git, estado de repos,
+        runtime activo, duración de comandos, etc.) con una estética agradable. A
+        continuación verás cómo instalarlo y dejarlo activo al abrir tu terminal.
+      </p>
+
+      <Tabs defaultValue="windows">
+        <TabsList>
+          <TabsTrigger value="windows">Windows</TabsTrigger>
+          <TabsTrigger value="macos">macOS</TabsTrigger>
+          <TabsTrigger value="linux">Linux</TabsTrigger>
+        </TabsList>
+
+        {/* WINDOWS */}
+        <TabsContent value="windows">
+          <Tip>
+            <span slot="title">Windows Terminal</span>
+
+            Aunque Windows incluye una terminal básica, se recomienda instalar
+            <strong> Windows Terminal</strong> para una experiencia moderna y cómoda.
+            Puedes obtenerla en la
+            <Link
+              href="https://www.microsoft.com/es-mx/p/windows-terminal/9n0dx20hk701"
+            >
+              Microsoft Store
+            </Link>.
+          </Tip>
+
+          <PowerShellBlock code={`scoop install oh-my-posh`}>
+            <span slot="title">Instalar Oh&nbsp;My&nbsp;Posh</span>
+          </PowerShellBlock>
+        </TabsContent>
+
+        {/* macOS */}
+        <TabsContent value="macos">
+          <Tip>
+            <span slot="title">iTerm2 recomendado</span>
+            La app de Terminal de macOS funciona, pero se recomienda usar
+            <strong> iTerm2</strong> (o cualquier terminal moderna con soporte de
+            24-bit y ligaduras).
+          </Tip>
+
+          <PowerShellBlock code={`brew install --cask iterm2`}>
+            <span slot="title">Instalar iTerm2</span>
+          </PowerShellBlock>
+
+          <PowerShellBlock
+            code={`
+              # oh-my-posh requiere un compilador C (clang o gcc)
+              # Instalar Xcode Command Line Tools (incluye clang)
+              xcode-select --install
+
+              # Alternativa: instalar gcc con Homebrew
+              # brew install gcc
+
+              # Instalar Oh My Posh
+              brew install jandedobbeleer/oh-my-posh/oh-my-posh
+            `}
+          >
+            <span slot="title">Instalar Oh&nbsp;My&nbsp;Posh</span>
+          </PowerShellBlock>
+        </TabsContent>
+
+        {/* LINUX */}
+        <TabsContent value="linux">
+          <PowerShellBlock
+            code={`
+              # Instalación con el script oficial
+              curl -s https://ohmyposh.dev/install.sh | bash -s
+            `}
+          >
+            <span slot="title">Instalar Oh&nbsp;My&nbsp;Posh</span>
+          </PowerShellBlock>
+
+          <Tip>
+            <span slot="title">Terminal y colores</span>
+
+            Oh&nbsp;My&nbsp;Posh usa códigos ANSI de color. Si los colores se
+            ven mal, asegúrate de que tu terminal soporte 24-bit y exporta <InlinePowerShell
+              code="$Env:TERM"
+            /> de forma persistente:
+
+            <PowerShellBlock
+              code={`
+                'Set-Item Env:TERM "xterm-256color"' | Out-File -Append $PROFILE
+                . $PROFILE
+              `}
+            >
+              <span slot="title">
+                Configurar <InlinePowerShell code="$Env:TERM" /> en PowerShell (pwsh)
+              </span>
+            </PowerShellBlock>
+          </Tip>
+        </TabsContent>
+      </Tabs>
+
+      <Tip>
+        <span slot="title">Extensión para VS Code</span>
+
+        Instala la extensión oficial <strong>PowerShell</strong> en VS Code para
+        obtener resaltado de sintaxis, autocompletado y depuración integrada.
+      </Tip>
+
+      <PowerShellBlock
+        code={`
+          if (-not (Test-Path -Path $PROFILE)) {
+              New-Item -ItemType File -Path $PROFILE -Force
+          }
+          code --install-extension ms-vscode.PowerShell
+          code $PROFILE
+        `}
+      >
+        <span slot="title">Editar perfil de PowerShell</span>
+      </PowerShellBlock>
+
+      <PowerShellBlock
+        code={`
+          # ↓ Esto debe ir al final del archivo
+          oh-my-posh init pwsh | Invoke-Expression
+        `}
+      >
+        <span slot="title">Inicializar Oh My Posh</span>
+        <span slot="source">Microsoft.PowerShell_profile.ps1</span>
+      </PowerShellBlock>
+
+      <p>Luego puedes cerrar y reabrir PowerShell, o recargar el perfil con:</p>
+
+      <PowerShellBlock code={`. $PROFILE`}>
+        <span slot="title">Recargar perfil</span>
+      </PowerShellBlock>
+
+      <Warning>
+        <span slot="title">Permisos de ejecución</span>
+
+        Si nunca has modificado políticas de ejecución en PowerShell, puede que
+        necesites habilitar scripts locales:
+        <PowerShellBlock
+          code={`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`}
+        >
+          <span slot="title">Permitir ejecución de scripts</span>
+        </PowerShellBlock>
+      </Warning>
+    </NotesSection>
+
+    <NotesSection id="h3-nerd-fonts">
+      <Heading headingLevel="h3" Icon={icons.TextAa}>
+        Nerd Fonts: qué son, cómo instalarlas y cómo usarlas con
+        Oh&nbsp;My&nbsp;Posh
+      </Heading>
+
+      <p class="mb-4">
+        <Link href="https://www.nerdfonts.com/">Nerd Fonts</Link> son fuentes parcheadas
+        que incluyen miles de iconos (Octicons, Font Awesome, Devicons, etc.). <strong
+          >Oh&nbsp;My&nbsp;Posh</strong
+        >
+        está diseñado para aprovechar estos glifos: sin una Nerd Font, verás cuadrados
+        o símbolos extraños en el prompt.
+      </p>
+
+      <NotesSection id="h4-install-nerd-font">
+        <Heading headingLevel="h4" Icon={icons.TextT}>
+          Instalar una Nerd Font
+        </Heading>
+
+        <Note>
+          Cualquier Nerd Font funciona. Usaremos <strong
+            >FiraCode Nerd Font</strong
+          >
+          como ejemplo, pero puedes elegir otra (Meslo, Caskaydia, JetBrainsMono,
+          etc.).
+        </Note>
+
+        <PowerShellBlock
+          code={`
+              # Instalador integrado de Oh My Posh (descarga e instala la fuente)
+              oh-my-posh font install FiraCode
+            `}
+        >
+          <span slot="title">Instalar FiraCode Nerd Font</span>
+        </PowerShellBlock>
+
+        <Tip>
+          <span slot="title">Instalador interactivo</span>
+
+          Si ejecutas <InlinePowerShell code="oh-my-posh font install" />, el
+          instalador te permitirá elegir entre varias fuentes populares.
+        </Tip>
+      </NotesSection>
+
+      <NotesSection id="h4-configure-terminal-font">
+        <Heading headingLevel="h4" Icon={icons.GearSix}>
+          Configurar en la terminal
+        </Heading>
+
+        <p class="mb-4">
+          Selecciona la fuente instalada en tu emulador de terminal.
+        </p>
+
+        <Tabs defaultValue="windows-terminal">
+          <TabsList>
+            <TabsTrigger value="windows-terminal">Windows Terminal</TabsTrigger>
+            <TabsTrigger value="iterm2">iTerm2 (macOS)</TabsTrigger>
+            <TabsTrigger value="kitty">Kitty (Linux/macOS)</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="windows-terminal">
+            <List>
+              <ListItem icon={icons.NumberCircleOne}>
+                Abre <strong>Settings</strong> → <strong>Profiles</strong> → <strong
+                  >Defaults</strong
+                >.
+              </ListItem>
+              <ListItem icon={icons.NumberCircleTwo}>
+                Ve a <strong>Appearance</strong> → <strong>Font face</strong>.
+              </ListItem>
+              <ListItem icon={icons.NumberCircleThree}>
+                Elige <code>FiraCode Nerd Font Mono</code> (o la que instalaste).
+              </ListItem>
+            </List>
+          </TabsContent>
+
+          <TabsContent value="iterm2">
+            <List>
+              <ListItem icon={icons.NumberCircleOne}>
+                Abre <strong>iTerm2</strong> → <strong>Settings</strong> / <strong
+                  >Preferences</strong
+                >.
+              </ListItem>
+              <ListItem icon={icons.NumberCircleTwo}>
+                <strong>Profiles</strong> → <strong>Text</strong> → <strong
+                  >Font</strong
+                >.
+              </ListItem>
+              <ListItem icon={icons.NumberCircleThree}>
+                Selecciona <code>FiraCode Nerd Font Mono</code> (o la que instalaste).
+                Activa ligaduras si lo deseas.
+              </ListItem>
+            </List>
+          </TabsContent>
+
+          <TabsContent value="kitty">
+            <p>
+              Edita tu archivo de configuración de Kitty (por ejemplo, <code
+                >~/.config/kitty/kitty.conf</code
+              >):
+            </p>
+            <PowerShellBlock
+              code={`
+                # ~/.config/kitty/kitty.conf
+                font_family      FiraCode Nerd Font Mono
+                bold_font        auto
+                italic_font      auto
+                bold_italic_font auto
+              `}
+            >
+              <span slot="title">Configurar fuente en Kitty</span>
+            </PowerShellBlock>
+            <p>
+              Reinicia Kitty o presiona <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd
+                >F5</kbd
+              > para recargar.
+            </p>
+          </TabsContent>
+        </Tabs>
+
+        <Tip>
+          <span slot="title">¿No aparece la fuente?</span>
+
+          Cierra y vuelve a abrir la terminal. En algunos casos, reiniciar la
+          sesión del sistema ayuda a que las fuentes nuevas se indexen.
+        </Tip>
+
+        <Note>
+          <span slot="title">Otras terminales</span>
+
+          Si utilizas un emulador de terminal distinto a los mostrados arriba
+          (como Terminator, GNOME Terminal, Alacritty, WezTerm, etc.), revisa la
+          documentación oficial de tu terminal para cambiar la fuente. El
+          procedimiento varía según la aplicación, pero en todos los casos debes
+          seleccionar la Nerd Font instalada (por ejemplo, <code
+            >FiraCode Nerd Font Mono</code
+          >).
+        </Note>
+      </NotesSection>
+
+      <NotesSection id="h4-configure-vscode">
+        <Heading headingLevel="h4" Icon={icons.FileCode}>
+          Configurar en VS&nbsp;Code
+        </Heading>
+
+        <p>
+          Usa la misma Nerd Font dentro del terminal integrado de VS&nbsp;Code:
+        </p>
+
+        <CodeBlock
+          code={`
+            {
+              // ...
+              "terminal.integrated.fontFamily": "FiraCode Nerd Font Mono",
+              // ...
+            }
+          `}
+          lang="json"
+        >
+          <span slot="title">VS&nbsp;Code — Terminal integrado</span>
+          <span slot="source">settings.json</span>
+        </CodeBlock>
+      </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h3-themes">
+      <Heading headingLevel="h3" Icon={icons.Palette}>
+        Elegir y aplicar un tema de Oh&nbsp;My&nbsp;Posh
+      </Heading>
+
+      <p class="mb-4">
+        Los <em>temas</em> de Oh&nbsp;My&nbsp;Posh son archivos <code
+          >.omp.json</code
+        > que definen colores, segmentos e iconos del prompt. Puedes usar cualquiera
+        de la
+        <Link href="https://ohmyposh.dev/docs/themes"
+          >galería oficial de temas</Link
+        >. A continuación se muestra cómo descargar uno (por ejemplo, <strong
+          >easy-term</strong
+        >) con <strong>PowerShell</strong> y dejarlo activo.
+      </p>
+
+      <PowerShellBlock
+        code={`
+          # 1) Definir carpeta y tema a usar
+          $themesPath = Join-Path $HOME ".poshthemes"
+          $themeName = "easy-term" # cámbialo por cualquier tema de la galería
+
+
+          # 2) Crear carpeta si no existe
+          New-Item -ItemType Directory -Path $themesPath -Force
+
+
+          # 3) Descargar el tema desde GitHub (archivo JSON)
+          $themeUrl = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/$themeName.omp.json"
+          Invoke-WebRequest -Uri $themeUrl -OutFile (Join-Path $themesPath "$themeName.omp.json")
+
+        `}
+      >
+        <span slot="title">Descargar un tema</span>
+      </PowerShellBlock>
+
+      <p>
+        Para que el tema quede activo cada vez que abras PowerShell, añade la
+        línea de inicialización a tu perfil (recuerda que puedes abrirlo con
+        <InlinePowerShell code="code $PROFILE" />):
+      </p>
+
+      <PowerShellBlock
+        code={`
+          # [!code ++:2]
+          $themesPath = Join-Path $HOME ".poshthemes"
+          $themeName = "easy-term" # cámbialo por cualquier tema de la galería
+          # ↓ Esto debe ir al final del archivo
+          # [!code --]
+          oh-my-posh init pwsh | Invoke-Expression
+          # [!code ++:2]
+          oh-my-posh init pwsh --config "$themesPath/$themeName.omp.json" |
+              Invoke-Expression
+        `}
+      >
+        <span slot="title">Configurar el tema en el perfil</span>
+        <span slot="source">Microsoft.PowerShell_profile.ps1</span>
+      </PowerShellBlock>
+
+      Si todo está en orden, al recargar el perfil o abrir una nueva terminal
+      verás el nuevo tema aplicado:
+
+      <Img
+        image={{
+          src: "/img/installation/omp_light.png",
+          darkSrc: "/img/installation/omp_dark.png",
+          alt: "Oh My Posh con el tema easy-term",
+        }}
+        caption="Oh My Posh con el tema easy-term"
+      />
+    </NotesSection>
+
+    <NotesSection id="h3-terminal-extras">
+      <Heading headingLevel="h3" Icon={icons.Cake}>
+        Herramientas extra para potenciar tu terminal (opcionales)
+      </Heading>
+
+      <p class="mb-4">
+        Como "cereza del pastel", estas utilidades pueden mejorar la experiencia
+        en la terminal y acelerar tareas comunes. <strong
+          >No son obligatorias</strong
+        >; instálalas si encajan con tus preferencias y flujo de trabajo.
+      </p>
+
+      <List>
+        <ListItem icon={icons.Package}>
+          <Link href="https://github.com/devblackops/Terminal-Icons"
+            >Terminal-Icons</Link
+          > — Añade íconos a <InlinePowerShell
+            code="Get-ChildItem"
+          />/<InlinePowerShell code="ls" /> según tipo de archivo. Requiere usar
+          una <em>Nerd&nbsp;Font</em> para ver glifos.
+        </ListItem>
+
+        <ListItem icon={icons.Compass}>
+          <Link href="https://github.com/badmotorfinger/z">z</Link> — Salta a directorios
+          por <em>frecuencia+recencia</em> (frecency). Reduce <code>cd</code> repetitivos
+          y acelera la navegación.
+        </ListItem>
+
+        <ListItem icon={icons.MagnifyingGlass}>
+          <Link href="https://github.com/kelleyma49/PSFzf">PSFzf</Link> — Integra
+          <code>fzf</code> (buscador difuso) con PowerShell y PSReadLine para buscar
+          historial, archivos, procesos y más.
+        </ListItem>
+      </List>
+
+      <NotesSection id="h4-install-terminal-extras">
+        <Heading headingLevel="h4" Icon={icons.DownloadSimple}>
+          Instalación de módulos con PowerShell Gallery
+        </Heading>
+
+        <p class="mb-2">
+          PSFzf necesita el binario <code>fzf</code> en el <em>PATH</em>:
+        </p>
+
+        <Tabs defaultValue="windows">
+          <TabsList>
+            <TabsTrigger value="windows">Windows</TabsTrigger>
+            <TabsTrigger value="macos">macOS</TabsTrigger>
+            <TabsTrigger value="linux">Linux</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="windows">
+            <PowerShellBlock code={`scoop install fzf`}>
+              <span slot="title">Instalar fzf con Scoop</span>
+            </PowerShellBlock>
+          </TabsContent>
+          <TabsContent value="macos">
+            <PowerShellBlock code={`brew install fzf`}>
+              <span slot="title">Instalar fzf con Homebrew</span>
+            </PowerShellBlock>
+          </TabsContent>
+          <TabsContent value="linux">
+            <PowerShellBlock code={`nix profile add nixpkgs#fzf`}>
+              <span slot="title">Instalar fzf con Nix</span>
+            </PowerShellBlock>
+          </TabsContent>
+        </Tabs>
+
+        <PowerShellBlock
+          code={`
+              # Terminal-Icons (iconos en listados)
+              Install-Module Terminal-Icons -Scope CurrentUser -Force
+
+              # z (jump entre directorios por frecency)
+              Install-Module z -Scope CurrentUser -Force
+
+              # PSFzf (requiere fzf instalado y PSReadLine)
+              Install-Module PSFzf -Scope CurrentUser -Force
+          `}
+        >
+          <span slot="title">Instalar módulos</span>
+        </PowerShellBlock>
+      </NotesSection>
+
+      <NotesSection id="h4-profile">
+        <Heading headingLevel="h4" Icon={icons.GearSix}>
+          Configurar el perfil de PowerShell para cargar módulos y atajos
+        </Heading>
+
+        <p class="mb-2">
+          Carga automática de módulos y atajos útiles en tu <InlinePowerShell
+            code="$PROFILE"
+          />:
+        </p>
+
+        <PowerShellBlock
+          code={`
+            # [!code ++:9]
+            # Cargar módulos
+            Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue
+            Import-Module -Name z -ErrorAction SilentlyContinue
+            Import-Module -Name PSFzf -ErrorAction SilentlyContinue
+
+            # PSFzf: atajos (ajústalos a gusto)
+            Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+f' -PSReadlineChordReverseHistory 'Ctrl+r'
+            $themesPath = Join-Path $HOME ".poshthemes"
+            $themeName = "easy-term" # cámbialo por cualquier tema de la galería
+            # ...
+          `}
+        >
+          <span slot="title">Autocarga + atajos</span>
+          <span slot="source">Microsoft.PowerShell_profile.ps1</span>
+        </PowerShellBlock>
+      </NotesSection>
+
+      <NotesSection id="h4-basic-usage">
+        <Heading headingLevel="h4" Icon={icons.Rocket}>
+          Uso básico de las herramientas
+        </Heading>
+
+        <List>
+          <ListItem icon={icons.Eye}>
+            <strong>Terminal-Icons</strong> — Ahora, ejecuta <InlinePowerShell
+              code="Get-ChildItem"
+            /> y verás íconos según tipo/extension.
+          </ListItem>
+
+          <ListItem icon={icons.ArrowSquareOut}>
+            <strong>z</strong> — navega por el historial de directorios (requiere
+            usar varios directorios primero para poblar su base de datos):
+            <ul class="list-disc ml-6 mt-1 space-y-1">
+              <li>
+                <InlinePowerShell code="z foo" /> — salta al directorio más usado
+                que coincida con "foo".
+              </li>
+              <li>
+                <InlinePowerShell code="z -l" /> — lista coincidencias ordenadas
+                por frecuencia y recencia.
+              </li>
+              <li>
+                <InlinePowerShell code="z temp -o t" /> — usa un algoritmo alternativo
+                de coincidencia.
+              </li>
+            </ul>
+          </ListItem>
+
+          <ListItem icon={icons.MagnifyingGlass}>
+            <strong>PSFzf</strong> — búsqueda difusa:
+            <ul class="list-disc ml-6 mt-1 space-y-1">
+              <li>
+                <kbd>Ctrl+f</kbd>: selector difuso de archivos y carpetas en el
+                directorio actual.
+              </li>
+
+              <li>
+                <kbd>Ctrl+r</kbd>: buscar en historial e insertar comando.
+              </li>
+            </ul>
+          </ListItem>
+        </List>
+      </NotesSection>
+    </NotesSection>
+  </NotesSection>
+
+  <NotesSection id="h2-conclusion">
+    <Heading Icon={icons.FlagCheckered} headingLevel="h2" slot="heading">
+      Conclusión
     </Heading>
 
     <p>
-      Windows incluye una terminal básica, pero puedes mejorar tu experiencia
-      instalando <strong>Windows Terminal</strong> y añadiendo personalización con
-      <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
+      Con estas herramientas instaladas y tu terminal personalizada, ya cuentas
+      con un entorno moderno, productivo y cómodo para trabajar en el curso. No
+      se trata solo de estética: tener un flujo de trabajo fluido y consistente
+      te permitirá concentrarte en lo importante —diseñar y construir
+      bibliotecas de software de calidad.
     </p>
 
-    <List>
-      <ListItem icon={icons.Storefront}>
-        Descarga <strong>Windows Terminal</strong> desde la
-        <Link
-          href="https://www.microsoft.com/es-mx/p/windows-terminal/9n0dx20hk701"
-        >
-          Microsoft Store
-        </Link>.
-      </ListItem>
-      <ListItem icon={icons.Sparkle}>
-        <strong>Opcional:</strong> añade estilos y funcionalidades adicionales con
-        <Link href="https://ohmyposh.dev/">Oh My Posh</Link>.
-      </ListItem>
-    </List>
-
-    <PowerShellBlock
-      code={`
-            # Instalar Oh My Posh con Scoop
-            scoop install oh-my-posh
-            # Inicializarlo en PowerShell
-            oh-my-posh init pwsh | Invoke-Expression
-          `}
-    >
-      <Fragment slot="title">Instalación de Oh My Posh</Fragment>
-    </PowerShellBlock>
-
-    <More title="Configuración avanzada">
-      <p>
-        Para una mejor experiencia visual, te recomendamos
-        <Link href="https://ohmyposh.dev/docs/installation/fonts">
-          instalar una fuente compatible
-        </Link> con símbolos y ligaduras, como Fira Code.
-      </p>
-
-      <PowerShellBlock code={`oh-my-posh font install FiraCode`}>
-        <Fragment slot="title">Instalar Fira Code</Fragment>
-      </PowerShellBlock>
-
-      <p>
-        Luego, configura tu terminal para usar la nueva fuente. Consulta la
-        <Link href="https://ohmyposh.dev/docs/installation/fonts#configuration">
-          guía de configuración
-        </Link>.
-      </p>
-
-      <p>
-        También puedes elegir un tema visual desde la
-        <Link href="https://ohmyposh.dev/docs/themes">
-          galería de temas disponibles
-        </Link>. Para que se aplique automáticamente al abrir PowerShell, edita
-        tu perfil:
-      </p>
-
-      <PowerShellBlock
-        code={`
-              # Crear el perfil si no existe
-              if (-not Test-Path $PROFILE) {
-                  New-Item -Type File -Path $PROFILE -Force
-              }
-
-              # Abrir el perfil en VS Code si está instalado, si no usar notepad
-              if (Get-Command code-insiders -ErrorAction SilentlyContinue) {
-                  code-insiders $PROFILE
-              } elseif (Get-Command code -ErrorAction SilentlyContinue) {
-                  code $PROFILE
-              } else {
-                  notepad $PROFILE
-              }
-            `}
-      >
-        <Fragment slot="title">Editar perfil de PowerShell</Fragment>
-      </PowerShellBlock>
-
-      <Explanation>
-        <p>
-          En PowerShell, el <strong>perfil</strong> es un archivo de configuración
-          que se ejecuta automáticamente cada vez que abres la terminal. Allí puedes
-          agregar comandos o configuraciones que quieras tener siempre activas (por
-          ejemplo, inicializar <code>Oh My Posh</code> con tu tema favorito).
-        </p>
-
-        <p>
-          La variable <InlinePowerShell code="$PROFILE" /> apunta a la ruta de ese
-          archivo en tu sistema. Si el archivo aún no existe, el script lo crea automáticamente.
-        </p>
-
-        <List>
-          <ListItem icon={icons.File}>
-            <strong>Crear el archivo:</strong> si <InlineCode
-              code="$PROFILE"
-              lang="powershell"
-            /> no existe, se genera con <InlineCode
-              code="New-Item -Force"
-              lang="powershell"
-            />.
-          </ListItem>
-          <ListItem icon={icons.MagnifyingGlass}>
-            <strong>Elegir editor:</strong> el script busca primero <em
-              >VS Code Insiders</em
-            >, luego <em>VS Code</em>, y si no encuentra ninguno, abre el perfil
-            con <em>Notepad</em>.
-          </ListItem>
-          <ListItem icon={icons.PencilSimple}>
-            <strong>Editar:</strong> una vez abierto, puedes añadir tus configuraciones
-            personalizadas, como inicializar <InlineCode
-              code="oh-my-posh"
-              lang="plaintext"
-            />.
-          </ListItem>
-        </List>
-      </Explanation>
-
-      <p>
-        Dentro del archivo, agrega la siguiente línea para inicializar Oh My
-        Posh con tu tema preferido:
-      </p>
-
-      <PowerShellBlock
-        code={`
-              oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\\emodipt-extend.omp.json" |
-                  Invoke-Expression
-            `}
-      >
-        <Fragment slot="title">Inicialización automática</Fragment>
-      </PowerShellBlock>
-
-      <p>
-        Guarda el archivo y reinicia la terminal. Para una personalización más
-        completa, revisa la
-        <Link href="https://ohmyposh.dev/docs/installation/customize">
-          documentación oficial
-        </Link>.
-      </p>
-    </More>
+    <p>
+      Recuerda que esta configuración no es estática. Puedes ajustar temas,
+      atajos y módulos adicionales a medida que descubras qué te resulta más
+      útil.
+      <strong>Tu entorno es tuyo</strong>, adáptalo a tus necesidades para que
+      se convierta en una herramienta que trabaje a tu favor.
+    </p>
   </NotesSection>
-
-  <Note>
-    <span slot="title">Accesibilidad</span>
-
-    Si usas un lector de pantalla o tienes alguna necesidad particular respecto
-    al entorno de desarrollo, por favor comunícalo para que podamos ayudarte a
-    configurar una alternativa accesible.
-  </Note>
 </NotesLayout>

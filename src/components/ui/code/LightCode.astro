@@ -17,9 +17,8 @@ import { Code } from "astro:components";
 import { availableLanguages } from "~/lib/shiki/highlighter";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { ShikiTransformer } from "shiki";
-import { transformerNotationFocus } from "@shikijs/transformers";
+import { transformerNotationDiff, transformerNotationFocus } from "@shikijs/transformers";
 
-// Component props definition
 type Props = {
   code: string;
   lang: (typeof availableLanguages)[number];
@@ -27,11 +26,9 @@ type Props = {
   transformers?: ShikiTransformer[];
 };
 
-// Destructure and default props
 const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
 ---
 
-<!-- Render the code block for light mode using the catppuccin-latte theme -->
 <Code
   code={code}
   theme="catppuccin-latte"
@@ -48,6 +45,7 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
   transformers={[
     transformerColorizedBrackets(),
     transformerNotationFocus(),
+    transformerNotationDiff(),
     ...transformers,
   ]}
   role="code"
@@ -55,6 +53,7 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
 />
 
 <style is:global>
+  /* Focus */
   pre.has-focused .line:not(.focused) {
     filter: blur(1px);
     transition: filter 0.2s ease;
@@ -63,28 +62,27 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
     filter: none;
   }
 
+  /* Base line padding */
   pre .line {
     position: relative;
-    padding-left: 0.75rem; /* espacio para el borde izquierdo */
+    padding-left: 0.75rem;
   }
 
+  /* Highlighted lines */
   pre.has-highlighted .line.highlighted {
     background-color: color-mix(in oklab, var(--muted), transparent 70%);
     transition:
       background-color 0.2s ease,
       box-shadow 0.2s ease;
   }
-
   pre.has-highlighted .line.highlighted.error {
     background-color: color-mix(in oklab, var(--error), transparent 88%);
     box-shadow: inset 2px 0 0 0 var(--error);
   }
-
   pre.has-highlighted .line.highlighted.warning {
     background-color: color-mix(in oklab, var(--warning), transparent 86%);
     box-shadow: inset 2px 0 0 0 var(--warning);
   }
-
   pre.has-highlighted .line.highlighted.error code,
   pre.has-highlighted .line.highlighted.error .token {
     color: var(--error-foreground);
@@ -92,5 +90,64 @@ const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
   pre.has-highlighted .line.highlighted.warning code,
   pre.has-highlighted .line.highlighted.warning .token {
     color: var(--warning-foreground);
+  }
+
+  /* === Diff styling (transformerNotationDiff) === */
+  :root {
+    --diff-add-bg: color-mix(in oklab, #22c55e 12%, transparent 90%);
+    --diff-add-border: #16a34a;
+    --diff-add-fg: #064e3b;
+
+    --diff-remove-bg: color-mix(in oklab, #ef4444 12%, transparent 90%);
+    --diff-remove-border: #dc2626;
+    --diff-remove-fg: #7f1d1d;
+
+    --diff-gutter-w: 1rem;
+    --diff-gutter-fg: color-mix(in oklab, currentColor 55%, transparent 45%);
+  }
+
+  pre.has-diff .line {
+    padding-left: calc(0.75rem + var(--diff-gutter-w));
+  }
+
+  pre.has-diff .line.diff.add {
+    background: var(--diff-add-bg);
+    box-shadow: inset 3px 0 0 0 var(--diff-add-border);
+    color: var(--diff-add-fg);
+  }
+  pre.has-diff .line.diff.remove {
+    background: var(--diff-remove-bg);
+    box-shadow: inset 3px 0 0 0 var(--diff-remove-border);
+    color: var(--diff-remove-fg);
+  }
+
+  pre.has-diff .line.diff.add::before,
+  pre.has-diff .line.diff.remove::before {
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: calc(var(--diff-gutter-w) - 0.5rem);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-weight: 700;
+    color: var(--diff-gutter-fg);
+    user-select: none;
+    pointer-events: none;
+  }
+  pre.has-diff .line.diff.add::before { content: "+"; }
+  pre.has-diff .line.diff.remove::before { content: "−"; }
+
+  pre.has-diff .line.diff.add,
+  pre.has-diff .line.diff.remove {
+    transition: background-color .15s ease, box-shadow .15s ease;
+  }
+
+  pre.has-highlighted .line.diff.add.highlighted {
+    background: color-mix(in oklab, var(--diff-add-bg) 70%, transparent);
+  }
+  pre.has-highlighted .line.diff.remove.highlighted {
+    background: color-mix(in oklab, var(--diff-remove-bg) 70%, transparent);
   }
 </style>

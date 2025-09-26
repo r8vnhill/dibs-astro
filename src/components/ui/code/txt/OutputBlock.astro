@@ -1,0 +1,18 @@
+---
+import CodeBlock from "../CodeBlock.astro";
+
+type Props = {
+  code: string,
+};
+
+const { code } : Props = Astro.props;
+---
+
+<CodeBlock
+  code={code}
+  lang="plaintext"
+>
+  <span slot="title">
+    <slot name="title">Output</slot>
+  </span>
+</CodeBlock>
