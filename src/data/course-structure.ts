@@ -43,8 +43,18 @@ export const courseStructure: Lesson[] = [
         href: "/notes/software-libraries/task-automation/",
       },
       {
-        title: "Scripting 101",
+        title: "Scripting",
         href: "/notes/software-libraries/scripting/",
+        children: [
+          {
+            title: "Patrones básicos",
+            href: "/notes/software-libraries/scripting/basic-patterns/",
+          },
+          {
+            title: "Manejo de errores",
+            href: "/notes/software-libraries/scripting/errors/",
+          }
+        ]
       },
       {
         title: "Sistemas de construcción",

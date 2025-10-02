@@ -14,8 +14,13 @@ import Head from "~/components/meta/Head.astro";
 import "~/styles/global.css"; // Loads Tailwind styles and CSS variables
 import { site } from "~/utils";
 
+type Props = {
+  pageTitle: string;
+  description?: string | undefined;
+}
+
 // Props passed into the layout
-const { pageTitle } = Astro.props;
+const { pageTitle, description } = Astro.props;
 
 // Repository info for GitHub/GitLab links in the header
 const repoInfo = {
@@ -46,7 +51,7 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
 <html lang="en">
   <head>
     <!-- Includes metadata, favicons, and dynamic <title> -->
-    <Head title={fullTitle} />
+    <Head title={fullTitle} description={description} />
   </head>
   <body class="min-h-screen bg-base-background text-base-text">
     <!-- Site-wide header with title and repo links -->

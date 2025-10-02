@@ -1,7 +1,6 @@
 ---
 import * as icons from "~/assets/img/icons";
 import NotesLayout from "~/layouts/NotesLayout.astro";
-import ToDo from "~/components/utils/ToDo.tsx";
 import {
   Abstract,
   Definition,
@@ -17,23 +16,35 @@ import {
   InlinePowerShell,
   OutputBlock,
   PowerShellBlock,
+  PowerShellInline,
 } from "~/components/ui/code";
 import { FootnoteRef, Footnotes, Footnote } from "~/components/ui/footnotes";
 import { List, ListItem } from "~/components/ui/list";
 import NotesSection from "~/layouts/NotesSection.astro";
 import Heading from "~/components/semantics/Heading.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import {
+  AuthorList,
+  Book,
+  References,
+} from "~/components/ui/references";
 ---
 
-<NotesLayout title="Scripting 101: Introducción a PowerShell">
-  <Abstract>
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: ["..."],
-      }}
-    />
-  </Abstract>
+<NotesLayout title="Scripting 101: Introducción a PowerShell"
+  ><Abstract>
+    Esta lección introduce el <strong>scripting</strong> con <strong
+      >PowerShell 7+</strong
+    > como herramienta multiplataforma para automatizar tareas de forma <em
+      >repetible</em
+    > y
+    <em>confiable</em>. Explica por qué conviene trabajar con
+    <strong>objetos en la pipeline</strong> en lugar de texto, cómo los cmdlets integrados
+    simplifican tareas comunes y cómo organizar un
+    <em>workspace</em> inicial. También muestra la creación de un primer script con
+    parámetros y salida tipada, incorporando validaciones y mensajes de diagnóstico
+    que sientan las bases para escribir scripts claros y reutilizables en PowerShell.</Abstract
+  >
 
   <NotesSection id="h2-scripting-powershell">
     <Heading headingLevel="h2" Icon={icons.Terminal}>
@@ -449,7 +460,7 @@ import { DibsSourceLink, Link } from "~/components/ui/links";
           expresiones (por ejemplo, <InlinePowerShell code="$Name" /> o
           <InlinePowerShell code="$(Get-Date ...)" />). También existe la
           variante <InlinePowerShell code="@' ... '@" /> que no expande variables,
-          tratándolas como texto literal.<FootnoteRef index={4} />
+          tratándolas como texto literal.
         </ListItem>
       </List>
     </Explanation>
@@ -506,213 +517,111 @@ import { DibsSourceLink, Link } from "~/components/ui/links";
     </Note>
   </NotesSection>
 
-  <NotesSection id="h2-should-process">
-    <Heading headingLevel="h2" Icon={icons.ShieldCheck}>
-      Patrón de ensayo seguro (simular antes de ejecutar)
-    </Heading>
-
-    <p class="mb-4">
-      Antes de modificar archivos o crear estructuras, es buena práctica hacer
-      un “ensayo” que muestre <em>qué</em> se haría sin hacerlo realmente. En PowerShell
-      esto se logra con <InlinePowerShell code="-WhatIf" /> (vía
-      <InlinePowerShell code="SupportsShouldProcess" />). Así evitamos efectos
-      no deseados y ganamos confianza en el script.
-    </p>
-
-    <PowerShellBlock
-      code={`
-          #Requires -Version 7.0
-          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-          param(
-              [Parameter(Mandatory)]
-              [ValidateNotNullOrEmpty()]
-              [string] $Name,
-
-              [string] $Path
-          )
-
-          # Si no se pasa -Path, usar el nombre del proyecto como carpeta en el cwd
-          $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path ?? $Name)
-
-          if ($PSCmdlet.ShouldProcess($target, 'Initialize project and create README.md')) {
-              New-Item -Path $target -ItemType Directory -Force | Out-Null
-
-              $helperPath = Join-Path -Path $PSScriptRoot -ChildPath 'New-Readme.ps1'
-              & $helperPath -Name $Name -Verbose:$VerbosePreference |
-                  Set-Content -Path (
-                      Join-Path -Path $target -ChildPath 'README.md') -Encoding UTF8 -Force
-          }
-        `}
+  <ConclusionsLayout
+    ><Fragment slot="conclusions">
+      En esta lección introdujimos la idea de scripting como una forma de
+      automatizar tareas repetitivas mediante programas breves y prácticos.
+      Vimos por qué PowerShell 7+ resulta una buena elección para el curso:
+      funciona en múltiples plataformas, ofrece una tubería basada en objetos y
+      resuelve de forma integrada muchas necesidades comunes. Además, dimos los
+      primeros pasos creando un espacio de trabajo y escribiendo un script
+      sencillo para generar un <code>README.md</code>.</Fragment
     >
-      <Fragment slot="title"
-        >Initialize-Project (con <code>-WhatIf</code>)</Fragment
+
+    <Fragment slot="key-points"
+      ><ListItem icon={icons.GearSix}
+        >El scripting permite automatizar tareas y hacer procesos más repetibles
+        y confiables.</ListItem
       >
-      <DibsSourceLink
-        repo="scripts"
-        file="Initialize-Project.ps1"
-        slot="source"
-      />
-    </PowerShellBlock>
 
-    <Explanation>
-      <List>
-        <ListItem icon={icons.Shield}>
-          <InlinePowerShell code="SupportsShouldProcess" /> habilita
-          <InlinePowerShell code="-WhatIf" /> y <InlinePowerShell
-            code="-Confirm"
-          />, permitiendo simular u obligar confirmación antes de actuar.
-          Además, con <InlinePowerShell code="ConfirmImpact = 'Medium'" />
-          indicamos la “gravedad” de la operación: PowerShell solo pedirá confirmación
-          automática si la preferencia del usuario (<InlinePowerShell
-            code="$ConfirmPreference"
-          />) es igual o más baja.
+      <ListItem icon={icons.Devices}
+        >PowerShell 7+ es multiplataforma y su pipeline transmite objetos
+        fuertemente tipados.</ListItem
+      >
 
-          <List>
-            <ListItem icon={icons.CheckCircle}>
-              <InlinePowerShell code="Low" /> → operaciones triviales, casi nunca
-              piden confirmación.
-            </ListItem>
-            <ListItem icon={icons.FolderPlus}>
-              <InlinePowerShell code="Medium" /> → operaciones que crean o modifican
-              archivos (nuestro caso: inicializar un proyecto).
-            </ListItem>
-            <ListItem icon={icons.Trash}>
-              <InlinePowerShell code="High" /> → operaciones destructivas, como borrar
-              datos críticos.
-            </ListItem>
-          </List>
+      <ListItem icon={icons.Code}
+        >Los cmdlets reducen la necesidad de utilidades externas y hacen el
+        código más expresivo.</ListItem
+      >
 
-          Usar <code>Medium</code> comunica que el script modifica el sistema de
-          forma relevante (crea carpetas y archivos), pero sin ser una acción destructiva.
-        </ListItem>
-
-        <ListItem icon={icons.CurrencyDollar}>
-          <InlinePowerShell code="$PSCmdlet" /> es una variable automática disponible
-          en funciones avanzadas (<InlinePowerShell
-            code="[CmdletBinding()]"
-          />). Representa la instancia actual del cmdlet en ejecución y permite
-          acceder a información y utilidades internas, como <InlinePowerShell
-            code="$PSCmdlet.ShouldProcess()"
-          /> o <InlinePowerShell code="$PSCmdlet.SessionState" />.
-        </ListItem>
-
-        <ListItem icon={icons.Path}>
-          La variable <InlinePowerShell code="$target" /> se calcula con
-          <InlinePowerShell
-            code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)"
-          />, un método de PowerShell que convierte una ruta relativa o con
-          <code>~</code> en una ruta absoluta válida del sistema de archivos.
-
-          <List>
-            <ListItem icon={icons.TextT}>
-              El operador <InlinePowerShell code="??" /> devuelve
-              <InlinePowerShell code="$Path" /> si fue pasado como argumento, o en
-              su defecto el valor de <InlinePowerShell code="$Name" />.
-            </ListItem>
-            <ListItem icon={icons.FolderOpen}>
-              No es necesario pasar un directorio base explícito: PowerShell
-              resuelve la ruta relativa con respecto al directorio actual y la
-              expande a una forma absoluta, incluso si la carpeta aún no existe.
-            </ListItem>
-          </List>
-        </ListItem>
-
-        <ListItem icon={icons.ShieldCheck}>
-          <InlinePowerShell code="$PSCmdlet.ShouldProcess(...)" /> consulta si la
-          acción debe ejecutarse. <InlinePowerShell code="ShouldProcess" /> habilita
-          soportar <InlinePowerShell code="-WhatIf" /> y <InlinePowerShell
-            code="-Confirm"
-          />, permitiendo simular o pedir confirmación antes de modificar el
-          sistema.
-        </ListItem>
-
-        <ListItem icon={icons.FolderOpen}>
-          <InlinePowerShell code="$PSScriptRoot" /> contiene la ruta absoluta de
-          la carpeta donde se encuentra el script actual. Es útil para construir
-          rutas relativas seguras (por ejemplo, a otros scripts o recursos en el
-          mismo directorio), en lugar de depender del directorio desde el que se
-          ejecuta PowerShell.
-        </ListItem>
-
-        <ListItem icon={icons.Terminal}>
-          <InlinePowerShell
-            code="& $helperPath -Name $Name -Verbose:$VerbosePreference | Set-Content ..."
-          /> ejecuta otro script y redirige su salida a un archivo.
-
-          <List>
-            <ListItem icon={icons.PlayCircle}>
-              <InlinePowerShell code="&" /> es el <em>call operator</em>:
-              permite invocar el script cuya ruta está almacenada en
-              <InlinePowerShell code="$helperPath" />.<FootnoteRef index={5} />
-            </ListItem>
-
-            <ListItem icon={icons.ToggleRight}>
-              <InlinePowerShell code="-Verbose:$VerbosePreference" /> asegura que
-              la preferencia <InlinePowerShell code="-Verbose" /> se respete también
-              en el script secundario.
-              <InlinePowerShell code="$VerbosePreference" /> es una variable automática
-              de PowerShell que guarda si la sesión actual está en modo detallado.
-              Al usar la sintaxis <InlinePowerShell
-                code=":$VerbosePreference"
-              />, transmitimos explícitamente el valor booleano (por ejemplo,
-              <InlinePowerShell code="$true" /> si se ejecutó con
-              <InlinePowerShell code="-Verbose" />). Sin esto, el script llamado
-              ignoraría el estado de verbosidad y siempre trabajaría en modo
-              silencioso.
-            </ListItem>
-          </List>
-        </ListItem>
-      </List>
-    </Explanation>
-
-    <PowerShellBlock
-      code={`
-        # Desde dibs:
-        .\\scripts\\Initialize-Project.ps1 -Name "Test" -Path "test" -Verbose -WhatIf
-      `}
+      <ListItem icon={icons.FileCode}
+        >Configuramos un workspace inicial y escribimos un primer script con
+        parámetros y salida tipada.</ListItem
+      ></Fragment
     >
-      <Fragment slot="title">Desde la terminal de PowerShell</Fragment>
-    </PowerShellBlock>
 
-    <OutputBlock
-      code={`
-        What if: Performing the operation "Initialize project and create README.md" on target "C:\\path\\to\\dibs\\test".
-      `}
+    <Fragment slot="takeaways"
+      >Aprender scripting no se trata solo de memorizar comandos, sino de
+      adoptar una mentalidad de <em>automatización</em>. A partir de ahora
+      podrás pensar en tareas repetitivas como oportunidades para escribir
+      pequeños programas que te ahorren tiempo y reduzcan errores. Este es
+      apenas el inicio: con práctica, tus scripts evolucionarán en herramientas
+      valiosas y reutilizables que apoyarán tu trabajo cotidiano y el desarrollo
+      de bibliotecas más complejas.</Fragment
+    ></ConclusionsLayout
+  >
+
+  <References
+    ><Fragment slot="recommended"
+      ><Book
+        chapter="Improving your parameterized script"
+        bookTitle="Learn PowerShell in a month of lunches, fourth edition"
+        pages={[249, 258]}
+        ><AuthorList
+          slot="authors"
+          authors={[{ firstName: "Travis", lastName: "Plunk" }]}
+        />
+
+        <Fragment slot="description"
+          >Capítulo práctico sobre cómo llevar un script parametrizado de
+          PowerShell “de básico a sólido”. Parte desde un ejemplo funcional (<PowerShellInline
+            code={`Get-DiskInventory`}
+          />) con ayuda embebida y dos parámetros, y muestra por qué conviene <strong
+            >emitir objetos</strong
+          > con
+          <PowerShellInline code={`Select-Object`} /> en lugar de salida formateada,
+          permitiendo usar <PowerShellInline code={`Format-Table`} /> o exportar
+          a CSV sin cambios. Con
+          <PowerShellInline code={`[CmdletBinding()]`} /> se vuelve “avanzado” y
+          habilita
+          <PowerShellInline code={`-Verbose`} /> para <strong
+            >trazas activables</strong
+          >. También introduce mejoras en la <strong
+            >definición de parámetros</strong
+          >: obligatorios con
+          <PowerShellInline code={`[Parameter(Mandatory=$true)]`} />, <strong
+            >alias</strong
+          > con
+          <PowerShellInline code={`[Alias('host')]`} /> y <strong
+            >validaciones</strong
+          > con
+          <PowerShellInline code={`[ValidateSet(...)]`} />. Aunque centrado en
+          <strong>Windows</strong>, los principios son transferibles. El
+          capítulo introduce <strong>conceptos más avanzados</strong> que se explicarán
+          más adelante o que quedan fuera del alcance de este curso, pero resulta
+          ideal para quienes buscan crear scripts en PowerShell que sean profesionales,
+          reutilizables y claros.</Fragment
+        ></Book
+      ></Fragment
     >
-      <span slot="title">Salida con <InlinePowerShell code="-WhatIf" /></span>
-    </OutputBlock>
-  </NotesSection>
 
-  <NotesSection id="...">
-    <Heading headingLevel="h2" Icon={null}> ... </Heading>
+    <!--<Fragment slot="additional">
+        ...
+      </Fragment> --></References
+  >
 
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: [
-          "Definir id",
-          "Definir el título y su ícono",
-          `Agregar texto "al rededor" del código para contextualizar`,
-          `Manejo de errores:
-            - PowerShell: try/catch, $ErrorActionPreference, $LASTEXITCODE
-            - Bash: set -euo pipefail, trap, manejo de códigos de salida`,
-        ],
-      }}
-    />
-  </NotesSection>
-
-  <Footnotes>
-    <Footnote index={1}>
-      A diferencia de los shells tradicionales, PowerShell trata todo como
+  <Footnotes
+    ><Footnote index={1}
+      >A diferencia de los shells tradicionales, PowerShell trata todo como
       objetos de .NET. Esto habilita capacidades como composición, herencia,
       manejo de excepciones y tipado más estricto, lo que acerca la experiencia
       a la de un lenguaje de programación completo. Además, permite cierto nivel
       de compatibilidad con C#, lo que facilita integrar scripts con bibliotecas
-      y funcionalidades del ecosistema .NET para resolver tareas más complejas.
-    </Footnote>
+      y funcionalidades del ecosistema .NET para resolver tareas más complejas.</Footnote
+    >
 
-    <Footnote index={2}>
-      Un <strong>cmdlet</strong> es un comando ligero de PowerShell diseñado para
+    <Footnote index={2}
+      >Un <strong>cmdlet</strong> es un comando ligero de PowerShell diseñado para
       realizar una única tarea bien definida. Suelen seguir la convención <em
         >Verbo-Sustantivo</em
       > (por ejemplo,
@@ -722,30 +631,15 @@ import { DibsSourceLink, Link } from "~/components/ui/links";
       comandos en Bash. A diferencia de los ejecutables tradicionales, los
       cmdlets devuelven
       <em>objetos .NET</em>, lo que permite combinarlos en pipelines potentes y
-      consistentes.
-    </Footnote>
+      consistentes.</Footnote
+    >
 
-    <Footnote index={3}>
-      Puedes ajustar <InlinePowerShell code="#Requires" /> a otra versión, pero no
-      garantizamos compatibilidad con PowerShell anterior.
-    </Footnote>
-
-    <Footnote index={4}>
-      Microsoft define una lista de verbos recomendados en
-      <Link
-        href="https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands"
-        >Approved Verbs for Windows PowerShell Commands</Link
-      >.
-    </Footnote>
-
-    <Footnote index={5}>
-      <InlinePowerShell code="&" /> ejecuta un script en un nuevo contexto, sin compartir
-      variables locales. En cambio, <InlinePowerShell code="." /> (dot-sourcing)
-      carga el script en el contexto actual, permitiendo que sus funciones y variables
-      permanezcan disponibles después de la ejecución.
-    </Footnote>
-  </Footnotes>
-</NotesLayout>
+    <Footnote index={3}
+      >Puedes ajustar <InlinePowerShell code="#Requires" /> a otra versión, pero
+      no garantizamos compatibilidad con PowerShell anterior.</Footnote
+    ></Footnotes
+  ></NotesLayout
+>
 
 <!-- <NotesSection id="scripting-101">
       <Heading headingLevel="h2" Icon={icons.Terminal}

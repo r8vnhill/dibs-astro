@@ -25,6 +25,10 @@ interface Props {
    */
   title: string;
   /**
+   * A brief description of the lesson, used for SEO and social sharing.
+   */
+  description?: string;
+  /**
    * Optional next lesson navigation data.
    * If not provided, will attempt to auto-resolve based on course structure.
    */
@@ -50,7 +54,8 @@ interface Props {
 }
 
 // Extract current page data and fallback navigation resolution
-const { title, next, previous, timeMultiplier, git } = Astro.props as Props;
+const { title, next, previous, timeMultiplier, git, description } =
+  Astro.props as Props;
 const pathname = Astro.url.pathname;
 
 // Attempt to auto-resolve previous/next from course structure
@@ -63,11 +68,11 @@ const effectiveNext = next ?? autoNav.next ?? undefined;
 // Normalize hrefs for consistency (e.g. ensure trailing slashes)
 const { normalizedNext, normalizedPrevious } = normalizeNavigation(
   effectiveNext,
-  effectivePrevious,
+  effectivePrevious
 );
 ---
 
-<BaseLayout pageTitle={title}>
+<BaseLayout pageTitle={title} description={description}>
   <div class="flex">
     <!-- Sidebar with course structure navigation -->
     <div class="flex-none">

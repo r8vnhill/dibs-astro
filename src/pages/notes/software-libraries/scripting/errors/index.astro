@@ -1,0 +1,785 @@
+---
+import Heading from "~/components/semantics/Heading.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import * as icons from "~/assets/img/icons";
+import {
+  OutputBlock,
+  PowerShellBlock,
+  PowerShellInline,
+} from "~/components/ui/code";
+import {
+  Abstract,
+  Definition,
+  Explanation,
+  More,
+  Note,
+  Tip,
+} from "~/components/ui/callouts";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import B from "~/components/ui/font/B.astro";
+import I from "~/components/ui/font/I.astro";
+import { Footnote, Footnotes } from "~/components/ui/footnotes";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "~/components/starwind/table";
+---
+
+<NotesLayout
+  title="Manejo de errores en PowerShell"
+  description="Buenas prácticas para capturar y manejar errores en scripts de PowerShell, usando try/catch, ErrorAction y más."
+  ><Abstract
+    ><ToDo
+      client:only="react"
+      metadata={{
+        tasks: ["..."],
+      }}
+    /></Abstract
+  >
+
+  <NotesSection id="h2-terminating-vs-non-terminating">
+    <Heading headingLevel="h2" Icon={icons.TextAa}
+      >Terminantes vs. no terminantes: qué son y cuándo usarlas</Heading
+    >
+
+    <NotesSection id="h3-nonterminating-errors"
+      ><Heading headingLevel="h3" Icon={icons.Bug}
+        >Errores no terminantes: acumular y devolver resultados</Heading
+      >
+
+      <Definition
+        ><Fragment slot="title">Error <B>no</B> terminante</Fragment>
+
+        <p>
+          Un <B>error no terminante</B> registra la falla pero <I>continúa</I>
+          la ejecución. Es útil cuando procesas un conjunto de elementos y quieres
+          obtener un reporte de qué funcionó y qué falló, sin detener todo ante el
+          primer error.
+        </p>
+      </Definition>
+
+      <PowerShellBlock
+        code={`
+            #Requires -Version 7.0
+            [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+            param(
+                [Parameter(Mandatory)]
+                [string[]] $Path
+            )
+
+            $deleted = @()
+            $errors = @()
+
+            foreach ($p in $Path) {
+                if ($PSCmdlet.ShouldProcess($p, 'Remove item')) {
+                    $localErr = $null
+                    Remove-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue -ErrorVariable localErr
+
+                    if ($localErr) {
+                        $errors += [pscustomobject]@{
+                            Path    = $p
+                            Message = $localErr[0].Exception.Message
+                        }
+                    }
+                    else {
+                        $deleted += $p
+                    }
+                }
+            }
+
+            return [pscustomobject]@{
+                Deleted = $deleted
+                Errors  = $errors
+            }
+          `}
+        ><Fragment slot="title"
+          >Script con reporte de eliminados y errores</Fragment
+        >
+        <DibsSourceLink
+          repo="scripts"
+          file="maintenance/Remove-ItemWithReport.ps1"
+          slot="source"
+        /></PowerShellBlock
+      >
+
+      <Explanation>
+        <List
+          ><ListItem icon={icons.Biohazard}
+            >Usamos <PowerShellInline code="ConfirmImpact = 'High'" /> en este caso
+            porque borrar es una acción destructiva.</ListItem
+          >
+
+          <ListItem icon={icons.TextT}
+            ><strong>Tipos y arreglos</strong>:
+            <PowerShellInline code="[string[]]" /> declara un parámetro como <em
+              >arreglo de strings</em
+            > (acepta uno o varios valores). <PowerShellInline code="@()" /> crea
+            un arreglo vacío (ej. <PowerShellInline code="$deleted = @()" />).
+            Agregar elementos con
+            <PowerShellInline code="$deleted += $p" /> es suficiente para volúmenes
+            pequeños.</ListItem
+          >
+
+          <ListItem icon={icons.Trash}
+            ><PowerShellInline code="Remove-Item" /> elimina un <I>item</I>, es
+            decir, una entrada dentro de un <B>proveedor de PowerShell</B>
+            (archivos, carpetas, claves del registro, entradas en certificados, etc.).
+            Con <PowerShellInline code="-Force" /> intenta eliminar aunque el objeto
+            sea de solo lectura u oculto.
+            <PowerShellInline code="-ErrorAction SilentlyContinue" /> evita que un
+            error detenga la ejecución (comportamiento no terminante) y permite seguir
+            con el resto.
+            <PowerShellInline code="-ErrorVariable localErr" /> captura los
+            <I>ErrorRecord</I> en la variable indicada</ListItem
+          >
+
+          <ListItem icon={icons.ListBullets}
+            ><B>Salida estructurada</B>: <PowerShellInline
+              code="[pscustomobject]@{ ... }"
+            /> crea objetos con propiedades nombradas. Devolvemos un objeto con
+            <PowerShellInline code="Deleted" /> y <PowerShellInline
+              code="Errors"
+            />, fácil de formatear (<PowerShellInline code="Format-Table" />),
+            exportar (<PowerShellInline code="Export-Csv" />) o serializar (<PowerShellInline
+              code="ConvertTo-Json -Depth 5"
+            />).</ListItem
+          ></List
+        ></Explanation
+      >
+
+      <More
+        ><Fragment slot="title">Clases</Fragment>
+
+        <p class="mb-2">
+          PowerShell permite definir <I>clases</I> para modelar tipos con propiedades
+          y métodos, ofreciendo contratos más expresivos que un <PowerShellInline
+            code="[pscustomobject]"
+          />. Este tema queda fuera del alcance del curso, pero es útil saber
+          que existe.
+        </p><PowerShellBlock
+          code={`
+              class RemovalResult {
+                [string[]] $Deleted
+                [object[]] $Errors
+                RemovalResult([string[]] $deleted, [object[]] $errors) {
+                  $this.Deleted = $deleted
+                  $this.Errors  = $errors
+                }
+              }
+              # Ejemplo de construcción:
+              [RemovalResult]::new($deleted, $errors)
+            `}><Fragment slot="title">Clase básica</Fragment></PowerShellBlock
+        ></More
+      >
+
+      <More>
+        <Fragment slot="title">Arreglos vs. Listas (.NET)</Fragment>
+
+        <p>
+          Para colecciones grandes, prefiere listas .NET: en un arreglo cada uso
+          de <PowerShellInline code="+=" /> crea una copia nueva, mientras que
+          <PowerShellInline code="List[string]" /> agrega en el mismo buffer. En
+          colecciones pequeñas la diferencia es mínima, pero en lotes grandes el
+          rendimiento se multiplica.
+        </p><PowerShellBlock
+          code={`
+              $n = 100000
+
+              $results = @()
+
+              # Arreglo con += (copia completa en cada iteración)
+              $timeArray = Measure-Command {
+                  $a = @()
+                  1..$n | ForEach-Object { $a += "x$_" }
+              }
+              $results += [pscustomobject]@{
+                  Method            = 'Array +='
+                  TotalMilliseconds = [math]::Round($timeArray.TotalMilliseconds, 0)
+              }
+
+              # List[string] con Add() (agrega sin copiar todo)
+              $timeList = Measure-Command {
+                  $l = [System.Collections.Generic.List[string]]::new()
+                  1..$n | ForEach-Object { $l.Add("x$_") }
+              }
+              $results += [pscustomobject]@{
+                  Method            = 'List[string].Add()'
+                  TotalMilliseconds = [math]::Round($timeList.TotalMilliseconds, 0)
+              }
+
+              # Mostrar como tabla
+              $results | Format-Table -AutoSize
+            `}
+          ><Fragment slot="title"
+            >Arreglo vs. <code>List[string]</code></Fragment
+          >
+          <DibsSourceLink
+            repo="scripts"
+            file="benchmarks/Benchmark-ArrayVsList.ps1"
+            slot="source"
+          /></PowerShellBlock
+        >
+
+        <OutputBlock
+          code={`
+              Method             TotalMilliseconds
+              ------             -----------------
+              Array +=                      25924
+              List[string].Add()              368
+            `}
+        /></More
+      >
+
+      <p class="mt-4">
+        Como <PowerShellInline code="[string[]]" /> acepta varios valores, puedes
+        pasar rutas separadas por coma sin usar
+        <PowerShellInline code="@(...)" />. Ambas formas son equivalentes.
+      </p><PowerShellBlock
+        code={`
+          # Varios ítems (no hace falta @())
+          $r = .\\Remove-ItemWithReport.ps1 -Path '.\\a.txt', '.\\b.txt', '.\\c.txt'
+          $r.Errors | Format-Table -AutoSize
+          # Equivalente usando arreglo literal
+          .\\Remove-ItemWithReport.ps1 -Path @('.\\a.txt', '.\\b.txt', '.\\c.txt')
+        `}
+        ><Fragment slot="title">Desde <code>scripts/maintenance</code></Fragment
+        ></PowerShellBlock
+      ></NotesSection
+    >
+
+    <NotesSection id="h3-terminating-errors"
+      ><Heading headingLevel="h3" Icon={icons.Shield}
+        >Errores terminantes: cuándo promover y cómo manejarlos</Heading
+      >
+
+      <Definition
+        ><Fragment slot="title">Error terminante</Fragment>
+
+        <p>
+          Un <B>error terminante</B>
+          <I>interrumpe</I> inmediatamente el flujo. Úsalo cuando la operación es
+          crítica (crear/escribir/borrar datos relevantes, cambios de estado, CI/CD),
+          promoviendo fallos con <PowerShellInline code="-ErrorAction Stop" /> y
+          manejándolos con <PowerShellInline code="try" />/<PowerShellInline
+            code="catch"
+          />/<PowerShellInline code="finally" />.
+        </p></Definition
+      >
+
+      <p class="mb-3">
+        Este ejemplo copia archivos de forma estricta: cada intento de copia
+        convierte fallos en <I>terminantes</I>, lo que permite capturarlos y
+        acumular los resultados. Además, el bloque
+        <PowerShellInline code="finally" /> se ejecuta siempre para registrar el
+        cierre de la operación. La estructura
+        <PowerShellInline code="try" />/<PowerShellInline
+          code="catch"
+        />/<PowerShellInline code="finally" /> funciona igual que en otros lenguajes,
+        por lo que no entraremos en detalle.
+      </p>
+
+      <PowerShellBlock
+        code={`
+          #Requires -Version 7.0
+          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+          param(
+              [Parameter(Mandatory)]
+              [ValidateNotNullOrEmpty()]
+              [string[]] $Source,
+
+              [Parameter(Mandatory)]
+              [ValidateNotNullOrEmpty()]
+              [string]  $Destination,
+
+              [switch] $Recurse,
+              [switch] $Overwrite
+          )
+
+          $copied = @()
+          $skipped = @()
+          $failures = @()
+
+          $destPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Destination)
+          if (!(Test-Path -LiteralPath $destPath) -and
+              $PSCmdlet.ShouldProcess($destPath, 'Create destination directory')) {
+              New-Item -ItemType Directory -Path $destPath -Force | Out-Null
+          }
+
+          try {
+              foreach ($s in $Source) {
+                  $src = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($s)
+                  $target = Join-Path -Path $destPath -ChildPath (Split-Path -Leaf $src)
+
+                  if ($PSCmdlet.ShouldProcess($src, "Copy to $destPath")) {
+                      if (!$Overwrite -and (Test-Path -LiteralPath $target)) {
+                          $skipped += [pscustomobject]@{
+                              File   = $src
+                              Reason = 'Exists'
+                              Target = $target
+                          }
+                          continue
+                      }
+
+                      $copyParams = @{
+                          LiteralPath = $src
+                          Destination = $destPath
+                          Recurse     = $Recurse
+                          Force       = $Overwrite
+                          ErrorAction = 'Stop'
+                      }
+
+                      try {
+                          Copy-Item @copyParams
+                          $copied += $src
+                      }
+                      catch {
+                          $failures += [pscustomobject]@{
+                              File    = $src
+                              Kind    = $PSItem.Exception.GetType().Name
+                              Message = $PSItem.Exception.Message
+                          }
+                      }
+                  }
+              }
+
+              $result = [pscustomobject]@{
+                  Destination = $destPath
+                  Copied      = $copied
+                  Skipped     = $skipped
+                  Failures    = $failures
+              }
+
+              if ($failures.Count) {
+                  Write-Warning "Copiado parcial: $($failures.Count) error(es)"
+              }
+
+              return $result
+          }
+          finally {
+              Write-Verbose ('Finalizado. Copiados={0}, Omitidos={1}, Errores={2}' -f $copied.Count,
+                  $skipped.Count, $failures.Count)
+          }
+        `}
+        ><Fragment slot="title"
+          >Copia estricta con resumen en <code>finally</code></Fragment
+        >
+        <DibsSourceLink
+          repo="scripts"
+          file="operations/Copy-ItemsStrict.ps1"
+          slot="source"
+        /></PowerShellBlock
+      >
+
+      <Explanation
+        ><List
+          ><ListItem icon={icons.Code}
+            ><B>Sintaxis</B>: <PowerShellInline
+              code="try { ... } catch { ... } finally { ... }"
+            /> sigue el mismo patrón que en otros lenguajes (ej. Python, Scala).
+            Los bloques <I>catch</I> pueden ser tipados o genéricos, y
+            <I>finally</I> se ejecuta siempre.</ListItem
+          >
+
+          <ListItem icon={icons.ArrowElbowDownRight}
+            ><PowerShellInline code="continue" />: interrumpe la iteración
+            actual y pasa al siguiente elemento del bucle. Aquí lo usamos para
+            saltar archivos que no deben copiarse.</ListItem
+          >
+
+          <ListItem icon={icons.BookOpenText}
+            ><B>Sintaxis de colecciones</B>:
+            <PowerShellInline code="@()" /> crea un <I>arreglo</I>,
+            <PowerShellInline code="@{ ... }" /> define un <I>diccionario</I> (pares
+            clave–valor), y <PowerShellInline code="[pscustomobject]@{ ... }" />
+            genera un <I>objeto</I> con propiedades nombradas a partir de un diccionario.</ListItem
+          >
+
+          <ListItem icon={icons.Package}
+            ><B>Splatting</B>: en lugar de pasar cada argumento por separado,
+            puedes agruparlos en un diccionario (<PowerShellInline
+              code="@{ ... }"
+            />) y expandirlos con <PowerShellInline code="@nombre" />. Ejemplo:
+            <PowerShellBlock
+              code={`
+                $p = @{ Path = '.\\a.txt'; Destination = '.\\backup'; Force = $true }
+                Copy-Item @p
+                # Equivale a: Copy-Item -Path .\\a.txt -Destination .\\backup -Force
+              `}><Fragment slot="title">Splatting</Fragment></PowerShellBlock
+            ></ListItem
+          >
+
+          <ListItem icon={icons.SlidersHorizontal}
+            ><B>Promoción a terminante</B>: al usar
+            <PowerShellInline code="-ErrorAction Stop" /> en
+            <PowerShellInline code="Copy-Item" /> convertimos un error no terminante
+            en terminante. Esto garantiza que no se ignore y que el control pase
+            al bloque <PowerShellInline code="catch" /> para manejarlo explícitamente.</ListItem
+          >
+
+          <ListItem icon={icons.TextT}
+            ><B><PowerShellInline code="$PSItem" /></B> dentro de un
+            <PowerShellInline code="catch" /> apunta al error que se está manejando
+            en ese momento. Permite acceder a sus propiedades, como el tipo de excepción
+            (<PowerShellInline code="$PSItem.Exception.GetType().Name" />) o el
+            mensaje (<PowerShellInline
+              code="$PSItem.Exception.Message"
+            />).</ListItem
+          >
+
+          <ListItem icon={icons.Quotes}
+            ><B>Formato de cadenas (<PowerShellInline code="-f" />)</B>: inserta
+            valores en una cadena con marcadores <PowerShellInline
+              code="{0}"
+            />, <PowerShellInline code="{1}" />, etc. Aquí lo usamos también
+            para escribir el mensaje en varias líneas del script sin que el
+            texto final se parta, manteniendo el código más legible.</ListItem
+          ></List
+        ></Explanation
+      >
+
+      <PowerShellBlock
+        code={`
+        $r = .\\Copy-ItemsStrict.ps1 -Source '.\\a.txt', '.\\b.txt' -Destination '.\\backup'
+        $r | Format-List
+        $r.Failures | Format-Table -AutoSize
+      `}
+        ><Fragment slot="title">Desde <code>scripts/operations</code></Fragment
+        ></PowerShellBlock
+      >
+
+      <More
+        ><Fragment slot="title"
+          ><PowerShellInline code="catch" /> tipado</Fragment
+        ><p class="mb-2">
+          Puedes encadenar varios <I>catch</I> específicos y cerrar con uno genérico.
+          Ordénalos de más específico a más general.
+        </p><PowerShellBlock
+          code={`
+            try {
+                Copy-Item @copyParams
+            }
+            catch [System.UnauthorizedAccessException] {
+                Write-Warning "Permisos insuficientes: $($PSItem.Exception.Message)"
+            }
+            catch [System.IO.IOException] {
+                Write-Warning "Problema de E/S: $($PSItem.Exception.Message)"
+            }
+            catch {
+                # Genérico: útil en PowerShell porque muchos cmdlets encapsulan errores en ErrorRecord
+                Write-Warning ("Error {0}: {1}" -f $PSItem.Exception.GetType().Name, $PSItem.Exception.Message)
+            }
+          `}
+          ><Fragment slot="title"
+            >Orden de <code>catch</code> y uso práctico</Fragment
+          ></PowerShellBlock
+        >
+
+        <p class="mt-2">
+          En PowerShell es común incluir un <I>catch</I> genérico porque los cmdlets
+          pueden envolver excepciones .NET en <I>ErrorRecord</I> con categorías que
+          varían según el proveedor. Aun así, cuando anticipes escenarios típicos
+          (permisos, E/S), añade <I>catch</I> tipados para mensajes más claros.
+        </p>
+
+        <p class="mt-2">
+          En este apunte usaremos principalmente <I>catch</I> genéricos para simplificar
+          los ejemplos, aun cuando en un contexto real convenga combinar tipados
+          y genéricos según el caso.
+        </p></More
+      >
+
+      <More
+        ><Fragment slot="title">Streams de salida en PowerShell</Fragment>
+
+        <p>
+          PowerShell no se limita a imprimir texto: maneja múltiples <Link
+            href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_output_streams"
+            ><I>streams de salida</I></Link
+          >, lo que permite separar mensajes de éxito, errores, advertencias,
+          depuración, etc. Esto hace posible <Link
+            href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection"
+            >redirigirlos</Link
+          > o tratarlos de forma independiente en un mismo script.
+        </p>
+
+        <p>
+          En particular, <PowerShellInline code="Write-Error" /> escribe en el <I
+            >error stream</I
+          > (2), lo que puede interrumpir pipelines o marcar la ejecución como fallida.
+          En estos apuntes evitaremos usarlo para no introducir demasiados conceptos
+          nuevos, y en su lugar preferiremos <PowerShellInline
+            code="Write-Warning"
+          /> o
+          <PowerShellInline code="Write-Verbose" />. Sin embargo, es importante
+          conocer que existe y que forma parte del sistema de streams.
+        </p>
+
+        <Table
+          ><TableCaption>Streams de PowerShell</TableCaption>
+          <TableHeader
+            ><TableRow
+              ><TableCell>Stream</TableCell>
+              <TableCell>Descripción</TableCell>
+              <TableCell>Write&nbsp;Cmdlet</TableCell></TableRow
+            ></TableHeader
+          >
+          <TableBody
+            ><TableRow
+              ><TableCell>1</TableCell>
+              <TableCell>Éxito (Output)</TableCell>
+              <TableCell><PowerShellInline code="Write-Output" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>2</TableCell>
+              <TableCell>Error</TableCell>
+              <TableCell><PowerShellInline code="Write-Error" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>3</TableCell>
+              <TableCell>Warning</TableCell>
+              <TableCell><PowerShellInline code="Write-Warning" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>4</TableCell>
+              <TableCell>Verbose</TableCell>
+              <TableCell><PowerShellInline code="Write-Verbose" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>5</TableCell>
+              <TableCell>Debug</TableCell>
+              <TableCell><PowerShellInline code="Write-Debug" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>6</TableCell>
+              <TableCell>Information</TableCell>
+              <TableCell
+                ><PowerShellInline code="Write-Information" /></TableCell
+              ></TableRow
+            >
+            <TableRow
+              ><TableCell>n/a</TableCell>
+              <TableCell>Progress</TableCell>
+              <TableCell><PowerShellInline code="Write-Progress" /></TableCell
+              ></TableRow
+            ></TableBody
+          ></Table
+        ></More
+      ></NotesSection
+    ></NotesSection
+  >
+
+  <NotesSection id="h2-verify-external-commands">
+    <Heading headingLevel="h2" Icon={icons.MagnifyingGlass}>
+      Verificar y ejecutar comandos externos con seguridad
+    </Heading>
+
+    <p class="mb-3">
+      Patrón para resolver primero la ruta de un ejecutable y luego invocarlo
+      con el <I>call operator</I>. Si el comando no existe, falla temprano con un
+      mensaje claro.
+    </p>
+
+    <PowerShellBlock
+      code={`
+      # Verificar existencia y ejecutar con ruta resuelta
+      try {
+        $tool = (Get-Command git -CommandType Application -ErrorAction Stop).Source
+        & $tool --version
+      }
+      catch {
+        Write-Warning ("No se encontró 'git' en PATH: {0}" -f $PSItem.Exception.Message)
+      }
+    `}
+    >
+      <Fragment slot="title">Patrón básico</Fragment>
+    </PowerShellBlock>
+
+    <PowerShellBlock
+      code={`
+      # Función reutilizable: valida e invoca cualquier herramienta externa
+      function Invoke-Tool {
+        [CmdletBinding()]
+        param(
+          [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]   $Name,
+          [Parameter()][string[]] $Args
+        )
+        try {
+          $exe = (Get-Command $Name -CommandType Application -ErrorAction Stop).Source
+          & $exe @Args
+        }
+        catch {
+          Write-Warning ("Falta el comando '{0}': {1}" -f $Name, $PSItem.Exception.Message)
+        }
+      }
+
+      # Ejemplos
+      Invoke-Tool -Name "node" -Args "--version"
+      Invoke-Tool -Name "7z"   -Args "i"   # mostrará warning si no está instalado
+    `}
+    >
+      <Fragment slot="title">Versión reutilizable</Fragment>
+    </PowerShellBlock>
+
+    <Explanation>
+      <List>
+        <ListItem icon={icons.Lightning}>
+          <strong>Motivación</strong>: <em>fail-fast</em> con mensajes comprensibles;
+          evita invocar alias o funciones con el mismo nombre (se usa la ruta real
+          del ejecutable).
+        </ListItem>
+
+        <ListItem icon={icons.TextT}>
+          <strong>Sintaxis</strong>: <PowerShellInline
+            code="Get-Command <name> -CommandType Application"
+          /> devuelve un <code>CommandInfo</code>; la propiedad <PowerShellInline
+            code=".Source"
+          /> es la ruta del ejecutable. El operador <PowerShellInline
+            code="&"
+          /> (<em>call operator</em>) ejecuta esa ruta con los argumentos dados.
+        </ListItem>
+
+        <ListItem icon={icons.CheckCircle}>
+          <strong>Ventajas</strong>: errores tempranos, llamadas deterministas,
+          menos ambigüedad en entornos con PATH/aliases complejos.
+        </ListItem>
+
+        <ListItem icon={icons.WarningCircle}>
+          <strong>Limitaciones</strong>: aplica a ejecutables externos; para
+          cmdlets/funciones
+          <PowerShellInline code=".Source" /> no es una ruta de archivo. Requiere
+          que el ejecutable esté en PATH (o especificar ruta absoluta).
+        </ListItem>
+
+        <ListItem icon={null}>
+          <strong>Buenas prácticas</strong>: captura con <PowerShellInline
+            code="try/catch"
+          /> para registrar un
+          <PowerShellInline code="Write-Warning" /> útil y seguir con el script;
+          usa <PowerShellInline code="@Args" /> para pasar parámetros con <em
+            >splatting</em
+          >.
+        </ListItem>
+      </List>
+    </Explanation>
+  </NotesSection>
+
+  <NotesSection id="h3-external-tools">
+    <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
+      Errores con herramientas externas (exit codes)
+    </Heading>
+
+    <p class="mb-2">
+      Los cmdlets de PowerShell usan el subsistema de errores; las herramientas
+      externas (por ejemplo, <PowerShellInline code="git" />) devuelven un <em
+        >exit code</em
+      >. Puedes consultarlo en <PowerShellInline code="$LASTEXITCODE" />.
+    </p>
+
+    <PowerShellBlock
+      code={`
+        git init $target
+        if ($LASTEXITCODE -ne 0) {
+          throw ("git init falló con código {0}" -f $LASTEXITCODE)
+        }
+      `}
+    >
+      <span slot="title">Comprobar $LASTEXITCODE</span>
+    </PowerShellBlock>
+
+    <Tip>
+      <span slot="title">¿$? o $LASTEXITCODE?</span>
+      <PowerShellInline code="$?" /> indica si la última operación de PowerShell
+      fue exitosa, pero no el código exacto. Para herramientas externas utiliza
+      <PowerShellInline code="$LASTEXITCODE" />.
+    </Tip>
+  </NotesSection>
+
+  <NotesSection id="h3-scope-tactics">
+    <Heading headingLevel="h3" Icon={icons.SlidersHorizontal}>
+      Tácticas de control de errores por alcance
+    </Heading>
+
+    <List>
+      <ListItem icon={icons.Target}>
+        <strong>Local</strong>: usa <PowerShellInline
+          code="-ErrorAction Stop"
+        /> en el cmdlet puntual.
+      </ListItem>
+      <ListItem icon={icons.ArrowBendDownRight}>
+        <strong>Bloque</strong>: ajusta <PowerShellInline
+          code="$ErrorActionPreference"
+        />
+        al inicio de un bloque <PowerShellInline code="try" /> y restaura en
+        <PowerShellInline code="finally" />.
+      </ListItem>
+      <ListItem icon={icons.NotePencil}>
+        <strong>Captura el detalle</strong>: con <PowerShellInline
+          code="-ErrorVariable ev"
+        />
+        puedes inspeccionar <PowerShellInline code="$ev" /> (útil para logs).
+      </ListItem>
+    </List>
+
+    <PowerShellBlock
+      code={`
+        # Ejemplo combinando -ErrorVariable y -ErrorAction
+        Remove-Item -Path (Join-Path $target 'README.md') -Force -ErrorAction SilentlyContinue -ErrorVariable ev
+        if ($ev) {
+          Write-Verbose ("Aviso: no se pudo borrar README previo: {0}" -f $ev[0].Exception.Message)
+        }
+      `}
+    >
+      <span slot="title">-ErrorVariable para logging fino</span>
+    </PowerShellBlock>
+  </NotesSection>
+
+  <Note>
+    <span slot="title">Resumen de patrones</span>
+    <List>
+      <ListItem icon={icons.CheckCircle}>
+        Promueve errores relevantes con <PowerShellInline
+          code="-ErrorAction Stop"
+        />.
+      </ListItem>
+      <ListItem icon={icons.ShieldCheck}>
+        Encierra operaciones críticas en <PowerShellInline
+          code="try/catch/finally"
+        />.
+      </ListItem>
+      <ListItem icon={icons.Terminal}>
+        Para herramientas externas, valida <PowerShellInline
+          code="$LASTEXITCODE"
+        />.
+      </ListItem>
+      <ListItem icon={icons.GearSix}>
+        Restaura configuraciones globales en <PowerShellInline
+          code="finally"
+        />.
+      </ListItem>
+    </List>
+  </Note>
+</NotesLayout>
+
+<Footnotes
+  ><Footnote index={1}
+    >Si usas <PowerShellInline code="-ErrorVariable localErr" />, la variable se <B
+      >sobrescribe</B
+    > en cada invocación. Para <B>acumular</B> los errores de múltiples llamadas
+    en la misma variable, añade el prefijo
+    <PowerShellInline code="+" /> (ej. <PowerShellInline
+      code="-ErrorVariable +localErr"
+    />).</Footnote
+  ></Footnotes
+>

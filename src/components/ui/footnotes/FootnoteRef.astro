@@ -15,12 +15,13 @@ import { next } from "./counter";
  */
 interface Props {
   index?: number;
+  class?: string;
 }
 
-const { index } = Astro.props as Props;
+const { index, class: className } = Astro.props as Props;
 const n = index ?? next();
 ---
 
-<sup id={`fnref-${n}`} class="align-super text-xs no-underline">
+<sup id={`fnref-${n}`} class:list={["align-super", "text-xs", "no-underline", className]}>
   <a href={`#fn-${n}`} class="footnote-ref underline decoration-dotted">{n}</a>
 </sup>
