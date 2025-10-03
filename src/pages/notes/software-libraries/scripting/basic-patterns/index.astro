@@ -26,6 +26,7 @@ import { List, ListItem } from "~/components/ui/list";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import { References, WebPage } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 ---
 
 <NotesLayout title="Patrones básicos de scripting"
@@ -64,6 +65,28 @@ import { References, WebPage } from "~/components/ui/references";
       <PowerShellInline code="SupportsShouldProcess" />). Así evitamos efectos
       no deseados y ganamos confianza en el script.
     </p>
+
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          `Cambiar
+            $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path ?? $Name)
+          por
+            [string]$base = if (
+                $PSBoundParameters.ContainsKey('Path') -and -not [string]::IsNullOrWhiteSpace($Path)
+            ) {
+                $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
+            }
+            else {
+                (Get-Location).ProviderPath
+            }
+
+            $target = Join-Path -Path $base -ChildPath $Name
+          `,
+        ],
+      }}
+    />
 
     <PowerShellBlock
       code={`

@@ -10,19 +10,22 @@ import {
 import {
   Abstract,
   Definition,
+  Exercise,
   Explanation,
+  Hints,
+  Info,
   More,
   Note,
+  Solution,
   Tip,
   Warning,
 } from "~/components/ui/callouts";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
-import { Footnote, Footnotes } from "~/components/ui/footnotes";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import {
   Table,
   TableBody,
@@ -31,18 +34,31 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/starwind/table";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 ---
 
 <NotesLayout
   title="Manejo de errores en PowerShell"
-  description="Buenas prácticas para capturar y manejar errores en scripts de PowerShell, usando try/catch, ErrorAction y más."
+  description="Guía práctica de manejo de errores en PowerShell: terminantes vs. no terminantes, try/catch/finally, ErrorAction, redirección de streams y salida estructurada."
   ><Abstract
-    ><ToDo
-      client:only="react"
-      metadata={{
-        tasks: ["..."],
-      }}
-    /></Abstract
+    >Esta lección propone un enfoque práctico para diseñar scripts <B
+      >predecibles</B
+    > y <B>trazables</B> en PowerShell. Aprenderás a decidir cuándo un error debe
+    registrarse y permitir continuar y cuándo debe detener el flujo promoviendo fallos
+    con <PowerShellInline code="-ErrorAction Stop" />, a capturarlos con
+    <PowerShellInline code="try" />/<PowerShellInline
+      code="catch"
+    />/<PowerShellInline code="finally" />, y a ejecutar comandos externos con
+    seguridad resolviendo el binario real con <PowerShellInline
+      code="Get-Command"
+    />, llamándolo con <PowerShellInline code="&" /> y verificando
+    <PowerShellInline code="$LASTEXITCODE" />. También verás cómo usar los <I
+      >streams</I
+    >
+    y la redirección sin perder control. El objetivo es que salgas con un pequeño
+    conjunto de patrones repetibles —salida estructurada, validación explícita y
+    <I>rollback</I>
+    selectivo— para construir utilidades confiables y mantenibles.</Abstract
   >
 
   <NotesSection id="h2-terminating-vs-non-terminating">
@@ -63,8 +79,8 @@ import {
           la ejecución. Es útil cuando procesas un conjunto de elementos y quieres
           obtener un reporte de qué funcionó y qué falló, sin detener todo ante el
           primer error.
-        </p>
-      </Definition>
+        </p></Definition
+      >
 
       <PowerShellBlock
         code={`
@@ -138,7 +154,9 @@ import {
             error detenga la ejecución (comportamiento no terminante) y permite seguir
             con el resto.
             <PowerShellInline code="-ErrorVariable localErr" /> captura los
-            <I>ErrorRecord</I> en la variable indicada</ListItem
+            <I>ErrorRecord</I> en la variable indicada.<FootnoteRef
+              index={1}
+            /></ListItem
           >
 
           <ListItem icon={icons.ListBullets}
@@ -343,8 +361,8 @@ import {
                       catch {
                           $failures += [pscustomobject]@{
                               File    = $src
-                              Kind    = $PSItem.Exception.GetType().Name
-                              Message = $PSItem.Exception.Message
+                              Kind    = $_.Exception.GetType().Name
+                              Message = $_.Exception.Message
                           }
                       }
                   }
@@ -425,12 +443,12 @@ import {
           >
 
           <ListItem icon={icons.TextT}
-            ><B><PowerShellInline code="$PSItem" /></B> dentro de un
+            ><B><PowerShellInline code="$_" /></B> dentro de un
             <PowerShellInline code="catch" /> apunta al error que se está manejando
             en ese momento. Permite acceder a sus propiedades, como el tipo de excepción
-            (<PowerShellInline code="$PSItem.Exception.GetType().Name" />) o el
+            (<PowerShellInline code="$_.Exception.GetType().Name" />) o el
             mensaje (<PowerShellInline
-              code="$PSItem.Exception.Message"
+              code="$_.Exception.Message"
             />).</ListItem
           >
 
@@ -467,14 +485,14 @@ import {
                 Copy-Item @copyParams
             }
             catch [System.UnauthorizedAccessException] {
-                Write-Warning "Permisos insuficientes: $($PSItem.Exception.Message)"
+                Write-Warning "Permisos insuficientes: $($_.Exception.Message)"
             }
             catch [System.IO.IOException] {
-                Write-Warning "Problema de E/S: $($PSItem.Exception.Message)"
+                Write-Warning "Problema de E/S: $($_.Exception.Message)"
             }
             catch {
                 # Genérico: útil en PowerShell porque muchos cmdlets encapsulan errores en ErrorRecord
-                Write-Warning ("Error {0}: {1}" -f $PSItem.Exception.GetType().Name, $PSItem.Exception.Message)
+                Write-Warning ("Error {0}: {1}" -f $_.Exception.GetType().Name, $_.Exception.Message)
             }
           `}
           ><Fragment slot="title"
@@ -494,89 +512,6 @@ import {
           los ejemplos, aun cuando en un contexto real convenga combinar tipados
           y genéricos según el caso.
         </p></More
-      >
-
-      <More
-        ><Fragment slot="title">Streams de salida en PowerShell</Fragment>
-
-        <p>
-          PowerShell no se limita a imprimir texto: maneja múltiples <Link
-            href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_output_streams"
-            ><I>streams de salida</I></Link
-          >, lo que permite separar mensajes de éxito, errores, advertencias,
-          depuración, etc. Esto hace posible <Link
-            href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection"
-            >redirigirlos</Link
-          > o tratarlos de forma independiente en un mismo script.
-        </p>
-
-        <p>
-          En particular, <PowerShellInline code="Write-Error" /> escribe en el <I
-            >error stream</I
-          > (2), lo que puede interrumpir pipelines o marcar la ejecución como fallida.
-          En estos apuntes evitaremos usarlo para no introducir demasiados conceptos
-          nuevos, y en su lugar preferiremos <PowerShellInline
-            code="Write-Warning"
-          /> o
-          <PowerShellInline code="Write-Verbose" />. Sin embargo, es importante
-          conocer que existe y que forma parte del sistema de streams.
-        </p>
-
-        <Table
-          ><TableCaption>Streams de PowerShell</TableCaption>
-          <TableHeader
-            ><TableRow
-              ><TableCell>Stream</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Write&nbsp;Cmdlet</TableCell></TableRow
-            ></TableHeader
-          >
-          <TableBody
-            ><TableRow
-              ><TableCell>1</TableCell>
-              <TableCell>Éxito (Output)</TableCell>
-              <TableCell><PowerShellInline code="Write-Output" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>2</TableCell>
-              <TableCell>Error</TableCell>
-              <TableCell><PowerShellInline code="Write-Error" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>3</TableCell>
-              <TableCell>Warning</TableCell>
-              <TableCell><PowerShellInline code="Write-Warning" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>4</TableCell>
-              <TableCell>Verbose</TableCell>
-              <TableCell><PowerShellInline code="Write-Verbose" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>5</TableCell>
-              <TableCell>Debug</TableCell>
-              <TableCell><PowerShellInline code="Write-Debug" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>6</TableCell>
-              <TableCell>Information</TableCell>
-              <TableCell
-                ><PowerShellInline code="Write-Information" /></TableCell
-              ></TableRow
-            >
-            <TableRow
-              ><TableCell>n/a</TableCell>
-              <TableCell>Progress</TableCell>
-              <TableCell><PowerShellInline code="Write-Progress" /></TableCell
-              ></TableRow
-            ></TableBody
-          ></Table
-        ></More
       ></NotesSection
     ></NotesSection
   >
@@ -587,10 +522,9 @@ import {
     </Heading>
 
     <p class="mb-3">
-      Patrón <I>multiplataforma</I> y simple: resolver el binario real con
-      <PowerShellInline code="Get-Command" />, ejecutarlo con el <I
-        >call operator</I
-      >
+      Patrón simple: resolver el binario real con <PowerShellInline
+        code="Get-Command"
+      />, ejecutarlo con el <I>call operator</I>
       <PowerShellInline code="&" />, y validar <PowerShellInline
         code="$LASTEXITCODE"
       />. Devuelve un objeto con datos útiles para logs o para controlar el
@@ -603,19 +537,17 @@ import {
         [CmdletBinding()]
         param(
             [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Path
+            [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+            [string] $LiteralPath
         )
 
         try {
-            $git = (Get-Command git -CommandType Application -ErrorAction Stop).Source
+            $git = (Get-Command -Name git -ErrorAction Stop).Source
 
-            New-Item -ItemType Directory -LiteralPath $Path -Force | Out-Null
-
-            $repoPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+            $repoPath = Resolve-Path -LiteralPath $LiteralPath -ErrorAction Stop
             Write-Verbose "Inicializando repo en: $repoPath"
 
-            $output = & $git -C $repoPath init 2>&1
+            $output = & $git -C $repoPath.Path init 2>&1
 
             if ($?) {
                 return [pscustomobject]@{
@@ -631,8 +563,8 @@ import {
         }
         catch {
             throw [System.AggregateException]::new(
-                "No se pudo inicializar el repositorio Git en '$Path'.",
-                $PSItem.Exception
+                "No se pudo inicializar el repositorio Git en '$LiteralPath'.",
+                $_.Exception
             )
         }
       `}
@@ -640,133 +572,556 @@ import {
 
       <DibsSourceLink
         repo="scripts"
-        file="git/Initialize-GitRepo.ps1"
+        file="git/Initialize-Repository.ps1"
         slot="source"
       /></PowerShellBlock
     >
 
-    <Explanation>
-      <ToDo
-        client:only="react"
-        metadata={{
-          tasks: [
-            `Explicar:
-              - Get-Command git -CommandType Application -ErrorAction Stop
-              - CommandInfo.Source
-              - & $git
-              - -C $repoPath
-              - 2>&1
-              - $?
-              - $LASTEXITCODE
-              - System.AggregateException`,
-          ],
-        }}
-      />
-    </Explanation>
-  </NotesSection>
-</NotesLayout>
+    <Explanation
+      ><List
+        ><ListItem icon={icons.CheckCircle}
+          ><PowerShellInline
+            code="[ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]"
+          /> valida el argumento antes de ejecutar el script. La función recibe el
+          valor del parámetro como <PowerShellInline code="$_" /> y lo pasa a <PowerShellInline
+            code="Test-Path"
+          />. Si la ruta no existe o no es una carpeta, la validación falla
+          temprano con un error claro.</ListItem
+        >
 
-<NotesSection id="h3-external-tools">
-  <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
-    Errores con herramientas externas (exit codes)
-  </Heading>
+        <ListItem icon={icons.MagnifyingGlass}
+          ><PowerShellInline code="Get-Command" /> obtiene un objeto <PowerShellInline
+            code="CommandInfo"
+          /> que describe el ejecutable <I>git</I>. Con
+          <PowerShellInline code="-ErrorAction Stop" /> se fuerza a lanzar una excepción
+          inmediata si no se encuentra, logrando un comportamiento
+          <I>fail-fast</I>.</ListItem
+        >
 
-  <p class="mb-2">
-    Los cmdlets de PowerShell usan el subsistema de errores; las herramientas
-    externas (por ejemplo, <PowerShellInline code="git" />) devuelven un <em
-      >exit code</em
-    >. Puedes consultarlo en <PowerShellInline code="$LASTEXITCODE" />.
-  </p>
+        <ListItem icon={icons.FolderOpen}
+          ><PowerShellInline code="CommandInfo.Source" /> entrega la ruta completa
+          del ejecutable (p. ej., <code>C:\path\to\git.exe</code> en Windows, o <code
+            >/usr/bin/git</code
+          > en Linux).</ListItem
+        >
 
-  <PowerShellBlock
-    code={`
-        git init $target
-        if ($LASTEXITCODE -ne 0) {
-          throw ("git init falló con código {0}" -f $LASTEXITCODE)
-        }
-      `}
+        <ListItem icon={icons.Terminal}
+          >El <I>call operator</I>
+          <PowerShellInline code="& $git" /> ejecuta el binario incluso si la ruta
+          contiene espacios.</ListItem
+        >
+
+        <ListItem icon={icons.ArrowElbowDownRight}
+          ><PowerShellInline code="-C $repoPath.Path" /> es un argumento propio de
+          <code>git</code> que define el directorio de trabajo en el que se ejecutará
+          el comando, sin necesidad de cambiar la ubicación actual de PowerShell.
+          Esto permite invocar <code>git</code> sobre cualquier carpeta de repositorio
+          desde cualquier ubicación.</ListItem
+        >
+
+        <ListItem icon={icons.ArrowsMerge}
+          ><PowerShellInline code="2>&1" /> es una instrucción de redirección de
+          streams en PowerShell. El número <PowerShellInline code="2" /> representa
+          el canal de error estándar (<I>stderr</I>) y el número
+          <PowerShellInline code="1" /> representa la salida estándar (<I
+            >stdout</I
+          >). El símbolo <PowerShellInline code=">" /> indica una redirección, y
+          <PowerShellInline code="&" /> señala que el destino es otro canal, no un
+          archivo. En conjunto, <PowerShellInline code="2>&1" /> significa: “redirige
+          todos los errores (2) hacia el mismo destino que la salida normal (1)”,
+          de modo que tanto mensajes como errores se recojan en
+          <PowerShellInline code="$output" />.</ListItem
+        >
+
+        <ListItem icon={icons.ToggleRight}
+          ><PowerShellInline code="$?" /> y <PowerShellInline
+            code="$LASTEXITCODE"
+          />
+          reflejan el estado del último comando.
+          <PowerShellInline code="$?" /> devuelve <PowerShellInline
+            code="$true"
+          /> si se ejecutó con éxito o <PowerShellInline code="$false" /> si falló.
+          <PowerShellInline code="$LASTEXITCODE" /> guarda el código numérico de
+          salida de procesos nativos: <PowerShellInline code="0" /> significa éxito,
+          y cualquier otro valor indica error. En este caso, <PowerShellInline
+            code="$?"
+          /> es simplemente una traducción de
+          <PowerShellInline code="$LASTEXITCODE" /> a un valor booleano.</ListItem
+        >
+
+        <ListItem icon={icons.WarningCircle}
+          ><PowerShellInline code="System.AggregateException" /> permite envolver
+          y relanzar manteniendo la causa original en
+          <PowerShellInline code="InnerException" />, añadiendo un mensaje más
+          claro para el usuario.</ListItem
+        ></List
+      ></Explanation
+    >
+
+    <More
+      ><Fragment slot="title">Streams de salida en PowerShell</Fragment>
+
+      <p>
+        PowerShell no se limita a imprimir texto: maneja múltiples <Link
+          href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_output_streams"
+          ><I>streams de salida</I></Link
+        >, lo que permite separar mensajes de éxito, errores, advertencias,
+        depuración, etc. Esto hace posible <Link
+          href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection"
+          >redirigirlos</Link
+        > o tratarlos de forma independiente en un mismo script.
+      </p>
+
+      <p>
+        En particular, <PowerShellInline code="Write-Error" /> escribe en el <I
+          >error stream</I
+        > (2), lo que puede interrumpir pipelines o marcar la ejecución como fallida.
+        En estos apuntes evitaremos usarlo para no introducir demasiados conceptos
+        nuevos, y en su lugar preferiremos <PowerShellInline
+          code="Write-Warning"
+        /> o
+        <PowerShellInline code="Write-Verbose" />. Sin embargo, es importante
+        conocer que existe y que forma parte del sistema de streams.
+      </p>
+
+      <Table
+        ><TableCaption>Streams de PowerShell</TableCaption>
+        <TableHeader
+          ><TableRow
+            ><TableCell>Stream</TableCell>
+            <TableCell>Descripción</TableCell>
+            <TableCell>Write&nbsp;Cmdlet</TableCell></TableRow
+          ></TableHeader
+        >
+        <TableBody
+          ><TableRow
+            ><TableCell>1</TableCell>
+            <TableCell>Éxito (Output)</TableCell>
+            <TableCell><PowerShellInline code="Write-Output" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>2</TableCell>
+            <TableCell>Error</TableCell>
+            <TableCell><PowerShellInline code="Write-Error" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>3</TableCell>
+            <TableCell>Warning</TableCell>
+            <TableCell><PowerShellInline code="Write-Warning" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>4</TableCell>
+            <TableCell>Verbose</TableCell>
+            <TableCell><PowerShellInline code="Write-Verbose" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>5</TableCell>
+            <TableCell>Debug</TableCell>
+            <TableCell><PowerShellInline code="Write-Debug" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>6</TableCell>
+            <TableCell>Information</TableCell>
+            <TableCell><PowerShellInline code="Write-Information" /></TableCell
+            ></TableRow
+          >
+          <TableRow
+            ><TableCell>n/a</TableCell>
+            <TableCell>Progress</TableCell>
+            <TableCell><PowerShellInline code="Write-Progress" /></TableCell
+            ></TableRow
+          ></TableBody
+        ></Table
+      ></More
+    >
+
+    <Note
+      ><Fragment slot="title"
+        ><PowerShellInline code=">" /> vs <PowerShellInline
+          code="|"
+        /></Fragment
+      >
+
+      <p>
+        Ambos operadores redirigen, pero con propósitos distintos.
+        <PowerShellInline code=">" /> envía la salida a un <I>destino</I>: puede
+        ser un archivo (sobrescribiendo su contenido) o un stream numérico, como
+        <PowerShellInline code="2>" /> para errores. Usa
+        <PowerShellInline code=">>" /> si quieres añadir al final. En cambio, <PowerShellInline
+          code="|"
+        /> es un <I>pipeline</I>: conecta la salida de un comando como entrada
+        del siguiente, preservando los objetos de PowerShell sin convertirlos a
+        texto.
+      </p>
+
+      <p class="mt-2">
+        <B>Ejemplo:</B>
+        <PowerShellInline code="tree > estructura.txt" /> genera un listado en texto
+        plano y lo guarda en un archivo. En cambio,
+        <PowerShellInline
+          code="Get-ChildItem -Recurse | Where-Object { $_.Extension -eq '.ps1' }"
+        />
+        trabaja con objetos de tipo <PowerShellInline
+          code="FileInfo"
+        />/<PowerShellInline code="DirectoryInfo" />
+        y permite filtrarlos en memoria.
+      </p>
+
+      <Tip
+        ><Fragment slot="title">¿Cuándo usar cada uno?</Fragment>
+
+        <p>
+          Usa <PowerShellInline code="|" /> cuando quieras procesar objetos ricos
+          (cmdlets de PowerShell que entienden propiedades). Usa <PowerShellInline
+            code=">"
+          /> cuando necesites capturar texto plano, ya sea en un archivo o en otro
+          stream de salida.
+        </p></Tip
+      ></Note
+    >
+
+    <Info
+      ><Fragment slot="title">Redirigir todo</Fragment>
+
+      <p>
+        En PowerShell puedes redirigir <I>todos</I> los streams con
+        <PowerShellInline code="*>" /> (y añadir al final con
+        <PowerShellInline code="*>>" />). Incluye los canales 1 a 6.
+        <B>No</B> captura la barra de progreso del host.
+      </p>
+
+      <p class="my-2">
+        <I>Ejemplos:</I>
+      </p>
+
+      <List
+        ><ListItem icon={icons.FileText}
+          ><PowerShellInline
+            code="& $git -C $repoPath.Path init *>> git-init.log"
+          /> registra todo en un log (anexando).</ListItem
+        >
+
+        <ListItem icon={icons.Eraser}
+          ><PowerShellInline code="Remove-Item archivo.txt *> $null" /> silencia
+          toda la salida.</ListItem
+        >
+
+        <ListItem icon={icons.ArrowsMerge}
+          ><PowerShellInline
+            code="Move-Item archivo.txt .\\backup\\ *>&1 | Out-File out.txt"
+          /> mezcla todos los streams hacia <I>stdout</I> y luego los canaliza.</ListItem
+        ></List
+      >
+
+      <Warning
+        ><Fragment slot="title">Usar con cuidado</Fragment>
+
+        <p>
+          Redirigir errores no los “convierte en éxito”:
+          <PowerShellInline code="$LASTEXITCODE" /> y
+          <PowerShellInline code="$?" /> seguirán reflejando fallo si el proceso
+          falla. Úsalo para <I>capturar</I> y auditar, no para ocultar errores inadvertidamente.
+        </p>
+
+        <p class="mt-2">
+          Aunque <PowerShellInline code="*>" /> redirige todos los streams, suele
+          ser preferible redirigir solo los canales necesarios (<PowerShellInline
+            code="2>"
+          /> para errores,
+          <PowerShellInline code="3>" /> para warnings, etc.) para mantener un control
+          más claro sobre qué se guarda y qué se muestra.
+        </p></Warning
+      ></Info
+    ></NotesSection
   >
-    <span slot="title">Comprobar $LASTEXITCODE</span>
-  </PowerShellBlock>
 
-  <Tip>
-    <span slot="title">¿$? o $LASTEXITCODE?</span>
-    <PowerShellInline code="$?" /> indica si la última operación de PowerShell fue
-    exitosa, pero no el código exacto. Para herramientas externas utiliza
-    <PowerShellInline code="$LASTEXITCODE" />.
-  </Tip>
-</NotesSection>
+  <Exercise>
+    <Fragment slot="title">Inicializar repositorio Git opcional</Fragment>
 
-<NotesSection id="h3-scope-tactics">
-  <Heading headingLevel="h3" Icon={icons.SlidersHorizontal}>
-    Tácticas de control de errores por alcance
-  </Heading>
+    <p>
+      Modifica el script <code>Initialize-Project.ps1</code> creado en la
+      <Link
+        href="/notes/software-libraries/scripting/basic-patterns/#h2-should-process"
+        >lección anterior</Link
+      >
+      para que, en base a un <PowerShellInline code="[switch]" />, ejecute el
+      script <code>Initialize-Repository.ps1</code> e inicie un repositorio de Git.
+    </p>
 
-  <List>
-    <ListItem icon={icons.Target}>
-      <strong>Local</strong>: usa <PowerShellInline code="-ErrorAction Stop" /> en
-      el cmdlet puntual.
-    </ListItem>
-    <ListItem icon={icons.ArrowBendDownRight}>
-      <strong>Bloque</strong>: ajusta <PowerShellInline
-        code="$ErrorActionPreference"
-      />
-      al inicio de un bloque <PowerShellInline code="try" /> y restaura en
-      <PowerShellInline code="finally" />.
-    </ListItem>
-    <ListItem icon={icons.NotePencil}>
-      <strong>Captura el detalle</strong>: con <PowerShellInline
-        code="-ErrorVariable ev"
-      />
-      puedes inspeccionar <PowerShellInline code="$ev" /> (útil para logs).
-    </ListItem>
-  </List>
+    <p class="my-2">Reglas de decisión:</p>
 
-  <PowerShellBlock
-    code={`
-        # Ejemplo combinando -ErrorVariable y -ErrorAction
-        Remove-Item -Path (Join-Path $target 'README.md') -Force -ErrorAction SilentlyContinue -ErrorVariable ev
-        if ($ev) {
-          Write-Verbose ("Aviso: no se pudo borrar README previo: {0}" -f $ev[0].Exception.Message)
-        }
-      `}
+    <List>
+      <ListItem icon={icons.WarningCircle}>
+        Si el proyecto no existe, falla con un error.
+      </ListItem>
+
+      <ListItem icon={icons.GitBranch}>
+        Si existe pero no contiene <code>.git</code>, inicialízalo.
+      </ListItem>
+
+      <ListItem icon={icons.CheckCircle}>
+        Si ya es un repositorio, omite la inicialización.
+      </ListItem>
+    </List>
+
+    <p class="mt-2">
+      Maneja errores y encapsúlalos en caso de fallo usando
+      <PowerShellInline code="AggregateException" /> para enriquecer el contexto.
+      Si ocurre un error durante la creación, realiza <b>rollback seguro</b> del
+      trabajo de esta ejecución (p. ej., eliminar <code>.git</code> y/o
+      <code>README.md</code>, y la carpeta solo si la creaste tú), de modo que
+      no queden restos inconsistentes.
+    </p>
+
+    <p class="mt-2">El script debe devolver un objeto con:</p>
+
+    <List>
+      <ListItem icon={icons.FolderSimple}>
+        <code>ProjectPath</code>: ruta del proyecto
+      </ListItem>
+
+      <ListItem icon={icons.FileText}>
+        <code>ReadmeCreated</code>: <PowerShellInline code="$true" /> si se creó
+        <code>README.md</code>, <PowerShellInline code="$false" /> en caso contrario
+      </ListItem>
+
+      <ListItem icon={icons.ToggleRight}>
+        <code>RepoCreated</code>:
+        <PowerShellInline code="$true" /> si se creó el repositorio,
+        <PowerShellInline code="$false" /> en caso contrario
+      </ListItem>
+    </List>
+
+    <Hints
+      ><List
+        ><ListItem icon={icons.ArrowCounterClockwise}
+          ><B>Rollback seguro:</B> lleva banderas como
+          <PowerShellInline code="$createdTarget" />, <PowerShellInline
+            code="$createdReadme"
+          /> y
+          <PowerShellInline code="$createdGit" /> para revertir <I>solo</I> lo que
+          creó esta ejecución.</ListItem
+        >
+
+        <ListItem icon={icons.ShieldCheck}
+          ><B>Errores terminantes:</B> usa <PowerShellInline
+            code="-ErrorAction Stop"
+          /> en operaciones clave (<PowerShellInline code="New-Item" />, <PowerShellInline
+            code="Set-Content"
+          />, ejecución de <PowerShellInline code="Initialize-Repository.ps1" />
+          (disponible gracias a <PowerShellInline code="[CmdletBinding]" />))
+          para que entren al <PowerShellInline code="catch" />.</ListItem
+        >
+
+        <ListItem icon={icons.Path}
+          ><B>Consistencia de rutas:</B> usa siempre
+          <PowerShellInline code="-LiteralPath" /> al manipular archivos y directorios.</ListItem
+        ></List
+      ></Hints
+    >
+
+    <Solution
+      ><PowerShellBlock
+        code={`
+          #Requires -Version 7.0
+          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+          param(
+              [Parameter(Mandatory)]
+              [ValidateNotNullOrEmpty()]
+              [string] $Name,
+
+              [string] $Path,
+
+              [switch] $GitManaged
+          )
+
+          [string]$base = if (
+              $PSBoundParameters.ContainsKey('Path') -and -not [string]::IsNullOrWhiteSpace($Path)
+          ) {
+              $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
+          }
+          else {
+              (Get-Location).ProviderPath
+          }
+
+          $target = Join-Path -Path $base -ChildPath $Name
+
+          $createdTarget = $false
+          $createdReadme = $false
+          $createdGit = $false
+
+          if ($PSCmdlet.ShouldProcess($target, 'Initialize project and create README.md')) {
+              try {
+                  # Crear carpeta solo si no existe
+                  if (!(Test-Path -LiteralPath $target)) {
+                      New-Item -Path $target -ItemType Directory -ErrorAction Stop | Out-Null
+                      $createdTarget = $true
+                  }
+
+                  $helperPath = Join-Path -Path $PSScriptRoot -ChildPath 'New-Readme.ps1'
+                  $readmePath = Join-Path -Path $target -ChildPath 'README.md'
+
+                  # Crear README.md solo si no existe
+                  if (!(Test-Path -LiteralPath $readmePath)) {
+                      $scParams = @{
+                          LiteralPath = $readmePath
+                          Encoding    = 'UTF8'
+                          Force       = $true
+                          ErrorAction = 'Stop'
+                      }
+                      & $helperPath -Name $Name -Verbose:$VerbosePreference | Set-Content @scParams
+                      $createdReadme = $true
+                  }
+
+                  # Inicializar git si corresponde y si aún no es repo
+                  if ($GitManaged -and !(Test-Path -LiteralPath (Join-Path $target '.git'))) {
+                      $gitInitPath = Join-Path $PSScriptRoot '..' 'git' 'Initialize-Repository.ps1'
+                      $gitInitParams = @{
+                          LiteralPath = $target
+                          Verbose     = $VerbosePreference
+                          ErrorAction = 'Stop'
+                      }
+                      & $gitInitPath @gitInitParams | Out-Null
+                      $createdGit = $true
+                  }
+
+                  return [pscustomobject]@{
+                      ProjectPath   = $target
+                      ReadmeCreated = $createdReadme
+                      RepoCreated   = $createdGit
+                  }
+              }
+              catch {
+                  # Rollback selectivo
+                  if ($createdGit) {
+                      Remove-Item -LiteralPath (
+                          Join-Path $target '.git'
+                      ) -Recurse -Force -ErrorAction SilentlyContinue
+                  }
+                  if ($createdReadme) {
+                      Remove-Item -LiteralPath (
+                          Join-Path $target 'README.md'
+                      ) -Force -ErrorAction SilentlyContinue
+                  }
+                  if ($createdTarget) {
+                      Remove-Item -LiteralPath $target -Recurse -Force -ErrorAction SilentlyContinue
+                  }
+
+                  throw [System.AggregateException]::new(
+                      "The project could not be initialized at '$target'.", $_.Exception)
+              }
+          }
+        `}
+        ><Fragment slot="title">...</Fragment>
+
+        <DibsSourceLink
+          repo="scripts"
+          file="Initialize-Project.ps1"
+          slot="source"
+        /></PowerShellBlock
+      ></Solution
+    ></Exercise
   >
-    <span slot="title">-ErrorVariable para logging fino</span>
-  </PowerShellBlock>
-</NotesSection>
 
-<Note>
-  <span slot="title">Resumen de patrones</span>
-  <List>
-    <ListItem icon={icons.CheckCircle}>
-      Promueve errores relevantes con <PowerShellInline
+  <ConclusionsLayout
+    ><Fragment slot="conclusions"
+      >Esta lección mostró cómo controlar el flujo ante fallos en PowerShell con
+      una combinación de <PowerShellInline code="try" />/<PowerShellInline
+        code="catch"
+      />/<PowerShellInline code="finally" /> y promoción de errores con <PowerShellInline
         code="-ErrorAction Stop"
-      />.
-    </ListItem>
-    <ListItem icon={icons.ShieldCheck}>
-      Encierra operaciones críticas en <PowerShellInline
-        code="try/catch/finally"
-      />.
-    </ListItem>
-    <ListItem icon={icons.Terminal}>
-      Para herramientas externas, valida <PowerShellInline
-        code="$LASTEXITCODE"
-      />.
-    </ListItem>
-    <ListItem icon={icons.GearSix}>
-      Restaura configuraciones globales en <PowerShellInline code="finally" />.
-    </ListItem>
-  </List>
-</Note>
+      />. Vimos la diferencia entre errores <I>no terminantes</I> (útiles para procesar
+      lotes y reportar) y <I>terminantes</I> (adecuados cuando la operación es crítica),
+      además de patrones prácticos para ejecutar herramientas externas de forma segura:
+      resolver el binario real con
+      <PowerShellInline code="Get-Command" />, invocarlo con <PowerShellInline
+        code="&"
+      />, y verificar <PowerShellInline code="$LASTEXITCODE" /> / <PowerShellInline
+        code="$?"
+      />. Finalmente, reforzamos la idea de producir <B>salidas estructuradas</B
+      > (objetos), y de implementar <I>rollback</I> selectivo para evitar estados
+      inconsistentes.</Fragment
+    >
 
-<Footnotes
-  ><Footnote index={1}
-    >Si usas <PowerShellInline code="-ErrorVariable localErr" />, la variable se <B
-      >sobrescribe</B
-    > en cada invocación. Para <B>acumular</B> los errores de múltiples llamadas
-    en la misma variable, añade el prefijo
-    <PowerShellInline code="+" /> (ej. <PowerShellInline
-      code="-ErrorVariable +localErr"
-    />).</Footnote
-  ></Footnotes
+    <Fragment slot="key-points"
+      ><ListItem icon={icons.Bug}
+        ><B>No terminante</B> acumula errores sin detener el lote; úsalo cuando lo
+        importante es completar y reportar (<PowerShellInline
+          code="-ErrorAction SilentlyContinue"
+        /> +
+        <PowerShellInline code="-ErrorVariable" />).</ListItem
+      >
+
+      <ListItem icon={icons.Shield}
+        ><B>Terminante</B> detiene el flujo ante fallas críticas; promuévelo con
+        <PowerShellInline code="-ErrorAction Stop" /> y maneja con
+        <PowerShellInline code="try/catch/finally" />.</ListItem
+      >
+
+      <ListItem icon={icons.MagnifyingGlass}
+        >Ejecutables externos de forma segura: <PowerShellInline
+          code="Get-Command"
+        /> →
+        <PowerShellInline code="CommandInfo.Source" /> → <PowerShellInline
+          code="&"
+        /> → valida con <PowerShellInline code="$LASTEXITCODE" /> / <PowerShellInline
+          code="$?"
+        />.</ListItem
+      >
+
+      <ListItem icon={icons.ArrowsMerge}
+        >Redirección: <PowerShellInline code="2>&1" /> mezcla errores con salida;
+        <PowerShellInline code="*>" /> captura todos los streams, pero es preferible
+        redirigir solo los necesarios para tener control fino.</ListItem
+      >
+
+      <ListItem icon={icons.ToggleRight}
+        ><PowerShellInline code="$?" /> es el indicador booleano del último comando;
+        <PowerShellInline code="$LASTEXITCODE" /> es el código numérico de procesos
+        nativos (0 = éxito).</ListItem
+      >
+
+      <ListItem icon={icons.ListChecks}
+        >Produce <B>objetos</B> (p. ej., <PowerShellInline
+          code="[pscustomobject]"
+        />) para reportes reproducibles (tabla/CSV/JSON) en vez de solo texto
+        suelto.</ListItem
+      >
+
+      <ListItem icon={icons.ArrowCounterClockwise}
+        ><B>Rollback seguro</B>: marca lo que creas (<PowerShellInline
+          code="$created_"
+        />) y revierte solo eso; encapsula con <PowerShellInline
+          code="AggregateException"
+        /> para mensajes claros sin perder la causa original.</ListItem
+      ></Fragment
+    >
+
+    <Fragment slot="takeaways"
+      >Al trabajar con errores en PowerShell no se trata solo de capturarlos,
+      sino de decidir conscientemente qué impacto deben tener en el flujo: a
+      veces conviene seguir y reportar, otras detenerse de inmediato. Lo
+      importante es que la elección sea clara, coherente y deje el sistema en un
+      estado confiable. Si además cuidamos la salida estructurada, validamos las
+      herramientas externas y aplicamos <I>rollback</I> cuando algo falla, nuestros
+      scripts dejan de ser simples utilidades y se convierten en piezas seguras y
+      mantenibles dentro de un sistema mayor.</Fragment
+    ></ConclusionsLayout
+  >
+
+  <Footnotes
+    ><Footnote index={1}
+      >Si usas <PowerShellInline code="-ErrorVariable localErr" />, la variable
+      se <B>sobrescribe</B> en cada invocación. Para <B>acumular</B> los errores
+      de múltiples llamadas en la misma variable, añade el prefijo
+      <PowerShellInline code="+" /> (ej. <PowerShellInline
+        code="-ErrorVariable +localErr"
+      />).</Footnote
+    ></Footnotes
+  ></NotesLayout
 >
