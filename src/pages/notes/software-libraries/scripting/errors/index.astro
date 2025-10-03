@@ -14,6 +14,7 @@ import {
   More,
   Note,
   Tip,
+  Warning,
 } from "~/components/ui/callouts";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
@@ -586,191 +587,177 @@ import {
     </Heading>
 
     <p class="mb-3">
-      Patrón para resolver primero la ruta de un ejecutable y luego invocarlo
-      con el <I>call operator</I>. Si el comando no existe, falla temprano con un
-      mensaje claro.
+      Patrón <I>multiplataforma</I> y simple: resolver el binario real con
+      <PowerShellInline code="Get-Command" />, ejecutarlo con el <I
+        >call operator</I
+      >
+      <PowerShellInline code="&" />, y validar <PowerShellInline
+        code="$LASTEXITCODE"
+      />. Devuelve un objeto con datos útiles para logs o para controlar el
+      flujo.
     </p>
 
     <PowerShellBlock
       code={`
-      # Verificar existencia y ejecutar con ruta resuelta
-      try {
-        $tool = (Get-Command git -CommandType Application -ErrorAction Stop).Source
-        & $tool --version
-      }
-      catch {
-        Write-Warning ("No se encontró 'git' en PATH: {0}" -f $PSItem.Exception.Message)
-      }
-    `}
-    >
-      <Fragment slot="title">Patrón básico</Fragment>
-    </PowerShellBlock>
-
-    <PowerShellBlock
-      code={`
-      # Función reutilizable: valida e invoca cualquier herramienta externa
-      function Invoke-Tool {
+        #Requires -Version 7.0
         [CmdletBinding()]
         param(
-          [Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]   $Name,
-          [Parameter()][string[]] $Args
+            [Parameter(Mandatory)]
+            [ValidateNotNullOrEmpty()]
+            [string] $Path
         )
+
         try {
-          $exe = (Get-Command $Name -CommandType Application -ErrorAction Stop).Source
-          & $exe @Args
+            $git = (Get-Command git -CommandType Application -ErrorAction Stop).Source
+
+            New-Item -ItemType Directory -LiteralPath $Path -Force | Out-Null
+
+            $repoPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+            Write-Verbose "Inicializando repo en: $repoPath"
+
+            $output = & $git -C $repoPath init 2>&1
+
+            if ($?) {
+                return [pscustomobject]@{
+                    ToolPath = $git
+                    RepoPath = $repoPath
+                    ExitCode = $LASTEXITCODE
+                    Output   = $output
+                }
+            }
+            $msg = ('git init devolvió código {0}.{1}Salida:{1}{2}' -f $LASTEXITCODE, 
+                [Environment]::NewLine, ($output -join [Environment]::NewLine))
+            throw [System.Exception]::new($msg)
         }
         catch {
-          Write-Warning ("Falta el comando '{0}': {1}" -f $Name, $PSItem.Exception.Message)
+            throw [System.AggregateException]::new(
+                "No se pudo inicializar el repositorio Git en '$Path'.",
+                $PSItem.Exception
+            )
         }
-      }
+      `}
+      ><Fragment slot="title">Inicializar repo Git de forma segura</Fragment>
 
-      # Ejemplos
-      Invoke-Tool -Name "node" -Args "--version"
-      Invoke-Tool -Name "7z"   -Args "i"   # mostrará warning si no está instalado
-    `}
+      <DibsSourceLink
+        repo="scripts"
+        file="git/Initialize-GitRepo.ps1"
+        slot="source"
+      /></PowerShellBlock
     >
-      <Fragment slot="title">Versión reutilizable</Fragment>
-    </PowerShellBlock>
 
     <Explanation>
-      <List>
-        <ListItem icon={icons.Lightning}>
-          <strong>Motivación</strong>: <em>fail-fast</em> con mensajes comprensibles;
-          evita invocar alias o funciones con el mismo nombre (se usa la ruta real
-          del ejecutable).
-        </ListItem>
-
-        <ListItem icon={icons.TextT}>
-          <strong>Sintaxis</strong>: <PowerShellInline
-            code="Get-Command <name> -CommandType Application"
-          /> devuelve un <code>CommandInfo</code>; la propiedad <PowerShellInline
-            code=".Source"
-          /> es la ruta del ejecutable. El operador <PowerShellInline
-            code="&"
-          /> (<em>call operator</em>) ejecuta esa ruta con los argumentos dados.
-        </ListItem>
-
-        <ListItem icon={icons.CheckCircle}>
-          <strong>Ventajas</strong>: errores tempranos, llamadas deterministas,
-          menos ambigüedad en entornos con PATH/aliases complejos.
-        </ListItem>
-
-        <ListItem icon={icons.WarningCircle}>
-          <strong>Limitaciones</strong>: aplica a ejecutables externos; para
-          cmdlets/funciones
-          <PowerShellInline code=".Source" /> no es una ruta de archivo. Requiere
-          que el ejecutable esté en PATH (o especificar ruta absoluta).
-        </ListItem>
-
-        <ListItem icon={null}>
-          <strong>Buenas prácticas</strong>: captura con <PowerShellInline
-            code="try/catch"
-          /> para registrar un
-          <PowerShellInline code="Write-Warning" /> útil y seguir con el script;
-          usa <PowerShellInline code="@Args" /> para pasar parámetros con <em
-            >splatting</em
-          >.
-        </ListItem>
-      </List>
+      <ToDo
+        client:only="react"
+        metadata={{
+          tasks: [
+            `Explicar:
+              - Get-Command git -CommandType Application -ErrorAction Stop
+              - CommandInfo.Source
+              - & $git
+              - -C $repoPath
+              - 2>&1
+              - $?
+              - $LASTEXITCODE
+              - System.AggregateException`,
+          ],
+        }}
+      />
     </Explanation>
   </NotesSection>
+</NotesLayout>
 
-  <NotesSection id="h3-external-tools">
-    <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
-      Errores con herramientas externas (exit codes)
-    </Heading>
+<NotesSection id="h3-external-tools">
+  <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
+    Errores con herramientas externas (exit codes)
+  </Heading>
 
-    <p class="mb-2">
-      Los cmdlets de PowerShell usan el subsistema de errores; las herramientas
-      externas (por ejemplo, <PowerShellInline code="git" />) devuelven un <em
-        >exit code</em
-      >. Puedes consultarlo en <PowerShellInline code="$LASTEXITCODE" />.
-    </p>
+  <p class="mb-2">
+    Los cmdlets de PowerShell usan el subsistema de errores; las herramientas
+    externas (por ejemplo, <PowerShellInline code="git" />) devuelven un <em
+      >exit code</em
+    >. Puedes consultarlo en <PowerShellInline code="$LASTEXITCODE" />.
+  </p>
 
-    <PowerShellBlock
-      code={`
+  <PowerShellBlock
+    code={`
         git init $target
         if ($LASTEXITCODE -ne 0) {
           throw ("git init falló con código {0}" -f $LASTEXITCODE)
         }
       `}
-    >
-      <span slot="title">Comprobar $LASTEXITCODE</span>
-    </PowerShellBlock>
+  >
+    <span slot="title">Comprobar $LASTEXITCODE</span>
+  </PowerShellBlock>
 
-    <Tip>
-      <span slot="title">¿$? o $LASTEXITCODE?</span>
-      <PowerShellInline code="$?" /> indica si la última operación de PowerShell
-      fue exitosa, pero no el código exacto. Para herramientas externas utiliza
-      <PowerShellInline code="$LASTEXITCODE" />.
-    </Tip>
-  </NotesSection>
+  <Tip>
+    <span slot="title">¿$? o $LASTEXITCODE?</span>
+    <PowerShellInline code="$?" /> indica si la última operación de PowerShell fue
+    exitosa, pero no el código exacto. Para herramientas externas utiliza
+    <PowerShellInline code="$LASTEXITCODE" />.
+  </Tip>
+</NotesSection>
 
-  <NotesSection id="h3-scope-tactics">
-    <Heading headingLevel="h3" Icon={icons.SlidersHorizontal}>
-      Tácticas de control de errores por alcance
-    </Heading>
+<NotesSection id="h3-scope-tactics">
+  <Heading headingLevel="h3" Icon={icons.SlidersHorizontal}>
+    Tácticas de control de errores por alcance
+  </Heading>
 
-    <List>
-      <ListItem icon={icons.Target}>
-        <strong>Local</strong>: usa <PowerShellInline
-          code="-ErrorAction Stop"
-        /> en el cmdlet puntual.
-      </ListItem>
-      <ListItem icon={icons.ArrowBendDownRight}>
-        <strong>Bloque</strong>: ajusta <PowerShellInline
-          code="$ErrorActionPreference"
-        />
-        al inicio de un bloque <PowerShellInline code="try" /> y restaura en
-        <PowerShellInline code="finally" />.
-      </ListItem>
-      <ListItem icon={icons.NotePencil}>
-        <strong>Captura el detalle</strong>: con <PowerShellInline
-          code="-ErrorVariable ev"
-        />
-        puedes inspeccionar <PowerShellInline code="$ev" /> (útil para logs).
-      </ListItem>
-    </List>
+  <List>
+    <ListItem icon={icons.Target}>
+      <strong>Local</strong>: usa <PowerShellInline code="-ErrorAction Stop" /> en
+      el cmdlet puntual.
+    </ListItem>
+    <ListItem icon={icons.ArrowBendDownRight}>
+      <strong>Bloque</strong>: ajusta <PowerShellInline
+        code="$ErrorActionPreference"
+      />
+      al inicio de un bloque <PowerShellInline code="try" /> y restaura en
+      <PowerShellInline code="finally" />.
+    </ListItem>
+    <ListItem icon={icons.NotePencil}>
+      <strong>Captura el detalle</strong>: con <PowerShellInline
+        code="-ErrorVariable ev"
+      />
+      puedes inspeccionar <PowerShellInline code="$ev" /> (útil para logs).
+    </ListItem>
+  </List>
 
-    <PowerShellBlock
-      code={`
+  <PowerShellBlock
+    code={`
         # Ejemplo combinando -ErrorVariable y -ErrorAction
         Remove-Item -Path (Join-Path $target 'README.md') -Force -ErrorAction SilentlyContinue -ErrorVariable ev
         if ($ev) {
           Write-Verbose ("Aviso: no se pudo borrar README previo: {0}" -f $ev[0].Exception.Message)
         }
       `}
-    >
-      <span slot="title">-ErrorVariable para logging fino</span>
-    </PowerShellBlock>
-  </NotesSection>
+  >
+    <span slot="title">-ErrorVariable para logging fino</span>
+  </PowerShellBlock>
+</NotesSection>
 
-  <Note>
-    <span slot="title">Resumen de patrones</span>
-    <List>
-      <ListItem icon={icons.CheckCircle}>
-        Promueve errores relevantes con <PowerShellInline
-          code="-ErrorAction Stop"
-        />.
-      </ListItem>
-      <ListItem icon={icons.ShieldCheck}>
-        Encierra operaciones críticas en <PowerShellInline
-          code="try/catch/finally"
-        />.
-      </ListItem>
-      <ListItem icon={icons.Terminal}>
-        Para herramientas externas, valida <PowerShellInline
-          code="$LASTEXITCODE"
-        />.
-      </ListItem>
-      <ListItem icon={icons.GearSix}>
-        Restaura configuraciones globales en <PowerShellInline
-          code="finally"
-        />.
-      </ListItem>
-    </List>
-  </Note>
-</NotesLayout>
+<Note>
+  <span slot="title">Resumen de patrones</span>
+  <List>
+    <ListItem icon={icons.CheckCircle}>
+      Promueve errores relevantes con <PowerShellInline
+        code="-ErrorAction Stop"
+      />.
+    </ListItem>
+    <ListItem icon={icons.ShieldCheck}>
+      Encierra operaciones críticas en <PowerShellInline
+        code="try/catch/finally"
+      />.
+    </ListItem>
+    <ListItem icon={icons.Terminal}>
+      Para herramientas externas, valida <PowerShellInline
+        code="$LASTEXITCODE"
+      />.
+    </ListItem>
+    <ListItem icon={icons.GearSix}>
+      Restaura configuraciones globales en <PowerShellInline code="finally" />.
+    </ListItem>
+  </List>
+</Note>
 
 <Footnotes
   ><Footnote index={1}
