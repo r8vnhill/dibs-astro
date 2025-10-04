@@ -35,6 +35,8 @@ import {
   TableRow,
 } from "~/components/starwind/table";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import { AuthorList, Book, References } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 ---
 
 <NotesLayout
@@ -530,6 +532,16 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
       />. Devuelve un objeto con datos útiles para logs o para controlar el
       flujo.
     </p>
+
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          "Cambiar rama a main",
+          "Explicar Resolve-Path y cuándo usarlo",
+        ],
+      }}
+    />
 
     <PowerShellBlock
       code={`
@@ -1113,6 +1125,46 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
       mantenibles dentro de un sistema mayor.</Fragment
     ></ConclusionsLayout
   >
+
+  <References
+    ><Fragment slot="recommended"
+      ><Book
+        chapter="Handling errors"
+        bookTitle="Learn PowerShell in a Month of Lunches, fourth edition: Covers Windows, Linux, and MacOS"
+        pages={[279, 286]}
+        ><AuthorList
+          slot="authors"
+          authors={[{ firstName: "Travis", lastName: "Plunk" }]}
+        />
+
+        <Fragment slot="description"
+          >Capítulo práctico sobre manejo de errores en PowerShell que explica
+          la diferencia entre errores no terminantes y excepciones, cómo forzar
+          excepciones con <PowerShellInline code="-ErrorAction Stop" /> para poder
+          capturarlas con
+          <PowerShellInline code="try" />/<PowerShellInline
+            code="catch"
+          />/<PowerShellInline code="finally" />, y el papel de <PowerShellInline
+            code="$Error"
+          />, <PowerShellInline code="-ErrorVariable" />
+          (incluyendo el uso de <PowerShellInline code="+" /> para acumular) y <PowerShellInline
+            code="$ErrorActionPreference"
+          />. Advierte contra malas prácticas como silenciar errores
+          globalmente, y muestra cuándo registrar, continuar o detener según el
+          objetivo del script. Incluye patrones para comandos nativos y métodos
+          .NET (cuándo ajustar temporalmente las preferencias), y ejemplos de <PowerShellInline
+            code="catch"
+          />
+          tipados. Ideal para entender qué registrar, cómo reaccionar ante fallos
+          y cómo diseñar herramientas que fallen de forma explícita y depurable.</Fragment
+        ></Book
+      ></Fragment
+    >
+
+    <!-- <Fragment slot="additional">
+        ...
+      </Fragment> -->
+  </References>
 
   <Footnotes
     ><Footnote index={1}

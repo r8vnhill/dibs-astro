@@ -1,0 +1,488 @@
+---
+import * as icons from "~/assets/img/icons";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import ToDo from "~/components/utils/ToDo.tsx";
+import { Abstract, Explanation, Tip } from "~/components/ui/callouts";
+import NotesSection from "~/layouts/NotesSection.astro";
+import {
+  InlineBash,
+  InlinePowerShell,
+  PowerShellBlock,
+  PowerShellInline,
+  Terminals,
+} from "~/components/ui/code";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import Heading from "~/components/semantics/Heading.astro";
+import { List, ListItem } from "~/components/ui/list";
+import B from "~/components/ui/font/B.astro";
+import I from "~/components/ui/font/I.astro";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
+---
+
+<NotesLayout title="Laboratorio 1: Submódulos en Git" description="..."
+  ><Abstract
+    ><ToDo
+      client:only="react"
+      metadata={{
+        tasks: ["..."],
+      }}
+    /></Abstract
+  >
+
+  <NotesSection id="h2-configurar-remoto-gitlab"
+    ><Heading headingLevel="h2" Icon={icons.GitBranch}
+      >Configurar remoto Git: crear o actualizar de forma idempotente</Heading
+    >
+
+    <p class="mb-3">
+      Este script agrega o actualiza un <I>remote</I> de Git para un repositorio
+      local, apuntándolo a
+      <B>GitLab</B> usando URL HTTPS. Resuelve la ruta del repo, valida parámetros
+      y, si el remoto ya existe, actualiza su URL solo si cambió; si no existe, lo
+      crea. Devuelve un objeto con
+      <PowerShellInline code="RepoPath" />, <PowerShellInline code="Remote" />, <PowerShellInline
+        code="Url"
+      /> y la <PowerShellInline code="Action" />
+      realizada (<I>created</I>, <I>updated</I>, <I>unchanged</I>). El cmdlet
+      respeta <PowerShellInline code="-WhatIf" />
+      y <PowerShellInline code="-Confirm" /> gracias a <PowerShellInline
+        code="SupportsShouldProcess"
+      />.
+    </p>
+
+    <p class="mb-4">
+      El ejemplo se centra en <B>GitLab</B> por simplicidad, pero adaptarlo a GitHub
+      o Bitbucket es directo: cambia el host y el formato de la URL (p. ej.,
+      <code>https://github.com/&lt;user&gt;/&lt;repo&gt;.git</code> o la variante
+      SSH).
+    </p>
+
+    <PowerShellBlock
+      code={`
+        #Requires -Version 7.0
+        [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+        param(
+            [Parameter(Mandatory)]
+            [ValidatePattern('^[\\w\\-.]+$')]
+            [string] $User,
+
+            [Parameter(Mandatory)]
+            [ValidatePattern('^[\\w\\-.]+$')]
+            [string] $Target,
+
+            [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+            [string] $LiteralPath,
+
+            [ValidatePattern('^[\\w\\-.]+$')]
+            [string] $RemoteName = 'origin'
+        )
+
+        $repoPath = if ($LiteralPath) {
+            (Get-Item -LiteralPath $LiteralPath -ErrorAction Stop).FullName
+        }
+        else {
+            (Get-Location).ProviderPath
+        }
+
+        Write-Verbose "Using repository path: $repoPath"
+
+        try {
+            $git = (Get-Command -Name git -ErrorAction Stop).Source
+            $url = "https://gitlab.com/$User/$Target.git"
+
+            $existingUrl = & $git -C $repoPath remote get-url $RemoteName 2>$null
+            if ($?) {
+                Write-Verbose "Existing URL for '$RemoteName': $existingUrl"
+                if ($existingUrl -ne $url -and 
+                    $PSCmdlet.ShouldProcess("$RemoteName", "Update remote URL to $url")) {
+
+                    $updateOut = & $git -C $repoPath remote set-url $RemoteName $url 2>&1
+                    if (-not $?) {
+                        # Use -not instead of ! because !$? can be confusing
+                        throw [System.Exception]::new(
+                            'git remote set-url failed: {0}' -f (
+                                $updateOut -join [Environment]::NewLine)
+                        )
+                    }
+                    return [pscustomobject]@{
+                        RepoPath = $repoPath
+                        Remote   = $RemoteName
+                        Url      = $url
+                        Action   = 'updated'
+                    }
+                }
+
+                return [pscustomobject]@{
+                    RepoPath = $repoPath
+                    Remote   = $RemoteName
+                    Url      = $url
+                    Action   = 'unchanged'
+                }
+            }
+
+            Write-Verbose "No existing remote named '$RemoteName'. Adding new remote."
+            if ($PSCmdlet.ShouldProcess("$RemoteName", "Add remote -> $url")) {
+                $addOut = & $git -C $repoPath remote add $RemoteName $url 2>&1
+                if (-not $?) {
+                    throw [System.Exception]::new(
+                        "git remote add failed: $($addOut -join [Environment]::NewLine)"
+                    )
+                }
+
+                return [pscustomobject]@{
+                    RepoPath = $repoPath
+                    Remote   = $RemoteName
+                    Url      = $url
+                    Action   = 'created'
+                }
+            }
+        }
+        catch {
+            throw [System.AggregateException]::new(
+                "Failed to configure remote '$RemoteName' in '$repoPath'.",
+                $_.Exception
+            )
+        }
+      `}
+      ><Fragment slot="title">Add or update Git remote (GitLab)</Fragment>
+
+      <DibsSourceLink
+        repo="scripts"
+        file="git/Add-Remote.ps1"
+        slot="source"
+      /></PowerShellBlock
+    >
+
+    <Explanation
+      ><List
+        ><ListItem icon={icons.TextT}
+          ><B>Validación de parámetros</B> —
+          <PowerShellInline code="[ValidatePattern('^[\\w\\-.]+$')]" /> limita
+          <PowerShellInline code="User" />, <PowerShellInline code="Target" /> y
+          <PowerShellInline code="RemoteName" /> a letras, dígitos, guion, guion
+          bajo y punto. Es un patrón <I>slug-safe</I> para evitar caracteres problemáticos
+          en la URL del remoto.</ListItem
+        >
+
+        <ListItem icon={icons.Terminal}
+          ><B>Detección del remoto existente</B> —
+          <PowerShellInline
+            code="$git -C $repoPath remote get-url $RemoteName 2>$null"
+          />
+          ejecuta Git dentro de <PowerShellInline code="$repoPath" /> (<PowerShellInline
+            code="-C"
+          />) y redirige errores a <PowerShellInline code="$null" /> si el remoto
+          no existe. El estado en
+          <PowerShellInline code="$?" /> indica éxito/fracaso de la llamada.</ListItem
+        >
+
+        <ListItem icon={icons.SlidersHorizontal}
+          ><B>Actualización controlada</B> —
+          <PowerShellInline
+            code="$git -C $repoPath remote set-url $RemoteName $url"
+          /> solo se ejecuta si la URL actual difiere. Se comprueba el resultado
+          con
+          <PowerShellInline code="-not $?" /><FootnoteRef
+            index={1}
+            class="mr-2"
+          /> y, en caso de fallo, se lanza una excepción con el detalle capturado.</ListItem
+        >
+
+        <ListItem icon={icons.PlusCircle}
+          ><B>Creación del remoto</B> —
+          <PowerShellInline
+            code="$git -C $repoPath remote add $RemoteName $url"
+          />
+          añade el remoto cuando no existe. El script es idempotente: no crea duplicados
+          y devuelve <PowerShellInline code="Action" /> acorde al cambio realizado.</ListItem
+        ></List
+      ></Explanation
+    ></NotesSection
+  >
+
+  <NotesSection id="...">
+    <Heading headingLevel="h2" Icon={icons.GitBranch}
+      >Inicializa y versiona con GitLab (ensayo primero)</Heading
+    >
+
+    <p class="mb-4">
+      Si quieres versionar tu estructura desde el inicio, automatiza la creación
+      del repo local y remoto en GitLab.
+      <strong>Primero ensaya</strong> con <InlinePowerShell code="-WhatIf" /> (PowerShell)
+      o
+      <InlineBash code="--dry-run" /> (Bash) para ver qué ocurrirá sin realizar cambios.
+    </p>
+
+    <Terminals
+      powerShellCode={`
+#Requires -Version 7.0
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+param(
+  [ValidateNotNullOrEmpty()]
+  [Parameter(Mandatory)]
+  [string] $User,
+
+  [ValidateNotNullOrEmpty()]
+  [string] $RepositoryDirectory = $PWD.Path,
+
+  [string] $RepositoryName,
+  [string] $Prefix
+)
+
+$ErrorActionPreference = 'Stop'
+
+# Normalizar y validar carpeta destino (acepta relativa)
+$RepositoryDirectory = (Resolve-Path -LiteralPath $RepositoryDirectory -ErrorAction Stop).Path
+$repoDirInfo = Get-Item -LiteralPath $RepositoryDirectory
+if (-not $repoDirInfo.PSIsContainer) {
+  throw "The path '$RepositoryDirectory' is not a directory."
+}
+
+# Derivar nombre/prefijo si faltan
+if (-not $RepositoryName -or [string]::IsNullOrWhiteSpace($RepositoryName)) {
+  $RepositoryName = $repoDirInfo.Name.ToLower()
+}
+if (-not $Prefix -and $repoDirInfo.Parent) {
+  $Prefix = $repoDirInfo.Parent.Name.ToLower()
+}
+
+# Nombre final remoto
+$target = if ([string]::IsNullOrWhiteSpace($Prefix)) { $RepositoryName } else { "$Prefix-$RepositoryName" }
+
+# Crear remoto en GitLab (ensayable con -WhatIf/-Confirm)
+if ($PSCmdlet.ShouldProcess($target, 'Create GitLab repository')) {
+  Push-Location -LiteralPath $repoDirInfo.FullName
+  try {
+    git init
+    glab repo create $target --public
+    if ($LASTEXITCODE) { throw "glab exited with code $LASTEXITCODE." }
+    git remote add origin "https://gitlab.com/$User/$target.git"
+  }
+  finally {
+    Pop-Location
+  }
+}
+  `}
+      bashCode={`#!/usr/bin/env bash
+set -euo pipefail
+
+USER=""
+REPO_DIR="$(pwd)"
+REPO_NAME=""
+PREFIX=""
+DRY_RUN=false
+
+usage() {
+  echo "Usage: $0 -u <user> [-d <directory>] [-n <repo_name>] [-p <prefix>] [--dry-run]"
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -u|--user) USER="$2"; shift 2 ;;
+    -d|--dir) REPO_DIR="$2"; shift 2 ;;
+    -n|--name) REPO_NAME="$2"; shift 2 ;;
+    -p|--prefix) PREFIX="$2"; shift 2 ;;
+    --dry-run) DRY_RUN=true; shift ;;
+    *) usage ;;
+  esac
+done
+
+[[ -n "$USER" ]] || { echo "Error: user is required"; usage; }
+[[ -d "$REPO_DIR" ]] || { echo "Error: '$REPO_DIR' is not a directory"; exit 1; }
+
+# Derivar nombre/prefijo si faltan
+if [[ -z "$REPO_NAME" ]]; then
+  REPO_NAME="$(basename "$REPO_DIR" | tr '[:upper:]' '[:lower:]')"
+fi
+if [[ -z "$PREFIX" ]]; then
+  PARENT="$(dirname "$REPO_DIR")"
+  PREFIX="$(basename "$PARENT" | tr '[:upper:]' '[:lower:]')"
+fi
+
+TARGET="$REPO_NAME"
+if [[ -n "$PREFIX" ]]; then
+  TARGET="$PREFIX-$REPO_NAME"
+fi
+
+echo "Repositorio remoto: $TARGET"
+
+run() {
+  if $DRY_RUN; then
+    echo "[dry-run] $*"
+  else
+    eval "$@"
+  fi
+}
+
+(
+  cd "$REPO_DIR"
+  run "git init"
+  run "glab repo create $TARGET --public"
+  run "git remote add origin https://gitlab.com/$USER/$TARGET.git"
+)
+  `}
+    >
+      <Fragment slot="powershell-title"
+        >PowerShell: crear repo local + remoto en GitLab (con <code
+          >-WhatIf</code
+        >)</Fragment
+      >
+      <DibsSourceLink
+        repo="scripts"
+        file="ps1/New-GitLabRepository.ps1"
+        slot="powershell-source"
+      />
+      <Fragment slot="powershell-explanation">
+        <List>
+          <ListItem icon={icons.Info}>
+            <InlinePowerShell
+              code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='Medium')]"
+            /> habilita
+            <InlinePowerShell code="-WhatIf" />/<InlinePowerShell
+              code="-Confirm"
+            /> para ensayar cambios antes de aplicarlos.
+          </ListItem>
+          <ListItem icon={icons.Path}>
+            <InlinePowerShell code="Resolve-Path -LiteralPath" /> normaliza rutas
+            y evita comodines; luego se valida que sea carpeta con <InlinePowerShell
+              code="Get-Item"
+            />.
+          </ListItem>
+          <ListItem icon={icons.TextB}>
+            Si faltan <InlinePowerShell code="$RepositoryName" /> o <InlinePowerShell
+              code="$Prefix"
+            />, se derivan del árbol de carpetas.
+          </ListItem>
+          <ListItem icon={icons.CloudArrowUp}>
+            <InlinePowerShell code="glab repo create $target --public" /> crea el
+            remoto; si falla (<InlinePowerShell code="$LASTEXITCODE" /> ≠ 0) se aborta
+            con mensaje claro.
+          </ListItem>
+        </List>
+      </Fragment>
+
+      <Fragment slot="bash-title"
+        >Bash/Zsh: crear repo local + remoto en GitLab (con <code
+          >--dry-run</code
+        >)</Fragment
+      >
+      <DibsSourceLink
+        repo="scripts"
+        file="sh/new-gitlab-repository.sh"
+        slot="bash-source"
+      />
+      <Fragment slot="bash-explanation">
+        <List>
+          <ListItem icon={icons.Bug}>
+            <InlineBash code="set -euo pipefail" />: aborta en errores,
+            variables no definidas y fallos en pipelines.
+          </ListItem>
+          <ListItem icon={icons.Terminal}>
+            Flags: <InlineBash code="-u/--user" />, <InlineBash
+              code="-d/--dir"
+            />, <InlineBash code="-n/--name" />,
+            <InlineBash code="-p/--prefix" />, <InlineBash code="--dry-run" />.
+          </ListItem>
+          <ListItem icon={icons.Eye}>
+            <InlineBash code="DRY_RUN=true" /> imprime acciones (no las ejecuta).
+            Quita <InlineBash code="--dry-run" /> para aplicar.
+          </ListItem>
+          <ListItem icon={icons.TextB}>
+            Deriva <InlineBash code="TARGET" /> como <code>prefix-name</code> si
+            hay prefijo; útil para estandarizar nombres.
+          </ListItem>
+        </List>
+      </Fragment>
+    </Terminals>
+
+    <Heading headingLevel="h3" Icon={icons.ListChecks}
+      >Flujo sugerido (ensayo → aplicar)</Heading
+    >
+
+    <Terminals
+      powerShellCode={`
+Set-Location 'dibs'
+$gitlabUser = '<TU-USUARIO>'  # <- reemplaza aquí
+.\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryDirectory .\scripts -WhatIf
+.\scripts\ps1\New-GitLabRepository.ps1 -User $gitlabUser -RepositoryName index -Prefix dibs -WhatIf
+# Si el ensayo luce bien, repite sin -WhatIf
+  `}
+      bashCode={`
+cd dibs
+GITLAB_USER="<TU-USUARIO>"  # <- reemplaza aquí
+./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -d ./scripts --dry-run
+./scripts/sh/new-gitlab-repository.sh -u "$GITLAB_USER" -n index -p dibs --dry-run
+# Si el ensayo luce bien, repite sin --dry-run
+  `}
+    >
+      <Fragment slot="powershell-explanation">
+        <p>
+          Elige <strong>no</strong> crear carpeta local adicional cuando el asistente
+          de <InlinePowerShell code="glab" /> lo pregunte; el script ya opera dentro
+          de tu estructura.
+        </p>
+      </Fragment>
+      <Fragment slot="bash-explanation">
+        <p>
+          Revisa la salida de <InlineBash code="DRY_RUN" />. Si todo se ve bien,
+          ejecuta de nuevo sin <InlineBash code="--dry-run" />.
+        </p>
+      </Fragment>
+    </Terminals>
+
+    <Tip class="my-4">
+      <Fragment slot="title">.gitignore</Fragment>
+      Genera un <code>.gitignore</code> adecuado para cada repo; útil:
+      <Link href="https://www.toptal.com/developers/gitignore/"
+        >toptal.com/developers/gitignore</Link
+      >.
+    </Tip>
+
+    <Terminals
+      powerShellCode={`
+# Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
+Push-Location '.\scripts'
+git add .
+git commit -m "chore(scripts): initial scaffolding and GitLab integration utilities"
+git push -u origin main
+Pop-Location
+
+git submodule add "https://gitlab.com/$gitlabUser/dibs-scripts.git" scripts
+git add .gitmodules scripts
+git commit -m "chore(index): add scripts as submodule"
+git push -u origin main
+  `}
+      bashCode={`
+# Commit del repo 'dibs/scripts' y subirlo. Luego agregarlo como submódulo en 'dibs/index'.
+(
+  cd scripts
+  git add .
+  git commit -m "chore(scripts): initial scaffolding and GitLab integration utilities"
+  git push -u origin main
+)
+
+git submodule add "https://gitlab.com/$GITLAB_USER/dibs-scripts.git" scripts
+git add .gitmodules scripts
+git commit -m "chore(index): add scripts as submodule"
+git push -u origin main
+  `}
+    >
+      <Fragment slot="powershell-title"
+        >Versionar y añadir como submódulo (PowerShell)</Fragment
+      >
+      <Fragment slot="bash-title"
+        >Versionar y añadir como submódulo (Bash/Zsh)</Fragment
+      >
+    </Terminals>
+  </NotesSection>
+
+  <Footnotes
+    ><Footnote index={1}
+      >Usamos <PowerShellInline code="-not" /> en lugar de <PowerShellInline
+        code="!"
+      /> en este caso ya que <PowerShellInline code="-not $?" /> es más legible que
+      <PowerShellInline code="!$?" />.</Footnote
+    ></Footnotes
+  ></NotesLayout
+>

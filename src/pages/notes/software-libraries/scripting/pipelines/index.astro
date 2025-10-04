@@ -1,0 +1,412 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    Info,
+    Solution,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
+import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import B from "~/components/ui/font/B.astro";
+import I from "~/components/ui/font/I.astro";
+import { List, ListItem } from "~/components/ui/list";
+import Cons from "~/components/ui/procons/Cons.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
+import { References, WebPage } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Pipelines I: Fundamentos"
+    description="Primera lección de la serie dedicada al pipeline en PowerShell. Introduce el procesamiento en streaming, la composición de comandos mediante objetos y las bases conceptuales de un modelo cercano a la programación funcional. Un contenido clave —y más complejo— que enseña a construir flujos eficientes, expresivos y declarativos."
+    timeMultiplier={2}
+>
+    <Abstract>
+        <p class="mb-2">
+            Esta lección marca el inicio de una serie dedicada al <B>pipeline</B> en PowerShell, un concepto central
+            pero más desafiante que los vistos hasta ahora. A lo largo de estas lecciones aprenderás a comprender,
+            construir y extender flujos de comandos que procesan datos de forma continua y eficiente.
+        </p>
+
+        <p class="mb-2">
+            Comenzaremos explorando el <B>procesamiento en streaming</B> como idea fundamental: un modelo donde los
+            datos se consumen y transforman <I>a medida que llegan</I>, reduciendo la latencia y optimizando el uso de
+            memoria. Luego veremos cómo PowerShell implementa este enfoque a través del <I>pipeline</I>, que conecta
+            comandos pasando
+            <B>objetos</B> —no texto— entre ellos.
+        </p>
+
+        <p>
+            Este enfoque introduce una forma de pensar cercana a la <B>programación funcional</B>: cada etapa es una
+            transformación pura que se compone con las demás para formar un flujo declarativo. Puede que al principio
+            requiera más práctica y atención que las lecciones anteriores, pero dominar el pipeline te permitirá
+            escribir comandos más expresivos, eficientes y elegantes.
+        </p>
+    </Abstract>
+
+    <NotesSection id="h2-why-streaming">
+        <Heading headingLevel="h2" Icon={icons.PlayCircle}>
+            ¿Por qué pensar en procesamiento en streaming?
+        </Heading>
+
+        <Definition>
+            <p>
+                El <B>procesamiento en streaming</B> es un modelo donde los datos se <I>consumen y procesan a medida que
+                    llegan</I>, elemento por elemento, sin esperar a tener el conjunto completo. Este enfoque permite <B
+                >producir resultados de inmediato</B>, mantener <I>memoria acotada</I> y sostener flujos continuos de
+                información.
+            </p>
+        </Definition>
+
+        <p class="mb-2">
+            Como todo modelo, el enfoque en streaming ofrece ventajas claras, pero también introduce nuevos retos:
+        </p>
+
+        <ProCons>
+            <Pros>
+                <List>
+                    <ListItem icon={icons.Cpu}>
+                        <B>Baja latencia:</B> entregas resultados parciales inmediatamente.
+                    </ListItem>
+
+                    <ListItem icon={icons.FolderOpen}>
+                        <B>Memoria acotada:</B> procesas pieza a pieza, sin materializar todo el dataset.
+                    </ListItem>
+
+                    <ListItem icon={icons.Pipe}>
+                        <B>Composición natural:</B> encadena pasos (filtrar → transformar → emitir) como un pipeline.
+                    </ListItem>
+
+                    <ListItem icon={icons.Bug}>
+                        <B>Descubrimiento temprano de errores:</B> fallas aparecen antes, no al final del lote.
+                    </ListItem>
+                </List>
+            </Pros>
+
+            <Cons>
+                <List>
+                    <ListItem icon={icons.ListChecks}>
+                        <B>Complejidad:</B> manejo de reintentos, idempotencia y consistencia eventual.
+                    </ListItem>
+
+                    <ListItem icon={icons.Code}>
+                        <B>Depuración y pruebas:</B> repetir flujos en tiempo real puede ser más difícil que un batch
+                        determinista.
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        <B>Materialización parcial:</B> si necesitas el total (p. ej., percentil global), debes
+                        acumular.
+                    </ListItem>
+                </List>
+            </Cons>
+        </ProCons>
+
+        <NotesSection id="h3-use-cases">
+            <Heading headingLevel="h3" Icon={icons.Tag}>
+                Casos de uso: del entorno cotidiano a la producción a gran escala
+            </Heading>
+
+            <p>
+                Algunos escenarios comunes donde el procesamiento en streaming destaca:
+            </p>
+
+            <List>
+                <ListItem icon={icons.MagicWand}>
+                    <B>Logs en vivo:</B> inspeccionar y filtrar eventos conforme se generan (p. ej., seguridad,
+                    auditorías).
+                </ListItem>
+
+                <ListItem icon={icons.Hash}>
+                    <B>Métricas y monitoreo:</B> paneles de salud de servicios con alertas en tiempo real.
+                </ListItem>
+
+                <ListItem icon={icons.Cpu}>
+                    <B>IoT y mensajes en tiempo real:</B> sensores o colas de eventos que generan datos continuamente.
+                </ListItem>
+
+                <ListItem icon={icons.PlayCircle}>
+                    <B>Streaming multimedia:</B> procesar o transcodificar al vuelo, reduciendo la latencia percibida
+                    por el usuario final.
+                </ListItem>
+            </List>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-pipeline">
+        <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
+            El pipeline en PowerShell: streaming de objetos
+        </Heading>
+
+        <p class="mb-2">
+            Ahora que entendemos por qué el procesamiento en streaming es valioso, veamos cómo PowerShell lo aplica a su
+            modelo de ejecución: el <I>pipeline</I>.
+        </p>
+
+        <p class="mb-2">
+            El operador de <I>pipeline</I> (<PowerShellInline code="|" />) conecta comandos pasando <B>objetos</B> de
+            uno a otro. A diferencia de otros shells que encadenan texto, PowerShell transmite <I>instancias con
+                propiedades</I>
+            (por ejemplo, <PowerShellInline code="FileInfo" />), lo que permite filtrar, transformar y exportar datos
+            sin parseo frágil. El pipeline opera en <I>streaming</I>: cada objeto se envía al siguiente comando apenas
+            está disponible, permitiendo trabajar con grandes volúmenes sin cargar todo en memoria.
+        </p>
+
+        <Tip>
+            Piensa en <B>pasos declarativos</B>: <I>filtra temprano</I>, <I>transforma después</I> y <I>emite al
+                final</I>. Así tu pipeline será más expresivo y eficiente.
+        </Tip>
+
+        <PowerShellBlock
+            code={`
+                Get-ChildItem -Path $HOME -Recurse -File |
+                    Where-Object { $_.Length -gt 0 } |
+                    Sort-Object Length -Descending |
+                    Select-Object FullName, Length -First 10 |
+                    Export-Csv "top10.csv" -NoTypeInformation
+            `}
+        >
+            <Fragment slot="title">
+                Top 10 archivos más grandes en tu carpeta de usuario
+            </Fragment>
+        </PowerShellBlock>
+
+        <Explanation>
+            <p class="mb-2">
+                Este flujo recorre archivos, descarta los de longitud cero, los ordena por tamaño, toma los 10 mayores y
+                los exporta a CSV. Observa cómo cada comando asume una <I>responsabilidad única</I> y clara:
+            </p>
+
+            <List>
+                <ListItem icon={icons.FolderOpen}>
+                    <PowerShellInline code="Get-ChildItem -Recurse -File" /> emite objetos <PowerShellInline
+                        code="FileInfo"
+                    /> de forma secuencial (<I>streaming</I>).
+                </ListItem>
+
+                <ListItem icon={icons.Funnel}>
+                    <PowerShellInline code="Where-Object { $_.Length -gt 0 }" /> filtra <B>temprano</B> para reducir lo
+                    que fluye.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowsDownUp}>
+                    <PowerShellInline code="Sort-Object Length -Descending" /> ordena por una propiedad sin convertir a
+                    texto.
+                </ListItem>
+
+                <ListItem icon={icons.ListChecks}>
+                    <PowerShellInline code="Select-Object ... -First 10" /> limita el flujo tras obtener lo necesario,
+                    sin cargar todo en memoria.
+                </ListItem>
+
+                <ListItem icon={icons.FileText}>
+                    <PowerShellInline code='Export-Csv "top10.csv"' /> materializa el resultado en formato CSV
+                    (Comma-Separated Values) en el directorio actual. Puedes ver el archivo con VSCode usando
+                    <PowerShellInline code="code top10.csv" />.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Warning>
+            <Fragment slot="title">
+                Cuidado con cortar el pipeline demasiado pronto
+            </Fragment>
+
+            <p class="mb-1">
+                Cmdlets de formato (<PowerShellInline code="Format-Table" />, <PowerShellInline code="Format-List" />)
+                producen <I>objetos de formato</I>, no datos reales. Si los usas en medio del flujo, los siguientes
+                comandos no verán las propiedades originales.
+            </p>
+            <p>
+                Evita usarlos hasta el final del pipeline —prefiere <PowerShellInline code="Select-Object" /> o
+                <PowerShellInline code="Out-File" /> si necesitas preparar la salida antes.
+            </p>
+        </Warning>
+    </NotesSection>
+
+    <Exercise id="h2-exercise">
+        <span slot="title">
+            ¿Quién se comió la RAM que dejé libre esta mañana?
+        </span>
+
+        <p class="mb-2">
+            Tienes las siguientes llamadas disponibles. Construye un pipeline que obtenga el <B>TOP 5</B> de procesos
+            por memoria (<I>Working Set</I>), mostrando <I>Name</I>, <I>Id</I> y <I>WS_MB</I> (Working Set en MB), y <B
+            >muestre los resultados como tabla</B>.
+        </p>
+
+        <Info>
+            <span slot="title">Llamadas disponibles</span>
+
+            <List>
+                <ListItem icon={icons.ArrowsDownUp}>
+                    <PowerShellInline code="Sort-Object -Property WorkingSet -Descending" /> — ordena los procesos por
+                    memoria (descendente).
+                </ListItem>
+
+                <ListItem icon={icons.Table}>
+                    <PowerShellInline code="Format-Table -AutoSize" /> — da formato tabular a la salida.
+                </ListItem>
+
+                <ListItem icon={icons.ListChecks}>
+                    <PowerShellInline
+                        code="Select-Object Name, Id, @{ n='WS_MB'; e={ [math]::Round($_.WorkingSet / 1MB, 1) } } -First 5"
+                    /> — proyecta las columnas y calcula <I>WS_MB</I>, mostrando solo los 5 primeros.
+                </ListItem>
+
+                <ListItem icon={icons.Cpu}>
+                    <PowerShellInline code="Get-Process" /> — emite objetos de proceso (propiedades útiles:
+                    <I>Name</I>, <I>Id</I>, <I>WorkingSet</I> en bytes).
+                </ListItem>
+
+                <ListItem icon={icons.Funnel}>
+                    <PowerShellInline code="Where-Object { $_.WorkingSet -gt 200MB }" /> — filtra procesos con más de
+                    200 MB de memoria.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Solution>
+            <PowerShellBlock
+                code={`
+                    Get-Process |
+                        Where-Object { $_.WorkingSet -gt 200MB } |
+                        Sort-Object -Property WorkingSet -Descending |
+                        Select-Object Name, Id, @{ n='WS_MB'; e={ [math]::Round($_.WorkingSet / 1MB, 1) } } -First 5 |
+                        Format-Table -AutoSize
+                `}
+            >
+                <Fragment slot="title">Solución: pipeline completo</Fragment>
+                <span slot="footer">
+                    El pipeline recorre procesos, filtra los que usan más de 200 MB, los ordena por memoria, calcula el
+                    uso en MB, toma los 5 más altos y finalmente formatea la salida como tabla.
+                    <B>Todos los pasos previos manipulan objetos;</B> solo el último genera texto para el usuario.
+                </span>
+            </PowerShellBlock>
+        </Solution>
+
+        <OutputBlock
+            code={`
+                Name                  Id   WS_MB
+                ----                  --   -----
+                vivaldi            39884 1536.4
+                Memory Compression  3228 1319.3
+                node               16544 1086.2
+                vivaldi            13352  974.5
+                Code                3320  869.3
+            `}
+        >
+            <span slot="title">Salida esperada (ejemplo)</span>
+        </OutputBlock>
+    </Exercise>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <p class="mb-2">
+                En esta lección exploramos el concepto de <B>procesamiento en streaming</B> y cómo PowerShell lo
+                incorpora a su modelo de ejecución mediante el <I>pipeline</I>. Aprendimos que el pipeline no es solo
+                una forma de encadenar comandos, sino un mecanismo para <B>transferir objetos de manera secuencial</B>,
+                permitiendo que cada etapa procese los datos sin necesidad de cargar todo en memoria.
+            </p>
+
+            <p>
+                Además, vimos que su verdadero poder surge de la <B>composición declarativa</B>: dividir una tarea
+                compleja en pasos simples —filtrar, transformar, limitar y mostrar— que se comunican de forma natural.
+                Este enfoque mejora la legibilidad, el rendimiento y la trazabilidad de los comandos.
+            </p>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Pipe}>
+                PowerShell transmite <B>objetos</B>, no texto, lo que evita el parseo manual y facilita el trabajo con
+                propiedades.
+            </ListItem>
+
+            <ListItem icon={icons.Funnel}>
+                <B>Filtrar temprano</B> y <B>transformar después</B> reduce el uso de memoria y mejora el rendimiento
+                del flujo.
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsDownUp}>
+                <PowerShellInline code="Sort-Object" /> y <PowerShellInline code="Select-Object" /> son etapas típicas
+                de transformación dentro del pipeline.
+            </ListItem>
+
+            <ListItem icon={icons.Table}>
+                <PowerShellInline code="Format-Table" /> debe usarse solo al final, ya que convierte los objetos en
+                texto formateado.
+            </ListItem>
+
+            <ListItem icon={icons.Gear}>
+                Cada cmdlet tiene una <B>responsabilidad única</B>: el pipeline conecta sus salidas e insumos para
+                producir un flujo coherente.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <p class="mb-2">
+                Pensar en <B>pipelines</B> es pensar en <B>composición funcional</B>: una cadena de transformaciones
+                donde cada paso recibe una entrada, produce una salida y delega el resultado al siguiente.
+            </p>
+
+            <p class="mb-2">
+                Igual que en la programación funcional, el poder del pipeline no está en cada comando aislado, sino en
+                cómo se
+                <I>combinan</I> para expresar un flujo claro, sin efectos colaterales innecesarios y con
+                responsabilidades bien delimitadas.
+            </p>
+
+            <p>
+                Este modo de razonar —centrado en la composición y la transformación— será la base para las siguientes
+                lecciones, donde aprenderemos a crear nuestros propios scripts que participen en el flujo y a extender
+                el modelo de streaming más allá de los cmdlets incorporados.
+            </p>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <WebPage
+                title="Collection Pipeline" url="https://martinfowler.com/articles/collection-pipeline/"
+                location="MartinFowler.com"
+            >
+                <Fragment slot="description">
+                    <p>
+                        El artículo describe el patrón <B>Collection Pipeline</B>, una forma de organizar programas como
+                        una <B>secuencia de operaciones encadenadas</B> (como <code>filter</code>, <code>map</code>,
+                        <code>reduce</code>) que transforman colecciones paso a paso. Fowler explica su origen en el
+                        shell Unix y su adopción en lenguajes como Smalltalk, Ruby, Clojure y Java, mostrando cómo el
+                        patrón promueve <B>claridad, modularidad y composición funcional</B>.
+                    </p>
+
+                    <p>
+                        A través de ejemplos, analiza temas como <B>laziness</B>, <B>paralelismo</B>, <B
+                        >inmutabilidad</B> y la relación del patrón con <I>Pipes and Filters</I>. También contrasta este
+                        enfoque con bucles tradicionales, comprensiones y expresiones anidadas, destacando cómo el
+                        pipeline mejora la legibilidad y favorece la <B>programación declarativa</B>.
+                    </p>
+
+                    <p>
+                        Ideal para quienes quieran <B>entender los fundamentos conceptuales detrás del pipeline de
+                            PowerShell</B> y cómo este se conecta con principios de la <B>programación funcional</B> y
+                        el diseño de APIs expresivas.
+                    </p>
+                </Fragment>
+            </WebPage>
+        </Fragment>
+
+        <!--
+            <Fragment slot="additional">
+                ...
+            </Fragment>
+        -->
+    </References>
+</NotesLayout>

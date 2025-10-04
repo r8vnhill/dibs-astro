@@ -1,0 +1,36 @@
+{
+  "PowerShellBlock con slots": {
+	"scope": "astro",
+    "prefix": "psblock",
+    "body": [
+      "<PowerShellBlock code={`",
+      "    $1",
+      "`}>",
+      "    <Fragment slot=\"title\">${2:...}</Fragment>",
+      "    <Fragment slot=\"footer\">${3:...}</Fragment>",
+      "    <Fragment slot=\"source\">${4:path/to/script.ps1}</Fragment>",
+      "</PowerShellBlock>"
+    ],
+    "description": "Inserta un bloque PowerShellBlock con slots de título, footer y source."
+  },
+  "NotesLayout": {
+		"prefix": "noteslayout",
+    "scope": "astro",
+		"body": [
+			"---",
+			"import * as icons from \"~/assets/img/icons\";",
+			"import NotesLayout from \"~/layouts/NotesLayout.astro\";",
+			"import ToDo from \"~/components/utils/ToDo.tsx\";",
+			"---",
+			"",
+			"<NotesLayout",
+      "    title=\"${1:Definir título}\"",
+      "    description=\"${2:Definir descripción}\"",
+      "    timeMultiplier={${3:1.5}}",
+      ">",
+			"    $0",
+			"</NotesLayout>"
+		],
+		"description": "Insert a NotesLayout component"
+	},
+}

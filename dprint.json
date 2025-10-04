@@ -1,0 +1,57 @@
+{
+  "lineWidth": 120,
+  "indentWidth": 4,
+  "typescript": {
+  },
+  "json": {
+  },
+  "markdown": {
+  },
+  "toml": {
+  },
+  "malva": {
+  },
+  "markup": {
+  },
+  "markup": {
+    "printWidth": 120,
+    "useTabs": false,
+    "indentWidth": 4,
+    "lineBreak": "lf",
+    "quotes": "double",
+    "maxAttrsPerLine": 2,
+    "preferAttrsSingleLine": false,
+    "singleAttrSameLine": true,
+    "closingBracketSameLine": false,
+    "closingTagLineBreakForEmpty": "fit",
+    "html.normal.selfClosing": null,
+    "html.void.selfClosing": null,
+    "component.selfClosing": true,
+    "svg.selfClosing": null,
+    "mathml.selfClosing": null,
+    "whitespaceSensitivity": "css",
+    "component.whitespaceSensitivity": null,
+    "scriptIndent": false,
+    "styleIndent": false,
+    "astro.scriptIndent": true,
+    "astro.styleIndent": true,
+    "astroAttrShorthand": true,
+    "formatComments": true,
+    "scriptFormatter": "dprint"
+  },
+  "yaml": {
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.95.11.wasm",
+    "https://plugins.dprint.dev/json-0.20.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.19.0.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.14.3.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.24.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm"
+  ]
+}

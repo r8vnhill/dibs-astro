@@ -2,200 +2,138 @@
 /**
  * CodeLayout.astro
  * ----------------
- * A flexible and reusable layout component for rendering multi-line code blocks with optional
- * title, icon, and source label. It supports Shiki syntax highlighting with separate themes for
- * light and dark modes.
- *
- * This component normalizes indentation and provides styling extensibility via Tailwind and
- * additional class props (`class`, `titleClasses`, `codeClasses`).
+ * Block de código con header opcional (título/fuente) y footer por slot.
  */
-import type { AstroComponentFactory } from "~/types/astro-component";
-import LightCode from "./LightCode.astro";
-import type { availableLanguages } from "~/lib/shiki/highlighter";
-import DarkCode from "./DarkCode.astro";
-import CopyButton from "./CopyButton";
-import type { ShikiTransformer } from "shiki";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
-import {
-  transformerNotationErrorLevel,
-  transformerNotationFocus,
-} from "@shikijs/transformers";
+import { transformerNotationErrorLevel, transformerNotationFocus } from "@shikijs/transformers";
+import type { ShikiTransformer } from "shiki";
+import type { availableLanguages } from "~/lib/shiki/highlighter";
+import type { AstroComponentFactory } from "~/types/astro-component";
+import CopyButton from "./CopyButton";
+import DarkCode from "./DarkCode.astro";
+import LightCode from "./LightCode.astro";
 
-/**
- * Props for the CodeLayout component.
- */
 export interface CodeProps {
-  /**
-   * The code content to display.
-   */
-  code: string;
-  /**
-   * The language used for syntax highlighting.
-   */
-  lang: (typeof availableLanguages)[number];
-  /**
-   * Extra classes for the wrapper container.
-   */
-  class?: string;
-  /**
-   * Optional title shown in a header above the code block.
-   */
-  title?: string;
-  /**
-   * Optional icon component to display next to the title.
-   */
-  icon?: AstroComponentFactory;
-  /**
-   * Optional extra classes for styling the title bar.
-   */
-  titleClasses?: string;
-  /**
-   * Optional source label, e.g. filename or origin.
-   */
-  source?: string;
-  /**
-   * Optional extra classes for the code area.
-   */
-  codeClasses?: string;
-  /**
-   * Optional Shiki transformers for custom syntax highlighting.
-   */
-  transformers?: ShikiTransformer[];
+    code: string;
+    lang: (typeof availableLanguages)[number];
+    class?: string;
+    title?: string;
+    icon?: AstroComponentFactory;
+    titleClasses?: string;
+    source?: string;
+    codeClasses?: string;
+    transformers?: ShikiTransformer[];
+    /** Extra clases para el pie si se usa el slot "footer" */
+    footerClasses?: string;
 }
 
-/**
- * Normalizes the indentation of a multi-line code string.
- *
- * Removes leading/trailing blank lines and adjusts indentation so that the least-indented line
- * starts at column 0.
- *
- * @param code The raw multi-line code string.
- * @returns The normalized code string.
- */
 export function normalizeIndentation(code: string): string {
-  if (!code) throw new Error("Code content is required");
-  const lines = code.split("\n");
+    if (!code) throw new Error("Code content is required");
+    const lines = code.split("\n");
 
-  // Remove leading blank lines
-  while (lines.length > 0 && lines[0] !== undefined && lines[0].trim() === "") {
-    lines.shift();
-  }
+    while (lines.length > 0 && lines[0]?.trim() === "") lines.shift();
+    while (lines.length > 0 && lines.at(-1)?.trim() === "") lines.pop();
 
-  // Remove trailing blank lines
-  while (
-    lines.length > 0 &&
-    lines[lines.length - 1] !== undefined &&
-    lines[lines.length - 1]!.trim() === ""
-  ) {
-    lines.pop();
-  }
-
-  // Compute minimum indentation of non-empty lines
-  const indentLengths = lines
-    .filter((line) => line.trim().length > 0)
-    .map((line) => {
-      const match = line.match(/^[ \t]*/);
-      return match && match[0] ? match[0].length : 0;
-    });
-
-  const minIndent = indentLengths.length > 0 ? Math.min(...indentLengths) : 0;
-
-  // Remove minIndent spaces/tabs from each line
-  return lines.map((line) => line.slice(minIndent)).join("\n");
+    const minIndent = Math.min(
+        ...lines.filter(l => l.trim().length > 0).map(l => (l.match(/^[ \t]*/)?.[0].length ?? 0)),
+        Infinity,
+    );
+    return Number.isFinite(minIndent) ? lines.map(l => l.slice(minIndent)).join("\n") : lines.join("\n");
 }
 
-// Shared base styles for the code container
-const baseClasses = [
-  "relative",
-  "my-6",
-  "overflow-x-auto",
-  "rounded-md",
-  "border",
-  "border-primary",
-];
+const baseClasses = ["relative", "my-6", "overflow-x-auto", "rounded-md", "border", "border-primary"];
 
-// Shared base styles for the title/header bar
 const baseTitleClasses = [
-  "flex",
-  "items-center",
-  "gap-2",
-  "border-b",
-  "border-primary/30",
-  "px-4",
-  "py-2",
-  "text-primary",
-  "text-sm",
-  "font-semibold",
-  "tracking-wide",
-  "dark:border-primary/40",
-  "bg-base-background",
+    "flex",
+    "items-center",
+    "gap-2",
+    "border-b",
+    "border-primary/30",
+    "px-4",
+    "py-2",
+    "text-primary",
+    "text-sm",
+    "font-semibold",
+    "tracking-wide",
+    "dark:border-primary/40",
+    "bg-base-background",
 ];
 
-// Destructure and default props
+/** Estilos base para el pie */
+const baseFooterClasses = [
+    "flex",
+    "items-start",
+    "gap-2",
+    "border-t",
+    "border-primary/30",
+    "px-4",
+    "py-2",
+    "text-primary/70",
+    "dark:border-primary/40",
+    "bg-base-background",
+];
+
 const {
-  class: className = "",
-  title,
-  icon: Icon,
-  titleClasses = "",
-  source,
-  code,
-  lang,
-  transformers = [],
+    class: className = "",
+    title,
+    icon: Icon,
+    titleClasses = "",
+    source,
+    code,
+    lang,
+    transformers = [],
+    footerClasses = "",
 } = Astro.props as CodeProps;
 
-// Normalize the code content before rendering
 const normalizedCode = normalizeIndentation(code);
 
 const commonTransformers = [
-  transformerColorizedBrackets(),
-  transformerNotationFocus(),
-  transformerNotationErrorLevel(),
+    transformerColorizedBrackets(),
+    transformerNotationFocus(),
+    transformerNotationErrorLevel(),
 ];
 ---
 
-<!-- Code block container -->
 <div class:list={[...baseClasses, className]}>
-  {
-    (Astro.slots.title || Astro.slots.source || title || source) && (
-      <div class:list={[...baseTitleClasses, titleClasses]}>
-        {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
-        {Astro.slots.title ? (
-          <div class="truncate">
-            <slot name="title" />
-          </div>
-        ) : (
-          <span class="truncate">{title}</span>
-        )}
-        {(Astro.slots.source || source) && (
-          <span
-            class:list={[
-              "ml-auto",
-              "text-s",
-              "font-mono",
-              "text-primary/60",
-              "italic",
-              "truncate",
-            ]}
-          >
-            {Astro.slots.source ? <slot name="source" /> : source}
-          </span>
-        )}
-      </div>
-    )
-  }
+    {
+        (Astro.slots.title || Astro.slots.source || title || source) && (
+            <div class:list={[...baseTitleClasses, titleClasses]}>
+                {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
+                {
+                    Astro.slots.title ? (
+                        <div class="truncate">
+                            <slot name="title" />
+                        </div>
+                    ) : <span class="truncate">{title}</span>
+                }
+                {
+                    (Astro.slots.source || source) && (
+                        <span class:list={["ml-auto", "text-s", "font-mono", "text-primary/60", "italic", "truncate"]}>
+                            {Astro.slots.source ? <slot name="source" /> : source}
+                        </span>
+                    )
+                }
+            </div>
+        )
+    }
 
-  <!-- Button container: positions the copy button separately -->
-  <div class="relative">
-    <CopyButton client:load code={normalizedCode} />
+    <div class="relative">
+        <CopyButton client:load code={normalizedCode} />
+        <LightCode
+            transformers={[...commonTransformers, ...transformers]}
+            {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+        />
+        <DarkCode
+            transformers={[...commonTransformers, ...transformers]}
+            {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+        />
+    </div>
 
-    <!-- Code blocks get extra padding-right -->
-    <LightCode
-      transformers={[...commonTransformers, ...transformers]}
-      {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
-    />
-    <DarkCode
-      transformers={[...commonTransformers, ...transformers]}
-      {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
-    />
-  </div>
+    {
+        Astro.slots.footer && (
+            <div class:list={[...baseFooterClasses, footerClasses]}>
+                <slot name="footer" />
+            </div>
+        )
+    }
 </div>

@@ -3,18 +3,18 @@ import type { ShikiTransformer } from "shiki";
 import CodeLayout, { type CodeProps } from "./CodeLayout.astro";
 
 type CodeBlockProps = {
-  filename?: string;
-  transformers?: ShikiTransformer[];
+    filename?: string;
+    transformers?: ShikiTransformer[];
 } & CodeProps;
 
 const {
-  code,
-  lang = "text",
-  class: className = "",
-  title,
-  filename,
-  icon: Icon,
-  transformers = [],
+    code,
+    lang = "text",
+    class: className = "",
+    title,
+    filename,
+    icon: Icon,
+    transformers = [],
 } = Astro.props as CodeBlockProps;
 
 const classes = ["bg-surface-50", "dark:bg-surface-800"];
@@ -22,34 +22,37 @@ const classes = ["bg-surface-50", "dark:bg-surface-800"];
 // Build aria-label if we have a title or filename
 let ariaLabel = "";
 if (title) {
-  ariaLabel = title + (filename ? ` – ${filename}` : "");
+    ariaLabel = title + (filename ? ` – ${filename}` : "");
 } else if (filename) {
-  ariaLabel = filename;
+    ariaLabel = filename;
 }
 ---
 
 <CodeLayout
-  class:list={[...classes, className]}
-  icon={Icon}
-  source={filename}
-  code={code}
-  lang={lang}
-  transformers={transformers}
-  {...ariaLabel ? { "aria-label": ariaLabel } : {}}
-  {...title ? { title } : {}}
+    class:list={[...classes, className]} icon={Icon}
+    source={filename} {code}
+    {lang} {transformers}
+    {...ariaLabel ? { "aria-label": ariaLabel } : {}} {...title ? { title } : {}}
 >
-  {
-    Astro.slots.title && (
-      <Fragment slot="title">
-        <slot name="title" />
-      </Fragment>
-    )
-  }
-  {
-    Astro.slots.source && (
-      <Fragment slot="source">
-        <slot name="source" />
-      </Fragment>
-    )
-  }
+    {
+        Astro.slots.title && (
+            <Fragment slot="title">
+                <slot name="title" />
+            </Fragment>
+        )
+    }
+    {
+        Astro.slots.source && (
+            <Fragment slot="source">
+                <slot name="source" />
+            </Fragment>
+        )
+    }
+    {
+        Astro.slots.footer && (
+            <Fragment slot="footer">
+                <slot name="footer" />
+            </Fragment>
+        )
+    }
 </CodeLayout>
