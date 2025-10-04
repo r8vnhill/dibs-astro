@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Explanation, Warning } from "~/components/ui/callouts";
+import { Exercise, Explanation, Hints, Solution, Warning } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -11,7 +11,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Definir título"
+    title="Pipelines III: Caso práctico y composición"
     description="Definir descripción"
 >
     <NotesSection id="h2-file-hash-streaming">
@@ -231,4 +231,80 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </span>
         </PowerShellBlock>
     </NotesSection>
+
+    <Exercise>
+        
+        <p class="mt-6 mb-3">
+            <B>Parte B.</B> Compón un pipeline que use: <PowerShellInline code="Get-ChildItem" /> → tu script de la
+            Parte A → <PowerShellInline code=".\\Get-FileHashStream.ps1 -Algorithm SHA256" /> para calcular el hash de
+            cada archivo → proyecta columnas y exporta a CSV. La idea es agregar la propiedad <code>Hash</code> sin
+            romper el flujo.
+        </p>
+
+        <p>
+            Para exportar a CSV, usa <PowerShellInline
+                code={`| Export-Csv -LiteralPath "$Env:TMP\\file-inventory.csv"`}
+            />, que crea un archivo temporal en la carpeta del usuario. Luego, abre ese archivo con
+            <PowerShellInline code="code $Env:TMP\\file-inventory.csv" /> para ver el resultado.
+        </p>
+
+        <Hints>
+            <List>
+                <ListItem icon={icons.MagicWand}>
+                    <B>Propiedades calculadas con <PowerShellInline code="Select-Object" /></B>: puedes crear columnas
+                    derivadas en tiempo real usando la sintaxis: <PowerShellInline
+                        code="@{ Name = 'NombreColumna'; Expression = { <bloque de código> } }"
+                    />.
+                </ListItem>
+
+                <ListItem icon={icons.Code}>
+                    <B>Desglose de la expresión</B>:
+                    <ul class="list-disc ml-6 mt-2">
+                        <li>
+                            <PowerShellInline code="$_" /> representa el elemento actual del pipeline.
+                        </li>
+                        <li>
+                            <PowerShellInline code="Get-FileHashStream.ps1 -Algorithm SHA256 -LiteralPath $_.Path" />
+                            invoca el script sobre la ruta del archivo actual.
+                        </li>
+                        <li>
+                            <PowerShellInline code="Select-Object -ExpandProperty Hash" /> extrae solo el valor del hash
+                            (sin cabeceras ni estructura adicional).
+                        </li>
+                    </ul>
+                </ListItem>
+
+                <ListItem icon={icons.Hash}>
+                    Una vez que tengas el resultado de <PowerShellInline code="Get-FileHashStream.ps1" />, usa
+                    <PowerShellInline code="| Select-Object -ExpandProperty Hash" /> para proyectar solo el valor del
+                    hash (en lugar de <PowerShellInline code="@{Hash = xx}" />).
+                </ListItem>
+            </List>
+        </Hints>
+
+        <Solution>
+            <PowerShellBlock
+                code={`
+                    # Archivos de la carpeta actual -> resumen + SHA256 -> CSV
+                    Get-ChildItem -File |
+                        .\\Get-FileInfoSummary.ps1 |
+                        Select-Object Name, Path, Length, LastWriteTime, @{
+                            Name       = 'Hash'
+                            Expression = {
+                                # Invoca el hasher por elemento y extrae solo el valor del hash
+                                (.\\Get-FileHashStream.ps1 -Algorithm SHA256 -LiteralPath $_.Path |
+                                    Select-Object -ExpandProperty Hash)
+                            }
+                        } |
+                        Export-Csv "$Env:TMP\\file-inventory.csv"
+                `}
+            >
+                <span slot="title">Solución Parte B — composición de pipeline</span>
+                <span slot="footer">
+                    El <PowerShellInline code="Select-Object" /> usa una propiedad calculada para anexar
+                    <PowerShellInline code="Hash" /> por elemento.
+                </span>
+            </PowerShellBlock>
+        </Solution>
+    </Exercise>
 </NotesLayout>

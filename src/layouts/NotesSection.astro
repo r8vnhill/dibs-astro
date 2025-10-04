@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "astro/types";
 import type { HeadingLevel } from "~/utils";
 
 type Props = {
-  headingLevel?: HeadingLevel;
+    headingLevel?: HeadingLevel;
 } & HTMLAttributes<"div">;
 
 const { id = undefined, ...rest }: Props = Astro.props;
@@ -12,6 +12,6 @@ const resolvedId = id || `notes-section-${crypto.randomUUID()}`;
 ---
 
 <div id={resolvedId} {...rest}>
-  <slot name="heading" />
-  <slot />
+    <slot name="heading" />
+    <slot />
 </div>

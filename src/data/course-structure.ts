@@ -57,6 +57,12 @@ export const courseStructure: Lesson[] = [
           {
             title: "Pipelines",
             href: "/notes/software-libraries/scripting/pipelines/",
+            children: [
+              {
+                title: "Pipeline-awareness",
+                href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
+              }
+            ]
           },
           {
             title: "Lab. 1: Git submodules",

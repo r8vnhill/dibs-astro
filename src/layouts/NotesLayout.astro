@@ -9,53 +9,52 @@
  * - Automatic or manual previous/next navigation buttons
  */
 
-import ReadingTime from "~/components/reading-time/ReadingTime.astro";
-import BaseLayout from "~/layouts/BaseLayout.astro";
-import NavigationButton from "~/components/navigation/NavigationButton.astro";
 import * as icons from "~/assets/img/icons";
-import { courseStructure } from "~/data/course-structure";
-import LessonSidebar from "~/components/navigation/LessonSidebar";
-import { normalizeNavigation, resolveAutoNav } from "~/utils";
 import RepoLink from "~/components/git/RepoLink.astro";
+import LessonSidebar from "~/components/navigation/LessonSidebar";
+import NavigationButton from "~/components/navigation/NavigationButton.astro";
+import ReadingTime from "~/components/reading-time/ReadingTime.astro";
+import { courseStructure } from "~/data/course-structure";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { normalizeNavigation, resolveAutoNav } from "~/utils";
 
 // Props passed to the layout (can optionally override next/previous buttons)
 interface Props {
-  /**
-   * The title of the current lesson page.
-   */
-  title: string;
-  /**
-   * A brief description of the lesson, used for SEO and social sharing.
-   */
-  description?: string;
-  /**
-   * Optional next lesson navigation data.
-   * If not provided, will attempt to auto-resolve based on course structure.
-   */
-  next?: { title: string; href: string };
-  /**
-   * Optional previous lesson navigation data.
-   * If not provided, will attempt to auto-resolve based on course structure.
-   */
-  previous?: { title: string; href: string };
-  /**
-   * Optional multiplier for reading time calculation.
-   * Can be used to adjust the estimated reading time based on content complexity.
-   */
-  timeMultiplier?: number;
-  /**
-   * Optional repository information for the lesson.
-   * If provided, will render a link to the repository.
-   */
-  git?: {
-    user: string;
-    repo: string;
-  };
+    /**
+     * The title of the current lesson page.
+     */
+    title: string;
+    /**
+     * A brief description of the lesson, used for SEO and social sharing.
+     */
+    description?: string;
+    /**
+     * Optional next lesson navigation data.
+     * If not provided, will attempt to auto-resolve based on course structure.
+     */
+    next?: { title: string; href: string };
+    /**
+     * Optional previous lesson navigation data.
+     * If not provided, will attempt to auto-resolve based on course structure.
+     */
+    previous?: { title: string; href: string };
+    /**
+     * Optional multiplier for reading time calculation.
+     * Can be used to adjust the estimated reading time based on content complexity.
+     */
+    timeMultiplier?: number;
+    /**
+     * Optional repository information for the lesson.
+     * If provided, will render a link to the repository.
+     */
+    git?: {
+        user: string;
+        repo: string;
+    };
 }
 
 // Extract current page data and fallback navigation resolution
-const { title, next, previous, timeMultiplier, git, description } =
-  Astro.props as Props;
+const { title, next, previous, timeMultiplier, git, description } = Astro.props as Props;
 const pathname = Astro.url.pathname;
 
 // Attempt to auto-resolve previous/next from course structure
@@ -67,167 +66,164 @@ const effectiveNext = next ?? autoNav.next ?? undefined;
 
 // Normalize hrefs for consistency (e.g. ensure trailing slashes)
 const { normalizedNext, normalizedPrevious } = normalizeNavigation(
-  effectiveNext,
-  effectivePrevious
+    effectiveNext,
+    effectivePrevious,
 );
 ---
 
-<BaseLayout pageTitle={title} description={description}>
-  <div class="flex">
-    <!-- Sidebar with course structure navigation -->
-    <div class="flex-none">
-      <LessonSidebar client:load lessons={courseStructure} />
+<BaseLayout pageTitle={title} {description}>
+    <div class="flex">
+        <!-- Sidebar with course structure navigation -->
+        <div class="flex-none">
+            <LessonSidebar client:load lessons={courseStructure} />
+        </div>
+
+        <!-- Main content area -->
+        <div id="lesson-content" class:list={["flex-1", "px-4", "md:px-8", "max-w-screen-xl", "mx-auto"]}>
+            <h1>{title}</h1>
+
+            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+
+            {
+                git && (
+                    <div
+                        class:list={[
+                            "rounded-md",
+                            "border",
+                            "px-4",
+                            "py-3",
+                            "text-sm",
+                            "bg-purple-50",
+                            "text-purple-800",
+                            "border-purple-300",
+                            "dark:bg-purple-950/40",
+                            "dark:text-purple-200",
+                            "dark:border-purple-700/50",
+                            "mt-2",
+                        ]}
+                    >
+                        <span class="font-semibold">
+                            Encuentra el código de la lección:
+                        </span>
+                        <div
+                            class:list={[
+                                "mt-2",
+                                "flex",
+                                "flex-wrap",
+                                "gap-4",
+                                "items-center",
+                            ]}
+                        >
+                            <RepoLink {...git} platform="gitlab" />
+                            <RepoLink {...git} platform="github" />
+                        </div>
+                    </div>
+                )
+            }
+
+            <slot />
+
+            {
+                (normalizedNext || normalizedPrevious) && (
+                    <nav
+                        aria-label="Siguiente o anterior lección"
+                        class:list={[
+                            "mt-12",
+                            "flex",
+                            "flex-col",
+                            "sm:flex-row",
+                            "justify-between",
+                            "gap-4",
+                            "border-t",
+                            "border-base-border",
+                            "pt-6",
+                        ]}
+                    >
+                        {
+                            normalizedPrevious ? (
+                                <NavigationButton
+                                    href={normalizedPrevious.href} label={normalizedPrevious.title}
+                                    iconPosition="left"
+                                >
+                                    <icons.ArrowLeft class="w-5 h-5" slot="icon" />
+                                </NavigationButton>
+                            ) : <span />
+                        }
+
+                        {
+                            normalizedNext && (
+                                <NavigationButton
+                                    href={normalizedNext.href} label={normalizedNext.title}
+                                    iconPosition="right"
+                                >
+                                    <icons.ArrowRight class="w-5 h-5" slot="icon" />
+                                </NavigationButton>
+                            )
+                        }
+                    </nav>
+                )
+            }
+        </div>
     </div>
-
-    <!-- Main content area -->
-    <div
-      id="lesson-content"
-      class:list={["flex-1", "px-4", "md:px-8", "max-w-screen-xl", "mx-auto"]}
-    >
-      <h1>{title}</h1>
-
-      <ReadingTime multiplier={timeMultiplier ?? 1.5} />
-
-      {
-        git && (
-          <div
-            class:list={[
-              "rounded-md",
-              "border",
-              "px-4",
-              "py-3",
-              "text-sm",
-              "bg-purple-50",
-              "text-purple-800",
-              "border-purple-300",
-              "dark:bg-purple-950/40",
-              "dark:text-purple-200",
-              "dark:border-purple-700/50",
-              "mt-2",
-            ]}
-          >
-            <span class="font-semibold">
-              Encuentra el código de la lección:
-            </span>
-            <div
-              class:list={[
-                "mt-2",
-                "flex",
-                "flex-wrap",
-                "gap-4",
-                "items-center",
-              ]}
-            >
-              <RepoLink {...git} platform="gitlab" />
-              <RepoLink {...git} platform="github" />
-            </div>
-          </div>
-        )
-      }
-
-      <slot />
-
-      {
-        (normalizedNext || normalizedPrevious) && (
-          <nav
-            aria-label="Siguiente o anterior lección"
-            class:list={[
-              "mt-12",
-              "flex",
-              "flex-col",
-              "sm:flex-row",
-              "justify-between",
-              "gap-4",
-              "border-t",
-              "border-base-border",
-              "pt-6",
-            ]}
-          >
-            {normalizedPrevious ? (
-              <NavigationButton
-                href={normalizedPrevious.href}
-                label={normalizedPrevious.title}
-                iconPosition="left"
-              >
-                <icons.ArrowLeft class="w-5 h-5" slot="icon" />
-              </NavigationButton>
-            ) : (
-              <span />
-            )}
-
-            {normalizedNext && (
-              <NavigationButton
-                href={normalizedNext.href}
-                label={normalizedNext.title}
-                iconPosition="right"
-              >
-                <icons.ArrowRight class="w-5 h-5" slot="icon" />
-              </NavigationButton>
-            )}
-          </nav>
-        )
-      }
-    </div>
-  </div>
 </BaseLayout>
 
 <style is:global>
-  /* Sidebar navigation styles */
-  .lesson-tree ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
+    /* Sidebar navigation styles */
+    .lesson-tree ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
 
-  .lesson-tree li {
-    line-height: 1.3;
-  }
+    .lesson-tree li {
+        line-height: 1.3;
+    }
 
-  .lesson-tree a {
-    display: inline-block;
-    padding: 2px 0;
-  }
+    .lesson-tree a {
+        display: inline-block;
+        padding: 2px 0;
+    }
 
-  /* Highlight current page in sidebar */
-  .lesson-tree a.text-primary {
-    position: relative;
-  }
+    /* Highlight current page in sidebar */
+    .lesson-tree a.text-primary {
+        position: relative;
+    }
 
-  .lesson-tree a.text-primary::before {
-    content: "";
-    position: absolute;
-    left: -0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60%;
-    background: var(--color-primary);
-    border-radius: 2px;
-  }
+    .lesson-tree a.text-primary::before {
+        content: "";
+        position: absolute;
+        left: -0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: var(--color-primary);
+        border-radius: 2px;
+    }
 
-  /* ----------- */
-  .lesson-tree li::before {
-    content: "";
-    position: absolute;
-    top: 0.75rem;
-    left: 0.5rem;
-    width: 1px;
-    height: 100%;
-    background-color: var(--color-base-border);
-    opacity: 0.5;
-  }
+    /* ----------- */
+    .lesson-tree li::before {
+        content: "";
+        position: absolute;
+        top: 0.75rem;
+        left: 0.5rem;
+        width: 1px;
+        height: 100%;
+        background-color: var(--color-base-border);
+        opacity: 0.5;
+    }
 
-  .lesson-tree li:last-child::before {
-    height: 0.8rem;
-  }
+    .lesson-tree li:last-child::before {
+        height: 0.8rem;
+    }
 
-  .lesson-tree .group {
-    padding-left: 0.75rem; /* extra space for the tree line */
-  }
+    .lesson-tree .group {
+        padding-left: 0.75rem; /* extra space for the tree line */
+    }
 
-  .lesson-tree .tree-separator {
-    border-top: 1px solid var(--color-base-border);
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-  }
+    .lesson-tree .tree-separator {
+        border-top: 1px solid var(--color-base-border);
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+    }
 </style>
