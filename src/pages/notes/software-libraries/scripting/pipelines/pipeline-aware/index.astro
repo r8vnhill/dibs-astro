@@ -17,13 +17,15 @@ import I from "~/components/ui/font/I.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Pipelines II: Pipeline-awareness" description="..."
+    title="Pipelines II: Pipeline-awareness"
+    description="Aprende a diseñar funciones PowerShell pipeline-aware con begin/process/end, ValueFromPipeline/ByPropertyName y parameter sets para scripts eficientes y componibles."
     timeMultiplier={2}
 >
     <Abstract>
@@ -554,6 +556,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </p>
         </Fragment>
     </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <Book
+                chapter="The pipeline, deeper."
+                bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS."
+                pages={[114, 131]}
+            >
+                <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
+
+                <Fragment slot="description">
+                    Capítulo práctico que profundiza en el <B>pipeline de PowerShell</B> y su <B>parameter binding</B>.
+                    Explica cómo los comandos encajan por <B>ByValue</B> y <B>ByPropertyName</B>, cuándo uno falla y
+                    entra el otro, y cómo <B>modelar/transformar</B> datos en tránsito (p. ej., <PowerShellInline
+                        code="Select-Object -Property"
+                    /> vs <PowerShellInline code="-ExpandProperty" />). Incluye casos con CSV, AD y Azure, trucos con <B
+                    >paréntesis</B> para pasar resultados directamente a parámetros, y un <B>lab</B> final para afianzar
+                    conceptos.
+                </Fragment>
+            </Book>
+        </Fragment>
+
+        <!--
+            <Fragment slot="additional">
+                ...
+            </Fragment>
+        -->
+    </References>
 
     <Footnotes>
         <Footnote index={1}>

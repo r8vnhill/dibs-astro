@@ -55,19 +55,23 @@ export const courseStructure: Lesson[] = [
             href: "/notes/software-libraries/scripting/errors/",
           },
           {
+            title: "Lab. 1: Git submodules",
+            href: "/notes/software-libraries/scripting/submodules/",
+          },
+          {
             title: "Pipelines",
             href: "/notes/software-libraries/scripting/pipelines/",
             children: [
               {
                 title: "Pipeline-awareness",
                 href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
+              },
+              {
+                title: "Práctica: Composición",
+                href: "/notes/software-libraries/scripting/pipelines/practice/",
               }
             ]
           },
-          {
-            title: "Lab. 1: Git submodules",
-            href: "/notes/software-libraries/scripting/submodules/",
-          }
         ]
       },
       {

@@ -1,0 +1,370 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    Hints,
+    Important,
+    Solution,
+    Warning,
+} from "~/components/ui/callouts";
+import { OutputBlock, PowerShellBlock } from "~/components/ui/code";
+import B from "~/components/ui/font/B.astro";
+import I from "~/components/ui/font/I.astro";
+import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Pipeline-awareness en Nushell" description="..."
+    timeMultiplier={1.6}
+>
+    <Abstract>
+        ...
+    </Abstract>
+
+    <NotesSection id="h2-nu-overview">
+        <Heading headingLevel="h2" Icon={icons.Pipe}>
+            El pipeline en Nushell, en 3 ideas
+        </Heading>
+
+        <List>
+            <ListItem icon={icons.Table}>
+                <B>Datos tipados en tránsito</B>: las etapas operan sobre registros/filas. Muchos comandos trabajan “por
+                columna” sin parseo manual.
+            </ListItem>
+            <ListItem icon={icons.Code}>
+                <B>Bloques por elemento</B>: la unidad de procesamiento suele ser un
+                <I>record</I>; se usa <code>each</code> para transformar fila a fila.
+            </ListItem>
+            <ListItem icon={icons.SlidersHorizontal}>
+                <B>Selección y expansión</B>: <code>select</code> mantiene tablas, <code>get</code> extrae (expande) una
+                columna a valores simples —un paralelismo útil con “expandir propiedad”.
+            </ListItem>
+        </List>
+
+        <PowerShellBlock
+            code={`# Nushell — pipeline de números a registros y filtrado
+1..5
+| each {|n| { original: $n, doubled: ($n * 2) } }
+| where doubled > 5
+| select original doubled
+`}
+        >
+            <Fragment slot="title">Flujo básico en Nushell</Fragment>
+            <Fragment slot="footer">
+                Procesa elemento a elemento y filtra por columna sin formatear a texto.
+            </Fragment>
+        </PowerShellBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-begin-process-end-analog">
+        <Heading headingLevel="h2" Icon={icons.PlayCircle}>
+            Análogo a <I>begin/process/end</I> en Nushell
+        </Heading>
+
+        <Explanation>
+            Nushell no ofrece bloques <I>begin/process/end</I> como primitiva del lenguaje. El patrón típico es: <B
+            >inicializar estado</B> fuera del flujo, <B>procesar</B> con
+            <code>each</code> y <B>finalizar</B> después del pipeline. Se logra con variables mutables y bloques,
+            manteniendo el <I>streaming</I>.
+        </Explanation>
+
+        <PowerShellBlock
+            code={`# Inicialización (begin)
+let mut count = 0
+
+# Proceso por elemento (process)
+ls
+| where type == file
+| each {|f|
+    $count = $count + 1
+    { name: $f.name, size: $f.size }
+}
+
+# Finalización (end)
+print $"Procesados ($count) archivo(s)"
+`}
+        >
+            <Fragment slot="title">Patrón begin/process/end en Nu (idiomático)</Fragment>
+            <Fragment slot="footer">
+                No hay hooks dedicados; se compone con estado y bloques.
+            </Fragment>
+        </PowerShellBlock>
+
+        <Important>
+            En PowerShell, los tres bloques están integrados y coordinan el ciclo de vida del pipeline. En Nu se replica
+            el flujo con código explícito, lo que da flexibilidad, pero no hay “evento end” automático dentro de una
+            única función.
+        </Important>
+    </NotesSection>
+
+    <NotesSection id="h2-byproperty-analogs">
+        <Heading headingLevel="h2" Icon={icons.Tag}>
+            Encaje por nombre: columnas en Nu vs parámetros en PowerShell
+        </Heading>
+
+        <p class="mb-2">
+            En PowerShell, <I>ByPropertyName</I> hace <I>binding</I> cuando el nombre de propiedad coincide con el del
+            parámetro. En Nu, muchos comandos operan sobre <B>columnas</B> de la tabla actual; para “alinear” nombres,
+            se usan <code>rename</code>/<code>update</code> antes de invocar otras etapas.
+        </p>
+
+        <PowerShellBlock
+            code={`# CSV con columnas 'login' y 'dept'
+open newusers.csv
+| rename samAccountName login
+| rename Department dept
+| select samAccountName Department
+`}
+        >
+            <Fragment slot="title">Alineación de columnas en Nushell</Fragment>
+            <Fragment slot="footer">
+                Igual que “encajar por nombre”: renombra para que la etapa siguiente encuentre lo que espera.
+            </Fragment>
+        </PowerShellBlock>
+
+        <Explanation>
+            Si una etapa consume una columna concreta, <code>rename</code> y <code>select</code> son el equivalente a
+            preparar el objeto para <I>ByPropertyName</I>. No hay <I>parameter binding</I> automático entre comandos
+            arbitrarios como en PowerShell: en Nu decides explícitamente la forma del registro.
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-select-vs-get">
+        <Heading headingLevel="h2" Icon={icons.Columns}>
+            <code>select</code> (tabla) vs <code>get</code> (expandir)
+        </Heading>
+
+        <PowerShellBlock
+            code={`# Mantener tabla con una columna
+ls | select name | first 3
+
+# Expandir a lista de strings (análogo a “expandir propiedad”)
+ls | get name | first 3
+`}
+        >
+            <Fragment slot="title">Mantener estructura vs extraer valores</Fragment>
+            <Fragment slot="footer">
+                <code>select</code> conserva filas/columnas; <code>get</code> devuelve la columna como lista tipada.
+            </Fragment>
+        </PowerShellBlock>
+
+        <OutputBlock code={`───┬────────────
+ 0 │ Cargo.toml
+ 1 │ README.md
+ 2 │ nu.nuon
+`} />
+    </NotesSection>
+
+    <NotesSection id="h2-parenthesis-analogs">
+        <Heading headingLevel="h2" Icon={icons.BracketsCurly}>
+            Subexpresiones: “haz esto primero” en Nushell
+        </Heading>
+
+        <PowerShellBlock
+            code={`# Pasar el resultado de una subexpresión a una opción
+let mod = (open modules.txt | lines | to text)
+help $mod
+`}
+        >
+            <Fragment slot="title">Subexpresiones en Nu</Fragment>
+            <Fragment slot="footer">
+                Igual que las paréntesis: se evalúa primero y el valor se inyecta donde se necesita.
+            </Fragment>
+        </PowerShellBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-parametersets">
+        <Heading headingLevel="h2" Icon={icons.SlidersHorizontal}>
+            Modos de invocación: parameter sets vs firmas en Nu
+        </Heading>
+
+        <Explanation>
+            PowerShell ofrece <B>parameter sets</B> con exclusión mutua y selección automática del modo. Nushell define
+            firmas con flags y tipos, pero <B>no</B> tiene parameter sets nativos: se emula con validación manual.
+        </Explanation>
+
+        <PowerShellBlock
+            code={`# Definir un comando en Nu con dos flags excluyentes
+def summarize [
+  --path (-p): path
+  --list (-l): list<path>
+] {
+  if ($path != null and $list != null) {
+    error make { msg: "Usa solo --path o --list" }
+  }
+
+  let items = if $path != null {
+    ls $path | where type == file | get name
+  } else {
+    $list
+  }
+
+  $items
+  | each {|p|
+      let f = (ls $p | first 1)
+      { name: $f.name, size: $f.size }
+    }
+}
+`}
+        >
+            <Fragment slot="title">Emular conjuntos de parámetros en Nu</Fragment>
+            <Fragment slot="footer">
+                Exclusión mutua con <code>if</code> y <code>error make</code>; tipos en la firma para robustez.
+            </Fragment>
+        </PowerShellBlock>
+
+        <Warning>
+            En PowerShell, la selección del conjunto es automática; en Nu recae en tu validación. Esto es una <B
+            >capacidad presente en PowerShell que Nu no ofrece de serie</B>.
+        </Warning>
+    </NotesSection>
+
+    <NotesSection id="h2-interop">
+        <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
+            Interoperabilidad: estructurado ↔ texto/binario
+        </Heading>
+
+        <List>
+            <ListItem icon={icons.DownloadSimple}>
+                <B>Entradas estructuradas</B>: <code>open</code> detecta formatos (CSV/JSON/TOML/Parquet) y devuelve
+                tablas/objetos listos para filtrar sin parseo manual.
+            </ListItem>
+            <ListItem icon={icons.UploadSimple}>
+                <B>Salida</B>: <code>to csv</code>, <code>to json</code>, <code>save</code> permiten materializar
+                resultados.
+            </ListItem>
+            <ListItem icon={icons.Terminal}>
+                <B>Comandos externos</B>: si esperan texto, convierte con <code>to text</code> o extrae columnas con
+                <code>get</code>; si devuelven texto, vuelve a estructurar con <code>from …</code>.
+            </ListItem>
+        </List>
+
+        <PowerShellBlock
+            code={`# JSON -> estructurado -> filtrar -> CSV
+open users.json
+| where active == true
+| select id name email
+| to csv
+| save active-users.csv
+`}
+        >
+            <Fragment slot="title">Ciclo estructurado completo en Nu</Fragment>
+        </PowerShellBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-what-one-can-do">
+        <Heading headingLevel="h2" Icon={icons.CheckCircle}>
+            Qué puedes hacer en uno y no en el otro (o no igual)
+        </Heading>
+
+        <List>
+            <ListItem icon={icons.ShieldCheck}>
+                <B>PowerShell →</B> parameter binding <I>ByValue/ByPropertyName</I> entre <I>cmdlets</I> arbitrarios y
+                <B>parameter sets</B> con selección automática. En Nu, el “binding” es <I>por columnas</I> y la
+                exclusión mutua es manual.
+            </ListItem>
+            <ListItem icon={icons.Cpu}>
+                <B>PowerShell →</B> hooks formales <I>begin/process/end</I> por función. En Nu se compone con
+                variables/bloques; no hay ganchos integrados por etapa.
+            </ListItem>
+            <ListItem icon={icons.Table}>
+                <B>Nushell →</B> operaciones tabulares idiomáticas sin clases/propiedades .NET: muchas tareas de <I
+                >ETL</I> se expresan más concisas sobre tablas (p. ej., <code>open</code> + <code>where</code> + <code
+                >update</code>).
+            </ListItem>
+            <ListItem icon={icons.Bolt}>
+                <B>Nushell →</B> <I>autodetección</I> de formatos y paths de columna simplifican pipelines centrados en
+                datos; no requiere escribir tipos o wrappers.
+            </ListItem>
+        </List>
+    </NotesSection>
+
+    <Exercise id="h2-exercise" headingLevel="h2">
+        <span slot="title">Ejercicio: portar un flujo a Nushell</span>
+
+        <p class="mb-3">
+            Toma un pipeline que conozcas (filtrar archivos, transformar filas de un CSV, etc.) y exprésalo en Nu. El
+            objetivo es <B>preservar estructura</B> hasta el final y comparar concisión/legibilidad.
+        </p>
+
+        <Hints>
+            <List>
+                <ListItem icon={icons.Columns}>
+                    Si necesitas “expandir propiedad”, usa <code>get</code> (no <code>select</code>).
+                </ListItem>
+                <ListItem icon={icons.Tag}>
+                    Si te falta una columna “con el nombre correcto”, <code>rename</code> antes de la etapa que la
+                    exige.
+                </ListItem>
+                <ListItem icon={icons.PlayCircle}>
+                    Para contar/recapitular, inicializa con <code>let mut</code>, incrementa en <code>each</code> y
+                    emite al final.
+                </ListItem>
+            </List>
+        </Hints>
+
+        <Solution>
+            <PowerShellBlock
+                code={`# Nushell: resumir 3 archivos más grandes del directorio actual
+ls | where type == file
+| sort-by size -r
+| first 3
+| select name size modified
+`}
+            >
+                <span slot="title">Solución de referencia (Nu)</span>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="nushell/top3.nu"
+                />
+            </PowerShellBlock>
+        </Solution>
+    </Exercise>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <p class="mb-2">
+                Ambos ecosistemas comparten la idea de <B>composición basada en objetos</B>, pero difieren en cómo
+                llegan ahí: PowerShell confía en un <I>binding</I> rico entre parámetros y el ciclo <I
+                >begin/process/end</I>; Nushell apuesta por <B>tablas y columnas</B> con bloques expresivos y
+                transformación explícita.
+            </p>
+            <p>
+                Elegir uno u otro depende de si priorizas <B>binding y contratos de cmdlets</B> (PowerShell) o <B
+                >operaciones tabulares y datos heterogéneos</B> con sintaxis concisa (Nushell).
+            </p>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Table}>
+                Nu trabaja “por columnas”; usa <code>select</code>/<code>get</code>/<code>rename</code> para modelar el
+                registro.
+            </ListItem>
+            <ListItem icon={icons.PlayCircle}>
+                El patrón <I>begin/process/end</I> se emula con <code>let mut</code> + <code>each</code> + paso final.
+            </ListItem>
+            <ListItem icon={icons.SlidersHorizontal}>
+                No hay <I>parameter sets</I> nativos en Nu; valida exclusión mutua manualmente.
+            </ListItem>
+            <ListItem icon={icons.ArrowsMerge}>
+                Interopera con texto/binario usando <code>from</code>/<code>to</code>/<code>save</code>.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <p>
+                Donde PowerShell ofrece “autopistas” de <I>binding</I> entre cmdlets, Nushell te da una
+                <B>tabla en la mano</B> para transformar datos sin perder estructura. Ambos son pipelines de objetos;
+                elige la superficie que mejor modele tu problema.
+            </p>
+        </Fragment>
+    </ConclusionsLayout>
+</NotesLayout>

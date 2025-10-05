@@ -1,32 +1,161 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Exercise, Explanation, Hints, Solution, Warning } from "~/components/ui/callouts";
+import { Abstract, Exercise, Explanation, Hints, More, Solution, Tip, Warning } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
+import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Pipelines III: Caso práctico y composición"
-    description="Definir descripción"
+    title="Pipelines III: Caso práctico y composición" description="Definir descripción"
+    timeMultiplier={2}
 >
+    <Abstract>
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "...",
+                ],
+            }}
+        />
+    </Abstract>
+
+    <NotesSection id="...">
+        <Heading
+            headingLevel="h2" Icon={null}
+            slot="heading"
+        >
+            ...
+        </Heading>
+
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Definir id",
+                    "Definir el título y su ícono",
+                    "Plantear el problema que vamos a resolver, la idea es que separaremos una tarea en varios scripts que luego encadenaremos en un pipeline",
+                ],
+            }}
+        />
+
+        <NotesSection id="...">
+            <Heading headingLevel="h3" Icon={null}
+                slot="heading"
+            >
+                ...
+            </Heading>
+        
+            <ToDo
+                client:only="react"
+                metadata={{
+                    tasks: [
+                        "Definir id",
+                        "Definir el título y su ícono",
+                        "Agregar texto 'al rededor' del código para contextualizar",
+                        "Reemplazar placeholders como 'path/to/...' por valores reales",
+                        `...`,
+                    ],
+                }}
+            />
+        </NotesSection>
+    </NotesSection>
+
     <NotesSection id="h2-file-hash-streaming">
-        <Heading headingLevel="h2" Icon={icons.Code}>
+        <Heading
+            headingLevel="h2" Icon={icons.Code}
+            slot="heading"
+        >
             Calcular hash de archivos en <I>streaming</I> con <PowerShellInline code="begin" />, <PowerShellInline
                 code="process"
             /> y <PowerShellInline code="end" />
         </Heading>
 
         <p class="mb-2">
-            Este ejemplo muestra un caso <I>pipeline-aware</I> realista: calcular el hash de archivos sin cargar todo en
-            memoria. El objetivo es ilustrar la separación de responsabilidades entre los bloques
-            <PowerShellInline code="begin" />, <PowerShellInline code="process" /> y <PowerShellInline code="end" />,
-            más que profundizar en criptografía.
+            Este ejemplo muestra un caso <I>pipeline-aware</I> realista (aunque algo simplificado para no abrumar):
+            calcular el hash de archivos sin cargar todo en memoria. El objetivo es ilustrar la separación de
+            responsabilidades entre los bloques <PowerShellInline code="begin" />, <PowerShellInline code="process" /> y
+            <PowerShellInline code="end" />, más que profundizar en criptografía.
         </p>
+
+        <NotesSection id="h3-hash-policy">
+            <Heading headingLevel="h3" Icon={icons.Hash}>
+                Política de algoritmos y flags de seguridad
+            </Heading>
+
+            <p class="mb-3">
+                Antes de hacer <I>streaming</I> del archivo, conviene definir una <B>política de selección de
+                    algoritmo</B>. El siguiente bloque no calcula el hash; <I>valida y describe</I> la elección del
+                algoritmo según si es considerado inseguro (<code>MD5</code>, <code>SHA1</code>), si fue autorizado
+                explícitamente con un flag y si entra en la categoría de “fuerte” (<code>SHA256</code>, <code
+                >SHA384</code>, <code>SHA512</code>). Esto permite <I>fallar temprano</I>
+                o registrar decisiones, y luego encadenar el cómputo real en otra función.
+            </p>
+
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.0
+                    [CmdletBinding()]
+                    param(
+                        [Parameter(Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+                        [Alias('Name', 'HashAlgorithm')]
+                        [ValidateSet('MD5', 'SHA1', 'SHA256', 'SHA384', 'SHA512')]
+                        [string] $Algorithm = 'SHA256',
+
+                        [switch] $AllowInsecure
+                    )
+
+                    process {
+                        $isInsecure = $Algorithm -in @('MD5', 'SHA1')
+                        $isSecure = !$isInsecure
+                        $isAllowed = $isSecure -or $isInsecure -and $AllowInsecure
+
+                        [PSCustomObject]@{
+                            Algorithm  = $Algorithm
+                            IsInsecure = $isInsecure
+                            IsAllowed  = $isAllowed
+                            IsSecure   = $isSecure
+                        }
+                    }
+                `}
+            >
+                <Fragment slot="title">Comprobación de política de hash</Fragment>
+                <span slot="footer">
+                    Emite un objeto con campos <code>Algorithm</code>, <code>IsInsecure</code>, <code>IsAllowed</code>,
+                    <code>IsSecure</code>, <code>IsStrongHash</code>. Útil para registrar/validar antes del cómputo en
+                    <I>streaming</I>.
+                </span>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="pipeline/hash/Test-AlgorithmSecurity.ps1"
+                />
+            </PowerShellBlock>
+
+            <Explanation>
+                <List>
+                    <ListItem icon={icons.Pipe}>
+                        <B>Entrada por pipeline (combinada):</B> el parámetro <PowerShellInline code="$Algorithm" />
+                        acepta entrada por <PowerShellInline code="ValueFromPipeline" /> y por <PowerShellInline
+                            code="ValueFromPipelineByPropertyName"
+                        /> simultáneamente. Con los <PowerShellInline code="[Alias('Name','HashAlgorithm')]" /> es común
+                        que encaje con objetos previos (p. ej. salidas que traen un campo <code>Name</code> o <code
+                        >HashAlgorithm</code>), sin tener que renombrar propiedades.
+                    </ListItem>
+
+                    <ListItem icon={icons.SlidersHorizontal}>
+                        <B><PowerShellInline code="[ValidateSet(...)]" />:</B> restringe la entrada a una lista conocida
+                        de algoritmos y habilita autocompletado, mensajes de error claros y documentación implícita.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </NotesSection>
 
         <PowerShellBlock
             code={`
@@ -233,7 +362,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </NotesSection>
 
     <Exercise>
-        
         <p class="mt-6 mb-3">
             <B>Parte B.</B> Compón un pipeline que use: <PowerShellInline code="Get-ChildItem" /> → tu script de la
             Parte A → <PowerShellInline code=".\\Get-FileHashStream.ps1 -Algorithm SHA256" /> para calcular el hash de

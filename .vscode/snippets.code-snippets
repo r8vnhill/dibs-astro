@@ -33,4 +33,52 @@
 		],
 		"description": "Insert a NotesLayout component"
 	},
+  "NotesSection": {
+		"prefix": "notessection",
+		"body": [
+			"<NotesSection id=\"...\">",
+			"    <Heading headingLevel=\"${2:h2}\" Icon={null}",
+      "        slot=\"heading\"",
+      "    >",
+			"        ...",
+			"    </Heading>",
+			"",
+			"    <ToDo",
+			"        client:only=\"react\"",
+			"        metadata={{",
+			"            tasks: [",
+			"                \"Definir id\",",
+			"                \"Definir el título y su ícono\",",
+			"                \"Agregar texto 'al rededor' del código para contextualizar\",",
+			"                \"Reemplazar placeholders como 'path/to/...' por valores reales\",",
+			"                `...`,",
+			"            ],",
+			"        }}",
+			"    />",
+			"</NotesSection>"
+		],
+		"description": "Insert a NotesSection component"
+	},
+	"ProCons": {
+		"prefix": "procons",
+		"body": [
+			"<ProCons>",
+			"    <Pros>",
+			"        <List>",
+			"            <ListItem icon={null}>",
+			"                ...",
+			"            </ListItem>",
+			"        </List>",
+			"    </Pros>",
+			"    <Cons>",
+			"        <List>",
+			"            <ListItem icon={null}>",
+			"                ...",
+			"            </ListItem>",
+			"        </List>",
+			"    </Cons>",
+			"</ProCons>"
+		],
+		"description": "Insert a ProCons component"
+	}
 }

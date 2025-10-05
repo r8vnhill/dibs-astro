@@ -1,9 +1,16 @@
 ---
+import { Link } from "../links";
+
 type Props = {
-  class?: string;
+    class?: string;
+    href?: string;
 };
 
-const { class: className = "" } = Astro.props;
+const { class: className = "", href } = Astro.props;
 ---
 
-<span class:list={["font-bold", className]}><slot /></span>
+{
+    href ? <Link {href} class:list={["font-bold", className]}><slot /></Link> : (
+        <span class:list={["font-bold", className]}><slot /></span>
+    )
+}

@@ -1,0 +1,329 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
+import { Abstract, Definition, Explanation, Important, Info, More, Note, Tip, Warning } from "~/components/ui/callouts";
+import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { BashScript, InlineBash, InlineCode, NushellInline, OutputBlock } from "~/components/ui/code";
+import B from "~/components/ui/font/B.astro";
+import I from "~/components/ui/font/I.astro";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import { AuthorList, Book, References } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout title="Scripting 101: Comparativa con Nushell">
+    <Abstract>
+        <ToDo
+          client:only="react"
+          metadata={{
+            tasks: [
+              "...",
+            ],
+          }}
+        />
+    </Abstract>
+
+    <NotesSection id="nushell-intro-install">
+        <Heading headingLevel="h2" Icon={icons.Table}>
+            Nushell: ¿qué es y cómo instalarlo?
+        </Heading>
+
+        <Definition>
+            <Fragment slot="title">¿Qué es Nushell?</Fragment>
+            <p>
+                <B>Nushell</B> es un shell moderno orientado a <I>datos estructurados</I>. En lugar de pasar texto plano
+                por la tubería, trabaja con <I>tablas de registros tipados</I> (filas y columnas), lo que hace más
+                simple y seguro filtrar, transformar y combinar información de archivos, APIs y comandos externos. Su
+                sintaxis es concisa, declarativa y coherente entre plataformas.
+            </p>
+        </Definition>
+
+        <Info>
+            <span slot="title">
+                Características clave
+            </span>
+            <List>
+                <ListItem icon={icons.FlowArrow}>
+                    <B>Pipeline estructurada</B>: comandos como <NushellInline code="where" />, <NushellInline
+                        code="select"
+                    /> y <NushellInline code="sort-by" /> operan sobre columnas tipadas.
+                </ListItem>
+                <ListItem icon={icons.Database}>
+                    <B>Formatos de datos</B>: lectura/escritura directa de JSON, CSV, TOML, YAML, Parquet, entre otros.
+                </ListItem>
+                <ListItem icon={icons.Terminal}>
+                    <B>Multiplataforma</B>: funciona en Windows, macOS y Linux.
+                </ListItem>
+            </List>
+        </Info>
+
+        <p>
+            Para instalar Nushell, existen varios métodos según tu sistema operativo. A continuación se muestran las
+            opciones con las herramientas de gestión de paquetes que usamos en el curso.
+        </p>
+
+        <Tabs defaultValue="windows">
+            <TabsList>
+                <TabsTrigger value="windows">Windows</TabsTrigger>
+                <TabsTrigger value="macos">macOS</TabsTrigger>
+                <TabsTrigger value="linux">Linux</TabsTrigger>
+            </TabsList>
+            <TabsContent value="windows">
+                <PowerShellBlock code={`scoop install nu`}>
+                    <span slot="title">Desde la terminal</span>
+                </PowerShellBlock>
+            </TabsContent>
+            <TabsContent value="macos">
+                <PowerShellBlock code={`brew install nushell`}>
+                    <span slot="title">Desde la terminal</span>
+                </PowerShellBlock>
+            </TabsContent>
+            <TabsContent value="linux">
+                <PowerShellBlock code={`nix profile add nixpkgs#nushell`}>
+                    <span slot="title">
+                        Desde la terminal
+                    </span>
+                </PowerShellBlock>
+            </TabsContent>
+        </Tabs>
+
+        <p class="mt-4">
+            Tras instalar, inicia <PowerShellInline code="nu" /> en tu terminal para usar Nushell. Puedes configurar tu
+            shell por defecto o integrar <PowerShellInline code="nu" /> como intérprete dentro de tu editor (por
+            ejemplo, VS Code) sin reemplazar tu shell actual.
+        </p>
+    </NotesSection>
+
+    <NotesSection id="comparison-intro">
+        <Heading headingLevel="h2" Icon={icons.Terminal}>
+            Enfoque general
+        </Heading>
+
+        <Explanation>
+            <List>
+                <ListItem icon={icons.GearSix}>
+                    <strong>PowerShell</strong> está diseñado sobre .NET y manipula
+                    <em>objetos completos</em>. Cada comando puede producir instancias de clases con propiedades,
+                    métodos y herencia.
+                </ListItem>
+
+                <ListItem icon={icons.Table}>
+                    <strong>Nushell</strong> usa una <em>tabla estructurada</em> como unidad de trabajo. Cada fila es un
+                    registro y cada columna un campo tipado (texto, número, fecha, lista, etc.). No hay herencia ni
+                    métodos: todo es <em>dato estructurado</em>.
+                </ListItem>
+
+                <ListItem icon={icons.Cpu}>
+                    El enfoque de Nushell busca <strong>consistencia y seguridad de tipos</strong>: no trabaja con texto
+                    sin estructura, sino con datos que siempre tienen forma tabular. Esto permite validaciones tempranas
+                    y menos errores en pipelines.
+                </ListItem>
+
+                <ListItem icon={icons.Sparkle}>
+                    PowerShell, al basarse en .NET, puede <strong>invocar cualquier API o biblioteca del ecosistema
+                        .NET</strong>. Nushell no puede hacer esto directamente, aunque ofrece integración con comandos
+                    externos y plugins escritos en Rust.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Tip>
+            <span slot="title">Dos filosofías de diseño</span>
+            PowerShell ve el shell como una extensión del lenguaje C# orientado a objetos. Nushell, en cambio, lo trata
+            como un <em>lenguaje de datos</em>: su objetivo es simplificar la exploración y transformación de
+            información estructurada sin escribir código imperativo.
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="pipeline-comparison">
+        <Heading headingLevel="h2" Icon={icons.FlowArrow}>
+            Pipelines: objetos vs tablas
+        </Heading>
+
+        <Explanation>
+            <p>
+                En PowerShell, el pipeline transmite objetos .NET. En Nushell, transmite registros (estructuras
+                similares a filas de una tabla). Ambas permiten filtrar, proyectar y ordenar, pero los conceptos son
+                distintos.
+            </p>
+
+            <BashScript
+                code={`# Listar procesos, filtrar y ordenar en Nushell
+ps | where mem > 200mb | sort-by mem -r | first 10 | select name pid mem
+`}
+            >
+                <span slot="title">Pipeline con datos estructurados en Nushell</span>
+            </BashScript>
+
+            <List class="mt-2">
+                <ListItem icon={icons.Funnel}>
+                    El comando <InlineBash code="where" /> aplica un filtro sobre columnas. No requiere acceder con
+                    <code>$_</code> o nombres de propiedades como en PowerShell; basta usar el nombre de la columna
+                    (<InlineBash code="mem" />).
+                </ListItem>
+
+                <ListItem icon={icons.SortAscending}>
+                    <InlineBash code="sort-by mem -r" /> ordena en orden descendente usando el flag <InlineBash
+                        code="-r"
+                    /> (reverse).
+                </ListItem>
+
+                <ListItem icon={icons.Table}>
+                    <InlineBash code="select name pid mem" /> proyecta columnas, igual que
+                    <code>Select-Object</code> en PowerShell, pero sin necesidad de expresiones.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Note>
+            En Nushell la tubería <strong>solo maneja estructuras homogéneas</strong>. Todos los elementos deben
+            compartir las mismas columnas. PowerShell, en cambio, puede pasar objetos de tipos distintos en una misma
+            pipeline, lo que lo vuelve más flexible pero también más propenso a errores en tiempo de ejecución.
+        </Note>
+
+        <More>
+            <Fragment slot="title">Limitaciones y ventajas cruzadas</Fragment>
+
+            <List>
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    PowerShell permite usar <strong>propiedades y métodos complejos</strong>
+                    (por ejemplo, acceder a <code>$_.Threads.Count</code> en un proceso). Nushell no tiene acceso a
+                    métodos ni jerarquías: solo a campos.
+                </ListItem>
+
+                <ListItem icon={icons.Database}>
+                    Nushell ofrece <strong>integraciones nativas con formatos estructurados</strong>
+                    como JSON, CSV, TOML o Parquet con comandos como
+                    <InlineBash code="open" /> y <InlineBash code="to json" />, simplificando el análisis de datos sin
+                    bibliotecas externas.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsCurly}>
+                    En PowerShell, el tipado dinámico permite manipular estructuras heterogéneas; en Nushell, el tipado
+                    estático protege contra combinaciones incompatibles.
+                </ListItem>
+            </List>
+        </More>
+    </NotesSection>
+
+    <NotesSection id="scripts-and-variables">
+        <Heading headingLevel="h2" Icon={icons.FileText}>
+            Scripts, variables y funciones
+        </Heading>
+
+        <Explanation>
+            <p>
+                Nushell usa una sintaxis declarativa y tipada, más similar a lenguajes como Rust o Haskell que a Bash.
+                Las variables no usan prefijos y los tipos son inferidos.
+            </p>
+
+            <BashScript
+                code={`# Definir una variable y usarla
+let project = "dibs"
+let scripts = $"($project)/scripts"
+
+mkdir $scripts
+`}
+            >
+                <span slot="title">Variables y rutas en Nushell</span>
+            </BashScript>
+
+            <List>
+                <ListItem icon={icons.TextT}>
+                    <InlineBash code="let" /> define variables inmutables por defecto. Se puede usar <InlineBash
+                        code="mut"
+                    /> para variables mutables.
+                </ListItem>
+
+                <ListItem icon={icons.Link}>
+                    La interpolación se realiza con <InlineBash code='$"($var)"' />, que ejecuta la expresión entre
+                    paréntesis. Esto es más seguro que concatenar strings.
+                </ListItem>
+
+                <ListItem icon={icons.Function}>
+                    Las funciones se definen con <InlineBash code="def" /> y devuelven automáticamente el resultado de
+                    la última expresión, sin necesidad de
+                    <InlineBash code="return" />.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Note>
+            Nushell no soporta sobrecarga de funciones ni atributos como
+            <code>[CmdletBinding()]</code>. Su diseño busca simplicidad y uniformidad. En cambio, PowerShell ofrece
+            anotaciones y validaciones de parámetros más ricas.
+        </Note>
+    </NotesSection>
+
+    <NotesSection id="when-to-use">
+        <Heading headingLevel="h2" Icon={icons.Question}>
+            ¿Cuándo conviene usar uno u otro?
+        </Heading>
+
+        <List>
+            <ListItem icon={icons.Terminal}>
+                <strong>Para exploración de datos</strong> — Nushell brilla cuando se trabaja con JSON, CSV o
+                estructuras tabulares. Su sintaxis es concisa y evita escribir código imperativo.
+            </ListItem>
+
+            <ListItem icon={icons.Code}>
+                <strong>Para automatización compleja</strong> — PowerShell es preferible cuando se necesita integración
+                con APIs, librerías .NET o validaciones tipadas en scripts más grandes.
+            </ListItem>
+
+            <ListItem icon={icons.RocketLaunch}>
+                Nushell se instala rápido, funciona bien en entornos portátiles y puede incrustarse fácilmente en flujos
+                de datos de otras herramientas, pero su ecosistema aún es joven comparado con PowerShell.
+            </ListItem>
+        </List>
+
+        <Important>
+            Ninguna herramienta reemplaza completamente a la otra. PowerShell es un <em>lenguaje de automatización</em>;
+            Nushell, un
+            <em>shell de datos estructurados</em>. Elegir uno depende del tipo de problema que se quiera resolver.
+        </Important>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            Nushell y PowerShell comparten la idea de una pipeline rica en estructura, pero divergen en sus fundamentos:
+            PowerShell trabaja con objetos .NET y herencia, mientras que Nushell apuesta por un modelo tabular estático
+            más coherente y minimalista. Nushell simplifica la exploración de datos y el análisis en línea, mientras que
+            PowerShell ofrece un entorno de programación más completo.
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Table}>
+                Nushell usa una pipeline basada en tablas, no en objetos.
+            </ListItem>
+            <ListItem icon={icons.BracketsCurly}>
+                PowerShell puede usar APIs, clases y métodos de .NET; Nushell no.
+            </ListItem>
+            <ListItem icon={icons.Database}>
+                Nushell simplifica el trabajo con datos estructurados como JSON o CSV.
+            </ListItem>
+            <ListItem icon={icons.GearSix}>
+                PowerShell sigue siendo más adecuado para scripts complejos y automatización empresarial.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            Si tu foco está en explorar y transformar datos tabulares rápidamente, Nushell ofrece una experiencia
+            moderna y segura. Si en cambio necesitas automatización avanzada, acceso a sistemas, servicios o librerías,
+            PowerShell proporciona un ecosistema más robusto.
+        </Fragment>
+    </ConclusionsLayout>
+
+    <Footnotes>
+        <Footnote index={1}>
+            Nushell está escrito en Rust y no depende de .NET. Esto le da una huella pequeña y portabilidad alta, pero
+            limita la interoperabilidad directa con bibliotecas del ecosistema .NET o Python.
+        </Footnote>
+    </Footnotes>
+</NotesLayout>

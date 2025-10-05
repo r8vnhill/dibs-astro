@@ -18,3 +18,4 @@ export { default as BashTerminal } from "./sh/BashTerminal.astro";
 export { default as InlineBash } from "./sh/InlineBash.astro";
 export { default as Terminals } from "./Terminals.astro";
 export { default as OutputBlock } from "./txt/OutputBlock.astro";
+export { default as NushellInline } from "./nushell/NushellInline.astro";

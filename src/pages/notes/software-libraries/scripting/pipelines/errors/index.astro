@@ -1,0 +1,241 @@
+<!-- ---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+  Abstract,
+  Definition,
+  Explanation,
+  Important,
+  Note,
+  Tip,
+  Warning,
+} from "~/components/ui/callouts";
+import { PowerShellBlock, PowerShellInline, OutputBlock } from "~/components/ui/code";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import { DibsSourceLink } from "~/components/ui/links";
+---
+
+<NotesLayout
+  title="Manejo de errores en pipelines"
+  description="Cómo se comportan los errores terminantes y no terminantes dentro de un pipeline en PowerShell, cuándo elegir uno u otro y cómo asegurar flujos predecibles."
+>
+  <Abstract>
+    <p>
+      En esta lección aprenderás cómo los errores afectan el <B>flujo de un pipeline</B> en PowerShell. 
+      Verás qué ocurre cuando un comando intermedio lanza un error terminante, cómo 
+      los errores no terminantes se propagan sin interrumpir el flujo, y cuándo conviene promover un fallo o manejarlo localmente.
+    </p>
+    <p>
+      También exploraremos buenas prácticas para evitar que un error aislado bloquee un pipeline entero —por ejemplo, 
+      cuando se procesan miles de objetos—, y cómo encapsular errores para mantener trazabilidad sin romper la cadena de comandos.
+    </p>
+  </Abstract>
+
+  <NotesSection id="h2-behavior">
+    <Heading headingLevel="h2" Icon={icons.Pipe}>
+      Qué sucede con los errores dentro de un pipeline
+    </Heading>
+
+    <Explanation>
+      <p>
+        Cuando un pipeline conecta varios comandos, PowerShell decide cómo continuar ante un error según su tipo:
+      </p>
+
+      <List>
+        <ListItem icon={icons.Bug}>
+          <B>Error no terminante</B>: registra la falla pero el pipeline sigue procesando los elementos restantes.
+          Ideal cuando quieres completar el lote aunque algunos elementos fallen.
+        </ListItem>
+
+        <ListItem icon={icons.Shield}>
+          <B>Error terminante</B>: detiene de inmediato el bloque <PowerShellInline code="process" /> activo 
+          y <B>rompe el pipeline</B>. Los comandos posteriores no se ejecutan a menos que el error sea manejado dentro del mismo script.
+        </ListItem>
+
+        <ListItem icon={icons.Info}>
+          Los errores no terminantes pueden “promoverse” a terminantes con 
+          <PowerShellInline code="-ErrorAction Stop" />, permitiendo capturarlos con 
+          <PowerShellInline code="try/catch" /> sin detener otros pipelines externos.
+        </ListItem>
+      </List>
+    </Explanation>
+
+    <PowerShellBlock
+      code={`
+        # Ejemplo: pipeline con error intermedio
+        1..5 | ForEach-Object {
+            if ($_ -eq 3) {
+                Write-Error "Falló el elemento $_"
+            } else {
+                "Procesado $_"
+            }
+        } | ForEach-Object { "Recibido: $_" }
+      `}
+    >
+      <Fragment slot="title">Error no terminante dentro del pipeline</Fragment>
+    </PowerShellBlock>
+
+    <OutputBlock
+      code={`
+        Procesado 1
+        Procesado 2
+        Write-Error: Falló el elemento 3
+        Procesado 4
+        Procesado 5
+        Recibido: Procesado 1
+        Recibido: Procesado 2
+        Recibido: Procesado 4
+        Recibido: Procesado 5
+      `}
+    />
+
+    <Tip>
+      <Fragment slot="title">El pipeline no se rompe</Fragment>
+      <p>
+        Aunque el tercer elemento falla, el flujo continúa. 
+        Esto se debe a que <PowerShellInline code="Write-Error" /> emite un error no terminante.
+      </p>
+    </Tip>
+
+    <PowerShellBlock
+      code={`
+        # Promoviendo a error terminante
+        1..5 | ForEach-Object {
+            if ($_ -eq 3) {
+                Write-Error "Falló el elemento $_" -ErrorAction Stop
+            } else {
+                "Procesado $_"
+            }
+        } | ForEach-Object { "Recibido: $_" }
+      `}
+    >
+      <Fragment slot="title">Error terminante rompe el flujo</Fragment>
+    </PowerShellBlock>
+
+    <OutputBlock
+      code={`
+        Procesado 1
+        Procesado 2
+        Write-Error: Falló el elemento 3
+        # El pipeline termina aquí
+      `}
+    />
+
+    <Warning>
+      <Fragment slot="title">Errores terminantes en pipelines largos</Fragment>
+      <p>
+        Si un comando intermedio lanza un error terminante y no lo captura, 
+        <B>el pipeline entero se aborta</B>. 
+        Esto puede ser útil en tareas críticas (p. ej., migraciones o copias), 
+        pero perjudicial en lotes grandes donde se desea resiliencia.
+      </p>
+    </Warning>
+  </NotesSection>
+
+  <NotesSection id="h2-best-practices">
+    <Heading headingLevel="h2" Icon={icons.ListChecks}>
+      Buenas prácticas para manejar errores en pipelines
+    </Heading>
+
+    <List>
+      <ListItem icon={icons.Wrench}>
+        <B>Usa errores terminantes solo cuando tenga sentido detener el flujo.</B>  
+        Por ejemplo, en operaciones que alteran datos, donde continuar podría generar resultados corruptos.
+      </ListItem>
+
+      <ListItem icon={icons.FileText}>
+        <B>Prefiere errores no terminantes en pipelines de procesamiento masivo</B> (limpieza, auditorías, escaneos).  
+        Esto permite seguir procesando los elementos buenos mientras registras los fallidos.
+      </ListItem>
+
+      <ListItem icon={icons.Code}>
+        <B>Captura errores terminantes localmente</B> usando <PowerShellInline code="try/catch" /> dentro del mismo bloque 
+        <PowerShellInline code="process" /> si no quieres romper el flujo general.
+      </ListItem>
+
+      <ListItem icon={icons.ListBullets}>
+        <B>Usa <PowerShellInline code="-ErrorVariable" /> para acumular errores</B> sin interrumpir el flujo, 
+        o define estructuras <PowerShellInline code="[pscustomobject]" /> con campos de éxito/falla.
+      </ListItem>
+
+      <ListItem icon={icons.ShieldCheck}>
+        <B>Evita lanzar <PowerShellInline code="throw" /> directamente en pipelines</B> salvo que el fallo sea irrecuperable.  
+        <PowerShellInline code="throw" /> siempre genera un error terminante que no puede manejarse fuera del script sin romper el flujo.
+      </ListItem>
+    </List>
+
+    <PowerShellBlock
+      code={`
+        # Patrón seguro en pipeline-aware
+        [CmdletBinding()]
+        param([Parameter(ValueFromPipeline)][string]$Path)
+        process {
+            try {
+                Get-Content -LiteralPath $Path -ErrorAction Stop | Out-Null
+                [pscustomobject]@{ Path = $Path; Status = 'OK' }
+            }
+            catch {
+                [pscustomobject]@{ Path = $Path; Status = 'Error'; Message = $_.Exception.Message }
+            }
+        }
+      `}
+    >
+      <Fragment slot="title">Manejo local de errores terminantes sin romper el flujo</Fragment>
+    </PowerShellBlock>
+
+    <OutputBlock
+      code={`
+        PS> 'ok.txt','missing.txt' | .\\Test-Content.ps1 | Format-Table
+
+        Path        Status Message
+        ----        ------ -------
+        ok.txt      OK
+        missing.txt Error  Cannot find path 'missing.txt'
+      `}
+    />
+
+    <Important>
+      <Fragment slot="title">Diseño predecible</Fragment>
+      <p>
+        Un script *pipeline-aware* bien diseñado nunca sorprende:
+        o bien falla completamente de forma controlada (error terminante justificado),
+        o bien devuelve una salida consistente con los errores encapsulados.
+      </p>
+    </Important>
+  </NotesSection>
+
+  <ConclusionsLayout>
+    <Fragment slot="conclusions">
+      <p>
+        Los errores en pipelines no son solo eventos a evitar, sino señales que deben manejarse con intención.
+        Entender cómo se propagan permite diseñar flujos más confiables y predecibles.
+      </p>
+    </Fragment>
+
+    <Fragment slot="key-points">
+      <ListItem icon={icons.Bug}>
+        <B>No terminante:</B> registra y continúa el pipeline.
+      </ListItem>
+      <ListItem icon={icons.Shield}>
+        <B>Terminante:</B> detiene la ejecución y rompe el pipeline si no se captura.
+      </ListItem>
+      <ListItem icon={icons.Code}>
+        <B>try/catch</B> dentro de <PowerShellInline code="process" /> permite manejar fallos locales sin abortar el flujo.
+      </ListItem>
+      <ListItem icon={icons.WarningCircle}>
+        <PowerShellInline code="throw" /> siempre genera un error terminante: úsalo con cuidado.
+      </ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+      <p>
+        En pipelines grandes, evita que un solo error interrumpa todo el procesamiento. 
+        Usa errores no terminantes y captura los terminantes dentro del mismo bloque <I>process</I>.
+        Así, tus scripts se mantienen resilientes, predecibles y seguros.
+      </p>
+    </Fragment>
+  </ConclusionsLayout>
+</NotesLayout> -->
