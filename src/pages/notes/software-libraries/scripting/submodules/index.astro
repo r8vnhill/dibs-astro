@@ -16,6 +16,7 @@ import {
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
+import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
@@ -42,7 +43,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <NotesSection id="h2-intro">
         <Heading
-            headingLevel="h2" Icon={icons.GitBranch}
+            headingLevel="h2" Icon={icons.GitlabLogo}
             slot="heading"
         >
             Por qué GitLab y qué aprenderemos
@@ -139,325 +140,415 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.FolderPlus}>
                     Crear repositorios remotos automáticamente.
                 </ListItem>
-                <ListItem icon={icons.BracketsSquare}>
+
+                <ListItem icon={icons.FolderOpen}>
                     Inicializar proyectos locales y enlazarlos con su remoto.
                 </ListItem>
-                <ListItem icon={icons.GitBranch}>
-                    Agregar y mantener submódulos en un índice común.
+
+                <ListItem icon={icons.Play}>
+                    Automatizar ambos pasos en un solo script.
                 </ListItem>
             </List>
         </p>
+    </NotesSection>
 
-        <NotesSection id="h3-submodules-intro">
+    <NotesSection id="scripts">
+        <Heading
+            headingLevel="h2" Icon={icons.Terminal}
+            slot="heading"
+        >
+            Scripts del laboratorio
+        </Heading>
+
+        <Important>
+            <span slot="title">Requisitos previos</span>
+
+            <p>
+                Antes de comenzar, asegúrate de haber iniciado sesión en GitLab desde la línea de comandos con:
+            </p>
+            
+            <PowerShellBlock code={`glab auth login`}>
+                <span slot="title">Desde la terminal</span>
+                <span slot="footer">Iniciar sesión en GitLab CLI</span>
+            </PowerShellBlock>
+        </Important>
+
+        <p class="mb-3">
+            Todos los scripts son idempotentes: puedes ejecutarlos varias veces sin generar duplicados ni
+            inconsistencias.
+        </p>
+
+        <NotesSection id="h3-new-gitlab-repo">
             <Heading
                 headingLevel="h3" Icon={icons.GitBranch}
                 slot="heading"
             >
-                Introducción a submódulos: definición y motivación
+                Crear repo remoto en GitLab
             </Heading>
 
             <p class="mb-3">
-                Un <B>submódulo</B> es un repositorio Git independiente que se incluye como referencia dentro de otro
-                repositorio (el <I>índice</I> o repositorio principal). El objetivo es <B>versionar juntos</B> varios
-                proyectos que deben mantenerse separados (cada uno con su ciclo de cambios, issues y releases), pero que
-                conviene “anclar” a una versión específica en un repositorio padre.
+                Este script crea un repositorio remoto en GitLab usando <PowerShellInline code="glab" />, de forma
+                idempotente: primero verifica su existencia y, si ya existe, devuelve un resultado estable sin fallar.
+                Además, respeta <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> gracias a <I
+                >SupportsShouldProcess</I>, y normaliza el nombre para cumplir con las restricciones del hosting.
             </p>
 
-            <p class="mb-3">
-                En nuestro curso, usaremos un repositorio índice llamado <B>dibs-index</B> (clonado localmente como
-                <B>dibs/</B>) que incluirá submódulos para cada subproyecto, por ejemplo <B>dibs-scripts</B> (local:
-                <B>scripts/</B>) y <B>dibs-astro-webpage</B> (local: <B>astro-webpage/</B>). Así, <B>dibs</B> registra
-                qué versión exacta de cada subproyecto se usa en el conjunto.
-            </p>
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.0
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrEmpty()]
+                        [string] $Name,
 
-            <More>
-                <span slot="title">Submódulos vs. subárboles (git subtree)</span>
+                        [switch] $Public
+                    )
 
-                <p class="mb-3">
-                    Tanto <I>submodules</I> como <I>subtree</I> permiten combinar repositorios, pero resuelven problemas
-                    distintos y con compromisos diferentes.
-                </p>
+                    $normalized = $Name.ToLowerInvariant() -replace '\\s+', '-' -replace '[^a-z0-9-]', ''
+                    if ([string]::IsNullOrWhiteSpace($normalized)) {
+                        throw [System.ArgumentException]::new(
+                            "Name '$Name' is not valid after normalizing to '$normalized' (only [a-z0-9-])."
+                        )
+                    }
 
+                    $visibility = if ($Public) { 'public' } else { 'private' }
+
+                    # Invocador utilitario para ejecutar binarios externos y capturar ExitCode/Output.
+                    $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+
+                    try {
+                        # Idempotencia: salir en éxito si ya existe.
+                        & $invoker glab repo view $normalized | Out-Null
+                        Write-Verbose "Repository '$normalized' already exists. Not creating it again."
+                        return [pscustomobject]@{
+                            Name       = $normalized
+                            Visibility = $visibility
+                            Created    = $false
+                            Output     = @()
+                            Message    = 'Repository already exists'
+                        }
+                    }
+                    catch {
+                        Write-Verbose "Repo '$normalized' not found. Will attempt to create it."
+                    }
+
+                    if ($PSCmdlet.ShouldProcess($normalized, "Create GitLab repository ($visibility)")) {
+                        try {
+                            $args = @('repo', 'create', $normalized, '--defaultBranch', 'main')
+                            if ($Public) { $args += '--public' } else { $args += '--private' }
+
+                            $result = & $invoker glab $args
+                            $out = $result.Output
+
+                            Write-Verbose ("Created '{0}' as {1}.{2}{3}" -f $normalized, $visibility, 
+                                [Environment]::NewLine, ($out -join [Environment]::NewLine))
+
+                            [pscustomobject]@{
+                                Name       = $normalized
+                                Visibility = $visibility
+                                Created    = $true
+                                Output     = $out
+                                Message    = 'Repository created'
+                            }
+                        }
+                        catch {
+                            throw [System.AggregateException]::new(
+                                "Failed to create repository '$Name' ('$normalized').", $_.Exception)
+                        }
+                    }
+                `}
+            >
+                <Fragment slot="title">
+                    Creación idempotente de repositorios en GitLab
+                </Fragment>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="git/New-GitLabRepository.ps1"
+                />
+            </PowerShellBlock>
+
+            <Explanation>
                 <List>
-                    <ListItem icon={icons.GitBranch}>
-                        <B>Submódulos</B> (lo que usaremos):
-                        <List>
-                            <ListItem icon={icons.PushPin}>
-                                Mantienen cada proyecto como <B>repo independiente</B> (historial, issues, releases, CI,
-                                permisos). El índice solo guarda un <I>puntero</I> a una revisión concreta de cada
-                                submódulo.
-                            </ListItem>
-
-                            <ListItem icon={icons.Repeat}>
-                                Requieren pasos explícitos para actualizar la revisión en el índice (intencional:
-                                reproducibilidad).
-                            </ListItem>
-
-                            <ListItem icon={icons.ShieldCheck}>
-                                Ideales cuando quieres <B>acoplamiento débil</B> y control fino de versiones entre
-                                piezas.
-                            </ListItem>
-                        </List>
+                    <ListItem icon={icons.TextT}>
+                        <PowerShellInline code=".ToLowerInvariant()" /> evita efectos de cultura (e.g. “I/İ” en turco) y
+                        las expresiones regulares sustituyen espacios por guiones y filtran a
+                        <Mono>[a-z0-9-]</Mono>.
                     </ListItem>
 
-                    <ListItem icon={icons.ArrowsMerge}>
-                        <B>Subárboles</B> (<I>git subtree</I>):
-                        <List>
-                            <ListItem icon={icons.Copy}>
-                                Copian el contenido del otro repo dentro del tuyo, <B>fusionando historial</B> mediante
-                                commits especiales. El resultado vive “embebido” en el índice.
-                            </ListItem>
+                    <ListItem icon={icons.Terminal}>
+                        <PowerShellInline code="& $invoker glab repo view $normalized" /> consulta el repo; si devuelve
+                        <Mono>ExitCode = 0</Mono> asumimos que existe y devolvemos un objeto con <PowerShellInline
+                            code="Created = $false"
+                        />.
+                    </ListItem>
 
-                            <ListItem icon={icons.Rocket}>
-                                Simples de consumir (no dependen de inicializar submódulos), pero <B>acoplan más</B> y
-                                pueden complejizar la sincronización de cambios bidireccional.
-                            </ListItem>
-                        </List>
+                    <ListItem icon={icons.Wrench}>
+                        <PowerShellInline code="& $invoker glab $args" /> ejecuta <PowerShellInline
+                            code="glab repo create"
+                        /> con
+                        <PowerShellInline code="--defaultBranch main" /> y visibilidad según <PowerShellInline
+                            code="-Public"
+                        />. El bloque está protegido con <PowerShellInline code="try" />/<PowerShellInline
+                            code="catch"
+                        /> y arroja un <I>AggregateException</I> con contexto si falla.
                     </ListItem>
                 </List>
-            </More>
+            </Explanation>
+        </NotesSection>
+
+        <NotesSection id="h3-set-git-remote">
+            <Heading
+                headingLevel="h3" Icon={icons.Link}
+                slot="heading"
+            >
+                Asignar remoto en Git
+            </Heading>
+
+            <p class="mb-3">
+                Este script configura un remoto de Git de forma <B>idempotente</B>: si el remoto ya existe con la misma
+                URL, no hace nada; si existe con otra URL, la actualiza; si no existe, lo crea. Usamos <PowerShellInline
+                    code="git -C"
+                />
+                para operar en la carpeta del repo sin cambiar el directorio actual, y <I>SupportsShouldProcess</I> para
+                habilitar
+                <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />.
+            </p>
+
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.0
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidatePattern('^(https://|git@|ssh://)')]
+                        [string] $RemoteUrl,
+
+                        [Parameter()]
+                        [ValidateNotNullOrEmpty()]
+                        [string] $Path = '.',
+
+                        [ValidatePattern('^[\\w.-]+$')]
+                        [string] $RemoteName = 'origin'
+                    )
+
+                    $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+                    $repoPath = (Resolve-Path -LiteralPath $Path).Path
+
+                    try {
+                        & $invoker git -C $repoPath rev-parse --is-inside-work-tree | Out-Null
+                    }
+                    catch {
+                        throw [System.AggregateException]::new(
+                            "The path '$repoPath' is not a Git repository (or does not exist).",
+                            $_.Exception
+                        )
+                    }
+
+                    $currentUrl = try {
+                        $res = & $invoker git -C $repoPath remote get-url $RemoteName
+                        ($res.Output | Out-String).Trim()
+                    }
+                    catch {
+                        $null
+                    }
+
+                    if ($null -ne $currentUrl) {
+                        if ([string]::Equals($currentUrl, $RemoteUrl, 'OrdinalIgnoreCase')) {
+                            [pscustomobject]@{
+                                RepoPath = $repoPath
+                                Remote   = $RemoteName
+                                Url      = $RemoteUrl
+                                Existed  = $true
+                                Changed  = $false
+                                Action   = 'none'
+                                Output   = @()
+                                Message  = 'Remote already configured'
+                            }
+                        }
+                        elseif ($PSCmdlet.ShouldProcess("$RemoteName → $RemoteUrl", 'git remote set-url')) {
+                            $set = & $invoker git -C $repoPath remote set-url $RemoteName $RemoteUrl
+                            [pscustomobject]@{
+                                RepoPath = $repoPath
+                                Remote   = $RemoteName
+                                Url      = $RemoteUrl
+                                Existed  = $true
+                                Changed  = $true
+                                Action   = 'set-url'
+                                Output   = $set.Output
+                                Message  = "Remote URL updated (was: $currentUrl)"
+                            }
+                        }
+                    }
+                    elseif ($PSCmdlet.ShouldProcess("$RemoteName → $RemoteUrl", 'git remote add')) {
+                        $add = & $invoker git -C $repoPath remote add $RemoteName $RemoteUrl
+                        return [pscustomobject]@{
+                            RepoPath = $repoPath
+                            Remote   = $RemoteName
+                            Url      = $RemoteUrl
+                            Existed  = $false
+                            Changed  = $true
+                            Action   = 'add'
+                            Output   = $add.Output
+                            Message  = 'Remote added'
+                        }
+                    }
+                    else {
+                        [pscustomobject]@{
+                            RepoPath = $repoPath
+                            Remote   = $RemoteName
+                            Url      = $RemoteUrl
+                            Existed  = [bool]$currentUrl
+                            Changed  = $false
+                            Action   = 'skipped'
+                            Output   = @()
+                            Message  = 'Operation skipped'
+                        }
+                    }
+                `}
+            >
+                <Fragment slot="title">
+                    Set-GitRemote.ps1
+                </Fragment>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="git/Set-GitRemote.ps1"
+                />
+            </PowerShellBlock>
+
+            <Explanation>
+                <List>
+                    <ListItem icon={icons.CheckCircle}>
+                        <B>Validación de URL</B>: <PowerShellInline
+                            code="[ValidatePattern('^(https://|git@|ssh://)')]"
+                        /> asegura que apuntemos a un remoto válido (HTTPS o SSH) antes de ejecutar Git.
+                    </ListItem>
+
+                    <ListItem icon={icons.Terminal}>
+                        <B>Verificar repo</B>: <PowerShellInline
+                            code="& $invoker git -C $repoPath rev-parse --is-inside-work-tree"
+                        /> confirma que la ruta es un repositorio Git; si falla, se lanza una excepción con contexto.
+                    </ListItem>
+
+                    <ListItem icon={icons.Eye}>
+                        <B>Leer remoto actual</B>: el bloque <PowerShellInline code="try" />/<PowerShellInline
+                            code="catch"
+                        /> asigna <PowerShellInline code="$null" /> si el remoto no existe con <PowerShellInline
+                            code="$currentUrl = try { ... } catch { $null }"
+                        />.
+                    </ListItem>
+
+                    <ListItem icon={icons.Equals}>
+                        <B>Comparación</B>: <PowerShellInline code="[string]::Equals(..., 'OrdinalIgnoreCase')" /> evita
+                        cambios innecesarios por diferencias de mayúsculas/minúsculas en la URL.
+                    </ListItem>
+
+                    <ListItem icon={icons.MagicWand}>
+                        <B>Acciones</B>: si no hay cambios → <I>none</I>; si difiere → <I>set-url</I>; si no existe → <I
+                        >add</I>. Gracias a <I>ShouldProcess</I>, puedes simular con <Mono>-WhatIf</Mono>.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </NotesSection>
+
+        <NotesSection id="h3-new-git-project">
+            <Heading
+                headingLevel="h3" Icon={icons.Play}
+                slot="heading"
+            >
+                Crear proyecto completo (remoto + local + remoto origin)
+            </Heading>
+
+            <p class="mb-3">
+                Este script combina los pasos anteriores: crea el repositorio remoto, inicializa el repositorio local
+                (usando el script de la lección anterior) y asigna el remoto <Mono>origin</Mono>. Es idempotente de
+                extremo a extremo.
+            </p>
+
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.0
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidatePattern('^[a-zA-Z0-9._-]+$')]
+                        [string] $Username,
+
+                        [Parameter(Mandatory)]
+                        [ValidatePattern('^[a-zA-Z0-9._-]+$')]
+                        [string] $RepositoryName,
+
+                        [ValidatePattern('^[a-zA-Z0-9._-]*$')]
+                        [string] $Prefix = '',
+
+                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                        [string] $LiteralPath = '.',
+
+                        [switch] $Public
+                    )
+
+                    $result = @{
+                        NewRepository        = $null
+                        InitializeRepository = $null
+                        SetRemote            = $null
+                    }
+
+                    $newRepository = Join-Path $PSScriptRoot 'New-GitLabRepository.ps1' -Resolve
+                    $initializeRepository = Join-Path $PSScriptRoot 'Initialize-Repository.ps1' -Resolve
+                    $setRemote = Join-Path $PSScriptRoot 'Add-Remote.ps1' -Resolve
+
+                    $forward = @{}
+                    foreach ($k in 'WhatIf', 'Confirm') {
+                        if ($PSBoundParameters.ContainsKey($k)) { $forward[$k] = $PSBoundParameters[$k] }
+                    }
+
+                    $normalized = (
+                        $RepositoryName.ToLowerInvariant() -replace '\\s+', '-' -replace '[^a-z0-9-]', '')
+
+                    $repoSlug = if ([string]::IsNullOrEmpty($Prefix)) {
+                        $normalized
+                    }
+                    else {
+                        ($Prefix.Trim('-') + '-' + $normalized.Trim('-')).Trim('-')
+                    }
+
+                    $result.NewRepository = & $newRepository @forward -Name $LiteralPath -Public:$Public
+                    $remoteUrl = "git@gitlab.com:$Username/$repoSlug.git"
+                    $result.InitializeRepository = (
+                        & $initializeRepository @forward -Name $normalized -RemoteUrl $remoteUrl)
+                    $result.SetRemote = (
+                        & $setRemote @forward -Path $normalized -RemoteName 'origin' -RemoteUrl $remoteUrl)
+
+                    [pscustomobject]$result
+                `}
+            >
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="git/New-GitProject.ps1"
+                />
+            </PowerShellBlock>
+
+            <Explanation>
+                <ToDo
+                  client:only="react"
+                  metadata={{
+                    tasks: [
+                      `Explicar:
+                      - `,
+                    ],
+                  }}
+                />
+            </Explanation>
+
+            <PowerShellBlock code={`
+                
+            `}>
+                <Fragment slot="title">...</Fragment>
+                <Fragment slot="footer">...</Fragment>
+                <Fragment slot="source">path/to/script.ps1</Fragment>
+            </PowerShellBlock>
         </NotesSection>
     </NotesSection>
-
-    <!--
-        <NotesSection id="scripts">
-                                              <Heading headingLevel="h2" Icon={icons.Terminal}>Scripts del laboratorio</Heading>
-
-                                              <Explanation>
-                                                  A continuación se detallan los scripts que construiremos paso a paso. Todos son idempotentes: pueden
-                                                  ejecutarse varias veces sin generar duplicados ni inconsistencias.
-                                              </Explanation>
-
-                                              <Heading headingLevel="h3" Icon={icons.FolderPlus}>1️⃣ Crear repositorio remoto</Heading>
-
-                                              <PowerShellBlock
-                                                  code={`
-        #Requires -Version 7.0
-        [CmdletBinding(SupportsShouldProcess)]
-        param(
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Name,
-
-            [switch] $Private
-        )
-
-        $normalized = $Name.ToLower() -replace '\\s+', '-' -replace '[^a-z0-9-]', ''
-        $visibility = if ($Private) { 'private' } else { 'public' }
-
-        if ($PSCmdlet.ShouldProcess($normalized, "Create GitLab repository ($visibility)")) {
-            try {
-                glab repo create $normalized --$visibility --confirm --source "." --enable-issues=false --enable-wiki=false
-                Write-Output "Repository created: $normalized"
-            } catch {
-                Write-Warning "Could not create repo '$normalized' (maybe it already exists)."
-            }
-        }
-      `}
-                                              >
-                                                  <Fragment slot="title">New-GitLabRepo.ps1</Fragment>
-                                              </PowerShellBlock>
-
-                                              <Explanation>
-                                                  <List>
-                                                      <ListItem icon={icons.TextT}>
-                                                          El nombre se normaliza a minúsculas, sin espacios ni caracteres especiales, para cumplir con las
-                                                          restricciones de GitLab.
-                                                      </ListItem>
-                                                      <ListItem icon={icons.Shield}>
-                                                          <PowerShellInline code="-Private" /> permite crear repositorios visibles solo para ti o tu grupo.
-                                                          Por defecto se crean públicos.
-                                                      </ListItem>
-                                                      <ListItem icon={icons.ShieldCheck}>
-                                                          <PowerShellInline code="SupportsShouldProcess" /> habilita el modo de ensayo con <PowerShellInline
-                                                              code="-WhatIf"
-                                                          />, útil para probar sin crear repositorios reales.
-                                                      </ListItem>
-                                                  </List>
-                                              </Explanation>
-
-                                              <Heading headingLevel="h3" Icon={icons.HardDrive}>2️⃣ Inicializar repositorio local</Heading>
-
-                                              <PowerShellBlock
-                                                  code={`
-        #Requires -Version 7.0
-        [CmdletBinding(SupportsShouldProcess)]
-        param(
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Name,
-
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $RemoteUrl
-        )
-
-        $dir = $Name.ToLower() -replace '\\s+', '-' -replace '[^a-z0-9-]', ''
-
-        if (-not (Test-Path -LiteralPath $dir)) {
-            if ($PSCmdlet.ShouldProcess($dir, "Initialize local repo")) {
-                git init $dir | Out-Null
-                Push-Location $dir
-                git remote add origin $RemoteUrl
-                New-Item -ItemType File -Name 'README.md' -Value "# $Name" | Out-Null
-                git add .
-                git commit -m "Initial commit" | Out-Null
-                git push -u origin main
-                Pop-Location
-                Write-Output "Local repo initialized -> $dir"
-            }
-        }
-        else {
-            Write-Warning "Directory already exists: $dir"
-        }
-      `}
-                                              >
-                                                  <Fragment slot="title">Initialize-LocalRepo.ps1</Fragment>
-                                              </PowerShellBlock>
-
-                                              <Explanation>
-                                                  <List>
-                                                      <ListItem icon={icons.FolderOpen}>
-                                                          Si la carpeta ya existe, se omite (idempotencia).
-                                                      </ListItem>
-                                                      <ListItem icon={icons.Terminal}>
-                                                          Se crean y publican los commits iniciales.
-                                                      </ListItem>
-                                                  </List>
-                                              </Explanation>
-
-                                              <Heading headingLevel="h3" Icon={icons.Link2}>3️⃣ Configurar el índice y agregar submódulos</Heading>
-
-                                              <PowerShellBlock
-                                                  code={`
-        #Requires -Version 7.0
-        [CmdletBinding(SupportsShouldProcess)]
-        param(
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $IndexName = 'dibs',
-
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string[]] $Submodules
-        )
-
-        $indexDir = $IndexName
-        if (-not (Test-Path -LiteralPath $indexDir)) {
-            if ($PSCmdlet.ShouldProcess($indexDir, 'Initialize index repo')) {
-                git clone "git@gitlab.com:your-group/${IndexName}-index.git" $indexDir
-            }
-        }
-
-        Push-Location $indexDir
-        foreach ($sub in $Submodules) {
-            $remote = "git@gitlab.com:your-group/${sub}.git"
-            if (-not (Test-Path -LiteralPath $sub)) {
-                if ($PSCmdlet.ShouldProcess($sub, "Add submodule $sub")) {
-                    git submodule add $remote $sub
-                    Write-Output "Added submodule -> $sub"
-                }
-            } else {
-                Write-Warning "Submodule already present -> $sub"
-            }
-        }
-        git commit -am "Updated submodules" | Out-Null
-        git push | Out-Null
-        Pop-Location
-      `}
-                                              >
-                                                  <Fragment slot="title">Add-Submodules.ps1</Fragment>
-                                              </PowerShellBlock>
-
-                                              <Explanation>
-                                                  <List>
-                                                      <ListItem icon={icons.FolderPlus}>
-                                                          El repositorio índice se llama <code>dibs-index</code> en GitLab, pero se clona como <code
-                                                          >dibs/</code> en local.
-                                                      </ListItem>
-                                                      <ListItem icon={icons.BracketsSquare}>
-                                                          Cada submódulo se añade solo si no existe, evitando duplicados.
-                                                      </ListItem>
-                                                      <ListItem icon={icons.Info}>
-                                                          Las rutas remotas pueden adaptarse a tu grupo o namespace de GitLab.
-                                                      </ListItem>
-                                                  </List>
-                                              </Explanation>
-                                          </NotesSection>
-    -->
-
-    <!--
-        <NotesSection id="workflow">
-                                              <Heading headingLevel="h2" Icon={icons.Play}>Flujo completo</Heading>
-
-                                              <PowerShellBlock
-                                                  code={`
-        # 1. Crear repos remotos
-        .\\New-GitLabRepo.ps1 -Name "dibs-index" -Private
-        .\\New-GitLabRepo.ps1 -Name "dibs-scripts"
-        .\\New-GitLabRepo.ps1 -Name "dibs-astro-webpage"
-
-        # 2. Inicializar repos locales
-        .\\Initialize-LocalRepo.ps1 -Name "dibs" -RemoteUrl "git@gitlab.com:your-group/dibs-index.git"
-        .\\Initialize-LocalRepo.ps1 -Name "scripts" -RemoteUrl "git@gitlab.com:your-group/dibs-scripts.git"
-        .\\Initialize-LocalRepo.ps1 -Name "astro-webpage" -RemoteUrl "git@gitlab.com:your-group/dibs-astro-webpage.git"
-
-        # 3. Agregar submódulos
-        .\\Add-Submodules.ps1 -IndexName "dibs" -Submodules @("dibs-scripts", "dibs-astro-webpage")
-      `}
-                                              >
-                                                  <Fragment slot="title">Ejecución secuencial del laboratorio</Fragment>
-                                              </PowerShellBlock>
-
-                                              <OutputBlock
-                                                  code={`
-        Repository created: dibs-index
-        Repository created: dibs-scripts
-        Repository created: dibs-astro-webpage
-        Local repo initialized -> dibs
-        Local repo initialized -> scripts
-        Local repo initialized -> astro-webpage
-        Added submodule -> dibs-scripts
-        Added submodule -> dibs-astro-webpage
-      `}
-                                              />
-
-                                              <Tip>
-                                                  Puedes verificar el resultado con <PowerShellInline code="git submodule status" /> dentro de <code
-                                                  >dibs/</code>.
-                                              </Tip>
-                                          </NotesSection>
-    -->
-
-    <!--
-        <ConclusionsLayout>
-            <Fragment slot="conclusions">
-                <p>
-                    Con este laboratorio completamos un flujo de automatización real: desde la creación de repositorios
-                    hasta su organización jerárquica con submódulos. En los próximos temas, veremos cómo refactorizar estos
-                    scripts usando funciones con
-                    <PowerShellInline code="begin/process/end" /> para componer pipelines más flexibles.
-                </p>
-            </Fragment>
-
-            <Fragment slot="key-points">
-                <ListItem icon={icons.Terminal}
-                >Usamos <PowerShellInline code="SupportsShouldProcess" /> para mantener los scripts seguros e
-                    idempotentes.</ListItem>
-                <ListItem icon={icons.CheckCircle}>La normalización de nombres evita errores comunes en GitLab.</ListItem>
-                <ListItem icon={icons.FolderPlus}
-                >Los submódulos permiten mantener proyectos separados, pero versionados juntos.</ListItem>
-            </Fragment>
-
-            <Fragment slot="takeaways">
-                <p>
-                    GitLab amplía tu dominio de Git con herramientas profesionales de CI/CD y registro de paquetes. La
-                    automatización con PowerShell te permite mantener estructuras complejas de proyectos sin depender de
-                    pasos manuales.
-                </p>
-            </Fragment>
-        </ConclusionsLayout>
-    -->
 
     <Footnotes>
         <Footnote index={1}>
@@ -467,4 +558,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             que coordinar dos fuentes distintas de colaboración.
         </Footnote>
     </Footnotes>
+</NotesLayout>
+
+<NotesLayout
+    title="Laboratorio 1: GitLab — crear repos y remotos"
+    description="Crea un repositorio en GitLab, inicializa el repo local y configura el remoto de forma idempotente."
+>
 </NotesLayout>

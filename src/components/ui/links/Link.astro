@@ -2,15 +2,23 @@
 type Props = {
     href: string;
     content?: string;
-    class?: string;
+    class?: string | undefined;
+    target?: string | undefined;
+    rel?: string | undefined;
 };
 
-const { href, content, class: className } = Astro.props;
+const {
+    href,
+    content,
+    class: className,
+    target = "_blank",
+    rel = "noopener noreferrer",
+} = Astro.props;
 ---
 
 <a
-    {href} target="_blank"
-    rel="noopener noreferrer" class={className}
+    {href} {target}
+    {rel} class={className}
 >
     <slot>{content}</slot>
 </a>

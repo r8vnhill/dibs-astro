@@ -1,0 +1,22 @@
+---
+import { Link } from "../links";
+
+type WrapProps = {
+    href?: string;
+    newTab?: boolean;
+    class?: string;
+    [key: string]: any;
+};
+const { href, newTab = false, class: className, ...rest } = Astro.props as WrapProps;
+const aProps = newTab ? { target: "_blank", rel: "noopener noreferrer" } : {};
+---
+{
+    href
+        ? (
+        <Link
+            {href} {...aProps}
+            class={className} {...rest}
+        ><slot /></Link>
+    )
+    : <slot {...rest} />
+}
