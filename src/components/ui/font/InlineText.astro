@@ -1,0 +1,26 @@
+---
+import InlineWrap from "./InlineWrap.astro";
+
+type Props<T extends string> = {
+    as?: T;
+    class?: string;
+    href?: string;
+    newTab?: boolean;
+    classes?: string[]; // base classes to apply
+    [key: string]: any;
+};
+
+const {
+    as = "span",
+    class: className = "",
+    href,
+    newTab = false,
+    classes = [],
+    ...rest
+} = Astro.props as Props<"span" | "strong" | "b" | "em" | "i" | "code" | "kbd">;
+
+const Tag = as as any;
+const merged = ["align-baseline", ...classes, className].filter(Boolean);
+---
+
+<InlineWrap {href} {newTab}><Tag class:list={merged} {...rest}><slot /></Tag></InlineWrap>

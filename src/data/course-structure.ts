@@ -55,8 +55,8 @@ export const courseStructure: Lesson[] = [
             href: "/notes/software-libraries/scripting/errors/",
           },
           {
-            title: "Lab. 1: Git submodules",
-            href: "/notes/software-libraries/scripting/submodules/",
+            title: "Lab. 1: GitLab",
+            href: "/notes/software-libraries/scripting/gitlab/",
           },
           {
             title: "Pipelines",

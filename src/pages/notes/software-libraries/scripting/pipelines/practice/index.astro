@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Exercise, Explanation, Hints, More, Solution, Tip, Warning } from "~/components/ui/callouts";
+import { Abstract, Exercise, Explanation, Hints, Solution, Warning } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -47,12 +47,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         />
 
         <NotesSection id="...">
-            <Heading headingLevel="h3" Icon={null}
+            <Heading
+                headingLevel="h3" Icon={null}
                 slot="heading"
             >
                 ...
             </Heading>
-        
+
             <ToDo
                 client:only="react"
                 metadata={{

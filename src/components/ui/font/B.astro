@@ -1,19 +1,18 @@
 ---
-// B.astro
-import InlineWrap from "./InlineWrap.astro";
+import InlineText from "./InlineText.astro";
 
 type Props = {
+    as?: "strong" | "span" | "b";
     class?: string;
     href?: string;
     newTab?: boolean;
-    as?: "strong" | "span" | "b";
     [key: string]: any;
 };
 
-const { class: className = "", href, newTab = false, as = "strong", ...rest } = Astro.props as Props;
-const Tag = as;
-const classes = ["font-bold", className].filter(Boolean);
+const { as = "strong", ...rest } = Astro.props as Props;
 ---
-<InlineWrap {href} {newTab}>
-    <Tag class:list={classes} {...rest}><slot /></Tag>
-</InlineWrap>
+
+<InlineText
+    {as} classes={["font-bold"]}
+    {...rest}
+><slot /></InlineText>

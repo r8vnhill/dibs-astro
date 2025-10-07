@@ -1,0 +1,11 @@
+---
+type Props = {
+    class?: string;
+};
+
+const { class: className = "", ...rest } = Astro.props as Props & Record<string, any>;
+---
+
+<p class:list={["my-1", className]} {...rest}>
+    <slot />
+</p>

@@ -122,6 +122,26 @@ import ToDo from "~/components/utils/ToDo";
       /></PowerShellBlock
     >
 
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          `<ListItem icon={icons.Path}>
+                        <B>ProviderPath vs. Path</B>: PowerShell distingue entre rutas del sistema de archivos
+                        (<PowerShellInline code="ProviderPath" />) y rutas calificadas por proveedor (<PowerShellInline
+                            code="Path"
+                        />, como <Mono>Microsoft.PowerShell.Core\FileSystem::C:\</Mono>). Algunas herramientas externas
+                        —como <I>git</I>— no entienden las rutas con prefijo de proveedor. Por eso usamos:
+                        <PowerShellInline
+                            code="$repoPath = if ($rp.ProviderPath) { $rp.ProviderPath } else { $rp.Path }"
+                        />
+                        para asegurar que el comando reciba una ruta nativa del sistema operativo.
+                    </ListItem>`,
+                    "GetUnresolvedProviderPathFromPSPath vs. GetResolvedPathFromPSPath.",
+        ],
+      }}
+    />
+    
     <Explanation
       ><List
         ><ListItem icon={icons.Shield}
