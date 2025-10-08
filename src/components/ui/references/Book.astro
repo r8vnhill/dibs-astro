@@ -1,35 +1,35 @@
 ---
-import { ListItem } from "~/components/ui/list";
 import * as icons from "~/assets/img/icons";
+import { ListItem } from "~/components/ui/list";
 
 type PageRange = [number, number];
 
 type Props = {
-  chapter?: string;
-  pages?: PageRange;
-  bookTitle?: string;
+    chapter?: string;
+    pages?: PageRange;
+    bookTitle?: string;
 };
 
 const { chapter, pages, bookTitle }: Props = Astro.props;
 ---
 
 <ListItem icon={icons.Book}>
-  <span>“<slot name="chapter">{chapter}</slot>”</span>{" "}{
-    pages && (
-      <span class="text-muted-foreground">
-        (pp. {pages[0]}–{pages[1]})
-      </span>
-    )
-  }
-  <span class="text-muted-foreground">{" en "}</span>
-  <span><slot name="bookTitle">{bookTitle}</slot></span>
-  <span class="text-muted-foreground">{" por "}</span>
-  <slot name="authors" />
-  {
-    Astro.slots.description ? (
-      <div class="text-muted-foreground block">
-        <slot name="description" />
-      </div>
-    ) : null
-  }
+    <span>“<slot name="chapter">{chapter}</slot>”</span>{" "}{
+        pages && (
+            <span class="text-muted-foreground">
+                (pp. {pages[0]}–{pages[1]})
+            </span>
+        )
+    }
+    <span class="text-muted-foreground">{" en "}</span>
+    <span><slot name="bookTitle">{bookTitle}</slot></span>
+    <span class="text-muted-foreground">{" por "}</span>
+    <slot name="authors" />
+    {
+        Astro.slots.description ? (
+            <div class="text-muted-foreground block">
+                <slot name="description" />
+            </div>
+        ) : null
+    }
 </ListItem>

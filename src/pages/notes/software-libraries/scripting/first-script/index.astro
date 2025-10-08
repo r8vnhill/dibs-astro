@@ -1,0 +1,412 @@
+
+<!--
+        <NotesSection id="h2-first-script">
+            <Heading headingLevel="h2" Icon={icons.FileText}>
+                Tu script: generar un <Mono>README.md</Mono> básico
+            </Heading>
+
+            <P>
+                Antes de escribir nuestro primer script, vale la pena aclarar qué entendemos por <B>cmdlet</B> y cómo se
+                relaciona con los <I>scripts</I> y las <I>funciones</I> de PowerShell.
+            </P>
+
+            <Definition>
+                <Fragment slot="title">Cmdlets, funciones y scripts</Fragment>
+
+                <P>
+                    Un <B>cmdlet</B> (<I>command-let</I>) es la unidad básica de ejecución en PowerShell. Cada cmdlet
+                    implementa una acción bien definida (como <PowerShellInline code="Get-Process" /> o <PowerShellInline
+                        code="Set-Content"
+                    />) y devuelve objetos .NET al <I>pipeline</I>, lo que permite encadenarlos fácilmente.
+                </P>
+
+                <P>
+                    Por otro lado, una <B>función</B> es un bloque de código definido dentro de PowerShell que puede
+                    comportarse como un cmdlet si se le añade el atributo <PowerShellInline code="[CmdletBinding()]" />.
+                    Esto habilita características avanzadas como el manejo de <PowerShellInline code="-Verbose" />,
+                    <PowerShellInline code="-ErrorAction" />, o
+                    <PowerShellInline code="-WhatIf" />, entre otras.
+                </P>
+
+                <P>
+                    Finalmente, un <B>script</B> es un archivo <Mono>.ps1</Mono> que agrupa comandos y lógica en un formato
+                    ejecutable. Al igual que las funciones, un script también puede incluir <PowerShellInline
+                        code="[CmdletBinding()]"
+                    /> y así comportarse como un cmdlet completo —solo que sin necesidad de declararse dentro de un módulo
+                    (<Mono>.psm1</Mono>) o manifest (<Mono>.psd1</Mono>).
+                </P>
+
+                <Note>
+                    En este apunte usaremos <B>scripts</B> en lugar de funciones o módulos para mantener las explicaciones
+                    simples. Todos los conceptos de scripting (validación de parámetros, <I>pipelines</I>, salida tipada,
+                    etc.) se aplican por igual a funciones y scripts, por lo que podrás migrar este conocimiento fácilmente
+                    más adelante.
+                </Note>
+            </Definition>
+
+            <P>
+                Hasta ahora hemos trabajado ejecutando comandos directamente en la terminal. El siguiente paso es encapsular
+                esa lógica en un <I>script</I> sencillo y reutilizable, guardado dentro de <Mono>dibs/scripts</Mono>.
+                Nuestro ejemplo genera el contenido inicial de un <Mono>README.md</Mono> para un proyecto. Incluye
+                parámetros obligatorios y una opción de <I>verbosity</I> para mostrar mensajes adicionales durante la
+                ejecución. Te recomiendo editar y mantener estos scripts en un entorno cómodo como <B>VS&nbsp;Code</B>, que
+                ofrece resaltado de sintaxis, integración con terminal y depuración básica.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                #Requires -Version 7.0
+                [CmdletBinding()]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrEmpty()]
+                    [string] $Name
+                )
+
+                Write-Verbose "Creating README.md for project '$Name'"
+
+                @'
+                # {0}
+
+                Project initialized on {1}.
+
+                Learn more about READMEs at https://www.makeareadme.com/.
+                '@ -f $Name, (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+            `}
+            >
+                <Fragment slot="title">Generar <Mono>README.md</Mono> con PowerShell</Fragment>
+                <DibsSourceLink
+                    repo="scripts" file="core/New-Readme.ps1"
+                    slot="source"
+                />
+            </PowerShellBlock>
+
+            <Explanation headingLevel="h3">
+                <List>
+                    <ListItem icon={icons.Hash}>
+                        <PowerShellInline code="#Requires -Version 7.0" /> garantiza que el script se ejecute en
+                        PowerShell&nbsp;7 o superior.<FootnoteRef index={3} />
+                    </ListItem>
+
+                    <ListItem icon={icons.Info}>
+                        <PowerShellInline code="[CmdletBinding()]" /> convierte el script en un
+                        <Link
+                            href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_cmdletbindingattribute"
+                        >cmdlet avanzado</Link>, lo que permite usar parámetros como
+                        <PowerShellInline code="-Verbose" /> para mostrar mensajes de diagnóstico controlados con
+                        <PowerShellInline code="Write-Verbose" />.
+                        <br />
+                        Esto hace que tanto scripts como funciones puedan comportarse como cmdlets, con soporte para
+                        <I>validation attributes</I>, <I>common parameters</I> y confirmaciones interactivas.
+                    </ListItem>
+
+                    <ListItem icon={icons.SlidersHorizontal}>
+                        El bloque <PowerShellInline code="param(...)" /> define los parámetros del script. La sintaxis
+                        <PowerShellInline code="[Atributo1][Atributo2][Tipo] $Parametro" /> permite aplicar metadatos y
+                        validaciones:
+                        <List>
+                            <ListItem icon={icons.WarningCircle}>
+                                <PowerShellInline code="[Parameter(Mandatory)]" /> indica que el parámetro debe
+                                proporcionarse obligatoriamente al ejecutar el script.
+                            </ListItem>
+                            <ListItem icon={icons.Prohibit}>
+                                <PowerShellInline code="[ValidateNotNullOrEmpty()]" /> evita que se pasen valores vacíos o
+                                <PowerShellInline code="$null" />.
+                            </ListItem>
+                            <ListItem icon={icons.TextT}>
+                                <PowerShellInline code="[string]" /> especifica el tipo del parámetro, mejorando la
+                                validación y el autocompletado.
+                            </ListItem>
+                        </List>
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        Se usa un <I
+                            href="https://devblogs.microsoft.com/scripting/maximizing-the-power-of-here-string-in-powershell-for-configuration-data/"
+                        >here-string</I> para devolver texto multilínea. La sintaxis con <PowerShellInline
+                            code="@' ... '@"
+                        /> preserva los saltos de línea.
+                    </ListItem>
+
+                    <ListItem icon={icons.Function}>
+                        El operador <PowerShellInline code="-f" /> es el <I>format operator</I> de PowerShell. Reemplaza los
+                        marcadores <PowerShellInline code="{0}" />, <PowerShellInline code="{1}" />, ... por los valores que
+                        se pasan a continuación, en orden. En este caso, <PowerShellInline code="$Name" /> y la fecha
+                        formateada se insertan en el texto del <I>README</I>.
+                    </ListItem>
+
+                    <ListItem icon={icons.ArrowBendUpLeft}>
+                        En PowerShell, la última expresión evaluada en un script o función se devuelve automáticamente como
+                        salida, incluso sin usar la palabra clave <PowerShellInline code="return" />.
+                        <br />
+                        Aquí, el <I>here-string</I> formateado es la última expresión, por lo que se devuelve como resultado
+                        del script. Esto permite enviarlo directamente por <I>pipeline</I> o asignarlo a una variable.
+                    </ListItem>
+                </List>
+            </Explanation>
+
+            <More>
+                <Fragment slot="title" headingLevel="h3">
+                    Formato de cadenas en PowerShell: guía rápida
+                </Fragment>
+
+                <P>
+                    En los ejemplos del curso usaremos <B>cadenas literales</B> (<PowerShellInline code={`'...'`} />) junto
+                    con <B>composite formatting</B> (<PowerShellInline code={`-f`} />). Esta combinación es uniforme,
+                    legible y evita sorpresas al dividir líneas largas.
+                </P>
+
+                <List>
+                    <ListItem icon={icons.TextT}>
+                        <B>Composite formatting</B>: usa <PowerShellInline code={`-f`} /> o <PowerShellInline
+                            code={`[string]::Format()`}
+                        /> para reemplazar marcadores <PowerShellInline code="{0}" />, <PowerShellInline code="{1}" />, etc.
+                        por los argumentos en orden.
+
+                        <PowerShellBlock
+                            code={`
+                            'Hello, {0}! Today is {1:yyyy-MM-dd}.' -f $User, (Get-Date)
+                            # o bien
+                            [string]::Format('Hello, {0}! Today is {1:yyyy-MM-dd}.', $User, (Get-Date))
+                        `}
+                        />
+                    </ListItem>
+
+                    <ListItem icon={icons.Sparkle}>
+                        <B>Interpolación</B>: las comillas dobles (<PowerShellInline code={`"..."`} />) expanden variables
+                        (<PowerShellInline code={`$var`} />) y expresiones (<PowerShellInline code={`$(...)`} />), como:
+
+                        <PowerShellBlock code={`"Hello, $User! Today is $(Get-Date -Format 'yyyy-MM-dd')."`} />
+
+                        <P>
+                            Es más concisa, pero menos práctica para cadenas largas o con muchos valores a insertar.
+                        </P>
+                    </ListItem>
+                </List>
+            </More>
+
+            <Warning>
+                <Fragment slot="title">Evitar el uso de <PowerShellInline code="return" /></Fragment>
+
+                <P>
+                    En PowerShell, <PowerShellInline code="return" /> termina la ejecución de una función o script de
+                    inmediato. Aunque puede parecer útil para devolver valores, también corta la ejecución del bloque
+                    actual, lo que puede ser problemático más adelante cuando trabajemos con el <I>pipeline</I> o queramos
+                    emitir varios resultados.
+                </P>
+
+                <P>
+                    Por claridad y consistencia, en este curso evitaremos el <PowerShellInline code="return" /> explícito y
+                    preferiremos dejar que la última expresión del bloque determine el valor devuelto. Esto hace que las
+                    funciones sean más predecibles y se integren mejor con el flujo de datos del <I>pipeline</I>.
+                </P>
+            </Warning>
+
+            <PowerShellBlock
+                code={`
+                $content = .\\core\\New-Readme.ps1 -Name 'Utility Scripts - DIBS' -Verbose
+                Set-Content -Value $content -Path README.md -Encoding UTF8
+            `}
+            >
+                <Fragment slot="title">Desde <Mono>dibs/scripts</Mono></Fragment>
+            </PowerShellBlock>
+
+            <Explanation>
+                <List>
+                    <ListItem icon={icons.PlayCircle}>
+                        <PowerShellInline code=".\\core\\New-Readme.ps1 -Name '...'" /> ejecuta el script desde la carpeta
+                        actual (<Mono>dibs/scripts</Mono>). El parámetro <PowerShellInline code="-Name" /> es obligatorio.
+                    </ListItem>
+
+                    <ListItem icon={icons.Info}>
+                        <PowerShellInline code="-Verbose" /> muestra mensajes de diagnóstico (habilitado por
+                        <PowerShellInline code="[CmdletBinding()]" /> dentro del script).
+                    </ListItem>
+
+                    <ListItem icon={icons.TextAa}>
+                        El resultado (texto del README) se asigna a una variable con <PowerShellInline
+                            code="$content = ..."
+                        />.
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        <PowerShellInline code="Set-Content -Value $content -Path README.md -Encoding UTF8 -Force" /> crea o
+                        sobrescribe <Mono>README.md</Mono> con codificación UTF-8.
+                    </ListItem>
+                </List>
+            </Explanation>
+
+            <Important>
+                <Fragment slot="title">Rutas portables con <PowerShellInline code="Join-Path" /></Fragment>
+
+                <P>
+                    En scripts, preferimos <PowerShellInline code="Join-Path" /> para construir rutas de forma portable
+                    (evita concatenar strings con <Mono>\</Mono> o <Mono>/</Mono>). Por ejemplo:
+                </P>
+
+                <PowerShellBlock code={`$readmePath = Join-Path . 'README.md'`}>
+                    <span slot="footer">
+                        <PowerShellInline code="Join-Path" /> construirá <Mono>./README.md</Mono> o <Mono>.\README.md</Mono>
+                        según el sistema operativo.
+                    </span>
+                </PowerShellBlock>
+
+                <P>
+                    En la terminal mantendremos los ejemplos simples y no usaremos <PowerShellInline code="Join-Path" />
+                    para no sobrecargar la sintaxis; pero en archivos <Mono>.ps1</Mono> sí lo usaremos por claridad y
+                    portabilidad.
+                </P>
+            </Important>
+        </NotesSection>
+
+        <Exercise headingLevel="h2">
+            <Fragment slot="title"><Mono>Test-Readme.ps1</Mono></Fragment>
+
+            <P>
+                Implementa un script de validación que verifique un <Mono>README.md</Mono> mínimo en el directorio indicado.
+                Debe devolver <PowerShellInline code="$true" /> si pasa todas las validaciones y <PowerShellInline
+                    code="$false"
+                /> en caso contrario (sin usar <PowerShellInline code="return" />).
+            </P>
+
+            <B class="mt-4 text-exercise-title">Requisitos:</B>
+
+            <List>
+                <ListItem icon={icons.SlidersHorizontal}>
+                    Parámetros:
+                    <List>
+                        <ListItem icon={icons.TextT}>
+                            <PowerShellInline code="[Parameter(Mandatory)][ValidateNotNullOrEmpty()][string] $Path" />
+                            (carpeta a validar).
+                        </ListItem>
+                        <ListItem icon={icons.Info}>
+                            <PowerShellInline code="[switch] $Verbose" /> (mensajes de diagnóstico).
+                        </ListItem>
+                    </List>
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Validaciones mínimas sobre <Mono>README.md</Mono> en <PowerShellInline code="$Path" />:
+
+                    <List>
+                        <ListItem icon={icons.FileText}>
+                            Existe el archivo <Mono>README.md</Mono>.
+                        </ListItem>
+
+                        <ListItem icon={icons.TextAa}>
+                            Contiene un título H1 en la primera línea: <MarkdownInline code="# Nombre" />.
+                        </ListItem>
+
+                        <ListItem icon={icons.Calendar}>
+                            Contiene la frase <MarkdownInline code="Project initialized on" /> (línea generada por el script
+                            de la lección).
+                        </ListItem>
+                    </List>
+                </ListItem>
+            </List>
+
+            <Heading headingLevel="h4" Icon={icons.PlayCircle}>Uso esperado</Heading>
+            <PowerShellBlock code={`
+                .\\Test-Readme.ps1 -Path '.' -Verbose
+            `}>
+                <Fragment slot="title">Uso esperado</Fragment>
+                <span slot="footer">Verifica el repositorio en la carpeta actual</span>
+            </PowerShellBlock>
+
+            <PowerShellBlock
+                code={`
+            # Retorna $true si existe 'path/to/file', $false si no
+            Test-Path -Path "path/to/file"
+            # Lee todo el contenido de 'path/to/file';
+            # -Raw devuelve todo como un string
+            Get-Content -Path "path/to/file" -Raw
+            # Verifica si un string coincide con una expresión regular
+            "<string>" -match "<regex>"
+            # Operadores lógicos
+            $true -and !$false
+        `}
+            >
+                <span slot="title">Cmdlets útiles</span>
+            </PowerShellBlock>
+
+            <Hints>
+                <List>
+                    <ListItem icon={icons.FolderOpen}>
+                        Usa <PowerShellInline code="Join-Path $Path 'README.md'" /> para construir la ruta al archivo.
+                    </ListItem>
+                    <ListItem icon={icons.MagnifyingGlass}>
+                        <PowerShellInline code="Test-Path" /> para existencia; <PowerShellInline code="Get-Content -Raw" />
+                        para leer todo.
+                    </ListItem>
+                    <ListItem icon={icons.Bug}>
+                        Puedes verificar el H1 con <PowerShellInline code="$content -match '^#\\s+.+'" /> y la frase con
+                        <PowerShellInline code="$content -match 'Project initialized on'" />.
+                    </ListItem>
+                </List>
+            </Hints>
+
+            <Solution>
+                <PowerShellBlock
+                    code={`
+                    #Requires -Version 7.0
+                    [CmdletBinding()]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrEmpty()]
+                        [string] $Path
+                    )
+
+                    $readmePath = Join-Path $Path 'README.md'
+                    Write-Verbose 'Checking for README.md at {0}' -f $readmePath
+
+                    if (Test-Path -Path $readmePath) {
+                        $content = Get-Content -Path $readmePath
+                        if ($content -match '^\\#\\s+.+' -and $content -match 'Project initialized on') {
+                            Write-Verbose 'README.md looks good.'
+                            $true
+                        }
+                        else {
+                            Write-Verbose 'README.md does not follow expected format.'
+                            $false
+                        }
+                    }
+                    else {
+                        Write-Verbose 'README.md not found.'
+                        $false
+                    }
+                `}
+                >
+                    <Fragment slot="title">Valida README.md</Fragment>
+                    <DibsSourceLink
+                        repo="scripts" file="core/Test-Readme.ps1"
+                        slot="source"
+                    />
+                </PowerShellBlock>
+            </Solution>
+        </Exercise>
+
+        <Book
+                chapter="Improving your parameterized script"
+                bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS"
+                pages={[249, 258]}
+            >
+                <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
+
+                <Fragment slot="description">
+                    Capítulo práctico sobre cómo llevar un script parametrizado de PowerShell “de básico a sólido”.
+                    Parte desde un ejemplo funcional (<PowerShellInline code={`Get-DiskInventory`} />) con ayuda
+                    embebida y dos parámetros, y muestra por qué conviene <B>emitir objetos</B> con
+                    <PowerShellInline code={`Select-Object`} /> en lugar de salida formateada, permitiendo usar
+                    <PowerShellInline code={`Format-Table`} /> o exportar a CSV sin cambios. Con
+                    <PowerShellInline code={`[CmdletBinding()]`} /> se vuelve “avanzado” y habilita
+                    <PowerShellInline code={`-Verbose`} /> para <B>trazas activables</B>. También introduce mejoras en
+                    la <B>definición de parámetros</B>: obligatorios con
+                    <PowerShellInline code={`[Parameter(Mandatory=$true)]`} />, <B>alias</B> con
+                    <PowerShellInline code={`[Alias('host')]`} /> y <B>validaciones</B> con
+                    <PowerShellInline code={`[ValidateSet(...)]`} />. Aunque centrado en
+                    <B>Windows</B>, los principios son transferibles. El capítulo introduce <B>conceptos más
+                        avanzados</B> que se explicarán más adelante o que quedan fuera del alcance de este curso, pero
+                    resulta ideal para quienes buscan crear scripts en PowerShell que sean profesionales, reutilizables
+                    y claros.
+                </Fragment>
+            </Book>
+    -->

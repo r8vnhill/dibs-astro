@@ -2,70 +2,70 @@
 /**
  * InlineCode.astro
  *
- * Displays inline code with dual Shiki themes (light/dark) using Astro's <Code /> component.
- * Ensures good typography, accessibility, and theming consistency using Tailwind utilities.
+ * Inline code with dual Shiki themes (light/dark), zero client JS.
+ * Extensible themes, optional colorized brackets, and small, testable surface.
  */
 
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { CodeLanguage } from "astro";
 import { Code } from "astro:components";
+import type { BundledTheme, ThemeRegistration, ThemeRegistrationRaw } from "shiki";
 
 type Props = {
-  /**
-   * Code snippet to render inline.
-   */
-  code: string;
-  /**
-   * Language for syntax highlighting.
-   */
-  lang: CodeLanguage;
-  /**
-   * Additional Tailwind classes.
-   */
-  class?: string;
+    code: string;
+    lang?: CodeLanguage; // default: "txt"
+    class?: string;
+    /** Shiki themes (override from layout/page if needed) */
+    themeLight?: BundledTheme | ThemeRegistration | ThemeRegistrationRaw; // default: "catppuccin-latte"
+    themeDark?: BundledTheme | ThemeRegistration | ThemeRegistrationRaw; // default: "catppuccin-mocha"
+    /** Toggle colorized bracket transformer */
+    brackets?: boolean; // default: true
+    /** Optional label for screen readers when snippet is not self-descriptive */
+    ariaLabel?: string;
 };
 
-const { code, lang, class: className = "" } = Astro.props as Props;
+const {
+    code,
+    lang = "txt",
+    class: className = "",
+    themeLight = "catppuccin-latte",
+    themeDark = "catppuccin-mocha",
+    brackets = true,
+    ariaLabel,
+} = Astro.props as Props;
 
-const safeLang = lang || "txt";
-const baseStyle = `
-  text-[0.95em]
-  font-mono
-  rounded
-  px-[2px]
-  py-[0px]
-  whitespace-nowrap
-  bg-transparent
-`;
----
-
-<code
-  class:list={[
+const baseClass = [
     "inline-block",
     "align-[0.05em]",
     "leading-[1.4]",
-    baseStyle,
-    className,
-  ]}
->
-  <span class="dark:hidden">
-    <Code
-      code={code}
-      lang={safeLang}
-      inline
-      theme="catppuccin-latte"
-      class:list={["!bg-transparent", "!shadow-none"]}
-      transformers={[transformerColorizedBrackets()]}
-    />
-  </span>
-  <span class="hidden dark:inline">
-    <Code
-      code={code}
-      lang={safeLang}
-      inline
-      theme="catppuccin-mocha"
-      class:list={["!bg-transparent", "!shadow-none"]}
-      transformers={[transformerColorizedBrackets()]}
-    />
-  </span>
-</code>
+    // Tailwind “token” utilities — keep visual identity consistent
+    "text-[0.95em]",
+    "font-mono",
+    "rounded",
+    "px-[2px]",
+    "py-[0px]",
+    "whitespace-nowrap",
+    "bg-transparent", // or `bg-code` if you define one in your theme
+].join(" ");
+
+const transformers = brackets ? [transformerColorizedBrackets()] : [];
+const variants = [
+    { wrapperClass: "dark:hidden", theme: themeLight },
+    { wrapperClass: "hidden dark:inline", theme: themeDark },
+];
+---
+
+<code
+    class:list={[baseClass, className]} data-lang={lang}
+    aria-label={ariaLabel}
+>{
+    variants.map(({ wrapperClass, theme }) => (
+        <span class={wrapperClass}>
+            <Code
+                {code} {lang}
+                inline {theme}
+                class:list={["!bg-transparent", "!shadow-none"]} {transformers}
+            />
+        </span>
+    ))
+}</code>

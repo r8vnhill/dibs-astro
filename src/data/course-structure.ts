@@ -47,6 +47,14 @@ export const courseStructure: Lesson[] = [
         href: "/notes/software-libraries/scripting/",
         children: [
           {
+            title: "Ayuda",
+            href: "/notes/software-libraries/scripting/help/",
+          },
+          {
+            title: "Primer script",
+            href: "/notes/software-libraries/scripting/first-script/",
+          },
+          {
             title: "Patrones básicos",
             href: "/notes/software-libraries/scripting/basic-patterns/",
           },
