@@ -1,43 +1,52 @@
 ---
 import type { AstroComponentFactory } from "~/types/astro-component";
-import FilledIcon from "../ui/callouts/FilledIcon.astro";
 import type { HeadingLevel } from "~/utils";
+import FilledIcon from "../ui/callouts/FilledIcon.astro";
 
 type Props = {
-  Icon?: AstroComponentFactory | null;
-  headingLevel?: Exclude<HeadingLevel, "h1">;
-  class?: string;
-  decorativeIcon?: boolean;
+    Icon?: AstroComponentFactory | null;
+    headingLevel?: Exclude<HeadingLevel, "h1">;
+    class?: string;
+    decorativeIcon?: boolean;
 };
 
 const {
-  Icon = null,
-  headingLevel = "h3",
-  class: className = "",
-  decorativeIcon = true,
-  ...rest
+    Icon = null,
+    headingLevel = "h3",
+    class: className = "",
+    decorativeIcon = true,
+    ...rest
 } = Astro.props as Props & Record<string, any>;
 
 const Tag = headingLevel;
+
+/**
+ * Tamaños tipográficos por nivel (h2–h6)
+ */
+const sizeClasses: Record<string, string> = {
+    h2: "text-xl sm:text-2xl",
+    h3: "text-lg sm:text-xl",
+    h4: "text-base sm:text-lg",
+    h5: "text-sm sm:text-base",
+    h6: "text-xs sm:text-sm",
+};
+
+const resolvedSize = sizeClasses[headingLevel] ?? sizeClasses.h3;
 ---
 
-<Tag
-  class:list={["flex items-center gap-2", className]}
-  {...rest}
->
-  <slot name="icon">
-    {Icon && (
-      <FilledIcon
-        Icon={Icon}
-        class="inline-block text-current"
-        iconClass="shrink-0"
-        size="1em"
-        variant="outline"
-        decorative={decorativeIcon}
-        aria-hidden={decorativeIcon ? "true" : "false"}
-      />
-    )}
-  </slot>
+<Tag class:list={["flex items-center gap-2", resolvedSize, className]} {...rest}>
+    <slot name="icon">
+        {
+            Icon && (
+                <FilledIcon
+                    {Icon} class="inline-block text-current"
+                    iconClass="shrink-0" size="1em"
+                    variant="outline" decorative={decorativeIcon}
+                    aria-hidden={decorativeIcon ? "true" : "false"}
+                />
+            )
+        }
+    </slot>
 
-  <slot />
+    <slot />
 </Tag>

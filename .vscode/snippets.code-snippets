@@ -1,21 +1,5 @@
 {
-  "PowerShellBlock con slots": {
-	"scope": "astro",
-    "prefix": "psblock",
-    "body": [
-      "<PowerShellBlock code={`",
-      "    $1",
-      "`}>",
-      "    <Fragment slot=\"title\">${2:...}</Fragment>",
-      "    <Fragment slot=\"footer\">${3:...}</Fragment>",
-      "    <Fragment slot=\"source\">${4:path/to/script.ps1}</Fragment>",
-      "</PowerShellBlock>"
-    ],
-    "description": "Inserta un bloque PowerShellBlock con slots de título, footer y source."
-  },
-  "NotesLayout": {
-		"prefix": "noteslayout",
-    "scope": "astro",
+	"NotesLayout": {
 		"body": [
 			"---",
 			"import * as icons from \"~/assets/img/icons\";",
@@ -24,22 +8,23 @@
 			"---",
 			"",
 			"<NotesLayout",
-      "    title=\"${1:Definir título}\"",
-      "    description=\"${2:Definir descripción}\"",
-      "    timeMultiplier={${3:1.5}}",
-      ">",
+			"    title=\"${1:Definir título}\"",
+			"    description=\"${2:Definir descripción}\"",
+			"    timeMultiplier={${3:1.5}}",
+			">",
 			"    $0",
 			"</NotesLayout>"
 		],
-		"description": "Insert a NotesLayout component"
+		"description": "Insert a NotesLayout component",
+		"prefix": "noteslayout",
+		"scope": "astro"
 	},
-  "NotesSection": {
-		"prefix": "notessection",
+	"NotesSection": {
 		"body": [
 			"<NotesSection id=\"...\">",
 			"    <Heading headingLevel=\"${2:h2}\" Icon={null}",
-      "        slot=\"heading\"",
-      "    >",
+			"        slot=\"heading\"",
+			"    >",
 			"        ...",
 			"    </Heading>",
 			"",
@@ -57,10 +42,32 @@
 			"    />",
 			"</NotesSection>"
 		],
-		"description": "Insert a NotesSection component"
+		"description": "Insert a NotesSection component",
+		"prefix": "notessection"
+	},
+	"PowerShell Inline": {
+		"body": [
+			"<PowerShellInline code={`$1`} />"
+		],
+		"description": "Inserta un componente PowerShellInline",
+		"prefix": "psinline",
+		"scope": "astro"
+	},
+	"PowerShellBlock con slots": {
+		"body": [
+			"<PowerShellBlock code={`",
+			"    $1",
+			"`}>",
+			"    <Fragment slot=\"title\">${2:...}</Fragment>",
+			"    <Fragment slot=\"footer\">${3:...}</Fragment>",
+			"    <Fragment slot=\"source\">${4:path/to/script.ps1}</Fragment>",
+			"</PowerShellBlock>"
+		],
+		"description": "Inserta un bloque PowerShellBlock con slots de título, footer y source.",
+		"prefix": "psblock",
+		"scope": "astro"
 	},
 	"ProCons": {
-		"prefix": "procons",
 		"body": [
 			"<ProCons>",
 			"    <Pros>",
@@ -79,6 +86,7 @@
 			"    </Cons>",
 			"</ProCons>"
 		],
-		"description": "Insert a ProCons component"
+		"description": "Insert a ProCons component",
+		"prefix": "procons"
 	}
 }

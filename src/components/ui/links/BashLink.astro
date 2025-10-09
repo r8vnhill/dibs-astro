@@ -1,0 +1,47 @@
+---
+/**
+ * BashLink.astro
+ *
+ * Enlaza a {slug}/bash/ usando la URL actual de la página.
+ * Cambia el logo según tema claro/oscuro sin JS (dark:hidden / hidden dark:inline).
+ * Evita espacios indeseados con `contents` para que el wrapper no agregue caja.
+ */
+
+import { LangLink } from ".";
+
+type Props = {
+    /** Opcional: sobrescribe la base (slug). Por defecto, se deriva de Astro.url.pathname */
+    slug?: string;
+    /** Opcional: cambia el nombre visible del destino */
+    name?: string;
+    /** Logos opcionales por tema (urls absolutas) */
+    srcLight?: string;
+    srcDark?: string;
+};
+
+// Defaults de imágenes
+const DEFAULT_LIGHT = "https://bashlogo.com/img/symbol/png/full_colored_dark.png";
+const DEFAULT_DARK = "https://bashlogo.com/img/symbol/png/full_colored_light.png";
+
+const {
+    slug,
+    name = "Bash",
+    srcLight = DEFAULT_LIGHT,
+    srcDark = DEFAULT_DARK,
+} = Astro.props as Props;
+
+// Base actual de la página, sin barra final
+const base = (slug ?? Astro.url.pathname).replace(/\/$/, "");
+
+// Construye {slug}/bash/ garantizando una barra final
+const href = `${base}/bash/`;
+---
+
+<!-- wrapper neutro sin aporte de layout ni espacios -->
+<span class="contents"><span class="dark:hidden contents"><LangLink
+            {href} src={srcLight}
+            {name}
+        /></span><span class="hidden dark:contents"><LangLink
+            {href} src={srcDark}
+            {name}
+        /></span></span>
