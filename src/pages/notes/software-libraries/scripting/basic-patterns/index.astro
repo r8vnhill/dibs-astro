@@ -1,626 +1,552 @@
 ---
 import * as icons from "~/assets/img/icons";
-import NotesLayout from "~/layouts/NotesLayout.astro";
-import {
-  Abstract,
-  Definition,
-  Exercise,
-  Explanation,
-  Hints,
-  More,
-  Note,
-  Solution,
-  Tip,
-  Warning,
-} from "~/components/ui/callouts";
-import NotesSection from "~/layouts/NotesSection.astro";
-import Heading from "~/components/semantics/Heading.astro";
-import {
-  MarkdownInline,
-  OutputBlock,
-  PowerShellBlock,
-  PowerShellInline,
-} from "~/components/ui/code";
+import comoImg from "~/assets/img/why/como.webp";
+import { Heading, P } from "~/components/semantics";
+import { Abstract, Explanation, Important, Info, More, Note, Question, Tip, Warning } from "~/components/ui/callouts";
+import { MarkdownInline, OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
-import { References, WebPage } from "~/components/ui/references";
 import ToDo from "~/components/utils/ToDo";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
-<NotesLayout title="Patrones básicos de scripting"
-  ><Abstract
-    >Esta lección presenta dos patrones esenciales para escribir scripts seguros
-    y mantenibles en PowerShell 7+: el <em>ensayo seguro</em> con <PowerShellInline
-      code="-WhatIf"
-    /> y <PowerShellInline code="-Confirm" /> mediante <PowerShellInline
-      code="[CmdletBinding(SupportsShouldProcess)]"
-    /> y <PowerShellInline code="$PSCmdlet.ShouldProcess(...)" />, para simular
-    o exigir confirmación antes de modificar el sistema; y el
-    recorrido/transformación de archivos para estandarizar metadatos (crear <code
-      >LICENSE</code
-    > y añadir <MarkdownInline code="## License" /> en <code>README.md</code>),
-    aprovechando la pipeline de objetos, validaciones de parámetros (<PowerShellInline
-      code="[ValidateRange]"
-    />, <PowerShellInline code="[switch]" />) y utilidades como <PowerShellInline
-      code="$PSScriptRoot"
-    />. También se compara <PowerShellInline code="foreach" /> vs <PowerShellInline
-      code="ForEach-Object"
-    /> y se recomiendan prácticas que favorecen la claridad (evitar backticks frágiles).
-    Cerrarás aplicando estos conceptos con un ejercicio de normalización de <code
-      >README.md</code
-    > orientado a automatización y pruebas.</Abstract
-  >
+<NotesLayout
+    title="Patrones básicos de scripting"
+    description="Si estás leyendo esto es porque se me olvidó agregar la descripción."
+    git={{ user: "r8vnhill", repo: "dibs-scripts" }}
+>
+    <Abstract>
+        ...
+    </Abstract>
 
-  <NotesSection id="h2-should-process"
-    ><Heading headingLevel="h2" Icon={icons.ShieldCheck}
-      >Patrón de ensayo seguro (simular antes de ejecutar)</Heading
-    >
-
-    <p class="mb-4">
-      Antes de modificar archivos o crear estructuras, es buena práctica hacer
-      un “ensayo” que muestre <em>qué</em> se haría sin hacerlo realmente. En PowerShell
-      esto se logra con <PowerShellInline code="-WhatIf" /> (vía
-      <PowerShellInline code="SupportsShouldProcess" />). Así evitamos efectos
-      no deseados y ganamos confianza en el script.
-    </p>
-
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: [
-          `Cambiar
-            $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path ?? $Name)
-          por
-            [string]$base = if (
-                $PSBoundParameters.ContainsKey('Path') -and -not [string]::IsNullOrWhiteSpace($Path)
-            ) {
-                $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
-            }
-            else {
-                (Get-Location).ProviderPath
-            }
-
-            $target = Join-Path -Path $base -ChildPath $Name
-          `,
-        ],
-      }}
-    />
-
-    <PowerShellBlock
-      code={`
-        #Requires -Version 7.0
-        [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-        param(
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Name,
-
-            [string] $Path
-        )
-
-        # Si no se pasa -Path, usar el nombre del proyecto como carpeta en el cwd
-        $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path ?? $Name)
-
-        if ($PSCmdlet.ShouldProcess($target, 'Initialize project and create README.md')) {
-            New-Item -Path $target -ItemType Directory -Force | Out-Null
-
-            $helperPath = Join-Path -Path $PSScriptRoot -ChildPath 'New-Readme.ps1'
-            & $helperPath -Name $Name -Verbose:$VerbosePreference |
-                Set-Content -Path (
-                    Join-Path -Path $target -ChildPath 'README.md') -Encoding UTF8 -Force
-        }
-      `}
-      ><Fragment slot="title"
-        >Initialize-Project (con <code>-WhatIf</code>)</Fragment
-      >
-      <DibsSourceLink
-        repo="scripts"
-        file="Initialize-Project.ps1"
-        slot="source"
-      /></PowerShellBlock
-    >
-
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: [
-          `<ListItem icon={icons.Path}>
-                        <B>ProviderPath vs. Path</B>: PowerShell distingue entre rutas del sistema de archivos
-                        (<PowerShellInline code="ProviderPath" />) y rutas calificadas por proveedor (<PowerShellInline
-                            code="Path"
-                        />, como <Mono>Microsoft.PowerShell.Core\FileSystem::C:\</Mono>). Algunas herramientas externas
-                        —como <I>git</I>— no entienden las rutas con prefijo de proveedor. Por eso usamos:
-                        <PowerShellInline
-                            code="$repoPath = if ($rp.ProviderPath) { $rp.ProviderPath } else { $rp.Path }"
-                        />
-                        para asegurar que el comando reciba una ruta nativa del sistema operativo.
-                    </ListItem>`,
-                    "GetUnresolvedProviderPathFromPSPath vs. GetResolvedPathFromPSPath.",
-        ],
-      }}
-    />
-    
-    <Explanation
-      ><List
-        ><ListItem icon={icons.Shield}
-          ><PowerShellInline code="SupportsShouldProcess" /> habilita
-          <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-            code="-Confirm"
-          />, permitiendo simular u obligar confirmación antes de actuar.
-          Además, con <PowerShellInline code="ConfirmImpact = 'Medium'" />
-          indicamos la “gravedad” de la operación: PowerShell solo pedirá confirmación
-          automática si la preferencia del usuario (<PowerShellInline
-            code="$ConfirmPreference"
-          />) es igual o más baja.
-
-          <List
-            ><ListItem icon={icons.CheckCircle}
-              ><PowerShellInline code="Low" /> → operaciones triviales, casi nunca
-              piden confirmación.</ListItem
-            >
-
-            <ListItem icon={icons.FolderPlus}
-              ><PowerShellInline code="Medium" /> → operaciones que crean o modifican
-              archivos (nuestro caso: inicializar un proyecto).</ListItem
-            >
-
-            <ListItem icon={icons.Trash}
-              ><PowerShellInline code="High" /> → operaciones destructivas, como
-              borrar datos críticos.</ListItem
-            ></List
-          >
-
-          Usar <code>Medium</code> comunica que el script modifica el sistema de
-          forma relevante (crea carpetas y archivos), pero sin ser una acción destructiva.</ListItem
+    <NotesSection id="h2-should-process">
+        <Heading
+            headingLevel="h2" Icon={icons.ShieldCheck}
+            slot="heading"
         >
+            Patrón de ensayo seguro (simular antes de ejecutar)
+        </Heading>
 
-        <ListItem icon={icons.CurrencyDollar}
-          ><PowerShellInline code="$PSCmdlet" /> es una variable automática disponible
-          en funciones avanzadas (<PowerShellInline
-            code="[CmdletBinding()]"
-          />). Representa la instancia actual del cmdlet en ejecución y permite
-          acceder a información y utilidades internas, como <PowerShellInline
-            code="$PSCmdlet.ShouldProcess()"
-          /> o <PowerShellInline code="$PSCmdlet.SessionState" />.</ListItem
-        >
+        <P>
+            Antes de modificar archivos o crear estructuras, es buena práctica hacer un “ensayo” que muestre <I>qué</I>
+            se haría sin hacerlo realmente. En PowerShell esto se logra con <PowerShellInline code="-WhatIf" /> (vía
+            <PowerShellInline code="SupportsShouldProcess" />). Así evitamos efectos no deseados y ganamos confianza en
+            el script.
+        </P>
 
-        <ListItem icon={icons.Path}>
-          La variable <PowerShellInline code="$target" /> se calcula con
-          <PowerShellInline
-            code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)"
-          />, un método de PowerShell que convierte una ruta relativa o con
-          <code>~</code> en una ruta absoluta válida del sistema de archivos.
+        <PowerShellBlock
+            code={`
+                #Requires -Version 7.4
+                [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrEmpty()]
+                    [string] $Name,
 
-          <List>
-            <ListItem icon={icons.TextT}>
-              El operador <PowerShellInline code="??" /> devuelve
-              <PowerShellInline code="$Path" /> si fue pasado como argumento, o en
-              su defecto el valor de <PowerShellInline code="$Name" />.
-            </ListItem>
-            <ListItem icon={icons.FolderOpen}>
-              No es necesario pasar un directorio base explícito: PowerShell
-              resuelve la ruta relativa con respecto al directorio actual y la
-              expande a una forma absoluta, incluso si la carpeta aún no existe.
-            </ListItem>
-          </List>
-        </ListItem>
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -Path $_ -PathType Container })]
+                    [string] $Path
+                )
 
-        <ListItem icon={icons.ShieldCheck}>
-          <PowerShellInline code="$PSCmdlet.ShouldProcess(...)" /> consulta si la
-          acción debe ejecutarse. <PowerShellInline code="ShouldProcess" /> habilita
-          soportar <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-            code="-Confirm"
-          />, permitiendo simular o pedir confirmación antes de modificar el
-          sistema.
-        </ListItem>
+                $base = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
+                $target = Join-Path $base $Name
+                $readmePath = Join-Path $target 'README.md'
+                $helperPath = Join-Path $PSScriptRoot 'New-Readme.ps1' -Resolve
 
-        <ListItem icon={icons.FolderOpen}>
-          <PowerShellInline code="$PSScriptRoot" /> contiene la ruta absoluta de
-          la carpeta donde se encuentra el script actual. Es útil para construir
-          rutas relativas seguras (por ejemplo, a otros scripts o recursos en el
-          mismo directorio), en lugar de depender del directorio desde el que se
-          ejecuta PowerShell.
-        </ListItem>
+                Write-Verbose (@'
+                Base path: {0}
+                Project destination: {1}
+                Helper: {2}
+                '@ -f $base, $target, $helperPath)
 
-        <ListItem icon={icons.Terminal}>
-          <PowerShellInline
-            code="& $helperPath -Name $Name -Verbose:$VerbosePreference | Set-Content ..."
-          /> ejecuta otro script y redirige su salida a un archivo.
+                if (!(Test-Path -Path $readmePath -PathType Leaf)) {
+                    if ($PSCmdlet.ShouldProcess($readmePath, 'Create README.md')) {
+                        $content = & $helperPath -Name $Name -Verbose:$VerbosePreference
+                        Set-Content -Path $readmePath -Encoding UTF8 -Value $content
 
-          <List>
-            <ListItem icon={icons.PlayCircle}>
-              <PowerShellInline code="&" /> es el <em>call operator</em>:
-              permite invocar el script cuya ruta está almacenada en
-              <PowerShellInline code="$helperPath" />.<FootnoteRef index={1} />
-            </ListItem>
-
-            <ListItem icon={icons.ToggleRight}>
-              <PowerShellInline code="-Verbose:$VerbosePreference" /> asegura que
-              la preferencia <PowerShellInline code="-Verbose" /> se respete también
-              en el script secundario.
-              <PowerShellInline code="$VerbosePreference" /> es una variable automática
-              de PowerShell que guarda si la sesión actual está en modo detallado.
-              Al usar la sintaxis <PowerShellInline
-                code=":$VerbosePreference"
-              />, transmitimos explícitamente el valor booleano (por ejemplo,
-              <PowerShellInline code="$true" /> si se ejecutó con
-              <PowerShellInline code="-Verbose" />). Sin esto, el script llamado
-              ignoraría el estado de verbosidad y siempre trabajaría en modo
-              silencioso.
-            </ListItem>
-          </List>
-        </ListItem>
-      </List>
-    </Explanation>
-
-    <PowerShellBlock
-      code={`
-        # Desde dibs:
-        .\\scripts\\Initialize-Project.ps1 -Name "Test" -Path "test" -Verbose -WhatIf
-      `}
-    >
-      <Fragment slot="title">Desde la terminal de PowerShell</Fragment>
-    </PowerShellBlock>
-
-    <OutputBlock
-      code={`
-        What if: Performing the operation "Initialize project and create README.md" on target "C:\\path\\to\\dibs\\test".
-      `}
-    >
-      <span slot="title">Salida con <PowerShellInline code="-WhatIf" /></span>
-    </OutputBlock>
-  </NotesSection>
-
-  <NotesSection id="h2-iteration">
-    <Heading headingLevel="h2" Icon={icons.ArrowsClockwise}>
-      Recorrer y transformar archivos
-    </Heading>
-
-    <p class="mb-4">
-      Un caso típico en bibliotecas de software es estandarizar metadatos: por
-      ejemplo, asegurarte de que cada proyecto tenga archivo <code>LICENSE</code
-      >
-      y que su <code>README.md</code> incluya una sección de licencia. A continuación
-      iteramos por todos los <code>README.md</code> del árbol, creamos <code
-        >LICENSE</code
-      ><FootnoteRef index={2} />&nbsp;si falta y añadimos (o evitamos duplicar)
-      la sección
-      <MarkdownInline code="## License" />.
-    </p>
-
-    <PowerShellBlock
-      code={`
-        #Requires -Version 7.0
-        [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-        param(
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Root,
-
-            [Parameter(Mandatory)]
-            [ValidateNotNullOrEmpty()]
-            [string] $Owner,
-            
-            [ValidateRange(1900, 3000)]
-            [int] $Year = (Get-Date).Year
-        )
-
-        $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
-
-        $bsd2Url = 'https://raw.githubusercontent.com/spdx/license-list-data/master/text/BSD-2-Clause.txt'
-        $licenseText = (Invoke-WebRequest -Uri $bsd2Url).Content \`
-            -replace '<year>', $Year \`
-            -replace '<owner>', $Owner
-
-        $readmes = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
-
-        foreach ($readme in $readmes) {
-            $dir = Split-Path -Parent $readme.FullName
-            $licensePath = Join-Path $dir 'LICENSE'
-
-            if (-not (Test-Path -LiteralPath $licensePath)) {
-                if ($PSCmdlet.ShouldProcess($licensePath, 'Create LICENSE (BSD-2)')) {
-                    Set-Content -Value $licenseText -LiteralPath $licensePath -Encoding utf8
-                    Write-Output "LICENSE created -> $licensePath"
+                        Write-Information ('README.md created successfully at {0}' -f $readmePath)
+                    }
                 }
-            }
-            else {
-                Write-Warning "LICENSE already present -> $licensePath"
-            }
+                else {
+                    Write-Warning ('README.md already exists at {0}; creation skipped.' -f $readmePath)
+                }
+            `}
+        >
+            <Fragment slot="title">
+                Initialize-Project (con <code>-WhatIf</code>)
+            </Fragment>
+            <DibsSourceLink
+                repo="scripts" file="Initialize-Project.ps1"
+                slot="source"
+            />
+        </PowerShellBlock>
 
-            $readmeText = Get-Content -Raw -LiteralPath $readme.FullName
-            if ($readmeText -notmatch '(?im)^##\\s*License\\b') {
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.Shield}>
+                    <PowerShellInline code="SupportsShouldProcess" /> permite simular o confirmar acciones con
+                    <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />. Esto hace que los
+                    scripts sean más seguros al modificar el sistema, sobre todo con <PowerShellInline
+                        code="ConfirmImpact = 'Medium'"
+                    />.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                    <PowerShellInline code="[ValidateNotNullOrWhiteSpace()]" /> (desde PowerShell&nbsp;7.4) evita que el
+                    valor sea
+                    <PowerShellInline code="$null" />, vacío o solo espacios.
+                </ListItem>
+
+                <ListItem icon={icons.CurrencyDollar}>
+                    <PowerShellInline code="$PSCmdlet" /> expone información y utilidades del “cmdlet actual”, como
+                    <PowerShellInline code="ShouldProcess()" /> para integrar <PowerShellInline code="-WhatIf" /> y
+                    <PowerShellInline code="-Confirm" />.
+                </ListItem>
+
+                <ListItem icon={icons.FolderOpen}>
+                    <PowerShellInline code="Path" /> puede incluir el proveedor (por ejemplo,
+                    <Mono>Microsoft.PowerShell.Core\FileSystem::C:\Users</Mono>), mientras que
+                    <PowerShellInline code="ProviderPath" /> muestra solo la ruta del sistema (por ejemplo, <Mono
+                    >C:\Users</Mono>).
+                    <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)" /> es una forma segura y
+                    portable de obtener el <I>provider path</I> real dentro de un script. Como ya validamos que la ruta
+                    existe con
+                    <PowerShellInline code="[ValidateScript(...)]" />, usar <Mono>Unresolved</Mono> es suficiente y
+                    confiable.
+
+                    <More headingLevel="h5">
+                        <span slot="title">¿Y si necesito usar <Mono>Resolved</Mono>?</span>
+
+                        <P>
+                            <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)" /> no requiere
+                            que la ruta exista, por lo que es más flexible. En cambio,
+                            <PowerShellInline code="$PSCmdlet.GetResolvedProviderPathFromPSPath(...)" /> solo funciona
+                            con rutas reales existentes y necesita un parámetro adicional que representa el proveedor
+                            (por ejemplo, el file system). Este enfoque es menos común y se usa principalmente en
+                            escenarios más avanzados.
+                        </P>
+
+                        <P>Ejemplo de uso con la variante <Mono>Resolved</Mono>:</P>
+
+                        <PowerShellBlock
+                            code={`
+                                $base = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path,
+                                    [ref](Get-PSProvider FileSystem))
+                            `}
+                        >
+                            <Fragment slot="title">Conversión a ruta resuelta</Fragment>
+                            <Fragment slot="footer">Devuelve la ruta real solo si existe.</Fragment>
+                        </PowerShellBlock>
+                    </More>
+                </ListItem>
+
+                <ListItem icon={icons.Info}>
+                    <PowerShellInline code="Write-Information" /> y <PowerShellInline code="Write-Warning" /> muestran
+                    mensajes sin detener la ejecución. Se usan junto a <PowerShellInline code="Write-Verbose" /> para
+                    diferenciar propósitos.
+                </ListItem>
+
+                <ListItem icon={icons.Link}>
+                    <B><PowerShellInline code="$PSScriptRoot" /></B> devuelve la ruta donde está el script actual. Útil
+                    para cargar helpers locales sin depender del directorio de ejecución.
+                </ListItem>
+
+                <ListItem icon={icons.MapPin}>
+                    <B><PowerShellInline code="-Resolve" /></B> en <PowerShellInline code="Join-Path" /> verifica que la
+                    ruta exista y devuelve su forma absoluta; falla si el archivo no existe.
+                </ListItem>
+
+                <ListItem icon={icons.PlayCircle}>
+                    <B><PowerShellInline code="&" /></B> ejecuta comandos o scripts almacenados en variables, como
+                    <PowerShellInline code="& $helperPath -Name $Name" />.
+                </ListItem>
+
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <B><PowerShellInline code="-Switch:$variable" /></B> permite pasar un switch solo si la variable
+                    booleana es
+                    <PowerShellInline code="$true" />, como <PowerShellInline code="-Verbose:$VerbosePreference" />.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Important headingLevel="h3">
+            <Fragment slot="title">Confirmación y simulación</Fragment>
+            <P>
+                <PowerShellInline code="SupportsShouldProcess" /> habilita las banderas <PowerShellInline
+                    code="-WhatIf"
+                /> y <PowerShellInline code="-Confirm" />. <PowerShellInline code={`-WhatIf`} /> muestra lo que el
+                script haría sin ejecutar acciones, mientras que <PowerShellInline code={`-Confirm`} /> pide
+                confirmación antes de continuar.
+            </P>
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <PowerShellInline code="Low" /> → operaciones triviales.
+                </ListItem>
+                <ListItem icon={icons.FolderPlus}>
+                    <PowerShellInline code="Medium" /> → crean o modifican archivos (como en este ejemplo).
+                </ListItem>
+                <ListItem icon={icons.Trash}>
+                    <PowerShellInline code="High" /> → operaciones destructivas o críticas.
+                </ListItem>
+            </List>
+        </Important>
+
+        <NotesSection id="h3-safe-dry-run">
+            <Heading
+                headingLevel="h3" Icon={icons.TerminalWindow}
+                slot="heading"
+            >
+                Ensayo seguro con <Mono>-WhatIf</Mono> y confirmación
+            </Heading>
+
+            <P>
+                Antes de crear carpetas o archivos, ensaya el cambio con <PowerShellInline code="-WhatIf" />. Así
+                verificas <I>qué</I> haría el script sin modificar nada. Si además quieres pedir confirmación
+                interactiva, usa <PowerShellInline code="-Confirm" />.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                    ./scripts/Initialize-Project.ps1 -Name "Test" -Path "." -Verbose -WhatIf
+                `}
+            >
+                <Fragment slot="title">Desde <Mono>dibs/</Mono></Fragment>
+            </PowerShellBlock>
+
+            <OutputBlock
+                code={`
+                    What if: Performing the operation "Initialize project and create README.md" on target "/path/to/dibs/Test".
+                `}
+            >
+                <span slot="title">Salida con <PowerShellInline code="-WhatIf" /></span>
+            </OutputBlock>
+
+            <Question headingLevel="h4">
+                Prueba distintos valores de <PowerShellInline code="-Name" /> y <PowerShellInline code="-Path" /> con
+                <PowerShellInline code="-WhatIf" />. ¿Qué sucede si el proyecto ya existe? ¿Y si la ruta no existe?
+            </Question>
+
+            <Question headingLevel="h4">
+                Ejecuta el script con <PowerShellInline code="-Confirm" /> para observar el flujo de confirmaciones.
+            </Question>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-iteration">
+        <Heading headingLevel="h2" Icon={icons.ArrowsClockwise}>
+            Recorrer y transformar archivos
+        </Heading>
+
+        <P>
+            Un caso típico en bibliotecas de software es estandarizar metadatos: por ejemplo, asegurarte de que cada
+            proyecto tenga archivo <code>LICENSE</code>
+            y que su <code>README.md</code> incluya una sección de licencia. A continuación iteramos por todos los <code
+            >README.md</code> del árbol, creamos <code>LICENSE</code><FootnoteRef index={1} />&nbsp;si falta y añadimos
+            (o evitamos duplicar) la sección
+            <MarkdownInline code="## License" />.
+        </P>
+
+        <PowerShellBlock
+            code={`
+                #Requires -Version 7.4
+                [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -Path $_ -PathType Container })]
+                    [string] $Root,
+
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $Owner,
+                    
+                    [ValidateRange(1900, 3000)]
+                    [int] $Year = (Get-Date).Year
+                )
+
+                $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
+                $bsd2Url = 'https://raw.githubusercontent.com/spdx/license-list-data/master/text/BSD-2-Clause.txt'
                 $section = @'
+                ## License
 
-        ## License
+                This project is licensed under the **BSD 2-Clause** license.  
+                See the [LICENSE](./LICENSE) file for details.
+                '@
 
-        This project is licensed under the **BSD 2-Clause** license.  
-        See the [LICENSE](./LICENSE) file for details.
+                $licenseText = (Invoke-RestMethod -Uri $bsd2Url) -replace '<year>', $Year -replace (
+                    '<owner>', $Owner)
 
-        '@
-                $new = $readmeText.TrimEnd() + [Environment]::NewLine + $section
-                if ($PSCmdlet.ShouldProcess($readme.FullName, 'Append License section')) {
-                    Set-Content -LiteralPath $readme.FullName -Encoding utf8 -NoNewline:$false -Value $new
-                    Write-Output "License section appended -> $($readme.FullName)"
+                $foundReadmes = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
+
+                foreach ($readme in $foundReadmes) {
+                    $dir = $readme.DirectoryName
+                    $licensePath = Join-Path $dir 'LICENSE'
+
+                    if (!(Test-Path -LiteralPath $licensePath)) {
+                        if ($PSCmdlet.ShouldProcess($licensePath, 'Create LICENSE (BSD-2)')) {
+                            Set-Content -LiteralPath $licensePath -Encoding utf8 -Value $licenseText
+                            Write-Information ('LICENSE created -> {0}' -f $licensePath)
+                        }
+                    }
+                    else {
+                        Write-Warning ('LICENSE already present -> {0}' -f $licensePath)
+                    }
+
+                    $readmeText = Get-Content -LiteralPath $readme.FullName -Raw
+                    if ($readmeText -notmatch '(?im)^##\\s*License\\b') {
+                        if ($PSCmdlet.ShouldProcess($readme.FullName, 'Append License section')) {
+                            $nl2 = [Environment]::NewLine * 2
+                            Add-Content -LiteralPath $readme.FullName -Encoding utf8 -Value (
+                                $nl2 + $section)
+                            Write-Information ('License section appended -> {0}' -f $readme.FullName)
+                        }
+                    }
+                    else {
+                        Write-Warning ('README already has a License section -> {0}' -f $readme.FullName)
+                    }
                 }
-            }
-            else {
-                Write-Warning "README already has a License section -> $($readme.FullName)"
-            }
-        }
-      `}
-    >
-      <span slot="title">Estandarizar LICENSE y sección en README.md</span>
-      <DibsSourceLink slot="source" repo="scripts" file="Apply-License.ps1" />
-    </PowerShellBlock>
+            `}
+        >
+            <span slot="title">Estandarizar LICENSE y sección en README.md</span>
+            <DibsSourceLink
+                slot="source" repo="scripts"
+                file="Apply-License.ps1"
+            />
+        </PowerShellBlock>
 
-    <Explanation>
-      <List>
-        <ListItem icon={icons.NumberCircleOne}>
-          <PowerShellInline code="[ValidateRange(1900, 3000)]" /> valida en tiempo
-          de <em>binding</em> que <PowerShellInline code="-Year" /> esté dentro del
-          rango permitido. Si no, PowerShell detiene el script antes de ejecutar
-          la lógica.
-        </ListItem>
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.NumberCircleOne}>
+                    <PowerShellInline code="[ValidateRange(1900, 3000)]" /> valida en tiempo de <em>binding</em> que
+                    <PowerShellInline code="-Year" /> esté dentro del rango permitido. Si no, PowerShell detiene el
+                    script antes de ejecutar la lógica.
 
-        <ListItem icon={icons.MagnifyingGlass}>
-          <PowerShellInline
-            code="Get-ChildItem -Path $Root -Recurse -File -Filter README.md"
-          />: recorre <em>recursivamente</em> la carpeta raíz indicada en <PowerShellInline
-            code="$Root"
-          />
-          y devuelve únicamente los archivos llamados <code>README.md</code>.
-          <PowerShellInline code="-Recurse" /> baja por todas las subcarpetas,
-          <PowerShellInline code="-File" /> restringe la búsqueda a archivos (ignora
-          directorios), y <PowerShellInline code="-Filter" /> aplica el patrón directamente
-          en el proveedor del sistema de archivos, lo que lo hace más eficiente que
-          filtrar con <PowerShellInline code="Where-Object" /> después de obtener
-          los resultados.
-        </ListItem>
+                    <More headingLevel="h5">
+                        <span slot="title">¿Y si estoy programando después del año 3000?</span>
 
-        <ListItem icon={icons.ArrowsClockwise}>
-          <strong
-            ><PowerShellInline
-              code="foreach ($readme in $readmes) { ... }"
-            /></strong
-          >: bucle nativo (no de pipeline) que itera colecciones en memoria. Es
-          rápido y legible para transformaciones por archivo.
-        </ListItem>
+                        <img
+                            src={comoImg.src} alt="¿Qué?"
+                            class="mx-auto my-4 w-64 rounded-xl shadow-md transition-transform duration-300 hover:scale-105"
+                        />
+                    </More>
+                </ListItem>
 
-        <ListItem icon={icons.FolderOpen}>
-          <PowerShellInline code="Split-Path -Parent $readme.FullName" /> devuelve
-          la carpeta que contiene el archivo <code>README.md</code> actual.
-        </ListItem>
+                <ToDo
+                    client:only="react"
+                    metadata={{
+                        tasks: [
+                            "Explicar Invoke-RestMethod",
+                        ],
+                    }}
+                />
 
-        <ListItem icon={icons.Question}>
-          <PowerShellInline
-            code="-not (Test-Path -LiteralPath $licensePath)"
-          />: comprueba existencia del archivo. Con <PowerShellInline
-            code="-LiteralPath"
-          /> evitas confusiones con nombres que contienen <code>[</code> o <code
-            >*</code
-          >.
-        </ListItem>
+                <ToDo
+                    client:only="react"
+                    metadata={{
+                        tasks: [
+                            "Explicar -replace",
+                        ],
+                    }}
+                />
 
-        <ListItem icon={icons.CloudArrowDown}>
-          <PowerShellInline code="Invoke-WebRequest" /> realiza una petición HTTP
-          a una URL y devuelve un objeto rico con información de la respuesta (estado,
-          cabeceras, contenido, etc.). En este caso nos interesa la propiedad <PowerShellInline
-            code=".Content"
-          />, que contiene el cuerpo de la respuesta como texto. Ese texto —la
-          licencia BSD-2— se envía luego por <em>pipeline</em> a <PowerShellInline
-            code="Set-Content"
-          /> para guardarlo en el archivo <code>LICENSE</code>.
-        </ListItem>
+                <ToDo
+                    client:only="react"
+                    metadata={{
+                        tasks: [
+                            "Explicar Get-ChildItem -Recurse -File -Filter",
+                        ],
+                    }}
+                />
 
-        <ListItem icon={icons.TextT}>
-          Reemplazos:
-          <PowerShellInline code="-replace '<year>', $Year" /> y
-          <PowerShellInline code="-replace '<owner>', $Owner" /> insertan tus datos
-          en la plantilla. <PowerShellInline code="-replace" /> usa <em
-            >regex</em
-          >; si tu <PowerShellInline code="$Owner" /> incluye <code>$</code>,
-          escápalo con
-          <PowerShellInline code="$Owner -replace '\\$','$$'" /> para tratarlo como
-          literal.
-        </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <PowerShellInline code="foreach ($readme in $foundReadmes) { ... }" />: bucle nativo (no de
+                    pipeline) que itera colecciones en memoria. Es rápido y legible para transformaciones por archivo.
+                </ListItem>
 
-        <ListItem icon={icons.Megaphone}>
-          <PowerShellInline code="Write-Output" /> envía resultados al pipeline y
-          suele usarse para registrar acciones normales (por ejemplo, “archivo creado”).
-          <PowerShellInline code="Write-Warning" /> en cambio resalta situaciones
-          que no son errores pero merecen atención (por ejemplo, “el archivo ya existía”).
-          Ambos cmdlets respetan las preferencias del host (por ejemplo,
-          <PowerShellInline code="$WarningPreference" />) y permiten que los
-          mensajes se filtren o redirijan fácilmente.<FootnoteRef index={3} />
-        </ListItem>
+                <ListItem icon={icons.Funnel}>
+                    <PowerShellInline code="$readmeText -notmatch '(?im)^##\\s*License\\b'" /> usa el operador de
+                    comparación con expresiones regulares <PowerShellInline code="-match" /> / <PowerShellInline
+                        code="-notmatch"
+                    />. Este devuelve un valor booleano según si la cadena cumple (o no cumple) con el patrón dado. En
+                    este caso:
+                    <List>
+                        <ListItem icon={icons.TextT}>
+                            La expresión regular <Mono>(?im)^##\s*License\b</Mono>
+                            busca un encabezado <MarkdownInline code="## License" /> al inicio de una línea.
+                        </ListItem>
 
-        <ListItem icon={icons.FileText}>
-          <PowerShellInline code="Get-Content -Raw" /> lee el README como una sola
-          cadena (no por líneas), ideal para búsquedas y concatenación.
-        </ListItem>
+                        <ListItem icon={icons.TextAa}>
+                            La bandera <Mono>i</Mono> ignora mayúsculas/minúsculas; <Mono>m</Mono> permite que <Mono
+                            >^</Mono> coincida con el inicio de cada línea (no solo del texto completo).
+                        </ListItem>
 
-        <ListItem icon={icons.Funnel}>
-          <PowerShellInline
-            code="$readmeText -notmatch '(?im)^##\\s*License\\b'"
-          /> usa el operador de comparación con expresiones regulares
-          <PowerShellInline code="-match" /> / <PowerShellInline
-            code="-notmatch"
-          />. Este devuelve un valor booleano según si la cadena cumple (o no
-          cumple) con el patrón dado. En este caso:
-          <List>
-            <ListItem icon={icons.TextT}>
-              La expresión regular <code>(?im)^##\s*License\b</code>
-              busca un encabezado <code>## License</code> al inicio de una línea.
-            </ListItem>
-            <ListItem icon={icons.TextAa}>
-              La bandera <code>i</code> ignora mayúsculas/minúsculas;
-              <code>m</code> permite que <code>^</code> coincida con el inicio de
-              cada línea (no solo del texto completo).
-            </ListItem>
-            <ListItem icon={icons.ShieldCheck}>
-              Con <PowerShellInline code="-notmatch" /> verificamos que no exista
-              aún esa sección, evitando duplicar la licencia en el README.
-            </ListItem>
-          </List>
-        </ListItem>
+                        <ListItem icon={icons.ShieldCheck}>
+                            Con <PowerShellInline code="-notmatch" /> verificamos que no exista aún esa sección,
+                            evitando duplicar la licencia en el README.
+                        </ListItem>
+                    </List>
+                </ListItem>
 
-        <ListItem icon={icons.Eraser}>
-          <PowerShellInline code=".TrimEnd()" /> elimina saltos de línea extra al
-          final del README para que la sección añadida quede bien separada (una sola
-          línea en blanco).
-        </ListItem>
+                <ToDo
+                  client:only="react"
+                  metadata={{
+                    tasks: [
+                      "Explicar [Environment]::NewLine",
+                    ],
+                  }}
+                />
 
-        <ListItem icon={icons.ArrowsLeftRight}>
-          <PowerShellInline code="[Environment]::NewLine" /> inserta el salto de
-          línea correcto según el sistema (Windows/Linux/macOS), manteniendo portabilidad.
-        </ListItem>
+                <ToDo
+                  client:only="react"
+                  metadata={{
+                    tasks: [
+                      "Explicar Add-Conmtent",
+                    ],
+                  }}
+                />
+            </List>
 
-        <ListItem icon={icons.ToggleRight}>
-          <PowerShellInline code="-NoNewline:$false" /> en <PowerShellInline
-            code="Set-Content"
-          />
-          asegura que el archivo termine con salto de línea.
-        </ListItem>
-      </List>
+            <Warning>
+                <span slot="title">
+                    Backtick (<PowerShellInline code="`" />) al final de línea
+                </span>
 
-      <Warning>
-        <span slot="title">
-          Backtick (<PowerShellInline code="`" />) al final de línea
-        </span>
+                En PowerShell sirve como <em>continuación de línea</em>, permitiendo dividir un comando largo en varias
+                líneas. Sin embargo, es una práctica <strong>frágil</strong>: basta un espacio después del backtick para
+                que el script falle. Como alternativa más robusta, puedes:
 
-        En PowerShell sirve como <em>continuación de línea</em>, permitiendo
-        dividir un comando largo en varias líneas. Sin embargo, es una práctica <strong
-          >frágil</strong
-        >: basta un espacio después del backtick para que el script falle. Como
-        alternativa más robusta, puedes:
+                <List>
+                    <ListItem icon={icons.BracketsRound}>
+                        Envolver expresiones en paréntesis y dividirlas en varias líneas.
+                    </ListItem>
 
-        <List>
-          <ListItem icon={icons.BracketsRound}>
-            Envolver expresiones en paréntesis y dividirlas en varias líneas.
-          </ListItem>
+                    <ListItem icon={icons.TextT}>
+                        Usar variables intermedias para mantener el código legible.
+                    </ListItem>
+                </List>
 
-          <ListItem icon={icons.TextT}>
-            Usar variables intermedias para mantener el código legible.
-          </ListItem>
-        </List>
+                En este apunte usaremos backticks solo para simplificar ejemplos, pero en proyectos reales conviene
+                evitarlos siempre que sea posible.
+            </Warning>
+        </Explanation>
 
-        En este apunte usaremos backticks solo para simplificar ejemplos, pero
-        en proyectos reales conviene evitarlos siempre que sea posible.
-      </Warning>
-    </Explanation>
+        <More>
+            <span slot="title"><PowerShellInline code="ForEach-Object" /></span>
 
-    <More>
-      <span slot="title"><PowerShellInline code="ForEach-Object" /></span>
+            <p class="mb-2">
+                PowerShell ofrece dos formas de iterar colecciones: la palabra clave
+                <PowerShellInline code="foreach" /> y el cmdlet
+                <PowerShellInline code="ForEach-Object" />. Aunque se parecen, tienen diferencias importantes:
+            </p>
 
-      <p class="mb-2">
-        PowerShell ofrece dos formas de iterar colecciones: la palabra clave
-        <PowerShellInline code="foreach" /> y el cmdlet
-        <PowerShellInline code="ForEach-Object" />. Aunque se parecen, tienen
-        diferencias importantes:
-      </p>
+            <List>
+                <ListItem icon={icons.Rocket}>
+                    <strong><PowerShellInline code="foreach" /></strong> (palabra clave): recorre en memoria una
+                    colección ya materializada. Es más rápido y más legible cuando ya tienes los datos en una variable
+                    (ej.
+                    <PowerShellInline code="$readmes" />).
+                </ListItem>
 
-      <List>
-        <ListItem icon={icons.Rocket}>
-          <strong><PowerShellInline code="foreach" /></strong> (palabra clave): recorre
-          en memoria una colección ya materializada. Es más rápido y más legible
-          cuando ya tienes los datos en una variable (ej.
-          <PowerShellInline code="$readmes" />).
-        </ListItem>
+                <ListItem icon={icons.Pipe}>
+                    <strong><PowerShellInline code="... | ForEach-Object { ... }" /></strong>
+                    (cmdlet): procesa los elementos <em>en streaming</em> conforme llegan por el pipeline. Ideal para
+                    cadenas de comandos largas donde no quieres cargar toda la colección en memoria. En PowerShell 7+ se
+                    añade
+                    <PowerShellInline code="-Parallel" /> con
+                    <PowerShellInline code="-ThrottleLimit" /> para ejecutar en paralelo.
+                </ListItem>
+            </List>
 
-        <ListItem icon={icons.Pipe}>
-          <strong
-            ><PowerShellInline code="... | ForEach-Object { ... }" /></strong
-          >
-          (cmdlet): procesa los elementos <em>en streaming</em> conforme llegan por
-          el pipeline. Ideal para cadenas de comandos largas donde no quieres cargar
-          toda la colección en memoria. En PowerShell 7+ se añade
-          <PowerShellInline code="-Parallel" /> con
-          <PowerShellInline code="-ThrottleLimit" /> para ejecutar en paralelo.
-        </ListItem>
-      </List>
+            <Tip>
+                Usa <PowerShellInline code="foreach" /> en scripts “procedimentales”, y
+                <PowerShellInline code="ForEach-Object" /> cuando ya compones pipelines con otros cmdlets
+                (<PowerShellInline code="Get-ChildItem ... | Where-Object ... | ForEach-Object { ... }" />).
+            </Tip>
 
-      <Tip>
-        Usa <PowerShellInline code="foreach" /> en scripts “procedimentales”, y
-        <PowerShellInline code="ForEach-Object" /> cuando ya compones pipelines con
-        otros cmdlets (<PowerShellInline
-          code="Get-ChildItem ... | Where-Object ... | ForEach-Object { ... }"
-        />).
-      </Tip>
+            <Note>
+                En PowerShell 7+ existe la sintaxis abreviada
+                <PowerShellInline code="| % { ... }" /> como alias de
+                <PowerShellInline code="| ForEach-Object { ... }" />, pero no se recomienda en scripts por ser menos
+                legible.
+            </Note>
+        </More>
 
-      <Note>
-        En PowerShell 7+ existe la sintaxis abreviada
-        <PowerShellInline code="| % { ... }" /> como alias de
-        <PowerShellInline code="| ForEach-Object { ... }" />, pero no se
-        recomienda en scripts por ser menos legible.
-      </Note>
-    </More>
+        <p class="mt-4">Ahora puedes ejecutar el script desde la terminal:</p>
 
-    <p class="mt-4">Ahora puedes ejecutar el script desde la terminal:</p>
-
-    <PowerShellBlock
-      code={`
+        <PowerShellBlock
+            code={`
         # Desde dibs:
         .\\scripts\\Apply-License.ps1 -Root . -Owner "Tu Nombre" -WhatIf
       `}
-    >
-      <span slot="title">Desde la terminal de PowerShell</span>
-    </PowerShellBlock>
+        >
+            <span slot="title">Desde la terminal de PowerShell</span>
+        </PowerShellBlock>
 
-    <p>
-      Si todo se ve bien, vuelve a ejecutar sin <PowerShellInline
-        code="-WhatIf"
-      /> para aplicar los cambios de verdad.
-    </p>
-  </NotesSection>
+        <p>
+            Si todo se ve bien, vuelve a ejecutar sin <PowerShellInline code="-WhatIf" /> para aplicar los cambios de
+            verdad.
+        </p>
+    </NotesSection>
 
-  <Exercise>
-    <span slot="title">Normalizar archivos Markdown</span>
+    <Footnotes>
+        <Footnote index={1}>
+            Usaremos la licencia BSD-2 como ejemplo por ser simple y permisiva, pero puedes usar la que prefieras (MIT,
+            Apache-2.0, GPL, etc.). Revisa la <Link href="https://spdx.org/licenses/">lista de licencias SPDX</Link>
+            para más opciones.
+        </Footnote>
+    </Footnotes>
+</NotesLayout>
 
-    Escribe un script que <strong>normalice archivos Markdown</strong> en un árbol
-    de proyectos (por ejemplo, todos los <code>README.md</code>):
+<!--
+    <Exercise>
+          <span slot="title">Normalizar archivos Markdown</span>
 
-    <List class="mt-2">
-      <ListItem icon={icons.Eraser}>
-        Quita espacios en blanco al final de cada línea.
-      </ListItem>
+          Escribe un script que <strong>normalice archivos Markdown</strong> en un árbol
+          de proyectos (por ejemplo, todos los <code>README.md</code>):
 
-      <ListItem icon={icons.ArrowsLeftRight}>
-        Asegura que el archivo termine con un salto de línea.
-      </ListItem>
+          <List class="mt-2">
+            <ListItem icon={icons.Eraser}>
+              Quita espacios en blanco al final de cada línea.
+            </ListItem>
 
-      <ListItem icon={icons.Calendar}>
-        Agrega o actualiza una línea <code>Last updated: YYYY-MM-DD</code>
-        al final con <MarkdownInline code="-UpdateStamp" />.
-      </ListItem>
+            <ListItem icon={icons.ArrowsLeftRight}>
+              Asegura que el archivo termine con un salto de línea.
+            </ListItem>
 
-      <ListItem icon={icons.ShieldCheck}>
-        Debe soportar <MarkdownInline code="-WhatIf" /> y <MarkdownInline
-          code="-Confirm"
-        /> (patrón de <em>ensayo seguro</em>).
-      </ListItem>
-    </List>
+            <ListItem icon={icons.Calendar}>
+              Agrega o actualiza una línea <code>Last updated: YYYY-MM-DD</code>
+              al final con <MarkdownInline code="-UpdateStamp" />.
+            </ListItem>
 
-    <Definition
-      ><span slot="title"
-        ><PowerShellInline code="[switch]" />: booleano por presencia</span
-      >
+            <ListItem icon={icons.ShieldCheck}>
+              Debe soportar <MarkdownInline code="-WhatIf" /> y <MarkdownInline
+                code="-Confirm"
+              /> (patrón de <em>ensayo seguro</em>).
+            </ListItem>
+          </List>
 
-      <p>
-        <PowerShellInline code="[switch] $UpdateStamp" /> vale <PowerShellInline
-          code="$true"
-        /> si se pasa <PowerShellInline code="-UpdateStamp" /> y <PowerShellInline
-          code="$false"
-        /> si no. Ejemplos: <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-          code="-Confirm"
-        />.
-      </p></Definition
-    >
+          <Definition
+            ><span slot="title"
+              ><PowerShellInline code="[switch]" />: booleano por presencia</span
+            >
 
-    <PowerShellBlock
-      code={`
+            <p>
+              <PowerShellInline code="[switch] $UpdateStamp" /> vale <PowerShellInline
+                code="$true"
+              /> si se pasa <PowerShellInline code="-UpdateStamp" /> y <PowerShellInline
+                code="$false"
+              /> si no. Ejemplos: <PowerShellInline code="-WhatIf" /> y <PowerShellInline
+                code="-Confirm"
+              />.
+            </p></Definition
+          >
+
+          <PowerShellBlock
+            code={`
         $a -eq $b        # Igualdad
         $a -ne $b        # Desigualdad
         $a -lt $b        # Menor que
@@ -630,35 +556,35 @@ import ToDo from "~/components/utils/ToDo";
         $a -and $b       # Y lógico
         $a -or $b        # O lógico
       `}><span slot="title">Operadores útiles</span></PowerShellBlock
-    >
+          >
 
-    <Hints
-      ><List
-        ><ListItem icon={icons.TextT}
-          >Para limpiar espacios al final de línea, utiliza <MarkdownInline
-            code="[regex]::Replace(...)"
-          /> con el patrón <PowerShellInline
-            code={`[ \\t]+(?=\\r?\\n)}`}
-          />.</ListItem
-        >
+          <Hints
+            ><List
+              ><ListItem icon={icons.TextT}
+                >Para limpiar espacios al final de línea, utiliza <MarkdownInline
+                  code="[regex]::Replace(...)"
+                /> con el patrón <PowerShellInline
+                  code={`[ \\t]+(?=\\r?\\n)}`}
+                />.</ListItem
+              >
 
-        <ListItem icon={icons.ArrowsLeftRight}
-          >Puedes verificar que un string termine con salto de línea usando <MarkdownInline
-            code=".EndsWith([Environment]::NewLine)"
-          />.</ListItem
-        >
+              <ListItem icon={icons.ArrowsLeftRight}
+                >Puedes verificar que un string termine con salto de línea usando <MarkdownInline
+                  code=".EndsWith([Environment]::NewLine)"
+                />.</ListItem
+              >
 
-        <ListItem icon={icons.Calendar}
-          >Para buscar y reemplazar el sello de fecha, usa el patrón <PowerShellInline
-            code={`"(?im)^\s*Last updated: .*$"`}
-          /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem
-        ></List
-      ></Hints
-    >
+              <ListItem icon={icons.Calendar}
+                >Para buscar y reemplazar el sello de fecha, usa el patrón <PowerShellInline
+                  code={`"(?im)^\s*Last updated: .*$"`}
+                /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem
+              ></List
+            ></Hints
+          >
 
-    <Solution
-      ><PowerShellBlock
-        code={`
+          <Solution
+            ><PowerShellBlock
+              code={`
           #Requires -Version 7.0
           [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
           param(
@@ -706,131 +632,117 @@ import ToDo from "~/components/utils/ToDo";
               }
           }
       `}
-        ><slot slot="title" />
-        <DibsSourceLink
-          slot="source"
-          repo="scripts"
-          file="Cleanup-Readmes.ps1"
-        /></PowerShellBlock
-      ></Solution
-    ></Exercise
-  >
+              ><slot slot="title" />
+              <DibsSourceLink
+                slot="source"
+                repo="scripts"
+                file="Cleanup-Readmes.ps1"
+              /></PowerShellBlock
+            ></Solution
+          ></Exercise
+        >
 
-  <ConclusionsLayout
-    ><Fragment slot="conclusions">
-      En esta lección exploramos dos patrones fundamentales para escribir
-      scripts más seguros y útiles en PowerShell. Primero, el <strong
-        >ensayo seguro</strong
-      > con
-      <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-        code="-Confirm"
-      />, que permite simular o confirmar operaciones antes de aplicarlas.
-      Luego, el recorrido y transformación de archivos, aplicando validaciones y
-      operaciones típicas sobre proyectos (por ejemplo, crear <code
-        >LICENSE</code
-      > y asegurar secciones en
-      <code>README.md</code>). Ambos enfoques muestran cómo usar la
-      <strong>pipeline de objetos</strong>, las validaciones de parámetros y las
-      capacidades de <PowerShellInline code="[CmdletBinding()]" /> para hacer scripts
-      más expresivos, confiables y mantenibles.</Fragment
-    >
+        <ConclusionsLayout
+          ><Fragment slot="conclusions">
+            En esta lección exploramos dos patrones fundamentales para escribir
+            scripts más seguros y útiles en PowerShell. Primero, el <strong
+              >ensayo seguro</strong
+            > con
+            <PowerShellInline code="-WhatIf" /> y <PowerShellInline
+              code="-Confirm"
+            />, que permite simular o confirmar operaciones antes de aplicarlas.
+            Luego, el recorrido y transformación de archivos, aplicando validaciones y
+            operaciones típicas sobre proyectos (por ejemplo, crear <code
+              >LICENSE</code
+            > y asegurar secciones en
+            <code>README.md</code>). Ambos enfoques muestran cómo usar la
+            <strong>pipeline de objetos</strong>, las validaciones de parámetros y las
+            capacidades de <PowerShellInline code="[CmdletBinding()]" /> para hacer scripts
+            más expresivos, confiables y mantenibles.</Fragment
+          >
 
-    <Fragment slot="key-points"
-      ><ListItem icon={icons.ShieldCheck}
-        >El patrón de <strong>ensayo seguro</strong> evita efectos no deseados y
-        aumenta la confianza en el script.</ListItem
-      >
+          <Fragment slot="key-points"
+            ><ListItem icon={icons.ShieldCheck}
+              >El patrón de <strong>ensayo seguro</strong> evita efectos no deseados y
+              aumenta la confianza en el script.</ListItem
+            >
 
-      <ListItem icon={icons.FolderOpen}
-        >Recorrer y transformar archivos es un caso común al estandarizar
-        proyectos y metadatos.</ListItem
-      >
+            <ListItem icon={icons.FolderOpen}
+              >Recorrer y transformar archivos es un caso común al estandarizar
+              proyectos y metadatos.</ListItem
+            >
 
-      <ListItem icon={icons.SlidersHorizontal}
-        >Validaciones de parámetros y atributos como <PowerShellInline
-          code="[ValidateRange]"
-        /> o
-        <PowerShellInline code="[switch]" /> hacen los scripts más robustos.</ListItem
-      >
+            <ListItem icon={icons.SlidersHorizontal}
+              >Validaciones de parámetros y atributos como <PowerShellInline
+                code="[ValidateRange]"
+              /> o
+              <PowerShellInline code="[switch]" /> hacen los scripts más robustos.</ListItem
+            >
 
-      <ListItem icon={icons.Terminal}
-        >La combinación de <PowerShellInline code="[CmdletBinding()]" /> y cmdlets
-        como
-        <PowerShellInline code="Write-Verbose" /> aporta control y claridad al ejecutar.</ListItem
-      ></Fragment
-    >
+            <ListItem icon={icons.Terminal}
+              >La combinación de <PowerShellInline code="[CmdletBinding()]" /> y cmdlets
+              como
+              <PowerShellInline code="Write-Verbose" /> aporta control y claridad al ejecutar.</ListItem
+            ></Fragment
+          >
 
-    <Fragment slot="takeaways"
-      >El scripting en PowerShell no se limita a resolver tareas inmediatas: se
-      trata de desarrollar <em>hábitos de diseño</em> que hagan que tus herramientas
-      sean confiables, predecibles y fáciles de mantener. Incorporar confirmaciones,
-      validaciones y diagnósticos transforma simples scripts en piezas reutilizables
-      y seguras, que pueden crecer junto con tus proyectos y bibliotecas de software.</Fragment
-    ></ConclusionsLayout
-  >
+          <Fragment slot="takeaways"
+            >El scripting en PowerShell no se limita a resolver tareas inmediatas: se
+            trata de desarrollar <em>hábitos de diseño</em> que hagan que tus herramientas
+            sean confiables, predecibles y fáciles de mantener. Incorporar confirmaciones,
+            validaciones y diagnósticos transforma simples scripts en piezas reutilizables
+            y seguras, que pueden crecer junto con tus proyectos y bibliotecas de software.</Fragment
+          ></ConclusionsLayout
+        >
 
-  <References
-    ><Fragment slot="recommended"
-      ><WebPage
-        title="Everything you wanted to know about ShouldProcess"
-        url="https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess"
-        location="Microsoft Learn"
-        ><Fragment slot="description"
-          >Guía práctica y profunda sobre cómo agregar soporte a <PowerShellInline
-            code=`-WhatIf`
-          /> y
-          <PowerShellInline code=`-Confirm` /> en funciones PowerShell con <PowerShellInline
-            code=`SupportsShouldProcess`
-          />. Explica el uso correcto de <PowerShellInline
-            code=`$PSCmdlet.ShouldProcess()`
-          /> (y sus
-          <em>overloads</em>), dónde colocarlo en el flujo (especialmente en
-          bucles), y cómo se relaciona con variables de preferencia como
-          <PowerShellInline code=`$WhatIfPreference` />, <PowerShellInline
-            code=`$ConfirmPreference`
-          /> y <PowerShellInline code=`ConfirmImpact` />. Distingue
-          <PowerShellInline code=`ShouldProcess` /> de <PowerShellInline
-            code=`ShouldContinue`
-          /> (cuándo usar cada uno) e incluye patrones para implementar <PowerShellInline
-            code=`-Force`
-          /> sin romper confirmaciones ni simulaciones. Cubre matices de propagación
-          entre módulos de script, localización de los prompts y formas de pasar
-          <em>switches</em> (<PowerShellInline code=`-WhatIf:$true` />, <em
-            >splatting</em
-          >). Ideal para quienes diseñan funciones seguras y reproducibles, y
-          quieren entender los bordes reales de
-          <PowerShellInline code=`-WhatIf` />/<PowerShellInline
-            code=`-Confirm`
-          /> más allá de lo básico.
-        </Fragment></WebPage
-      ></Fragment
-    >
+        <References
+          ><Fragment slot="recommended"
+            ><WebPage
+              title="Everything you wanted to know about ShouldProcess"
+              url="https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess"
+              location="Microsoft Learn"
+              ><Fragment slot="description"
+                >Guía práctica y profunda sobre cómo agregar soporte a <PowerShellInline
+                  code=`-WhatIf`
+                /> y
+                <PowerShellInline code=`-Confirm` /> en funciones PowerShell con <PowerShellInline
+                  code=`SupportsShouldProcess`
+                />. Explica el uso correcto de <PowerShellInline
+                  code=`$PSCmdlet.ShouldProcess()`
+                /> (y sus
+                <em>overloads</em>), dónde colocarlo en el flujo (especialmente en
+                bucles), y cómo se relaciona con variables de preferencia como
+                <PowerShellInline code=`$WhatIfPreference` />, <PowerShellInline
+                  code=`$ConfirmPreference`
+                /> y <PowerShellInline code=`ConfirmImpact` />. Distingue
+                <PowerShellInline code=`ShouldProcess` /> de <PowerShellInline
+                  code=`ShouldContinue`
+                /> (cuándo usar cada uno) e incluye patrones para implementar <PowerShellInline
+                  code=`-Force`
+                /> sin romper confirmaciones ni simulaciones. Cubre matices de propagación
+                entre módulos de script, localización de los prompts y formas de pasar
+                <em>switches</em> (<PowerShellInline code=`-WhatIf:$true` />, <em
+                  >splatting</em
+                >). Ideal para quienes diseñan funciones seguras y reproducibles, y
+                quieren entender los bordes reales de
+                <PowerShellInline code=`-WhatIf` />/<PowerShellInline
+                  code=`-Confirm`
+                /> más allá de lo básico.
+              </Fragment></WebPage
+            ></Fragment
+          >
 
-    <!-- <Fragment slot="additional">...</Fragment> --></References
-  >
+          <!-- <Fragment slot="additional">...</Fragment>
+    </References >
 
-  <Footnotes
-    ><Footnote index={1}
-      ><PowerShellInline code="&" /> ejecuta un script en un nuevo contexto, sin
-      compartir variables locales. En cambio, <PowerShellInline code="." /> (dot-sourcing)
-      carga el script en el contexto actual, permitiendo que sus funciones y variables
-      permanezcan disponibles después de la ejecución.</Footnote
-    >
+    <Footnotes><Footnote index={1}><PowerShellInline code="&" /> ejecuta un script en un nuevo contexto, sin compartir
+            variables locales. En cambio, <PowerShellInline code="." /> (dot-sourcing) carga el script en el contexto
+            actual, permitiendo que sus funciones y variables permanezcan disponibles después de la ejecución.</Footnote>
 
-    <Footnote index={2}
-      >Usaremos la licencia BSD-2 como ejemplo por ser simple y permisiva, pero
-      puedes usar la que prefieras (MIT, Apache-2.0, GPL, etc.). Revisa la <Link
-        href="https://spdx.org/licenses/">lista de licencias SPDX</Link
-      > para más opciones.</Footnote
-    >
-
-    <Footnote index={3}
-      >En scripts, <PowerShellInline code="Write-Output" /> es preferible a
-      <PowerShellInline code="Write-Host" /> porque escribe en el pipeline, permitiendo
-      redirección, filtrado y pruebas automatizadas.
-      <PowerShellInline code="Write-Host" /> solo imprime en pantalla y rompe esa
-      flexibilidad, por lo que se recomienda usarlo únicamente para mostrar mensajes
-      interactivos al usuario.</Footnote
-    ></Footnotes
-  ></NotesLayout
->
+        <Footnote index={3}
+        >En scripts, <PowerShellInline code="Write-Output" /> es preferible a
+            <PowerShellInline code="Write-Host" /> porque escribe en el pipeline, permitiendo redirección, filtrado y
+            pruebas automatizadas.
+            <PowerShellInline code="Write-Host" /> solo imprime en pantalla y rompe esa flexibilidad, por lo que se
+            recomienda usarlo únicamente para mostrar mensajes interactivos al usuario.</Footnote></Footnotes>*/ }
+-->

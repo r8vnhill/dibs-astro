@@ -2,16 +2,25 @@
 import Link from "./Link.astro";
 
 type Props = {
-  repo: string;
-  file: string;
-  title?: string;
+    /** Nombre corto del repositorio sin prefijo `dibs-`. */
+    repo: string;
+    /** Ruta del archivo dentro del repositorio. */
+    file: string;
+    /** Texto opcional a mostrar en el enlace. */
+    title?: string;
+    /** Commit hash, tag o nombre de branch (opcional). */
+    ref?: string;
 };
 
-const { repo, file, title }: Props = Astro.props;
+const { repo, file, title, ref }: Props = Astro.props;
 
-const href = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/main/${file}?ref_type=heads`;
+// Si no se especifica ref, apunta a la rama main
+const resolvedRef = ref ?? "main";
+
+// GitLab usa `-/blob/<ref>/<file>` para cualquier referencia
+const href = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/${resolvedRef}/${file}`;
 ---
 
-<Link href={href}>
-  <slot>{title ?? `${repo}/${file}`}</slot>
+<Link {href}>
+    <slot>{title ?? `${repo}/${file}`}</slot>
 </Link>
