@@ -1,8 +1,10 @@
 ---
 import * as Icons from "~/assets/img/icons";
+import { Info, Note } from ".";
 import CalloutHeading from "./CalloutHeading.astro";
 import Hints from "./Hints.astro";
 import type { BaseCalloutProps } from "./shared";
+import Solution from "./Solution.astro";
 import Tip from "./Tip.astro";
 
 type ExerciseProps = BaseCalloutProps;
@@ -82,12 +84,37 @@ const passthrough = Object.fromEntries(
                 </Tip>
             )
         }
+        {
+            Astro.slots.notes && (
+                <Note headingLevel="h3">
+                    <span slot="title">Notas</span>
+
+                    <slot name="notes" />
+                </Note>
+            )
+        }
         <slot />
+        {
+            Astro.slots.use && (
+                <Info headingLevel="h3" icon={Icons.PlayCircle}>
+                    <span slot="title">Uso esperado</span>
+
+                    <slot name="use" />
+                </Info>
+            )
+        }
         {
             Astro.slots.hints && (
                 <Hints headingLevel="h3">
                     <slot name="hints" />
                 </Hints>
+            )
+        }
+        {
+            Astro.slots.solution && (
+                <Solution headingLevel="h3">
+                    <slot name="solution" />
+                </Solution>
             )
         }
     </div>

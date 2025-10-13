@@ -94,8 +94,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Initialize-Project (con <code>-WhatIf</code>)
             </Fragment>
             <DibsSourceLink
-                repo="scripts" file="Initialize-Project.ps1"
-                slot="source"
+                repo="scripts" file="core/Initialize-Project.ps1"
+                slot="source" ref="433e47c4c33d32ebc072e9eb8b31f6cc8200584d"
             />
         </PowerShellBlock>
 
@@ -333,7 +333,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.NumberCircleOne}>
-                    <PowerShellInline code="[ValidateRange(1900, 3000)]" /> valida en tiempo de <em>binding</em> que
+                    <PowerShellInline code="[ValidateRange(1900, 3000)]" /> valida en tiempo de <I>binding</I> que
                     <PowerShellInline code="-Year" /> esté dentro del rango permitido. Si no, PowerShell detiene el
                     script antes de ejecutar la lógica.
 
@@ -524,7 +524,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 ./scripts/core/Add-License.ps1 -Root . -Owner "Tu Nombre" -WhatIf
             `}
         >
-            <span slot="title">Desde la terminal de PowerShell</span>
+            <span slot="title">Desde <PowerShellInline code={`dibs/`} /></span>
         </PowerShellBlock>
 
         <P>
@@ -539,32 +539,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Question>
     </NotesSection>
 
-    <Exercise>
-        <span slot="title">Normalizar archivos Markdown</span>
+    <Exercise headingLevel="h2">
+        <span slot="title">...</span>
 
         <Fragment slot="requirements">
-            Escribe un script que <B>normalice archivos Markdown</B> en un árbol de proyectos (por ejemplo, todos los
-            <Mono>README.md</Mono>):
-
-            <List class="mt-2">
-                <ListItem icon={icons.Eraser}>
-                    Quita espacios en blanco al final de cada línea.
-                </ListItem>
-
-                <ListItem icon={icons.ArrowsLeftRight}>
-                    Asegura que el archivo termine con un salto de línea.
-                </ListItem>
-
-                <ListItem icon={icons.Calendar}>
-                    Agrega o actualiza una línea <MarkdownInline code="Last updated: YYYY-MM-DD" /> al final con
-                    <PowerShellInline code="-UpdateStamp" />.
-                </ListItem>
-
-                <ListItem icon={icons.ShieldCheck}>
-                    Debe soportar <MarkdownInline code="-WhatIf" /> y <MarkdownInline code="-Confirm" /> (patrón de <I
-                    >ensayo seguro</I>).
-                </ListItem>
-            </List>
+            ...
         </Fragment>
 
         <Definition headingLevel="h3">
@@ -581,8 +560,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Definition>
 
-        <PowerShellBlock
-            code={`
+        <Fragment slot="hints">
+            <PowerShellBlock
+                code={`
                 $a -eq $b        # Igualdad
                 $a -ne $b        # Desigualdad
                 $a -lt $b        # Menor que
@@ -592,9 +572,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 $a -and $b       # Y lógico
                 $a -or $b        # O lógico
             `}
-        ><span slot="title">Operadores útiles</span></PowerShellBlock>
+            ><span slot="title">Operadores útiles</span></PowerShellBlock>
 
-        <Fragment slot="hints">
             <List>
                 <ListItem icon={icons.TextT}>
                     Para limpiar espacios al final de línea, utiliza <PowerShellInline code="-replace" /> con el patrón
@@ -602,8 +581,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
 
                 <ListItem icon={icons.ArrowsLeftRight}>
-                    Puedes verificar que un string termine con salto de línea usando 
-                    <MarkdownInline code="$_.EndsWith([Environment]::NewLine)" /> ()
+                    Puedes verificar que un string termine con salto de línea usando <MarkdownInline
+                        code="$_.EndsWith([Environment]::NewLine)"
+                    /> (aquí <PowerShellInline code={`$_`} /> es cualquier variable que contenga un string).
                 </ListItem>
 
                 <ListItem icon={icons.Calendar}
@@ -611,60 +591,61 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         code={`'(?im)^\\s*Last updated: .*$'`}
                     /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem></List></Fragment>
 
-        <Solution><PowerShellBlock
+        <Fragment slot="solution">
+            <PowerShellBlock
                 code={`
-          #Requires -Version 7.0
-          [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-          param(
-              [Parameter(Mandatory)]
-              [ValidateNotNullOrEmpty()]
-              [string] $Root,
+                    #Requires -Version 7.0
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrEmpty()]
+                        [string] $Root,
 
-              [switch] $UpdateStamp
-          )
+                        [switch] $UpdateStamp
+                    )
 
-          $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
-          $files = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
+                    $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
+                    $files = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
 
-          foreach ($file in $files) {
-              $original = Get-Content -LiteralPath $file.FullName -Raw
+                    foreach ($file in $files) {
+                        $original = Get-Content -LiteralPath $file.FullName -Raw
 
-              # 1) Quitar espacios en blanco al final de cada línea
-              $clean = [regex]::Replace($original, '[ \\t]+(?=\\r?\\n)', '')
+                        # 1) Quitar espacios en blanco al final de cada línea
+                        $clean = [regex]::Replace($original, '[ \\t]+(?=\\r?\\n)', '')
 
-              # 2) Asegurar salto de línea final
-              if (-not $clean.EndsWith([Environment]::NewLine)) {
-                  $clean += [Environment]::NewLine
-              }
+                        # 2) Asegurar salto de línea final
+                        if (-not $clean.EndsWith([Environment]::NewLine)) {
+                            $clean += [Environment]::NewLine
+                        }
 
-              # 3) Agregar/actualizar sello de fecha si se pidió -UpdateStamp
-              if ($UpdateStamp) {
-                  $stamp = "Last updated: $(Get-Date)"
-                  if ($clean -match '(?im)^\\s*Last updated: .*$') {
-                      $clean = [regex]::Replace($clean, '(?im)^\\s*Last updated: .*$', $stamp, 1)
-                  }
-                  else {
-                      $clean = $clean + $stamp + [Environment]::NewLine
-                  }
-              }
+                        # 3) Agregar/actualizar sello de fecha si se pidió -UpdateStamp
+                        if ($UpdateStamp) {
+                            $stamp = "Last updated: $(Get-Date)"
+                            if ($clean -match '(?im)^\\s*Last updated: .*$') {
+                                $clean = [regex]::Replace($clean, '(?im)^\\s*Last updated: .*$', $stamp, 1)
+                            }
+                            else {
+                                $clean = $clean + $stamp + [Environment]::NewLine
+                            }
+                        }
 
-              # Aplicar cambios solo si hubo modificaciones, respetando -WhatIf
-              if (($clean -ne $original) -and (
-                      $PSCmdlet.ShouldProcess(
-                          $file.FullName, 'Normalize Markdown whitespace and stamp'))) {
-                  Set-Content -LiteralPath $file.FullName -Encoding utf8 -NoNewline:$false -Value $clean
-                  Write-Output "Fixed -> $($file.FullName)"
-              }
-              else {
-                  Write-Verbose "No changes -> $($file.FullName)"
-              }
-          }
-      `}
+                        # Aplicar cambios solo si hubo modificaciones, respetando -WhatIf
+                        if (($clean -ne $original) -and (
+                                $PSCmdlet.ShouldProcess(
+                                    $file.FullName, 'Normalize Markdown whitespace and stamp'))) {
+                            Set-Content -LiteralPath $file.FullName -Encoding utf8 -NoNewline:$false -Value $clean
+                            Write-Output "Fixed -> $($file.FullName)"
+                        }
+                        else {
+                            Write-Verbose "No changes -> $($file.FullName)"
+                        }
+                    }
+                `}
             ><slot slot="title" />
                 <DibsSourceLink
                     slot="source" repo="scripts"
                     file="Cleanup-Readmes.ps1"
-                /></PowerShellBlock></Solution></Exercise>
+                /></PowerShellBlock></Fragment></Exercise>
 
     <Footnotes>
         <Footnote index={1}>

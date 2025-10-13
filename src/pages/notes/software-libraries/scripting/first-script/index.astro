@@ -19,6 +19,7 @@ import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -132,6 +133,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
             la ejecución. Te recomiendo editar y mantener estos scripts en un entorno cómodo como <B>VS&nbsp;Code</B>,
             que ofrece resaltado de sintaxis, integración con terminal y depuración básica.
         </P>
+
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Bump v to 7.4",
+                ],
+            }}
+        />
 
         <PowerShellBlock
             code={`
@@ -440,9 +450,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <Exercise headingLevel="h2">
         <Fragment slot="title"><Mono>Test-Readme.ps1</Mono></Fragment>
 
-        <Tip headingLevel="h3" icon={icons.Target}>
-            <span slot="title">Requisitos</span>
-
+        <Fragment slot="requirements">
             <P>
                 Implementa un script de validación que verifique un <Mono>README.md</Mono> mínimo en el directorio
                 indicado. Debe devolver <PowerShellInline code="$true" /> si pasa todas las validaciones y
@@ -490,11 +498,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </List>
                 </ListItem>
             </List>
-        </Tip>
+        </Fragment>
 
-        <Info headingLevel="h3" icon={icons.PlayCircle}>
-            <span slot="title">Uso esperado</span>
-
+        <Fragment slot="use">
             <PowerShellBlock code={`
                 ./path/to/Test-Readme.ps1 -Path '.' -Verbose
             `}>
@@ -506,9 +512,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     />. Si todo está correcto, devuelve <PowerShellInline code="$true" />.
                 </span>
             </PowerShellBlock>
-        </Info>
+        </Fragment>
 
-        <Hints>
+        <Fragment slot="hints">
             <List>
                 <ListItem icon={icons.FolderOpen}>
                     Usa <PowerShellInline code="Join-Path $Path 'README.md'" /> para construir rutas.
@@ -546,9 +552,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <span slot="title">Ejemplos de uso</span>
                 </PowerShellBlock>
             </More>
-        </Hints>
+        </Fragment,e>
 
-        <Solution>
+        <Fragment slot="solution">
             <PowerShellBlock
                 code={`
                     #Requires -Version 7.0
@@ -580,7 +586,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <Fragment slot="title">Solución de referencia</Fragment>
                 <span slot="footer">Un enfoque posible; cualquier solución que cumpla los requisitos es válida.</span>
             </PowerShellBlock>
-        </Solution>
+        </Fragment>
     </Exercise>
 
     <ConclusionsLayout>
