@@ -1,35 +1,92 @@
 ---
 import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 
-type PageRange = [number, number];
+type PageRange = number | [number, number];
 
 type Props = {
     chapter?: string;
     pages?: PageRange;
     bookTitle?: string;
+    authors?: string[];
+    quoteType?: "latin-double" | "latin-single" | "english-double" | "english-single";
+    italicTitle?: boolean;
+    locale?: "es" | "en";
 };
 
-const { chapter, pages, bookTitle }: Props = Astro.props;
+const {
+    chapter,
+    pages,
+    bookTitle,
+    authors,
+    quoteType = "english-double",
+    italicTitle = true,
+    locale = "es",
+} = Astro.props as Props;
+
+/* ---------- helpers ---------- */
+const normalizePages = (p?: PageRange) => {
+    if (p == null) return null;
+    if (typeof p === "number") return [p, p] as [number, number];
+    const [a, b] = p;
+    return a <= b ? [a, b] as [number, number] : [b, a] as [number, number];
+};
+
+const fmtPages = (p?: PageRange, loc: "es" | "en" = "es") => {
+    const norm = normalizePages(p);
+    if (!norm) return null;
+    const [start, end] = norm;
+    const single = start === end;
+    const prefix = loc === "en" ? (single ? "p." : "pp.") : (single ? "p." : "pp.");
+    // Nota: en español también se usa p./pp.; si prefieres “pág.”/“págs.” ajusta aquí.
+    return `${prefix} ${single ? start : `${start}–${end}`}`; // en dash
+};
+
+const authorsText = (arr?: string[], loc: "es" | "en" = "es") => {
+    if (!arr || arr.length === 0) return null;
+    const lf = new Intl.ListFormat(loc, { style: "long", type: "conjunction" });
+    return lf.format(arr);
+};
+
+const pagesLabel = fmtPages(pages, locale);
+const authorsInline = authorsText(authors, locale);
+const byWord = locale === "en" ? "by" : "por";
+const inWord = locale === "en" ? "in" : "en";
 ---
 
-<ListItem icon={icons.Book}>
-    <span>“<slot name="chapter">{chapter}</slot>”</span>{" "}{
-        pages && (
-            <span class="text-muted-foreground">
-                (pp. {pages[0]}–{pages[1]})
-            </span>
-        )
-    }
-    <span class="text-muted-foreground">{" en "}</span>
-    <span><slot name="bookTitle">{bookTitle}</slot></span>
-    <span class="text-muted-foreground">{" por "}</span>
-    <slot name="authors" />
+<ListItem icon={icons.Book} class="space-y-1">
+    <div class="flex flex-wrap items-baseline gap-x-1.5">
+        <Enquote type={quoteType}><slot name="chapter">{chapter}</slot></Enquote>
+
+        {
+            pagesLabel && (
+                <span class="text-muted-foreground" aria-label={pagesLabel}>
+                    ({pagesLabel})
+                </span>
+            )
+        }
+
+        <span class="text-muted-foreground">{inWord}</span>
+
+        <cite class:list={["not-italic", italicTitle && "italic"]}>
+            <slot name="bookTitle">{bookTitle}</slot>
+        </cite>
+
+        <span class="text-muted-foreground">{byWord}</span>
+
+        {
+            authorsInline
+                ? <span>{authorsInline}</span>
+            : <slot name="authors" />
+        }
+    </div>
+
     {
-        Astro.slots.description ? (
-            <div class="text-muted-foreground block">
+        Astro.slots.description && (
+            <div class="text-muted-foreground">
                 <slot name="description" />
             </div>
-        ) : null
+        )
     }
 </ListItem>

@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import comoImg from "~/assets/img/why/como.webp";
-import { Heading, P } from "~/components/semantics";
+import { Enquote, Heading, P } from "~/components/semantics";
 import {
     Abstract,
     Definition,
@@ -18,17 +18,33 @@ import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
     title="Patrones básicos de scripting"
-    description="Si estás leyendo esto es porque se me olvidó agregar la descripción."
+    description="Patrones básicos de scripting en PowerShell: -WhatIf/-Confirm, foreach vs ForEach-Object, regex y rutas portables. Diseña scripts seguros y mantenibles."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
     <Abstract>
-        ...
+        <P>
+            Esta lección eleva tus scripts de <Enquote>funcionan en mi máquina</Enquote> a herramientas seguras y
+            mantenibles. Practicarás el <B>ensayo seguro</B> con <PowerShellInline code="-WhatIf" /> y
+            <PowerShellInline code="-Confirm" /> mediante <PowerShellInline code="SupportsShouldProcess" />, y
+            recorrerás árboles de archivos con <PowerShellInline code="foreach" /> para aplicar transformaciones
+            idempotentes. También aprenderás a usar expresiones regulares, tipos de versión y resolución de rutas para
+            mantener consistencia y portabilidad en tus scripts.
+        </P>
+
+        <P>
+            Como cierre, implementarás <PowerShellInline code={`Update-ScriptRequiresVersion.ps1`} />, un script que
+            ajusta la directiva de versión <PowerShellInline code={`#Requires -Version`} /> de forma automática, segura
+            y predecible. El objetivo es que tus herramientas no solo funcionen, sino que lo hagan de manera confiable
+            cuando crece el proyecto o las ejecuta otra persona.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-should-process">
@@ -753,6 +769,105 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
     </Exercise>
 
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            Esta lección nos llevó de <Enquote>escribir scripts que hacen cosas</Enquote> a <Enquote>diseñar
+                herramientas seguras y mantenibles</Enquote>. Practicaste el <B>ensayo seguro</B> con <PowerShellInline
+                code="-WhatIf"
+            /> / <PowerShellInline code="-Confirm" />, recorriste árboles con <PowerShellInline code="foreach" /> y
+            aplicaste transformaciones idempotentes. También normalizaste metadatos con expresiones regulares y
+            aprendiste a encapsular decisiones peligrosas tras
+            <PowerShellInline code="$PSCmdlet.ShouldProcess()" />. El resultado: scripts predecibles, auditables y
+            fáciles de evolucionar.
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <List>
+                <ListItem icon={icons.ShieldCheck}>
+                    <PowerShellInline code="SupportsShouldProcess" /> + <PowerShellInline code="-WhatIf" /> /
+                    <PowerShellInline code="-Confirm" /> ⇒ cambios controlados y reversibles.
+                </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <PowerShellInline code="foreach" /> para colecciones materializadas; <PowerShellInline
+                        code="ForEach-Object"
+                    /> para <I>streaming</I> en pipelines.
+                </ListItem>
+                <ListItem icon={icons.TextT}>
+                    Regex bien acotadas permiten <I>detectar</I>, <I>contar</I> y <I>reemplazar</I> sin ambigüedades
+                    (<PowerShellInline code="[regex]::Matches" /> / <PowerShellInline code="-replace" />).
+                </ListItem>
+                <ListItem icon={icons.MapPin}>
+                    Resuelve rutas con <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)" />
+                    para portabilidad.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Idempotencia: volver a ejecutar no debe romper ni duplicar; debe dejar el estado consistente.
+                </ListItem>
+            </List>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <P>
+                El valor de un script no está solo en <Enquote>que funcione</Enquote>, sino en <I>cómo</I> se comporta
+                cuando algo sale mal, cuando lo ejecuta otra persona o cuando el proyecto crece. Diseña con seguridad
+                (ensayo, confirmación), claridad (mensajes, validaciones) y propósito (regex acotadas, versiones
+                normalizadas). Si repites estos hábitos —simular, verificar, aplicar— convertirás tareas frágiles en <B
+                >flujos confiables</B> que tu equipo puede reutilizar sin miedo.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <WebPage
+                title="Everything you wanted to know about ShouldProcess"
+                url="https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess"
+                location="Microsoft Learn"
+            >
+                <Fragment slot="description">
+                    Guía práctica y profunda sobre cómo agregar soporte a <PowerShellInline code={`-WhatIf`} /> y
+                    <PowerShellInline code={`-Confirm`} /> en funciones PowerShell con <PowerShellInline
+                        code={`SupportsShouldProcess`}
+                    />. Explica el uso correcto de <PowerShellInline code={`$PSCmdlet.ShouldProcess()`} /> (y sus
+                    <I>overloads</I>), dónde colocarlo en el flujo (especialmente en bucles), y cómo se relaciona con
+                    variables de preferencia como <PowerShellInline code={`$WhatIfPreference`} />, <PowerShellInline
+                        code={`$ConfirmPreference`}
+                    /> y <PowerShellInline code={`ConfirmImpact`} />. Distingue <PowerShellInline
+                        code={`ShouldProcess`}
+                    /> de <PowerShellInline code={`ShouldContinue`} /> (cuándo usar cada uno) e incluye patrones para
+                    implementar <PowerShellInline code={`-Force`} /> sin romper confirmaciones ni simulaciones. Cubre
+                    matices de propagación entre módulos de script, localización de los prompts y formas de pasar
+                    <I>switches</I> (<PowerShellInline code={`-WhatIf:$true`} />, <I>splatting</I>). Ideal para quienes
+                    quieren entender los bordes reales de <PowerShellInline code={`-WhatIf`} />/<PowerShellInline
+                        code={`-Confirm`}
+                    /> más allá de lo básico.
+                </Fragment>
+            </WebPage>
+        </Fragment>
+
+        <Fragment slot="additional">
+            <Book
+                chapter="Adding logic and loops"
+                bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS"
+                pages={[273, 278]}
+            >
+                <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
+
+                <Fragment slot="description">
+                    Este capítulo explica los distintos tipos de bucles en PowerShell —<PowerShellInline
+                        code={`foreach`}
+                    />, <PowerShellInline code={`ForEach-Object`} /> y <PowerShellInline code={`while`} />—, mostrando
+                    cuándo conviene usar cada uno y cómo difieren en comportamiento. Presenta ejemplos prácticos de
+                    iteración sobre colecciones, procesamiento en <I>pipeline</I>, y ejecución en paralelo con
+                    <PowerShellInline code={`ForEach-Object -Parallel`} />. También introduce los bucles
+                    <PowerShellInline code={`while`} /> y <PowerShellInline code={`do while`} />, ilustrando cómo
+                    controlar condiciones y tiempos de ejecución, y cómo aplicar operadores lógicos para construir
+                    iteraciones más complejas.
+                </Fragment>
+            </Book>
+        </Fragment>
+    </References>
+
     <Footnotes>
         <Footnote index={1}>
             Usaremos la licencia BSD-2 como ejemplo por ser simple y permisiva, pero puedes usar la que prefieras (MIT,
@@ -767,109 +882,3 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Footnote>
     </Footnotes>
 </NotesLayout>
-
-<!--
-    <ConclusionsLayout
-          ><Fragment slot="conclusions">
-            En esta lección exploramos dos patrones fundamentales para escribir
-            scripts más seguros y útiles en PowerShell. Primero, el <strong
-              >ensayo seguro</strong
-            > con
-            <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-              code="-Confirm"
-            />, que permite simular o confirmar operaciones antes de aplicarlas.
-            Luego, el recorrido y transformación de archivos, aplicando validaciones y
-            operaciones típicas sobre proyectos (por ejemplo, crear <code
-              >LICENSE</code
-            > y asegurar secciones en
-            <code>README.md</code>). Ambos enfoques muestran cómo usar la
-            <strong>pipeline de objetos</strong>, las validaciones de parámetros y las
-            capacidades de <PowerShellInline code="[CmdletBinding()]" /> para hacer scripts
-            más expresivos, confiables y mantenibles.</Fragment
-          >
-
-          <Fragment slot="key-points"
-            ><ListItem icon={icons.ShieldCheck}
-              >El patrón de <strong>ensayo seguro</strong> evita efectos no deseados y
-              aumenta la confianza en el script.</ListItem
-            >
-
-            <ListItem icon={icons.FolderOpen}
-              >Recorrer y transformar archivos es un caso común al estandarizar
-              proyectos y metadatos.</ListItem
-            >
-
-            <ListItem icon={icons.SlidersHorizontal}
-              >Validaciones de parámetros y atributos como <PowerShellInline
-                code="[ValidateRange]"
-              /> o
-              <PowerShellInline code="[switch]" /> hacen los scripts más robustos.</ListItem
-            >
-
-            <ListItem icon={icons.Terminal}
-              >La combinación de <PowerShellInline code="[CmdletBinding()]" /> y cmdlets
-              como
-              <PowerShellInline code="Write-Verbose" /> aporta control y claridad al ejecutar.</ListItem
-            ></Fragment
-          >
-
-          <Fragment slot="takeaways"
-            >El scripting en PowerShell no se limita a resolver tareas inmediatas: se
-            trata de desarrollar <em>hábitos de diseño</em> que hagan que tus herramientas
-            sean confiables, predecibles y fáciles de mantener. Incorporar confirmaciones,
-            validaciones y diagnósticos transforma simples scripts en piezas reutilizables
-            y seguras, que pueden crecer junto con tus proyectos y bibliotecas de software.</Fragment
-          ></ConclusionsLayout
-        >
-
-        <References
-          ><Fragment slot="recommended"
-            ><WebPage
-              title="Everything you wanted to know about ShouldProcess"
-              url="https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-shouldprocess"
-              location="Microsoft Learn"
-              ><Fragment slot="description"
-                >Guía práctica y profunda sobre cómo agregar soporte a <PowerShellInline
-                  code=`-WhatIf`
-                /> y
-                <PowerShellInline code=`-Confirm` /> en funciones PowerShell con <PowerShellInline
-                  code=`SupportsShouldProcess`
-                />. Explica el uso correcto de <PowerShellInline
-                  code=`$PSCmdlet.ShouldProcess()`
-                /> (y sus
-                <em>overloads</em>), dónde colocarlo en el flujo (especialmente en
-                bucles), y cómo se relaciona con variables de preferencia como
-                <PowerShellInline code=`$WhatIfPreference` />, <PowerShellInline
-                  code=`$ConfirmPreference`
-                /> y <PowerShellInline code=`ConfirmImpact` />. Distingue
-                <PowerShellInline code=`ShouldProcess` /> de <PowerShellInline
-                  code=`ShouldContinue`
-                /> (cuándo usar cada uno) e incluye patrones para implementar <PowerShellInline
-                  code=`-Force`
-                /> sin romper confirmaciones ni simulaciones. Cubre matices de propagación
-                entre módulos de script, localización de los prompts y formas de pasar
-                <em>switches</em> (<PowerShellInline code=`-WhatIf:$true` />, <em
-                  >splatting</em
-                >). Ideal para quienes diseñan funciones seguras y reproducibles, y
-                quieren entender los bordes reales de
-                <PowerShellInline code=`-WhatIf` />/<PowerShellInline
-                  code=`-Confirm`
-                /> más allá de lo básico.
-              </Fragment></WebPage
-            ></Fragment
-          >
-
-          <!-- <Fragment slot="additional">...</Fragment>
-    </References >
-
-    <Footnotes><Footnote index={1}><PowerShellInline code="&" /> ejecuta un script en un nuevo contexto, sin compartir
-            variables locales. En cambio, <PowerShellInline code="." /> (dot-sourcing) carga el script en el contexto
-            actual, permitiendo que sus funciones y variables permanezcan disponibles después de la ejecución.</Footnote>
-
-        <Footnote index={3}
-        >En scripts, <PowerShellInline code="Write-Output" /> es preferible a
-            <PowerShellInline code="Write-Host" /> porque escribe en el pipeline, permitiendo redirección, filtrado y
-            pruebas automatizadas.
-            <PowerShellInline code="Write-Host" /> solo imprime en pantalla y rompe esa flexibilidad, por lo que se
-            recomienda usarlo únicamente para mostrar mensajes interactivos al usuario.</Footnote></Footnotes>*/ }
--->

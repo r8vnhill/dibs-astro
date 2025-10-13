@@ -1,4 +1,52 @@
 {
+	"Book Reference": {
+		"body": [
+			"<Book",
+			"    chapter=\"...\" bookTitle=\"...\"",
+			"    pages={[420, 8080]}",
+			">",
+			"    <AuthorList slot=\"authors\" authors={[]} />",
+			"",
+			"    <Fragment slot=\"description\">",
+			"        ...",
+			"    </Fragment>",
+			"</Book>"
+		],
+		"description": "Insert a Book reference component",
+		"prefix": "book",
+		"scope": "astro"
+	},
+	"Exercise": {
+		"body": [
+			"<Exercise headingLevel=\"h2\">",
+			"    <Fragment slot=\"title\">",
+			"        ...",
+			"    </Fragment>",
+			"",
+			"    <Fragment slot=\"requirements\">",
+			"        ...",
+			"    </Fragment>",
+			"",
+			"    <Fragment slot=\"notes\">",
+			"        ...",
+			"    </Fragment>",
+			"",
+			"    <Fragment slot=\"use\">",
+			"        ...",
+			"    </Fragment>",
+			"",
+			"    <Fragment slot=\"hints\">",
+			"        ...",
+			"    </Fragment>",
+			"",
+			"    <Fragment slot=\"solution\">",
+			"        ...",
+			"    </Fragment>",
+			"</Exercise>"
+		],
+		"description": "Insert an Exercise component",
+		"prefix": "exercise"
+	},
 	"NotesLayout": {
 		"body": [
 			"---",
@@ -88,36 +136,5 @@
 		],
 		"description": "Insert a ProCons component",
 		"prefix": "procons"
-	},
-	"Exercise": {
-		"body": [
-			"<Exercise headingLevel=\"h2\">",
-			"    <Fragment slot=\"title\">",
-			"        ...",
-			"    </Fragment>",
-			"",
-			"    <Fragment slot=\"requirements\">",
-			"        ...",
-			"    </Fragment>",
-			"",
-			"    <Fragment slot=\"notes\">",
-			"        ...",
-			"    </Fragment>",
-			"",
-			"    <Fragment slot=\"use\">",
-			"        ...",
-			"    </Fragment>",
-			"",
-			"    <Fragment slot=\"hints\">",
-			"        ...",
-			"    </Fragment>",
-			"",
-			"    <Fragment slot=\"solution\">",
-			"        ...",
-			"    </Fragment>",
-			"</Exercise>"
-		],
-		"description": "Insert an Exercise component",
-		"prefix": "exercise"
 	}
 }
