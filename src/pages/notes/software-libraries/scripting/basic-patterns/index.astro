@@ -1,28 +1,23 @@
 ---
 import * as icons from "~/assets/img/icons";
 import comoImg from "~/assets/img/why/como.webp";
-import { Enquote, Heading, P } from "~/components/semantics";
+import { Heading, P } from "~/components/semantics";
 import {
     Abstract,
     Definition,
     Exercise,
     Explanation,
-    Hints,
     Important,
-    Info,
     More,
     Note,
     Question,
-    Solution,
     Tip,
-    Warning,
 } from "~/components/ui/callouts";
 import { MarkdownInline, OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -53,7 +48,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <PowerShellBlock
             code={`
-                #Requires -Version 7.4
+                #Requires -Version 7.5
                 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                 param(
                     [Parameter(Mandatory)]
@@ -111,8 +106,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                 <ListItem icon={icons.TextT}>
                     <PowerShellInline code="[ValidateNotNullOrWhiteSpace()]" /> (desde PowerShell&nbsp;7.4) evita que el
-                    valor sea
-                    <PowerShellInline code="$null" />, vacío o solo espacios.
+                    valor sea <PowerShellInline code="$null" />, vacío o solo espacios.
                 </ListItem>
 
                 <ListItem icon={icons.CurrencyDollar}>
@@ -265,7 +259,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <PowerShellBlock
             code={`
-                #Requires -Version 7.4
+                #Requires -Version 7.5
                 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                 param(
                     [Parameter(Mandatory)]
@@ -540,112 +534,224 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </NotesSection>
 
     <Exercise headingLevel="h2">
-        <span slot="title">...</span>
-
-        <Fragment slot="requirements">
-            ...
+        <Fragment slot="title">
+            <Mono>Update-ScriptRequiresVersion</Mono>
         </Fragment>
 
-        <Definition headingLevel="h3">
-            <span slot="title">
-                <PowerShellInline code="[switch]" />: <Enquote>booleano</Enquote> por presencia
-            </span>
+        <Fragment slot="requirements">
+            <List>
+                <ListItem icon={icons.ShieldCheck}>
+                    Crea <Mono>Update-ScriptRequiresVersion.ps1</Mono> con <PowerShellInline
+                        code="SupportsShouldProcess"
+                    />.
+                </ListItem>
 
-            <P>
-                Declarar un parámetro como <PowerShellInline code="[switch] $UpdateStamp" /> es similar a un booleano
-                que representa la presencia o ausencia del switch en la línea de comandos. Si se incluye
-                <PowerShellInline code="-UpdateStamp" />, el valor de <PowerShellInline code="$UpdateStamp.IsPresent" />
-                es
-                <PowerShellInline code="$true" />; si no, es <PowerShellInline code="$false" />.
-            </P>
-        </Definition>
+                <ListItem icon={icons.FolderOpen}>
+                    Debe recorrer recursivamente una carpeta raíz y procesar todos los <Mono>.ps1</Mono> usando
+                    <PowerShellInline code={`foreach`} />.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                    Verifica en cada archivo cuántas veces aparece <PowerShellInline code={`#Requires -Version M.m`} />
+                    (regex).
+                    <br />
+                    Regla:
+
+                    <List>
+                        <ListItem icon={icons.NumberCircleOne}>
+                            <B>Si existe exactamente 1</B>: reemplaza su versión por la proporcionada (si no se
+                            proporciona, usa la versión actual de PowerShell).
+                        </ListItem>
+                        <ListItem icon={icons.NumberCircleTwo}>
+                            <B>Si no existe</B>: inserta <PowerShellInline code={`#Requires -Version M.m`} /> como <I
+                            >primera línea</I> del script.
+                        </ListItem>
+                        <ListItem icon={icons.Warning}>
+                            <B>Si existe más de una</B>: imprime <PowerShellInline code={`Write-Warning`} /> y no
+                            modifica el archivo.
+                        </ListItem>
+                    </List>
+                </ListItem>
+            </List>
+        </Fragment>
+
+        <Fragment slot="notes">
+            <Definition headingLevel="h4">
+                <span slot="title"><PowerShellInline code={`[Version]`} /></span>
+
+                <B><PowerShellInline code="[Version]" /></B> es el tipo .NET para representar versiones.
+
+                <List>
+                    <ListItem icon={icons.TerminalWindow}>
+                        <B><PowerShellInline code="$PSVersionTable" /></B> es un <PowerShellInline
+                            code={`[hashtable]`}
+                        />
+                        con datos de la sesión actual (por ejemplo, <PowerShellInline code={`.PSVersion`} />,
+                        <PowerShellInline code={`.PSEdition`} />, <PowerShellInline code={`.Platform`} />, etc.).
+                    </ListItem>
+
+                    <ListItem icon={icons.Tag}>
+                        <B><PowerShellInline code="$PSVersionTable.PSVersion" /></B> es un <PowerShellInline
+                            code={`[Version]`}
+                        /> que representa la versión del motor de PowerShell en ejecución (p. ej., <Mono>7.4.2</Mono>).
+                    </ListItem>
+
+                    <ListItem icon={icons.NumberCircleOne}>
+                        <B><PowerShellInline code=".Major" /> / <PowerShellInline code=".Minor" /></B> son enteros de la
+                        versión. Para normalizar a <Mono>Mayor.Menor</Mono> (recomendado en <Mono>#Requires
+                            -Version</Mono>), compón la cadena así:
+                        <PowerShellBlock
+                            code={`
+                                $v = $PSVersionTable.PSVersion
+                                $target = '{0}.{1}' -f $v.Major, $v.Minor  # ej. "7.5"
+                            `}
+                        />
+                    </ListItem>
+
+                    <ListItem icon={icons.Lightbulb}>
+                        Al declarar un parámetro <PowerShellInline code="[Version] $Version" />, puedes pasar
+                        <PowerShellInline code={`'7.5'`} /> o <PowerShellInline code={`7.5`} />; PowerShell lo convierte
+                        automáticamente a <PowerShellInline code={`[Version]`} />. Si no lo pasas, usar
+                        <PowerShellInline code="$PSVersionTable.PSVersion" /> te da un valor consistente y tipado.
+                    </ListItem>
+                </List>
+            </Definition>
+
+            <Definition headingLevel="h4">
+                <PowerShellInline code={`[regex]::Matches([string] $Input, [string] $Pattern)`} slot="title" />
+
+                <List>
+                    <ListItem icon={icons.MagnifyingGlass}>
+                        <B><PowerShellInline code="[regex]::Matches($text, $rxRequires)" />:</B> Ejecuta el patrón sobre
+                        <PowerShellInline code={`$text`} /> y devuelve un <PowerShellInline
+                            code={`[MatchCollection]`}
+                        /> (todas las coincidencias). Útil cuando quieres contar o recorrer múltiples matches.
+                    </ListItem>
+
+                    <ListItem icon={icons.NumberCircleOne}>
+                        <B><PowerShellInline code="[MatchCollection].Count" />:</B> Cantidad de coincidencias
+                        encontradas.
+                    </ListItem>
+
+                    <ListItem icon={icons.BracketsCurly}>
+                        <B><PowerShellInline code="[MatchCollection][0].Groups[1].Value" />:</B> Del primer match
+                        (<PowerShellInline code={`[0]`} />), toma el <I>primer</I> grupo de captura explícito
+                        (<PowerShellInline code={`.Groups[1]`} />) y su texto (<PowerShellInline code={`.Value`} />).
+                        <PowerShellInline code={`.Groups[0]`} /> es la coincidencia completa; los grupos capturados
+                        empiezan en <PowerShellInline code={`1`} />.
+                    </ListItem>
+                </List>
+
+                <PowerShellBlock
+                    code={`
+                        $rxRequires = '(?im)^\\s*#\\s*Requires\\s+-Version\\s+([0-9]+(?:\\.[0-9]+)?)\\s*$'
+
+                        $matches = [regex]::Matches($text, $rxRequires)
+
+                        $matches.Count              # -> 1
+                        $matches[0].Value           # -> "#Requires -Version 7.5"
+                        $matches[0].Groups[1].Value # -> "7.5"   (el grupo capturado de la versión)
+                    `}
+                >
+                    <span slot="title">Ejemplo rápido</span>
+                </PowerShellBlock>
+            </Definition>
+        </Fragment>
+
+        <Fragment slot="use">
+            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -WhatIf -Verbose`}>
+                <span slot="footer">Ensayo — sin aplicar cambios</span>
+                <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
+            </PowerShellBlock>
+
+            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -Version 7.5 -Confirm`}>
+                <span slot="footer">Aplicación con confirmación</span>
+                <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
+            </PowerShellBlock>
+        </Fragment>
 
         <Fragment slot="hints">
-            <PowerShellBlock
-                code={`
-                $a -eq $b        # Igualdad
-                $a -ne $b        # Desigualdad
-                $a -lt $b        # Menor que
-                $a -le $b        # Menor o igual que
-                $a -gt $b        # Mayor que
-                $a -ge $b        # Mayor o igual que
-                $a -and $b       # Y lógico
-                $a -or $b        # O lógico
-            `}
-            ><span slot="title">Operadores útiles</span></PowerShellBlock>
-
             <List>
                 <ListItem icon={icons.TextT}>
-                    Para limpiar espacios al final de línea, utiliza <PowerShellInline code="-replace" /> con el patrón
-                    <PowerShellInline code={`'[ \\t]+(?=\\r?\\n)'`} /> (espacios o tabs antes de salto de línea).
+                    Un patrón simple para la línea (modo multilinea/ignore case): <Mono
+                    >(?im)^\s*#\s*Requires\s+-Version\s+([0-9]+(?:\.[0-9]+)?)\s*$</Mono>
                 </ListItem>
 
-                <ListItem icon={icons.ArrowsLeftRight}>
-                    Puedes verificar que un string termine con salto de línea usando <MarkdownInline
-                        code="$_.EndsWith([Environment]::NewLine)"
-                    /> (aquí <PowerShellInline code={`$_`} /> es cualquier variable que contenga un string).
+                <ListItem icon={icons.ArrowsClockwise}>
+                    Estructura típica: lee <Mono>-Raw</Mono>, calcula <Mono>$newText</Mono>, si cambia y <Mono
+                    >ShouldProcess</Mono> → <Mono>Set-Content</Mono>.
                 </ListItem>
 
-                <ListItem icon={icons.Calendar}
-                >Para buscar y reemplazar el sello de fecha, usa el patrón <PowerShellInline
-                        code={`'(?im)^\\s*Last updated: .*$'`}
-                    /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem></List></Fragment>
+                <ListItem icon={icons.Funnel}>
+                    Puedes usar <PowerShellInline code={`Get-ChildItem ... -Filter *.ps1`} /> para limitar a archivos
+                    <Mono>.ps1</Mono>.
+                </ListItem>
+            </List>
+        </Fragment>
 
         <Fragment slot="solution">
             <PowerShellBlock
                 code={`
-                    #Requires -Version 7.0
+                    #Requires -Version 7.5
                     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                     param(
                         [Parameter(Mandatory)]
-                        [ValidateNotNullOrEmpty()]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
                         [string] $Root,
 
-                        [switch] $UpdateStamp
+                        [Version] $Version = $PSVersionTable.PSVersion
                     )
 
                     $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
-                    $files = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
+                    $targetVersion = '{0}.{1}' -f $Version.Major, $Version.Minor
+                    $requiresLine = '#Requires -Version {0}' -f $targetVersion
+                    $rxRequires = '(?im)^\\s*#\\s*Requires\\s+-Version\\s+([0-9]+(?:\\.[0-9]+)?)\\s*$'
 
-                    foreach ($file in $files) {
-                        $original = Get-Content -LiteralPath $file.FullName -Raw
+                    $foundScripts = Get-ChildItem -LiteralPath $rootPath -Recurse -File -Filter *.ps1
+                    foreach ($script in $foundScripts) {
+                        $text = Get-Content -LiteralPath $script.FullName -Raw
+                        $matches = [regex]::Matches($text, $rxRequires)
+                        $count = $matches.Count
 
-                        # 1) Quitar espacios en blanco al final de cada línea
-                        $clean = [regex]::Replace($original, '[ \\t]+(?=\\r?\\n)', '')
-
-                        # 2) Asegurar salto de línea final
-                        if (-not $clean.EndsWith([Environment]::NewLine)) {
-                            $clean += [Environment]::NewLine
+                        if ($count -eq 0) {
+                            $newText = '{0}{1}{2}' -f $requiresLine, [Environment]::NewLine, $text
+                            if ($newText -ne $text) {
+                                Write-Information (
+                                    '[{0}] Insert #Requires -> {1}' -f $script.Name, $requiresLine)
+                                if ($PSCmdlet.ShouldProcess($script.FullName, 'Insert #Requires -Version')) {
+                                    Set-Content -LiteralPath $script.FullName -Encoding utf8 -Value $newText
+                                }
+                            }
                         }
-
-                        # 3) Agregar/actualizar sello de fecha si se pidió -UpdateStamp
-                        if ($UpdateStamp) {
-                            $stamp = "Last updated: $(Get-Date)"
-                            if ($clean -match '(?im)^\\s*Last updated: .*$') {
-                                $clean = [regex]::Replace($clean, '(?im)^\\s*Last updated: .*$', $stamp, 1)
+                        elseif ($count -eq 1) {
+                            $current = $matches[0].Groups[1].Value
+                            if ($current -ne $targetVersion) {
+                                $newText = $text -replace $rxRequires, $requiresLine
+                                Write-Information ('[{0}] Update #Requires {1} -> {2}' -f $script.Name,
+                                    $current, $targetVersion)
+                                if ($PSCmdlet.ShouldProcess($script.FullName, 'Update #Requires -Version')) {
+                                    Set-Content -LiteralPath $script.FullName -Encoding utf8 -Value $newText
+                                }
                             }
                             else {
-                                $clean = $clean + $stamp + [Environment]::NewLine
+                                Write-Verbose ('[{0}] OK (version {1})' -f $script.Name, $current)
                             }
                         }
-
-                        # Aplicar cambios solo si hubo modificaciones, respetando -WhatIf
-                        if (($clean -ne $original) -and (
-                                $PSCmdlet.ShouldProcess(
-                                    $file.FullName, 'Normalize Markdown whitespace and stamp'))) {
-                            Set-Content -LiteralPath $file.FullName -Encoding utf8 -NoNewline:$false -Value $clean
-                            Write-Output "Fixed -> $($file.FullName)"
-                        }
                         else {
-                            Write-Verbose "No changes -> $($file.FullName)"
+                            Write-Warning ('[{0}] Multiple #Requires -Version lines found ({1}); skipping.' -f 
+                                $script.Name, $count)
                         }
                     }
                 `}
-            ><slot slot="title" />
+            >
                 <DibsSourceLink
                     slot="source" repo="scripts"
-                    file="Cleanup-Readmes.ps1"
-                /></PowerShellBlock></Fragment></Exercise>
+                    file="maintenance/Update-ScriptRequiresVersion.ps1"
+                />
+            </PowerShellBlock>
+        </Fragment>
+    </Exercise>
 
     <Footnotes>
         <Footnote index={1}>
