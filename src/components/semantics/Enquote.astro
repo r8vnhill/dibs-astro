@@ -1,0 +1,43 @@
+---
+interface Props {
+    /**
+     * Tipo de comillas.
+     *
+     * - `latin-double` → «texto»
+     * - `latin-single` → ‹texto›
+     * - `english-double` → “texto”
+     * - `english-single` → ‘texto’
+     * - `ascii-double` → "texto"
+     * - `ascii-single` → 'texto'
+     */
+    type?:
+        | "latin-double"
+        | "latin-single"
+        | "english-double"
+        | "english-single"
+        | "ascii-double"
+        | "ascii-single";
+}
+
+const { type = "latin-double" } = Astro.props as Props;
+
+const quoteTypes = {
+    "latin-double": { open: "«", close: "»" },
+    "latin-single": { open: "‹", close: "›" },
+    "english-double": { open: "“", close: "”" },
+    "english-single": { open: "‘", close: "’" },
+    "ascii-double": { open: "\"", close: "\"" },
+    "ascii-single": { open: "'", close: "'" },
+} as const;
+
+const quotes = quoteTypes[type] ?? quoteTypes["latin-double"];
+---
+
+<span class="enquote" aria-label="quoted text">{quotes.open}<slot />{quotes.close}</span>
+
+<style>
+    .enquote {
+        font-style: italic;
+        quotes: "«" "»" "‹" "›" "“" "”" "‘" "’" "'" "'" "\"" "\"";
+    }
+</style>

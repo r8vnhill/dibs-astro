@@ -1,8 +1,22 @@
 ---
 import * as icons from "~/assets/img/icons";
 import comoImg from "~/assets/img/why/como.webp";
-import { Heading, P } from "~/components/semantics";
-import { Abstract, Explanation, Important, Info, More, Note, Question, Tip, Warning } from "~/components/ui/callouts";
+import { Enquote, Heading, P } from "~/components/semantics";
+import {
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    Hints,
+    Important,
+    Info,
+    More,
+    Note,
+    Question,
+    Solution,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
 import { MarkdownInline, OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -243,10 +257,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <P>
             Un caso típico en bibliotecas de software es estandarizar metadatos: por ejemplo, asegurarte de que cada
-            proyecto tenga archivo <code>LICENSE</code>
-            y que su <code>README.md</code> incluya una sección de licencia. A continuación iteramos por todos los <code
-            >README.md</code> del árbol, creamos <code>LICENSE</code><FootnoteRef index={1} />&nbsp;si falta y añadimos
-            (o evitamos duplicar) la sección
+            proyecto tenga archivo <Mono>LICENSE</Mono> y que su <Mono>README.md</Mono> incluya una sección de licencia.
+            A continuación iteramos por todos los <Mono>README.md</Mono> del árbol, creamos <Mono
+            >LICENSE</Mono><FootnoteRef index={1} />&nbsp;si falta y añadimos (o evitamos duplicar) la sección
             <MarkdownInline code="## License" />.
         </P>
 
@@ -299,9 +312,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     $readmeText = Get-Content -LiteralPath $readme.FullName -Raw
                     if ($readmeText -notmatch '(?im)^##\\s*License\\b') {
                         if ($PSCmdlet.ShouldProcess($readme.FullName, 'Append License section')) {
-                            $nl2 = [Environment]::NewLine * 2
                             Add-Content -LiteralPath $readme.FullName -Encoding utf8 -Value (
-                                $nl2 + $section)
+                                '{0}{0}{1}' -f [Environment]::NewLine, $section)
                             Write-Information ('License section appended -> {0}' -f $readme.FullName)
                         }
                     }
@@ -314,7 +326,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Estandarizar LICENSE y sección en README.md</span>
             <DibsSourceLink
                 slot="source" repo="scripts"
-                file="Apply-License.ps1"
+                file="core/Add-License.ps1"
             />
         </PowerShellBlock>
 
@@ -335,32 +347,43 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </More>
                 </ListItem>
 
-                <ToDo
-                    client:only="react"
-                    metadata={{
-                        tasks: [
-                            "Explicar Invoke-RestMethod",
-                        ],
-                    }}
-                />
+                <ListItem icon={icons.CloudArrowDown}>
+                    <PowerShellInline code="Invoke-RestMethod" /> descarga el contenido y te entrega directamente el <I
+                    >cuerpo</I> (string u objeto si es JSON/XML). Es ideal cuando quieres el payload sin metadatos. En
+                    cambio, <PowerShellInline code="Invoke-WebRequest" /> retorna un objeto más “pesado” con
+                    encabezados, estado, etc., y el texto viene en <Mono>.Content</Mono>.
+                    <br />
+                    Como la licencia de SPDX es texto plano y solo nos interesa el contenido, <PowerShellInline
+                        code="Invoke-RestMethod"
+                    /> es la opción más simple.
+                </ListItem>
 
-                <ToDo
-                    client:only="react"
-                    metadata={{
-                        tasks: [
-                            "Explicar -replace",
-                        ],
-                    }}
-                />
+                <ListItem icon={icons.PencilSimpleLine}>
+                    <B>Reemplazos con</B> <PowerShellInline code="-replace" />: es un operador de <I>expresiones
+                        regulares</I> que recibe <Mono>patrón</Mono> y <Mono>reemplazo</Mono>. En el script encadenamos
+                    dos reemplazos: primero <PowerShellInline code={`'<year>'`} /> por <PowerShellInline
+                        code="$Year"
+                    />, y luego <PowerShellInline code={`'<owner>'`} /> por <PowerShellInline
+                        code="$Owner"
+                    />.<FootnoteRef index={2} />
+                </ListItem>
 
-                <ToDo
-                    client:only="react"
-                    metadata={{
-                        tasks: [
-                            "Explicar Get-ChildItem -Recurse -File -Filter",
-                        ],
-                    }}
-                />
+                <ListItem icon={icons.FolderOpen}>
+                    <B>Enumerar archivos</B> con <PowerShellInline code="Get-ChildItem -Recurse -File -Filter" />:
+                    <List>
+                        <ListItem icon={icons.ArrowBendDoubleUpRight}>
+                            <PowerShellInline code="-Recurse" /> recorre subcarpetas.
+                        </ListItem>
+                        <ListItem icon={icons.File}>
+                            <PowerShellInline code="-File" /> limita a archivos.
+                        </ListItem>
+                        <ListItem icon={icons.FileMd}>
+                            <PowerShellInline code="-Filter README.md" /> conserva sólo archivos <Mono>README.md</Mono>;
+                            usar <PowerShellInline code={`Where-Object`} /> es una alternativa, pero usualmente es menos
+                            eficiente porque filtra <B>después</B> de obtener todos los archivos.
+                        </ListItem>
+                    </List>
+                </ListItem>
 
                 <ListItem icon={icons.ArrowsClockwise}>
                     <PowerShellInline code="foreach ($readme in $foundReadmes) { ... }" />: bucle nativo (no de
@@ -391,200 +414,205 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </List>
                 </ListItem>
 
-                <ToDo
-                  client:only="react"
-                  metadata={{
-                    tasks: [
-                      "Explicar [Environment]::NewLine",
-                    ],
-                  }}
-                />
+                <ListItem icon={icons.TextIndent}>
+                    <PowerShellInline code="[Environment]::NewLine" /> devuelve el separador de línea apropiado para el
+                    sistema operativo (por ejemplo, <Mono>\r\n</Mono> en Windows, <Mono>\n</Mono> en Unix).
+                </ListItem>
 
-                <ToDo
-                  client:only="react"
-                  metadata={{
-                    tasks: [
-                      "Explicar Add-Conmtent",
-                    ],
-                  }}
-                />
+                <ListItem icon={icons.PlusCircle}>
+                    <PowerShellInline code="Add-Content" /> agrega texto al final de un archivo existente, mientras que
+                    <PowerShellInline code="Set-Content" /> sobrescribe el contenido. Aquí usamos <PowerShellInline
+                        code="Add-Content -Encoding utf8"
+                    /> para anexar la sección de licencia al README preservando codificación UTF-8 y sin borrar lo
+                    anterior.
+                </ListItem>
             </List>
-
-            <Warning>
-                <span slot="title">
-                    Backtick (<PowerShellInline code="`" />) al final de línea
-                </span>
-
-                En PowerShell sirve como <em>continuación de línea</em>, permitiendo dividir un comando largo en varias
-                líneas. Sin embargo, es una práctica <strong>frágil</strong>: basta un espacio después del backtick para
-                que el script falle. Como alternativa más robusta, puedes:
-
-                <List>
-                    <ListItem icon={icons.BracketsRound}>
-                        Envolver expresiones en paréntesis y dividirlas en varias líneas.
-                    </ListItem>
-
-                    <ListItem icon={icons.TextT}>
-                        Usar variables intermedias para mantener el código legible.
-                    </ListItem>
-                </List>
-
-                En este apunte usaremos backticks solo para simplificar ejemplos, pero en proyectos reales conviene
-                evitarlos siempre que sea posible.
-            </Warning>
         </Explanation>
 
-        <More>
+        <More headingLevel="h3">
             <span slot="title"><PowerShellInline code="ForEach-Object" /></span>
 
-            <p class="mb-2">
+            <P>
                 PowerShell ofrece dos formas de iterar colecciones: la palabra clave
-                <PowerShellInline code="foreach" /> y el cmdlet
-                <PowerShellInline code="ForEach-Object" />. Aunque se parecen, tienen diferencias importantes:
-            </p>
+                <PowerShellInline code="foreach" /> y el cmdlet <PowerShellInline code="ForEach-Object" />. Aunque se
+                parecen, tienen diferencias importantes:
+            </P>
 
             <List>
                 <ListItem icon={icons.Rocket}>
-                    <strong><PowerShellInline code="foreach" /></strong> (palabra clave): recorre en memoria una
-                    colección ya materializada. Es más rápido y más legible cuando ya tienes los datos en una variable
-                    (ej.
-                    <PowerShellInline code="$readmes" />).
+                    <B><PowerShellInline code="foreach" /></B> (palabra clave): recorre una colección ya materializada
+                    en memoria (por ejemplo, una variable como <PowerShellInline code="$foundReadmes" />). Suele ser más
+                    rápido y permite usar <PowerShellInline code={`break`} />/<PowerShellInline code={`continue`} /> de
+                    forma clara. Es ideal cuando ya tienes los datos y quieres un bucle “procedimental”.
                 </ListItem>
 
                 <ListItem icon={icons.Pipe}>
-                    <strong><PowerShellInline code="... | ForEach-Object { ... }" /></strong>
-                    (cmdlet): procesa los elementos <em>en streaming</em> conforme llegan por el pipeline. Ideal para
-                    cadenas de comandos largas donde no quieres cargar toda la colección en memoria. En PowerShell 7+ se
-                    añade
-                    <PowerShellInline code="-Parallel" /> con
-                    <PowerShellInline code="-ThrottleLimit" /> para ejecutar en paralelo.
+                    <B><PowerShellInline code="... | ForEach-Object { ... }" /></B> (cmdlet): procesa elementos <I>en
+                        streaming</I> conforme llegan por el pipeline (esto se entenderá mejor cuando lleguemos al tema
+                    de pipelines), con menor consumo de memoria y mejor composición con otros cmdlets (<PowerShellInline
+                        code="Get-ChildItem ... | Where-Object ... | ForEach-Object { ... }"
+                    />). Útil para árboles grandes de archivos o secuencias largas.
                 </ListItem>
             </List>
 
-            <Tip>
-                Usa <PowerShellInline code="foreach" /> en scripts “procedimentales”, y
-                <PowerShellInline code="ForEach-Object" /> cuando ya compones pipelines con otros cmdlets
-                (<PowerShellInline code="Get-ChildItem ... | Where-Object ... | ForEach-Object { ... }" />).
+            <Tip headingLevel="h4">
+                Prefiere <PowerShellInline code="foreach" /> cuando: ya tienes los datos en una variable, buscas
+                velocidad/claridad y vas a ejecutar varias acciones por elemento. Usa <PowerShellInline
+                    code="ForEach-Object"
+                /> cuando: estés componiendo pipelines, quieras <I>streaming</I> para ahorrar memoria o necesites
+                <PowerShellInline code="-Parallel" /> (esto último escapa del alcance del curso).
             </Tip>
 
-            <Note>
-                En PowerShell 7+ existe la sintaxis abreviada
-                <PowerShellInline code="| % { ... }" /> como alias de
-                <PowerShellInline code="| ForEach-Object { ... }" />, pero no se recomienda en scripts por ser menos
-                legible.
+            <Note headingLevel="h4">
+                La abreviatura <PowerShellInline code="| % { ... }" /> es equivalente a un <PowerShellInline
+                    code="ForEach-Object"
+                />, pero en scripts se recomienda usar <PowerShellInline code="ForEach-Object" /> por legibilidad..
             </Note>
         </More>
 
-        <p class="mt-4">Ahora puedes ejecutar el script desde la terminal:</p>
+        <More>
+            <span slot="title">¿Y <PowerShellInline code={`for`} />?</span>
+
+            <P>
+                Además de <PowerShellInline code="foreach" /> y <PowerShellInline code="ForEach-Object" />, PowerShell
+                también incluye la estructura clásica <PowerShellInline code="for" />, similar a la de lenguajes como C,
+                Java o JavaScript. Es menos común en scripts de PowerShell, pero útil cuando necesitas control manual
+                sobre un contador o índices.
+            </P>
+
+            <List>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <B><PowerShellInline code="for" /></B> permite definir tres expresiones: inicialización, condición y
+                    actualización. Por ejemplo:
+                    <PowerShellBlock code={`for ($i = 0; $i -lt 5; $i++) { "Iteración $i" }`} />
+                    Aquí <PowerShellInline code="$i = 0" /> inicializa el contador,
+                    <PowerShellInline code="$i -lt 5" /> controla la condición de salida, y <PowerShellInline
+                        code="$i++"
+                    /> incrementa el valor en cada iteración.
+                </ListItem>
+
+                <ListItem icon={icons.Rocket}>
+                    Es más adecuado cuando:
+                    <List>
+                        <ListItem icon={icons.NumberCircleOne}>
+                            Necesitas iterar un número específico de veces.
+                        </ListItem>
+
+                        <ListItem icon={icons.NumberCircleTwo}>
+                            Requieres acceder al índice actual.
+                        </ListItem>
+
+                        <ListItem icon={icons.NumberCircleThree}>
+                            Vas a modificar valores dentro de un arreglo o lista usando índices.
+                        </ListItem>
+                    </List>
+                </ListItem>
+            </List>
+
+            <Tip headingLevel="h4">
+                Usa <PowerShellInline code="for" /> sólo cuando necesites un contador explícito o debas manipular
+                índices. Si solo necesitas recorrer colecciones, <PowerShellInline code="foreach" /> es más idiomático y
+                expresivo. En la práctica, <PowerShellInline code="for" /> se usa con poca frecuencia en scripts de
+                PowerShell.
+            </Tip>
+        </More>
+
+        <P class="mt-4">Ahora puedes ejecutar el script desde la terminal:</P>
 
         <PowerShellBlock
             code={`
-        # Desde dibs:
-        .\\scripts\\Apply-License.ps1 -Root . -Owner "Tu Nombre" -WhatIf
-      `}
+                ./scripts/core/Add-License.ps1 -Root . -Owner "Tu Nombre" -WhatIf
+            `}
         >
             <span slot="title">Desde la terminal de PowerShell</span>
         </PowerShellBlock>
 
-        <p>
+        <P>
             Si todo se ve bien, vuelve a ejecutar sin <PowerShellInline code="-WhatIf" /> para aplicar los cambios de
             verdad.
-        </p>
+        </P>
+
+        <Question headingLevel="h3">
+            ¿Qué sucede si ejecutas el script dos veces seguidas? ¿Y si cambias el valor de <PowerShellInline
+                code="-Owner"
+            />?
+        </Question>
     </NotesSection>
 
-    <Footnotes>
-        <Footnote index={1}>
-            Usaremos la licencia BSD-2 como ejemplo por ser simple y permisiva, pero puedes usar la que prefieras (MIT,
-            Apache-2.0, GPL, etc.). Revisa la <Link href="https://spdx.org/licenses/">lista de licencias SPDX</Link>
-            para más opciones.
-        </Footnote>
-    </Footnotes>
-</NotesLayout>
-
-<!--
     <Exercise>
-          <span slot="title">Normalizar archivos Markdown</span>
+        <span slot="title">Normalizar archivos Markdown</span>
 
-          Escribe un script que <strong>normalice archivos Markdown</strong> en un árbol
-          de proyectos (por ejemplo, todos los <code>README.md</code>):
+        <Fragment slot="requirements">
+            Escribe un script que <B>normalice archivos Markdown</B> en un árbol de proyectos (por ejemplo, todos los
+            <Mono>README.md</Mono>):
 
-          <List class="mt-2">
-            <ListItem icon={icons.Eraser}>
-              Quita espacios en blanco al final de cada línea.
-            </ListItem>
+            <List class="mt-2">
+                <ListItem icon={icons.Eraser}>
+                    Quita espacios en blanco al final de cada línea.
+                </ListItem>
 
-            <ListItem icon={icons.ArrowsLeftRight}>
-              Asegura que el archivo termine con un salto de línea.
-            </ListItem>
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    Asegura que el archivo termine con un salto de línea.
+                </ListItem>
 
-            <ListItem icon={icons.Calendar}>
-              Agrega o actualiza una línea <code>Last updated: YYYY-MM-DD</code>
-              al final con <MarkdownInline code="-UpdateStamp" />.
-            </ListItem>
+                <ListItem icon={icons.Calendar}>
+                    Agrega o actualiza una línea <MarkdownInline code="Last updated: YYYY-MM-DD" /> al final con
+                    <PowerShellInline code="-UpdateStamp" />.
+                </ListItem>
 
-            <ListItem icon={icons.ShieldCheck}>
-              Debe soportar <MarkdownInline code="-WhatIf" /> y <MarkdownInline
-                code="-Confirm"
-              /> (patrón de <em>ensayo seguro</em>).
-            </ListItem>
-          </List>
+                <ListItem icon={icons.ShieldCheck}>
+                    Debe soportar <MarkdownInline code="-WhatIf" /> y <MarkdownInline code="-Confirm" /> (patrón de <I
+                    >ensayo seguro</I>).
+                </ListItem>
+            </List>
+        </Fragment>
 
-          <Definition
-            ><span slot="title"
-              ><PowerShellInline code="[switch]" />: booleano por presencia</span
-            >
+        <Definition headingLevel="h3">
+            <span slot="title">
+                <PowerShellInline code="[switch]" />: <Enquote>booleano</Enquote> por presencia
+            </span>
 
-            <p>
-              <PowerShellInline code="[switch] $UpdateStamp" /> vale <PowerShellInline
-                code="$true"
-              /> si se pasa <PowerShellInline code="-UpdateStamp" /> y <PowerShellInline
-                code="$false"
-              /> si no. Ejemplos: <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-                code="-Confirm"
-              />.
-            </p></Definition
-          >
+            <P>
+                Declarar un parámetro como <PowerShellInline code="[switch] $UpdateStamp" /> es similar a un booleano
+                que representa la presencia o ausencia del switch en la línea de comandos. Si se incluye
+                <PowerShellInline code="-UpdateStamp" />, el valor de <PowerShellInline code="$UpdateStamp.IsPresent" />
+                es
+                <PowerShellInline code="$true" />; si no, es <PowerShellInline code="$false" />.
+            </P>
+        </Definition>
 
-          <PowerShellBlock
+        <PowerShellBlock
             code={`
-        $a -eq $b        # Igualdad
-        $a -ne $b        # Desigualdad
-        $a -lt $b        # Menor que
-        $a -le $b        # Menor o igual que
-        $a -gt $b        # Mayor que
-        $a -ge $b        # Mayor o igual que
-        $a -and $b       # Y lógico
-        $a -or $b        # O lógico
-      `}><span slot="title">Operadores útiles</span></PowerShellBlock
-          >
+                $a -eq $b        # Igualdad
+                $a -ne $b        # Desigualdad
+                $a -lt $b        # Menor que
+                $a -le $b        # Menor o igual que
+                $a -gt $b        # Mayor que
+                $a -ge $b        # Mayor o igual que
+                $a -and $b       # Y lógico
+                $a -or $b        # O lógico
+            `}
+        ><span slot="title">Operadores útiles</span></PowerShellBlock>
 
-          <Hints
-            ><List
-              ><ListItem icon={icons.TextT}
-                >Para limpiar espacios al final de línea, utiliza <MarkdownInline
-                  code="[regex]::Replace(...)"
-                /> con el patrón <PowerShellInline
-                  code={`[ \\t]+(?=\\r?\\n)}`}
-                />.</ListItem
-              >
+        <Fragment slot="hints">
+            <List>
+                <ListItem icon={icons.TextT}>
+                    Para limpiar espacios al final de línea, utiliza <PowerShellInline code="-replace" /> con el patrón
+                    <PowerShellInline code={`'[ \\t]+(?=\\r?\\n)'`} /> (espacios o tabs antes de salto de línea).
+                </ListItem>
 
-              <ListItem icon={icons.ArrowsLeftRight}
-                >Puedes verificar que un string termine con salto de línea usando <MarkdownInline
-                  code=".EndsWith([Environment]::NewLine)"
-                />.</ListItem
-              >
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    Puedes verificar que un string termine con salto de línea usando 
+                    <MarkdownInline code="$_.EndsWith([Environment]::NewLine)" /> ()
+                </ListItem>
 
-              <ListItem icon={icons.Calendar}
+                <ListItem icon={icons.Calendar}
                 >Para buscar y reemplazar el sello de fecha, usa el patrón <PowerShellInline
-                  code={`"(?im)^\s*Last updated: .*$"`}
-                /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem
-              ></List
-            ></Hints
-          >
+                        code={`'(?im)^\\s*Last updated: .*$'`}
+                    /> con <MarkdownInline code="[regex]::Replace(...)" />.</ListItem></List></Fragment>
 
-          <Solution
-            ><PowerShellBlock
-              code={`
+        <Solution><PowerShellBlock
+                code={`
           #Requires -Version 7.0
           [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
           param(
@@ -632,17 +660,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
               }
           }
       `}
-              ><slot slot="title" />
-              <DibsSourceLink
-                slot="source"
-                repo="scripts"
-                file="Cleanup-Readmes.ps1"
-              /></PowerShellBlock
-            ></Solution
-          ></Exercise
-        >
+            ><slot slot="title" />
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="Cleanup-Readmes.ps1"
+                /></PowerShellBlock></Solution></Exercise>
 
-        <ConclusionsLayout
+    <Footnotes>
+        <Footnote index={1}>
+            Usaremos la licencia BSD-2 como ejemplo por ser simple y permisiva, pero puedes usar la que prefieras (MIT,
+            Apache-2.0, GPL, etc.). Revisa la <Link href="https://spdx.org/licenses/">lista de licencias SPDX</Link>
+            para más opciones.
+        </Footnote>
+
+        <Footnote index={2}>
+            Como es <I>regex</I>, si el texto de reemplazo puede contener metacaracteres (por ejemplo barras
+            invertidas), puedes proteger el patrón con <PowerShellInline code="[regex]::Escape(...)" /> o usar el
+            operador <PowerShellInline code="-creplace" /> si necesitas coincidencia <I>case-sensitive</I>.
+        </Footnote>
+    </Footnotes>
+</NotesLayout>
+
+<!--
+    <ConclusionsLayout
           ><Fragment slot="conclusions">
             En esta lección exploramos dos patrones fundamentales para escribir
             scripts más seguros y útiles en PowerShell. Primero, el <strong
