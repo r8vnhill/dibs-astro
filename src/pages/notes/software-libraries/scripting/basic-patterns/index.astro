@@ -16,9 +16,11 @@ import {
 import { MarkdownInline, OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { DibsSourceLink, Link } from "~/components/ui/links";
+import { DibsSourceLink, Link, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
+import { LinksLayout } from "~/layouts";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -61,6 +63,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <PowerShellInline code="SupportsShouldProcess" />). Así evitamos efectos no deseados y ganamos confianza en
             el script.
         </P>
+
+        <ToDo
+          client:only="react"
+          metadata={{
+            tasks: [
+              "Usar objeto de dominio en lugar de string",
+            ],
+          }}
+        />
 
         <PowerShellBlock
             code={`
@@ -816,6 +827,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <LinksLayout>
+        <PythonLink />
+    </LinksLayout>
 
     <References>
         <Fragment slot="recommended">

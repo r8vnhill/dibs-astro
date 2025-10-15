@@ -1,17 +1,46 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { HeadingLevel } from "~/utils";
+
+type AsTag = "section" | "div" | "article";
 
 type Props = {
-    headingLevel?: HeadingLevel;
-} & HTMLAttributes<"div">;
+    /** Element to render; defaults to 'section' for better semantics */
+    as?: AsTag;
+    /** If no heading slot is provided, use this for accessible name */
+    ariaLabel?: string;
+    /** Apply a conventional container layout (max-w & padding) */
+    container?: boolean;
+} & HTMLAttributes<"section">;
 
-const { id = undefined, ...rest }: Props = Astro.props;
+const {
+    as = "section",
+    id,
+    ariaLabel,
+    container = false,
+    class: className,
+    ...rest
+} = Astro.props as Props;
 
-const resolvedId = id || `notes-section-${crypto.randomUUID()}`;
+const resolvedId = id ?? `notes-section-${crypto.randomUUID()}`;
+const headingId = `${resolvedId}-heading`;
+
+/** We can’t “detect” if the heading slot is filled ahead of time.
+ * Convention: when using the heading slot, set its root element id={headingId}.
+ * Example:
+ *   <Heading id={headingId} ...>Title</Heading>
+ */
+const Tag = as;
 ---
 
-<div id={resolvedId} {...rest}>
+<Tag
+    id={resolvedId} aria-label={ariaLabel}
+    aria-labelledby={ariaLabel ? undefined : headingId}
+    class:list={[
+        container && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
+        className,
+    ]}
+    {...rest}
+>
     <slot name="heading" />
     <slot />
-</div>
+</Tag>

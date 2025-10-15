@@ -1,0 +1,46 @@
+---
+import pythonLight from "~/assets/img/logos/python-logo.svg?url";
+import pythonDark from "~/assets/img/logos/python-logo.svg?url";
+import LangLink from "./LangLink.astro";
+
+type Props = {
+    slug?: string;
+    name?: string;
+    srcLight?: string;
+    srcDark?: string;
+    class?: string;
+};
+
+const {
+    slug,
+    name = "Python",
+    srcLight = pythonLight,
+    srcDark = pythonDark,
+    class: className,
+} = Astro.props as Props;
+
+const base = (slug ?? Astro.url.pathname).replace(/\/$/, "");
+const href = `${base}/py/`;
+---
+
+<span class="contents">
+    <LangLink
+        {href} {name}
+        class:list={[className]}
+    >
+        <Fragment slot="icon">
+            <img
+                src={srcLight} alt=""
+                width="24" height="24"
+                class="inline-block size-6 object-contain dark:hidden [image-rendering:crisp-edges]" loading="lazy"
+                decoding="async" aria-hidden="true"
+            />
+            <img
+                src={srcDark} alt=""
+                width="24" height="24"
+                class="hidden dark:inline object-contain size-6 [image-rendering:crisp-edges]" loading="lazy"
+                decoding="async" aria-hidden="true"
+            />
+        </Fragment>
+    </LangLink>
+</span>

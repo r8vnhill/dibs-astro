@@ -8,7 +8,7 @@ import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { LangLink, Link } from "~/components/ui/links";
+import { LangLink, Link, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -26,8 +26,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             Esta lección introduce el concepto de <B>scripting</B> como una forma práctica de automatizar tareas
             repetitivas y construir herramientas reutilizables. Presenta <B>PowerShell&nbsp;7+</B> como lenguaje común
-            en
-            <I>Windows, macOS y Linux</I>, destacando su <I>pipeline de objetos</I> y su capacidad para simplificar
+            en <I>Windows, macOS y Linux</I>, destacando su <I>pipeline de objetos</I> y su capacidad para simplificar
             flujos sin depender de utilidades externas.
         </P>
         <P>
@@ -183,7 +182,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 (evita concatenar strings con <Mono>\</Mono> o <Mono>/</Mono>). Por ejemplo:
             </P>
 
-            <PowerShellBlock code={`$readmePath = Join-Path 'dibs' 'scripts'`}>
+            <PowerShellBlock code={`$scriptsPath = Join-Path 'dibs' 'scripts'`}>
                 <span slot="footer">
                     <PowerShellInline code="Join-Path" /> construirá <Mono>dibs/scripts</Mono> o <Mono
                     >dibs\scripts</Mono> según el sistema operativo.
@@ -285,6 +284,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Logo_of_nushell_shell.svg"
             name="nushell"
         />
+        <PythonLink />
     </LinksLayout>
 
     <References>

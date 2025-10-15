@@ -57,7 +57,7 @@
 			"",
 			"<NotesLayout",
 			"    title=\"${1:Definir título}\"",
-			"    description=\"${2:Definir descripción}\"",
+			"    description=\"${2:Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas.}\"",
 			"    timeMultiplier={${3:1.5}}",
 			">",
 			"    $0",

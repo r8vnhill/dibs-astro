@@ -1,0 +1,181 @@
+---
+import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
+import { Abstract } from "~/components/ui/callouts";
+import ToDo from "~/components/utils/ToDo";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Introducción a scripting con Python"
+    description="Comparación entre PowerShell y Python como lenguajes de scripting, destacando sus fortalezas, limitaciones y contextos de uso."
+    git={{ user: "r8vnhill", repo: "..." }}
+>
+    <Abstract>...</Abstract>
+
+    <NotesSection id="...">
+        <Heading
+            headingLevel="h2" Icon={icons.Code}
+            slot="heading"
+        >
+            Scripting con Python
+        </Heading>
+
+        Este apunte asume que ya has trabajado en Python, así que no se detiene en los fundamentos del lenguaje. En su
+        lugar, se centra en las características que lo hacen adecuado para scripting, especialmente en comparación con
+        PowerShell.
+
+        Sin embargo, para que quede como referencia, aquí tienes una instalación mínima según tu sistema operativo:
+
+        
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Definir id",
+                    "Definir el título y su ícono",
+                    "Agregar texto 'al rededor' del código para contextualizar",
+                    "Reemplazar placeholders como 'path/to/...' por valores reales",
+                    `...`,
+                ],
+            }}
+        />
+    </NotesSection>
+</NotesLayout>
+
+<!--
+    <NotesSection id="h2-scripting-python">
+                    <Heading
+                        headingLevel="h2" Icon={icons.Code}
+                        slot="heading"
+                    >
+                        Scripting con Python
+                    </Heading>
+
+                    <Definition>
+                        <Fragment slot="title">Un lenguaje de propósito general, no solo de scripting</Fragment>
+
+                        <P>
+                            Python es un lenguaje multiparadigma, diseñado originalmente para la legibilidad y la rapidez de
+                            desarrollo. A diferencia de PowerShell, que se integra profundamente con el sistema y el entorno .NET,
+                            Python mantiene una capa de abstracción más alta y busca ser portable entre plataformas mediante una
+                            librería estándar extensa.
+                        </P>
+                        <P>
+                            Esto lo hace ideal para scripts que trascienden las fronteras del sistema operativo: automatización de
+                            redes, tareas científicas, procesamiento de datos o herramientas de despliegue. Su punto fuerte es la
+                            enorme cantidad de <B>paquetes</B> disponibles, desde manipulación de archivos hasta APIs web.
+                        </P>
+                    </Definition>
+
+                    <PythonBlock
+                        code={`
+import os
+from pathlib import Path
+
+root = Path("dibs") / "scripts"
+root.mkdir(parents=True, exist_ok=True)
+
+print(f"Workspace creado en: {root.resolve()}")
+      `}
+                    >
+                        <Fragment slot="title">Creación de un directorio en Python</Fragment>
+                    </PythonBlock>
+
+                    <Explanation>
+                        <List>
+                            <ListItem icon={icons.FolderOpen}>
+                                Python utiliza <PythonInline code="pathlib" /> para construir rutas portables, cumpliendo el mismo
+                                rol que
+                                <Mono>Join-Path</Mono> en PowerShell. La clase <PythonInline code="Path" /> abstrae las diferencias
+                                entre sistemas.
+                            </ListItem>
+
+                            <ListItem icon={icons.Lightning}>
+                                <B>Salida explícita</B>: mientras PowerShell suprime o redirige la salida con <Mono>Out-Null</Mono>,
+                                Python imprime solo cuando se llama a <PythonInline code="print()" />, lo que ofrece más control
+                                sobre cuándo mostrar información.
+                            </ListItem>
+
+                            <ListItem icon={icons.Package}>
+                                <B>Ecosistema de librerías</B>: para tareas como leer JSON, realizar peticiones HTTP o ejecutar
+                                comandos del sistema, Python ofrece módulos integrados (<PythonInline code="json" />, <PythonInline
+                                    code="subprocess"
+                                />,
+                                <PythonInline code="shutil" />). PowerShell tiene cmdlets equivalentes, pero Python escala mejor
+                                cuando el script evoluciona hacia una aplicación completa.
+                            </ListItem>
+                        </List>
+                    </Explanation>
+
+                    <Tip>
+                        <span slot="title">¿Qué puede hacer Python que PowerShell no?</span>
+                        <P>
+                            Python brilla en <B>procesamiento de datos, scripting científico y automatización de alto nivel</B>.
+                            Bibliotecas como <Mono>pandas</Mono>, <Mono>requests</Mono> o <Mono>asyncio</Mono> permiten construir
+                            soluciones que van más allá del ámbito del sistema operativo.
+                        </P>
+                        <P>
+                            También es más adecuado cuando un script necesita crecer hasta convertirse en una herramienta o
+                            servicio, ya que su sintaxis, su gestor de dependencias (<Mono>pip</Mono>) y su comunidad lo convierten
+                            en una opción natural para proyectos grandes o colaborativos.
+                        </P>
+                    </Tip>
+
+                    <Important>
+                        <span slot="title">¿Y qué puede hacer PowerShell que Python no?</span>
+                        <P>
+                            PowerShell ofrece una integración nativa con el entorno del sistema y con la API de Windows, además de
+                            manipular <B>objetos .NET</B> directamente en lugar de texto. Esto permite acceder a procesos, servicios
+                            y recursos del sistema sin librerías externas y con un modelo de tipado fuerte.
+                        </P>
+                        <P>
+                            Además, PowerShell cuenta con el <I>pipeline de objetos</I>, que no tiene un equivalente directo en
+                            Python: encadenar comandos que transmiten instancias en lugar de texto permite construir flujos de
+                            automatización más expresivos y seguros.
+                        </P>
+                    </Important>
+                </NotesSection>
+
+                <NotesSection id="h2-comparativa">
+                    <Heading
+                        headingLevel="h2" Icon={icons.Scales}
+                        slot="heading"
+                    >
+                        Comparativa práctica
+                    </Heading>
+
+                    <List>
+                        <ListItem icon={icons.Check}>
+                            <B>Integración del sistema</B>: PowerShell está diseñado para la administración del sistema operativo.
+                            Python requiere módulos como <Mono>os</Mono> o <Mono>subprocess</Mono> para alcanzar el mismo nivel de
+                            control.
+                        </ListItem>
+
+                        <ListItem icon={icons.Package}>
+                            <B>Reutilización y escalabilidad</B>: los scripts en PowerShell son concisos y específicos, mientras que
+                            en Python pueden evolucionar hacia aplicaciones completas. Esto lo hace más versátil cuando la
+                            automatización crece en complejidad.
+                        </ListItem>
+
+                        <ListItem icon={icons.Terminal}>
+                            <B>Pipeline de objetos</B>: exclusivo de PowerShell. Python puede simularlo con generadores o
+                            <Mono>map/filter</Mono>, pero no con el mismo modelo de composición de tipos.
+                        </ListItem>
+
+                        <ListItem icon={icons.Lightning}>
+                            <B>Velocidad de desarrollo</B>: PowerShell gana en tareas del sistema; Python en expresividad general y
+                            soporte multiplataforma más extenso (por ejemplo, entornos de datos, CI/CD o scripting web).
+                        </ListItem>
+                    </List>
+                </NotesSection>
+
+                <Footnotes>
+                    <Footnote index={1}>
+                        Algunos shells modernos como <Mono>nushell</Mono> intentan replicar el enfoque de PowerShell al usar
+                        estructuras tipadas en sus pipelines. Python, en cambio, conserva su modelo de programación tradicional
+                        basado en funciones y colecciones.
+                    </Footnote>
+                </Footnotes>
+-->

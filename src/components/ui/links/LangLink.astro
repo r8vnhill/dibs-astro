@@ -50,6 +50,8 @@ const label = variant === "ghost"
     : "underline-offset-2"; // no underline by default in "soft"
 
 const iconClass = size === "sm" ? "h-5 w-5" : "h-6 w-6";
+
+const hasIconSlot = Astro.slots.has("icon");
 ---
 
 <a
@@ -57,22 +59,19 @@ const iconClass = size === "sm" ? "h-5 w-5" : "h-6 w-6";
     rel={isExternal ? "noopener noreferrer" : undefined} aria-label={ariaLabel ?? name}
     title={name} class:list={[base, sizes, variants, focus, className]}
 >
-    {/* Prefer provided SVG via slot */}
-    <slot name="icon" />
     {
-        src && (
+                hasIconSlot ? <slot name="icon" />: (
+                   src && (
             <img
                 {src} {alt}
+                width="24" height="24"
                 class:list={[iconClass, "object-contain"]} loading="lazy"
                 decoding="async" aria-hidden={alt ? undefined : "true"}
             />
         )
+        )
     }
     <span class={label}>{name}</span>
-
-    {/* Optional trailing adornment via slot (e.g., chevron) */}
     <slot />
-
-    {/* SR-only hint for external links */}
     {isExternal && <span class="sr-only">(opens in a new tab)</span>}
 </a>

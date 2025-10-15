@@ -1,0 +1,312 @@
+---
+import { Heading } from "~/components/semantics";
+import { Abstract } from "~/components/ui/callouts";
+import ToDo from "~/components/utils/ToDo.tsx";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Patrones básicos de scripting en Python"
+    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
+    timeMultiplier={1.5}
+    git={{ user: "r8vnhill", repo: "..." }}
+>
+    <Abstract>
+        ...
+    </Abstract>
+
+    <NotesSection id="h2-dry-run">
+        <Heading headingLevel="h2" Icon={null}
+            slot="heading"
+        >
+            ...
+        </Heading>
+    
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Definir id",
+                    "Definir el título y su ícono",
+                    "Agregar texto 'al rededor' del código para contextualizar",
+                    "Reemplazar placeholders como 'path/to/...' por valores reales",
+                    `...`,
+                ],
+            }}
+        />
+    </NotesSection>
+</NotesLayout>
+
+{
+    /*
+      <NotesSection id="h2-dry-run">
+        <Heading headingLevel="h2" Icon={icons.ShieldCheck} slot="heading">
+          Ensayo seguro y confirmaciones: <Mono>-WhatIf</Mono> vs <Mono>--dry-run</Mono>
+        </Heading>
+
+        <Explanation headingLevel="h3">
+          <P>
+            En PowerShell, <Mono>SupportsShouldProcess</Mono> habilita <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono> sin esfuerzo. En Python <I>no existe un equivalente automático</I>; debes implementar un flag <Mono>--dry-run</Mono> y confirmar explícitamente antes de acciones peligrosas.
+          </P>
+          <Tip headingLevel="h4">
+            Usa <Mono>argparse</Mono> para exponer <Mono>--dry-run</Mono> y una opción <Mono>--yes</Mono> (no interactiva) para CI. Registra lo que <Enquote>harías</Enquote> con <Mono>logging.INFO</Mono> en vez de ejecutar.
+          </Tip>
+
+    ```python
+    # python -m script init --name Test --path . --dry-run
+    import argparse, logging, pathlib
+
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    def confirm(msg: str, assume_yes: bool) -> bool:
+        return assume_yes or input(f"{msg} [y/N] ").lower().startswith("y")
+
+    def write_text(path: pathlib.Path, text: str, *, dry_run: bool):
+        if dry_run:
+            logging.info(f"[whatif] create file -> {path}")
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+        logging.info(f"created -> {path}")
+
+    def main():
+        ap = argparse.ArgumentParser()
+        ap.add_argument("--name", required=True)
+        ap.add_argument("--path", required=True)
+        ap.add_argument("--dry-run", action="store_true")
+        ap.add_argument("--yes", action="store_true", help="assume confirmation")
+        args = ap.parse_args()
+
+        base = pathlib.Path(args.path).expanduser().resolve()
+        target = base / args.name / "README.md"
+
+        if not target.exists():
+            if confirm(f"Create README.md at {target}?", assume_yes=args.yes):
+                write_text(target, f"# {args.name}\n", dry_run=args["dry_run"] if isinstance(args, dict) else args.dry_run)
+            else:
+                logging.warning("skipped by user")
+        else:
+            logging.warning(f"README.md already exists -> {target}")
+
+    if __name__ == "__main__":
+        main()
+    ```
+
+        <Important headingLevel="h4">
+          <Fragment slot="title">Diferencia clave</Fragment>
+          <P>
+            <B>Solo en PowerShell</B>: <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono> se propagan automáticamente cuando usas <Mono>$PSCmdlet.ShouldProcess()</Mono>. <B>En Python</B> debes pasar y respetar <Mono>dry_run</Mono>/<Mono>yes</Mono> a <I>todas</I> las funciones que ejecuten efectos.
+          </P>
+        </Important>
+      </Explanation>
+      </NotesSection>
+
+      <NotesSection id="h2-iterate">
+        <Heading headingLevel="h2" Icon={icons.ArrowsClockwise} slot="heading">
+          Recorrer y transformar archivos: pipeline vs generadores
+        </Heading>
+
+        <Explanation headingLevel="h3">
+          <P>
+            El dúo <Mono>foreach</Mono>/<Mono>ForEach-Object</Mono> se traduce en Python a <B>bucles <Mono>for</Mono></B> (colecciones materializadas) y <B>generadores</B> (streaming). Para árboles de carpetas, <Mono>pathlib.Path.rglob</Mono> y <Mono>os.walk</Mono> permiten transformar en memoria o en flujo.
+          </P>
+
+    ```python
+    # Añadir LICENSE si falta y garantizar "## License" en README.md
+    import pathlib, logging, re, urllib.request
+
+    ROOT = pathlib.Path(".").resolve()
+    BSD2_URL = "https://raw.githubusercontent.com/spdx/license-list-data/master/text/BSD-2-Clause.txt"
+
+    def ensure_license_and_section(project_dir: pathlib.Path, owner: str, year: int, *, dry_run: bool):
+        license_path = project_dir / "LICENSE"
+        readme_path = project_dir / "README.md"
+
+        if not license_path.exists():
+            text = urllib.request.urlopen(BSD2_URL).read().decode("utf-8")
+            text = text.replace("<year>", str(year)).replace("<owner>", owner)
+            write_text(license_path, text, dry_run=dry_run)
+
+        if readme_path.exists():
+            content = readme_path.read_text(encoding="utf-8")
+            if not re.search(r"(?im)^\s*##\s*License\b", content):
+                new_content = content.rstrip() + "\n\n## License\n\nSee the [LICENSE](./LICENSE) file for details.\n"
+                if dry_run:
+                    logging.info(f"[whatif] append License section -> {readme_path}")
+                else:
+                    readme_path.write_text(new_content, encoding="utf-8")
+                    logging.info(f"appended section -> {readme_path}")
+
+    for readme in ROOT.rglob("README.md"):
+        ensure_license_and_section(readme.parent, owner="Tu Nombre", year=2025, dry_run=True)
+    ```
+
+        <Tip headingLevel="h4">
+          Usa expresiones regulares de <Mono>re</Mono> con anclas y flags <Mono>re.I|re.M</Mono> para evitar duplicados, igual que en la lección original.
+        </Tip>
+      </Explanation>
+      </NotesSection>
+
+      <NotesSection id="h2-parallel">
+        <Heading headingLevel="h2" Icon={icons.GitFork} slot="heading">
+          Paralelismo: <Mono>ForEach-Object -Parallel</Mono> vs <Mono>concurrent.futures</Mono>
+        </Heading>
+
+        <Explanation headingLevel="h3">
+          <P>
+            PowerShell 7 incorpora <Mono>-Parallel</Mono> con <I>throttle</I> implícito. En Python el patrón análogo es <Mono>concurrent.futures</Mono> con <Mono>max_workers</Mono>. No hay garantía del orden de resultados salvo que los recolectes tú.
+          </P>
+
+    ```python
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    import time
+
+    def work(n: int):
+        time.sleep(2)
+        return n
+
+    items = range(10)
+    with ThreadPoolExecutor(max_workers=5) as ex:  # throttle
+        futures = {ex.submit(work, n): n for n in items}
+        for fut in as_completed(futures):
+            print("done:", fut.result())
+    ```
+
+        <Important headingLevel="h4">
+          <Fragment slot="title">Diferencias</Fragment>
+          <List>
+            <ListItem icon={icons.Warning}>
+              <B>Solo en PowerShell</B>: sintaxis uniforme <Mono>-Parallel</Mono> dentro del pipeline.
+            </ListItem>
+            <ListItem icon={icons.Cpu}>
+              <B>Python</B> ofrece más estrategias (procesos, hilos, async) y control fino de colas, errores y <I>backpressure</I>.
+            </ListItem>
+          </List>
+        </Important>
+      </Explanation>
+      </NotesSection>
+
+      <NotesSection id="h2-paths-regex">
+        <Heading headingLevel="h2" Icon={icons.MapPin} slot="heading">
+          Rutas portables y regex
+        </Heading>
+
+        <Explanation headingLevel="h3">
+          <P>
+            Donde en la lección original usamos <Mono>$PSCmdlet.GetUnresolvedProviderPathFromPSPath(...)</Mono>, en Python preferimos <Mono>pathlib.Path</Mono> (normaliza, resuelve, crea padres). Para regex, <Mono>re</Mono> ofrece <Mono>re.sub</Mono> y <Mono>re.finditer</Mono> con grupos capturados.
+          </P>
+
+    ```python
+    import pathlib, re
+
+    p = pathlib.Path("~/proyecto").expanduser().resolve()
+    text = "#Requires -Version 7.2\n..."
+    rx = re.compile(r"(?im)^\s*#\s*Requires\s+-Version\s+([0-9]+(?:\.[0-9]+)?)\s*$")
+    print(bool(rx.search(text)))
+    print(rx.sub("#Requires -Version 7.5", text))
+    ```
+
+        <Note headingLevel="h4">
+          <B>Solo en PowerShell</B>: <Mono>#Requires -Version</Mono> es una directiva entendida por el motor. En Python, si quieres políticas de versión, debes validarlas tú (por ejemplo, comprobando <Mono>sys.version_info</Mono>) y fallar explícitamente.
+        </Note>
+      </Explanation>
+      </NotesSection>
+
+      <Exercise headingLevel="h2">
+        <Fragment slot="title"><Mono>update_script_requires.py</Mono></Fragment>
+        <Fragment slot="requirements">
+          <P>
+            Implementa un script Python que recorra <Mono>*.ps1</Mono>, cuente coincidencias de <Mono>#Requires -Version M.m</Mono> y:
+            1) inserte si no existe, 2) reemplace si existe una, 3) avise y no cambie si hay múltiples. Respeta <Mono>--dry-run</Mono>/<Mono>--yes</Mono>.
+          </P>
+        </Fragment>
+
+    ```python
+    # Esqueleto mínimo (rellena validaciones y logs)
+    import argparse, pathlib, re, sys
+
+    RX = re.compile(r"(?im)^\s*#\s*Requires\s+-Version\s+([0-9]+(?:\.[0-9]+)?)\s*$")
+
+    def normalize_version_tuple(vt) -> str:
+        return f"{vt.major}.{vt.minor}"
+
+    def process_script(path: pathlib.Path, target: str, *, dry: bool):
+        text = path.read_text(encoding="utf-8")
+        matches = list(RX.finditer(text))
+        if len(matches) == 0:
+            new = f"#Requires -Version {target}\n{text}"
+        elif len(matches) == 1:
+            new = RX.sub(f"#Requires -Version {target}", text)
+        else:
+            print(f"[warn] multiple #Requires in {path}; skipping")
+            return
+        if new != text:
+            if dry:
+                print(f"[whatif] write -> {path}")
+            else:
+                path.write_text(new, encoding="utf-8")
+                print(f"updated -> {path}")
+
+    def main():
+        ap = argparse.ArgumentParser()
+        ap.add_argument("--root", default=".")
+        ap.add_argument("--version", default=normalize_version_tuple(sys.version_info))
+        ap.add_argument("--dry-run", action="store_true")
+        args = ap.parse_args()
+
+        for ps1 in pathlib.Path(args.root).rglob("*.ps1"):
+            process_script(ps1, args.version, dry=args.dry_run)
+
+    if __name__ == "__main__":
+        main()
+    ```
+      </Exercise>
+
+      <ConclusionsLayout>
+        <Fragment slot="conclusions">
+          Si vienes de la lección original, verás que casi todo es trasladable a Python, pero <B>no hay magia integrada</B> para el ensayo/confirmación ni directivas como <Mono>#Requires</Mono>. A cambio, Python te da <I>librerías estándar</I> potentes (argparse/pathlib/re/concurrent.futures) y libertad para diseñar flujos idénticamente seguros y más extensibles.
+        </Fragment>
+
+        <Fragment slot="key-points">
+          <List>
+            <ListItem icon={icons.ShieldCheck}>
+              <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono> ⇢ <Mono>--dry-run</Mono>/<Mono>--yes</Mono> + funciones puras que reciben <Mono>dry_run</Mono>.
+            </ListItem>
+            <ListItem icon={icons.ArrowsClockwise}>
+              <Mono>foreach</Mono>/<Mono>ForEach-Object</Mono> ⇢ <Mono>for</Mono> + generadores; <Mono>-Parallel</Mono> ⇢ <Mono>concurrent.futures</Mono>.
+            </ListItem>
+            <ListItem icon={icons.MapPin}>
+              Provider paths ⇢ <Mono>pathlib.Path</Mono>; <Mono>#Requires</Mono> ⇢ validación manual de versión.
+            </ListItem>
+          </List>
+        </Fragment>
+      </ConclusionsLayout>
+
+      <References>
+        <Fragment slot="recommended">
+          <WebPage
+            title="argparse — Parser for command-line options"
+            url="https://docs.python.org/3/library/argparse.html"
+            location="Python docs"
+          />
+          <WebPage
+            title="pathlib — Object-oriented filesystem paths"
+            url="https://docs.python.org/3/library/pathlib.html"
+            location="Python docs"
+          />
+          <WebPage
+            title="concurrent.futures — ThreadPoolExecutor & ProcessPoolExecutor"
+            url="https://docs.python.org/3/library/concurrent.futures.html"
+            location="Python docs"
+          />
+          <WebPage
+            title="re — Regular expression operations"
+            url="https://docs.python.org/3/library/re.html"
+            location="Python docs"
+          />
+        </Fragment>
+      </References>
+    </NotesLayout>
+     */
+}
