@@ -35,6 +35,9 @@
       "$assets/*": [
         "src/assets/*"
       ],
+      "$icons": [
+        "src/assets/img/icons/index.ts"
+      ]
     },
     "types": [
       "astro/client"

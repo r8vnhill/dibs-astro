@@ -1,50 +1,39 @@
 {
-  "lineWidth": 120,
-  "indentWidth": 4,
-  "typescript": {
-  },
-  "json": {
-  },
-  "markdown": {
-  },
-  "toml": {
-  },
-  "malva": {
-  },
-  "markup": {
-  },
-  "markup": {
-    "printWidth": 120,
-    "useTabs": false,
-    "indentWidth": 4,
-    "lineBreak": "lf",
-    "quotes": "double",
-    "maxAttrsPerLine": 2,
-    "preferAttrsSingleLine": false,
-    "singleAttrSameLine": true,
-    "closingBracketSameLine": false,
-    "closingTagLineBreakForEmpty": "fit",
-    "html.normal.selfClosing": null,
-    "html.void.selfClosing": null,
-    "component.selfClosing": true,
-    "svg.selfClosing": null,
-    "mathml.selfClosing": null,
-    "whitespaceSensitivity": "css",
-    "component.whitespaceSensitivity": null,
-    "scriptIndent": false,
-    "styleIndent": false,
-    "astro.scriptIndent": true,
-    "astro.styleIndent": true,
-    "astroAttrShorthand": true,
-    "formatComments": true,
-    "scriptFormatter": "dprint"
-  },
-  "yaml": {
-  },
   "excludes": [
     "**/node_modules",
     "**/*-lock.json"
   ],
+  "indentWidth": 4,
+  "json": {},
+  "lineWidth": 120,
+  "malva": {},
+  "markdown": {},
+  "markup": {
+    "astro.scriptIndent": true,
+    "astro.styleIndent": true,
+    "astroAttrShorthand": true,
+    "closingBracketSameLine": false,
+    "closingTagLineBreakForEmpty": "fit",
+    "component.selfClosing": true,
+    "component.whitespaceSensitivity": null,
+    "formatComments": true,
+    "html.normal.selfClosing": null,
+    "html.void.selfClosing": null,
+    "indentWidth": 4,
+    "lineBreak": "lf",
+    "mathml.selfClosing": null,
+    "maxAttrsPerLine": 2,
+    "preferAttrsSingleLine": false,
+    "printWidth": 120,
+    "quotes": "double",
+    "scriptFormatter": "dprint",
+    "scriptIndent": false,
+    "singleAttrSameLine": true,
+    "styleIndent": false,
+    "svg.selfClosing": null,
+    "useTabs": false,
+    "whitespaceSensitivity": "css"
+  },
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.95.11.wasm",
     "https://plugins.dprint.dev/json-0.20.0.wasm",
@@ -53,5 +42,8 @@
     "https://plugins.dprint.dev/g-plane/malva-v0.14.3.wasm",
     "https://plugins.dprint.dev/g-plane/markup_fmt-v0.24.0.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm"
-  ]
+  ],
+  "toml": {},
+  "typescript": {},
+  "yaml": {}
 }

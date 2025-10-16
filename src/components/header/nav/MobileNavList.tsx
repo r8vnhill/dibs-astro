@@ -1,69 +1,93 @@
-import clsx from 'clsx';
-import type { NavItem } from './nav-items';
-import type { JSX } from 'react';
+import clsx from "clsx";
+import { type JSX, memo, useCallback } from "react";
+import type { NavItem } from "./nav-items";
 
-/**
- * Props for a navigation list component, typically used for mobile or collapsible menus.
- *
- * This type defines the structure of data passed to components that render a list of navigation
- * items, including control over visibility and optional click handling.
- */
 type NavListProps = {
-  /**
-   * Whether the navigation list is currently visible.
-   * Used to toggle animations or visibility logic.
-   */
-  isOpen: boolean;
-
-  /**
-   * The list of navigation items to be rendered as links.
-   * Each item should conform to the `NavItem` interface.
-   */
-  items: NavItem[];
-
-  /**
-   * Optional callback triggered when a navigation item is clicked.
-   * Useful for closing the menu, tracking events, etc.
-   */
-  onToggle?: (item: NavItem) => void;
+    isOpen: boolean;
+    items: NavItem[];
+    onItemSelect?: (item: NavItem) => void;
+    /** Optionally pass the id of the control (e.g., the hamburger button) for aria-controls symmetry */
+    controllerId?: string;
+    /** Optional className to extend styling */
+    className?: string;
 };
 
-/**
- * Renders the mobile version of the navigation menu.
- *
- * Displays a slide-in/out animated `<ul>` that lists navigation links based on the provided items.
- * Each link is accessible via keyboard and screen readers, using appropriate ARIA roles.
- *
- * - Applies transition classes based on `isOpen`.
- * - Supports optional `onItemClick` callback for handling navigation behavior.
- * - Hides the list from assistive tech when closed via `aria-hidden`.
- *
- * @param isOpen - Whether the mobile navigation list is currently open.
- * @param items - List of navigation items to render.
- * @param onItemClick - Optional callback triggered when a nav item is clicked.
- * @returns A JSX element representing the mobile navigation menu.
- */
-export function MobileNavList({ isOpen, items, onToggle: onItemClick }: NavListProps): JSX.Element {
-  return (
-    <ul
-      id="mainNavMobile"
-      className={clsx('mobile-nav-list', isOpen ? 'slide-fade-in' : 'slide-fade-out')}
-      aria-hidden={!isOpen}
-      role="menu"
-      aria-label="Mobile Navigation"
-    >
-      {items.map((item) => (
-        <li key={item.href || item.label} role="none">
-          <a
-            href={item.href}
-            className="mobile-nav-item"
-            role="menuitem"
-            onClick={() => onItemClick?.(item)}
-          >
-            {item.label}
-          </a>
+type MobileNavItemProps = Readonly<{
+    item: NavItem;
+    onSelect?: (item: NavItem) => void;
+}>;
+
+const MobileNavItem = memo(function MobileNavItem({ item, onSelect }: MobileNavItemProps) {
+    const handleClick = useCallback(() => onSelect?.(item), [onSelect, item]);
+
+    // External links: set rel when target=_blank
+    const rel = item.target === "_blank" ? "noopener noreferrer" : undefined;
+
+    return (
+        <li key={item.id ?? `${item.href ?? ""}::${item.label}`}>
+            <a
+                href={item.href}
+                onClick={handleClick}
+                target={item.target}
+                rel={rel}
+                aria-current={item.active ? "page" : undefined}
+                className={clsx(
+                    "block rounded-xl px-4 py-3",
+                    "focus:outline-none focus-visible:ring focus-visible:ring-primary/40",
+                    "hover:bg-muted/60",
+                    item.disabled
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer",
+                )}
+            >
+                <span className="inline-flex items-center gap-2">
+                    {item.icon ? <item.icon className="size-4" aria-hidden /> : null}
+                    <span>{item.label}</span>
+                </span>
+            </a>
         </li>
-      ))}
-    </ul>
-  );
+    );
+});
+
+export function MobileNavList({
+    isOpen,
+    items,
+    onItemSelect,
+    controllerId,
+    className,
+}: NavListProps): JSX.Element | null {
+    // Don’t keep focusable links in the tree when closed
+    if (!isOpen) return null;
+
+    return (
+        <nav
+            aria-label="Mobile navigation"
+            aria-controls={controllerId}
+            className={clsx("md:hidden", className)}
+        >
+            <ul
+                id="mainNavMobile"
+                data-state={isOpen ? "open" : "closed"}
+                aria-hidden={!isOpen}
+                className={clsx(
+                    // container
+                    "w-full space-y-1 rounded-2xl bg-background/95 p-2 shadow-lg ring-1 ring-border/60 backdrop-blur",
+                    // animation
+                    "transition-[transform,opacity] duration-200 ease-out",
+                    "data-[state=closed]:pointer-events-none data-[state=closed]:-translate-y-2 data-[state=closed]:opacity-0",
+                    "data-[state=open]:translate-y-0 data-[state=open]:opacity-100",
+                    // reduce motion
+                    "motion-reduce:transition-none",
+                )}
+            >
+                {items.map((item) => (
+                    <MobileNavItem
+                        key={item.id ?? `${item.href ?? ""}::${item.label}`}
+                        item={item}
+                        {...(onItemSelect && { onSelect: onItemSelect })}
+                    />
+                ))}
+            </ul>
+        </nav>
+    );
 }

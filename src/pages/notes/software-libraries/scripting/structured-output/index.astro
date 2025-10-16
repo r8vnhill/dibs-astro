@@ -1,0 +1,265 @@
+---
+import * as icons from "$icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
+import { Abstract, Definition, Explanation, Important, Tip } from "~/components/ui/callouts";
+import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
+import { NotesSection } from "~/layouts";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+---
+
+<NotesLayout
+    title="Salida estructurada en PowerShell"
+    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
+    timeMultiplier={1.5} git={{ repo: "dibs-scripts", user: "r8vnhill" }}
+>
+    <Abstract>
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "...",
+                ],
+            }}
+        />
+    </Abstract>
+
+    <NotesSection id="h2-hash-tables">
+        <Heading
+            headingLevel="h2" Icon={icons.BracketsCurly}
+            slot="heading"
+        >
+            Hash tables (<Mono>@{}</Mono>)
+        </Heading>
+
+        <Definition headingLevel="h3">
+            <span slot="title">Diccionarios en PowerShell</span>
+            <P>
+                Una <B>hash table</B> es una colección de pares <I>clave–valor</I>. Permite agrupar datos bajo una misma
+                variable y acceder a ellos por nombre. Su tipo subyacente es
+                <PowerShellInline code="[hashtable]" />.
+            </P>
+        </Definition>
+
+        <PowerShellBlock
+            code={`
+          $persona = @{
+              Nombre = "Ada"
+              Apellido = "Lovelace"
+              Año = 1815
+          }
+
+          # Acceso por clave
+          $persona["Nombre"]
+          $persona.Apellido
+      `}
+        >
+            <Fragment slot="title">Creación y acceso</Fragment>
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h4">
+            <List>
+                <ListItem icon={icons.Key}>
+                    <B>Claves</B> pueden ser strings o números, pero deben ser únicas.
+                </ListItem>
+
+                <ListItem icon={icons.Wrench}>
+                    Se pueden agregar o modificar elementos con la sintaxis
+                    <PowerShellInline code="$tabla['Clave'] = Valor" />.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    Para iterar sobre las claves o valores, usa
+                    <PowerShellInline code="GetEnumerator()" /> o
+                    <PowerShellInline code="foreach" />.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <PowerShellBlock
+            code={`
+          foreach ($item in $persona.GetEnumerator()) {
+              "{0}: {1}" -f $item.Key, $item.Value
+          }
+      `}
+        >
+            <Fragment slot="title">Recorrido de una hash table</Fragment>
+        </PowerShellBlock>
+
+        <Important>
+            <B>[ordered]</B> garantiza que las claves mantengan el orden de inserción, útil para reportes o exportación:
+            <PowerShellInline code="[ordered]@{ ... }" />.
+        </Important>
+    </NotesSection>
+    
+    {
+        /*
+
+          <NotesSection id="h2-pscustomobject">
+              <Heading
+                  headingLevel="h2" Icon={icons.Table}
+                  slot="heading"
+              >
+                  Objetos personalizados (<Mono>[pscustomobject]</Mono>)
+              </Heading>
+
+              <Definition headingLevel="h3">
+                  <span slot="title">Estructuras con propiedades</span>
+                  <P>
+                      Los <PowerShellInline code="[pscustomobject]" /> convierten un conjunto de claves y valores en un <I
+                      >objeto</I> cuyas propiedades se pueden acceder con <PowerShellInline code="." /> y que PowerShell
+                      muestra en formato tabular automáticamente.
+                  </P>
+              </Definition>
+
+              <PowerShellBlock
+                  code={`
+          $registro = [pscustomobject]@{
+              Nombre = "Alan"
+              Apellido = "Turing"
+              Año = 1912
+          }
+
+          $registro
+      `}
+              >
+                  <Fragment slot="title">Creación de objetos personalizados</Fragment>
+              </PowerShellBlock>
+
+              <OutputBlock
+                  code={`
+          Nombre Apellido Año
+          ------ -------- ---
+          Alan   Turing   1912
+      `}
+              />
+
+              <Explanation headingLevel="h4">
+                  <List>
+                      <ListItem icon={icons.DotOutline}>
+                          Acceso con <PowerShellInline code="$obj.Propiedad" />.
+                      </ListItem>
+
+                      <ListItem icon={icons.Export}>
+                          Ideal para exportar a CSV, JSON o XML:
+                          <PowerShellInline code="$obj | ConvertTo-Json" />.
+                      </ListItem>
+
+                      <ListItem icon={icons.Table}>
+                          PowerShell formatea automáticamente los objetos en tablas.
+                      </ListItem>
+                  </List>
+              </Explanation>
+
+              <Tip>
+                  Puedes combinar ambas ideas:
+                  <PowerShellInline code="[pscustomobject][ordered]@{ ... }" /> para crear un objeto con propiedades
+                  ordenadas.
+              </Tip>
+          </NotesSection>
+
+          <NotesSection id="h2-compare">
+              <Heading
+                  headingLevel="h2" Icon={icons.ArrowsLeftRight}
+                  slot="heading"
+              >
+                  Diferencias y usos
+              </Heading>
+
+              <Explanation>
+                  <Table>
+                      <TableHeader>
+                          <TableRow>
+                              <TableCell>Aspecto</TableCell>
+                              <TableCell>Hash table</TableCell>
+                              <TableCell>PSCustomObject</TableCell>
+                          </TableRow>
+                      </TableHeader>
+
+                      <TableBody>
+                          <TableRow>
+                              <TableCell>Tipo</TableCell>
+                              <TableCell>[hashtable]</TableCell>
+                              <TableCell>[pscustomobject]</TableCell>
+                          </TableRow>
+                          <TableRow>
+                              <TableCell>Acceso</TableCell>
+                              <TableCell>$h['Clave']</TableCell>
+                              <TableCell>$o.Propiedad</TableCell>
+                          </TableRow>
+                          <TableRow>
+                              <TableCell>Orden</TableCell>
+                              <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
+                              <TableCell>Ordenado por defecto</TableCell>
+                          </TableRow>
+                          <TableRow>
+                              <TableCell>Mutabilidad</TableCell>
+                              <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
+                              <TableCell>Generalmente inmutable</TableCell>
+                          </TableRow>
+                          <TableRow>
+                              <TableCell>Ideal para</TableCell>
+                              <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
+                              <TableCell>Datos tabulares, reportes o exportación</TableCell>
+                          </TableRow>
+                      </TableBody>
+                  </Table>
+              </Explanation>
+          </NotesSection>
+
+          <NotesSection id="h2-apply">
+              <Heading
+                  headingLevel="h2" Icon={icons.Wrench}
+                  slot="heading"
+              >
+                  Aplicaciones prácticas
+              </Heading>
+
+              <List>
+                  <ListItem icon={icons.FileText}>
+                      Crear reportes:
+                      <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
+                  </ListItem>
+
+                  <ListItem icon={icons.Export}>
+                      Exportar resultados:
+                      <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
+                  </ListItem>
+
+                  <ListItem icon={icons.Code}>
+                      Definir configuraciones o parámetros con
+                      <PowerShellInline code="@{ }" /> y pasarlos mediante
+                      <I>splatting</I>:
+                      <PowerShellInline code="Invoke-Script @config" />.
+                  </ListItem>
+              </List>
+          </NotesSection>
+
+          <ConclusionsLayout>
+              <P slot="conclusions">
+                  La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
+                  producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
+                  objetos personalizados permiten entregar resultados consistentes y exportables.
+              </P>
+
+              <Fragment slot="key-points">
+                  <ListItem icon={icons.BracketsCurly}>
+                      Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
+                  </ListItem>
+                  <ListItem icon={icons.Table}>
+                      Convierte esa tabla en un objeto legible con
+                      <PowerShellInline code="[pscustomobject]" />.
+                  </ListItem>
+                  <ListItem icon={icons.Export}>
+                      Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
+                  </ListItem>
+              </Fragment>
+          </ConclusionsLayout>
+           */
+    }
+</NotesLayout>

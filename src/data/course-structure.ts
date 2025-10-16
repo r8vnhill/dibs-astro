@@ -55,6 +55,10 @@ export const courseStructure: Lesson[] = [
             href: "/notes/software-libraries/scripting/first-script/",
           },
           {
+            title: "Salida estructurada",
+            href: "/notes/software-libraries/scripting/structured-output/",
+          },
+          {
             title: "Patrones básicos",
             href: "/notes/software-libraries/scripting/basic-patterns/",
           },

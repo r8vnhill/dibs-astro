@@ -1,16 +1,19 @@
-/**
- * Represents a single navigation item used in the site's header.
- *
- * Each item defines a destination URL (`href`) and a human-readable label (`label`) to be rendered
- * as a link.
- * This interface ensures consistent structure across all navigation items.
- */
-export interface NavItem {
-  /** Destination URL for the navigation link (e.g., "/notes"). */
-  href: string;
+// nav-items.ts
+import type { JSX } from "react";
 
-  /** Text label displayed to the user (e.g., "Apuntes"). */
+export type NavIcon = (props: {
+  className?: string;
+  "aria-hidden"?: boolean;
+}) => JSX.Element;
+
+export interface NavItem {
   label: string;
+  href?: string;
+  target?: string;
+  id?: string;
+  active?: boolean;
+  disabled?: boolean;
+  icon?: NavIcon;
 }
 
 /**
@@ -20,9 +23,9 @@ export interface NavItem {
  * by components such as `<Header />` or `<NavToggle />`.
  */
 export const navItems: NavItem[] = [
-  { href: '/', label: 'Inicio' },
-  { href: '/notes/', label: 'Apuntes' },
-  { href: '/lessons/', label: 'Clases' },
-  { href: '/syllabus/', label: 'Temario' },
-  { href: '/assignments/', label: 'Tareas' },
+  { href: "/", label: "Inicio" },
+  { href: "/notes/", label: "Apuntes" },
+  { href: "/lessons/", label: "Clases" },
+  { href: "/syllabus/", label: "Temario" },
+  { href: "/assignments/", label: "Tareas" },
 ];
