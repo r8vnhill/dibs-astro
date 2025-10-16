@@ -1,11 +1,12 @@
 ---
 import * as icons from "$icons";
-import { P } from "~/components/semantics";
+import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
-import { Abstract, Definition, Explanation, Important, Tip } from "~/components/ui/callouts";
+import { Abstract, Definition, Explanation, Important, Info, More, Tip } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ToDo from "~/components/utils/ToDo";
 import { NotesSection } from "~/layouts";
@@ -34,91 +35,244 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             headingLevel="h2" Icon={icons.BracketsCurly}
             slot="heading"
         >
-            Hash tables (<Mono>@{}</Mono>)
+            Diccionarios (<PowerShellInline code="@{ }" />)
         </Heading>
 
         <Definition headingLevel="h3">
             <span slot="title">Diccionarios en PowerShell</span>
+
             <P>
-                Una <B>hash table</B> es una colección de pares <I>clave–valor</I>. Permite agrupar datos bajo una misma
-                variable y acceder a ellos por nombre. Su tipo subyacente es
-                <PowerShellInline code="[hashtable]" />.
+                En PowerShell, los diccionarios se crean con la sintaxis
+                <PowerShellInline code="@{ Clave = Valor }" />. Son tablas de hash que agrupan pares <I>clave–valor</I>
+                y permiten acceder a cada valor por su nombre.
             </P>
         </Definition>
 
         <PowerShellBlock
             code={`
-          $persona = @{
-              Nombre = "Ada"
-              Apellido = "Lovelace"
-              Año = 1815
-          }
+                #Requires -Version 7.5
+                [CmdletBinding()]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $FirstName,
 
-          # Acceso por clave
-          $persona["Nombre"]
-          $persona.Apellido
-      `}
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $LastName
+                )
+
+                @{
+                    FirstName = $FirstName
+                    LastName  = $LastName
+                }
+            `}
         >
-            <Fragment slot="title">Creación y acceso</Fragment>
+            <Fragment slot="title">Script que retorna un diccionario</Fragment>
+            <DibsSourceLink
+                slot="source" file="models/New-Person.ps1"
+                repo="scripts" ref="6b3cbfeaf6820f6289c5f8f30db34c526797bf29"
+            />
         </PowerShellBlock>
 
-        <Explanation headingLevel="h4">
+        <Explanation headingLevel="h3">
             <List>
+                <ListItem icon={icons.BracketsCurly}>
+                    La sintaxis es <PowerShellInline code="@{ Clave1 = Valor1; Clave2 = Valor2 }" />. Cada par está
+                    separado por punto y coma o salto de línea.
+                </ListItem>
+
                 <ListItem icon={icons.Key}>
-                    <B>Claves</B> pueden ser strings o números, pero deben ser únicas.
+                    Las claves son únicas; si se repite una, su valor anterior se sobrescribe.
                 </ListItem>
 
-                <ListItem icon={icons.Wrench}>
-                    Se pueden agregar o modificar elementos con la sintaxis
-                    <PowerShellInline code="$tabla['Clave'] = Valor" />.
-                </ListItem>
-
-                <ListItem icon={icons.ArrowsLeftRight}>
-                    Para iterar sobre las claves o valores, usa
-                    <PowerShellInline code="GetEnumerator()" /> o
-                    <PowerShellInline code="foreach" />.
+                <ListItem icon={icons.Warning}>
+                    <I><B>No</B></I> se garantiza el orden de inserción de los elementos.
                 </ListItem>
             </List>
         </Explanation>
 
-        <PowerShellBlock
-            code={`
-          foreach ($item in $persona.GetEnumerator()) {
-              "{0}: {1}" -f $item.Key, $item.Value
-          }
-      `}
-        >
-            <Fragment slot="title">Recorrido de una hash table</Fragment>
-        </PowerShellBlock>
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
 
-        <Important>
-            <B>[ordered]</B> garantiza que las claves mantengan el orden de inserción, útil para reportes o exportación:
-            <PowerShellInline code="[ordered]@{ ... }" />.
-        </Important>
+            <PowerShellBlock
+                code={`
+            $result = ./New-Person.ps1 -FirstName Miles -LastName Edgeworth
+
+            # Acceder a los valores
+            $result.FirstName   # Miles
+            $result["LastName"] # Edgeworth
+
+            # Mutar el diccionario (agregar y modificar valores)
+            $result.Age = 25
+
+            # Mostrar el nuevo estado del diccionario
+            $result
+        `}
+            >
+                <Fragment slot="title">Desde <Mono>dibs/scripts/models/</Mono></Fragment>
+                <span slot="footer">
+                    Los diccionarios en PowerShell son <I>mutables</I>: puedes agregar, modificar o eliminar pares
+                    <I>clave–valor</I> en cualquier momento.
+                </span>
+            </PowerShellBlock>
+
+            <Explanation headingLevel="h3">
+                <List>
+                    <ListItem icon={icons.Code}>
+                        <B>Tipo:</B> el resultado es un <PowerShellInline code="[hashtable]" />, que almacena los pares
+                        <I>clave–valor</I>.
+                    </ListItem>
+
+                    <ListItem icon={icons.CursorClick}>
+                        <B>Acceso:</B> usa <PowerShellInline code="$h.Clave" /> o <PowerShellInline
+                            code='$h["Clave"]'
+                        /> para leer valores.
+                    </ListItem>
+
+                    <ListItem icon={icons.Pencil}>
+                        <B>Mutabilidad:</B> puedes agregar o modificar elementos con <PowerShellInline
+                            code="$h.Clave = Valor"
+                        /> (incluso si <I>no existe</I>) y eliminarlos con <PowerShellInline
+                            code='Remove-Item -Key "Clave"'
+                        />.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </Info>
+
+        <NotesSection id="h3-splatting-dictionaries">
+            <Heading
+                headingLevel="h3" Icon={icons.ArrowsLeftRight}
+                slot="heading"
+            >
+                Splatting: pasar diccionarios como parámetros
+            </Heading>
+
+            <P>
+                En PowerShell puedes <Enquote>desempaquetar</Enquote> un
+                <PowerShellInline code="[hashtable]" /> como parámetros nombrados usando el operador <PowerShellInline
+                    code="@"
+                /> (<I>splatting</I>). Esto mejora legibilidad, evita líneas largas y facilita mantener scripts.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                    # Diccionario de parámetros
+                    $copyParams = @{
+                        Path        = './data/input.txt'
+                        Destination = './backup'
+                        Force       = $true
+                        Verbose     = $true
+                    }
+
+                    # Splatting: pasa las claves como parámetros nombrados
+                    Copy-Item @copyParams
+
+                    # Mutabilidad: se puede modificar antes de reutilizar
+                    $copyParams.Recurse = $true
+                    Copy-Item @copyParams
+                `}
+            >
+                <Fragment slot="title">Diccionario → parámetros</Fragment>
+            </PowerShellBlock>
+
+            <PowerShellBlock
+                code={`
+                Copy-Item -Path './data/input.txt' -Destination './backup' -Force -Verbose
+                Copy-Item -Path './data/input.txt' -Destination './backup' -Force -Verbose -Recurse
+            `}
+            >
+                <Fragment slot="title">Equivalencia</Fragment>
+                <span slot="footer">
+                    Splatting y parámetros explícitos ejecutan lo mismo; cambia sólo la forma de escribirlo. Nota como
+                    reducimos la duplicación de código y hacemos las líneas más cortas.
+                </span>
+            </PowerShellBlock>
+
+            <Explanation headingLevel="h4">
+                <List>
+                    <ListItem icon={icons.BracketsCurly}>
+                        <PowerShellInline code="@{ Clave = Valor }" /> crea un diccionario (<PowerShellInline
+                            code="[hashtable]"
+                        />).
+                    </ListItem>
+                    <ListItem icon={icons.ArrowsLeftRight}>
+                        <PowerShellInline code="@diccionario" /> aplica sus pares como parámetros nombrados del cmdlet.
+                    </ListItem>
+                    <ListItem icon={icons.Info}>
+                        Los valores <PowerShellInline code="[bool]" /> se interpretan como <I>switches</I> de presencia
+                        o ausencia.
+                    </ListItem>
+                </List>
+            </Explanation>
+
+            <Important headingLevel="h4">
+                Usaremos <I>diccionarios</I> para valores transitorios y <I>splatting</I>. Para salida estructurada,
+                preferiremos <PowerShellInline code="[PSCustomObject]" />.
+            </Important>
+
+            <More headingLevel="h4">
+                <span slot="title">Continuación de líneas con <PowerShellInline code={"`"} /></span>
+
+                <P>
+                    Una alternativa a usar <I>splatting</I> para separar líneas largas es usar el carácter de <Enquote
+                    >escape</Enquote> (<PowerShellInline code={"`"} />) al final de la línea. Sin embargo, esto
+                    <B>no se recomienda</B> fuera de casos muy puntuales, ya que es propenso a errores difíciles de
+                    detectar. El caracter especial <PowerShellInline code={"`"} /> <B>debe ser</B> el último de la
+                    línea.
+                </P>
+
+                <PowerShellBlock
+                    code={`
+                        # Esto funciona
+                        Write-Output \`
+                            "Hello, World!"
+                        # Pero...
+                        Write-Output \` # ...esto ya no
+                            "Hello, World!"
+                    `}
+                >
+                    <span slot="title">Ejemplos de continuación de línea válido e inválido</span>
+                    <span slot="footer">
+                        El espacio después del <PowerShellInline code={"`"} /> (y antes de <PowerShellInline
+                            code={`#`}
+                        />) en la segunda llamada hace que falle.
+                    </span>
+                </PowerShellBlock>
+
+                <P>
+                    PowerShell recomienda otras formas de continuar líneas, puedes encontrar más información en la
+                    <Link
+                        href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing#line-continuation"
+                    >documentación oficial</Link>.
+                </P>
+            </More>
+        </NotesSection>
     </NotesSection>
-    
+
     {
         /*
 
-          <NotesSection id="h2-pscustomobject">
-              <Heading
-                  headingLevel="h2" Icon={icons.Table}
-                  slot="heading"
-              >
-                  Objetos personalizados (<Mono>[pscustomobject]</Mono>)
-              </Heading>
+<NotesSection id="h2-pscustomobject">
+    <Heading
+        headingLevel="h2" Icon={icons.Table}
+        slot="heading"
+    >
+        Objetos personalizados (<Mono>[pscustomobject]</Mono>)
+    </Heading>
 
-              <Definition headingLevel="h3">
-                  <span slot="title">Estructuras con propiedades</span>
-                  <P>
-                      Los <PowerShellInline code="[pscustomobject]" /> convierten un conjunto de claves y valores en un <I
-                      >objeto</I> cuyas propiedades se pueden acceder con <PowerShellInline code="." /> y que PowerShell
-                      muestra en formato tabular automáticamente.
-                  </P>
-              </Definition>
+    <Definition headingLevel="h3">
+        <span slot="title">Estructuras con propiedades</span>
+        <P>
+            Los <PowerShellInline code="[pscustomobject]" /> convierten un conjunto de claves y valores en un <I
+            >objeto</I> cuyas propiedades se pueden acceder con <PowerShellInline code="." /> y que PowerShell
+            muestra en formato tabular automáticamente.
+        </P>
+    </Definition>
 
-              <PowerShellBlock
-                  code={`
+    <PowerShellBlock
+        code={`
           $registro = [pscustomobject]@{
               Nombre = "Alan"
               Apellido = "Turing"
@@ -127,139 +281,139 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
 
           $registro
       `}
-              >
-                  <Fragment slot="title">Creación de objetos personalizados</Fragment>
-              </PowerShellBlock>
+    >
+        <Fragment slot="title">Creación de objetos personalizados</Fragment>
+    </PowerShellBlock>
 
-              <OutputBlock
-                  code={`
+    <OutputBlock
+        code={`
           Nombre Apellido Año
           ------ -------- ---
           Alan   Turing   1912
       `}
-              />
+        />
 
-              <Explanation headingLevel="h4">
-                  <List>
-                      <ListItem icon={icons.DotOutline}>
-                          Acceso con <PowerShellInline code="$obj.Propiedad" />.
-                      </ListItem>
+        <Explanation headingLevel="h4">
+            <List>
+                <ListItem icon={icons.DotOutline}>
+                    Acceso con <PowerShellInline code="$obj.Propiedad" />.
+                </ListItem>
 
-                      <ListItem icon={icons.Export}>
-                          Ideal para exportar a CSV, JSON o XML:
-                          <PowerShellInline code="$obj | ConvertTo-Json" />.
-                      </ListItem>
+                <ListItem icon={icons.Export}>
+                    Ideal para exportar a CSV, JSON o XML:
+                    <PowerShellInline code="$obj | ConvertTo-Json" />.
+                </ListItem>
 
-                      <ListItem icon={icons.Table}>
-                          PowerShell formatea automáticamente los objetos en tablas.
-                      </ListItem>
-                  </List>
-              </Explanation>
+                <ListItem icon={icons.Table}>
+                    PowerShell formatea automáticamente los objetos en tablas.
+                </ListItem>
+            </List>
+        </Explanation>
 
-              <Tip>
-                  Puedes combinar ambas ideas:
-                  <PowerShellInline code="[pscustomobject][ordered]@{ ... }" /> para crear un objeto con propiedades
-                  ordenadas.
-              </Tip>
-          </NotesSection>
+        <Tip>
+            Puedes combinar ambas ideas:
+            <PowerShellInline code="[pscustomobject][ordered]@{ ... }" /> para crear un objeto con propiedades
+            ordenadas.
+        </Tip>
+    </NotesSection>
 
-          <NotesSection id="h2-compare">
-              <Heading
-                  headingLevel="h2" Icon={icons.ArrowsLeftRight}
-                  slot="heading"
-              >
-                  Diferencias y usos
-              </Heading>
+    <NotesSection id="h2-compare">
+        <Heading
+            headingLevel="h2" Icon={icons.ArrowsLeftRight}
+            slot="heading"
+        >
+            Diferencias y usos
+        </Heading>
 
-              <Explanation>
-                  <Table>
-                      <TableHeader>
-                          <TableRow>
-                              <TableCell>Aspecto</TableCell>
-                              <TableCell>Hash table</TableCell>
-                              <TableCell>PSCustomObject</TableCell>
-                          </TableRow>
-                      </TableHeader>
+        <Explanation>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableCell>Aspecto</TableCell>
+                        <TableCell>Hash table</TableCell>
+                        <TableCell>PSCustomObject</TableCell>
+                    </TableRow>
+                </TableHeader>
 
-                      <TableBody>
-                          <TableRow>
-                              <TableCell>Tipo</TableCell>
-                              <TableCell>[hashtable]</TableCell>
-                              <TableCell>[pscustomobject]</TableCell>
-                          </TableRow>
-                          <TableRow>
-                              <TableCell>Acceso</TableCell>
-                              <TableCell>$h['Clave']</TableCell>
-                              <TableCell>$o.Propiedad</TableCell>
-                          </TableRow>
-                          <TableRow>
-                              <TableCell>Orden</TableCell>
-                              <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
-                              <TableCell>Ordenado por defecto</TableCell>
-                          </TableRow>
-                          <TableRow>
-                              <TableCell>Mutabilidad</TableCell>
-                              <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
-                              <TableCell>Generalmente inmutable</TableCell>
-                          </TableRow>
-                          <TableRow>
-                              <TableCell>Ideal para</TableCell>
-                              <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
-                              <TableCell>Datos tabulares, reportes o exportación</TableCell>
-                          </TableRow>
-                      </TableBody>
-                  </Table>
-              </Explanation>
-          </NotesSection>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>Tipo</TableCell>
+                        <TableCell>[hashtable]</TableCell>
+                        <TableCell>[pscustomobject]</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Acceso</TableCell>
+                        <TableCell>$h['Clave']</TableCell>
+                        <TableCell>$o.Propiedad</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Orden</TableCell>
+                        <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
+                        <TableCell>Ordenado por defecto</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Mutabilidad</TableCell>
+                        <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
+                        <TableCell>Generalmente inmutable</TableCell>
+                    </TableRow>
+                    <TableRow>
+                        <TableCell>Ideal para</TableCell>
+                        <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
+                        <TableCell>Datos tabulares, reportes o exportación</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </Explanation>
+    </NotesSection>
 
-          <NotesSection id="h2-apply">
-              <Heading
-                  headingLevel="h2" Icon={icons.Wrench}
-                  slot="heading"
-              >
-                  Aplicaciones prácticas
-              </Heading>
+    <NotesSection id="h2-apply">
+        <Heading
+            headingLevel="h2" Icon={icons.Wrench}
+            slot="heading"
+        >
+            Aplicaciones prácticas
+        </Heading>
 
-              <List>
-                  <ListItem icon={icons.FileText}>
-                      Crear reportes:
-                      <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
-                  </ListItem>
+        <List>
+            <ListItem icon={icons.FileText}>
+                Crear reportes:
+                <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
+            </ListItem>
 
-                  <ListItem icon={icons.Export}>
-                      Exportar resultados:
-                      <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
-                  </ListItem>
+            <ListItem icon={icons.Export}>
+                Exportar resultados:
+                <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
+            </ListItem>
 
-                  <ListItem icon={icons.Code}>
-                      Definir configuraciones o parámetros con
-                      <PowerShellInline code="@{ }" /> y pasarlos mediante
-                      <I>splatting</I>:
-                      <PowerShellInline code="Invoke-Script @config" />.
-                  </ListItem>
-              </List>
-          </NotesSection>
+            <ListItem icon={icons.Code}>
+                Definir configuraciones o parámetros con
+                <PowerShellInline code="@{ }" /> y pasarlos mediante
+                <I>splatting</I>:
+                <PowerShellInline code="Invoke-Script @config" />.
+            </ListItem>
+        </List>
+    </NotesSection>
 
-          <ConclusionsLayout>
-              <P slot="conclusions">
-                  La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
-                  producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
-                  objetos personalizados permiten entregar resultados consistentes y exportables.
-              </P>
+    <ConclusionsLayout>
+        <P slot="conclusions">
+            La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
+            producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
+            objetos personalizados permiten entregar resultados consistentes y exportables.
+        </P>
 
-              <Fragment slot="key-points">
-                  <ListItem icon={icons.BracketsCurly}>
-                      Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
-                  </ListItem>
-                  <ListItem icon={icons.Table}>
-                      Convierte esa tabla en un objeto legible con
-                      <PowerShellInline code="[pscustomobject]" />.
-                  </ListItem>
-                  <ListItem icon={icons.Export}>
-                      Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
-                  </ListItem>
-              </Fragment>
-          </ConclusionsLayout>
-           */
+        <Fragment slot="key-points">
+            <ListItem icon={icons.BracketsCurly}>
+                Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
+            </ListItem>
+            <ListItem icon={icons.Table}>
+                Convierte esa tabla en un objeto legible con
+                <PowerShellInline code="[pscustomobject]" />.
+            </ListItem>
+            <ListItem icon={icons.Export}>
+                Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
+            </ListItem>
+        </Fragment>
+    </ConclusionsLayout>
+        */
     }
 </NotesLayout>
