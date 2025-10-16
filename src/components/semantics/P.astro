@@ -6,6 +6,6 @@ type Props = {
 const { class: className = "", ...rest } = Astro.props as Props & Record<string, any>;
 ---
 
-<p class:list={["my-1", className]} {...rest}>
+<p class:list={["my-2", className]} {...rest}>
     <slot />
 </p>

@@ -1,5 +1,6 @@
 ---
 import * as icons from "~/assets/img/icons";
+import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Abstract, Explanation, Important, Note } from "~/components/ui/callouts";
 import Question from "~/components/ui/callouts/Question.astro";
@@ -39,56 +40,51 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Por qué GitLab y qué aprenderemos
         </Heading>
 
-        <p class="mb-2">
-            <B href="https://gitlab.com">GitLab</B> es una plataforma similar a GitHub, pero con mayor enfoque en
-            integración continua (CI/CD), control interno de dependencias, y publicación de paquetes. Es ampliamente
-            usada en entornos profesionales, especialmente donde las empresas mantienen su propia infraestructura de
-            repositorios.
-        </p>
+        <P>
+            En este curso utilizaremos <B href="https://gitlab.com">GitLab</B>, una plataforma similar a GitHub pero con
+            un enfoque más completo en integración continua (CI/CD), gestión de dependencias y publicación de paquetes.
+            Es ampliamente usada en entornos profesionales, especialmente cuando las organizaciones mantienen su propia
+            infraestructura de repositorios.
+        </P>
 
-        <p class="mb-2">
-            En este curso utilizaremos GitLab para practicar el flujo completo de trabajo:
-            <B>crear, clonar, organizar, versionar y publicar</B> bibliotecas de software. Más adelante aprovecharemos
-            su <I>Package Registry</I> para distribuir nuestras bibliotecas.
-        </p>
+        <P>
+            Con GitLab practicaremos el flujo completo de trabajo:
+            <B>crear, clonar, organizar, versionar y publicar</B> bibliotecas de software. Más adelante, usaremos su
+            <I>Package Registry</I> para distribuir nuestras bibliotecas dentro de pipelines automatizados.
+        </P>
 
         <ProCons>
             <Pros title="Ventajas">
                 <List>
                     <ListItem icon={icons.ShieldCheck}>
-                        <B>Integración continua (CI/CD) integrada</B>: GitLab incluye un sistema de pipelines nativo (<I
-                        >GitLab CI</I>) sin necesidad de servicios externos. Es ideal para automatizar pruebas,
-                        compilaciones y despliegues directamente desde el repositorio.
-                        <I>GitHub ofrece una funcionalidad similar a través de GitHub Actions</I>, aunque requiere
-                        definir flujos en YAML por separado y algunos límites difieren.
+                        <B>CI/CD integrado</B>: GitLab incluye un sistema de pipelines nativo (<I>GitLab CI</I>) sin
+                        depender de servicios externos, ideal para automatizar pruebas, compilaciones y despliegues.
+                        GitHub ofrece una solución similar con <I>GitHub Actions</I>, pero con una configuración
+                        separada en YAML y límites distintos.
                     </ListItem>
 
                     <ListItem icon={icons.Package}>
                         <B>Registro de paquetes unificado</B>: permite publicar y consumir bibliotecas o imágenes de
-                        contenedores desde el mismo entorno, facilitando el flujo <I>build → test → publish</I> del
-                        curso.
-                        <I>GitHub cuenta con GitHub Packages</I>, pero en GitLab este registro está integrado de forma
-                        más directa con la interfaz del proyecto y sus pipelines.
+                        contenedores en el mismo entorno, simplificando el flujo <I>build → test → publish</I>. En
+                        GitHub, esta función está separada en <I>GitHub Packages</I>.
                     </ListItem>
 
                     <ListItem icon={icons.Lock}>
-                        <B>Instalación autogestionada</B>: muchas organizaciones lo utilizan en servidores propios, lo
-                        que facilita cumplir requisitos de seguridad y confidencialidad.
-                        <I>GitHub Enterprise Server</I> ofrece una alternativa equivalente, aunque requiere
-                        licenciamiento específico.
+                        <B>Instalación autogestionada</B>: muchas organizaciones lo implementan en servidores propios,
+                        facilitando el cumplimiento de políticas de seguridad y confidencialidad. GitHub ofrece una
+                        alternativa con
+                        <I>Enterprise Server</I>, pero bajo licenciamiento específico.
                     </ListItem>
 
                     <ListItem icon={icons.Users}>
-                        <B>Gestión avanzada de roles y grupos</B>: ofrece más niveles de permisos y jerarquías de
-                        proyectos que GitHub, útil cuando se trabaja en equipos grandes.
+                        <B>Gestión avanzada de roles y grupos</B>: ofrece jerarquías y permisos más detallados,
+                        especialmente útiles en equipos grandes o con múltiples proyectos relacionados.
                     </ListItem>
 
                     <ListItem icon={icons.Terminal}>
-                        <B>Automatización por línea de comandos</B> con <PowerShellInline code="glab" />: una
-                        herramienta oficial que facilita tareas repetitivas —como crear o clonar repositorios— sin
-                        depender de la interfaz web.
-                        <I>GitHub dispone de su propia CLI (<PowerShellInline code="gh" />)</I>, que cumple un propósito
-                        similar y también es útil para flujos automatizados.
+                        <B>Automatización por línea de comandos</B> mediante <PowerShellInline code="glab" />: la CLI
+                        oficial de GitLab permite crear, clonar o administrar repositorios sin usar la interfaz web.
+                        GitHub cuenta con su propia CLI (<PowerShellInline code="gh" />) con fines similares.
                     </ListItem>
                 </List>
             </Pros>
@@ -97,49 +93,38 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <List>
                     <ListItem icon={icons.CloudSlash}>
                         <B>Menor comunidad pública</B>: GitHub sigue siendo el principal espacio de colaboración
-                        abierta, por lo que las herramientas o bibliotecas publicadas en GitLab pueden alcanzar a menos
-                        personas al inicio. Este factor es importante al diseñar proyectos <I>open-source</I>, ya que
-                        impacta la visibilidad y la cantidad de contribuciones potenciales.<FootnoteRef index={1} />
+                        abierta, por lo que los proyectos en GitLab pueden tener menor visibilidad y participación al
+                        inicio.<FootnoteRef index={1} />
                     </ListItem>
 
                     <ListItem icon={icons.Wrench}>
-                        <B>Curva de aprendizaje</B>: su interfaz y flujos de CI/CD tienen más opciones y
-                        configuraciones, lo que puede ser abrumador al inicio.
+                        <B>Curva de aprendizaje más alta</B>: la interfaz y las opciones de CI/CD ofrecen mayor control,
+                        pero también más complejidad para quienes comienzan.
                     </ListItem>
 
                     <ListItem icon={icons.Database}>
-                        <B>Uso de almacenamiento y límites</B>: en la versión gratuita de GitLab Cloud, los límites de
-                        espacio y minutos de CI son más estrictos que en GitHub.
+                        <B>Límites más estrictos en la nube</B>: la versión gratuita de GitLab Cloud tiene menor espacio
+                        de almacenamiento y minutos de CI que GitHub.
                     </ListItem>
 
                     <ListItem icon={icons.Student}>
-                        <B>Falta de un equivalente directo a GitHub Classroom</B>: GitLab no ofrece una herramienta
-                        integrada para gestionar tareas o repositorios de estudiantes de forma automática. Si bien se
-                        pueden implementar soluciones alternativas con scripts o grupos preconfigurados,
-                        <I>GitHub Classroom</I> sigue siendo una ventaja significativa en contextos educativos por su
-                        facilidad de uso y su integración con repositorios individuales.
+                        <B>Sin equivalente directo a GitHub Classroom</B>: GitLab no incluye una herramienta integrada
+                        para gestionar tareas o repositorios de estudiantes. Aunque pueden configurarse soluciones
+                        alternativas con grupos y scripts, <I>GitHub Classroom</I> sigue siendo más conveniente en
+                        contextos educativos.
                     </ListItem>
                 </List>
             </Cons>
         </ProCons>
 
-        <p>
+        <P>
             Hoy aprenderemos a:
-
             <List>
-                <ListItem icon={icons.FolderPlus}>
-                    Crear repositorios remotos automáticamente.
-                </ListItem>
-
-                <ListItem icon={icons.FolderOpen}>
-                    Inicializar proyectos locales y enlazarlos con su remoto.
-                </ListItem>
-
-                <ListItem icon={icons.Play}>
-                    Automatizar ambos pasos en un solo script.
-                </ListItem>
+                <ListItem icon={icons.FolderPlus}>Crear repositorios remotos automáticamente.</ListItem>
+                <ListItem icon={icons.FolderOpen}>Inicializar proyectos locales y enlazarlos con su remoto.</ListItem>
+                <ListItem icon={icons.Play}>Automatizar ambos pasos en un solo script.</ListItem>
             </List>
-        </p>
+        </P>
     </NotesSection>
 
     <NotesSection id="scripts">
@@ -153,9 +138,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Important>
             <span slot="title">Requisitos previos</span>
 
-            <p>
+            <P>
                 Antes de comenzar, asegúrate de haber iniciado sesión en GitLab desde la línea de comandos con:
-            </p>
+            </P>
 
             <PowerShellBlock code={`glab auth login`}>
                 <span slot="title">Desde la terminal</span>
@@ -163,10 +148,62 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </PowerShellBlock>
         </Important>
 
-        <p class="mb-3">
+        <P>
             Todos los scripts son idempotentes: puedes ejecutarlos varias veces sin generar duplicados ni
             inconsistencias.
-        </p>
+        </P>
+
+        <NotesSection id="...">
+            <Heading headingLevel="h3" Icon={null}
+                slot="heading"
+            >
+                ...
+            </Heading>
+        
+            <ToDo
+                client:only="react"
+                metadata={{
+                    tasks: [
+                        "Definir id",
+                        "Definir el título y su ícono",
+                        "Agregar texto 'al rededor' del código para contextualizar",
+                        "Reemplazar placeholders como 'path/to/...' por valores reales",
+                        `...`,
+                    ],
+                }}
+            />
+
+            <PowerShellBlock code={`
+                #Requires -Version 7.5
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                    [string] $Path
+                )
+
+                $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+
+                $repoPath = $PSCmdlet.GetResolvedProviderPathFromPSPath($Path)
+
+                try {
+                    Write-Verbose "Checking if '$repoPath' is inside a Git work tree"
+                    & $invoker git -C $repoPath rev-parse --is-inside-work-tree | Out-Null
+                    $true
+                }
+                catch {
+                    Write-Verbose "'$repoPath' is not inside a Git work tree"
+                    $false
+                }
+            `}>
+                <Fragment slot="title">...</Fragment>
+                <Fragment slot="footer">...</Fragment>
+                <Fragment slot="source">path/to/script.ps1</Fragment>
+            </PowerShellBlock>
+
+            <Explanation headingLevel={4}>
+            </Explanation>
+        </NotesSection>
 
         <NotesSection id="h3-new-gitlab-repo">
             <Heading
