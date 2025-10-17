@@ -4,7 +4,7 @@ import fs from "fs";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
-import { Abstract, Definition, Explanation, Important, Info, More, Tip } from "~/components/ui/callouts";
+import { Abstract, Definition, Explanation, Important, Info, More, Note, Tip } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -42,7 +42,7 @@ const newPersonPSCustomCode = fs.readFileSync(
             headingLevel="h2" Icon={icons.BracketsCurly}
             slot="heading"
         >
-            Diccionarios (<PowerShellInline code="@{ }" />)
+            Diccionarios
         </Heading>
 
         <Definition headingLevel="h3">
@@ -104,18 +104,18 @@ const newPersonPSCustomCode = fs.readFileSync(
 
             <PowerShellBlock
                 code={`
-            $result = ./New-Person.ps1 -FirstName Miles -LastName Edgeworth
+                    $result = ./New-Person.ps1 -FirstName Miles -LastName Edgeworth
 
-            # Acceder a los valores
-            $result.FirstName   # Miles
-            $result["LastName"] # Edgeworth
+                    # Acceder a los valores
+                    $result.FirstName   # Miles
+                    $result["LastName"] # Edgeworth
 
-            # Mutar el diccionario (agregar y modificar valores)
-            $result.Age = 25
+                    # Mutar el diccionario (agregar y modificar valores)
+                    $result.Age = 25
 
-            # Mostrar el nuevo estado del diccionario
-            $result
-        `}
+                    # Mostrar el nuevo estado del diccionario
+                    $result
+                `}
             >
                 <Fragment slot="title">Desde <Mono>dibs/scripts/models/</Mono></Fragment>
                 <span slot="footer">
@@ -273,6 +273,7 @@ const newPersonPSCustomCode = fs.readFileSync(
             <DibsSourceLink
                 slot="source" file="models/New-Person.ps1"
                 repo="scripts" line={13}
+                ref="a4dfcdd1f7950134079eeb1e3fafdba682947b76"
             />
         </PowerShellBlock>
 
@@ -294,22 +295,13 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 Beneficios de <PowerShellInline code="[PSCustomObject]" /> frente a <PowerShellInline
                     code="[hashtable]"
-                />
+                /><FootnoteRef index={2} />
             </Heading>
-
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "Tengo que revisar esta sección para asegurarme de que todo está correcto y bien explicado.",
-                    ],
-                }}
-            />
 
             <P>
                 Aunque las <PowerShellInline code="[hashtable]" /> son útiles como estructuras clave–valor,
                 <PowerShellInline code="[PSCustomObject]" /> ofrece ventajas importantes al generar salida estructurada
-                o devolver datos desde funciones. Además, encaja mejor con el modelo de encadenamiento de comandos
+                o devolver datos desde cmdlets. Además, encaja mejor con el modelo de encadenamiento de comandos
                 (pipeline) que veremos más adelante.
             </P>
 
@@ -320,20 +312,20 @@ const newPersonPSCustomCode = fs.readFileSync(
 
                     <PowerShellBlock
                         code={`
-          # Hashtable: mapa clave–valor (no tiene propiedades reales)
-          $pokemonHT = @{
-              Name  = "Toxtricity"
-              Types = @("Electric", "Poison")
-          }
-          # Intentar seleccionar columnas por nombre no produce el resultado esperado
-          Format-Table -Property Name, Types -InputObject $pokemonHT
+                            # Hashtable: mapa clave–valor (no tiene propiedades reales)
+                            $pokemonHT = @{
+                                Name  = "Toxtricity"
+                                Types = @("Electric", "Poison")
+                            }
+                            # Intentar seleccionar columnas por nombre no produce el resultado esperado
+                            Format-Table -Property Name, Types -InputObject $pokemonHT
 
-          # PSCustomObject: convierte claves en propiedades reales (ideal para salida)
-          $pokemonPSCO = [PSCustomObject]$pokemonHT
+                            # PSCustomObject: convierte claves en propiedades reales (ideal para salida)
+                            $pokemonPSCO = [PSCustomObject]$pokemonHT
 
-          # Ahora sí: columnas y valores aparecen como se espera
-          Format-Table -Property Name, Types -InputObject $pokemonPSCO
-        `}
+                            # Ahora sí: columnas y valores aparecen como se espera
+                            Format-Table -Property Name, Types -InputObject $pokemonPSCO
+                        `}
                     >
                         <span slot="title">
                             Diferencia práctica: <PowerShellInline code="[hashtable]" /> vs <PowerShellInline
@@ -341,46 +333,161 @@ const newPersonPSCustomCode = fs.readFileSync(
                             />
                         </span>
                         <span slot="footer">
-                            Este comportamiento coincide con lo descrito por la comunidad: un <em>hashtable</em> no se
-                            comporta como un objeto con propiedades al formatear columnas específicas; convertir a <code
-                            >[PSCustomObject]</code>
-                            evita esa sorpresa.
+                            Este comportamiento coincide con lo descrito por la comunidad: un <I>hashtable</I> no se
+                            comporta como un objeto con propiedades al formatear columnas específicas; convertir a
+                            <PowerShellInline code={`[PSCustomObject]`} /> evita esa sorpresa.
                         </span>
                     </PowerShellBlock>
-
-                    <Note>
-                        Discusión de referencia: “Why PS Custom Object?” — plantea precisamente que
-                        <I>Format-Table Name, Location</I> con hashtable no muestra columnas como se esperaría, mientras
-                        que un <PowerShellInline code="[PSCustomObject]" /> sí lo hace. Además, se menciona que a los
-                        objetos personalizados se les puede asociar <em>TypeNames</em> y propiedades de visualización
-                        por defecto para controlar su salida.
-                        <br />
-                        <Link href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
-                        >PowerShell.org — Why PS Custom Object?</Link>
-                    </Note>
                 </ListItem>
 
                 <ListItem icon={icons.Tag}>
                     <I>Control de presentación (TypeNames y propiedades por defecto):</I> a los
-                    <PowerShellInline code="[PSCustomObject]" /> se les puede asignar un <em>TypeName</em> y definir qué
+                    <PowerShellInline code="[PSCustomObject]" /> se les puede asignar un <I>TypeName</I> y definir qué
                     propiedades se muestran por defecto, mejorando la legibilidad sin perder datos. Para más detalles
                     sobre cómo el sistema de tipos extiende estos comportamientos, consulta:
-                    <Link
-                        href="https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_Types.ps1xml"
-                    >
-                        about_Types.ps1xml (Microsoft Learn)
-                    </Link>.
+                    <PowerShellBlock code={`
+                        Get-Help about_Types.ps1xml
+                    `}>
+                        <Fragment slot="title">Explorar cómo utilizar <Mono>Types.ps1xml</Mono></Fragment>
+                    </PowerShellBlock>
                 </ListItem>
 
-                <ListItem icon={icons.Puzzle}>
-                    <I>Compatibilidad con el encadenamiento de comandos:</I> muchos comandos esperan objetos con
-                    propiedades claras para seleccionar campos por nombre y aplicar formateadores. Los
-                    <PowerShellInline code="[PSCustomObject]" /> están pensados para encajar en ese modelo. No
-                    entraremos en detalles aquí; basta con saber que más adelante esta elección facilita el flujo de
-                    trabajo.
+                <ListItem icon={icons.Pipe}>
+                    <I>Compatibilidad con el pipeline:</I> muchos comandos esperan objetos con propiedades claras para
+                    seleccionar campos por nombre y aplicar formateadores. Los <PowerShellInline
+                        code="[PSCustomObject]"
+                    /> están pensados para encajar en ese modelo. No entraremos en detalles aquí; basta con saber que
+                    más adelante esta elección facilita el flujo de trabajo.
                 </ListItem>
             </List>
         </NotesSection>
+
+        <Important headingLevel="h3">
+            En este curso utilizaremos <PowerShellInline code="[PSCustomObject]" /> para mantener la simplicidad y
+            centrarnos en la forma de los datos. Si necesitas reglas más estrictas, métodos, herencia o contratos de
+            tipos más claros para herramientas y módulos, considera migrar a <I>clases</I>.
+        </Important>
+
+        <More headingLevel="h3">
+            <span slot="title">Clases y salida tipada</span>
+
+            <P>
+                PowerShell permite definir <I>clases</I> para modelar datos con propiedades y métodos, aprovechando
+                conceptos conocidos de OOP (encapsulación y herencia). Usarlas mejora el autocompletado del editor y
+                ayuda a detectar errores de tipos al escribir. Para describir el tipo de salida de una <I>función</I>
+                existe el atributo <PowerShellInline code="[OutputType()]" /> (útil para documentación y tooling), pero
+                a nivel de <I>script</I> no podemos declarar un tipo de salida explícito (esta es una ventaja de usar
+                funciones o módulos que puedes considerar más adelante).
+            </P>
+
+            <P>
+                A continuación definimos una clase <PowerShellInline code={`[Person]`} /> en un módulo (<Mono
+                >.psm1</Mono>) y luego la usamos desde un script (<Mono>.ps1</Mono>) para crear y devolver un objeto.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                    class Person {
+                        [string] $FirstName
+                        [string] $LastName
+
+                        Person([string] $first, [string] $last) {
+                            $this.FirstName = $first
+                            $this.LastName  = $last
+                        }
+
+                        [string] ToString() {
+                            return '{0} {1}' -f $this.FirstName, $this.LastName
+                        }
+                    }
+                `}
+            >
+                <span slot="title">Definir un tipo de datos con <code>class</code> (módulo .psm1)</span>
+                <span slot="footer">
+                    Un archivo <Mono>.psm1</Mono> es un <I>módulo</I> de PowerShell: puede exportar tipos (clases),
+                    funciones u otros elementos para ser reutilizados. Aquí sólo definimos la clase <PowerShellInline
+                        code={`[Person]`}
+                    />.
+                    <br />
+                    A diferencia de los scripts y funciones, los <I>métodos</I> deben tener un <PowerShellInline
+                        code={`return`}
+                    /> explícito para devolver valores.
+                </span>
+                <DibsSourceLink
+                    slot="source" file="models/Person.psm1"
+                    repo="scripts"
+                />
+            </PowerShellBlock>
+
+            <PowerShellBlock
+                code={`
+                    using module ./Person.psm1
+
+                    #Requires -Version 7.5
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $FirstName,
+
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $LastName
+                    )
+
+                    # Función local al script (no se exporta): deja el flujo claro y permite reutilizar internamente.
+                    function Script:New-Person {
+                        [OutputType([Person])]
+                        param ()
+
+                        [Person]::new($FirstName, $LastName)
+                    }
+
+                    # Devolver la instancia tipada como salida del script
+                    New-Person
+                `}
+            >
+                <span slot="title">Usar el módulo y devolver una instancia tipada (script <Mono>.ps1</Mono>)</span>
+
+                <span slot="footer">
+                    <B>Notas breves:</B>
+                    <ul style="list-style-type: disc; margin-left: 1.5rem">
+                        <li>
+                            <PowerShellInline code={`using module ./Person.psm1`} /> carga el módulo con la clase
+                            <PowerShellInline code={`[Person]`} />.
+                        </li>
+                        <li>
+                            El prefijo <PowerShellInline code={`Script:`} /> hace que <PowerShellInline
+                                code={`New-Person`}
+                            /> sea <I>local</I> al script (no se exporta).
+                        </li>
+                        <li>La salida del script es el objeto <PowerShellInline code={`[Person]`} /> recién creado.</li>
+                    </ul>
+                </span>
+                <DibsSourceLink
+                    slot="source" file="models/New-PersonClass.ps1"
+                    repo="scripts"
+                />
+            </PowerShellBlock>
+
+            <PowerShellBlock
+                code={`
+                    $person = ./New-PersonClass.ps1 -FirstName Naoki -LastName Urasawa
+                    $person.ToString()  # "Naoki Urasawa"
+                    $person.FirstName   # "Naoki"
+                    $person.LastName    # "Urasawa"
+                `}
+            >
+                <span slot="title">Desde <Mono>scripts/models/</Mono></span>
+            </PowerShellBlock>
+
+            <P>
+                Para aprender más consulta la documentación oficial:
+            </P>
+
+            <PowerShellBlock code={`Get-Help about_Classes`}>
+                <Fragment slot="title">Explorar la documentación de clases</Fragment>
+            </PowerShellBlock>
+        </More>
     </NotesSection>
 
     <Footnotes>
@@ -403,6 +510,11 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 <Fragment slot="title">Explorar los type accelerators</Fragment>
             </PowerShellBlock>
+        </Footnote>
+
+        <Footnote index={2}>
+            Discusión de referencia: <Link href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
+            >Why PS Custom Object?</Link>
         </Footnote>
     </Footnotes>
 

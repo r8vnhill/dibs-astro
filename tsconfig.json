@@ -37,6 +37,9 @@
       ],
       "$icons": [
         "src/assets/img/icons/index.ts"
+      ],
+      "$semantics": [
+        "$components/semantics/index.ts"
       ]
     },
     "types": [
