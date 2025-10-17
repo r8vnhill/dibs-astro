@@ -1,17 +1,24 @@
 ---
 import * as icons from "$icons";
+import fs from "fs";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import { Abstract, Definition, Explanation, Important, Info, More, Tip } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ToDo from "~/components/utils/ToDo";
 import { NotesSection } from "~/layouts";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
+
+const newPersonPSCustomCode = fs.readFileSync(
+    "src/fragments/notes/software-libraries/scripting/structured-output/New-Person.fragment.ps1",
+    "utf8",
+);
 ---
 
 <NotesLayout
@@ -251,169 +258,254 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </NotesSection>
     </NotesSection>
 
+    <NotesSection id="h2-pscustomobject">
+        <Heading
+            headingLevel="h2" Icon={icons.Table}
+            slot="heading"
+        >
+            Objetos personalizados
+        </Heading>
+
+        <PowerShellBlock code={newPersonPSCustomCode}>
+            <Fragment slot="title">
+                Crear un objeto fuertemente tipado con <PowerShellInline code={`[PSCustomObject]`} />
+            </Fragment>
+            <DibsSourceLink
+                slot="source" file="models/New-Person.ps1"
+                repo="scripts" line={13}
+            />
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h3">
+            <B><PowerShellInline code={`[PSCustomObject]@{ ... }`} />:</B> Es un <Enquote>type
+                accelerator</Enquote><FootnoteRef index={1} /> que convierte un <PowerShellInline
+                code={`[hashtable]`}
+            /> en una instancia de <PowerShellInline code={`[PSCustomObject]`} />. Observa que lo único que cambia
+            respecto del ejemplo con un diccionario es el prefijo <PowerShellInline code={`[PSCustomObject]`} />. Dentro
+            sigues declarando <I>propiedades</I> con pares <PowerShellInline code={`Nombre = Valor`} />. El resultado es
+            un objeto con propiedades reales (no solo entradas en un diccionario), apto para mostrarse en tabla y para
+            interoperar con el ecosistema de cmdlets de salida.
+        </Explanation>
+
+        <NotesSection id="h3-pscustomobject-benefits">
+            <Heading
+                headingLevel="h3" Icon={icons.GridFour}
+                slot="heading"
+            >
+                Beneficios de <PowerShellInline code="[PSCustomObject]" /> frente a <PowerShellInline
+                    code="[hashtable]"
+                />
+            </Heading>
+
+            <ToDo
+                client:only="react"
+                metadata={{
+                    tasks: [
+                        "Tengo que revisar esta sección para asegurarme de que todo está correcto y bien explicado.",
+                    ],
+                }}
+            />
+
+            <P>
+                Aunque las <PowerShellInline code="[hashtable]" /> son útiles como estructuras clave–valor,
+                <PowerShellInline code="[PSCustomObject]" /> ofrece ventajas importantes al generar salida estructurada
+                o devolver datos desde funciones. Además, encaja mejor con el modelo de encadenamiento de comandos
+                (pipeline) que veremos más adelante.
+            </P>
+
+            <List>
+                <ListItem icon={icons.Table}>
+                    <I>Salida tabular predecible:</I> las propiedades se muestran como columnas y conservan el orden en
+                    que fueron declaradas.
+
+                    <PowerShellBlock
+                        code={`
+          # Hashtable: mapa clave–valor (no tiene propiedades reales)
+          $pokemonHT = @{
+              Name  = "Toxtricity"
+              Types = @("Electric", "Poison")
+          }
+          # Intentar seleccionar columnas por nombre no produce el resultado esperado
+          Format-Table -Property Name, Types -InputObject $pokemonHT
+
+          # PSCustomObject: convierte claves en propiedades reales (ideal para salida)
+          $pokemonPSCO = [PSCustomObject]$pokemonHT
+
+          # Ahora sí: columnas y valores aparecen como se espera
+          Format-Table -Property Name, Types -InputObject $pokemonPSCO
+        `}
+                    >
+                        <span slot="title">
+                            Diferencia práctica: <PowerShellInline code="[hashtable]" /> vs <PowerShellInline
+                                code="[PSCustomObject]"
+                            />
+                        </span>
+                        <span slot="footer">
+                            Este comportamiento coincide con lo descrito por la comunidad: un <em>hashtable</em> no se
+                            comporta como un objeto con propiedades al formatear columnas específicas; convertir a <code
+                            >[PSCustomObject]</code>
+                            evita esa sorpresa.
+                        </span>
+                    </PowerShellBlock>
+
+                    <Note>
+                        Discusión de referencia: “Why PS Custom Object?” — plantea precisamente que
+                        <I>Format-Table Name, Location</I> con hashtable no muestra columnas como se esperaría, mientras
+                        que un <PowerShellInline code="[PSCustomObject]" /> sí lo hace. Además, se menciona que a los
+                        objetos personalizados se les puede asociar <em>TypeNames</em> y propiedades de visualización
+                        por defecto para controlar su salida.
+                        <br />
+                        <Link href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
+                        >PowerShell.org — Why PS Custom Object?</Link>
+                    </Note>
+                </ListItem>
+
+                <ListItem icon={icons.Tag}>
+                    <I>Control de presentación (TypeNames y propiedades por defecto):</I> a los
+                    <PowerShellInline code="[PSCustomObject]" /> se les puede asignar un <em>TypeName</em> y definir qué
+                    propiedades se muestran por defecto, mejorando la legibilidad sin perder datos. Para más detalles
+                    sobre cómo el sistema de tipos extiende estos comportamientos, consulta:
+                    <Link
+                        href="https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_Types.ps1xml"
+                    >
+                        about_Types.ps1xml (Microsoft Learn)
+                    </Link>.
+                </ListItem>
+
+                <ListItem icon={icons.Puzzle}>
+                    <I>Compatibilidad con el encadenamiento de comandos:</I> muchos comandos esperan objetos con
+                    propiedades claras para seleccionar campos por nombre y aplicar formateadores. Los
+                    <PowerShellInline code="[PSCustomObject]" /> están pensados para encajar en ese modelo. No
+                    entraremos en detalles aquí; basta con saber que más adelante esta elección facilita el flujo de
+                    trabajo.
+                </ListItem>
+            </List>
+        </NotesSection>
+    </NotesSection>
+
+    <Footnotes>
+        <Footnote index={1}>
+            Los <I>type accelerators</I> son atajos definidos por PowerShell que permiten instanciar tipos .NET sin
+            escribir su nombre completo. Por ejemplo, <PowerShellInline code="[PSCustomObject]" /> es un acelerador de
+            <PowerShellInline code="[System.Management.Automation.PSObject]" />. Existen muchos otros, como
+            <PowerShellInline code="[hashtable]" /> para <PowerShellInline code="[System.Collections.Hashtable]" /> o
+            <PowerShellInline code="[ValidateSet]" /> para <PowerShellInline
+                code="[System.Management.Automation.ValidateSetAttribute]"
+            />. Puedes aprender más sobre ellos con:
+            <PowerShellBlock
+                code={`
+                    # Mostrar la lista completa de type accelerators disponibles
+                    [PSObject].Assembly.GetType("System.Management.Automation.TypeAccelerators")::Get
+
+                    # Obtener documentación adicional
+                    Get-Help about_Type_Accelerators
+                `}
+            >
+                <Fragment slot="title">Explorar los type accelerators</Fragment>
+            </PowerShellBlock>
+        </Footnote>
+    </Footnotes>
+
     {
         /*
 
-<NotesSection id="h2-pscustomobject">
-    <Heading
-        headingLevel="h2" Icon={icons.Table}
-        slot="heading"
-    >
-        Objetos personalizados (<Mono>[pscustomobject]</Mono>)
-    </Heading>
+        <NotesSection id="h2-compare">
+            <Heading
+                headingLevel="h2" Icon={icons.ArrowsLeftRight}
+                slot="heading"
+            >
+                Diferencias y usos
+            </Heading>
 
-    <Definition headingLevel="h3">
-        <span slot="title">Estructuras con propiedades</span>
-        <P>
-            Los <PowerShellInline code="[pscustomobject]" /> convierten un conjunto de claves y valores en un <I
-            >objeto</I> cuyas propiedades se pueden acceder con <PowerShellInline code="." /> y que PowerShell
-            muestra en formato tabular automáticamente.
-        </P>
-    </Definition>
+            <Explanation>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableCell>Aspecto</TableCell>
+                            <TableCell>Hash table</TableCell>
+                            <TableCell>PSCustomObject</TableCell>
+                        </TableRow>
+                    </TableHeader>
 
-    <PowerShellBlock
-        code={`
-          $registro = [pscustomobject]@{
-              Nombre = "Alan"
-              Apellido = "Turing"
-              Año = 1912
-          }
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>Tipo</TableCell>
+                            <TableCell>[hashtable]</TableCell>
+                            <TableCell>[pscustomobject]</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Acceso</TableCell>
+                            <TableCell>$h['Clave']</TableCell>
+                            <TableCell>$o.Propiedad</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Orden</TableCell>
+                            <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
+                            <TableCell>Ordenado por defecto</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Mutabilidad</TableCell>
+                            <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
+                            <TableCell>Generalmente inmutable</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Ideal para</TableCell>
+                            <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
+                            <TableCell>Datos tabulares, reportes o exportación</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </Explanation>
+        </NotesSection>
 
-          $registro
-      `}
-    >
-        <Fragment slot="title">Creación de objetos personalizados</Fragment>
-    </PowerShellBlock>
+        <NotesSection id="h2-apply">
+            <Heading
+                headingLevel="h2" Icon={icons.Wrench}
+                slot="heading"
+            >
+                Aplicaciones prácticas
+            </Heading>
 
-    <OutputBlock
-        code={`
-          Nombre Apellido Año
-          ------ -------- ---
-          Alan   Turing   1912
-      `}
-        />
-
-        <Explanation headingLevel="h4">
             <List>
-                <ListItem icon={icons.DotOutline}>
-                    Acceso con <PowerShellInline code="$obj.Propiedad" />.
+                <ListItem icon={icons.FileText}>
+                    Crear reportes:
+                    <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
                 </ListItem>
 
                 <ListItem icon={icons.Export}>
-                    Ideal para exportar a CSV, JSON o XML:
-                    <PowerShellInline code="$obj | ConvertTo-Json" />.
+                    Exportar resultados:
+                    <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
                 </ListItem>
 
-                <ListItem icon={icons.Table}>
-                    PowerShell formatea automáticamente los objetos en tablas.
+                <ListItem icon={icons.Code}>
+                    Definir configuraciones o parámetros con
+                    <PowerShellInline code="@{ }" /> y pasarlos mediante
+                    <I>splatting</I>:
+                    <PowerShellInline code="Invoke-Script @config" />.
                 </ListItem>
             </List>
-        </Explanation>
+        </NotesSection>
 
-        <Tip>
-            Puedes combinar ambas ideas:
-            <PowerShellInline code="[pscustomobject][ordered]@{ ... }" /> para crear un objeto con propiedades
-            ordenadas.
-        </Tip>
-    </NotesSection>
+        <ConclusionsLayout>
+            <P slot="conclusions">
+                La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
+                producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
+                objetos personalizados permiten entregar resultados consistentes y exportables.
+            </P>
 
-    <NotesSection id="h2-compare">
-        <Heading
-            headingLevel="h2" Icon={icons.ArrowsLeftRight}
-            slot="heading"
-        >
-            Diferencias y usos
-        </Heading>
-
-        <Explanation>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableCell>Aspecto</TableCell>
-                        <TableCell>Hash table</TableCell>
-                        <TableCell>PSCustomObject</TableCell>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                    <TableRow>
-                        <TableCell>Tipo</TableCell>
-                        <TableCell>[hashtable]</TableCell>
-                        <TableCell>[pscustomobject]</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Acceso</TableCell>
-                        <TableCell>$h['Clave']</TableCell>
-                        <TableCell>$o.Propiedad</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Orden</TableCell>
-                        <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
-                        <TableCell>Ordenado por defecto</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Mutabilidad</TableCell>
-                        <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
-                        <TableCell>Generalmente inmutable</TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell>Ideal para</TableCell>
-                        <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
-                        <TableCell>Datos tabulares, reportes o exportación</TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </Explanation>
-    </NotesSection>
-
-    <NotesSection id="h2-apply">
-        <Heading
-            headingLevel="h2" Icon={icons.Wrench}
-            slot="heading"
-        >
-            Aplicaciones prácticas
-        </Heading>
-
-        <List>
-            <ListItem icon={icons.FileText}>
-                Crear reportes:
-                <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
-            </ListItem>
-
-            <ListItem icon={icons.Export}>
-                Exportar resultados:
-                <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
-            </ListItem>
-
-            <ListItem icon={icons.Code}>
-                Definir configuraciones o parámetros con
-                <PowerShellInline code="@{ }" /> y pasarlos mediante
-                <I>splatting</I>:
-                <PowerShellInline code="Invoke-Script @config" />.
-            </ListItem>
-        </List>
-    </NotesSection>
-
-    <ConclusionsLayout>
-        <P slot="conclusions">
-            La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
-            producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
-            objetos personalizados permiten entregar resultados consistentes y exportables.
-        </P>
-
-        <Fragment slot="key-points">
-            <ListItem icon={icons.BracketsCurly}>
-                Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
-            </ListItem>
-            <ListItem icon={icons.Table}>
-                Convierte esa tabla en un objeto legible con
-                <PowerShellInline code="[pscustomobject]" />.
-            </ListItem>
-            <ListItem icon={icons.Export}>
-                Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
-            </ListItem>
-        </Fragment>
-    </ConclusionsLayout>
-        */
+            <Fragment slot="key-points">
+                <ListItem icon={icons.BracketsCurly}>
+                    Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
+                </ListItem>
+                <ListItem icon={icons.Table}>
+                    Convierte esa tabla en un objeto legible con
+                    <PowerShellInline code="[pscustomobject]" />.
+                </ListItem>
+                <ListItem icon={icons.Export}>
+                    Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
+                </ListItem>
+            </Fragment>
+        </ConclusionsLayout>
+            */
     }
 </NotesLayout>

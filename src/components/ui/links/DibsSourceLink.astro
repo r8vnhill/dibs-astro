@@ -10,9 +10,13 @@ type Props = {
     title?: string;
     /** Commit hash, tag o nombre de branch (opcional). */
     ref?: string;
+    /** Número de línea inicial opcional para anclar al archivo en GitLab. */
+    line?: number;
+    /** Línea final opcional (usa un rango Lx-Ly). */
+    endLine?: number;
 };
 
-const { repo, file, title, ref }: Props = Astro.props;
+const { repo, file, title, ref, line, endLine }: Props = Astro.props;
 
 // Si no se especifica ref, apunta a la rama main
 const resolvedRef = ref ?? "main";
@@ -23,13 +27,28 @@ const looksLikeCommit = /^[0-9a-f]{7,40}$/i.test(resolvedRef);
 const shortRef = looksLikeCommit ? resolvedRef.slice(0, 7) : resolvedRef;
 
 // GitLab usa `-/blob/<ref>/<file>` para cualquier referencia
-const href = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/${resolvedRef}/${file}`;
+const startLine = typeof line === "number" && Number.isFinite(line) ? Math.max(1, Math.floor(line)) : undefined;
+const rawEndLine = typeof endLine === "number" && Number.isFinite(endLine) ? Math.max(1, Math.floor(endLine)) : undefined;
+const resolvedEndLine = startLine !== undefined && rawEndLine !== undefined && rawEndLine >= startLine ? rawEndLine : undefined;
+const lineFragment = startLine !== undefined
+    ? `#L${startLine}${resolvedEndLine ? `-${resolvedEndLine}` : ""}`
+    : "";
+
+const hrefBase = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/${resolvedRef}/${file}`;
+const href = `${hrefBase}${lineFragment}`;
+
+const lineLabel = startLine !== undefined
+    ? resolvedEndLine
+        ? `, líneas ${startLine}-${resolvedEndLine}`
+        : `, línea ${startLine}`
+    : "";
+const ariaLabel = `Fuente (${isExplicitRef ? resolvedRef : "main"}${lineLabel})`;
 ---
 
 <Link
     {href} class:list={["dibs-source-link"]}
     data-has-ref={isExplicitRef ? "true" : "false"}
-    aria-label={isExplicitRef ? `Fuente (${resolvedRef})` : "Fuente (main)"}
+    aria-label={ariaLabel}
 ><slot>{title ?? `${repo}/${file}`}</slot></Link><a {href} class:list={["dibs-source-link"]}>{
     isExplicitRef && <small class="ref-hint" aria-hidden="true">{shortRef}</small>
 }</a>
