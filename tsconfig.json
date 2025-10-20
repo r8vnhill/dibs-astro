@@ -40,6 +40,9 @@
       ],
       "$semantics": [
         "$components/semantics/index.ts"
+      ],
+      "$callouts": [
+        "~/components/ui/callouts/index.ts"
       ]
     },
     "types": [

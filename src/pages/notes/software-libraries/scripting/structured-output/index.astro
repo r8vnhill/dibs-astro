@@ -3,14 +3,13 @@ import * as icons from "$icons";
 import fs from "fs";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
-import { Abstract, Definition, Explanation, Important, Info, More, Note, Tip } from "~/components/ui/callouts";
+import { Abstract, Definition, Exercise, Explanation, Important, Info, More, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import { References, WebPage } from "~/components/ui/references";
 import { NotesSection } from "~/layouts";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -23,18 +22,25 @@ const newPersonPSCustomCode = fs.readFileSync(
 
 <NotesLayout
     title="Salida estructurada en PowerShell"
-    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
-    timeMultiplier={1.5} git={{ repo: "dibs-scripts", user: "r8vnhill" }}
+    description="Aprende a producir salida estructurada en PowerShell para que tus scripts comuniquen datos de forma clara y reutilizable. Esta lección explica cómo usar diccionarios ([hashtable]) para almacenar configuraciones o pasar parámetros, y cómo convertirlos en objetos personalizados ([PSCustomObject]) para obtener resultados tabulares consistentes. Incluye un ejercicio práctico donde crearás un comando que devuelve un resultado de éxito o fallo simulado."
+    git={{ repo: "dibs-scripts", user: "r8vnhill" }}
 >
     <Abstract>
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "...",
-                ],
-            }}
-        />
+        <P>
+            Esta lección introduce la idea de generar <I>salida estructurada</I> en PowerShell, un paso esencial para
+            construir scripts reutilizables y fáciles de integrar con otros comandos. En lugar de imprimir texto sin
+            formato, aprenderás a devolver datos en estructuras que PowerShell y otras herramientas pueden interpretar,
+            visualizar y filtrar con facilidad.
+        </P>
+
+        <P>
+            Comenzamos explorando los diccionarios (<PowerShellInline code="[hashtable]" />) como forma básica de
+            agrupar pares clave–valor, útiles para almacenar configuraciones o pasar parámetros mediante <I
+            >splatting</I>. Luego avanzamos hacia <PowerShellInline code="[PSCustomObject]" />, que permite producir
+            resultados con propiedades reales y una presentación tabular consistente. La lección culmina con un pequeño
+            ejercicio práctico donde crearás un comando que simula una comprobación de conexión y devuelve un objeto con
+            el resultado de éxito o fallo, reforzando la utilidad de esta representación estructurada.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-hash-tables">
@@ -490,6 +496,177 @@ const newPersonPSCustomCode = fs.readFileSync(
         </More>
     </NotesSection>
 
+    <Exercise headingLevel="h2">
+        <span slot="title">Comando con resultado de éxito o fallo</span>
+
+        <Fragment slot="requirements">
+            <P>
+                Diseña un script llamado <PowerShellInline code="Test-ConnectionSummary.ps1" /> que simule la
+                comprobación de conectividad hacia un servidor y devuelva un resultado estructurado. El script debe
+                aceptar un único parámetro: <PowerShellInline code="[string] $Address" />.
+            </P>
+            <P>
+                La salida debe ser un objeto <PowerShellInline code="[PSCustomObject]" /> con tres propiedades:
+            </P>
+            <List>
+                <ListItem icon={icons.Circle}>
+                    <Mono>Address</Mono>: el nombre recibido como parámetro.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <Mono>Status</Mono>: un <PowerShellInline code="[bool]" /> que indique si la conexión fue exitosa o
+                    fallida.
+                </ListItem>
+                <ListItem icon={icons.Clock}>
+                    <Mono>CheckedAt</Mono>: la fecha y hora de la comprobación (usa <PowerShellInline
+                        code="Get-Date"
+                    />).
+                </ListItem>
+            </List>
+            <P>No es necesario conectarse realmente; puedes simular el resultado.</P>
+        </Fragment>
+
+        <P slot="notes">
+            Para simular la conexión, usa una heurística simple: devolver éxito si el address cumple la expresión
+            regular
+            <PowerShellInline code={`'^[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*(?::\\d+)?$'`} />.<FootnoteRef index={3} />
+        </P>
+
+        <Fragment slot="use">
+            <PowerShellBlock
+                code={`
+                    $res1 = ./Test-ConnectionSummary.ps1 -Address "toshihiko.kifuken.jp"
+                    $res2 = ./Test-ConnectionSummary.ps1 -Address "shokujinki@net"
+                    Format-Table -InputObject $res1, $res2
+                `}
+            >
+                <span slot="title">Ejemplo de ejecución</span>
+                <span slot="footer" class="text-sm">Inspirado en <I href="https://myanimelist.net/anime/1454/Kemonozume"
+                    >Kemonozume</I></span>
+            </PowerShellBlock>
+
+            <OutputBlock
+                code={`
+                    Address              Status CheckedAt
+                    -------              ------ ---------
+                    toshihiko.kifuken.jp   True 10/17/2025 8:55:44 PM
+                    shokujinki@net        False 10/17/2025 8:55:44 PM
+                `}
+            />
+        </Fragment>
+
+        <Fragment slot="solution">
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.5
+                    [CmdletBinding()]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $Address
+                    )
+
+                    [PSCustomObject]@{
+                        Address   = $Address
+                        Status    = $Address -match '^[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*(?::\\d+)?$'
+                        CheckedAt = Get-Date
+                    }
+                `}
+            >
+                <Fragment slot="title">Solución de referencia</Fragment>
+                <span slot="footer">
+                    La salida es tabular y consistente gracias a <PowerShellInline code="[PSCustomObject]" />. No se usa
+                    manejo de errores; la decisión de éxito/fallo se basa únicamente en la expresión regular.
+                </span>
+            </PowerShellBlock>
+        </Fragment>
+    </Exercise>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            En esta lección vimos cómo modelar datos en PowerShell para producir <I>salida estructurada</I>. Partimos
+            con diccionarios (<PowerShellInline code="[hashtable]" />) —útiles para valores transitorios y <I
+            >splatting</I>— y luego pasamos a <PowerShellInline code="[PSCustomObject]" />, que convierte claves en <I
+            >propiedades reales</I> y ofrece una presentación tabular consistente. También señalamos, de forma breve,
+            que esta elección facilita el encadenamiento de comandos que veremos más adelante. La idea práctica: usa
+            diccionarios para configurar/parametrizar, y <PowerShellInline code="[PSCustomObject]" /> cuando quieras
+            devolver datos.
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.BracketsCurly}>
+                <B>Diccionarios:</B> <PowerShellInline code="@{ Clave = Valor }" />; mutables, acceso por punto o
+                índice, sin garantía de orden de inserción.
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsLeftRight}>
+                <B>Splatting:</B> usa <PowerShellInline code="@params" /> para pasar diccionarios como parámetros;
+                mejora legibilidad y evita líneas largas duplicadas.
+            </ListItem>
+
+            <ListItem icon={icons.Table}>
+                <B><PowerShellInline code="[PSCustomObject]" />:</B> <PowerShellInline
+                    code="[PSCustomObject]@{ ... }"
+                /> crea objetos con propiedades reales; la salida se muestra en columnas de forma predecible.
+            </ListItem>
+
+            <ListItem icon={icons.Lightning}>
+                <B>Type accelerators:</B> <PowerShellInline code="[PSCustomObject]" /> es un acelerador; es decir, una
+                forma abreviada de instanciar el tipo adecuado para salida estructurada.
+            </ListItem>
+
+            <ListItem icon={icons.FlowArrow}>
+                <B>Cuándo usar qué:</B> diccionarios para configuración y parámetros; <PowerShellInline
+                    code="[PSCustomObject]"
+                /> para devolver resultados y que otras herramientas/comandos los consuman fácilmente.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            Prefiere <PowerShellInline code="[PSCustomObject]" /> cuando el objetivo sea <I>comunicar datos</I>:
+            obtendrás columnas claras, nombres de campos estables y objetos listos para ser reutilizados. Reserva los
+            diccionarios para
+            <I>armar llamadas</I> y <I>configurar</I> comandos. Con este criterio simple tus scripts serán más legibles
+            hoy y, cuando conozcas el encadenamiento de comandos, gran parte del trabajo ya estará hecho.
+        </Fragment>
+    </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <WebPage
+                title="Everything you wanted to know about PSCustomObject"
+                url="https://learn.microsoft.com/en-us/powershell/scripting/learn/deep-dives/everything-about-pscustomobject"
+                location="Microsoft Learn"
+            >
+                <Fragment slot="description">
+                    <P>
+                        Ofrece una guía completa —desde lo básico hasta lo avanzado— sobre el uso de <PowerShellInline
+                            code={`[PSCustomObject]`}
+                        /> en PowerShell para crear datos estructurados. Explica cómo convertir diccionarios en objetos,
+                        agregar o quitar propiedades dinámicamente, clonar instancias y definir comportamientos
+                        personalizados mediante <PowerShellInline code={`Add-Member`} /> o <PowerShellInline
+                            code={`Update-TypeData`}
+                        />.
+                    </P>
+                    <P>
+                        También aborda la importancia del <I>type system</I> de PowerShell: cómo asignar
+                        <PowerShellInline code={`PSTypeName`} />, establecer propiedades por defecto para mejorar la
+                        presentación en consola y definir tipos personalizados reutilizables en funciones y scripts.
+                        Finalmente, el texto enfatiza que dominar <PowerShellInline code={`[PSCustomObject]`} /> permite
+                        producir salidas limpias, coherentes y tipadas, facilitando la interoperabilidad y el
+                        mantenimiento de los scripts.
+                    </P>
+                </Fragment>
+            </WebPage>
+        </Fragment>
+
+        {
+            /*
+            <Fragment slot="additional">
+                ...
+            </Fragment> */
+        }
+    </References>
+
     <Footnotes>
         <Footnote index={1}>
             Los <I>type accelerators</I> son atajos definidos por PowerShell que permiten instanciar tipos .NET sin
@@ -516,108 +693,40 @@ const newPersonPSCustomCode = fs.readFileSync(
             Discusión de referencia: <Link href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
             >Why PS Custom Object?</Link>
         </Footnote>
+
+        <Footnote index={3}>
+            <ul style="list-style-type: disc; margin-left: 1.5rem">
+                <li>
+                    <PowerShellInline code={`'[A-Za-z0-9-]+'`} />: etiqueta inicial (letras, dígitos, guiones).
+                </li>
+                <li>
+                    <PowerShellInline code={`'(?:\\.[A-Za-z0-9-]+)*'`} />: cero o más etiquetas separadas por puntos
+                    (soporta <Mono>localhost</Mono> y <Mono>sub.example.com</Mono>).
+                </li>
+                <li>
+                    <PowerShellInline code={`'(?::\\d+)?'`} />: opcional <Mono>:puerto</Mono> (uno o más dígitos).
+                </li>
+                <li>
+                    Ancla <PowerShellInline code={`'^...$'`} /> para que coincida toda la cadena.
+                </li>
+            </ul>
+            <I>Ejemplos:</I>
+            <ul style="list-style-type: disc; margin-left: 1.5rem">
+                <li>
+                    Coincide: <Mono>example.com</Mono>, <Mono>localhost</Mono>, <Mono>sub.domain.co</Mono>, <Mono
+                    >example.com:8080</Mono>, <Mono>192.168.1.1:3000</Mono>
+                </li>
+                <li>
+                    No coincide: <Mono>::1</Mono> (IPv6), cadenas con espacios o caracteres inválidos.
+                </li>
+            </ul>
+            <Warning headingLevel="h5">
+                Es intencionalmente permisiva: no valida rangos de octetos IPv4 (p. ej. <Mono>999.999.999.999</Mono>
+                pasaría) ni cumple estrictamente RFC para nombres de host. Úsala sólo como heurística ilustrativa. Para
+                validación robusta (IPv6 completo, rangos de puerto 0–65535, reglas exactas RFC) conviene usar
+                parsers/librerías o validaciones adicionales (por ejemplo utilizando el type accelerator
+                <PowerShellInline code={`[IPAddress]`} />).
+            </Warning>
+        </Footnote>
     </Footnotes>
-
-    {
-        /*
-
-        <NotesSection id="h2-compare">
-            <Heading
-                headingLevel="h2" Icon={icons.ArrowsLeftRight}
-                slot="heading"
-            >
-                Diferencias y usos
-            </Heading>
-
-            <Explanation>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableCell>Aspecto</TableCell>
-                            <TableCell>Hash table</TableCell>
-                            <TableCell>PSCustomObject</TableCell>
-                        </TableRow>
-                    </TableHeader>
-
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>Tipo</TableCell>
-                            <TableCell>[hashtable]</TableCell>
-                            <TableCell>[pscustomobject]</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Acceso</TableCell>
-                            <TableCell>$h['Clave']</TableCell>
-                            <TableCell>$o.Propiedad</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Orden</TableCell>
-                            <TableCell>Desordenado (usa [ordered] para mantenerlo)</TableCell>
-                            <TableCell>Ordenado por defecto</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Mutabilidad</TableCell>
-                            <TableCell>Mutable (puedes agregar o quitar claves)</TableCell>
-                            <TableCell>Generalmente inmutable</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Ideal para</TableCell>
-                            <TableCell>Configuraciones, parámetros o diccionarios</TableCell>
-                            <TableCell>Datos tabulares, reportes o exportación</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </Explanation>
-        </NotesSection>
-
-        <NotesSection id="h2-apply">
-            <Heading
-                headingLevel="h2" Icon={icons.Wrench}
-                slot="heading"
-            >
-                Aplicaciones prácticas
-            </Heading>
-
-            <List>
-                <ListItem icon={icons.FileText}>
-                    Crear reportes:
-                    <PowerShellInline code="[pscustomobject]@{ Nombre = $n; Estado = $e; Fecha = Get-Date }" />.
-                </ListItem>
-
-                <ListItem icon={icons.Export}>
-                    Exportar resultados:
-                    <PowerShellInline code="$data | Export-Csv -Path './salida.csv' -NoTypeInformation" />.
-                </ListItem>
-
-                <ListItem icon={icons.Code}>
-                    Definir configuraciones o parámetros con
-                    <PowerShellInline code="@{ }" /> y pasarlos mediante
-                    <I>splatting</I>:
-                    <PowerShellInline code="Invoke-Script @config" />.
-                </ListItem>
-            </List>
-        </NotesSection>
-
-        <ConclusionsLayout>
-            <P slot="conclusions">
-                La <B>salida estructurada</B> convierte scripts en herramientas que pueden interoperar: en lugar de texto,
-                producen datos reutilizables. Las hash tables son útiles para agrupar pares clave–valor, mientras que los
-                objetos personalizados permiten entregar resultados consistentes y exportables.
-            </P>
-
-            <Fragment slot="key-points">
-                <ListItem icon={icons.BracketsCurly}>
-                    Usa <PowerShellInline code="@{ }" /> para agrupar claves y valores.
-                </ListItem>
-                <ListItem icon={icons.Table}>
-                    Convierte esa tabla en un objeto legible con
-                    <PowerShellInline code="[pscustomobject]" />.
-                </ListItem>
-                <ListItem icon={icons.Export}>
-                    Aprovecha su formato tabular para exportar fácilmente a CSV o JSON.
-                </ListItem>
-            </Fragment>
-        </ConclusionsLayout>
-            */
-    }
 </NotesLayout>
