@@ -64,15 +64,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             el script.
         </P>
 
-        <ToDo
-          client:only="react"
-          metadata={{
-            tasks: [
-              "Usar objeto de dominio en lugar de string",
-            ],
-          }}
-        />
-
         <PowerShellBlock
             code={`
                 #Requires -Version 7.5

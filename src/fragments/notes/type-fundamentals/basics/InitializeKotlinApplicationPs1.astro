@@ -1,24 +1,19 @@
 ---
-import {
-  InlineCode,
-  PowerShellBlock,
-  PowerShellTerminal,
-} from "~/components/ui/code";
+import { InlineCode, PowerShellBlock, PowerShellTerminal } from "~/components/ui/code";
 import { psScript } from "./code";
 import ScriptLink from "./ScriptLink.astro";
+import { P } from "~/components/semantics";
 
 const filename = "Initialize-KotlinApplication.ps1";
 const source = `scripts\\windows\\${filename}`;
 ---
 
 <PowerShellBlock code={psScript}>
-  <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
-  <ScriptLink slot="source" source={source} />
+    <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
+    <ScriptLink slot="source" {source} />
 </PowerShellBlock>
-<p>
-  Guarda este script como <InlineCode code={filename} lang="bash" /> y ejecútalo
-  en la terminal:
-</p>
-<PowerShellTerminal code={`.\\${source} -ProjectName "intro-kt"`}
-  ><Fragment slot="title">Ejecutar Script</Fragment></PowerShellTerminal
->
+<P>
+    Guarda este script como <InlineCode code={filename} lang="bash" /> y ejecútalo en la terminal:
+</P>
+<PowerShellTerminal code={`.\\${source} -ProjectName "intro-kt"`}><Fragment slot="title"
+    >Ejecutar Script</Fragment></PowerShellTerminal>
