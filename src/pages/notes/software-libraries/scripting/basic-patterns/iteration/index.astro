@@ -1,0 +1,245 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Heading, P } from "~/components/semantics";
+import {
+    Explanation,
+    More,
+    Note,
+    Question,
+    Tip,
+} from "~/components/ui/callouts";
+import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { B, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+---
+
+<NotesLayout
+    title="Recorrer y transformar archivos"
+    description="Iterar archivos con foreach y aplicar transformaciones idempotentes; listas .NET vs arreglos y patrones prácticos."
+    git={{ user: "r8vnhill", repo: "dibs-scripts" }}
+>
+    <Heading headingLevel="h2" Icon={icons.ArrowsClockwise}>
+        Recorrer y transformar archivos
+    </Heading>
+
+    <P>
+        En mantenimiento de bibliotecas de software, es habitual tener que <B>iterar sobre archivos</B>; el
+        siguiente ejemplo es deliberadamente sencillo para ilustrar el patrón: recorremos todos los <Mono
+        >README.md</Mono> del árbol y comprobamos si existe <Mono>project-metadata.yml</Mono>; si falta, lo creamos
+        con un contenido inicial uniforme y generado automáticamente.
+    </P>
+
+    <PowerShellBlock
+        code={`
+                #Requires -Version 7.5
+                [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -Path $_ -PathType Container })]
+                    [string] $Root,
+
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $Owner,
+                    
+                    # [!code focus:2]
+                    [ValidateRange(1900, 3000)]
+                    [int] $Year = (Get-Date).Year
+                )
+
+                $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
+                $metadataTemplate = @'
+                owner: __OWNER__
+                updated: __YEAR__
+                '@
+
+                # [!code focus:2]
+                $foundReadmes = Get-ChildItem -Path $rootPath -Recurse -File -Filter README.md
+                $results = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+                # [!code focus:1]
+                foreach ($readme in $foundReadmes) {
+                    $dir = $readme.DirectoryName
+                    $metadataPath = Join-Path $dir 'project-metadata.yml'
+                    $metadataExists = Test-Path -LiteralPath $metadataPath
+                    $action = 'exists'
+                    if (!$metadataExists) {
+                        $approved = $PSCmdlet.ShouldProcess($metadataPath, 'Create project-metadata.yml')
+                        if ($approved) {
+                            # [!code focus:3]
+                            $metadataText = $metadataTemplate -replace '__OWNER__', $Owner -replace '__YEAR__', $Year
+                            Set-Content -LiteralPath $metadataPath -Encoding utf8 -Value $metadataText
+                            $action = 'created'
+                        }
+                        else {
+                            # En modo -WhatIf, ShouldProcess informa pero no aprueba.
+                            $action = if ($PSBoundParameters['WhatIf']) { 'would-create' } else { 'skipped' }
+                        }
+                    }
+
+                    # [!code focus:4]
+                    $results.Add([PSCustomObject]@{
+                                Path     = $dir
+                                Metadata = $action
+                        })
+                }
+
+                $results
+            `}
+    >
+        <span slot="title">Configurar project-metadata.yml junto a README.md</span>
+        <DibsSourceLink
+            slot="source" repo="scripts"
+            file="scaffolding/Set-ProjectMetadata.ps1"
+        />
+    </PowerShellBlock>
+
+    <Explanation headingLevel="h3">
+        <List>
+            <ListItem icon={icons.NumberCircleOne}>
+                <PowerShellInline code="[ValidateRange(1900, 3000)]" /> valida que <PowerShellInline code="-Year" />
+                esté dentro del rango permitido. Si el valor está fuera de ese rango, PowerShell detiene la ejecución
+                antes de entrar al cuerpo del script.
+            </ListItem>
+
+            <ListItem icon={icons.ShieldCheck}>
+                El bloque que genera <Mono>project-metadata.yml</Mono> solo se ejecuta cuando el archivo no existe y
+                <PowerShellInline code="$PSCmdlet.ShouldProcess()" /> autoriza la acción. Con <PowerShellInline
+                    code="-WhatIf"
+                /> se informa <Mono>would-create</Mono>; con confirmación denegada, <Mono>skipped</Mono>. En ejecución
+                normal, si crea, devuelve <Mono>created</Mono>; si ya existe, <Mono>exists</Mono>.
+            </ListItem>
+
+            <ListItem icon={icons.PencilSimpleLine}>
+                La plantilla se personaliza reemplazando los marcadores <PowerShellInline code="__YEAR__" /> y
+                <PowerShellInline code="__OWNER__" /> mediante <PowerShellInline code="-replace" />.
+            </ListItem>
+
+            <ListItem icon={icons.FolderOpen}>
+                <B>Enumerar archivos</B> con <PowerShellInline code="Get-ChildItem -Recurse -File -Filter" />:
+                <List>
+                    <ListItem icon={icons.ArrowBendDoubleUpRight}>
+                        <PowerShellInline code="-Recurse" /> recorre subcarpetas.
+                    </ListItem>
+                    <ListItem icon={icons.File}>
+                        <PowerShellInline code="-File" /> restringe la búsqueda a archivos.
+                    </ListItem>
+                    <ListItem icon={icons.FileMd}>
+                        <PowerShellInline code="-Filter README.md" /> selecciona solo los <Mono>README.md</Mono>.
+                    </ListItem>
+                </List>
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsClockwise}>
+                <PowerShellInline code="foreach ($item in $collection) { ... }" />
+                <List>
+                    <ListItem icon={icons.NumberCircleOne}>
+                        <B>Ámbito de la variable</B>: la variable del bucle persiste después del bloque.
+                    </ListItem>
+                    <ListItem icon={icons.NumberCircleTwo}>
+                        <B>No produce una nueva colección</B>: ejecuta acciones por elemento; no es una comprehension.
+                    </ListItem>
+                </List>
+            </ListItem>
+        </List>
+    </Explanation>
+
+    <More headingLevel="h3">
+        <Fragment slot="title">Arreglos vs. Listas (.NET)</Fragment>
+        <P>
+            Para colecciones pequeñas, los arreglos son suficientes. Pero en operaciones masivas conviene usar
+            <PowerShellInline code="[List[string]]" />, que evita crear copias en cada suma.
+        </P>
+        <PowerShellBlock
+            code={`
+                    #Requires -Version 7.5
+                    $n = 100000
+                    $results = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+                    # Arreglo con +=
+                    $timeArray = Measure-Command {
+                        $a = @()
+                        foreach ($i in 1..$n) {
+                            $a += "x$i"
+                        }
+                    }
+                    $results.Add([PSCustomObject]@{
+                            Method            = 'Array +='
+                            TotalMilliseconds = $timeArray.TotalMilliseconds
+                        })
+
+                    # List[T] con Add()
+                    $timeList = Measure-Command {
+                        $l = [System.Collections.Generic.List[string]]::new()
+                        foreach ($i in 1..$n) {
+                            $l.Add("x$i")
+                        }
+                    }
+                    $results.Add([PSCustomObject]@{
+                            Method            = 'List[T].Add()'
+                            TotalMilliseconds = $timeList.TotalMilliseconds
+                        })
+
+                    $results
+                `}
+        >
+            <Fragment slot="title">
+                Arreglo (<PowerShellInline code={`@()`} />) vs. <PowerShellInline code={`[List[string]]`} />
+            </Fragment>
+        </PowerShellBlock>
+        <OutputBlock
+            code={`
+                    Method        TotalMilliseconds
+                    ------        -----------------
+                    Array +=               17853.28
+                    List[T].Add()            116.75
+                `}
+        />
+    </More>
+
+    <Heading headingLevel="h3" Icon={icons.ListChecks}>
+        Ejecutar <Mono>Set-ProjectMetadata</Mono>
+    </Heading>
+    <PowerShellBlock
+        code={`
+                    ./scaffolding/Set-ProjectMetadata.ps1 -Root . -Owner "Tu Nombre" -WhatIf
+                `}
+    >
+        <span slot="title">Ensayo con <PowerShellInline code={`-WhatIf`} /></span>
+    </PowerShellBlock>
+
+    <Question headingLevel="h3">
+        ¿Qué sucede si ejecutas el script dos veces seguidas? ¿Y si cambias el valor de <PowerShellInline
+            code="-Owner"
+        />?
+    </Question>
+
+    <More headingLevel="h3">
+        <span slot="title"><PowerShellInline code="ForEach-Object" /></span>
+        <P>
+            <B>foreach</B> recorre colecciones materializadas; <B>ForEach-Object</B> procesa en streaming por pipeline.
+        </P>
+        <Tip headingLevel="h4">
+            Prefiere <PowerShellInline code="foreach" /> cuando ya tienes los datos y harás varias acciones por
+            elemento. Usa <PowerShellInline code="ForEach-Object" /> cuando estés componiendo pipelines o necesites
+            streaming.
+        </Tip>
+        <Note headingLevel="h4">
+            La abreviatura <PowerShellInline code="| % { ... }" /> es equivalente a <PowerShellInline
+                code="ForEach-Object"
+            />, pero en scripts se recomienda el nombre completo por legibilidad.
+        </Note>
+    </More>
+
+    <More>
+        <span slot="title">¿Y <PowerShellInline code={`for`} />?</span>
+        <P>
+            Además de <PowerShellInline code="foreach" /> y <PowerShellInline code="ForEach-Object" />, existe el
+            bucle clásico <PowerShellInline code="for" />, útil cuando necesitas un contador explícito.
+        </P>
+        <PowerShellBlock code={`for ($i = 0; $i -lt 5; $i++) { "Iteración $i" }`} />
+    </More>
+</NotesLayout>

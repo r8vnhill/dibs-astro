@@ -1,0 +1,215 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Heading } from "~/components/semantics";
+import { Definition, Exercise } from "~/components/ui/callouts";
+import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { B, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import { DibsSourceLink } from "~/components/ui/links";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+---
+
+<NotesLayout
+    title="Regex, versiones y ejercicio"
+    description="Normaliza #Requires -Version con regex y [Version]; práctica guiada para actualizar scripts de forma segura."
+    git={{ user: "r8vnhill", repo: "dibs-scripts" }}
+>
+    <Heading headingLevel="h2" Icon={icons.TextT}>
+        Regex y versiones en PowerShell
+    </Heading>
+
+    <Exercise headingLevel="h3">
+        <Fragment slot="title">
+            <Mono>Update-ScriptRequiresVersion</Mono>
+        </Fragment>
+
+        <Fragment slot="requirements">
+            <List>
+                <ListItem icon={icons.ShieldCheck}>
+                    Crea <Mono>Update-ScriptRequiresVersion.ps1</Mono> con <PowerShellInline
+                        code="SupportsShouldProcess"
+                    />.
+                </ListItem>
+
+                <ListItem icon={icons.FolderOpen}>
+                    Debe recorrer recursivamente una carpeta raíz y procesar todos los <Mono>.ps1</Mono> usando
+                    <PowerShellInline code={`foreach`} />.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                    Verifica en cada archivo cuántas veces aparece <PowerShellInline code={`#Requires -Version M.m`} />
+                    (regex).
+                    <br />
+                    Regla:
+
+                    <List>
+                        <ListItem icon={icons.NumberCircleOne}>
+                            <B>Si existe exactamente 1</B>: reemplaza su versión por la proporcionada (si no se
+                            proporciona, usa la versión actual de PowerShell).
+                        </ListItem>
+                        <ListItem icon={icons.NumberCircleTwo}>
+                            <B>Si no existe</B>: inserta <PowerShellInline code={`#Requires -Version M.m`} /> como <em>
+                            primera línea</em> del script.
+                        </ListItem>
+                        <ListItem icon={icons.Warning}>
+                            <B>Si existe más de una</B>: imprime <PowerShellInline code={`Write-Warning`} /> y no
+                            modifica el archivo.
+                        </ListItem>
+                    </List>
+                </ListItem>
+            </List>
+        </Fragment>
+
+        <Fragment slot="notes">
+            <Definition headingLevel="h4">
+                <span slot="title"><PowerShellInline code={`[Version]`} /></span>
+
+                <B><PowerShellInline code="[Version]" /></B> es el tipo .NET para representar versiones.
+
+                <List>
+                    <ListItem icon={icons.TerminalWindow}>
+                        <B><PowerShellInline code="$PSVersionTable" /></B> es un <PowerShellInline
+                            code={`[hashtable]`}
+                        />
+                        con datos de la sesión actual.
+                    </ListItem>
+
+                    <ListItem icon={icons.Tag}>
+                        <B><PowerShellInline code="$PSVersionTable.PSVersion" /></B> es un <PowerShellInline
+                            code={`[Version]`}
+                        /> que representa la versión del motor de PowerShell en ejecución.
+                    </ListItem>
+
+                    <ListItem icon={icons.NumberCircleOne}>
+                        <B><PowerShellInline code=".Major" /> / <PowerShellInline code=".Minor" /></B> son enteros de la
+                        versión. Para normalizar a <Mono>Mayor.Menor</Mono>:
+                        <PowerShellBlock
+                            code={`
+                                $v = $PSVersionTable.PSVersion
+                                $target = '{0}.{1}' -f $v.Major, $v.Minor  # ej. "7.5"
+                            `}
+                        />
+                    </ListItem>
+
+                    <ListItem icon={icons.Lightbulb}>
+                        Al declarar un parámetro <PowerShellInline code="[Version] $Version" />, puedes pasar
+                        <PowerShellInline code={`'7.5'`} /> o <PowerShellInline code={`7.5`} />; PowerShell lo convierte
+                        automáticamente a <PowerShellInline code={`[Version]`} />.
+                    </ListItem>
+                </List>
+            </Definition>
+
+            <Definition headingLevel="h4">
+                <PowerShellInline code={`[regex]::Matches([string] $Input, [string] $Pattern)`} slot="title" />
+
+                <List>
+                    <ListItem icon={icons.MagnifyingGlass}>
+                        <B><PowerShellInline code="[regex]::Matches($text, $rxRequires)" />:</B> Ejecuta el patrón sobre
+                        <PowerShellInline code={`$text`} /> y devuelve un <PowerShellInline
+                            code={`[MatchCollection]`}
+                        /> (todas las coincidencias).
+                    </ListItem>
+
+                    <ListItem icon={icons.NumberCircleOne}>
+                        <B><PowerShellInline code="[MatchCollection].Count" />:</B> Cantidad de coincidencias
+                        encontradas.
+                    </ListItem>
+
+                    <ListItem icon={icons.BracketsCurly}>
+                        <B><PowerShellInline code="[MatchCollection][0].Groups[1].Value" />:</B> Del primer match
+                        toma el primer grupo capturado y su texto.
+                    </ListItem>
+                </List>
+
+                <PowerShellBlock
+                    code={`
+                        $rxRequires = '(?im)^\\s*#\\s*Requires\\s+-Version\\s+([0-9]+(?:\\.[0-9]+)?)\\s*$'
+
+                        $matches = [regex]::Matches($text, $rxRequires)
+
+                        $matches.Count              # -> 1
+                        $matches[0].Value           # -> "#Requires -Version 7.5"
+                        $matches[0].Groups[1].Value # -> "7.5"
+                    `}
+                >
+                    <span slot="title">Ejemplo rápido</span>
+                </PowerShellBlock>
+            </Definition>
+        </Fragment>
+
+        <Fragment slot="use">
+            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -WhatIf -Verbose`}>
+                <span slot="footer">Ensayo — sin aplicar cambios</span>
+                <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
+            </PowerShellBlock>
+
+            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -Version 7.5 -Confirm`}>
+                <span slot="footer">Aplicación con confirmación</span>
+                <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
+            </PowerShellBlock>
+        </Fragment>
+
+        <Fragment slot="solution">
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.5
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                        [string] $Root,
+
+                        [Version] $Version = $PSVersionTable.PSVersion
+                    )
+
+                    $rootPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Root)
+                    $targetVersion = '{0}.{1}' -f $Version.Major, $Version.Minor
+                    $requiresLine = '#Requires -Version {0}' -f $targetVersion
+                    $rxRequires = '(?im)^\\s*#\\s*Requires\\s+-Version\\s+([0-9]+(?:\\.[0-9]+)?)\\s*$'
+
+                    $foundScripts = Get-ChildItem -LiteralPath $rootPath -Recurse -File -Filter *.ps1
+                    foreach ($script in $foundScripts) {
+                        $text = Get-Content -LiteralPath $script.FullName -Raw
+                        $matches = [regex]::Matches($text, $rxRequires)
+                        $count = $matches.Count
+
+                        if ($count -eq 0) {
+                            $newText = '{0}{1}{2}' -f $requiresLine, [Environment]::NewLine, $text
+                            if ($newText -ne $text) {
+                                Write-Information (
+                                    '[{0}] Insert #Requires -> {1}' -f $script.Name, $requiresLine)
+                                if ($PSCmdlet.ShouldProcess($script.FullName, 'Insert #Requires -Version')) {
+                                    Set-Content -LiteralPath $script.FullName -Encoding utf8 -Value $newText
+                                }
+                            }
+                        }
+                        elseif ($count -eq 1) {
+                            $current = $matches[0].Groups[1].Value
+                            if ($current -ne $targetVersion) {
+                                $newText = $text -replace $rxRequires, $requiresLine
+                                Write-Information ('[{0}] Update #Requires {1} -> {2}' -f $script.Name,
+                                    $current, $targetVersion)
+                                if ($PSCmdlet.ShouldProcess($script.FullName, 'Update #Requires -Version')) {
+                                    Set-Content -LiteralPath $script.FullName -Encoding utf8 -Value $newText
+                                }
+                            }
+                            else {
+                                Write-Verbose ('[{0}] OK (version {1})' -f $script.Name, $current)
+                            }
+                        }
+                        else {
+                            Write-Warning ('[{0}] Multiple #Requires -Version lines found ({1}); skipping.' -f 
+                                $script.Name, $count)
+                        }
+                    }
+                `}
+            >
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="maintenance/Update-ScriptRequiresVersion.ps1"
+                />
+            </PowerShellBlock>
+        </Fragment>
+    </Exercise>
+</NotesLayout>

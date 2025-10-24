@@ -82,7 +82,13 @@ export function resolveAutoNav(
   next: NavigationLink | undefined;
 } {
   // Flatten the nested course structure to a linear list of lessons
-  const flat = flattenLessons(lessons);
+  // and exclude container entries that don't have an href.
+  const flat = flattenLessons(lessons).filter(
+    (
+      l
+    ): l is Lesson & { depth: number; parents: string[] } & { href: string } =>
+      typeof l.href === "string" && l.href.length > 0
+  );
 
   // Find the index of the current lesson in the flattened list
   const currentIndex = flat.findIndex(

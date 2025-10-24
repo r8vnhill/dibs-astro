@@ -10,7 +10,7 @@ export interface Lesson {
    * The URL path to the lesson page.
    * This should be a relative path from the base URL of the site.
    */
-  href: string;
+  href?: string; // Optional: containers can omit href and serve as visual groups only
   /**
    * Optional nested lessons under this entry.
    * If present, this lesson is a parent and can be expanded in the UI.
@@ -60,7 +60,20 @@ export const courseStructure: Lesson[] = [
           },
           {
             title: "Patrones básicos",
-            href: "/notes/software-libraries/scripting/basic-patterns/",
+            children: [
+              {
+                title: "Ensayo seguro (-WhatIf/-Confirm)",
+                href: "/notes/software-libraries/scripting/basic-patterns/should-process/",
+              },
+              {
+                title: "Recorrer y transformar archivos",
+                href: "/notes/software-libraries/scripting/basic-patterns/iteration/",
+              },
+              {
+                title: "Regex, versiones y ejercicio",
+                href: "/notes/software-libraries/scripting/basic-patterns/regex-and-versions/",
+              },
+            ],
           },
           {
             title: "Manejo de errores",
