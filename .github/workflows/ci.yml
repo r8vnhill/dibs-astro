@@ -1,45 +1,14 @@
-name: CI
+name: CI (disabled - GitLab-first)
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+  workflow_dispatch: {}
 
+# This workflow is intentionally disabled for push/pull_request events.
+# The project uses a GitLab-first CI approach; the GitHub workflow is kept
+# only for manual runs and documentation purposes.
 jobs:
-  build:
-    name: Verify build
+  disabled:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    env:
-      PNPM_VERSION: "9"
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-          run_install: false
-          standalone: true
-
-      - name: Verify pnpm
-        run: pnpm --version
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Astro check
-        run: pnpm astro check
-
-      - name: Build site
-        run: pnpm build
+      - name: Disabled
+        run: echo "GitHub Actions disabled in favor of GitLab CI (see .gitlab-ci.yml)"
