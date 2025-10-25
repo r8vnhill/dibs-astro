@@ -28,6 +28,9 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm@${PNPM_VERSION}
 
+      - name: Verify pnpm
+        run: pnpm --version
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
