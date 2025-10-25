@@ -1,0 +1,53 @@
+stages:
+  - install
+  - test
+  - build
+
+variables:
+  PNPM_CACHE_FOLDER: .pnpm-store
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
+
+cache:
+  key: pnpm-${CI_COMMIT_REF_SLUG}
+  paths:
+    - ${PNPM_CACHE_FOLDER}
+
+install:
+  stage: install
+  image: node:${NODE_VERSION}-alpine
+  script:
+    - corepack enable
+    - corepack prepare pnpm@${PNPM_VERSION} --activate
+    - pnpm install --frozen-lockfile
+  artifacts:
+    paths:
+      - node_modules/
+      - ${PNPM_CACHE_FOLDER}
+    expire_in: 1 day
+
+test:
+  stage: test
+  image: node:${NODE_VERSION}-alpine
+  needs:
+    - job: install
+      artifacts: true
+  script:
+    - corepack enable
+    - corepack prepare pnpm@${PNPM_VERSION} --activate
+    - pnpm astro check
+
+build:
+  stage: build
+  image: node:${NODE_VERSION}-alpine
+  needs:
+    - job: install
+      artifacts: true
+  script:
+    - corepack enable
+    - corepack prepare pnpm@${PNPM_VERSION} --activate
+    - pnpm build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
