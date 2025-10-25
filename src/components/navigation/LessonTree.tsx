@@ -48,7 +48,7 @@ export const LessonTree: FC<Props> = ({ lessons, depth = 0 }) => {
     const indentPadding = (d: number) => ["pl-0", "pl-4", "pl-8", "pl-12"][Math.min(d, 3)];
 
     return (
-    <nav aria-label="Navegación de lecciones" className="lesson-tree">
+        <nav aria-label="Navegación de lecciones" className="lesson-tree">
             <ul role="tree" className="space-y-1">
                 {lessons.map((lesson, index) => {
                     const key = lesson.href ?? `${lesson.title}-${depth}-${index}`;
