@@ -5,7 +5,11 @@
  * Block de código con header opcional (título/fuente) y footer por slot.
  */
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
-import { transformerNotationErrorLevel, transformerNotationFocus } from "@shikijs/transformers";
+import {
+    transformerNotationDiff,
+    transformerNotationErrorLevel,
+    transformerNotationFocus,
+} from "@shikijs/transformers";
 import type { ShikiTransformer } from "shiki";
 import type { availableLanguages } from "~/lib/shiki/highlighter";
 import type { AstroComponentFactory } from "~/types/astro-component";
@@ -91,6 +95,7 @@ const commonTransformers = [
     transformerColorizedBrackets(),
     transformerNotationFocus(),
     transformerNotationErrorLevel(),
+    transformerNotationDiff(),
 ];
 ---
 

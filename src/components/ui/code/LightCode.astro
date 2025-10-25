@@ -13,11 +13,9 @@
  * - `codeClasses`: Optional Tailwind classes to further style the `<Code>` component.
  */
 
-import { Code } from "astro:components";
-import { availableLanguages } from "~/lib/shiki/highlighter";
-import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { ShikiTransformer } from "shiki";
-import { transformerNotationDiff, transformerNotationFocus } from "@shikijs/transformers";
+import { highlightToHtml, availableLanguages } from "~/lib/shiki/highlighter";
+import { applyTailwindClasses } from "~/lib/shiki/transformers";
 
 type Props = {
   code: string;
@@ -26,33 +24,48 @@ type Props = {
   transformers?: ShikiTransformer[];
 };
 
-const { code, lang, codeClasses, transformers = [] } = Astro.props as Props;
+const { code, lang, codeClasses = "", transformers = [] } = Astro.props as Props;
+
+const extraClasses = codeClasses.split(/\s+/u).filter(Boolean);
+const preClasses = [
+  "dark:hidden",
+  "transition-colors",
+  "duration-200",
+  "p-4",
+  "text-sm",
+  "font-mono",
+  ...extraClasses,
+];
+const codeClassList = ["font-mono"];
+
+const html = await highlightToHtml({
+  code,
+  lang,
+  theme: "catppuccin-latte",
+  transformers: [
+    ...transformers,
+    applyTailwindClasses({ pre: preClasses, code: codeClassList }),
+  ],
+  fallbackPreClasses: preClasses,
+  fallbackCodeClasses: codeClassList,
+});
 ---
 
-<Code
-  code={code}
-  theme="catppuccin-latte"
-  lang={lang}
-  class:list={[
-    "dark:hidden", // Only show in light mode
-    "transition-colors", // Smooth color theme transitions
-    "duration-200", // Duration for transitions
-    "p-4", // Padding inside the code area
-    "text-sm", // Font size
-    "font-mono", // Monospaced font
-    codeClasses, // Allow overrides from parent component
-  ]}
-  transformers={[
-    transformerColorizedBrackets(),
-    transformerNotationFocus(),
-    transformerNotationDiff(),
-    ...transformers,
-  ]}
-  role="code"
-  wrap
-/>
+<div class="shiki-container" set:html={html} />
 
 <style is:global>
+  .shiki-container {
+    display: contents;
+  }
+
+  .shiki {
+    white-space: pre-wrap;
+  }
+
+  .shiki code {
+    white-space: inherit;
+  }
+
   /* Focus */
   pre.has-focused .line:not(.focused) {
     filter: blur(1px);

@@ -11,14 +11,9 @@
  * - `transformers`: Optional extra Shiki transformers.
  */
 
-import { Code } from "astro:components";
-import { availableLanguages } from "~/lib/shiki/highlighter";
-import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { ShikiTransformer } from "shiki";
-import {
-  transformerNotationDiff,
-  transformerNotationFocus,
-} from "@shikijs/transformers";
+import { availableLanguages, highlightToHtml } from "~/lib/shiki/highlighter";
+import { applyTailwindClasses } from "~/lib/shiki/transformers";
 
 type Props = {
   code: string;
@@ -27,33 +22,49 @@ type Props = {
   transformers?: ShikiTransformer[];
 };
 
-const { code, lang, codeClasses, transformers = [] } = Astro.props;
+const { code, lang, codeClasses = "", transformers = [] } = Astro.props as Props;
+
+const extraClasses = codeClasses.split(/\s+/u).filter(Boolean);
+const preClasses = [
+  "hidden",
+  "dark:block",
+  "transition-colors",
+  "duration-200",
+  "p-4",
+  "text-sm",
+  "font-mono",
+  ...extraClasses,
+];
+const codeClassList = ["font-mono"];
+
+const html = await highlightToHtml({
+  code,
+  lang,
+  theme: "catppuccin-mocha",
+  transformers: [
+    ...transformers,
+    applyTailwindClasses({ pre: preClasses, code: codeClassList }),
+  ],
+  fallbackPreClasses: preClasses,
+  fallbackCodeClasses: codeClassList,
+});
 ---
 
-<Code
-  code={code}
-  theme="catppuccin-mocha"
-  lang={lang}
-  class:list={[
-    "hidden dark:block",
-    "transition-colors",
-    "duration-200",
-    "p-4",
-    "text-sm",
-    "font-mono",
-    codeClasses,
-  ]}
-  role="code"
-  wrap
-  transformers={[
-    transformerColorizedBrackets(),
-    transformerNotationFocus(),
-    transformerNotationDiff(),
-    ...transformers,
-  ]}
-/>
+<div class="shiki-container" set:html={html} />
 
 <style is:global>
+  .shiki-container {
+    display: contents;
+  }
+
+  .shiki {
+    white-space: pre-wrap;
+  }
+
+  .shiki code {
+    white-space: inherit;
+  }
+
   /* Focus */
   pre.has-focused .line:not(.focused) {
     filter: blur(1px);
