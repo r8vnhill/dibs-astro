@@ -104,6 +104,10 @@ $RECYCLE.BIN/
 *.entregable.*
 docs/**/*.pdf
 
+### Personal notes ###
+*.
+todo.md
+
 # ====================================================================
 # End of customized .gitignore for dibs-astro
 # ====================================================================

@@ -6,13 +6,17 @@ import "./config/shiki-warn-tracker";
 import react from "@astrojs/react";
 
 /**
- * Astro configuration for the DIBS site.
+ * DIBS Astro configuration (concise):
+ * - site, trailingSlash and static output for a static-site deployment
+ * - React integration for client islands
+ * - Tailwind via Vite and Sharp for image transforms
+ * - Dev file watcher for HMR on config/assets/data changes
  *
- * This setup includes:
- * - React for interactive UI components.
- * - TailwindCSS for utility-first styling.
- * - Sharp image service for image optimization during build time.
- * - A custom dev server watcher to reload when config files change.
+ * Notes:
+ * - Code highlighting is implemented by local Shiki helpers; Astro's Markdown highlighting is set
+ *   to Prism to avoid the built-in Shiki instantiation during markdown processing.
+ * - `./config/shiki-warn-tracker` is imported for an early runtime patch that suppresses redundant
+ *   Shiki warnings and applies a small cache for the markdown-remark highlighter.
  */
 export default defineConfig({
   // Used to generate correct absolute URLs during build
