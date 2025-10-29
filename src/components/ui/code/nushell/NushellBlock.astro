@@ -1,0 +1,27 @@
+---
+/**
+ * NushellBlock.astro
+ * ------------------
+ * A specialized code block component for displaying Nushell scripts with appropriate
+ * styling and iconography. Mirrors the PowerShell block component but configured for Nushell.
+ */
+import * as Icons from "~/assets/img/icons";
+import { CodeBlock } from "~/components/ui/code";
+
+const { code, class: className = "" } = Astro.props;
+---
+
+<CodeBlock
+    lang="nu" icon={Icons.NushellLogo}
+    {code} class={className}
+>
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+    <Fragment slot="footer">
+        <slot name="footer" />
+    </Fragment>
+</CodeBlock>
