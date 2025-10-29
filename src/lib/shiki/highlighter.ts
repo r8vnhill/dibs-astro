@@ -1,123 +1,84 @@
-import { bundledLanguages, createHighlighter } from "shiki";
-import type { BundledLanguage, BundledTheme, ShikiTransformer } from "shiki";
+/*
+ * Public wrapper for the project's Shiki-based syntax highlighting.
+ *
+ * Responsibilities:
+ * - Resolve requested language names to bundled Shiki languages (via `language-aliases`).
+ * - Obtain a cached highlighter instance (via `cache`).
+ * - Attempt to load language definitions on-demand and render highlighted HTML using Shiki. If a language can't be 
+ *   resolved or loaded, fall back to safe, plain HTML (via `html`).
+ *
+ * Test helpers live in `cache.ts` so they remain clearly internal and aren't part of the main highlighting API.
+ */
+import type { BundledTheme } from "shiki";
+import type { ShikiTransformer } from "shiki";
+import { getHighlighter } from "./cache";
+import { resolveLanguage, } from "./language-aliases";
+import { buildPlainHtml } from "./html";
 
-const languageAliases: Record<string, BundledLanguage | null> = {
-  bash: "bash",
-  c: "c",
-  javascript: "javascript",
-  json: "json",
-  kotlin: "kotlin",
-  markdown: "markdown",
-  md: "markdown",
-  powershell: "powershell",
-  python: "python",
-  py: "python",
-  rust: "rust",
-  scala: "scala",
-  shell: "shell",
-  sh: "bash",
-  plaintext: null,
-};
-
-export const availableLanguages = Array.from(
-  new Set(
-    Object.values(languageAliases).filter((lang): lang is BundledLanguage => lang !== null),
-  ),
-);
-
-export const supportedThemes = [
-  "catppuccin-latte",
-  "catppuccin-mocha",
-] as const;
-
+export const supportedThemes = ["catppuccin-latte", "catppuccin-mocha"] as const;
 type SupportedTheme = (typeof supportedThemes)[number];
-
-type HighlighterInstance = ReturnType<typeof createHighlighter>;
-
-const globalCache = globalThis as typeof globalThis & {
-  __dibsShikiHighlighter?: HighlighterInstance;
-};
-
-let highlighterPromise: HighlighterInstance | null = globalCache.__dibsShikiHighlighter ?? null;
-
-export async function getHighlighter() {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: [...supportedThemes],
-      langs: availableLanguages,
-    });
-    globalCache.__dibsShikiHighlighter = highlighterPromise;
-  }
-  return highlighterPromise;
-}
 
 type HighlightTheme = SupportedTheme | BundledTheme | string;
 
 interface HighlightOptions {
-  code: string;
-  lang: string;
-  theme: HighlightTheme;
-  transformers?: ShikiTransformer[];
-  fallbackPreClasses?: string[];
-  fallbackCodeClasses?: string[];
+    code: string;
+    lang: string;
+    theme: HighlightTheme;
+    transformers?: ShikiTransformer[];
+    fallbackPreClasses?: string[];
+    fallbackCodeClasses?: string[];
 }
 
 export async function highlightToHtml({
-  code,
-  lang,
-  theme,
-  transformers = [],
-  fallbackPreClasses = [],
-  fallbackCodeClasses = [],
+    code,
+    lang,
+    theme,
+    transformers = [],
+    fallbackPreClasses = [],
+    fallbackCodeClasses = [],
 }: HighlightOptions) {
-  const highlighter = await getHighlighter();
-  const { resolvedLang, shouldWarn } = resolveLanguage(lang);
+    // Get (or create) the shared highlighter instance. We pass the supported themes list so the underlying creator 
+    // knows which themes to preload.
+    const highlighter = await getHighlighter(supportedThemes as unknown as string[]);
 
-  if (resolvedLang) {
-    return highlighter.codeToHtml(code, {
-      lang: resolvedLang,
-      theme,
-      transformers,
-    });
-  }
+    // Resolve language aliases (for example `py` -> `python`, `nu` -> `nushell`).
+    // `resolvedLang` is a BundledLanguage when we know how to highlight it, otherwise null.
+    const { resolvedLang, shouldWarn } = resolveLanguage(lang);
 
-  if (shouldWarn && !missingLanguageWarnings.has(lang)) {
-    missingLanguageWarnings.add(lang);
-    console.warn(`[shiki] language "${lang}" not recognized. Rendering as plain text.`);
-  }
+    if (resolvedLang) {
+        try {
+            if (!highlighter.getLoadedLanguages().includes(resolvedLang)) {
+                await highlighter.loadLanguage(resolvedLang);
+            }
 
-  return buildPlainHtml(code, fallbackPreClasses, fallbackCodeClasses);
+            return highlighter.codeToHtml(code, {
+                lang: resolvedLang,
+                theme,
+                transformers,
+            });
+        } catch (error) {
+            // If language loading fails (for example, a missing dependency or network error during dynamic load), warn 
+            // once and fall back to rendering un-highlighted, escaped HTML. We track failures so we don't flood the 
+            // console.
+            if (!failedLanguageWarnings.has(resolvedLang)) {
+                failedLanguageWarnings.add(resolvedLang);
+                console.warn(
+                    `[shiki] language "${lang}" could not be loaded. Rendering as plain text.`,
+                    error,
+                );
+            }
+        }
+    }
+
+    // If the language wasn't recognized at all (not in our alias map or in the Shiki bundle), issue a single warning 
+    // for that language and return a plain, escaped code block so content remains safe.
+    if (shouldWarn && !missingLanguageWarnings.has(lang)) {
+        missingLanguageWarnings.add(lang);
+        console.warn(`[shiki] language "${lang}" not recognized. Rendering as plain text.`);
+    }
+
+    return buildPlainHtml(code, fallbackPreClasses, fallbackCodeClasses);
 }
 
 const missingLanguageWarnings = new Set<string>();
-
-function resolveLanguage(lang: string): { resolvedLang: BundledLanguage | null; shouldWarn: boolean } {
-  const lower = lang.toLowerCase();
-  if (Object.prototype.hasOwnProperty.call(languageAliases, lower)) {
-    const alias = languageAliases[lower];
-    if (alias) {
-      return { resolvedLang: alias, shouldWarn: false };
-    }
-    return { resolvedLang: null, shouldWarn: false };
-  }
-  if (lower in bundledLanguages) {
-    return { resolvedLang: lower as BundledLanguage, shouldWarn: false };
-  }
-  return { resolvedLang: null, shouldWarn: true };
-}
-
-function buildPlainHtml(code: string, preClasses: string[], codeClasses: string[]) {
-  const preClassAttr = ["shiki", ...preClasses].filter(Boolean).join(" ");
-  const codeClassAttr = codeClasses.filter(Boolean).join(" ");
-  const escaped = escapeHtml(code);
-  return `<pre class="${preClassAttr}"><code class="${codeClassAttr}">${escaped}</code></pre>`;
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/gu, "&amp;")
-    .replace(/</gu, "&lt;")
-    .replace(/>/gu, "&gt;")
-    .replace(/"/gu, "&quot;")
-    .replace(/'/gu, "&#39;");
-}
+const failedLanguageWarnings = new Set<string>();
