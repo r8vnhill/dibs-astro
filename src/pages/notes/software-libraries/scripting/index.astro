@@ -8,7 +8,7 @@ import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { LangLink, Link, PythonLink } from "~/components/ui/links";
+import { Link, PythonLink, NushellLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -279,12 +279,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </ConclusionsLayout>
 
     <LinksLayout>
-        <LangLink
-            href="/notes/software-libraries/scripting/nushell/"
-            src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Logo_of_nushell_shell.svg"
-            name="nushell"
-        />
         <PythonLink />
+        <NushellLink />
     </LinksLayout>
 
     <References>

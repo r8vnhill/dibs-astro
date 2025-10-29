@@ -82,3 +82,10 @@ export async function highlightToHtml({
 
 const missingLanguageWarnings = new Set<string>();
 const failedLanguageWarnings = new Set<string>();
+
+// Re-exports for compatibility with existing components and tests
+export { availableLanguages } from "./language-aliases";
+export {
+    __resetHighlighterCacheForTests,
+    __setHighlighterInstanceForTests,
+} from "./cache";
