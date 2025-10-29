@@ -60,6 +60,7 @@ export const courseStructure: Lesson[] = [
           },
           {
             title: "Patrones básicos",
+            href: "/notes/software-libraries/scripting/basic-patterns/",
             children: [
               {
                 title: "Ensayo seguro (-WhatIf/-Confirm)",

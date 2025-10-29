@@ -2,24 +2,27 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
 import { Abstract } from "~/components/ui/callouts";
+import { PowerShellInline } from "~/components/ui/code";
+import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
     title="Patrones básicos de scripting"
-    description="Patrones básicos de scripting en PowerShell: -WhatIf/-Confirm, foreach vs ForEach-Object, regex y rutas portables. Diseña scripts seguros y mantenibles."
+    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Abstract>
-        <P>
-            Esta unidad se ha dividido en <strong>sublecciones</strong> para facilitar el estudio. La idea es ir de
-            <Enquote>scripts que hacen cosas</Enquote> a <Enquote>herramientas seguras y mantenibles</Enquote>:
-            ensayo seguro con <code>-WhatIf</code> / <code>-Confirm</code>, recorrer con <code>foreach</code> y
-            normalizar textos con <code>[regex]</code> y <code>[Version]</code>.
-        </P>
-    </Abstract>
+    <ToDo
+        client:only="react"
+        metadata={{
+            tasks: [
+                "Resumen",
+            ],
+        }}
+    />
 
     <NotesSection id="h2-sub-lessons">
         <Heading headingLevel="h2" Icon={icons.List}>
@@ -28,13 +31,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <List>
             <ListItem icon={icons.ShieldCheck}>
-                <a href="/notes/software-libraries/scripting/basic-patterns/should-process/">Ensayo seguro (-WhatIf / -Confirm)</a>
+                <Link href="/notes/software-libraries/scripting/basic-patterns/should-process/"
+                >Ensayo seguro (<PowerShellInline code={`-WhatIf`} /> / <PowerShellInline code={`-Confirm`} />)</Link>
             </ListItem>
+
             <ListItem icon={icons.ArrowsClockwise}>
-                <a href="/notes/software-libraries/scripting/basic-patterns/iteration/">Recorrer y transformar archivos</a>
-            </ListItem>
-            <ListItem icon={icons.TextT}>
-                <a href="/notes/software-libraries/scripting/basic-patterns/regex-and-versions/">Regex, versiones y ejercicio</a>
+                <Link href="/notes/software-libraries/scripting/basic-patterns/iteration/"
+                >Recorrer y transformar archivos</Link>
             </ListItem>
         </List>
     </NotesSection>

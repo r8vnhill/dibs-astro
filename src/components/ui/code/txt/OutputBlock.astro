@@ -2,17 +2,17 @@
 import CodeBlock from "../CodeBlock.astro";
 
 type Props = {
-  code: string,
+    code: string;
 };
 
-const { code } : Props = Astro.props;
+const { code }: Props = Astro.props;
 ---
 
 <CodeBlock
-  code={code}
-  lang="plaintext"
+    {code} lang="plaintext"
+    class="bg-base-200 dark:bg-surface-700 border-base-border/30"
 >
-  <span slot="title">
-    <slot name="title">Output</slot>
-  </span>
+    <span slot="title">
+        <slot name="title">Output</slot>
+    </span>
 </CodeBlock>

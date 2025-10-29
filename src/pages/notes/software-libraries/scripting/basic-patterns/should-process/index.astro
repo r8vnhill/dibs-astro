@@ -1,42 +1,44 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
-import { Explanation, Important, Question } from "~/components/ui/callouts";
+import { Exercise, Explanation, Important, Question, Tip } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { NotesSection } from "~/layouts";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
 <NotesLayout
     title="Ensayo seguro (-WhatIf / -Confirm)"
-    description="Cómo usar SupportsShouldProcess, -WhatIf y -Confirm para simular y confirmar cambios de forma segura."
+    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Heading headingLevel="h2" Icon={icons.ShieldCheck}>
-        Patrón de ensayo seguro (dry run)
-    </Heading>
+    <NotesSection id="h2-dry-run-pattern">
+        <Heading headingLevel="h2" Icon={icons.ShieldCheck}>
+            Patrón de ensayo seguro (dry run)
+        </Heading>
 
-    <P>
-        Antes de modificar archivos o crear estructuras, es buena práctica realizar un <Enquote>ensayo</Enquote> que
-        muestre <I>qué</I> se haría sin hacerlo realmente. En PowerShell, este comportamiento se activa con
-        <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />, gracias al atributo
-        <PowerShellInline code="SupportsShouldProcess" />. Este patrón permite que un script pueda <B>simular o
-            confirmar acciones potencialmente destructivas</B> antes de ejecutarlas, reduciendo riesgos y aumentando
-        la confianza en su comportamiento.
-    </P>
+        <P>
+            Antes de crear carpetas o archivos, conviene ensayar el cambio: ver <B>qué</B> se haría sin ejecutar nada.
+            En PowerShell esto se habilita con el atributo <PowerShellInline code="SupportsShouldProcess" />, que agrega
+            los <B>parámetros automáticos</B> <PowerShellInline code="-WhatIf" /> y <PowerShellInline
+                code="-Confirm"
+            />. Con ellos, el script puede <B>simular</B> o <B>solicitar confirmación</B> de acciones potencialmente
+            destructivas, reduciendo riesgos y aumentando la confianza en su comportamiento.
+        </P>
 
-    <PowerShellBlock
-        code={`
+        <PowerShellBlock
+            code={`
                 #Requires -Version 7.5
                 # [!code focus:2]
                 [CmdletBinding(SupportsShouldProcess,
                     ConfirmImpact = 'Medium')]
                 param(
-                    # [!code focus:3]
                     [Parameter(Mandatory)]
+                    # [!code focus:2]
                     [ValidateNotNullOrWhiteSpace()]
                     [string] $Name,
 
@@ -45,6 +47,8 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     [ValidateScript({ Test-Path -Path $_ -PathType Container })]
                     [string] $Path
                 )
+
+                Set-StrictMode -Version 3.0
 
                 # [!code focus:1]
                 $base = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
@@ -83,137 +87,241 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     Skipped      = $skipped
                 }
             `}
-    >
+        >
+            <Fragment slot="title">
+                Initialize-Project (con <code>-WhatIf</code>)
+            </Fragment>
+            <DibsSourceLink
+                repo="scripts" file="scaffolding/Initialize-Project.ps1"
+                slot="source" ref="ae2ea81f7c7a376d2c05763dbba045e8644c0fca"
+            />
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.Shield}>
+                    <B><PowerShellInline code="SupportsShouldProcess" /></B> indica que el comando admite los parámetros
+                    automáticos <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />. PowerShell
+                    los agrega y gestiona por ti: <PowerShellInline code="-WhatIf" />
+                    <B>nunca ejecuta</B> la acción, sólo la describe; <PowerShellInline code="-Confirm" />
+                    <B>solicita confirmación</B> antes de proceder (según reglas de impacto y preferencia del usuario).
+                    <FootnoteRef index={1} />
+                </ListItem>
+
+                <ListItem icon={icons.CellSignalHigh}>
+                    <B><PowerShellInline code="ConfirmImpact" /></B> declara el impacto de las operaciones del comando
+                    (<Mono>Low</Mono>, <Mono>Medium</Mono>, <Mono>High</Mono>). PowerShell lo compara con
+                    <B><PowerShellInline code="$ConfirmPreference" /></B> del usuario (por defecto, <Mono>High</Mono>):
+
+                    <List>
+                        <ListItem icon={icons.Scales}>
+                            Si <B><Mono>ConfirmImpact >= $ConfirmPreference</Mono></B>, se pedirá confirmación
+                            automáticamente.
+                        </ListItem>
+
+                        <ListItem icon={icons.HandPalm}>
+                            Si no, <B>igual puedes forzarla</B> con <PowerShellInline code="-Confirm" />.
+                        </ListItem>
+                    </List>
+
+                    En este ejemplo <Mono>Medium</Mono> describe creación/modificación de archivos (relevante pero no
+                    destructiva).
+                </ListItem>
+
+                <ListItem icon={icons.CurrencyDollar}>
+                    <B><PowerShellInline code="$PSCmdlet.ShouldProcess([string] target, [string] action)" /></B> es el
+                    <B>punto de decisión</B>: aquí se evalúa si una operación debe simularse o ejecutarse. Coloca cada
+                    operación con efectos dentro de este <B>if</B>. Con <PowerShellInline code="-WhatIf" /> se simula y
+                    con <PowerShellInline code="-Confirm" /> se solicita permiso —como se explicó arriba—.
+                </ListItem>
+
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <B><PowerShellInline code="-Switch:$variable" /></B> pasa un switch sólo si la variable booleana es
+                    <PowerShellInline code="$true" />. Para <I>propagar</I> switches comunes a helpers, usa
+                    <PowerShellInline code="$PSBoundParameters" />: por ejemplo
+                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" />. Si quieres propagar
+                    <PowerShellInline code="-WhatIf" /> / <PowerShellInline code="-Confirm" /> el helper <B>también debe
+                        declarar</B> <PowerShellInline code="SupportsShouldProcess" /> para que PowerShell gestione su
+                    simulación/confirmación correctamente.
+                </ListItem>
+            </List>
+
+            <Tip headingLevel="h4">
+                <span slot="title">Regla mental</span>
+
+                Declara <PowerShellInline code="SupportsShouldProcess" />, marca el impacto con <PowerShellInline
+                    code="ConfirmImpact"
+                />, y <B>envuelve efectos</B> en <PowerShellInline code="ShouldProcess(target, action)" />. Con eso,
+                <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" /> <Enquote>simplemente
+                    funcionan</Enquote>.
+            </Tip>
+        </Explanation>
+
+        <Important headingLevel="h3">
+            <Fragment slot="title">Confirmación y simulación</Fragment>
+
+            <P>
+                Como se indicó arriba, <PowerShellInline code="SupportsShouldProcess" /> habilita <Mono>-WhatIf</Mono>
+                y <Mono>-Confirm</Mono>, y el punto de decisión es
+                <PowerShellInline code="$PSCmdlet.ShouldProcess(target, action)" />. En la práctica: <Mono
+                >-WhatIf</Mono>
+                simula sin aplicar cambios y <Mono>-Confirm</Mono> pide autorización previa.
+            </P>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <PowerShellInline code="Low" /> → operaciones triviales (por ejemplo, lectura o inspección de
+                    datos).
+                </ListItem>
+                <ListItem icon={icons.FolderPlus}>
+                    <PowerShellInline code="Medium" /> → operaciones que crean o modifican recursos.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <PowerShellInline code="High" /> → operaciones críticas o destructivas (por ejemplo, eliminación de
+                    archivos o estructuras completas).
+                </ListItem>
+            </List>
+        </Important>
+
+        <NotesSection id="h3-safe-run-example">
+            <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
+                Ensayo seguro con <Mono>-WhatIf</Mono> y confirmación
+            </Heading>
+
+            <P>
+                Antes de crear carpetas o archivos, ejecuta el comando con <PowerShellInline code="-WhatIf" /> para
+                comprobar <I>qué</I> haría el script sin realizar cambios reales. Si además deseas que el script <B>pida
+                    confirmación antes de ejecutar</B> cada acción, cambia <PowerShellInline code={`-WhatIf`} />
+                <PowerShellInline code="-Confirm" />.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                    ./scaffolding/Initialize-Project.ps1 -Name "Test" -Path "." -Verbose -WhatIf
+                `}
+            >
+                <Fragment slot="title">Desde <Mono>dibs/scripts</Mono></Fragment>
+            </PowerShellBlock>
+
+            <OutputBlock
+                code={`
+                    What if: Performing the operation "Create Directory" on target "Destination: /path/to/dibs/scripts/Test".
+                    What if: Performing the operation "Create README.md" on target "/path/to/dibs/scripts/Test/README.md".
+
+                    BasePath     : /path/to/dibs/scripts
+                    TargetPath   : /path/to/dibs/scripts/Test
+                    ReadmePath   : /path/to/dibs/scripts/Test/README.md
+                    HelperPath   : /path/to/dibs/scripts/scaffolding/New-Readme.ps1
+                    ExistsBefore : False
+                    Created      : False
+                    Skipped      : False
+                `}
+            >
+                <span slot="title">Salida con <PowerShellInline code="-WhatIf" /></span>
+            </OutputBlock>
+
+            <Question headingLevel="h4">
+                Prueba distintos valores de <PowerShellInline code="-Name" /> y
+                <PowerShellInline code="-Path" /> junto con
+                <PowerShellInline code="-WhatIf" />. ¿Qué ocurre si el proyecto ya existe? ¿Y si la ruta no es válida?
+            </Question>
+
+            <Question headingLevel="h4">
+                Ejecuta el script con <PowerShellInline code="-Confirm" /> para observar cómo solicita autorización
+                antes de crear cada archivo.
+            </Question>
+        </NotesSection>
+    </NotesSection>
+
+    <Exercise headingLevel="h2">
         <Fragment slot="title">
-            Initialize-Project (con <code>-WhatIf</code>)
+            Limpieza segura con <Mono>ConfirmImpact = 'High'</Mono>
         </Fragment>
-        <DibsSourceLink
-            repo="scripts" file="scaffolding/Initialize-Project.ps1"
-            slot="source" ref="ae2ea81f7c7a376d2c05763dbba045e8644c0fca"
-        />
-    </PowerShellBlock>
 
-    <Explanation headingLevel="h3">
-        <List>
-            <ListItem icon={icons.Shield}>
-                <B><PowerShellInline code="SupportsShouldProcess" /></B> indica que el script admite los
-                modificadores <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />. Cuando
-                está presente, PowerShell ofrece automáticamente ambos parámetros, permitiendo al usuario decidir si
-                desea <B>ver una simulación</B> (<PowerShellInline code="-WhatIf" />) o <B>confirmar
-                    interactivamente</B> (<PowerShellInline code="-Confirm" />) antes de continuar.<FootnoteRef
-                    index={1}
-                />
-            </ListItem>
+        <Fragment slot="requirements">
+            Implementa un script <Mono>Remove-WorkFolder.ps1</Mono> que elimine UNA carpeta de trabajo específica de
+            forma <B>segura</B>, aplicando el patrón de ensayo/confirmación:
 
-            <ListItem icon={icons.CellSignalHigh}>
-                <B><PowerShellInline code="ConfirmImpact" /></B> establece el <I>nivel de importancia</I> de las
-                acciones que el comando realiza. Sus valores (<Mono>Low</Mono>, <Mono>Medium</Mono>, <Mono
-                >High</Mono>) determinan cuándo PowerShell pedirá confirmación en función de la preferencia global
-                del usuario (<PowerShellInline code="$ConfirmPreference" />). En este ejemplo, <Mono>Medium</Mono>
-                indica que la operación —crear o modificar archivos— es potencialmente relevante, pero no
-                destructiva.
-            </ListItem>
+            <List>
+                <ListItem icon={icons.Shield}>
+                    Declara <PowerShellInline code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]" />.
+                </ListItem>
+                <ListItem icon={icons.Folder}>
+                    Parámetro obligatorio <Mono>$Path</Mono>, válido y de tipo <I>carpeta existente</I>.
+                </ListItem>
+                <ListItem icon={icons.CursorClick}>
+                    Usa <PowerShellInline code="$PSCmdlet.ShouldProcess(target, action)" /> para proteger la llamada a
+                    <PowerShellInline code="Remove-Item -Recurse -Force" />.
+                </ListItem>
+                <ListItem icon={icons.SlidersHorizontal}>
+                    Propaga verbosidad y switches comunes con
+                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" /> y, opcionalmente,
+                    <PowerShellInline code="-WhatIf:$PSBoundParameters['WhatIf']" /> /
+                    <PowerShellInline code="-Confirm:$PSBoundParameters['Confirm']" />.
+                </ListItem>
+                <ListItem icon={icons.ListChecks}>
+                    Devuelve un <Mono>PSCustomObject</Mono> con <Mono>TargetPath</Mono>, <Mono>ExistsBefore</Mono> y
+                    <Mono>Deleted</Mono>.
+                </ListItem>
+            </List>
+        </Fragment>
 
-            <ListItem icon={icons.CurrencyDollar}>
-                <B><PowerShellInline code="$PSCmdlet.ShouldProcess()" /></B> es el método que pone en práctica el
-                patrón. Es el punto del código donde se evalúa si la acción debe ejecutarse o solo simularse. Si el
-                usuario invoca el script con <PowerShellInline code="-WhatIf" />, PowerShell mostrará un mensaje
-                como:
-                <Mono>What if: Performing the operation 'Create README.md' on target
-                    'C:\\Projects\\Example\\README.md'.</Mono>
-                Si usa <PowerShellInline code="-Confirm" />, se pedirá confirmación antes de ejecutar esa misma
-                acción.
-            </ListItem>
+        <Fragment slot="use">
+            <PowerShellBlock
+                code={`
+                    ./Remove-WorkFolder.ps1 -Path './Test' -Verbose -WhatIf
 
-            <ListItem icon={icons.SlidersHorizontal}>
-                <B><PowerShellInline code="-Switch:$variable" /></B> pasa un switch solo si la variable booleana es
-                <PowerShellInline code="$true" />. Para <I>propagar</I> switches comunes a helpers, usa
-                <PowerShellInline code="$PSBoundParameters" />: por ejemplo,
-                <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" /> (y, si el helper también los
-                acepta, <PowerShellInline code="-WhatIf:$PSBoundParameters['WhatIf']" /> / <PowerShellInline
-                    code="-Confirm:$PSBoundParameters['Confirm']"
-                />).
-            </ListItem>
-        </List>
-    </Explanation>
+                    # Luego, con confirmación interactiva
+                    ./Remove-WorkFolder.ps1 -Path './Test' -Verbose -Confirm
+                `}
+            >
+                <span slot="title">Prueba el flujo seguro</span>
+            </PowerShellBlock>
+        </Fragment>
 
-    <Important headingLevel="h3">
-        <Fragment slot="title">Confirmación y simulación</Fragment>
-        <P>
-            El patrón <PowerShellInline code="ShouldProcess" /> combina los mecanismos de <B>simulación</B>
-            (<PowerShellInline code="-WhatIf" />) y <B>confirmación interactiva</B> (<PowerShellInline
-                code="-Confirm"
-            />). Ambos se habilitan con <PowerShellInline code="SupportsShouldProcess" /> y se controlan mediante
-            <PowerShellInline code="ConfirmImpact" /> y el método <PowerShellInline
-                code="$PSCmdlet.ShouldProcess()"
-            />.
-        </P>
+        <Fragment slot="hints">
+            Recuerda resolver rutas con <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)" />
+            y usar <PowerShellInline code="-LiteralPath" /> en las operaciones de archivo para evitar problemas con
+            caracteres especiales.
+        </Fragment>
 
-        <P>
-            <PowerShellInline code="-WhatIf" /> permite verificar qué haría el comando sin ejecutar cambios reales,
-            mientras que <PowerShellInline code="-Confirm" /> solicita autorización explícita antes de proceder.
-            Estos mecanismos son esenciales en scripts que crean, modifican o eliminan recursos.
-        </P>
+        <Fragment slot="solution">
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.5
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [ValidateScript({ Test-Path -Path $_ -PathType Container })]
+                        [string] $Path
+                    )
 
-        <List>
-            <ListItem icon={icons.CheckCircle}>
-                <PowerShellInline code="Low" /> → operaciones triviales (ej. lectura de datos).
-            </ListItem>
-            <ListItem icon={icons.FolderPlus}>
-                <PowerShellInline code="Medium" /> → operaciones de creación o modificación.
-            </ListItem>
-            <ListItem icon={icons.Trash}>
-                <PowerShellInline code="High" /> → operaciones destructivas o críticas (ej. eliminación de
-                archivos).
-            </ListItem>
-        </List>
-    </Important>
+                    $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
+                    $existsBefore = Test-Path -LiteralPath $target -PathType Container
+                    $deleted = $false
 
-    <Heading headingLevel="h3" Icon={icons.TerminalWindow}>
-        Ensayo seguro con <Mono>-WhatIf</Mono> y confirmación
-    </Heading>
+                    if ($existsBefore) {
+                        if ($PSCmdlet.ShouldProcess($target, 'Remove work folder recursively')) {
+                            Remove-Item -LiteralPath $target -Recurse -Force \
+                                -Verbose:$PSBoundParameters['Verbose'] \
+                                -WhatIf:$PSBoundParameters['WhatIf'] \
+                                -Confirm:$PSBoundParameters['Confirm']
+                            $deleted = $true
+                        }
+                    }
 
-    <P>
-        Antes de crear carpetas o archivos, prueba el comando con <PowerShellInline code="-WhatIf" /> para
-        verificar <I>qué</I> haría el script sin realizar cambios reales. Si además quieres que el script <B
-        >pida confirmación antes de ejecutar</B> cada acción, usa
-        <PowerShellInline code="-Confirm" />.
-    </P>
-
-    <PowerShellBlock
-        code={`
-            ./scaffolding/Initialize-Project.ps1 -Name "Test" -Path "." -Verbose -WhatIf
-        `}
-    >
-        <Fragment slot="title">Desde <Mono>dibs/scripts</Mono></Fragment>
-    </PowerShellBlock>
-
-    <OutputBlock
-        code={`
-            What if: Performing the operation "Create Directory" on target "Destination: /path/to/dibs/scripts/Test".
-            What if: Performing the operation "Create README.md" on target "/path/to/dibs/scripts/Test/README.md".
-
-            BasePath     : /path/to/dibs/scripts
-            TargetPath   : /path/to/dibs/scripts/Test
-            ReadmePath   : /path/to/dibs/scripts/Test/README.md
-            HelperPath   : /path/to/dibs/scripts/scaffolding/New-Readme.ps1
-            ExistsBefore : False
-            Created      : False
-            Skipped      : False
-        `}
-    >
-        <span slot="title">Salida con <PowerShellInline code="-WhatIf" /></span>
-    </OutputBlock>
-
-    <Question headingLevel="h4">
-        Prueba distintos valores de <PowerShellInline code="-Name" /> y <PowerShellInline code="-Path" /> junto con
-        <PowerShellInline code="-WhatIf" />. ¿Qué sucede si el proyecto ya existe? ¿Y si la ruta no es válida?
-    </Question>
-
-    <Question headingLevel="h4">
-        Ejecuta el script con <PowerShellInline code="-Confirm" /> para observar cómo el flujo de ejecución solicita
-        autorización antes de crear los archivos.
-    </Question>
+                    [PSCustomObject]@{
+                        TargetPath   = $target
+                        ExistsBefore = $existsBefore
+                        Deleted      = $deleted
+                    }
+                `}
+            >
+                <span slot="title">Solución de referencia</span>
+            </PowerShellBlock>
+        </Fragment>
+    </Exercise>
 
     <Footnotes>
         <Footnote index={1}>

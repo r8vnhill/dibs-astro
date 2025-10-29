@@ -6,13 +6,25 @@ type Props = {
     class?: string;
     href?: string;
     newTab?: boolean;
+    /**
+     * When true, apply a subtle inline badge style so monospace text stands out a bit more.
+     * Safe for light/dark themes. Ignored for <kbd>, which has its own global styles.
+     */
+    elevate?: boolean;
     [key: string]: any;
 };
 
-const { as = "code", ...rest } = Astro.props as Props;
+const { as = "code", elevate = true, ...rest } = Astro.props as Props;
+
+// Base monospace style, plus optional "elevated" inline badge visuals
+const classes = [
+    "font-mono",
+    // Avoid double-styling kbd; it already has a global style in styles/global.css
+    elevate && as !== "kbd" && "rounded border border-base-border/60 bg-base-background/60 px-1 py-[1px] shadow-inner",
+].filter(Boolean) as string[];
 ---
 
 <InlineText
-    {as} classes={["font-mono"]}
+    {as} {classes}
     {...rest}
 ><slot /></InlineText>

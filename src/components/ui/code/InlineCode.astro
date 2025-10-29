@@ -22,6 +22,8 @@ type Props = {
     brackets?: boolean; // default: true
     /** Optional label for screen readers when snippet is not self-descriptive */
     ariaLabel?: string;
+    /** Subtle "elevated" badge style to make inline code stand out (uses theme tokens). */
+    elevate?: boolean;
 };
 
 const {
@@ -32,6 +34,7 @@ const {
     themeDark = "catppuccin-mocha",
     brackets = true,
     ariaLabel,
+    elevate = true,
 } = Astro.props as Props;
 
 const baseClass = [
@@ -41,11 +44,23 @@ const baseClass = [
     // Tailwind “token” utilities — keep visual identity consistent
     "text-[0.95em]",
     "font-mono",
+    // small internal padding; elevation will add more visible padding if requested
     "rounded",
     "px-[2px]",
     "py-[0px]",
     "whitespace-nowrap",
     "bg-transparent", // or `bg-code` if you define one in your theme
+].join(" ");
+
+// extra classes for elevated badge effect (uses base tokens so light/dark are respected)
+const elevateClasses = [
+    "rounded",
+    "border",
+    "border-base-border/60",
+    "bg-base-background/60",
+    "px-1",
+    "py-[1px]",
+    "shadow-inner",
 ].join(" ");
 
 const transformers = brackets ? [transformerColorizedBrackets()] : [];
@@ -56,7 +71,7 @@ const variants = [
 ---
 
 <code
-    class:list={[baseClass, className]} data-lang={lang}
+    class:list={[baseClass, elevate ? elevateClasses : "", className]} data-lang={lang}
     aria-label={ariaLabel}
 >{
     variants.map(({ wrapperClass, theme }) => (
