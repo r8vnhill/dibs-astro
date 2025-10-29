@@ -1,26 +1,26 @@
 ---
-import pythonLight from "~/assets/img/logos/python-logo.svg?url";
-import pythonDark from "~/assets/img/logos/python-logo.svg?url";
-import LangLink from "./LangLink.astro";
+import nushellLight from "~/assets/img/icons/nushell-logo.svg?url";
+import nushellDark from "~/assets/img/icons/nushell-logo.svg?url";
 import { resolveLanguageHref } from "./helpers";
+import LangLink from "./LangLink.astro";
 
 type Props = {
     slug?: string;
     name?: string;
+    class?: string;
     srcLight?: string;
     srcDark?: string;
-    class?: string;
 };
 
 const {
     slug,
-    name = "Python",
-    srcLight = pythonLight,
-    srcDark = pythonDark,
+    name = "Nushell",
     class: className,
+    srcLight = nushellLight,
+    srcDark = nushellDark,
 } = Astro.props as Props;
 
-const { href } = resolveLanguageHref(Astro.url.pathname, slug, "py");
+const { href } = resolveLanguageHref(Astro.url.pathname, slug, "nushell");
 const hasDarkVariant = Boolean(srcDark && srcDark !== srcLight);
 const lightClass = hasDarkVariant
     ? "inline-block size-6 object-contain dark:hidden [image-rendering:crisp-edges]"

@@ -8,6 +8,8 @@
     "build": "node generate-icons-index.js && astro build",
     "preview": "node generate-icons-index.js && astro build && wrangler dev",
     "astro": "astro",
+    "fmt": "dprint fmt",
+    "prepare": "husky install",
     "deploy": "node generate-icons-index.js && astro check && astro build && wrangler deploy",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -55,6 +57,13 @@
     "shiki-transformer-copy-button": "^0.0.5",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2",
-    "wrangler": "^4.27.0"
+    "wrangler": "^4.27.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.10"
+  },
+  "lint-staged": {
+    "*": [
+      "pnpm dlx dprint fmt --"
+    ]
   }
 }

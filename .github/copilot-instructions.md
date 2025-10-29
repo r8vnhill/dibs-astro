@@ -14,6 +14,13 @@ Key developer commands (pnpm)
 - pnpm deploy — runs `node generate-icons-index.js && astro check && astro build && wrangler deploy`.
 - pnpm generate-icons — regenerate `src/assets/img/icons/index.ts` (do this after adding SVGs).
 
+Formatting
+- We use `dprint` to keep formatting consistent. Preferred commands:
+  - Install globally with pnpm: `pnpm add -g dprint` then `dprint fmt`
+  - Or run without global install: `pnpm dlx dprint fmt`
+  - Consider adding a pre-commit hook to run `dprint fmt` on staged files.
+  - Repo hooks: This repo uses Husky + lint-staged; commits will run `dprint` on staged files. Agents creating commits should either rely on the hook or run `pnpm dlx dprint fmt` before committing.
+
 Project conventions and examples
 - Path aliases (see `tsconfig.json`): `~/*` → `src/*`; also `$components/*`, `$styles/*`, `$utils/*`, `$assets/*`. Use them in imports.
   Example: import { LessonTree } from "$components/navigation/LessonTree";

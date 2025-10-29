@@ -5,6 +5,8 @@ import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Abstract, Definition, Exercise, Explanation, Important, Info, More, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import LinksLayout from "~/layouts/LinksLayout.astro";
+import NushellLink from "~/components/ui/links/NushellLink.astro";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
@@ -629,6 +631,10 @@ const newPersonPSCustomCode = fs.readFileSync(
             hoy y, cuando conozcas el encadenamiento de comandos, gran parte del trabajo ya estará hecho.
         </Fragment>
     </ConclusionsLayout>
+
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NushellLink />
+    </LinksLayout>
 
     <References>
         <Fragment slot="recommended">
