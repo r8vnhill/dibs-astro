@@ -1,18 +1,30 @@
 ---
 import * as icons from "~/assets/img/icons";
-import { P } from "~/components/semantics";
+import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFoot,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import { Abstract, Definition, Explanation, Important, Info, Tip } from "~/components/ui/callouts";
+import { Abstract, Definition, Explanation, Important, Info } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
-import InlineCode from "~/components/ui/code/InlineCode.astro";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
 import NushellInline from "~/components/ui/code/nushell/NushellInline.astro";
 import { B, I } from "~/components/ui/font";
 import Mono from "~/components/ui/font/Mono.astro";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import Cons from "~/components/ui/procons/Cons.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
+// (sin ToDo: se reemplazaron los placeholders por contenido real)
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -94,130 +106,193 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </NotesSection>
 
-    <NotesSection id="...">
-        <Heading
-            headingLevel="h2" Icon={null}
-            slot="heading"
-        >
-            ...
-        </Heading>
-
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "Definir id",
-                    "Definir el título y su ícono",
-                    "Agregar texto 'al rededor' del código para contextualizar",
-                    "Reemplazar placeholders como 'path/to/...' por valores reales",
-                    `...`,
-                ],
-            }}
-        />
-
-        <NushellBlock code={`
-            let scripts_path = "dibs/scripts"
-            mkdir $scripts_path
-          `} />
-    </NotesSection>
-
-    <NotesSection id="h2-nushell-pipeline">
-        <Heading
-            headingLevel="h2" Icon={icons.FlowArrow}
-            slot="heading"
-        >
-            Pipeline y datos estructurados en Nushell
-        </Heading>
-
-        <Definition>
-            <Fragment slot="title">¿Qué fluye por el pipeline?</Fragment>
-
-            <P>
-                En Nushell <b>fluyen filas (registros) y tablas</b>. Muchos comandos emiten tablas con columnas tipadas;
-                filtrar, ordenar y proyectar columnas es natural y conciso.
-            </P>
-        </Definition>
-
-        <Explanation>
-            <P>
-                Listar archivos y quedarte con los nombres de los <Mono>*.md</Mono> más recientes:
-            </P>
-
-            <CodeBlock
-                lang="nu" icon={icons.FileText}
-                title="Filtrar y proyectar en tablas"
-                code={`
-ls | where type == File | where name ends-with '.md' | sort-by modified -r | get name
-`}
-            />
-
-            <P class="mt-4">
-                Una vez instalado, ejecuta <PowerShellInline code="nu" /> en tu terminal para comenzar a usar Nushell.
-                Puedes establecerlo como tu shell predeterminada o integrarlo en tu editor (por ejemplo, VS Code) sin
-                reemplazar la actual.
-            </P>
-        </Explanation>
-    </NotesSection>
-
-    <NotesSection id="h2-nushell-rutas">
+    <NotesSection id="h2-workspace-nushell">
         <Heading
             headingLevel="h2" Icon={icons.FolderOpen}
             slot="heading"
         >
-            Rutas y portabilidad
+            Estructura base del <Enquote>workspace</Enquote>
         </Heading>
 
         <P>
-            Para construir rutas portables, usa <NushellInline code="path join" /> en lugar de concatenar strings:
+            Igual que en PowerShell, comenzarás creando una estructura base donde guardarás los scripts y ejercicios del
+            curso. Nushell mantiene una sintaxis sencilla y directa: no necesitas especificar tipos de ítem ni redirigir
+            salidas. Aquí veremos cómo crear la carpeta <Mono>dibs/scripts-nushell</Mono> desde la terminal.
         </P>
 
-        <CodeBlock
-            lang="nu" icon={icons.FolderOpen}
-            title="Construir rutas portables" code={`
-let scripts = (path join 'dibs' 'scripts')
-mkdir $scripts
-`}
-        />
-
-        <Tip>
-            <span slot="title">Redirección silenciosa</span>
-            Si querés ocultar salida en la terminal, podés usar <InlineCode code="> /dev/null" /> en sistemas Unix, o
-            directamente confiar en comandos que no emiten salida cuando todo salió bien (muchos subcomandos de Nushell
-            son silenciosos por defecto).
-        </Tip>
-    </NotesSection>
-
-    <NotesSection id="h2-nushell-ventajas">
-        <Heading
-            headingLevel="h2" Icon={icons.Sparkle}
-            slot="heading"
+        <NushellBlock
+            code={`
+                let scripts_path = "dibs/scripts-nushell"
+                mkdir $scripts_path
+            `}
         >
-            ¿Qué ofrece Nushell que puede resultarte útil?
-        </Heading>
+            <span slot="title">Desde la terminal de Nushell</span>
+            <span slot="footer">
+                Crea el directorio <Mono>dibs/scripts-nushell</Mono> si no existe. En Nushell, los comandos no requieren
+                redirección a <Mono>null</Mono>: no muestran salida si no la usas en un pipeline.
+            </span>
+        </NushellBlock>
 
-        <List class="mt-2">
-            <ListItem icon={icons.Table}>
-                <b>Tablas primero</b>: la salida de muchos comandos ya es tabular. Operaciones como <Mono>where</Mono>,
-                <Mono>get</Mono>,
-                <Mono>select</Mono> y <Mono>group-by</Mono> son concisas y consistentes.
-            </ListItem>
-            <ListItem icon={icons.BracketsCurly} class="mt-2">
-                <b>Soporte nativo para formatos</b>: <Mono>open</Mono> detecta <Mono>.json</Mono>, <Mono>.toml</Mono>,
-                <Mono>.csv</Mono>, etc., y los convierte a datos estructurados listos para consultar.
-            </ListItem>
-            <ListItem icon={icons.ChartBar} class="mt-2">
-                <b>Trabajo con datos</b>: con paquetes opcionales como <Mono>dfr</Mono> (basado en Polars) podés
-                realizar transformaciones de tipo dataframe directamente desde el shell.
-            </ListItem>
-        </List>
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.TextT}>
+                    <B>Asignación con <NushellInline code="let" /></B>: define una variable local. A diferencia de
+                    PowerShell, no se usa <PowerShellInline code={`$`} /> al declarar, solo al referenciarla en
+                    expresiones o comandos. Por ejemplo, <NushellInline code="let path = 'dibs/scripts-nushell'" /> crea
+                    la variable y luego <NushellInline code="$path" /> la usa.
+                </ListItem>
+
+                <ListItem icon={icons.FolderPlus}>
+                    <B><NushellInline code="mkdir" /></B> crea directorios, igual que <PowerShellInline
+                        code="New-Item -ItemType Directory"
+                    />
+                    en PowerShell. Si el directorio ya existe, Nushell simplemente lo ignora sin error. También puedes
+                    encadenarlo con otros comandos en pipelines, aprovechando su naturaleza estructurada.
+                </ListItem>
+            </List>
+        </Explanation>
 
         <Important>
-            <span slot="title">¿Hay algo que se pueda en Nushell y no en PowerShell?</span>
-            En la práctica, ambos shells son muy capaces. Nushell destaca por su <b>UX tabular integrada</b> y por su <b
-            >línea de comandos centrada en datos estructurados</b> desde el diseño —lo que simplifica ciertos flujos con
-            JSON/CSV/Parquet sin escribir código adicional. PowerShell, por su parte, se apoya en <Mono>.NET</Mono>
-            y su ecosistema, ofreciendo integración profunda con APIs y tipos del runtime.
+            <span slot="title">Rutas portables con <NushellInline code="path join" /></span>
+
+            <P>
+                En Nushell, la forma recomendada de construir rutas es usando <NushellInline code="path join" />. Este
+                comando concatena segmentos de ruta de manera <B>portátil</B>, evitando errores por separadores
+                distintos entre sistemas (<Mono>/</Mono> en Unix, <Mono>\</Mono> en Windows). Por ejemplo:
+            </P>
+
+            <NushellBlock code={`let scripts_path = (["dibs", "scripts"] | path join)`}>
+                <span slot="footer">
+                    <NushellInline code="path join" /> devolverá <Mono>dibs/scripts</Mono> o <Mono>dibs\scripts</Mono>
+                    según el sistema operativo. Usamos la forma <NushellInline code={`[ ... ] | path join`} /> para
+                    evitar errores cuando no hay datos fluyendo por el pipeline.
+                </span>
+            </NushellBlock>
+
+            <P>
+                En ejemplos de terminal podemos escribir rutas literales para mantener la sintaxis simple; sin embargo,
+                en scripts (<Mono>.nu</Mono>) preferimos <NushellInline code="path join" /> por claridad y portabilidad,
+                igual que <PowerShellInline code="Join-Path" /> en PowerShell.
+            </P>
+
+            <P>
+                Aún no hemos visto cómo funciona el <I>pipeline</I> en Nushell; por ahora basta con entender que muchos
+                comandos —como <NushellInline code="path join" />— esperan recibir datos desde él. En las próximas
+                lecciones veremos en detalle cómo fluye la información entre comandos.
+            </P>
         </Important>
+    </NotesSection>
+
+    <NotesSection id="h2-nushell-vs-powershell">
+        <Heading
+            headingLevel="h2" Icon={icons.ArrowsClockwise}
+            slot="heading"
+        >
+            Nushell vs PowerShell: ¿cuándo usar cada uno?
+        </Heading>
+
+        <P>
+            En esta tabla resumimos cuándo puede convenir usar Nushell frente a PowerShell (y viceversa). No se trata de
+            sustituir uno por otro, sino de entender sus ámbitos de fuerza para elegir la herramienta más adecuada para
+            un script o entorno concreto.
+        </P>
+
+        <Table>
+            <TableCaption>Comparativa rápida entre Nushell y PowerShell</TableCaption>
+            <TableHeader>
+                <TableRow>
+                    <TableHead wrap="normal">Aspecto</TableHead>
+                    <TableHead wrap="normal">Nushell</TableHead>
+                    <TableHead wrap="normal">PowerShell</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell wrap="normal">Paradigma de datos</TableCell>
+                    <TableCell wrap="normal"
+                    >Trabaja con registros/tablas tipadas, ideal para procesar JSON, YAML, CSV.</TableCell>
+                    <TableCell wrap="normal"
+                    >Trabaja con objetos .NET en pipeline, ideal para entornos Windows, automatización de
+                        sistema.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Sistema operativo</TableCell>
+                    <TableCell wrap="normal"
+                    >Cross-platform nativo (Windows, macOS, Linux) con enfoque moderno.</TableCell>
+                    <TableCell wrap="normal"
+                    >También cross-platform desde versiones recientes, pero herencia muy fuerte en
+                        Windows/infraestructura Microsoft.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Ecosistema/módulos</TableCell>
+                    <TableCell wrap="normal"
+                    >Ecosistema aún emergente; menos módulos específicos que PowerShell.</TableCell>
+                    <TableCell wrap="normal"
+                    >Ecosistema maduro, amplísima disponibilidad de módulos y extensiones.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Curva de aprendizaje y estilo</TableCell>
+                    <TableCell wrap="normal"
+                    >Sintaxis más concisa y orientada a datos modernos; pero puede requerir adaptarse al pipeline de
+                        valores estructurados.</TableCell>
+                    <TableCell wrap="normal"
+                    >Sintaxis más verbosa (“Verb-Noun”), muy documentada; quizá más familiar a administradores
+                        Windows.</TableCell>
+                </TableRow>
+            </TableBody>
+            <TableFoot>
+                <TableRow>
+                    <TableCell wrap="normal">Resumen</TableCell>
+                    <TableCell wrap="normal"
+                    >Ideal para tareas de manipulación de datos estructurados, flujos multi-OS, scripts ligeros de
+                        “nuevos” entornos.</TableCell>
+                    <TableCell wrap="normal"
+                    >Ideal para automatización del sistema, infraestructuras Windows/.NET, cuando necesitas acceder a
+                        APIs del sistema o módulos existentes.</TableCell>
+                </TableRow>
+            </TableFoot>
+        </Table>
+
+        <ProCons>
+            <Pros title="Cuándo considerar Nushell">
+                <List>
+                    <ListItem icon={icons.Database}>
+                        Procesamiento de formatos de datos modernos (JSON, YAML, CSV) como tabla sin invocar múltiples
+                        herramientas externas.
+                    </ListItem>
+                    <ListItem icon={icons.Terminal}>
+                        Entorno cross-platform ligero y rápido, adecuado para desarrolladores que trabajan en macOS,
+                        Linux y Windows.
+                    </ListItem>
+                    <ListItem icon={icons.FlowArrow}>
+                        Pipelines de datos más intuitivos, evitando tantos hacks de parsing de texto.
+                    </ListItem>
+                </List>
+            </Pros>
+            <Cons title="Limitaciones a tener en cuenta">
+                <List>
+                    <ListItem icon={icons.WarningCircle}>
+                        Ecosistema aún menos maduro que PowerShell: pueden faltar módulos específicos, integraciones con
+                        infraestructuras legacy.
+                    </ListItem>
+                    <ListItem icon={icons.Bug}>
+                        Cambios frecuentes en versiones tempranas pueden introducir rupturas; quizá menos estable para
+                        scripts críticos de infraestructura.
+                    </ListItem>
+                    <ListItem icon={icons.Keyboard}>
+                        Si ya tienes un fuerte dominio de PowerShell y dependes de muchos módulos Windows/.NET, migrar a
+                        Nushell puede requerir reescritura o adaptación de flujos.
+                    </ListItem>
+                </List>
+            </Cons>
+        </ProCons>
+
+        <P>
+            En definitiva: si tu trabajo gira en torno a automatización de sistemas Windows con módulos .NET y acceso a
+            APIs del sistema, PowerShell sigue siendo la opción más robusta. Si en cambio tu foco es la manipulación de
+            datos estructurados, pipelines limpios y entornos multi-OS, Nushell merece una mirada —incluso puedes usar
+            ambos según el contexto.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-nushell-ejemplos">

@@ -1,54 +1,29 @@
 ---
 /**
- * TableRow.astro – Starwind Table row
+ * TableRow.astro - Starwind Table row
  * -----------------------------------
  * Renders a <tr> with optional state styling.
- * Supports visual feedback on hover and selection.
+ * Supports visual feedback on hover and selection while inheriting padding density from the parent <Table>.
  */
 
 import type { HTMLAttributes } from "astro/types";
-import { tv, type VariantProps } from "tailwind-variants";
+import { type VariantProps } from "tailwind-variants";
+import { tableRowStyles } from "./table-variants";
 
 /**
  * Props accepted by the TableRow component.
  */
-type Props = HTMLAttributes<"tr"> & VariantProps<typeof tableRow>;
+type Props = HTMLAttributes<"tr"> & VariantProps<typeof tableRowStyles>;
 
-/**
- * Tailwind Variants for table rows, enabling
- * selection, hover states, and optional sizing.
- */
-const tableRow = tv({
-  base: [
-    "border-b transition-colors",
-    "hover:bg-muted/50",
-    "data-[state=selected]:bg-muted",
-  ],
-  variants: {
-    intent: {
-      default: "",
-      clickable: "cursor-pointer hover:bg-accent/30",
-      highlight: "bg-yellow-50",
-    },
-    size: {
-      sm: "[&_td]:px-2 [&_td]:py-1",
-      md: "[&_td]:px-4 [&_td]:py-2",
-      lg: "[&_td]:px-6 [&_td]:py-3",
-    },
-  },
-  defaultVariants: {
-    intent: "default",
-    size: "md",
-  },
-});
+const props = Astro.props satisfies Props;
+const { class: className, intent, density, hoverable, ...rest } = props;
 
-const { class: className, intent, size, ...rest } = Astro.props;
+export type { Props as TableRowProps };
 ---
 
 <tr
   data-table-row
-  class={tableRow({ class: className, intent, size })}
-  role="row"
+  class={tableRowStyles({ class: className, intent, density, hoverable })}
   {...rest}
 >
   <slot />

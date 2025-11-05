@@ -1,14 +1,14 @@
 name: CI (disabled - GitLab-first)
 
 on:
-  workflow_dispatch: {}
+    workflow_dispatch: {}
 
 # This workflow is intentionally disabled for push/pull_request events.
 # The project uses a GitLab-first CI approach; the GitHub workflow is kept
 # only for manual runs and documentation purposes.
 jobs:
-  disabled:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Disabled
-        run: echo "GitHub Actions disabled in favor of GitLab CI (see .gitlab-ci.yml)"
+    disabled:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Disabled
+              run: echo "GitHub Actions disabled in favor of GitLab CI (see .gitlab-ci.yml)"

@@ -115,6 +115,56 @@
 		"prefix": "psblock",
 		"scope": "astro"
 	},
+	"Nushell Inline": {
+		"body": [
+			"<NushellInline code={`$1`} />"
+		],
+		"description": "Inserta un componente NushellInline",
+		"prefix": "nuinline",
+		"scope": "astro"
+	},
+	"NushellBlock con slots": {
+		"body": [
+			"<NushellBlock code={`",
+			"    $1",
+			"`}>",
+			"    <Fragment slot=\"title\">${2:...}</Fragment>",
+			"    <Fragment slot=\"footer\">${3:...}</Fragment>",
+			"    <Fragment slot=\"source\">${4:path/to/script.nu}</Fragment>",
+			"</NushellBlock>"
+		],
+		"description": "Inserta un bloque NushellBlock con slots de titulo, footer y source.",
+		"prefix": "nublock",
+		"scope": "astro"
+	},
+	"Starwind Table": {
+		"body": [
+			"<Table>",
+			"    <TableCaption>${1:Table caption}</TableCaption>",
+			"    <TableHeader>",
+			"        <TableRow>",
+			"            <TableHead>${2:Header 1}</TableHead>",
+			"            <TableHead>${3:Header 2}</TableHead>",
+			"        </TableRow>",
+			"    </TableHeader>",
+			"    <TableBody>",
+			"        <TableRow>",
+			"            <TableCell>${4:Cell 1}</TableCell>",
+			"            <TableCell>${5:Cell 2}</TableCell>",
+			"        </TableRow>",
+			"    </TableBody>",
+			"    <TableFoot>",
+			"        <TableRow>",
+			"            <TableCell>${6:Foot label}</TableCell>",
+			"            <TableCell>${7:Foot value}</TableCell>",
+			"        </TableRow>",
+			"    </TableFoot>",
+			"</Table>"
+		],
+		"description": "Inserta una tabla Starwind con placeholders",
+		"prefix": "swtable",
+		"scope": "astro"
+	},
 	"ProCons": {
 		"body": [
 			"<ProCons>",

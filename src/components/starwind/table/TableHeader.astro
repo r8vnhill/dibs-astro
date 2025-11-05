@@ -1,47 +1,29 @@
 ---
 /**
- * TableHeader.astro – Starwind Table header
+ * TableHeader.astro - Starwind Table header
  * -----------------------------------------
  * Renders the <thead> element of a table with optional styling and variants.
  * Includes default border and layout behavior using Tailwind utilities.
  */
 
 import type { HTMLAttributes } from "astro/types";
-import { tv, type VariantProps } from "tailwind-variants";
+import { type VariantProps } from "tailwind-variants";
+import { tableHeaderSection } from "./table-variants";
 
 /**
  * Props supported by the TableHeader component.
  */
-type Props = HTMLAttributes<"thead"> & VariantProps<typeof tableHeader>;
+type Props = HTMLAttributes<"thead"> & VariantProps<typeof tableHeaderSection>;
 
-/**
- * Tailwind Variants config for styling the <thead> element.
- */
-const tableHeader = tv({
-  base: [
-    "[&_tr]:border-b", // Apply border to <tr> inside <thead>
-    "[&_th]:px-4 [&_th]:py-2", // Padding for <th> elements
-    "[&_th]:text-left [&_th]:font-medium", // Typography
-    "bg-muted text-muted-foreground", // Visual separation from body
-  ],
-  variants: {
-    size: {
-      sm: "[&_th]:px-2 [&_th]:py-1 text-sm",
-      md: "[&_th]:px-4 [&_th]:py-2 text-base",
-      lg: "[&_th]:px-6 [&_th]:py-3 text-lg",
-    },
-  },
-  defaultVariants: {
-    size: "md",
-  },
-});
+const props = Astro.props satisfies Props;
+const { class: className, sticky, elevated, ...rest } = props;
 
-const { class: className, size, ...rest } = Astro.props;
+export type { Props as TableHeaderProps };
 ---
 
 <thead
   data-table-header
-  class={tableHeader({ class: className, size })}
+  class={tableHeaderSection({ class: className, sticky, elevated })}
   {...rest}
 >
   <slot />

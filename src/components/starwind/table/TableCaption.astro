@@ -1,45 +1,93 @@
 ---
 /**
- * TableCaption.astro – Starwind Table caption
+ * TableCaption.astro - Starwind Table caption
  * -------------------------------------------
- * Renders a <caption> element with consistent styling for accessibility and context.
+ *
+ * ## Purpose
+ * Provide a small, consistently-styled `<caption>` element for tables. The caption gives context to the table and
+ * improves accessibility (screen readers announce the caption when the table receives focus). Keep captions short and
+ * descriptive.
+ *
+ * ## Contract (inputs / outputs)
+ * - Inputs: any `caption` HTML attributes (e.g., `id`, `aria-*`) plus two styling variants: `align` and `tone`.
+ * - Output: a rendered `<caption>` element with the computed className and passed props.
+ * - Error modes: this component only renders markup and should not throw. Passing unexpected props will be forwarded
+ *   to the caption element via the spread.
+ *
+ * ## Props
+ * - `align`: "left" | "center" | "right"
+ *    Controls text alignment for the caption. Default: `center`.
+ * - `tone`: "default" | "muted" | "emphasis"
+ *    Visual tone for the caption. `muted` is suitable for explanatory text; `emphasis` raises prominence (e.g., used
+ *   when listing a table title).
+ *
+ * ## Accessibility
+ * - Keep caption content concise and descriptive (e.g. "Browser support by feature").
+ * - Prefer the `<caption>` element over visually-similar alternatives so screen readers
+ *   can discover the table context.
+ *
+ * ## Styling notes
+ * - Base styles set a small font size and a muted foreground color.
+ * - Consumers may pass a `class` attribute to further tweak spacing, color or layout.
+ *
+ * ## Examples
+ * ```astro
+ * ---
+ * import Table from './Table.astro'
+ * import TableCaption from './TableCaption.astro'
+ * ---
+ * <Table>
+ *   <TableCaption align="left" tone="emphasis">Feature matrix (Q4)</TableCaption>
+ *   <!-- thead, tbody... -->
+ * </Table>
+ * ```
  */
 
 import type { HTMLAttributes } from "astro/types";
 import { tv, type VariantProps } from "tailwind-variants";
 
+// Compose tailwind utility variants for the caption. Keep the defaults conservative (centered, muted tone) so existing
+// tables keep their layout.
+const tableCaption = tv({
+    base: [
+        "text-muted-foreground text-sm",
+        "mt-4 text-center", // Centered by default for common layout
+    ],
+    variants: {
+        align: {
+            left: "text-left",
+            center: "text-center",
+            right: "text-right",
+        },
+        tone: {
+            default: "",
+            muted: "text-muted-foreground",
+            emphasis: "text-foreground font-semibold",
+        },
+    },
+    defaultVariants: {
+        align: "center",
+        tone: "muted",
+    },
+});
+
 /**
  * Props supported by TableCaption component.
+ * We accept the normal HTML attributes for `<caption>` and the `tv` variant props.
  */
 type Props = HTMLAttributes<"caption"> & VariantProps<typeof tableCaption>;
 
-/**
- * Tailwind Variants configuration for TableCaption.
- */
-const tableCaption = tv({
-  base: [
-    "text-muted-foreground text-sm",
-    "mt-4 text-center", // Centered by default for common layout
-  ],
-  variants: {
-    align: {
-      left: "text-left",
-      center: "text-center",
-      right: "text-right",
-    },
-  },
-  defaultVariants: {
-    align: "center",
-  },
-});
+// Validate and destructure incoming props. `Astro.props` contains runtime values passed to the component; the
+// `satisfies` clause keeps local typing strict.
+const props = Astro.props satisfies Props;
+const { class: className, align, tone, ...rest } = props;
 
-const { class: className, align, ...rest } = Astro.props;
+export type { Props as TableCaptionProps };
 ---
 
 <caption
-  data-table-caption
-  class={tableCaption({ class: className, align })}
-  {...rest}
+    data-table-caption class={tableCaption({ class: className, align, tone })}
+    {...rest}
 >
-  <slot />
+    <slot />
 </caption>

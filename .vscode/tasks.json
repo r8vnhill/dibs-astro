@@ -1,0 +1,35 @@
+{
+  // Tasks used to run the Astro dev server from VS Code.
+  // - "Astro: Dev (bin)" runs the exact command you requested: ./node_modules/.bin/astro dev
+  // - "Astro: Dev (pnpm)" runs the project's `pnpm dev` script (more portable)
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Astro: Dev (bin)",
+      "type": "shell",
+      "command": "./node_modules/.bin/astro dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Astro: Dev (pnpm)",
+      "type": "shell",
+      "command": "pnpm dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "group": "build"
+    }
+  ]
+}

@@ -1,8 +1,41 @@
 ---
 /**
- * Table.astro – Starwind Table component
+ * Table.astro - Starwind Table component
  * ---------------------------------------
  * A responsive, accessible table container with Tailwind-based styling.
+ *
+ * ## Responsibilities
+ * - Render a semantic `<table>` element with sane defaults for layout and borders (via `tailwind-variants`).
+ * - Optionally wrap the `<table>` in a responsive scroll container so wide tables get a horizontal scrollbar instead
+ *   of breaking layout.
+ * - Forward any native table attributes (aria, id, data-*) to the table.
+ *
+ * ## Props
+ * - `scrollContainer` (boolean): when true (default) the table is wrapped in a div with `overflow-x-auto` so content
+ *   can scroll horizontally on small viewports. Set to `false` if your layout already provides scrolling.
+ * - `scrollContainerClass` (string): extra class names applied to the scroll container for fine-grained control of
+ *   spacing or behavior.
+ * - `scrollContainerProps` (HTMLAttributes<'div'>): forwarded to the scroll container (useful to add `data-*`
+ *   attributes or a custom id).
+ * - `density` (`"compact" | "comfortable" | "spacious"`): controls the padding scale for descendant rows/cells via CSS
+ *   custom properties. Defaults to `"comfortable"`.
+ *
+ * ## Variants
+ * - `layout`: controls table sizing (`auto` | `fixed`).
+ * - `border`: controls the outer border style (`standard` | `subtle` | `none`).
+ * - `density`: cascades padding tokens to `TableRow` instances (`compact` | `comfortable` | `spacious`).
+ *
+ * ## Design notes
+ * - We keep the wrapper and the table element separate so consumers can opt out of the scroll container when embedding
+ *   the table in complex layouts.
+ * - The component deliberately has a small API surface; row/cell behavior is handled by `TableBody`, `TableRow`,
+ *   `TableCell`, etc., to encourage composability and focused unit tests.
+ *
+ * ## Example
+ * <Table border="subtle" layout="fixed">
+ *   <TableHeader>...</TableHeader>
+ *   <TableBody zebra="even">...</TableBody>
+ * </Table>
  */
 
 import type { HTMLAttributes } from "astro/types";
@@ -12,38 +45,104 @@ import { tv, type VariantProps } from "tailwind-variants";
  * Props supported by the table component.
  * Includes native table attributes and variant styling.
  */
-type Props = HTMLAttributes<"table"> & VariantProps<typeof table>;
+type Props =
+    & HTMLAttributes<"table">
+    & VariantProps<typeof table>
+    & {
+        /**
+         * Toggle the responsive scroll container wrapper.
+         * Useful when the table is already managed by another layout element.
+         */
+        scrollContainer?: boolean;
+        /**
+         * Optional class names applied to the scroll container.
+         */
+        scrollContainerClass?: string;
+        /**
+         * Additional attributes forwarded to the scroll container.
+         */
+        scrollContainerProps?: HTMLAttributes<"div">;
+    };
 
 /**
  * Tailwind Variants config for the table.
  */
 const table = tv({
-  base: [
-    "w-full caption-bottom text-sm border-collapse",
-    "border border-border",
-    "[&_th]:text-left [&_th]:font-semibold [&_th]:text-muted-foreground", // Scope header styling
-    "[&_td]:p-2 [&_th]:p-2", // Padding for all cells
-  ],
-  variants: {
-    striped: {
-      true: "[&_tbody_tr:nth-child(even)]:bg-muted/50",
+    base: [
+        "w-full caption-bottom text-sm border-collapse",
+    ],
+    variants: {
+        layout: {
+            auto: "table-auto",
+            fixed: "table-fixed",
+        },
+        border: {
+            standard: "border border-border",
+            subtle: "border border-border/60",
+            none: "border-0",
+        },
+        density: {
+            compact: "[--table-cell-px:0.5rem] [--table-cell-py:0.25rem]",
+            comfortable: "[--table-cell-px:0.75rem] [--table-cell-py:0.5rem]",
+            spacious: "[--table-cell-px:1rem] [--table-cell-py:0.75rem]",
+        },
     },
-  },
+    defaultVariants: {
+        layout: "auto",
+        border: "standard",
+        density: "comfortable",
+    },
 });
 
-const { class: className, striped, ...rest } = Astro.props;
+const props = Astro.props satisfies Props;
+const {
+    class: className,
+    scrollContainer = true,
+    scrollContainerClass,
+    scrollContainerProps = {},
+    layout,
+    border,
+    density,
+    ...rest
+} = props;
+
+const { class: containerClassName, ...containerRest } = scrollContainerProps;
+const containerClass = [
+    "relative w-full overflow-x-auto my-4",
+    scrollContainerClass,
+    containerClassName,
+]
+    .filter(Boolean)
+    .join(" ");
+
+const tableClass = table({ class: className, layout, border, density });
+const resolvedDensity = density ?? "comfortable";
+
+export type { Props as TableProps };
 ---
 
-<!--
-  Responsive wrapper with horizontal scroll when content overflows.
--->
-<div data-table-container class="relative w-full overflow-x-auto my-4">
-  <table
-    data-table
-    class={table({ class: className, striped })}
-    role="table"
-    {...rest}
-  >
-    <slot />
-  </table>
-</div>
+{/* Responsive wrapper with horizontal scroll when content overflows. */}
+{
+    scrollContainer ? (
+        <div
+            data-table-container class={containerClass}
+            {...containerRest}
+        >
+                <table
+                    data-table data-table-density={resolvedDensity}
+                    class={tableClass}
+                    {...rest}
+                >
+                <slot />
+            </table>
+        </div>
+    ) : (
+        <table
+            data-table data-table-density={resolvedDensity}
+            class={tableClass}
+            {...rest}
+        >
+            <slot />
+        </table>
+    )
+}

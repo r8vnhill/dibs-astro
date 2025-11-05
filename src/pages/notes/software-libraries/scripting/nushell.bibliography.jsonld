@@ -1,0 +1,351 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Bibliografía de la lección: Nushell",
+  "about": "Nushell",
+  "itemListElement": [
+    {
+      "@type": "BlogPosting",
+      "name": "Exploring Nushell, a Rust-powered, cross-platform shell",
+      "headline": "Exploring Nushell, a Rust-powered, cross-platform shell",
+      "url": "https://blog.logrocket.com/exploring-nushell-rust-powered-cross-platform-shell/?utm_source=chatgpt.com",
+      "datePublished": "2024-04-22",
+      "publisher": {
+        "@type": "Organization",
+        "name": "LogRocket",
+        "url": "https://blog.logrocket.com"
+      },
+      "description": "While Nushell is a relatively new shell, it is powerful, extensible, and provides a rich user interface compared to most traditional shells.",
+      "keywords": [
+        "Nushell",
+        "Rust",
+        "Shell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "BlogPosting",
+      "name": "The case for Nushell - Sophia Turner's Blog",
+      "headline": "The case for Nushell",
+      "url": "https://www.sophiajt.com/case-for-nushell/?utm_source=chatgpt.com",
+      "datePublished": "2023-08-29",
+      "publisher": {
+        "@type": "Person",
+        "name": "Sophia Turner",
+        "url": "https://www.sophiajt.com"
+      },
+      "description": "Pros: it's a structured shell - you can actually work with objects rather than text. Powerful set of tools and capabilities taken from .NET.",
+      "keywords": [
+        "Nushell",
+        "Shell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "Nushell is PowerShell done right. - Hacker News",
+      "headline": "Nushell is PowerShell done right.",
+      "url": "https://news.ycombinator.com/item?id=33420271&utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Hacker News",
+        "url": "https://news.ycombinator.com"
+      },
+      "description": "Discussion thread comparing Nushell and PowerShell.",
+      "keywords": [
+        "Nushell",
+        "PowerShell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "name": "nushell vs PowerShell - compare differences and reviews? - LibHunt",
+      "headline": "nushell vs PowerShell - compare differences and reviews?",
+      "url": "https://www.libhunt.com/compare-nushell-vs-PowerShell?utm_source=chatgpt.com",
+      "datePublished": "2025-04-17",
+      "publisher": {
+        "@type": "Organization",
+        "name": "LibHunt",
+        "url": "https://www.libhunt.com"
+      },
+      "keywords": [
+        "Nushell",
+        "PowerShell",
+        "Comparison"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "name": "Nu Shell vs PowerShell | What are the differences? - StackShare",
+      "headline": "Nu Shell vs PowerShell | What are the differences?",
+      "url": "https://stackshare.io/stackups/nu-shell-vs-powershell?utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "StackShare",
+        "url": "https://stackshare.io"
+      },
+      "keywords": [
+        "Nushell",
+        "PowerShell",
+        "Comparison"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "name": "Thinking in Nu - Nushell",
+      "headline": "Thinking in Nu",
+      "url": "https://www.nushell.sh/book/thinking_in_nu.html?utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh"
+      },
+      "keywords": [
+        "Nushell",
+        "Book"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "PowerShell isn't that verbose, compared to NuShell. The ls ...",
+      "headline": "PowerShell isn't that verbose, compared to NuShell. The ls ...",
+      "url": "https://news.ycombinator.com/item?id=35125196&utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Hacker News",
+        "url": "https://news.ycombinator.com"
+      },
+      "keywords": [
+        "Nushell",
+        "PowerShell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "BlogPosting",
+      "name": "Nushell for SREs — Modern Shell Scripting for Internal Tools - Medium",
+      "headline": "Nushell for SREs — Modern Shell Scripting for Internal Tools",
+      "url": "https://medium.com/%40nonickedgr/nushell-for-sres-modern-shell-scripting-for-internal-tools-7b5dca51dc66?utm_source=chatgpt.com",
+      "datePublished": "2025-04-29",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Medium",
+        "url": "https://medium.com"
+      },
+      "keywords": [
+        "Nushell",
+        "SRE",
+        "Shell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "DiscussionForumPosting",
+      "name": "Switch to a better nushell bash is old - Fedora Discussion",
+      "headline": "Switch to a better nushell bash is old",
+      "url": "https://discussion.fedoraproject.org/t/switch-to-a-better-nushell-bash-is-old/130876?utm_source=chatgpt.com",
+      "datePublished": "2024-09-08",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Fedora Discussion",
+        "url": "https://discussion.fedoraproject.org"
+      },
+      "keywords": [
+        "Nushell",
+        "Bash",
+        "Discussion"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "BlogPosting",
+      "name": "From column to nushell: not what I expected - Homo Ludditus",
+      "headline": "From column to nushell: not what I expected",
+      "url": "https://ludditus.com/2025/01/09/linux-apps-nutty-shell/?utm_source=chatgpt.com",
+      "datePublished": "2025-01-08",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Homo Ludditus",
+        "url": "https://ludditus.com"
+      },
+      "keywords": [
+        "Nushell",
+        "Linux"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "The case for Nushell : r/ProgrammingLanguages - Reddit",
+      "headline": "The case for Nushell",
+      "url": "https://www.reddit.com/r/ProgrammingLanguages/comments/165co33/the_case_for_nushell/?utm_source=chatgpt.com",
+      "datePublished": "2023-08-29",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Reddit",
+        "url": "https://www.reddit.com"
+      },
+      "keywords": [
+        "Nushell",
+        "Discussion"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "Should I use Fish Shell or Nushell? : r/fishshell - Reddit",
+      "headline": "Should I use Fish Shell or Nushell?",
+      "url": "https://www.reddit.com/r/fishshell/comments/15t7nw3/should_i_use_fish_shell_or_nushell/?utm_source=chatgpt.com",
+      "datePublished": "2023-08-16",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Reddit",
+        "url": "https://www.reddit.com"
+      },
+      "keywords": [
+        "Nushell",
+        "fish",
+        "Discussion"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "Nushell table-like visualization for PowerShell - Reddit",
+      "headline": "Nushell table-like visualization for PowerShell",
+      "url": "https://www.reddit.com/r/PowerShell/comments/114hyrc/nushell_tablelike_visualization_for_powershell/?utm_source=chatgpt.com",
+      "datePublished": "2023-02-16",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Reddit",
+        "url": "https://www.reddit.com"
+      },
+      "keywords": [
+        "Nushell",
+        "PowerShell"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "Nushell: Introduction to a new kind of shell | Hacker News",
+      "headline": "Nushell: Introduction to a new kind of shell",
+      "url": "https://news.ycombinator.com/item?id=33419944&utm_source=chatgpt.com",
+      "datePublished": "2022-10-31",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Hacker News",
+        "url": "https://news.ycombinator.com"
+      },
+      "keywords": [
+        "Nushell",
+        "Hacker News"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "SocialMediaPosting",
+      "name": "I think that these 'improved shell' projects (incl. crush and nushell) | Hacker News",
+      "headline": "I think that these 'improved shell' projects (incl. crush and nushell) that try to copy powershell somewhat miss the point of the shell in the first place.",
+      "url": "https://news.ycombinator.com/item?id=24079554&utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Hacker News",
+        "url": "https://news.ycombinator.com"
+      },
+      "keywords": [
+        "Nushell",
+        "Shell",
+        "Discussion"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "name": "Comparison of Bash, Elvish, NuShell, Murex, es-shell, fish ... - Gist",
+      "headline": "Comparison of Bash, Elvish, NuShell, Murex, es-shell, fish ...",
+      "url": "https://gist.github.com/pmarreck/b7bd1c270cb77005205bf91f80c4e130?utm_source=chatgpt.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "GitHub Gist",
+        "url": "https://gist.github.com"
+      },
+      "keywords": [
+        "Nushell",
+        "Comparison",
+        "Bash",
+        "Fish",
+        "Elvish"
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Lección: Nushell",
+        "url": "/notes/software-libraries/scripting/nushell"
+      }
+    }
+  ]
+}

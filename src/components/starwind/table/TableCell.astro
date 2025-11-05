@@ -2,59 +2,69 @@
 /**
  * TableCell.astro – Starwind table cell
  * -------------------------------------
- * Renders a table data cell (`<td>`) with support for padding, alignment, and contextual variants.
- * Also supports embedded checkboxes.
+ *
+ * ## Purpose
+ * Provide a `<td>` element with consistent padding, alignment, tone and wrap variants. Centralizes visual rules so all
+ * table cells keep a uniform look and behavior across the site.
+ *
+ * ## Contract (inputs / outputs)
+ * - Inputs: normal `<td>` HTML attributes (id, role, aria-*, etc.) plus variant props from `table-variants` (align,
+ *   tone, size, wrap).
+ * - Output: a rendered `<td>` element with the computed className and forwarded props.
+ * - Error modes: component forwards unknown props and should not throw.
+ *
+ * ## Props
+ * - `align`: 'left' | 'center' | 'right' — text alignment. Falls back to the table default if omitted.
+ * - `tone`: 'default' | 'muted' | 'emphasis' — visual emphasis for content.
+ * - `size`: size variant for padding (e.g., 'sm' | 'md' | 'lg').
+ * - `wrap`: 'nowrap' | 'normal' — whitespace handling. Default 'nowrap' to preserve row height; use 'normal' for
+ *   description-heavy columns.
+ *
+ * ## Accessibility
+ * - Preserve semantic table structure. For interactive controls inside a cell ensure they have accessible labels
+ *   (aria-label/aria-labelledby). Use `scope` on header cells where appropriate.
+ *
+ * ## Styling notes
+ * - Variant classes live in `table-variants.ts`. Keep visual decisions there to avoid duplication and to simplify
+ *   theme changes.
+ *
+ * ## Examples
+ * ```astro
+ * ---
+ * import TableCell from './TableCell.astro'
+ * ---
+ * <tr>
+ *   <TableCell tone="muted">Short label</TableCell>
+ *   <TableCell wrap="normal">A long description that will wrap instead of forcing horizontal scroll</TableCell>
+ *   <TableCell>
+ *     <input type="checkbox" aria-label="Enable feature" />
+ *   </TableCell>
+ * </tr>
+ * ```
  */
 
 import type { HTMLAttributes } from "astro/types";
-import { tv, type VariantProps } from "tailwind-variants";
+import { type VariantProps } from "tailwind-variants";
+import { tableDataCell } from "./table-variants";
 
 /**
  * Component props, extending <td> plus style variants.
  */
-type Props = HTMLAttributes<"td"> &
-  VariantProps<typeof tableCell>;
+type Props =
+    & HTMLAttributes<"td">
+    & VariantProps<typeof tableDataCell>;
 
-/**
- * Tailwind Variants for table cells.
- */
-const tableCell = tv({
-  base: [
-    "p-2 align-middle whitespace-nowrap",
-    "[&:has([role=checkbox])]:pr-0",
-    "[&>[role=checkbox]]:translate-y-[2px]",
-  ],
-  variants: {
-    align: {
-      left: "text-left",
-      center: "text-center",
-      right: "text-right",
-    },
-    intent: {
-      default: "",
-      muted: "text-muted-foreground",
-      highlight: "bg-yellow-50",
-    },
-    size: {
-      sm: "text-sm",
-      md: "text-base",
-      lg: "text-lg",
-    },
-  },
-  defaultVariants: {
-    align: "left",
-    intent: "default",
-    size: "md",
-  },
-});
+// Validate and destructure runtime props. `Astro.props` contains values passed from the caller; using `satisfies`
+// keeps the local type inference strict.
+const props = Astro.props satisfies Props;
+const { class: className, align, tone, size, wrap, ...rest } = props;
 
-const { class: className, align, intent, size, ...rest } = Astro.props;
+export type { Props as TableCellProps };
 ---
 
 <td
-  data-table-cell
-  class={tableCell({ class: className, align, intent, size })}
-  {...rest}
+    data-table-cell class={tableDataCell({ class: className, align, tone, size, wrap })}
+    {...rest}
 >
-  <slot />
+    <slot />
 </td>

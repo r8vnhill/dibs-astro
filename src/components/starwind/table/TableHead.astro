@@ -1,16 +1,95 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import { tv, type VariantProps } from "tailwind-variants";
+import { type VariantProps } from "tailwind-variants";
+import { tableHeaderCell } from "./table-variants";
+import { buildTableHeadState, type SortState } from "./table-head-logic";
 
-type Props = HTMLAttributes<"th"> & VariantProps<typeof tableHead>;
+/**
+ * TableHead.astro - Starwind table header cell
+ * -------------------------------------------
+ *
+ * Purpose:
+ * Provide a documented, typed thin wrapper around `<th>` elements used in the project's Starwind table components.
+ * This file exposes a small, typed `Props` shape and delegates styling to the shared `tableHeaderCell` variant helper.
+ *
+ * Contract (inputs / outputs):
+ * - Inputs: normal `<th>` HTML attributes plus the variant props supported by `tableHeaderCell` (align, size, wrap).
+ *   Also accepts a `scope` prop to control table semantics (defaults to `col`) and an optional `sort` state to reflect
+ *   current column ordering.
+ * - Output: a `<th>` element with the computed Tailwind classes and forwarded props.
+ *
+ * Accessibility:
+ * - `scope` defaults to `col` which is appropriate for column headers. For row headers pass `scope="row"` explicitly
+ *   when needed.
+ */
 
-const tableHead = tv({
-  base: "text-muted-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-});
+type Props =
+    & HTMLAttributes<"th">
+    & VariantProps<typeof tableHeaderCell>
+    & {
+        /**
+         * Sets the HTML `scope` attribute of the `<th>` element. Typical values are `"col"` (default) and `"row"` for
+         * row headers.
+         */
+        scope?: HTMLTableCellElement["scope"];
+        /**
+         * Optional sorting state for the column. When provided the component automatically sets `aria-sort`,
+         * renders assistive text and exposes `data-sort` for styling hooks.
+         */
+        sort?: SortState;
+        /**
+         * Override the screen-reader label that accompanies the sort icon. Defaults to
+         * `"Sorted ascending"` / `"Sorted descending"` when `sort` is set.
+         */
+        sortLabel?: string;
+        /**
+         * Toggle rendering of the inline sort glyph. Screen-reader text is still rendered when `sort` is set.
+         */
+        showSortIcon?: boolean;
+    };
 
-const { class: className, ...rest } = Astro.props;
+// Retrieve and type-check incoming props from the Astro component invocation.
+// `Astro.props satisfies Props` enforces the expected shape at compile-time.
+const props = Astro.props satisfies Props;
+
+// Destructure values we care about; keep the rest to forward to the <th> element.
+// `class` is remapped to `className` so we can pass it into the variant helper.
+const {
+    class: className,
+    align,
+    size,
+    wrap,
+    scope,
+    sort,
+    sortLabel,
+    showSortIcon,
+    ...rest
+} = props;
+
+const headState = buildTableHeadState({ scope, sort, sortLabel, showSortIcon });
+
+export type { Props as TableHeadCellProps };
 ---
-
-<th data-table-head class={tableHead({ class: className })} {...rest} role="columnheader">
-  <slot />
+<th
+    data-table-head scope={headState.scope}
+    data-sort={headState.isSorted ? headState.sort : undefined}
+    aria-sort={headState.ariaSort}
+    class={tableHeaderCell({ class: className, align, size, wrap })}
+    {...rest}
+>
+    {
+        headState.isSorted ? (
+            <span class="inline-flex items-center gap-1">
+                <slot />
+                {headState.showSortIcon ? (
+                    <span aria-hidden="true" class="text-muted-foreground/70">
+                        {headState.sort === "asc" ? "↑" : "↓"}
+                    </span>
+                ) : null}
+                <span class="sr-only">{headState.srLabel}</span>
+            </span>
+        ) : (
+            <slot />
+        )
+    }
 </th>

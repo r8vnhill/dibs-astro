@@ -2,42 +2,53 @@
 /**
  * TableBody.astro – Starwind table body
  * -------------------------------------
- * Renders the `<tbody>` element of a table, styled via Tailwind variants.
- * Allows future extension for striping or condensed spacing.
+ * Renders the `<tbody>` element of a table and exposes a small set of style variants via `tailwind-variants`.
+ *
+ * ## Responsibilities
+ * - Provide a semantic `<tbody>` wrapper for table rows.
+ * - Offer a `zebra` variant to produce striped rows (even/odd).
+ * - Forward arbitrary HTML attributes (class, id, data-*) to the `<tbody>`.
+ *
+ * ## Why this component exists
+ * The design keeps table layout and row-level styling separate. The `Table` component handles the container and 
+ * overflow behavior while `TableBody` focuses on per-row visual variants (for example, zebra striping). Keeping these 
+ * responsibilities isolated makes the table easier to compose and test.
+ *
+ * Usage examples
+ * <Table>
+ *   <TableHeader>...</TableHeader>
+ *   <TableBody zebra="even">...
+ *     <TableRow>...</TableRow>
+ *   </TableBody>
+ * </Table>
+ *
+ * Notes
+ * - The `zebra` variant accepts `none`, `even` or `odd` and maps to a Tailwind rule that sets a background color on 
+ *   rows. The default is `none`.
+ * - This component intentionally only provides a small API surface; more complex behaviors (condensed spacing, 
+ *   selectable rows, etc.) can be added later as separate variants.
  */
 
 import type { HTMLAttributes } from "astro/types";
-import { tv, type VariantProps } from "tailwind-variants";
+import { type VariantProps } from "tailwind-variants";
+import { tableBodySection } from "./table-variants";
 
 /**
  * Props for TableBody component.
  */
-type Props = HTMLAttributes<"tbody"> &
-  VariantProps<typeof tableBody>;
+type Props =
+    & HTMLAttributes<"tbody">
+    & VariantProps<typeof tableBodySection>;
 
-/**
- * Tailwind Variants for styling the table body.
- */
-const tableBody = tv({
-  base: "[&_tr:last-child]:border-0",
-  variants: {
-    striped: {
-      true: "[&_tr:nth-child(even)]:bg-muted/50",
-      false: "",
-    },
-  },
-  defaultVariants: {
-    striped: false,
-  },
-});
+const props = Astro.props satisfies Props;
+const { class: className, zebra, ...rest } = props;
 
-const { class: className, striped, ...rest } = Astro.props;
+export type { Props as TableBodyProps };
 ---
 
 <tbody
-  data-table-body
-  class={tableBody({ class: className, striped })}
-  {...rest}
+    data-table-body class={tableBodySection({ class: className, zebra })}
+    {...rest}
 >
-  <slot />
+    <slot />
 </tbody>
