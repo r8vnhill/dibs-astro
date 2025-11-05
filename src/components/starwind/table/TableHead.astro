@@ -1,8 +1,8 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 import { type VariantProps } from "tailwind-variants";
-import { tableHeaderCell } from "./table-variants";
 import { buildTableHeadState, type SortState } from "./table-head-logic";
+import { tableHeaderCell } from "./table-variants";
 
 /**
  * TableHead.astro - Starwind table header cell
@@ -72,24 +72,22 @@ export type { Props as TableHeadCellProps };
 ---
 <th
     data-table-head scope={headState.scope}
-    data-sort={headState.isSorted ? headState.sort : undefined}
-    aria-sort={headState.ariaSort}
-    class={tableHeaderCell({ class: className, align, size, wrap })}
-    {...rest}
+    data-sort={headState.isSorted ? headState.sort : undefined} aria-sort={headState.ariaSort}
+    class={tableHeaderCell({ class: className, align, size, wrap })} {...rest}
 >
     {
         headState.isSorted ? (
             <span class="inline-flex items-center gap-1">
                 <slot />
-                {headState.showSortIcon ? (
-                    <span aria-hidden="true" class="text-muted-foreground/70">
-                        {headState.sort === "asc" ? "↑" : "↓"}
-                    </span>
-                ) : null}
+                {
+                    headState.showSortIcon ? (
+                        <span aria-hidden="true" class="text-muted-foreground/70">
+                            {headState.sort === "asc" ? "↑" : "↓"}
+                        </span>
+                    ) : null
+                }
                 <span class="sr-only">{headState.srLabel}</span>
             </span>
-        ) : (
-            <slot />
-        )
+        ) : <slot />
     }
 </th>

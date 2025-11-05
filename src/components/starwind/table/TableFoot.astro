@@ -1,62 +1,30 @@
 ---
-/**
- * TableFoot.astro - Starwind table footer
- * --------------------------------------
- *
- * ## Purpose
- * Provide a visually-consistent `<tfoot>` wrapper for table footer rows. The footer is a good place for summary rows, 
- * totals, or table-level controls.
- *
- * ## Contract (inputs / outputs)
- * - Inputs: any normal `<tfoot>` HTML attributes (id, aria-*, etc.) plus the `muted` variant which controls the visual 
- *   tone of the footer content.
- * - Output: a `<tfoot>` element with the computed className and forwarded props.
- * - Error modes: no runtime errors — unknown props are forwarded to the DOM.
- *
- * ## Props
- * - `muted` (boolean) — when true applies a muted foreground color to the
- *   footer contents and a subtle background. Defaults to `true`.
- * - `class` — consumers may pass utility classes to tweak spacing or layout.
- *
- * ## Accessibility
- * - Keep footer rows concise. If footer contains interactive controls, ensure
- *   they are keyboard-accessible and labelled.
- * - Use `role` attributes only when necessary (most table footers are semantic
- *   and do not require ARIA roles).
- *
- * ## Styling notes
- * - Base style includes a subtle muted background, a top border and medium
- *   font weight to visually separate the footer from the body rows.
- * - The implementation uses a small selector to remove the last-row bottom
- *   border when present (`[&>tr]:last:border-b-0`).
- *
- * ## Examples
- * Basic usage (inline example):
- *
- *   <Table>
- *     <!-- thead, tbody... -->
- *     <TableFoot muted>
- *       <tr>
- *         <td colspan="3">Summary: 42 items</td>
- *       </tr>
- *     </TableFoot>
- *   </Table>
- */
+// TableFoot.astro
+// -----------------
+// Small wrapper for a table's `<tfoot>` section with Tailwind Variants styling and strong TypeScript typings. This 
+// file is intentionally minimal; it validates incoming props at compile-time and forwards unknown props to the
+// rendered DOM element so callers can provide `id`, `aria-*`, event handlers, etc.
 
 import type { HTMLAttributes } from "astro/types";
 import { type VariantProps } from "tailwind-variants";
 import { tableFootSection } from "./table-variants";
 
+// Props contract:
+// - Accept any normal <tfoot> HTML attributes (id, role, aria-*, class, ...)
+// - Accept variant props defined by `tableFootSection` (e.g., `muted`)
 type Props = HTMLAttributes<"tfoot"> & VariantProps<typeof tableFootSection>;
 
-// Create a strongly-typed view of incoming props and then destructure the
-// values we need. `Astro.props satisfies Props` provides compile-time
-// validation of the expected shape. Unknown props are forwarded to the DOM via
-// the spread (`...rest`) so callers can pass `id`, `aria-*`, etc.
+// Create a strongly-typed view of incoming props and then destructure the values we need. Using
+// `Astro.props satisfies Props` gives compile-time type checking but does not change runtime shape. This helps
+// consumers catch mistakes in their usage during development.
 const props = Astro.props satisfies Props;
-// Map `class` to `className` so we can merge it into the tv helper call.
+
+// `class` is a reserved attribute name in templates; map it to `className` so we can pass it through into the tv
+// helper which expects a `class` key in its options object. `muted` is a variant prop used by the tv helper;
+// everything else is collected in `rest` and forwarded to the DOM.
 const { class: className, muted, ...rest } = props;
 
+// Re-export the Props type so other components/tests can import it if needed.
 export type { Props as TableFootProps };
 ---
 
