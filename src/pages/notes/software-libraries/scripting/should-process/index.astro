@@ -1,21 +1,40 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
-import { Exercise, Explanation, Important, Question, Tip } from "~/components/ui/callouts";
+import { Abstract, Exercise, Explanation, Important, Question, Tip, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { NotesSection } from "~/layouts";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
 <NotesLayout
     title="Ensayo seguro (-WhatIf / -Confirm)"
-    description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
+    description="Simula y confirma acciones con SupportsShouldProcess, -WhatIf y -Confirm para ensayar cambios sin riesgos. Aprende a envolver efectos en ShouldProcess y a decidir el ConfirmImpact correcto."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
+    <Abstract>
+        <P>
+            Esta lección introduce el <B>patrón de ensayo seguro</B> en PowerShell, una práctica que permite simular o
+            confirmar acciones antes de aplicarlas. A través del uso del atributo
+            <PowerShellInline code="SupportsShouldProcess" /> y los modificadores automáticos
+            <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />, aprenderás a ejecutar comandos
+            con mayor seguridad y control sobre sus efectos.
+        </P>
+
+        <P>
+            A lo largo de la lección, exploramos cómo envolver operaciones dentro de
+            <PowerShellInline code="$PSCmdlet.ShouldProcess(target, action)" /> y cómo ajustar su impacto mediante
+            <PowerShellInline code="ConfirmImpact" />. Con ejemplos prácticos, verás cómo aplicar este patrón para
+            prevenir errores, realizar pruebas seguras y construir scripts más confiables sin modificar su
+            funcionamiento principal.
+        </P>
+    </Abstract>
+
     <NotesSection id="h2-dry-run-pattern">
         <Heading headingLevel="h2" Icon={icons.ShieldCheck}>
             Patrón de ensayo seguro (dry run)
@@ -93,7 +112,7 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             </Fragment>
             <DibsSourceLink
                 repo="scripts" file="scaffolding/Initialize-Project.ps1"
-                slot="source" ref="ae2ea81f7c7a376d2c05763dbba045e8644c0fca"
+                slot="source"
             />
         </PowerShellBlock>
 
@@ -111,19 +130,13 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                 <ListItem icon={icons.CellSignalHigh}>
                     <B><PowerShellInline code="ConfirmImpact" /></B> declara el impacto de las operaciones del comando
                     (<Mono>Low</Mono>, <Mono>Medium</Mono>, <Mono>High</Mono>). PowerShell lo compara con
-                    <B><PowerShellInline code="$ConfirmPreference" /></B> del usuario (por defecto, <Mono>High</Mono>):
-
-                    <List>
-                        <ListItem icon={icons.Scales}>
-                            Si <B><Mono>ConfirmImpact >= $ConfirmPreference</Mono></B>, se pedirá confirmación
-                            automáticamente.
-                        </ListItem>
-
-                        <ListItem icon={icons.HandPalm}>
-                            Si no, <B>igual puedes forzarla</B> con <PowerShellInline code="-Confirm" />.
-                        </ListItem>
-                    </List>
-
+                    <B><PowerShellInline code="$ConfirmPreference" /></B> del usuario (por defecto, <Mono>High</Mono>).
+                    PowerShell pide confirmación cuando <Mono>ConfirmImpact >= $ConfirmPreference</Mono>.
+                    <br />
+                    Si no se supera el umbral, <B>puedes forzar la confirmación</B> con <PowerShellInline
+                        code="-Confirm"
+                    />.
+                    <br />
                     En este ejemplo <Mono>Medium</Mono> describe creación/modificación de archivos (relevante pero no
                     destructiva).
                 </ListItem>
@@ -145,6 +158,33 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     simulación/confirmación correctamente.
                 </ListItem>
             </List>
+
+            <Warning headingLevel="h4">
+                Si el comando no implementa <PowerShellInline code="SupportsShouldProcess" />,
+                <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> no surten efecto. Compruébalo
+                con
+                <PowerShellBlock
+                    code={`
+                        $cmd = Get-Command Start-Job
+                        [System.Management.Automation.CommandMetadata]::new($cmd).SupportsShouldProcess # (1)
+                        $cmd = Get-Command Copy-ItemProperty
+                        [System.Management.Automation.CommandMetadata]::new($cmd).SupportsShouldProcess # (2)
+                    `}
+                >
+                    <Fragment slot="title">Desde la terminal</Fragment>
+                    <span slot="footer"><span class="text-primary font-mono">(1)</span> Retorna <PowerShellInline
+                            code={`$false`}
+                        /> ya que <PowerShellInline code={`Start-Job`} /> no acepta <PowerShellInline
+                            code={`-WhatIf`}
+                        /> / <PowerShellInline code={`-Confirm`} />.
+                        <br />
+                        <span class="text-primary font-mono">(2)</span> Retorna <PowerShellInline code={`$true`} />
+                        ya que <PowerShellInline code={`Copy-ItemProperty`} /> acepta <PowerShellInline
+                            code={`-WhatIf`}
+                        /> / <PowerShellInline code={`-Confirm`} />.
+                    </span>
+                </PowerShellBlock>
+            </Warning>
 
             <Tip headingLevel="h4">
                 <span slot="title">Regla mental</span>
@@ -239,7 +279,7 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Fragment>
 
         <Fragment slot="requirements">
-            Implementa un script <Mono>Remove-WorkFolder.ps1</Mono> que elimine UNA carpeta de trabajo específica de
+            Implementa un script <Mono>Remove-WorkFolder.ps1</Mono> que elimine una carpeta de trabajo específica de
             forma <B>segura</B>, aplicando el patrón de ensayo/confirmación:
 
             <List>
@@ -260,8 +300,8 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     <PowerShellInline code="-Confirm:$PSBoundParameters['Confirm']" />.
                 </ListItem>
                 <ListItem icon={icons.ListChecks}>
-                    Devuelve un <Mono>PSCustomObject</Mono> con <Mono>TargetPath</Mono>, <Mono>ExistsBefore</Mono> y
-                    <Mono>Deleted</Mono>.
+                    Devuelve un <PowerShellInline code={`[PSCustomObject]`} /> con <Mono>TargetPath</Mono>, <Mono
+                    >ExistsBefore</Mono> y <Mono>Deleted</Mono>.
                 </ListItem>
             </List>
         </Fragment>
@@ -289,26 +329,32 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             <PowerShellBlock
                 code={`
                     #Requires -Version 7.5
-                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
                     param(
                         [Parameter(Mandatory)]
                         [ValidateNotNullOrWhiteSpace()]
                         [ValidateScript({ Test-Path -Path $_ -PathType Container })]
                         [string] $Path
                     )
+                    Set-StrictMode -Version 3.0
 
                     $target = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
                     $existsBefore = Test-Path -LiteralPath $target -PathType Container
+
                     $deleted = $false
 
-                    if ($existsBefore) {
-                        if ($PSCmdlet.ShouldProcess($target, 'Remove work folder recursively')) {
-                            Remove-Item -LiteralPath $target -Recurse -Force \
-                                -Verbose:$PSBoundParameters['Verbose'] \
-                                -WhatIf:$PSBoundParameters['WhatIf'] \
-                                -Confirm:$PSBoundParameters['Confirm']
-                            $deleted = $true
+                    if ($existsBefore -and $PSCmdlet.ShouldProcess($target, 'Remove work folder recursively')) {
+                        $removeParams = @{
+                            LiteralPath = $target
+                            Recurse     = $true
+                            Force       = $true
+                            Verbose     = $PSBoundParameters['Verbose']
+                            WhatIf      = $PSBoundParameters['WhatIf']
+                            Confirm     = $PSBoundParameters['Confirm']
                         }
+
+                        Remove-Item @removeParams
+                        $deleted = $true
                     }
 
                     [PSCustomObject]@{
@@ -319,9 +365,78 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                 `}
             >
                 <span slot="title">Solución de referencia</span>
+                <DibsSourceLink
+                    repo="scripts" file="maintenance/Remove-WorkFolder.ps1"
+                    slot="source"
+                />
             </PowerShellBlock>
         </Fragment>
     </Exercise>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                El patrón <B>ShouldProcess</B> ofrece una base sólida para escribir scripts más seguros, predecibles y
+                confiables. Gracias a los modificadores automáticos <PowerShellInline code="-WhatIf" /> y
+                <PowerShellInline code="-Confirm" />, podemos agregar ensayos y confirmaciones sin alterar la estructura
+                ni el comportamiento principal del script, integrando buenas prácticas de <I>seguridad operacional</I>
+                directamente en la herramienta.
+            </P>
+
+            <P>
+                Incorporarlo no solo previene errores costosos, sino que además impulsa una forma de pensar centrada en
+                la
+                <B>reversibilidad</B> y en el <B>control del efecto</B> que cada comando tiene sobre el sistema. Con una
+                estructura mínima —declarar <PowerShellInline code="SupportsShouldProcess" />, asignar
+                <PowerShellInline code="ConfirmImpact" /> y envolver la operación en
+                <PowerShellInline code="ShouldProcess()" />— obtenemos de forma automática simulación y confirmación
+                interactiva.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.ShieldCheck}>
+                <PowerShellInline code="SupportsShouldProcess" /> habilita <PowerShellInline code="-WhatIf" /> y
+                <PowerShellInline code="-Confirm" />, añadiendo seguridad sin modificar la estructura principal del
+                script.
+            </ListItem>
+
+            <ListItem icon={icons.CellSignalHigh}>
+                <PowerShellInline code="ConfirmImpact" /> define el nivel de riesgo (<Mono>Low</Mono>, <Mono
+                >Medium</Mono>, <Mono>High</Mono>) y cuándo PowerShell pedirá confirmación.
+            </ListItem>
+
+            <ListItem icon={icons.PlayCircle}>
+                <PowerShellInline code="ShouldProcess()" /> es el punto donde se decide ejecutar o simular; todo efecto
+                del script debería pasar por él.
+            </ListItem>
+
+            <ListItem icon={icons.HandPalm}>
+                Los parámetros <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" /> se aplican
+                automáticamente en cascada a funciones que también declaran soporte para este patrón.
+            </ListItem>
+
+            <ListItem icon={icons.FolderPlus}>
+                Al combinarlo con validaciones (<PowerShellInline code="ValidateScript" />, <PowerShellInline
+                    code="LiteralPath"
+                />) y <PowerShellInline code="$PSBoundParameters" />, se obtienen scripts robustos y reutilizables.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <P>
+                El <I>ensayo seguro</I> en PowerShell no es solo una característica técnica: es una <B>filosofía de
+                    diseño</B> que fomenta escribir comandos conscientes del contexto y del impacto que generan.
+            </P>
+
+            <P>
+                Adoptar este patrón tempranamente te permite crear utilidades más confiables, colaborativas y
+                mantenibles, facilitando pruebas, revisiones y automatización en entornos reales. A partir de aquí, cada
+                comando que modifique el sistema debería preguntarse:
+                <Enquote>¿debo hacerlo, o solo mostrar lo que haría?</Enquote>
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
 
     <Footnotes>
         <Footnote index={1}>

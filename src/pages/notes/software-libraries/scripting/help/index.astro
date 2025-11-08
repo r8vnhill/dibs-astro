@@ -7,6 +7,7 @@ import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -42,30 +43,53 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             <PowerShellInline code="Get-Command" /> sirve para <I>descubrir qué existe</I> en tu entorno PowerShell:
             cmdlets, funciones, scripts o alias. Puedes filtrar por <B>nombre, verbo o sustantivo</B>, usar comodines y
-            explorar las acciones disponibles sin recordar nombres exactos.
+            explorar las acciones disponibles sin recordar nombres exactos. Devuelve objetos <PowerShellInline
+                code="[CommandInfo]"
+            /> (y derivados como <PowerShellInline code="[CmdletInfo]" />, <PowerShellInline code="[FunctionInfo]" />
+            o <PowerShellInline code="[ApplicationInfo]" />) que puedes inspeccionar.
         </P>
 
         <PowerShellBlock
             code={`
-                $cmd = Get-Command Get-Command
+                $cmd = Get-Command -Name Get-Command
                 Get-Member -InputObject $cmd
                 Get-Command -Verb Push
                 Get-Command -Noun *Item
 
                 # Cuando no recuerdes el nombre exacto
-                Get-Command *location*  # Buscar comandos relacionados con "location"
+                Get-Command -Name *location*  # Buscar comandos relacionados con "location"
           `}
         >
             <Fragment slot="title">Desde la terminal</Fragment>
             <span slot="footer">Explorar comandos disponibles</span>
         </PowerShellBlock>
 
-        <Explanation>
+        <PowerShellBlock
+            code={`
+                # Filtrar por tipo y módulo
+                Get-Command -CommandType Cmdlet -Module Microsoft.PowerShell.Management
+
+                # Ver sintaxis de un comando específico
+                Get-Command -Name Copy-Item -Syntax
+
+                # Buscar por parámetro (¿qué cmdlets tienen -Force?)
+                Get-Command -ParameterName Force
+
+                # Si sólo recuerdas el tipo de un parámetro
+                Get-Command -ParameterType SwitchParameter
+            `}
+        >
+            <Fragment slot="title">Ejemplos rápidos</Fragment>
+            <span slot="footer">Filtrado por tipo, módulo, parámetros y sintaxis</span>
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Terminal}>
-                    <PowerShellInline code="Get-Command Get-Command" /> devuelve un objeto
+                    <PowerShellInline code="Get-Command -Name Get-Command" /> devuelve un objeto
                     <PowerShellInline code="[CommandInfo]" />, que puedes inspeccionar para conocer sus propiedades. Por
-                    ejemplo, <PowerShellInline code="(Get-Command Get-Command).Parameters.Keys" /> lista sus parámetros.
+                    ejemplo, <PowerShellInline code="(Get-Command -Name Get-Command).Parameters.Keys" /> lista sus
+                    parámetros.
                 </ListItem>
 
                 <ListItem icon={icons.BracketsCurly}>
@@ -84,7 +108,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <PowerShellInline code="-Verb" /> lista acciones (“qué hace”) y
                     <PowerShellInline code="-Noun" /> el “sobre qué”. Ejemplos:
                     <PowerShellInline code="Get-Command -Verb Push" /> o
-                    <PowerShellInline code="Get-Command -Noun *Item" />.
+                    <PowerShellInline code="Get-Command -Noun *Item" />. Además, usa <PowerShellInline
+                        code="-CommandType"
+                    /> (<Mono>Cmdlet</Mono>/<Mono>Function</Mono>/<Mono>Alias</Mono>/<Mono>Application</Mono>/<Mono
+                    >ExternalScript</Mono>) y <PowerShellInline code="-Module" /> para acotar por origen o tipo.
                 </ListItem>
 
                 <ListItem icon={icons.Asterisk}>
@@ -96,12 +123,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     filtros, por ejemplo:
                     <PowerShellInline
                         code="Get-Command *item* -CommandType Cmdlet -Module Microsoft.PowerShell.Management"
-                    />.
+                    />. Combínalo con <PowerShellInline code="-CommandType" />/<PowerShellInline code="-Module" /> y usa
+                    búsquedas explícitas con <PowerShellInline code="-Name" /> y combina <PowerShellInline
+                        code="-CommandType"
+                    />/<PowerShellInline code="-Module" /> para salidas más legibles.
+                </ListItem>
+
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <B>Buscar por parámetros</B> — cuando recuerdas un parámetro pero no el cmdlet, prueba
+                    <PowerShellInline code="-ParameterName" /> o <PowerShellInline code="-ParameterType" /> (por
+                    ejemplo,
+                    <PowerShellInline code="[switch]" /> o <PowerShellInline code="SwitchParameter" />) para localizar
+                    candidatos.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsCurly}>
+                    <B>Ver uso rápido</B> — <PowerShellInline code="-Syntax" /> muestra las firmas del comando sin abrir
+                    la ayuda completa; útil para recordar parámetros posicionales y combinaciones rápidas.
                 </ListItem>
             </List>
         </Explanation>
 
-        <Tip Icon={icons.Lightbulb}>
+        <Tip headingLevel="h3">
             <Fragment slot="title">Adopta la convención <Mono>Verbo-Sustantivo</Mono></Fragment>
             <P>
                 Nombra tus funciones y scripts como <Mono>Verbo-Sustantivo</Mono>. Así <PowerShellInline
@@ -109,6 +152,86 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 /> y la ayuda integrada podrán <I>descubrir</I> tus comandos fácilmente.
             </P>
         </Tip>
+    </NotesSection>
+
+    <NotesSection id="h3-get-command-advanced">
+        <Heading
+            headingLevel="h3" Icon={icons.Funnel}
+            slot="heading"
+        >
+            Búsqueda avanzada con <Mono>Get-Command</Mono>
+        </Heading>
+
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Estoy chequeando esto",
+                ],
+            }}
+        />
+
+        <PowerShellBlock
+            code={`
+                # Verbos oficiales para nombrar funciones/cmdlets
+                Get-Verb
+
+                # Encontrar comandos por parámetro o tipo de parámetro
+                Get-Command -ParameterName LiteralPath
+                Get-Command -ParameterType [switch]
+
+                # Descubrir por módulo
+                Get-Module -ListAvailable
+                Get-Command -Module Microsoft.PowerShell.Management
+
+                # Ver todas las resoluciones y alias
+                Get-Command -Name get-childitem -All
+                Get-Alias gci
+
+                # Soporte de -WhatIf/-Confirm (ShouldProcess)
+                (Get-Command -Name Remove-Item).SupportsShouldProcess
+                Get-Command -Verb Remove
+            `}
+        >
+            <Fragment slot="title">Desde la terminal</Fragment>
+            <span slot="footer">Filtros y señales útiles para elegir y usar comandos</span>
+        </PowerShellBlock>
+
+        <Explanation>
+            <List>
+                <ListItem icon={icons.Bookmark}>
+                    <PowerShellInline code="Get-Verb" /> - Consulta verbos oficiales y elige nombres coherentes al crear
+                    funciones/scripts.
+                </ListItem>
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <PowerShellInline code="-ParameterName" /> / <PowerShellInline code="-ParameterType" /> - Encuentra
+                    cmdlets que aceptan un parámetro concreto o un tipo (por ejemplo, <PowerShellInline
+                        code="[switch]"
+                    />).
+                </ListItem>
+                <ListItem icon={icons.TreeStructure}>
+                    <PowerShellInline code="-Module" /> - Acota la búsqueda a un módulo concreto. Útil tras
+                    <PowerShellInline code="Get-Module -ListAvailable" />.
+                </ListItem>
+                <ListItem icon={icons.Link}>
+                    <PowerShellInline code="-All" /> y <PowerShellInline code="Get-Alias" /> - Ve todas las resoluciones
+                    (función/cmdlet/script) y el alias asociado.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <PowerShellInline code="SupportsShouldProcess" /> - Señal de compatibilidad con <Mono>-WhatIf</Mono>
+                    y
+                    <Mono>-Confirm</Mono>. Lo retomamos en <Mono>Patrones básicos → Ensayo seguro</Mono>.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <More>
+            <span slot="title">Más allá de lo local</span>
+            <P>
+                Si tienes <Mono>PowerShellGet</Mono>, puedes explorar el ecosistema público con
+                <PowerShellInline code="Find-Module" /> y <PowerShellInline code="Find-Command" />.
+            </P>
+        </More>
     </NotesSection>
 
     <NotesSection id="h2-get-help">
@@ -139,6 +262,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
             `}>
                 <Fragment slot="title">Desde la terminal</Fragment>
                 <span slot="footer">Actualizar ayuda local en inglés (en-US)</span>
+            </PowerShellBlock>
+
+            <PowerShellBlock
+                code={`
+                Update-Help -UICulture en-US,es-ES -ErrorAction SilentlyContinue
+            `}
+            >
+                <Fragment slot="title">Alternativa recomendada</Fragment>
+                <span slot="footer">Intenta es-ES y cae a en-US si falla</span>
             </PowerShellBlock>
 
             <Warning>
@@ -206,6 +338,54 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </List>
         </Explanation>
 
+        <Tip>
+            <Fragment slot="title">Chuleta de ayuda</Fragment>
+            <List>
+                <ListItem icon={icons.Terminal}>
+                    <PowerShellInline code="<Comando> -?" /> - Muestra la ayuda rápida de cualquier comando (parámetros
+                    y sintaxis principales).
+                </ListItem>
+                <ListItem icon={icons.FileText}>
+                    <PowerShellInline code="Get-Help <Comando> -Parameter <Nombre>" /> y <PowerShellInline
+                        code="-Syntax"
+                    /> - Para ir directo a parámetros específicos y a la sintaxis.
+                </ListItem>
+                <ListItem icon={icons.Globe}>
+                    <PowerShellInline code="-Online" /> - Abre la versión web cuando exista.
+                </ListItem>
+                <ListItem icon={icons.Asterisk}>
+                    <PowerShellInline code="help" /> / <PowerShellInline code="man" /> - Atajos interactivos. En
+                    scripts, prefiere nombres completos y explícitos.
+                </ListItem>
+            </List>
+        </Tip>
+
+        <More>
+            <span slot="title">Ayuda offline</span>
+            <P>
+                En entornos sin Internet o con permisos restringidos, descarga ayuda a una carpeta compartida y
+                actualiza desde ahí.
+            </P>
+            <PowerShellBlock
+                code={`
+                    # Descargar ayuda (una vez, con Internet)
+                    Save-Help -DestinationPath C:\\Help -UICulture en-US
+
+                    # Actualizar equipos sin Internet/permiso
+                    Update-Help -SourcePath C:\\Help -UICulture en-US -ErrorAction SilentlyContinue
+                `}
+            >
+                <Fragment slot="title">Desde la terminal</Fragment>
+                <span slot="footer">Ruta de ejemplo en Windows; ajusta en macOS/Linux</span>
+            </PowerShellBlock>
+            <Note>
+                <P>
+                    Algunos módulos instalados en <Mono>Program Files</Mono> requieren permisos elevados para
+                    <PowerShellInline code="Update-Help" />. La estrategia <Mono>Save-Help</Mono> evita ese bloqueo.
+                </P>
+            </Note>
+        </More>
+
         <Note>
             En este apunte no documentaremos formalmente los scripts: priorizaremos explicaciones en línea y ejemplos
             prácticos. Si quieres aprender a incluir documentación interna en tus propios scripts, revisa la sección
@@ -264,6 +444,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <Question>
         Encuentra tres cmdlets que empiecen con <Mono>Get-</Mono> y tengan <I>Noun</I> <Mono>Item</Mono>. Usa
         <PowerShellInline code="Get-Help" /> para ver sus ejemplos de uso.
+    </Question>
+
+    <Question>
+        Encuentra comandos que acepten <Mono>-LiteralPath</Mono> con
+        <PowerShellInline code="Get-Command -ParameterName LiteralPath" />. Elige uno y revisa
+        <PowerShellInline code="Get-Help &lt;Comando&gt; -Parameter LiteralPath" />.
+    </Question>
+
+    <Question>
+        Lista cmdlets con verbo <Mono>Remove</Mono> que soporten <Mono>-WhatIf</Mono> usando
+        <PowerShellInline code="Get-Command -Verb Remove" />. Valida el comportamiento comprobando
+        <PowerShellInline code="(Get-Command -Name Remove-Item).SupportsShouldProcess" /> y usando
+        <PowerShellInline code="-WhatIf" /> en un entorno seguro.
     </Question>
 
     <ConclusionsLayout>

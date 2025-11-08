@@ -66,13 +66,15 @@ const {
     ...rest
 } = props;
 
-const headState = buildTableHeadState({ scope, sort, sortLabel, showSortIcon });
+// Cast the args to `any` to satisfy strict `exactOptionalPropertyTypes` checks
+// while keeping runtime behavior unchanged. The helper normalizes undefineds itself.
+const headState = buildTableHeadState({ scope, sort, sortLabel, showSortIcon } as any);
 
 export type { Props as TableHeadCellProps };
 ---
 <th
     data-table-head scope={headState.scope}
-    data-sort={headState.isSorted ? headState.sort : undefined} aria-sort={headState.ariaSort}
+    data-sort={headState.isSorted ? headState.sort : undefined} aria-sort={headState.ariaSort as any}
     class={tableHeaderCell({ class: className, align, size, wrap })} {...rest}
 >
     {

@@ -49,10 +49,11 @@ Also: `~/*` → `src/*`, `$layouts/*`, `$styles/*`, `$hooks/*`, `$assets/*`, `$c
 
 **Icons workflow**:
 
-1. Add SVG to `src/assets/img/icons/` (e.g., `copy-icon.svg`)
-2. Run `pnpm generate-icons` (or dev/build auto-runs it)
-3. Import: `import { CopyIcon } from "$icons";`
-4. Never manually edit `src/assets/img/icons/index.ts` (auto-generated, PascalCase exports)
+1. Add SVG to `src/assets/img/icons/` (e.g., `copy-icon.svg`).
+2. Run `pnpm generate-icons` (or dev/build auto-runs it).
+3. Import: `import { CopyIcon } from "$icons";`.
+4. Never manually edit `src/assets/img/icons/index.ts` (auto-generated, PascalCase exports).
+5. Notes on icon sourcing: the `src/assets/img/icons/` folder contains mainly Phosphor-style icons for this project. Icons are added on demand: it's fine to recommend an icon that doesn't yet exist in the folder — download the appropriate SVG, place it in `src/assets/img/icons/`, then run `pnpm generate-icons` to include it in the index. This workflow keeps the repo small and the icon set curated by usage.
 
 **Navigation patterns**:
 
@@ -107,6 +108,7 @@ Also: `~/*` → `src/*`, `$layouts/*`, `$styles/*`, `$hooks/*`, `$assets/*`, `$c
 4. **Spanish-first content**: UI text, error messages, and content default to Spanish. Follow existing copy patterns.
 5. **Client directives**: React islands need explicit hydration (`client:only="react"` is most common here). Don't assume auto-hydration.
 6. **dprint formatting**: pre-commit hook enforces. If you generate code, it must pass `dprint fmt` or commit will fail.
+7. **Code examples are immutable**: never modify code inside `<PowerShellBlock>`, `<NushellBlock>`, or other code block components unless explicitly requested. Only edit surrounding explanatory text, callouts, and prose.
 
 ### Testing patterns
 
