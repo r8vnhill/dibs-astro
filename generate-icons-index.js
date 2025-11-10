@@ -9,6 +9,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 // Path to the folder containing the .svg icon files
 const ICONS_DIR = path.resolve("src/assets/img/icons");
@@ -40,8 +41,12 @@ function toPascalCase(filename) {
 /**
  * Generates an `index.ts` file exporting all SVGs in ICONS_DIR using named exports based on
  * PascalCase identifiers.
+ *
+ * @param {{ quiet?: boolean }} [options]
  */
-function generateExports() {
+export function generateIconsIndex(options = {}) {
+  const { quiet = false } = options;
+
   // Get all .svg files in the directory
   const files = fs.readdirSync(ICONS_DIR).filter((f) => f.endsWith(".svg"));
 
@@ -54,8 +59,14 @@ function generateExports() {
   // Write to the output file with header and export lines
   fs.writeFileSync(OUTPUT_FILE, PREAMBLE + lines.join("\n") + "\n");
 
-  console.log(`✅ Generated ${OUTPUT_FILE} with ${files.length} icons.`);
+  if (!quiet) {
+    console.log(`? Generated ${OUTPUT_FILE} with ${files.length} icons.`);
+  }
 }
 
-// Run the generator
-generateExports();
+const invokedDirectly =
+  import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
+
+if (invokedDirectly) {
+  generateIconsIndex();
+}

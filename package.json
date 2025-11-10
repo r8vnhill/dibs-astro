@@ -4,13 +4,14 @@
   "version": "0.7.2",
   "scripts": {
     "generate-icons": "node generate-icons-index.js",
-    "dev": "node generate-icons-index.js && astro dev",
-    "build": "node generate-icons-index.js && astro build",
-    "preview": "node generate-icons-index.js && astro build && wrangler dev",
+    "dev": "node ./node_modules/astro/astro.js dev",
+    "build": "node ./node_modules/astro/astro.js build",
+    "preview": "node scripts/preview-dev.mjs",
     "astro": "astro",
     "fmt": "dprint fmt",
+    "check": "node ./node_modules/astro/astro.js check",
     "prepare": "husky install",
-    "deploy": "node generate-icons-index.js && astro check && astro build && wrangler deploy",
+    "deploy": "astro build && wrangler deploy",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui"
@@ -59,11 +60,12 @@
     "typescript": "^5.9.2",
     "wrangler": "^4.27.0",
     "husky": "^8.0.0",
-    "lint-staged": "^15.2.10"
+    "lint-staged": "^15.2.10",
+    "dprint": "^0.48.0"
   },
   "lint-staged": {
     "*": [
-      "pnpm dlx dprint fmt --"
+      "pnpm dprint fmt --"
     ]
   }
 }

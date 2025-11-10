@@ -1,6 +1,7 @@
 import { defineConfig, sharpImageService } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
+import { generateIconsIntegration } from "./config/integrations/generate-icons";
 import "./config/shiki-warn-tracker";
 
 import react from "@astrojs/react";
@@ -34,6 +35,7 @@ export default defineConfig({
   },
 
   integrations: [
+    generateIconsIntegration(),
     // Custom plugin to trigger HMR when specific files change
     devServerFileWatcher([
       "./config/**", // Watch all custom integration and plugin files
