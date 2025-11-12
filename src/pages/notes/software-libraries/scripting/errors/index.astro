@@ -2,43 +2,65 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { TableBody, TableCaption, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
+import {
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHeader,
+    TableRow,
+} from "~/components/starwind/table";
 import Table from "~/components/starwind/table/Table.astro";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import { Abstract, Definition, Exercise, Explanation, Info, More } from "~/components/ui/callouts";
-import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import {
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    Info,
+    More,
+    Question,
+} from "~/components/ui/callouts";
+import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Manejo de errores en PowerShell"
-    description="Guía práctica de manejo de errores en PowerShell: promover fallos críticos, capturarlos con try/catch y ejecutar comandos externos de forma segura con Get-Command."
+    title="Manejo de errores terminantes en PowerShell"
+    description="Guía práctica de manejo de errores terminantes en PowerShell: promover fallos a terminantes con -ErrorAction Stop, capturarlos con try/catch/finally y ejecutar comandos externos de forma segura con Get-Command. Mencionamos errores no terminantes solo como contraste; los veremos más adelante con el pipeline."
     timeMultiplier={1.5} git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
     <Abstract>
         <P>
-            Esta lección enseña a <B>controlar el flujo con errores terminantes</B> en PowerShell: promover fallos con
+            Esta lección enseña a <B>controlar el flujo con errores terminantes</B> en PowerShell:
+            promover fallos con
             <PowerShellInline code="-ErrorAction Stop" />, capturarlos con
-            <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline code="finally" /> y
-            registrar resultados de forma clara (listas y diccionarios .NET). Los <I>no terminantes</I> se mencionan
-            solo para contraste: no detienen el flujo y sirven para procesar lotes y reportar.
+            <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline
+                code="finally"
+            /> y registrar resultados de forma clara mediante salida estructurada. Esta lección se
+            centra en <B>errores terminantes</B>. Los <I>no terminantes</I> se mencionan solo para
+            contraste: no detienen el flujo y sirven principalmente para reportar advertencias; los
+            veremos en detalle más adelante cuando trabajemos con el <I>pipeline</I>, donde cobran
+            mayor relevancia.
         </P>
 
         <P>
-            Se introduce un <B>patrón para ejecutar comandos externos de forma segura</B>: resolver el binario real con
-            <PowerShellInline code="Get-Command" />, invocarlo con <PowerShellInline code="&" />, capturar
-            salida/errores (<PowerShellInline code="2>&1" />), validar <PowerShellInline code="$LASTEXITCODE" /> y
-            elevar con contexto si falla (p. ej., wrapper <PowerShellInline code="Invoke-Tool.ps1" />). El ejercicio
-            propone practicar estos conceptos con un <I>fallback por comando</I> (como actividad, no como patrón
-            formal).
+            Se introduce un <B>patrón para ejecutar comandos externos de forma segura</B>: resolver
+            el binario real con
+            <PowerShellInline code="Get-Command" />, invocarlo con <PowerShellInline code="&" />,
+            capturar salida/errores (<PowerShellInline code="2>&1" />), validar <PowerShellInline
+                code="$LASTEXITCODE"
+            /> y elevar con contexto si falla (p. ej., wrapper <PowerShellInline
+                code="Invoke-Tool.ps1"
+            />). El ejercicio propone practicar estos conceptos implementando un <I>fallback</I>
+            simple entre dos comandos de descarga.
         </P>
     </Abstract>
 
@@ -50,15 +72,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Errores terminantes
         </Heading>
 
+        <P>
+            En un shell orientado a automatización y pipelines como PowerShell, no todos los fallos
+            deben detener la ejecución: a menudo procesas <B>muchos elementos</B> (archivos, filas,
+            recursos remotos) y necesitas <B>registrar errores por ítem</B> sin abortar el lote
+            completo (errores <I>no terminantes</I>). En cambio, cuando una operación es crítica (p.
+            ej., escribir/borrar datos relevantes), conviene <B>elevar el error a terminante</B>
+            para detener el flujo y manejarlo con <PowerShellInline code="try" />/<PowerShellInline
+                code="catch"
+            />. PowerShell modela explícitamente esta distinción y te da controles como
+            <PowerShellInline code="-ErrorAction" /> y <PowerShellInline
+                code="$ErrorActionPreference"
+            /> para <B>escalar</B> fallos no terminantes a terminantes cuando lo requiera el guion,
+            mientras que <PowerShellInline code="try" />/<PowerShellInline code="catch" /> solo
+            captura errores <B>terminantes</B>. Esto permite equilibrar <B>robustez en lote</B> y <B
+            >seguridad en operaciones críticas</B> dentro del mismo lenguaje.
+        </P>
+
         <Definition headingLevel="h3">
             <Fragment slot="title">
                 Error <B>no</B> terminante
             </Fragment>
 
             <P>
-                Un <B>error no terminante</B> registra la falla pero <I>continúa</I> la ejecución. Es útil cuando
-                procesas un conjunto de elementos y quieres obtener un reporte de qué funcionó y qué falló, sin detener
-                todo ante el primer error.
+                Un <B>error no terminante</B> registra la falla pero <I>continúa</I> la ejecución.
+                Es útil cuando procesas un conjunto de elementos y quieres obtener un reporte de qué
+                funcionó y qué falló, sin detener todo ante el primer error. Solo lo mencionamos
+                aquí como contexto; lo veremos con más detalle cuando abordemos el <I>pipeline</I>,
+                donde resulta especialmente relevante.
             </P>
         </Definition>
 
@@ -66,8 +107,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Fragment slot="title">Error terminante</Fragment>
 
             <P>
-                Un <B>error terminante</B> <I>interrumpe</I> inmediatamente el flujo. Úsalo cuando la operación es
-                crítica (crear/escribir/borrar datos relevantes, cambios de estado, CI/CD), promoviendo fallos con
+                Un <B>error terminante</B> <I>interrumpe</I> inmediatamente el flujo. Úsalo cuando
+                la operación es crítica (crear/escribir/borrar datos relevantes, cambios de estado,
+                CI/CD), promoviendo fallos con
                 <PowerShellInline code="-ErrorAction Stop" /> y manejándolos con <PowerShellInline
                     code="try"
                 />/<PowerShellInline code="catch" />/<PowerShellInline code="finally" />.
@@ -75,157 +117,124 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Definition>
 
         <P>
-            Este ejemplo copia archivos de forma estricta: cada intento de copia convierte fallos en <I>terminantes</I>,
-            lo que permite capturarlos y acumular los resultados. Además, el bloque
-            <PowerShellInline code="finally" /> se ejecuta siempre para registrar el cierre de la operación. La
-            estructura <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline
-                code="finally"
-            /> funciona igual que en otros lenguajes, por lo que no entraremos en detalle.
+            Este ejemplo implementa una copia <B>segura</B> con <PowerShellInline
+                code="ShouldProcess"
+            /> y elevación de errores a <I>terminantes</I> para capturarlos con
+            <PowerShellInline code="catch" />. El bloque <PowerShellInline code="finally" /> siempre
+            devuelve un objeto con <I>estado</I> de la operación.
         </P>
 
         <PowerShellBlock
             code={`
-                #Requires -Version 7.5
+                #Requires -Version 7.5 
                 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                 param(
                     [Parameter(Mandatory)]
-                    [ValidateNotNullOrEmpty()]
-                    [System.Collections.Generic.List[string]] $Source,
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -LiteralPath $_ })]
+                    # [!code focus:1]
+                    [string] $Source,
 
                     [Parameter(Mandatory)]
-                    [ValidateNotNullOrEmpty()]
+                    [ValidateNotNullOrWhiteSpace()]
                     [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
-                    [string]  $Destination,
+                    # [!code focus:1]
+                    [string] $Destination,
 
                     [switch] $Recurse
                 )
 
+                Set-StrictMode -Version 3.0
+
+                # [!code focus:6]
                 $result = @{
-                    Copied   = [System.Collections.Generic.List[string]]::new()
-                    Skipped  = [System.Collections.Generic.List[hashtable]]::new()
-                    Failures = [System.Collections.Generic.List[hashtable]]::new()
+                    Source      = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Source)
+                    Destination = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Destination)
                 }
+                $result.Target = Join-Path $result.Destination (Split-Path -Leaf $result.Source)
 
-                $destPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Destination)
-
+                # [!code focus:1]
                 try {
-                    foreach ($s in $Source) {
-                        $src = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($s)
-                        $target = Join-Path $destPath (Split-Path -Leaf $src)
-
-                        if ($PSCmdlet.ShouldProcess($src, "Copy to $destPath")) {
-                            if (!(Test-Path -LiteralPath $target)) {
-                                $copyParams = @{
-                                    LiteralPath = $src
-                                    Destination = $destPath
-                                    Recurse     = $Recurse
-                                    ErrorAction = 'Stop'
-                                }
-
-                                try {
-                                    Copy-Item @copyParams
-                                    $result.Copied.Add($src)
-                                }
-                                catch {
-                                    $result.Failures.Add(@{
-                                            File    = $src
-                                            Kind    = $_.Exception.GetType().Name
-                                            Message = $_.Exception.Message
-                                        })
-                                }
+                    $shouldProcess = $PSCmdlet.ShouldProcess($result.Source, 'Copy to {0}' -f $result.Destination)
+                    # [!code focus:2]
+                    if ($shouldProcess) {
+                        if (Test-Path -LiteralPath $result.Target) {
+                            # [!code focus:2]
+                            $result.Status = 'Skipped'
+                            $result.Reason = ('Target already exists: {0}' -f $result.Target)
+                        }
+                        # [!code focus:1]
+                        else {
+                            $copyParams = @{
+                                LiteralPath = $result.Source
+                                Destination = $result.Destination
+                                Recurse     = $Recurse
+                                # [!code focus:1]
+                                ErrorAction = 'Stop'
                             }
-                            else {
-                                $result.Skipped.Add(@{
-                                        File   = $src
-                                        Reason = 'Exists'
-                                        Target = $target
-                                    })
-                            }
+
+                            # [!code focus:2]
+                            Copy-Item @copyParams
+                            $result.Status = 'Copied'
                         }
                     }
-
-                    Write-Verbose ('Copied items: {0}' -f ($result.Copied -join ', '))
-                    foreach ($s in $result.Skipped) {
-                        Write-Warning ('Skipped: {0} -> {1} ({2})' -f $s.File, $s.Target, $s.Reason)
-                    }
-                    foreach ($f in $result.Failures) {
-                        Write-Warning ('Failed: {0} ({1}) -> {2}' -f $f.File, $f.Kind, $f.Message)
+                    # [!code focus:3]
+                    else {
+                        # Make cancellation explicit so callers don't need to infer it from missing Status
+                        $result.Status = 'Cancelled'
+                        $result.Reason = 'ShouldProcess returned False (confirmation declined or -WhatIf)'
                     }
                 }
+                # [!code focus:1]
+                catch {
+                    $result.Status = 'Failed'
+                    # [!code focus:4]
+                    $result.Error = [PSCustomObject]@{
+                        Kind    = $_.Exception.GetType().Name
+                        Message = $_.Exception.Message
+                    }
+                }
+                # [!code focus:1]
                 finally {
-                    Write-Output ('Finalizado. Copiados={0}, Omitidos={1}, Errores={2}' -f
-                        $result.Copied.Count, $result.Skipped.Count, $result.Failures.Count)
+                    [PSCustomObject]$result
                 }
             `}
         >
-            <Fragment slot="title">Copia estricta con resumen en <Mono>finally</Mono></Fragment>
+            <Fragment slot="title"
+            >Copia segura con <Mono>ShouldProcess</Mono> y salida estructurada</Fragment>
             <DibsSourceLink
-                repo="scripts" file="operations/Copy-ItemsStrict.ps1"
+                repo="scripts" file="operations/Copy-ItemStrict.ps1"
                 slot="source"
             />
         </PowerShellBlock>
 
         <Explanation headingLevel="h3">
             <List>
-                <ListItem icon={icons.Stack}>
-                    <B>Listas .NET</B> (<PowerShellInline code={`[System.Collections.Generic.List[T]]`} />) para
-                    acumular resultados: permiten <I>agregar</I> elementos con <PowerShellInline code={`.Add()`} />.
-                </ListItem>
-
-                <ListItem icon={icons.BracketsCurly}>
-                    <B><PowerShellInline code={`@{ ... }`} />:</B> crea un <I>diccionario</I> (<PowerShellInline
-                        code={`[hashtable]`}
-                    />) de pares clave–valor. Permite agrupar parámetros o datos bajo una sola variable y acceder a
-                    ellos por clave, como <PowerShellInline code={`$map['Key']`} /> o <PowerShellInline
-                        code={`$map.Key`}
-                    />.
-                </ListItem>
-
                 <ListItem icon={icons.Path}>
-                    <B><PowerShellInline code="Join-Path $destPath (Split-Path -Leaf $src)" />:</B> compone la <I>ruta
-                        destino</I> tomando sólo el <I>nombre base</I> del origen y uniéndolo al directorio de destino.
-                    <PowerShellInline code="Split-Path -Leaf" /> extrae el último segmento (archivo o carpeta), evitando
-                    replicar toda la ruta original dentro de <PowerShellInline code="$destPath" />.
+                    <B>Rutas normalizadas y destino final:</B>
+                    <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath()" />
+                    resuelve rutas absolutas; <PowerShellInline
+                        code="Join-Path ... (Split-Path -Leaf ...)"
+                    /> compone el <Mono>Target</Mono>.
                 </ListItem>
 
                 <ListItem icon={icons.Package}>
-                    <B>Splatting</B> con <PowerShellInline code={`@params`} />: <PowerShellInline code={`@`} /> es un
-                    operador que <I>desempaqueta</I> un diccionario en parámetros nombrados. Aquí se usa para pasar
-                    varios argumentos a <PowerShellInline code={`Copy-Item`} /> sin terminar con líneas muy largas. Es
-                    equivalente a escribir cada par clave–valor como un argumento separado.
-                    <PowerShellBlock
-                        code={`
-                                $p = @{ Path = './a.txt'; Destination = './backup'; Force = $true }
-                                Copy-Item @p
-                            `}
-                    >
-                        <Fragment slot="title">Splatting</Fragment>
-                        <span slot="footer">
-                            Equivalente a <PowerShellInline
-                                code="Copy-Item -Path './a.txt' -Destination './backup' -Force"
-                            />
-                        </span>
-                    </PowerShellBlock>
+                    <B>Validación temprana:</B> <PowerShellInline
+                        code="[ValidateScript({ Test-Path ... })]"
+                    />
+                    asegura que el origen existe y que el destino es un contenedor.
                 </ListItem>
 
                 <ListItem icon={icons.HandPalm}>
-                    <B><PowerShellInline code="-ErrorAction Stop" />:</B> muchos cmdlets (p. ej., <PowerShellInline
-                        code="Copy-Item"
-                    />) emiten errores <I>no terminantes</I> por defecto, lo que <B><I>no</I> activa</B>
-                    <PowerShellInline code="try" />/<PowerShellInline code="catch" />. Al establecer
-                    <PowerShellInline code="-ErrorAction Stop" /> promovemos esos fallos a <I>terminantes</I>,
-                    garantizando que el flujo entre en <PowerShellInline code="catch" /> y podamos registrar o recuperar
-                    de forma controlada.
+                    <B><PowerShellInline code="-ErrorAction Stop" />:</B> promueve fallos de
+                    <PowerShellInline code="Copy-Item" /> a <I>terminantes</I> para entrar en
+                    <PowerShellInline code="catch" />.
                 </ListItem>
 
-                <ListItem icon={icons.Bug}>
-                    <B><PowerShellInline code="$_" /> dentro de <PowerShellInline code={`catch`} />:</B>
-                    en un <PowerShellInline code="catch" />, <PowerShellInline code="$_" /> es el <PowerShellInline
-                        code={`[ErrorRecord]`}
-                    /> actual (el objeto de error capturado). Desde ahí puedes acceder a la excepción subyacente
-                    (<PowerShellInline code="$_.Exception" />), su tipo (<PowerShellInline
-                        code="$_.Exception.GetType().Name"
-                    />), el mensaje, el objeto objetivo (<PowerShellInline code="$_.TargetObject" />), etc.
+                <ListItem icon={icons.Table}>
+                    <B>Salida estructurada:</B> en <PowerShellInline code="finally" /> devolvemos
+                    <PowerShellInline code="$result" /> con <Mono>Source/Destination/Target</Mono>,
+                    <Mono>Status</Mono> y, cuando aplica, <Mono>Reason</Mono> o <Mono>Error</Mono>.
                 </ListItem>
             </List>
         </Explanation>
@@ -234,143 +243,116 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Uso</span>
 
             <P>
-                Puedes ejecutar el script desde la terminal pasando uno o más archivos y una carpeta destino. PowerShell
-                convierte automáticamente los valores de parámetros tipados como <PowerShellInline
-                    code={`[List[string]]`}
-                /> o <PowerShellInline code={`[string[]]`} />, por lo que puedes entregar varios elementos separados por
-                comas, usar un arreglo literal con <PowerShellInline code={`@(...)`} /> o incluso crear la lista
-                explícitamente con <PowerShellInline code={`[List[string]]::new(...)`} />.
-            </P>
-
-            <P>
-                Si alguno de los archivos no existe, se registra el error pero el script continúa con los demás. En
-                todos los casos, PowerShell realiza las conversiones necesarias automáticamente.
+                Ejecuta el script desde la terminal pasando un archivo y una carpeta destino:
             </P>
 
             <PowerShellBlock
                 code={`
-                    # Varios archivos (forma más común)
-                    ./Copy-ItemsStrict.ps1 -Source './Copy-ItemsStrict.ps1', './b.txt' -Destination './backup' -Verbose
+                    # Preparación mínima
+                    $dest = 'backup'
+                    if (!(Test-Path -LiteralPath $dest)) {
+                        New-Item -ItemType Directory -Path $dest
+                    }
 
-                    # Equivalente usando arreglo literal
-                    ./Copy-ItemsStrict.ps1 -Source @('./Copy-ItemsStrict.ps1', './b.txt') -Destination './backup'
+                    # Ensayo con -WhatIf -> 'Cancelled'
+                    $w = ./Copy-ItemStrict.ps1 -Source './Copy-ItemStrict.ps1' -Destination $dest -WhatIf
+                    $w.Status
+                    $w.Reason
 
-                    # También válido: lista explícita
-                    $files = [System.Collections.Generic.List[string]]::new(('./Copy-ItemsStrict.ps1', './b.txt'))
-                    ./Copy-ItemsStrict.ps1 -Source $files -Destination './backup'
+                    # Copia real -> 'Copied' (primera vez) o 'Skipped'
+                    $r = ./Copy-ItemStrict.ps1 -Source './Copy-ItemStrict.ps1' -Destination $dest
+                    $r.Status
+                    $r.Target
                 `}
             >
-                <Fragment slot="title">Desde <Mono>scripts/operations/</Mono></Fragment>
+                <Fragment slot="title">Usar y leer el resultado (breve, sin pipeline)</Fragment>
             </PowerShellBlock>
         </Info>
+
+        <Question headingLevel="h4">
+            <List>
+                <ListItem icon={icons.Play}
+                >Repite la copia para observar <Mono>Skipped</Mono> y el <Mono
+                    >Reason</Mono>.</ListItem>
+                <ListItem icon={icons.Folder}
+                >Intenta copiar una carpeta sin <Mono>-Recurse</Mono> para ver <Mono>Failed</Mono> y
+                    leer <Mono>Error.Kind</Mono>/<Mono>Error.Message</Mono>.</ListItem>
+            </List>
+        </Question>
+
+        <More headingLevel="h4">
+            <span slot="title">Esquema de salida y estabilidad</span>
+
+            <P>
+                Cuando se <I>omite</I>, <I>copia</I> o <I>falla</I>, el ejemplo adjunta
+                <Mono>Status</Mono> y, según el caso, <Mono>Reason</Mono> o <Mono>Error</Mono>. Si
+                <PowerShellInline code="ShouldProcess" /> es rechazado (confirmación o
+                <PowerShellInline code="-WhatIf" />), aquí marcamos <Mono>Cancelled</Mono> de forma
+                explícita. Una alternativa más simple es devolver solo el objeto base (<Mono
+                >Source/Destination/Target</Mono>) sin <Mono>Status</Mono>, pero eso <B>varía el
+                    esquema</B> entre ramas.
+            </P>
+
+            <P>
+                Decide qué prefieres para tus consumidores: un esquema <B>estable/tabular</B>
+                (mismas propiedades siempre, ideal para filtrar/seleccionar en pipeline) o uno más
+                <B>flexible/JSON</B> (propiedades opcionales según el caso). En estas notas <I
+                >todavía no trabajamos con el pipeline</I>, así que priorizamos claridad y registro
+                por sobre la rigidez del esquema.
+            </P>
+
+            <P>
+                Nota: al construir con <Mono>@{}</Mono> (<I>hashtable</I>) se puede <I>perder el
+                    orden</I> de propiedades; si necesitas orden estable (p. ej., para salida
+                tabular), puedes crear un <PowerShellInline code="[PSCustomObject]" /> desde el
+                comienzo y agregar propiedades con <PowerShellInline code="Add-Member" />. Aquí
+                elegimos la opción más simple con fines ilustrativos.
+            </P>
+        </More>
 
         <More headingLevel="h4">
             <span slot="title"><PowerShellInline code="catch" /> tipado</span>
 
             <P>
-                Puedes encadenar varios <PowerShellInline code={`catch`} /> específicos y cerrar con uno genérico.
-                Ordénalos de más específico a más general.
+                Puedes definir varios bloques <PowerShellInline code={`catch`} /> para distintos
+                tipos de excepción y cerrar con uno genérico. Ordénalos de los más específicos a los
+                más generales.
             </P>
 
             <PowerShellBlock
                 code={`
-                        try {
-                            Copy-Item @copyParams
-                        }
-                        catch [System.UnauthorizedAccessException] {
-                            Write-Warning "Permisos insuficientes: $($_.Exception.Message)"
-                        }
-                        catch [System.IO.IOException] {
-                            Write-Warning "Problema de E/S: $($_.Exception.Message)"
-                        }
-                        catch {
-                            # Genérico: útil en PowerShell porque muchos cmdlets encapsulan errores en ErrorRecord
-                            Write-Warning ("Error {0}: {1}" -f $_.Exception.GetType().Name, $_.Exception.Message)
-                        }
-                    `}
+                    try {
+                        Copy-Item @copyParams
+                    }
+                    catch [System.UnauthorizedAccessException] {
+                        Write-Warning ('Permisos insuficientes: {0}' -f $_.Exception.Message)
+                    }
+                    catch [System.IO.IOException] {
+                        Write-Warning ('Problema de E/S: {0}' -f $_.Exception.Message)
+                    }
+                    catch {
+                        Write-Warning ('Error {0}: {1}' -f $_.Exception.GetType().Name, $_.Exception.Message)
+                    }
+                `}
             >
                 <Fragment slot="title">Orden de <Mono>catch</Mono> y uso práctico</Fragment>
             </PowerShellBlock>
 
             <P>
-                En PowerShell es común incluir un <PowerShellInline code={`catch`} /> genérico porque los cmdlets pueden
-                envolver excepciones .NET en <PowerShellInline code={`[ErrorRecord]`} /> con categorías que varían según
-                el proveedor. Aun así, cuando anticipes escenarios típicos (permisos, E/S), añade
-                <PowerShellInline code={`catch`} /> tipados para mensajes más claros.
+                En PowerShell es común incluir un <PowerShellInline code={`catch`} /> genérico
+                porque muchos cmdlets encapsulan las excepciones .NET dentro de objetos
+                <PowerShellInline code={`[ErrorRecord]`} />, cuyas categorías o tipos varían entre
+                proveedores. Esto dificulta predecir el tipo exacto, por lo que un bloque genérico
+                suele ser una red de seguridad útil. Aun así, cuando anticipes escenarios típicos
+                (permisos, E/S), añade <PowerShellInline code={`catch`} /> tipados para mensajes más
+                claros.
             </P>
 
             <P>
-                En este apunte usaremos principalmente <PowerShellInline code={`catch`} /> genéricos para simplificar
-                los ejemplos, aun cuando en un contexto real convenga combinar tipados y genéricos según el caso.
+                En este apunte usaremos principalmente <PowerShellInline code={`catch`} /> genéricos
+                para simplificar los ejemplos, aunque en contextos reales conviene combinar ambos
+                tipos según el grado de control y legibilidad que busques.
             </P>
-        </More>
-
-        <More headingLevel="h4">
-            <Fragment slot="title">Arreglos vs. Listas (.NET)</Fragment>
-
-            <P>
-                Para colecciones grandes, prefiere listas .NET: en un arreglo cada uso de <PowerShellInline code="+=" />
-                crea una copia nueva, mientras que <PowerShellInline code="[List[string]]" /> agrega en el mismo buffer.
-                En colecciones pequeñas la diferencia es mínima, pero en lotes grandes el rendimiento se multiplica.
-            </P>
-
-            <PowerShellBlock
-                code={`
-                        $n = 100000
-                        $results = @()
-
-                        # Arreglo con +=
-                        $timeArray = Measure-Command {
-                            $a = @()
-                            foreach ($i in 1..$n) {
-                                $a += "x$i"
-                            }
-                        }
-                        $results += @{
-                            Method            = 'Array +='
-                            TotalMilliseconds = $timeArray.TotalMilliseconds
-                        }
-
-                        # List[T] con Add()
-                        $timeList = Measure-Command {
-                            $l = [System.Collections.Generic.List[string]]::new()
-                            foreach ($i in 1..$n) {
-                                $l.Add("x$i")
-                            }
-                        }
-                        $results += @{
-                            Method            = 'List[T].Add()'
-                            TotalMilliseconds = $timeList.TotalMilliseconds
-                        }
-
-                        # Mostrar como tabla
-                        Write-Output ('{0,-20} {1,10}' -f 'Método', 'Tiempo (ms)')
-                        foreach ($r in $results) {
-                            Write-Output ('{0,-20} {1,10}' -f $r.Method, $r.TotalMilliseconds)
-                        }
-                    `}
-            >
-                <Fragment slot="title">
-                    Arreglo (<PowerShellInline code={`@()`} />) vs. <PowerShellInline code={`[List[string]]`} />
-                </Fragment>
-                <span slot="footer">
-                    No es necesario que entiendas todo este código, sólo ver que realizar la <Enquote>misma
-                        operación</Enquote> con ambos tipos de colección tiene una diferencia de rendimiento
-                    significativa.
-                </span>
-                <DibsSourceLink
-                    repo="scripts" file="benchmarks/Benchmark-ArrayVsList.ps1"
-                    slot="source"
-                />
-            </PowerShellBlock>
-
-            <OutputBlock
-                code={`
-                        Método               Tiempo (ms)
-                        Array +=             33578.2745
-                        List[T].Add()          369.4552
-                    `}
-            />
         </More>
     </NotesSection>
 
@@ -383,9 +365,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Patrón simple: resolver el binario real con <PowerShellInline code="Get-Command" />, ejecutarlo con el <I
-            >call operator</I> <PowerShellInline code="&" />, y validar <PowerShellInline code="$LASTEXITCODE" />.
-            Devuelve un objeto con datos útiles para logs o para controlar el flujo.
+            Patrón simple: resolver el binario real con <PowerShellInline code="Get-Command" />,
+            ejecutarlo con el <I>call operator</I> <PowerShellInline code="&" />, y validar
+            <PowerShellInline code="$LASTEXITCODE" />. Devuelve un objeto con datos útiles para logs
+            o para controlar el flujo.
         </P>
 
         <PowerShellBlock
@@ -397,14 +380,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 [ValidateNotNullOrWhiteSpace()]
                 [string] $Name,
 
+                # [!code focus:3]
                 [Parameter(ValueFromRemainingArguments)]
                 [ValidateNotNull()]
                 [string[]] $Rest = @()
             )
 
+            Set-StrictMode -Version 3.0
+
+            # [!code focus:1]
             $cmds = Get-Command -Name $Name -CommandType Application -ErrorAction Stop
             if ($cmds.Count -gt 1) {
-                Write-Warning ("Se encontraron varios ejecutables llamados '{0}'. Se usará: {1}" -f 
+                Write-Warning ("Multiple executables named '{0}' were found. Using: {1}" -f 
                     $Name, $cmds[0].Source)
             }
             $path = $cmds[0].Source
@@ -419,7 +406,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             }
 
             if ($LASTEXITCODE -eq 0) {
-                @{
+                [PSCustomObject]@{
                     ToolPath = $path
                     ExitCode = $LASTEXITCODE
                     Output   = $out
@@ -427,7 +414,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             }
             else {
                 $nl = [Environment]::NewLine
-                $msg = ('{0} {1} devolvió código {2}.{3}Salida:{3}{4}' -f $Name, ($Rest -join ' '), 
+                $msg = ('{0} {1} returned exit code {2}.{3}Output:{3}{4}' -f $Name, ($Rest -join ' '), 
                     $LASTEXITCODE, $nl, ($out -join $nl))
                 throw [System.Exception]::new($msg)
             }
@@ -440,33 +427,47 @@ import NotesSection from "~/layouts/NotesSection.astro";
             />
         </PowerShellBlock>
 
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "Aquí voy, tengo que agregar una explicación breve sobre arreglos",
+                ],
+            }}
+        />
+
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.ArrowElbowRight}>
-                    <B><PowerShellInline code="ValueFromRemainingArguments" />:</B> todo lo que quede después de
-                    <PowerShellInline code="-Name" /> se captura en <PowerShellInline code="$Rest" /> <I>sin intentar
-                        parsearlo como parámetros del script</I>. Así puedes pasar flags arbitrarios al binario:
+                    <B><PowerShellInline code="ValueFromRemainingArguments" />:</B> todo lo que
+                    quede después de
+                    <PowerShellInline code="-Name" /> se captura en <PowerShellInline
+                        code="$Rest"
+                    /> <I>sin intentar parsearlo como parámetros del script</I>. Así puedes pasar
+                    flags arbitrarios al binario:
                     <PowerShellInline code="Invoke-Tool -Name git -C . status --porcelain" />.
                 </ListItem>
 
                 <ListItem icon={icons.MagnifyingGlass}>
-                    <B><PowerShellInline code="Get-Command ... -ErrorAction Stop" />:</B> resuelve el ejecutable real
-                    (solo de tipo <I>Application</I>). Con <PowerShellInline code="-ErrorAction Stop" /> convertimos
-                    <Enquote>no encontrado</Enquote> en error terminante. El objeto devuelto es <PowerShellInline
-                        code="[System.Management.Automation.CommandInfo]"
-                    />.
+                    <B><PowerShellInline code="Get-Command ... -ErrorAction Stop" />:</B> resuelve
+                    el ejecutable real (solo de tipo <I>Application</I>). Con <PowerShellInline
+                        code="-ErrorAction Stop"
+                    /> convertimos
+                    <Enquote>no encontrado</Enquote> en error terminante. El objeto devuelto es
+                    <PowerShellInline code="[System.Management.Automation.CommandInfo]" />.
                 </ListItem>
 
                 <ListItem icon={icons.LinkSimple}>
-                    <B><PowerShellInline code="[CommandInfo].Source" />:</B> ruta absoluta al binario resuelto (p. ej.,
-                    <Mono>C:\Program Files\Git\cmd\git.exe</Mono>). Se usa para invocarlo de forma inequívoca.
+                    <B><PowerShellInline code="[CommandInfo].Source" />:</B> ruta absoluta al
+                    binario resuelto (p. ej.,
+                    <Mono>C:\Program Files\Git\cmd\git.exe</Mono>). Se usa para invocarlo de forma
+                    inequívoca.
                 </ListItem>
 
                 <ListItem icon={icons.TextT}>
-                    <B><PowerShellInline code="[Console]::OutputEncoding" />:</B> establece UTF-8 temporalmente para
-                    capturar <I>stdout/stderr</I> con caracteres especiales. Se restaura en <PowerShellInline
-                        code="finally"
-                    /> para no afectar la sesión.
+                    <B><PowerShellInline code="[Console]::OutputEncoding" />:</B> establece UTF-8
+                    temporalmente para capturar <I>stdout/stderr</I> con caracteres especiales. Se
+                    restaura en <PowerShellInline code="finally" /> para no afectar la sesión.
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
@@ -477,48 +478,57 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </ListItem>
 
                         <ListItem icon={icons.BracketsCurly}>
-                            Splatting <PowerShellInline code="@Rest" /> pasa los argumentos tal cual (array → args).
+                            Splatting <PowerShellInline code="@Rest" /> pasa los argumentos tal cual
+                            (array → args).
                         </ListItem>
 
                         <ListItem icon={icons.ArrowsLeftRight}>
-                            <B><PowerShellInline code="2>&1" />:</B> combina los flujos de salida estándar (<I
-                            >stdout</I>) y error estándar (<I>stderr</I>) en uno solo. En PowerShell (y en sistemas
-                            heredados de Unix), los números representan los <I>streams</I>:
+                            <B><PowerShellInline code="2>&1" />:</B> combina los flujos de salida
+                            estándar (<I>stdout</I>) y error estándar (<I>stderr</I>) en uno solo.
+                            En PowerShell (y en sistemas heredados de Unix), los números representan
+                            los <I>streams</I>:
                             <List>
                                 <ListItem icon={icons.NumberCircleOne}>
-                                    <PowerShellInline code="1" /> → salida estándar (<I>stdout</I>), lo que normalmente
-                                    imprime el programa.
+                                    <PowerShellInline code="1" /> → salida estándar (<I>stdout</I>),
+                                    lo que normalmente imprime el programa.
                                 </ListItem>
 
                                 <ListItem icon={icons.NumberCircleTwo}>
-                                    <PowerShellInline code="2" /> → salida de error (<I>stderr</I>), donde van los
-                                    mensajes de error.
+                                    <PowerShellInline code="2" /> → salida de error (<I>stderr</I>),
+                                    donde van los mensajes de error.
                                 </ListItem>
 
                                 <ListItem icon={icons.CaretRight}>
-                                    <PowerShellInline code=">" /> redirige la salida hacia otro destino, y
-                                    <PowerShellInline code="&" /> indica que ese destino es otro flujo.
+                                    <PowerShellInline code=">" /> redirige la salida hacia otro
+                                    destino, y
+                                    <PowerShellInline code="&" /> indica que ese destino es otro
+                                    flujo.
                                 </ListItem>
                             </List>
 
                             Por lo tanto, <PowerShellInline code="2>&1" /> significa literalmente
-                            <I><Enquote>redirige el flujo 2 (errores) al mismo lugar que el flujo 1 (salida
-                                    estándar)</Enquote></I>, lo que permite capturar todo (mensajes y errores) en la
-                            misma variable <PowerShellInline code="$out" />.
+                            <I><Enquote>redirige el flujo 2 (errores) al mismo lugar que el flujo 1
+                                    (salida estándar)</Enquote></I>, lo que permite capturar todo
+                            (mensajes y errores) en la misma variable <PowerShellInline
+                                code="$out"
+                            />.
                         </ListItem>
                     </List>
                 </ListItem>
 
                 <ListItem icon={icons.CheckCircle}>
-                    <B><PowerShellInline code="$LASTEXITCODE" />:</B> código de salida del proceso nativo.
-                    <PowerShellInline code="0" /> = éxito; cualquier otro se trata como error y se eleva con un mensaje
-                    detallado.
+                    <B><PowerShellInline code="$LASTEXITCODE" />:</B> código de salida del proceso
+                    nativo.
+                    <PowerShellInline code="0" /> = éxito; cualquier otro se trata como error y se
+                    eleva con un mensaje detallado.
                 </ListItem>
 
                 <ListItem icon={icons.Siren}>
-                    <B><PowerShellInline code="throw [System.Exception]::new($msg)" />:</B> promueve el fallo a error
-                    terminante con contexto (comando, argumentos, código y salida), ideal para CI/CD y manejo en niveles
-                    superiores con <PowerShellInline code="try" />/<PowerShellInline code="catch" />.
+                    <B><PowerShellInline code="throw [System.Exception]::new($msg)" />:</B> promueve
+                    el fallo a error terminante con contexto (comando, argumentos, código y salida),
+                    ideal para CI/CD y manejo en niveles superiores con <PowerShellInline
+                        code="try"
+                    />/<PowerShellInline code="catch" />.
                 </ListItem>
             </List>
         </Explanation>
@@ -529,19 +539,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <P>
                 PowerShell no se limita a imprimir texto: maneja múltiples <I
                     href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_output_streams"
-                >streams de salida</I>, lo que permite separar mensajes de éxito, errores, advertencias, depuración,
-                etc. Esto hace posible <Link
+                >streams de salida</I>, lo que permite separar mensajes de éxito, errores,
+                advertencias, depuración, etc. Esto hace posible <Link
                     href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection"
                 >redirigirlos</Link> o tratarlos de forma independiente en un mismo script.
             </P>
 
             <P>
-                En particular, <PowerShellInline code="Write-Error" /> escribe en el <I>error stream</I> (2), lo que
-                puede interrumpir pipelines o marcar la ejecución como fallida. En estos apuntes evitaremos usarlo para
-                no introducir demasiados conceptos nuevos, y en su lugar preferiremos <PowerShellInline
-                    code="Write-Warning"
-                /> o <PowerShellInline code="Write-Verbose" />. Sin embargo, es importante conocer que existe y que
-                forma parte del sistema de streams.
+                En particular, <PowerShellInline code="Write-Error" /> escribe en el <I>error
+                    stream</I> (2), lo que puede interrumpir pipelines o marcar la ejecución como
+                fallida. En estos apuntes evitaremos usarlo para no introducir demasiados conceptos
+                nuevos, y en su lugar preferiremos <PowerShellInline code="Write-Warning" /> o
+                <PowerShellInline code="Write-Verbose" />. Sin embargo, es importante conocer que
+                existe y que forma parte del sistema de streams.
             </P>
 
             <Table>
@@ -676,40 +686,50 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="requirements">
             <List>
                 <ListItem icon={icons.MagnifyingGlass}>
-                    Implementa <PowerShellInline code={`Invoke-WebRequestByFallback.ps1`} /> que intente ejecutar una
-                    tarea usando una <I>cadena de alternativas</I> de binarios. No interrogues el sistema operativo; en
-                    su lugar, <B>resuelve comandos</B> (con <PowerShellInline code={`Invoke-Tool.ps1`} />) y usa
-                    <PowerShellInline code={`try`} />/<PowerShellInline code={`catch`} /> para avanzar al siguiente.
+                    Implementa <PowerShellInline code={`Invoke-WebRequestByFallback.ps1`} /> que
+                    intente ejecutar una tarea usando una <I>cadena de alternativas</I> de binarios.
+                    No interrogues el sistema operativo; en su lugar, <B>resuelve comandos</B> (con
+                    <PowerShellInline code={`Invoke-Tool.ps1`} />) y usa
+                    <PowerShellInline code={`try`} />/<PowerShellInline code={`catch`} /> para
+                    avanzar al siguiente.
                 </ListItem>
 
                 <ListItem icon={icons.DownloadSimple}>
-                    Escenario propuesto (puedes elegir otro): <B>descargar un archivo</B> en este orden: <Mono
-                    >wget</Mono> → <Mono>curl</Mono>.
+                    Escenario propuesto (puedes elegir otro): <B>descargar un archivo</B> probando
+                    primero <Mono>wget</Mono> y luego <Mono>curl</Mono>.
                 </ListItem>
 
                 <ListItem icon={icons.CursorClick}>
                     El script debe:
                     <List>
                         <ListItem icon={icons.LinkSimple}>
-                            Recibir <PowerShellInline code={`-Uri`} /> (obligatorio) y <PowerShellInline
-                                code={`-OutFile`}
-                            /> (obligatorio).
+                            Recibir <PowerShellInline code={`-Uri`} /> (obligatorio) y
+                            <PowerShellInline code={`-OutFile`} /> (obligatorio).
                         </ListItem>
 
                         <ListItem icon={icons.HandPalm}>
-                            Probar cada candidato dentro de <PowerShellInline code={`try`} />/<PowerShellInline
-                                code={`catch`}
-                            /> con <PowerShellInline code={`-ErrorAction Stop`} />.
+                            Probar <Mono>wget</Mono> dentro de <PowerShellInline
+                                code={`try`}
+                            />/<PowerShellInline code={`catch`} /> con <PowerShellInline
+                                code={`-ErrorAction Stop`}
+                            />.
                         </ListItem>
 
-                        <ListItem icon={icons.Terminal}>
-                            Capturar salida/errores (usa <PowerShellInline code={`2>&1`} />) y registrar qué alternativa
-                            funcionó.
+                        <ListItem icon={icons.ArrowElbowRight}>
+                            Si <Mono>wget</Mono> falla, capturar el error y probar <Mono>curl</Mono>
+                            en el bloque
+                            <PowerShellInline code={`catch`} /> (anidando otro <PowerShellInline
+                                code={`try`}
+                            />).
                         </ListItem>
 
                         <ListItem icon={icons.Siren}>
-                            Si todas fallan, <PowerShellInline code={`throw`} /> con un mensaje consolidado y el último
-                            error.
+                            Si ambos fallan, <PowerShellInline code={`throw`} /> con un mensaje
+                            consolidado.
+                        </ListItem>
+
+                        <ListItem icon={icons.Table}>
+                            Devuelve un objeto estructurado con el estado de la operación.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -721,9 +741,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <PowerShellInline code={`wget`} slot="title" />
 
                 <P>
-                    Descargador común en Linux/BSD; puede instalarse en macOS/Windows. Usa <PowerShellInline
-                        code="-O"
-                    /> para definir el archivo de salida.
+                    Descargador común en Linux/BSD; puede instalarse en macOS/Windows. Usa
+                    <PowerShellInline code="-O" /> para definir el archivo de salida.
                 </P>
 
                 <PowerShellBlock
@@ -743,8 +762,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <PowerShellInline code={`curl`} slot="title" />
 
                 <P>
-                    Cliente de transferencia que viene preinstalado en macOS y muchas distros Linux; en Windows 10+
-                    suele estar disponible. Úsalo con <PowerShellInline code="-L" /> para seguir redirecciones y
+                    Cliente de transferencia que viene preinstalado en macOS y muchas distros Linux;
+                    en Windows 10+ suele estar disponible. Úsalo con <PowerShellInline code="-L" />
+                    para seguir redirecciones y
                     <PowerShellInline code="-o" /> para especificar archivo de salida.
                 </P>
 
@@ -780,25 +800,26 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="hints">
             <List>
                 <ListItem icon={icons.LinkSimple}>
-                    Usa <PowerShellInline code="Join-Path ... -Resolve" /> para obtener la ruta real de <Mono
-                    >Invoke-Tool.ps1</Mono> y fallar temprano si no existe.
+                    Usa <PowerShellInline code="Join-Path ... -Resolve" /> para obtener la ruta real
+                    de <Mono>Invoke-Tool.ps1</Mono> y fallar temprano si no existe.
                     <PowerShellBlock
                         code={`
-                            $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+                            $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
                             # Ejemplo de uso con call operator (&) y argumentos:
                             & $invoker wget -O './out.txt' 'https://example.com/file.txt'
                         `}
                     >
                         <Fragment slot="title">Invocador seguro</Fragment>
                         <span slot="footer">
-                            <PowerShellInline code="-Resolve" /> valida la ruta en tiempo de inicio; evita fallos
-                            tardíos.
+                            <PowerShellInline code="-Resolve" /> valida la ruta en tiempo de inicio;
+                            evita fallos tardíos.
                         </span>
                     </PowerShellBlock>
                 </ListItem>
 
                 <ListItem icon={icons.ShieldCheck}>
-                    Prefiere tipar <PowerShellInline code="[uri] $Uri" /> y validar el esquema en lugar de
+                    Prefiere tipar <PowerShellInline code="[uri] $Uri" /> y validar el esquema en
+                    lugar de
                     <PowerShellInline code={`[string]`} />:
                     <PowerShellBlock
                         code={`
@@ -809,9 +830,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     >
                         <Fragment slot="title">Validación de URL robusta</Fragment>
                         <span slot="footer">
-                            El tipo <PowerShellInline code={`[uri]`} /> parsea la dirección; el <PowerShellInline
-                                code={`[ValidateScript]`}
-                            /> asegura <Mono>http/https</Mono>.
+                            El tipo <PowerShellInline code={`[uri]`} /> parsea la dirección; el
+                            <PowerShellInline code={`[ValidateScript]`} /> asegura <Mono
+                            >http/https</Mono>.
                         </span>
                     </PowerShellBlock>
                 </ListItem>
@@ -819,204 +840,128 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
 
         <Fragment slot="solution">
-            <Tabs defaultValue="basic">
-                <TabsList>
-                    <TabsTrigger value="basic">Solución básica</TabsTrigger>
-                    <TabsTrigger value="advanced">Solución avanzada</TabsTrigger>
-                </TabsList>
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.5
+                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateScript({ $_.Scheme -in @('http','https') })]
+                        [uri] $Uri,
 
-                <TabsContent value="basic">
-                    <PowerShellBlock
-                        code={`
-                            #Requires -Version 7.5
-                            [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-                            param(
-                                [Parameter(Mandatory)]
-                                [ValidateScript({ $_.Scheme -in @('http','https') })]
-                                [uri] $Uri,
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $OutFile
+                    )
 
-                                [Parameter(Mandatory)]
-                                [ValidateNotNullOrWhiteSpace()]
-                                [string] $OutFile
-                            )
+                    Set-StrictMode -Version 3.0
 
-                            $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+                    $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
 
-                            if ($PSCmdlet.ShouldProcess("$Uri to $OutFile", 'Download file')) {
-                                try {
-                                    & $invoker wget -O $OutFile $Uri
-                                    Write-Output ("Downloaded $Uri to $OutFile using wget")
-                                }
-                                catch {
-                                    Write-Warning ('wget failed: {0}' -f $_.Exception.Message)
-                                    try {
-                                        & $invoker curl -o $OutFile $Uri
-                                        Write-Output ("Downloaded $Uri to $OutFile using curl")
-                                    }
-                                    catch {
-                                        Write-Warning ('curl failed: {0}' -f $_.Exception.Message)
-                                        throw [System.Exception]::new("Both wget and curl failed to download $Uri")
-                                    }
+                    if ($PSCmdlet.ShouldProcess("$Uri to $OutFile", 'Download file')) {
+                        try {
+                            & $invoker wget -O $OutFile $Uri
+                            [PSCustomObject]@{
+                                Uri    = $Uri
+                                OutFile = $OutFile
+                                Tool   = 'wget'
+                                Status = 'Success'
+                            }
+                        }
+                        catch {
+                            Write-Warning ('wget failed: {0}' -f $_.Exception.Message)
+                            try {
+                                & $invoker curl -L -o $OutFile $Uri
+                                [PSCustomObject]@{
+                                    Uri    = $Uri
+                                    OutFile = $OutFile
+                                    Tool   = 'curl'
+                                    Status = 'Success'
                                 }
                             }
-                        `}
-                    >
-                        <Fragment slot="title">Solución de referencia</Fragment>
-                        <DibsSourceLink
-                            repo="scripts" file="operations/Invoke-WebRequestByFallback.ps1"
-                            slot="source"
-                        />
-                    </PowerShellBlock>
-                </TabsContent>
-
-                <TabsContent value="advanced">
-                    <PowerShellBlock
-                        code={`
-                            #Requires -Version 7.5
-                            [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-                            param(
-                                [Parameter(Mandatory)]
-                                [ValidateScript({ $_.Scheme -in @('http', 'https') })]
-                                [uri] $Uri,
-
-                                [Parameter(Mandatory)]
-                                [ValidateNotNullOrWhiteSpace()]
-                                [string] $OutFile
-                            )
-
-                            $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
-                            $candidates = [ordered]@{
-                                wget = { param($U, $O) @('-O', $O, $U) }
-                                curl = { param($U, $O) @('-o', $O, $U) }
+                            catch {
+                                Write-Warning ('curl failed: {0}' -f $_.Exception.Message)
+                                throw [System.Exception]::new("Both wget and curl failed to download $Uri")
                             }
-                            $success = $false
-
-                            if ($PSCmdlet.ShouldProcess("$Uri to $OutFile", 'Download file')) {
-                                foreach ($tool in $candidates.Keys) {
-                                    try {
-                                        & $invoker $tool @($candidates[$tool].Invoke($Uri, $OutFile))
-                                        Write-Output ("Downloaded $Uri to $OutFile using $tool")
-                                        $success = $true
-                                        break
-                                    }
-                                    catch {
-                                        Write-Warning ("$tool failed: {0}" -f $_.Exception.Message)
-                                    }
-                                }
-                                if (!$success) {
-                                    throw [System.Exception]::new('All download methods failed.')
-                                }
-                            }
-                        `}
-                    >
-                        <Fragment slot="title">Solución avanzada</Fragment>
-                        <span slot="footer"
-                        >Esta solución es mejor ya que evita anidar <PowerShellInline code={`try`} />/<PowerShellInline
-                                code={`catch`}
-                            /> en cada herramienta, haciendo más fácil agregar o modificar herramientas en el
-                            futuro.</span>
-                        <DibsSourceLink
-                            repo="scripts" file="operations/Invoke-WebRequestByFallback.ps1"
-                            ref="db2381657ba36127178e5805fa37136602084095" slot="source"
-                        />
-                    </PowerShellBlock>
-
-                    <Explanation headingLevel="h4">
-                        <B>Idea principal:</B> patrón de <I>fallback por comando</I> con una sola estructura. No
-                        necesitas entender cada detalle; observa cómo se prueba cada herramienta en orden hasta lograr
-                        la descarga.
-
-                        <List>
-                            <ListItem icon={icons.BracketsCurly}>
-                                <B>Diccionario ordenado:</B> <PowerShellInline code={`[ordered]@{ ... }`} /> preserva el
-                                orden de inserción de las claves, así definimos la <I>prioridad</I> (<Mono>wget</Mono> →
-                                <Mono>curl</Mono>) en la iteración.
-                            </ListItem>
-
-                            <ListItem icon={icons.Function}>
-                                <B><PowerShellInline code={`{ param(...) ... }`} /> es una lambda:</B> en PowerShell es
-                                un <PowerShellInline code={`[ScriptBlock]`} /> que recibe <Mono>$Uri</Mono>/<Mono
-                                >$OutFile</Mono> y devuelve el array de argumentos para cada binario.
-                            </ListItem>
-
-                            <ListItem icon={icons.Play}>
-                                <B><PowerShellInline code={`.Invoke(...)`} /> ejecuta la lambda:</B> <PowerShellInline
-                                    code={`$candidates[$tool].Invoke($Uri, $OutFile)`}
-                                /> produce los argumentos que luego se pasan a <PowerShellInline
-                                    code={`& $invoker $tool @args`}
-                                />.
-                            </ListItem>
-
-                            <ListItem icon={icons.ArrowElbowRight}>
-                                <B><PowerShellInline code={`break`} /> en el primer éxito:</B> tras una descarga
-                                exitosa, se interrumpe el <PowerShellInline code={`foreach`} /> para no probar más
-                                herramientas.
-                            </ListItem>
-                        </List>
-                    </Explanation>
-                </TabsContent>
-            </Tabs>
+                        }
+                    }
+                `}
+            >
+                <Fragment slot="title">Solución de referencia</Fragment>
+                <DibsSourceLink
+                    repo="scripts" file="operations/Invoke-WebRequestByFallback.ps1"
+                    slot="source"
+                />
+            </PowerShellBlock>
         </Fragment>
     </Exercise>
 
     <ConclusionsLayout>
         <P slot="conclusions">
-            El hilo conductor de la lección es <B>controlar el flujo a través de los errores</B>. Cuando la integridad
-            importa, promueve fallos con <PowerShellInline code="-ErrorAction Stop" /> y manéjalos con
-            <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline code="finally" />;
-            cuando buscas procesar lotes, usa errores no terminantes y reporta. Al ejecutar binarios externos,
-            resuélvelos primero (<PowerShellInline code="Get-Command" />), ejecútalos con <PowerShellInline code="&" />
-            y valida con <PowerShellInline code="$LASTEXITCODE" /> o un wrapper como <PowerShellInline
-                code={`Invoke-Tool.ps1`}
-            />.
+            El hilo conductor de la lección es <B>controlar el flujo a través de los errores</B>.
+            Cuando la integridad importa, promueve fallos con <PowerShellInline
+                code="-ErrorAction Stop"
+            /> y manéjalos con
+            <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline
+                code="finally"
+            />; cuando buscas reportar sin interrumpir, usa errores no terminantes. Al ejecutar
+            binarios externos, resuélvelos primero (<PowerShellInline code="Get-Command" />),
+            ejecútalos con <PowerShellInline code="&" />
+            y valida con <PowerShellInline code="$LASTEXITCODE" /> o un wrapper como
+            <PowerShellInline code={`Invoke-Tool.ps1`} />.
         </P>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.HandPalm}>
-                Promueve errores críticos con <PowerShellInline code="-ErrorAction Stop" /> para activar
+                Promueve errores críticos con <PowerShellInline code="-ErrorAction Stop" /> para
+                activar
                 <PowerShellInline code={`catch`} />.
             </ListItem>
 
             <ListItem icon={icons.Bug}>
-                En <PowerShellInline code={`catch`} />, <PowerShellInline code="$_" /> es el <PowerShellInline
-                    code={`[ErrorRecord]`}
-                /> (tipo y mensaje en <PowerShellInline code={`$_.Exception`} />).
+                En <PowerShellInline code={`catch`} />, <PowerShellInline code="$_" /> es el
+                <PowerShellInline code={`[ErrorRecord]`} /> (tipo y mensaje en <PowerShellInline
+                    code={`$_.Exception`}
+                />).
             </ListItem>
 
             <ListItem icon={icons.MagnifyingGlass}>
-                Resuelve binarios con <PowerShellInline code="Get-Command -ErrorAction Stop" /> y llama al path real.
+                Resuelve binarios con <PowerShellInline code="Get-Command -ErrorAction Stop" /> y
+                llama al path real.
             </ListItem>
 
             <ListItem icon={icons.Play}>
-                Ejecuta con <PowerShellInline code="&" /> y valida con <PowerShellInline code="$LASTEXITCODE" /> (o tu
-                wrapper).
+                Ejecuta con <PowerShellInline code="&" /> y valida con <PowerShellInline
+                    code="$LASTEXITCODE"
+                /> (o tu wrapper).
             </ListItem>
 
             <ListItem icon={icons.ArrowsLeftRight}>
-                <PowerShellInline code="2>&1" /> mezcla <I>stderr</I> en <I>stdout</I> para capturar todo en una
-                variable.
+                <PowerShellInline code="2>&1" /> mezcla <I>stderr</I> en <I>stdout</I> para capturar
+                todo en una variable.
             </ListItem>
 
-            <ListItem icon={icons.Stack}>
-                Prefiere <PowerShellInline code="[System.Collections.Generic.List[T]]" /> para acumular sin costo de
-                copias.
+            <ListItem icon={icons.Table}>
+                Devuelve <PowerShellInline code="[PSCustomObject]" /> para salida estructurada y
+                consumible.
             </ListItem>
 
             <ListItem icon={icons.BracketsCurly}>
-                <PowerShellInline code="@{ }" /> (hashtable) agrupa datos/params; perfecto para <I>splatting</I> y
-                reportes.
+                <PowerShellInline code="@{ }" /> (hashtable) agrupa datos/params; perfecto para <I
+                >splatting</I>.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
             <P>
-                <B>El buen manejo de errores es diseño, no accidente.</B> Trata los errores como datos: promuévelos
-                cuando la integridad esté en juego, o toléralos cuando el objetivo sea cubrir la mayor superficie
-                posible y reportar. Compón tus soluciones en torno a <I>capacidades</I> (comandos disponibles) y no a
-                suposiciones del entorno. Registra con intención, devuelve resúmenes accionables y <I><Enquote>fail
-                        loudly</Enquote></I> cuando sea necesario. Si adoptas estos patrones (terminantes,
-                observabilidad, wrapper de binarios y fallback), tus scripts serán más confiables, portables y fáciles
-                de mantener.
+                <B>El buen manejo de errores es diseño, no accidente.</B> Trata los errores como
+                datos: promuévelos cuando la integridad esté en juego, o toléralos cuando el
+                objetivo sea reportar sin interrumpir. Compón tus soluciones en torno a <I
+                >capacidades</I> (comandos disponibles) y no a suposiciones del entorno. Registra
+                con intención, devuelve resultados estructurados y <I><Enquote>fail
+                        loudly</Enquote></I> cuando sea necesario. Si adoptas estos patrones
+                (terminantes, observabilidad, wrapper de binarios y fallback), tus scripts serán más
+                confiables, portables y fáciles de mantener.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -1031,20 +976,23 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
                 <span slot="description">
-                    Capítulo práctico sobre manejo de errores en PowerShell que explica la diferencia entre errores no
-                    terminantes y excepciones, cómo forzar excepciones con <PowerShellInline code="-ErrorAction Stop" />
+                    Capítulo práctico sobre manejo de errores en PowerShell que explica la
+                    diferencia entre errores no terminantes y excepciones, cómo forzar excepciones
+                    con <PowerShellInline code="-ErrorAction Stop" />
                     para poder capturarlas con
-                    <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline
-                        code="finally"
-                    />, y el papel de <PowerShellInline code="$Error" />, <PowerShellInline code="-ErrorVariable" />
-                    (incluyendo el uso de <PowerShellInline code="+" /> para acumular) y <PowerShellInline
-                        code="$ErrorActionPreference"
-                    />. Advierte contra malas prácticas como silenciar errores globalmente, y muestra cuándo registrar,
-                    continuar o detener según el objetivo del script. Incluye patrones para comandos nativos y métodos
-                    .NET (cuándo ajustar temporalmente las preferencias), y ejemplos de <PowerShellInline
+                    <PowerShellInline code="try" />/<PowerShellInline
                         code="catch"
-                    /> tipados. Ideal para entender qué registrar, cómo reaccionar ante fallos y cómo diseñar
-                    herramientas que fallen de forma explícita y depurable.
+                    />/<PowerShellInline code="finally" />, y el papel de <PowerShellInline
+                        code="$Error"
+                    />, <PowerShellInline code="-ErrorVariable" />
+                    (incluyendo el uso de <PowerShellInline code="+" /> para acumular) y
+                    <PowerShellInline code="$ErrorActionPreference" />. Advierte contra malas
+                    prácticas como silenciar errores globalmente, y muestra cuándo registrar,
+                    continuar o detener según el objetivo del script. Incluye patrones para comandos
+                    nativos y métodos .NET (cuándo ajustar temporalmente las preferencias), y
+                    ejemplos de <PowerShellInline code="catch" /> tipados. Ideal para entender qué
+                    registrar, cómo reaccionar ante fallos y cómo diseñar herramientas que fallen de
+                    forma explícita y depurable.
                 </span>
             </Book>
         </Fragment>
@@ -1057,18 +1005,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <Link href="https://learn.microsoft.com/en-us/powershell" slot="location"
                 >la documentación oficial de PowerShell</Link>
                 <Fragment slot="description">
-                    Breve guía de <B>redirección en PowerShell</B>: explica cómo enviar salida a archivos y combinar
-                    flujos (éxito, error, warning, etc.) usando <PowerShellInline code={`Out-File`} />,
-                    <PowerShellInline code={`Tee-Object`} /> y <B>operadores de redirección</B> (<PowerShellInline
-                        code={`>`}
-                    />, <PowerShellInline code={`>>`} />, <PowerShellInline code={`n>&1`} />, <PowerShellInline
-                        code={`*>`}
-                    />). Incluye tabla de flujos redireccionables, cambios en <B>PowerShell&nbsp;7.4</B> para redirigir
-                    <I>stdout</I> de comandos nativos (conservando bytes), ejemplos prácticos (fusionar
-                    <PowerShellInline code={`2>&1`} />, redirigir todos los flujos, suprimir <I>Information/Host</I>),
-                    efectos de <I>Action Preferences</I>, consideraciones de <I>codificación y ancho</I> de salida, y
-                    notas sobre confusiones comunes con <PowerShellInline code={`>`} /> vs. comparadores
-                    (<PowerShellInline code={`-gt`} />, <PowerShellInline code={`-lt`} />).
+                    Breve guía de <B>redirección en PowerShell</B>: explica cómo enviar salida a
+                    archivos y combinar flujos (éxito, error, warning, etc.) usando
+                    <PowerShellInline code={`Out-File`} />,
+                    <PowerShellInline code={`Tee-Object`} /> y <B>operadores de redirección</B>
+                    (<PowerShellInline code={`>`} />, <PowerShellInline code={`>>`} />,
+                    <PowerShellInline code={`n>&1`} />, <PowerShellInline code={`*>`} />). Incluye
+                    tabla de flujos redireccionables, cambios en <B>PowerShell&nbsp;7.4</B> para
+                    redirigir
+                    <I>stdout</I> de comandos nativos (conservando bytes), ejemplos prácticos
+                    (fusionar
+                    <PowerShellInline code={`2>&1`} />, redirigir todos los flujos, suprimir <I
+                    >Information/Host</I>), efectos de <I>Action Preferences</I>, consideraciones de
+                    <I>codificación y ancho</I> de salida, y notas sobre confusiones comunes con
+                    <PowerShellInline code={`>`} /> vs. comparadores (<PowerShellInline
+                        code={`-gt`}
+                    />, <PowerShellInline code={`-lt`} />).
                 </Fragment>
             </WebPage>
         </Fragment>

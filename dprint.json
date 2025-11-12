@@ -5,7 +5,7 @@
   ],
   "indentWidth": 4,
   "json": {},
-  "lineWidth": 120,
+  "lineWidth": 100,
   "malva": {},
   "markdown": {},
   "markup": {
@@ -24,7 +24,7 @@
     "mathml.selfClosing": null,
     "maxAttrsPerLine": 2,
     "preferAttrsSingleLine": false,
-    "printWidth": 120,
+    "printWidth": 100,
     "quotes": "double",
     "scriptFormatter": "dprint",
     "scriptIndent": false,

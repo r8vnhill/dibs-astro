@@ -42,3 +42,13 @@ This repo uses Husky with lint-staged to automatically format only staged files 
 - Troubleshooting: If hooks don’t run, execute `pnpm run prepare` to (re)install Husky.
 
 Recommended: For large repos, formatting only staged files keeps commits quick. Our lint-staged config lives in `package.json` under the `lint-staged` key.
+
+## Commit messages
+
+Please write commit messages in English.
+
+- Use Conventional Commits (e.g., `feat(scope): short description`, `fix(scope): short description`, `chore(docs): ...`).
+- Prefix messages with a gitmoji when relevant (e.g., `📝 chore(docs): ...`).
+- Keep the subject line short (<= 72 chars) and add a brief bullet-list body if more context is needed.
+
+This repo enforces formatting and CI checks; keeping commit messages consistent and in English helps contributors, CI systems, and automated changelog tools.
