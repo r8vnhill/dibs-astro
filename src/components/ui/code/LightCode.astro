@@ -83,10 +83,14 @@ const html = await highlightToHtml({
 
   /* Highlighted lines */
   pre.has-highlighted .line.highlighted {
-    background-color: color-mix(in oklab, var(--muted), transparent 70%);
+    background-color: var(
+      --code-line-highlight-bg,
+      color-mix(in oklab, var(--muted), transparent 70%)
+    );
+    border-left: 4px solid var(--code-line-highlight-border, transparent);
     transition:
       background-color 0.2s ease,
-      box-shadow 0.2s ease;
+      border-color 0.2s ease;
   }
   pre.has-highlighted .line.highlighted.error {
     background-color: color-mix(in oklab, var(--error), transparent 88%);
@@ -117,6 +121,8 @@ const html = await highlightToHtml({
 
     --diff-gutter-w: 1rem;
     --diff-gutter-fg: color-mix(in oklab, currentColor 55%, transparent 45%);
+    --code-line-highlight-bg: color-mix(in oklab, var(--primary) 18%, transparent 82%);
+    --code-line-highlight-border: color-mix(in oklab, var(--primary), transparent 55%);
   }
 
   pre.has-diff .line {

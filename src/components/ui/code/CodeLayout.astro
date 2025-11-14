@@ -9,6 +9,7 @@ import {
     transformerNotationDiff,
     transformerNotationErrorLevel,
     transformerNotationFocus,
+    transformerNotationHighlight,
 } from "@shikijs/transformers";
 import type { ShikiTransformer } from "shiki";
 import type { availableLanguages } from "~/lib/shiki/highlighter";
@@ -94,6 +95,7 @@ const normalizedCode = normalizeIndentation(code);
 const commonTransformers = [
     transformerColorizedBrackets(),
     transformerNotationFocus(),
+    transformerNotationHighlight(),
     transformerNotationErrorLevel(),
     transformerNotationDiff(),
 ];
