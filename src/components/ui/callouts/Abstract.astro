@@ -1,129 +1,18 @@
 ---
 /**
- * A themed, accessible callout/admonition block for “Abstract” sections.
+ * A themed, accessible callout/admonition block for "Abstract" sections.
  */
-
-import CalloutHeading from "./CalloutHeading.astro";
+import CalloutShell from "./CalloutShell.astro";
+import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
-import Brain from "~/assets/img/icons/brain.svg";
 
-type AbstractProps = BaseCalloutProps;
+const variant = "abstract" as const;
+const variantConfig = calloutVariants[variant];
 
-/* -------------------- Resolve props & defaults -------------------- */
-const {
-  title = "Abstract",
-  icon: Icon = Brain,
-  headingLevel = "h3",
-  headingId,
-  class: className = "",
-  headingClass = "",
-  iconClass = "",
-  ariaLabel,
-  compact = false,
-  prose = true,
-  // Any other attributes will be filtered and forwarded to <section>
-  ...rest
-} = Astro.props as AbstractProps & Record<string, any>;
-
-/**
- * Stable id for the heading so the region can reference it via aria-labelledby.
- * If an id was provided, use it; otherwise generate one.
- */
-const resolvedHeadingId = headingId ?? `abstract-${crypto.randomUUID()}`;
-
-/**
- * Forward only safe/expected attributes to the <section> (e.g., id, data-*, aria-*).
- * This keeps the component flexible without opening it to accidental attribute leakage.
- */
-const passthrough = Object.fromEntries(
-  Object.entries(rest).filter(
-    ([k]) => k === "id" || k.startsWith("data-") || k.startsWith("aria-")
-  )
-);
+const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
+  Astro.props as BaseCalloutProps & Record<string, any>;
 ---
-
-<section
-  class:list={[
-    "abstract relative rounded-md shadow-sm",
-    compact ? "px-4 py-3" : "px-5 py-4",
-    className,
-  ]}
-  style={{
-    // Pass resolved colors down to the child heading through CSS variables.
-    "--callout-title-color": "var(--abstract__title-color)",
-    "--callout-icon-color": "var(--abstract__title-color)",
-  }}
-  role="region"
-  aria-labelledby={resolvedHeadingId}
-  {...ariaLabel ? { "aria-label": ariaLabel } : {}}
-  {...passthrough}
->
-  <!-- Heading row (icon + title). -->
-  <CalloutHeading
-    Icon={Icon}
-    heading={title}
-    headingLevel={headingLevel}
-    headingId={resolvedHeadingId}
-    class={`abstract__title ${headingClass}`}
-    iconClass={`abstract__icon ${iconClass}`}
-  />
-
-  <!-- Body content. Enable `prose` when you want Typography styles. -->
-  <div
-    class:list={[
-      "abstract__body",
-      prose &&
-        "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed",
-    ]}
-  >
-    <slot />
-  </div>
-</section>
-
-<style scoped>
-  /* ------------------------------------------------------------
-     Local defaults for the Abstract color tokens.
-     Override these globally in your theme to align with your palette.
-     ------------------------------------------------------------ */
-  :root {
-    --abstract__bg-color: #fdf6ec; /* warm subtle background */
-    --abstract__border-color: #f6ad55; /* soft amber/orange accent */
-    --abstract__title-color: #c05621; /* deeper, legible title/icon color */
-  }
-
-  /* If you manage dark mode by toggling `.dark` on :root, these serve as local defaults. */
-  :root.dark {
-    --abstract__bg-color: #2b1a11;
-    --abstract__border-color: #f6ad55;
-    --abstract__title-color: #fbd38d;
-  }
-
-  /* ------------------------------------------------------------
-     Base container styles (left border accent)
-     ------------------------------------------------------------ */
-  .abstract {
-    padding: 1rem 1.25rem;
-    border-radius: 0.375rem;
-    margin: 1rem 0;
-    background-color: var(--abstract__bg-color);
-    border-left: 4px solid var(--abstract__border-color);
-  }
-
-  /* NOTE:
-     The rule below assumes you define *-dark variables globally (e.g., in a tokens.css).
-     If you rely entirely on :root.dark overrides above, you can remove this block. */
-  :global([data-theme="dark"]) :where(.abstract) {
-    background-color: var(--abstract__bg-color-dark);
-    border-left-color: var(--abstract__border-color-dark);
-  }
-
-  /* ------------------------------------------------------------
-     Body rhythm adjustments
-     ------------------------------------------------------------ */
-  .abstract__body :where(p:first-child) {
-    margin-top: 0;
-  }
-  .abstract__body :where(p:last-child) {
-    margin-bottom: 0;
-  }
-</style>
+<CalloutShell variant={variant} title={title} icon={icon} {...rest}>
+  <slot name="title">{title}</slot>
+  <slot />
+</CalloutShell>

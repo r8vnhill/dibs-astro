@@ -10,10 +10,10 @@
  */
 
 export interface Props {
-  /**
-   * Optional Tailwind CSS classes for additional layout customization.
-   */
-  class?: string;
+    /**
+     * Optional Tailwind CSS classes for additional layout customization.
+     */
+    class?: string;
 }
 
 // Destructure props with alias for Tailwind compatibility
@@ -22,15 +22,15 @@ const { class: className } = Astro.props;
 
 <!-- Responsive grid container -->
 <div
-  class:list={[
-    "grid",
-    "grid-cols-1",
-    "md:grid-cols-2",
-    "gap-8",
-    "my-8",
-    className,
-  ]}
+    class:list={[
+        "grid",
+        "grid-cols-1",
+        "md:grid-cols-2",
+        "gap-8",
+        "my-8",
+        className,
+    ]}
 >
-  <!-- Render nested content, typically <Pros /> and <Cons /> -->
-  <slot />
+    <!-- Render nested content, typically <Pros /> and <Cons /> -->
+    <slot />
 </div>

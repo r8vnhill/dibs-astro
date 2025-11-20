@@ -12,35 +12,33 @@ import ContentBlock from "./ContentBlock.astro";
 import { blockVariants } from "./shared";
 
 export interface Props {
-  /**
-   * Optional custom title for the section.
-   */
-  title?: string;
-  /**
-   * Fallback title if no custom title is provided.
-   * Defaults to "Limitaciones".
-   */
-  defaultTitle?: string;
-  /**
-   * Additional Tailwind CSS classes to apply to the outer section.
-   */
-  class?: string;
+    /**
+     * Optional custom title for the section.
+     */
+    title?: string;
+    /**
+     * Fallback title if no custom title is provided.
+     * Defaults to "Limitaciones".
+     */
+    defaultTitle?: string;
+    /**
+     * Additional Tailwind CSS classes to apply to the outer section.
+     */
+    class?: string;
 }
 
 // Extract props with fallback values
-const { title, defaultTitle = "Limitaciones", class: className } = Astro.props as Props;
-
-// Define the variant key for the "cons" block
-const variant = "cons";
+const variant = "cons" as const;
+const variantConfig = blockVariants[variant];
+const { title, defaultTitle = variantConfig.defaultTitle, class: className } = Astro.props as Props;
 ---
 
 <!-- Renders the shared ContentBlock with styling specific to the "cons" variant. -->
 <ContentBlock
-  title={title}
-  defaultTitle={defaultTitle}
-  class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
-  titleClass={blockVariants[variant].title}
+    {title} {defaultTitle}
+    class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
+    titleClass={blockVariants[variant].title}
 >
-  <!-- Slot for injecting section content -->
-  <slot />
+    <!-- Slot for injecting section content -->
+    <slot />
 </ContentBlock>

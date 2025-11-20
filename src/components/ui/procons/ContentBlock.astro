@@ -6,55 +6,69 @@
  * It is used as a wrapper for modular content blocks such as "Pros" or "Cons".
  */
 export interface Props {
-  /**
-   * Custom title for the section (overrides defaultTitle if provided).
-   */
-  title?: string | undefined;
-  /**
-   * Fallback title when no custom title is specified.
-   */
-  defaultTitle?: string | undefined;
-  /**
-   * Additional Tailwind CSS classes for the section container.
-   */
-  class?: string | undefined;
-  /**
-   * Additional Tailwind CSS classes for the title element.
-   */
-  titleClass?: string | undefined;
+    /**
+     * Custom title for the section (overrides defaultTitle if provided).
+     */
+    title?: string | undefined;
+    /**
+     * Fallback title when no custom title is specified.
+     */
+    defaultTitle?: string | undefined;
+    /**
+     * Additional Tailwind CSS classes for the section container.
+     */
+    class?: string | undefined;
+    /**
+     * Additional Tailwind CSS classes for the title element.
+     */
+    titleClass?: string | undefined;
+    /**
+     * Custom id for the section; falls back to a slugified title.
+     */
+    id?: string | undefined;
 }
 
 // Destructure and apply default values from incoming props
 const {
-  title,
-  defaultTitle = "Sin título", // Default title when `title` is not provided
-  class: className, // Optional custom container styles
-  titleClass = "", // Optional custom title styles
-} = Astro.props;
+    title,
+    defaultTitle = "Sin título",
+    class: className,
+    titleClass = "",
+    id,
+} = Astro.props as Props;
 
 // Choose between provided title or fallback
 const resolvedTitle = title ?? defaultTitle;
+const slugify = (value: string) =>
+    value
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+const sectionId = (id ?? slugify(resolvedTitle)) || "section";
+const headingId = `${sectionId}__title`;
 ---
 
 <!-- Main section wrapper. -->
 <section
-  class:list={["pt-0", "pb-4", "px-4", "flex", "flex-col", "gap-2", className]}
-  aria-label={resolvedTitle}
-  id={resolvedTitle.toLowerCase().replace(/\s+/g, "-")}
+    class:list={["pt-0", "pb-4", "px-4", "flex", "flex-col", "gap-2", className]}
+    aria-labelledby={headingId}
+    id={sectionId}
 >
-  <!-- Title block with responsive size and tracking, customizable via `titleClass` -->
-  <div
-    class:list={[
-      "text-lg",
-      "sm:text-xl",
-      "font-semibold",
-      "tracking-tight",
-      titleClass,
-    ]}
-  >
-    {resolvedTitle}
-  </div>
+    <h3
+        id={headingId}
+        class:list={[
+            "text-lg",
+            "sm:text-xl",
+            "font-semibold",
+            "tracking-tight",
+            titleClass,
+        ]}
+    >
+        {resolvedTitle}
+    </h3>
 
-  <!-- Content slot: allows consumers of this component to inject arbitrary HTML -->
-  <slot />
+    <!-- Content slot: allows consumers of this component to inject arbitrary HTML -->
+    <slot />
 </section>

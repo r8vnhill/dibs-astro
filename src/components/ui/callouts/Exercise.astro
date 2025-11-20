@@ -1,152 +1,66 @@
 ---
 import * as Icons from "~/assets/img/icons";
 import { Info, Note } from ".";
-import CalloutHeading from "./CalloutHeading.astro";
+import CalloutShell from "./CalloutShell.astro";
 import Hints from "./Hints.astro";
-import type { BaseCalloutProps } from "./shared";
 import Solution from "./Solution.astro";
 import Tip from "./Tip.astro";
+import { calloutVariants } from "./shared";
+import type { BaseCalloutProps } from "./shared";
 
 type ExerciseProps = BaseCalloutProps;
 
-/* -------------------- Resolve props & defaults -------------------- */
-const {
-    title = "Ejercicio",
-    icon: Icon = Icons.PencilLine,
-    headingLevel = "h3",
-    headingId,
-    class: className = "",
-    headingClass = "",
-    iconClass = "",
-    ariaLabel,
-    compact = false,
-    prose = true,
-    // Any other attributes will be filtered and forwarded to <section>
-    ...rest
-} = Astro.props as ExerciseProps & Record<string, any>;
+const variant = "exercise" as const;
+const variantConfig = calloutVariants[variant];
 
-const resolvedHeadingId = headingId ?? `exercise-${crypto.randomUUID()}`;
-
-/**
- * Forward only safe/expected attributes to the <section> (e.g., id, data-*, aria-*).
- * This keeps the component flexible without opening it to accidental attribute leakage.
- */
-const passthrough = Object.fromEntries(
-    Object.entries(rest).filter(
-        ([k]) => k === "id" || k.startsWith("data-") || k.startsWith("aria-"),
-    ),
-);
+const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
+  Astro.props as ExerciseProps & Record<string, any>;
 ---
+<CalloutShell variant={variant} title={title} icon={icon} {...rest}>
+  <Fragment slot="title">
+    Ejercicio: <slot name="title">{title}</slot>
+  </Fragment>
 
-<section
-    class:list={[
-        "exercise relative rounded-md shadow-sm",
-        compact ? "px-4 py-3" : "px-5 py-4",
-        className,
-    ]}
-    style={{
-        // Pass resolved colors down to the child heading through CSS variables.
-        "--callout-title-color": "var(--exercise__title-color)",
-        "--callout-icon-color": "var(--exercise__title-color)",
-    }}
-    role="region" aria-labelledby={resolvedHeadingId}
-    {...ariaLabel ? { "aria-label": ariaLabel } : {}} {...passthrough}
->
-    <!-- Heading row (icon + title). -->
-    <CalloutHeading
-        {Icon} heading={title}
-        {headingLevel} headingId={resolvedHeadingId}
-        class={`exercise__title ${headingClass}`} iconClass={`exercise__icon ${iconClass}`}
-    >
-        {
-            Astro.slots.title || title ? (
-                <Fragment>
-                    Ejercicio: <slot name="title">{title}</slot>
-                </Fragment>
-            ) : <Fragment>Ejercicio</Fragment>
-        }
-    </CalloutHeading>
+  {
+    Astro.slots.requirements && (
+      <Tip headingLevel="h3" icon={Icons.Target}>
+        <span slot="title">Requisitos</span>
 
-    <!-- Body content. Enable `prose` when you want Typography styles. -->
-    <div
-        class:list={[
-            "exercise__body",
-            prose
-            && "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed",
-        ]}
-    >
-        {
-            Astro.slots.requirements && (
-                <Tip headingLevel="h3" icon={Icons.Target}>
-                    <span slot="title">Requisitos</span>
+        <slot name="requirements" />
+      </Tip>
+    )
+  }
+  {
+    Astro.slots.notes && (
+      <Note headingLevel="h3">
+        <span slot="title">Notas</span>
 
-                    <slot name="requirements" />
-                </Tip>
-            )
-        }
-        {
-            Astro.slots.notes && (
-                <Note headingLevel="h3">
-                    <span slot="title">Notas</span>
+        <slot name="notes" />
+      </Note>
+    )
+  }
+  <slot />
+  {
+    Astro.slots.use && (
+      <Info headingLevel="h3" icon={Icons.PlayCircle}>
+        <span slot="title">Uso esperado</span>
 
-                    <slot name="notes" />
-                </Note>
-            )
-        }
-        <slot />
-        {
-            Astro.slots.use && (
-                <Info headingLevel="h3" icon={Icons.PlayCircle}>
-                    <span slot="title">Uso esperado</span>
-
-                    <slot name="use" />
-                </Info>
-            )
-        }
-        {
-            Astro.slots.hints && (
-                <Hints headingLevel="h3">
-                    <slot name="hints" />
-                </Hints>
-            )
-        }
-        {
-            Astro.slots.solution && (
-                <Solution headingLevel="h3">
-                    <slot name="solution" />
-                </Solution>
-            )
-        }
-    </div>
-</section>
-
-<style scoped>
-    /* ------------------------------------------------------------
-       Base container styles (left border accent)
-       ------------------------------------------------------------ */
-    .exercise {
-        padding: 1rem 1.25rem;
-        border-radius: 0.375rem;
-        margin: 1rem 0;
-        background-color: var(--exercise__bg-color);
-        border-left: 4px solid var(--exercise__border-color);
-    }
-
-    /* exercise:
-       The rule below assumes you define *-dark variables globally (e.g., in a tokens.css).
-       If you rely entirely on :root.dark overrides above, you can remove this block. */
-    :global([data-theme="dark"]) :where(.exercise) {
-        background-color: var(--exercise__bg-color-dark);
-        border-left-color: var(--exercise__border-color-dark);
-    }
-
-    /* ------------------------------------------------------------
-       Body rhythm adjustments
-       ------------------------------------------------------------ */
-    .exercise__body :where(p:first-child) {
-        margin-top: 0;
-    }
-    .exercise__body :where(p:last-child) {
-        margin-bottom: 0;
-    }
-</style>
+        <slot name="use" />
+      </Info>
+    )
+  }
+  {
+    Astro.slots.hints && (
+      <Hints headingLevel="h3">
+        <slot name="hints" />
+      </Hints>
+    )
+  }
+  {
+    Astro.slots.solution && (
+      <Solution headingLevel="h3">
+        <slot name="solution" />
+      </Solution>
+    )
+  }
+</CalloutShell>

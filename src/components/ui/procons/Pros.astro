@@ -13,42 +13,33 @@
 import ContentBlock from "./ContentBlock.astro";
 import { blockVariants } from "./shared";
 
-/**
- * Props interface for the Pros block.
- */
 export interface Props {
-  /**
-   * Optional custom title to override the default.
-   */
-  title?: string;
-  /**
-   * Fallback title when `title` is not provided.
-   */
-  defaultTitle?: string;
-  /**
-   * Additional Tailwind CSS classes for the container.
-   */
-  class?: string;
+    /**
+     * Optional custom title to override the default.
+     */
+    title?: string;
+    /**
+     * Fallback title when `title` is not provided.
+     */
+    defaultTitle?: string;
+    /**
+     * Additional Tailwind CSS classes for the container.
+     */
+    class?: string;
 }
 
 // Destructure Astro props and assign default values.
-const {
-  title,
-  defaultTitle = "Beneficios",
-  class: className,
-} = Astro.props as Props;
-
-// Select the "pros" style variant from shared config
-const variant = "pros";
+const variant = "pros" as const;
+const variantConfig = blockVariants[variant];
+const { title, defaultTitle = variantConfig.defaultTitle, class: className } = Astro.props as Props;
 ---
 
 <!-- Render a reusable ContentBlock component. -->
 <ContentBlock
-  title={title}
-  defaultTitle={defaultTitle}
-  class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
-  titleClass={blockVariants[variant].title}
+    {title} {defaultTitle}
+    class:list={["border-l-4", "pl-4", blockVariants[variant].border, className]}
+    titleClass={blockVariants[variant].title}
 >
-  <!-- Render the section content -->
-  <slot />
+    <!-- Render the section content -->
+    <slot />
 </ContentBlock>

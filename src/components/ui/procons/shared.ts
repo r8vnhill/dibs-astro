@@ -14,14 +14,14 @@
  * duplicating hardcoded colors or labels.
  */
 export const blockVariants = {
-  pros: {
-    border: "border-green-500", // Green border for positive items
-    title: "text-green-700 dark:text-green-300", // Green title (adaptive to light/dark mode)
-    defaultTitle: "Beneficios", // Default heading for pros section
-  },
-  cons: {
-    border: "border-red-500", // Red border for negative items
-    title: "text-red-700 dark:text-red-300", // Red title (adaptive to light/dark mode)
-    defaultTitle: "Limitaciones", // Default heading for cons section
-  },
+    pros: {
+        border: "border-green-500", // Green border for positive items
+        title: "text-green-700 dark:text-green-300", // Green title (adaptive to light/dark mode)
+        defaultTitle: "Qué ganamos", // Default heading for pros section
+    },
+    cons: {
+        border: "border-red-500", // Red border for negative items
+        title: "text-red-700 dark:text-red-300", // Red title (adaptive to light/dark mode)
+        defaultTitle: "En qué topamos", // Default heading for cons section
+    },
 } as const;
