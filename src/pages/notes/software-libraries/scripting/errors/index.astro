@@ -382,7 +382,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             Set-StrictMode -Version 3.0
 
-            $cmds = Get-Command -Name $Name -CommandType Application -ErrorAction Stop
+            $cmds = @(Get-Command -Name $Name -CommandType Application -ErrorAction Stop)
             if ($cmds.Count -gt 1) {
                 Write-Warning ("Multiple executables named '{0}' were found. Using: {1}" -f 
                     $Name, $cmds[0].Source)
@@ -441,6 +441,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     devuelto es <PowerShellInline
                         code="[System.Management.Automation.CommandInfo]"
                     />.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsCurly}>
+                    <B>Forzar arreglo con <PowerShellInline code="@()" />:</B> envolver la
+                    llamada a <PowerShellInline code="Get-Command" /> en
+                    <PowerShellInline code="@(...)" /> garantiza que el resultado sea siempre un
+                    arreglo (0, 1 o más elementos). De este modo <PowerShellInline
+                        code=".Count" /> y la indexación (<PowerShellInline code="$cmds[0]" />)
+                    funcionan de forma consistente sin errores sorpresa cuando solo hay un
+                    candidato o ninguno.
                 </ListItem>
 
                 <ListItem icon={icons.LinkSimple}>

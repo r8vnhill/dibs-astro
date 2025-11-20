@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Important, Note } from "~/components/ui/callouts";
+import { Abstract, Explanation, Important, Info, Note } from "~/components/ui/callouts";
 import Question from "~/components/ui/callouts/Question.astro";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
@@ -22,14 +22,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout title="Laboratorio 1: GitLab — crear repos y remotos" description="...">
     <Abstract>
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "...",
-                ],
-            }}
-        />
+        <P>
+            Este laboratorio es más largo y denso que los anteriores porque <B>condensa varias
+                lecciones</B>: retomamos validaciones, salida tipada y herramientas de línea de
+            comandos para aplicarlas en un flujo real de GitLab. La idea es practicar cómo se usan
+            estos patrones juntos, no solo de forma aislada.
+        </P>
+        <P>
+            Automatizaremos la creación de proyectos con la CLI <PowerShellInline code="glab" />,
+            normalizaremos nombres válidos para GitLab, verificaremos repos locales y configuraremos
+            remotos de manera idempotente. Cerraremos con un script orquestador que une todo el
+            pipeline y te deja el repo listo para hacer commit y push manualmente, con soporte de
+            <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> para ensayar
+            sin riesgos.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-intro">
@@ -41,88 +47,104 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En este curso utilizaremos <B href="https://gitlab.com">GitLab</B>, una plataforma similar a GitHub pero con
-            un enfoque más completo en integración continua (CI/CD), gestión de dependencias y publicación de paquetes.
-            Es ampliamente usada en entornos profesionales, especialmente cuando las organizaciones mantienen su propia
-            infraestructura de repositorios.
+            En este curso trabajaremos con <B href="https://gitlab.com">GitLab</B>. Es probable que
+            ya tengas familiaridad con GitHub, pero GitLab presenta un modelo distinto: integra
+            repositorios, CI/CD y registro de paquetes en un mismo espacio. Esta integración es útil
+            para practicar el flujo completo de creación y publicación de bibliotecas de software
+            sin depender de múltiples servicios.
         </P>
 
         <P>
-            Con GitLab practicaremos el flujo completo de trabajo:
-            <B>crear, clonar, organizar, versionar y publicar</B> bibliotecas de software. Más adelante, usaremos su
-            <I>Package Registry</I> para distribuir nuestras bibliotecas dentro de pipelines automatizados.
+            Durante las unidades veremos cómo usar GitLab para <B>crear, versionar y publicar</B>
+            bibliotecas. Más adelante aprovecharemos su <I>Package Registry</I> para distribuir
+            nuestras bibliotecas, aunque en este curso nos concentraremos en la <B>orquestación
+                local</B> (scripts, Gradle) y no llegaremos a implementar integración continua en
+            GitLab.
         </P>
 
         <ProCons>
-            <Pros title="Ventajas">
+            <Pros title="Qué ganamos">
                 <List>
                     <ListItem icon={icons.ShieldCheck}>
-                        <B>CI/CD integrado</B>: GitLab incluye un sistema de pipelines nativo (<I>GitLab CI</I>) sin
-                        depender de servicios externos, ideal para automatizar pruebas, compilaciones y despliegues.
-                        GitHub ofrece una solución similar con <I>GitHub Actions</I>, pero con una configuración
-                        separada en YAML y límites distintos.
+                        <B>CI/CD integrado</B>: GitLab incorpora su sistema de integración continua
+                        (<I>GitLab CI/CD</I>) dentro del propio repositorio. El modelo es similar a
+                        <I>GitHub Actions</I>, pero en GitLab forma parte nativa del proyecto y
+                        suele requerir menos servicios externos. En este curso no trabajaremos con
+                        GitLab CI/CD, pero el modelo es útil para contexto futuro.
                     </ListItem>
 
                     <ListItem icon={icons.Package}>
-                        <B>Registro de paquetes unificado</B>: permite publicar y consumir bibliotecas o imágenes de
-                        contenedores en el mismo entorno, simplificando el flujo <I>build → test → publish</I>. En
-                        GitHub, esta función está separada en <I>GitHub Packages</I>.
+                        <B>Registro de paquetes en el mismo entorno</B>: permite publicar y consumir
+                        artefactos (bibliotecas, contenedores, etc.) sin salir de la plataforma. En
+                        GitHub esto existe como <I>GitHub Packages</I>, aunque opera como un
+                        servicio separado.
                     </ListItem>
 
                     <ListItem icon={icons.Lock}>
-                        <B>Instalación autogestionada</B>: muchas organizaciones lo implementan en servidores propios,
-                        facilitando el cumplimiento de políticas de seguridad y confidencialidad. GitHub ofrece una
-                        alternativa con
-                        <I>Enterprise Server</I>, pero bajo licenciamiento específico.
+                        <B>Opciones autogestionadas</B>: muchas organizaciones utilizan GitLab en
+                        servidores propios, lo que facilita cumplir requisitos internos de
+                        seguridad. GitHub también ofrece una variante empresarial (pagada), pero con
+                        un modelo diferente de distribución.
                     </ListItem>
 
                     <ListItem icon={icons.Users}>
-                        <B>Gestión avanzada de roles y grupos</B>: ofrece jerarquías y permisos más detallados,
-                        especialmente útiles en equipos grandes o con múltiples proyectos relacionados.
+                        <B>Modelo de grupos y permisos detallado</B>: GitLab organiza repositorios
+                        en grupos y subgrupos, lo que facilita estructurar proyectos relacionados.
+                        GitHub ofrece organizaciones, pero con un modelo distinto de jerarquía.
                     </ListItem>
 
                     <ListItem icon={icons.Terminal}>
-                        <B>Automatización por línea de comandos</B> mediante <PowerShellInline code="glab" />: la CLI
-                        oficial de GitLab permite crear, clonar o administrar repositorios sin usar la interfaz web.
-                        GitHub cuenta con su propia CLI (<PowerShellInline code="gh" />) con fines similares.
+                        <B>CLI oficial</B> mediante <PowerShellInline code="glab" />: permite crear
+                        y gestionar proyectos desde la terminal. GitHub cuenta con <PowerShellInline
+                            code="gh"
+                        />, con un alcance comparable.
                     </ListItem>
                 </List>
             </Pros>
 
-            <Cons>
+            <Cons title="En qué topamos...">
                 <List>
                     <ListItem icon={icons.CloudSlash}>
-                        <B>Menor comunidad pública</B>: GitHub sigue siendo el principal espacio de colaboración
-                        abierta, por lo que los proyectos en GitLab pueden tener menor visibilidad y participación al
-                        inicio.<FootnoteRef index={1} />
+                        <B>Menor visibilidad pública</B>: GitHub sigue siendo el espacio
+                        predominante para proyectos abiertos, por lo que los repositorios alojados
+                        en GitLab suelen tener menos exposición inicial.
+                        <FootnoteRef index={1} />
                     </ListItem>
 
                     <ListItem icon={icons.Wrench}>
-                        <B>Curva de aprendizaje más alta</B>: la interfaz y las opciones de CI/CD ofrecen mayor control,
-                        pero también más complejidad para quienes comienzan.
+                        <B>Flujos de CI/CD más detallados</B>: la configuración de integración
+                        continua ofrece bastante control, pero esto también implica una mayor
+                        cantidad de opciones al comienzo si vienes desde GitHub. Aunque no veremos
+                        GitLab CI/CD en este curso, es útil tenerlo presente para proyectos futuros.
                     </ListItem>
 
                     <ListItem icon={icons.Database}>
-                        <B>Límites más estrictos en la nube</B>: la versión gratuita de GitLab Cloud tiene menor espacio
-                        de almacenamiento y minutos de CI que GitHub.
+                        <B>Restricciones en la nube gratuita</B>: GitLab Cloud incluye límites de
+                        almacenamiento y de minutos de CI que pueden sentirse más estrictos que los
+                        de GitHub en su capa gratuita.
                     </ListItem>
 
                     <ListItem icon={icons.Student}>
-                        <B>Sin equivalente directo a GitHub Classroom</B>: GitLab no incluye una herramienta integrada
-                        para gestionar tareas o repositorios de estudiantes. Aunque pueden configurarse soluciones
-                        alternativas con grupos y scripts, <I>GitHub Classroom</I> sigue siendo más conveniente en
-                        contextos educativos.
+                        <B>Sin equivalente directo a GitHub Classroom</B>: GitLab no incluye un
+                        sistema integrado para gestionar entregas de estudiantes. Se pueden
+                        construir alternativas, pero requieren más trabajo manual.
                     </ListItem>
                 </List>
             </Cons>
         </ProCons>
 
         <P>
-            Hoy aprenderemos a:
+            En esta primera parte aprenderemos a:
             <List>
-                <ListItem icon={icons.FolderPlus}>Crear repositorios remotos automáticamente.</ListItem>
-                <ListItem icon={icons.FolderOpen}>Inicializar proyectos locales y enlazarlos con su remoto.</ListItem>
-                <ListItem icon={icons.Play}>Automatizar ambos pasos en un solo script.</ListItem>
+                <ListItem icon={icons.FolderPlus}>
+                    Crear repositorios remotos automáticamente.
+                </ListItem>
+                <ListItem icon={icons.FolderOpen}>
+                    Inicializar proyectos locales y enlazarlos con su remoto.
+                </ListItem>
+                <ListItem icon={icons.Play}>
+                    Automatizar ambos pasos con un script para agilizar el flujo.
+                </ListItem>
             </List>
         </P>
     </NotesSection>
@@ -139,7 +161,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Requisitos previos</span>
 
             <P>
-                Antes de comenzar, asegúrate de haber iniciado sesión en GitLab desde la línea de comandos con:
+                Antes de comenzar, asegúrate de haber iniciado sesión en GitLab desde la línea de
+                comandos con:
             </P>
 
             <PowerShellBlock code={`glab auth login`}>
@@ -149,63 +172,204 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Important>
 
         <P>
-            Todos los scripts son idempotentes: puedes ejecutarlos varias veces sin generar duplicados ni
-            inconsistencias.
+            Todos los scripts son idempotentes: puedes ejecutarlos varias veces sin generar
+            duplicados ni inconsistencias.
         </P>
 
-        <NotesSection id="...">
-            <Heading headingLevel="h3" Icon={null}
+        <NotesSection id="h3-test-git-repository">
+            <Heading
+                headingLevel="h3" Icon={icons.MagnifyingGlass}
                 slot="heading"
             >
-                ...
+                Probar si una carpeta es un repositorio Git
             </Heading>
-        
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "Definir id",
-                        "Definir el título y su ícono",
-                        "Agregar texto 'al rededor' del código para contextualizar",
-                        "Reemplazar placeholders como 'path/to/...' por valores reales",
-                        `...`,
-                    ],
-                }}
-            />
 
-            <PowerShellBlock code={`
-                #Requires -Version 7.5
-                param(
-                    [Parameter(Mandatory)]
-                    [ValidateNotNullOrWhiteSpace()]
-                    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
-                    [string] $Path
-                )
+            <P>
+                Antes de crear un remoto o asignar <Mono>origin</Mono>, conviene verificar si la
+                carpeta indicada <I>ya es</I> un repositorio Git. Este script actúa como <B
+                >comprobación preliminar idempotente</B>: nunca modifica la carpeta; únicamente
+                inspecciona su estado usando Git de forma segura. Así evitamos intentar leer o
+                configurar remotos donde todavía no existe <Mono>.git/</Mono>, y podemos decidir
+                condicionalmente qué otros scripts ejecutar.
+            </P>
 
-                $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+            <P>
+                La lógica retorna un objeto con <Mono>Status</Mono> (<Mono>IsRepository</Mono> o
+                <Mono>NotRepository</Mono>) y posible <Mono>Error</Mono>. Usa <PowerShellInline
+                    code="git -C <ruta> rev-parse --is-inside-work-tree"
+                />
+                para comprobar sin cambiar el directorio actual y captura excepciones, devolviendo
+                un resultado estable sin romper la orquestación de scripts mayores.
+            </P>
 
-                $repoPath = $PSCmdlet.GetResolvedProviderPathFromPSPath($Path)
+            <PowerShellBlock
+                code={`
+                    #Requires -Version 7.5
+                    [CmdletBinding()]
+                    param(
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                        [string] $Path
+                    )
 
-                try {
-                    Write-Verbose "Checking if '$repoPath' is inside a Git work tree"
-                    & $invoker git -C $repoPath rev-parse --is-inside-work-tree | Out-Null
-                    $true
-                }
-                catch {
-                    Write-Verbose "'$repoPath' is not inside a Git work tree"
-                    $false
-                }
-            `}>
-                <Fragment slot="title">...</Fragment>
-                <Fragment slot="footer">...</Fragment>
-                <Fragment slot="source">path/to/script.ps1</Fragment>
+                    Set-StrictMode -Version 3.0
+
+                    $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
+
+                    $result = [PSCustomObject]@{
+                        Status = 'Pending'
+                        Error  = $null
+                    }
+
+                    try {
+                        $repoPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+                        & $invoker git -C $repoPath rev-parse --is-inside-work-tree | Out-Null
+                        $result.Status = 'IsRepository'
+                    }
+                    catch {
+                        $result.Status = 'NotRepository'
+                        $result.Error = $_
+                    }
+
+                    $result
+                `}
+            >
+                <Fragment slot="title">Test-GitRepository.ps1</Fragment>
+                <span slot="footer">
+                    Devuelve objeto con <Mono>Status</Mono>: <Mono>IsRepository</Mono> o <Mono
+                    >NotRepository</Mono>.
+                </span>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="git/Test-GitRepository.ps1"
+                />
             </PowerShellBlock>
 
             <Explanation headingLevel="h4">
+                <List>
+                    <ListItem icon={icons.Terminal}>
+                        <B>Chequeo nativo</B>: <PowerShellInline
+                            code="git -C <ruta> rev-parse --is-inside-work-tree"
+                        /> verifica el estado sin cambiar el directorio actual. Desglose del
+                        comando:
+                        <List>
+                            <ListItem icon={icons.TextT}>
+                                <PowerShellInline code={`git`} />: el ejecutable de Git que invoca
+                                los subcomandos.
+                            </ListItem>
+
+                            <ListItem icon={icons.Path}>
+                                <PowerShellInline code={`-C <ruta>`} />: indica a Git que ejecute el
+                                subcomando desde la carpeta especificada sin cambiar el directorio
+                                del proceso actual.
+                            </ListItem>
+
+                            <ListItem icon={icons.Terminal}>
+                                <PowerShellInline code={`rev-parse`} />: subcomando de Git usado
+                                para obtener/parsear información interna y valores de configuración.
+                            </ListItem>
+
+                            <ListItem icon={icons.Check}>
+                                <PowerShellInline code={`--is-inside-work-tree`} />: opción que hace
+                                que <PowerShellInline code={`rev-parse`} /> devuelva "true" (por
+                                stdout) y <I>ExitCode</I> 0 cuando la ruta está dentro de un work
+                                tree; si no, el <I>ExitCode</I> será distinto de 0.
+                            </ListItem>
+                        </List>
+                    </ListItem>
+                    <ListItem icon={icons.Eye}>
+                        <B>Resolución física</B>: <PowerShellInline
+                            code="Resolve-Path -LiteralPath"
+                        /> obtiene <Mono>ProviderPath</Mono> para evitar ambigüedades y fallar
+                        temprano si la ruta es inválida.
+                    </ListItem>
+
+                    <ListItem icon={icons.MagicWand}>
+                        <B>Manejo de errores</B>: cualquier excepción asigna <Mono>Status =
+                            'NotRepository'</Mono> y preserva el detalle en <Mono>Error</Mono> para
+                        inspección posterior sin detener otros scripts.
+                    </ListItem>
+
+                    <ListItem icon={icons.Info}>
+                        <B>Salida estructurada</B>: retornar un objeto facilita componer condiciones
+                        (<PowerShellInline code="if ($result.Status -eq 'IsRepository')" />) y
+                        serializar resultados.
+                    </ListItem>
+                </List>
             </Explanation>
         </NotesSection>
 
-        <NotesSection id="h3-new-gitlab-repo">
+        <NotesSection id="h3-convert-to-valid-gitlab-name">
+            <Heading
+                headingLevel="h3" Icon={icons.Hash}
+                slot="heading"
+            >
+                Normalizar nombres para GitLab
+            </Heading>
+
+            <P>
+                GitLab exige nombres de repositorio en minúsculas, sin espacios ni caracteres
+                especiales (solo <Mono>[a-z0-9-]</Mono>). Este pequeño filtro convierte cualquier
+                entrada —por ejemplo, <Mono>"R.E.M."</Mono>— en un <I>slug</I> válido como <Mono
+                >"rem"</Mono>, y fallando en strings que no pueda convertir como <Mono
+                >"菊池ひみこ"</Mono>. Lo usamos antes de crear el remoto para evitar errores de
+                sintaxis y mantener nombres legibles y predecibles.
+            </P>
+
+            <PowerShellBlock
+                code={`
+                #Requires -Version 7.5
+                [CmdletBinding()]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $Name
+                )
+
+                Set-StrictMode -Version 3.0
+
+                $normalized = $Name.ToLowerInvariant() -replace '\\s+', '-' -replace '[^a-z0-9-]', ''
+                if ([string]::IsNullOrWhiteSpace($normalized)) {
+                    throw [System.ArgumentException]::new(
+                        "Name '$Name' is not valid after normalizing to '$normalized' (only [a-z0-9-])."
+                    )
+                }
+
+                $normalized
+            `}
+            >
+                <Fragment slot="title">ConvertTo-ValidGitLabName.ps1</Fragment>
+                <Fragment slot="footer">
+                    Retorna el nombre normalizado o lanza excepción si el resultado está vacío.
+                </Fragment>
+                <DibsSourceLink
+                    slot="source" repo="scripts"
+                    file="git/ConvertTo-ValidGitLabName.ps1"
+                />
+            </PowerShellBlock>
+
+            <Explanation headingLevel="h4">
+                <List>
+                    <ListItem icon={icons.TextT}>
+                        <B>Minúsculas invariantes</B>: <PowerShellInline
+                            code=".ToLowerInvariant()"
+                        /> convierte sin depender de la cultura local (evita casos como "I/İ" en
+                        turco).
+                    </ListItem>
+
+                    <ListItem icon={icons.Eraser}>
+                        <B>Limpieza de caracteres</B>: <PowerShellInline
+                            code="-replace '\\s+', '-'"
+                        /> cambia espacios por guiones; <PowerShellInline
+                            code="-replace '[^a-z0-9-]', ''"
+                        /> elimina todo lo que no sea alfanumérico o guion.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </NotesSection>
+
+        <NotesSection id="h3-new-gitlab-repo-status">
             <Heading
                 headingLevel="h3" Icon={icons.GitBranch}
                 slot="heading"
@@ -213,82 +377,76 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Crear repo remoto en GitLab
             </Heading>
 
-            <p class="mb-3">
-                Este script crea un repositorio remoto en GitLab usando <PowerShellInline code="glab" />, de forma
-                idempotente: primero verifica su existencia y, si ya existe, devuelve un resultado estable sin fallar.
-                Además, respeta <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> gracias a <I
-                >SupportsShouldProcess</I>, y normaliza el nombre para cumplir con las restricciones del hosting.
-            </p>
+            <P>
+                Este script crea un repositorio remoto de forma <B>idempotente</B>: primero consulta
+                si existe y, solo si no existe, intenta crearlo. Devuelve un objeto con
+                <PowerShellInline code={`Name`} />, <PowerShellInline code={`Visibility`} /> y
+                <PowerShellInline code={`Status { Created; Reason }`} />. Aquí <PowerShellInline
+                    code={`Reason`}
+                /> aprovecha la naturaleza dinámica de PowerShell: puede ser un texto, el resultado
+                devuelto por <PowerShellInline code={`glab`} /> o un <I>ErrorRecord</I> si algo
+                falla.
+            </P>
 
             <PowerShellBlock
                 code={`
-                    #Requires -Version 7.0
+                    #Requires -Version 7.5
                     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                     param(
                         [Parameter(Mandatory)]
-                        [ValidateNotNullOrEmpty()]
+                        [ValidateNotNullOrWhiteSpace()]
                         [string] $Name,
 
                         [switch] $Public
                     )
 
-                    $normalized = $Name.ToLowerInvariant() -replace '\\s+', '-' -replace '[^a-z0-9-]', ''
-                    if ([string]::IsNullOrWhiteSpace($normalized)) {
-                        throw [System.ArgumentException]::new(
-                            "Name '$Name' is not valid after normalizing to '$normalized' (only [a-z0-9-])."
-                        )
+                    Set-StrictMode -Version 3.0
+
+                    $normalized = & (Join-Path $PSScriptRoot 'ConvertTo-ValidGitLabName.ps1') -Name $Name
+                    $visibility = if ($Public.IsPresent) { 'public' } else { 'private' }
+                    $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
+
+                    $repository = [PSCustomObject]@{
+                        Name       = $normalized
+                        Visibility = $visibility
+                        Status     = [PSCustomObject]@{
+                            Created = $false
+                            Reason  = ''
+                        }
                     }
-
-                    $visibility = if ($Public) { 'public' } else { 'private' }
-
-                    # Invocador utilitario para ejecutar binarios externos y capturar ExitCode/Output.
-                    $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
 
                     try {
-                        # Idempotencia: salir en éxito si ya existe.
-                        & $invoker glab repo view $normalized | Out-Null
-                        Write-Verbose "Repository '$normalized' already exists. Not creating it again."
-                        return [pscustomobject]@{
-                            Name       = $normalized
-                            Visibility = $visibility
-                            Created    = $false
-                            Output     = @()
-                            Message    = 'Repository already exists'
-                        }
+                        & $invoker glab repo view $repository.Name | Out-Null
+                        $repository.Status.Reason = '{0} already exists on GitLab.' -f $repository.Name
                     }
                     catch {
-                        Write-Verbose "Repo '$normalized' not found. Will attempt to create it."
-                    }
+                        if ($PSCmdlet.ShouldProcess($normalized, "Create GitLab repository ($visibility)")) {
+                            try {
+                                $args = @('repo', 'create', $normalized, '--defaultBranch', 'main')
+                                if ($Public) { $args += '--public' } else { $args += '--private' }
 
-                    if ($PSCmdlet.ShouldProcess($normalized, "Create GitLab repository ($visibility)")) {
-                        try {
-                            $args = @('repo', 'create', $normalized, '--defaultBranch', 'main')
-                            if ($Public) { $args += '--public' } else { $args += '--private' }
-
-                            $result = & $invoker glab $args
-                            $out = $result.Output
-
-                            Write-Verbose ("Created '{0}' as {1}.{2}{3}" -f $normalized, $visibility, 
-                                [Environment]::NewLine, ($out -join [Environment]::NewLine))
-
-                            [pscustomobject]@{
-                                Name       = $normalized
-                                Visibility = $visibility
-                                Created    = $true
-                                Output     = $out
-                                Message    = 'Repository created'
+                                $result = & $invoker glab $args
+                                $repository.Status.Created = $true
+                                $repository.Status.Reason = $result
+                            }
+                            catch {
+                                $repository.Status.Reason = $_
                             }
                         }
-                        catch {
-                            throw [System.AggregateException]::new(
-                                "Failed to create repository '$Name' ('$normalized').", $_.Exception)
+                        else {
+                            $repository.Status.Reason = 'Creation cancelled by user.'
                         }
                     }
+
+                    $repository
                 `}
             >
-                <Fragment slot="title">
-                    Creación idempotente de repositorios en GitLab
-                </Fragment>
+                <span slot="title">New-GitLabRepository.ps1</span>
+                <span slot="footer">
+                    Devuelve objeto con <Mono>Status.Created</Mono> y <Mono>Status.Reason</Mono>
+                    (texto, salida de <Mono>glab</Mono> o <I>ErrorRecord</I>), más
+                    <Mono>Name</Mono>/<Mono>Visibility</Mono>.
+                </span>
                 <DibsSourceLink
                     slot="source" repo="scripts"
                     file="git/New-GitLabRepository.ps1"
@@ -297,337 +455,318 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <Explanation>
                 <List>
-                    <ListItem icon={icons.TextT}>
-                        <PowerShellInline code=".ToLowerInvariant()" /> evita efectos de cultura (e.g. “I/İ” en turco) y
-                        las expresiones regulares sustituyen espacios por guiones y filtran a
-                        <Mono>[a-z0-9-]</Mono>.
+                    <ListItem icon={icons.MagnifyingGlass}>
+                        <B>Idempotencia</B>: primero intenta <PowerShellInline
+                            code="glab repo view"
+                        />; si existe, solo informa; si no, procede a crear.
                     </ListItem>
 
                     <ListItem icon={icons.Terminal}>
-                        <PowerShellInline code="& $invoker glab repo view $normalized" /> consulta el repo; si devuelve
-                        <Mono>ExitCode = 0</Mono> asumimos que existe y devolvemos un objeto con <PowerShellInline
-                            code="Created = $false"
-                        />.
+                        <B>glab repo view</B>: ejecuta <PowerShellInline
+                            code="glab repo view $repository.Name"
+                        /> solo para comprobar si el proyecto ya existe en GitLab. Si el comando
+                        termina correctamente, asumimos que el repo está creado y solo rellenamos
+                        <Mono>Status.Reason</Mono>; si lanza error, caemos en el <PowerShellInline
+                            code="catch"
+                        /> y pasamos a la lógica de creación.
                     </ListItem>
 
-                    <ListItem icon={icons.Wrench}>
-                        <PowerShellInline code="& $invoker glab $args" /> ejecuta <PowerShellInline
-                            code="glab repo create"
-                        /> con
-                        <PowerShellInline code="--defaultBranch main" /> y visibilidad según <PowerShellInline
-                            code="-Public"
-                        />. El bloque está protegido con <PowerShellInline code="try" />/<PowerShellInline
-                            code="catch"
-                        /> y arroja un <I>AggregateException</I> con contexto si falla.
+                    <ListItem icon={icons.Terminal}>
+                        <B>glab repo create</B>: construye el array <PowerShellInline
+                            code="$args"
+                        /> como <PowerShellInline
+                            code="repo create $normalized --defaultBranch main"
+                        />, añadiendo <PowerShellInline code="--public" /> o <PowerShellInline
+                            code="--private"
+                        /> según el parámetro <Mono>-Public</Mono>. <Mono>--defaultBranch
+                            main</Mono> fija el nombre de la rama principal y los flags <Mono
+                        >--public</Mono>/<Mono>--private</Mono> controlan la visibilidad del
+                        proyecto en GitLab.
+                    </ListItem>
+
+                    <ListItem icon={icons.Package}>
+                        <B>Salida rica</B>: <Mono>Status.Reason</Mono> puede ser texto, la salida de
+                        <Mono>glab</Mono> o un <I>ErrorRecord</I>; útil para inspección y logs.
+                    </ListItem>
+                    <ListItem icon={icons.ShieldCheck}>
+                        <B>Confirmación opcional</B>: usa <I>ShouldProcess</I> para soportar <Mono
+                        >-WhatIf</Mono>/<Mono>-Confirm</Mono>.
                     </ListItem>
                 </List>
             </Explanation>
         </NotesSection>
 
-        <NotesSection id="h3-set-git-remote">
+        <NotesSection id="h3-set-gitlab-remote">
             <Heading
                 headingLevel="h3" Icon={icons.Link}
                 slot="heading"
             >
-                Asignar remoto en Git
+                Asignar remoto GitLab a un repo existente
             </Heading>
 
-            <p class="mb-3">
-                Este script configura un remoto de Git de forma <B>idempotente</B>: si el remoto ya existe con la misma
-                URL, no hace nada; si existe con otra URL, la actualiza; si no existe, lo crea. Usamos <PowerShellInline
-                    code="git -C"
-                />
-                para operar en la carpeta del repo sin cambiar el directorio actual, y <I>SupportsShouldProcess</I> para
-                habilitar
-                <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />.
-            </p>
+            <P>
+                Este script conecta un repositorio local ya inicializado con un remoto en GitLab:
+                valida que la ruta sea un repo Git, genera la URL a partir del usuario y el nombre
+                normalizado, y luego crea o actualiza el remoto (por defecto <Mono>origin</Mono>) de
+                forma <B>idempotente</B>. Devuelve un objeto con la acción realizada y la razón,
+                útil para inspección y logs.
+            </P>
 
             <PowerShellBlock
                 code={`
-                    #Requires -Version 7.0
-                    [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
-                    param(
-                        [Parameter(Mandatory)]
-                        [ValidatePattern('^(https://|git@|ssh://)')]
-                        [string] $RemoteUrl,
+                #Requires -Version 7.5
+                [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                    [string] $Path,
 
-                        [Parameter()]
-                        [ValidateNotNullOrEmpty()]
-                        [string] $Path = '.',
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $User,
 
-                        [ValidatePattern('^[\\w.-]+$')]
-                        [string] $RemoteName = 'origin'
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $Name,
+
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $Remote = 'origin'
+                )
+
+                Set-StrictMode -Version 3.0
+
+                $testRepo = Join-Path $PSScriptRoot 'Test-GitRepository.ps1' -Resolve
+                $convertName = Join-Path $PSScriptRoot 'ConvertTo-ValidGitLabName.ps1' -Resolve
+                $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
+
+                if ((& $testRepo -Path $Path).Status -ne 'IsRepository') {
+                    throw [System.InvalidOperationException]::new(
+                        "Path '$Path' is not a valid Git repository."
                     )
+                }
 
-                    $invoker = Join-Path $PSScriptRoot '..' 'core' 'Invoke-Tool.ps1' -Resolve
+                $repoPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).ProviderPath
+                $remoteUrl = 'https://gitlab.com/{0}/{1}.git' -f $User, (& $convertName -Name $Name)
 
-                    $repoPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)
+                $result = [PSCustomObject]@{
+                    Path       = $repoPath
+                    RemoteName = $Remote
+                    RemoteUrl  = $remoteUrl
+                    Action     = 'None'
+                    Reason     = ''
+                }
 
-                    $result = @{
-                        RepoPath = $repoPath
-                        Remote   = $RemoteName
-                        Url      = $RemoteUrl
-                        Existed  = $false
-                        Changed  = $false
-                        Action   = 'none'
-                        Output   = @()
-                        Message  = ''
-                    }
-
-                    $inside = $false
+                $target = '{0} remote {1} -> {2}' -f $repoPath, $Remote, $remoteUrl
+                if (!$PSCmdlet.ShouldProcess($target, 'Set Git remote')) {
+                    $result.Action = 'Skipped'
+                    $result.Reason = 'Operation cancelled by user.'
+                }
+                else {
                     try {
-                        & $invoker git -C $repoPath rev-parse --is-inside-work-tree | Out-Null
-                        $inside = $true
-                    }
-                    catch { $inside = $false }
-
-                    if (!$inside -and $WhatIfPreference) {
-                        $result.Action = 'skipped'
-                        $result.Message = 'WhatIf: would set remote after repository initialization'
-                    }
-                    elseif (!$inside) {
-                        throw [System.AggregateException]::new(
-                            "The path '$repoPath' is not a Git repository (or does not exist).",
-                            $_.Exception
-                        )
-                    }
-                    else {
-                        $currentUrl = try {
-                            $res = & $invoker git -C $repoPath remote get-url $RemoteName
-                            $res.Output.Trim()
+                        try {
+                            & $invoker git -C $repoPath remote get-url $Remote | Out-Null
+                            & $invoker git -C $repoPath remote set-url $Remote $remoteUrl | Out-Null
+                            $result.Action = 'Updated'
+                            $result.Reason = "Remote '$Remote' URL updated."
                         }
-                        catch { $null }
-
-                        $result.Existed = [bool]$currentUrl
-
-                        if ($null -ne $currentUrl) {
-                            if ([string]::Equals($currentUrl, $RemoteUrl, 'OrdinalIgnoreCase')) {
-                                $result.Action = 'none'
-                                $result.Message = 'Remote already configured'
-                            }
-                            elseif ($PSCmdlet.ShouldProcess("$RemoteName → $RemoteUrl", 'git remote set-url')) {
-                                $set = & $invoker git -C $repoPath remote set-url $RemoteName $RemoteUrl
-                                $result.Changed = $true
-                                $result.Action = 'set-url'
-                                $result.Output = $set.Output
-                                $result.Message = "Remote URL updated (was: $currentUrl)"
-                            }
-                            else {
-                                $result.Action = 'skipped'
-                                $result.Message = 'Operation skipped'
-                            }
-                        }
-                        elseif ($PSCmdlet.ShouldProcess("$RemoteName → $RemoteUrl", 'git remote add')) {
-                            $add = & $invoker git -C $repoPath remote add $RemoteName $RemoteUrl
-                            $result.Changed = $true
-                            $result.Action = 'add'
-                            $result.Output = $add.Output
-                            $result.Message = 'Remote added'
-                        }
-                        else {
-                            $result.Action = 'skipped'
-                            $result.Message = 'Operation skipped'
+                        catch {
+                            & $invoker git -C $repoPath remote add $Remote $remoteUrl | Out-Null
+                            $result.Action = 'Added'
+                            $result.Reason = "Remote '$Remote' created."
                         }
                     }
+                    catch {
+                        $result.Action = 'Failed'
+                        $result.Reason = $_
+                    }
+                }
 
-                    [pscustomobject]$result
-                `}
+                $result
+            `}
             >
-                <Fragment slot="title">
-                    Set-GitRemote.ps1
-                </Fragment>
+                <span slot="title">Set-GitLabRemote.ps1</span>
+                <span slot="footer">
+                    Configura el remoto de un repositorio local hacia GitLab (por defecto <Mono
+                    >origin</Mono>) y devuelve qué acción se ejecutó (<Mono>Added</Mono>, <Mono
+                    >Updated</Mono>, <Mono>Skipped</Mono>, <Mono>Failed</Mono>).
+                </span>
                 <DibsSourceLink
                     slot="source" repo="scripts"
                     file="git/Set-GitRemote.ps1"
                 />
             </PowerShellBlock>
 
-            <Explanation>
+            <Explanation headingLevel="h4">
                 <List>
-                    <ListItem icon={icons.CheckCircle}>
-                        <B>Validación de URL</B>: <PowerShellInline
-                            code="[ValidatePattern('^(https://|git@|ssh://)')]"
-                        /> asegura que apuntemos a un remoto válido (HTTPS o SSH) antes de ejecutar Git.
+                    <ListItem icon={icons.Eye}>
+                        <B>Verificación del repo</B>: usa <PowerShellInline
+                            code="Test-GitRepository.ps1"
+                        /> para asegurarse de que <Mono>$Path</Mono> apunta a un repositorio Git
+                        válido antes de tocar remotos; si no, lanza una <I
+                        >InvalidOperationException</I>
+                        con un mensaje claro.
+                    </ListItem>
+
+                    <ListItem icon={icons.Hash}>
+                        <B>Nombre normalizado</B>: delega en <PowerShellInline
+                            code="ConvertTo-ValidGitLabName.ps1"
+                        /> la generación del <I>slug</I> del proyecto y construye la URL como
+                        <Mono>https://gitlab.com/&lt;user&gt;/&lt;slug&gt;.git</Mono>.
                     </ListItem>
 
                     <ListItem icon={icons.Terminal}>
-                        <B>Verificar repo</B>: <PowerShellInline
-                            code="& $invoker git -C $repoPath rev-parse --is-inside-work-tree"
-                        /> confirma que la ruta es un repositorio Git; si falla, se lanza una excepción con contexto.
-                    </ListItem>
-
-                    <ListItem icon={icons.Eye}>
-                        <B>Leer remoto actual</B>: el bloque <PowerShellInline code="try" />/<PowerShellInline
-                            code="catch"
-                        /> asigna <PowerShellInline code="$null" /> si el remoto no existe con <PowerShellInline
-                            code="$currentUrl = try { ... } catch { $null }"
+                        <B>Idempotencia del remoto</B>: primero intenta <PowerShellInline
+                            code="git -C $repoPath remote get-url $Remote"
+                        />; si el remoto existe, ejecuta <PowerShellInline
+                            code="git -C $repoPath remote set-url $Remote $remoteUrl"
+                        />, y si falla (por ejemplo, porque el remoto no existe) cae en el <I
+                        >catch</I> interno y usa <PowerShellInline
+                            code="git -C $repoPath remote add $Remote $remoteUrl"
                         />.
-                    </ListItem>
-
-                    <ListItem icon={icons.Equals}>
-                        <B>Comparación</B>: <PowerShellInline code="[string]::Equals(..., 'OrdinalIgnoreCase')" /> evita
-                        cambios innecesarios por diferencias de mayúsculas/minúsculas en la URL.
-                    </ListItem>
-
-                    <ListItem icon={icons.MagicWand}>
-                        <B>Acciones</B>: si no hay cambios → <I>none</I>; si difiere → <I>set-url</I>; si no existe → <I
-                        >add</I>. Gracias a <I>ShouldProcess</I>, puedes simular con <Mono>-WhatIf</Mono>.
                     </ListItem>
                 </List>
             </Explanation>
         </NotesSection>
 
-        <NotesSection id="h3-new-git-project">
+        <NotesSection id="h3-publish-git-repository">
             <Heading
                 headingLevel="h3" Icon={icons.Play}
                 slot="heading"
             >
-                Crear proyecto completo (remoto + local + remoto origin)
+                Orquestar creación de repo y remoto
             </Heading>
 
-            <p class="mb-3">
-                Este script combina los pasos anteriores: crea el repositorio remoto, inicializa el repositorio local y
-                asigna el remoto <Mono>origin</Mono>. Es idempotente de extremo a extremo y respeta <PowerShellInline
-                    code="-WhatIf"
-                />/<PowerShellInline code="-Confirm" />.
-            </p>
+            <P>
+                Para cerrar el flujo, este script actúa como <B>orquestador</B>: crea (si hace
+                falta) el repositorio remoto en GitLab y a continuación configura el remoto en el
+                repositorio local apuntando a ese proyecto. Reutiliza los scripts anteriores,
+                respeta <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" />
+                y devuelve un objeto con el detalle de cada paso.
+            </P>
 
             <PowerShellBlock
                 code={`
-                    #Requires -Version 7.0
+                    #Requires -Version 7.5
                     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                     param(
                         [Parameter(Mandatory)]
-                        [ValidatePattern('^[a-zA-Z0-9._-]+$')]
-                        [string] $Username,
+                        [ValidateNotNullOrWhiteSpace()]
+                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
+                        [string] $Path,
 
                         [Parameter(Mandatory)]
-                        [ValidatePattern('^[a-zA-Z0-9._-]+$')]
-                        [string] $RepositoryName,
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $User,
 
-                        [ValidatePattern('^[a-zA-Z0-9._-]*$')]
-                        [string] $Prefix = '',
+                        [Parameter(Mandatory)]
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $Name,
 
-                        [ValidateScript({ Test-Path -LiteralPath $_ -PathType Container })]
-                        [string] $LiteralPath = '.',
+                        [switch] $Public,
 
-                        [switch] $Public
+                        [ValidateNotNullOrWhiteSpace()]
+                        [string] $Remote = 'origin'
                     )
 
-                    $result = @{
-                        NewRepository        = $null
-                        InitializeRepository = $null
-                        SetRemote            = $null
+                    Set-StrictMode -Version 3.0
+
+                    $createGitLabRepo = Join-Path $PSScriptRoot 'New-GitLabRepository.ps1' -Resolve
+                    $setGitRemote = Join-Path $PSScriptRoot 'Set-GitRemote.ps1' -Resolve
+
+                    $forwardBoundParams = @{}
+                    if ($PSBoundParameters.ContainsKey('WhatIf')) {
+                        $forwardBoundParams['WhatIf'] = $PSBoundParameters['WhatIf']
+                    }
+                    if ($PSBoundParameters.ContainsKey('Confirm')) {
+                        $forwardBoundParams['Confirm'] = $PSBoundParameters['Confirm']
                     }
 
-                    $newRepository = Join-Path $PSScriptRoot 'New-GitLabRepository.ps1' -Resolve
-                    $initializeRepository = Join-Path $PSScriptRoot 'Initialize-Repository.ps1' -Resolve
-                    $setRemote = Join-Path $PSScriptRoot 'Add-Remote.ps1' -Resolve
+                    $gitLab = & $createGitLabRepo -Name $Name -Public:$Public @forwardBoundParams
 
-                    $forward = @{}
-                    foreach ($k in 'WhatIf', 'Confirm') {
-                        if ($PSBoundParameters.ContainsKey($k)) { $forward[$k] = $PSBoundParameters[$k] }
+                    $remoteParams = @{}
+                    $remoteParams += $forwardBoundParams
+                    $remoteParams += @{ Path = $Path; User = $User; Name = $Name; Remote = $Remote }
+
+                    $remoteResult = & $setGitRemote @remoteParams
+
+                    [PSCustomObject]@{
+                        Path   = $Path
+                        GitLab = $gitLab
+                        Remote = $remoteResult
                     }
-
-                    $normalized = (
-                        $RepositoryName.ToLowerInvariant() -replace '\\s+', '-' -replace '[^a-z0-9-]', '')
-
-                    $repoSlug = if ([string]::IsNullOrEmpty($Prefix)) {
-                        $normalized
-                    }
-                    else {
-                        ($Prefix.Trim('-') + '-' + $normalized.Trim('-')).Trim('-')
-                    }
-
-                    $result.NewRepository = & $newRepository @forward -Name $repoSlug -Public:$Public
-                    $remoteUrl = "git@gitlab.com:$Username/$repoSlug.git"
-                    $result.InitializeRepository = & $initializeRepository @forward -LiteralPath $LiteralPath
-                    $result.SetRemote = (
-                        & $setRemote @forward -Path $LiteralPath -RemoteName 'origin' -RemoteUrl $remoteUrl)
-
-                    [pscustomobject]$result
                 `}
             >
+                <Fragment slot="title">Publish-GitRepository.ps1</Fragment>
+                <span slot="footer">
+                    Orquesta la creación del repositorio remoto en GitLab y la configuración del
+                    remoto local, devolviendo un objeto con el resultado de ambos pasos.
+                </span>
                 <DibsSourceLink
                     slot="source" repo="scripts"
-                    file="git/New-GitProject.ps1"
+                    file="git/Publish-GitRepository.ps1"
                 />
             </PowerShellBlock>
 
-            <Explanation>
+            <Explanation headingLevel="h4">
                 <List>
-                    <ListItem icon={icons.Share}>
-                        <B>Propagación de <Mono>WhatIf</Mono>/<Mono>Confirm</Mono></B>: <PowerShellInline
-                            code="$forward"
-                        /> recoge las banderas <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" />
-                        y las reenvía a los scripts internos con <PowerShellInline code="@forward" />, manteniendo la
-                        simulación/confirmación en toda la orquestación.
+                    <ListItem icon={icons.ShieldCheck}>
+                        <B>Propaga <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono></B>: construye
+                        <Mono>$forwardBoundParams</Mono> a partir de <Mono>$PSBoundParameters</Mono>
+                        y lo pasa a ambos scripts, asegurando que los ensayos y confirmaciones se
+                        respeten de extremo a extremo.
                     </ListItem>
 
-                    <ListItem icon={icons.Hash}>
-                        <Mono>repoSlug</Mono>: a partir de <PowerShellInline code="$RepositoryName" /> se genera un <I
-                        >slug</I> seguro para el remoto: minúsculas, espacios a guiones y filtrado a <Mono
-                        >[a-z0-9-]</Mono>. Si hay <PowerShellInline code="$Prefix" />, se antepone (por ejemplo: <Mono
-                        >dibs-scripts</Mono>).
-                    </ListItem>
-
-                    <ListItem icon={icons.GitlabLogo}>
-                        <B>Remoto + local + origin</B>: el script primero asegura el remoto en GitLab, luego inicializa
-                        el repositorio local (si hace falta), y finalmente establece <Mono>origin</Mono> a la URL SSH
-                        <Mono>git@gitlab.com:&lt;user&gt;/&lt;slug&gt;.git</Mono>.
-                    </ListItem>
-
-                    <ListItem icon={icons.Eye}>
-                        <B>Salida agregada</B>: se retorna un objeto con tres propiedades (<Mono>NewRepository</Mono>,
-                        <Mono>InitializeRepository</Mono>, <Mono>SetRemote</Mono>) para inspeccionar el resultado de
-                        cada paso por separado.
+                    <ListItem icon={icons.Package}>
+                        <B>Salida estructurada</B>: retorna un objeto con <Mono>Path</Mono>, más los
+                        resultados completos de <Mono>GitLab</Mono> y <Mono>Remote</Mono>. Esto
+                        permite inspeccionar qué ocurrió en cada etapa o registrar el resultado en
+                        logs sin necesidad de parsear texto.
                     </ListItem>
                 </List>
             </Explanation>
 
-            <PowerShellBlock
-                code={`
-                    $params = @{
-                        Username       = 'tu-usuario'   # <- reemplaza con tu usuario real de GitLab
-                        RepositoryName = 'scripts'
-                        Prefix         = 'dibs'
-                        LiteralPath    = '.'            # carpeta actual como repo local
-                        Public         = $true
-                        Verbose        = $true
-                        Confirm        = $true
-                    }
+            <Info>
+                <span slot="title">Ejemplo de uso</span>
 
-                    $result = .\\git\\New-GitProject.ps1 @params
+                <PowerShellBlock
+                    code={`
+                        git init # Si aún no es un repo Git
+                        $params = @{
+                            User = 'tu-usuario' # Reemplaza con tu nombre de usuario de GitLab
+                            Path = '.'
+                            Name = (Get-Item -Path '.').Name
+                        }
+                        $result = ./git/Publish-GitRepository.ps1 @params -WhatIf
+                    `}
+                >
+                    <span slot="title">Desde <Mono>dibs/scripts</Mono></span>
+                </PowerShellBlock>
 
-                    # Ver resultados individuales:
-                    $result.NewRepository        | Format-List
-                    $result.InitializeRepository | Format-List
-                    $result.SetRemote            | Format-List
-                `}
-            >
-                <Fragment slot="title">Desde <Mono>dibs/scripts</Mono></Fragment>
-                <Fragment slot="footer">
-                    Con <Mono>-WhatIf</Mono> el script describe lo que haría sin efectuar cambios; con <Mono
-                    >-Confirm</Mono>
-                    solicita confirmación paso a paso.
-                </Fragment>
-                <DibsSourceLink
-                    slot="source" repo="scripts"
-                    file="git/New-GitProject.ps1"
-                />
-            </PowerShellBlock>
+                <P>
+                    Revisa <Mono>$result</Mono> para verificar que todo está en orden, luego ejecuta
+                    sin <Mono>-WhatIf</Mono> para crear el repo y asignar el remoto. Usa <Mono
+                    >-Confirm</Mono> para aprobar cada paso si prefieres mayor control.
+                </P>
+            </Info>
+
+            <Question headingLevel="h4">
+                <span slot="title">Verificar</span>
+
+                <PowerShellBlock
+                    code={`
+                        # Revisar resultado
+                        $result.GitLab.Status    # Created y Reason
+                        $result.Remote.Action    # Added/Updated/Skipped/Failed
+
+                        # Confirmar con Git
+                        git remote -v
+                    `}
+                >
+                    <span slot="title">Inspeccionar resultado</span>
+                </PowerShellBlock>
+            </Question>
         </NotesSection>
-
-        <Question>
-            <span slot="title">Ejercicio propuesto</span>
-
-            <p>
-                Modifica el script <Mono>Initialize-Project.ps1</Mono> para que llame a <Mono>New-GitProject.ps1</Mono>
-                y cree el repositorio remoto en GitLab, inicialice el repo local (si procede) y configure el remoto
-                <Mono>origin</Mono>. Mantén el comportamiento idempotente y respeta <Mono>-WhatIf</Mono>/<Mono
-                >-Confirm</Mono>.
-            </p>
-        </Question>
     </NotesSection>
 
     <NotesSection id="h2-next-steps">
@@ -638,26 +777,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Siguientes pasos
         </Heading>
 
-        <p class="mb-3">
-            Los scripts <B>no hacen commit ni push</B> para evitar cambios accidentales. La idea es que revises el
-            estado del repo y confirmes conscientemente qué subirás. Además, conviene agregar un <Mono>.gitignore</Mono>
-            antes de tu primer commit.
-        </p>
+        <P>
+            Los scripts <B>no hacen commit ni push</B> para evitar cambios accidentales. La idea es
+            que revises el estado del repo y confirmes conscientemente qué subirás. Además, conviene
+            agregar un <Mono>.gitignore</Mono> antes de tu primer commit.
+        </P>
 
         <PowerShellBlock
             code={`
-                # 1) Revisa el estado y los archivos creados
+                # Revisa estado y agrega .gitignore
                 git status
+                # Visita https://www.toptal.com/developers/gitignore/ para generar .gitignore
 
-                # 2) Crea un .gitignore recomendado para tu stack
-                # Visita: https://www.toptal.com/developers/gitignore/
-                # Copia el contenido y guárdalo como .gitignore en la raíz del proyecto
-
-                # 3) Haz tu primer commit (cuando estés conforme)
+                # Primer commit y push
                 git add .
                 git commit -m "init: estructura y configuración inicial"
-
-                # 4) Publica en el remoto (rama main)
                 git push origin main
             `}
         >
@@ -665,64 +799,77 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="footer">Publicar cambios manualmente</span>
         </PowerShellBlock>
 
-        <Note>
-            Si tu proyecto genera artefactos (por ejemplo, <Mono>bin/</Mono>, <Mono>obj/</Mono>, <Mono>dist/</Mono>,
-            <Mono>node_modules/</Mono>, <Mono>*.env</Mono>), asegúrate de ignorarlos en <Mono>.gitignore</Mono> para
-            evitar subir archivos innecesarios o sensibles.
-        </Note>
+        <Important>
+            Si tu proyecto genera artefactos (por ejemplo, <Mono>bin/</Mono>, <Mono>obj/</Mono>,
+            <Mono>dist/</Mono>, <Mono>node_modules/</Mono>, <Mono>*.env</Mono>), asegúrate de
+            ignorarlos en <Mono>.gitignore</Mono> para evitar subir archivos innecesarios o
+            sensibles.
+        </Important>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            En este laboratorio establecimos una base sólida para trabajar con GitLab desde la línea de comandos:
-            normalizamos nombres de repos, creamos el remoto de forma idempotente con <B>glab</B>, inicializamos el
-            repositorio local con rama <Mono>main</Mono> y configuramos <Mono>origin</Mono> sin duplicar estado.
-            Orquestamos todo con un solo script que respeta <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono>, y cuidamos la
-            compatibilidad de rutas usando
-            <Mono>ProviderPath</Mono> cuando interactuamos con herramientas externas. El resultado es un flujo
-            repetible, seguro y fácil de compartir con el equipo.
+            <P>
+                Conectamos todo lo aprendido sobre validaciones, salida tipada y <I>CLI</I> en un
+                flujo completo de GitLab. Pasamos de comprobar si una carpeta es repo, a crear el
+                proyecto remoto con <PowerShellInline code="glab" />, normalizar nombres y fijar el
+                remoto de forma idempotente. El resultado es un set de scripts que puedes ejecutar
+                sin miedo a duplicar recursos ni romper el estado local.
+            </P>
+            <P>
+                La estructura orientada a objetos de salida y el soporte de <PowerShellInline
+                    code="-WhatIf"
+                />/<PowerShellInline code="-Confirm" /> dejan claro qué ocurrió en cada paso y te
+                permiten ensayar antes de afectar el entorno. Esa transparencia hace que automatizar
+                GitLab sea tan confiable como ejecutarlo todo a mano, pero con menos fricción.
+            </P>
         </Fragment>
 
         <Fragment slot="key-points">
-            <List>
-                <ListItem icon={icons.Check}>
-                    <B>Idempotencia</B>: los comandos pueden ejecutarse varias veces sin efectos secundarios (crear/no
-                    crear, agregar/actualizar).
-                </ListItem>
-                <ListItem icon={icons.Check}>
-                    <B>Determinismo y compatibilidad</B>: preferimos <Mono>ProviderPath</Mono> al invocar binarios
-                    externos, y usamos <Mono>git -C</Mono> para no depender del directorio actual.
-                </ListItem>
-                <ListItem icon={icons.Check}>
-                    <B>Control seguro</B>: <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono> permiten ensayar y confirmar
-                    cambios; los scripts devuelven objetos para inspeccionar resultados.
-                </ListItem>
-                <ListItem icon={icons.Check}>
-                    <B>Composición</B>: piezas pequeñas (crear remoto, inicializar, asignar <Mono>origin</Mono>) que se
-                    combinan en un comando único.
-                </ListItem>
-                <ListItem icon={icons.Check}>
-                    <B>Próximos pasos</B>: añadir <Mono>.gitignore</Mono>, primer <Mono>commit</Mono>/<Mono>push</Mono>
-                    y preparar la base para CI/CD.
-                </ListItem>
-            </List>
+            <ListItem icon={icons.Terminal}>
+                <B>Flujo completo automatizado:</B> desde <PowerShellInline code="glab repo view" />
+                para detectar existentes hasta <PowerShellInline code="repo create" /> y la
+                configuración del remoto con <Mono>git remote</Mono>, todo se ensambla sin pasos
+                repetitivos.
+            </ListItem>
+            <ListItem icon={icons.Hash}>
+                <B>Normalización y validaciones:</B> transformar nombres a <Mono>[a-z0-9-]</Mono> y
+                verificar rutas antes de operar evita errores de sintaxis o rutas mal apuntadas.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                <B>Idempotencia y seguridad:</B> los scripts no sobreescriben sin revisar, exponen
+                objetos con estado (<Mono>Status</Mono>/<Mono>Reason</Mono>) y soportan
+                <Mono>-WhatIf</Mono>/<Mono>-Confirm</Mono> para probar sin riesgos.
+            </ListItem>
+            <ListItem icon={icons.GitBranch}>
+                <B>Salida estructurada:</B> devolver objetos facilita registrar, auditar y encadenar
+                resultados en orquestaciones mayores sin parsear texto.
+            </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            Automatizar no es solo ahorrar tiempo: es diseñar <I>confianza operacional</I>. Al convertir acciones
-            frágiles en comandos idempotentes —probables con <Mono>-WhatIf</Mono> y confirmables paso a paso— ganamos
-            reproducibilidad y tranquilidad para iterar. Empieza por lo esencial, compón tareas pequeñas y prioriza
-            claridad sobre “magia”. Este hábito se vuelve ventaja compuesta: menos sorpresas, más foco en el diseño de
-            la biblioteca y un equipo que comparte el mismo lenguaje de trabajo.
+            <P>
+                Automatizar GitLab con scripts idempotentes demuestra que podemos cuidar el estado
+                del repositorio sin perder control: cada paso se documenta en la salida y puede
+                ensayarse antes de ejecutarse. Esa disciplina es la base para flujos más complejos,
+                ya sea en equipo o en proyectos personales.
+            </P>
+            <P>
+                La clave no es solo crear repos rápido, sino diseñar automatizaciones que sean
+                legibles, seguras y fáciles de adaptar. Con estos patrones en marcha, el siguiente
+                paso es iterarlos en tus propios proyectos y ajustar el equilibrio entre rapidez y
+                confianza.
+            </P>
         </Fragment>
     </ConclusionsLayout>
 
     <Footnotes>
         <Footnote index={1}>
-            Una estrategia común para mitigar este problema es mantener un <B>mirror</B> del repositorio en GitHub (Git
-            permite definir varios remotos). Sin embargo, esto puede complicar la gestión de <I>issues</I> o solicitudes
-            de cambio (<I>merge requests</I> en GitLab, equivalentes a <I>pull requests</I> en GitHub), ya que habría
-            que coordinar dos fuentes distintas de colaboración.
+            Una estrategia común para mitigar este problema es mantener un <B>mirror</B> del
+            repositorio en GitHub (Git permite definir varios remotos). Sin embargo, esto puede
+            complicar la gestión de <I>issues</I> o solicitudes de cambio (<I>merge requests</I> en
+            GitLab, equivalentes a <I>pull requests</I> en GitHub), ya que habría que coordinar dos
+            fuentes distintas de colaboración.
         </Footnote>
     </Footnotes>
 </NotesLayout>
