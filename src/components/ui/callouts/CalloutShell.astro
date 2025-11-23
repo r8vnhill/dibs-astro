@@ -3,47 +3,47 @@ import * as icons from "~/assets/img/icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import CalloutHeading from "./CalloutHeading.astro";
 import {
-  calloutBaseClasses,
-  calloutColors,
-  calloutVariants,
-  filterSectionAttrs,
-  proseClasses,
-  slugifyTitle,
+    calloutBaseClasses,
+    calloutColors,
+    calloutVariants,
+    filterSectionAttrs,
+    proseClasses,
+    slugifyTitle,
 } from "./shared";
 import type { BaseCalloutProps, CalloutVariant } from "./shared";
 
 export interface CalloutShellProps extends BaseCalloutProps {
-  variant: CalloutVariant;
-  title?: string;
-  icon?: AstroComponentFactory | null;
-  id?: string;
-  bodyClass?: string;
-  collapsible?: boolean;
-  defaultOpen?: boolean;
-  showChevron?: boolean;
+    variant: CalloutVariant;
+    title?: string;
+    icon?: AstroComponentFactory | null;
+    id?: string;
+    bodyClass?: string;
+    collapsible?: boolean;
+    defaultOpen?: boolean;
+    showChevron?: boolean;
 }
 
 const {
-  variant,
-  title,
-  icon,
-  headingLevel = "h3",
-  headingId,
-  class: className = "",
-  headingClass = "",
-  iconClass = "",
-  iconProps = {},
-  iconVariant = "outline",
-  iconDecorative = true,
-  ariaLabel,
-  compact = false,
-  prose = true,
-  bodyClass = "",
-  collapsible = false,
-  defaultOpen = false,
-  showChevron = true,
-  id,
-  ...rest
+    variant,
+    title,
+    icon,
+    headingLevel = "h3",
+    headingId,
+    class: className = "",
+    headingClass = "",
+    iconClass = "",
+    iconProps = {},
+    iconVariant = "outline",
+    iconDecorative = true,
+    ariaLabel,
+    compact = false,
+    prose = true,
+    bodyClass = "",
+    collapsible = false,
+    defaultOpen = false,
+    showChevron = true,
+    id,
+    ...rest
 } = Astro.props as CalloutShellProps & Record<string, any>;
 
 const variantConfig = calloutVariants[variant];
@@ -57,9 +57,9 @@ const resolvedHeadingId = headingId ?? `${sectionId}__title`;
 
 const passthrough = filterSectionAttrs(rest);
 const sectionClassList = [
-  ...calloutBaseClasses,
-  compact ? "px-4 py-3" : "px-5 py-4",
-  className,
+    ...calloutBaseClasses,
+    compact ? "px-4 py-3" : "px-5 py-4",
+    className,
 ];
 const bodyClassList = ["callout__body", prose && proseClasses, bodyClass];
 
@@ -67,96 +67,93 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
 ---
 
 <section
-  id={sectionId}
-  class:list={sectionClassList}
-  role="region"
-  aria-labelledby={resolvedHeadingId}
-  data-callout
-  data-variant={variant}
-  style={{
-    "--callout-bg-color": `var(--${variant}__bg-color, ${colors.bg})`,
-    "--callout-border-color": `var(--${variant}__border-color, ${colors.border})`,
-    "--callout-title-color": `var(--${variant}__title-color, ${colors.title})`,
-    "--callout-icon-color": `var(--${variant}__title-color, ${colors.title})`,
-    "--callout-bg-color-dark": `var(--${variant}__bg-color-dark, ${colors.bgDark ?? colors.bg})`,
-    "--callout-border-color-dark": `var(--${variant}__border-color-dark, ${colors.borderDark ?? colors.border})`,
-    "--callout-title-color-dark": `var(--${variant}__title-color-dark, ${colors.titleDark ?? colors.title})`,
-  }}
-  {...ariaLabel ? { "aria-label": ariaLabel } : {}}
-  {...passthrough}
+    id={sectionId} class:list={sectionClassList}
+    role="region" aria-labelledby={resolvedHeadingId}
+    data-callout data-variant={variant}
+    style={{
+        "--callout-bg-color": `var(--${variant}__bg-color, ${colors.bg})`,
+        "--callout-border-color": `var(--${variant}__border-color, ${colors.border})`,
+        "--callout-title-color": `var(--${variant}__title-color, ${colors.title})`,
+        "--callout-icon-color": `var(--${variant}__title-color, ${colors.title})`,
+        "--callout-bg-color-dark": `var(--${variant}__bg-color-dark, ${
+            colors.bgDark ?? colors.bg
+        })`,
+        "--callout-border-color-dark": `var(--${variant}__border-color-dark, ${
+            colors.borderDark ?? colors.border
+        })`,
+        "--callout-title-color-dark": `var(--${variant}__title-color-dark, ${
+            colors.titleDark ?? colors.title
+        })`,
+    }}
+    {...ariaLabel ? { "aria-label": ariaLabel } : {}}
+    {...passthrough}
 >
-  {
-    collapsible ? (
-      <details class="group callout__details" {...detailProps}>
-        <summary class="list-none">
-          <CalloutHeading
-            Icon={resolvedIcon ?? undefined}
-            heading={resolvedTitle}
-            headingLevel={headingLevel}
-            headingId={resolvedHeadingId}
-            class={headingClass}
-            iconClass={iconClass}
-            iconProps={iconProps}
-            iconVariant={iconVariant}
-            iconDecorative={iconDecorative}
-          >
-            <slot name="title">{resolvedTitle}</slot>
-            <Fragment slot="actions">
-              <slot name="actions" />
-              {showChevron && (
-                <icons.CaretDown
-                  class="w-4 h-4 transition-transform duration-200 group-open:rotate-180 text-[var(--callout-title-color)]"
-                  aria-hidden="true"
-                />
-              )}
-            </Fragment>
-          </CalloutHeading>
-        </summary>
+    {
+        collapsible ? (
+            <details class="group callout__details" {...detailProps}>
+                <summary class="list-none">
+                    <CalloutHeading
+                        Icon={resolvedIcon ?? undefined} heading={resolvedTitle}
+                        {headingLevel} headingId={resolvedHeadingId}
+                        class={headingClass} {iconClass}
+                        {iconProps} {iconVariant}
+                        {iconDecorative}
+                    >
+                        <slot name="title">{resolvedTitle}</slot>
+                        <Fragment slot="actions">
+                            <slot name="actions" />
+                            {
+                                showChevron && (
+                                    <icons.CaretDown
+                                        class="w-4 h-4 transition-transform duration-200 group-open:rotate-180 text-[var(--callout-title-color)]"
+                                        aria-hidden="true"
+                                    />
+                                )
+                            }
+                        </Fragment>
+                    </CalloutHeading>
+                </summary>
 
-        <div class:list={bodyClassList}>
-          <slot />
-        </div>
-      </details>
-    ) : (
-      <>
-        <CalloutHeading
-          Icon={resolvedIcon ?? undefined}
-          heading={resolvedTitle}
-          headingLevel={headingLevel}
-          headingId={resolvedHeadingId}
-          class={headingClass}
-          iconClass={iconClass}
-          iconProps={iconProps}
-          iconVariant={iconVariant}
-          iconDecorative={iconDecorative}
-        >
-          <slot name="title">{resolvedTitle}</slot>
-          <slot slot="actions" name="actions" />
-        </CalloutHeading>
+                <div class:list={bodyClassList}>
+                    <slot />
+                </div>
+            </details>
+        ) : (
+            <>
+                <CalloutHeading
+                    Icon={resolvedIcon ?? undefined} heading={resolvedTitle}
+                    {headingLevel} headingId={resolvedHeadingId}
+                    class={headingClass} {iconClass}
+                    {iconProps} {iconVariant}
+                    {iconDecorative}
+                >
+                    <slot name="title">{resolvedTitle}</slot>
+                    <slot slot="actions" name="actions" />
+                </CalloutHeading>
 
-        <div class:list={bodyClassList}>
-          <slot />
-        </div>
-      </>
-    )
-  }
+                <div class:list={bodyClassList}>
+                    <slot />
+                </div>
+            </>
+        )
+    }
 </section>
 
 <style scoped>
-  .callout {
-    background-color: var(--callout-bg-color);
-    border-left: 4px solid var(--callout-border-color);
-  }
+    .callout {
+        background-color: var(--callout-bg-color);
+        border-left: 4px solid var(--callout-border-color);
+    }
 
-  :global([data-theme="dark"]) :where(.callout) {
-    background-color: var(--callout-bg-color-dark);
-    border-left-color: var(--callout-border-color-dark);
-  }
+    :global([data-theme="dark"]) :where(.callout) {
+        background-color: var(--callout-bg-color-dark);
+        border-left-color: var(--callout-border-color-dark);
+    }
 
-  .callout__body :where(p:first-child) {
-    margin-top: 0;
-  }
-  .callout__body :where(p:last-child) {
-    margin-bottom: 0;
-  }
+    .callout__body :where(p:first-child) {
+        margin-top: 0;
+    }
+    .callout__body :where(p:last-child) {
+        margin-bottom: 0;
+    }
 </style>

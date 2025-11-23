@@ -7,27 +7,27 @@ import type { HeadingLevel } from "~/utils";
 import FilledIcon from "./FilledIcon.astro";
 
 export interface CalloutHeadingProps {
-  Icon?: AstroComponentFactory | null;
-  heading?: string;
-  headingLevel?: Exclude<HeadingLevel, "h1">;
-  headingId?: string;
-  class?: string;
-  iconClass?: string;
-  iconProps?: Record<string, any>;
-  iconVariant?: "outline" | "solid";
-  iconDecorative?: boolean;
+    Icon?: AstroComponentFactory | null;
+    heading?: string;
+    headingLevel?: Exclude<HeadingLevel, "h1">;
+    headingId?: string;
+    class?: string;
+    iconClass?: string;
+    iconProps?: Record<string, any>;
+    iconVariant?: "outline" | "solid";
+    iconDecorative?: boolean;
 }
 
 const {
-  Icon,
-  heading,
-  headingLevel = "h3",
-  headingId,
-  class: className = "",
-  iconClass = "",
-  iconProps = {},
-  iconVariant = "outline",
-  iconDecorative = true,
+    Icon,
+    heading,
+    headingLevel = "h3",
+    headingId,
+    class: className = "",
+    iconClass = "",
+    iconProps = {},
+    iconVariant = "outline",
+    iconDecorative = true,
 } = Astro.props as CalloutHeadingProps;
 
 const HeadingTag = headingLevel;
@@ -37,50 +37,47 @@ const resolvedHeadingId = headingId ?? `callout-${crypto.randomUUID()}`;
  * Tamaños tipográficos por nivel (h2-h6)
  */
 const sizeClasses: Record<Exclude<HeadingLevel, "h1">, string> = {
-  h2: "text-xl sm:text-2xl",
-  h3: "text-lg sm:text-xl",
-  h4: "text-base sm:text-lg",
-  h5: "text-sm sm:text-base",
-  h6: "text-xs sm:text-sm",
+    h2: "text-xl sm:text-2xl",
+    h3: "text-lg sm:text-xl",
+    h4: "text-base sm:text-lg",
+    h5: "text-sm sm:text-base",
+    h6: "text-xs sm:text-sm",
 };
 
 const resolvedSize = sizeClasses[headingLevel] ?? sizeClasses.h3;
 ---
 <HeadingTag
-  id={resolvedHeadingId}
-  class:list={[
-    "callout__title flex items-center gap-2 font-semibold leading-snug mb-2",
-    resolvedSize,
-    className,
-  ]}
-  style={{
-    color: "var(--callout-title-color, inherit)",
-  }}
+    id={resolvedHeadingId}
+    class:list={[
+        "callout__title flex items-center gap-2 font-semibold leading-snug mb-2",
+        resolvedSize,
+        className,
+    ]}
+    style={{
+        color: "var(--callout-title-color, inherit)",
+    }}
 >
-  <slot name="icon">
-    {
-      Icon && (
-        <FilledIcon
-          {Icon}
-          class={iconClass}
-          variant={iconVariant}
-          decorative={iconDecorative}
-          {iconProps}
-          style={{ color: "var(--callout-icon-color, currentColor)" }}
-        />
-      )
-    }
-  </slot>
+    <slot name="icon">
+        {
+            Icon && (
+                <FilledIcon
+                    {Icon} class={iconClass}
+                    variant={iconVariant} decorative={iconDecorative}
+                    {iconProps} style={{ color: "var(--callout-icon-color, currentColor)" }}
+                />
+            )
+        }
+    </slot>
 
-  <slot>{heading}</slot>
+    <slot>{heading}</slot>
 
-  <div class="ml-auto flex items-center gap-2">
-    <slot name="actions" />
-  </div>
+    <div class="ml-auto flex items-center gap-2">
+        <slot name="actions" />
+    </div>
 </HeadingTag>
 
 <style scoped>
-  .callout__title {
-    margin: 0 0 0.5rem;
-  }
+    .callout__title {
+        margin: 0 0 0.5rem;
+    }
 </style>

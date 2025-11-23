@@ -15,81 +15,78 @@ import type { AstroComponentFactory } from "~/types/astro-component";
 
 /** Public API for the FilledIcon wrapper. */
 export interface FilledIconProps {
-  /** Icon component to render (e.g., `Brain` from @lucide/astro). */
-  Icon: AstroComponentFactory;
+    /** Icon component to render (e.g., `Brain` from @lucide/astro). */
+    Icon: AstroComponentFactory;
 
-  /**
-   * Icon size applied via `font-size` on the wrapper element.
-   * Accepts a string (e.g., "1.25em") or number (in px).
-   * Defaults to "1em" so icon scales with surrounding text.
-   */
-  size?: number | string;
+    /**
+     * Icon size applied via `font-size` on the wrapper element.
+     * Accepts a string (e.g., "1.25em") or number (in px).
+     * Defaults to "1em" so icon scales with surrounding text.
+     */
+    size?: number | string;
 
-  /** Extra classes for the outer <span> wrapper. */
-  class?: string;
+    /** Extra classes for the outer <span> wrapper. */
+    class?: string;
 
-  /** Extra classes applied to the rendered <svg>. */
-  iconClass?: string;
+    /** Extra classes applied to the rendered <svg>. */
+    iconClass?: string;
 
-  /**
-   * Visual variant:
-   *  - "outline" (default): standard Lucide stroke look.
-   *  - "solid": simulate a filled look (forces `fill: currentColor`, removes stroke).
-   */
-  variant?: "outline" | "solid";
+    /**
+     * Visual variant:
+     *  - "outline" (default): standard Lucide stroke look.
+     *  - "solid": simulate a filled look (forces `fill: currentColor`, removes stroke).
+     */
+    variant?: "outline" | "solid";
 
-  /**
-   * Whether the icon is purely decorative (default: true).
-   * Set to false and add `aria-label` on the wrapper for meaningful icons.
-   */
-  decorative?: boolean;
+    /**
+     * Whether the icon is purely decorative (default: true).
+     * Set to false and add `aria-label` on the wrapper for meaningful icons.
+     */
+    decorative?: boolean;
 
-  /** Arbitrary props forwarded to the icon component (<Icon />), e.g. `{ strokeWidth: 1.5 }`. */
-  iconProps?: Record<string, any>;
+    /** Arbitrary props forwarded to the icon component (<Icon />), e.g. `{ strokeWidth: 1.5 }`. */
+    iconProps?: Record<string, any>;
 }
 
 /* -------------------- Resolve props & defaults -------------------- */
 const {
-  Icon,
-  size = "1em",              // Scales with text by default
-  class: className = "",     // Wrapper <span> classes
-  iconClass = "",            // SVG <Icon> classes
-  variant = "outline",       // Default visual variant
-  decorative = true,         // Default: hidden from screen readers
-  iconProps = {},            // Extra props to <Icon />
-  // Remaining props (e.g. `aria-label`, `id`) forwarded to wrapper <span>
-  ...rest
+    Icon,
+    size = "1em", // Scales with text by default
+    class: className = "", // Wrapper <span> classes
+    iconClass = "", // SVG <Icon> classes
+    variant = "outline", // Default visual variant
+    decorative = true, // Default: hidden from screen readers
+    iconProps = {}, // Extra props to <Icon />
+    // Remaining props (e.g. `aria-label`, `id`) forwarded to wrapper <span>
+    ...rest
 } = Astro.props as FilledIconProps & Record<string, any>;
 ---
 
-<!-- 
-  Outer wrapper element for the icon. 
-  - Uses `inline-flex` to align with text.
-  - Applies `font-size` to scale the <svg> using `1em`.
--->
+{
+    // Outer wrapper element for the icon.
+    // - Uses `inline-flex` to align with text.
+    // - Applies `font-size` to scale the <svg> using `1em`.
+}
 <span
-  class:list={[
-    "fi inline-flex items-center justify-center flex-shrink-0",
-    "text-[var(--icon-color, currentColor)]",   // Allow parent control of icon color
-    variant === "solid" && "fi--solid",         // Apply solid style if selected
-    className,
-  ]}
-  {...(decorative ? { "aria-hidden": "true" } : {})}
-  {...rest}
-  style={{
-    // If size is a number (e.g. 20), assume px; otherwise use string as-is
-    fontSize: typeof size === "string" ? size : `${size}px`,
-    
-  }}
+    class:list={[
+        "fi inline-flex items-center justify-center flex-shrink-0",
+        "text-[var(--icon-color, currentColor)]", // Allow parent control of icon color
+        variant === "solid" && "fi--solid", // Apply solid style if selected
+        className,
+    ]}
+    {...(decorative ? { "aria-hidden": "true" } : {})}
+    {...rest}
+    style={{
+        // If size is a number (e.g. 20), assume px; otherwise use string as-is
+        fontSize: typeof size === "string" ? size : `${size}px`,
+    }}
 >
-  <!-- 
-    The actual icon (SVG component).
-    - Width/height set to 1em so it scales with font-size.
-  -->
-  <Icon
-    width="1em"
-    height="1em"
-    class:list={["fi__icon", iconClass]}
-    {...iconProps}
-  />
+    {
+        // The actual icon (SVG component).
+        // Width/height set to 1em so it scales with font-size.
+    }
+    <Icon
+        width="1em" height="1em"
+        class:list={["fi__icon", iconClass]} {...iconProps}
+    />
 </span>
