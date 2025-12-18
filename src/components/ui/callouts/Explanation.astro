@@ -1,5 +1,4 @@
 ---
-import * as Icons from "~/assets/img/icons";
 import CalloutShell from "./CalloutShell.astro";
 import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
@@ -12,6 +11,7 @@ const variantConfig = calloutVariants[variant];
 
 const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
   Astro.props as ExplanationProps & Record<string, any>;
+const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell
   variant={variant}
@@ -20,6 +20,6 @@ const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
   bodyClass="[&_.listitem__icon]:text-[var(--callout-title-color)]"
   {...rest}
 >
-  <slot name="title">{title}</slot>
+  {hasTitleSlot && <slot name="title" slot="title" />}
   <slot />
 </CalloutShell>

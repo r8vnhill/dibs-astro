@@ -51,6 +51,8 @@ const colors = calloutColors[variant];
 
 const resolvedTitle = title ?? variantConfig.title;
 const resolvedIcon = icon === undefined ? variantConfig.icon : icon;
+const titleSlotContent = await Astro.slots.render?.("title");
+const hasTitleContent = Boolean(titleSlotContent && titleSlotContent.trim().length > 0);
 
 const sectionId = slugifyTitle(resolvedTitle, variant, id);
 const resolvedHeadingId = headingId ?? `${sectionId}__title`;
@@ -93,13 +95,14 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
             <details class="group callout__details" {...detailProps}>
                 <summary class="list-none">
                     <CalloutHeading
-                        Icon={resolvedIcon ?? undefined} heading={resolvedTitle}
+                        Icon={resolvedIcon ?? undefined}
                         {headingLevel} headingId={resolvedHeadingId}
                         class={headingClass} {iconClass}
                         {iconProps} {iconVariant}
                         {iconDecorative}
+                        heading={resolvedTitle}
                     >
-                        <slot name="title">{resolvedTitle}</slot>
+                        {hasTitleContent ? <slot name="title" /> : resolvedTitle}
                         <Fragment slot="actions">
                             <slot name="actions" />
                             {
@@ -121,13 +124,14 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
         ) : (
             <>
                 <CalloutHeading
-                    Icon={resolvedIcon ?? undefined} heading={resolvedTitle}
+                    Icon={resolvedIcon ?? undefined}
                     {headingLevel} headingId={resolvedHeadingId}
                     class={headingClass} {iconClass}
                     {iconProps} {iconVariant}
                     {iconDecorative}
+                    heading={resolvedTitle}
                 >
-                    <slot name="title">{resolvedTitle}</slot>
+                    {hasTitleContent ? <slot name="title" /> : resolvedTitle}
                     <slot slot="actions" name="actions" />
                 </CalloutHeading>
 

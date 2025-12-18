@@ -8,128 +8,198 @@ import {
     Exercise,
     Explanation,
     Info,
+    More,
+    Question,
     Solution,
     Tip,
     Warning,
 } from "~/components/ui/callouts";
-import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { CodeBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { List, ListItem } from "~/components/ui/list";
-import Cons from "~/components/ui/procons/Cons.astro";
-import ProCons from "~/components/ui/procons/ProCons.astro";
-import Pros from "~/components/ui/procons/Pros.astro";
 import { References, WebPage } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Pipelines I: Fundamentos" description="..."
+    title="Pipelines I: PowerShell declarativo"
+    description="Cómo mapear conceptos conocidos (FP, method chaining y SQL) al pipeline de PowerShell: una sintaxis declarativa para componer transformaciones."
     timeMultiplier={2}
 >
     <Abstract>
-        ...
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "...",
+                ],
+            }}
+        />
     </Abstract>
 
-    <NotesSection id="h2-why-streaming">
-        <Heading headingLevel="h2" Icon={icons.PlayCircle}>
-            ¿Por qué pensar en procesamiento en streaming?
+    <NotesSection id="h2-pipeline-intuition">
+        <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
+            Pensar en pasos: de colecciones al pipeline de PowerShell
         </Heading>
 
-        <Definition>
-            El <B>procesamiento en streaming</B> es un modelo donde los datos se <I>consumen y
-                procesan a medida que llegan</I>, elemento por elemento, sin esperar a tener el
-            conjunto completo. Este enfoque permite <B>producir resultados de inmediato</B>,
-            mantener <I>memoria acotada</I> y sostener flujos continuos de información.
-        </Definition>
-
         <P>
-            Como todo modelo, el enfoque en streaming ofrece ventajas claras, pero también introduce
-            nuevos retos:
+            Antes de hablar del <B>pipeline</B> de PowerShell, pensemos en una idea más simple:
+            <B>procesar una colección paso a paso</B>.
         </P>
 
-        <ProCons>
-            <Pros>
-                <List>
-                    <ListItem icon={icons.Cpu}>
-                        <B>Baja latencia:</B> entregas resultados parciales inmediatamente.
-                    </ListItem>
+        <P>
+            En muchos lenguajes, cuando tienes una colección de datos, aplicas una secuencia de
+            operaciones:
+            <I>filtrar</I>, <I>transformar</I>, <I>eliminar duplicados</I>, <I>limitar
+                resultados</I>. Cada paso toma el resultado del anterior.
+        </P>
 
-                    <ListItem icon={icons.FolderOpen}>
-                        <B>Memoria acotada:</B> procesas pieza a pieza, sin materializar todo el
-                        dataset.
-                    </ListItem>
+        <Definition>
+            <Fragment slot="title">Transformaciones encadenadas</Fragment>
+            <P>
+                Una <B>transformación</B> recibe una colección de entrada y produce otra colección
+                de salida. Al encadenarlas, describes <I>qué</I> quieres hacer con los datos, no
+                <I>cómo</I> recorrerlos elemento por elemento.
+            </P>
+        </Definition>
 
-                    <ListItem icon={icons.Pipe}>
-                        <B>Composición natural:</B> encadena pasos (filtrar → transformar → emitir)
-                        como un pipeline.
-                    </ListItem>
+        <Info>
+            <span slot="title">El mismo problema, expresado como pasos</span>
 
-                    <ListItem icon={icons.Bug}>
-                        <B>Descubrimiento temprano de errores:</B> fallas aparecen antes, no al
-                        final del lote.
-                    </ListItem>
-                </List>
-            </Pros>
+            <CodeBlock
+                lang="scala"
+                code={`
+                    users
+                        .filter(_.active)
+                        .map(_.email)
+                        .distinct
+                        .take(10)
+                `}
+            >
+                <Fragment slot="title">Colecciones con operaciones encadenadas (Scala)</Fragment>
+            </CodeBlock>
 
-            <Cons>
-                <List>
-                    <ListItem icon={icons.ListChecks}>
-                        <B>Complejidad:</B> manejo de reintentos, idempotencia y consistencia
-                        eventual.
-                    </ListItem>
+            <CodeBlock
+                lang="python"
+                code={`list(
+    islice(
+        dict.fromkeys(
+            map(
+                lambda u: u.email,
+                filter(lambda u: u.active, users)
+            )
+        ),
+        10
+    )
+)`}
+            >
+                <Fragment slot="title"
+                >Colecciones con funciones de orden superior (Python)</Fragment>
+            </CodeBlock>
 
-                    <ListItem icon={icons.Code}>
-                        <B>Depuración y pruebas:</B> repetir flujos en tiempo real puede ser más
-                        difícil que un batch determinista.
-                    </ListItem>
+            <CodeBlock
+                lang="sql" code={`SELECT DISTINCT email
+FROM users
+WHERE active = TRUE
+LIMIT 10;`}
+            >
+                <Fragment slot="title">Consulta declarativa (SQL)</Fragment>
+            </CodeBlock>
+        </Info>
 
-                    <ListItem icon={icons.FileText}>
-                        <B>Materialización parcial:</B> si necesitas el total (p. ej., percentil
-                        global), debes acumular.
-                    </ListItem>
-                </List>
-            </Cons>
-        </ProCons>
+        <P>
+            Aunque la sintaxis cambia, la <B>idea es siempre la misma</B>:
+        </P>
 
-        <NotesSection id="h3-use-cases">
-            <Heading headingLevel="h3" Icon={icons.Tag}>
-                Casos de uso: del entorno cotidiano a la producción a gran escala
-            </Heading>
+        <List>
+            <ListItem icon={icons.Funnel}>
+                Quedarse solo con los elementos que cumplen una condición.
+            </ListItem>
+            <ListItem icon={icons.At}>
+                Extraer un dato relevante de cada elemento.
+            </ListItem>
+            <ListItem icon={icons.Copy}>
+                Eliminar duplicados.
+            </ListItem>
+            <ListItem icon={icons.ArrowDown}>
+                Tomar solo una cantidad limitada de resultados.
+            </ListItem>
+        </List>
 
-            <p>
-                Algunos escenarios comunes donde el procesamiento en streaming destaca:
-            </p>
+        <More>
+            <span slot="title">¿Dónde entra PowerShell?</span>
+
+            <P>
+                El <B>pipeline de PowerShell</B> es otra forma de expresar exactamente esta misma
+                idea, pero en lugar de encadenar métodos o funciones, <B>conecta comandos</B>.
+            </P>
+
+            <P>
+                Cada comando:
+            </P>
 
             <List>
-                <ListItem icon={icons.MagicWand}>
-                    <B>Logs en vivo:</B> inspeccionar y filtrar eventos conforme se generan (p. ej.,
-                    seguridad, auditorías).
+                <ListItem icon={icons.Box}>
+                    recibe <B>objetos</B> como entrada,
                 </ListItem>
-
-                <ListItem icon={icons.Hash}>
-                    <B>Métricas y monitoreo:</B> paneles de salud de servicios con alertas en tiempo
-                    real.
+                <ListItem icon={icons.ArrowRight}>
+                    procesa uno a uno,
                 </ListItem>
-
-                <ListItem icon={icons.Cpu}>
-                    <B>IoT y mensajes en tiempo real:</B> sensores o colas de eventos que generan
-                    datos continuamente.
-                </ListItem>
-
-                <ListItem icon={icons.PlayCircle}>
-                    <B>Streaming multimedia:</B> procesar o transcodificar al vuelo, reduciendo la
-                    latencia percibida por el usuario final.
+                <ListItem icon={icons.ArrowElbowRight}>
+                    y envía el resultado al siguiente comando.
                 </ListItem>
             </List>
-        </NotesSection>
+
+            <P>
+                Esa conexión se escribe con el operador <Mono>|</Mono>, que puedes leer como
+                <I>“pasa el resultado a…”</I>.
+            </P>
+        </More>
+
+        <Info>
+            <span slot="title">El mismo flujo expresado como pipeline</span>
+
+            <PowerShellBlock
+                code={`Import-Csv users.csv |
+Where-Object { $_.active -eq 'true' } |
+Select-Object -ExpandProperty email |
+Sort-Object -Unique |
+Select-Object -First 10`}
+            >
+                <Fragment slot="title">Pipeline en PowerShell</Fragment>
+            </PowerShellBlock>
+        </Info>
+
+        <Explanation>
+            <List>
+                <ListItem icon={icons.Pipe}>
+                    <B><Mono>|</Mono> conecta pasos:</B> no es “texto”, son objetos que fluyen entre
+                    comandos.
+                </ListItem>
+                <ListItem icon={icons.Funnel}>
+                    <B>Filtrar temprano:</B> igual que en SQL o FP, reduces trabajo en los pasos
+                    siguientes.
+                </ListItem>
+                <ListItem icon={icons.Stack}>
+                    <B>Procesamiento incremental:</B> PowerShell no necesita cargar todo en memoria
+                    para empezar a trabajar.
+                </ListItem>
+                <ListItem icon={icons.FileText}>
+                    <B>La salida final decide el formato:</B> solo al final conviertes a texto,
+                    archivo o reporte.
+                </ListItem>
+            </List>
+        </Explanation>
     </NotesSection>
 
-    <NotesSection id="h2-pipeline">
-        <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
-            El pipeline en PowerShell: streaming de objetos
+    <NotesSection id="h2-por-que-declarativa">
+        <Heading headingLevel="h2" Icon={icons.Tag}>
+            ¿Por qué queremos una sintaxis declarativa?
         </Heading>
 
         <p class="mb-2">
@@ -147,9 +217,35 @@ import NotesSection from "~/layouts/NotesSection.astro";
             volúmenes sin cargar todo en memoria.
         </p>
 
-        <Tip>
-            Piensa en <B>pasos declarativos</B>: <I>filtra temprano</I>, <I>transforma después</I> y
-            <I>emite al final</I>. Así tu pipeline será más expresivo y eficiente.
+        <Definition headingLevel="h4">
+            <Fragment slot="title">Ventajas prácticas</Fragment>
+            <List>
+                <ListItem icon={icons.FileText}>
+                    <B>Legibilidad:</B> el flujo se lee como una historia (fuente → filtro →
+                    transformación → orden → límite → salida).
+                </ListItem>
+                <ListItem icon={icons.Pipe}>
+                    <B>Composición:</B> cambias una etapa sin reescribir todo el procedimiento.
+                </ListItem>
+                <ListItem icon={icons.Gear}>
+                    <B>Optimizable:</B> filtrar temprano y cortar (<PowerShellInline
+                        code="-First"
+                    />) reduce trabajo (igual que un optimizador empuja <I>WHERE</I> hacia abajo).
+                </ListItem>
+                <ListItem icon={icons.ListChecks}>
+                    <B>Razonable y testeable:</B> cada etapa tiene contrato claro (entrada →
+                    salida), con menos estado mutable.
+                </ListItem>
+            </List>
+        </Definition>
+        <Tip headingLevel="h4">
+            <span slot="title">SQL como espejo</span>
+            <P>
+                SQL funciona porque describe <I>qué</I> quieres y delega el <I>cómo</I> al motor. En
+                pipelines buscamos el mismo beneficio: un vocabulario de transformaciones para
+                <B>reordenar</B>, <B>cortar temprano</B>, <B>instrumentar</B> y <B>componer</B> sin
+                ensuciar la intención.
+            </P>
         </Tip>
 
         <PowerShellBlock
@@ -221,154 +317,154 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <PowerShellInline code="Out-File" /> si necesitas preparar la salida antes.
             </p>
         </Warning>
+
+        <NotesSection id="h3-declarative-chaining">
+            <Heading headingLevel="h3" Icon={icons.Pipe}>
+                Del pipeline al method chaining (Scala) y a SQL
+            </Heading>
+
+            <p class="mb-2">
+                La idea central del pipeline es la misma que en la <B>programaci¢n funcional</B> y
+                en APIs de <B>method chaining</B>: construir un flujo como una <B>composici¢n de
+                    pasos peque¤os</B>. Cada paso recibe una entrada, produce una salida, y el
+                siguiente paso decide qu‚ hacer con ella.
+            </p>
+
+            <p class="mb-2">
+                Lo valioso no es solo el streaming, sino la <B>sintaxis declarativa</B>: expresar
+                <I>qu‚</I> quieres (filtrar, proyectar, ordenar, limitar) sin escribir un bucle
+                imperativo con variables temporales.
+            </p>
+
+            <Definition headingLevel="h4">
+                <Fragment slot="title">Por qu‚ queremos una sintaxis declarativa</Fragment>
+                <List>
+                    <ListItem icon={icons.FileText}>
+                        <B>Legibilidad:</B> el flujo se lee como una historia (fuente -> filtro ->
+                        transformaci¢n -> orden -> l¡mite -> salida).
+                    </ListItem>
+                    <ListItem icon={icons.Pipe}>
+                        <B>Composici¢n:</B> cambias una etapa sin reescribir todo el procedimiento.
+                    </ListItem>
+                    <ListItem icon={icons.Gear}>
+                        <B>Optimizable:</B> filtrar temprano y cortar con <PowerShellInline
+                            code="-First"
+                        /> reduce trabajo (igual que un optimizador empuja <I>WHERE</I> hacia
+                        abajo).
+                    </ListItem>
+                    <ListItem icon={icons.ListChecks}>
+                        <B>Razonable y testeable:</B> cada etapa tiene contrato claro (entrada ->
+                        salida), con menos estado mutable.
+                    </ListItem>
+                </List>
+            </Definition>
+
+            <Info headingLevel="h4">
+                <span slot="title">El mismo contrato en PowerShell, Scala y SQL</span>
+                <p class="mb-2">
+                    Tres notaciones para el mismo objetivo: "dame los 10 correos £nicos de usuarios
+                    activos".
+                </p>
+
+                <PowerShellBlock
+                    code={`Import-Csv users.csv |
+Where-Object { $_.active -eq 'true' } |
+Select-Object -ExpandProperty email |
+Sort-Object -Unique |
+Select-Object -First 10`}
+                >
+                    <Fragment slot="title">Pipeline (PowerShell)</Fragment>
+                </PowerShellBlock>
+
+                <CodeBlock
+                    lang="scala"
+                    code={`users
+  .filter(_.active)
+  .map(_.email)
+  .distinct
+  .take(10)`}
+                >
+                    <Fragment slot="title">Method chaining (Scala)</Fragment>
+                </CodeBlock>
+
+                <CodeBlock
+                    lang="sql" code={`SELECT DISTINCT email
+FROM users
+WHERE active = TRUE
+LIMIT 10;`}
+                >
+                    <Fragment slot="title">Consulta declarativa (SQL)</Fragment>
+                </CodeBlock>
+
+                <Tip headingLevel="h4">
+                    <span slot="title">Por qu‚ SQL es un gran espejo</span>
+                    <p>
+                        SQL funciona porque describe <I>qu‚</I> quieres y delega el <I>c¢mo</I> al
+                        motor (planificador/optimizador). En pipelines buscamos el mismo beneficio:
+                        un vocabulario de transformaciones para poder <B>reordenar</B>, <B>cortar
+                            temprano</B>, <B>instrumentar</B> y <B>componer</B> sin ensuciar la
+                        intenci¢n del flujo.
+                    </p>
+                </Tip>
+            </Info>
+        </NotesSection>
     </NotesSection>
 
-    <Exercise id="h2-exercise">
-        <span slot="title">
-            ¿Quién se comió la RAM que dejé libre esta mañana?
-        </span>
-
-        <p class="mb-2">
-            Tienes las siguientes llamadas disponibles. Construye un pipeline que obtenga el <B>TOP
-                5</B> de procesos por memoria (<I>Working Set</I>), mostrando <I>Name</I>, <I>Id</I>
-            y <I>WS_MB</I> (Working Set en MB), y <B>muestre los resultados como tabla</B>.
-        </p>
-
-        <Info>
-            <span slot="title">Llamadas disponibles</span>
-
-            <List>
-                <ListItem icon={icons.ArrowsDownUp}>
-                    <PowerShellInline code="Sort-Object -Property WorkingSet -Descending" /> —
-                    ordena los procesos por memoria (descendente).
-                </ListItem>
-
-                <ListItem icon={icons.Table}>
-                    <PowerShellInline code="Format-Table -AutoSize" /> — da formato tabular a la
-                    salida.
-                </ListItem>
-
-                <ListItem icon={icons.ListChecks}>
-                    <PowerShellInline
-                        code="Select-Object Name, Id, @{ n='WS_MB'; e={ [math]::Round($_.WorkingSet / 1MB, 1) } } -First 5"
-                    /> — proyecta las columnas y calcula <I>WS_MB</I>, mostrando solo los 5
-                    primeros.
-                </ListItem>
-
-                <ListItem icon={icons.Cpu}>
-                    <PowerShellInline code="Get-Process" /> — emite objetos de proceso (propiedades
-                    útiles:
-                    <I>Name</I>, <I>Id</I>, <I>WorkingSet</I> en bytes).
-                </ListItem>
-
-                <ListItem icon={icons.Funnel}>
-                    <PowerShellInline code="Where-Object { $_.WorkingSet -gt 200MB }" /> — filtra
-                    procesos con más de 200 MB de memoria.
-                </ListItem>
-            </List>
-        </Info>
-
-        <Solution>
-            <PowerShellBlock
-                code={`
-                    Get-Process |
-                        Where-Object { $_.WorkingSet -gt 200MB } |
-                        Sort-Object -Property WorkingSet -Descending |
-                        Select-Object Name, Id, @{ n='WS_MB'; e={ [math]::Round($_.WorkingSet / 1MB, 1) } } -First 5 |
-                        Format-Table -AutoSize
-                `}
-            >
-                <Fragment slot="title">Solución: pipeline completo</Fragment>
-                <span slot="footer">
-                    El pipeline recorre procesos, filtra los que usan más de 200 MB, los ordena por
-                    memoria, calcula el uso en MB, toma los 5 más altos y finalmente formatea la
-                    salida como tabla.
-                    <B>Todos los pasos previos manipulan objetos;</B> solo el último genera texto
-                    para el usuario.
-                </span>
-            </PowerShellBlock>
-        </Solution>
-
-        <OutputBlock
-            code={`
-                Name                  Id   WS_MB
-                ----                  --   -----
-                vivaldi            39884 1536.4
-                Memory Compression  3228 1319.3
-                node               16544 1086.2
-                vivaldi            13352  974.5
-                Code                3320  869.3
-            `}
-        >
-            <span slot="title">Salida esperada (ejemplo)</span>
-        </OutputBlock>
-    </Exercise>
+    <NotesSection id="h2-ejercicio">
+        <Heading headingLevel="h2" Icon={icons.ListChecks}>
+            Ejercicio corto
+        </Heading>
+        <Exercise>
+            <span slot="title">Traducir cadenas declarativas a PowerShell</span>
+            <Info>
+                <span slot="title">Entrada</span>
+                <List>
+                    <ListItem icon={icons.Code}>
+                        Un pequeño pipeline en Python (ver arriba) que <I>filtra</I>, <I
+                        >proyecta</I>,
+                        <I>deduplica</I> y <I>toma</I>.
+                    </ListItem>
+                    <ListItem icon={icons.Table}>
+                        Una consulta SQL <I>SELECT DISTINCT ... WHERE ... LIMIT 10</I>.
+                    </ListItem>
+                </List>
+            </Info>
+            <Question>
+                <List>
+                    <ListItem icon={icons.Pipe}>
+                        Escribe el pipeline equivalente en PowerShell usando <PowerShellInline
+                            code="Where-Object"
+                        />, <PowerShellInline code="Select-Object" />, <PowerShellInline
+                            code="Sort-Object -Unique"
+                        /> y <PowerShellInline code="Select-Object -First" />.
+                    </ListItem>
+                </List>
+            </Question>
+            <Solution>
+                <PowerShellBlock
+                    code={`Import-Csv users.csv |
+Where-Object { $_.active -eq 'true' } |
+Select-Object -ExpandProperty email |
+Sort-Object -Unique |
+Select-Object -First 10`}
+                >
+                    <Fragment slot="title">Solución esperada</Fragment>
+                    <span slot="footer">
+                        Composición declarativa: cada etapa transforma el flujo; se materializa al
+                        final si es necesario.
+                    </span>
+                </PowerShellBlock>
+            </Solution>
+        </Exercise>
+    </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            <p class="mb-2">
-                En esta lección exploramos el concepto de <B>procesamiento en streaming</B> y cómo
-                PowerShell lo incorpora a su modelo de ejecución mediante el <I>pipeline</I>.
-                Aprendimos que el pipeline no es solo una forma de encadenar comandos, sino un
-                mecanismo para <B>transferir objetos de manera secuencial</B>, permitiendo que cada
-                etapa procese los datos sin necesidad de cargar todo en memoria.
-            </p>
-
-            <p>
-                Además, vimos que su verdadero poder surge de la <B>composición declarativa</B>:
-                dividir una tarea compleja en pasos simples —filtrar, transformar, limitar y
-                mostrar— que se comunican de forma natural. Este enfoque mejora la legibilidad, el
-                rendimiento y la trazabilidad de los comandos.
-            </p>
-        </Fragment>
-
-        <Fragment slot="key-points">
-            <ListItem icon={icons.Pipe}>
-                PowerShell transmite <B>objetos</B>, no texto, lo que evita el parseo manual y
-                facilita el trabajo con propiedades.
-            </ListItem>
-
-            <ListItem icon={icons.Funnel}>
-                <B>Filtrar temprano</B> y <B>transformar después</B> reduce el uso de memoria y
-                mejora el rendimiento del flujo.
-            </ListItem>
-
-            <ListItem icon={icons.ArrowsDownUp}>
-                <PowerShellInline code="Sort-Object" /> y <PowerShellInline code="Select-Object" />
-                son etapas típicas de transformación dentro del pipeline.
-            </ListItem>
-
-            <ListItem icon={icons.Table}>
-                <PowerShellInline code="Format-Table" /> debe usarse solo al final, ya que convierte
-                los objetos en texto formateado.
-            </ListItem>
-
-            <ListItem icon={icons.Gear}>
-                Cada cmdlet tiene una <B>responsabilidad única</B>: el pipeline conecta sus salidas
-                e insumos para producir un flujo coherente.
-            </ListItem>
-        </Fragment>
-
-        <Fragment slot="takeaways">
-            <p class="mb-2">
-                Pensar en <B>pipelines</B> es pensar en <B>composición funcional</B>: una cadena de
-                transformaciones donde cada paso recibe una entrada, produce una salida y delega el
-                resultado al siguiente.
-            </p>
-
-            <p class="mb-2">
-                Igual que en la programación funcional, el poder del pipeline no está en cada
-                comando aislado, sino en cómo se
-                <I>combinan</I> para expresar un flujo claro, sin efectos colaterales innecesarios y
-                con responsabilidades bien delimitadas.
-            </p>
-
-            <p>
-                Este modo de razonar —centrado en la composición y la transformación— será la base
-                para las siguientes lecciones, donde aprenderemos a crear nuestros propios scripts
-                que participen en el flujo y a extender el modelo de streaming más allá de los
-                cmdlets incorporados.
-            </p>
+            <P>
+                El pipeline de PowerShell se entiende mejor como <B>sintaxis declarativa</B> cercana
+                a FP, method chaining y SQL. Piensa en transformar flujos paso a paso, filtrando
+                temprano y materializando al final.
+            </P>
         </Fragment>
     </ConclusionsLayout>
 
@@ -380,38 +476,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 location="MartinFowler.com"
             >
                 <Fragment slot="description">
-                    <p>
-                        El artículo describe el patrón <B>Collection Pipeline</B>, una forma de
-                        organizar programas como una <B>secuencia de operaciones encadenadas</B>
-                        (como <code>filter</code>, <code>map</code>,
-                        <code>reduce</code>) que transforman colecciones paso a paso. Fowler explica
-                        su origen en el shell Unix y su adopción en lenguajes como Smalltalk, Ruby,
-                        Clojure y Java, mostrando cómo el patrón promueve <B>claridad, modularidad y
-                            composición funcional</B>.
-                    </p>
-
-                    <p>
-                        A través de ejemplos, analiza temas como <B>laziness</B>, <B
-                        >paralelismo</B>, <B>inmutabilidad</B> y la relación del patrón con <I>Pipes
-                            and Filters</I>. También contrasta este enfoque con bucles
-                        tradicionales, comprensiones y expresiones anidadas, destacando cómo el
-                        pipeline mejora la legibilidad y favorece la <B>programación
-                            declarativa</B>.
-                    </p>
-
-                    <p>
-                        Ideal para quienes quieran <B>entender los fundamentos conceptuales detrás
-                            del pipeline de PowerShell</B> y cómo este se conecta con principios de
-                        la <B>programación funcional</B> y el diseño de APIs expresivas.
-                    </p>
+                    Patrón para encadenar operaciones declarativas en colecciones
+                    (filter/map/reduce), espejo útil del pipeline.
                 </Fragment>
             </WebPage>
         </Fragment>
-
-        <!--
-            <Fragment slot="additional">
-                ...
-            </Fragment>
-        -->
     </References>
 </NotesLayout>

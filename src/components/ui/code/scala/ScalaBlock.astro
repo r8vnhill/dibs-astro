@@ -1,0 +1,32 @@
+---
+/**
+ * ScalaBlock renders a Scala-specific CodeBlock with the Scala icon and named
+ * slots for any optional title/source metadata.
+ */
+import * as icons from "~/assets/img/icons";
+import CodeBlock from "../CodeBlock.astro";
+
+/**
+ * Input data required by ScalaBlock.
+ */
+type Props = {
+    code: string;
+};
+
+const { code }: Props = Astro.props;
+---
+
+<CodeBlock
+    lang="scala" icon={icons.Scala}
+    {code}
+>
+    {
+        // Forward custom title/source slot content to keep the outer CodeBlock layout intact.
+    }
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+</CodeBlock>

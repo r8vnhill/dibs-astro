@@ -8,8 +8,9 @@ const variantConfig = calloutVariants[variant];
 
 const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
   Astro.props as BaseCalloutProps & Record<string, any>;
+const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell variant={variant} title={title} icon={icon} {...rest}>
-  <slot name="title">{title}</slot>
+  {hasTitleSlot && <slot name="title" slot="title" />}
   <slot />
 </CalloutShell>

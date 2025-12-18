@@ -6,10 +6,20 @@ import type { BaseCalloutProps } from "./shared";
 const variant = "definition" as const;
 const variantConfig = calloutVariants[variant];
 
-const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
-  Astro.props as BaseCalloutProps & Record<string, any>;
+const { title = variantConfig.title, icon = variantConfig.icon, ...rest } = Astro.props as
+    & BaseCalloutProps
+    & Record<string, any>;
+const hasTitleSlot = Astro.slots.has("title");
+
+// Compose inline heading as "Definición - <custom>" when a custom title is provided
+const headingTitle = title === variantConfig.title
+    ? variantConfig.title
+    : `${variantConfig.title} - ${title}`;
 ---
-<CalloutShell variant={variant} title={title} icon={icon} {...rest}>
-  <slot name="title">{title}</slot>
-  <slot />
+<CalloutShell
+    {variant} title={headingTitle}
+    {icon} {...rest}
+>
+    {hasTitleSlot && <slot name="title" slot="title" />}
+    <slot />
 </CalloutShell>
