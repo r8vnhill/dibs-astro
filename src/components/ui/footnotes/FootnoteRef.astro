@@ -14,8 +14,8 @@ import { next } from "./counter";
  *                     pasar índices manuales para mantener correspondencia.
  */
 interface Props {
-  index?: number;
-  class?: string;
+    index?: number;
+    class?: string;
 }
 
 const { index, class: className } = Astro.props as Props;
@@ -23,5 +23,5 @@ const n = index ?? next();
 ---
 
 <sup id={`fnref-${n}`} class:list={["align-super", "text-xs", "no-underline", className]}>
-  <a href={`#fn-${n}`} class="footnote-ref underline decoration-dotted">{n}</a>
+    <a href={`#fn-${n}`} class="footnote-ref underline decoration-dotted">{n}</a>
 </sup>

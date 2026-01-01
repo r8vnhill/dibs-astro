@@ -6,7 +6,7 @@
 //  - toHaveClass(...)
 //  - toHaveTextContent(...)
 //
-// These make assertions against DOM nodes more readable and are widely used across the test suite. Importing this file 
-// here (and referencing it via `vitest.config.ts` -> `setupFiles`) ensures every test file has those matchers available 
+// These make assertions against DOM nodes more readable and are widely used across the test suite. Importing this file
+// here (and referencing it via `vitest.config.ts` -> `setupFiles`) ensures every test file has those matchers available
 // without repeating the import.
 import "@testing-library/jest-dom/vitest";

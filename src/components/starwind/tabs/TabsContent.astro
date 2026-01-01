@@ -14,37 +14,32 @@ import { tv } from "tailwind-variants";
  * Props accepted by the TabsContent component.
  * Inherits most <div> attributes, except a few internal ones.
  */
-interface Props
-  extends Omit<HTMLAttributes<"div">, "id" | "role" | "tabindex" | "hidden"> {
-  /**
-   * The tab value this content is associated with.
-   */
-  value: string;
+interface Props extends Omit<HTMLAttributes<"div">, "id" | "role" | "tabindex" | "hidden"> {
+    /**
+     * The tab value this content is associated with.
+     */
+    value: string;
 }
 
 /**
  * Tailwind Variants config for content container.
  */
 const tabsContent = tv({
-  base: [
-    "mt-2",
-    "focus-visible:outline-2 focus-visible:outline-offset-2",
-    "focus-visible:outline-outline",
-  ],
+    base: [
+        "mt-2",
+        "focus-visible:outline-2 focus-visible:outline-offset-2",
+        "focus-visible:outline-outline",
+    ],
 });
 
 const { value, class: className, ...rest } = Astro.props;
 ---
 
 <div
-  class={tabsContent({ class: className })}
-  data-tabs-content
-  data-value={value}
-  data-state="inactive"
-  role="tabpanel"
-  tabindex="0"
-  hidden
-  {...rest}
+    class={tabsContent({ class: className })} data-tabs-content
+    data-value={value} data-state="inactive"
+    role="tabpanel" tabindex="0"
+    hidden {...rest}
 >
-  <slot />
+    <slot />
 </div>

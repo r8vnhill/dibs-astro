@@ -4,7 +4,7 @@ import { bashScript } from "./code";
 import ScriptLink from "./ScriptLink.astro";
 
 type Props = {
-  os: "macos" | "linux";
+    os: "macos" | "linux";
 };
 
 const { os } = Astro.props as Props;
@@ -14,18 +14,14 @@ const source = `scripts/${os}/${filename}`;
 ---
 
 <BashScript code={bashScript}>
-  <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
-  <ScriptLink slot="source" source={source} />
+    <Fragment slot="title">Inicializar Proyecto Kotlin</Fragment>
+    <ScriptLink slot="source" {source} />
 </BashScript>
 <p>
-  Guarda este script como <InlineCode
-    code={filename}
-    lang="bash"
-  /> y ejecútalo en la terminal:
+    Guarda este script como <InlineCode code={filename} lang="bash" /> y ejecútalo en la terminal:
 </p>
-<BashTerminal
-  code={`
+<BashTerminal code={`
     chmod +x ./${source}
     ./${source} "intro-kt"
-  `}><Fragment slot="title">Ejecutar Script</Fragment></BashTerminal
->
+  `}><Fragment slot="title"
+    >Ejecutar Script</Fragment></BashTerminal>

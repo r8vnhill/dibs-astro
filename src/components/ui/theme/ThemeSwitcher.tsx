@@ -1,10 +1,10 @@
 import clsx from "clsx";
-import * as utils from "~/utils";
+import { type Dispatch, type JSX, type SetStateAction, useEffect, useRef, useState } from "react";
 import { useDisclosure, useOutsideClick } from "~/hooks";
-import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
+import * as utils from "~/utils";
 import { applyTheme, type Theme } from "~/utils";
 import { ThemeList } from "./ThemeList";
-import { useEffect, useRef, useState, type Dispatch, type JSX, type SetStateAction } from "react";
+import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
 
 /**
  * <ThemeSwitcher /> is a dropdown component that allows users to toggle between themes (e.g.,
@@ -17,29 +17,29 @@ import { useEffect, useRef, useState, type Dispatch, type JSX, type SetStateActi
  * - Displays a toggle button and a list of selectable themes.
  */
 export default function ThemeSwitcher(): JSX.Element {
-  const [theme, setTheme] = useState<Theme>(utils.theme.DEFAULT);
+    const [theme, setTheme] = useState<Theme>(utils.theme.DEFAULT);
 
-  // Reference to the dropdown wrapper to detect outside clicks
-  const dropdownRef = useRef<HTMLDivElement>(null);
+    // Reference to the dropdown wrapper to detect outside clicks
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { isOpen, toggle, close } = useDisclosure();
+    const { isOpen, toggle, close } = useDisclosure();
 
-  useOutsideClick(dropdownRef, close);
-  useInitializeTheme(setTheme);
-  useAutoThemeSync(theme);
+    useOutsideClick(dropdownRef, close);
+    useInitializeTheme(setTheme);
+    useAutoThemeSync(theme);
 
-  return (
-    <div
-      className={clsx("relative", "inline-block", "text-left")}
-      ref={dropdownRef}
-    >
-      {/* Toggle button for the theme dropdown */}
-      <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} />
+    return (
+        <div
+            className={clsx("relative", "inline-block", "text-left")}
+            ref={dropdownRef}
+        >
+            {/* Toggle button for the theme dropdown */}
+            <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} />
 
-      {/* Conditionally render the dropdown list of themes */}
-      {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} />}
-    </div>
-  );
+            {/* Conditionally render the dropdown list of themes */}
+            {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} />}
+        </div>
+    );
 }
 
 /**
@@ -52,14 +52,13 @@ export default function ThemeSwitcher(): JSX.Element {
  * @param setTheme - State updater function to set the current theme.
  */
 function useInitializeTheme(setTheme: Dispatch<SetStateAction<utils.Theme>>): void {
-  useEffect(() => {
-    const stored =
-      (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme) ||
-      utils.theme.DEFAULT;
+    useEffect(() => {
+        const stored = (localStorage.getItem(utils.theme.STORAGE_KEY) as Theme)
+            || utils.theme.DEFAULT;
 
-    setTheme(stored);
-    applyTheme(stored);
-  }, []);
+        setTheme(stored);
+        applyTheme(stored);
+    }, []);
 }
 
 /**
@@ -73,18 +72,18 @@ function useInitializeTheme(setTheme: Dispatch<SetStateAction<utils.Theme>>): vo
  * @param theme - The current theme selection.
  */
 function useAutoThemeSync(theme: Theme): void {
-  useEffect(() => {
-    if (theme !== utils.theme.AUTO) return;
+    useEffect(() => {
+        if (theme !== utils.theme.AUTO) return;
 
-    const media = utils.getColorSchemeMediaQuery();
+        const media = utils.getColorSchemeMediaQuery();
 
-    // Define a listener that reapplies the 'auto' theme when the preference changes
-    const listener = () => applyTheme(utils.theme.AUTO);
+        // Define a listener that reapplies the 'auto' theme when the preference changes
+        const listener = () => applyTheme(utils.theme.AUTO);
 
-    const themeChangeEvent = "change";
-    media.addEventListener(themeChangeEvent, listener);
+        const themeChangeEvent = "change";
+        media.addEventListener(themeChangeEvent, listener);
 
-    // Clean up the event listener on component unmount or dependency change
-    return () => media.removeEventListener(themeChangeEvent, listener);
-  }, [theme]);
+        // Clean up the event listener on component unmount or dependency change
+        return () => media.removeEventListener(themeChangeEvent, listener);
+    }, [theme]);
 }

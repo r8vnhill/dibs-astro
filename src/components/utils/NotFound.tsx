@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useLayoutEffect, useState, type JSX } from "react";
+import { type JSX, useLayoutEffect, useState } from "react";
 import { notFoundMessages, ultraRareMessage } from "~/data/not-found-messages";
 import { pickRandom, type StyledComponent } from "~/utils";
 
@@ -21,39 +21,38 @@ type NotFoundProps = StyledComponent;
  * This avoids a brief flash of empty or incorrect content.
  */
 export default function NotFound({ className }: NotFoundProps): JSX.Element {
-  // Holds the selected 404 message title
-  const [title, setTitle] = useState<string | null>(null);
+    // Holds the selected 404 message title
+    const [title, setTitle] = useState<string | null>(null);
 
-  useLayoutEffect(() => {
-    // Select a random message (ultra-rare easter egg included)
-    const notFoundMessage =
-      Math.random() < 1e-6
-        ? ultraRareMessage
-        : pickRandom(notFoundMessages);
+    useLayoutEffect(() => {
+        // Select a random message (ultra-rare easter egg included)
+        const notFoundMessage = Math.random() < 1e-6
+            ? ultraRareMessage
+            : pickRandom(notFoundMessages);
 
-    console.log("📄 NotFound title:", notFoundMessage);
-    setTitle(notFoundMessage ?? null);
-  }, []);
+        console.log("📄 NotFound title:", notFoundMessage);
+        setTitle(notFoundMessage ?? null);
+    }, []);
 
-  return (
-    <h1
-      // Merge default Tailwind styles with optional external className
-      className={clsx([
-        "text-4xl",           // Base size
-        "sm:text-5xl",        // Medium screens
-        "md:text-6xl",        // Large screens
-        "font-extrabold",     // Emphasize the heading
-        "text-primary",       // Themed text color
-        "tracking-tight",     // Reduce letter spacing
-        "drop-shadow-md",     // Add subtle depth
-        "font-404-title",     // Custom font defined for 404 pages
-        "animate-fade-in",    // Smooth entrance animation
-        className,            // Allow external overrides
-      ])}
-      role="heading"
-      aria-level={1}
-    >
-      {title}
-    </h1>
-  );
+    return (
+        <h1
+            // Merge default Tailwind styles with optional external className
+            className={clsx([
+                "text-4xl", // Base size
+                "sm:text-5xl", // Medium screens
+                "md:text-6xl", // Large screens
+                "font-extrabold", // Emphasize the heading
+                "text-primary", // Themed text color
+                "tracking-tight", // Reduce letter spacing
+                "drop-shadow-md", // Add subtle depth
+                "font-404-title", // Custom font defined for 404 pages
+                "animate-fade-in", // Smooth entrance animation
+                className, // Allow external overrides
+            ])}
+            role="heading"
+            aria-level={1}
+        >
+            {title}
+        </h1>
+    );
 }

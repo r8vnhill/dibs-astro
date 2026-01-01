@@ -8,13 +8,13 @@
  */
 
 @layer utilities {
-  /* Border color using the primary base color */
-  .border-primary {
-    border-color: var(--theme-color-primary);
-  }
+    /* Border color using the primary base color */
+    .border-primary {
+        border-color: var(--theme-color-primary);
+    }
 
-  /* Outline color using the primary base color (e.g. focus ring) */
-  .outline-primary {
-    outline-color: var(--theme-color-primary);
-  }
+    /* Outline color using the primary base color (e.g. focus ring) */
+    .outline-primary {
+        outline-color: var(--theme-color-primary);
+    }
 }

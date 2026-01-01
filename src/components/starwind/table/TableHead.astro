@@ -74,7 +74,8 @@ export type { Props as TableHeadCellProps };
 ---
 <th
     data-table-head scope={headState.scope}
-    data-sort={headState.isSorted ? headState.sort : undefined} aria-sort={headState.ariaSort as any}
+    data-sort={headState.isSorted ? headState.sort : undefined}
+    aria-sort={headState.ariaSort as any}
     class={tableHeaderCell({ class: className, align, size, wrap })} {...rest}
 >
     {

@@ -10,8 +10,8 @@
  * - Forward arbitrary HTML attributes (class, id, data-*) to the `<tbody>`.
  *
  * ## Why this component exists
- * The design keeps table layout and row-level styling separate. The `Table` component handles the container and 
- * overflow behavior while `TableBody` focuses on per-row visual variants (for example, zebra striping). Keeping these 
+ * The design keeps table layout and row-level styling separate. The `Table` component handles the container and
+ * overflow behavior while `TableBody` focuses on per-row visual variants (for example, zebra striping). Keeping these
  * responsibilities isolated makes the table easier to compose and test.
  *
  * Usage examples
@@ -23,9 +23,9 @@
  * </Table>
  *
  * Notes
- * - The `zebra` variant accepts `none`, `even` or `odd` and maps to a Tailwind rule that sets a background color on 
+ * - The `zebra` variant accepts `none`, `even` or `odd` and maps to a Tailwind rule that sets a background color on
  *   rows. The default is `none`.
- * - This component intentionally only provides a small API surface; more complex behaviors (condensed spacing, 
+ * - This component intentionally only provides a small API surface; more complex behaviors (condensed spacing,
  *   selectable rows, etc.) can be added later as separate variants.
  */
 

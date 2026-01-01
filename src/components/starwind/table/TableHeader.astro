@@ -22,9 +22,8 @@ export type { Props as TableHeaderProps };
 ---
 
 <thead
-  data-table-header
-  class={tableHeaderSection({ class: className, sticky, elevated })}
-  {...rest}
+    data-table-header class={tableHeaderSection({ class: className, sticky, elevated })}
+    {...rest}
 >
-  <slot />
+    <slot />
 </thead>

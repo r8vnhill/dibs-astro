@@ -1,50 +1,48 @@
 ---
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "~/components/starwind/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import { Explanation } from "../callouts";
-import PowerShellBlock from "./ps1/PowerShellBlock.astro";
 import { BashScript } from ".";
+import PowerShellBlock from "./ps1/PowerShellBlock.astro";
 
 type Props = {
-  powerShellCode: string;
-  bashCode: string;
-  className?: string;
+    powerShellCode: string;
+    bashCode: string;
+    className?: string;
 };
 
 const { powerShellCode, bashCode, className }: Props = Astro.props;
 ---
 
-<Tabs defaultValue="powershell" syncKey="terminal-choice" class={className}>
-  <TabsList>
-    <TabsTrigger value="powershell">PowerShell</TabsTrigger>
-    <TabsTrigger value="bash">Bash/Zsh</TabsTrigger>
-  </TabsList>
+<Tabs
+    defaultValue="powershell" syncKey="terminal-choice"
+    class={className}
+>
+    <TabsList>
+        <TabsTrigger value="powershell">PowerShell</TabsTrigger>
+        <TabsTrigger value="bash">Bash/Zsh</TabsTrigger>
+    </TabsList>
 
-  <TabsContent value="powershell">
-    <PowerShellBlock code={powerShellCode}>
-      <slot name="powershell-title" slot="title">
-        Desde la terminal de PowerShell
-      </slot>
-      <slot name="powershell-source" slot="source" />
-    </PowerShellBlock>
+    <TabsContent value="powershell">
+        <PowerShellBlock code={powerShellCode}>
+            <slot name="powershell-title" slot="title">
+                Desde la terminal de PowerShell
+            </slot>
+            <slot name="powershell-source" slot="source" />
+        </PowerShellBlock>
 
-    <Explanation>
-      <slot name="powershell-explanation" />
-    </Explanation>
-  </TabsContent>
+        <Explanation>
+            <slot name="powershell-explanation" />
+        </Explanation>
+    </TabsContent>
 
-  <TabsContent value="bash">
-    <BashScript code={bashCode}>
-      <slot name="bash-title" slot="title">Desde la terminal de Bash/Zsh</slot>
-      <slot name="bash-source" slot="source" />
-    </BashScript>
+    <TabsContent value="bash">
+        <BashScript code={bashCode}>
+            <slot name="bash-title" slot="title">Desde la terminal de Bash/Zsh</slot>
+            <slot name="bash-source" slot="source" />
+        </BashScript>
 
-    <Explanation>
-      <slot name="bash-explanation" />
-    </Explanation>
-  </TabsContent>
+        <Explanation>
+            <slot name="bash-explanation" />
+        </Explanation>
+    </TabsContent>
 </Tabs>

@@ -8,23 +8,23 @@ import { useEffect } from "react";
  * @param onEscape Callback to be invoked when Escape is pressed.
  */
 export function useEscapeKey(active: boolean, onEscape: () => void): void {
-  useEffect(() => {
-    // Don't attach the listener if not active
-    if (!active) return;
+    useEffect(() => {
+        // Don't attach the listener if not active
+        if (!active) return;
 
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onEscape();
-      }
-    };
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                onEscape();
+            }
+        };
 
-    const keyDownEvent = "keydown";
+        const keyDownEvent = "keydown";
 
-    window.addEventListener(keyDownEvent, handler);
+        window.addEventListener(keyDownEvent, handler);
 
-    // Clean up the event listener on unmount or when dependencies change
-    return () => {
-      window.removeEventListener(keyDownEvent, handler);
-    };
-  }, [active, onEscape]); // React to changes in `active` or `onEscape`
+        // Clean up the event listener on unmount or when dependencies change
+        return () => {
+            window.removeEventListener(keyDownEvent, handler);
+        };
+    }, [active, onEscape]); // React to changes in `active` or `onEscape`
 }

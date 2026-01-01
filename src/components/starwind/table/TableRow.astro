@@ -22,9 +22,8 @@ export type { Props as TableRowProps };
 ---
 
 <tr
-  data-table-row
-  class={tableRowStyles({ class: className, intent, density, hoverable })}
-  {...rest}
+    data-table-row class={tableRowStyles({ class: className, intent, density, hoverable })}
+    {...rest}
 >
-  <slot />
+    <slot />
 </tr>

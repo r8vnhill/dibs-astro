@@ -1,20 +1,25 @@
 @layer components {
-  /* Icon sits inline with label and uses base text color at softer opacity for muted emphasis. */
-  .theme-options__icon {
-    @apply inline-block h-4 w-4 flex-none text-base-text/70;
-  }
-  
-  /* Button mirrors theme palette: shared hover tint and accessible focus ring. */
-  .theme-switcher__button {
-    @apply inline-flex items-center gap-1 rounded border border-base-border bg-base-background px-3 py-1 text-sm font-medium transition-colors;
-    @apply hover:bg-primary-lightest/40 dark:hover:bg-primary-dark/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-base-background;
-    @apply disabled:cursor-not-allowed disabled:opacity-60;
-  }
-  
-  /* Select dropdown keeps the same visual language and focus treatment as the button. */
-  .theme-select {
-    @apply rounded border border-base-border bg-base-background px-2 py-1 text-sm text-base-text transition-colors;
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-base-background;
-    @apply disabled:cursor-not-allowed disabled:opacity-60;
-  }
+    /* Icon sits inline with label and uses base text color at softer opacity for muted emphasis. */
+    .theme-options__icon {
+        @apply inline-block h-4 w-4 flex-none text-base-text/70;
+    }
+
+    /* Button mirrors theme palette: shared hover tint and accessible focus ring. */
+    .theme-switcher__button {
+        @apply inline-flex items-center gap-1 rounded border border-base-border bg-base-background
+            px-3 py-1 text-sm font-medium transition-colors;
+        @apply hover:bg-primary-lightest/40 dark:hover:bg-primary-dark/10 focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1
+            focus-visible:ring-offset-base-background;
+        @apply disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    /* Select dropdown keeps the same visual language and focus treatment as the button. */
+    .theme-select {
+        @apply rounded border border-base-border bg-base-background px-2 py-1 text-sm text-base-text
+            transition-colors;
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+            focus-visible:ring-offset-1 focus-visible:ring-offset-base-background;
+        @apply disabled:cursor-not-allowed disabled:opacity-60;
+    }
 }

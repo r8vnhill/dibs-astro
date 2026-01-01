@@ -4,22 +4,22 @@
  * - `'dark'`: Dark mode theme.
  * - `'auto'`: Automatically selects the theme based on system preferences.
  */
-export type Theme = 'light' | 'dark' | 'auto';
+export type Theme = "light" | "dark" | "auto";
 
 export interface ThemeConstants {
-  STORAGE_KEY: string;
-  DEFAULT: Theme;
-  LIGHT: 'light';
-  DARK: 'dark';
-  AUTO: 'auto';
+    STORAGE_KEY: string;
+    DEFAULT: Theme;
+    LIGHT: "light";
+    DARK: "dark";
+    AUTO: "auto";
 }
 
 export const theme = {
-  STORAGE_KEY: 'theme',
-  DEFAULT: 'auto',
-  LIGHT: 'light',
-  DARK: 'dark',
-  AUTO: 'auto',
+    STORAGE_KEY: "theme",
+    DEFAULT: "auto",
+    LIGHT: "light",
+    DARK: "dark",
+    AUTO: "auto",
 } satisfies ThemeConstants;
 
 /**
@@ -33,7 +33,7 @@ export const theme = {
  * @returns {MediaQueryList} A MediaQueryList for the dark color scheme preference.
  */
 export function getColorSchemeMediaQuery(): MediaQueryList {
-  return window.matchMedia('(prefers-color-scheme: dark)');
+    return window.matchMedia("(prefers-color-scheme: dark)");
 }
 
 /**
@@ -42,7 +42,7 @@ export function getColorSchemeMediaQuery(): MediaQueryList {
  * @returns {boolean} `true` if the user's system preference is set to dark mode, otherwise `false`.
  */
 export function isDarkModePreferred(): boolean {
-  return getColorSchemeMediaQuery().matches;
+    return getColorSchemeMediaQuery().matches;
 }
 
 /**
@@ -54,8 +54,8 @@ export function isDarkModePreferred(): boolean {
  * @param value - The theme to apply (`'light'`, `'dark'`, or `'auto'`).
  */
 export function applyTheme(value: Theme): void {
-  persistTheme(value);
-  applyThemeClass(value);
+    persistTheme(value);
+    applyThemeClass(value);
 }
 
 /**
@@ -67,7 +67,7 @@ export function applyTheme(value: Theme): void {
  * @param value - The selected theme to store (`'light'`, `'dark'`, or `'auto'`).
  */
 function persistTheme(value: Theme): void {
-  localStorage.setItem(theme.STORAGE_KEY, value);
+    localStorage.setItem(theme.STORAGE_KEY, value);
 }
 
 /**
@@ -79,7 +79,7 @@ function persistTheme(value: Theme): void {
  * @param value - The selected theme value (`'light'`, `'dark'`, or `'auto'`).
  */
 function applyThemeClass(value: Theme): void {
-  const prefersDark = isDarkModePreferred();
-  const shouldUseDark = value === theme.DARK || (value === theme.AUTO && prefersDark);
-  document.documentElement.classList.toggle(theme.DARK, shouldUseDark);
+    const prefersDark = isDarkModePreferred();
+    const shouldUseDark = value === theme.DARK || (value === theme.AUTO && prefersDark);
+    document.documentElement.classList.toggle(theme.DARK, shouldUseDark);
 }

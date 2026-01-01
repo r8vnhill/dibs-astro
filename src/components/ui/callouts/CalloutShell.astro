@@ -95,11 +95,10 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
             <details class="group callout__details" {...detailProps}>
                 <summary class="list-none">
                     <CalloutHeading
-                        Icon={resolvedIcon ?? undefined}
-                        {headingLevel} headingId={resolvedHeadingId}
-                        class={headingClass} {iconClass}
-                        {iconProps} {iconVariant}
-                        {iconDecorative}
+                        Icon={resolvedIcon ?? undefined} {headingLevel}
+                        headingId={resolvedHeadingId} class={headingClass}
+                        {iconClass} {iconProps}
+                        {iconVariant} {iconDecorative}
                         heading={resolvedTitle}
                     >
                         {hasTitleContent ? <slot name="title" /> : resolvedTitle}
@@ -124,11 +123,10 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
         ) : (
             <>
                 <CalloutHeading
-                    Icon={resolvedIcon ?? undefined}
-                    {headingLevel} headingId={resolvedHeadingId}
-                    class={headingClass} {iconClass}
-                    {iconProps} {iconVariant}
-                    {iconDecorative}
+                    Icon={resolvedIcon ?? undefined} {headingLevel}
+                    headingId={resolvedHeadingId} class={headingClass}
+                    {iconClass} {iconProps}
+                    {iconVariant} {iconDecorative}
                     heading={resolvedTitle}
                 >
                     {hasTitleContent ? <slot name="title" /> : resolvedTitle}

@@ -4,4 +4,6 @@ import InlineCode from "../InlineCode.astro";
 const { code } = Astro.props;
 ---
 
-<InlineCode code={code} lang="bash" />
+<InlineCode {code} lang="bash">
+    <slot />
+</InlineCode>

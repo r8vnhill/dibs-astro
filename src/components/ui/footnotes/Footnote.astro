@@ -12,9 +12,9 @@ import { next } from "./counter";
  * - refId?: string  -> ID de la referencia en el texto. Por defecto, "fnref-{index}".
  */
 interface Props {
-  index?: number;
-  refId?: string;
-  class?: string;
+    index?: number;
+    refId?: string;
+    class?: string;
 }
 
 const props = Astro.props as Props;
@@ -24,13 +24,12 @@ const cls = props.class ?? "";
 ---
 
 <li id={`fn-${idx}`} class={cls}>
-  <slot />
-  <a
-    href={`#${refId}`}
-    class="footnote-backref"
-    aria-label="Volver a la referencia"
-  >
-    <span class="sr-only">Volver</span>
-    <icons.ArrowBendUpLeft class="inline h-4 w-4 align-[-0.1em]" aria-hidden="true" />
-  </a>
+    <slot />
+    <a
+        href={`#${refId}`} class="footnote-backref"
+        aria-label="Volver a la referencia"
+    >
+        <span class="sr-only">Volver</span>
+        <icons.ArrowBendUpLeft class="inline h-4 w-4 align-[-0.1em]" aria-hidden="true" />
+    </a>
 </li>

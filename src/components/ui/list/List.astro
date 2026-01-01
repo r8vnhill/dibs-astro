@@ -16,34 +16,34 @@ type Variant = "default" | "compact" | "dense" | "unstyled";
  * Props for the List component.
  */
 type ListProps = {
-  /**
-   * If true, renders an ordered list (`<ol>`); otherwise, renders an unordered list (`<ul>`).
-   */
-  ordered?: boolean;
+    /**
+     * If true, renders an ordered list (`<ol>`); otherwise, renders an unordered list (`<ul>`).
+     */
+    ordered?: boolean;
 
-  /**
-   * If true, indicates that the list is nested within another list.
-   */
-  nested?: boolean;
+    /**
+     * If true, indicates that the list is nested within another list.
+     */
+    nested?: boolean;
 
-  /**
-   * Visual variant of the list, used for styling purposes.
-   */
-  variant?: Variant;
+    /**
+     * Visual variant of the list, used for styling purposes.
+     */
+    variant?: Variant;
 
-  /**
-   * Additional CSS classes to apply to the list element.
-   */
-  class?: string;
+    /**
+     * Additional CSS classes to apply to the list element.
+     */
+    class?: string;
 };
 
 // Extract and assign default values to props
 const {
-  ordered = false,
-  nested = false,
-  class: className = "",
-  variant = "default",
-  ...rest
+    ordered = false,
+    nested = false,
+    class: className = "",
+    variant = "default",
+    ...rest
 } = Astro.props as ListProps;
 
 // Choose the appropriate HTML tag based on `ordered`
@@ -51,28 +51,31 @@ const Tag = ordered ? "ol" : "ul";
 
 // Select vertical spacing utility based on variant
 const spacingClass = {
-  default: "space-y-2", // Comfortable spacing between items
-  compact: "space-y-0.5", // Slightly tighter spacing
-  dense: "space-y-0", // No vertical spacing
-  unstyled: "", // No spacing applied
+    default: "space-y-2", // Comfortable spacing between items
+    compact: "space-y-0.5", // Slightly tighter spacing
+    dense: "space-y-0", // No vertical spacing
+    unstyled: "", // No spacing applied
 }[variant];
 
 // Compose list container classes conditionally
 const classes = [
-  variant !== "unstyled" ? (ordered ? "list-decimal" : "list-disc") : "",
-  nested ? "mt-1 ps-5" : "mt-2 ps-5", // Adjust spacing and indentation for nested lists
-  spacingClass,
-  variant !== "unstyled" ? "text-inherit" : "", // Inherit text color
-  className,
+    variant !== "unstyled" ? (ordered ? "list-decimal" : "list-disc") : "",
+    nested ? "mt-1 ps-5" : "mt-2 ps-5", // Adjust spacing and indentation for nested lists
+    spacingClass,
+    variant !== "unstyled" ? "text-inherit" : "", // Inherit text color
+    className,
 ]
-  .filter(Boolean)
-  .join(" ");
+    .filter(Boolean)
+    .join(" ");
 ---
 
 <!--
-  Renders the ordered or unordered list with computed styles.
-  All additional attributes are forwarded via {...rest}.
+    Renders the ordered or unordered list with computed styles.
+    All additional attributes are forwarded via {...rest}.
 -->
-<Tag role="list" class:list={["mb-4", classes]} {...rest}>
-  <slot />
+<Tag
+    role="list" class:list={["mb-4", classes]}
+    {...rest}
+>
+    <slot />
 </Tag>

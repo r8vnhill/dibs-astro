@@ -17,12 +17,12 @@
  *   for edge jumps, or `undefined` if the key is irrelevant.
  */
 export function resolveKeyDirection(
-  key: string
+    key: string,
 ): number | "start" | "end" | undefined {
-  return {
-    ArrowRight: 1,
-    ArrowLeft: -1,
-    Home: "start",
-    End: "end",
-  }[key] as number | "start" | "end" | undefined;
+    return {
+        ArrowRight: 1,
+        ArrowLeft: -1,
+        Home: "start",
+        End: "end",
+    }[key] as number | "start" | "end" | undefined;
 }

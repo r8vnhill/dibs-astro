@@ -1,5 +1,5 @@
 /*
- * Centralized mapping of common language short-hands and aliases to the names that Shiki bundles. This keeps the rest 
+ * Centralized mapping of common language short-hands and aliases to the names that Shiki bundles. This keeps the rest
  * of the codebase free from ad-hoc string checks and provides a single place to add new mappings
  * (for example: `nu` -> `nushell`).
  *
@@ -42,11 +42,13 @@ export const availableLanguages = Array.from(
  *
  * Returns:
  * - resolvedLang: the BundledLanguage name if known, otherwise null.
- * - shouldWarn: whether callers should emit a warning when the language is unknown. We don't warn when the input 
- *   matches a known alias that maps to `null` (explicitly treated as plaintext), but we do warn for totally 
+ * - shouldWarn: whether callers should emit a warning when the language is unknown. We don't warn when the input
+ *   matches a known alias that maps to `null` (explicitly treated as plaintext), but we do warn for totally
  *   unrecognized names.
  */
-export function resolveLanguage(lang: string): { resolvedLang: BundledLanguage | null; shouldWarn: boolean } {
+export function resolveLanguage(
+    lang: string,
+): { resolvedLang: BundledLanguage | null; shouldWarn: boolean } {
     const lower = lang.toLowerCase();
     if (Object.prototype.hasOwnProperty.call(languageAliases, lower)) {
         const alias = languageAliases[lower];

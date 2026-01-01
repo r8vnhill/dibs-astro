@@ -1,38 +1,39 @@
 /* ----- Footnotes styling ----- */
 .footnotes {
-  @apply mt-10 border-t border-base-border pt-6 text-sm;
+    @apply mt-10 border-t border-base-border pt-6 text-sm;
 }
 
 .footnotes > ol {
-  @apply pl-6 space-y-3;
+    @apply pl-6 space-y-3;
 }
 
 .footnotes li {
-  @apply relative;
+    @apply relative;
 }
 
 /* marca/contador (números de la lista) */
 .footnotes ol > li::marker {
-  color: var(--color-primary);
-  opacity: 0.9;
+    color: var(--color-primary);
+    opacity: 0.9;
 }
 
 /* enlaces internos dentro de la nota */
 .footnotes a {
-  @apply underline decoration-dotted underline-offset-2;
+    @apply underline decoration-dotted underline-offset-2;
 }
 
 /* backref (volver a la cita) */
 .footnotes .footnote-backref {
-  @apply ml-2 inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors;
+    @apply ml-2 inline-flex items-center gap-1 text-muted-foreground hover:text-foreground
+        transition-colors;
 }
 
 /* modo oscuro suave */
 :root.dark .footnotes {
-  @apply border-base-border/60;
+    @apply border-base-border/60;
 }
 
 /* opcional: caja suave para cada nota */
 .footnotes li > p:first-child {
-  @apply bg-muted/40 dark:bg-muted/20 rounded-md px-3 py-2;
+    @apply bg-muted/40 dark:bg-muted/20 rounded-md px-3 py-2;
 }

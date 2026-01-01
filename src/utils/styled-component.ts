@@ -5,8 +5,8 @@
  * customization via utility classes or CSS modules.
  */
 export default interface StyledComponent {
-  /**
-   * Optional custom CSS class or utility classes to apply to the component.
-   */
-  className?: string;
+    /**
+     * Optional custom CSS class or utility classes to apply to the component.
+     */
+    className?: string;
 }

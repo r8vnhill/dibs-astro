@@ -93,6 +93,28 @@
 		"description": "Insert a NotesSection component",
 		"prefix": "notessection"
 	},
+	"Nushell Inline": {
+		"body": [
+			"<NushellInline code={`$1`} />"
+		],
+		"description": "Inserta un componente NushellInline",
+		"prefix": "nuinline",
+		"scope": "astro"
+	},
+	"NushellBlock con slots": {
+		"body": [
+			"<NushellBlock code={`",
+			"    $1",
+			"`}>",
+			"    <Fragment slot=\"title\">${2:...}</Fragment>",
+			"    <Fragment slot=\"footer\">${3:...}</Fragment>",
+			"    <Fragment slot=\"source\">${4:path/to/script.nu}</Fragment>",
+			"</NushellBlock>"
+		],
+		"description": "Inserta un bloque NushellBlock con slots de titulo, footer y source.",
+		"prefix": "nublock",
+		"scope": "astro"
+	},
 	"PowerShell Inline": {
 		"body": [
 			"<PowerShellInline code={`$1`} />"
@@ -115,26 +137,48 @@
 		"prefix": "psblock",
 		"scope": "astro"
 	},
-	"Nushell Inline": {
+	"ProCons": {
 		"body": [
-			"<NushellInline code={`$1`} />"
+			"<ProCons>",
+			"    <Pros>",
+			"        <List>",
+			"            <ListItem icon={null}>",
+			"                ...",
+			"            </ListItem>",
+			"        </List>",
+			"    </Pros>",
+			"    <Cons>",
+			"        <List>",
+			"            <ListItem icon={null}>",
+			"                ...",
+			"            </ListItem>",
+			"        </List>",
+			"    </Cons>",
+			"</ProCons>"
 		],
-		"description": "Inserta un componente NushellInline",
-		"prefix": "nuinline",
+		"description": "Insert a ProCons component",
+		"prefix": "procons"
+	},
+	"Python Inline": {
+		"body": [
+			"<PythonInline code={`$1`} />"
+		],
+		"description": "Inserta un componente PythonInline",
+		"prefix": "pyinline",
 		"scope": "astro"
 	},
-	"NushellBlock con slots": {
+	"PythonBlock con slots": {
 		"body": [
-			"<NushellBlock code={`",
+			"<PythonBlock code={`",
 			"    $1",
 			"`}>",
 			"    <Fragment slot=\"title\">${2:...}</Fragment>",
 			"    <Fragment slot=\"footer\">${3:...}</Fragment>",
-			"    <Fragment slot=\"source\">${4:path/to/script.nu}</Fragment>",
-			"</NushellBlock>"
+			"    <Fragment slot=\"source\">${4:path/to/script.py}</Fragment>",
+			"</PythonBlock>"
 		],
-		"description": "Inserta un bloque NushellBlock con slots de titulo, footer y source.",
-		"prefix": "nublock",
+		"description": "Inserta un bloque PythonBlock con slots de título, footer y source.",
+		"prefix": "pyblock",
 		"scope": "astro"
 	},
 	"Starwind Table": {
@@ -164,27 +208,5 @@
 		"description": "Inserta una tabla Starwind con placeholders",
 		"prefix": "swtable",
 		"scope": "astro"
-	},
-	"ProCons": {
-		"body": [
-			"<ProCons>",
-			"    <Pros>",
-			"        <List>",
-			"            <ListItem icon={null}>",
-			"                ...",
-			"            </ListItem>",
-			"        </List>",
-			"    </Pros>",
-			"    <Cons>",
-			"        <List>",
-			"            <ListItem icon={null}>",
-			"                ...",
-			"            </ListItem>",
-			"        </List>",
-			"    </Cons>",
-			"</ProCons>"
-		],
-		"description": "Insert a ProCons component",
-		"prefix": "procons"
 	}
 }

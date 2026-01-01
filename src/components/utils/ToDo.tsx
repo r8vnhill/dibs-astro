@@ -119,7 +119,8 @@ export default function ToDo({
                 id={messageId}
                 className="text-center text-sm italic"
             >
-                {message}<br />Esta sección podría estar incompleta :0
+                {message}
+                <br />Esta sección podría estar incompleta :0
             </figcaption>
         </figure>
     );

@@ -16,176 +16,172 @@ import { availableLanguages, highlightToHtml } from "~/lib/shiki/highlighter";
 import { applyTailwindClasses } from "~/lib/shiki/transformers";
 
 type Props = {
-  code: string;
-  lang: (typeof availableLanguages)[number];
-  codeClasses?: string;
-  transformers?: ShikiTransformer[];
+    code: string;
+    lang: (typeof availableLanguages)[number];
+    codeClasses?: string;
+    transformers?: ShikiTransformer[];
 };
 
 const { code, lang, codeClasses = "", transformers = [] } = Astro.props as Props;
 
 const extraClasses = codeClasses.split(/\s+/u).filter(Boolean);
 const preClasses = [
-  "hidden",
-  "dark:block",
-  "transition-colors",
-  "duration-200",
-  "p-4",
-  "text-sm",
-  "font-mono",
-  ...extraClasses,
+    "hidden",
+    "dark:block",
+    "transition-colors",
+    "duration-200",
+    "p-4",
+    "text-sm",
+    "font-mono",
+    ...extraClasses,
 ];
 const codeClassList = ["font-mono"];
 
 const html = await highlightToHtml({
-  code,
-  lang,
-  theme: "catppuccin-mocha",
-  transformers: [
-    ...transformers,
-    applyTailwindClasses({ pre: preClasses, code: codeClassList }),
-  ],
-  fallbackPreClasses: preClasses,
-  fallbackCodeClasses: codeClassList,
+    code,
+    lang,
+    theme: "catppuccin-mocha",
+    transformers: [
+        ...transformers,
+        applyTailwindClasses({ pre: preClasses, code: codeClassList }),
+    ],
+    fallbackPreClasses: preClasses,
+    fallbackCodeClasses: codeClassList,
 });
 ---
 
 <div class="shiki-container" set:html={html} />
 
 <style is:global>
-  .shiki-container {
-    display: contents;
-  }
+    .shiki-container {
+        display: contents;
+    }
 
-  .shiki {
-    white-space: pre-wrap;
-  }
+    .shiki {
+        white-space: pre-wrap;
+    }
 
-  .shiki code {
-    white-space: inherit;
-  }
+    .shiki code {
+        white-space: inherit;
+    }
 
-  /* Focus */
-  pre.has-focused .line:not(.focused) {
-    filter: blur(1px);
-    transition: filter 0.2s ease;
-  }
-  pre.has-focused:hover .line:not(.focused) {
-    filter: none;
-  }
+    /* Focus */
+    pre.has-focused .line:not(.focused) {
+        filter: blur(1px);
+        transition: filter 0.2s ease;
+    }
+    pre.has-focused:hover .line:not(.focused) {
+        filter: none;
+    }
 
-  /* Base lines */
-  pre .line {
-    position: relative;
-    padding-left: 0.75rem;
-  }
+    /* Base lines */
+    pre .line {
+        position: relative;
+        padding-left: 0.75rem;
+    }
 
-  /* Highlighted lines */
-  pre.has-highlighted .line.highlighted {
-    background-color: var(
-      --code-line-highlight-bg,
-      color-mix(in oklab, var(--muted), transparent 70%)
-    );
-    border-left: 4px solid var(--code-line-highlight-border, transparent);
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease;
-  }
-  pre.has-highlighted .line.highlighted.error {
-    background-color: color-mix(in oklab, var(--error), transparent 88%);
-    box-shadow: inset 2px 0 0 0 var(--error);
-  }
-  pre.has-highlighted .line.highlighted.warning {
-    background-color: color-mix(in oklab, var(--warning), transparent 86%);
-    box-shadow: inset 2px 0 0 0 var(--warning);
-  }
-  pre.has-highlighted .line.highlighted.error code,
-  pre.has-highlighted .line.highlighted.error .token {
-    color: var(--error-foreground);
-  }
-  pre.has-highlighted .line.highlighted.warning code,
-  pre.has-highlighted .line.highlighted.warning .token {
-    color: var(--warning-foreground);
-  }
+    /* Highlighted lines */
+    pre.has-highlighted .line.highlighted {
+        background-color: var(
+            --code-line-highlight-bg,
+            color-mix(in oklab, var(--muted), transparent 70%)
+        );
+        border-left: 4px solid var(--code-line-highlight-border, transparent);
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    pre.has-highlighted .line.highlighted.error {
+        background-color: color-mix(in oklab, var(--error), transparent 88%);
+        box-shadow: inset 2px 0 0 0 var(--error);
+    }
+    pre.has-highlighted .line.highlighted.warning {
+        background-color: color-mix(in oklab, var(--warning), transparent 86%);
+        box-shadow: inset 2px 0 0 0 var(--warning);
+    }
+    pre.has-highlighted .line.highlighted.error code,
+    pre.has-highlighted .line.highlighted.error .token {
+        color: var(--error-foreground);
+    }
+    pre.has-highlighted .line.highlighted.warning code,
+    pre.has-highlighted .line.highlighted.warning .token {
+        color: var(--warning-foreground);
+    }
 
-  /* === Diff styling (transformerNotationDiff) === */
-  :root {
-    --diff-add-bg: color-mix(in oklab, #22c55e 18%, transparent 88%);
-    --diff-add-border: #22c55e;
-    --diff-add-fg: #14532d;
+    /* === Diff styling (transformerNotationDiff) === */
+    :root {
+        --diff-add-bg: color-mix(in oklab, #22c55e 18%, transparent 88%);
+        --diff-add-border: #22c55e;
+        --diff-add-fg: #14532d;
 
-    --diff-remove-bg: color-mix(in oklab, #ef4444 16%, transparent 88%);
-    --diff-remove-border: #ef4444;
-    --diff-remove-fg: #7f1d1d;
+        --diff-remove-bg: color-mix(in oklab, #ef4444 16%, transparent 88%);
+        --diff-remove-border: #ef4444;
+        --diff-remove-fg: #7f1d1d;
 
-    --diff-gutter-w: 1rem;
-    --diff-gutter-fg: color-mix(in oklab, currentColor 60%, transparent 40%);
-    --code-line-highlight-bg: color-mix(in oklab, var(--primary) 18%, transparent 82%);
-    --code-line-highlight-border: color-mix(in oklab, var(--primary), transparent 55%);
-  }
+        --diff-gutter-w: 1rem;
+        --diff-gutter-fg: color-mix(in oklab, currentColor 60%, transparent 40%);
+        --code-line-highlight-bg: color-mix(in oklab, var(--primary) 18%, transparent 82%);
+        --code-line-highlight-border: color-mix(in oklab, var(--primary), transparent 55%);
+    }
 
-  .dark {
-    --diff-add-bg: color-mix(in oklab, #22c55e 22%, transparent 88%);
-    --diff-add-border: #16a34a;
-    --diff-add-fg: #dcfce7;
+    .dark {
+        --diff-add-bg: color-mix(in oklab, #22c55e 22%, transparent 88%);
+        --diff-add-border: #16a34a;
+        --diff-add-fg: #dcfce7;
 
-    --diff-remove-bg: color-mix(in oklab, #ef4444 20%, transparent 88%);
-    --diff-remove-border: #f87171;
-    --diff-remove-fg: #fee2e2;
+        --diff-remove-bg: color-mix(in oklab, #ef4444 20%, transparent 88%);
+        --diff-remove-border: #f87171;
+        --diff-remove-fg: #fee2e2;
 
-    --diff-gutter-fg: color-mix(in oklab, currentColor 70%, transparent 30%);
-    --code-line-highlight-bg: color-mix(in oklab, var(--primary) 30%, transparent 78%);
-    --code-line-highlight-border: color-mix(in oklab, var(--primary), transparent 35%);
-  }
+        --diff-gutter-fg: color-mix(in oklab, currentColor 70%, transparent 30%);
+        --code-line-highlight-bg: color-mix(in oklab, var(--primary) 30%, transparent 78%);
+        --code-line-highlight-border: color-mix(in oklab, var(--primary), transparent 35%);
+    }
 
-  pre.has-diff .line {
-    padding-left: calc(0.75rem + var(--diff-gutter-w));
-  }
+    pre.has-diff .line {
+        padding-left: calc(0.75rem + var(--diff-gutter-w));
+    }
 
-  pre.has-diff .line.diff.add {
-    background: var(--diff-add-bg);
-    box-shadow: inset 3px 0 0 0 var(--diff-add-border);
-    color: var(--diff-add-fg);
-  }
-  pre.has-diff .line.diff.remove {
-    background: var(--diff-remove-bg);
-    box-shadow: inset 3px 0 0 0 var(--diff-remove-border);
-    color: var(--diff-remove-fg);
-  }
+    pre.has-diff .line.diff.add {
+        background: var(--diff-add-bg);
+        box-shadow: inset 3px 0 0 0 var(--diff-add-border);
+        color: var(--diff-add-fg);
+    }
+    pre.has-diff .line.diff.remove {
+        background: var(--diff-remove-bg);
+        box-shadow: inset 3px 0 0 0 var(--diff-remove-border);
+        color: var(--diff-remove-fg);
+    }
 
-  pre.has-diff .line.diff.add::before,
-  pre.has-diff .line.diff.remove::before {
-    position: absolute;
-    left: 0.5rem;
-    top: 0;
-    bottom: 0;
-    width: calc(var(--diff-gutter-w) - 0.5rem);
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    font-weight: 700;
-    color: var(--diff-gutter-fg);
-    user-select: none;
-    pointer-events: none;
-  }
-  pre.has-diff .line.diff.add::before {
-    content: "+";
-  }
-  pre.has-diff .line.diff.remove::before {
-    content: "−";
-  }
+    pre.has-diff .line.diff.add::before,
+    pre.has-diff .line.diff.remove::before {
+        position: absolute;
+        left: 0.5rem;
+        top: 0;
+        bottom: 0;
+        width: calc(var(--diff-gutter-w) - 0.5rem);
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: 700;
+        color: var(--diff-gutter-fg);
+        user-select: none;
+        pointer-events: none;
+    }
+    pre.has-diff .line.diff.add::before {
+        content: "+";
+    }
+    pre.has-diff .line.diff.remove::before {
+        content: "−";
+    }
 
-  pre.has-diff .line.diff.add,
-  pre.has-diff .line.diff.remove {
-    transition:
-      background-color 0.15s ease,
-      box-shadow 0.15s ease;
-  }
+    pre.has-diff .line.diff.add,
+    pre.has-diff .line.diff.remove {
+        transition: background-color 0.15s ease, box-shadow 0.15s ease;
+    }
 
-  pre.has-highlighted .line.diff.add.highlighted {
-    background: color-mix(in oklab, var(--diff-add-bg) 70%, transparent);
-  }
-  pre.has-highlighted .line.diff.remove.highlighted {
-    background: color-mix(in oklab, var(--diff-remove-bg) 70%, transparent);
-  }
+    pre.has-highlighted .line.diff.add.highlighted {
+        background: color-mix(in oklab, var(--diff-add-bg) 70%, transparent);
+    }
+    pre.has-highlighted .line.diff.remove.highlighted {
+        background: color-mix(in oklab, var(--diff-remove-bg) 70%, transparent);
+    }
 </style>

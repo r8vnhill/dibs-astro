@@ -3,39 +3,39 @@ import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
 
 type Props = HTMLAttributes<"span"> & {
-  openDelay?: number;
-  closeDelay?: number;
-  disableHoverableContent?: boolean;
+    openDelay?: number;
+    closeDelay?: number;
+    disableHoverableContent?: boolean;
 };
 
 const tooltip = tv({ base: "starwind-tooltip relative inline-block align-baseline" });
 
 const {
-  openDelay = 200,
-  closeDelay = 200,
-  disableHoverableContent = false,
-  class: className,
+    openDelay = 200,
+    closeDelay = 200,
+    disableHoverableContent = false,
+    class: className,
 } = Astro.props;
 ---
 
 <span
-  class={tooltip({ class: className })}
-  data-state="closed"
-  data-open-delay={openDelay}
-  data-close-delay={closeDelay}
-  {...!disableHoverableContent && { "data-content-hoverable": "" }}
+    class={tooltip({ class: className })} data-state="closed"
+    data-open-delay={openDelay} data-close-delay={closeDelay}
+    {...!disableHoverableContent && { "data-content-hoverable": "" }}
 >
-  <slot />
+    <slot />
 </span>
 
 <script>
-  import { TooltipController } from "~/utils/tooltip";
-  const tooltipInstances = new WeakMap<HTMLElement, TooltipController>();
-  const setupTooltips = () => {
-    document.querySelectorAll<HTMLElement>(".starwind-tooltip").forEach((el, i) => {
-      if (!tooltipInstances.has(el)) tooltipInstances.set(el, new TooltipController(el, i));
-    });
-  };
-  setupTooltips();
-  document.addEventListener("astro:after-swap", setupTooltips);
+    import { TooltipController } from "~/utils/tooltip";
+    const tooltipInstances = new WeakMap<HTMLElement, TooltipController>();
+    const setupTooltips = () => {
+        document.querySelectorAll<HTMLElement>(".starwind-tooltip").forEach((el, i) => {
+            if (!tooltipInstances.has(el)) {
+                tooltipInstances.set(el, new TooltipController(el, i));
+            }
+        });
+    };
+    setupTooltips();
+    document.addEventListener("astro:after-swap", setupTooltips);
 </script>

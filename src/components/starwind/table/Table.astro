@@ -128,19 +128,17 @@ export type { Props as TableProps };
             data-table-container class={containerClass}
             {...containerRest}
         >
-                <table
-                    data-table data-table-density={resolvedDensity}
-                    class={tableClass}
-                    {...rest}
-                >
+            <table
+                data-table data-table-density={resolvedDensity}
+                class={tableClass} {...rest}
+            >
                 <slot />
             </table>
         </div>
     ) : (
         <table
             data-table data-table-density={resolvedDensity}
-            class={tableClass}
-            {...rest}
+            class={tableClass} {...rest}
         >
             <slot />
         </table>

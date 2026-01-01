@@ -1,21 +1,21 @@
+import { Check, Copy } from "phosphor-react";
 import { useState } from "react";
-import { Copy, Check } from "phosphor-react";
 
 type CopyButtonProps = {
-  /**
-   * The raw code string to be copied.
-   */
-  code: string;
+    /**
+     * The raw code string to be copied.
+     */
+    code: string;
 
-  /**
-   * Optional extra Tailwind classes for layout customization.
-   */
-  className?: string;
+    /**
+     * Optional extra Tailwind classes for layout customization.
+     */
+    className?: string;
 
-  /**
-   * Accessible label and tooltip text for the button.
-   */
-  label?: string;
+    /**
+     * Accessible label and tooltip text for the button.
+     */
+    label?: string;
 };
 
 /**
@@ -23,37 +23,37 @@ type CopyButtonProps = {
  * Displays visual feedback and supports dark/light themes via Tailwind CSS.
  */
 export function CopyButton({
-  code,
-  className = "",
-  label = "Copy code",
+    code,
+    className = "",
+    label = "Copy code",
 }: CopyButtonProps) {
-  // Track whether the code has been successfully copied.
-  const [copied, setCopied] = useState(false);
+    // Track whether the code has been successfully copied.
+    const [copied, setCopied] = useState(false);
 
-  /**
-   * Handles the copy button click event.
-   * Copies the trimmed code string to the clipboard and shows temporary feedback.
-   */
-  const handleClick = async () => {
-    if (copied || !code) return; // Prevent re-triggering if already copied
+    /**
+     * Handles the copy button click event.
+     * Copies the trimmed code string to the clipboard and shows temporary feedback.
+     */
+    const handleClick = async () => {
+        if (copied || !code) return; // Prevent re-triggering if already copied
 
-    try {
-      await navigator.clipboard.writeText(code.trim());
-      setCopied(true);
+        try {
+            await navigator.clipboard.writeText(code.trim());
+            setCopied(true);
 
-      // Reset the feedback message after 1.5 seconds
-      setTimeout(() => setCopied(false), 1500);
-    } catch (e) {
-      console.error("Copy failed:", e);
-      setCopied(false);
-    }
-  };
+            // Reset the feedback message after 1.5 seconds
+            setTimeout(() => setCopied(false), 1500);
+        } catch (e) {
+            console.error("Copy failed:", e);
+            setCopied(false);
+        }
+    };
 
-  /**
-   * Shared Tailwind classes for layout and styling.
-   * Applies dark mode support, keyboard focus rings, and hover transitions.
-   */
-  const buttonClasses = `
+    /**
+     * Shared Tailwind classes for layout and styling.
+     * Applies dark mode support, keyboard focus rings, and hover transitions.
+     */
+    const buttonClasses = `
     absolute top-2 right-2
     inline-flex items-center gap-1
     rounded px-2 py-1 text-xs font-medium
@@ -63,28 +63,26 @@ export function CopyButton({
     transition
   `;
 
-  return (
-    <button
-      onClick={handleClick}
-      type="button"
-      aria-label={label}
-      title={label}
-      className={`${buttonClasses} ${className}`}
-    >
-      {/* Display check icon and feedback message when copied */}
-      {copied ? (
-        <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-      ) : (
-        <Copy className="w-4 h-4" />
-      )}
-      <span>{copied ? "Copied!" : "Copy"}</span>
+    return (
+        <button
+            onClick={handleClick}
+            type="button"
+            aria-label={label}
+            title={label}
+            className={`${buttonClasses} ${className}`}
+        >
+            {/* Display check icon and feedback message when copied */}
+            {copied
+                ? <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                : <Copy className="w-4 h-4" />}
+            <span>{copied ? "Copied!" : "Copy"}</span>
 
-      {/* Screen-reader feedback for accessibility */}
-      <span className="sr-only" aria-live="polite">
-        {copied ? "Code copied to clipboard" : ""}
-      </span>
-    </button>
-  );
+            {/* Screen-reader feedback for accessibility */}
+            <span className="sr-only" aria-live="polite">
+                {copied ? "Code copied to clipboard" : ""}
+            </span>
+        </button>
+    );
 }
 
 export default CopyButton;

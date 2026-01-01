@@ -6,22 +6,20 @@
  * and iconography. This component leverages the generic CodeBlock component, pre-configured for
  * Bash code.
  */
-import { CodeBlock } from "~/components/ui/code";
 import * as Icons from "~/assets/img/icons";
+import { CodeBlock } from "~/components/ui/code";
 
 const { code, class: className = "" } = Astro.props;
 ---
 
 <CodeBlock
-  lang="bash"
-  icon={Icons.Bash}
-  code={code}
-  class={className}
+    lang="bash" icon={Icons.Bash}
+    {code} class={className}
 >
-  <span slot="title">
-    <slot name="title" />
-  </span>
-  <span slot="source">
-    <slot name="source" />
-  </span>
+    <span slot="title">
+        <slot name="title" />
+    </span>
+    <span slot="source">
+        <slot name="source" />
+    </span>
 </CodeBlock>

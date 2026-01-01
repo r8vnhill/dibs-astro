@@ -5,15 +5,15 @@
  * pages.
  */
 export const notFoundMessages = [
-  "¿Qué haces aquí? Esta página no existe.",
-  "¡Esta página explotó!",
-  "La princesa está en otro castillo.",
-  "404: The page is a lie.",
-  "I'm sorry, Dave. I'm afraid I can't do that.",
-  "This is not the page you are looking for.",
-  "¡Hey! Tú no deberías estar aquí.",
-  "You Can (Not) Find This Page",
-  `I'm the invisible page
+    "¿Qué haces aquí? Esta página no existe.",
+    "¡Esta página explotó!",
+    "La princesa está en otro castillo.",
+    "404: The page is a lie.",
+    "I'm sorry, Dave. I'm afraid I can't do that.",
+    "This is not the page you are looking for.",
+    "¡Hey! Tú no deberías estar aquí.",
+    "You Can (Not) Find This Page",
+    `I'm the invisible page
 I'm the invisible page
 Incredible how you can
 See right through me`,

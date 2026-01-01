@@ -6,68 +6,69 @@
  */
 
 @layer components {
+    /*
+     * Container for right-aligned navigation links.
+     * Displays items in a horizontal row with spacing between them.
+     */
+    .nav-links {
+        @apply flex items-center space-x-4;
+    }
 
-  /*
-   * Container for right-aligned navigation links.
-   * Displays items in a horizontal row with spacing between them.
-   */
-  .nav-links {
-    @apply flex items-center space-x-4;
-  }
+    /*
+     * Individual navigation links.
+     * Styled with base font, gray color, and hover transition to primary color.
+     */
+    .nav-link {
+        @apply hover:text-primary text-header-text text-sm transition-colors;
+    }
 
-  /*
-   * Individual navigation links.
-   * Styled with base font, gray color, and hover transition to primary color.
-   */
-  .nav-link {
-    @apply hover:text-primary text-header-text text-sm transition-colors;
-  }
+    /*
+     * Desktop navigation list container.
+     * Displays items in a horizontal row with spacing between them.
+     */
+    .desktop-nav-list {
+        @apply hidden items-center gap-4 sm:flex;
+    }
 
-  /*
-   * Desktop navigation list container.
-   * Displays items in a horizontal row with spacing between them.
-   */
-  .desktop-nav-list {
-    @apply hidden items-center gap-4 sm:flex;
-  }
+    /*
+     * Individual desktop navigation item.
+     * Uses Tailwind's utility classes for hover effects and text styling.
+     */
+    .desktop-nav-item {
+        @apply hover:text-primary text-header-text text-base font-medium transition-colors;
+    }
 
-  /*
-   * Individual desktop navigation item.
-   * Uses Tailwind's utility classes for hover effects and text styling.
-   */
-  .desktop-nav-item {
-    @apply hover:text-primary text-header-text text-base font-medium transition-colors;
-  }
+    /*
+     * Full-screen translucent overlay shown behind mobile menu.
+     * Ensures focus and disables interaction with background content.
+     */
+    .mobile-nav-overlay {
+        @apply fixed inset-0 z-40 bg-black/30 backdrop-blur-sm sm:hidden;
+    }
 
-  /*
-   * Full-screen translucent overlay shown behind mobile menu.
-   * Ensures focus and disables interaction with background content.
-   */
-  .mobile-nav-overlay {
-    @apply fixed inset-0 z-40 bg-black/30 backdrop-blur-sm sm:hidden;
-  }
+    /*
+     * Container for mobile navigation list.
+     * Appears as a floating box with transition animations and responsive visibility.
+     */
+    .mobile-nav-list {
+        @apply bg-header-fill fixed inset-x-4 top-20 z-50 transform rounded-md border p-4 shadow-lg
+            transition-all duration-300 sm:hidden;
+    }
 
-  /*
-   * Container for mobile navigation list.
-   * Appears as a floating box with transition animations and responsive visibility.
-   */
-  .mobile-nav-list {
-    @apply bg-header-fill fixed inset-x-4 top-20 z-50 transform rounded-md border p-4 shadow-lg transition-all duration-300 sm:hidden;
-  }
+    /*
+     * Individual mobile navigation link.
+     * Block-level links with padding and subtle hover feedback.
+     */
+    .mobile-nav-item {
+        @apply text-header-text hover:bg-primary block rounded px-4 py-2 text-base font-medium;
+    }
 
-  /*
-   * Individual mobile navigation link.
-   * Block-level links with padding and subtle hover feedback.
-   */
-  .mobile-nav-item {
-    @apply text-header-text hover:bg-primary block rounded px-4 py-2 text-base font-medium;
-  }
-
-  /*
-   * Toggle button for mobile menu (hamburger/X icon).
-   * Visible only on small screens, with focus and hover accessibility styles.
-   */
-  .toggle-button {
-    @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border border-transparent p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
-  }
+    /*
+     * Toggle button for mobile menu (hamburger/X icon).
+     * Visible only on small screens, with focus and hover accessibility styles.
+     */
+    .toggle-button {
+        @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border
+            border-transparent p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
+    }
 }

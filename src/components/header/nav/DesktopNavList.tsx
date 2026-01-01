@@ -1,5 +1,5 @@
-import type { JSX } from 'react';
-import type { NavItem } from './nav-items';
+import type { JSX } from "react";
+import type { NavItem } from "./nav-items";
 
 /**
  * Props for the `DesktopNavList` component.
@@ -8,8 +8,8 @@ import type { NavItem } from './nav-items';
  * viewports.
  */
 type DesktopNavListProps = {
-  /** List of items to be displayed in the desktop navigation menu. */
-  items: NavItem[];
+    /** List of items to be displayed in the desktop navigation menu. */
+    items: NavItem[];
 };
 
 /**
@@ -23,15 +23,15 @@ type DesktopNavListProps = {
  * @returns A JSX element representing the desktop navigation menu.
  */
 export function DesktopNavList({ items }: DesktopNavListProps): JSX.Element {
-  return (
-    <ul className="desktop-nav-list" id="mainNavDesktop">
-      {items.map((item) => (
-        <li key={item.href}>
-          <a href={item.href} className="desktop-nav-item">
-            {item.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
+    return (
+        <ul className="desktop-nav-list" id="mainNavDesktop">
+            {items.map((item) => (
+                <li key={item.href}>
+                    <a href={item.href} className="desktop-nav-item">
+                        {item.label}
+                    </a>
+                </li>
+            ))}
+        </ul>
+    );
 }

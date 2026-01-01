@@ -18,15 +18,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout title="Introducción a la automatización de tareas">
     <Abstract>
-        La automatización de tareas convierte actividades manuales y repetitivas en procesos <B>predecibles,
-            reproducibles y compartidos</B>. En el contexto del desarrollo de bibliotecas de software, esto implica
-        <B>menos errores humanos</B>, <B>mayor consistencia</B> y más tiempo para enfocarse en el <I>diseño</I> y la <I
-        >evolución</I> del proyecto.
+        La automatización de tareas convierte actividades manuales y repetitivas en procesos <B
+        >predecibles, reproducibles y compartidos</B>. En el contexto del desarrollo de bibliotecas
+        de software, esto implica
+        <B>menos errores humanos</B>, <B>mayor consistencia</B> y más tiempo para enfocarse en el <I
+        >diseño</I> y la <I>evolución</I> del proyecto.
         <br />
-        A lo largo de esta lección exploraremos qué entendemos por <I>tarea</I>, por qué conviene automatizar, qué
-        niveles de automatización existen y qué principios de diseño permiten construir procesos <B>fiables y
-            sostenibles</B>. El objetivo es desarrollar una <B>mentalidad de automatización</B> que permita diseñar
-        flujos claros, repetibles y listos para escalar junto al equipo.
+        A lo largo de esta lección exploraremos qué entendemos por <I>tarea</I>, por qué conviene
+        automatizar, qué niveles de automatización existen y qué principios de diseño permiten
+        construir procesos <B>fiables y sostenibles</B>. El objetivo es desarrollar una <B
+        >mentalidad de automatización</B> que permita diseñar flujos claros, repetibles y listos
+        para escalar junto al equipo.
     </Abstract>
 
     <NotesSection id="h2-task-automation">
@@ -38,15 +40,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p class="mb-2">
-            La <B>automatización</B> transforma actividades repetitivas en procesos <I>predecibles, rápidos y
-                auditables</I>. En este contexto, <B>auditable</B> significa que los pasos ejecutados pueden revisarse,
-            reproducirse y verificarse después, lo cual permite entender <I>qué</I> se hizo, <I>cuándo</I> y <I>por
-                qué</I>.
+            La <B>automatización</B> transforma actividades repetitivas en procesos <I>predecibles,
+                rápidos y auditables</I>. En este contexto, <B>auditable</B> significa que los pasos
+            ejecutados pueden revisarse, reproducirse y verificarse después, lo cual permite
+            entender <I>qué</I> se hizo, <I>cuándo</I> y <I>por qué</I>.
         </p>
 
         <p class="mb-2">
-            En bibliotecas de software, esto tiene un impacto directo en la <B>calidad de los lanzamientos</B>, la <B
-            >confianza de quienes contribuyen</B> y la <B>velocidad de iteración</B>.
+            En bibliotecas de software, esto tiene un impacto directo en la <B>calidad de los
+                lanzamientos</B>, la <B>confianza de quienes contribuyen</B> y la <B>velocidad de
+                iteración</B>.
         </p>
 
         <Definition>
@@ -54,9 +57,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <p>
                 Una <B>tarea</B> es una unidad de trabajo con <B>entrada</B> conocida,
-                <B>pasos</B> definidos y <B>salida</B> verificable. Automatizar consiste en describir esa unidad de
-                forma que cualquier persona del equipo pueda ejecutarla con el mismo resultado, sin importar su entorno
-                o sistema operativo.
+                <B>pasos</B> definidos y <B>salida</B> verificable. Automatizar consiste en
+                describir esa unidad de forma que cualquier persona del equipo pueda ejecutarla con
+                el mismo resultado, sin importar su entorno o sistema operativo.
             </p>
         </Definition>
     </NotesSection>
@@ -70,23 +73,24 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p class="mb-2">
-            La <B>automatización</B> reduce errores humanos en tareas repetitivas y libera tiempo que, acumulado, se
-            traduce en un ahorro significativo. También estandariza los procesos, garantizando que todas las personas
-            trabajen con los mismos criterios y obtengan resultados consistentes.
+            La <B>automatización</B> reduce errores humanos en tareas repetitivas y libera tiempo
+            que, acumulado, se traduce en un ahorro significativo. También estandariza los procesos,
+            garantizando que todas las personas trabajen con los mismos criterios y obtengan
+            resultados consistentes.
         </p>
 
         <p class="mb-2">
             Esto mejora la <B>calidad del software</B>, facilita la <B>colaboración en equipo</B>
-            y permite concentrarse en el <I>diseño</I> y la <I>evolución</I> de la biblioteca en lugar de en pasos
-            mecánicos. A nivel organizacional, la automatización es la base de la <B>integración continua</B> y la <B
-            >entrega continua</B> (CI/CD), reduciendo el tiempo de salida al mercado y aumentando la confianza en cada
-            versión.
+            y permite concentrarse en el <I>diseño</I> y la <I>evolución</I> de la biblioteca en
+            lugar de en pasos mecánicos. A nivel organizacional, la automatización es la base de la
+            <B>integración continua</B> y la <B>entrega continua</B> (CI/CD), reduciendo el tiempo
+            de salida al mercado y aumentando la confianza en cada versión.
         </p>
 
         <p class="mb-2">
             A largo plazo, la automatización favorece la <B>escalabilidad</B> y el
-            <B>mantenimiento</B> del software, asegurando que pueda evolucionar de manera ordenada y sostenible conforme
-            crece el proyecto o el equipo.
+            <B>mantenimiento</B> del software, asegurando que pueda evolucionar de manera ordenada y
+            sostenible conforme crece el proyecto o el equipo.
         </p>
     </NotesSection>
 
@@ -100,9 +104,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <List>
             <ListItem icon={icons.Hand}>
-                <B>Manual guiado:</B> checklist claro y pasos documentados (nivel base). Es como en la época de las
-                <B>tarjetas perforadas</B>, cuando cada instrucción debía registrarse a mano y cualquier error obligaba
-                a repetir todo el proceso.
+                <B>Manual guiado:</B> checklist claro y pasos documentados (nivel base). Es como en
+                la época de las
+                <B>tarjetas perforadas</B>, cuando cada instrucción debía registrarse a mano y
+                cualquier error obligaba a repetir todo el proceso.
                 <br />
                 <I>Tecnologías:</I>
                 <Link href="https://docs.gitlab.com/user/project/wiki/">GitLab Wiki</Link>,
@@ -112,31 +117,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
 
             <ListItem icon={icons.Terminal}>
-                <B>Automatización local:</B> comandos encapsulados y repetibles en el entorno de desarrollo. Permite
-                reducir errores humanos y ejecutar procesos de forma consistente.
+                <B>Automatización local:</B> comandos encapsulados y repetibles en el entorno de
+                desarrollo. Permite reducir errores humanos y ejecutar procesos de forma
+                consistente.
                 <br />
                 <I>Tecnologías:</I> scripts en PowerShell, Bash o Python.
             </ListItem>
 
             <ListItem icon={icons.Cpu}>
-                <B>Orquestación:</B> herramientas que definen dependencias, orden y resultados esperados. Incorporan
+                <B>Orquestación:</B> herramientas que definen dependencias, orden y resultados
+                esperados. Incorporan
                 <B>cacheo</B> (reutilizar resultados previos) e
-                <B>incrementalidad</B> (ejecutar solo lo que cambió), acelerando las compilaciones y aumentando la
-                eficiencia.
+                <B>incrementalidad</B> (ejecutar solo lo que cambió), acelerando las compilaciones y
+                aumentando la eficiencia.
                 <br />
                 <I>Tecnologías:</I> Gradle, Maven, npm, pnpm, Cargo, Cabal, Meson.
             </ListItem>
 
             <ListItem icon={icons.Rocket}>
-                <B>Integración y entrega continuas (CI/CD):</B> ejecuta tareas automáticamente en cada cambio, consolida
-                artefactos y genera reportes o despliegues.
+                <B>Integración y entrega continuas (CI/CD):</B> ejecuta tareas automáticamente en
+                cada cambio, consolida artefactos y genera reportes o despliegues.
                 <br />
                 <I>Tecnologías:</I> GitLab CI/CD, GitHub Actions, Jenkins.
             </ListItem>
         </List>
 
         <Note>
-            En este curso llegaremos hasta la tercera categoría (<I>orquestación</I>), que sienta las bases para CI/CD.
+            En este curso llegaremos hasta la tercera categoría (<I>orquestación</I>), que sienta
+            las bases para CI/CD.
         </Note>
     </NotesSection>
 
@@ -149,35 +157,40 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p>
-            Al diseñar procesos y herramientas de automatización conviene seguir algunos principios clave. Aplicarlos
-            mejora la confiabilidad, la mantenibilidad y la escalabilidad de los sistemas en el tiempo.
+            Al diseñar procesos y herramientas de automatización conviene seguir algunos principios
+            clave. Aplicarlos mejora la confiabilidad, la mantenibilidad y la escalabilidad de los
+            sistemas en el tiempo.
         </p>
 
         <List>
             <ListItem icon={icons.Scales}>
-                <B>Idempotencia</B>:<FootnoteRef index={1} /> ejecutar el mismo comando varias veces produce siempre el
-                mismo resultado, sin efectos secundarios inesperados. Esto permite reintentos seguros si algo falla.
+                <B>Idempotencia</B>:<FootnoteRef index={1} /> ejecutar el mismo comando varias veces
+                produce siempre el mismo resultado, sin efectos secundarios inesperados. Esto
+                permite reintentos seguros si algo falla.
             </ListItem>
 
             <ListItem icon={icons.Folder}>
-                <B>Rutas y entornos deterministas</B>: un proceso debe comportarse igual sin importar la máquina o el
-                contexto de ejecución. Esto reduce la variabilidad y previene dependencias ocultas.
+                <B>Rutas y entornos deterministas</B>: un proceso debe comportarse igual sin
+                importar la máquina o el contexto de ejecución. Esto reduce la variabilidad y
+                previene dependencias ocultas.
             </ListItem>
 
             <ListItem icon={icons.MagnifyingGlass}>
-                <B>Observabilidad</B>: cada paso debe dejar trazas claras —mensajes, logs o reportes— que permitan
-                entender qué ocurrió y por qué. Sin visibilidad, la automatización se convierte en una “caja negra”
-                difícil de mantener.
+                <B>Observabilidad</B>: cada paso debe dejar trazas claras —mensajes, logs o
+                reportes— que permitan entender qué ocurrió y por qué. Sin visibilidad, la
+                automatización se convierte en una “caja negra” difícil de mantener.
             </ListItem>
 
             <ListItem icon={icons.PuzzlePiece}>
-                <B>Composición</B>: construir tareas pequeñas y reutilizables que puedan combinarse para formar flujos
-                más complejos. Este enfoque modular facilita extender o modificar partes sin afectar al conjunto.
+                <B>Composición</B>: construir tareas pequeñas y reutilizables que puedan combinarse
+                para formar flujos más complejos. Este enfoque modular facilita extender o modificar
+                partes sin afectar al conjunto.
             </ListItem>
 
             <ListItem icon={icons.Globe}>
-                <B>Portabilidad</B>: los procesos deben funcionar de forma consistente en distintos entornos, sistemas
-                operativos o configuraciones, favoreciendo la colaboración y el mantenimiento a largo plazo.
+                <B>Portabilidad</B>: los procesos deben funcionar de forma consistente en distintos
+                entornos, sistemas operativos o configuraciones, favoreciendo la colaboración y el
+                mantenimiento a largo plazo.
             </ListItem>
         </List>
     </NotesSection>
@@ -191,47 +204,49 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p>
-            Antes de implementar una tarea conviene detenerse a reflexionar sobre su propósito y condiciones. Una tarea
-            bien definida no solo cumple su función, también es <B>clara</B>, <B>reutilizable</B> y fácil de integrar en
-            un flujo mayor.
+            Antes de implementar una tarea conviene detenerse a reflexionar sobre su propósito y
+            condiciones. Una tarea bien definida no solo cumple su función, también es <B>clara</B>,
+            <B>reutilizable</B> y fácil de integrar en un flujo mayor.
         </p>
 
         <List>
             <ListItem icon={icons.PlayCircle}>
-                <B>Trigger</B>: especifica <I>cuándo</I> se ejecuta (por ejemplo, manualmente en local, al hacer
+                <B>Trigger</B>: especifica <I>cuándo</I> se ejecuta (por ejemplo, manualmente en
+                local, al hacer
                 <Mono>commit</Mono>, durante CI o antes de publicar).
             </ListItem>
 
             <ListItem icon={icons.FolderOpen}>
-                <B>Entradas y salidas</B>: define qué archivos, rutas o artefactos utiliza, qué produce y dónde deja sus
-                resultados.
+                <B>Entradas y salidas</B>: define qué archivos, rutas o artefactos utiliza, qué
+                produce y dónde deja sus resultados.
             </ListItem>
 
             <ListItem icon={icons.WarningCircle}>
-                <B>Precondiciones</B>: indica qué requisitos deben cumplirse antes de ejecutar (dependencias,
-                configuración mínima o entorno disponible).
+                <B>Precondiciones</B>: indica qué requisitos deben cumplirse antes de ejecutar
+                (dependencias, configuración mínima o entorno disponible).
             </ListItem>
 
             <ListItem icon={icons.Checks}>
-                <B>Criterios de éxito</B>: aclara cómo verificar que finalizó correctamente y qué hacer si falla (logs,
-                códigos de salida o reportes).
+                <B>Criterios de éxito</B>: aclara cómo verificar que finalizó correctamente y qué
+                hacer si falla (logs, códigos de salida o reportes).
             </ListItem>
 
             <ListItem icon={icons.Gauge}>
-                <B>Rendimiento</B>: evalúa si conviene aplicar incrementalidad, caché o paralelismo para optimizar la
-                ejecución.
+                <B>Rendimiento</B>: evalúa si conviene aplicar incrementalidad, caché o paralelismo
+                para optimizar la ejecución.
             </ListItem>
         </List>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            La automatización de tareas es un pilar para el desarrollo de software moderno. Nos permite transformar
-            actividades repetitivas en procesos confiables, predecibles y compartidos por todo el equipo. No se trata
-            solo de ahorrar tiempo: también es una estrategia para mejorar la calidad, reducir errores humanos y
-            garantizar que los proyectos evolucionen de manera sostenible. Pensar cada tarea como una unidad clara, con
-            entradas, salidas y criterios de éxito definidos, es el primer paso para diseñar flujos más sólidos y
-            colaborativos.
+            La automatización de tareas es un pilar para el desarrollo de software moderno. Nos
+            permite transformar actividades repetitivas en procesos confiables, predecibles y
+            compartidos por todo el equipo. No se trata solo de ahorrar tiempo: también es una
+            estrategia para mejorar la calidad, reducir errores humanos y garantizar que los
+            proyectos evolucionen de manera sostenible. Pensar cada tarea como una unidad clara, con
+            entradas, salidas y criterios de éxito definidos, es el primer paso para diseñar flujos
+            más sólidos y colaborativos.
         </Fragment>
 
         <Fragment slot="key-points">
@@ -240,26 +255,27 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
 
             <ListItem icon={icons.Check}>
-                Existen distintos niveles: desde manual guiado hasta CI/CD, en este curso trabajaremos principalmente la
-                orquestación.
+                Existen distintos niveles: desde manual guiado hasta CI/CD, en este curso
+                trabajaremos principalmente la orquestación.
             </ListItem>
 
             <ListItem icon={icons.Check}>
-                Principios como idempotencia, determinismo, observabilidad, composición y portabilidad son claves para
-                diseñar procesos fiables.
+                Principios como idempotencia, determinismo, observabilidad, composición y
+                portabilidad son claves para diseñar procesos fiables.
             </ListItem>
 
             <ListItem icon={icons.Check}>
-                Antes de implementar, conviene reflexionar sobre triggers, entradas/salidas, precondiciones, criterios
-                de éxito y rendimiento.
+                Antes de implementar, conviene reflexionar sobre triggers, entradas/salidas,
+                precondiciones, criterios de éxito y rendimiento.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            Automatizar no es un lujo, sino una práctica esencial para que el software crezca con orden y confianza. Al
-            adoptar la mentalidad de diseñar tareas claras y repetibles, sentamos las bases para procesos más eficientes
-            y equipos que colaboran mejor. La verdadera ganancia está en el largo plazo: proyectos que pueden
-            mantenerse, escalar y adaptarse sin depender de esfuerzos manuales ni de personas específicas.
+            Automatizar no es un lujo, sino una práctica esencial para que el software crezca con
+            orden y confianza. Al adoptar la mentalidad de diseñar tareas claras y repetibles,
+            sentamos las bases para procesos más eficientes y equipos que colaboran mejor. La
+            verdadera ganancia está en el largo plazo: proyectos que pueden mantenerse, escalar y
+            adaptarse sin depender de esfuerzos manuales ni de personas específicas.
         </Fragment>
     </ConclusionsLayout>
 
@@ -282,20 +298,24 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 />
                 <Fragment slot="description">
                     <p>
-                        Charla que explora el concepto de reproducibilidad en investigación, tanto desde el plano
-                        conceptual como tecnológico. Presenta la reproducibilidad como una herramienta clave para la
+                        Charla que explora el concepto de reproducibilidad en investigación, tanto
+                        desde el plano conceptual como tecnológico. Presenta la reproducibilidad
+                        como una herramienta clave para la
                         <strong>colaboración</strong>, la
                         <strong>detección de errores</strong> y la
-                        <strong>predicción confiable</strong>, mostrando cómo problemas en distintos niveles (datos,
-                        algoritmos, implementación, hardware o experiencia personal) pueden abordarse mediante
-                        reintentos, replicaciones y pruebas de robustez.
+                        <strong>predicción confiable</strong>, mostrando cómo problemas en distintos
+                        niveles (datos, algoritmos, implementación, hardware o experiencia personal)
+                        pueden abordarse mediante reintentos, replicaciones y pruebas de robustez.
                     </p>
                     <p>
-                        En el plano tecnológico identifica cuatro grandes obstáculos —versionado, errores de copia y
-                        pega, dependencias de software y vinculación de componentes— y propone soluciones prácticas como
-                        <strong>control de versiones</strong>, <strong>documentos dinámicos</strong>,
-                        <strong>gestión de entornos</strong> y <strong>orquestación de flujos de trabajo</strong>,
-                        ilustradas con ejemplos de Git, RMarkdown, Quarto, Docker y GitHub Actions.
+                        En el plano tecnológico identifica cuatro grandes obstáculos —versionado,
+                        errores de copia y pega, dependencias de software y vinculación de
+                        componentes— y propone soluciones prácticas como
+                        <strong>control de versiones</strong>, <strong>documentos
+                            dinámicos</strong>,
+                        <strong>gestión de entornos</strong> y <strong>orquestación de flujos de
+                            trabajo</strong>, ilustradas con ejemplos de Git, RMarkdown, Quarto,
+                        Docker y GitHub Actions.
                     </p>
                 </Fragment>
             </WebPage>
@@ -313,14 +333,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span>
                 En matemática y lógica, la
                 <Link href="https://es.wikipedia.org/wiki/Idempotencia">idempotencia</Link>
-                describe la propiedad de una operación que, al aplicarse varias veces, produce el mismo resultado que si
-                se aplicara una sola vez. Un ejemplo clásico es la operación lógica OR con un valor verdadero: una vez
-                que el resultado es <InlineKotlin code="true" />, repetir la operación no lo modifica.
+                describe la propiedad de una operación que, al aplicarse varias veces, produce el
+                mismo resultado que si se aplicara una sola vez. Un ejemplo clásico es la operación
+                lógica OR con un valor verdadero: una vez que el resultado es <InlineKotlin
+                    code="true"
+                />, repetir la operación no lo modifica.
                 <br />
-                En cambio, una acción <em>no idempotente</em> acumula efectos cada vez que se ejecuta. Por ejemplo,
-                “agregar 1 a un contador” genera resultados distintos si se repite. La idempotencia previene ese
-                crecimiento inesperado: garantiza que volver a ejecutar una tarea no altere el estado más allá de lo
-                necesario, permitiendo reintentarla sin riesgo de duplicar resultados o corromper datos.
+                En cambio, una acción <em>no idempotente</em> acumula efectos cada vez que se
+                ejecuta. Por ejemplo, “agregar 1 a un contador” genera resultados distintos si se
+                repite. La idempotencia previene ese crecimiento inesperado: garantiza que volver a
+                ejecutar una tarea no altere el estado más allá de lo necesario, permitiendo
+                reintentarla sin riesgo de duplicar resultados o corromper datos.
             </span>
         </Footnote>
     </Footnotes>

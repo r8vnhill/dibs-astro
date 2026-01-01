@@ -7,17 +7,17 @@ import { useCallback, useEffect, useState } from "react";
  * toggling UI components like modals, drawers, menus, or dropdowns.
  */
 type UseDisclosureReturn = {
-  /** Whether the disclosure state is currently open */
-  isOpen: boolean;
+    /** Whether the disclosure state is currently open */
+    isOpen: boolean;
 
-  /** Opens the disclosure (sets `isOpen` to `true`) */
-  open: () => void;
+    /** Opens the disclosure (sets `isOpen` to `true`) */
+    open: () => void;
 
-  /** Closes the disclosure (sets `isOpen` to `false`) */
-  close: () => void;
+    /** Closes the disclosure (sets `isOpen` to `false`) */
+    close: () => void;
 
-  /** Toggles the disclosure (switches `isOpen` between `true` and `false`) */
-  toggle: () => void;
+    /** Toggles the disclosure (switches `isOpen` between `true` and `false`) */
+    toggle: () => void;
 };
 
 /**
@@ -27,22 +27,22 @@ type UseDisclosureReturn = {
  * @param options Optional lifecycle callbacks
  */
 export function useDisclosure(
-  defaultOpen = false,
-  options?: {
-    onOpen?: () => void;
-    onClose?: () => void;
-  }
+    defaultOpen = false,
+    options?: {
+        onOpen?: () => void;
+        onClose?: () => void;
+    },
 ) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+    const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
-  const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
+    const open = useCallback(() => setIsOpen(true), []);
+    const close = useCallback(() => setIsOpen(false), []);
+    const toggle = useCallback(() => setIsOpen((prev) => !prev), []);
 
-  useEffect(() => {
-    if (isOpen) options?.onOpen?.();
-    else options?.onClose?.();
-  }, [isOpen]);
+    useEffect(() => {
+        if (isOpen) options?.onOpen?.();
+        else options?.onClose?.();
+    }, [isOpen]);
 
-  return { isOpen, open, close, toggle } satisfies UseDisclosureReturn;
+    return { isOpen, open, close, toggle } satisfies UseDisclosureReturn;
 }

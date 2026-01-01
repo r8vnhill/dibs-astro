@@ -80,9 +80,9 @@ describe("LessonTree navigation behaviors", () => {
 
         // Locate the toggle button inside that container
         // NOTE: the trailing `!` is TypeScript's non-null assertion. `getAllByRole` returns an array which may be
-        // empty; indexing [0] yields `Element | undefined`. The `!` tells TypeScript we expect a value here (not 
+        // empty; indexing [0] yields `Element | undefined`. The `!` tells TypeScript we expect a value here (not
         // undefined) at runtime. We use it because the element must exist (we've found the container and it contains a
-        // toggle in this UI path). If you prefer stricter checks, use `getAllByRole(...)[0] ?? throw`-style guard or 
+        // toggle in this UI path). If you prefer stricter checks, use `getAllByRole(...)[0] ?? throw`-style guard or
         // assert presence with `expect(...).toBeDefined()` before clicking.
         const toggleBtn = within(containerLi).getAllByRole("button")[0]!;
 
@@ -125,7 +125,7 @@ describe("LessonTree navigation behaviors", () => {
         );
 
         // Expand again to confirm toggling still works
-        // NOTE: same non-null assertion as above — we expect the toggle button to exist inside the treeitem (otherwise 
+        // NOTE: same non-null assertion as above — we expect the toggle button to exist inside the treeitem (otherwise
         // the test setup has gone wrong). The `!` silences the TypeScript undefined check for this test convenience.
         const toggleBtn2 = within(li2).getAllByRole("button")[0]!;
         await userEvent.click(toggleBtn2);

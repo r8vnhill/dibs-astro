@@ -7,30 +7,30 @@
  */
 
 @layer utilities {
-  /* Default primary ring color */
-  .focus\:ring-primary:focus {
-    --tw-ring-color: var(--theme-color-primary);
-  }
+    /* Default primary ring color */
+    .focus\:ring-primary:focus {
+        --tw-ring-color: var(--theme-color-primary);
+    }
 
-  /* Darker variations of the primary ring color */
-  .focus\:ring-primary-dark:focus {
-    --tw-ring-color: var(--theme-color-primary-dark);
-  }
-  .focus\:ring-primary-darker:focus {
-    --tw-ring-color: var(--theme-color-primary-darker);
-  }
-  .focus\:ring-primary-darkest:focus {
-    --tw-ring-color: var(--theme-color-primary-darkest);
-  }
+    /* Darker variations of the primary ring color */
+    .focus\:ring-primary-dark:focus {
+        --tw-ring-color: var(--theme-color-primary-dark);
+    }
+    .focus\:ring-primary-darker:focus {
+        --tw-ring-color: var(--theme-color-primary-darker);
+    }
+    .focus\:ring-primary-darkest:focus {
+        --tw-ring-color: var(--theme-color-primary-darkest);
+    }
 
-  /* Lighter variations of the primary ring color */
-  .focus\:ring-primary-light:focus {
-    --tw-ring-color: var(--theme-color-primary-light);
-  }
-  .focus\:ring-primary-lighter:focus {
-    --tw-ring-color: var(--theme-color-primary-lighter);
-  }
-  .focus\:ring-primary-lightest:focus {
-    --tw-ring-color: var(--theme-color-primary-lightest);
-  }
+    /* Lighter variations of the primary ring color */
+    .focus\:ring-primary-light:focus {
+        --tw-ring-color: var(--theme-color-primary-light);
+    }
+    .focus\:ring-primary-lighter:focus {
+        --tw-ring-color: var(--theme-color-primary-lighter);
+    }
+    .focus\:ring-primary-lightest:focus {
+        --tw-ring-color: var(--theme-color-primary-lightest);
+    }
 }

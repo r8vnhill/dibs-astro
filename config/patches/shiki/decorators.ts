@@ -33,7 +33,7 @@ export function composeDecorators(
 }
 
 /**
- * Resolve language aliases before attempting to highlight. The decorator updates `state.resolvedLang` when an alias is 
+ * Resolve language aliases before attempting to highlight. The decorator updates `state.resolvedLang` when an alias is
  * present. Downstream decorators/transformers should use `resolvedLang` when deciding behavior.
  */
 export function withAliasResolution(): HighlightDecorator {
@@ -59,7 +59,7 @@ export function withLanguageLoading(): HighlightDecorator {
 
         if (!isSpecialLang(lang) && !loadedLanguages.includes(resolvedLang)) {
             try {
-                // Load language on demand; most highlights will find the language already loaded but this supports 
+                // Load language on demand; most highlights will find the language already loaded but this supports
                 // dynamic lists.
                 await highlighter.loadLanguage(resolvedLang as any);
             } catch {
@@ -79,7 +79,7 @@ export function withLanguageLoading(): HighlightDecorator {
 }
 
 /**
- * Trim a single trailing newline from the input code. This prevents an extra empty line from appearing in the 
+ * Trim a single trailing newline from the input code. This prevents an extra empty line from appearing in the
  * highlighted output and keeps diff between raw files and rendered output minimal.
  */
 export function withTrailingNewlineTrim(): HighlightDecorator {
@@ -90,7 +90,7 @@ export function withTrailingNewlineTrim(): HighlightDecorator {
 }
 
 /**
- * Inject the primary/default transformer at the front of the transformers list. This ensures the default transformation 
+ * Inject the primary/default transformer at the front of the transformers list. This ensures the default transformation
  * logic runs before any user-supplied transformers.
  */
 export function withDefaultTransformers(): HighlightDecorator {

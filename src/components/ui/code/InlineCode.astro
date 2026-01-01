@@ -12,7 +12,7 @@ import { Code } from "astro:components";
 import type { BundledTheme, ThemeRegistration, ThemeRegistrationRaw } from "shiki";
 
 type Props = {
-    code: string;
+    code?: string;
     lang?: CodeLanguage; // default: "txt"
     class?: string;
     /** Shiki themes (override from layout/page if needed) */
@@ -27,7 +27,7 @@ type Props = {
 };
 
 const {
-    code,
+    code: codeProp,
     lang = "txt",
     class: className = "",
     themeLight = "catppuccin-latte",
@@ -36,6 +36,11 @@ const {
     ariaLabel,
     elevate = true,
 } = Astro.props as Props;
+
+const slotCode = codeProp === undefined && Astro.slots.has("default")
+    ? (await Astro.slots.render("default")).trim()
+    : "";
+const code = codeProp ?? slotCode;
 
 const baseClass = [
     "inline-block",

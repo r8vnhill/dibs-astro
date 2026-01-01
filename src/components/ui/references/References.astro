@@ -6,26 +6,26 @@
  * prevent these sections from affecting reading time estimation.
  */
 
-import Heading from "~/components/semantics/Heading.astro";
 import * as icons from "~/assets/img/icons";
+import Heading from "~/components/semantics/Heading.astro";
 import { List } from "~/components/ui/list";
 import NotesSection from "~/layouts/NotesSection.astro";
 
 // Define the props that this component accepts
 type Props = {
-  /** Main heading text (defaults to Spanish prompt) */
-  heading?: string;
-  /** Heading for the "recommended" section */
-  recommendedHeading?: string;
-  /** Heading for the "additional" section */
-  additionalHeading?: string;
+    /** Main heading text (defaults to Spanish prompt) */
+    heading?: string;
+    /** Heading for the "recommended" section */
+    recommendedHeading?: string;
+    /** Heading for the "additional" section */
+    additionalHeading?: string;
 };
 
 // Destructure incoming props and assign default values if not provided
 const {
-  heading = "¿Con ganas de más?",
-  recommendedHeading = "Referencias recomendadas",
-  additionalHeading = "Referencias adicionales",
+    heading = "¿Con ganas de más?",
+    recommendedHeading = "Referencias recomendadas",
+    additionalHeading = "Referencias adicionales",
 }: Props = Astro.props;
 
 // Determine whether the parent passed content into the named slots
@@ -34,33 +34,37 @@ const hasAdditional = !!Astro.slots.additional;
 ---
 
 <NotesSection id="references" class="exclude-from-reading-time">
-  <Heading headingLevel="h2" Icon={icons.BookOpenText} slot="heading"
-    >{heading}</Heading
-  >
+    <Heading
+        headingLevel="h2" Icon={icons.BookOpenText}
+        slot="heading"
+    >{heading}</Heading>
 
-  {
-    hasRecommended && (
-      <NotesSection id="recommended-references">
-        <Heading headingLevel="h3" Icon={icons.Bookmarks} slot="heading">
-          {recommendedHeading}
-        </Heading>
-        <List>
-          <slot name="recommended" />
-        </List>
-      </NotesSection>
-    )
-  }
+    {
+        hasRecommended && (
+            <NotesSection id="recommended-references">
+                <Heading
+                    headingLevel="h3" Icon={icons.Bookmarks}
+                    slot="heading"
+                >
+                    {recommendedHeading}
+                </Heading>
+                <List>
+                    <slot name="recommended" />
+                </List>
+            </NotesSection>
+        )
+    }
 
-  {
-    hasAdditional && (
-      <NotesSection id="additional-references">
-        <Heading headingLevel="h3" Icon={icons.Files}>
-          {additionalHeading}
-        </Heading>
-        <List>
-          <slot name="additional" />
-        </List>
-      </NotesSection>
-    )
-  }
+    {
+        hasAdditional && (
+            <NotesSection id="additional-references">
+                <Heading headingLevel="h3" Icon={icons.Files}>
+                    {additionalHeading}
+                </Heading>
+                <List>
+                    <slot name="additional" />
+                </List>
+            </NotesSection>
+        )
+    }
 </NotesSection>

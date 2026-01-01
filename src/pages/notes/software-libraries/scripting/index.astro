@@ -2,13 +2,21 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Definition, Explanation, Important, More, Tip, Warning } from "~/components/ui/callouts";
+import {
+    Abstract,
+    Definition,
+    Explanation,
+    Important,
+    More,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { Link, PythonLink, NushellLink } from "~/components/ui/links";
+import { Link, NushellLink, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -24,16 +32,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Abstract>
         <P>
-            Esta lección introduce el concepto de <B>scripting</B> como una forma práctica de automatizar tareas
-            repetitivas y construir herramientas reutilizables. Presenta <B>PowerShell&nbsp;7+</B> como lenguaje común
-            en <I>Windows, macOS y Linux</I>, destacando su <I>pipeline de objetos</I> y su capacidad para simplificar
-            flujos sin depender de utilidades externas.
+            Esta lección introduce el concepto de <B>scripting</B> como una forma práctica de
+            automatizar tareas repetitivas y construir herramientas reutilizables. Presenta <B
+            >PowerShell&nbsp;7+</B> como lenguaje común en <I>Windows, macOS y Linux</I>, destacando
+            su <I>pipeline de objetos</I> y su capacidad para simplificar flujos sin depender de
+            utilidades externas.
         </P>
         <P>
-            También aprenderás a crear una estructura base de trabajo —tu <I>workspace</I>— y a aplicar buenas prácticas
-            como el uso de <PowerShellInline code="Join-Path" /> para rutas portables y la preferencia por comandos
-            explícitos en lugar de aliases. Este será el punto de partida para escribir scripts claros, seguros y
-            mantenibles.
+            También aprenderás a crear una estructura base de trabajo —tu <I>workspace</I>— y a
+            aplicar buenas prácticas como el uso de <PowerShellInline code="Join-Path" /> para rutas
+            portables y la preferencia por comandos explícitos en lugar de aliases. Este será el
+            punto de partida para escribir scripts claros, seguros y mantenibles.
         </P>
     </Abstract>
 
@@ -49,67 +58,75 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Fragment slot="title">¿Qué es scripting?</Fragment>
 
             <P>
-                Por <B>scripting</B> entendemos la práctica de escribir pequeños programas destinados a
-                <I>automatizar tareas repetitivas</I>. A diferencia de una aplicación completa, un script suele ser
-                breve, orientado a ejecutar comandos del sistema, manipular archivos o coordinar herramientas ya
-                existentes. Su valor está en reducir pasos manuales y hacer procesos
+                Por <B>scripting</B> entendemos la práctica de escribir pequeños programas
+                destinados a
+                <I>automatizar tareas repetitivas</I>. A diferencia de una aplicación completa, un
+                script suele ser breve, orientado a ejecutar comandos del sistema, manipular
+                archivos o coordinar herramientas ya existentes. Su valor está en reducir pasos
+                manuales y hacer procesos
                 <I>repetibles y confiables</I>.
             </P>
             <P>
-                Una ventaja importante de los <B>lenguajes de scripting</B> frente a los lenguajes de propósito general
-                es que, al tener un <I>alcance más acotado</I>, ofrecen una sintaxis más simple y una
-                <B>librería estándar especializada</B> en automatización y manipulación del entorno. Esto permite
-                escribir soluciones concisas sin necesidad de definir estructuras o configuraciones complejas.
+                Una ventaja importante de los <B>lenguajes de scripting</B> frente a los lenguajes
+                de propósito general es que, al tener un <I>alcance más acotado</I>, ofrecen una
+                sintaxis más simple y una
+                <B>librería estándar especializada</B> en automatización y manipulación del entorno.
+                Esto permite escribir soluciones concisas sin necesidad de definir estructuras o
+                configuraciones complejas.
             </P>
         </Definition>
 
         <P>
             En este curso utilizaremos <B>PowerShell&nbsp;7+</B> como lenguaje de scripting único en
-            <I>Windows, macOS y Linux</I>. Esta decisión simplifica el material, elimina distracciones y te permite
-            concentrarte en lo esencial: <B>automatizar y construir con las mismas herramientas</B> en cualquier sistema
-            operativo.
+            <I>Windows, macOS y Linux</I>. Esta decisión simplifica el material, elimina
+            distracciones y te permite concentrarte en lo esencial: <B>automatizar y construir con
+                las mismas herramientas</B> en cualquier sistema operativo.
         </P>
 
         <Tip>
             <span slot="title">¿Por qué elegimos PowerShell?</span>
 
             <P>
-                Adoptar <B>un solo lenguaje</B> para todo el curso reduce la carga cognitiva y facilita el mantenimiento
-                del material: solo debemos actualizar ejemplos y explicaciones de PowerShell.
+                Adoptar <B>un solo lenguaje</B> para todo el curso reduce la carga cognitiva y
+                facilita el mantenimiento del material: solo debemos actualizar ejemplos y
+                explicaciones de PowerShell.
             </P>
 
             <List class="mt-2">
                 <ListItem icon={icons.Globe}>
-                    <B>Multiplataforma</B>: PowerShell&nbsp;7+ funciona en Windows, macOS y Linux. Un único lenguaje
-                    para todos los ejemplos y ejercicios del curso.
+                    <B>Multiplataforma</B>: PowerShell&nbsp;7+ funciona en Windows, macOS y Linux.
+                    Un único lenguaje para todos los ejemplos y ejercicios del curso.
                 </ListItem>
 
                 <ListItem icon={icons.Lightning}>
-                    <B>Más expresivo en este contexto</B>: su <I>pipeline</I> pasa <I>objetos</I><FootnoteRef
-                        index={1}
-                    />&nbsp; fuertemente tipados (no solo texto), lo que facilita filtrar, ordenar y transformar datos
-                    sin depender de múltiples utilidades externas.
+                    <B>Más expresivo en este contexto</B>: su <I>pipeline</I> pasa <I
+                    >objetos</I><FootnoteRef index={1} />&nbsp; fuertemente tipados (no solo texto),
+                    lo que facilita filtrar, ordenar y transformar datos sin depender de múltiples
+                    utilidades externas.
                 </ListItem>
 
                 <ListItem icon={icons.Sparkle}>
-                    <B>Más simple</B>: muchas tareas comunes (JSON, XML, archivos, procesos) están cubiertas por
-                    cmdlets<FootnoteRef index={2} /> y tipos .NET integrados, reduciendo dependencias y evitando el
-                    <I>trabajo manual de conexión</I> típico de otros entornos (como parsear texto o encadenar
-                    utilidades).
+                    <B>Más simple</B>: muchas tareas comunes (JSON, XML, archivos, procesos) están
+                    cubiertas por cmdlets<FootnoteRef index={2} /> y tipos .NET integrados,
+                    reduciendo dependencias y evitando el
+                    <I>trabajo manual de conexión</I> típico de otros entornos (como parsear texto o
+                    encadenar utilidades).
                 </ListItem>
 
                 <ListItem icon={icons.Target}>
-                    <B>Enfoque y coherencia</B>: un único lenguaje implica una sola ruta de instalación, una sola
-                    sintaxis y ejemplos consistentes a lo largo de todo el curso.
+                    <B>Enfoque y coherencia</B>: un único lenguaje implica una sola ruta de
+                    instalación, una sola sintaxis y ejemplos consistentes a lo largo de todo el
+                    curso.
                 </ListItem>
             </List>
         </Tip>
 
         <Important>
-            PowerShell no es un reemplazo absoluto de Bash. Ambos son entornos de scripting potentes con filosofías
-            distintas. La elección entre uno u otro depende siempre del <I>contexto</I> y de las <I>necesidades
-                específicas</I>. En este curso priorizamos PowerShell por su carácter multiplataforma y expresividad,
-            pero Bash sigue siendo la herramienta estándar en muchos entornos Unix.
+            PowerShell no es un reemplazo absoluto de Bash. Ambos son entornos de scripting potentes
+            con filosofías distintas. La elección entre uno u otro depende siempre del <I
+            >contexto</I> y de las <I>necesidades específicas</I>. En este curso priorizamos
+            PowerShell por su carácter multiplataforma y expresividad, pero Bash sigue siendo la
+            herramienta estándar en muchos entornos Unix.
         </Important>
     </NotesSection>
 
@@ -122,14 +139,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Comencemos creando una organización básica para los proyectos del curso. Esta carpeta puede compartirse
-            entre varios proyectos; si decides no usarla, solo tendrás que adaptar las rutas en los comandos
-            posteriores.
+            Comencemos creando una organización básica para los proyectos del curso. Esta carpeta
+            puede compartirse entre varios proyectos; si decides no usarla, solo tendrás que adaptar
+            las rutas en los comandos posteriores.
         </P>
 
         <P>
-            Este puede ser tu primer contacto con PowerShell. Haremos un repaso mínimo de su sintaxis, asumiendo que ya
-            conoces conceptos generales como <I>condicionales, bucles, funciones y objetos</I>.
+            Este puede ser tu primer contacto con PowerShell. Haremos un repaso mínimo de su
+            sintaxis, asumiendo que ya conoces conceptos generales como <I>condicionales, bucles,
+                funciones y objetos</I>.
         </P>
 
         <PowerShellBlock
@@ -145,21 +163,26 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation>
             <List>
                 <ListItem icon={icons.TextT}>
-                    Asignación con <PowerShellInline code="$nombre = 'valor'" />. Las variables comienzan con
+                    Asignación con <PowerShellInline code="$nombre = 'valor'" />. Las variables
+                    comienzan con
                     <PowerShellInline code="$" /> y pueden almacenar strings, números u objetos.
                 </ListItem>
 
                 <ListItem icon={icons.FlowArrow}>
-                    <B>Pipelines en PowerShell</B>: el operador <PowerShellInline code="|" /> pasa <I>objetos</I> al
-                    siguiente comando. Aquí usamos <PowerShellInline code="| Out-Null" /> para descartar la salida y
-                    mantener la terminal limpia.
+                    <B>Pipelines en PowerShell</B>: el operador <PowerShellInline code="|" /> pasa
+                    <I>objetos</I> al siguiente comando. Aquí usamos <PowerShellInline
+                        code="| Out-Null"
+                    /> para descartar la salida y mantener la terminal limpia.
 
                     <More>
                         <Fragment slot="title">Alternativas</Fragment>
                         <P>
-                            También se puede suprimir la salida con <PowerShellInline code="(comando) >$null" /> o
-                            <PowerShellInline code="$null = (comando)" />. Si bien no significan exactamente lo mismo,
-                            todos logran el mismo efecto de no mostrar salida en la terminal.
+                            También se puede suprimir la salida con <PowerShellInline
+                                code="(comando) >$null"
+                            /> o
+                            <PowerShellInline code="$null = (comando)" />. Si bien no significan
+                            exactamente lo mismo, todos logran el mismo efecto de no mostrar salida
+                            en la terminal.
                         </P>
                         <PowerShellBlock
                             code={`
@@ -175,24 +198,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Explanation>
 
         <Important>
-            <Fragment slot="title">Rutas portables con <PowerShellInline code="Join-Path" /></Fragment>
+            <Fragment slot="title">Rutas portables con <PowerShellInline
+                    code="Join-Path"
+                /></Fragment>
 
             <P>
-                En scripts, preferimos <PowerShellInline code="Join-Path" /> para construir rutas de forma portable
-                (evita concatenar strings con <Mono>\</Mono> o <Mono>/</Mono>). Por ejemplo:
+                En scripts, preferimos <PowerShellInline code="Join-Path" /> para construir rutas de
+                forma portable (evita concatenar strings con <Mono>\</Mono> o <Mono>/</Mono>). Por
+                ejemplo:
             </P>
 
             <PowerShellBlock code={`$scriptsPath = Join-Path 'dibs' 'scripts'`}>
                 <span slot="footer">
-                    <PowerShellInline code="Join-Path" /> construirá <Mono>dibs/scripts</Mono> o <Mono
-                    >dibs\scripts</Mono> según el sistema operativo.
+                    <PowerShellInline code="Join-Path" /> construirá <Mono>dibs/scripts</Mono> o
+                    <Mono>dibs\scripts</Mono> según el sistema operativo.
                 </span>
             </PowerShellBlock>
 
             <P>
-                En la terminal mantendremos los ejemplos simples y no usaremos <PowerShellInline code="Join-Path" />
-                para no sobrecargar la sintaxis; pero en archivos <Mono>.ps1</Mono> sí lo usaremos por claridad y
-                portabilidad.
+                En la terminal mantendremos los ejemplos simples y no usaremos <PowerShellInline
+                    code="Join-Path"
+                />
+                para no sobrecargar la sintaxis; pero en archivos <Mono>.ps1</Mono> sí lo usaremos
+                por claridad y portabilidad.
             </P>
         </Important>
 
@@ -200,26 +228,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Fragment slot="title">Aliases</Fragment>
 
             <p>
-                PowerShell incluye <I>aliases</I> que hacen que la experiencia sea más parecida a Bash o CMD (por
-                ejemplo, <PowerShellInline code="cat" /> en lugar de <PowerShellInline code="Get-Content" />). Son
-                útiles para escribir rápido en la terminal, pero <B>no los usaremos en este apunte</B> porque en scripts
-                y documentación las formas completas son más claras, predecibles y fáciles de leer.
+                PowerShell incluye <I>aliases</I> que hacen que la experiencia sea más parecida a
+                Bash o CMD (por ejemplo, <PowerShellInline code="cat" /> en lugar de
+                <PowerShellInline code="Get-Content" />). Son útiles para escribir rápido en la
+                terminal, pero <B>no los usaremos en este apunte</B> porque en scripts y
+                documentación las formas completas son más claras, predecibles y fáciles de leer.
             </p>
             <Warning>
                 <span slot="title">Compatibilidad entre sistemas</span>
-                Los <I>aliases</I> pueden variar entre sistemas operativos: algunos están disponibles solo en Windows o
-                solo en macOS/Linux. Por eso, confiar en ellos puede hacer que un script funcione en una plataforma pero
-                falle en otra.
+                Los <I>aliases</I> pueden variar entre sistemas operativos: algunos están
+                disponibles solo en Windows o solo en macOS/Linux. Por eso, confiar en ellos puede
+                hacer que un script funcione en una plataforma pero falle en otra.
             </Warning>
 
             <PowerShellBlock code={`Get-Alias -Definition Set-Location`}>
                 <Fragment slot="title">Desde la terminal</Fragment>
-                <span slot="footer">Inspeccionando aliases de <PowerShellInline code="Set-Location" /></span>
+                <span slot="footer">Inspeccionando aliases de <PowerShellInline
+                        code="Set-Location"
+                    /></span>
             </PowerShellBlock>
 
             <p class="mt-2">
-                En este caso, <PowerShellInline code="Set-Location" /> (que cambia el directorio actual) tiene dos
-                aliases disponibles:
+                En este caso, <PowerShellInline code="Set-Location" /> (que cambia el directorio
+                actual) tiene dos aliases disponibles:
             </p>
 
             <OutputBlock
@@ -235,45 +266,48 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            En esta lección diste tus primeros pasos en el uso de <B>PowerShell&nbsp;7+</B> como lenguaje de scripting
-            multiplataforma. Comprendiste qué significa automatizar con scripts, por qué PowerShell resulta
-            especialmente expresivo para ese propósito y cómo establecer una estructura base de trabajo coherente y
-            reutilizable. Además, exploraste conceptos fundamentales como las <I>pipelines orientadas a objetos</I>, la
-            asignación de variables y el uso de <PowerShellInline code="Join-Path" /> para mantener la portabilidad
-            entre sistemas.
+            En esta lección diste tus primeros pasos en el uso de <B>PowerShell&nbsp;7+</B> como
+            lenguaje de scripting multiplataforma. Comprendiste qué significa automatizar con
+            scripts, por qué PowerShell resulta especialmente expresivo para ese propósito y cómo
+            establecer una estructura base de trabajo coherente y reutilizable. Además, exploraste
+            conceptos fundamentales como las <I>pipelines orientadas a objetos</I>, la asignación de
+            variables y el uso de <PowerShellInline code="Join-Path" /> para mantener la
+            portabilidad entre sistemas.
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.GearSix}>
-                <B>Automatizar</B> es transformar tareas repetitivas en procesos reproducibles, seguros y fáciles de
-                mantener.
+                <B>Automatizar</B> es transformar tareas repetitivas en procesos reproducibles,
+                seguros y fáciles de mantener.
             </ListItem>
 
             <ListItem icon={icons.Terminal}>
-                PowerShell&nbsp;7+ unifica la experiencia de scripting en Windows, macOS y Linux con una <I>pipeline de
-                    objetos</I>.
+                PowerShell&nbsp;7+ unifica la experiencia de scripting en Windows, macOS y Linux con
+                una <I>pipeline de objetos</I>.
             </ListItem>
 
             <ListItem icon={icons.Code}>
-                La sintaxis simple y los cmdlets integrados permiten crear scripts expresivos sin dependencias externas.
+                La sintaxis simple y los cmdlets integrados permiten crear scripts expresivos sin
+                dependencias externas.
             </ListItem>
 
             <ListItem icon={icons.FolderOpen}>
-                Una estructura clara de carpetas y el uso de <PowerShellInline code="Join-Path" /> sientan la base para
-                proyectos portables y mantenibles.
+                Una estructura clara de carpetas y el uso de <PowerShellInline code="Join-Path" />
+                sientan la base para proyectos portables y mantenibles.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
             <P>
-                Todo comienza con un paso pequeño: decidir que una tarea no merece repetirse manualmente. Convertirla en
-                un script no solo ahorra tiempo, también captura conocimiento y lo vuelve compartible.
+                Todo comienza con un paso pequeño: decidir que una tarea no merece repetirse
+                manualmente. Convertirla en un script no solo ahorra tiempo, también captura
+                conocimiento y lo vuelve compartible.
             </P>
 
             <P>
-                A medida que avances, intenta pensar cada acción como parte de un flujo automatizable. Esa mentalidad
-                —más que dominar una sintaxis— es la que transforma comandos aislados en herramientas que escalan
-                contigo y con tus proyectos.
+                A medida que avances, intenta pensar cada acción como parte de un flujo
+                automatizable. Esa mentalidad —más que dominar una sintaxis— es la que transforma
+                comandos aislados en herramientas que escalan contigo y con tus proyectos.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -291,15 +325,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
                 <Fragment slot="description">
-                    Capítulo introductorio que orienta al lector en el ecosistema de <B>PowerShell&nbsp;7</B> en <B
-                    >Windows, macOS y Ubuntu 18.04</B>: diferencia entre <I>shell</I> y <I>terminal</I>, instalación
-                    (incluye el cambio de proceso a <Mono>pwsh.exe</Mono> y la coexistencia con Windows PowerShell 5.1)
-                    y primeras ejecuciones. Presenta la <B>consola</B> como interfaz ligera (con consejos de
-                    configuración de fuentes, colores e historial) y recomienda <B>Visual Studio Code</B> con la <B
-                    >extensión de PowerShell</B>, explicando la <B>Integrated Console</B>, IntelliSense y ajustes
-                    básicos. Cierra con verificación de versión (<PowerShellInline code={`$PSVersionTable`} />) y un <B
-                    >lab</B> para dejar listo el entorno. Ideal si buscas <B>poner a punto tu setup</B> y entender <B
-                    >qué interfaz usar</B> antes de escribir tus primeros scripts.
+                    Capítulo introductorio que orienta al lector en el ecosistema de <B
+                    >PowerShell&nbsp;7</B> en <B>Windows, macOS y Ubuntu 18.04</B>: diferencia entre
+                    <I>shell</I> y <I>terminal</I>, instalación (incluye el cambio de proceso a
+                    <Mono>pwsh.exe</Mono> y la coexistencia con Windows PowerShell 5.1) y primeras
+                    ejecuciones. Presenta la <B>consola</B> como interfaz ligera (con consejos de
+                    configuración de fuentes, colores e historial) y recomienda <B>Visual Studio
+                        Code</B> con la <B>extensión de PowerShell</B>, explicando la <B>Integrated
+                        Console</B>, IntelliSense y ajustes básicos. Cierra con verificación de
+                    versión (<PowerShellInline code={`$PSVersionTable`} />) y un <B>lab</B> para
+                    dejar listo el entorno. Ideal si buscas <B>poner a punto tu setup</B> y entender
+                    <B>qué interfaz usar</B> antes de escribir tus primeros scripts.
                 </Fragment>
             </Book>
         </Fragment>
@@ -309,7 +345,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 title="Understanding PowerShell and basic string formatting"
                 url="https://devblogs.microsoft.com/scripting/understanding-powershell-and-basic-string-formatting/"
             >
-                <Link slot="location" href="https://devblogs.microsoft.com/">Microsoft Developer Blogs</Link>
+                <Link slot="location" href="https://devblogs.microsoft.com/"
+                >Microsoft Developer Blogs</Link>
                 <AuthorList
                     slot="author"
                     authors={[{
@@ -319,15 +356,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     }]}
                 />
                 <Fragment slot="description">
-                    Un artículo introductorio sobre <B>formateo de cadenas en PowerShell</B>. Explica <B>composite
-                        formatting</B> de .NET (marcadores <PowerShellInline code={`{0}`} />, <PowerShellInline
-                        code={`{1}`}
-                    />, ...) y cómo aplicarlo con <PowerShellInline code={`[string]::Format()`} /> y el <B>operador
-                        <PowerShellInline code={`-f`} /></B>, comparándola con las <B>cadenas expandibles</B>
-                    (<PowerShellInline code={`"..."`} />). Incluye ejemplos simples con uno y varios marcadores, y
-                    comenta <B>ventajas, límites de legibilidad</B> y <B>cuándo preferir</B> cada enfoque (interpolación
-                    para casos triviales; composite formatting para formatos más complejos). Ideal para quien quiera
-                    aclarar “qué usar y por qué” al dar formato a texto en PowerShell.
+                    Un artículo introductorio sobre <B>formateo de cadenas en PowerShell</B>.
+                    Explica <B>composite formatting</B> de .NET (marcadores <PowerShellInline
+                        code={`{0}`}
+                    />, <PowerShellInline code={`{1}`} />, ...) y cómo aplicarlo con
+                    <PowerShellInline code={`[string]::Format()`} /> y el <B>operador
+                        <PowerShellInline code={`-f`} /></B>, comparándola con las <B>cadenas
+                        expandibles</B>
+                    (<PowerShellInline code={`"..."`} />). Incluye ejemplos simples con uno y varios
+                    marcadores, y comenta <B>ventajas, límites de legibilidad</B> y <B>cuándo
+                        preferir</B> cada enfoque (interpolación para casos triviales; composite
+                    formatting para formatos más complejos). Ideal para quien quiera aclarar “qué
+                    usar y por qué” al dar formato a texto en PowerShell.
                 </Fragment>
             </WebPage>
         </Fragment>
@@ -335,19 +375,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <Footnotes>
         <Footnote index={1}>
-            A diferencia de los shells tradicionales, PowerShell trata todo como objetos de .NET. Esto habilita
-            capacidades como composición, herencia, manejo de excepciones y tipado más estricto, lo que acerca la
-            experiencia a la de un lenguaje de programación completo. Además, permite cierto nivel de compatibilidad con
-            C#, lo que facilita integrar scripts con bibliotecas y funcionalidades del ecosistema .NET para resolver
-            tareas más complejas.
+            A diferencia de los shells tradicionales, PowerShell trata todo como objetos de .NET.
+            Esto habilita capacidades como composición, herencia, manejo de excepciones y tipado más
+            estricto, lo que acerca la experiencia a la de un lenguaje de programación completo.
+            Además, permite cierto nivel de compatibilidad con C#, lo que facilita integrar scripts
+            con bibliotecas y funcionalidades del ecosistema .NET para resolver tareas más
+            complejas.
         </Footnote>
 
         <Footnote index={2}>
-            Un <B>cmdlet</B> es un comando ligero de PowerShell diseñado para realizar una única tarea bien definida.
-            Suelen seguir la convención <I>Verbo-Sustantivo</I> (por ejemplo, <PowerShellInline code="Get-Process" /> o
-            <PowerShellInline code="New-Item" />), lo que los hace más expresivos y fáciles de entender que muchos
-            comandos en Bash. A diferencia de los ejecutables tradicionales, los cmdlets devuelven <I>objetos .NET</I>,
-            lo que permite combinarlos en pipelines potentes y consistentes.
+            Un <B>cmdlet</B> es un comando ligero de PowerShell diseñado para realizar una única
+            tarea bien definida. Suelen seguir la convención <I>Verbo-Sustantivo</I> (por ejemplo,
+            <PowerShellInline code="Get-Process" /> o
+            <PowerShellInline code="New-Item" />), lo que los hace más expresivos y fáciles de
+            entender que muchos comandos en Bash. A diferencia de los ejecutables tradicionales, los
+            cmdlets devuelven <I>objetos .NET</I>, lo que permite combinarlos en pipelines potentes
+            y consistentes.
         </Footnote>
     </Footnotes>
 </NotesLayout>

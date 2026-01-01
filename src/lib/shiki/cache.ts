@@ -2,17 +2,17 @@
  * Encapsulates the creation and caching of the Shiki highlighter instance.
  * We keep this logic here so callers (like `highlighter.ts`) don't need to worry about singletons or global state.
  *
- * The module also exposes small test helpers that allow unit tests to inject a fake highlighter or reset the cached 
+ * The module also exposes small test helpers that allow unit tests to inject a fake highlighter or reset the cached
  * instance. These helpers are intentionally low-level and should only be used by tests.
  */
 import { createHighlighter } from "shiki";
 import type { BundledTheme } from "shiki";
-import { availableLanguages, } from "./language-aliases";
 import type { ShikiTransformer } from "shiki";
+import { availableLanguages } from "./language-aliases";
 
 type HighlighterInstance = ReturnType<typeof createHighlighter>;
 
-// Store the highlighter on the global object so separate ESM contexts (such as Vitest workers) can share or reset it 
+// Store the highlighter on the global object so separate ESM contexts (such as Vitest workers) can share or reset it
 // predictably in tests.
 const globalCache = globalThis as typeof globalThis & {
     __dibsShikiHighlighter?: HighlighterInstance;
@@ -23,10 +23,12 @@ let highlighterPromise: HighlighterInstance | null = globalCache.__dibsShikiHigh
 /**
  * Return the shared Shiki highlighter instance, creating it on first use.
  *
- * `supportedThemes` is passed through to the underlying `createHighlighter` call; callers should pass the small set of 
+ * `supportedThemes` is passed through to the underlying `createHighlighter` call; callers should pass the small set of
  * themes they intend to support.
  */
-export async function getHighlighter(supportedThemes: readonly string[] = ["catppuccin-latte", "catppuccin-mocha"]) {
+export async function getHighlighter(
+    supportedThemes: readonly string[] = ["catppuccin-latte", "catppuccin-mocha"],
+) {
     if (!highlighterPromise) {
         highlighterPromise = createHighlighter({
             themes: [...supportedThemes] as unknown as BundledTheme[],
@@ -46,7 +48,7 @@ export function __resetHighlighterCacheForTests() {
 }
 
 /**
- * Test helper: replace the cached highlighter with a custom instance. This is useful to inject a mock that records 
+ * Test helper: replace the cached highlighter with a custom instance. This is useful to inject a mock that records
  * calls to `loadLanguage` / `codeToHtml`.
  */
 export function __setHighlighterInstanceForTests(instance: HighlighterInstance | null) {

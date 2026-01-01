@@ -2,27 +2,22 @@
 import * as Icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHeader,
-  TableRow,
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHeader,
+    TableRow,
 } from "~/components/starwind/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "~/components/starwind/tabs";
-import {
-  Abstract,
-  Definition,
-  Exercise,
-  Explanation,
-  More,
-  Solution,
-  Tip,
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    More,
+    Solution,
+    Tip,
 } from "~/components/ui/callouts";
 import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
@@ -45,188 +40,186 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
 ---
 
 <NotesLayout
-  title={title}
-  git={{
-    user: "r8vnhill",
-    repo: "intro-kt",
-  }}
-  timeMultiplier={1.2}
+    {title}
+    git={{
+        user: "r8vnhill",
+        repo: "intro-kt",
+    }}
+    timeMultiplier={1.2}
 >
-  <Gato />
-  <Abstract>
-    <p>
-      Kotlin es un lenguaje moderno, <strong>pragmático</strong> y <strong
-        >claro</strong
-      >, con foco en la <strong>seguridad</strong>. Combina de forma eficaz la <strong
-        >programación orientada a objetos</strong
-      > y la
-      <strong>programación funcional</strong> en una sintaxis concisa y expresiva.
-    </p>
+    <Gato />
+    <Abstract>
+        <p>
+            Kotlin es un lenguaje moderno, <strong>pragmático</strong> y <strong>claro</strong>, con
+            foco en la <strong>seguridad</strong>. Combina de forma eficaz la <strong>programación
+                orientada a objetos</strong> y la
+            <strong>programación funcional</strong> en una sintaxis concisa y expresiva.
+        </p>
 
-    <p>
-      En este curso usaremos Kotlin para el <strong
-        >diseño e implementación de bibliotecas reutilizables</strong
-      >. Su interoperabilidad con Java, el modelo seguro frente a nulos, las <strong
-        >funciones de extensión</strong
-      >, las <strong>corrutinas</strong> y otras características modernas lo hacen
-      ideal para construir componentes
-      <strong>modulares</strong> y <strong>mantenibles</strong>, también en
-      contextos <strong>multiplataforma</strong>.
-    </p>
+        <p>
+            En este curso usaremos Kotlin para el <strong>diseño e implementación de bibliotecas
+                reutilizables</strong>. Su interoperabilidad con Java, el modelo seguro frente a
+            nulos, las <strong>funciones de extensión</strong>, las <strong>corrutinas</strong> y
+            otras características modernas lo hacen ideal para construir componentes
+            <strong>modulares</strong> y <strong>mantenibles</strong>, también en contextos <strong
+            >multiplataforma</strong>.
+        </p>
 
-    <p>
-      Esta primera lección introduce el lenguaje y su filosofía: cómo se escribe
-      en Kotlin, en qué se diferencia de otros lenguajes y qué ventajas aporta
-      para escribir código
-      <strong>expresivo</strong> y <strong>seguro</strong> desde el inicio.
-    </p>
+        <p>
+            Esta primera lección introduce el lenguaje y su filosofía: cómo se escribe en Kotlin, en
+            qué se diferencia de otros lenguajes y qué ventajas aporta para escribir código
+            <strong>expresivo</strong> y <strong>seguro</strong> desde el inicio.
+        </p>
 
-    <p>
-      A través de ejemplos simples y comparaciones prácticas, sentaremos las
-      bases que guiarán el resto del curso.
-    </p>
-  </Abstract>
+        <p>
+            A través de ejemplos simples y comparaciones prácticas, sentaremos las bases que guiarán
+            el resto del curso.
+        </p>
+    </Abstract>
 
-  <NotesSection id="what-you-will-learn">
-    <Heading headingLevel="h2" Icon={Icons.BookOpen} slot="heading">
-      ¿Qué aprenderás en este módulo?
-    </Heading>
+    <NotesSection id="what-you-will-learn">
+        <Heading
+            headingLevel="h2" Icon={Icons.BookOpen}
+            slot="heading"
+        >
+            ¿Qué aprenderás en este módulo?
+        </Heading>
 
-    <p>
-      En este módulo introductorio conocerás los fundamentos esenciales de
-      Kotlin y cómo aplicarlos para crear software reutilizable y expresivo. A
-      lo largo de estas lecciones:
-    </p>
+        <p>
+            En este módulo introductorio conocerás los fundamentos esenciales de Kotlin y cómo
+            aplicarlos para crear software reutilizable y expresivo. A lo largo de estas lecciones:
+        </p>
 
-    <List>
-      <ListItem icon={Icons.Compass} aria-hidden="true">
-        Descubrirás qué es Kotlin, cuál es su filosofía y por qué es una
-        excelente opción para construir bibliotecas modernas.
-      </ListItem>
-      <ListItem icon={Icons.Code} aria-hidden="true">
-        Aprenderás a declarar funciones y variables, y a diferenciar entre
-        valores mutables e inmutables.
-      </ListItem>
-      <ListItem icon={Icons.GitBranch} aria-hidden="true">
-        Comprenderás la diferencia entre expresiones y declaraciones, y cómo
-        aprovecharla para escribir código más claro y conciso.
-      </ListItem>
-      <ListItem icon={Icons.ArrowsDownUp} aria-hidden="true">
-        Explorarás estructuras de control como condicionales, ciclos y rangos, y
-        su sintaxis idiomática en Kotlin.
-      </ListItem>
-      <ListItem icon={Icons.PlayCircle} aria-hidden="true">
-        Verás cómo funciona el <strong>punto de entrada</strong> de un programa Kotlin
-        y cómo ejecutar tu primer proyecto con Gradle.
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={Icons.Compass} aria-hidden="true">
+                Descubrirás qué es Kotlin, cuál es su filosofía y por qué es una excelente opción
+                para construir bibliotecas modernas.
+            </ListItem>
+            <ListItem icon={Icons.Code} aria-hidden="true">
+                Aprenderás a declarar funciones y variables, y a diferenciar entre valores mutables
+                e inmutables.
+            </ListItem>
+            <ListItem icon={Icons.GitBranch} aria-hidden="true">
+                Comprenderás la diferencia entre expresiones y declaraciones, y cómo aprovecharla
+                para escribir código más claro y conciso.
+            </ListItem>
+            <ListItem icon={Icons.ArrowsDownUp} aria-hidden="true">
+                Explorarás estructuras de control como condicionales, ciclos y rangos, y su sintaxis
+                idiomática en Kotlin.
+            </ListItem>
+            <ListItem icon={Icons.PlayCircle} aria-hidden="true">
+                Verás cómo funciona el <strong>punto de entrada</strong> de un programa Kotlin y
+                cómo ejecutar tu primer proyecto con Gradle.
+            </ListItem>
+        </List>
 
-    <p class="mt-6 text-base-subtle">
-      Este módulo sentará las bases conceptuales y prácticas para lo que sigue:
-      técnicas para diseñar bibliotecas reutilizables, seguras y fáciles de
-      mantener.
-    </p>
-  </NotesSection>
+        <p class="mt-6 text-base-subtle">
+            Este módulo sentará las bases conceptuales y prácticas para lo que sigue: técnicas para
+            diseñar bibliotecas reutilizables, seguras y fáciles de mantener.
+        </p>
+    </NotesSection>
 
-  <NotesSection id="learning-objectives">
-    <Heading headingLevel="h2" Icon={Icons.Target} slot="heading">
-      Objetivos de aprendizaje
-    </Heading>
+    <NotesSection id="learning-objectives">
+        <Heading
+            headingLevel="h2" Icon={Icons.Target}
+            slot="heading"
+        >
+            Objetivos de aprendizaje
+        </Heading>
 
-    <p class="leading-relaxed">Al finalizar este módulo, serás capaz de:</p>
+        <p class="leading-relaxed">Al finalizar este módulo, serás capaz de:</p>
 
-    <List>
-      <ListItem icon={Icons.BookOpenText} aria-hidden="true">
-        Explicar qué es Kotlin, su filosofía y por qué es ideal para bibliotecas
-        reutilizables y multiplataforma.
-      </ListItem>
-      <ListItem icon={Icons.CodeSimple} aria-hidden="true">
-        Declarar funciones y variables, distinguiendo entre
-        <InlineCode code="val" lang="kotlin" /> y
-        <InlineCode code="var" lang="kotlin" />, y emplear tipos básicos.
-      </ListItem>
-      <ListItem icon={Icons.GitCommit} aria-hidden="true">
-        Usar expresiones condicionales para modelar decisiones de forma clara y
-        concisa.
-      </ListItem>
-      <ListItem icon={Icons.ArrowsClockwise} aria-hidden="true">
-        Utilizar ciclos y rangos para recorrer colecciones de manera idiomática.
-      </ListItem>
-      <ListItem icon={Icons.Terminal} aria-hidden="true">
-        Identificar la estructura general de un programa en Kotlin y su punto de
-        entrada.
-      </ListItem>
-      <ListItem icon={Icons.TextAa} aria-hidden="true">
-        Emplear interpolación de cadenas para construir mensajes dinámicos.
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={Icons.BookOpenText} aria-hidden="true">
+                Explicar qué es Kotlin, su filosofía y por qué es ideal para bibliotecas
+                reutilizables y multiplataforma.
+            </ListItem>
+            <ListItem icon={Icons.CodeSimple} aria-hidden="true">
+                Declarar funciones y variables, distinguiendo entre
+                <InlineCode code="val" lang="kotlin" /> y
+                <InlineCode code="var" lang="kotlin" />, y emplear tipos básicos.
+            </ListItem>
+            <ListItem icon={Icons.GitCommit} aria-hidden="true">
+                Usar expresiones condicionales para modelar decisiones de forma clara y concisa.
+            </ListItem>
+            <ListItem icon={Icons.ArrowsClockwise} aria-hidden="true">
+                Utilizar ciclos y rangos para recorrer colecciones de manera idiomática.
+            </ListItem>
+            <ListItem icon={Icons.Terminal} aria-hidden="true">
+                Identificar la estructura general de un programa en Kotlin y su punto de entrada.
+            </ListItem>
+            <ListItem icon={Icons.TextAa} aria-hidden="true">
+                Emplear interpolación de cadenas para construir mensajes dinámicos.
+            </ListItem>
+        </List>
 
-    <p class="mt-6 leading-relaxed text-base-subtle">
-      Estos objetivos te darán una base sólida para avanzar hacia temas más
-      complejos como tipos algebraicos, control de flujo funcional y diseño
-      orientado a la composición.
-    </p>
-  </NotesSection>
+        <p class="mt-6 leading-relaxed text-base-subtle">
+            Estos objetivos te darán una base sólida para avanzar hacia temas más complejos como
+            tipos algebraicos, control de flujo funcional y diseño orientado a la composición.
+        </p>
+    </NotesSection>
 
-  <NotesSection id="what-is-kotlin-intro">
-    <Heading headingLevel="h2" Icon={Icons.Code} slot="heading">
-      ¿Qué es Kotlin?
-    </Heading>
+    <NotesSection id="what-is-kotlin-intro">
+        <Heading
+            headingLevel="h2" Icon={Icons.Code}
+            slot="heading"
+        >
+            ¿Qué es Kotlin?
+        </Heading>
 
-    <p class="leading-relaxed">
-      <strong>Kotlin</strong> es un lenguaje de programación
-      <strong>moderno y multiplataforma</strong> desarrollado por
-      <a
-        href="https://www.jetbrains.com"
-        class="font-semibold"
-        target="_blank"
-        rel="noopener noreferrer">JetBrains</a
-      >. Combina paradigmas de
-      <strong>programación orientada a objetos</strong> y
-      <strong>programación funcional</strong>, y destaca por su
-      <strong>sintaxis concisa y expresiva</strong>, su
-      <strong>enfoque en la seguridad</strong> y su capacidad de compilar a múltiples
-      plataformas:
-    </p>
+        <p class="leading-relaxed">
+            <strong>Kotlin</strong> es un lenguaje de programación
+            <strong>moderno y multiplataforma</strong> desarrollado por
+            <a
+                href="https://www.jetbrains.com" class="font-semibold"
+                target="_blank" rel="noopener noreferrer"
+            >JetBrains</a>. Combina paradigmas de
+            <strong>programación orientada a objetos</strong> y
+            <strong>programación funcional</strong>, y destaca por su
+            <strong>sintaxis concisa y expresiva</strong>, su
+            <strong>enfoque en la seguridad</strong> y su capacidad de compilar a múltiples
+            plataformas:
+        </p>
 
-    <List class="mt-3">
-      <ListItem icon={Icons.Globe} aria-hidden="true">
-        <strong>JavaScript (JS)</strong> y <strong>WebAssembly (WASM)</strong>
-        para ejecución en navegadores.
-      </ListItem>
-      <ListItem icon={Icons.AndroidLogo} aria-hidden="true">
-        <strong>Java Virtual Machine (JVM)</strong> para aplicaciones de servidor
-        y desarrollo en Android.
-      </ListItem>
-      <ListItem icon={Icons.Cpu} aria-hidden="true">
-        <strong>LLVM</strong> para aplicaciones nativas en escritorio, iOS y sistemas
-        embebidos.
-      </ListItem>
-    </List>
+        <List class="mt-3">
+            <ListItem icon={Icons.Globe} aria-hidden="true">
+                <strong>JavaScript (JS)</strong> y <strong>WebAssembly (WASM)</strong>
+                para ejecución en navegadores.
+            </ListItem>
+            <ListItem icon={Icons.AndroidLogo} aria-hidden="true">
+                <strong>Java Virtual Machine (JVM)</strong> para aplicaciones de servidor y
+                desarrollo en Android.
+            </ListItem>
+            <ListItem icon={Icons.Cpu} aria-hidden="true">
+                <strong>LLVM</strong> para aplicaciones nativas en escritorio, iOS y sistemas
+                embebidos.
+            </ListItem>
+        </List>
 
-    <p class="mt-4 leading-relaxed text-base-subtle">
-      En este curso nos enfocaremos en <strong>Kotlin sobre la JVM</strong>, la
-      plataforma más madura del ecosistema. Sin embargo, los conceptos que
-      aprenderás son altamente <strong>transferibles</strong> a las demás plataformas
-      y aplicables en muchos otros <strong>lenguajes modernos</strong>.
-    </p>
-  </NotesSection>
+        <p class="mt-4 leading-relaxed text-base-subtle">
+            En este curso nos enfocaremos en <strong>Kotlin sobre la JVM</strong>, la plataforma más
+            madura del ecosistema. Sin embargo, los conceptos que aprenderás son altamente <strong
+            >transferibles</strong> a las demás plataformas y aplicables en muchos otros <strong
+            >lenguajes modernos</strong>.
+        </p>
+    </NotesSection>
 
-  <NotesSection id="a-taste-of-kotlin">
-    <Heading headingLevel="h2" Icon={Icons.Code} slot="heading"
-      >A Taste of Kotlin</Heading
-    >
+    <NotesSection id="a-taste-of-kotlin">
+        <Heading
+            headingLevel="h2" Icon={Icons.Code}
+            slot="heading"
+        >A Taste of Kotlin</Heading>
 
-    <p class="leading-relaxed">
-      Como en <span class="font-semibold">Kotlin in Action</span>
-      <span class="text-subtle">(Dmitry Jemerov & Svetlana Isakova, 2017)</span
-      >, este apartado ofrece un <strong>primer ejemplo realista</strong> para mostrar
-      la <strong>concisión</strong> y <strong>expresividad</strong> de Kotlin. Aquí
-      usamos personajes de <em>Disco Elysium</em> para hacerlo más memorable.
-    </p>
+        <p class="leading-relaxed">
+            Como en <span class="font-semibold">Kotlin in Action</span>
+            <span class="text-subtle">(Dmitry Jemerov & Svetlana Isakova, 2017)</span>, este
+            apartado ofrece un <strong>primer ejemplo realista</strong> para mostrar la <strong
+            >concisión</strong> y <strong>expresividad</strong> de Kotlin. Aquí usamos personajes de
+            <em>Disco Elysium</em> para hacerlo más memorable.
+        </p>
 
-    <KotlinBlock
-      code={`
+        <KotlinBlock
+            code={`
         data class Person(
             val name: String,
             val age: Int? = null
@@ -242,432 +235,384 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         }
         // Output: The youngest is: Person(name=Kim Kitsuragi, age=43)
       `}
-      ><Fragment slot="title">Primer programa: filtrar y mostrar datos</Fragment
-      ></KotlinBlock
-    >
+        ><Fragment slot="title">Primer programa: filtrar y mostrar datos</Fragment></KotlinBlock>
 
-    <Explanation>
-      <List>
-        <ListItem icon={Icons.Users}>
-          Se define una <InlineKotlin code="data class" /> llamada
-          <InlineKotlin code="Person" /> con dos propiedades: <InlineKotlin
-            code="name"
-          /> de tipo <InlineKotlin code="String" />
-          y <InlineKotlin code="age" /> de tipo <InlineKotlin code="Int?" /> (puede
-          ser nulo).
-        </ListItem>
+        <Explanation>
+            <List>
+                <ListItem icon={Icons.Users}>
+                    Se define una <InlineKotlin code="data class" /> llamada
+                    <InlineKotlin code="Person" /> con dos propiedades: <InlineKotlin code="name" />
+                    de tipo <InlineKotlin code="String" />
+                    y <InlineKotlin code="age" /> de tipo <InlineKotlin code="Int?" /> (puede ser
+                    nulo).
+                </ListItem>
 
-        <ListItem icon={Icons.SlidersHorizontal}>
-          La propiedad <InlineKotlin code="age" /> tiene un valor por defecto (<InlineKotlin
-            code="null"
-          />), lo que permite omitirla al crear una instancia.
-        </ListItem>
+                <ListItem icon={Icons.SlidersHorizontal}>
+                    La propiedad <InlineKotlin code="age" /> tiene un valor por defecto
+                    (<InlineKotlin code="null" />), lo que permite omitirla al crear una instancia.
+                </ListItem>
 
-        <ListItem icon={Icons.ListBullets}>
-          Se crea una lista inmutable con <InlineKotlin code="listOf" />, que
-          contiene dos objetos <InlineKotlin code="Person" />.
-        </ListItem>
+                <ListItem icon={Icons.ListBullets}>
+                    Se crea una lista inmutable con <InlineKotlin code="listOf" />, que contiene dos
+                    objetos <InlineKotlin code="Person" />.
+                </ListItem>
 
-        <ListItem icon={Icons.PencilSimple}>
-          En la segunda instancia se utiliza una <strong
-            >asignación nombrada</strong
-          > (<InlineKotlin code="age = 43" />) para mayor claridad y
-          legibilidad.
-        </ListItem>
+                <ListItem icon={Icons.PencilSimple}>
+                    En la segunda instancia se utiliza una <strong>asignación nombrada</strong>
+                    (<InlineKotlin code="age = 43" />) para mayor claridad y legibilidad.
+                </ListItem>
 
-        <ListItem icon={Icons.SortAscending}>
-          Se emplea <InlineKotlin code="minByOrNull" /> junto con el operador Elvis
-          (<InlineKotlin code="?:" />) para ignorar los valores nulos y
-          encontrar la persona más joven.
-        </ListItem>
+                <ListItem icon={Icons.SortAscending}>
+                    Se emplea <InlineKotlin code="minByOrNull" /> junto con el operador Elvis
+                    (<InlineKotlin code="?:" />) para ignorar los valores nulos y encontrar la
+                    persona más joven.
+                </ListItem>
 
-        <ListItem icon={Icons.ShieldCheck}>
-          Si todas las edades fueran nulas, se usa <InlineKotlin
-            code="Int.MAX_VALUE"
-          /> como valor de reemplazo para evitar errores.
-        </ListItem>
+                <ListItem icon={Icons.ShieldCheck}>
+                    Si todas las edades fueran nulas, se usa <InlineKotlin code="Int.MAX_VALUE" />
+                    como valor de reemplazo para evitar errores.
+                </ListItem>
 
-        <ListItem icon={Icons.TextAa}>
-          Finalmente, se imprime el resultado usando <strong
-            >interpolación de cadenas</strong
-          >.
-        </ListItem>
-      </List>
-    </Explanation>
-  </NotesSection>
+                <ListItem icon={Icons.TextAa}>
+                    Finalmente, se imprime el resultado usando <strong>interpolación de
+                        cadenas</strong>.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
 
-  <NotesSection id="kotlin-philosophy" class="prose">
-    <Heading headingLevel="h2" Icon={Icons.BracketsAngle} slot="heading">
-      Filosofía de Kotlin
-    </Heading>
+    <NotesSection id="kotlin-philosophy" class="prose">
+        <Heading
+            headingLevel="h2" Icon={Icons.BracketsAngle}
+            slot="heading"
+        >
+            Filosofía de Kotlin
+        </Heading>
 
-    <p>
-      Kotlin busca simplificar la programación moderna combinando lo mejor de
-      distintos lenguajes, sin reinventar la rueda. Su diseño pragmático evita
-      la complejidad innecesaria y ofrece soluciones directas a problemas
-      comunes como la nulidad o la verbosidad excesiva.
-    </p>
+        <p>
+            Kotlin busca simplificar la programación moderna combinando lo mejor de distintos
+            lenguajes, sin reinventar la rueda. Su diseño pragmático evita la complejidad
+            innecesaria y ofrece soluciones directas a problemas comunes como la nulidad o la
+            verbosidad excesiva.
+        </p>
 
-    <p class="mt-4">Entre sus principios fundamentales se encuentran:</p>
-    <List>
-      <ListItem icon={Icons.Wrench}>
-        <strong>Pragmatismo</strong>: resuelve problemas reales de forma
-        efectiva, priorizando lo práctico por sobre lo experimental o lo
-        excesivamente teórico.
-      </ListItem>
-      <ListItem icon={Icons.FileText}>
-        <strong>Concisión expresiva</strong>: reduce la verbosidad sin perder
-        claridad ni intención.
-      </ListItem>
-      <ListItem icon={Icons.ShieldCheck}>
-        <strong>Seguridad</strong>: previene errores comunes en tiempo de
-        compilación —como las referencias nulas— y fomenta un código más
-        robusto.
-      </ListItem>
-      <ListItem icon={Icons.Lightbulb}>
-        <strong>Claridad intencional</strong>: promueve un estilo en el que la
-        intención del código es explícita y fácil de comprender para otras
-        personas.
-      </ListItem>
-    </List>
-
-    <p class="mt-4">
-      Estos principios guían todo el diseño del lenguaje y se reflejan en los
-      ejemplos que iremos explorando a lo largo del curso.
-    </p>
-  </NotesSection>
-
-  <NotesSection id="kotlin-benefits-limitations">
-    <Heading headingLevel="h2" Icon={Icons.Scales} slot="heading">
-      Beneficios y limitaciones de Kotlin en el desarrollo de bibliotecas de
-      software
-    </Heading>
-
-    <ProCons>
-      <Pros>
+        <p class="mt-4">Entre sus principios fundamentales se encuentran:</p>
         <List>
-          <ListItem icon={Icons.ArrowsLeftRight}>
-            <strong>Interoperabilidad con Java</strong>: se integra sin
-            fricciones con el ecosistema Java, permitiendo reutilizar
-            bibliotecas existentes y adoptar Kotlin de forma gradual, incluso en
-            bases de código heredadas.
-          </ListItem>
-          <ListItem icon={Icons.Feather}>
-            <strong>Sintaxis concisa y expresiva</strong>: reduce repetición de
-            código, mejora la legibilidad y facilita el mantenimiento. Favorece
-            el diseño de APIs limpias y DSLs orientadas a usabilidad.
-          </ListItem>
-          <ListItem icon={Icons.ShieldCheck}>
-            <strong>Seguridad frente a nulls</strong>: su sistema de tipos
-            previene errores comunes como <InlineKotlin
-              code="NullPointerException"
-            />, reforzando la robustez de las APIs y facilitando contratos más
-            confiables.
-          </ListItem>
-          <ListItem icon={Icons.PuzzlePiece}>
-            <strong>Funciones de extensión</strong>: permiten ampliar
-            funcionalidades sin modificar clases originales, fomentando una
-            arquitectura modular y extensible — ideal para bibliotecas
-            reutilizables.
-          </ListItem>
-          <ListItem icon={Icons.Devices}>
-            <strong>Compatibilidad multiplataforma</strong>: posibilita crear
-            bibliotecas que funcionan en JVM, JS y Native, promoviendo la
-            reutilización de código. Requiere seguir ciertas restricciones de
-            API común y, en el caso de Kotlin/Native, aceptar que el tooling aún
-            está menos maduro que en JVM.
-          </ListItem>
-          <ListItem icon={Icons.SpinnerGap}>
-            <strong>Corrutinas integradas</strong>: facilitan la programación
-            asíncrona con una sintaxis clara y eficiente, permitiendo exponer
-            APIs no bloqueantes en bibliotecas como clientes HTTP o SDKs.
-          </ListItem>
-          <ListItem icon={Icons.Terminal}>
-            <strong>Facilidad para crear DSLs</strong>: permite construir APIs
-            idiomáticas, expresivas y personalizables, ideales para bibliotecas
-            de configuración, testing o transformación de datos.
-          </ListItem>
+            <ListItem icon={Icons.Wrench}>
+                <strong>Pragmatismo</strong>: resuelve problemas reales de forma efectiva,
+                priorizando lo práctico por sobre lo experimental o lo excesivamente teórico.
+            </ListItem>
+            <ListItem icon={Icons.FileText}>
+                <strong>Concisión expresiva</strong>: reduce la verbosidad sin perder claridad ni
+                intención.
+            </ListItem>
+            <ListItem icon={Icons.ShieldCheck}>
+                <strong>Seguridad</strong>: previene errores comunes en tiempo de compilación —como
+                las referencias nulas— y fomenta un código más robusto.
+            </ListItem>
+            <ListItem icon={Icons.Lightbulb}>
+                <strong>Claridad intencional</strong>: promueve un estilo en el que la intención del
+                código es explícita y fácil de comprender para otras personas.
+            </ListItem>
         </List>
-      </Pros>
-      <Cons>
-        <List>
-          <ListItem icon={Icons.WarningCircle}>
-            <strong>Limitaciones en abstracciones avanzadas</strong>: Kotlin aún
-            no soporta conceptos como <em>Higher-Kinded Types (HKT)</em> o los <em>implicits</em>
-            de Scala. Esta decisión es <strong>intencional</strong>, priorizando
-            claridad y practicidad. Sin embargo, ya se exploran propuestas como
-            <a
-              href="https://kotlinlang.org/docs/whatsnew22.html#preview-of-context-parameters"
-              >context parameters</a
-            >, que podrían habilitar nuevos patrones funcionales sin comprometer
-            la legibilidad.
-          </ListItem>
-          <ListItem icon={Icons.Scan}>
-            <strong>Pattern matching limitado</strong>: Kotlin no cuenta con un
-            sistema tan expresivo como Scala, Rust o Haskell. Aunque
-            <InlineKotlin code="when" lang="kotlin" /> y las jerarquías selladas
-            permiten cierto control, no existe una sintaxis declarativa para hacer
-            match de estructuras anidadas ni extraer múltiples valores simultáneamente.
-            El compilador K2 abre la puerta a posibles mejoras en este terreno a
-            futuro.
-          </ListItem>
-        </List>
-      </Cons>
-    </ProCons>
 
-    <p>
-      Kotlin es una excelente opción para diseñar bibliotecas modernas, seguras
-      y expresivas. Su enfoque pragmático lo convierte en una herramienta
-      poderosa para la reutilización de código. Sin embargo, la ausencia de
-      ciertas abstracciones avanzadas puede limitar algunos estilos de diseño
-      altamente genéricos o funcionales.
-    </p>
-    <p>
-      A lo largo del curso aprenderás a <strong
-        >sacar el máximo provecho de Kotlin</strong
-      > en el diseño de bibliotecas, aprovechando sus fortalezas y
-      <strong
-        >encontrando soluciones pragmáticas cuando el lenguaje no provee una
-        abstracción directamente</strong
-      >.
-    </p>
-  </NotesSection>
+        <p class="mt-4">
+            Estos principios guían todo el diseño del lenguaje y se reflejan en los ejemplos que
+            iremos explorando a lo largo del curso.
+        </p>
+    </NotesSection>
 
-  <section title="¿Qué distingue una expresión de una declaración?">
-    <Heading headingLevel="h2" Icon={Icons.CodeBlock}>
-      ¿Qué distingue una expresión de una declaración?
-    </Heading>
+    <NotesSection id="kotlin-benefits-limitations">
+        <Heading
+            headingLevel="h2" Icon={Icons.Scales}
+            slot="heading"
+        >
+            Beneficios y limitaciones de Kotlin en el desarrollo de bibliotecas de software
+        </Heading>
 
-    <p>
-      En Kotlin, es importante distinguir entre <strong>expresiones</strong> y <strong
-        >declaraciones</strong
-      >, ya que cumplen funciones diferentes dentro de un programa. Esta
-      distinción —también presente en lenguajes como Rust— <strong
-        >favorece un estilo de programación más seguro y predecible</strong
-      >.
-    </p>
-    <Definition headingLevel="h3">
-      <span slot="title">Expresión</span>
-      <p>
-        Una <strong>expresión</strong> produce un valor y puede combinarse con otras.
-        En Kotlin, esto incluye desde constantes hasta funciones anónimas. También
-        lo son operaciones aritméticas, operadores lógicos y llamadas a funciones.
-      </p>
-    </Definition>
-    <Definition headingLevel="h3">
-      <span slot="title">Declaración</span>
-      <p>
-        Las <strong>declaraciones</strong> son instrucciones que <strong
-          >realizan una acción</strong
-        >. En general, <strong>no se usan por su valor</strong>, y no pueden
-        combinarse con otras expresiones. Ejemplos comunes son la definición de
-        variables, bucles o funciones.
-      </p>
-    </Definition>
-    <p>
-      Una diferencia clave con lenguajes como <strong
-        >Java, C o JavaScript</strong
-      > es que en esos lenguajes <strong
-        >las asignaciones son expresiones</strong
-      >, lo que puede llevar a errores como <InlineCode
-        code="if (x = 5)"
-        lang="c"
-      /> cuando en realidad se quería comparar (<InlineCode
-        code="if (x == 5)"
-        lang="c"
-      />). En Kotlin, <strong>las asignaciones son declaraciones</strong>, lo
-      que impide este tipo de ambigüedades y permite que el compilador detecte
-      errores más fácilmente.
-    </p>
-    <p>A continuación, una tabla con ejemplos representativos:</p>
-    <Table>
-      <TableCaption
-        >Ejemplos de expresiones y declaraciones en Kotlin</TableCaption
-      >
-      <TableHeader>
-        <TableRow>
-          <TableCell>Ejemplo</TableCell>
-          <TableCell>¿Expresión o declaración?</TableCell>
-          <TableCell>¿Devuelve valor?</TableCell>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          <TableCell>
-            <InlineCode code="val x = 5" lang="kotlin" />
-          </TableCell>
-          <TableCell>Declaración</TableCell>
-          <TableCell>No</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <InlineCode code="5" lang="kotlin" />
-          </TableCell>
-          <TableCell>Expresión</TableCell>
-          <TableCell
-            >Sí, el valor <InlineCode code="5" lang="kotlin" /></TableCell
-          >
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <InlineCode code="if (a > b) a else b" lang="kotlin" />
-          </TableCell>
-          <TableCell>Expresión</TableCell>
-          <TableCell
-            >Sí, el valor de <InlineCode code="a" lang="kotlin" /> o <InlineCode
-              code="b"
-              lang="kotlin"
-            /></TableCell
-          >
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <InlineCode code="fun greet() { println() }" lang="kotlin" />
-          </TableCell>
-          <TableCell>Declaración</TableCell>
-          <TableCell>No</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
-    <Tip>
-      <span slot="title">En resumen</span>
-      <p>
-        <List>
-          <ListItem icon={Icons.ArrowElbowRight}>
-            Las <strong>expresiones</strong> devuelven un valor y pueden ser combinadas
-            con otras expresiones.
-          </ListItem>
-          <ListItem icon={Icons.Play}>
-            Las <strong>declaraciones</strong> ejecutan acciones y no devuelven un
-            valor, por lo que no pueden ser combinadas con otras expresiones.
-          </ListItem>
-        </List>
-      </p>
-    </Tip>
-    <p>
-      Esta diferencia <strong
-        >promueve una programación más expresiva, segura y menos propensa a
-        errores sutiles</strong
-      >.
-    </p>
-  </section>
-  <section title="Interpolación de cadenas">
-    <Heading headingLevel="h2" Icon={Icons.CurrencyDollar}>
-      Interpolación de cadenas
-    </Heading>
-    <p>
-      La interpolación de cadenas —también conocida como string templates— es
-      una característica de Kotlin que permite insertar valores o expresiones
-      directamente dentro de un <InlineCode code="String" lang="kotlin" /> usando
-      el símbolo <InlineCode code="$" lang="kotlin" />.
-    </p>
-    <p>
-      Para insertar una variable, basta con escribir <InlineCode
-        code="$variable"
-        lang="kotlin"
-      />. En el caso de expresiones, se deben usar llaves: <InlineCode
-        code="${expresión}"
-        lang="kotlin"
-      />.
-    </p>
-    <section title="Ejemplo">
-      <Heading headingLevel="h3" Icon={Icons.Sword}>Ejemplo</Heading>
-      <p>
-        En el siguiente ejemplo, mostramos el estado de un personaje según sus
-        puntos de vida (<InlineCode code="hp" lang="kotlin" />):
-      </p>
-      <CodeBlock
-        icon={Icons.Kotlin}
-        code={`
+        <ProCons>
+            <Pros>
+                <List>
+                    <ListItem icon={Icons.ArrowsLeftRight}>
+                        <strong>Interoperabilidad con Java</strong>: se integra sin fricciones con
+                        el ecosistema Java, permitiendo reutilizar bibliotecas existentes y adoptar
+                        Kotlin de forma gradual, incluso en bases de código heredadas.
+                    </ListItem>
+                    <ListItem icon={Icons.Feather}>
+                        <strong>Sintaxis concisa y expresiva</strong>: reduce repetición de código,
+                        mejora la legibilidad y facilita el mantenimiento. Favorece el diseño de
+                        APIs limpias y DSLs orientadas a usabilidad.
+                    </ListItem>
+                    <ListItem icon={Icons.ShieldCheck}>
+                        <strong>Seguridad frente a nulls</strong>: su sistema de tipos previene
+                        errores comunes como <InlineKotlin code="NullPointerException" />,
+                        reforzando la robustez de las APIs y facilitando contratos más confiables.
+                    </ListItem>
+                    <ListItem icon={Icons.PuzzlePiece}>
+                        <strong>Funciones de extensión</strong>: permiten ampliar funcionalidades
+                        sin modificar clases originales, fomentando una arquitectura modular y
+                        extensible — ideal para bibliotecas reutilizables.
+                    </ListItem>
+                    <ListItem icon={Icons.Devices}>
+                        <strong>Compatibilidad multiplataforma</strong>: posibilita crear
+                        bibliotecas que funcionan en JVM, JS y Native, promoviendo la reutilización
+                        de código. Requiere seguir ciertas restricciones de API común y, en el caso
+                        de Kotlin/Native, aceptar que el tooling aún está menos maduro que en JVM.
+                    </ListItem>
+                    <ListItem icon={Icons.SpinnerGap}>
+                        <strong>Corrutinas integradas</strong>: facilitan la programación asíncrona
+                        con una sintaxis clara y eficiente, permitiendo exponer APIs no bloqueantes
+                        en bibliotecas como clientes HTTP o SDKs.
+                    </ListItem>
+                    <ListItem icon={Icons.Terminal}>
+                        <strong>Facilidad para crear DSLs</strong>: permite construir APIs
+                        idiomáticas, expresivas y personalizables, ideales para bibliotecas de
+                        configuración, testing o transformación de datos.
+                    </ListItem>
+                </List>
+            </Pros>
+            <Cons>
+                <List>
+                    <ListItem icon={Icons.WarningCircle}>
+                        <strong>Limitaciones en abstracciones avanzadas</strong>: Kotlin aún no
+                        soporta conceptos como <em>Higher-Kinded Types (HKT)</em> o los <em
+                        >implicits</em>
+                        de Scala. Esta decisión es <strong>intencional</strong>, priorizando
+                        claridad y practicidad. Sin embargo, ya se exploran propuestas como
+                        <a
+                            href="https://kotlinlang.org/docs/whatsnew22.html#preview-of-context-parameters"
+                        >context parameters</a>, que podrían habilitar nuevos patrones funcionales
+                        sin comprometer la legibilidad.
+                    </ListItem>
+                    <ListItem icon={Icons.Scan}>
+                        <strong>Pattern matching limitado</strong>: Kotlin no cuenta con un sistema
+                        tan expresivo como Scala, Rust o Haskell. Aunque
+                        <InlineKotlin code="when" lang="kotlin" /> y las jerarquías selladas
+                        permiten cierto control, no existe una sintaxis declarativa para hacer match
+                        de estructuras anidadas ni extraer múltiples valores simultáneamente. El
+                        compilador K2 abre la puerta a posibles mejoras en este terreno a futuro.
+                    </ListItem>
+                </List>
+            </Cons>
+        </ProCons>
+
+        <p>
+            Kotlin es una excelente opción para diseñar bibliotecas modernas, seguras y expresivas.
+            Su enfoque pragmático lo convierte en una herramienta poderosa para la reutilización de
+            código. Sin embargo, la ausencia de ciertas abstracciones avanzadas puede limitar
+            algunos estilos de diseño altamente genéricos o funcionales.
+        </p>
+        <p>
+            A lo largo del curso aprenderás a <strong>sacar el máximo provecho de Kotlin</strong> en
+            el diseño de bibliotecas, aprovechando sus fortalezas y
+            <strong>encontrando soluciones pragmáticas cuando el lenguaje no provee una abstracción
+                directamente</strong>.
+        </p>
+    </NotesSection>
+
+    <section title="¿Qué distingue una expresión de una declaración?">
+        <Heading headingLevel="h2" Icon={Icons.CodeBlock}>
+            ¿Qué distingue una expresión de una declaración?
+        </Heading>
+
+        <p>
+            En Kotlin, es importante distinguir entre <strong>expresiones</strong> y <strong
+            >declaraciones</strong>, ya que cumplen funciones diferentes dentro de un programa. Esta
+            distinción —también presente en lenguajes como Rust— <strong>favorece un estilo de
+                programación más seguro y predecible</strong>.
+        </p>
+        <Definition headingLevel="h3">
+            <span slot="title">Expresión</span>
+            <p>
+                Una <strong>expresión</strong> produce un valor y puede combinarse con otras. En
+                Kotlin, esto incluye desde constantes hasta funciones anónimas. También lo son
+                operaciones aritméticas, operadores lógicos y llamadas a funciones.
+            </p>
+        </Definition>
+        <Definition headingLevel="h3">
+            <span slot="title">Declaración</span>
+            <p>
+                Las <strong>declaraciones</strong> son instrucciones que <strong>realizan una
+                    acción</strong>. En general, <strong>no se usan por su valor</strong>, y no
+                pueden combinarse con otras expresiones. Ejemplos comunes son la definición de
+                variables, bucles o funciones.
+            </p>
+        </Definition>
+        <p>
+            Una diferencia clave con lenguajes como <strong>Java, C o JavaScript</strong> es que en
+            esos lenguajes <strong>las asignaciones son expresiones</strong>, lo que puede llevar a
+            errores como <InlineCode code="if (x = 5)" lang="c" /> cuando en realidad se quería
+            comparar (<InlineCode code="if (x == 5)" lang="c" />). En Kotlin, <strong>las
+                asignaciones son declaraciones</strong>, lo que impide este tipo de ambigüedades y
+            permite que el compilador detecte errores más fácilmente.
+        </p>
+        <p>A continuación, una tabla con ejemplos representativos:</p>
+        <Table>
+            <TableCaption>Ejemplos de expresiones y declaraciones en Kotlin</TableCaption>
+            <TableHeader>
+                <TableRow>
+                    <TableCell>Ejemplo</TableCell>
+                    <TableCell>¿Expresión o declaración?</TableCell>
+                    <TableCell>¿Devuelve valor?</TableCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell>
+                        <InlineCode code="val x = 5" lang="kotlin" />
+                    </TableCell>
+                    <TableCell>Declaración</TableCell>
+                    <TableCell>No</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell>
+                        <InlineCode code="5" lang="kotlin" />
+                    </TableCell>
+                    <TableCell>Expresión</TableCell>
+                    <TableCell>Sí, el valor <InlineCode code="5" lang="kotlin" /></TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell>
+                        <InlineCode code="if (a > b) a else b" lang="kotlin" />
+                    </TableCell>
+                    <TableCell>Expresión</TableCell>
+                    <TableCell>Sí, el valor de <InlineCode code="a" lang="kotlin" /> o <InlineCode
+                            code="b" lang="kotlin"
+                        /></TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell>
+                        <InlineCode code="fun greet() { println() }" lang="kotlin" />
+                    </TableCell>
+                    <TableCell>Declaración</TableCell>
+                    <TableCell>No</TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
+        <Tip>
+            <span slot="title">En resumen</span>
+            <p>
+                <List>
+                    <ListItem icon={Icons.ArrowElbowRight}>
+                        Las <strong>expresiones</strong> devuelven un valor y pueden ser combinadas
+                        con otras expresiones.
+                    </ListItem>
+                    <ListItem icon={Icons.Play}>
+                        Las <strong>declaraciones</strong> ejecutan acciones y no devuelven un
+                        valor, por lo que no pueden ser combinadas con otras expresiones.
+                    </ListItem>
+                </List>
+            </p>
+        </Tip>
+        <p>
+            Esta diferencia <strong>promueve una programación más expresiva, segura y menos propensa
+                a errores sutiles</strong>.
+        </p>
+    </section>
+    <section title="Interpolación de cadenas">
+        <Heading headingLevel="h2" Icon={Icons.CurrencyDollar}>
+            Interpolación de cadenas
+        </Heading>
+        <p>
+            La interpolación de cadenas —también conocida como string templates— es una
+            característica de Kotlin que permite insertar valores o expresiones directamente dentro
+            de un <InlineCode code="String" lang="kotlin" /> usando el símbolo <InlineCode
+                code="$" lang="kotlin"
+            />.
+        </p>
+        <p>
+            Para insertar una variable, basta con escribir <InlineCode
+                code="$variable" lang="kotlin"
+            />. En el caso de expresiones, se deben usar llaves: <InlineCode
+                code="${expresión}" lang="kotlin"
+            />.
+        </p>
+        <section title="Ejemplo">
+            <Heading headingLevel="h3" Icon={Icons.Sword}>Ejemplo</Heading>
+            <p>
+                En el siguiente ejemplo, mostramos el estado de un personaje según sus puntos de
+                vida (<InlineCode code="hp" lang="kotlin" />):
+            </p>
+            <CodeBlock
+                icon={Icons.Kotlin}
+                code={`
           val name = "Leif"
           val hp = 24
 
           println("Unit: $name | Status: \${if (hp <= 0) "defeated" else "active"}")
         `}
-        lang="kotlin"
-        ><span slot="title">Interpolación de cadenas en acción</span></CodeBlock
-      >
-      <p>Esto imprimirá:</p>
-      <CodeBlock
-        icon={Icons.Terminal}
-        code={`Unit: Leif | Status: active`}
-        lang="plaintext"><span slot="title">Salida en consola</span></CodeBlock
-      >
-      <p>
-        Gracias a la interpolación de cadenas, podemos construir mensajes
-        dinámicos de forma <strong>más clara, concisa y expresiva</strong>,
-        evitando la concatenación manual con operadores como <InlineCode
-          code="+"
-          lang="kotlin"
-        />.
-      </p>
-      <p>
-        Además, las expresiones interpoladas se evalúan <strong
-          >en el momento en que se construye la cadena</strong
-        >, lo que aporta claridad y eficiencia sin sobrecostos innecesarios.
-      </p>
-      <Tip>
-        <span slot="title">Sin prefijos especiales</span>
-        <p>
-          A diferencia de otros lenguajes, como <strong>Scala</strong> (<InlineCode
-            code=`s"Hola, $nombre"`
-            lang="scala"
-          />) o <strong>Python</strong> (<InlineCode
-            code=`f"Hola, {nombre}"`
-            lang="py"
-          />), Kotlin <strong>no requiere prefijos</strong> como <InlineCode
-            code="s"
-            lang="scala"
-          /> o <InlineCode code="f" lang="py" /> para habilitar la interpolación.
-        </p>
-        <p>
-          En Kotlin, <strong
-            >todas las cadenas admiten interpolación de forma nativa</strong
-          >, lo que las hace más simples, legibles y menos propensas a errores.
-        </p>
-      </Tip>
-      <More>
-        <span slot="title">
-          ¿Qué es un <InlineCode code="StringBuilder" lang="kotlin" />?
-        </span>
-        <p>
-          Cuando interpolamos cadenas en Kotlin, el compilador genera código que
-          usa internamente un
-          <strong><InlineCode code="StringBuilder" lang="kotlin" /></strong>,
-          una clase optimizada para construir texto de forma eficiente <strong
-            >sin crear múltiples objetos intermedios</strong
-          >.
-        </p>
-        <p>
-          Esto es relevante porque en Kotlin (y en Java), las cadenas (<InlineCode
-            code="String"
-            lang="kotlin"
-          />) son <strong>inmutables</strong>: cada vez que concatenas con <InlineCode
-            code="+"
-            lang="kotlin"
-          />, se crea una nueva instancia, lo cual puede degradar el rendimiento
-          en operaciones repetidas o dentro de bucles.
-        </p>
-        <p>
-          Un <InlineCode code="StringBuilder" lang="kotlin" />, en cambio,
-          permite <strong>modificar la cadena en memoria</strong>, agregando,
-          insertando o eliminando texto sin copiar constantemente.
-        </p>
-        <p>Por ejemplo, esta interpolación:</p>
-        <CodeBlock
-          icon={Icons.Kotlin}
-          code={`
+                lang="kotlin"
+            ><span slot="title">Interpolación de cadenas en acción</span></CodeBlock>
+            <p>Esto imprimirá:</p>
+            <CodeBlock
+                icon={Icons.Terminal} code={`Unit: Leif | Status: active`}
+                lang="plaintext"
+            ><span slot="title">Salida en consola</span></CodeBlock>
+            <p>
+                Gracias a la interpolación de cadenas, podemos construir mensajes dinámicos de forma
+                <strong>más clara, concisa y expresiva</strong>, evitando la concatenación manual
+                con operadores como <InlineCode code="+" lang="kotlin" />.
+            </p>
+            <p>
+                Además, las expresiones interpoladas se evalúan <strong>en el momento en que se
+                    construye la cadena</strong>, lo que aporta claridad y eficiencia sin
+                sobrecostos innecesarios.
+            </p>
+            <Tip>
+                <span slot="title">Sin prefijos especiales</span>
+                <p>
+                    A diferencia de otros lenguajes, como <strong>Scala</strong> (<InlineCode
+                        code={`s"Hola, $nombre"`} lang="scala"
+                    />) o <strong>Python</strong> (<InlineCode
+                        code={`f"Hola, {nombre}"`} lang="py"
+                    />), Kotlin <strong>no requiere prefijos</strong> como <InlineCode
+                        code="s" lang="scala"
+                    /> o <InlineCode code="f" lang="py" /> para habilitar la interpolación.
+                </p>
+                <p>
+                    En Kotlin, <strong>todas las cadenas admiten interpolación de forma
+                        nativa</strong>, lo que las hace más simples, legibles y menos propensas a
+                    errores.
+                </p>
+            </Tip>
+            <More>
+                <span slot="title">
+                    ¿Qué es un <InlineCode code="StringBuilder" lang="kotlin" />?
+                </span>
+                <p>
+                    Cuando interpolamos cadenas en Kotlin, el compilador genera código que usa
+                    internamente un
+                    <strong><InlineCode code="StringBuilder" lang="kotlin" /></strong>, una clase
+                    optimizada para construir texto de forma eficiente <strong>sin crear múltiples
+                        objetos intermedios</strong>.
+                </p>
+                <p>
+                    Esto es relevante porque en Kotlin (y en Java), las cadenas (<InlineCode
+                        code="String" lang="kotlin"
+                    />) son <strong>inmutables</strong>: cada vez que concatenas con <InlineCode
+                        code="+" lang="kotlin"
+                    />, se crea una nueva instancia, lo cual puede degradar el rendimiento en
+                    operaciones repetidas o dentro de bucles.
+                </p>
+                <p>
+                    Un <InlineCode code="StringBuilder" lang="kotlin" />, en cambio, permite <strong
+                    >modificar la cadena en memoria</strong>, agregando, insertando o eliminando
+                    texto sin copiar constantemente.
+                </p>
+                <p>Por ejemplo, esta interpolación:</p>
+                <CodeBlock
+                    icon={Icons.Kotlin}
+                    code={`
             val name = "Leif"
             val status = "active"
             val message = "Unit: $name | Status: $status"
           `}
-          lang="kotlin"
-          ><span slot="title">Interpolación de cadenas</span></CodeBlock
-        >
-        <p>Se traduce internamente a algo similar a esto:</p>
-        <CodeBlock
-          icon={Icons.Kotlin}
-          code={`
+                    lang="kotlin"
+                ><span slot="title">Interpolación de cadenas</span></CodeBlock>
+                <p>Se traduce internamente a algo similar a esto:</p>
+                <CodeBlock
+                    icon={Icons.Kotlin}
+                    code={`
             val name = "Leif"
             val status = "active"
             val sb = StringBuilder()
@@ -677,147 +622,129 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             sb.append(status)
             val message = sb.toString()
           `}
-          lang="kotlin"
-          ><span slot="title">Traducción interna usando StringBuilder</span
-          ></CodeBlock
-        >
-        <p>
-          Gracias a esta conversión, la interpolación en Kotlin es <strong
-            >más legible</strong
-          > que la concatenación manual y <strong>más eficiente</strong> que usar
-          <InlineCode code="+" lang="kotlin" /> repetidamente.
-        </p>
-      </More>
+                    lang="kotlin"
+                ><span slot="title">Traducción interna usando StringBuilder</span></CodeBlock>
+                <p>
+                    Gracias a esta conversión, la interpolación en Kotlin es <strong>más
+                        legible</strong> que la concatenación manual y <strong>más
+                        eficiente</strong> que usar
+                    <InlineCode code="+" lang="kotlin" /> repetidamente.
+                </p>
+            </More>
+        </section>
     </section>
-  </section>
-  <section title="Crear tu primer proyecto Kotlin con Gradle">
-    <Heading headingLevel="h2" Icon={null}
-      >Crear tu primer proyecto Kotlin con Gradle</Heading
-    >
-    <p>
-      Antes de comenzar a escribir código Kotlin, necesitamos configurar un
-      entorno de desarrollo funcional. En esta sección aprenderás cómo <strong
-        >crear un proyecto Kotlin básico desde la terminal utilizando Gradle</strong
-      >, el sistema de construcción que usaremos durante el curso.
-    </p>
-    <p>
-      Gradle es una herramienta de automatización de construcción flexible y
-      ampliamente utilizada en el ecosistema Kotlin y Java. Nos permitirá
-      compilar, probar y empaquetar nuestras aplicaciones y bibliotecas de forma
-      reproducible.
-    </p>
-    <p class="mb-4">
-      Te proporcionamos instrucciones específicas para Windows, Linux y macOS:
-    </p>
-    <Tabs defaultValue="windows">
-      <TabsList>
-        <TabsTrigger value="windows">Windows (PowerShell)</TabsTrigger>
-        <TabsTrigger value="macos">macOS (Bash)</TabsTrigger>
-        <TabsTrigger value="linux">Linux (Bash)</TabsTrigger>
-      </TabsList>
-      <TabsContent value="windows">
-        <InitializeKotlinApplicationPs1 />
-      </TabsContent>
-      <TabsContent value="macos">
-        <InitializeKotlinApplicationBash os="macos" />
-      </TabsContent>
-      <TabsContent value="linux">
-        <InitializeKotlinApplicationBash os="linux" />
-      </TabsContent>
-    </Tabs>
-    <p class="mt-4">
-      Por ahora, crearemos una <strong>aplicación de consola</strong> para probar
-      nuestro código. Más adelante aprenderemos a utilizar Gradle para construir
-      <strong>bibliotecas de software</strong> reutilizables.
-    </p>
-    <p>
-      Una vez creado el proyecto, puedes abrirlo con <strong
-        >IntelliJ IDEA</strong
-      >, <strong>Fleet</strong> u otro editor. Aún no necesitas comprender a fondo
-      la estructura del proyecto, pero es útil tener en cuenta sus directorios principales:
-    </p>
-    <List>
-      <ListItem icon={Icons.FolderOpen}>
-        El código fuente está en <InlineCode
-          code="app/src/main/kotlin"
-          lang="bash"
-        />.
-      </ListItem>
-      <ListItem icon={Icons.Flask}>
-        Las pruebas se ubican en <InlineCode
-          code="app/src/test/kotlin"
-          lang="bash"
-        />.
-      </ListItem>
-    </List>
-    <p>
-      Si estás usando IntelliJ IDEA y tienes disponible la herramienta <InlineCode
-        code="idea"
-        lang="bash"
-      /> en tu terminal, puedes abrir el proyecto con el siguiente comando:
-    </p>
-    <ShellBlock code="idea intro-kt" lang="bash">
-      <span slot="title">Abrir proyecto en IntelliJ IDEA</span>
-    </ShellBlock>
-    <Explanation>
-      Este comando abre el proyecto actual en IntelliJ IDEA, siempre que tengas
-      habilitado el <a
-        href="https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html"
-        target="_blank"
-        rel="noopener noreferrer">Command Line Launcher</a
-      > (<InlineCode code="idea" lang="bash" />). Puedes activarlo desde el menú <InlineCode
-        code="Tools > Create Command-line Launcher"
-        lang="plaintext"
-      />.
-    </Explanation>
-  </section>
-  <section title="Ejercicio">
-    <Exercise headingLevel="h2">
-      <Fragment slot="title"> Un “Hello, World” con sentido </Fragment>
-      <p>
-        Ya creaste tu primer proyecto en Kotlin. Ahora es momento de <strong
-          >darle voz propia</strong
-        >.
-      </p>
-      <p>
-        Tu tarea es <strong>explorar la estructura del proyecto</strong>,
-        encontrar el <strong>punto de entrada del programa</strong> y modificarlo
-        para que imprima un mensaje <strong
-          >auténtico y significativo para ti</strong
-        >.
-      </p>
-      <p>
-        No se trata de un simple <InlineCode
-          code=`"Hello, World"`
-          lang="kotlin"
-        />, sino de una frase que te represente. Algunas ideas:
-      </p>
-      <List>
-        <ListItem icon={Icons.GameController}>
-          Una línea de tu videojuego favorito
-        </ListItem>
-        <ListItem icon={Icons.Quotes}> Una cita que te inspira </ListItem>
-        <ListItem icon={Icons.Smiley}> Un meme que te haga reír </ListItem>
-        <ListItem icon={Icons.Pencil}>
-          Una frase que hayas escrito tú mismx
-        </ListItem>
-      </List>
-      <ShellBlock code="./gradlew :app:run" lang="bash">
-        <span slot="title">Ejecutar el programa</span>
-      </ShellBlock>
-      <p>
-        Si todo está bien configurado, tu mensaje aparecerá en la consola ✨
-      </p>
-      <Tip>
-        <Fragment slot="title">Recuerda</Fragment>
+    <section title="Crear tu primer proyecto Kotlin con Gradle">
+        <Heading headingLevel="h2" Icon={null}>Crear tu primer proyecto Kotlin con Gradle</Heading>
         <p>
-          No necesitas crear clases nuevas ni preocuparte por la estructura
-          ideal. Simplemente disfruta de escribir tu primer programa en Kotlin.
+            Antes de comenzar a escribir código Kotlin, necesitamos configurar un entorno de
+            desarrollo funcional. En esta sección aprenderás cómo <strong>crear un proyecto Kotlin
+                básico desde la terminal utilizando Gradle</strong>, el sistema de construcción que
+            usaremos durante el curso.
         </p>
-      </Tip>
-      <Solution>
-        <CodeBlock
-          code={`
+        <p>
+            Gradle es una herramienta de automatización de construcción flexible y ampliamente
+            utilizada en el ecosistema Kotlin y Java. Nos permitirá compilar, probar y empaquetar
+            nuestras aplicaciones y bibliotecas de forma reproducible.
+        </p>
+        <p class="mb-4">
+            Te proporcionamos instrucciones específicas para Windows, Linux y macOS:
+        </p>
+        <Tabs defaultValue="windows">
+            <TabsList>
+                <TabsTrigger value="windows">Windows (PowerShell)</TabsTrigger>
+                <TabsTrigger value="macos">macOS (Bash)</TabsTrigger>
+                <TabsTrigger value="linux">Linux (Bash)</TabsTrigger>
+            </TabsList>
+            <TabsContent value="windows">
+                <InitializeKotlinApplicationPs1 />
+            </TabsContent>
+            <TabsContent value="macos">
+                <InitializeKotlinApplicationBash os="macos" />
+            </TabsContent>
+            <TabsContent value="linux">
+                <InitializeKotlinApplicationBash os="linux" />
+            </TabsContent>
+        </Tabs>
+        <p class="mt-4">
+            Por ahora, crearemos una <strong>aplicación de consola</strong> para probar nuestro
+            código. Más adelante aprenderemos a utilizar Gradle para construir
+            <strong>bibliotecas de software</strong> reutilizables.
+        </p>
+        <p>
+            Una vez creado el proyecto, puedes abrirlo con <strong>IntelliJ IDEA</strong>, <strong
+            >Fleet</strong> u otro editor. Aún no necesitas comprender a fondo la estructura del
+            proyecto, pero es útil tener en cuenta sus directorios principales:
+        </p>
+        <List>
+            <ListItem icon={Icons.FolderOpen}>
+                El código fuente está en <InlineCode code="app/src/main/kotlin" lang="bash" />.
+            </ListItem>
+            <ListItem icon={Icons.Flask}>
+                Las pruebas se ubican en <InlineCode code="app/src/test/kotlin" lang="bash" />.
+            </ListItem>
+        </List>
+        <p>
+            Si estás usando IntelliJ IDEA y tienes disponible la herramienta <InlineCode
+                code="idea" lang="bash"
+            /> en tu terminal, puedes abrir el proyecto con el siguiente comando:
+        </p>
+        <ShellBlock code="idea intro-kt" lang="bash">
+            <span slot="title">Abrir proyecto en IntelliJ IDEA</span>
+        </ShellBlock>
+        <Explanation>
+            Este comando abre el proyecto actual en IntelliJ IDEA, siempre que tengas habilitado el
+            <a
+                href="https://www.jetbrains.com/help/idea/working-with-the-ide-features-from-command-line.html"
+                target="_blank"
+                rel="noopener noreferrer"
+            >Command Line Launcher</a> (<InlineCode code="idea" lang="bash" />). Puedes activarlo
+            desde el menú <InlineCode
+                code="Tools > Create Command-line Launcher" lang="plaintext"
+            />.
+        </Explanation>
+    </section>
+    <section title="Ejercicio">
+        <Exercise headingLevel="h2">
+            <Fragment slot="title"> Un “Hello, World” con sentido </Fragment>
+            <p>
+                Ya creaste tu primer proyecto en Kotlin. Ahora es momento de <strong>darle voz
+                    propia</strong>.
+            </p>
+            <p>
+                Tu tarea es <strong>explorar la estructura del proyecto</strong>, encontrar el
+                <strong>punto de entrada del programa</strong> y modificarlo para que imprima un
+                mensaje <strong>auténtico y significativo para ti</strong>.
+            </p>
+            <p>
+                No se trata de un simple <InlineCode code={`"Hello, World"`} lang="kotlin" />, sino
+                de una frase que te represente. Algunas ideas:
+            </p>
+            <List>
+                <ListItem icon={Icons.GameController}>
+                    Una línea de tu videojuego favorito
+                </ListItem>
+                <ListItem icon={Icons.Quotes}> Una cita que te inspira </ListItem>
+                <ListItem icon={Icons.Smiley}> Un meme que te haga reír </ListItem>
+                <ListItem icon={Icons.Pencil}>
+                    Una frase que hayas escrito tú mismx
+                </ListItem>
+            </List>
+            <ShellBlock code="./gradlew :app:run" lang="bash">
+                <span slot="title">Ejecutar el programa</span>
+            </ShellBlock>
+            <p>
+                Si todo está bien configurado, tu mensaje aparecerá en la consola ✨
+            </p>
+            <Tip>
+                <Fragment slot="title">Recuerda</Fragment>
+                <p>
+                    No necesitas crear clases nuevas ni preocuparte por la estructura ideal.
+                    Simplemente disfruta de escribir tu primer programa en Kotlin.
+                </p>
+            </Tip>
+            <Solution>
+                <CodeBlock
+                    code={`
             package org.example
 
             class App {
@@ -830,98 +757,91 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                 println(App().greeting)
             }
           `}
-          lang="kotlin"
-          icon={Icons.Kotlin}
-        >
-          <a
-            slot="source"
-            href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/app/src/main/kotlin/org/example/App.kt?ref_type=heads"
-            target="_blank"
-            rel="noopener noreferrer">app/src/main/kotlin/org/example/App.kt</a
-          >
-        </CodeBlock>
-      </Solution>
-    </Exercise>
-  </section>
-  <ConclusionsLayout>
-    <Fragment slot="conclusions">
-      <p>
-        En esta lección asentaste una base práctica de Kotlin: lo conociste como
-        lenguaje <strong>pragmático</strong>, exploraste su sintaxis clara, la
-        diferencia entre <strong>expresiones</strong> y <strong
-          >declaraciones</strong
-        >, y viste cómo la <strong>interpolación de cadenas</strong> mejora la legibilidad.
-        Además, dejaste listo un proyecto con <strong>Gradle</strong>
-        para ejecutar y evolucionar tus ejercicios.
-      </p>
-      <p>
-        Con esto ya puedes leer y escribir pequeños programas idiomáticos y
-        tienes el entorno de trabajo funcionando para continuar con temas más
-        profundos.
-      </p>
-    </Fragment>
-    <Fragment slot="key-points">
-      <ListItem icon={Icons.Compass}>
-        Kotlin prioriza <strong>claridad</strong> y <strong>seguridad</strong>
-        sin sacrificar productividad.
-      </ListItem>
-      <ListItem icon={Icons.SplitHorizontal}>
-        <strong>Expresiones</strong> producen valor; <strong
-          >declaraciones</strong
-        > ejecutan acciones.
-      </ListItem>
-      <ListItem icon={Icons.TextAa}>
-        La <strong>interpolación</strong> (<InlineCode code="$" lang="kotlin" />
-        / <InlineCode code="${...}" lang="kotlin" />) evita concatenaciones
-        verbosas y se traduce eficientemente.
-      </ListItem>
-      <ListItem icon={Icons.Terminal}>
-        Con <strong>Gradle</strong> puedes crear y ejecutar un proyecto base reproducible.
-      </ListItem>
-    </Fragment>
-    <p slot="takeaways">
-      La “caja de herramientas” inicial para seguir construyendo: un entorno que
-      compila, un primer contacto con la <strong>filosofía del lenguaje</strong>
-      y hábitos que nos acompañarán todo el curso: preferir la <strong
-        >intencionalidad</strong
-      > sobre la astucia, elegir construcciones <strong>expresivas</strong> y cuidar
-      la <strong>legibilidad</strong> de las APIs.
-    </p>
-  </ConclusionsLayout>
-  <References>
-    <Fragment slot="recommended">
-      <Book
-        chapter="Kotlin: what and why"
-        pages={[3, 16]}
-        bookTitle="Kotlin in Action"
-      >
-        <AuthorList
-          slot="authors"
-          authors={[
-            {
-              lastName: "Jemerov",
-              firstName: "Dmitry",
-              url: "https://www.yole.page",
-            },
-            { lastName: "Isakova", firstName: "Svetlana" },
-          ]}
-        />
-        <Fragment slot="description">
-          Este capítulo introductorio presenta a Kotlin como un lenguaje
-          moderno, conciso, seguro y pragmático que se integra perfectamente con
-          Java. Explica sus principales características —como la inferencia de
-          tipos, el soporte para programación funcional y orientada a objetos, y
-          la interoperabilidad total con bibliotecas Java— y muestra cómo Kotlin
-          se adapta a distintos contextos: desde el desarrollo de aplicaciones
-          Android hasta servicios del lado del servidor. También se discuten su
-          filosofía (pragmatismo, seguridad, concisión e interoperabilidad), las
-          herramientas disponibles (REPL, plug-ins para IntelliJ y Eclipse,
-          playground online), y mecanismos como el convertidor Java→Kotlin para
-          facilitar su adopción. El libro está principalmente orientado a
-          estudiantes con conocimientos básicos de Java que buscan transicionar
-          a un lenguaje más moderno y expresivo.
+                    lang="kotlin"
+                    icon={Icons.Kotlin}
+                >
+                    <a
+                        slot="source"
+                        href="https://gitlab.com/r8vnhill/intro-kt/-/blob/main/app/src/main/kotlin/org/example/App.kt?ref_type=heads"
+                        target="_blank" rel="noopener noreferrer"
+                    >app/src/main/kotlin/org/example/App.kt</a>
+                </CodeBlock>
+            </Solution>
+        </Exercise>
+    </section>
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <p>
+                En esta lección asentaste una base práctica de Kotlin: lo conociste como lenguaje
+                <strong>pragmático</strong>, exploraste su sintaxis clara, la diferencia entre
+                <strong>expresiones</strong> y <strong>declaraciones</strong>, y viste cómo la
+                <strong>interpolación de cadenas</strong> mejora la legibilidad. Además, dejaste
+                listo un proyecto con <strong>Gradle</strong>
+                para ejecutar y evolucionar tus ejercicios.
+            </p>
+            <p>
+                Con esto ya puedes leer y escribir pequeños programas idiomáticos y tienes el
+                entorno de trabajo funcionando para continuar con temas más profundos.
+            </p>
         </Fragment>
-      </Book>
-    </Fragment>
-  </References>
+        <Fragment slot="key-points">
+            <ListItem icon={Icons.Compass}>
+                Kotlin prioriza <strong>claridad</strong> y <strong>seguridad</strong>
+                sin sacrificar productividad.
+            </ListItem>
+            <ListItem icon={Icons.SplitHorizontal}>
+                <strong>Expresiones</strong> producen valor; <strong>declaraciones</strong> ejecutan
+                acciones.
+            </ListItem>
+            <ListItem icon={Icons.TextAa}>
+                La <strong>interpolación</strong> (<InlineCode code="$" lang="kotlin" />
+                / <InlineCode code="${...}" lang="kotlin" />) evita concatenaciones verbosas y se
+                traduce eficientemente.
+            </ListItem>
+            <ListItem icon={Icons.Terminal}>
+                Con <strong>Gradle</strong> puedes crear y ejecutar un proyecto base reproducible.
+            </ListItem>
+        </Fragment>
+        <p slot="takeaways">
+            La “caja de herramientas” inicial para seguir construyendo: un entorno que compila, un
+            primer contacto con la <strong>filosofía del lenguaje</strong>
+            y hábitos que nos acompañarán todo el curso: preferir la <strong
+            >intencionalidad</strong> sobre la astucia, elegir construcciones <strong
+            >expresivas</strong> y cuidar la <strong>legibilidad</strong> de las APIs.
+        </p>
+    </ConclusionsLayout>
+    <References>
+        <Fragment slot="recommended">
+            <Book
+                chapter="Kotlin: what and why" pages={[3, 16]}
+                bookTitle="Kotlin in Action"
+            >
+                <AuthorList
+                    slot="authors"
+                    authors={[
+                        {
+                            lastName: "Jemerov",
+                            firstName: "Dmitry",
+                            url: "https://www.yole.page",
+                        },
+                        { lastName: "Isakova", firstName: "Svetlana" },
+                    ]}
+                />
+                <Fragment slot="description">
+                    Este capítulo introductorio presenta a Kotlin como un lenguaje moderno, conciso,
+                    seguro y pragmático que se integra perfectamente con Java. Explica sus
+                    principales características —como la inferencia de tipos, el soporte para
+                    programación funcional y orientada a objetos, y la interoperabilidad total con
+                    bibliotecas Java— y muestra cómo Kotlin se adapta a distintos contextos: desde
+                    el desarrollo de aplicaciones Android hasta servicios del lado del servidor.
+                    También se discuten su filosofía (pragmatismo, seguridad, concisión e
+                    interoperabilidad), las herramientas disponibles (REPL, plug-ins para IntelliJ y
+                    Eclipse, playground online), y mecanismos como el convertidor Java→Kotlin para
+                    facilitar su adopción. El libro está principalmente orientado a estudiantes con
+                    conocimientos básicos de Java que buscan transicionar a un lenguaje más moderno
+                    y expresivo.
+                </Fragment>
+            </Book>
+        </Fragment>
+    </References>
 </NotesLayout>

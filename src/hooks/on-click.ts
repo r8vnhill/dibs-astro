@@ -1,4 +1,4 @@
-import { useEffect, type RefObject } from "react";
+import { type RefObject, useEffect } from "react";
 
 /**
  * Detects clicks outside the specified element and invokes the provided callback.
@@ -9,22 +9,22 @@ import { useEffect, type RefObject } from "react";
  * @param onClickOutside A callback function triggered when a click occurs outside the element.
  */
 export function useOutsideClick<T extends HTMLElement>(
-  ref: RefObject<T | null>,
-  onClickOutside: () => void
+    ref: RefObject<T | null>,
+    onClickOutside: () => void,
 ): void {
-  useEffect(() => {
-    // Handler function that checks if the click target is outside the referenced element
-    const handler = (event: MouseEvent) => {
-      if (!ref.current?.contains(event.target as Node)) {
-        onClickOutside(); // Trigger the callback when the click is outside
-      }
-    };
+    useEffect(() => {
+        // Handler function that checks if the click target is outside the referenced element
+        const handler = (event: MouseEvent) => {
+            if (!ref.current?.contains(event.target as Node)) {
+                onClickOutside(); // Trigger the callback when the click is outside
+            }
+        };
 
-    const mousedownEvent = "mousedown";
-    // Register the event listener on mount
-    document.addEventListener(mousedownEvent, handler);
+        const mousedownEvent = "mousedown";
+        // Register the event listener on mount
+        document.addEventListener(mousedownEvent, handler);
 
-    // Clean up the listener on unmount
-    return () => document.removeEventListener(mousedownEvent, handler);
-  }, [ref, onClickOutside]);
+        // Clean up the listener on unmount
+        return () => document.removeEventListener(mousedownEvent, handler);
+    }, [ref, onClickOutside]);
 }

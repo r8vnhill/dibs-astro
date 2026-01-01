@@ -4,8 +4,8 @@ import { Heading } from "~/components/semantics";
 import { Definition, Exercise } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, Mono } from "~/components/ui/font";
-import { List, ListItem } from "~/components/ui/list";
 import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
@@ -32,28 +32,35 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                 </ListItem>
 
                 <ListItem icon={icons.FolderOpen}>
-                    Debe recorrer recursivamente una carpeta raíz y procesar todos los <Mono>.ps1</Mono> usando
+                    Debe recorrer recursivamente una carpeta raíz y procesar todos los <Mono
+                    >.ps1</Mono> usando
                     <PowerShellInline code={`foreach`} />.
                 </ListItem>
 
                 <ListItem icon={icons.TextT}>
-                    Verifica en cada archivo cuántas veces aparece <PowerShellInline code={`#Requires -Version M.m`} />
+                    Verifica en cada archivo cuántas veces aparece <PowerShellInline
+                        code={`#Requires -Version M.m`}
+                    />
                     (regex).
                     <br />
                     Regla:
 
                     <List>
                         <ListItem icon={icons.NumberCircleOne}>
-                            <B>Si existe exactamente 1</B>: reemplaza su versión por la proporcionada (si no se
-                            proporciona, usa la versión actual de PowerShell).
+                            <B>Si existe exactamente 1</B>: reemplaza su versión por la
+                            proporcionada (si no se proporciona, usa la versión actual de
+                            PowerShell).
                         </ListItem>
                         <ListItem icon={icons.NumberCircleTwo}>
-                            <B>Si no existe</B>: inserta <PowerShellInline code={`#Requires -Version M.m`} /> como <em>
-                            primera línea</em> del script.
+                            <B>Si no existe</B>: inserta <PowerShellInline
+                                code={`#Requires -Version M.m`}
+                            /> como <em>
+                                primera línea</em> del script.
                         </ListItem>
                         <ListItem icon={icons.Warning}>
-                            <B>Si existe más de una</B>: imprime <PowerShellInline code={`Write-Warning`} /> y no
-                            modifica el archivo.
+                            <B>Si existe más de una</B>: imprime <PowerShellInline
+                                code={`Write-Warning`}
+                            /> y no modifica el archivo.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -64,7 +71,8 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             <Definition headingLevel="h4">
                 <span slot="title"><PowerShellInline code={`[Version]`} /></span>
 
-                <B><PowerShellInline code="[Version]" /></B> es el tipo .NET para representar versiones.
+                <B><PowerShellInline code="[Version]" /></B> es el tipo .NET para representar
+                versiones.
 
                 <List>
                     <ListItem icon={icons.TerminalWindow}>
@@ -75,14 +83,16 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     </ListItem>
 
                     <ListItem icon={icons.Tag}>
-                        <B><PowerShellInline code="$PSVersionTable.PSVersion" /></B> es un <PowerShellInline
-                            code={`[Version]`}
-                        /> que representa la versión del motor de PowerShell en ejecución.
+                        <B><PowerShellInline code="$PSVersionTable.PSVersion" /></B> es un
+                        <PowerShellInline code={`[Version]`} /> que representa la versión del motor
+                        de PowerShell en ejecución.
                     </ListItem>
 
                     <ListItem icon={icons.NumberCircleOne}>
-                        <B><PowerShellInline code=".Major" /> / <PowerShellInline code=".Minor" /></B> son enteros de la
-                        versión. Para normalizar a <Mono>Mayor.Menor</Mono>:
+                        <B><PowerShellInline code=".Major" /> / <PowerShellInline
+                                code=".Minor"
+                            /></B> son enteros de la versión. Para normalizar a <Mono
+                        >Mayor.Menor</Mono>:
                         <PowerShellBlock
                             code={`
                                 $v = $PSVersionTable.PSVersion
@@ -92,32 +102,38 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     </ListItem>
 
                     <ListItem icon={icons.Lightbulb}>
-                        Al declarar un parámetro <PowerShellInline code="[Version] $Version" />, puedes pasar
-                        <PowerShellInline code={`'7.5'`} /> o <PowerShellInline code={`7.5`} />; PowerShell lo convierte
-                        automáticamente a <PowerShellInline code={`[Version]`} />.
+                        Al declarar un parámetro <PowerShellInline code="[Version] $Version" />,
+                        puedes pasar
+                        <PowerShellInline code={`'7.5'`} /> o <PowerShellInline code={`7.5`} />;
+                        PowerShell lo convierte automáticamente a <PowerShellInline
+                            code={`[Version]`}
+                        />.
                     </ListItem>
                 </List>
             </Definition>
 
             <Definition headingLevel="h4">
-                <PowerShellInline code={`[regex]::Matches([string] $Input, [string] $Pattern)`} slot="title" />
+                <PowerShellInline
+                    code={`[regex]::Matches([string] $Input, [string] $Pattern)`} slot="title"
+                />
 
                 <List>
                     <ListItem icon={icons.MagnifyingGlass}>
-                        <B><PowerShellInline code="[regex]::Matches($text, $rxRequires)" />:</B> Ejecuta el patrón sobre
+                        <B><PowerShellInline code="[regex]::Matches($text, $rxRequires)" />:</B>
+                        Ejecuta el patrón sobre
                         <PowerShellInline code={`$text`} /> y devuelve un <PowerShellInline
                             code={`[MatchCollection]`}
                         /> (todas las coincidencias).
                     </ListItem>
 
                     <ListItem icon={icons.NumberCircleOne}>
-                        <B><PowerShellInline code="[MatchCollection].Count" />:</B> Cantidad de coincidencias
-                        encontradas.
+                        <B><PowerShellInline code="[MatchCollection].Count" />:</B> Cantidad de
+                        coincidencias encontradas.
                     </ListItem>
 
                     <ListItem icon={icons.BracketsCurly}>
-                        <B><PowerShellInline code="[MatchCollection][0].Groups[1].Value" />:</B> Del primer match
-                        toma el primer grupo capturado y su texto.
+                        <B><PowerShellInline code="[MatchCollection][0].Groups[1].Value" />:</B> Del
+                        primer match toma el primer grupo capturado y su texto.
                     </ListItem>
                 </List>
 
@@ -138,12 +154,16 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Fragment>
 
         <Fragment slot="use">
-            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -WhatIf -Verbose`}>
+            <PowerShellBlock
+                code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -WhatIf -Verbose`}
+            >
                 <span slot="footer">Ensayo — sin aplicar cambios</span>
                 <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
             </PowerShellBlock>
 
-            <PowerShellBlock code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -Version 7.5 -Confirm`}>
+            <PowerShellBlock
+                code={`./maintenance/Update-ScriptRequiresVersion.ps1 -Root . -Version 7.5 -Confirm`}
+            >
                 <span slot="footer">Aplicación con confirmación</span>
                 <Fragment slot="title">Desde <Mono>dibs/scripts/</Mono></Fragment>
             </PowerShellBlock>

@@ -1,7 +1,15 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
-import { Abstract, Exercise, Explanation, Important, Question, Tip, Warning } from "~/components/ui/callouts";
+import {
+    Abstract,
+    Exercise,
+    Explanation,
+    Important,
+    Question,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -20,15 +28,15 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
 >
     <Abstract>
         <P>
-            Esta lección introduce el <B>patrón de ensayo seguro</B> en PowerShell: simular o confirmar acciones antes
-            de aplicarlas. Verás cómo aprovechar el soporte integrado del lenguaje para ejecutar comandos con más
-            seguridad y control.
+            Esta lección introduce el <B>patrón de ensayo seguro</B> en PowerShell: simular o
+            confirmar acciones antes de aplicarlas. Verás cómo aprovechar el soporte integrado del
+            lenguaje para ejecutar comandos con más seguridad y control.
         </P>
 
         <P>
-            Exploramos cómo estructurar operaciones para ensayar cambios sin riesgos y decidir cuándo pedir
-            confirmación. Con ejemplos prácticos, aplicarás el patrón para prevenir errores y construir scripts más
-            confiables sin alterar su funcionamiento.
+            Exploramos cómo estructurar operaciones para ensayar cambios sin riesgos y decidir
+            cuándo pedir confirmación. Con ejemplos prácticos, aplicarás el patrón para prevenir
+            errores y construir scripts más confiables sin alterar su funcionamiento.
         </P>
     </Abstract>
 
@@ -38,12 +46,13 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Heading>
 
         <P>
-            Antes de crear carpetas o archivos, conviene ensayar el cambio: ver <B>qué</B> se haría sin ejecutar nada.
-            En PowerShell esto se habilita con el atributo <PowerShellInline code="SupportsShouldProcess" />, que agrega
-            los <B>parámetros automáticos</B> <PowerShellInline code="-WhatIf" /> y <PowerShellInline
-                code="-Confirm"
-            />. Con ellos, el script puede <B>simular</B> o <B>solicitar confirmación</B> de acciones potencialmente
-            destructivas, reduciendo riesgos y aumentando la confianza en su comportamiento.
+            Antes de crear carpetas o archivos, conviene ensayar el cambio: ver <B>qué</B> se haría
+            sin ejecutar nada. En PowerShell esto se habilita con el atributo <PowerShellInline
+                code="SupportsShouldProcess"
+            />, que agrega los <B>parámetros automáticos</B> <PowerShellInline code="-WhatIf" /> y
+            <PowerShellInline code="-Confirm" />. Con ellos, el script puede <B>simular</B> o <B
+            >solicitar confirmación</B> de acciones potencialmente destructivas, reduciendo riesgos
+            y aumentando la confianza en su comportamiento.
         </P>
 
         <PowerShellBlock
@@ -116,50 +125,63 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Shield}>
-                    <B><PowerShellInline code="SupportsShouldProcess" /></B> indica que el comando admite los parámetros
-                    automáticos <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />. PowerShell
-                    los agrega y gestiona por ti: <PowerShellInline code="-WhatIf" />
-                    <B>nunca ejecuta</B> la acción, sólo la describe; <PowerShellInline code="-Confirm" />
-                    <B>solicita confirmación</B> antes de proceder (según reglas de impacto y preferencia del usuario).
+                    <B><PowerShellInline code="SupportsShouldProcess" /></B> indica que el comando
+                    admite los parámetros automáticos <PowerShellInline code="-WhatIf" /> y
+                    <PowerShellInline code="-Confirm" />. PowerShell los agrega y gestiona por ti:
+                    <PowerShellInline code="-WhatIf" />
+                    <B>nunca ejecuta</B> la acción, sólo la describe; <PowerShellInline
+                        code="-Confirm"
+                    />
+                    <B>solicita confirmación</B> antes de proceder (según reglas de impacto y
+                    preferencia del usuario).
                     <FootnoteRef index={1} />
                 </ListItem>
 
                 <ListItem icon={icons.CellSignalHigh}>
-                    <B><PowerShellInline code="ConfirmImpact" /></B> declara el impacto de las operaciones del comando
-                    (<Mono>Low</Mono>, <Mono>Medium</Mono>, <Mono>High</Mono>). PowerShell lo compara con
-                    <B><PowerShellInline code="$ConfirmPreference" /></B> del usuario (por defecto, <Mono>High</Mono>).
-                    PowerShell pide confirmación cuando <Mono>ConfirmImpact >= $ConfirmPreference</Mono>.
+                    <B><PowerShellInline code="ConfirmImpact" /></B> declara el impacto de las
+                    operaciones del comando (<Mono>Low</Mono>, <Mono>Medium</Mono>, <Mono
+                    >High</Mono>). PowerShell lo compara con
+                    <B><PowerShellInline code="$ConfirmPreference" /></B> del usuario (por defecto,
+                    <Mono>High</Mono>). PowerShell pide confirmación cuando <Mono>ConfirmImpact >=
+                        $ConfirmPreference</Mono>.
                     <br />
-                    Si no se supera el umbral, <B>puedes forzar la confirmación</B> con <PowerShellInline
-                        code="-Confirm"
-                    />.
+                    Si no se supera el umbral, <B>puedes forzar la confirmación</B> con
+                    <PowerShellInline code="-Confirm" />.
                     <br />
-                    En este ejemplo <Mono>Medium</Mono> describe creación/modificación de archivos (relevante pero no
-                    destructiva).
+                    En este ejemplo <Mono>Medium</Mono> describe creación/modificación de archivos
+                    (relevante pero no destructiva).
                 </ListItem>
 
                 <ListItem icon={icons.CurrencyDollar}>
-                    <B><PowerShellInline code="$PSCmdlet.ShouldProcess([string] target, [string] action)" /></B> es el
-                    <B>punto de decisión</B>: aquí se evalúa si una operación debe simularse o ejecutarse. Coloca cada
-                    operación con efectos dentro de este <B>if</B>. Con <PowerShellInline code="-WhatIf" /> se simula y
-                    con <PowerShellInline code="-Confirm" /> se solicita permiso -como se explicó arriba-.
+                    <B><PowerShellInline
+                            code="$PSCmdlet.ShouldProcess([string] target, [string] action)"
+                        /></B> es el
+                    <B>punto de decisión</B>: aquí se evalúa si una operación debe simularse o
+                    ejecutarse. Coloca cada operación con efectos dentro de este <B>if</B>. Con
+                    <PowerShellInline code="-WhatIf" /> se simula y con <PowerShellInline
+                        code="-Confirm"
+                    /> se solicita permiso -como se explicó arriba-.
                 </ListItem>
 
                 <ListItem icon={icons.SlidersHorizontal}>
-                    <B><PowerShellInline code="-Switch:$variable" /></B> pasa un switch sólo si la variable booleana es
-                    <PowerShellInline code="$true" />. Para <I>propagar</I> switches comunes a helpers, usa
+                    <B><PowerShellInline code="-Switch:$variable" /></B> pasa un switch sólo si la
+                    variable booleana es
+                    <PowerShellInline code="$true" />. Para <I>propagar</I> switches comunes a
+                    helpers, usa
                     <PowerShellInline code="$PSBoundParameters" />: por ejemplo
-                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" />. Si quieres propagar
-                    <PowerShellInline code="-WhatIf" /> / <PowerShellInline code="-Confirm" /> el helper <B>también debe
-                        declarar</B> <PowerShellInline code="SupportsShouldProcess" /> para que PowerShell gestione su
-                    simulación/confirmación correctamente.
+                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" />. Si quieres
+                    propagar
+                    <PowerShellInline code="-WhatIf" /> / <PowerShellInline code="-Confirm" /> el
+                    helper <B>también debe declarar</B> <PowerShellInline
+                        code="SupportsShouldProcess"
+                    /> para que PowerShell gestione su simulación/confirmación correctamente.
                 </ListItem>
             </List>
 
             <Warning headingLevel="h4">
                 Si el comando no implementa <PowerShellInline code="SupportsShouldProcess" />,
-                <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> no surten efecto. Compruébalo
-                con
+                <PowerShellInline code="-WhatIf" />/<PowerShellInline code="-Confirm" /> no surten
+                efecto. Compruébalo con
                 <PowerShellBlock
                     code={`
                         $cmd = Get-Command Start-Job
@@ -169,16 +191,20 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     `}
                 >
                     <Fragment slot="title">Desde la terminal</Fragment>
-                    <span slot="footer"><span class="text-primary font-mono">(1)</span> Retorna <PowerShellInline
-                            code={`$false`}
-                        /> ya que <PowerShellInline code={`Start-Job`} /> no acepta <PowerShellInline
-                            code={`-WhatIf`}
-                        /> / <PowerShellInline code={`-Confirm`} />.
+                    <span slot="footer"><span class="text-primary font-mono">(1)</span> Retorna
+                        <PowerShellInline code={`$false`} /> ya que <PowerShellInline
+                            code={`Start-Job`}
+                        /> no acepta <PowerShellInline code={`-WhatIf`} /> / <PowerShellInline
+                            code={`-Confirm`}
+                        />.
                         <br />
-                        <span class="text-primary font-mono">(2)</span> Retorna <PowerShellInline code={`$true`} />
-                        ya que <PowerShellInline code={`Copy-ItemProperty`} /> acepta <PowerShellInline
-                            code={`-WhatIf`}
-                        /> / <PowerShellInline code={`-Confirm`} />.
+                        <span class="text-primary font-mono">(2)</span> Retorna <PowerShellInline
+                            code={`$true`}
+                        />
+                        ya que <PowerShellInline code={`Copy-ItemProperty`} /> acepta
+                        <PowerShellInline code={`-WhatIf`} /> / <PowerShellInline
+                            code={`-Confirm`}
+                        />.
                     </span>
                 </PowerShellBlock>
             </Warning>
@@ -208,21 +234,23 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     code={`-WhatIf`}
                 />/<PowerShellInline code={`-Confirm`} />; el punto de decisión es <PowerShellInline
                     code="$PSCmdlet.ShouldProcess(target, action)"
-                />. <PowerShellInline code={`-WhatIf`} /> simula; <PowerShellInline code={`-Confirm`} /> pide permiso
-                previo (según <PowerShellInline code="ConfirmImpact" /> y las preferencias del usuario).
+                />. <PowerShellInline code={`-WhatIf`} /> simula; <PowerShellInline
+                    code={`-Confirm`}
+                /> pide permiso previo (según <PowerShellInline code="ConfirmImpact" /> y las
+                preferencias del usuario).
             </P>
 
             <List>
                 <ListItem icon={icons.CheckCircle}>
-                    <PowerShellInline code="Low" /> — operaciones triviales (por ejemplo, lectura o inspección de
-                    datos).
+                    <PowerShellInline code="Low" /> — operaciones triviales (por ejemplo, lectura o
+                    inspección de datos).
                 </ListItem>
                 <ListItem icon={icons.FolderPlus}>
                     <PowerShellInline code="Medium" /> — operaciones que crean o modifican recursos.
                 </ListItem>
                 <ListItem icon={icons.WarningCircle}>
-                    <PowerShellInline code="High" /> — operaciones críticas o destructivas (por ejemplo, eliminación de
-                    archivos o estructuras completas).
+                    <PowerShellInline code="High" /> — operaciones críticas o destructivas (por
+                    ejemplo, eliminación de archivos o estructuras completas).
                 </ListItem>
             </List>
         </Important>
@@ -233,9 +261,11 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             </Heading>
 
             <P>
-                Antes de crear carpetas o archivos, ejecuta el comando con <PowerShellInline code="-WhatIf" /> para
-                comprobar <I>qué</I> haría el script sin realizar cambios reales. Si además deseas que el script <B>pida
-                    confirmación antes de ejecutar</B> cada acción, cambia <PowerShellInline code={`-WhatIf`} />
+                Antes de crear carpetas o archivos, ejecuta el comando con <PowerShellInline
+                    code="-WhatIf"
+                /> para comprobar <I>qué</I> haría el script sin realizar cambios reales. Si además
+                deseas que el script <B>pida confirmación antes de ejecutar</B> cada acción, cambia
+                <PowerShellInline code={`-WhatIf`} />
                 <PowerShellInline code="-Confirm" />.
             </P>
 
@@ -267,12 +297,13 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             <Question headingLevel="h4">
                 Prueba distintos valores de <PowerShellInline code="-Name" /> y
                 <PowerShellInline code="-Path" /> junto con
-                <PowerShellInline code="-WhatIf" />. ¿Qué ocurre si el proyecto ya existe? ¿Y si la ruta no es válida?
+                <PowerShellInline code="-WhatIf" />. ¿Qué ocurre si el proyecto ya existe? ¿Y si la
+                ruta no es válida?
             </Question>
 
             <Question headingLevel="h4">
-                Ejecuta el script con <PowerShellInline code="-Confirm" /> para observar cómo solicita autorización
-                antes de crear cada archivo.
+                Ejecuta el script con <PowerShellInline code="-Confirm" /> para observar cómo
+                solicita autorización antes de crear cada archivo.
             </Question>
         </NotesSection>
     </NotesSection>
@@ -283,29 +314,34 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Fragment>
 
         <Fragment slot="requirements">
-            Implementa un script <Mono>Remove-WorkFolder.ps1</Mono> que elimine una carpeta de trabajo específica de
-            forma <B>segura</B>, aplicando el patrón de ensayo/confirmación:
+            Implementa un script <Mono>Remove-WorkFolder.ps1</Mono> que elimine una carpeta de
+            trabajo específica de forma <B>segura</B>, aplicando el patrón de ensayo/confirmación:
 
             <List>
                 <ListItem icon={icons.Shield}>
-                    Declara <PowerShellInline code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]" />.
+                    Declara <PowerShellInline
+                        code="[CmdletBinding(SupportsShouldProcess, ConfirmImpact='High')]"
+                    />.
                 </ListItem>
                 <ListItem icon={icons.Folder}>
-                    Parámetro obligatorio <Mono>$Path</Mono>, válido y de tipo <I>carpeta existente</I>.
+                    Parámetro obligatorio <Mono>$Path</Mono>, válido y de tipo <I>carpeta
+                        existente</I>.
                 </ListItem>
                 <ListItem icon={icons.CursorClick}>
-                    Usa <PowerShellInline code="$PSCmdlet.ShouldProcess(target, action)" /> para proteger la llamada a
+                    Usa <PowerShellInline code="$PSCmdlet.ShouldProcess(target, action)" /> para
+                    proteger la llamada a
                     <PowerShellInline code="Remove-Item -Recurse -Force" />.
                 </ListItem>
                 <ListItem icon={icons.SlidersHorizontal}>
                     Propaga verbosidad y switches comunes con
-                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" /> y, opcionalmente,
+                    <PowerShellInline code="-Verbose:$PSBoundParameters['Verbose']" /> y,
+                    opcionalmente,
                     <PowerShellInline code="-WhatIf:$PSBoundParameters['WhatIf']" /> /
                     <PowerShellInline code="-Confirm:$PSBoundParameters['Confirm']" />.
                 </ListItem>
                 <ListItem icon={icons.ListChecks}>
-                    Devuelve un <PowerShellInline code={`[PSCustomObject]`} /> con <Mono>TargetPath</Mono>, <Mono
-                    >ExistsBefore</Mono> y <Mono>Deleted</Mono>.
+                    Devuelve un <PowerShellInline code={`[PSCustomObject]`} /> con <Mono
+                    >TargetPath</Mono>, <Mono>ExistsBefore</Mono> y <Mono>Deleted</Mono>.
                 </ListItem>
             </List>
         </Fragment>
@@ -324,18 +360,23 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         </Fragment>
 
         <Fragment slot="hints">
-            Recuerda resolver rutas con <PowerShellInline code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)" />
-            y usar <PowerShellInline code="-LiteralPath" /> en las operaciones de archivo para evitar problemas con
-            caracteres especiales.
+            Recuerda resolver rutas con <PowerShellInline
+                code="$PSCmdlet.GetUnresolvedProviderPathFromPSPath($Path)"
+            />
+            y usar <PowerShellInline code="-LiteralPath" /> en las operaciones de archivo para
+            evitar problemas con caracteres especiales.
 
             <List>
                 <ListItem icon={icons.CheckCircle}>
-                    Con <PowerShellInline code="-WhatIf" /> no debe borrarse nada; <Mono>'Deleted'</Mono> debe ser
+                    Con <PowerShellInline code="-WhatIf" /> no debe borrarse nada; <Mono
+                    >'Deleted'</Mono> debe ser
                     <Mono>False</Mono>.
                 </ListItem>
 
                 <ListItem icon={icons.ListChecks}>
-                    Con <PowerShellInline code="-Confirm" />, respeta <PowerShellInline code="$ConfirmPreference" />
+                    Con <PowerShellInline code="-Confirm" />, respeta <PowerShellInline
+                        code="$ConfirmPreference"
+                    />
                     (aplica confirmación cuando corresponda).
                 </ListItem>
             </List>
@@ -392,63 +433,75 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                El patrón <B>ShouldProcess</B> ofrece una base sólida para escribir scripts más seguros, predecibles y
-                confiables. Gracias a los modificadores automáticos <PowerShellInline code="-WhatIf" /> y
-                <PowerShellInline code="-Confirm" />, podemos agregar ensayos y confirmaciones sin alterar la estructura
-                ni el comportamiento principal del script, integrando buenas prácticas de <I>seguridad operacional</I>
+                El patrón <B>ShouldProcess</B> ofrece una base sólida para escribir scripts más
+                seguros, predecibles y confiables. Gracias a los modificadores automáticos
+                <PowerShellInline code="-WhatIf" /> y
+                <PowerShellInline code="-Confirm" />, podemos agregar ensayos y confirmaciones sin
+                alterar la estructura ni el comportamiento principal del script, integrando buenas
+                prácticas de <I>seguridad operacional</I>
                 directamente en la herramienta.
             </P>
 
             <P>
-                Incorporarlo no solo previene errores costosos, sino que además impulsa una forma de pensar centrada en
-                la
-                <B>reversibilidad</B> y en el <B>control del efecto</B> que cada comando tiene sobre el sistema. Con una
-                estructura mínima -declarar <PowerShellInline code="SupportsShouldProcess" />, asignar
+                Incorporarlo no solo previene errores costosos, sino que además impulsa una forma de
+                pensar centrada en la
+                <B>reversibilidad</B> y en el <B>control del efecto</B> que cada comando tiene sobre
+                el sistema. Con una estructura mínima -declarar <PowerShellInline
+                    code="SupportsShouldProcess"
+                />, asignar
                 <PowerShellInline code="ConfirmImpact" /> y envolver la operación en
-                <PowerShellInline code="ShouldProcess()" />- obtenemos de forma automática simulación y confirmación
-                interactiva.
+                <PowerShellInline code="ShouldProcess()" />- obtenemos de forma automática
+                simulación y confirmación interactiva.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.ShieldCheck}>
-                <PowerShellInline code="SupportsShouldProcess" /> habilita <PowerShellInline code="-WhatIf" /> y
-                <PowerShellInline code="-Confirm" />, añadiendo seguridad sin modificar la estructura principal del
-                script.
+                <PowerShellInline code="SupportsShouldProcess" /> habilita <PowerShellInline
+                    code="-WhatIf"
+                /> y
+                <PowerShellInline code="-Confirm" />, añadiendo seguridad sin modificar la
+                estructura principal del script.
             </ListItem>
 
             <ListItem icon={icons.CellSignalHigh}>
-                <PowerShellInline code="ConfirmImpact" /> define el nivel de riesgo (<Mono>Low</Mono>, <Mono
-                >Medium</Mono>, <Mono>High</Mono>) y cuándo PowerShell pedirá confirmación.
+                <PowerShellInline code="ConfirmImpact" /> define el nivel de riesgo (<Mono
+                >Low</Mono>, <Mono>Medium</Mono>, <Mono>High</Mono>) y cuándo PowerShell pedirá
+                confirmación.
             </ListItem>
 
             <ListItem icon={icons.PlayCircle}>
-                <PowerShellInline code="ShouldProcess()" /> es el punto donde se decide ejecutar o simular; todo efecto
-                del script debería pasar por él.
+                <PowerShellInline code="ShouldProcess()" /> es el punto donde se decide ejecutar o
+                simular; todo efecto del script debería pasar por él.
             </ListItem>
 
             <ListItem icon={icons.HandPalm}>
-                Los parámetros <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" /> se aplican
-                automáticamente en cascada a funciones que también declaran soporte para este patrón.
+                Los parámetros <PowerShellInline code="-WhatIf" /> y <PowerShellInline
+                    code="-Confirm"
+                /> se aplican automáticamente en cascada a funciones que también declaran soporte
+                para este patrón.
             </ListItem>
 
             <ListItem icon={icons.FolderPlus}>
-                Al combinarlo con validaciones (<PowerShellInline code="ValidateScript" />, <PowerShellInline
-                    code="LiteralPath"
-                />) y <PowerShellInline code="$PSBoundParameters" />, se obtienen scripts robustos y reutilizables.
+                Al combinarlo con validaciones (<PowerShellInline code="ValidateScript" />,
+                <PowerShellInline code="LiteralPath" />) y <PowerShellInline
+                    code="$PSBoundParameters"
+                />, se obtienen scripts robustos y reutilizables.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
             <P>
-                El <I>ensayo seguro</I> en PowerShell no es solo una característica técnica: es una <B>filosofía de
-                    diseño</B> que fomenta escribir comandos conscientes del contexto y del impacto que generan.
+                El <I>ensayo seguro</I> en PowerShell no es solo una característica técnica: es una
+                <B>filosofía de diseño</B> que fomenta escribir comandos conscientes del contexto y
+                del impacto que generan.
             </P>
 
             <P>
-                Adoptar este patrón tempranamente te permite crear utilidades más confiables, colaborativas y
-                mantenibles, facilitando pruebas, revisiones y automatización en entornos reales. A partir de aquí, cada
-                comando que modifique el sistema debería preguntarse:
+                Adoptar este patrón tempranamente te permite crear utilidades más confiables,
+                colaborativas y mantenibles, facilitando pruebas, revisiones y automatización en
+                entornos reales. A partir de aquí, cada comando que modifique el sistema debería
+                preguntarse:
                 <Enquote>¿debo hacerlo, o solo mostrar lo que haría?</Enquote>
             </P>
         </Fragment>
@@ -466,21 +519,25 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
                     authors={[
                         {
                             firstName: "Kevin",
-                            lastName: "Marquette"
+                            lastName: "Marquette",
                         },
                     ]}
                 />
                 <Fragment slot="description">
-                    Guía exhaustiva sobre la implementación de <PowerShellInline code="SupportsShouldProcess" /> en
-                    funciones de PowerShell. Explica en detalle cómo habilitar los parámetros automáticos
-                    <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />, el uso de las
-                    sobrecargas de <PowerShellInline code="$PSCmdlet.ShouldProcess()" /> para personalizar mensajes
-                    de simulación y confirmación, la configuración de <PowerShellInline code="ConfirmImpact" /> para
-                    controlar cuándo se solicita confirmación según <PowerShellInline code="$ConfirmPreference" />,
-                    y patrones avanzados como <PowerShellInline code="ShouldContinue()" /> para escenarios de alto
-                    riesgo. Incluye ejemplos prácticos de propagación de switches mediante splatting, localización
-                    automática de prompts, y mejores prácticas para integrar ensayos seguros en scripts de producción.
-                    Recurso esencial para escribir comandos robustos, confiables y conscientes del impacto.
+                    Guía exhaustiva sobre la implementación de <PowerShellInline
+                        code="SupportsShouldProcess"
+                    /> en funciones de PowerShell. Explica en detalle cómo habilitar los parámetros
+                    automáticos
+                    <PowerShellInline code="-WhatIf" /> y <PowerShellInline code="-Confirm" />, el
+                    uso de las sobrecargas de <PowerShellInline code="$PSCmdlet.ShouldProcess()" />
+                    para personalizar mensajes de simulación y confirmación, la configuración de
+                    <PowerShellInline code="ConfirmImpact" /> para controlar cuándo se solicita
+                    confirmación según <PowerShellInline code="$ConfirmPreference" />, y patrones
+                    avanzados como <PowerShellInline code="ShouldContinue()" /> para escenarios de
+                    alto riesgo. Incluye ejemplos prácticos de propagación de switches mediante
+                    splatting, localización automática de prompts, y mejores prácticas para integrar
+                    ensayos seguros en scripts de producción. Recurso esencial para escribir
+                    comandos robustos, confiables y conscientes del impacto.
                 </Fragment>
             </WebPage>
         </Fragment>
@@ -488,8 +545,9 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
 
     <Footnotes>
         <Footnote index={1}>
-            Nota que <PowerShellInline code={`-Confirm`} /> hace que el script <B>solicite confirmación</B> antes de
-            ejecutar una acción; <B>no significa que tú ya la estés confirmando.</B>
+            Nota que <PowerShellInline code={`-Confirm`} /> hace que el script <B>solicite
+                confirmación</B> antes de ejecutar una acción; <B>no significa que tú ya la estés
+                confirmando.</B>
         </Footnote>
     </Footnotes>
 </NotesLayout>

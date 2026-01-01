@@ -3,17 +3,26 @@ import * as icons from "$icons";
 import fs from "fs";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Definition, Exercise, Explanation, Important, Info, More, Warning } from "~/components/ui/callouts";
+import {
+    Abstract,
+    Definition,
+    Exercise,
+    Explanation,
+    Important,
+    Info,
+    More,
+    Warning,
+} from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
-import LinksLayout from "~/layouts/LinksLayout.astro";
-import NushellLink from "~/components/ui/links/NushellLink.astro";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
+import NushellLink from "~/components/ui/links/NushellLink.astro";
 import { List, ListItem } from "~/components/ui/list";
 import { References, WebPage } from "~/components/ui/references";
 import { NotesSection } from "~/layouts";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 
 const newPersonPSCustomCode = fs.readFileSync(
@@ -29,19 +38,22 @@ const newPersonPSCustomCode = fs.readFileSync(
 >
     <Abstract>
         <P>
-            Esta lección introduce la idea de generar <I>salida estructurada</I> en PowerShell, un paso esencial para
-            construir scripts reutilizables y fáciles de integrar con otros comandos. En lugar de imprimir texto sin
-            formato, aprenderás a devolver datos en estructuras que PowerShell y otras herramientas pueden interpretar,
-            visualizar y filtrar con facilidad.
+            Esta lección introduce la idea de generar <I>salida estructurada</I> en PowerShell, un
+            paso esencial para construir scripts reutilizables y fáciles de integrar con otros
+            comandos. En lugar de imprimir texto sin formato, aprenderás a devolver datos en
+            estructuras que PowerShell y otras herramientas pueden interpretar, visualizar y filtrar
+            con facilidad.
         </P>
 
         <P>
-            Comenzamos explorando los diccionarios (<PowerShellInline code="[hashtable]" />) como forma básica de
-            agrupar pares clave–valor, útiles para almacenar configuraciones o pasar parámetros mediante <I
-            >splatting</I>. Luego avanzamos hacia <PowerShellInline code="[PSCustomObject]" />, que permite producir
-            resultados con propiedades reales y una presentación tabular consistente. La lección culmina con un pequeño
-            ejercicio práctico donde crearás un comando que simula una comprobación de conexión y devuelve un objeto con
-            el resultado de éxito o fallo, reforzando la utilidad de esta representación estructurada.
+            Comenzamos explorando los diccionarios (<PowerShellInline code="[hashtable]" />) como
+            forma básica de agrupar pares clave–valor, útiles para almacenar configuraciones o pasar
+            parámetros mediante <I>splatting</I>. Luego avanzamos hacia <PowerShellInline
+                code="[PSCustomObject]"
+            />, que permite producir resultados con propiedades reales y una presentación tabular
+            consistente. La lección culmina con un pequeño ejercicio práctico donde crearás un
+            comando que simula una comprobación de conexión y devuelve un objeto con el resultado de
+            éxito o fallo, reforzando la utilidad de esta representación estructurada.
         </P>
     </Abstract>
 
@@ -58,7 +70,8 @@ const newPersonPSCustomCode = fs.readFileSync(
 
             <P>
                 En PowerShell, los diccionarios se crean con la sintaxis
-                <PowerShellInline code="@{ Clave = Valor }" />. Son tablas de hash que agrupan pares <I>clave–valor</I>
+                <PowerShellInline code="@{ Clave = Valor }" />. Son tablas de hash que agrupan pares
+                <I>clave–valor</I>
                 y permiten acceder a cada valor por su nombre.
             </P>
         </Definition>
@@ -93,8 +106,9 @@ const newPersonPSCustomCode = fs.readFileSync(
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.BracketsCurly}>
-                    La sintaxis es <PowerShellInline code="@{ Clave1 = Valor1; Clave2 = Valor2 }" />. Cada par está
-                    separado por punto y coma o salto de línea.
+                    La sintaxis es <PowerShellInline
+                        code="@{ Clave1 = Valor1; Clave2 = Valor2 }"
+                    />. Cada par está separado por punto y coma o salto de línea.
                 </ListItem>
 
                 <ListItem icon={icons.Key}>
@@ -127,7 +141,8 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 <Fragment slot="title">Desde <Mono>dibs/scripts/models/</Mono></Fragment>
                 <span slot="footer">
-                    Los diccionarios en PowerShell son <I>mutables</I>: puedes agregar, modificar o eliminar pares
+                    Los diccionarios en PowerShell son <I>mutables</I>: puedes agregar, modificar o
+                    eliminar pares
                     <I>clave–valor</I> en cualquier momento.
                 </span>
             </PowerShellBlock>
@@ -135,7 +150,8 @@ const newPersonPSCustomCode = fs.readFileSync(
             <Explanation headingLevel="h3">
                 <List>
                     <ListItem icon={icons.Code}>
-                        <B>Tipo:</B> el resultado es un <PowerShellInline code="[hashtable]" />, que almacena los pares
+                        <B>Tipo:</B> el resultado es un <PowerShellInline code="[hashtable]" />, que
+                        almacena los pares
                         <I>clave–valor</I>.
                     </ListItem>
 
@@ -146,11 +162,9 @@ const newPersonPSCustomCode = fs.readFileSync(
                     </ListItem>
 
                     <ListItem icon={icons.Pencil}>
-                        <B>Mutabilidad:</B> puedes agregar o modificar elementos con <PowerShellInline
-                            code="$h.Clave = Valor"
-                        /> (incluso si <I>no existe</I>) y eliminarlos con <PowerShellInline
-                            code='Remove-Item -Key "Clave"'
-                        />.
+                        <B>Mutabilidad:</B> puedes agregar o modificar elementos con
+                        <PowerShellInline code="$h.Clave = Valor" /> (incluso si <I>no existe</I>) y
+                        eliminarlos con <PowerShellInline code='Remove-Item -Key "Clave"' />.
                     </ListItem>
                 </List>
             </Explanation>
@@ -166,9 +180,9 @@ const newPersonPSCustomCode = fs.readFileSync(
 
             <P>
                 En PowerShell puedes <Enquote>desempaquetar</Enquote> un
-                <PowerShellInline code="[hashtable]" /> como parámetros nombrados usando el operador <PowerShellInline
-                    code="@"
-                /> (<I>splatting</I>). Esto mejora legibilidad, evita líneas largas y facilita mantener scripts.
+                <PowerShellInline code="[hashtable]" /> como parámetros nombrados usando el operador
+                <PowerShellInline code="@" /> (<I>splatting</I>). Esto mejora legibilidad, evita
+                líneas largas y facilita mantener scripts.
             </P>
 
             <PowerShellBlock
@@ -200,42 +214,45 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 <Fragment slot="title">Equivalencia</Fragment>
                 <span slot="footer">
-                    Splatting y parámetros explícitos ejecutan lo mismo; cambia sólo la forma de escribirlo. Nota como
-                    reducimos la duplicación de código y hacemos las líneas más cortas.
+                    Splatting y parámetros explícitos ejecutan lo mismo; cambia sólo la forma de
+                    escribirlo. Nota como reducimos la duplicación de código y hacemos las líneas
+                    más cortas.
                 </span>
             </PowerShellBlock>
 
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.BracketsCurly}>
-                        <PowerShellInline code="@{ Clave = Valor }" /> crea un diccionario (<PowerShellInline
-                            code="[hashtable]"
-                        />).
+                        <PowerShellInline code="@{ Clave = Valor }" /> crea un diccionario
+                        (<PowerShellInline code="[hashtable]" />).
                     </ListItem>
                     <ListItem icon={icons.ArrowsLeftRight}>
-                        <PowerShellInline code="@diccionario" /> aplica sus pares como parámetros nombrados del cmdlet.
+                        <PowerShellInline code="@diccionario" /> aplica sus pares como parámetros
+                        nombrados del cmdlet.
                     </ListItem>
                     <ListItem icon={icons.Info}>
-                        Los valores <PowerShellInline code="[bool]" /> se interpretan como <I>switches</I> de presencia
-                        o ausencia.
+                        Los valores <PowerShellInline code="[bool]" /> se interpretan como <I
+                        >switches</I> de presencia o ausencia.
                     </ListItem>
                 </List>
             </Explanation>
 
             <Important headingLevel="h4">
-                Usaremos <I>diccionarios</I> para valores transitorios y <I>splatting</I>. Para salida estructurada,
-                preferiremos <PowerShellInline code="[PSCustomObject]" />.
+                Usaremos <I>diccionarios</I> para valores transitorios y <I>splatting</I>. Para
+                salida estructurada, preferiremos <PowerShellInline code="[PSCustomObject]" />.
             </Important>
 
             <More headingLevel="h4">
                 <span slot="title">Continuación de líneas con <PowerShellInline code={"`"} /></span>
 
                 <P>
-                    Una alternativa a usar <I>splatting</I> para separar líneas largas es usar el carácter de <Enquote
-                    >escape</Enquote> (<PowerShellInline code={"`"} />) al final de la línea. Sin embargo, esto
-                    <B>no se recomienda</B> fuera de casos muy puntuales, ya que es propenso a errores difíciles de
-                    detectar. El caracter especial <PowerShellInline code={"`"} /> <B>debe ser</B> el último de la
-                    línea.
+                    Una alternativa a usar <I>splatting</I> para separar líneas largas es usar el
+                    carácter de <Enquote>escape</Enquote> (<PowerShellInline code={"`"} />) al final
+                    de la línea. Sin embargo, esto
+                    <B>no se recomienda</B> fuera de casos muy puntuales, ya que es propenso a
+                    errores difíciles de detectar. El caracter especial <PowerShellInline
+                        code={"`"}
+                    /> <B>debe ser</B> el último de la línea.
                 </P>
 
                 <PowerShellBlock
@@ -250,14 +267,14 @@ const newPersonPSCustomCode = fs.readFileSync(
                 >
                     <span slot="title">Ejemplos de continuación de línea válido e inválido</span>
                     <span slot="footer">
-                        El espacio después del <PowerShellInline code={"`"} /> (y antes de <PowerShellInline
-                            code={`#`}
-                        />) en la segunda llamada hace que falle.
+                        El espacio después del <PowerShellInline code={"`"} /> (y antes de
+                        <PowerShellInline code={`#`} />) en la segunda llamada hace que falle.
                     </span>
                 </PowerShellBlock>
 
                 <P>
-                    PowerShell recomienda otras formas de continuar líneas, puedes encontrar más información en la
+                    PowerShell recomienda otras formas de continuar líneas, puedes encontrar más
+                    información en la
                     <Link
                         href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing#line-continuation"
                     >documentación oficial</Link>.
@@ -276,7 +293,9 @@ const newPersonPSCustomCode = fs.readFileSync(
 
         <PowerShellBlock code={newPersonPSCustomCode}>
             <Fragment slot="title">
-                Crear un objeto fuertemente tipado con <PowerShellInline code={`[PSCustomObject]`} />
+                Crear un objeto fuertemente tipado con <PowerShellInline
+                    code={`[PSCustomObject]`}
+                />
             </Fragment>
             <DibsSourceLink
                 slot="source" file="models/New-Person.ps1"
@@ -289,11 +308,14 @@ const newPersonPSCustomCode = fs.readFileSync(
             <B><PowerShellInline code={`[PSCustomObject]@{ ... }`} />:</B> Es un <Enquote>type
                 accelerator</Enquote><FootnoteRef index={1} /> que convierte un <PowerShellInline
                 code={`[hashtable]`}
-            /> en una instancia de <PowerShellInline code={`[PSCustomObject]`} />. Observa que lo único que cambia
-            respecto del ejemplo con un diccionario es el prefijo <PowerShellInline code={`[PSCustomObject]`} />. Dentro
-            sigues declarando <I>propiedades</I> con pares <PowerShellInline code={`Nombre = Valor`} />. El resultado es
-            un objeto con propiedades reales (no solo entradas en un diccionario), apto para mostrarse en tabla y para
-            interoperar con el ecosistema de cmdlets de salida.
+            /> en una instancia de <PowerShellInline code={`[PSCustomObject]`} />. Observa que lo
+            único que cambia respecto del ejemplo con un diccionario es el prefijo <PowerShellInline
+                code={`[PSCustomObject]`}
+            />. Dentro sigues declarando <I>propiedades</I> con pares <PowerShellInline
+                code={`Nombre = Valor`}
+            />. El resultado es un objeto con propiedades reales (no solo entradas en un
+            diccionario), apto para mostrarse en tabla y para interoperar con el ecosistema de
+            cmdlets de salida.
         </Explanation>
 
         <NotesSection id="h3-pscustomobject-benefits">
@@ -301,22 +323,22 @@ const newPersonPSCustomCode = fs.readFileSync(
                 headingLevel="h3" Icon={icons.GridFour}
                 slot="heading"
             >
-                Beneficios de <PowerShellInline code="[PSCustomObject]" /> frente a <PowerShellInline
-                    code="[hashtable]"
-                /><FootnoteRef index={2} />
+                Beneficios de <PowerShellInline code="[PSCustomObject]" /> frente a
+                <PowerShellInline code="[hashtable]" /><FootnoteRef index={2} />
             </Heading>
 
             <P>
-                Aunque las <PowerShellInline code="[hashtable]" /> son útiles como estructuras clave–valor,
-                <PowerShellInline code="[PSCustomObject]" /> ofrece ventajas importantes al generar salida estructurada
-                o devolver datos desde cmdlets. Además, encaja mejor con el modelo de encadenamiento de comandos
-                (pipeline) que veremos más adelante.
+                Aunque las <PowerShellInline code="[hashtable]" /> son útiles como estructuras
+                clave–valor,
+                <PowerShellInline code="[PSCustomObject]" /> ofrece ventajas importantes al generar
+                salida estructurada o devolver datos desde cmdlets. Además, encaja mejor con el
+                modelo de encadenamiento de comandos (pipeline) que veremos más adelante.
             </P>
 
             <List>
                 <ListItem icon={icons.Table}>
-                    <I>Salida tabular predecible:</I> las propiedades se muestran como columnas y conservan el orden en
-                    que fueron declaradas.
+                    <I>Salida tabular predecible:</I> las propiedades se muestran como columnas y
+                    conservan el orden en que fueron declaradas.
 
                     <PowerShellBlock
                         code={`
@@ -336,13 +358,13 @@ const newPersonPSCustomCode = fs.readFileSync(
                         `}
                     >
                         <span slot="title">
-                            Diferencia práctica: <PowerShellInline code="[hashtable]" /> vs <PowerShellInline
-                                code="[PSCustomObject]"
-                            />
+                            Diferencia práctica: <PowerShellInline code="[hashtable]" /> vs
+                            <PowerShellInline code="[PSCustomObject]" />
                         </span>
                         <span slot="footer">
-                            Este comportamiento coincide con lo descrito por la comunidad: un <I>hashtable</I> no se
-                            comporta como un objeto con propiedades al formatear columnas específicas; convertir a
+                            Este comportamiento coincide con lo descrito por la comunidad: un <I
+                            >hashtable</I> no se comporta como un objeto con propiedades al
+                            formatear columnas específicas; convertir a
                             <PowerShellInline code={`[PSCustomObject]`} /> evita esa sorpresa.
                         </span>
                     </PowerShellBlock>
@@ -350,47 +372,55 @@ const newPersonPSCustomCode = fs.readFileSync(
 
                 <ListItem icon={icons.Tag}>
                     <I>Control de presentación (TypeNames y propiedades por defecto):</I> a los
-                    <PowerShellInline code="[PSCustomObject]" /> se les puede asignar un <I>TypeName</I> y definir qué
-                    propiedades se muestran por defecto, mejorando la legibilidad sin perder datos. Para más detalles
-                    sobre cómo el sistema de tipos extiende estos comportamientos, consulta:
-                    <PowerShellBlock code={`
+                    <PowerShellInline code="[PSCustomObject]" /> se les puede asignar un <I
+                    >TypeName</I> y definir qué propiedades se muestran por defecto, mejorando la
+                    legibilidad sin perder datos. Para más detalles sobre cómo el sistema de tipos
+                    extiende estos comportamientos, consulta:
+                    <PowerShellBlock
+                        code={`
                         Get-Help about_Types.ps1xml
-                    `}>
-                        <Fragment slot="title">Explorar cómo utilizar <Mono>Types.ps1xml</Mono></Fragment>
+                    `}
+                    >
+                        <Fragment slot="title">Explorar cómo utilizar <Mono
+                            >Types.ps1xml</Mono></Fragment>
                     </PowerShellBlock>
                 </ListItem>
 
                 <ListItem icon={icons.Pipe}>
-                    <I>Compatibilidad con el pipeline:</I> muchos comandos esperan objetos con propiedades claras para
-                    seleccionar campos por nombre y aplicar formateadores. Los <PowerShellInline
-                        code="[PSCustomObject]"
-                    /> están pensados para encajar en ese modelo. No entraremos en detalles aquí; basta con saber que
-                    más adelante esta elección facilita el flujo de trabajo.
+                    <I>Compatibilidad con el pipeline:</I> muchos comandos esperan objetos con
+                    propiedades claras para seleccionar campos por nombre y aplicar formateadores.
+                    Los <PowerShellInline code="[PSCustomObject]" /> están pensados para encajar en
+                    ese modelo. No entraremos en detalles aquí; basta con saber que más adelante
+                    esta elección facilita el flujo de trabajo.
                 </ListItem>
             </List>
         </NotesSection>
 
         <Important headingLevel="h3">
-            En este curso utilizaremos <PowerShellInline code="[PSCustomObject]" /> para mantener la simplicidad y
-            centrarnos en la forma de los datos. Si necesitas reglas más estrictas, métodos, herencia o contratos de
-            tipos más claros para herramientas y módulos, considera migrar a <I>clases</I>.
+            En este curso utilizaremos <PowerShellInline code="[PSCustomObject]" /> para mantener la
+            simplicidad y centrarnos en la forma de los datos. Si necesitas reglas más estrictas,
+            métodos, herencia o contratos de tipos más claros para herramientas y módulos, considera
+            migrar a <I>clases</I>.
         </Important>
 
         <More headingLevel="h3">
             <span slot="title">Clases y salida tipada</span>
 
             <P>
-                PowerShell permite definir <I>clases</I> para modelar datos con propiedades y métodos, aprovechando
-                conceptos conocidos de OOP (encapsulación y herencia). Usarlas mejora el autocompletado del editor y
-                ayuda a detectar errores de tipos al escribir. Para describir el tipo de salida de una <I>función</I>
-                existe el atributo <PowerShellInline code="[OutputType()]" /> (útil para documentación y tooling), pero
-                a nivel de <I>script</I> no podemos declarar un tipo de salida explícito (esta es una ventaja de usar
-                funciones o módulos que puedes considerar más adelante).
+                PowerShell permite definir <I>clases</I> para modelar datos con propiedades y
+                métodos, aprovechando conceptos conocidos de OOP (encapsulación y herencia). Usarlas
+                mejora el autocompletado del editor y ayuda a detectar errores de tipos al escribir.
+                Para describir el tipo de salida de una <I>función</I>
+                existe el atributo <PowerShellInline code="[OutputType()]" /> (útil para
+                documentación y tooling), pero a nivel de <I>script</I> no podemos declarar un tipo
+                de salida explícito (esta es una ventaja de usar funciones o módulos que puedes
+                considerar más adelante).
             </P>
 
             <P>
-                A continuación definimos una clase <PowerShellInline code={`[Person]`} /> en un módulo (<Mono
-                >.psm1</Mono>) y luego la usamos desde un script (<Mono>.ps1</Mono>) para crear y devolver un objeto.
+                A continuación definimos una clase <PowerShellInline code={`[Person]`} /> en un
+                módulo (<Mono>.psm1</Mono>) y luego la usamos desde un script (<Mono>.ps1</Mono>)
+                para crear y devolver un objeto.
             </P>
 
             <PowerShellBlock
@@ -410,16 +440,15 @@ const newPersonPSCustomCode = fs.readFileSync(
                     }
                 `}
             >
-                <span slot="title">Definir un tipo de datos con <code>class</code> (módulo .psm1)</span>
+                <span slot="title"
+                >Definir un tipo de datos con <code>class</code> (módulo .psm1)</span>
                 <span slot="footer">
-                    Un archivo <Mono>.psm1</Mono> es un <I>módulo</I> de PowerShell: puede exportar tipos (clases),
-                    funciones u otros elementos para ser reutilizados. Aquí sólo definimos la clase <PowerShellInline
-                        code={`[Person]`}
-                    />.
+                    Un archivo <Mono>.psm1</Mono> es un <I>módulo</I> de PowerShell: puede exportar
+                    tipos (clases), funciones u otros elementos para ser reutilizados. Aquí sólo
+                    definimos la clase <PowerShellInline code={`[Person]`} />.
                     <br />
-                    A diferencia de los scripts y funciones, los <I>métodos</I> deben tener un <PowerShellInline
-                        code={`return`}
-                    /> explícito para devolver valores.
+                    A diferencia de los scripts y funciones, los <I>métodos</I> deben tener un
+                    <PowerShellInline code={`return`} /> explícito para devolver valores.
                 </span>
                 <DibsSourceLink
                     slot="source" file="models/Person.psm1"
@@ -454,21 +483,26 @@ const newPersonPSCustomCode = fs.readFileSync(
                     New-Person
                 `}
             >
-                <span slot="title">Usar el módulo y devolver una instancia tipada (script <Mono>.ps1</Mono>)</span>
+                <span slot="title"
+                >Usar el módulo y devolver una instancia tipada (script <Mono>.ps1</Mono>)</span>
 
                 <span slot="footer">
                     <B>Notas breves:</B>
                     <ul style="list-style-type: disc; margin-left: 1.5rem">
                         <li>
-                            <PowerShellInline code={`using module ./Person.psm1`} /> carga el módulo con la clase
+                            <PowerShellInline code={`using module ./Person.psm1`} /> carga el módulo
+                            con la clase
                             <PowerShellInline code={`[Person]`} />.
                         </li>
                         <li>
-                            El prefijo <PowerShellInline code={`Script:`} /> hace que <PowerShellInline
-                                code={`New-Person`}
-                            /> sea <I>local</I> al script (no se exporta).
+                            El prefijo <PowerShellInline code={`Script:`} /> hace que
+                            <PowerShellInline code={`New-Person`} /> sea <I>local</I> al script (no
+                            se exporta).
                         </li>
-                        <li>La salida del script es el objeto <PowerShellInline code={`[Person]`} /> recién creado.</li>
+                        <li>
+                            La salida del script es el objeto <PowerShellInline code={`[Person]`} />
+                            recién creado.
+                        </li>
                     </ul>
                 </span>
                 <DibsSourceLink
@@ -503,34 +537,38 @@ const newPersonPSCustomCode = fs.readFileSync(
 
         <Fragment slot="requirements">
             <P>
-                Diseña un script llamado <PowerShellInline code="Test-ConnectionSummary.ps1" /> que simule la
-                comprobación de conectividad hacia un servidor y devuelva un resultado estructurado. El script debe
-                aceptar un único parámetro: <PowerShellInline code="[string] $Address" />.
+                Diseña un script llamado <PowerShellInline code="Test-ConnectionSummary.ps1" /> que
+                simule la comprobación de conectividad hacia un servidor y devuelva un resultado
+                estructurado. El script debe aceptar un único parámetro: <PowerShellInline
+                    code="[string] $Address"
+                />.
             </P>
             <P>
-                La salida debe ser un objeto <PowerShellInline code="[PSCustomObject]" /> con tres propiedades:
+                La salida debe ser un objeto <PowerShellInline code="[PSCustomObject]" /> con tres
+                propiedades:
             </P>
             <List>
                 <ListItem icon={icons.Circle}>
                     <Mono>Address</Mono>: el nombre recibido como parámetro.
                 </ListItem>
                 <ListItem icon={icons.CheckCircle}>
-                    <Mono>Status</Mono>: un <PowerShellInline code="[bool]" /> que indique si la conexión fue exitosa o
-                    fallida.
+                    <Mono>Status</Mono>: un <PowerShellInline code="[bool]" /> que indique si la
+                    conexión fue exitosa o fallida.
                 </ListItem>
                 <ListItem icon={icons.Clock}>
-                    <Mono>CheckedAt</Mono>: la fecha y hora de la comprobación (usa <PowerShellInline
-                        code="Get-Date"
-                    />).
+                    <Mono>CheckedAt</Mono>: la fecha y hora de la comprobación (usa
+                    <PowerShellInline code="Get-Date" />).
                 </ListItem>
             </List>
             <P>No es necesario conectarse realmente; puedes simular el resultado.</P>
         </Fragment>
 
         <P slot="notes">
-            Para simular la conexión, usa una heurística simple: devolver éxito si el address cumple la expresión
-            regular
-            <PowerShellInline code={`'^[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*(?::\\d+)?$'`} />.<FootnoteRef index={3} />
+            Para simular la conexión, usa una heurística simple: devolver éxito si el address cumple
+            la expresión regular
+            <PowerShellInline
+                code={`'^[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*(?::\\d+)?$'`}
+            />.<FootnoteRef index={3} />
         </P>
 
         <Fragment slot="use">
@@ -542,7 +580,8 @@ const newPersonPSCustomCode = fs.readFileSync(
                 `}
             >
                 <span slot="title">Ejemplo de ejecución</span>
-                <span slot="footer" class="text-sm">Inspirado en <I href="https://myanimelist.net/anime/1454/Kemonozume"
+                <span slot="footer" class="text-sm">Inspirado en <I
+                        href="https://myanimelist.net/anime/1454/Kemonozume"
                     >Kemonozume</I></span>
             </PowerShellBlock>
 
@@ -576,8 +615,10 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 <Fragment slot="title">Solución de referencia</Fragment>
                 <span slot="footer">
-                    La salida es tabular y consistente gracias a <PowerShellInline code="[PSCustomObject]" />. No se usa
-                    manejo de errores; la decisión de éxito/fallo se basa únicamente en la expresión regular.
+                    La salida es tabular y consistente gracias a <PowerShellInline
+                        code="[PSCustomObject]"
+                    />. No se usa manejo de errores; la decisión de éxito/fallo se basa únicamente
+                    en la expresión regular.
                 </span>
             </PowerShellBlock>
         </Fragment>
@@ -585,50 +626,55 @@ const newPersonPSCustomCode = fs.readFileSync(
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            En esta lección vimos cómo modelar datos en PowerShell para producir <I>salida estructurada</I>. Partimos
-            con diccionarios (<PowerShellInline code="[hashtable]" />) —útiles para valores transitorios y <I
-            >splatting</I>— y luego pasamos a <PowerShellInline code="[PSCustomObject]" />, que convierte claves en <I
-            >propiedades reales</I> y ofrece una presentación tabular consistente. También señalamos, de forma breve,
-            que esta elección facilita el encadenamiento de comandos que veremos más adelante. La idea práctica: usa
-            diccionarios para configurar/parametrizar, y <PowerShellInline code="[PSCustomObject]" /> cuando quieras
-            devolver datos.
+            En esta lección vimos cómo modelar datos en PowerShell para producir <I>salida
+                estructurada</I>. Partimos con diccionarios (<PowerShellInline
+                code="[hashtable]"
+            />) —útiles para valores transitorios y <I>splatting</I>— y luego pasamos a
+            <PowerShellInline code="[PSCustomObject]" />, que convierte claves en <I>propiedades
+                reales</I> y ofrece una presentación tabular consistente. También señalamos, de
+            forma breve, que esta elección facilita el encadenamiento de comandos que veremos más
+            adelante. La idea práctica: usa diccionarios para configurar/parametrizar, y
+            <PowerShellInline code="[PSCustomObject]" /> cuando quieras devolver datos.
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.BracketsCurly}>
-                <B>Diccionarios:</B> <PowerShellInline code="@{ Clave = Valor }" />; mutables, acceso por punto o
-                índice, sin garantía de orden de inserción.
+                <B>Diccionarios:</B> <PowerShellInline code="@{ Clave = Valor }" />; mutables,
+                acceso por punto o índice, sin garantía de orden de inserción.
             </ListItem>
 
             <ListItem icon={icons.ArrowsLeftRight}>
-                <B>Splatting:</B> usa <PowerShellInline code="@params" /> para pasar diccionarios como parámetros;
-                mejora legibilidad y evita líneas largas duplicadas.
+                <B>Splatting:</B> usa <PowerShellInline code="@params" /> para pasar diccionarios
+                como parámetros; mejora legibilidad y evita líneas largas duplicadas.
             </ListItem>
 
             <ListItem icon={icons.Table}>
                 <B><PowerShellInline code="[PSCustomObject]" />:</B> <PowerShellInline
                     code="[PSCustomObject]@{ ... }"
-                /> crea objetos con propiedades reales; la salida se muestra en columnas de forma predecible.
+                /> crea objetos con propiedades reales; la salida se muestra en columnas de forma
+                predecible.
             </ListItem>
 
             <ListItem icon={icons.Lightning}>
-                <B>Type accelerators:</B> <PowerShellInline code="[PSCustomObject]" /> es un acelerador; es decir, una
-                forma abreviada de instanciar el tipo adecuado para salida estructurada.
+                <B>Type accelerators:</B> <PowerShellInline code="[PSCustomObject]" /> es un
+                acelerador; es decir, una forma abreviada de instanciar el tipo adecuado para salida
+                estructurada.
             </ListItem>
 
             <ListItem icon={icons.FlowArrow}>
-                <B>Cuándo usar qué:</B> diccionarios para configuración y parámetros; <PowerShellInline
-                    code="[PSCustomObject]"
-                /> para devolver resultados y que otras herramientas/comandos los consuman fácilmente.
+                <B>Cuándo usar qué:</B> diccionarios para configuración y parámetros;
+                <PowerShellInline code="[PSCustomObject]" /> para devolver resultados y que otras
+                herramientas/comandos los consuman fácilmente.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            Prefiere <PowerShellInline code="[PSCustomObject]" /> cuando el objetivo sea <I>comunicar datos</I>:
-            obtendrás columnas claras, nombres de campos estables y objetos listos para ser reutilizados. Reserva los
-            diccionarios para
-            <I>armar llamadas</I> y <I>configurar</I> comandos. Con este criterio simple tus scripts serán más legibles
-            hoy y, cuando conozcas el encadenamiento de comandos, gran parte del trabajo ya estará hecho.
+            Prefiere <PowerShellInline code="[PSCustomObject]" /> cuando el objetivo sea <I
+            >comunicar datos</I>: obtendrás columnas claras, nombres de campos estables y objetos
+            listos para ser reutilizados. Reserva los diccionarios para
+            <I>armar llamadas</I> y <I>configurar</I> comandos. Con este criterio simple tus scripts
+            serán más legibles hoy y, cuando conozcas el encadenamiento de comandos, gran parte del
+            trabajo ya estará hecho.
         </Fragment>
     </ConclusionsLayout>
 
@@ -645,20 +691,22 @@ const newPersonPSCustomCode = fs.readFileSync(
             >
                 <Fragment slot="description">
                     <P>
-                        Ofrece una guía completa —desde lo básico hasta lo avanzado— sobre el uso de <PowerShellInline
-                            code={`[PSCustomObject]`}
-                        /> en PowerShell para crear datos estructurados. Explica cómo convertir diccionarios en objetos,
-                        agregar o quitar propiedades dinámicamente, clonar instancias y definir comportamientos
-                        personalizados mediante <PowerShellInline code={`Add-Member`} /> o <PowerShellInline
-                            code={`Update-TypeData`}
-                        />.
+                        Ofrece una guía completa —desde lo básico hasta lo avanzado— sobre el uso de
+                        <PowerShellInline code={`[PSCustomObject]`} /> en PowerShell para crear
+                        datos estructurados. Explica cómo convertir diccionarios en objetos, agregar
+                        o quitar propiedades dinámicamente, clonar instancias y definir
+                        comportamientos personalizados mediante <PowerShellInline
+                            code={`Add-Member`}
+                        /> o <PowerShellInline code={`Update-TypeData`} />.
                     </P>
                     <P>
-                        También aborda la importancia del <I>type system</I> de PowerShell: cómo asignar
-                        <PowerShellInline code={`PSTypeName`} />, establecer propiedades por defecto para mejorar la
-                        presentación en consola y definir tipos personalizados reutilizables en funciones y scripts.
-                        Finalmente, el texto enfatiza que dominar <PowerShellInline code={`[PSCustomObject]`} /> permite
-                        producir salidas limpias, coherentes y tipadas, facilitando la interoperabilidad y el
+                        También aborda la importancia del <I>type system</I> de PowerShell: cómo
+                        asignar
+                        <PowerShellInline code={`PSTypeName`} />, establecer propiedades por defecto
+                        para mejorar la presentación en consola y definir tipos personalizados
+                        reutilizables en funciones y scripts. Finalmente, el texto enfatiza que
+                        dominar <PowerShellInline code={`[PSCustomObject]`} /> permite producir
+                        salidas limpias, coherentes y tipadas, facilitando la interoperabilidad y el
                         mantenimiento de los scripts.
                     </P>
                 </Fragment>
@@ -675,10 +723,15 @@ const newPersonPSCustomCode = fs.readFileSync(
 
     <Footnotes>
         <Footnote index={1}>
-            Los <I>type accelerators</I> son atajos definidos por PowerShell que permiten instanciar tipos .NET sin
-            escribir su nombre completo. Por ejemplo, <PowerShellInline code="[PSCustomObject]" /> es un acelerador de
-            <PowerShellInline code="[System.Management.Automation.PSObject]" />. Existen muchos otros, como
-            <PowerShellInline code="[hashtable]" /> para <PowerShellInline code="[System.Collections.Hashtable]" /> o
+            Los <I>type accelerators</I> son atajos definidos por PowerShell que permiten instanciar
+            tipos .NET sin escribir su nombre completo. Por ejemplo, <PowerShellInline
+                code="[PSCustomObject]"
+            /> es un acelerador de
+            <PowerShellInline code="[System.Management.Automation.PSObject]" />. Existen muchos
+            otros, como
+            <PowerShellInline code="[hashtable]" /> para <PowerShellInline
+                code="[System.Collections.Hashtable]"
+            /> o
             <PowerShellInline code="[ValidateSet]" /> para <PowerShellInline
                 code="[System.Management.Automation.ValidateSetAttribute]"
             />. Puedes aprender más sobre ellos con:
@@ -696,21 +749,25 @@ const newPersonPSCustomCode = fs.readFileSync(
         </Footnote>
 
         <Footnote index={2}>
-            Discusión de referencia: <Link href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
+            Discusión de referencia: <Link
+                href="https://forums.powershell.org/t/why-ps-custom-object/10826/2"
             >Why PS Custom Object?</Link>
         </Footnote>
 
         <Footnote index={3}>
             <ul style="list-style-type: disc; margin-left: 1.5rem">
                 <li>
-                    <PowerShellInline code={`'[A-Za-z0-9-]+'`} />: etiqueta inicial (letras, dígitos, guiones).
+                    <PowerShellInline code={`'[A-Za-z0-9-]+'`} />: etiqueta inicial (letras,
+                    dígitos, guiones).
                 </li>
                 <li>
-                    <PowerShellInline code={`'(?:\\.[A-Za-z0-9-]+)*'`} />: cero o más etiquetas separadas por puntos
-                    (soporta <Mono>localhost</Mono> y <Mono>sub.example.com</Mono>).
+                    <PowerShellInline code={`'(?:\\.[A-Za-z0-9-]+)*'`} />: cero o más etiquetas
+                    separadas por puntos (soporta <Mono>localhost</Mono> y <Mono
+                    >sub.example.com</Mono>).
                 </li>
                 <li>
-                    <PowerShellInline code={`'(?::\\d+)?'`} />: opcional <Mono>:puerto</Mono> (uno o más dígitos).
+                    <PowerShellInline code={`'(?::\\d+)?'`} />: opcional <Mono>:puerto</Mono> (uno o
+                    más dígitos).
                 </li>
                 <li>
                     Ancla <PowerShellInline code={`'^...$'`} /> para que coincida toda la cadena.
@@ -719,18 +776,22 @@ const newPersonPSCustomCode = fs.readFileSync(
             <I>Ejemplos:</I>
             <ul style="list-style-type: disc; margin-left: 1.5rem">
                 <li>
-                    Coincide: <Mono>example.com</Mono>, <Mono>localhost</Mono>, <Mono>sub.domain.co</Mono>, <Mono
-                    >example.com:8080</Mono>, <Mono>192.168.1.1:3000</Mono>
+                    Coincide: <Mono>example.com</Mono>, <Mono>localhost</Mono>, <Mono
+                    >sub.domain.co</Mono>, <Mono>example.com:8080</Mono>, <Mono
+                    >192.168.1.1:3000</Mono>
                 </li>
                 <li>
-                    No coincide: <Mono>::1</Mono> (IPv6), cadenas con espacios o caracteres inválidos.
+                    No coincide: <Mono>::1</Mono> (IPv6), cadenas con espacios o caracteres
+                    inválidos.
                 </li>
             </ul>
             <Warning headingLevel="h5">
-                Es intencionalmente permisiva: no valida rangos de octetos IPv4 (p. ej. <Mono>999.999.999.999</Mono>
-                pasaría) ni cumple estrictamente RFC para nombres de host. Úsala sólo como heurística ilustrativa. Para
-                validación robusta (IPv6 completo, rangos de puerto 0–65535, reglas exactas RFC) conviene usar
-                parsers/librerías o validaciones adicionales (por ejemplo utilizando el type accelerator
+                Es intencionalmente permisiva: no valida rangos de octetos IPv4 (p. ej. <Mono
+                >999.999.999.999</Mono>
+                pasaría) ni cumple estrictamente RFC para nombres de host. Úsala sólo como
+                heurística ilustrativa. Para validación robusta (IPv6 completo, rangos de puerto
+                0–65535, reglas exactas RFC) conviene usar parsers/librerías o validaciones
+                adicionales (por ejemplo utilizando el type accelerator
                 <PowerShellInline code={`[IPAddress]`} />).
             </Warning>
         </Footnote>

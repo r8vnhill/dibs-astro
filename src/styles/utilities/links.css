@@ -1,6 +1,6 @@
 @layer base {
-  a {
-    @apply focus-visible:ring-2 focus-visible:ring-primary underline
-    transition-colors hover:text-primary focus:outline-none;
-  }
+    a {
+        @apply focus-visible:ring-2 focus-visible:ring-primary underline transition-colors
+            hover:text-primary focus:outline-none;
+    }
 }

@@ -1,17 +1,17 @@
 :root {
-  --header-bg: var(--theme-color-primary-lightest);
-  --header-text: hsl(240, 4%, 10%);
-  --header-border: var(--theme-color-primary-light);
+    --header-bg: var(--theme-color-primary-lightest);
+    --header-text: hsl(240, 4%, 10%);
+    --header-border: var(--theme-color-primary-light);
 }
 
 :root.dark {
-  --header-bg: hsl(var(--primary-h), var(--primary-s), 20%);
-  --header-text: var(--theme-color-primary-lightest);
-  --header-border: var(--theme-color-primary-darker);
+    --header-bg: hsl(var(--primary-h), var(--primary-s), 20%);
+    --header-text: var(--theme-color-primary-lightest);
+    --header-border: var(--theme-color-primary-darker);
 }
 
 @theme inline {
-  --color-header-fill: var(--header-bg);
-  --color-header-text: var(--header-text);
-  --color-header-border: var(--header-border);
+    --color-header-fill: var(--header-bg);
+    --color-header-text: var(--header-text);
+    --color-header-border: var(--header-border);
 }

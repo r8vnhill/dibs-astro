@@ -1,19 +1,28 @@
 ---
-import CodeBlock from "../CodeBlock.astro";
-import * as icons from "~/assets/img/icons";
+/**
+ * PythonBlock.astro
+ * ----------------
+ * A specialized code block component for displaying Python scripts with appropriate styling
+ * and iconography. This component leverages the generic CodeBlock component, pre-configured for
+ * Python code.
+ */
+import * as Icons from "~/assets/img/icons";
+import { CodeBlock } from "~/components/ui/code";
 
-type Props = {
-  code: string;
-};
-
-const { code }: Props = Astro.props;
+const { code, class: className = "" } = Astro.props;
 ---
 
-<CodeBlock lang="python" icon={icons.FilePy} code={code}>
-  <Fragment slot="title">
-    <slot name="title" />
-  </Fragment>
-  <Fragment slot="source">
-    <slot name="source" />
-  </Fragment>
+<CodeBlock
+    lang="python" icon={Icons.FilePy}
+    {code} class={className}
+>
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+    <Fragment slot="footer">
+        <slot name="footer" />
+    </Fragment>
 </CodeBlock>

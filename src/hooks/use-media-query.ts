@@ -66,7 +66,10 @@ function createMediaQueryList(query: string): MediaQueryList {
  * addListener when not available. The casting to LegacyMediaQueryList is constrained to this helper so the rest of the
  * hook avoids deprecated signatures.
  */
-function addMediaQueryChangeListener(mql: MediaQueryList, listener: (e: MediaQueryListEvent) => void) {
+function addMediaQueryChangeListener(
+    mql: MediaQueryList,
+    listener: (e: MediaQueryListEvent) => void,
+) {
     const legacy = mql as LegacyMediaQueryList;
     if (typeof mql.addEventListener === "function") {
         mql.addEventListener("change", listener);
@@ -78,7 +81,10 @@ function addMediaQueryChangeListener(mql: MediaQueryList, listener: (e: MediaQue
 /**
  * Remove a previously installed change listener using the matching modern/legacy removal API.
  */
-function removeMediaQueryChangeListener(mql: MediaQueryList, listener: (e: MediaQueryListEvent) => void) {
+function removeMediaQueryChangeListener(
+    mql: MediaQueryList,
+    listener: (e: MediaQueryListEvent) => void,
+) {
     const legacy = mql as LegacyMediaQueryList;
     if (typeof mql.removeEventListener === "function") {
         mql.removeEventListener("change", listener);

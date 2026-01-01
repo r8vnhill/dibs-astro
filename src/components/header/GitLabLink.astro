@@ -11,39 +11,39 @@ import IconLink from "./IconLink.astro";
  * Props accepted by the `GitLabLink` component.
  */
 interface GitLabLinkProps {
-  /**
-   * GitLab username or organization name.
-   */
-  username: string;
+    /**
+     * GitLab username or organization name.
+     */
+    username: string;
 
-  /**
-   * GitLab repository name.
-   */
-  repo: string;
+    /**
+     * GitLab repository name.
+     */
+    repo: string;
 
-  /**
-   * Accessible label for screen readers.
-   */
-  label?: string;
+    /**
+     * Accessible label for screen readers.
+     */
+    label?: string;
 
-  /**
-   * Additional Tailwind classes for the outer link.
-   */
-  className?: string;
+    /**
+     * Additional Tailwind classes for the outer link.
+     */
+    className?: string;
 
-  /**
-   * Additional Tailwind classes for the icon.
-   */
-  iconClass?: string;
+    /**
+     * Additional Tailwind classes for the icon.
+     */
+    iconClass?: string;
 }
 
 // Destructure and apply default values to props
 const {
-  username,
-  repo,
-  label = "Repositorio GitLab",
-  className = "",
-  iconClass = "",
+    username,
+    repo,
+    label = "Repositorio GitLab",
+    className = "",
+    iconClass = "",
 } = Astro.props as GitLabLinkProps;
 
 // Construct full GitLab repository URL
@@ -52,10 +52,7 @@ const link = `https://gitlab.com/${username}/${repo}`;
 
 <!-- GitLab icon link rendered using the reusable IconLink component -->
 <IconLink
-  href={link}
-  label={label}
-  icon={GitLabLogo}
-  newTab
-  className={className}
-  iconClass={iconClass}
+    href={link} {label}
+    icon={GitLabLogo} newTab
+    {className} {iconClass}
 />

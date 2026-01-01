@@ -19,7 +19,7 @@ export type TabValue = string;
  * Contains the tab `value` that should be activated across synced tab groups.
  */
 export interface TabsSyncEventDetail {
-  value: TabValue;
+    value: TabValue;
 }
 
 /**
@@ -29,7 +29,7 @@ export interface TabsSyncEventDetail {
  * related tab sets using a shared `syncKey`.
  */
 export interface TabsSyncEvent extends CustomEvent<TabsSyncEventDetail> {
-  type: `${typeof TAB_SYNC_EVENT_PREFIX}:${string}`;
+    type: `${typeof TAB_SYNC_EVENT_PREFIX}:${string}`;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface TabsSyncEvent extends CustomEvent<TabsSyncEventDetail> {
  * @returns A storage key string, namespaced with the sync event prefix
  */
 export function getStorageKey(tabsId: string, syncKey?: string): string {
-  return syncKey
-    ? `${TAB_SYNC_EVENT_PREFIX}-${tabsId}-${syncKey}`
-    : `${TAB_SYNC_EVENT_PREFIX}-${tabsId}`;
+    return syncKey
+        ? `${TAB_SYNC_EVENT_PREFIX}-${tabsId}-${syncKey}`
+        : `${TAB_SYNC_EVENT_PREFIX}-${tabsId}`;
 }

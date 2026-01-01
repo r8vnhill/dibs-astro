@@ -43,10 +43,19 @@ export function normalizeIndentation(code: string): string {
         ...lines.filter(l => l.trim().length > 0).map(l => (l.match(/^[ \t]*/)?.[0].length ?? 0)),
         Infinity,
     );
-    return Number.isFinite(minIndent) ? lines.map(l => l.slice(minIndent)).join("\n") : lines.join("\n");
+    return Number.isFinite(minIndent)
+        ? lines.map(l => l.slice(minIndent)).join("\n")
+        : lines.join("\n");
 }
 
-const baseClasses = ["relative", "my-6", "overflow-x-auto", "rounded-md", "border", "border-primary"];
+const baseClasses = [
+    "relative",
+    "my-6",
+    "overflow-x-auto",
+    "rounded-md",
+    "border",
+    "border-primary",
+];
 
 const baseTitleClasses = [
     "flex",
@@ -115,7 +124,9 @@ const commonTransformers = [
                 }
                 {
                     (Astro.slots.source || source) && (
-                        <span class:list={["ml-auto", "text-s", "font-mono", "text-primary/60", "italic", "truncate"]}>
+                        <span
+                            class:list={["ml-auto", "text-s", "font-mono", "text-primary/60", "italic", "truncate"]}
+                        >
                             {Astro.slots.source ? <slot name="source" /> : source}
                         </span>
                     )

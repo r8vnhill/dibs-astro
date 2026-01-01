@@ -30,22 +30,27 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Abstract>
         <p class="mb-2">
-            Esta lección continúa la exploración del <B>pipeline</B> en PowerShell, centrándose en cómo escribir
-            funciones y scripts que no solo consuman datos del flujo, sino que también <B>formen parte activa de él</B>.
-            A este enfoque se le conoce como <I>pipeline-awareness</I>.
+            Esta lección continúa la exploración del <B>pipeline</B> en PowerShell, centrándose en
+            cómo escribir funciones y scripts que no solo consuman datos del flujo, sino que también
+            <B>formen parte activa de él</B>. A este enfoque se le conoce como <I
+            >pipeline-awareness</I>.
         </p>
 
         <p class="mb-2">
-            Aprenderás a estructurar tus scripts usando los bloques <B>begin</B>, <B>process</B> y <B>end</B>,
-            entendiendo cómo cada uno participa en la inicialización, procesamiento y finalización del flujo. Además,
-            verás cómo aceptar datos por <B>objeto</B> o por <B>nombre de propiedad</B> mediante los parámetros
-            <PowerShellInline code="ValueFromPipeline" /> y <PowerShellInline code="ValueFromPipelineByPropertyName" />.
+            Aprenderás a estructurar tus scripts usando los bloques <B>begin</B>, <B>process</B> y
+            <B>end</B>, entendiendo cómo cada uno participa en la inicialización, procesamiento y
+            finalización del flujo. Además, verás cómo aceptar datos por <B>objeto</B> o por <B
+            >nombre de propiedad</B> mediante los parámetros
+            <PowerShellInline code="ValueFromPipeline" /> y <PowerShellInline
+                code="ValueFromPipelineByPropertyName"
+            />.
         </p>
 
         <p>
-            Esta y las siguientes lecciones profundizan en un contenido más complejo que los anteriores. Dominar el <I
-            >pipeline-awareness</I> requiere práctica, pero te permitirá construir scripts <B>eficientes, componibles y
-                escalables</B>, preparados para integrarse en pipelines mayores.
+            Esta y las siguientes lecciones profundizan en un contenido más complejo que los
+            anteriores. Dominar el <I>pipeline-awareness</I> requiere práctica, pero te permitirá
+            construir scripts <B>eficientes, componibles y escalables</B>, preparados para
+            integrarse en pipelines mayores.
         </p>
     </Abstract>
 
@@ -57,54 +62,59 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Definition>
             <span slot="title">Pipeline-awareness</span>
 
-            Se denomina <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de una función o script para
-            <I>recibir, procesar y emitir objetos a través del pipeline</I> de forma progresiva. En lugar de esperar a
-            que todos los datos estén disponibles, un componente <I>pipeline-aware</I> responde a cada elemento en el
-            momento en que llega, manteniendo la continuidad del flujo.
+            Se denomina <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de una
+            función o script para
+            <I>recibir, procesar y emitir objetos a través del pipeline</I> de forma progresiva. En
+            lugar de esperar a que todos los datos estén disponibles, un componente <I
+            >pipeline-aware</I> responde a cada elemento en el momento en que llega, manteniendo la
+            continuidad del flujo.
         </Definition>
 
         <p class="mb-2">
-            En PowerShell, esta característica permite que las funciones participen activamente en el flujo de datos,
-            comportándose como cualquier otro cmdlet del sistema. Un script <I>pipeline-aware</I> no acumula toda la
-            información antes de operar, sino que actúa elemento por elemento, favoreciendo la eficiencia y el
-            procesamiento en
+            En PowerShell, esta característica permite que las funciones participen activamente en
+            el flujo de datos, comportándose como cualquier otro cmdlet del sistema. Un script <I
+            >pipeline-aware</I> no acumula toda la información antes de operar, sino que actúa
+            elemento por elemento, favoreciendo la eficiencia y el procesamiento en
             <I>streaming</I>. Para lograrlo, PowerShell define tres bloques fundamentales:
         </p>
 
         <List>
             <ListItem icon={icons.PlayCircle}>
-                El bloque <PowerShellInline code="begin" /> se ejecuta una sola vez al inicio del flujo. Aquí se suelen
-                realizar inicializaciones costosas o configuraciones que deben ejecutarse solo una vez, como abrir
-                conexiones a bases de datos, crear estructuras de apoyo o inicializar contadores.
+                El bloque <PowerShellInline code="begin" /> se ejecuta una sola vez al inicio del
+                flujo. Aquí se suelen realizar inicializaciones costosas o configuraciones que deben
+                ejecutarse solo una vez, como abrir conexiones a bases de datos, crear estructuras
+                de apoyo o inicializar contadores.
             </ListItem>
 
             <ListItem icon={icons.Cpu}>
-                El bloque <PowerShellInline code="process" /> constituye el núcleo del pipeline. Se ejecuta tantas veces
-                como objetos lleguen desde el flujo, permitiendo procesar cada elemento individualmente. Esto habilita
-                un
-                <B>procesamiento incremental</B>, ideal para grandes volúmenes de datos sin necesidad de cargarlos por
-                completo en memoria.
+                El bloque <PowerShellInline code="process" /> constituye el núcleo del pipeline. Se
+                ejecuta tantas veces como objetos lleguen desde el flujo, permitiendo procesar cada
+                elemento individualmente. Esto habilita un
+                <B>procesamiento incremental</B>, ideal para grandes volúmenes de datos sin
+                necesidad de cargarlos por completo en memoria.
             </ListItem>
 
             <ListItem icon={icons.FlagCheckered}>
-                Finalmente, el bloque <PowerShellInline code="end" /> se ejecuta una única vez al finalizar la entrada.
-                Aquí se suelen liberar recursos, cerrar conexiones o generar resultados globales que dependen del
-                conjunto completo de datos procesados.
+                Finalmente, el bloque <PowerShellInline code="end" /> se ejecuta una única vez al
+                finalizar la entrada. Aquí se suelen liberar recursos, cerrar conexiones o generar
+                resultados globales que dependen del conjunto completo de datos procesados.
             </ListItem>
         </List>
 
         <p class="mb-2">
-            Esta separación de responsabilidades mantiene la claridad estructural: <I>inicialización</I> en <B
-            >begin</B>,
-            <I>transformación</I> en <B>process</B>, y <I>limpieza</I> en <B>end</B>. En este contexto, se recomienda
-            que las funciones no formateen su salida ni produzcan texto, sino que <B>emitan objetos</B> sin procesar, de
-            modo que puedan seguir combinándose con otros comandos del pipeline.
+            Esta separación de responsabilidades mantiene la claridad estructural: <I
+            >inicialización</I> en <B>begin</B>,
+            <I>transformación</I> en <B>process</B>, y <I>limpieza</I> en <B>end</B>. En este
+            contexto, se recomienda que las funciones no formateen su salida ni produzcan texto,
+            sino que <B>emitan objetos</B> sin procesar, de modo que puedan seguir combinándose con
+            otros comandos del pipeline.
         </p>
 
         <p>
-            Este enfoque convierte a los scripts en componentes <I>componibles</I> dentro del ecosistema de PowerShell:
-            cada bloque cumple un propósito bien definido y los resultados pueden seguir fluyendo hacia el siguiente
-            cmdlet, sin interrumpir el procesamiento ni comprometer la eficiencia del flujo.
+            Este enfoque convierte a los scripts en componentes <I>componibles</I> dentro del
+            ecosistema de PowerShell: cada bloque cumple un propósito bien definido y los resultados
+            pueden seguir fluyendo hacia el siguiente cmdlet, sin interrumpir el procesamiento ni
+            comprometer la eficiencia del flujo.
         </p>
 
         <NotesSection id="h3-example-pipeline-aware">
@@ -113,10 +123,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <p class="mb-3">
-                Para consolidar el concepto, veamos un ejemplo de función <I>pipeline-aware</I> que procesa números a
-                medida que llegan por el flujo. En lugar de esperar a tener todos los valores, la función incrementa un
-                contador en los bloques <I>begin</I>, <I>process</I> y <I>end</I>, y emite objetos con el número
-                original y su doble. Los mensajes <PowerShellInline code="Write-Verbose" /> permiten observar el
+                Para consolidar el concepto, veamos un ejemplo de función <I>pipeline-aware</I> que
+                procesa números a medida que llegan por el flujo. En lugar de esperar a tener todos
+                los valores, la función incrementa un contador en los bloques <I>begin</I>, <I
+                >process</I> y <I>end</I>, y emite objetos con el número original y su doble. Los
+                mensajes <PowerShellInline code="Write-Verbose" /> permiten observar el
                 comportamiento interno al ejecutarla con <PowerShellInline code="-Verbose" />.
             </p>
 
@@ -158,29 +169,36 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Explanation>
                 <List>
                     <ListItem icon={icons.Pipe}>
-                        <B>ValueFromPipeline</B> asocia automáticamente los valores del pipeline con el parámetro
+                        <B>ValueFromPipeline</B> asocia automáticamente los valores del pipeline con
+                        el parámetro
                         <PowerShellInline code="$Number" />. Así, <PowerShellInline
                             code="1..5 | .\\Get-DoubledNumber.ps1"
-                        /> enviará cada número como un elemento independiente al bloque <I>process</I>.
+                        /> enviará cada número como un elemento independiente al bloque <I
+                        >process</I>.
                     </ListItem>
 
                     <ListItem icon={icons.Code}>
-                        <B>Emisión implícita de objetos</B>: en PowerShell, el último valor evaluado en <I>process</I>
-                        se envía automáticamente al pipeline. No es necesario usar <PowerShellInline code="return" />,
-                        ya que interrumpe el flujo y detiene el procesamiento de los siguientes elementos.
+                        <B>Emisión implícita de objetos</B>: en PowerShell, el último valor evaluado
+                        en <I>process</I>
+                        se envía automáticamente al pipeline. No es necesario usar <PowerShellInline
+                            code="return"
+                        />, ya que interrumpe el flujo y detiene el procesamiento de los siguientes
+                        elementos.
                     </ListItem>
 
                     <ListItem icon={icons.Cpu}>
-                        <B>Streaming real</B>: el bloque <I>process</I> se ejecuta una vez por cada elemento recibido,
-                        reduciendo el uso de memoria y permitiendo producir resultados antes de leer toda la entrada.
+                        <B>Streaming real</B>: el bloque <I>process</I> se ejecuta una vez por cada
+                        elemento recibido, reduciendo el uso de memoria y permitiendo producir
+                        resultados antes de leer toda la entrada.
                     </ListItem>
 
                     <ListItem icon={icons.SlidersHorizontal}>
-                        <B>Salida componible</B>: al devolver objetos en lugar de texto, los resultados pueden seguir
-                        fluyendo por el pipeline y combinarse con otros cmdlets (<PowerShellInline
-                            code="Where-Object"
-                        />,
-                        <PowerShellInline code="Sort-Object" />, <PowerShellInline code="Export-Csv" />, etc.).
+                        <B>Salida componible</B>: al devolver objetos en lugar de texto, los
+                        resultados pueden seguir fluyendo por el pipeline y combinarse con otros
+                        cmdlets (<PowerShellInline code="Where-Object" />,
+                        <PowerShellInline code="Sort-Object" />, <PowerShellInline
+                            code="Export-Csv"
+                        />, etc.).
                     </ListItem>
                 </List>
             </Explanation>
@@ -203,7 +221,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     Desde <code>scripts/pipeline</code>.
                 </Fragment>
                 <Fragment slot="footer">
-                    Filtra para mostrar solo los números cuyo doble es mayor que 5 y <I>formatea</I> al final.
+                    Filtra para mostrar solo los números cuyo doble es mayor que 5 y <I>formatea</I>
+                    al final.
                 </Fragment>
             </PowerShellBlock>
 
@@ -230,19 +249,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p class="mb-2">
-            Además de <PowerShellInline code="ValueFromPipeline" />, que envía el objeto completo al parámetro,
+            Además de <PowerShellInline code="ValueFromPipeline" />, que envía el objeto completo al
+            parámetro,
             <PowerShellInline code="ValueFromPipelineByPropertyName" /> permite que PowerShell haga
-            <I>binding</I> por <B>nombre de propiedad</B>. En otras palabras, si el objeto que viaja por el pipeline
-            tiene una propiedad con el mismo nombre que un parámetro, ese valor se asigna automáticamente sin necesidad
-            de mapearlo manualmente.
+            <I>binding</I> por <B>nombre de propiedad</B>. En otras palabras, si el objeto que viaja
+            por el pipeline tiene una propiedad con el mismo nombre que un parámetro, ese valor se
+            asigna automáticamente sin necesidad de mapearlo manualmente.
         </p>
 
         <p class="mb-2">
-            Este enfoque es ideal cuando los objetos de entrada contienen mucha información, pero tu función solo
-            necesita una parte específica (por ejemplo, <PowerShellInline code="Path" />, <PowerShellInline
-                code="FullName"
-            /> o <PowerShellInline code="Id" />). Así, la composición entre comandos se mantiene fluida y evitas pasos
-            intermedios como <PowerShellInline code="Select-Object" /> solo para extraer propiedades.
+            Este enfoque es ideal cuando los objetos de entrada contienen mucha información, pero tu
+            función solo necesita una parte específica (por ejemplo, <PowerShellInline
+                code="Path"
+            />, <PowerShellInline code="FullName" /> o <PowerShellInline code="Id" />). Así, la
+            composición entre comandos se mantiene fluida y evitas pasos intermedios como
+            <PowerShellInline code="Select-Object" /> solo para extraer propiedades.
         </p>
 
         <PowerShellBlock
@@ -275,10 +296,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Explanation>
             <p class="mb-2">
-                <B>Uso de <PowerShellInline code="[Alias()]" /></B>: este atributo permite declarar nombres alternativos
-                para un mismo parámetro. Cuando un objeto en el pipeline tiene una propiedad cuyo nombre coincide con el
-                del parámetro o con alguno de sus alias, PowerShell enlaza automáticamente ese valor. El orden de
-                resolución es:
+                <B>Uso de <PowerShellInline code="[Alias()]" /></B>: este atributo permite declarar
+                nombres alternativos para un mismo parámetro. Cuando un objeto en el pipeline tiene
+                una propiedad cuyo nombre coincide con el del parámetro o con alguno de sus alias,
+                PowerShell enlaza automáticamente ese valor. El orden de resolución es:
             </p>
             <List>
                 <ListItem icon={icons.NumberCircleOne}>
@@ -292,8 +313,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
             </List>
             <p>
-                Este mecanismo permite crear scripts que se integran fácilmente con productores de objetos que usan
-                diferentes nombres de propiedad.
+                Este mecanismo permite crear scripts que se integran fácilmente con productores de
+                objetos que usan diferentes nombres de propiedad.
             </p>
         </Explanation>
 
@@ -328,16 +349,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Warning>
             <Fragment slot="title">Usa los alias con moderación</Fragment>
             <p class="mb-2">
-                Agregar demasiados alias puede provocar colisiones entre parámetros y dificultar el <I>binding</I>.
-                Limítate a <I>dos o tres alias</I> ampliamente reconocidos en el ecosistema (<PowerShellInline
-                    code="FullName"
-                />, <PowerShellInline code="Path" />, <PowerShellInline code="Id" />) y documenta claramente los nombres
-                aceptados en la ayuda de tu función.
+                Agregar demasiados alias puede provocar colisiones entre parámetros y dificultar el
+                <I>binding</I>. Limítate a <I>dos o tres alias</I> ampliamente reconocidos en el
+                ecosistema (<PowerShellInline code="FullName" />, <PowerShellInline code="Path" />,
+                <PowerShellInline code="Id" />) y documenta claramente los nombres aceptados en la
+                ayuda de tu función.
             </p>
 
             <p>
-                Si dos parámetros pueden coincidir con la misma propiedad, PowerShell fallará el enlace. En ese caso,
-                renombra el parámetro más específico, elimina alias redundantes o pide al usuario desambiguar usando
+                Si dos parámetros pueden coincidir con la misma propiedad, PowerShell fallará el
+                enlace. En ese caso, renombra el parámetro más específico, elimina alias redundantes
+                o pide al usuario desambiguar usando
                 <PowerShellInline code="Select-Object @{n='NombreEsperado';e={$_.Prop}}" />.
             </p>
         </Warning>
@@ -349,15 +371,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </span>
 
         <p class="mb-3">
-            Hasta ahora hemos visto cómo los scripts pueden recibir datos del pipeline de dos maneras distintas:
-            enviando el objeto completo (<PowerShellInline code="ValueFromPipeline" />) o enlazando por nombre de
-            propiedad (<PowerShellInline code="ValueFromPipelineByPropertyName" />). En este ejercicio combinaremos
-            ambos enfoques dentro de una misma función usando <B>parameter sets</B> —grupos de parámetros mutuamente
-            excluyentes que permiten definir diferentes “modos” de invocación.
+            Hasta ahora hemos visto cómo los scripts pueden recibir datos del pipeline de dos
+            maneras distintas: enviando el objeto completo (<PowerShellInline
+                code="ValueFromPipeline"
+            />) o enlazando por nombre de propiedad (<PowerShellInline
+                code="ValueFromPipelineByPropertyName"
+            />). En este ejercicio combinaremos ambos enfoques dentro de una misma función usando <B
+            >parameter sets</B> —grupos de parámetros mutuamente excluyentes que permiten definir
+            diferentes “modos” de invocación.
         </p>
 
         <p class="mb-3">
-            PowerShell elige automáticamente el conjunto apropiado según los argumentos que recibe. Por ejemplo:
+            PowerShell elige automáticamente el conjunto apropiado según los argumentos que recibe.
+            Por ejemplo:
         </p>
 
         <PowerShellBlock
@@ -379,10 +405,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 }
             `}
         >
-            <Fragment slot="title">Ejemplo básico de <PowerShellInline code="ParameterSetName" /></Fragment>
+            <Fragment slot="title">Ejemplo básico de <PowerShellInline
+                    code="ParameterSetName"
+                /></Fragment>
             <Fragment slot="footer">
-                Cada invocación activa un conjunto distinto; PowerShell impide combinar parámetros de conjuntos
-                incompatibles.
+                Cada invocación activa un conjunto distinto; PowerShell impide combinar parámetros
+                de conjuntos incompatibles.
             </Fragment>
             <span slot="source">Example.ps1</span>
         </PowerShellBlock>
@@ -396,22 +424,26 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <Fragment slot="title">Invocaciones</Fragment>
             <Fragment slot="footer">
-                La tercera línea falla porque mezcla parámetros de conjuntos distintos. PowerShell obliga a elegir uno u
-                otro.
+                La tercera línea falla porque mezcla parámetros de conjuntos distintos. PowerShell
+                obliga a elegir uno u otro.
             </Fragment>
         </PowerShellBlock>
 
         <p class="mt-3">
             En nuestro caso, definiremos dos modos:
-            <B><code>ByPath</code></B> y <B><code>ByObject</code></B>. El primero acepta rutas mediante
-            <PowerShellInline code="ValueFromPipelineByPropertyName" />, encajando propiedades como <code
-            >FullName</code> o <code>Path</code> gracias a
-            <PowerShellInline code="[Alias('FullName', 'Path')]" />. El segundo acepta directamente objetos
+            <B><code>ByPath</code></B> y <B><code>ByObject</code></B>. El primero acepta rutas
+            mediante
+            <PowerShellInline code="ValueFromPipelineByPropertyName" />, encajando propiedades como
+            <code>FullName</code> o <code>Path</code> gracias a
+            <PowerShellInline code="[Alias('FullName', 'Path')]" />. El segundo acepta directamente
+            objetos
             <PowerShellInline code="[System.IO.FileInfo]" />
-            desde el pipeline mediante <PowerShellInline code="ValueFromPipeline" />. Ambos validan que la ruta exista
-            (<PowerShellInline code="-PathType Leaf" />), llevan un contador y emiten, por cada archivo, las propiedades
-            <code>Name</code>, <code>Path</code>, <code>Length</code> y <code>LastWriteTime</code>. Esto demuestra cómo
-            una misma función puede adaptarse a distintos tipos de entrada sin duplicar código.
+            desde el pipeline mediante <PowerShellInline code="ValueFromPipeline" />. Ambos validan
+            que la ruta exista (<PowerShellInline code="-PathType Leaf" />), llevan un contador y
+            emiten, por cada archivo, las propiedades
+            <code>Name</code>, <code>Path</code>, <code>Length</code> y <code>LastWriteTime</code>.
+            Esto demuestra cómo una misma función puede adaptarse a distintos tipos de entrada sin
+            duplicar código.
         </p>
 
         <Hints>
@@ -419,14 +451,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.ShieldCheck}>
                     <B>Valida la entrada en <code>ByPath</code></B>: usa <PowerShellInline
                         code="[ValidateScript({ ... })]"
-                    /> para asegurarte de que el argumento existe y corresponde a un archivo. Esto evita errores de ruta
-                    inexistente antes de procesar el flujo.
+                    /> para asegurarte de que el argumento existe y corresponde a un archivo. Esto
+                    evita errores de ruta inexistente antes de procesar el flujo.
                 </ListItem>
 
                 <ListItem icon={icons.FolderOpen}>
-                    <B>Obtén el archivo correctamente</B>: si el conjunto activo es <code>ByObject</code>, usa
-                    directamente
-                    <PowerShellInline code="$InputObject" />. Si es <code>ByPath</code>, primero resuelve la ruta con
+                    <B>Obtén el archivo correctamente</B>: si el conjunto activo es <code
+                    >ByObject</code>, usa directamente
+                    <PowerShellInline code="$InputObject" />. Si es <code>ByPath</code>, primero
+                    resuelve la ruta con
                     <PowerShellInline code="Resolve-Path" />
                     y luego obtén el objeto <PowerShellInline code="FileInfo" /> mediante
                     <PowerShellInline code="Get-Item" />.
@@ -499,31 +532,37 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <p class="mb-2">
-                En esta lección dimos el salto de <I>usar</I> el pipeline a <I>diseñar</I> para él. Viste cómo
-                estructurar funciones y scripts con los bloques <B>begin / process / end</B> para procesar elementos en
-                streaming, emitiendo <B>objetos</B> listos para seguir fluyendo.
+                En esta lección dimos el salto de <I>usar</I> el pipeline a <I>diseñar</I> para él.
+                Viste cómo estructurar funciones y scripts con los bloques <B>begin / process /
+                    end</B> para procesar elementos en streaming, emitiendo <B>objetos</B> listos
+                para seguir fluyendo.
             </p>
             <p>
                 También aprendiste a aceptar entrada del pipeline de dos formas —<PowerShellInline
                     code="ValueFromPipeline"
-                /> y <PowerShellInline code="ValueFromPipelineByPropertyName" />— y a combinarlas de forma segura con <B
-                >parameter sets</B>. Con ello, tu código se vuelve más componible, predecible y fácil de integrar con
-                otros cmdlets.
+                /> y <PowerShellInline code="ValueFromPipelineByPropertyName" />— y a combinarlas de
+                forma segura con <B>parameter sets</B>. Con ello, tu código se vuelve más
+                componible, predecible y fácil de integrar con otros cmdlets.
             </p>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Pipe}>
-                <B>begin / process / end</B>: inicializa una vez, procesa elemento a elemento, limpia al final.
+                <B>begin / process / end</B>: inicializa una vez, procesa elemento a elemento,
+                limpia al final.
             </ListItem>
             <ListItem icon={icons.Tag}>
-                <B>Entrada por objeto o por nombre</B>: usa <PowerShellInline code="ValueFromPipeline" /> para el objeto
-                entero y <PowerShellInline code="ValueFromPipelineByPropertyName" /> (con <PowerShellInline
-                    code="[Alias()]"
-                />) para encaje por propiedad; el <I>binding</I> es <I>case-insensitive</I>.
+                <B>Entrada por objeto o por nombre</B>: usa <PowerShellInline
+                    code="ValueFromPipeline"
+                /> para el objeto entero y <PowerShellInline
+                    code="ValueFromPipelineByPropertyName"
+                /> (con <PowerShellInline code="[Alias()]" />) para encaje por propiedad; el <I
+                >binding</I> es <I>case-insensitive</I>.
             </ListItem>
             <ListItem icon={icons.Table}>
-                <B>No formatees en medio</B>: emite objetos, deja <PowerShellInline code="Format-Table" /> (u otros
+                <B>No formatees en medio</B>: emite objetos, deja <PowerShellInline
+                    code="Format-Table"
+                /> (u otros
                 <PowerShellInline code="Format-_" />) <I>solo</I> para el final.
             </ListItem>
             <ListItem icon={icons.SlidersHorizontal}>
@@ -532,27 +571,30 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 />; normaliza la entrada a un único modelo interno.
             </ListItem>
             <ListItem icon={icons.ShieldCheck}>
-                <B>Resiliencia</B>: valida temprano (<PowerShellInline code="[ValidateScript()]" />), registra con
+                <B>Resiliencia</B>: valida temprano (<PowerShellInline
+                    code="[ValidateScript()]"
+                />), registra con
                 <PowerShellInline code="Write-Verbose" /> y maneja errores con mensajes claros.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
             <p class="mb-2">
-                Dominar el <I>pipeline-awareness</I> es entender que los scripts no solo <I>usan</I> el pipeline, sino
-                que <I>forman parte de él</I>. Cada bloque —<B>begin</B>, <B>process</B> y <B>end</B>— aporta una etapa
-                clara del flujo y, bien diseñados, permiten que tus funciones se comporten como verdaderos cmdlets del
-                sistema.
+                Dominar el <I>pipeline-awareness</I> es entender que los scripts no solo <I>usan</I>
+                el pipeline, sino que <I>forman parte de él</I>. Cada bloque —<B>begin</B>, <B
+                >process</B> y <B>end</B>— aporta una etapa clara del flujo y, bien diseñados,
+                permiten que tus funciones se comporten como verdaderos cmdlets del sistema.
             </p>
             <p class="mb-2">
-                Esta forma de pensar favorece la <B>composición</B> y el <B>procesamiento progresivo</B>: tus scripts
-                dejan de ser piezas aisladas para convertirse en nodos dentro de un flujo continuo de datos, eficientes
-                y fáciles de combinar.
+                Esta forma de pensar favorece la <B>composición</B> y el <B>procesamiento
+                    progresivo</B>: tus scripts dejan de ser piezas aisladas para convertirse en
+                nodos dentro de un flujo continuo de datos, eficientes y fáciles de combinar.
             </p>
             <p>
-                En la próxima lección aplicaremos estos principios a un caso más realista, con datos estructurados,
-                validaciones y salidas acumuladas. Verás cómo los mismos bloques <I>begin/process/end</I> escalan
-                naturalmente hacia tareas más complejas sin perder claridad ni rendimiento.
+                En la próxima lección aplicaremos estos principios a un caso más realista, con datos
+                estructurados, validaciones y salidas acumuladas. Verás cómo los mismos bloques <I
+                >begin/process/end</I> escalan naturalmente hacia tareas más complejas sin perder
+                claridad ni rendimiento.
             </p>
         </Fragment>
     </ConclusionsLayout>
@@ -567,13 +609,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
                 <Fragment slot="description">
-                    Capítulo práctico que profundiza en el <B>pipeline de PowerShell</B> y su <B>parameter binding</B>.
-                    Explica cómo los comandos encajan por <B>ByValue</B> y <B>ByPropertyName</B>, cuándo uno falla y
-                    entra el otro, y cómo <B>modelar/transformar</B> datos en tránsito (p. ej., <PowerShellInline
+                    Capítulo práctico que profundiza en el <B>pipeline de PowerShell</B> y su <B
+                    >parameter binding</B>. Explica cómo los comandos encajan por <B>ByValue</B> y
+                    <B>ByPropertyName</B>, cuándo uno falla y entra el otro, y cómo <B
+                    >modelar/transformar</B> datos en tránsito (p. ej., <PowerShellInline
                         code="Select-Object -Property"
-                    /> vs <PowerShellInline code="-ExpandProperty" />). Incluye casos con CSV, AD y Azure, trucos con <B
-                    >paréntesis</B> para pasar resultados directamente a parámetros, y un <B>lab</B> final para afianzar
-                    conceptos.
+                    /> vs <PowerShellInline code="-ExpandProperty" />). Incluye casos con CSV, AD y
+                    Azure, trucos con <B>paréntesis</B> para pasar resultados directamente a
+                    parámetros, y un <B>lab</B> final para afianzar conceptos.
                 </Fragment>
             </Book>
         </Fragment>

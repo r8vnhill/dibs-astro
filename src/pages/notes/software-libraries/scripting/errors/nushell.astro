@@ -1,0 +1,302 @@
+---
+import * as icons from "$icons";
+import Heading from "~/components/semantics/Heading.astro";
+import { Abstract } from "~/components/ui/callouts";
+import ToDo from "~/components/utils/ToDo";
+import { NotesSection } from "~/layouts";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+---
+
+<NotesLayout
+    title="Manejo de errores en Nushell (comparativa con PowerShell)"
+    description="Lección comparativa: cómo manejar fallos en Nushell asumiendo que ya conoces el modelo de errores en PowerShell. Cubrimos try/catch, estrategias para seguir procesando en lote, creación de errores propios (error make) y un patrón seguro para ejecutar comandos externos con complete."
+>
+    <NotesSection id="h2-intro">
+        <Heading
+            headingLevel="h2" Icon={icons.TerminalWindow}
+            slot="heading"
+        >
+            Idea general
+        </Heading>
+
+        <Abstract>
+            <ToDo
+                client:only="react"
+                metadata={{
+                    tasks: [
+                        `Ya viste que, en <Mono>PowerShell</Mono>, la gran pregunta es <B>cuándo</B> convertir
+                un fallo en terminante para controlar el flujo (y cuándo seguir y reportar). En
+                <B>Nushell</B> el enfoque es un poco distinto: una condición de error <B>termina</B>
+                la evaluación del comando/bloque, y tú decides explícitamente si quieres
+                <B>capturar</B>, <B>ignorar</B> o <B>convertir</B> ese fallo en <I>datos</I> para
+                seguir procesando.`,
+                    ],
+                }}
+            />
+        </Abstract>
+    </NotesSection>
+
+    <ToDo
+        client:only="react"
+        metadata={{
+            tasks: [
+                "...",
+            ],
+        }}
+    />
+    {
+        /*
+        <NotesSection id="h2-error-model">
+            <Heading headingLevel="h2" Icon={icons.Warning} slot="heading">
+                Modelo mental: “el error corta”
+            </Heading>
+
+            <Definition headingLevel="h3">
+                <span slot="title">Qué significa “ocurrió un error” en Nushell</span>
+
+                <P>
+                    En Nushell, un error (por ejemplo, una división inválida o un archivo inexistente)
+                    <B>interrumpe</B> la evaluación de la expresión/bloque actual. Esto se parece más al
+                    comportamiento de un <I>error terminante</I> que a uno no terminante.
+                </P>
+
+                <P>
+                    La consecuencia práctica es que, si quieres el equivalente de “procesa N cosas y
+                    reporta por ítem”, debes envolver el trabajo por ítem con <Mono>try</Mono>/<Mono
+                    >catch</Mono> o usar <Mono>do</Mono> con flags para controlar cómo reaccionar.
+                </P>
+            </Definition>
+
+            <Tip headingLevel="h3">
+                <span slot="title">Comparativa rápida</span>
+                <List>
+                    <ListItem icon={icons.SplitHorizontal}>
+                        <B>PowerShell:</B> convive con errores no terminantes y tú decides cuándo
+                        “subirlos” a terminantes.
+                    </ListItem>
+                    <ListItem icon={icons.ArrowsSplit}>
+                        <B>Nushell:</B> el error corta el flujo <I>salvo</I> que lo captures o lo
+                        conviertas en un resultado alternativo.
+                    </ListItem>
+                </List>
+            </Tip>
+        </NotesSection>
+
+        <NotesSection id="h2-try-catch">
+            <Heading headingLevel="h2" Icon={icons.Lifebuoy} slot="heading">
+                try/catch: capturar y decidir
+            </Heading>
+
+            <Info headingLevel="h3">
+                <span slot="title">Capturar un fallo y devolver un valor alternativo</span>
+                <CodeBlock
+                    lang="nu"
+                    code={`
+                    try { 1 / 0 } catch { 'no se puede dividir por cero' }
+                `}
+                >
+                    <span slot="title">Fallback simple</span>
+                </CodeBlock>
+            </Info>
+
+            <Info headingLevel="h3">
+                <span slot="title">Leer el mensaje del error (catch con parámetro)</span>
+                <CodeBlock
+                    lang="nu"
+                    code={`
+                    try { 1 / 0 } catch { |err| $err.msg }
+                `}
+                >
+                    <span slot="title">Inspeccionar el error</span>
+                </CodeBlock>
+            </Info>
+
+            <Explanation headingLevel="h3">
+                <List>
+                    <ListItem icon={icons.Bug}>
+                        En <Mono>catch</Mono>, el parámetro (por convención <Mono>err</Mono>) es un
+                        <B>record</B> con información útil (por ejemplo <Mono>msg</Mono>).
+                    </ListItem>
+                    <ListItem icon={icons.BracketsCurly}>
+                        Esto facilita el patrón “si falla, devuelve un record estándar” para poder
+                        seguir en pipeline sin depender de texto suelto.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </NotesSection>
+
+        <NotesSection id="h2-batch">
+            <Heading headingLevel="h2" Icon={icons.ListChecks} slot="heading">
+                “Seguir en lote”: convertir el fallo en datos
+            </Heading>
+
+            <P>
+                Si tu objetivo es procesar muchos ítems y <B>no abortar todo</B> cuando uno falla, la
+                técnica típica es: <I>capturar por ítem</I> y devolver una fila con <Mono>ok</Mono> y
+                un <Mono>error</Mono> legible.
+            </P>
+
+            <CodeBlock
+                lang="nu"
+                code={`
+                let paths = [ './data/ok.json' './data/missing.json' './data/bad.json' ]
+
+                $paths
+                | each {|p|
+                    try {
+                        let data = (open $p | from json)
+                        { path: $p ok: true data: $data }
+                    } catch {|err|
+                        { path: $p ok: false error: $err.msg }
+                    }
+                }
+                | table
+            `}
+            >
+                <span slot="title">Reporte por ítem sin abortar el lote</span>
+            </CodeBlock>
+
+            <More headingLevel="h3">
+                <span slot="title">Ignorar errores explícitamente</span>
+                <P>
+                    Cuando de verdad quieres “me da lo mismo si falla”, Nushell expone una opción
+                    explícita:
+                    <Mono>do --ignore-errors</Mono> (alias <Mono>do -i</Mono>). Úsalo con moderación:
+                    es fácil esconder problemas reales.
+                </P>
+                <CodeBlock
+                    lang="nu"
+                    code={`
+                    do -i { open ./data/missing.json | from json }
+                `}
+                >
+                    <span slot="title">Ignorar fallos dentro de un bloque</span>
+                </CodeBlock>
+            </More>
+        </NotesSection>
+
+        <NotesSection id="h2-custom-errors">
+            <Heading headingLevel="h2" Icon={icons.Sparkle} slot="heading">
+                Crear errores propios con contexto (error make)
+            </Heading>
+
+            <P>
+                Nushell permite crear errores “bonitos” con <B>estructura</B> (mensaje, etiquetas y
+                hasta un <I>span</I> subrayado). Esto hace que tus comandos se sientan más como una
+                herramienta con diagnósticos, y menos como un script que imprime texto.
+            </P>
+
+            <CodeBlock
+                lang="nu"
+                code={`
+                def ensure-nonempty [name: string] {
+                    if ($name | str trim | is-empty) {
+                        let span = (metadata $name).span
+                        error make {
+                            msg: 'nombre inválido'
+                            labels: { text: 'aquí no puede ir vacío', span: $span }
+                        }
+                    }
+
+                    $name
+                }
+
+                ensure-nonempty ''
+            `}
+            >
+                <span slot="title">Error con etiqueta y span</span>
+            </CodeBlock>
+
+            <Warning headingLevel="h3">
+                <span slot="title">Algo que Nushell trae más “de fábrica”</span>
+                <P>
+                    El combo <Mono>metadata</Mono> + <Mono>error make</Mono> te deja apuntar al
+                    argumento exacto que provocó el problema, con un estilo tipo compilador. En
+                    PowerShell puedes adjuntar contexto, pero este tipo de “span con etiqueta” no es
+                    una primitiva tan directa del lenguaje.
+                </P>
+            </Warning>
+        </NotesSection>
+
+        <NotesSection id="h2-external-tools">
+            <Heading headingLevel="h2" Icon={icons.Gear} slot="heading">
+                Comandos externos: capturar stdout/stderr/exit_code como un record
+            </Heading>
+
+            <P>
+                En Nushell, los comandos externos se invocan con <Mono>^</Mono>. Para manejarlos de
+                forma robusta, un patrón útil es usar <Mono>complete</Mono> para capturar
+                <Mono>stdout</Mono>, <Mono>stderr</Mono> y <Mono>exit_code</Mono> en un solo record.
+            </P>
+
+            <CodeBlock
+                lang="nu"
+                code={`
+                let url = 'https://example.com/file.txt'
+
+                let r = (do { ^curl -fsSL $url } | complete)
+
+                if $r.exit_code != 0 {
+                    error make -u {
+                        msg: $"curl falló (exit_code=($r.exit_code))"
+                        labels: { text: $r.stderr }
+                    }
+                }
+
+                $r.stdout
+            `}
+            >
+                <span slot="title">Wrapper mínimo con complete</span>
+            </CodeBlock>
+
+            <Explanation headingLevel="h3">
+                <List>
+                    <ListItem icon={icons.Table}>
+                        <B>Salida estructurada:</B> <Mono>complete</Mono> devuelve un <I>record</I>
+                        (ideal para pipelines, logs y pruebas).
+                    </ListItem>
+                    <ListItem icon={icons.HandPalm}>
+                        <B>Fallos explícitos:</B> evalúas <Mono>exit_code</Mono> y elevas con un
+                        mensaje útil (sin perder <Mono>stderr</Mono>).
+                    </ListItem>
+                </List>
+            </Explanation>
+        </NotesSection>
+
+        <NotesSection id="h2-exercise">
+            <Heading headingLevel="h2" Icon={icons.PencilLine} slot="heading">
+                Ejercicio corto (análogamente al patrón de fallback)
+            </Heading>
+
+            <Exercise>
+                <span slot="title">Descargar con fallback y resultado estructurado</span>
+
+                <P>
+                    Implementa <Mono>fetch</Mono> que intente descargar una URL con <Mono>curl</Mono>
+                    si existe; si no, prueba <Mono>wget</Mono>. Debe devolver un record estable, por
+                    ejemplo:
+                    <Mono>{`{ ok: bool, tool: string, exit_code: int, stdout: string, stderr: string }`}</Mono>.
+                </P>
+
+                <Info>
+                    <span slot="title">Pistas</span>
+                    <List>
+                        <ListItem icon={icons.MagnifyingGlass}>
+                            Usa <Mono>which</Mono> para detectar disponibilidad (y decide qué hacer si
+                            no hay ninguna herramienta).
+                        </ListItem>
+                        <ListItem icon={icons.Table}>
+                            Usa <Mono>do {`{ ... }`}</Mono> + <Mono>complete</Mono> para capturar
+                            salida y código.
+                        </ListItem>
+                        <ListItem icon={icons.Warning}>
+                            Si ambas fallan, usa <Mono>error make</Mono> con un mensaje que incluya la
+                            URL y el <Mono>exit_code</Mono>.
+                        </ListItem>
+                    </List>
+                </Info>
+            </Exercise>
+        </NotesSection>
+        */
+    }
+</NotesLayout>

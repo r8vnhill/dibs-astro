@@ -1,31 +1,31 @@
-import clsx from 'clsx';
-import type { JSX } from 'react';
-import type { Theme } from '~/utils';
+import clsx from "clsx";
+import type { JSX } from "react";
+import type { Theme } from "~/utils";
 
 /**
  * Represents a selectable item within a theme switcher dropdown.
  */
 type ThemeListItemProps = {
-  /**
-   * The theme value represented by this item (e.g., 'light', 'dark', 'auto').
-   */
-  value: Theme;
-  /**
-   * Indicates if this item is currently selected.
-   */
-  isSelected: boolean;
-  /**
-   * Callback triggered when this item is selected.
-   */
-  onSelect: (value: Theme) => void;
-  /**
-   * Icon associated with the theme option.
-   */
-  icon: JSX.Element;
-  /**
-   * Display name for the theme option (e.g., 'Claro', 'Oscuro').
-   */
-  label: string;
+    /**
+     * The theme value represented by this item (e.g., 'light', 'dark', 'auto').
+     */
+    value: Theme;
+    /**
+     * Indicates if this item is currently selected.
+     */
+    isSelected: boolean;
+    /**
+     * Callback triggered when this item is selected.
+     */
+    onSelect: (value: Theme) => void;
+    /**
+     * Icon associated with the theme option.
+     */
+    icon: JSX.Element;
+    /**
+     * Display name for the theme option (e.g., 'Claro', 'Oscuro').
+     */
+    label: string;
 };
 
 /**
@@ -39,27 +39,27 @@ type ThemeListItemProps = {
  * @returns A JSX list item representing the theme option.
  */
 export function ThemeListItem({
-  value,
-  isSelected,
-  onSelect,
-  icon,
-  label,
+    value,
+    isSelected,
+    onSelect,
+    icon,
+    label,
 }: ThemeListItemProps): JSX.Element {
-  return (
-    <li role="option" aria-selected={isSelected}>
-      <button
-        type="button"
-        onClick={() => onSelect(value)} // Notify parent of selection
-        className={clsx(
-          'flex w-full items-center gap-2 rounded px-3 py-1 text-left',
-          'hover:bg-gray-300 dark:hover:bg-gray-700', // Visual feedback on hover
-          isSelected && 'font-semibold' // Bold text if this is the selected theme
-        )}
-        aria-label={`Cambiar tema a ${label}`} // Accessibility label
-      >
-        {icon}
-        <span>{label}</span>
-      </button>
-    </li>
-  );
+    return (
+        <li role="option" aria-selected={isSelected}>
+            <button
+                type="button"
+                onClick={() => onSelect(value)} // Notify parent of selection
+                className={clsx(
+                    "flex w-full items-center gap-2 rounded px-3 py-1 text-left",
+                    "hover:bg-gray-300 dark:hover:bg-gray-700", // Visual feedback on hover
+                    isSelected && "font-semibold", // Bold text if this is the selected theme
+                )}
+                aria-label={`Cambiar tema a ${label}`} // Accessibility label
+            >
+                {icon}
+                <span>{label}</span>
+            </button>
+        </li>
+    );
 }

@@ -9,20 +9,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
 <NotesLayout
     title="Patrones básicos de scripting en Python"
     description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
-    timeMultiplier={1.5}
-    git={{ user: "r8vnhill", repo: "..." }}
+    timeMultiplier={1.5} git={{ user: "r8vnhill", repo: "..." }}
 >
     <Abstract>
         ...
     </Abstract>
 
     <NotesSection id="h2-dry-run">
-        <Heading headingLevel="h2" Icon={null}
+        <Heading
+            headingLevel="h2" Icon={null}
             slot="heading"
         >
             ...
         </Heading>
-    
+
         <ToDo
             client:only="react"
             metadata={{

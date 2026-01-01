@@ -3,25 +3,25 @@ import PowerShellBlock from "./PowerShellBlock.astro";
 import PowerShellTerminal from "./PowerShellTerminal.astro";
 
 type Props = {
-  code: string;
-  command: string;
+    code: string;
+    command: string;
 };
 
 const { code, command }: Props = Astro.props;
 ---
 
-<PowerShellBlock code={code}>
-  <span slot="title">
-    <slot name="title" />
-  </span>
-  <span slot="source">
-    <slot name="source" />
-  </span>
+<PowerShellBlock {code}>
+    <span slot="title">
+        <slot name="title" />
+    </span>
+    <span slot="source">
+        <slot name="source" />
+    </span>
 </PowerShellBlock>
 
 <Fragment slot="description"></Fragment>
 <p>
-  Guarda este script como <code slot="source"></code> y ejecútalo en la terminal:
+    Guarda este script como <code slot="source"></code> y ejecútalo en la terminal:
 </p>
 
-<PowerShellTerminal code={command}/>
+<PowerShellTerminal code={command} />

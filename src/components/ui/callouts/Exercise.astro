@@ -3,69 +3,73 @@ import * as Icons from "~/assets/img/icons";
 import { Info, Note } from ".";
 import CalloutShell from "./CalloutShell.astro";
 import Hints from "./Hints.astro";
-import Solution from "./Solution.astro";
-import Tip from "./Tip.astro";
 import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
+import Solution from "./Solution.astro";
+import Tip from "./Tip.astro";
 
 type ExerciseProps = BaseCalloutProps;
 
 const variant = "exercise" as const;
 const variantConfig = calloutVariants[variant];
 
-const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
-  Astro.props as ExerciseProps & Record<string, any>;
+const { title = variantConfig.title, icon = variantConfig.icon, ...rest } = Astro.props as
+    & ExerciseProps
+    & Record<string, any>;
 const hasTitleSlot = Astro.slots.has("title");
 ---
-<CalloutShell variant={variant} title={title} icon={icon} {...rest}>
-  {
-    hasTitleSlot && (
-      <Fragment slot="title">
-        Ejercicio: <slot name="title" />
-      </Fragment>
-    )
-  }
+<CalloutShell
+    {variant} {title}
+    {icon} {...rest}
+>
+    {
+        hasTitleSlot && (
+            <Fragment slot="title">
+                Ejercicio: <slot name="title" />
+            </Fragment>
+        )
+    }
 
-  {
-    Astro.slots.requirements && (
-      <Tip headingLevel="h3" icon={Icons.Target}>
-        <span slot="title">Requisitos</span>
+    {
+        Astro.slots.requirements && (
+            <Tip headingLevel="h3" icon={Icons.Target}>
+                <span slot="title">Requisitos</span>
 
-        <slot name="requirements" />
-      </Tip>
-    )
-  }
-  {
-    Astro.slots.notes && (
-      <Note headingLevel="h3">
-        <span slot="title">Notas</span>
+                <slot name="requirements" />
+            </Tip>
+        )
+    }
+    {
+        Astro.slots.notes && (
+            <Note headingLevel="h3">
+                <span slot="title">Notas</span>
 
-        <slot name="notes" />
-      </Note>
-    )
-  }
-  <slot />
-  {
-    Astro.slots.use && (
-      <Info headingLevel="h3" icon={Icons.PlayCircle}>
-        <span slot="title">Uso esperado</span>
+                <slot name="notes" />
+            </Note>
+        )
+    }
+    <slot />
+    {
+        Astro.slots.use && (
+            <Info headingLevel="h3" icon={Icons.PlayCircle}>
+                <span slot="title">Uso esperado</span>
 
-        <slot name="use" />
-      </Info>
-    )
-  }
-  {
-    Astro.slots.hints && (
-      <Hints headingLevel="h3">
-        <slot name="hints" />
-      </Hints>
-    )
-  }
-  {
-    Astro.slots.solution && (
-      <Solution headingLevel="h3">
-        <slot name="solution" />
-      </Solution>
-    )
-  }
+                <slot name="use" />
+            </Info>
+        )
+    }
+    {
+        Astro.slots.hints && (
+            <Hints headingLevel="h3">
+                <slot name="hints" />
+            </Hints>
+        )
+    }
+    {
+        Astro.slots.solution && (
+            <Solution headingLevel="h3">
+                <slot name="solution" />
+            </Solution>
+        )
+    }
 </CalloutShell>

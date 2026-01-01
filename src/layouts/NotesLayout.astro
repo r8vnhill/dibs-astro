@@ -79,7 +79,10 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
         </div>
 
         <!-- Main content area -->
-        <div id="lesson-content" class:list={["flex-1", "px-4", "md:px-8", "max-w-screen-xl", "mx-auto"]}>
+        <div
+            id="lesson-content"
+            class:list={["flex-1", "px-4", "md:px-8", "max-w-screen-xl", "mx-auto"]}
+        >
             <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
 
             <ReadingTime multiplier={timeMultiplier ?? 1.5} />

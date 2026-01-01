@@ -27,9 +27,16 @@ const looksLikeCommit = /^[0-9a-f]{7,40}$/i.test(resolvedRef);
 const shortRef = looksLikeCommit ? resolvedRef.slice(0, 7) : resolvedRef;
 
 // GitLab usa `-/blob/<ref>/<file>` para cualquier referencia
-const startLine = typeof line === "number" && Number.isFinite(line) ? Math.max(1, Math.floor(line)) : undefined;
-const rawEndLine = typeof endLine === "number" && Number.isFinite(endLine) ? Math.max(1, Math.floor(endLine)) : undefined;
-const resolvedEndLine = startLine !== undefined && rawEndLine !== undefined && rawEndLine >= startLine ? rawEndLine : undefined;
+const startLine = typeof line === "number" && Number.isFinite(line)
+    ? Math.max(1, Math.floor(line))
+    : undefined;
+const rawEndLine = typeof endLine === "number" && Number.isFinite(endLine)
+    ? Math.max(1, Math.floor(endLine))
+    : undefined;
+const resolvedEndLine =
+    startLine !== undefined && rawEndLine !== undefined && rawEndLine >= startLine
+        ? rawEndLine
+        : undefined;
 const lineFragment = startLine !== undefined
     ? `#L${startLine}${resolvedEndLine ? `-${resolvedEndLine}` : ""}`
     : "";
@@ -47,8 +54,7 @@ const ariaLabel = `Fuente (${isExplicitRef ? resolvedRef : "main"}${lineLabel})`
 
 <Link
     {href} class:list={["dibs-source-link"]}
-    data-has-ref={isExplicitRef ? "true" : "false"}
-    aria-label={ariaLabel}
+    data-has-ref={isExplicitRef ? "true" : "false"} aria-label={ariaLabel}
 ><slot>{title ?? `${repo}/${file}`}</slot></Link><a {href} class:list={["dibs-source-link"]}>{
     isExplicitRef && <small class="ref-hint" aria-hidden="true">{shortRef}</small>
 }</a>
@@ -73,7 +79,14 @@ const ariaLabel = `Fuente (${isExplicitRef ? resolvedRef : "main"}${lineLabel})`
 
     /* Mini hint monoespaciado, con colores derivados del primary */
     .ref-hint {
-        font: 0.75em ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+        font:
+            0.75em ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            "Liberation Mono",
+            monospace;
         line-height: 1;
         padding: 0.1rem 0.3rem;
         border-radius: 0.25rem;

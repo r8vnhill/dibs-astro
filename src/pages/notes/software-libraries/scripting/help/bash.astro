@@ -36,8 +36,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En Bash no hay un índice único de comandos: se combinan varias utilidades. Úsalas en conjunto para cubrir lo
-            que en PowerShell harías con un solo cmdlet de descubrimiento.
+            En Bash no hay un índice único de comandos: se combinan varias utilidades. Úsalas en
+            conjunto para cubrir lo que en PowerShell harías con un solo cmdlet de descubrimiento.
         </P>
 
         <BashBlock
@@ -80,7 +80,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             `}
         ></BashBlock>
 
-        <OutputBlock code={`
+        <OutputBlock
+            code={`
             Comandos que contienen 'gradle' en el PATH:
             _gradle
             gradle
@@ -133,14 +134,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
             +vi-git-aheadbehind
             +vi-git-remotebranch
             ...
-        `} />
+        `}
+        />
         <Explanation>
             <List>
                 <ListItem icon={icons.Sparkle}>
                     <B>Completado y comandos “descubiertos” por el shell</B><br />
-                    <Mono>complete -p</Mono> — inspecciona reglas de autocompletado (útil para “aprender” opciones
-                    comunes).<br />
-                    <Mono>compgen -A function</Mono> — solo funciones; <Mono>compgen -A alias</Mono> — solo alias.
+                    <Mono>complete -p</Mono> — inspecciona reglas de autocompletado (útil para
+                    “aprender” opciones comunes).<br />
+                    <Mono>compgen -A function</Mono> — solo funciones; <Mono>compgen -A alias</Mono>
+                    — solo alias.
                 </ListItem>
             </List>
         </Explanation>
@@ -148,8 +151,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Tip Icon={icons.Lightbulb}>
             <Fragment slot="title">Pista rápida de descubrimiento</Fragment>
             <P>
-                Para tantear “qué hay de X”: <Mono>apropos X</Mono> (ideas), luego <Mono>type</Mono> para clasificar el
-                candidato y finalmente <Mono>man</Mono>/<Mono>--help</Mono> para concretar sintaxis.
+                Para tantear “qué hay de X”: <Mono>apropos X</Mono> (ideas), luego <Mono>type</Mono>
+                para clasificar el candidato y finalmente <Mono>man</Mono>/<Mono>--help</Mono> para
+                concretar sintaxis.
             </P>
         </Tip>
     </NotesSection>
@@ -163,39 +167,42 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En Bash la ayuda depende del tipo de comando. Los <I>builtins</I> tienen su propia ayuda; los ejecutables
-            suelen ofrecer <Mono>--help</Mono> y <Mono>man</Mono>. No hay un esquema uniforme de parámetros ni
-            metadatos.
+            En Bash la ayuda depende del tipo de comando. Los <I>builtins</I> tienen su propia
+            ayuda; los ejecutables suelen ofrecer <Mono>--help</Mono> y <Mono>man</Mono>. No hay un
+            esquema uniforme de parámetros ni metadatos.
         </P>
 
         <Explanation>
             <List>
                 <ListItem icon={icons.Cpu}>
                     <B>Builtins de Bash</B><br />
-                    <Mono>help cd</Mono> / <Mono>help printf</Mono> — documentación breve del builtin.<br />
-                    <Mono>help -d nombre</Mono> — resumen; <Mono>help -m nombre</Mono> — formato estilo <I>man</I>.
+                    <Mono>help cd</Mono> / <Mono>help printf</Mono> — documentación breve del
+                    builtin.<br />
+                    <Mono>help -d nombre</Mono> — resumen; <Mono>help -m nombre</Mono> — formato
+                    estilo <I>man</I>.
                 </ListItem>
 
                 <ListItem icon={icons.FileText}>
                     <B>Ejecutables del sistema</B><br />
                     <Mono>ls --help</Mono> — ayuda en línea de comandos (no estandarizada).<br />
-                    <Mono>man 1 ls</Mono> — página de manual completa (secciones: 1=usuario, 2=sistema, 3=biblioteca,
-                    etc.).<br />
-                    <Mono>MANPAGER='less -p "^ *OPTIONS"' man grep</Mono> — abre <I>man</I> resaltando la sección de
-                    opciones.
+                    <Mono>man 1 ls</Mono> — página de manual completa (secciones: 1=usuario,
+                    2=sistema, 3=biblioteca, etc.).<br />
+                    <Mono>MANPAGER='less -p "^ *OPTIONS"' man grep</Mono> — abre <I>man</I>
+                    resaltando la sección de opciones.
                 </ListItem>
 
                 <ListItem icon={icons.Bookmark}>
                     <B>Documentación extendida</B><br />
-                    <Mono>info coreutils 'printf invocation'</Mono> — manuales <I>info</I> con más detalle y
-                    navegación.<br />
-                    <Mono>tldr tar</Mono> — resúmenes comunitarios (si instalas <I>tldr</I>); o <Mono>curl
-                        cheat.sh/tar</Mono>.
+                    <Mono>info coreutils 'printf invocation'</Mono> — manuales <I>info</I> con más
+                    detalle y navegación.<br />
+                    <Mono>tldr tar</Mono> — resúmenes comunitarios (si instalas <I>tldr</I>); o
+                    <Mono>curl cheat.sh/tar</Mono>.
                 </ListItem>
 
                 <ListItem icon={icons.Globe}>
                     <B>Ayuda online</B><br />
-                    Muchas utilidades indican su URL en <Mono>--help</Mono> o la página <I>man</I>. Ej.: <I>GNU grep</I>
+                    Muchas utilidades indican su URL en <Mono>--help</Mono> o la página <I>man</I>.
+                    Ej.: <I>GNU grep</I>
                     enlaza a su manual web.
                 </ListItem>
             </List>
@@ -204,19 +211,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <More>
             <Fragment slot="title">Ejemplos comparativos (solo Bash)</Fragment>
             <P><B>Encontrar comandos “de procesos”:</B> <Mono>apropos process | head</Mono></P>
-            <P><B>Ver si <I>grep</I> es builtin, alias o binario y dónde vive:</B> <Mono>type -a grep</Mono></P>
+            <P><B>Ver si <I>grep</I> es builtin, alias o binario y dónde vive:</B> <Mono>type -a
+                    grep</Mono></P>
             <P><B>Aprender uso mínimo de un builtin:</B> <Mono>help pushd</Mono></P>
-            <P><B>Ver opciones y ejemplos cortos:</B> <Mono>tldr find</Mono> (o <Mono>man find</Mono> para el
-                completo)</P>
-            <P><B>Inspeccionar una función de shell que “descubriste”:</B> <Mono>type mi_funcion</Mono></P>
+            <P><B>Ver opciones y ejemplos cortos:</B> <Mono>tldr find</Mono> (o <Mono>man
+                    find</Mono> para el completo)</P>
+            <P><B>Inspeccionar una función de shell que “descubriste”:</B> <Mono>type
+                    mi_funcion</Mono></P>
         </More>
 
         <Warning>
             <Fragment slot="title">Limitación clave vs PowerShell</Fragment>
             <P>
-                En Bash no existen <I>conjuntos de parámetros</I> ni metadatos de tipado/validaciones accesibles de
-                forma estándar. Cada programa define su sintaxis; no puedes inferir automáticamente tipos, posiciones o
-                exclusividades como harías con la ayuda de un cmdlet.
+                En Bash no existen <I>conjuntos de parámetros</I> ni metadatos de
+                tipado/validaciones accesibles de forma estándar. Cada programa define su sintaxis;
+                no puedes inferir automáticamente tipos, posiciones o exclusividades como harías con
+                la ayuda de un cmdlet.
             </P>
         </Warning>
     </NotesSection>
@@ -235,12 +245,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Solo (o mejor) en Bash</B>
                     <List class="mt-2">
                         <ListItem icon={icons.BracketsCurly}>
-                            <I>Inspeccionar y editar</I> funciones de shell al vuelo: <Mono>type nombre</Mono> muestra
-                            su cuerpo; puedes redefinirlas en la sesión sin herramientas externas.
+                            <I>Inspeccionar y editar</I> funciones de shell al vuelo: <Mono>type
+                                nombre</Mono> muestra su cuerpo; puedes redefinirlas en la sesión
+                            sin herramientas externas.
                         </ListItem>
                         <ListItem icon={icons.Lightning}>
-                            <I>Completado específico</I> de cada herramienta: muchos paquetes instalan reglas de <Mono
-                            >complete</Mono>
+                            <I>Completado específico</I> de cada herramienta: muchos paquetes
+                            instalan reglas de <Mono>complete</Mono>
                             que aportan pistas de uso (aunque no son metadatos formales).
                         </ListItem>
                     </List>
@@ -250,13 +261,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Solo (o mejor) en PowerShell</B>
                     <List class="mt-2">
                         <ListItem icon={icons.BookOpen}>
-                            <I>Temas conceptuales</I> unificados (<Mono>about_*</Mono>) y <I>ayuda actualizable</I> sin
-                            conexión para módulos.
+                            <I>Temas conceptuales</I> unificados (<Mono>about_*</Mono>) y <I>ayuda
+                                actualizable</I> sin conexión para módulos.
                         </ListItem>
                         <ListItem icon={icons.Funnel}>
-                            <I>Metadatos de parámetros</I> (tipos, posiciones, obligatoriedad, <I>parameter sets</I>) y
-                            convención
-                            <Mono>Verbo-Sustantivo</Mono> que facilita el descubrimiento sistemático.
+                            <I>Metadatos de parámetros</I> (tipos, posiciones, obligatoriedad, <I
+                            >parameter sets</I>) y convención
+                            <Mono>Verbo-Sustantivo</Mono> que facilita el descubrimiento
+                            sistemático.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -266,48 +278,55 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Tip Icon={icons.Lightbulb}>
             <Fragment slot="title">Estrategia híbrida</Fragment>
             <P>
-                En entornos mixtos, usa Bash para <I>interactuar con utilidades POSIX</I> y aprovechar su presencia
-                universal; y apóyate en PowerShell cuando necesites <I>descubribilidad consistente</I> y <I
-                >autodescripción de comandos</I>.
+                En entornos mixtos, usa Bash para <I>interactuar con utilidades POSIX</I> y
+                aprovechar su presencia universal; y apóyate en PowerShell cuando necesites <I
+                >descubribilidad consistente</I> y <I>autodescripción de comandos</I>.
             </P>
         </Tip>
     </NotesSection>
 
     <Question>
-        Usando <Mono>apropos</Mono> y <Mono>man</Mono>, encuentra una utilidad que convierta salida a HTML y revisa sus
-        opciones principales. Luego clasifícala con <Mono>type -a</Mono> y comprueba si dispone de <Mono>--help</Mono>,
+        Usando <Mono>apropos</Mono> y <Mono>man</Mono>, encuentra una utilidad que convierta salida
+        a HTML y revisa sus opciones principales. Luego clasifícala con <Mono>type -a</Mono> y
+        comprueba si dispone de <Mono>--help</Mono>,
         <Mono>man</Mono> e <Mono>info</Mono>.
     </Question>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            Bash ofrece buenas rutas de <B>descubrimiento</B> (catálogo <I>man</I>, <Mono>apropos</Mono>, <Mono
-            >type</Mono>,
-            <Mono>compgen</Mono>), pero distribuidas y heterogéneas; PowerShell concentra la experiencia en comandos y
-            metadatos unificados. Entender ambas filosofías te permite moverte con soltura entre ecosistemas.
+            Bash ofrece buenas rutas de <B>descubrimiento</B> (catálogo <I>man</I>, <Mono
+            >apropos</Mono>, <Mono>type</Mono>,
+            <Mono>compgen</Mono>), pero distribuidas y heterogéneas; PowerShell concentra la
+            experiencia en comandos y metadatos unificados. Entender ambas filosofías te permite
+            moverte con soltura entre ecosistemas.
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.MagnifyingGlass}>
-                <Mono>apropos</Mono>/<Mono>man -k</Mono> y <Mono>type</Mono> cubren el “qué existe” en Bash; no hay un
-                índice único.
+                <Mono>apropos</Mono>/<Mono>man -k</Mono> y <Mono>type</Mono> cubren el “qué existe”
+                en Bash; no hay un índice único.
             </ListItem>
             <ListItem icon={icons.BookOpen}>
-                <Mono>help</Mono> (builtins), <Mono>--help</Mono> (ejecutables), <Mono>man</Mono>/<Mono>info</Mono>
+                <Mono>help</Mono> (builtins), <Mono>--help</Mono> (ejecutables), <Mono
+                >man</Mono>/<Mono>info</Mono>
                 componen la ayuda.
             </ListItem>
             <ListItem icon={icons.WarningCircle}>
-                No hay metadatos estandarizados de parámetros ni conjuntos de parámetros como en PowerShell.
+                No hay metadatos estandarizados de parámetros ni conjuntos de parámetros como en
+                PowerShell.
             </ListItem>
             <ListItem icon={icons.BracketsCurly}>
-                En Bash puedes inspeccionar el <I>código</I> de funciones de shell al instante (<Mono>type</Mono>).
+                En Bash puedes inspeccionar el <I>código</I> de funciones de shell al instante
+                (<Mono>type</Mono>).
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            Si vienes de PowerShell, piensa en Bash como un <I>“kit de piezas”</I> para descubrir y aprender: combina
-            <Mono>apropos</Mono>, <Mono>type</Mono> y <Mono>man</Mono> según el caso. No esperes uniformidad; diseña tu
-            propio flujo de descubrimiento. A cambio, ganarás portabilidad y cercanía al ecosistema POSIX.
+            Si vienes de PowerShell, piensa en Bash como un <I>“kit de piezas”</I> para descubrir y
+            aprender: combina
+            <Mono>apropos</Mono>, <Mono>type</Mono> y <Mono>man</Mono> según el caso. No esperes
+            uniformidad; diseña tu propio flujo de descubrimiento. A cambio, ganarás portabilidad y
+            cercanía al ecosistema POSIX.
         </Fragment>
     </ConclusionsLayout>
 </NotesLayout>

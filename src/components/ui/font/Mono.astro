@@ -20,7 +20,8 @@ const { as = "code", elevate = true, ...rest } = Astro.props as Props;
 const classes = [
     "font-mono",
     // Avoid double-styling kbd; it already has a global style in styles/global.css
-    elevate && as !== "kbd" && "rounded border border-base-border/60 bg-base-background/60 px-1 py-[1px] shadow-inner",
+    elevate && as !== "kbd"
+    && "rounded border border-base-border/60 bg-base-background/60 px-1 py-[1px] shadow-inner",
 ].filter(Boolean) as string[];
 ---
 

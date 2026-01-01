@@ -1,7 +1,7 @@
 packages:
-  - '.'
+    - "."
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
-  - sharp
-  - workerd
+    - "@tailwindcss/oxide"
+    - esbuild
+    - sharp
+    - workerd

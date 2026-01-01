@@ -1,20 +1,20 @@
 /*
  * Lightweight, local type definitions used by the Shiki highlight pipeline modules in `config/patches/shiki/`.
  *
- * These types are intentionally compact and only describe the surface area required by the decorator pipeline and 
+ * These types are intentionally compact and only describe the surface area required by the decorator pipeline and
  * factory. They are not intended to be a full mapping of the Shiki runtime API.
  */
 
-// The concrete highlighter type returned by shiki.createHighlighter(). We capture it as a single alias so the rest of 
+// The concrete highlighter type returned by shiki.createHighlighter(). We capture it as a single alias so the rest of
 // the codebase can reference Shiki's instance without importing `shiki` directly in many places.
 export type HighlighterInstance = Awaited<ReturnType<typeof import("shiki").createHighlighter>>;
 
-// Options supported by the highlighter factory. Keep the shape minimal so callers can pass either a theme name or a 
+// Options supported by the highlighter factory. Keep the shape minimal so callers can pass either a theme name or a
 // custom themes map.
 export interface HighlighterOptions {
     // additional languages to pre-load
     langs?: string[];
-    // a single theme (string or theme object). The factory accepts either a theme name (e.g. 'github-dark') or a 
+    // a single theme (string or theme object). The factory accepts either a theme name (e.g. 'github-dark') or a
     // CSS-variables theme object.
     theme?: unknown;
     // optional map of named themes; when provided the factory exposes them via `themeOptions` so callers can pick among
@@ -50,7 +50,7 @@ export interface HighlightState {
     langAlias: Record<string, string>;
 }
 
-// An executor receives the mutable state and must return the highlighted output (format depends on `state.format`). A 
+// An executor receives the mutable state and must return the highlighted output (format depends on `state.format`). A
 // decorator wraps an executor to provide additional behaviour.
 export type HighlightExecutor = (state: HighlightState) => Promise<any>;
 export type HighlightDecorator = (next: HighlightExecutor) => HighlightExecutor;

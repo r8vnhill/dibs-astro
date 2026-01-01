@@ -1,49 +1,49 @@
 :root {
-  --font-body-stack: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading-stack: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --font-mono-stack: 'Fira Code', ui-monospace, monospace;
-  --font-body: var(--font-body-stack);
-  --font-heading: var(--font-heading-stack);
-  --font-mono: var(--font-mono-stack);
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.6rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.5rem;
+    --font-body-stack: "Inter", system-ui, -apple-system, sans-serif;
+    --font-heading-stack: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    --font-mono-stack: "Fira Code", ui-monospace, monospace;
+    --font-body: var(--font-body-stack);
+    --font-heading: var(--font-heading-stack);
+    --font-mono: var(--font-mono-stack);
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.6rem;
+    --text-2xl: 2rem;
+    --text-3xl: 2.5rem;
 }
 
 @theme {
-  --font-404-title: "Press Start 2P", ui-monospace, monospace;
+    --font-404-title: "Press Start 2P", ui-monospace, monospace;
 }
 
 @layer base {
-  body {
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    line-height: 1.6;
-    font-synthesis: none;
-  }
-  
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    line-height: 1.3;
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-    color: var(--theme-color-primary);
-  }
-  
-  code,
-  pre {
-    font-family: var(--font-mono);
-    font-variant-ligatures: contextual;
-    text-rendering: optimizeLegibility;
-  }
+    body {
+        font-family: var(--font-body);
+        font-size: var(--text-base);
+        line-height: 1.6;
+        font-synthesis: none;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        line-height: 1.3;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        color: var(--theme-color-primary);
+    }
+
+    code,
+    pre {
+        font-family: var(--font-mono);
+        font-variant-ligatures: contextual;
+        text-rendering: optimizeLegibility;
+    }
 }

@@ -1,14 +1,13 @@
 ---
 import * as icons from "$icons";
-import { P, Enquote } from "~/components/semantics";
+import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Abstract, Definition, Explanation, Info, More } from "~/components/ui/callouts";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
-import { Mono, B, I } from "~/components/ui/font";
+import { B, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { NotesSection } from "~/layouts";
 import NotesLayout from "~/layouts/NotesLayout.astro";
-
 ---
 
 <NotesLayout
@@ -17,19 +16,29 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     git={{ repo: "dibs-scripts", user: "r8vnhill" }}
 >
     <NotesSection id="h2-intro">
-        <Heading headingLevel="h2" Icon={icons.TerminalWindow} slot="heading">
+        <Heading
+            headingLevel="h2" Icon={icons.TerminalWindow}
+            slot="heading"
+        >
             Idea general
         </Heading>
 
         <Abstract>
             <P>
-                Dado que ya leíste la lección de <Enquote>salida estructurada</Enquote> en <Mono>PowerShell</Mono>, aquí nos centraremos en <B>Nushell</B>. La noción es parecida: <I>registros</I> (equivalentes a objetos con propiedades) que se muestran en <I>tablas</I>. La diferencia clave es que el <I>pipeline</I> de Nushell es <B>nativamente estructurado</B>, lo que hace más directas muchas transformaciones.
+                Dado que ya leíste la lección de <Enquote>salida estructurada</Enquote> en <Mono
+                >PowerShell</Mono>, aquí nos centraremos en <B>Nushell</B>. La noción es parecida:
+                <I>registros</I> (equivalentes a objetos con propiedades) que se muestran en <I
+                >tablas</I>. La diferencia clave es que el <I>pipeline</I> de Nushell es <B
+                >nativamente estructurado</B>, lo que hace más directas muchas transformaciones.
             </P>
         </Abstract>
     </NotesSection>
 
     <NotesSection id="h2-records-and-tables">
-        <Heading headingLevel="h2" Icon={icons.Table} slot="heading">
+        <Heading
+            headingLevel="h2" Icon={icons.Table}
+            slot="heading"
+        >
             Registros y tablas en Nushell
         </Heading>
 
@@ -56,10 +65,13 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.Code}>
-                        <B>Record:</B> <Mono>{`{ campo: valor }`}</Mono> crea un registro. <Mono>get</Mono>, <Mono>select</Mono> y <Mono>table</Mono> permiten manipular y visualizar datos sin convertirlos a texto.
+                        <B>Record:</B> <Mono>{`{ campo: valor }`}</Mono> crea un registro. <Mono
+                        >get</Mono>, <Mono>select</Mono> y <Mono>table</Mono> permiten manipular y
+                        visualizar datos sin convertirlos a texto.
                     </ListItem>
                     <ListItem icon={icons.ArrowSquareOut}>
-                        <B>Serialización:</B> <Mono>to json</Mono>, <Mono>to csv</Mono>, <Mono>to yaml</Mono> están integrados en el pipeline.
+                        <B>Serialización:</B> <Mono>to json</Mono>, <Mono>to csv</Mono>, <Mono>to
+                            yaml</Mono> están integrados en el pipeline.
                     </ListItem>
                 </List>
             </Explanation>
@@ -67,12 +79,16 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     </NotesSection>
 
     <NotesSection id="h2-custom-commands">
-        <Heading headingLevel="h2" Icon={icons.Pipe} slot="heading">
+        <Heading
+            headingLevel="h2" Icon={icons.Pipe}
+            slot="heading"
+        >
             Comandos propios que devuelven estructura
         </Heading>
 
         <P>
-            En Nushell podemos definir comandos que <I>devuelvan registros</I> del mismo modo que en PowerShell devolvimos <Mono>[PSCustomObject]</Mono>.
+            En Nushell podemos definir comandos que <I>devuelvan registros</I> del mismo modo que en
+            PowerShell devolvimos <Mono>[PSCustomObject]</Mono>.
         </P>
 
         <CodeBlock
@@ -96,17 +112,23 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         <Explanation headingLevel="h4">
             <List>
                 <ListItem icon={icons.TerminalWindow}>
-                    <B>Firma:</B> la firma de <Mono>def</Mono> permite tipar parámetros (<Mono>string</Mono>, <Mono>int</Mono>, etc.). La salida es un record que el pipeline entiende como “fila”.
+                    <B>Firma:</B> la firma de <Mono>def</Mono> permite tipar parámetros (<Mono
+                    >string</Mono>, <Mono>int</Mono>, etc.). La salida es un record que el pipeline
+                    entiende como “fila”.
                 </ListItem>
                 <ListItem icon={icons.Table}>
-                    <B>Lista de filas:</B> Un array de registros se muestra como tabla sin formateadores extra.
+                    <B>Lista de filas:</B> Un array de registros se muestra como tabla sin
+                    formateadores extra.
                 </ListItem>
             </List>
         </Explanation>
     </NotesSection>
 
     <NotesSection id="h2-exercise-analogy">
-        <Heading headingLevel="h2" Icon={icons.CheckCircle} slot="heading">
+        <Heading
+            headingLevel="h2" Icon={icons.CheckCircle}
+            slot="heading"
+        >
             Análogo del ejercicio: resumen de conexión (Nushell)
         </Heading>
 
@@ -133,17 +155,28 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     </NotesSection>
 
     <NotesSection id="h2-only-in-nu">
-        <Heading headingLevel="h2" Icon={icons.Lightning} slot="heading">
+        <Heading
+            headingLevel="h2" Icon={icons.Lightning}
+            slot="heading"
+        >
             ¿Qué ofrece Nushell que PowerShell no trae de fábrica?
         </Heading>
 
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.ChartBar}>
-                    <B>DataFrames con Polars (plugin):</B> con el plugin <Mono>polars</Mono> puedes convertir datos tabulares en <I>dataframes</I> y hacer <I>proyecciones/aggregaciones</I> de forma declarativa y perezosa (<I>lazy</I>). PowerShell puede lograr algo similar con módulos externos o .NET, pero <B>no</B> lo trae listo <I>out‑of‑the‑box</I>.
+                    <B>DataFrames con Polars (plugin):</B> con el plugin <Mono>polars</Mono> puedes
+                    convertir datos tabulares en <I>dataframes</I> y hacer <I
+                    >proyecciones/aggregaciones</I> de forma declarativa y perezosa (<I>lazy</I>).
+                    PowerShell puede lograr algo similar con módulos externos o .NET, pero <B>no</B>
+                    lo trae listo <I>out‑of‑the‑box</I>.
                 </ListItem>
                 <ListItem icon={icons.Pipe}>
-                    <B>Pipeline siempre estructurado:</B> en <I>nu</I>, muchos comandos del core emiten <I>registros/filas</I> en vez de texto. Aunque PowerShell también es orientado a objetos, en Nushell esta coherencia es aún más estricta para operaciones del día a día (por ejemplo, <Mono>open</Mono> seguido de <Mono>from json</Mono>/<Mono>from csv</Mono> se encadenan sin fricción).
+                    <B>Pipeline siempre estructurado:</B> en <I>nu</I>, muchos comandos del core
+                    emiten <I>registros/filas</I> en vez de texto. Aunque PowerShell también es
+                    orientado a objetos, en Nushell esta coherencia es aún más estricta para
+                    operaciones del día a día (por ejemplo, <Mono>open</Mono> seguido de <Mono>from
+                        json</Mono>/<Mono>from csv</Mono> se encadenan sin fricción).
                 </ListItem>
             </List>
         </Explanation>
@@ -168,7 +201,9 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             </CodeBlock>
 
             <P>
-                En PowerShell podrías lograrlo con bibliotecas de .NET o módulos externos, pero no es parte del núcleo. En Nushell, el flujo tabular se mantiene dentro del mismo <I>pipeline</I>.
+                En PowerShell podrías lograrlo con bibliotecas de .NET o módulos externos, pero no
+                es parte del núcleo. En Nushell, el flujo tabular se mantiene dentro del mismo <I
+                >pipeline</I>.
             </P>
         </More>
     </NotesSection>

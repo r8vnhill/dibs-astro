@@ -9,19 +9,19 @@
  */
 
 interface Props {
-  /**
-   * Target URL for the button.
-   */
-  href: string;
-  /**
-   * Text label for the button.
-   */
-  label: string;
-  /**
-   * Optional position of the icon relative to the label.
-   * Defaults to "left".
-   */
-  iconPosition?: "left" | "right";
+    /**
+     * Target URL for the button.
+     */
+    href: string;
+    /**
+     * Text label for the button.
+     */
+    label: string;
+    /**
+     * Optional position of the icon relative to the label.
+     * Defaults to "left".
+     */
+    iconPosition?: "left" | "right";
 }
 
 const { href, label, iconPosition = "left" } = Astro.props;
@@ -30,42 +30,40 @@ const { href, label, iconPosition = "left" } = Astro.props;
 const rel = iconPosition === "left" ? "prev" : "next";
 
 // Accessible label for screen readers and hover descriptions.
-const labelText =
-  iconPosition === "left"
+const labelText = iconPosition === "left"
     ? `Lección anterior: ${label}`
     : `Lección siguiente: ${label}`;
 ---
 
-<!-- 
-  This button is implemented as a styled <a> tag.
-  - Uses Tailwind utility classes for layout, colors, spacing, and accessibility.
-  - Icon is inserted via slot, conditionally placed before or after the label.
+<!--
+    This button is implemented as a styled <a> tag.
+    - Uses Tailwind utility classes for layout, colors, spacing, and accessibility.
+    - Icon is inserted via slot, conditionally placed before or after the label.
 -->
 <a
-  href={href}
-  rel={rel}
-  aria-label={labelText}
-  class:list={[
-    "inline-flex", // flex layout for icon + text
-    "items-center", // vertical alignment
-    "gap-3", // spacing between icon and text
-    "rounded", // border radius
-    "border", // border base
-    "border-base-border", // uses theme token
-    "bg-base-background", // background base
-    "px-6",
-    "py-3", // padding
-    "text-base",
-    "font-semibold",
-    "text-base-text", // text styling
-    "transition-colors", // smooth hover transition
-    "hover:bg-primary-light/10",
-    "dark:hover:bg-primary-dark/20",
-    "focus-visible:ring-2",
-    "focus-visible:ring-primary", // accessibility
-  ]}
+    {href} {rel}
+    aria-label={labelText}
+    class:list={[
+        "inline-flex", // flex layout for icon + text
+        "items-center", // vertical alignment
+        "gap-3", // spacing between icon and text
+        "rounded", // border radius
+        "border", // border base
+        "border-base-border", // uses theme token
+        "bg-base-background", // background base
+        "px-6",
+        "py-3", // padding
+        "text-base",
+        "font-semibold",
+        "text-base-text", // text styling
+        "transition-colors", // smooth hover transition
+        "hover:bg-primary-light/10",
+        "dark:hover:bg-primary-dark/20",
+        "focus-visible:ring-2",
+        "focus-visible:ring-primary", // accessibility
+    ]}
 >
-  {iconPosition === "left" && <slot name="icon" />}
-  {label}
-  {iconPosition === "right" && <slot name="icon" />}
+    {iconPosition === "left" && <slot name="icon" />}
+    {label}
+    {iconPosition === "right" && <slot name="icon" />}
 </a>

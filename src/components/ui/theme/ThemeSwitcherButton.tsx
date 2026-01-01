@@ -1,28 +1,28 @@
-import clsx from 'clsx';
-import { themeOptions } from './ThemeOptions';
-import type { StyledComponent, Theme } from '~/utils';
-import type { JSX } from 'react';
+import clsx from "clsx";
+import type { JSX } from "react";
+import type { StyledComponent, Theme } from "~/utils";
+import { themeOptions } from "./ThemeOptions";
 
 /**
  * Props for the ThemeSwitcherButton component.
  */
 type ThemeSwitcherButtonProps = {
-  /**
-   * The current theme object.
-   */
-  theme: Theme;
-  /**
-   * Function to toggle between themes.
-   */
-  toggle: () => void;
-  /**
-   * Indicates if the theme switcher dropdown or menu is open.
-   */
-  isOpen: boolean;
-  /**
-   * Optional accessible label or tooltip for the button.
-   */
-  title?: string;
+    /**
+     * The current theme object.
+     */
+    theme: Theme;
+    /**
+     * Function to toggle between themes.
+     */
+    toggle: () => void;
+    /**
+     * Indicates if the theme switcher dropdown or menu is open.
+     */
+    isOpen: boolean;
+    /**
+     * Optional accessible label or tooltip for the button.
+     */
+    title?: string;
 } & StyledComponent;
 
 /**
@@ -41,31 +41,31 @@ type ThemeSwitcherButtonProps = {
  * @returns The JSX element representing the theme switcher button.
  */
 export function ThemeSwitcherButton({
-  theme,
-  toggle,
-  isOpen,
-  className,
-  title = 'Cambiar tema',
+    theme,
+    toggle,
+    isOpen,
+    className,
+    title = "Cambiar tema",
 }: ThemeSwitcherButtonProps): JSX.Element {
-  // Retrieve the label and icon for the current theme
-  const option = themeOptions[theme] ?? { label: theme, icon: null };
+    // Retrieve the label and icon for the current theme
+    const option = themeOptions[theme] ?? { label: theme, icon: null };
 
-  return (
-    <button
-      type="button"
-      className={clsx(
-        'bg-base-background inline-flex items-center gap-1 rounded border px-3 py-1',
-        className // allows external class overrides
-      )}
-      onClick={toggle}
-      aria-haspopup="listbox"
-      aria-expanded={isOpen}
-      title={title}
-    >
-      {option.icon}
-      {/* Screen-reader only label for accessibility */}
-      <span className="sr-only">Tema actual:</span>
-      {option.label}
-    </button>
-  );
+    return (
+        <button
+            type="button"
+            className={clsx(
+                "bg-base-background inline-flex items-center gap-1 rounded border px-3 py-1",
+                className, // allows external class overrides
+            )}
+            onClick={toggle}
+            aria-haspopup="listbox"
+            aria-expanded={isOpen}
+            title={title}
+        >
+            {option.icon}
+            {/* Screen-reader only label for accessibility */}
+            <span className="sr-only">Tema actual:</span>
+            {option.label}
+        </button>
+    );
 }

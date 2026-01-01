@@ -12,14 +12,14 @@ import Author, { type AuthorProps } from "./Author.astro";
  * Props accepted by AuthorList.
  */
 type Props = {
-  /**
-   * The list of authors to display.
-   */
-  authors: AuthorProps[];
-  /**
-   * Optional threshold after which the list is truncated with "et al."
-   */
-  etAlAfter?: number;
+    /**
+     * The list of authors to display.
+     */
+    authors: AuthorProps[];
+    /**
+     * Optional threshold after which the list is truncated with "et al."
+     */
+    etAlAfter?: number;
 };
 
 /**
@@ -31,11 +31,11 @@ type Props = {
  * @returns A new list sorted by lastName, then fullName, then firstName.
  */
 function sortAuthorsByLastName(authors: AuthorProps[]): AuthorProps[] {
-  return [...authors].sort((a, b) => {
-    const aKey = a.lastName || a.fullName || a.firstName || "";
-    const bKey = b.lastName || b.fullName || b.firstName || "";
-    return aKey.localeCompare(bKey, undefined, { sensitivity: "base" });
-  });
+    return [...authors].sort((a, b) => {
+        const aKey = a.lastName || a.fullName || a.firstName || "";
+        const bKey = b.lastName || b.fullName || b.firstName || "";
+        return aKey.localeCompare(bKey, undefined, { sensitivity: "base" });
+    });
 }
 
 /**
@@ -46,12 +46,12 @@ function sortAuthorsByLastName(authors: AuthorProps[]): AuthorProps[] {
  * @returns An object containing the visible authors and a flag for "et al."
  */
 function getVisibleAuthors(
-  authors: AuthorProps[],
-  etAlAfter: number
+    authors: AuthorProps[],
+    etAlAfter: number,
 ): { visibleAuthors: AuthorProps[]; showEtAl: boolean } {
-  const showEtAl = authors.length > etAlAfter;
-  const visibleAuthors = showEtAl ? authors.slice(0, etAlAfter) : authors;
-  return { visibleAuthors, showEtAl };
+    const showEtAl = authors.length > etAlAfter;
+    const visibleAuthors = showEtAl ? authors.slice(0, etAlAfter) : authors;
+    return { visibleAuthors, showEtAl };
 }
 
 // Read component props and apply defaults
@@ -62,31 +62,31 @@ const sortedAuthors = sortAuthorsByLastName(authors);
 
 // Determine visible authors and whether to append "et al."
 const { visibleAuthors, showEtAl } = getVisibleAuthors(
-  sortedAuthors,
-  etAlAfter
+    sortedAuthors,
+    etAlAfter,
 );
 ---
 
 <span>
-  {
-    visibleAuthors.map((author, index) => {
-      const isLast = index === visibleAuthors.length - 1;
-      const isSecondToLast = index === visibleAuthors.length - 2;
+    {
+        visibleAuthors.map((author, index) => {
+            const isLast = index === visibleAuthors.length - 1;
+            const isSecondToLast = index === visibleAuthors.length - 2;
 
-      return (
-        <Fragment>
-          <Author {...author} />
-          {
-            isLast
-              ? ""
-              : isSecondToLast
-                ? " y "
-                : ", "
-          }
-        </Fragment>
-      );
-    })
-  }
+            return (
+            <Fragment>
+                <Author {...author} />
+                {
+                    isLast
+                        ? ""
+                        : isSecondToLast
+                        ? " y "
+                        : ", "
+                }
+            </Fragment>
+        );
+        })
+    }
 
-  {showEtAl && " et al."}
+    {showEtAl && " et al."}
 </span>

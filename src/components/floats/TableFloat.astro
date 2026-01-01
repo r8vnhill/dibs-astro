@@ -9,22 +9,22 @@
  */
 
 export interface Props {
-  /** Optional caption below the table */
-  caption?: string;
-  /** Optional max width for the content wrapper (e.g., "700px") */
-  maxWidth?: string;
-  /** Additional class names for the outer <figure> */
-  className?: string;
-  /** Inline styles for the content container */
-  style?: Record<string, string | number>;
+    /** Optional caption below the table */
+    caption?: string;
+    /** Optional max width for the content wrapper (e.g., "700px") */
+    maxWidth?: string;
+    /** Additional class names for the outer <figure> */
+    className?: string;
+    /** Inline styles for the content container */
+    style?: Record<string, string | number>;
 }
 
 // Destructure and apply defaults for props
 const {
-  caption,
-  maxWidth = "1000px",
-  className = "",
-  style = {},
+    caption,
+    maxWidth = "1000px",
+    className = "",
+    style = {},
 } = Astro.props;
 
 // Merge maxWidth with other styles
@@ -32,53 +32,45 @@ const mergedStyle = { maxWidth, ...style };
 ---
 
 <!--
-  Outer <figure> acts as a semantic wrapper, centered with spacing.
-  Tailwind's `not-prose` avoids unwanted typographic overrides from prose styling.
+    Outer <figure> acts as a semantic wrapper, centered with spacing.
+    Tailwind's `not-prose` avoids unwanted typographic overrides from prose styling.
 -->
 <figure role="figure" class:list={["not-prose", "mx-auto", "my-8", className]}>
-  <!--
-    This container limits width, adds border/background for contrast,
-    and ensures the block remains visually separated.
-  -->
-  <div
-    class:list={[
-      "mx-auto rounded-lg overflow-hidden shadow-sm",
-      "border border-gray-200 dark:border-gray-700",
-      "bg-gray-50 dark:bg-gray-900" /* ← full opacity, stronger separation */,
-      className,
-    ]}
-    style={mergedStyle}
-  >
     <!--
-      Scrolls horizontally if table is too wide, and adds internal padding.
+        This container limits width, adds border/background for contrast,
+        and ensures the block remains visually separated.
     -->
-    <div class:list={["overflow-x-auto", "p-4"]}>
-      <slot />
-    </div>
+    <div
+        class:list={[
+            "mx-auto rounded-lg overflow-hidden shadow-sm",
+            "border border-gray-200 dark:border-gray-700",
+            "bg-gray-50 dark:bg-gray-900", /* ← full opacity, stronger separation */
+            className,
+        ]}
+        style={mergedStyle}
+    >
+        <!-- Scrolls horizontally if table is too wide, and adds internal padding. -->
+        <div class:list={["overflow-x-auto", "p-4"]}>
+            <slot />
+        </div>
 
-    <!--
-      Conditionally rendered caption, centered and visually styled as a note.
-    -->
-    {
-      (Astro.slots.caption || caption) && (
-        <figcaption
-          class:list={[
-            "px-4",
-            "pb-4",
-            "text-center",
-            "text-sm",
-            "text-gray-600",
-            "dark:text-gray-400",
-          ]}
-        >
-          <strong class="mr-1">Tab.</strong>
-          {Astro.slots.caption ? (
-            <slot name="caption" />
-          ) : (
-            <span>{caption}</span>
-          )}
-        </figcaption>
-      )
-    }
-  </div>
+        <!-- Conditionally rendered caption, centered and visually styled as a note. -->
+        {
+            (Astro.slots.caption || caption) && (
+                <figcaption
+                    class:list={[
+                        "px-4",
+                        "pb-4",
+                        "text-center",
+                        "text-sm",
+                        "text-gray-600",
+                        "dark:text-gray-400",
+                    ]}
+                >
+                    <strong class="mr-1">Tab.</strong>
+                    {Astro.slots.caption ? <slot name="caption" /> : <span>{caption}</span>}
+                </figcaption>
+            )
+        }
+    </div>
 </figure>

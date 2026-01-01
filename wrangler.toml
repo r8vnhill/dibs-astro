@@ -2,7 +2,7 @@ name = "dibs-astro"
 compatibility_date = "2025-07-18"
 
 routes = [
-  { pattern = "dibs.ravenhill.cl", custom_domain = true }
+    { pattern = "dibs.ravenhill.cl", custom_domain = true },
 ]
 
 [assets]

@@ -1,5 +1,5 @@
-import { defineConfig, sharpImageService } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, sharpImageService } from "astro/config";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
 import { generateIconsIntegration } from "./config/integrations/generate-icons";
 import "./config/shiki-warn-tracker";
@@ -20,40 +20,40 @@ import react from "@astrojs/react";
  *   Shiki warnings and applies a small cache for the markdown-remark highlighter.
  */
 export default defineConfig({
-  // Used to generate correct absolute URLs during build
-  site: "https://dibs.ravenhill.cl",
+    // Used to generate correct absolute URLs during build
+    site: "https://dibs.ravenhill.cl",
 
-  // Ensures that all routes have trailing slashes (e.g., /page/ instead of /page)
-  trailingSlash: "always",
+    // Ensures that all routes have trailing slashes (e.g., /page/ instead of /page)
+    trailingSlash: "always",
 
-  // Enables full static prerendering of the site
-  output: "static",
+    // Enables full static prerendering of the site
+    output: "static",
 
-  // Disable Astro's bundled Shiki instance; custom components handle highlighting
-  markdown: {
-    syntaxHighlight: "prism",
-  },
+    // Disable Astro's bundled Shiki instance; custom components handle highlighting
+    markdown: {
+        syntaxHighlight: "prism",
+    },
 
-  integrations: [
-    generateIconsIntegration(),
-    // Custom plugin to trigger HMR when specific files change
-    devServerFileWatcher([
-      "./config/**", // Watch all custom integration and plugin files
-      "./src/assets/**", // Watch all assets for changes
-      "./src/data/**", // Watch all data files for changes
-    ]),
-    react(),
-  ],
-
-  vite: {
-    plugins: [
-      // Enables TailwindCSS within the Vite build pipeline
-      tailwindcss(),
+    integrations: [
+        generateIconsIntegration(),
+        // Custom plugin to trigger HMR when specific files change
+        devServerFileWatcher([
+            "./config/**", // Watch all custom integration and plugin files
+            "./src/assets/**", // Watch all assets for changes
+            "./src/data/**", // Watch all data files for changes
+        ]),
+        react(),
     ],
-  },
 
-  image: {
-    // Use sharp for image transformations during build (prerendered only)
-    service: sharpImageService(),
-  },
+    vite: {
+        plugins: [
+            // Enables TailwindCSS within the Vite build pipeline
+            tailwindcss(),
+        ],
+    },
+
+    image: {
+        // Use sharp for image transformations during build (prerendered only)
+        service: sharpImageService(),
+    },
 });

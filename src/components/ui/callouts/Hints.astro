@@ -8,18 +8,16 @@ type HintsProps = BaseCalloutProps;
 const variant = "hints" as const;
 const variantConfig = calloutVariants[variant];
 
-const { title = variantConfig.title, icon = variantConfig.icon, ...rest } =
-  Astro.props as HintsProps & Record<string, any>;
+const { title = variantConfig.title, icon = variantConfig.icon, ...rest } = Astro.props as
+    & HintsProps
+    & Record<string, any>;
 const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell
-  variant={variant}
-  title={title}
-  icon={icon}
-  bodyClass="mt-3"
-  collapsible
-  {...rest}
+    {variant} {title}
+    {icon} bodyClass="mt-3"
+    collapsible {...rest}
 >
-  {hasTitleSlot && <slot name="title" slot="title" />}
-  <slot />
+    {hasTitleSlot && <slot name="title" slot="title" />}
+    <slot />
 </CalloutShell>

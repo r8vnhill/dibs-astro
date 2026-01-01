@@ -9,7 +9,8 @@ type Props = {
 const DEFAULT_LIGHT = "https://bashlogo.com/img/symbol/png/full_colored_dark.png";
 const DEFAULT_DARK = "https://bashlogo.com/img/symbol/png/full_colored_light.png";
 
-const { slug, name = "Bash", srcLight = DEFAULT_LIGHT, srcDark = DEFAULT_DARK } = Astro.props as Props;
+const { slug, name = "Bash", srcLight = DEFAULT_LIGHT, srcDark = DEFAULT_DARK } = Astro
+    .props as Props;
 const base = (slug ?? Astro.url.pathname).replace(/\/$/, "");
 const href = `${base}/bash/`;
 ---

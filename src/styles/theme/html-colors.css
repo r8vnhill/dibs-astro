@@ -1,21 +1,21 @@
 :root {
-  --base-background-color: hsl(0, 0%, 95%);
-  --base-text-color: hsl(240, 4%, 20%);
-  --base-border-color: hsl(240, 4%, 80%);
-  --base-subtle-text-color: hsl(240, 4%, 42%);
+    --base-background-color: hsl(0, 0%, 95%);
+    --base-text-color: hsl(240, 4%, 20%);
+    --base-border-color: hsl(240, 4%, 80%);
+    --base-subtle-text-color: hsl(240, 4%, 42%);
 }
 
 :root.dark {
-  --base-background-color: hsl(240, 4%, 11%);
-  --base-text-color: hsl(0, 0%, 100%);
-  --base-border-color: hsl(240, 4%, 20%);
-  --base-subtle-text-color: hsl(240, 2%, 70%);
+    --base-background-color: hsl(240, 4%, 11%);
+    --base-text-color: hsl(0, 0%, 100%);
+    --base-border-color: hsl(240, 4%, 20%);
+    --base-subtle-text-color: hsl(240, 2%, 70%);
 }
 
 @theme inline {
-  /* Define theme colors for use in Tailwind */
-  --color-base-background: var(--base-background-color);
-  --color-base-text: var(--base-text-color);
-  --color-base-border: var(--base-border-color);
-  --color-base-subtle-text: var(--base-subtle-text-color);
+    /* Define theme colors for use in Tailwind */
+    --color-base-background: var(--base-background-color);
+    --color-base-text: var(--base-text-color);
+    --color-base-border: var(--base-border-color);
+    --color-base-subtle-text: var(--base-subtle-text-color);
 }

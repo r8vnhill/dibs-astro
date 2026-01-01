@@ -76,7 +76,8 @@ export const courseStructure: Lesson[] = [
                         children: [
                             {
                                 title: "Pipeline-awareness",
-                                href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
+                                href:
+                                    "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
                             },
                             {
                                 title: "Práctica: Composición",

@@ -9,7 +9,7 @@ import { tv } from "tailwind-variants";
  * Rationale:
  * - Keep markup-focused `.astro` files small by moving class/variant logic here.
  * - Provide well-documented defaults and variant names so callers don't guess the available options.
- * - Use CSS custom properties for row/spacer sizing so the same variant API can switch density without touching many 
+ * - Use CSS custom properties for row/spacer sizing so the same variant API can switch density without touching many
  *   classes.
  */
 

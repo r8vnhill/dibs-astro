@@ -11,14 +11,14 @@ import { flattenLessons, type Lesson } from "~/data/course-structure";
  * Type representing a navigation link with additional lesson information.
  */
 type NavigationLink = {
-  /**
-   * The title of the lesson or page.
-   */
-  title: string;
-  /**
-   * The normalized URL path for the lesson.
-   */
-  href: string;
+    /**
+     * The title of the lesson or page.
+     */
+    title: string;
+    /**
+     * The normalized URL path for the lesson.
+     */
+    href: string;
 } & Lesson;
 
 /**
@@ -35,9 +35,9 @@ type NavigationLink = {
  * normalizeHref("/") // "/"
  */
 function normalizeHref(href: string): string {
-  let result = href.startsWith("/") ? href : `/${href}`;
-  if (result.length > 1 && !result.endsWith("/")) result += "/";
-  return result;
+    let result = href.startsWith("/") ? href : `/${href}`;
+    if (result.length > 1 && !result.endsWith("/")) result += "/";
+    return result;
 }
 
 /**
@@ -51,17 +51,17 @@ function normalizeHref(href: string): string {
  * @return An object with normalized `next` and `previous` entries
  */
 export function normalizeNavigation(
-  next: { title: string; href: string } | undefined,
-  previous: { title: string; href: string } | undefined
+    next: { title: string; href: string } | undefined,
+    previous: { title: string; href: string } | undefined,
 ) {
-  return {
-    normalizedNext: next
-      ? { ...next, href: normalizeHref(next.href) }
-      : undefined,
-    normalizedPrevious: previous
-      ? { ...previous, href: normalizeHref(previous.href) }
-      : undefined,
-  };
+    return {
+        normalizedNext: next
+            ? { ...next, href: normalizeHref(next.href) }
+            : undefined,
+        normalizedPrevious: previous
+            ? { ...previous, href: normalizeHref(previous.href) }
+            : undefined,
+    };
 }
 
 /**
@@ -75,30 +75,34 @@ export function normalizeNavigation(
  * @return An object containing the `previous` and `next` lessons, if available
  */
 export function resolveAutoNav(
-  pathname: string,
-  lessons: Lesson[]
+    pathname: string,
+    lessons: Lesson[],
 ): {
-  previous: NavigationLink | undefined;
-  next: NavigationLink | undefined;
+    previous: NavigationLink | undefined;
+    next: NavigationLink | undefined;
 } {
-  // Flatten the nested course structure to a linear list of lessons
-  // and exclude container entries that don't have an href.
-  const flat = flattenLessons(lessons).filter(
-    (
-      l
-    ): l is Lesson & { depth: number; parents: string[] } & { href: string } =>
-      typeof l.href === "string" && l.href.length > 0
-  );
+    // Flatten the nested course structure to a linear list of lessons
+    // and exclude container entries that don't have an href.
+    const flat = flattenLessons(lessons).filter(
+        (
+            l,
+        ): l is Lesson & { depth: number; parents: string[] } & { href: string } =>
+            typeof l.href === "string" && l.href.length > 0,
+    );
 
-  // Find the index of the current lesson in the flattened list
-  const currentIndex = flat.findIndex(
-    (l) => normalizeHref(l.href) === normalizeHref(pathname)
-  );
+    // Find the index of the current lesson in the flattened list
+    const currentIndex = flat.findIndex(
+        (l) => normalizeHref(l.href) === normalizeHref(pathname),
+    );
 
-  return {
-    // Get the lesson before the current one, if any
-    previous: flat[currentIndex - 1],
-    // Get the lesson after the current one, if any
-    next: flat[currentIndex + 1],
-  };
+    if (currentIndex === -1) {
+        return { previous: undefined, next: undefined };
+    }
+
+    return {
+        // Get the lesson before the current one, if any
+        previous: flat[currentIndex - 1],
+        // Get the lesson after the current one, if any
+        next: flat[currentIndex + 1],
+    };
 }

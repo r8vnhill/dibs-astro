@@ -17,20 +17,20 @@ import IconLink from "./IconLink.astro";
 
 // Define the expected props for this component
 interface GitHubLinkProps {
-  username: string;
-  repo: string;
-  label?: string;
-  className?: string;
-  iconClass?: string;
+    username: string;
+    repo: string;
+    label?: string;
+    className?: string;
+    iconClass?: string;
 }
 
 // Extract and assign default values from props
 const {
-  username,
-  repo,
-  label = "Repositorio GitHub",
-  className = "",
-  iconClass = "",
+    username,
+    repo,
+    label = "Repositorio GitHub",
+    className = "",
+    iconClass = "",
 } = Astro.props as GitHubLinkProps;
 
 // Construct the full GitHub repository URL
@@ -39,10 +39,7 @@ const link = `https://github.com/${username}/${repo}`;
 
 <!-- Render the link using the IconLink component -->
 <IconLink
-  href={link}
-  label={label}
-  icon={GitHubLogo}
-  newTab
-  className={className}
-  iconClass={iconClass}
+    href={link} {label}
+    icon={GitHubLogo} newTab
+    {className} {iconClass}
 />

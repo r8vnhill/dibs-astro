@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { CaretDown, CaretRight } from "phosphor-react";
-import { useEffect, useState, useCallback, memo, type ReactNode } from "react";
+import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
 import type { Lesson } from "~/data/course-structure";
 
 /**
@@ -85,7 +85,9 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
                 aria-label={isOpen ? "Contraer sección" : "Expandir sección"}
                 className="flex-none w-5 h-5 grid place-items-center rounded hover:bg-base-border/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-base-text/60 hover:text-base-text transition-all"
             >
-                {isOpen ? <CaretDown size={14} weight="bold" /> : <CaretRight size={14} weight="bold" />}
+                {isOpen
+                    ? <CaretDown size={14} weight="bold" />
+                    : <CaretRight size={14} weight="bold" />}
             </button>
         );
     }
@@ -105,27 +107,41 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
                     className={clsx("group", indentPadding(level), "relative")}
                 >
                     <div className="flex items-center gap-1.5">
-                        {hasChildren ? <ToggleBtn onClick={() => toggle(key)} isOpen={isOpen} /> : <div className="w-5" aria-hidden="true" />}
-                        {lesson.href ? (
-                            <a
-                                href={lesson.href}
-                                aria-current={isActive ? "page" : undefined}
-                                className={clsx("group flex-1 block mx-2 no-underline outline-none focus:outline-none shadow-none ring-0 border-0 border-l-0")}
-                            >
+                        {hasChildren
+                            ? <ToggleBtn onClick={() => toggle(key)} isOpen={isOpen} />
+                            : <div className="w-5" aria-hidden="true" />}
+                        {lesson.href
+                            ? (
+                                <a
+                                    href={lesson.href}
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={clsx(
+                                        "group flex-1 block mx-2 no-underline outline-none focus:outline-none shadow-none ring-0 border-0 border-l-0",
+                                    )}
+                                >
+                                    <span
+                                        className={clsx(
+                                            "block rounded-lg px-3 py-1.5 text-sm transition-colors",
+                                            isActive
+                                                ? "bg-primary/15 text-primary font-semibold"
+                                                : "text-base-text group-hover:bg-base-border/10 group-hover:text-primary",
+                                        )}
+                                    >
+                                        {lesson.title}
+                                    </span>
+                                </a>
+                            )
+                            : (
                                 <span
                                     className={clsx(
-                                        "block rounded-lg px-3 py-1.5 text-sm transition-colors",
-                                        isActive ? "bg-primary/15 text-primary font-semibold" : "text-base-text group-hover:bg-base-border/10 group-hover:text-primary",
+                                        "flex-1 px-3 py-1 mx-2 ml-1",
+                                        "text-base-text/60",
+                                        "font-semibold text-xs uppercase tracking-wider",
                                     )}
                                 >
                                     {lesson.title}
                                 </span>
-                            </a>
-                        ) : (
-                            <span className={clsx("flex-1 px-3 py-1 mx-2 ml-1", "text-base-text/60", "font-semibold text-xs uppercase tracking-wider")}>
-                                {lesson.title}
-                            </span>
-                        )}
+                            )}
                     </div>
                     {hasChildren && isOpen && (
                         <div className="mt-1">

@@ -1,7 +1,14 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Exercise, Explanation, Hints, Solution, Warning } from "~/components/ui/callouts";
+import {
+    Abstract,
+    Exercise,
+    Explanation,
+    Hints,
+    Solution,
+    Warning,
+} from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -74,15 +81,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
             headingLevel="h2" Icon={icons.Code}
             slot="heading"
         >
-            Calcular hash de archivos en <I>streaming</I> con <PowerShellInline code="begin" />, <PowerShellInline
-                code="process"
-            /> y <PowerShellInline code="end" />
+            Calcular hash de archivos en <I>streaming</I> con <PowerShellInline code="begin" />,
+            <PowerShellInline code="process" /> y <PowerShellInline code="end" />
         </Heading>
 
         <p class="mb-2">
-            Este ejemplo muestra un caso <I>pipeline-aware</I> realista (aunque algo simplificado para no abrumar):
-            calcular el hash de archivos sin cargar todo en memoria. El objetivo es ilustrar la separación de
-            responsabilidades entre los bloques <PowerShellInline code="begin" />, <PowerShellInline code="process" /> y
+            Este ejemplo muestra un caso <I>pipeline-aware</I> realista (aunque algo simplificado
+            para no abrumar): calcular el hash de archivos sin cargar todo en memoria. El objetivo
+            es ilustrar la separación de responsabilidades entre los bloques <PowerShellInline
+                code="begin"
+            />, <PowerShellInline code="process" /> y
             <PowerShellInline code="end" />, más que profundizar en criptografía.
         </p>
 
@@ -92,11 +100,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <p class="mb-3">
-                Antes de hacer <I>streaming</I> del archivo, conviene definir una <B>política de selección de
-                    algoritmo</B>. El siguiente bloque no calcula el hash; <I>valida y describe</I> la elección del
-                algoritmo según si es considerado inseguro (<code>MD5</code>, <code>SHA1</code>), si fue autorizado
-                explícitamente con un flag y si entra en la categoría de “fuerte” (<code>SHA256</code>, <code
-                >SHA384</code>, <code>SHA512</code>). Esto permite <I>fallar temprano</I>
+                Antes de hacer <I>streaming</I> del archivo, conviene definir una <B>política de
+                    selección de algoritmo</B>. El siguiente bloque no calcula el hash; <I>valida y
+                    describe</I> la elección del algoritmo según si es considerado inseguro (<code
+                >MD5</code>, <code>SHA1</code>), si fue autorizado explícitamente con un flag y si
+                entra en la categoría de “fuerte” (<code>SHA256</code>, <code>SHA384</code>, <code
+                >SHA512</code>). Esto permite <I>fallar temprano</I>
                 o registrar decisiones, y luego encadenar el cómputo real en otra función.
             </p>
 
@@ -129,8 +138,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >
                 <Fragment slot="title">Comprobación de política de hash</Fragment>
                 <span slot="footer">
-                    Emite un objeto con campos <code>Algorithm</code>, <code>IsInsecure</code>, <code>IsAllowed</code>,
-                    <code>IsSecure</code>, <code>IsStrongHash</code>. Útil para registrar/validar antes del cómputo en
+                    Emite un objeto con campos <code>Algorithm</code>, <code>IsInsecure</code>,
+                    <code>IsAllowed</code>,
+                    <code>IsSecure</code>, <code>IsStrongHash</code>. Útil para registrar/validar
+                    antes del cómputo en
                     <I>streaming</I>.
                 </span>
                 <DibsSourceLink
@@ -142,17 +153,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Explanation>
                 <List>
                     <ListItem icon={icons.Pipe}>
-                        <B>Entrada por pipeline (combinada):</B> el parámetro <PowerShellInline code="$Algorithm" />
-                        acepta entrada por <PowerShellInline code="ValueFromPipeline" /> y por <PowerShellInline
-                            code="ValueFromPipelineByPropertyName"
-                        /> simultáneamente. Con los <PowerShellInline code="[Alias('Name','HashAlgorithm')]" /> es común
-                        que encaje con objetos previos (p. ej. salidas que traen un campo <code>Name</code> o <code
-                        >HashAlgorithm</code>), sin tener que renombrar propiedades.
+                        <B>Entrada por pipeline (combinada):</B> el parámetro <PowerShellInline
+                            code="$Algorithm"
+                        />
+                        acepta entrada por <PowerShellInline code="ValueFromPipeline" /> y por
+                        <PowerShellInline code="ValueFromPipelineByPropertyName" /> simultáneamente.
+                        Con los <PowerShellInline code="[Alias('Name','HashAlgorithm')]" /> es común
+                        que encaje con objetos previos (p. ej. salidas que traen un campo <code
+                        >Name</code> o <code>HashAlgorithm</code>), sin tener que renombrar
+                        propiedades.
                     </ListItem>
 
                     <ListItem icon={icons.SlidersHorizontal}>
-                        <B><PowerShellInline code="[ValidateSet(...)]" />:</B> restringe la entrada a una lista conocida
-                        de algoritmos y habilita autocompletado, mensajes de error claros y documentación implícita.
+                        <B><PowerShellInline code="[ValidateSet(...)]" />:</B> restringe la entrada
+                        a una lista conocida de algoritmos y habilita autocompletado, mensajes de
+                        error claros y documentación implícita.
                     </ListItem>
                 </List>
             </Explanation>
@@ -222,9 +237,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 }
             `}
         >
-            <Fragment slot="title">Función <PowerShellInline code="Get-FileHashStream" /> (pipeline-aware)</Fragment>
+            <Fragment slot="title"
+            >Función <PowerShellInline code="Get-FileHashStream" /> (pipeline-aware)</Fragment>
             <Fragment slot="footer">
-                Entrada por pipeline (acepta <code>FullName</code>/<code>Path</code> por alias) y salida de objetos:
+                Entrada por pipeline (acepta <code>FullName</code>/<code>Path</code> por alias) y
+                salida de objetos:
                 <code>Path, Algorithm, [Length], Hash</code>.
             </Fragment>
             <Fragment slot="source">scripts/pipeline/Get-FileHashStream.ps1</Fragment>
@@ -233,29 +250,36 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation>
             <List>
                 <ListItem icon={icons.Pipe}>
-                    <B>Entrada por pipeline combinada</B>: los atributos <PowerShellInline code="ValueFromPipeline" /> y
-                    <PowerShellInline code="ValueFromPipelineByPropertyName" /> pueden usarse <I>juntos</I> en el mismo
-                    parámetro. Esto permite que el script acepte tanto la entrada directa (el objeto completo que fluye
-                    por el pipeline) como la asignación automática de una propiedad que coincida por nombre. Por
-                    ejemplo, un parámetro con <PowerShellInline code="[Alias('FullName','Path')]" /> podrá recibir
-                    objetos <PowerShellInline code="FileInfo" /> desde <PowerShellInline code="Get-ChildItem" />, ya sea
-                    porque el objeto completo se inyecta o porque PowerShell detecta y usa su propiedad
-                    <PowerShellInline code="FullName" />. Esta combinación maximiza la compatibilidad con distintos
-                    productores y evita tener que usar <PowerShellInline code="ForEach-Object" /> o <PowerShellInline
+                    <B>Entrada por pipeline combinada</B>: los atributos <PowerShellInline
+                        code="ValueFromPipeline"
+                    /> y
+                    <PowerShellInline code="ValueFromPipelineByPropertyName" /> pueden usarse <I
+                    >juntos</I> en el mismo parámetro. Esto permite que el script acepte tanto la
+                    entrada directa (el objeto completo que fluye por el pipeline) como la
+                    asignación automática de una propiedad que coincida por nombre. Por ejemplo, un
+                    parámetro con <PowerShellInline code="[Alias('FullName','Path')]" /> podrá
+                    recibir objetos <PowerShellInline code="FileInfo" /> desde <PowerShellInline
+                        code="Get-ChildItem"
+                    />, ya sea porque el objeto completo se inyecta o porque PowerShell detecta y
+                    usa su propiedad
+                    <PowerShellInline code="FullName" />. Esta combinación maximiza la
+                    compatibilidad con distintos productores y evita tener que usar
+                    <PowerShellInline code="ForEach-Object" /> o <PowerShellInline
                         code="Select-Object"
                     /> solo para adaptar nombres.
                 </ListItem>
 
                 <ListItem icon={icons.SlidersHorizontal}>
-                    <B><PowerShellInline code="[ValidateSet(...)]" /></B>: restringe <PowerShellInline
-                        code="$Algorithm"
-                    /> a valores conocidos (<code>SHA256|SHA1|MD5</code>). Mejora mensajes de error y autocompletado.
+                    <B><PowerShellInline code="[ValidateSet(...)]" /></B>: restringe
+                    <PowerShellInline code="$Algorithm" /> a valores conocidos (<code
+                    >SHA256|SHA1|MD5</code>). Mejora mensajes de error y autocompletado.
                 </ListItem>
 
                 <ListItem icon={icons.ToggleLeft}>
-                    <B><PowerShellInline code="switch (...) { ... }" /></B> es una estructura de control para comparar
-                    un valor contra múltiples condiciones. Evalúa una expresión y ejecuta el bloque asociado a la
-                    primera coincidencia (o a todas, si no se usa <PowerShellInline code="break" />).
+                    <B><PowerShellInline code="switch (...) { ... }" /></B> es una estructura de
+                    control para comparar un valor contra múltiples condiciones. Evalúa una
+                    expresión y ejecuta el bloque asociado a la primera coincidencia (o a todas, si
+                    no se usa <PowerShellInline code="break" />).
 
                     <PowerShellBlock
                         code={`
@@ -272,37 +296,46 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                         <ul class="list-disc ml-6 mt-2" slot="footer">
                             <li>
-                                <PowerShellInline code="default" /> se ejecuta si ninguna condición coincide.
+                                <PowerShellInline code="default" /> se ejecuta si ninguna condición
+                                coincide.
                             </li>
                             <li>
                                 <PowerShellInline code="break" /> detiene la ejecución dentro del
-                                <PowerShellInline code="switch" />, evitando que siga evaluando otros casos.
+                                <PowerShellInline code="switch" />, evitando que siga evaluando
+                                otros casos.
                             </li>
                         </ul>
                     </PowerShellBlock>
 
                     <Warning>
-                        No debe confundirse con el tipo de parámetro <PowerShellInline code="[switch]" />, que
-                        representa un <I>flag booleano</I> (p. ej., <PowerShellInline code="-Verbose" /> o
-                        <PowerShellInline code="-Force" />) y no tiene relación con la estructura condicional
+                        No debe confundirse con el tipo de parámetro <PowerShellInline
+                            code="[switch]"
+                        />, que representa un <I>flag booleano</I> (p. ej., <PowerShellInline
+                            code="-Verbose"
+                        /> o
+                        <PowerShellInline code="-Force" />) y no tiene relación con la estructura
+                        condicional
                         <PowerShellInline code="switch" />.
                     </Warning>
                 </ListItem>
 
                 <ListItem icon={icons.PlayCircle}>
-                    <B><I>begin</I> = inicialización única</B>: se crea el <I>hasher</I> una sola vez y se reutiliza. Si
-                    el algoritmo no es válido, se falla temprano.
+                    <B><I>begin</I> = inicialización única</B>: se crea el <I>hasher</I> una sola
+                    vez y se reutiliza. Si el algoritmo no es válido, se falla temprano.
                 </ListItem>
 
                 <ListItem icon={icons.Cpu}>
-                    <B><I>process</I> = unidad de trabajo</B>: por cada archivo se resuelve la ruta, se abre un
-                    <PowerShellInline code="FileStream" />, se inicializa el <I>hasher</I> y se calcula el hash. Se
-                    emite un <PowerShellInline code="[pscustomobject]" /> por elemento, listo para componer.
+                    <B><I>process</I> = unidad de trabajo</B>: por cada archivo se resuelve la ruta,
+                    se abre un
+                    <PowerShellInline code="FileStream" />, se inicializa el <I>hasher</I> y se
+                    calcula el hash. Se emite un <PowerShellInline code="[pscustomobject]" /> por
+                    elemento, listo para componer.
                 </ListItem>
 
                 <ListItem icon={icons.FlagCheckered}>
-                    <B><I>end</I> = limpieza</B>: se liberan recursos compartidos como el <I>hasher</I>. Los flujos
-                    individuales se cierran en su propio <I>finally</I> para cada elemento.
+                    <B><I>end</I> = limpieza</B>: se liberan recursos compartidos como el <I
+                    >hasher</I>. Los flujos individuales se cierran en su propio <I>finally</I> para
+                    cada elemento.
                 </ListItem>
 
                 <ListItem icon={icons.Code}>
@@ -310,28 +343,31 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                     <List class="mt-2">
                         <ListItem icon={icons.FolderOpen}>
-                            <PowerShellInline code="[System.IO.File]::OpenRead($resolved)" /> abre el archivo en modo
-                            lectura.
+                            <PowerShellInline code="[System.IO.File]::OpenRead($resolved)" /> abre
+                            el archivo en modo lectura.
                         </ListItem>
 
                         <ListItem icon={icons.ArrowClockwise}>
-                            <PowerShellInline code="$hasher.Initialize()" /> reinicia el estado antes de cada elemento.
+                            <PowerShellInline code="$hasher.Initialize()" /> reinicia el estado
+                            antes de cada elemento.
                         </ListItem>
 
                         <ListItem icon={icons.Hash}>
-                            <PowerShellInline code="$hasher.ComputeHash($stream)" /> calcula el hash de forma eficiente.
+                            <PowerShellInline code="$hasher.ComputeHash($stream)" /> calcula el hash
+                            de forma eficiente.
                         </ListItem>
                         <ListItem icon={icons.TextT}>
-                            <PowerShellInline code="[Convert]::ToHexString($bytes).ToLowerInvariant()" /> lo convierte a
-                            hex.
+                            <PowerShellInline
+                                code="[Convert]::ToHexString($bytes).ToLowerInvariant()"
+                            /> lo convierte a hex.
                         </ListItem>
                         <ListItem icon={icons.Trash}>
-                            <PowerShellInline code="$stream.Dispose()" /> en <I>finally</I> garantiza cierre del archivo
-                            incluso con errores.
+                            <PowerShellInline code="$stream.Dispose()" /> en <I>finally</I>
+                            garantiza cierre del archivo incluso con errores.
                         </ListItem>
                         <ListItem icon={icons.TrashSimple}>
-                            <PowerShellInline code="$hasher.Dispose()" /> en <I>end</I> libera recursos al finalizar el
-                            pipeline.
+                            <PowerShellInline code="$hasher.Dispose()" /> en <I>end</I> libera
+                            recursos al finalizar el pipeline.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -355,19 +391,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Desde <code>scripts/pipeline</code>
             </Fragment>
             <span slot="footer">
-                Lista los 2 archivos más grandes en la carpeta actual, mostrando su nombre, longitud y hash SHA256.
-                <PowerShellInline code="Select-Object" /> usa una expresión para extraer solo el nombre del archivo
-                (<PowerShellInline code="Split-Path $_.Path -Leaf" />).
+                Lista los 2 archivos más grandes en la carpeta actual, mostrando su nombre, longitud
+                y hash SHA256.
+                <PowerShellInline code="Select-Object" /> usa una expresión para extraer solo el
+                nombre del archivo (<PowerShellInline code="Split-Path $_.Path -Leaf" />).
             </span>
         </PowerShellBlock>
     </NotesSection>
 
     <Exercise>
         <p class="mt-6 mb-3">
-            <B>Parte B.</B> Compón un pipeline que use: <PowerShellInline code="Get-ChildItem" /> → tu script de la
-            Parte A → <PowerShellInline code=".\\Get-FileHashStream.ps1 -Algorithm SHA256" /> para calcular el hash de
-            cada archivo → proyecta columnas y exporta a CSV. La idea es agregar la propiedad <code>Hash</code> sin
-            romper el flujo.
+            <B>Parte B.</B> Compón un pipeline que use: <PowerShellInline code="Get-ChildItem" /> →
+            tu script de la Parte A → <PowerShellInline
+                code=".\\Get-FileHashStream.ps1 -Algorithm SHA256"
+            /> para calcular el hash de cada archivo → proyecta columnas y exporta a CSV. La idea es
+            agregar la propiedad <code>Hash</code> sin romper el flujo.
         </p>
 
         <p>
@@ -380,8 +418,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Hints>
             <List>
                 <ListItem icon={icons.MagicWand}>
-                    <B>Propiedades calculadas con <PowerShellInline code="Select-Object" /></B>: puedes crear columnas
-                    derivadas en tiempo real usando la sintaxis: <PowerShellInline
+                    <B>Propiedades calculadas con <PowerShellInline code="Select-Object" /></B>:
+                    puedes crear columnas derivadas en tiempo real usando la sintaxis:
+                    <PowerShellInline
                         code="@{ Name = 'NombreColumna'; Expression = { <bloque de código> } }"
                     />.
                 </ListItem>
@@ -390,23 +429,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Desglose de la expresión</B>:
                     <ul class="list-disc ml-6 mt-2">
                         <li>
-                            <PowerShellInline code="$_" /> representa el elemento actual del pipeline.
+                            <PowerShellInline code="$_" /> representa el elemento actual del
+                            pipeline.
                         </li>
                         <li>
-                            <PowerShellInline code="Get-FileHashStream.ps1 -Algorithm SHA256 -LiteralPath $_.Path" />
+                            <PowerShellInline
+                                code="Get-FileHashStream.ps1 -Algorithm SHA256 -LiteralPath $_.Path"
+                            />
                             invoca el script sobre la ruta del archivo actual.
                         </li>
                         <li>
-                            <PowerShellInline code="Select-Object -ExpandProperty Hash" /> extrae solo el valor del hash
-                            (sin cabeceras ni estructura adicional).
+                            <PowerShellInline code="Select-Object -ExpandProperty Hash" /> extrae
+                            solo el valor del hash (sin cabeceras ni estructura adicional).
                         </li>
                     </ul>
                 </ListItem>
 
                 <ListItem icon={icons.Hash}>
-                    Una vez que tengas el resultado de <PowerShellInline code="Get-FileHashStream.ps1" />, usa
-                    <PowerShellInline code="| Select-Object -ExpandProperty Hash" /> para proyectar solo el valor del
-                    hash (en lugar de <PowerShellInline code="@{Hash = xx}" />).
+                    Una vez que tengas el resultado de <PowerShellInline
+                        code="Get-FileHashStream.ps1"
+                    />, usa
+                    <PowerShellInline code="| Select-Object -ExpandProperty Hash" /> para proyectar
+                    solo el valor del hash (en lugar de <PowerShellInline code="@{Hash = xx}" />).
                 </ListItem>
             </List>
         </Hints>
@@ -430,7 +474,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >
                 <span slot="title">Solución Parte B — composición de pipeline</span>
                 <span slot="footer">
-                    El <PowerShellInline code="Select-Object" /> usa una propiedad calculada para anexar
+                    El <PowerShellInline code="Select-Object" /> usa una propiedad calculada para
+                    anexar
                     <PowerShellInline code="Hash" /> por elemento.
                 </span>
             </PowerShellBlock>

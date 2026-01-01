@@ -1,6 +1,6 @@
 /**
  * @file table-head-logic.ts
- * @description Utility to normalize TableHead props (scope, sorting, labels, and icon visibility) into a single, 
+ * @description Utility to normalize TableHead props (scope, sorting, labels, and icon visibility) into a single,
  * testable shape used by the component.
  * This keeps the component runtime very small and makes the behavior easy to assert from unit tests without rendering.
  */
@@ -60,12 +60,12 @@ const SORT_LABELS: Record<Exclude<SortState, "none">, string> = {
  * @param {BuildStateArgs} [args={}] - Optional inputs from the component.
  * @param {HTMLTableCellElement['scope']} [args.scope] - Cell scope, typically "col" or "row". Defaults to "col".
  * @param {SortState} [args.sort] - Sorting state: "none" | "asc" | "desc". Defaults to "none".
- * @param {string} [args.sortLabel] - Optional custom screen-reader label to announce the sorting state. Falls back to 
+ * @param {string} [args.sortLabel] - Optional custom screen-reader label to announce the sorting state. Falls back to
  *   internal labels when omitted.
- * @param {boolean} [args.showSortIcon] - Whether to render the sort icon when the column is sorted. Defaults to 
+ * @param {boolean} [args.showSortIcon] - Whether to render the sort icon when the column is sorted. Defaults to
  *   `true` when sorted.
  *
- * @returns {TableHeadState} Normalized state the `TableHead` component can consume directly (and unit tests can 
+ * @returns {TableHeadState} Normalized state the `TableHead` component can consume directly (and unit tests can
  *   assert).
  */
 export function buildTableHeadState(args: BuildStateArgs = {}): TableHeadState {
@@ -76,11 +76,11 @@ export function buildTableHeadState(args: BuildStateArgs = {}): TableHeadState {
     // in plain JS so they remain easy to test and reason about.
     const isSorted = sort !== "none";
 
-    // `ariaSort` is only set when the column is sorted — otherwise leave it undefined so the rendered element won't 
+    // `ariaSort` is only set when the column is sorted — otherwise leave it undefined so the rendered element won't
     // have an incorrect ARIA state.
     const ariaSort = isSorted ? sort : undefined;
 
-    // `srLabel` is a small convenience for screen reader text. If the consumer passed a custom `sortLabel` use it; 
+    // `srLabel` is a small convenience for screen reader text. If the consumer passed a custom `sortLabel` use it;
     // otherwise fall back to the human-friendly defaults defined above.
     const srLabel = isSorted ? (args.sortLabel ?? SORT_LABELS[sort]) : undefined;
 

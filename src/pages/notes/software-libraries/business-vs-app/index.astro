@@ -11,217 +11,215 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Lógica de negocio y lógica de aplicación">
-  <Abstract>
-    <p>
-      En la lección anterior entendimos que <strong
-        >una biblioteca es, en esencia, una API</strong
-      >: un conjunto de funciones, tipos y abstracciones diseñadas para ser
-      reutilizadas en distintos contextos. Pero surge una pregunta clave: <strong
-        >¿qué ponemos dentro de la biblioteca y qué dejamos fuera?</strong
-      >
-    </p>
-    <p>
-      La respuesta está en distinguir entre <strong>lógica de negocio</strong>
-      —las reglas e invariantes que definen el dominio y permanecen estables— y
-      <strong>lógica de aplicación</strong> —la capa que traduce, coordina y adapta
-      esas reglas a un entorno tecnológico concreto (frameworks, bases de datos,
-      interfaces, protocolos).
-    </p>
-    <p>
-      Comprender esta separación es fundamental para construir bibliotecas
-      reutilizables, mantenibles y resistentes al cambio tecnológico.
-    </p>
-  </Abstract>
+    <Abstract>
+        <p>
+            En la lección anterior entendimos que <strong>una biblioteca es, en esencia, una
+                API</strong>: un conjunto de funciones, tipos y abstracciones diseñadas para ser
+            reutilizadas en distintos contextos. Pero surge una pregunta clave: <strong>¿qué ponemos
+                dentro de la biblioteca y qué dejamos fuera?</strong>
+        </p>
+        <p>
+            La respuesta está en distinguir entre <strong>lógica de negocio</strong>
+            —las reglas e invariantes que definen el dominio y permanecen estables— y
+            <strong>lógica de aplicación</strong> —la capa que traduce, coordina y adapta esas
+            reglas a un entorno tecnológico concreto (frameworks, bases de datos, interfaces,
+            protocolos).
+        </p>
+        <p>
+            Comprender esta separación es fundamental para construir bibliotecas reutilizables,
+            mantenibles y resistentes al cambio tecnológico.
+        </p>
+    </Abstract>
 
-  <NotesSection id="business-logic">
-    <Heading slot="heading" headingLevel="h2" Icon={icons.Cube}>
-      Lógica de negocio
-    </Heading>
+    <NotesSection id="business-logic">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Cube}
+        >
+            Lógica de negocio
+        </Heading>
 
-    <p>
-      La <strong>lógica de negocio</strong> (business logic), a veces también llamada
-      <strong>core</strong> del sistema, representa las
-      <strong
-        >reglas, invariantes y operaciones fundamentales del dominio</strong
-      >
-      que queremos modelar. Es lo que permanece estable incluso si cambiamos la interfaz
-      de usuario, el framework web o la forma en que desplegamos el sistema.
-    </p>
+        <p>
+            La <strong>lógica de negocio</strong> (business logic), a veces también llamada
+            <strong>core</strong> del sistema, representa las
+            <strong>reglas, invariantes y operaciones fundamentales del dominio</strong>
+            que queremos modelar. Es lo que permanece estable incluso si cambiamos la interfaz de
+            usuario, el framework web o la forma en que desplegamos el sistema.
+        </p>
 
-    <List>
-      <ListItem icon={icons.Target}>
-        Define el <strong>qué</strong> hace el sistema, no el <strong
-          >cómo</strong
-        > se presenta o ejecuta.
-      </ListItem>
-      <ListItem icon={icons.Gear}>
-        Vive en la biblioteca, porque es lo que buscamos <strong
-          >reutilizar, probar y mantener aislado</strong
-        > de los detalles externos.
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={icons.Target}>
+                Define el <strong>qué</strong> hace el sistema, no el <strong>cómo</strong> se
+                presenta o ejecuta.
+            </ListItem>
+            <ListItem icon={icons.Gear}>
+                Vive en la biblioteca, porque es lo que buscamos <strong>reutilizar, probar y
+                    mantener aislado</strong> de los detalles externos.
+            </ListItem>
+        </List>
 
-    <NotesSection id="example-business-logic">
-      <Heading headingLevel="h3" Icon={icons.ShoppingCart}>
-        Ejemplo: Sistema de pedidos en un e-commerce
-      </Heading>
+        <NotesSection id="example-business-logic">
+            <Heading headingLevel="h3" Icon={icons.ShoppingCart}>
+                Ejemplo: Sistema de pedidos en un e-commerce
+            </Heading>
 
-      <p>
-        Si estamos construyendo un sistema de pedidos en un e-commerce, la
-        lógica de negocio define reglas como:
-      </p>
+            <p>
+                Si estamos construyendo un sistema de pedidos en un e-commerce, la lógica de negocio
+                define reglas como:
+            </p>
 
-      <List>
-        <ListItem icon={icons.Package}>
-          Un pedido debe tener al menos un ítem.
-        </ListItem>
-        <ListItem icon={icons.CreditCard}>
-          No se puede despachar un pedido que no esté pagado.
-        </ListItem>
-        <ListItem icon={icons.Truck}>
-          El cálculo del total considera descuentos y envío.
-        </ListItem>
-      </List>
+            <List>
+                <ListItem icon={icons.Package}>
+                    Un pedido debe tener al menos un ítem.
+                </ListItem>
+                <ListItem icon={icons.CreditCard}>
+                    No se puede despachar un pedido que no esté pagado.
+                </ListItem>
+                <ListItem icon={icons.Truck}>
+                    El cálculo del total considera descuentos y envío.
+                </ListItem>
+            </List>
 
-      <Tip>
-        La lógica de negocio no depende de si la aplicación es web, móvil o de
-        línea de comandos:
-        <strong> cambian las interfaces, pero las reglas se mantienen</strong>.
-      </Tip>
+            <Tip>
+                La lógica de negocio no depende de si la aplicación es web, móvil o de línea de
+                comandos:
+                <strong> cambian las interfaces, pero las reglas se mantienen</strong>.
+            </Tip>
+        </NotesSection>
     </NotesSection>
-  </NotesSection>
 
-  <NotesSection id="app-logic">
-    <Heading slot="heading" headingLevel="h2" Icon={icons.Play}>
-      Lógica de aplicación
-    </Heading>
+    <NotesSection id="app-logic">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Play}
+        >
+            Lógica de aplicación
+        </Heading>
 
-    <p>
-      La <strong>lógica de aplicación</strong> se refiere al
-      <strong>entorno donde la lógica de negocio se usa y coordina</strong>.
-      Incluye los detalles de frameworks, almacenamiento, presentación y
-      orquestación de acciones. A diferencia de la lógica de negocio, suele
-      cambiar con mayor frecuencia porque depende de tecnologías y protocolos.
-    </p>
+        <p>
+            La <strong>lógica de aplicación</strong> se refiere al
+            <strong>entorno donde la lógica de negocio se usa y coordina</strong>. Incluye los
+            detalles de frameworks, almacenamiento, presentación y orquestación de acciones. A
+            diferencia de la lógica de negocio, suele cambiar con mayor frecuencia porque depende de
+            tecnologías y protocolos.
+        </p>
 
-    <List>
-      <ListItem icon={icons.Users}>
-        Define el <strong>cómo</strong> interactúan las personas usuarias o sistemas
-        externos con la lógica de negocio.
-      </ListItem>
-      <ListItem icon={icons.AppWindow}>
-        No pertenece a la biblioteca: vive en un servicio, aplicación o
-        interfaz.
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={icons.Users}>
+                Define el <strong>cómo</strong> interactúan las personas usuarias o sistemas
+                externos con la lógica de negocio.
+            </ListItem>
+            <ListItem icon={icons.AppWindow}>
+                No pertenece a la biblioteca: vive en un servicio, aplicación o interfaz.
+            </ListItem>
+        </List>
 
-    <NotesSection id="example-app-logic">
-      <Heading headingLevel="h3" Icon={icons.Cloud}>
-        Ejemplo: Backend web para e-commerce
-      </Heading>
+        <NotesSection id="example-app-logic">
+            <Heading headingLevel="h3" Icon={icons.Cloud}>
+                Ejemplo: Backend web para e-commerce
+            </Heading>
 
-      <p>
-        Si seguimos con el ejemplo del sistema de pedidos, la lógica de
-        aplicación se encarga de:
-      </p>
+            <p>
+                Si seguimos con el ejemplo del sistema de pedidos, la lógica de aplicación se
+                encarga de:
+            </p>
 
-      <List>
-        <ListItem icon={icons.Download}>
-          Recibir una solicitud HTTP para crear un pedido.
-        </ListItem>
-        <ListItem icon={icons.Code}>
-          Convertir la entrada JSON a objetos de negocio (<code>Order</code>, <code
-            >Item</code
-          >).
-        </ListItem>
-        <ListItem icon={icons.PlayCircle}>
-          Llamar a las funciones de la lógica de negocio.
-        </ListItem>
-        <ListItem icon={icons.Database}>
-          Guardar el resultado en una base de datos.
-        </ListItem>
-        <ListItem icon={icons.Upload}>
-          Responder con un código HTTP apropiado.
-        </ListItem>
-      </List>
+            <List>
+                <ListItem icon={icons.Download}>
+                    Recibir una solicitud HTTP para crear un pedido.
+                </ListItem>
+                <ListItem icon={icons.Code}>
+                    Convertir la entrada JSON a objetos de negocio (<code>Order</code>, <code
+                    >Item</code>).
+                </ListItem>
+                <ListItem icon={icons.PlayCircle}>
+                    Llamar a las funciones de la lógica de negocio.
+                </ListItem>
+                <ListItem icon={icons.Database}>
+                    Guardar el resultado en una base de datos.
+                </ListItem>
+                <ListItem icon={icons.Upload}>
+                    Responder con un código HTTP apropiado.
+                </ListItem>
+            </List>
+        </NotesSection>
     </NotesSection>
-  </NotesSection>
-  <NotesSection id="library-contains-business-logic">
-    <Heading slot="heading" headingLevel="h2" Icon={icons.Books}>
-      La biblioteca contiene la lógica de negocio
-    </Heading>
+    <NotesSection id="library-contains-business-logic">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Books}
+        >
+            La biblioteca contiene la lógica de negocio
+        </Heading>
 
-    <p>Al separar estas dos capas, queda claro qué debe ir en la biblioteca:</p>
+        <p>Al separar estas dos capas, queda claro qué debe ir en la biblioteca:</p>
 
-    <List>
-      <ListItem icon={icons.Cube}>
-        La <strong>biblioteca</strong> implementa la <strong
-          >lógica de negocio</strong
-        >.
-      </ListItem>
-      <ListItem icon={icons.AppWindow}>
-        La <strong>aplicación</strong> integra esa lógica con tecnologías concretas
-        (frameworks web, CLI, UI, etc.).
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={icons.Cube}>
+                La <strong>biblioteca</strong> implementa la <strong>lógica de negocio</strong>.
+            </ListItem>
+            <ListItem icon={icons.AppWindow}>
+                La <strong>aplicación</strong> integra esa lógica con tecnologías concretas
+                (frameworks web, CLI, UI, etc.).
+            </ListItem>
+        </List>
 
-    <p>Esto trae beneficios:</p>
+        <p>Esto trae beneficios:</p>
 
-    <List>
-      <ListItem icon={icons.Repeat}>
-        <strong>Reutilización</strong>: la misma lógica de negocio puede usarse
-        en una app web, móvil o un script de automatización.
-      </ListItem>
-      <ListItem icon={icons.Check}>
-        <strong>Pruebas más simples</strong>: es posible verificar reglas del
-        negocio sin depender de HTTP, bases de datos o UI.
-      </ListItem>
-      <ListItem icon={icons.Wrench}>
-        <strong>Mantenibilidad</strong>: los cambios en frameworks o detalles
-        técnicos no afectan las reglas del dominio.
-      </ListItem>
-      <ListItem icon={icons.ArrowsLeftRight}>
-        <strong>Portabilidad</strong>: si mañana cambiamos de framework, la
-        lógica de negocio sigue siendo válida.
-      </ListItem>
-    </List>
+        <List>
+            <ListItem icon={icons.Repeat}>
+                <strong>Reutilización</strong>: la misma lógica de negocio puede usarse en una app
+                web, móvil o un script de automatización.
+            </ListItem>
+            <ListItem icon={icons.Check}>
+                <strong>Pruebas más simples</strong>: es posible verificar reglas del negocio sin
+                depender de HTTP, bases de datos o UI.
+            </ListItem>
+            <ListItem icon={icons.Wrench}>
+                <strong>Mantenibilidad</strong>: los cambios en frameworks o detalles técnicos no
+                afectan las reglas del dominio.
+            </ListItem>
+            <ListItem icon={icons.ArrowsLeftRight}>
+                <strong>Portabilidad</strong>: si mañana cambiamos de framework, la lógica de
+                negocio sigue siendo válida.
+            </ListItem>
+        </List>
 
-    <Note class="mt-4">
-      Aunque la distinción suele ser clara, la línea entre lógica de negocio y
-      lógica de aplicación puede ser difusa en ciertos escenarios. Por ejemplo,
-      la interacción con una base de datos normalmente pertenece a la lógica de
-      aplicación. Sin embargo, podríamos diseñar una biblioteca que modele <em
-        >cómo</em
-      > se consulta o persiste información, siempre a través de <strong
-        >abstracciones</strong
-      >. La conexión concreta a la base de datos (drivers, pools, transacciones)
-      sigue ocurriendo en la capa de aplicación.
-    </Note>
-  </NotesSection>
+        <Note class="mt-4">
+            Aunque la distinción suele ser clara, la línea entre lógica de negocio y lógica de
+            aplicación puede ser difusa en ciertos escenarios. Por ejemplo, la interacción con una
+            base de datos normalmente pertenece a la lógica de aplicación. Sin embargo, podríamos
+            diseñar una biblioteca que modele <em>cómo</em> se consulta o persiste información,
+            siempre a través de <strong>abstracciones</strong>. La conexión concreta a la base de
+            datos (drivers, pools, transacciones) sigue ocurriendo en la capa de aplicación.
+        </Note>
+    </NotesSection>
 
-  <NotesSection id="real-example">
-    <Heading slot="heading" headingLevel="h2" Icon={icons.PlayCircle}>
-      Ejemplo real
-    </Heading>
+    <NotesSection id="real-example">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.PlayCircle}
+        >
+            Ejemplo real
+        </Heading>
 
-    <p>
-      La misma función de <strong>lógica de negocio</strong> se usa desde dos contextos
-      de <strong>lógica de aplicación</strong>: una API REST y una interfaz de
-      usuario. Observa cómo las reglas viven en la biblioteca, y la
-      orquestación/delivery vive en la aplicación.
-    </p>
+        <p>
+            La misma función de <strong>lógica de negocio</strong> se usa desde dos contextos de
+            <strong>lógica de aplicación</strong>: una API REST y una interfaz de usuario. Observa
+            cómo las reglas viven en la biblioteca, y la orquestación/delivery vive en la
+            aplicación.
+        </p>
 
-    <p>
-      Para ilustrar esto usaremos <strong>Ktor</strong> (un framework ligero para
-      crear servidores en Kotlin) y <strong>Compose</strong> (un toolkit para construir
-      interfaces declarativas). Podríamos haber usado otras alternativas, como Spring
-      Boot o Micronaut en lugar de Ktor, o JavaFX en lugar de Compose. El punto clave
-      es que las tecnologías de aplicación pueden cambiar, mientras que la lógica
-      de negocio permanece en la biblioteca.
-    </p>
+        <p>
+            Para ilustrar esto usaremos <strong>Ktor</strong> (un framework ligero para crear
+            servidores en Kotlin) y <strong>Compose</strong> (un toolkit para construir interfaces
+            declarativas). Podríamos haber usado otras alternativas, como Spring Boot o Micronaut en
+            lugar de Ktor, o JavaFX en lugar de Compose. El punto clave es que las tecnologías de
+            aplicación pueden cambiar, mientras que la lógica de negocio permanece en la biblioteca.
+        </p>
 
-    <KotlinBlock
-      code={`
+        <KotlinBlock
+            code={`
         fun createOrder(products: Set<Pair<String, Int>>): Map<String, Int> {
             require(products.isNotEmpty()) {
               "Un pedido debe tener al menos un ítem."
@@ -229,14 +227,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
             return products.toMap()
         }
       `}
-    >
-      <Fragment slot="title">
-        <strong>Lógica de negocio:</strong> valida las reglas e implementa el dominio.
-      </Fragment>
-    </KotlinBlock>
+        >
+            <Fragment slot="title">
+                <strong>Lógica de negocio:</strong> valida las reglas e implementa el dominio.
+            </Fragment>
+        </KotlinBlock>
 
-    <KotlinBlock
-      code={`
+        <KotlinBlock
+            code={`
         post("/orders") {
             // Lógica de aplicación:
             // 1) Recibir datos externos (JSON: {"skuA": 2, "skuB": 1})
@@ -253,15 +251,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
             call.respond(order)
         }
       `}
-    >
-      <Fragment slot="title">
-        <strong>Lógica de aplicación (API REST):</strong> adapta HTTP↔️dominio y
-        delega en <InlineKotlin code={`createOrder`} />.
-      </Fragment>
-    </KotlinBlock>
+        >
+            <Fragment slot="title">
+                <strong>Lógica de aplicación (API REST):</strong> adapta HTTP↔️dominio y delega en
+                <InlineKotlin code={`createOrder`} />.
+            </Fragment>
+        </KotlinBlock>
 
-    <KotlinBlock
-      code={`
+        <KotlinBlock
+            code={`
         @Composable
         fun OrderScreen() {
             // Lógica de aplicación (UI):
@@ -277,98 +275,97 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Text(text = "Pedido creado · ítems: $totalItems")
         }
       `}
-    >
-      <Fragment slot="title">
-        <strong>Lógica de aplicación (UI):</strong> obtiene datos de la vista, llama
-        a <InlineKotlin code={`createOrder`} /> y presenta el resultado.
-      </Fragment>
-    </KotlinBlock>
+        >
+            <Fragment slot="title">
+                <strong>Lógica de aplicación (UI):</strong> obtiene datos de la vista, llama a
+                <InlineKotlin code={`createOrder`} /> y presenta el resultado.
+            </Fragment>
+        </KotlinBlock>
 
-    <Tip class="mt-3">
-      Las reglas del dominio se mantienen en la función de la biblioteca. La
-      aplicación solo <em>traduce</em> entradas/salidas (HTTP, UI) y orquesta el
-      flujo. Cambiar Ktor por otro framework web, o Compose por otro toolkit de UI,
-      no afecta la validez de <InlineKotlin code={`createOrder`} />.
-    </Tip>
-  </NotesSection>
+        <Tip class="mt-3">
+            Las reglas del dominio se mantienen en la función de la biblioteca. La aplicación solo
+            <em>traduce</em> entradas/salidas (HTTP, UI) y orquesta el flujo. Cambiar Ktor por otro
+            framework web, o Compose por otro toolkit de UI, no afecta la validez de <InlineKotlin
+                code={`createOrder`}
+            />.
+        </Tip>
+    </NotesSection>
 
-  <ConclusionsLayout>
-    <Fragment slot="conclusions">
-      <p>
-        La distinción entre <strong>lógica de negocio</strong> y
-        <strong>lógica de aplicación</strong> nos entrega una brújula clara para
-        decidir qué debe vivir en una biblioteca y qué pertenece a la aplicación.
-        La primera concentra las reglas del dominio y se mantiene estable, mientras
-        que la segunda traduce y orquesta esas reglas en entornos concretos como
-        APIs, interfaces gráficas o servicios en la nube.
-      </p>
-      <p>
-        Esta separación no solo favorece la <strong>reutilización</strong>,
-        <strong>pruebas más simples</strong> y <strong>portabilidad</strong>,
-        sino que también nos prepara para el siguiente paso: preguntarnos
-        <em>cómo representamos esas reglas e invariantes en código</em>. Es aquí
-        donde entran en juego los <strong>modelos de dominio</strong>.
-      </p>
-    </Fragment>
-
-    <Fragment slot="key-points">
-      <ListItem icon={icons.Cube}>
-        La biblioteca implementa la lógica de negocio: reglas, invariantes y
-        operaciones fundamentales del dominio.
-      </ListItem>
-      <ListItem icon={icons.AppWindow}>
-        La aplicación implementa la lógica de aplicación: frameworks, UI, bases
-        de datos y orquestación de acciones.
-      </ListItem>
-      <ListItem icon={icons.Repeat}>
-        Separar ambas capas aumenta la reutilización, la mantenibilidad y la
-        portabilidad de las soluciones.
-      </ListItem>
-      <ListItem icon={icons.Check}>
-        Esta división abre paso a diseñar modelos de dominio más expresivos,
-        precisos y alineados con las necesidades reales.
-      </ListItem>
-    </Fragment>
-
-    <Fragment slot="takeaways">
-      <p>
-        El gran aprendizaje es que <strong
-          >las bibliotecas deben capturar el corazón del dominio</strong
-        >, mientras que la aplicación se adapta al contexto tecnológico. Con
-        esta base clara, estamos listxs para explorar cómo dar forma a esas
-        reglas a través de <strong>modelos de dominio</strong>: estructuras de
-        datos y tipos que representan con precisión el mundo que queremos
-        modelar.
-      </p>
-    </Fragment>
-  </ConclusionsLayout>
-
-  <References>
-    <Fragment slot="recommended">
-      <WebPage
-        title="Qué es la lógica de negocio en programación y cómo distinguirla de la lógica de aplicación y de pantalla"
-        url="https://albertcapdevila.net/logica-negocio-programacion/"
-      >
-        <AuthorList
-          slot="author"
-          authors={[
-            {
-              firstName: "Albert",
-              lastName: "Capdevila",
-              url: "https://albertcapdevila.net/",
-            },
-          ]}
-        />
-        <Fragment slot="description">
-          Explica cómo diferenciar tres tipos de lógica en un sistema de
-          software: <strong>lógica de negocio</strong> (reglas e invariantes del
-          dominio), <strong>lógica de aplicación</strong> (coordinación técnica y
-          persistencia) y <strong>lógica de pantalla</strong> (decisiones de interfaz).
-          A través de ejemplos claros, como facturas y gestión de stock, muestra
-          cómo ubicar cada tipo de lógica en la arquitectura y cómo esta separación
-          favorece la comunicación en el equipo y la mantenibilidad del código.
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <p>
+                La distinción entre <strong>lógica de negocio</strong> y
+                <strong>lógica de aplicación</strong> nos entrega una brújula clara para decidir qué
+                debe vivir en una biblioteca y qué pertenece a la aplicación. La primera concentra
+                las reglas del dominio y se mantiene estable, mientras que la segunda traduce y
+                orquesta esas reglas en entornos concretos como APIs, interfaces gráficas o
+                servicios en la nube.
+            </p>
+            <p>
+                Esta separación no solo favorece la <strong>reutilización</strong>,
+                <strong>pruebas más simples</strong> y <strong>portabilidad</strong>, sino que
+                también nos prepara para el siguiente paso: preguntarnos
+                <em>cómo representamos esas reglas e invariantes en código</em>. Es aquí donde
+                entran en juego los <strong>modelos de dominio</strong>.
+            </p>
         </Fragment>
-      </WebPage>
-    </Fragment>
-  </References>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Cube}>
+                La biblioteca implementa la lógica de negocio: reglas, invariantes y operaciones
+                fundamentales del dominio.
+            </ListItem>
+            <ListItem icon={icons.AppWindow}>
+                La aplicación implementa la lógica de aplicación: frameworks, UI, bases de datos y
+                orquestación de acciones.
+            </ListItem>
+            <ListItem icon={icons.Repeat}>
+                Separar ambas capas aumenta la reutilización, la mantenibilidad y la portabilidad de
+                las soluciones.
+            </ListItem>
+            <ListItem icon={icons.Check}>
+                Esta división abre paso a diseñar modelos de dominio más expresivos, precisos y
+                alineados con las necesidades reales.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <p>
+                El gran aprendizaje es que <strong>las bibliotecas deben capturar el corazón del
+                    dominio</strong>, mientras que la aplicación se adapta al contexto tecnológico.
+                Con esta base clara, estamos listxs para explorar cómo dar forma a esas reglas a
+                través de <strong>modelos de dominio</strong>: estructuras de datos y tipos que
+                representan con precisión el mundo que queremos modelar.
+            </p>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <WebPage
+                title="Qué es la lógica de negocio en programación y cómo distinguirla de la lógica de aplicación y de pantalla"
+                url="https://albertcapdevila.net/logica-negocio-programacion/"
+            >
+                <AuthorList
+                    slot="author"
+                    authors={[
+                        {
+                            firstName: "Albert",
+                            lastName: "Capdevila",
+                            url: "https://albertcapdevila.net/",
+                        },
+                    ]}
+                />
+                <Fragment slot="description">
+                    Explica cómo diferenciar tres tipos de lógica en un sistema de software: <strong
+                    >lógica de negocio</strong> (reglas e invariantes del dominio), <strong>lógica
+                        de aplicación</strong> (coordinación técnica y persistencia) y <strong
+                    >lógica de pantalla</strong> (decisiones de interfaz). A través de ejemplos
+                    claros, como facturas y gestión de stock, muestra cómo ubicar cada tipo de
+                    lógica en la arquitectura y cómo esta separación favorece la comunicación en el
+                    equipo y la mantenibilidad del código.
+                </Fragment>
+            </WebPage>
+        </Fragment>
+    </References>
 </NotesLayout>

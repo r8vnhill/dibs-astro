@@ -27,7 +27,8 @@ const isExternal = typeof external === "boolean"
     ? external
     : /^https?:\/\//.test(href) || href.startsWith("//");
 
-const base = "group inline-flex items-center gap-2 rounded-md font-medium transition-colors focus-visible:outline-none";
+const base =
+    "group inline-flex items-center gap-2 rounded-md font-medium transition-colors focus-visible:outline-none";
 const sizes = {
     sm: "text-sm px-2 py-1",
     md: "text-sm px-3 py-2",

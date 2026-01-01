@@ -15,18 +15,24 @@ import {
     Definition,
     Exercise,
     Explanation,
+    Important,
     Info,
     More,
+    Note,
     Question,
+    Tip,
+    Warning,
 } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
+import NushellLink from "~/components/ui/links/NushellLink.astro";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -48,14 +54,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
 
         <P>
-            También verás un <B>patrón para ejecutar comandos externos de forma segura</B>: resolver
-            el binario real con <PowerShellInline code="Get-Command" />, invocarlo con
-            <PowerShellInline code="&" />, capturar salida y errores (<PowerShellInline
-                code="2>&1"
-            />), validar <PowerShellInline code="$LASTEXITCODE" /> y elevar con contexto si falla
-            (por ejemplo, mediante un wrapper como
-            <PowerShellInline code="Invoke-Tool.ps1" />). El ejercicio final te invita a practicar
-            estos conceptos implementando un <I>fallback</I> simple entre dos comandos de descarga.
+            También aprenderás un <B>patrón seguro para ejecutar comandos externos</B>: resolver el
+            binario real, ejecutarlo de forma inequívoca, capturar su resultado y <B>elevar fallos
+                con contexto</B> cuando corresponda, para evitar scripts frágiles o dependientes del
+            entorno. El ejercicio final consolida estas ideas implementando un <I>fallback</I>
+            simple entre herramientas, priorizando <B>capacidades reales</B> por sobre suposiciones.
         </P>
     </Abstract>
 
@@ -69,19 +72,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <P>
             En un shell orientado a automatización y pipelines como PowerShell, no todos los fallos
-            deben detener la ejecución: a menudo procesas <B>muchos elementos</B> (archivos, filas,
+            deben detener la ejecución. A menudo procesas <B>muchos elementos</B> (archivos, filas,
             recursos remotos) y necesitas <B>registrar errores por ítem</B> sin abortar el lote
-            completo (errores <I>no terminantes</I>). En cambio, cuando una operación es crítica (p.
-            ej., escribir/borrar datos relevantes), conviene <B>elevar el error a terminante</B>
-            para detener el flujo y manejarlo con <PowerShellInline code="try" />/<PowerShellInline
-                code="catch"
-            />. PowerShell modela explícitamente esta distinción y te da controles como
-            <PowerShellInline code="-ErrorAction" /> y <PowerShellInline
-                code="$ErrorActionPreference"
-            /> para <B>escalar</B> fallos no terminantes a terminantes cuando lo requiera el guion,
-            mientras que <PowerShellInline code="try" />/<PowerShellInline code="catch" /> solo
-            captura errores <B>terminantes</B>. Esto permite equilibrar <B>robustez en lote</B> y <B
-            >seguridad en operaciones críticas</B> dentro del mismo lenguaje.
+            completo: estos son errores <I>no terminantes</I>.
+        </P>
+
+        <P>
+            En cambio, cuando una operación es crítica (por ejemplo, escribir o borrar datos),
+            conviene <B>elevar el error a terminante</B> para detener el flujo y manejarlo
+            explícitamente con <PowerShellInline code="try" />/<PowerShellInline code="catch" />.
+            PowerShell modela esta distinción de forma explícita y proporciona mecanismos como
+            <PowerShellInline code="-ErrorAction" /> y
+            <PowerShellInline code="$ErrorActionPreference" />
+            para <B>promover</B> errores no terminantes a terminantes cuando el script lo requiere.
+        </P>
+
+        <P>
+            <I>Ojo:</I> <PowerShellInline code="try" />/<PowerShellInline code="catch" />
+            solo captura errores <B>terminantes</B>. Esto no es un detalle accidental: los errores
+            no terminantes están pensados para <B>reportar problemas sin romper el flujo</B>,
+            mientras que <PowerShellInline code="try" />/<PowerShellInline code="catch" /> está
+            diseñado para el <B>control explícito del flujo</B> ante fallos críticos. En última
+            instancia, PowerShell nos permite decidir si los errores
+            <I>informan</I> o <I>definen</I> el comportamiento del programa.
         </P>
 
         <Definition headingLevel="h3">
@@ -91,10 +104,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <P>
                 Un <B>error no terminante</B> registra la falla pero <I>continúa</I> la ejecución.
-                Es útil cuando procesas un conjunto de elementos y quieres obtener un reporte de qué
-                funcionó y qué falló, sin detener todo ante el primer error. Solo lo mencionamos
-                aquí como contexto; lo veremos con más detalle cuando abordemos el <I>pipeline</I>,
-                donde resulta especialmente relevante.
+                Es útil cuando procesas un conjunto de elementos y quieres un reporte <B>por
+                    elemento</B> de qué funcionó y qué falló, sin detener todo ante el primer error.
+                Solo lo mencionamos aquí como contexto; lo veremos con más detalle cuando abordemos
+                el <I>pipeline</I>, donde resulta especialmente relevante.
             </P>
         </Definition>
 
@@ -109,14 +122,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     code="try"
                 />/<PowerShellInline code="catch" />/<PowerShellInline code="finally" />.
             </P>
+
+            <P>
+                En CI/CD suele ser deseable <B>fallar rápido</B> para evitar despliegues
+                inconsistentes o estados intermedios.
+            </P>
         </Definition>
 
+        <Tip headingLevel="h3">
+            <Fragment slot="title">Regla práctica</Fragment>
+            <P>
+                Si un fallo invalida el resultado del script, conviértelo en terminante; si solo
+                invalida <I>un elemento</I>, suele ser mejor tratarlo como no terminante (registrar
+                y continuar).
+            </P>
+        </Tip>
+
         <P>
-            Este ejemplo implementa una copia <B>segura</B> con <PowerShellInline
+            Este ejemplo implementa una copia <B>segura y predecible</B> con <PowerShellInline
                 code="ShouldProcess"
-            /> y elevación de errores a <I>terminantes</I> para capturarlos con
-            <PowerShellInline code="catch" />. El bloque <PowerShellInline code="finally" /> siempre
-            devuelve un objeto con <I>estado</I> de la operación.
+            /> para confirmación, y elevación de errores a <I>terminantes</I> para capturarlos con
+            <PowerShellInline code="catch" />. El bloque <PowerShellInline code="finally" />
+            garantiza una <B>salida estructurada</B> con el <I>estado</I> de la operación, incluso
+            ante fallos o cancelaciones.
         </P>
 
         <PowerShellBlock
@@ -204,6 +232,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </PowerShellBlock>
 
         <Explanation headingLevel="h3">
+            <P>
+                El objetivo del diseño no es solo copiar archivos: es <B>comunicar explícitamente
+                    qué ocurrió</B>, sin obligar al consumidor a inferirlo desde excepciones o
+                salida textual.
+            </P>
+
             <List>
                 <ListItem icon={icons.Path}>
                     <B>Rutas normalizadas y destino final:</B>
@@ -232,13 +266,39 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <Mono>Status</Mono> y, cuando aplica, <Mono>Reason</Mono> o <Mono>Error</Mono>.
                 </ListItem>
             </List>
+
+            <P>
+                <Mono>Cancelled</Mono> se modela de forma explícita para evitar ambigüedad: el
+                script no <I>falló</I>, simplemente <B>no ejecutó la acción</B> (decisión del
+                usuario o <PowerShellInline code="-WhatIf" />).
+            </P>
         </Explanation>
+
+        <Info headingLevel="h3">
+            <span slot="title">Estados posibles del resultado</span>
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <Mono>Copied</Mono>: la copia se realizó correctamente.
+                </ListItem>
+                <ListItem icon={icons.HandPalm}>
+                    <Mono>Skipped</Mono>: el destino ya existía.
+                </ListItem>
+                <ListItem icon={icons.XCircle}>
+                    <Mono>Cancelled</Mono>: <PowerShellInline code="ShouldProcess" /> devolvió
+                    <Mono>false</Mono>.
+                </ListItem>
+                <ListItem icon={icons.Bug}>
+                    <Mono>Failed</Mono>: ocurrió un error terminante durante la operación.
+                </ListItem>
+            </List>
+        </Info>
 
         <Info headingLevel="h3">
             <span slot="title">Uso</span>
 
             <P>
-                Ejecuta el script desde la terminal pasando un archivo y una carpeta destino:
+                Ejecuta el script desde la terminal pasando un archivo y una carpeta destino, para
+                centrarnos en el <B>contrato del script</B> antes de introducir pipelines:
             </P>
 
             <PowerShellBlock
@@ -264,6 +324,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </PowerShellBlock>
         </Info>
 
+        <P>
+            Más adelante veremos cómo esta salida estructurada permite <B>encadenar decisiones en
+                pipelines</B>, sin depender de <PowerShellInline code="try" />/<PowerShellInline
+                code="catch"
+            /> externos.
+        </P>
+
         <Question headingLevel="h4">
             <List>
                 <ListItem icon={icons.Play}
@@ -279,30 +346,36 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Esquema de salida y estabilidad</span>
 
             <P>
-                Cuando se <I>omite</I>, <I>copia</I> o <I>falla</I>, el ejemplo adjunta
-                <Mono>Status</Mono> y, según el caso, <Mono>Reason</Mono> o <Mono>Error</Mono>. Si
-                <PowerShellInline code="ShouldProcess" /> es rechazado (confirmación o
-                <PowerShellInline code="-WhatIf" />), aquí marcamos <Mono>Cancelled</Mono> de forma
-                explícita. Una alternativa más simple es devolver solo el objeto base (<Mono
-                >Source/Destination/Target</Mono>) sin <Mono>Status</Mono>, pero eso <B>varía el
-                    esquema</B> entre ramas.
+                Este ejemplo define un <B>contrato explícito</B>: siempre devuelve
+                <Mono>Source/Destination/Target</Mono> y añade <Mono>Status</Mono> para que el
+                consumidor no tenga que <I>inferir</I> qué pasó leyendo excepciones o texto. Nombrar
+                <Mono>Cancelled</Mono> de forma directa evita el antipatrón de asumir que
+                <Enquote>no se hizo nada</Enquote> solo porque falta información, algo frágil en
+                automatización.
             </P>
 
-            <P>
-                Decide qué prefieres para tus consumidores: un esquema <B>estable/tabular</B>
-                (mismas propiedades siempre, ideal para filtrar/seleccionar en pipeline) o uno más
-                <B>flexible/JSON</B> (propiedades opcionales según el caso). En estas notas <I
-                >todavía no trabajamos con el pipeline</I>, así que priorizamos claridad y registro
-                por sobre la rigidez del esquema.
-            </P>
+            <Warning headingLevel="h5">
+                <span slot="title">Hay un compromiso</span>
 
-            <P>
-                Nota: al construir con <Mono>@{}</Mono> (<I>hashtable</I>) se puede <I>perder el
-                    orden</I> de propiedades; si necesitas orden estable (p. ej., para salida
-                tabular), puedes crear un <PowerShellInline code="[PSCustomObject]" /> desde el
-                comienzo y agregar propiedades con <PowerShellInline code="Add-Member" />. Aquí
-                elegimos la opción más simple con fines ilustrativos.
-            </P>
+                Un esquema <B>estable/tabular</B> (mismas propiedades siempre, ideal para filtrar o
+                agrupar por <Mono>Status</Mono> en un pipeline) versus uno <B>flexible</B>
+                (propiedades opcionales según el caso). Aquí <I>todavía no usamos el pipeline</I>,
+                así que privilegiamos claridad por encima de rigidez total.
+            </Warning>
+
+            <Tip headingLevel="h5">
+                <span slot="title">Regla práctica</span>
+
+                Si otros scripts consumirán tu salida, prefiere un <B>esquema estable</B>; si es
+                consumo humano puntual, puedes permitir más flexibilidad.
+            </Tip>
+
+            <Note headingLevel="h5">
+                Al construir con <PowerShellInline code={`@{}`} /> (<I>hashtable</I>) puedes <I
+                >perder el orden</I> de propiedades. Si necesitas un orden fijo (por ejemplo, para
+                una tabla), crea el <PowerShellInline code="[PSCustomObject]" /> desde el inicio y
+                agrega propiedades con <PowerShellInline code="Add-Member" />.
+            </Note>
         </More>
 
         <More headingLevel="h4">
@@ -336,18 +409,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <P>
                 En PowerShell es común incluir un <PowerShellInline code={`catch`} /> genérico
                 porque muchos cmdlets encapsulan las excepciones .NET dentro de objetos
-                <PowerShellInline code={`[ErrorRecord]`} />, cuyas categorías o tipos varían entre
-                proveedores. Esto dificulta predecir el tipo exacto, por lo que un bloque genérico
-                suele ser una red de seguridad útil. Aun así, cuando anticipes escenarios típicos
-                (permisos, E/S), añade <PowerShellInline code={`catch`} /> tipados para mensajes más
-                claros.
+                <PowerShellInline code={`[ErrorRecord]`} />. En la práctica esto implica que el
+                <I>tipo de excepción original</I> no siempre es el que llega al
+                <PowerShellInline code={`catch`} />, por lo que tipar puede fallar. El
+                <PowerShellInline code={`catch`} /> genérico actúa como <B>última línea de
+                    defensa</B>: garantiza que el error no se pierda ni quede sin manejar.
             </P>
 
-            <P>
-                En este apunte usaremos principalmente <PowerShellInline code={`catch`} /> genéricos
-                para simplificar los ejemplos, aunque en contextos reales conviene combinar ambos
-                tipos según el grado de control y legibilidad que busques.
-            </P>
+            <Tip headingLevel="h5">
+                <span slot="title">Regla práctica</span>
+
+                Tipa <PowerShellInline code={`catch`} /> solo cuando esperas un fallo concreto y
+                recurrente; mantén siempre un <PowerShellInline code={`catch`} /> genérico como
+                respaldo. En ambos casos, el objetivo es convertir el error en <B>información
+                    útil</B> (por ejemplo en <Mono>Error</Mono>) para quien consuma el resultado.
+            </Tip>
         </More>
     </NotesSection>
 
@@ -434,23 +510,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.MagnifyingGlass}>
                     <B><PowerShellInline code="Get-Command ... -ErrorAction Stop" />:</B> resuelve
                     el ejecutable real (solo de tipo <I>Application</I>) a partir de todos los
-                    candidatos que encuentra (devuelve una colección) usando la heurística simple de
-                    quedarnos con el primer resultado. Con <PowerShellInline
+                    candidatos que encuentra (devuelve una colección). Aquí usamos una heurística
+                    simple (<I>primer candidato</I>), suficiente para scripts controlados; si el
+                    entorno es más complejo, puedes filtrar por ruta/versión. Con <PowerShellInline
                         code="-ErrorAction Stop"
-                    /> convertimos <Enquote>no encontrado</Enquote> en error terminante. El objeto
-                    devuelto es <PowerShellInline
-                        code="[System.Management.Automation.CommandInfo]"
-                    />.
+                    /> convertimos <Enquote>no encontrado</Enquote> en error terminante.
                 </ListItem>
 
-                <ListItem icon={icons.BracketsCurly}>
-                    <B>Forzar arreglo con <PowerShellInline code="@()" />:</B> envolver la
-                    llamada a <PowerShellInline code="Get-Command" /> en
+                <ListItem icon={icons.ShieldCheck}>
+                    <B>Seguridad (PATH hijacking):</B> resolver el binario con <PowerShellInline
+                        code="Get-Command"
+                    /> y ejecutar su ruta (<PowerShellInline code="$path" />) reduce el riesgo de
+                    invocar <I>otro</I> ejecutable con el mismo nombre por manipulación del
+                    <Mono>PATH</Mono>.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsSquare}>
+                    <B>Forzar arreglo con <PowerShellInline code="@()" />:</B> envolver la llamada a
+                    <PowerShellInline code="Get-Command" /> en
                     <PowerShellInline code="@(...)" /> garantiza que el resultado sea siempre un
-                    arreglo (0, 1 o más elementos). De este modo <PowerShellInline
-                        code=".Count" /> y la indexación (<PowerShellInline code="$cmds[0]" />)
-                    funcionan de forma consistente sin errores sorpresa cuando solo hay un
-                    candidato o ninguno.
+                    arreglo (0, 1 o más elementos). De este modo <PowerShellInline code=".Count" />
+                    y la indexación (<PowerShellInline code="$cmds[0]" />) funcionan de forma
+                    consistente sin errores sorpresa cuando solo hay un candidato o ninguno.
                 </ListItem>
 
                 <ListItem icon={icons.LinkSimple}>
@@ -468,55 +549,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                 <ListItem icon={icons.Play}>
                     <B>Línea clave: <PowerShellInline code="$out = & $path @Rest 2>&1" />:</B>
-                    <List>
-                        <ListItem icon={icons.ArrowRight}>
-                            <I>call operator</I> <PowerShellInline code="&" /> ejecuta el binario.
-                        </ListItem>
-
-                        <ListItem icon={icons.BracketsCurly}>
-                            Splatting <PowerShellInline code="@Rest" /> pasa los argumentos tal cual
-                            (array → args).
-                        </ListItem>
-
-                        <ListItem icon={icons.ArrowsLeftRight}>
-                            <B><PowerShellInline code="2>&1" />:</B> combina los flujos de salida
-                            estándar (<I>stdout</I>) y error estándar (<I>stderr</I>) en uno solo.
-                            En PowerShell (y en sistemas heredados de Unix), los números representan
-                            los <I>streams</I>:
-                            <List>
-                                <ListItem icon={icons.NumberCircleOne}>
-                                    <PowerShellInline code="1" /> → salida estándar (<I>stdout</I>),
-                                    lo que normalmente imprime el programa.
-                                </ListItem>
-
-                                <ListItem icon={icons.NumberCircleTwo}>
-                                    <PowerShellInline code="2" /> → salida de error (<I>stderr</I>),
-                                    donde van los mensajes de error.
-                                </ListItem>
-
-                                <ListItem icon={icons.CaretRight}>
-                                    <PowerShellInline code=">" /> redirige la salida hacia otro
-                                    destino, y
-                                    <PowerShellInline code="&" /> indica que ese destino es otro
-                                    flujo.
-                                </ListItem>
-                            </List>
-
-                            Por lo tanto, <PowerShellInline code="2>&1" /> significa literalmente
-                            <I><Enquote>redirige el flujo 2 (errores) al mismo lugar que el flujo 1
-                                    (salida estándar)</Enquote></I>, lo que permite capturar todo
-                            (mensajes y errores) en la misma variable <PowerShellInline
-                                code="$out"
-                            />.
-                        </ListItem>
-                    </List>
+                    ejecuta el binario (<PowerShellInline code="&" />), pasa argumentos sin
+                    reinterpretarlos (<PowerShellInline code="@Rest" />) y captura <I>stdout</I> +
+                    <I>stderr</I> juntos (<PowerShellInline code="2>&1" />).
                 </ListItem>
 
                 <ListItem icon={icons.CheckCircle}>
                     <B><PowerShellInline code="$LASTEXITCODE" />:</B> código de salida del proceso
-                    nativo.
-                    <PowerShellInline code="0" /> = éxito; cualquier otro se trata como error y se
-                    eleva con un mensaje detallado.
+                    nativo. <PowerShellInline code="0" /> = éxito; cualquier otro se trata como
+                    error y se eleva con un mensaje detallado. Nota: <PowerShellInline
+                        code="$LASTEXITCODE"
+                    /> solo aplica a procesos nativos; los cmdlets de PowerShell reportan fallos vía
+                    errores, no por exit codes.
                 </ListItem>
 
                 <ListItem icon={icons.Siren}>
@@ -534,9 +578,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <P>
                 En PowerShell, un <B>arreglo</B> (<PowerShellInline code={`[T[]]`} />) es una
-                colección ordenada de elementos. Declaras un arreglo vacío con <PowerShellInline
+                colección ordenada de elementos. Es, además, la forma “natural” de representar
+                <I>cero, uno o muchos</I> resultados: muchos comandos devuelven un arreglo cuando
+                hay múltiples valores. Para normalizar, envolver una expresión en <PowerShellInline
                     code="@()"
-                /> o simplemente listando valores separados por comas:
+                /> garantiza que el resultado sea siempre un arreglo (aunque tenga 0 o 1 elemento).
+                Declaras un arreglo vacío con <PowerShellInline code="@()" /> o simplemente listando
+                valores separados por comas:
             </P>
 
             <PowerShellBlock
@@ -567,8 +615,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 todos los argumentos restantes gracias a <PowerShellInline
                     code="ValueFromRemainingArguments"
                 />. Luego, <PowerShellInline code="@Rest" /> (splatting) expande ese arreglo como
-                argumentos individuales al comando nativo.
+                argumentos individuales al comando nativo. Esto evita un error común: pasar
+                <PowerShellInline code="$Rest" /> sin splatting enviaría el arreglo como <I>un
+                    solo</I>
+                argumento.
             </P>
+
+            <Important headingLevel="h4">
+                Los arreglos son de tamaño fijo; operaciones como <PowerShellInline code={`+=`} />
+                crean un nuevo arreglo.
+            </Important>
         </More>
 
         <More headingLevel="h3">
@@ -584,9 +640,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
 
             <P>
+                La idea clave para esta etapa es simple: distinguir entre <B>datos</B> y
+                <B>mensajes</B>. En la práctica, devolver objetos (por ejemplo un <PowerShellInline
+                    code="[PSCustomObject]"
+                />) por el pipeline es equivalente a usar <PowerShellInline code="Write-Output" />.
+            </P>
+
+            <P>
                 De momento solo nos interesa la <B>idea general</B>: el stream <Mono>1</Mono> se usa
                 para la salida normal, y el resto (2–6) sirven para errores, advertencias, mensajes
-                verbosos, depuración, etc. Más adelante veremos con detalle cómo usar
+                verbosos, depuración, etc. El stream <Mono>6</Mono> (Information) es útil para
+                mensajes informativos que el consumidor puede mostrar, suprimir o redirigir según su
+                configuración. Más adelante veremos con detalle cómo usar
                 <PowerShellInline code="Write-Error" /> para <B>propagar errores no terminantes en
                     el pipeline</B>; por ahora nos apoyaremos sobre todo en
                 <B>salida estructurada</B> y dejaremos la responsabilidad de <I>imprimir en
@@ -667,7 +732,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     No interrogues el sistema operativo; en su lugar, <B>resuelve comandos</B> (con
                     <PowerShellInline code={`Invoke-Tool.ps1`} />) y usa
                     <PowerShellInline code={`try`} />/<PowerShellInline code={`catch`} /> para
-                    avanzar al siguiente.
+                    avanzar al siguiente. La idea es que el comportamiento dependa de la
+                    <B>disponibilidad real</B> de herramientas, no del “entorno declarado”
+                    (plataforma/versión).
                 </ListItem>
 
                 <ListItem icon={icons.DownloadSimple}>
@@ -678,34 +745,31 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.CursorClick}>
                     El script debe:
                     <List>
-                        <ListItem icon={icons.LinkSimple}>
-                            Recibir <PowerShellInline code={`-Uri`} /> (obligatorio) y
-                            <PowerShellInline code={`-OutFile`} /> (obligatorio).
-                        </ListItem>
-
-                        <ListItem icon={icons.HandPalm}>
-                            Probar <Mono>wget</Mono> dentro de <PowerShellInline
-                                code={`try`}
-                            />/<PowerShellInline code={`catch`} /> con <PowerShellInline
-                                code={`-ErrorAction Stop`}
-                            />.
+                        <ListItem icon={icons.BracketsCurly}>
+                            <B>Interfaz:</B> recibir <PowerShellInline code={`-Uri`} /> y
+                            <PowerShellInline code={`-OutFile`} /> (obligatorios).
                         </ListItem>
 
                         <ListItem icon={icons.ArrowElbowRight}>
-                            Si <Mono>wget</Mono> falla, capturar el error y probar <Mono>curl</Mono>
-                            en el bloque
-                            <PowerShellInline code={`catch`} /> (anidando otro <PowerShellInline
-                                code={`try`}
-                            />).
+                            <B>Estrategia de fallback:</B> intentar <Mono>wget</Mono>; si falla,
+                            intentar <Mono>curl</Mono> (en el <PowerShellInline code={`catch`} />).
                         </ListItem>
 
                         <ListItem icon={icons.Siren}>
-                            Si ambos fallan, <PowerShellInline code={`throw`} /> con un mensaje
-                            consolidado.
+                            <B>Fallos explícitos:</B> si ambos fallan, <PowerShellInline
+                                code={`throw`}
+                            /> con un mensaje consolidado.
                         </ListItem>
 
                         <ListItem icon={icons.Table}>
-                            Devuelve un objeto estructurado con el estado de la operación.
+                            <B>Contrato de salida:</B> devolver un objeto estructurado con el estado
+                            de la operación.
+                        </ListItem>
+
+                        <ListItem icon={icons.Target}>
+                            <B>Objetivo:</B> la descarga es un pretexto; lo importante es modelar
+                            una cadena de alternativas con fallos explícitos y un resultado
+                            verificable.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -874,7 +938,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <ConclusionsLayout>
         <P slot="conclusions">
-            El hilo conductor de la lección es <B>controlar el flujo a través de los errores</B>.
+            El hilo conductor de esta lección es que, en PowerShell, <B>el manejo de errores es una
+                decisión de diseño</B> y una herramienta explícita de <B>control de flujo</B>.
             Cuando la integridad importa, eleva fallos con
             <PowerShellInline code="-ErrorAction Stop" /> y manéjalos con
             <PowerShellInline code="try" />/<PowerShellInline code="catch" />/<PowerShellInline
@@ -916,20 +981,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
 
         <P slot="takeaways">
-            <B>El buen manejo de errores es diseño, no accidente.</B> En esta lección vimos tres
-            ideas clave: <B>elevar fallos no terminantes</B> con <PowerShellInline
-                code="-ErrorAction Stop"
-            /> para capturarlos con <PowerShellInline code="try" />/<PowerShellInline
-                code="catch"
-            /> cuando la integridad está en juego; <B>envolver comandos externos</B> (por ejemplo
-            con <Mono>Invoke-Tool.ps1</Mono>) para resolver el ejecutable real, validar
-            <PowerShellInline code="$LASTEXITCODE" /> y devolver salida estructurada; y <B>diseñar
-                scripts alrededor de capacidades</B> (qué herramientas hay disponibles) en lugar de
-            suposiciones frágiles del entorno. Si registras con intención, priorizas la salida
-            estructurada sobre el texto suelto y <I><Enquote>fail loudly</Enquote></I> cuando
-            corresponde, tus scripts serán más confiables, portables y fáciles de mantener.
+            <B>El buen manejo de errores es diseño, no accidente.</B> Elevar fallos a terminantes,
+            envolver herramientas externas y devolver objetos no es “ser más estricto”: es ser
+            <B>más predecible</B>. Si registras con intención, priorizas la salida estructurada
+            sobre el texto suelto y <I><Enquote>fail loudly</Enquote></I> cuando corresponde, tus
+            scripts serán más confiables, portables y fáciles de mantener.
         </P>
     </ConclusionsLayout>
+
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NushellLink />
+    </LinksLayout>
 
     <References>
         <Fragment slot="recommended">
@@ -963,6 +1025,47 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
 
         <Fragment slot="additional">
+            <Book
+                chapter="Errors and exceptions"
+                bookTitle="Windows PowerShell in Action, Third Edition"
+                pages={[531, 562]}
+            >
+                <AuthorList
+                    slot="authors"
+                    authors={[
+                        {
+                            firstName: "Bruce",
+                            lastName: "Payette",
+                            url: "https://www.goodreads.com/author/show/441636.Bruce_Payette",
+                        },
+                        {
+                            firstName: "Richard",
+                            lastName: "Siddaway",
+                            url: "https://www.goodreads.com/author/show/4742136.Richard_Siddaway",
+                        },
+                    ]}
+                />
+
+                <Fragment slot="description">
+                    Capítulo estructurado sobre el sistema de manejo de errores de PowerShell como
+                    herramienta de <B>automatización crítica</B>. Explica la distinción fundamental
+                    entre errores <B>terminantes</B> (que interrumpen el flujo) y <B>no
+                        terminantes</B> (que continúan pero registran fallos), alineados con el
+                    modelo de streaming de PowerShell. Cubre objetos <PowerShellInline
+                        code="ErrorRecord"
+                    /> con sus propiedades ricas (<Mono>Exception</Mono>,
+                    <Mono>TargetObject</Mono>, <Mono>CategoryInfo</Mono>, <Mono
+                    >InvocationInfo</Mono>), cómo capturar errores usando redirección
+                    (<PowerShellInline code="2>&1" />), el parámetro <PowerShellInline
+                        code="-ErrorVariable"
+                    />, y variables de estado (<PowerShellInline code="$?" />, <PowerShellInline
+                        code="$LASTEXITCODE"
+                    />). Incluye patrones para diagnosticar y gestionar errores en scripts,
+                    especialmente útil para entender cuándo un fallo debe detener la ejecución y
+                    cuándo debe reportarse sin interrumpir un pipeline.
+                </Fragment>
+            </Book>
+
             <WebPage
                 title="about_Redirection"
                 url="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_redirection"

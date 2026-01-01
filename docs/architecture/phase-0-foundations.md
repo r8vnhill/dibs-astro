@@ -11,6 +11,7 @@
 | Configuración del sitio | `src/utils/site.ts`, cabeceras SEO en `src/components/meta`                                          | Definiciones de metadatos conviven con strings de contenido, sin una capa de dominio que represente entidades (curso, lección, autoría).                     |
 
 ### Oportunidades
+
 - Definir entidades del dominio (Curso, Lección, Recurso externo) y normalizarlas antes de llegar a la capa de presentación.
 - Extraer servicios de aplicación para navegación (resolución de "previous/next", chips por lenguaje) y para la generación de bloques de código.
 - Centralizar adaptadores de infraestructura (Shiki, lectura de archivos Markdoc, registro de iconos) para reemplazos futuros.
@@ -52,11 +53,13 @@ Se usarán estos casos para medir progreso en Fase 1. Cada uno debe tener tests 
 | Tiempo de build                          | Mantener dentro del baseline actual (registrar ahora)                      | Registrar `pnpm build --filter` y comparar tras cada fase.                                        |
 
 ### Guardas operativas
+
 - Registrar estado inicial de métricas (build time, warnings) antes de Fase 1.
 - Documentar nuevos puertos/adaptadores dentro de `docs/architecture/`.
 - Cada PR de refactor debe incluir nota de compatibilidad con contenidos existentes.
 
 ## 5. Preguntas abiertas
+
 - ¿Necesitamos compatibilidad con múltiples temas de Shiki por usuario o solo dos globales? Afecta el diseño del puerto de resaltado.
 - ¿La navegación dependerá de progresos almacenados (localStorage/remote)? Determina la infraestructura necesaria.
 - ¿El sitio planea internacionalización adicional? Definirlo condiciona entidades de dominio (slugs, títulos por idioma).

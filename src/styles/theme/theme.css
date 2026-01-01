@@ -13,24 +13,24 @@
  * These are defined on the root element and used as fallbacks or defaults.
  */
 :root {
-  --primary-h: 235;
-  --primary-s: 50%;
-  --primary-l: 58%;
+    --primary-h: 235;
+    --primary-s: 50%;
+    --primary-l: 58%;
 
-  /* Base primary color (used in buttons, links, accents, etc.) */
-  --theme-color-primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
+    /* Base primary color (used in buttons, links, accents, etc.) */
+    --theme-color-primary: hsl(var(--primary-h), var(--primary-s), var(--primary-l));
 
-  /* #region Darker variants for hover, active, or focus states */
-  --theme-color-primary-dark: hsl(var(--primary-h), var(--primary-s), 45%);
-  --theme-color-primary-darker: hsl(var(--primary-h), var(--primary-s), 40%);
-  --theme-color-primary-darkest: hsl(var(--primary-h), var(--primary-s), 30%);
-  /* #endregion */
+    /* #region Darker variants for hover, active, or focus states */
+    --theme-color-primary-dark: hsl(var(--primary-h), var(--primary-s), 45%);
+    --theme-color-primary-darker: hsl(var(--primary-h), var(--primary-s), 40%);
+    --theme-color-primary-darkest: hsl(var(--primary-h), var(--primary-s), 30%);
+    /* #endregion */
 
-  /* #region Lighter variants for subtle borders, backgrounds, or text */
-  --theme-color-primary-light: hsl(var(--primary-h), var(--primary-s), 70%);
-  --theme-color-primary-lighter: hsl(var(--primary-h), var(--primary-s), 75%);
-  --theme-color-primary-lightest: hsl(var(--primary-h), var(--primary-s), 85%);
-  /* #endregion */
+    /* #region Lighter variants for subtle borders, backgrounds, or text */
+    --theme-color-primary-light: hsl(var(--primary-h), var(--primary-s), 70%);
+    --theme-color-primary-lighter: hsl(var(--primary-h), var(--primary-s), 75%);
+    --theme-color-primary-lightest: hsl(var(--primary-h), var(--primary-s), 85%);
+    /* #endregion */
 }
 
 /*
@@ -38,9 +38,9 @@
  * These are scoped to `:root.dark` and take precedence in dark mode.
  */
 :root.dark {
-  --primary-h: 275;
-  --primary-s: 60%;
-  --primary-l: 75%;
+    --primary-h: 275;
+    --primary-s: 60%;
+    --primary-l: 75%;
 }
 
 /*
@@ -51,13 +51,13 @@
  * Result: You can now use `text-primary`, `hover:bg-primary-light`, etc.
  */
 @theme inline {
-  --color-primary: var(--theme-color-primary);
+    --color-primary: var(--theme-color-primary);
 
-  --color-primary-dark: var(--theme-color-primary-dark);
-  --color-primary-darker: var(--theme-color-primary-darker);
-  --color-primary-darkest: var(--theme-color-primary-darkest);
+    --color-primary-dark: var(--theme-color-primary-dark);
+    --color-primary-darker: var(--theme-color-primary-darker);
+    --color-primary-darkest: var(--theme-color-primary-darkest);
 
-  --color-primary-light: var(--theme-color-primary-light);
-  --color-primary-lighter: var(--theme-color-primary-lighter);
-  --color-primary-lightest: var(--theme-color-primary-lightest);
+    --color-primary-light: var(--theme-color-primary-light);
+    --color-primary-lighter: var(--theme-color-primary-lighter);
+    --color-primary-lightest: var(--theme-color-primary-lightest);
 }

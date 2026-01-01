@@ -4,22 +4,23 @@ import Heading from "~/components/semantics/Heading.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
 type Props = {
-  env: string;
+    env: string;
 };
 
 const { env }: Props = Astro.props;
 ---
 
 <NotesSection id={`${env}-env-config`}>
-  <Heading Icon={icons.DesktopTower} headingLevel="h4" slot="heading">
-    Configurar el entorno de desarrollo
-  </Heading>
-
-  <p>
-    Para programar en Kotlin, se recomienda usar <strong
-      >JetBrains Toolbox</strong
+    <Heading
+        Icon={icons.DesktopTower} headingLevel="h4"
+        slot="heading"
     >
-    para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), la opción
-    más completa y optimizada para este lenguaje.
-  </p>
+        Configurar el entorno de desarrollo
+    </Heading>
+
+    <p>
+        Para programar en Kotlin, se recomienda usar <strong>JetBrains Toolbox</strong>
+        para instalar <strong>IntelliJ IDEA</strong> (Community o Ultimate), la opción más completa
+        y optimizada para este lenguaje.
+    </p>
 </NotesSection>

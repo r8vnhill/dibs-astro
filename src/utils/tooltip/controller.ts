@@ -1,186 +1,186 @@
 export class TooltipController {
-  private tooltip: HTMLElement;
-  private trigger: HTMLElement | null;
-  private content: HTMLElement | null;
-  private openTimerRef: number | null = null;
-  private closeTimerRef: number | null = null;
-  private contentId: string;
-  private animationDuration = 150;
+    private tooltip: HTMLElement;
+    private trigger: HTMLElement | null;
+    private content: HTMLElement | null;
+    private openTimerRef: number | null = null;
+    private closeTimerRef: number | null = null;
+    private contentId: string;
+    private animationDuration = 150;
 
-  constructor(tooltip: HTMLElement, idx: number) {
-    this.contentId = `starwind-tooltip${idx}`;
-    this.tooltip = tooltip;
-    this.content = tooltip.querySelector(".starwind-tooltip-content");
+    constructor(tooltip: HTMLElement, idx: number) {
+        this.contentId = `starwind-tooltip${idx}`;
+        this.tooltip = tooltip;
+        this.content = tooltip.querySelector(".starwind-tooltip-content");
 
-    // if tooltip.firstElementChild is this.content, then get the next element
-    this.trigger = tooltip.firstElementChild as HTMLElement;
-    if (this.trigger === this.content) {
-      this.trigger = this.trigger.nextElementSibling as HTMLElement;
+        // if tooltip.firstElementChild is this.content, then get the next element
+        this.trigger = tooltip.firstElementChild as HTMLElement;
+        if (this.trigger === this.content) {
+            this.trigger = this.trigger.nextElementSibling as HTMLElement;
+        }
+
+        this.trigger.classList.add("starwind-tooltip-trigger");
+
+        if (!this.trigger || !this.content) return;
+
+        // animationDuration is set with inline styles through passed prop to TooltipContent
+        const animationDurationString = this.content.style.animationDuration;
+        if (animationDurationString.endsWith("ms")) {
+            this.animationDuration = parseFloat(animationDurationString);
+        } else if (animationDurationString.endsWith("s")) {
+            // using something like @playform/compress might optimize to use "s" instead of "ms"
+            this.animationDuration = parseFloat(animationDurationString) * 1000;
+        }
+        this.init();
     }
 
-    this.trigger.classList.add("starwind-tooltip-trigger");
-
-    if (!this.trigger || !this.content) return;
-
-    // animationDuration is set with inline styles through passed prop to TooltipContent
-    const animationDurationString = this.content.style.animationDuration;
-    if (animationDurationString.endsWith("ms")) {
-      this.animationDuration = parseFloat(animationDurationString);
-    } else if (animationDurationString.endsWith("s")) {
-      // using something like @playform/compress might optimize to use "s" instead of "ms"
-      this.animationDuration = parseFloat(animationDurationString) * 1000;
-    }
-    this.init();
-  }
-
-  private init() {
-    this.setupAccessibility();
-    this.setupEvents();
-  }
-
-  private setupAccessibility() {
-    if (!this.trigger || !this.content) return;
-    this.trigger.setAttribute("aria-describedby", this.contentId);
-    this.content.id = this.contentId;
-  }
-
-  private setupEvents() {
-    if (!this.trigger || !this.content) return;
-
-    // Trigger events
-    this.trigger.addEventListener("mouseenter", () => this.show());
-    this.trigger.addEventListener("mouseleave", () => this.hide());
-    this.trigger.addEventListener("focus", () => this.show(true));
-    this.trigger.addEventListener("blur", () => this.hide(true));
-
-    // Content events
-    if (this.tooltip.hasAttribute("data-content-hoverable")) {
-      this.content.addEventListener("mouseenter", () => this.show());
-      this.content.addEventListener("mouseleave", () => this.hide());
+    private init() {
+        this.setupAccessibility();
+        this.setupEvents();
     }
 
-    // if data-avoid-collisions exists, add resize listener to reset any translations
-    if (this.content.hasAttribute("data-avoid-collisions")) {
-      window.addEventListener(
-        "resize",
-        () => {
-          if (!this.content) return;
-          this.content.style.transform = "";
-        },
-        { passive: true }
-      );
+    private setupAccessibility() {
+        if (!this.trigger || !this.content) return;
+        this.trigger.setAttribute("aria-describedby", this.contentId);
+        this.content.id = this.contentId;
     }
 
-    // Document events
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        this.tooltip.getAttribute("data-state") === "open"
-      ) {
-        this.hide(true);
-      }
-    });
+    private setupEvents() {
+        if (!this.trigger || !this.content) return;
 
-    document.addEventListener("click", (e) => {
-      if (
-        !this.tooltip.contains(e.target as Node) &&
-        this.tooltip.getAttribute("data-state") === "open"
-      ) {
-        this.hide(true);
-      }
-    });
-  }
+        // Trigger events
+        this.trigger.addEventListener("mouseenter", () => this.show());
+        this.trigger.addEventListener("mouseleave", () => this.hide());
+        this.trigger.addEventListener("focus", () => this.show(true));
+        this.trigger.addEventListener("blur", () => this.hide(true));
 
-  private show(immediate: boolean = false) {
-    if (!this.content || !this.trigger) return;
-    if (immediate) {
-      this.tooltip.setAttribute("data-state", "open");
-      this.content.setAttribute("data-state", "open");
-      this.content.style.display = "block";
-      this.checkBoundary(this.content);
-      this.clearOpenTimer();
-      return;
+        // Content events
+        if (this.tooltip.hasAttribute("data-content-hoverable")) {
+            this.content.addEventListener("mouseenter", () => this.show());
+            this.content.addEventListener("mouseleave", () => this.hide());
+        }
+
+        // if data-avoid-collisions exists, add resize listener to reset any translations
+        if (this.content.hasAttribute("data-avoid-collisions")) {
+            window.addEventListener(
+                "resize",
+                () => {
+                    if (!this.content) return;
+                    this.content.style.transform = "";
+                },
+                { passive: true },
+            );
+        }
+
+        // Document events
+        document.addEventListener("keydown", (e) => {
+            if (
+                e.key === "Escape"
+                && this.tooltip.getAttribute("data-state") === "open"
+            ) {
+                this.hide(true);
+            }
+        });
+
+        document.addEventListener("click", (e) => {
+            if (
+                !this.tooltip.contains(e.target as Node)
+                && this.tooltip.getAttribute("data-state") === "open"
+            ) {
+                this.hide(true);
+            }
+        });
     }
 
-    this.clearCloseTimer();
+    private show(immediate: boolean = false) {
+        if (!this.content || !this.trigger) return;
+        if (immediate) {
+            this.tooltip.setAttribute("data-state", "open");
+            this.content.setAttribute("data-state", "open");
+            this.content.style.display = "block";
+            this.checkBoundary(this.content);
+            this.clearOpenTimer();
+            return;
+        }
 
-    const delay = parseInt(
-      this.tooltip.getAttribute("data-open-delay") || "700"
-    );
-    this.openTimerRef = window.setTimeout(() => {
-      if (!this.content || !this.trigger) return;
-      this.tooltip.setAttribute("data-state", "open");
-      this.content.setAttribute("data-state", "open");
-      this.content.style.display = "block";
-      this.checkBoundary(this.content);
-      this.openTimerRef = null;
-    }, delay);
-  }
+        this.clearCloseTimer();
 
-  private hide(immediate: boolean = false) {
-    if (!this.content || !this.trigger) return;
-    this.clearOpenTimer();
-
-    if (immediate) {
-      this.clearCloseTimer();
-      this.tooltip.setAttribute("data-state", "closed");
-      setTimeout(() => {
-        if (!this.content) return;
-        this.content.style.display = "none";
-      }, this.animationDuration);
-      this.content.setAttribute("data-state", "closed");
-      return;
+        const delay = parseInt(
+            this.tooltip.getAttribute("data-open-delay") || "700",
+        );
+        this.openTimerRef = window.setTimeout(() => {
+            if (!this.content || !this.trigger) return;
+            this.tooltip.setAttribute("data-state", "open");
+            this.content.setAttribute("data-state", "open");
+            this.content.style.display = "block";
+            this.checkBoundary(this.content);
+            this.openTimerRef = null;
+        }, delay);
     }
 
-    this.closeTimerRef = window.setTimeout(
-      () => {
-        this.tooltip.setAttribute("data-state", "closed");
-        setTimeout(() => {
-          if (!this.content) return;
-          this.content.style.display = "none";
-        }, this.animationDuration);
-        if (!this.content) return;
-        this.content.setAttribute("data-state", "closed");
-        this.closeTimerRef = null;
-      },
-      parseInt(this.tooltip.getAttribute("data-close-delay") || "300")
-    );
-  }
+    private hide(immediate: boolean = false) {
+        if (!this.content || !this.trigger) return;
+        this.clearOpenTimer();
 
-  private checkBoundary(tooltipElement: HTMLElement) {
-    if (!tooltipElement) return;
+        if (immediate) {
+            this.clearCloseTimer();
+            this.tooltip.setAttribute("data-state", "closed");
+            setTimeout(() => {
+                if (!this.content) return;
+                this.content.style.display = "none";
+            }, this.animationDuration);
+            this.content.setAttribute("data-state", "closed");
+            return;
+        }
 
-    // if data-avoid-collisions does not exist, return
-    if (!tooltipElement.hasAttribute("data-avoid-collisions")) return;
-
-    const viewportWidth = window.innerWidth;
-    const tooltipRect = tooltipElement.getBoundingClientRect();
-    const padding = 16; // Add some padding from viewport edges
-
-    // Check if tooltip extends beyond right edge of viewport
-    if (tooltipRect.right > viewportWidth - padding) {
-      const overflow = tooltipRect.right - (viewportWidth - padding);
-      tooltipElement.style.transform = `translateX(-${overflow + padding}px)`;
+        this.closeTimerRef = window.setTimeout(
+            () => {
+                this.tooltip.setAttribute("data-state", "closed");
+                setTimeout(() => {
+                    if (!this.content) return;
+                    this.content.style.display = "none";
+                }, this.animationDuration);
+                if (!this.content) return;
+                this.content.setAttribute("data-state", "closed");
+                this.closeTimerRef = null;
+            },
+            parseInt(this.tooltip.getAttribute("data-close-delay") || "300"),
+        );
     }
 
-    // Check if tooltip extends beyond left edge of viewport
-    if (tooltipRect.left < padding) {
-      const overflow = padding - tooltipRect.left;
-      tooltipElement.style.transform = `translateX(${overflow + padding}px)`;
-    }
-  }
+    private checkBoundary(tooltipElement: HTMLElement) {
+        if (!tooltipElement) return;
 
-  private clearOpenTimer() {
-    if (this.openTimerRef) {
-      window.clearTimeout(this.openTimerRef);
-      this.openTimerRef = null;
-    }
-  }
+        // if data-avoid-collisions does not exist, return
+        if (!tooltipElement.hasAttribute("data-avoid-collisions")) return;
 
-  private clearCloseTimer() {
-    if (this.closeTimerRef) {
-      window.clearTimeout(this.closeTimerRef);
-      this.closeTimerRef = null;
+        const viewportWidth = window.innerWidth;
+        const tooltipRect = tooltipElement.getBoundingClientRect();
+        const padding = 16; // Add some padding from viewport edges
+
+        // Check if tooltip extends beyond right edge of viewport
+        if (tooltipRect.right > viewportWidth - padding) {
+            const overflow = tooltipRect.right - (viewportWidth - padding);
+            tooltipElement.style.transform = `translateX(-${overflow + padding}px)`;
+        }
+
+        // Check if tooltip extends beyond left edge of viewport
+        if (tooltipRect.left < padding) {
+            const overflow = padding - tooltipRect.left;
+            tooltipElement.style.transform = `translateX(${overflow + padding}px)`;
+        }
     }
-  }
+
+    private clearOpenTimer() {
+        if (this.openTimerRef) {
+            window.clearTimeout(this.openTimerRef);
+            this.openTimerRef = null;
+        }
+    }
+
+    private clearCloseTimer() {
+        if (this.closeTimerRef) {
+            window.clearTimeout(this.closeTimerRef);
+            this.closeTimerRef = null;
+        }
+    }
 }

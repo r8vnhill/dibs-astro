@@ -1,17 +1,15 @@
 ---
-import ShellBlock from "../ShellBlock.astro";
 import * as Icons from "~/assets/img/icons";
+import ShellBlock from "../ShellBlock.astro";
 
 const { code, class: className = "" } = Astro.props;
 ---
 
 <ShellBlock
-  lang="powershell"
-  icon={Icons.Powershell}
-  code={code}
-  class={className}
+    lang="powershell" icon={Icons.Powershell}
+    {code} class={className}
 >
-  <span slot="title">
-    <slot name="title" />
-  </span>
+    <span slot="title">
+        <slot name="title" />
+    </span>
 </ShellBlock>

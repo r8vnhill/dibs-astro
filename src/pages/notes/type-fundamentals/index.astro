@@ -3,13 +3,11 @@ import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
-<NotesLayout
-  title="Unidad 2 - Fundamentos de tipos y representaciones de datos"
->
-  <ToDo
-    client:only="react"
-    metadata={{
-      title: "Resumen de la unidad 1"
-    }}
-  />
+<NotesLayout title="Unidad 2 - Fundamentos de tipos y representaciones de datos">
+    <ToDo
+        client:only="react"
+        metadata={{
+            title: "Resumen de la unidad 1",
+        }}
+    />
 </NotesLayout>
