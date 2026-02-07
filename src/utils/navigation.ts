@@ -5,7 +5,11 @@
  * normalize their URLs for consistent routing.
  */
 
-import { flattenLessons, type Lesson } from "~/data/course-structure";
+import {
+    flattenLessons,
+    type FlattenedLesson,
+    type Lesson,
+} from "~/data/course-structure";
 
 /**
  * Type representing a navigation link with additional lesson information.
@@ -86,7 +90,7 @@ export function resolveAutoNav(
     const flat = flattenLessons(lessons).filter(
         (
             l,
-        ): l is Lesson & { depth: number; parents: string[] } & { href: string } =>
+        ): l is FlattenedLesson & { href: string } =>
             typeof l.href === "string" && l.href.length > 0,
     );
 

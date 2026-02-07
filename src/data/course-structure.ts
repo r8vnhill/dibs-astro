@@ -19,6 +19,13 @@ export interface Lesson {
 }
 
 /**
+ * A lesson entry augmented with metadata from flattening a hierarchy.
+ *
+ * Includes the nesting depth and the title path of its ancestors for navigation.
+ */
+export type FlattenedLesson = Lesson & { depth: number; parents: string[] };
+
+/**
  * Defines the hierarchical structure of the course's lessons and units.
  *
  * This structure is used to render the sidebar and compute automatic navigation (e.g. next/previous
@@ -142,20 +149,24 @@ export const courseStructure: Lesson[] = [
  * @returns A flat list of lessons with depth and ancestry info.
  */
 export function flattenLessons(
-    lessons: Lesson[],
+    lessons: readonly Lesson[],
     depth = 0,
-    parentPath: string[] = [],
-): (Lesson & { depth: number; parents: string[] })[] {
+    parentPath: readonly string[] = [],
+): FlattenedLesson[] {
     return lessons.flatMap((lesson) => {
         // Augment the lesson with its depth and ancestry
-        const entry = { ...lesson, depth, parents: parentPath };
+        const entry: FlattenedLesson = {
+            ...lesson,
+            depth,
+            parents: [...parentPath],
+        };
 
         // Recursively flatten children, if any
-        const children = lesson.children
+        const children = lesson.children?.length
             ? flattenLessons(lesson.children, depth + 1, [
-                ...parentPath,
-                lesson.title,
-            ])
+                  ...parentPath,
+                  lesson.title,
+              ])
             : [];
 
         // Combine current entry and its descendants

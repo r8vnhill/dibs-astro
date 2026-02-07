@@ -1,0 +1,27 @@
+---
+/**
+ * PowerShellBlock.astro
+ * ---------------------
+ * A specialized code block component for displaying PowerShell scripts with appropriate styling
+ * and iconography. This component leverages the generic CodeBlock component, pre-configured for
+ * PowerShell code.
+ */
+import { CodeBlock } from "~/components/ui/code";
+
+const { code, class: className = "" } = Astro.props;
+---
+
+<CodeBlock
+    lang="sql" {code}
+    class={className}
+>
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+    <Fragment slot="footer">
+        <slot name="footer" />
+    </Fragment>
+</CodeBlock>

@@ -1,0 +1,9 @@
+---
+import InlineCode from "../InlineCode.astro";
+
+const { code } = Astro.props;
+---
+
+<InlineCode {code} lang="sql">
+    <slot />
+</InlineCode>
