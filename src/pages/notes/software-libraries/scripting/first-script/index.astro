@@ -16,7 +16,6 @@ import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References } from "~/components/ui/references";
-import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -140,26 +139,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
             con terminal y depuración básica.
         </P>
 
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "Bump v to 7.5",
-                    "Change core/ -> scaffolding/",
-                    "Set-StrictMode -Version 3.0 Using Latest for Version in scripts isn't deterministic. The meaning of Latest can change in new releases of PowerShell. A script written for an older version of PowerShell that uses Set-StrictMode -Version Latest is subject to more restrictive rules when run in a newer version of PowerShell.",
-                ],
-            }}
-        />
-
         <PowerShellBlock
             code={`
-                #Requires -Version 7.0
+                #Requires -Version 7.5
                 [CmdletBinding()]
                 param(
                     [Parameter(Mandatory)]
                     [ValidateNotNullOrEmpty()]
                     [string] $Name
                 )
+
+                Set-StrictMode -Version 3.0
 
                 Write-Verbose "Creating README.md for project '$Name'"
 
@@ -174,7 +164,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <Fragment slot="title">Generar <Mono>README.md</Mono> con PowerShell</Fragment>
             <DibsSourceLink
-                repo="scripts" file="core/New-Readme.ps1"
+                repo="scripts" file="scaffolding/New-Readme.ps1"
                 slot="source"
             />
         </PowerShellBlock>
@@ -182,8 +172,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Hash}>
-                    <PowerShellInline code="#Requires -Version 7.0" />: garantiza que el script se
+                    <PowerShellInline code="#Requires -Version 7.5" />: garantiza que el script se
                     ejecute en PowerShell&nbsp;7 o superior.<FootnoteRef index={1} />
+                </ListItem>
+
+                <ListItem icon={icons.WarningCircle}>
+                    <PowerShellInline code="Set-StrictMode -Version 3.0" /> activa reglas más
+                    estrictas para detectar errores tempranos (variables no inicializadas,
+                    referencias ambiguas, etc.). Usamos una versión fija en vez de <PowerShellInline
+                        code="Latest"
+                    /> para mantener el comportamiento del script estable entre versiones de
+                    PowerShell.
                 </ListItem>
 
                 <ListItem icon={icons.Info}>
@@ -350,7 +349,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <PowerShellBlock
                 code={`
-                    $content = .\\core\\New-Readme.ps1 -Name 'Utility Scripts - DIBS' -Verbose
+                    $content = .\\scaffolding\\New-Readme.ps1 -Name 'Utility Scripts - DIBS' -Verbose
                     Set-Content -Value $content -Path README.md -Encoding UTF8
                 `}
             >
@@ -361,8 +360,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.PlayCircle}>
-                        <PowerShellInline code=".\\core\\New-Readme.ps1 -Name '...'" /> ejecuta el
-                        script desde la carpeta actual (<Mono>dibs/scripts</Mono>).
+                        <PowerShellInline code=".\\scaffolding\\New-Readme.ps1 -Name '...'" />
+                        ejecuta el script desde la carpeta actual (<Mono>dibs/scripts</Mono>).
                     </ListItem>
 
                     <ListItem icon={icons.Info}>
@@ -603,7 +602,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="solution">
             <PowerShellBlock
                 code={`
-                    #Requires -Version 7.0
+                    #Requires -Version 7.5
                     [CmdletBinding()]
                     param(
                         [Parameter(Mandatory)]
@@ -611,6 +610,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         [ValidateScript({ Test-Path (Join-Path $_ 'README.md') -PathType Leaf })]
                         [string] $Path
                     )
+
+                    Set-StrictMode -Version 3.0
 
                     $readmePath = Join-Path $Path 'README.md'
                     Write-Verbose ('Checking for README.md at {0}' -f $readmePath)

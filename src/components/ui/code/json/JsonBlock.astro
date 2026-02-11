@@ -1,0 +1,22 @@
+---
+import * as icons from "~/assets/img/icons";
+import CodeBlock from "../CodeBlock.astro";
+
+type Props = {
+    code: string;
+};
+
+const { code }: Props = Astro.props;
+---
+
+<CodeBlock
+    lang="json" icon={icons.Json}
+    {code}
+>
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+</CodeBlock>
