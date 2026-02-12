@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-02-11T22:06:26.262Z",
+  "filesScanned": 2,
+  "lessons": [
+    {
+      "sourcePath": "src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld",
+      "lessonName": "Bibliografia de la leccion: Pipelines II",
+      "lessonAbout": "PowerShell pipeline-awareness",
+      "totalReferences": 1,
+      "byType": {
+        "Book": 1
+      }
+    },
+    {
+      "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
+      "lessonName": "Bibliografia de la leccion: Pipelines I",
+      "lessonAbout": "PowerShell pipelines",
+      "totalReferences": 2,
+      "byType": {
+        "Book": 1,
+        "WebPage": 1
+      }
+    }
+  ],
+  "totals": {
+    "references": 3,
+    "byType": {
+      "Book": 2,
+      "WebPage": 1
+    }
+  },
+  "topDomains": [
+    {
+      "key": "martinfowler.com",
+      "count": 1
+    }
+  ],
+  "topAuthors": [
+    {
+      "key": "Travis Plunk",
+      "count": 2
+    },
+    {
+      "key": "Martin Fowler",
+      "count": 1
+    }
+  ],
+  "missingDatePublished": [
+    {
+      "id": "pipeline-deeper",
+      "sourcePath": "src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld",
+      "type": "Book",
+      "title": "The pipeline, deeper"
+    },
+    {
+      "id": "pipeline-connecting-commands",
+      "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
+      "type": "Book",
+      "title": "The pipeline: Connecting commands"
+    },
+    {
+      "id": "collection-pipeline-fowler",
+      "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
+      "type": "WebPage",
+      "title": "Collection Pipeline"
+    }
+  ],
+  "duplicateUrls": [],
+  "warnings": []
+}

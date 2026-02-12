@@ -25,6 +25,7 @@ import I from "~/components/ui/font/I.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -32,7 +33,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="Pipelines II: Pipeline-awareness"
-    description="Aprende a diseñar funciones PowerShell pipeline-aware con begin/process/end, ValueFromPipeline/ByPropertyName y parameter sets para scripts eficientes y componibles."
+    description="Aprende pipeline-awareness en PowerShell: begin/process/end, binding ByValue/ByPropertyName y funciones componibles orientadas a objetos."
     timeMultiplier={2}
     git={{
         repo: "dibs-scripts",
@@ -443,24 +444,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </span>
                 </PowerShellBlock>
 
-                <More headingLevel="h5">
-                    <span slot="title">¿Qué es CLIXML?</span>
+                <More headingLevel="h5"><span slot="title">¿Qué es CLIXML?</span>
 
-                    <P>
-                        CLIXML (<Enquote><Link
+                    <P>CLIXML (<Enquote><Link
                                 href="https://en.wikipedia.org/wiki/Common_Language_Infrastructure"
                             >Common Language Infrastructure</Link> XML</Enquote>) es el formato que
                         PowerShell (y otros lenguajes de .NET) usa para serializar y deserializar
                         objetos manteniendo su <B>estructura</B> (propiedades) de forma confiable.
                         Típicamente se genera con <PowerShellInline>Export-CliXml</PowerShellInline>
-                        y se lee con <PowerShellInline>Import-CliXml</PowerShellInline>.
-                    </P>
+                        y se lee con <PowerShellInline>Import-CliXml</PowerShellInline>.</P>
 
-                    <P>
-                        Igual que para JSON, puedes encontrar archivos CLIXML de ejemplo en el <Link
+                    <P>Igual que para JSON, puedes encontrar archivos CLIXML de ejemplo en el <Link
                             href="https://gitlab.com/r8vnhill/dibs-scripts/-/tree/main/tests"
-                        >repositorio de scripts de DIBS</Link>.
-                    </P>
+                        >repositorio de scripts de DIBS</Link>.</P>
 
                     <XmlBlock
                         code={`
@@ -719,7 +715,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="key-points">
             <ListItem icon={icons.Pipe}>
                 Un script <I>pipeline-aware</I> procesa datos en streaming con
-                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline>process</PowerShellInline>
+                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
+                >process</PowerShellInline>
                 y <PowerShellInline>end</PowerShellInline>.
             </ListItem>
             <ListItem icon={icons.ArrowRight}>
@@ -745,11 +742,30 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Cuando diseñas scripts para pipeline, dejas de pensar en comandos aislados y
                 empiezas a construir piezas que cooperan entre sí. Ese cambio de enfoque mejora la
                 mantenibilidad, reduce adaptaciones innecesarias entre etapas y hace que tus
-                automatizaciones crezcan de forma más estable a medida que el proyecto se vuelve
-                más complejo.
+                automatizaciones crezcan de forma más estable a medida que el proyecto se vuelve más
+                complejo.
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <Book
+                chapter="The pipeline, deeper"
+                bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
+                pages={[114, 131]}
+            >
+                <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
+
+                <Fragment slot="description"
+                >El capítulo explica cómo PowerShell liga objetos en el pipeline tanto por valor
+                    como por nombre de propiedad, muestra adaptadores con <PowerShellInline
+                    >Select-Object</PowerShellInline> o paréntesis y contiene ejemplos (hashes,
+                    servicios, módulos, Azure) para que quien lee evalúe si necesita dominar estos
+                    patrones antes de invertir tiempo en la lectura.</Fragment>
+            </Book>
+        </Fragment>
+    </References>
 
     <Footnotes>
         <Footnote index={1}>

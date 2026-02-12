@@ -1,0 +1,46 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Bibliografia de la leccion: Pipelines I",
+  "about": "PowerShell pipelines",
+  "itemListElement": [
+    {
+      "@type": "Book",
+      "identifier": "pipeline-connecting-commands",
+      "name": "The pipeline: Connecting commands",
+      "pageStart": 69,
+      "pageEnd": 83,
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Travis",
+          "familyName": "Plunk",
+          "url": "https://www.goodreads.com/author/show/21330027.Travis_Plunk"
+        }
+      ],
+      "isPartOf": {
+        "@type": "Book",
+        "name": "Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "collection-pipeline-fowler",
+      "name": "Collection Pipeline",
+      "url": "https://martinfowler.com/articles/collection-pipeline/",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Martin",
+          "familyName": "Fowler",
+          "url": "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)"
+        }
+      ],
+      "publisher": {
+        "@type": "Organization",
+        "name": "martinfowler.com",
+        "url": "https://martinfowler.com"
+      }
+    }
+  ]
+}

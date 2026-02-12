@@ -15,10 +15,13 @@ import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { List, ListItem } from "~/components/ui/list";
-import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
+import { ReferencesFromJsonLd } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import bibliographyRaw from "~/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld?raw";
+
+const bibliography = JSON.parse(bibliographyRaw);
 ---
 
 <NotesLayout
@@ -551,61 +554,26 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
     </ConclusionsLayout>
 
-    <References>
-        <Fragment slot="recommended">
-            <Book
-                chapter="The pipeline: Connecting commands"
-                bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
-                pages={[69, 83]}
-            >
-                <AuthorList
-                    slot="authors"
-                    authors={[
-                        {
-                            firstName: "Travis",
-                            lastName: "Plunk",
-                            url: "https://www.goodreads.com/author/show/21330027.Travis_Plunk",
-                        },
-                    ]}
-                />
-
-                <Fragment slot="description">
-                    Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets,
-                    por qué el flujo de objetos es distinto al de shells tradicionales, y cómo
-                    exportar resultados a CSV/JSON/XML. Incluye ejemplos prácticos con
-                    <PowerShellInline>Get-Process</PowerShellInline>, conceptos de conversión y
-                    exportación, y ejercicios guiados para afianzar el uso del pipeline.
-                </Fragment>
-            </Book>
+    <ReferencesFromJsonLd
+        source={bibliography}
+        recommended={["pipeline-connecting-commands"]}
+        additional={["collection-pipeline-fowler"]}
+    >
+        <Fragment slot="description-pipeline-connecting-commands">
+            Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets, por qué
+            el flujo de objetos es distinto al de shells tradicionales, y cómo exportar resultados a
+            CSV/JSON/XML. Incluye ejemplos prácticos con <PowerShellInline>Get-Process</PowerShellInline
+            >, conceptos de conversión y exportación, y ejercicios guiados para afianzar el uso del
+            pipeline.
         </Fragment>
 
-        <Fragment slot="additional">
-            <WebPage
-                title="Collection Pipeline"
-                url="https://martinfowler.com/articles/collection-pipeline/"
-                location="martinfowler.com"
-            >
-                <AuthorList
-                    slot="author"
-                    authors={[
-                        {
-                            firstName: "Martin",
-                            lastName: "Fowler",
-                            url: "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)",
-                        },
-                    ]}
-                />
-
-                <Fragment slot="description">
-                    Artículo fundacional sobre el patrón Collection Pipeline: cómo encadenar
-                    operaciones declarativas (<Mono>map</Mono>, <Mono>filter</Mono>, <Mono
-                    >reduce</Mono>, <Mono>group-by</Mono>) para transformar colecciones. Compara
-                    sintaxis en múltiples lenguajes (Ruby, Clojure, Smalltalk), explora alternativas
-                    (loops, comprehensions), y discute temas avanzados como laziness, paralelismo e
-                    inmutabilidad. Incluye un catálogo detallado de operaciones comunes con ejemplos
-                    visuales.
-                </Fragment>
-            </WebPage>
+        <Fragment slot="description-collection-pipeline-fowler">
+            Artículo fundacional sobre el patrón Collection Pipeline: cómo encadenar operaciones
+            declarativas (<Mono>map</Mono>, <Mono>filter</Mono>, <Mono>reduce</Mono>, <Mono
+            >group-by</Mono>) para transformar colecciones. Compara sintaxis en múltiples lenguajes
+            (Ruby, Clojure, Smalltalk), explora alternativas (loops, comprehensions), y discute
+            temas avanzados como laziness, paralelismo e inmutabilidad. Incluye un catálogo
+            detallado de operaciones comunes con ejemplos visuales.
         </Fragment>
-    </References>
+    </ReferencesFromJsonLd>
 </NotesLayout>

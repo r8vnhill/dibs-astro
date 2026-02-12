@@ -1,0 +1,4 @@
+sourcePath,id,type,title,url,domain,chapter,bookTitle,pageStart,pageEnd,publisher,datePublished,authors,keywords
+src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld,pipeline-deeper,Book,"The pipeline, deeper",,,"The pipeline, deeper","Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS",114,131,Manning Publications Co. LLC,,Travis Plunk,
+src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld,pipeline-connecting-commands,Book,The pipeline: Connecting commands,,,The pipeline: Connecting commands,"Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS",69,83,,,Travis Plunk,
+src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld,collection-pipeline-fowler,WebPage,Collection Pipeline,https://martinfowler.com/articles/collection-pipeline/,martinfowler.com,,,,,martinfowler.com,,Martin Fowler,

@@ -1,0 +1,30 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Bibliografia de la leccion: Pipelines II",
+  "about": "PowerShell pipeline-awareness",
+  "itemListElement": [
+    {
+      "@type": "Book",
+      "identifier": "pipeline-deeper",
+      "name": "The pipeline, deeper",
+      "pageStart": 114,
+      "pageEnd": 131,
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Travis",
+          "familyName": "Plunk"
+        }
+      ],
+      "isPartOf": {
+        "@type": "Book",
+        "name": "Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Manning Publications Co. LLC"
+      }
+    }
+  ]
+}
