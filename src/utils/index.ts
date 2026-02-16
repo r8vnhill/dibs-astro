@@ -28,6 +28,14 @@ export {
 export { normalizeNavigation, resolveAutoNav } from "./navigation.ts";
 
 // Generic utilities
+export {
+    DEFAULT_REPO_PLATFORMS,
+    isRepoPlatform,
+    normalizePlatforms as normalisePlatforms,
+    REPO_PLATFORM_HOST,
+    type RepoPlatform,
+    type RepoRef,
+} from "./git.ts";
 export { pickRandom } from "./random.ts";
 export { site } from "./site.ts";
 export type { default as StyledComponent } from "./styled-component.ts";

@@ -47,6 +47,7 @@ import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { normalizeNavigation, resolveAutoNav } from "~/utils";
+import type { RepoRef } from "~/utils/git";
 import { resolveLessonMetadata } from "~/utils/lesson-metadata";
 
 /**
@@ -96,17 +97,7 @@ interface Props {
      *
      * When provided, the layout renders repository links via {@link LessonRepoPanel}.
      */
-    git?: {
-        /**
-         * Repository owner or organization.
-         */
-        user: string;
-
-        /**
-         * Repository name.
-         */
-        repo: string;
-    };
+    git?: RepoRef;
 }
 
 // Extract current page data and resolve metadata/navigation.

@@ -1,17 +1,75 @@
 ---
+/**
+ * @file LessonRepoPanel.astro
+ *
+ * Repository panel for a lesson page.
+ *
+ * This component renders a visually distinct callout containing links to the lesson's source code
+ * repository across one or more platforms (e.g. GitHub, GitLab).
+ *
+ * It is intended to be used inside {@link NotesLayout.astro} or other lesson-level layouts when
+ * the lesson exposes public source code.
+ *
+ * ## Responsibilities:
+ *
+ * - Render an accessible region labelled by a heading.
+ * - Display one {@link RepoLink} per configured platform.
+ * - Keep presentation concerns (styling + layout) isolated from layout logic.
+ *
+ * ## Accessibility:
+ *
+ * - Uses `aria-labelledby` to associate the `<section>` with its heading.
+ * - Wraps repository links inside a semantic `<ul>` list.
+ *
+ * ## Design notes:
+ *
+ * - Platform configuration is injected via props, defaulting to {@link DEFAULT_REPO_PLATFORMS}.
+ * - The repository reference is provided as a {@link RepoRef}, ensuring consistency across the
+ *   codebase.
+ */
 import RepoLink from "~/components/git/RepoLink.astro";
+import { normalizePlatforms, type RepoRef } from "~/utils/git";
 
+/**
+ * Props accepted by {@link LessonRepoPanel}.
+ */
 interface Props {
-    git: {
-        user: string;
-        repo: string;
-    };
+    /**
+     * Repository reference used to construct platform links.
+     *
+     * Example:
+     * ```ts
+     * { user: "ravenhill", repo: "dibs-scripts" }
+     * ```
+     */
+    git: RepoRef;
+
+    /**
+     * Optional list of platforms to render.
+     *
+     * Defaults to {@link DEFAULT_REPO_PLATFORMS}.
+     *
+     * This allows:
+     * - Restricting to a single platform
+     * - Supporting additional platforms in the future
+     */
+    platforms?: unknown;
 }
 
-const { git } = Astro.props as Props;
+const { git, platforms } = Astro.props as Props;
+const selectedPlatforms = normalizePlatforms(platforms);
+
+/**
+ * Stable heading id used to associate the section with its label.
+ *
+ * If multiple panels are rendered on the same page in the future,
+ * this can be extended to accept a suffix via props.
+ */
+const panelHeadingId = "lesson-repo-panel-heading";
 ---
 
 <section
+    aria-labelledby={panelHeadingId}
     class:list={[
         "rounded-md",
         "border",
@@ -27,10 +85,11 @@ const { git } = Astro.props as Props;
         "mt-2",
     ]}
 >
-    <span class="font-semibold">
+    <h2 id={panelHeadingId} class="font-semibold">
         Encuentra el código de la lección:
-    </span>
-    <div
+    </h2>
+
+    <ul
         class:list={[
             "mt-2",
             "flex",
@@ -39,7 +98,12 @@ const { git } = Astro.props as Props;
             "items-center",
         ]}
     >
-        <RepoLink {...git} platform="gitlab" />
-        <RepoLink {...git} platform="github" />
-    </div>
+        {
+            selectedPlatforms.map((platform) => (
+                <li>
+                    <RepoLink {...git} {platform} />
+                </li>
+            ))
+        }
+    </ul>
 </section>
