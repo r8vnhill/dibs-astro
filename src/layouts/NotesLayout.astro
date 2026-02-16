@@ -17,6 +17,7 @@ import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { normalizeNavigation, resolveAutoNav } from "~/utils";
+import { formatLessonDate, resolveLessonMetadata } from "~/utils/lesson-metadata";
 
 // Props passed to the layout (can optionally override next/previous buttons)
 interface Props {
@@ -56,6 +57,10 @@ interface Props {
 // Extract current page data and fallback navigation resolution
 const { title, next, previous, timeMultiplier, git, description } = Astro.props as Props;
 const pathname = Astro.url.pathname;
+const lessonMetadata = resolveLessonMetadata(pathname);
+const authorsText = lessonMetadata?.authors.map((author) => author.name).join(", ");
+const formattedLastModified = formatLessonDate(lessonMetadata?.lastModified);
+const recentChanges = lessonMetadata?.changes.slice(0, 3) ?? [];
 
 // Attempt to auto-resolve previous/next from course structure
 const autoNav = resolveAutoNav(pathname, courseStructure);
@@ -86,6 +91,47 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
             <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
 
             <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+
+            {
+                lessonMetadata && (
+                    <div
+                        class:list={[
+                            "rounded-md",
+                            "border",
+                            "px-4",
+                            "py-3",
+                            "text-sm",
+                            "bg-base-elevated",
+                            "text-base-text",
+                            "border-base-border",
+                            "mt-3",
+                        ]}
+                    >
+                        <p>
+                            <strong>Autoría:</strong> {authorsText || "sin autoría registrada"}
+                        </p>
+                        <p class="mt-1">
+                            <strong>Última actualización:</strong> {formattedLastModified}
+                        </p>
+                        {
+                            recentChanges.length > 0 && (
+                                <div class="mt-2">
+                                    <p><strong>Cambios recientes:</strong></p>
+                                    <ul class="list-disc list-inside mt-1">
+                                        {
+                                            recentChanges.map((change) => (
+                                                <li>
+                                                    <code>{change.hash.slice(0, 7)}</code> · {change.date} · {change.subject}
+                                                </li>
+                                            ))
+                                        }
+                                    </ul>
+                                </div>
+                            )
+                        }
+                    </div>
+                )
+            }
 
             {
                 git && (
