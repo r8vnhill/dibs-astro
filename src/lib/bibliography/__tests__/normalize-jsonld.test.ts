@@ -72,7 +72,7 @@ describe("parseBibliography", () => {
                         url: "https://martinfowler.com/articles/collection-pipeline/",
                     },
                 ],
-            }),
+            })
         ).toThrow(/missing "identifier"/i);
     });
 
@@ -95,7 +95,7 @@ describe("parseBibliography", () => {
                         url: "https://example.com/b",
                     },
                 ],
-            }),
+            })
         ).toThrow(/duplicate identifier/i);
     });
 
@@ -111,7 +111,7 @@ describe("parseBibliography", () => {
                         name: "Unsupported",
                     },
                 ],
-            }),
+            })
         ).toThrow(/unsupported @type/i);
     });
 });

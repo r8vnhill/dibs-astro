@@ -25,15 +25,15 @@ describe("resolveReferenceGroups", () => {
     });
 
     it("throws if a group references an unknown id", () => {
-        expect(() =>
-            resolveReferenceGroups(parsed, ["missing-id"], []),
-        ).toThrow(/unknown reference ids/i);
+        expect(() => resolveReferenceGroups(parsed, ["missing-id"], [])).toThrow(
+            /unknown reference ids/i,
+        );
     });
 
     it("throws on duplicated ids across groups in strict mode", () => {
-        expect(() =>
-            resolveReferenceGroups(parsed, ["book-1"], ["book-1"]),
-        ).toThrow(/duplicate ids across reference groups/i);
+        expect(() => resolveReferenceGroups(parsed, ["book-1"], ["book-1"])).toThrow(
+            /duplicate ids across reference groups/i,
+        );
     });
 
     it("resolves groups and does not require description fields", () => {

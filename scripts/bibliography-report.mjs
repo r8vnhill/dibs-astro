@@ -46,10 +46,9 @@ const parseItem = (item, sourcePath) => {
     const title = asString(item.name) ?? asString(item.headline);
     const datePublished = asString(item.datePublished);
     const keywords = toArray(item.keywords).map(asString).filter(Boolean);
-    const publisherName =
-        typeof item.publisher === "object" && item.publisher !== null
-            ? asString(item.publisher.name)
-            : asString(item.publisher);
+    const publisherName = typeof item.publisher === "object" && item.publisher !== null
+        ? asString(item.publisher.name)
+        : asString(item.publisher);
     const authors = parseAuthors(item.author);
     const description = asString(item.description);
 
@@ -59,10 +58,9 @@ const parseItem = (item, sourcePath) => {
 
     if (type === "Book") {
         const isPartOf = item.isPartOf;
-        const bookTitle =
-            typeof isPartOf === "object" && isPartOf !== null
-                ? asString(isPartOf.name)
-                : asString(isPartOf);
+        const bookTitle = typeof isPartOf === "object" && isPartOf !== null
+            ? asString(isPartOf.name)
+            : asString(isPartOf);
         if (!bookTitle) return null;
 
         const pageStart = asNumber(item.pageStart);

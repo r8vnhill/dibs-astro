@@ -16,10 +16,10 @@ import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromJsonLd } from "~/components/ui/references";
+import bibliographyRaw from "~/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
-import bibliographyRaw from "~/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld?raw";
 
 const bibliography = JSON.parse(bibliographyRaw);
 ---
@@ -555,16 +555,15 @@ const bibliography = JSON.parse(bibliographyRaw);
     </ConclusionsLayout>
 
     <ReferencesFromJsonLd
-        source={bibliography}
-        recommended={["pipeline-connecting-commands"]}
+        source={bibliography} recommended={["pipeline-connecting-commands"]}
         additional={["collection-pipeline-fowler"]}
     >
         <Fragment slot="description-pipeline-connecting-commands">
             Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets, por qué
             el flujo de objetos es distinto al de shells tradicionales, y cómo exportar resultados a
-            CSV/JSON/XML. Incluye ejemplos prácticos con <PowerShellInline>Get-Process</PowerShellInline
-            >, conceptos de conversión y exportación, y ejercicios guiados para afianzar el uso del
-            pipeline.
+            CSV/JSON/XML. Incluye ejemplos prácticos con <PowerShellInline
+            >Get-Process</PowerShellInline>, conceptos de conversión y exportación, y ejercicios
+            guiados para afianzar el uso del pipeline.
         </Fragment>
 
         <Fragment slot="description-collection-pipeline-fowler">

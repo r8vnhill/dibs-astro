@@ -5,11 +5,7 @@
  * normalize their URLs for consistent routing.
  */
 
-import {
-    flattenLessons,
-    type FlattenedLesson,
-    type Lesson,
-} from "~/data/course-structure";
+import { type FlattenedLesson, flattenLessons, type Lesson } from "~/data/course-structure";
 
 /**
  * Type representing a navigation link with additional lesson information.

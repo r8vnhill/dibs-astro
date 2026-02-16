@@ -101,8 +101,7 @@ const ISO_SHORT_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
  * @returns {string}
  *   A POSIX-normalized path.
  */
-export const normalizePath = (value) =>
-  path.posix.normalize(String(value).replaceAll("\\", "/"));
+export const normalizePath = (value) => path.posix.normalize(String(value).replaceAll("\\", "/"));
 
 /**
  * Strips the `.astro` extension from a path if present.
@@ -112,7 +111,7 @@ export const normalizePath = (value) =>
  *   The path without `.astro`, or `undefined` when the suffix is not present.
  */
 const stripAstroExt = (value) =>
-  value.endsWith(".astro") ? value.slice(0, -".astro".length) : undefined;
+    value.endsWith(".astro") ? value.slice(0, -".astro".length) : undefined;
 
 /**
  * Collapses “index routes” according to Astro conventions.
@@ -124,8 +123,8 @@ const stripAstroExt = (value) =>
  * @returns {string}
  */
 const collapseIndexRoutes = (route) => {
-  if (route === "index") return "";
-  return route.endsWith("/index") ? route.slice(0, -"/index".length) : route;
+    if (route === "index") return "";
+    return route.endsWith("/index") ? route.slice(0, -"/index".length) : route;
 };
 
 /**
@@ -157,9 +156,9 @@ const ensureTrailingSlash = (route) => (route.endsWith("/") ? route : `${route}/
  *   The validated ISO short date, or `undefined` if invalid.
  */
 export const toIsoShortDate = (value) => {
-  const normalized = String(value).trim();
-  if (!ISO_SHORT_DATE_REGEX.test(normalized)) return undefined;
-  return normalized;
+    const normalized = String(value).trim();
+    if (!ISO_SHORT_DATE_REGEX.test(normalized)) return undefined;
+    return normalized;
 };
 
 /**
@@ -184,22 +183,22 @@ export const toIsoShortDate = (value) => {
  *   The parsed change entry, or `undefined` if the line is invalid.
  */
 export const parseGitLogLine = (line, delimiter = GIT_FIELD_DELIMITER) => {
-  const trimmed = line.trim();
-  if (!trimmed) return undefined;
+    const trimmed = line.trim();
+    if (!trimmed) return undefined;
 
-  const [hashRaw, dateRaw, authorRaw, ...subjectParts] = trimmed.split(delimiter);
-  const hash = hashRaw?.trim();
-  const date = toIsoShortDate(dateRaw);
-  const author = authorRaw?.trim();
+    const [hashRaw, dateRaw, authorRaw, ...subjectParts] = trimmed.split(delimiter);
+    const hash = hashRaw?.trim();
+    const date = toIsoShortDate(dateRaw);
+    const author = authorRaw?.trim();
 
-  if (!hash || !date || !author) return undefined;
+    if (!hash || !date || !author) return undefined;
 
-  return {
-    hash,
-    date,
-    author,
-    subject: subjectParts.join(delimiter).trim(),
-  };
+    return {
+        hash,
+        date,
+        author,
+        subject: subjectParts.join(delimiter).trim(),
+    };
 };
 
 /**
@@ -218,15 +217,15 @@ export const parseGitLogLine = (line, delimiter = GIT_FIELD_DELIMITER) => {
  *   The parsed changes in the same order they appear in the log output.
  */
 export const parseGitLogOutput = (raw, delimiter = GIT_FIELD_DELIMITER) => {
-  const lines = raw.split(/\r?\n/);
-  const changes = [];
+    const lines = raw.split(/\r?\n/);
+    const changes = [];
 
-  for (const line of lines) {
-    const parsed = parseGitLogLine(line, delimiter);
-    if (parsed) changes.push(parsed);
-  }
+    for (const line of lines) {
+        const parsed = parseGitLogLine(line, delimiter);
+        if (parsed) changes.push(parsed);
+    }
 
-  return changes;
+    return changes;
 };
 
 /**
@@ -253,30 +252,30 @@ export const parseGitLogOutput = (raw, delimiter = GIT_FIELD_DELIMITER) => {
  *   The canonical lesson route (e.g. `/fp/functors/`), or `undefined` if not applicable.
  */
 export const sourceFileToLessonPath = (sourceFile, pagesRoot = "src/pages") => {
-  const normalized = normalizePath(sourceFile);
-  const root = normalizePath(pagesRoot).replace(/\/+$/, "");
-  const rootPrefix = `${root}/`;
-  const nestedMarker = `/${root}/`;
+    const normalized = normalizePath(sourceFile);
+    const root = normalizePath(pagesRoot).replace(/\/+$/, "");
+    const rootPrefix = `${root}/`;
+    const nestedMarker = `/${root}/`;
 
-  let relative;
+    let relative;
 
-  // Case 1: path begins with the pages root (common for relative paths).
-  if (normalized.startsWith(rootPrefix)) {
-    relative = normalized.slice(rootPrefix.length);
-  } else {
-    // Case 2: pages root appears as an internal segment (common for absolute paths).
-    const index = normalized.indexOf(nestedMarker);
-    if (index === -1) return undefined;
-    relative = normalized.slice(index + nestedMarker.length);
-  }
+    // Case 1: path begins with the pages root (common for relative paths).
+    if (normalized.startsWith(rootPrefix)) {
+        relative = normalized.slice(rootPrefix.length);
+    } else {
+        // Case 2: pages root appears as an internal segment (common for absolute paths).
+        const index = normalized.indexOf(nestedMarker);
+        if (index === -1) return undefined;
+        relative = normalized.slice(index + nestedMarker.length);
+    }
 
-  const withoutExt = stripAstroExt(relative);
-  if (!withoutExt) return undefined;
+    const withoutExt = stripAstroExt(relative);
+    if (!withoutExt) return undefined;
 
-  const collapsed = collapseIndexRoutes(withoutExt);
-  const leading = ensureLeadingSlash(collapsed);
-  const compact = leading.replace(/\/+/g, "/");
-  return ensureTrailingSlash(compact);
+    const collapsed = collapseIndexRoutes(withoutExt);
+    const leading = ensureLeadingSlash(collapsed);
+    const compact = leading.replace(/\/+/g, "/");
+    return ensureTrailingSlash(compact);
 };
 
 /**
@@ -296,14 +295,14 @@ export const sourceFileToLessonPath = (sourceFile, pagesRoot = "src/pages") => {
  * @returns {LessonAuthor[]}
  */
 export const resolveAuthors = (
-  lessonPath,
-  authorsByPath,
-  fallbackAuthorName = undefined,
+    lessonPath,
+    authorsByPath,
+    fallbackAuthorName = undefined,
 ) => {
-  const authors = authorsByPath[lessonPath];
-  if (Array.isArray(authors) && authors.length > 0) return authors;
-  if (!fallbackAuthorName) return [];
-  return [{ name: fallbackAuthorName }];
+    const authors = authorsByPath[lessonPath];
+    if (Array.isArray(authors) && authors.length > 0) return authors;
+    if (!fallbackAuthorName) return [];
+    return [{ name: fallbackAuthorName }];
 };
 
 /**
@@ -326,12 +325,12 @@ const compareIsoDatesDesc = (a, b) => b.localeCompare(a);
  *   The newest `change.date`, or `undefined` when no valid dates exist.
  */
 const getLatestChangeDate = (changes) => {
-  if (changes.length === 0) return undefined;
+    if (changes.length === 0) return undefined;
 
-  const dates = changes.map((change) => change.date).filter(Boolean);
-  if (dates.length === 0) return undefined;
+    const dates = changes.map((change) => change.date).filter(Boolean);
+    if (dates.length === 0) return undefined;
 
-  return [...dates].sort(compareIsoDatesDesc)[0];
+    return [...dates].sort(compareIsoDatesDesc)[0];
 };
 
 /**
@@ -345,11 +344,11 @@ const getLatestChangeDate = (changes) => {
  * - Computes `lastModified` as the newest ISO date across the provided `changes`.
  *
  * ## Usage:
- * 
+ *
  * Build metadata for a single source file after parsing a git log export.
  *
  * ### Example 1: Parse changes and build one entry
- * 
+ *
  * ```ts
  * const raw = execSync(
  *   `git log --date=short --pretty=format:"%H|%ad|%an|%s" -- src/pages/fp/functors.astro`,
@@ -377,7 +376,7 @@ const getLatestChangeDate = (changes) => {
  *   .map((file) => buildLessonMetadataEntry(file, changesByFile[file] ?? [], authorsByPath))
  *   .filter(Boolean);
  * ```
- * 
+ *
  * @param {string} sourceFile
  *   Path to the lesson’s `.astro` file.
  * @param {Change[]} changes
@@ -398,14 +397,14 @@ export const buildLessonMetadataEntry = (
     pagesRoot = "src/pages",
     fallbackAuthorName = undefined,
 ) => {
-  const lessonPath = sourceFileToLessonPath(sourceFile, pagesRoot);
-  if (!lessonPath) return undefined;
+    const lessonPath = sourceFileToLessonPath(sourceFile, pagesRoot);
+    if (!lessonPath) return undefined;
 
-  return {
-    path: lessonPath,
-    sourceFile: normalizePath(sourceFile),
-    authors: resolveAuthors(lessonPath, authorsByPath, fallbackAuthorName),
-    lastModified: getLatestChangeDate(changes),
-    changes,
-  };
+    return {
+        path: lessonPath,
+        sourceFile: normalizePath(sourceFile),
+        authors: resolveAuthors(lessonPath, authorsByPath, fallbackAuthorName),
+        lastModified: getLatestChangeDate(changes),
+        changes,
+    };
 };

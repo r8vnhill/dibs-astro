@@ -10,7 +10,7 @@ export { default as MarkdownInline } from "./md/MarkdownInline.astro";
 export { default as NushellInline } from "./nushell/NushellInline.astro";
 export {
     default as InlinePowerShell,
-    default as PowerShellInline
+    default as PowerShellInline,
 } from "./ps1/InlinePowerShell.astro";
 export { default as PowerShellBlock } from "./ps1/PowerShellBlock.astro";
 export { default as PowerShellTerminal } from "./ps1/PowerShellTerminal.astro";

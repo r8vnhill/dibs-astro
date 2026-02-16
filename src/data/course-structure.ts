@@ -164,9 +164,9 @@ export function flattenLessons(
         // Recursively flatten children, if any
         const children = lesson.children?.length
             ? flattenLessons(lesson.children, depth + 1, [
-                  ...parentPath,
-                  lesson.title,
-              ])
+                ...parentPath,
+                lesson.title,
+            ])
             : [];
 
         // Combine current entry and its descendants

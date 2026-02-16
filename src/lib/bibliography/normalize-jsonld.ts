@@ -4,8 +4,8 @@ import type {
     NormalizedReference,
     ParseBibliographyOptions,
     ParsedBibliography,
-    ResolveGroupsOptions,
     ResolvedReferenceGroups,
+    ResolveGroupsOptions,
 } from "./types";
 
 const SUPPORTED_TYPES = new Set(["Book", "WebPage"]);
@@ -133,7 +133,11 @@ const normalizeItem = (
 
     const id = asString(rawItem.identifier);
     if (!id) {
-        addError(errors, strict, `[${sourceLabel}] itemListElement[${index}] missing "identifier".`);
+        addError(
+            errors,
+            strict,
+            `[${sourceLabel}] itemListElement[${index}] missing "identifier".`,
+        );
         return null;
     }
 
@@ -239,7 +243,9 @@ export const parseBibliography = (
         addError(
             errors,
             strict,
-            `[${sourceLabel}] root "@type" must be "ItemList" but received "${rootType || "<empty>"}".`,
+            `[${sourceLabel}] root "@type" must be "ItemList" but received "${
+                rootType || "<empty>"
+            }".`,
         );
     }
 
@@ -301,7 +307,9 @@ export const resolveReferenceGroups = (
 
     if (duplicates.size > 0 && strict) {
         fail(
-            `[${sourceLabel}] duplicate IDs across reference groups: ${Array.from(duplicates).join(", ")}.`,
+            `[${sourceLabel}] duplicate IDs across reference groups: ${
+                Array.from(duplicates).join(", ")
+            }.`,
         );
     }
 

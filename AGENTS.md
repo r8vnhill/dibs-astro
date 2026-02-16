@@ -16,11 +16,13 @@ Este documento proporciona contexto y convenciones esenciales para agentes de IA
 **Ejemplos de transformaciones correctas:**
 
 ❌ Incorrecto:
+
 - "El desarrollador debe asegurarse de..."
 - "Los administradores pueden..."
 - "El usuario final verá..."
 
 ✅ Correcto:
+
 - "Quien desarrolle debe asegurarse de..."
 - "El equipo de administración puede..."
 - "Las personas usuarias verán..."
@@ -52,10 +54,10 @@ Este documento proporciona contexto y convenciones esenciales para agentes de IA
 ### Aliases de importación
 
 ```typescript
-import { Component } from "$components/...";  // src/components
-import { Icon } from "$icons";                // src/assets/img/icons/index.ts
-import * as semantics from "$semantics";      // componentes semánticos
-import { util } from "$utils/...";            // src/utils
+import { Component } from "$components/..."; // src/components
+import { Icon } from "$icons"; // src/assets/img/icons/index.ts
+import * as semantics from "$semantics"; // componentes semánticos
+import { util } from "$utils/..."; // src/utils
 ```
 
 También disponibles: `~/*`, `$layouts/*`, `$styles/*`, `$hooks/*`, `$assets/*`, `$callouts/*`
@@ -103,7 +105,7 @@ Las páginas de notas (`src/pages/notes/**/*.astro`) siguen esta estructura:
         <Heading headingLevel="h2" Icon={icons.IconName}>
             Título de la sección
         </Heading>
-        
+
         <!-- Contenido: P, List, CodeBlocks, callouts (Definition, Important, Tip, etc.) -->
     </NotesSection>
 
@@ -137,7 +139,10 @@ Siempre incluir slots descriptivos:
 <PowerShellBlock code={`...`}>
     <span slot="title">Descripción clara del ejemplo</span>
     <span slot="footer">Contexto adicional (opcional)</span>
-    <DibsSourceLink repo="scripts" file="..." slot="source" />
+    <DibsSourceLink
+        repo="scripts" file="..."
+        slot="source"
+    />
 </PowerShellBlock>
 ```
 
@@ -163,7 +168,7 @@ No. Prefiere formas inclusivas reconocidas por la RAE: desdoblamientos ("estudia
 
 ### ¿Cómo manejo términos técnicos en inglés?
 
-Los términos técnicos sin traducción consolidada se mantienen en inglés con `<Mono>` o `<I>`: "el *pipeline*", "usar `ValueFromPipeline`". No fuerces traducciones artificiales.
+Los términos técnicos sin traducción consolidada se mantienen en inglés con `<Mono>` o `<I>`: "el _pipeline_", "usar `ValueFromPipeline`". No fuerces traducciones artificiales.
 
 ### ¿Qué hago si encuentro contenido no inclusivo existente?
 
@@ -179,5 +184,5 @@ Edita `src/data/course-structure.ts` y reinicia el dev server. El watcher detect
 
 ---
 
-**Última actualización:** Febrero 2026  
+**Última actualización:** Febrero 2026\
 **Mantenedor:** Proyecto DIBS (Diseño e Implementación de Bibliotecas de Software)

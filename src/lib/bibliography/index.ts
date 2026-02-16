@@ -7,7 +7,7 @@ export type {
     NormalizedWebReference,
     ParseBibliographyOptions,
     ParsedBibliography,
-    ResolveGroupsOptions,
     ResolvedReferenceGroups,
+    ResolveGroupsOptions,
     SupportedReferenceType,
 } from "./types";
