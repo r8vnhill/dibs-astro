@@ -326,6 +326,13 @@ export const getLessonMetadataDataset = (): LessonMetadataDataset => {
 };
 
 /**
+ * Test hook to keep cache-dependent tests deterministic.
+ */
+export const __resetLessonMetadataCache = (): void => {
+    datasetCache = undefined;
+};
+
+/**
  * Resolves a metadata entry for a given pathname.
  *
  * The lookup key is normalized via {@link normalizeLessonPathname}.
@@ -339,7 +346,7 @@ export const getLessonMetadataDataset = (): LessonMetadataDataset => {
  * ```
  *
  * ### Example 2: Resolve from a known lesson path
- * 
+ *
  * ```ts
  * resolveLessonMetadata("/notes/software-libraries/scripting/first-script/");
  * ```

@@ -57,10 +57,7 @@
  */
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-    generateLessonMetadata,
-    parseArgs,
-} from "../src/lib/lesson-metadata/generator.js";
+import { generateLessonMetadata, parseArgs } from "../src/lib/lesson-metadata/generator.js";
 
 /**
  * Resolve the absolute path to this file in ESM.
@@ -142,10 +139,12 @@ const main = async () => {
         const action = dryRun ? "Simulated" : "Generated";
 
         console.log(
-            `[lesson-metadata] ${action} ${path.relative(
-                projectRoot,
-                outputPath,
-            )} with ${output.totalLessons} lessons.`,
+            `[lesson-metadata] ${action} ${
+                path.relative(
+                    projectRoot,
+                    outputPath,
+                )
+            } with ${output.totalLessons} lessons.`,
         );
 
         console.log(

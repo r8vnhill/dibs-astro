@@ -121,7 +121,9 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
                                         {
                                             recentChanges.map((change) => (
                                                 <li>
-                                                    <code>{change.hash.slice(0, 7)}</code> · {change.date} · {change.subject}
+                                                    <code>{change.hash.slice(0, 7)}</code> · {
+                                                        change.date
+                                                    } · {change.subject}
                                                 </li>
                                             ))
                                         }

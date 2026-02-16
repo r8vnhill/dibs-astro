@@ -1,7 +1,6 @@
 export type { HeadingLevel } from "./heading-level.ts";
 export {
     DEFAULT_LOCALE,
-    UNKNOWN_DATE_LABEL,
     formatDate,
     formatLessonDate,
     getLessonMetadataDataset,
@@ -9,6 +8,7 @@ export {
     parseIsoShortDate,
     parseLessonMetadataDataset,
     resolveLessonMetadata,
+    UNKNOWN_DATE_LABEL,
 } from "./lesson-metadata.ts";
 export { normalizeNavigation, resolveAutoNav } from "./navigation.ts";
 export { pickRandom } from "./random.ts";
