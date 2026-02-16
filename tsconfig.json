@@ -46,7 +46,8 @@
             ]
         },
         "types": [
-            "astro/client"
+            "astro/client",
+            "vitest/globals"
         ],
         "target": "ESNext",
         "module": "ESNext",
