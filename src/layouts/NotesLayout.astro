@@ -1,75 +1,129 @@
 ---
 /**
- * NotesLayout.astro
- * -----------------
- * This layout component renders the full lesson view, including:
- * - The title and reading time
- * - Sidebar navigation (based on course structure)
- * - Content slot (lesson body)
- * - Automatic or manual previous/next navigation buttons
+ * @file NotesLayout.astro
+ *
+ * Page layout for lesson content under `src/pages/notes/**`.
+ *
+ * This layout composes the main “lesson” experience:
+ *
+ * - A persistent course sidebar (tree navigation) built from `courseStructure`.
+ * - The lesson header (title + reading time estimate).
+ * - Optional lesson metadata panels (authors, last modified, recent changes, repo links).
+ * - The lesson body via the default `<slot />`.
+ * - Previous/next navigation controls (manual overrides or auto-resolved).
+ *
+ * ## Data sources
+ *
+ * - **Sidebar lessons:** `courseStructure` (static course definition).
+ * - **Auto navigation:** {@link resolveAutoNav} uses `courseStructure` and current pathname.
+ * - **Lesson metadata:** {@link resolveLessonMetadata} uses the generated metadata dataset (see
+ *   `src/data/lesson-metadata.generated.json`).
+ *
+ * ## Navigation precedence
+ *
+ * Previous/next links may be provided by the page frontmatter and/or derived from the course
+ * structure. Resolution follows this precedence:
+ *
+ * 1. Explicit `previous`/`next` props (frontmatter override)
+ * 2. Auto navigation from {@link resolveAutoNav}
+ * 3. Omit navigation button when neither is available
+ *
+ * Links are normalized by {@link normalizeNavigation} to ensure consistent routing (e.g. trailing
+ * slashes and collapsed separators).
+ *
+ * ## Accessibility
+ *
+ * - Sidebar is wrapped in `<aside>` with an explicit `aria-label`.
+ * - Prev/next controls are wrapped in `<nav>` with an `aria-label`.
+ * - When there is no “previous” button, a hidden placeholder is used on wide screens to
+ *   preserve alignment without adding noise to assistive technologies.
  */
-
 import * as icons from "~/assets/img/icons";
-import RepoLink from "~/components/git/RepoLink.astro";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
+import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
+import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { normalizeNavigation, resolveAutoNav } from "~/utils";
-import { formatLessonDate, resolveLessonMetadata } from "~/utils/lesson-metadata";
+import { resolveLessonMetadata } from "~/utils/lesson-metadata";
 
-// Props passed to the layout (can optionally override next/previous buttons)
+/**
+ * Props passed to the layout.
+ *
+ * Lesson pages typically set these values from frontmatter.
+ */
 interface Props {
     /**
-     * The title of the current lesson page.
+     * Title of the current lesson.
+     *
+     * Rendered as the `<h1>` and used as the page title within {@link BaseLayout}.
      */
     title: string;
+
     /**
-     * A brief description of the lesson, used for SEO and social sharing.
+     * Short lesson description for SEO and social previews.
+     *
+     * Forwarded to {@link BaseLayout}.
      */
     description?: string;
+
     /**
-     * Optional next lesson navigation data.
-     * If not provided, will attempt to auto-resolve based on course structure.
+     * Optional next lesson navigation override.
+     *
+     * If omitted, the layout attempts to auto-resolve it from the course structure.
      */
     next?: { title: string; href: string };
+
     /**
-     * Optional previous lesson navigation data.
-     * If not provided, will attempt to auto-resolve based on course structure.
+     * Optional previous lesson navigation override.
+     *
+     * If omitted, the layout attempts to auto-resolve it from the course structure.
      */
     previous?: { title: string; href: string };
+
     /**
-     * Optional multiplier for reading time calculation.
-     * Can be used to adjust the estimated reading time based on content complexity.
+     * Multiplier applied to the reading-time estimate.
+     *
+     * Useful to tune reading-time estimates for lessons that include code, exercises, or dense
+     * theoretical sections.
      */
     timeMultiplier?: number;
+
     /**
      * Optional repository information for the lesson.
-     * If provided, will render a link to the repository.
+     *
+     * When provided, the layout renders repository links via {@link LessonRepoPanel}.
      */
     git?: {
+        /**
+         * Repository owner or organization.
+         */
         user: string;
+
+        /**
+         * Repository name.
+         */
         repo: string;
     };
 }
 
-// Extract current page data and fallback navigation resolution
+// Extract current page data and resolve metadata/navigation.
 const { title, next, previous, timeMultiplier, git, description } = Astro.props as Props;
 const pathname = Astro.url.pathname;
-const lessonMetadata = resolveLessonMetadata(pathname);
-const authorsText = lessonMetadata?.authors.map((author) => author.name).join(", ");
-const formattedLastModified = formatLessonDate(lessonMetadata?.lastModified);
-const recentChanges = lessonMetadata?.changes.slice(0, 3) ?? [];
 
-// Attempt to auto-resolve previous/next from course structure
+// Metadata may be absent if the route is not present in the generated dataset.
+const lessonMetadata = resolveLessonMetadata(pathname);
+
+// Attempt to auto-resolve previous/next from course structure.
 const autoNav = resolveAutoNav(pathname, courseStructure);
 
-// Allow manual override from frontmatter (if provided)
+// Allow manual override from frontmatter (if provided).
 const effectivePrevious = previous ?? autoNav.previous ?? undefined;
 const effectiveNext = next ?? autoNav.next ?? undefined;
 
-// Normalize hrefs for consistency (e.g. ensure trailing slashes)
+// Normalize hrefs for consistency (e.g. ensure trailing slashes).
 const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     effectiveNext,
     effectivePrevious,
@@ -79,9 +133,9 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 <BaseLayout pageTitle={title} {description}>
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
-        <div class="flex-none">
+        <aside class="flex-none" aria-label="Navegación del curso">
             <LessonSidebar client:load lessons={courseStructure} />
-        </div>
+        </aside>
 
         <!-- Main content area -->
         <div
@@ -92,85 +146,9 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 
             <ReadingTime multiplier={timeMultiplier ?? 1.5} />
 
-            {
-                lessonMetadata && (
-                    <div
-                        class:list={[
-                            "rounded-md",
-                            "border",
-                            "px-4",
-                            "py-3",
-                            "text-sm",
-                            "bg-base-elevated",
-                            "text-base-text",
-                            "border-base-border",
-                            "mt-3",
-                        ]}
-                    >
-                        <p>
-                            <strong>Autoría:</strong> {authorsText || "sin autoría registrada"}
-                        </p>
-                        <p class="mt-1">
-                            <strong>Última actualización:</strong> {formattedLastModified}
-                        </p>
-                        {
-                            recentChanges.length > 0 && (
-                                <div class="mt-2">
-                                    <p><strong>Cambios recientes:</strong></p>
-                                    <ul class="list-disc list-inside mt-1">
-                                        {
-                                            recentChanges.map((change) => (
-                                                <li>
-                                                    <code>{change.hash.slice(0, 7)}</code> · {
-                                                        change.date
-                                                    } · {change.subject}
-                                                </li>
-                                            ))
-                                        }
-                                    </ul>
-                                </div>
-                            )
-                        }
-                    </div>
-                )
-            }
+            {lessonMetadata && <LessonMetaPanel metadata={lessonMetadata} />}
 
-            {
-                git && (
-                    <div
-                        class:list={[
-                            "rounded-md",
-                            "border",
-                            "px-4",
-                            "py-3",
-                            "text-sm",
-                            "bg-purple-50",
-                            "text-purple-800",
-                            "border-purple-300",
-                            "dark:bg-purple-950/40",
-                            "dark:text-purple-200",
-                            "dark:border-purple-700/50",
-                            "mt-2",
-                        ]}
-                    >
-                        <span class="font-semibold">
-                            Encuentra el código de la lección:
-                        </span>
-                        <div
-                            class:list={[
-                                "mt-2",
-                                "flex",
-                                "flex-wrap",
-                                "gap-4",
-                                "items-center",
-                            ]}
-                        >
-                            <RepoLink {...git} platform="gitlab" />
-                            <RepoLink {...git} platform="github" />
-                        </div>
-                    </div>
-                )
-            }
+            {git && <LessonRepoPanel {git} />}
 
             <slot />
 
@@ -198,7 +176,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
                                 >
                                     <icons.ArrowLeft class="w-5 h-5" slot="icon" />
                                 </NavigationButton>
-                            ) : <span />
+                            ) : (<div aria-hidden="true" class="hidden sm:block" />)
                         }
 
                         {
@@ -219,7 +197,15 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 </BaseLayout>
 
 <style is:global>
-    /* Sidebar navigation styles */
+    /**
+     * Sidebar tree styles.
+     *
+     * These are global because the sidebar is rendered as a nested tree and the layout is
+     * responsible for the overall page chrome.
+     *
+     * If these styles grow further, consider moving them into the sidebar component (or a
+     * dedicated stylesheet) to keep this layout focused on composition.
+     */
     .lesson-tree ul {
         list-style: none;
         margin: 0;
@@ -227,6 +213,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
     }
 
     .lesson-tree li {
+        position: relative;
         line-height: 1.3;
     }
 
@@ -252,7 +239,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
         border-radius: 2px;
     }
 
-    /* ----------- */
+    /* Tree “connector” line */
     .lesson-tree li::before {
         content: "";
         position: absolute;
@@ -268,10 +255,12 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
         height: 0.8rem;
     }
 
+    /* Indentation for grouped subtrees */
     .lesson-tree .group {
         padding-left: 0.75rem; /* extra space for the tree line */
     }
 
+    /* Visual separator between major groups */
     .lesson-tree .tree-separator {
         border-top: 1px solid var(--color-base-border);
         margin-top: 0.75rem;

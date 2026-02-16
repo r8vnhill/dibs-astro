@@ -1,0 +1,83 @@
+---
+import { formatLessonDate, type LessonMetadataEntry } from "~/utils/lesson-metadata";
+
+interface Props {
+    metadata: LessonMetadataEntry;
+}
+
+const { metadata } = Astro.props as Props;
+const authorsText = metadata.authors.map((author) => author.name).join(", ");
+const lastModified = formatLessonDate(metadata.lastModified);
+const recentChanges = metadata.changes.slice(0, 3);
+const WEBSITE_GITHUB_REPO = "r8vnhill/dibs-astro";
+const WEBSITE_GITLAB_REPO = "r8vnhill/dibs-astro-website";
+
+const githubCommitUrl = (hash: string) => `https://github.com/${WEBSITE_GITHUB_REPO}/commit/${hash}`;
+const gitlabCommitUrl = (hash: string) =>
+    `https://gitlab.com/${WEBSITE_GITLAB_REPO}/-/commit/${hash}`;
+---
+
+<section
+    aria-label="Metadatos de la lección"
+    class:list={[
+        "rounded-md",
+        "border",
+        "px-4",
+        "py-3",
+        "text-sm",
+        "bg-base-elevated",
+        "text-base-text",
+        "border-base-border",
+        "mt-3",
+    ]}
+>
+    <dl class="space-y-1">
+        <div>
+            <dt class="font-semibold inline">Autoría:</dt>
+            <dd class="inline ml-1">{authorsText || "sin autoría registrada"}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold inline">Última actualización:</dt>
+            <dd class="inline ml-1">{lastModified}</dd>
+        </div>
+    </dl>
+
+    <div class="mt-2">
+        <p class="font-semibold">Cambios recientes:</p>
+        {
+            recentChanges.length > 0 ? (
+                <ul class="list-disc list-inside mt-1">
+                    {
+                        recentChanges.map((change) => (
+                            <li>
+                                <code>{change.hash.slice(0, 7)}</code> · {formatLessonDate(change.date)}
+                                {" "}· {change.subject}
+                                <span class="ml-1">
+                                    (
+                                    <a
+                                        href={githubCommitUrl(change.hash)}
+                                        class="underline"
+                                        target="_blank" rel="noreferrer"
+                                    >
+                                        GitHub
+                                    </a>
+                                    {" / "}
+                                    <a
+                                        href={gitlabCommitUrl(change.hash)}
+                                        class="underline"
+                                        target="_blank" rel="noreferrer"
+                                    >
+                                        GitLab
+                                    </a>
+                                    )
+                                </span>
+                            </li>
+                        ))
+                    }
+                </ul>
+            ) : (
+                <p class="mt-1">No hay cambios registrados.</p>
+            )
+        }
+    </div>
+</section>

@@ -1,1235 +1,1253 @@
 {
-    "generatedAt": "2026-02-16T16:11:07.572Z",
-    "totalLessons": 38,
-    "changesLimit": 5,
-    "entries": {
-        "/notes/": {
-            "sourceFile": "src/pages/notes/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-                    "date": "2025-09-21",
-                    "author": "r8vnhill",
-                    "subject": "feat: add new scripting notes and footnotes styling"
-                },
-                {
-                    "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
-                    "date": "2025-08-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
-                },
-                {
-                    "hash": "26b00ee2b60e6b76b7561257c669b2fbda6a388b",
-                    "date": "2025-08-03",
-                    "author": "r8vnhill",
-                    "subject": "✨ Add new icons and lesson navigation enhancements"
-                },
-                {
-                    "hash": "c6f2f2e1b6c0b706b9c171e4a66d6a2852e4d36a",
-                    "date": "2025-08-02",
-                    "author": "r8vnhill",
-                    "subject": "✨🔧 Bump version and add lesson navigation sidebar"
-                }
-            ]
-        },
-        "/notes/installation/": {
-            "sourceFile": "src/pages/notes/installation.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-                    "date": "2025-11-08",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-                },
-                {
-                    "hash": "fe64dd240232fa156308b5d41149ba92db4eff8f",
-                    "date": "2025-09-26",
-                    "author": "r8vnhill",
-                    "subject": "✨📝♻️🔧 Enfoque en PowerShell, reescritura de notas y nuevo icono `Prohibit`"
-                },
-                {
-                    "hash": "52ddf6c1d59161a2d549849293999343394df938",
-                    "date": "2025-09-26",
-                    "author": "r8vnhill",
-                    "subject": "✨📝💄🖼️🐛 Revamp installation guide, add UI components & icons, diff-highlighting, and fix tabs scoping"
-                },
-                {
-                    "hash": "5ae95de66afe2442785edb997ee122c32e6c4eb1",
-                    "date": "2025-09-25",
-                    "author": "r8vnhill",
-                    "subject": "feat: add Question callout component and related styles"
-                }
-            ]
-        },
-        "/notes/software-libraries/": {
-            "sourceFile": "src/pages/notes/software-libraries/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                },
-                {
-                    "hash": "acf75a4e5ac209fcf018f1c89809b40fcd4d192a",
-                    "date": "2025-08-03",
-                    "author": "R8V",
-                    "subject": "feat: add RepoLink component for GitHub and GitLab links"
-                }
-            ]
-        },
-        "/notes/software-libraries/build-systems/": {
-            "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-                    "date": "2025-09-21",
-                    "author": "r8vnhill",
-                    "subject": "feat: add new scripting notes and footnotes styling"
-                }
-            ]
-        },
-        "/notes/software-libraries/build-systems/veritas-1/": {
-            "sourceFile": "src/pages/notes/software-libraries/build-systems/veritas-1/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-                    "date": "2025-09-21",
-                    "author": "r8vnhill",
-                    "subject": "feat: add new scripting notes and footnotes styling"
-                }
-            ]
-        },
-        "/notes/software-libraries/business-vs-app/": {
-            "sourceFile": "src/pages/notes/software-libraries/business-vs-app/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-                    "date": "2025-09-21",
-                    "author": "r8vnhill",
-                    "subject": "feat: add new scripting notes and footnotes styling"
-                },
-                {
-                    "hash": "5febdbce9e57a209a5fb84d6063e097688f12a90",
-                    "date": "2025-09-17",
-                    "author": "r8vnhill",
-                    "subject": "✨➕ Add new icons and course lesson"
-                }
-            ]
-        },
-        "/notes/software-libraries/design-principles/": {
-            "sourceFile": "src/pages/notes/software-libraries/design-principles/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
-                    "date": "2025-09-16",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
-                },
-                {
-                    "hash": "c72df87a556ca7077a1448ffe2599632af360773",
-                    "date": "2025-09-14",
-                    "author": "R8V",
-                    "subject": "✨🖼️ Add new icons: BugDroid, EyeSlash, Rows, and Signpost; update icons index timestamp"
-                },
-                {
-                    "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
-                }
-            ]
-        },
-        "/notes/software-libraries/domain-models/": {
-            "sourceFile": "src/pages/notes/software-libraries/domain-models/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2025-10-02",
-            "changes": [
-                {
-                    "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
-                    "date": "2025-10-02",
-                    "author": "r8vnhill",
-                    "subject": "Refactor code structure for improved readability and maintainability"
-                },
-                {
-                    "hash": "5febdbce9e57a209a5fb84d6063e097688f12a90",
-                    "date": "2025-09-17",
-                    "author": "r8vnhill",
-                    "subject": "✨➕ Add new icons and course lesson"
-                },
-                {
-                    "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
-                    "date": "2025-09-16",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
-                },
-                {
-                    "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-                    "date": "2025-10-15",
-                    "author": "r8vnhill",
-                    "subject": "Add Python scripting notes and comparison with PowerShell"
-                },
-                {
-                    "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-                    "date": "2025-10-09",
-                    "author": "r8vnhill",
-                    "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-                },
-                {
-                    "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
-                    "date": "2025-10-08",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/basic-patterns/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
-                },
-                {
-                    "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
-                },
-                {
-                    "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-                    "date": "2025-10-24",
-                    "author": "r8vnhill",
-                    "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-                },
-                {
-                    "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
-                    "date": "2025-10-21",
-                    "author": "r8vnhill",
-                    "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/basic-patterns/iteration/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/iteration/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-                    "date": "2025-10-24",
-                    "author": "r8vnhill",
-                    "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/basic-patterns/py/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/py.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-                    "date": "2025-10-15",
-                    "author": "r8vnhill",
-                    "subject": "Add Python scripting notes and comparison with PowerShell"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/basic-patterns/regex-and-versions/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/regex-and-versions/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-                    "date": "2025-10-24",
-                    "author": "r8vnhill",
-                    "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/errors/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/errors/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
-                    "date": "2025-11-20",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-                },
-                {
-                    "hash": "edbe20af039b365862a1497040e37403dcbca71d",
-                    "date": "2025-11-14",
-                    "author": "r8vnhill",
-                    "subject": "✨ docs(pwsh): add try/catch reference"
-                },
-                {
-                    "hash": "dc2bcec9641cdb37071a15c82f417a767cb8e371",
-                    "date": "2025-11-12",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(repo): clarify catch rationale and require English commit messages"
-                },
-                {
-                    "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-                    "date": "2025-10-15",
-                    "author": "r8vnhill",
-                    "subject": "Add Python scripting notes and comparison with PowerShell"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/errors/bash/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/errors/bash.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "5fccee30a33cb510933bd99e6091e4860fc10afb",
-                    "date": "2025-12-18",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(ui/code): document scala block component"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/errors/nushell/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/errors/nushell.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/first-script/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-02-11",
-            "changes": [
-                {
-                    "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
-                    "date": "2026-02-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-                },
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-                    "date": "2025-10-24",
-                    "author": "r8vnhill",
-                    "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-                },
-                {
-                    "hash": "35e2042677186dd556f0a64dc0fc5f2fb6aeea5f",
-                    "date": "2025-10-13",
-                    "author": "r8vnhill",
-                    "subject": "✨📝 feat(docs/scripting): add `Update-ScriptRequiresVersion` exercise & bump examples to PowerShell 7.5"
-                },
-                {
-                    "hash": "edc942c8d179d226f88af974eef2afc4bbdf9406",
-                    "date": "2025-10-13",
-                    "author": "r8vnhill",
-                    "subject": "✨♿💄 feat(ui,links,snippets): add Exercise slots, show ref hints in source links, and provide editor snippet"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/first-script/py/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/py.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/gitlab/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/gitlab/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-02-07",
-            "changes": [
-                {
-                    "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
-                    "date": "2026-02-07",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
-                },
-                {
-                    "hash": "b3181f7ef65fc09cdab86ff55973e975b800d069",
-                    "date": "2025-11-20",
-                    "author": "r8vnhill",
-                    "subject": "♻️✨ refactor(callouts): centralize shell and tokens"
-                },
-                {
-                    "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
-                    "date": "2025-11-20",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-                },
-                {
-                    "hash": "a0409f187352e3ea9aa4fe8179a16964b2a4d1a0",
-                    "date": "2025-10-20",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
-                },
-                {
-                    "hash": "a64c6a36e10a5c7d4e36d333fca403fa037d45a5",
-                    "date": "2025-10-16",
-                    "author": "r8vnhill",
-                    "subject": "✨♻️🎨📝🔧 refactor(semantics,notes): Standardize paragraphs with `<P>`, polish TabsTrigger, expand GitLab notes, add “clsx” to dictionary"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/help/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/help/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2025-11-20",
-            "changes": [
-                {
-                    "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
-                    "date": "2025-11-20",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-                },
-                {
-                    "hash": "9acbdb8e32f31f128035d5d935d0fc3bd1ea229c",
-                    "date": "2025-11-15",
-                    "author": "r8vnhill",
-                    "subject": "✨📝 docs(powershell-help): Refine integrated help lesson"
-                },
-                {
-                    "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-                    "date": "2025-11-08",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-                },
-                {
-                    "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-                    "date": "2025-10-09",
-                    "author": "r8vnhill",
-                    "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-                },
-                {
-                    "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
-                    "date": "2025-10-08",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/help/bash/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/help/bash.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-                    "date": "2025-10-09",
-                    "author": "r8vnhill",
-                    "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/nushell/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/nushell.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-                    "date": "2025-11-08",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-                },
-                {
-                    "hash": "93f9ad0694fc6ffc482532e6106365ae772cba79",
-                    "date": "2025-11-05",
-                    "author": "r8vnhill",
-                    "subject": "📝✨🔧 docs(repo): update Copilot instructions, document table components, add VS Code run/debug configs"
-                },
-                {
-                    "hash": "eb17bd9f1565e63b197ba6cf5616e55436936f9b",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨♻️ feat(code): add Nushell block and inline, polish Nushell page"
-                },
-                {
-                    "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/pipelines/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-02-11",
-            "changes": [
-                {
-                    "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
-                    "date": "2026-02-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
-                },
-                {
-                    "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
-                    "date": "2026-02-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-                },
-                {
-                    "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
-                    "date": "2026-02-07",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
-                },
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "5fccee30a33cb510933bd99e6091e4860fc10afb",
-                    "date": "2025-12-18",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(ui/code): document scala block component"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/pipelines/errors/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/errors/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-                    "date": "2025-10-05",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/pipelines/pipeline-aware/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-02-11",
-            "changes": [
-                {
-                    "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
-                    "date": "2026-02-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
-                },
-                {
-                    "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
-                    "date": "2026-02-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-                },
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-                    "date": "2025-10-05",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
-                },
-                {
-                    "hash": "da2a3844910289a5d65f201be9dc5f85997aa901",
-                    "date": "2025-10-04",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2025-10-07",
-            "changes": [
-                {
-                    "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
-                    "date": "2025-10-07",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
-                },
-                {
-                    "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-                    "date": "2025-10-05",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/pipelines/practice/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/practice/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
-                    "date": "2025-10-07",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
-                },
-                {
-                    "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-                    "date": "2025-10-05",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
-                },
-                {
-                    "hash": "da2a3844910289a5d65f201be9dc5f85997aa901",
-                    "date": "2025-10-04",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
-                },
-                {
-                    "hash": "bb9b6390f97c18ea7006f70ed7d982038330bc06",
-                    "date": "2025-10-04",
-                    "author": "r8vnhill",
-                    "subject": "✨ docs(powershell): add examples for GitLab remote configuration and file hashing"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/py/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/py.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2025-10-15",
-            "changes": [
-                {
-                    "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-                    "date": "2025-10-15",
-                    "author": "r8vnhill",
-                    "subject": "Add Python scripting notes and comparison with PowerShell"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/should-process/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/should-process/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "d07d8209d82f687762b267a216a4e30e4d885656",
-                    "date": "2025-11-10",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(scripting/should-process): añadir referencia y criterios de aceptación para ShouldProcess"
-                },
-                {
-                    "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-                    "date": "2025-11-08",
-                    "author": "r8vnhill",
-                    "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-                },
-                {
-                    "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
-                },
-                {
-                    "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-                    "date": "2025-10-24",
-                    "author": "r8vnhill",
-                    "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/structured-output/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/structured-output/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
-                },
-                {
-                    "hash": "a0409f187352e3ea9aa4fe8179a16964b2a4d1a0",
-                    "date": "2025-10-20",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
-                },
-                {
-                    "hash": "fb3b94430ac9c9d4cb47ad86edc54c4e48b4b918",
-                    "date": "2025-10-17",
-                    "author": "r8vnhill",
-                    "subject": "✨📝🔧 docs(structured-output): expand lesson with classes, fixes & aliases"
-                },
-                {
-                    "hash": "8be69fd68aabe6de60427c5d334a5768716735d4",
-                    "date": "2025-10-17",
-                    "author": "r8vnhill",
-                    "subject": "✨♿️📝 feat(icons,links/aria,notes): add GridFour; support GitLab line anchors; expand PSCustomObject notes"
-                }
-            ]
-        },
-        "/notes/software-libraries/scripting/structured-output/nushell/": {
-            "sourceFile": "src/pages/notes/software-libraries/scripting/structured-output/nushell.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
-                    "date": "2025-10-29",
-                    "author": "r8vnhill",
-                    "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
-                }
-            ]
-        },
-        "/notes/software-libraries/task-automation/": {
-            "sourceFile": "src/pages/notes/software-libraries/task-automation/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-                    "date": "2025-10-09",
-                    "author": "r8vnhill",
-                    "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-                },
-                {
-                    "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
-                    "date": "2025-10-07",
-                    "author": "r8vnhill",
-                    "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
-                },
-                {
-                    "hash": "dae5b3da41b5d4fdb982bdcf16aaf3f965558ff6",
-                    "date": "2025-09-22",
-                    "author": "r8vnhill",
-                    "subject": "✨🗺️ Add new lesson on task automation and icons"
-                }
-            ]
-        },
-        "/notes/software-libraries/what-is/": {
-            "sourceFile": "src/pages/notes/software-libraries/what-is/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
-                    "date": "2025-10-21",
-                    "author": "r8vnhill",
-                    "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
-                },
-                {
-                    "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
-                    "date": "2025-10-02",
-                    "author": "r8vnhill",
-                    "subject": "Refactor code structure for improved readability and maintainability"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                }
-            ]
-        },
-        "/notes/type-fundamentals/": {
-            "sourceFile": "src/pages/notes/type-fundamentals/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                },
-                {
-                    "hash": "acf75a4e5ac209fcf018f1c89809b40fcd4d192a",
-                    "date": "2025-08-03",
-                    "author": "R8V",
-                    "subject": "feat: add RepoLink component for GitHub and GitLab links"
-                }
-            ]
-        },
-        "/notes/type-fundamentals/basics/": {
-            "sourceFile": "src/pages/notes/type-fundamentals/basics/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
-                    "date": "2025-08-25",
-                    "author": "r8vnhill",
-                    "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
-                },
-                {
-                    "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
-                    "date": "2025-08-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
-                },
-                {
-                    "hash": "28f5e0708650d4e6cc16eebeabef5497e5b940f2",
-                    "date": "2025-08-07",
-                    "author": "r8vnhill",
-                    "subject": "✨ Add references and tooltip system"
-                },
-                {
-                    "hash": "dba88126d07e71d1b69efe8aa2ffa0ffe1e9d40b",
-                    "date": "2025-08-06",
-                    "author": "R8V",
-                    "subject": "✨ Add \"Conclusiones\" section with a heading to the Kotlin module"
-                }
-            ]
-        },
-        "/notes/type-fundamentals/basics/functions/": {
-            "sourceFile": "src/pages/notes/type-fundamentals/basics/functions/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                },
-                {
-                    "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
-                    "date": "2025-08-25",
-                    "author": "r8vnhill",
-                    "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
-                },
-                {
-                    "hash": "0727829dad55d889710402f8b7846bd8f4720840",
-                    "date": "2025-08-11",
-                    "author": "r8vnhill",
-                    "subject": "✨➕ Add new icons and enhance Kotlin functions lesson"
-                },
-                {
-                    "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
-                    "date": "2025-08-11",
-                    "author": "r8vnhill",
-                    "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
-                }
-            ]
-        },
-        "/notes/type-fundamentals/basics/functions/py/": {
-            "sourceFile": "src/pages/notes/type-fundamentals/basics/functions/py.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2025-09-14",
-            "changes": [
-                {
-                    "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                },
-                {
-                    "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
-                    "date": "2025-08-25",
-                    "author": "r8vnhill",
-                    "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
-                }
-            ]
-        },
-        "/notes/type-fundamentals/basics/variables/": {
-            "sourceFile": "src/pages/notes/type-fundamentals/basics/variables/index.astro",
-            "authors": [
-                {
-                    "name": "Ignacio Slater-Muñoz"
-                }
-            ],
-            "lastModified": "2026-01-01",
-            "changes": [
-                {
-                    "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-                    "date": "2026-01-01",
-                    "author": "r8vnhill",
-                    "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-                },
-                {
-                    "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
-                },
-                {
-                    "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-                    "date": "2025-09-14",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-                },
-                {
-                    "hash": "e4f96bd661c85ef0f63e5931cccaac08e4470a4a",
-                    "date": "2025-09-07",
-                    "author": "R8V",
-                    "subject": "✨📚 Add practical examples for encapsulating logic in setters and enhance variable declaration section"
-                },
-                {
-                    "hash": "c94e98efd951f2afc3467d13e3b3b4ad52dae5fb",
-                    "date": "2025-09-07",
-                    "author": "r8vnhill",
-                    "subject": "✨🖼️ Add new icons and expand Kotlin properties notes"
-                }
-            ]
+  "generatedAt": "2026-02-16T20:51:29.638Z",
+  "totalLessons": 38,
+  "changesLimit": 5,
+  "entries": {
+    "/notes/": {
+      "sourceFile": "src/pages/notes/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
         }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        },
+        {
+          "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
+          "date": "2025-08-11",
+          "author": "r8vnhill",
+          "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
+        },
+        {
+          "hash": "26b00ee2b60e6b76b7561257c669b2fbda6a388b",
+          "date": "2025-08-03",
+          "author": "r8vnhill",
+          "subject": "✨ Add new icons and lesson navigation enhancements"
+        },
+        {
+          "hash": "c6f2f2e1b6c0b706b9c171e4a66d6a2852e4d36a",
+          "date": "2025-08-02",
+          "author": "r8vnhill",
+          "subject": "✨🔧 Bump version and add lesson navigation sidebar"
+        }
+      ]
+    },
+    "/notes/installation/": {
+      "sourceFile": "src/pages/notes/installation.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
+          "date": "2025-11-08",
+          "author": "r8vnhill",
+          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
+        },
+        {
+          "hash": "fe64dd240232fa156308b5d41149ba92db4eff8f",
+          "date": "2025-09-26",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🔧 Enfoque en PowerShell, reescritura de notas y nuevo icono `Prohibit`"
+        },
+        {
+          "hash": "52ddf6c1d59161a2d549849293999343394df938",
+          "date": "2025-09-26",
+          "author": "r8vnhill",
+          "subject": "✨📝💄🖼️🐛 Revamp installation guide, add UI components & icons, diff-highlighting, and fix tabs scoping"
+        },
+        {
+          "hash": "5ae95de66afe2442785edb997ee122c32e6c4eb1",
+          "date": "2025-09-25",
+          "author": "r8vnhill",
+          "subject": "feat: add Question callout component and related styles"
+        }
+      ]
+    },
+    "/notes/software-libraries/": {
+      "sourceFile": "src/pages/notes/software-libraries/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        },
+        {
+          "hash": "acf75a4e5ac209fcf018f1c89809b40fcd4d192a",
+          "date": "2025-08-03",
+          "author": "R8V",
+          "subject": "feat: add RepoLink component for GitHub and GitLab links"
+        }
+      ]
+    },
+    "/notes/software-libraries/build-systems/": {
+      "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        }
+      ]
+    },
+    "/notes/software-libraries/build-systems/veritas-1/": {
+      "sourceFile": "src/pages/notes/software-libraries/build-systems/veritas-1/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        }
+      ]
+    },
+    "/notes/software-libraries/business-vs-app/": {
+      "sourceFile": "src/pages/notes/software-libraries/business-vs-app/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        },
+        {
+          "hash": "5febdbce9e57a209a5fb84d6063e097688f12a90",
+          "date": "2025-09-17",
+          "author": "r8vnhill",
+          "subject": "✨➕ Add new icons and course lesson"
+        }
+      ]
+    },
+    "/notes/software-libraries/design-principles/": {
+      "sourceFile": "src/pages/notes/software-libraries/design-principles/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
+          "date": "2025-09-16",
+          "author": "r8vnhill",
+          "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
+        },
+        {
+          "hash": "c72df87a556ca7077a1448ffe2599632af360773",
+          "date": "2025-09-14",
+          "author": "R8V",
+          "subject": "✨🖼️ Add new icons: BugDroid, EyeSlash, Rows, and Signpost; update icons index timestamp"
+        },
+        {
+          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
+        }
+      ]
+    },
+    "/notes/software-libraries/domain-models/": {
+      "sourceFile": "src/pages/notes/software-libraries/domain-models/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2025-10-02",
+      "changes": [
+        {
+          "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
+          "date": "2025-10-02",
+          "author": "r8vnhill",
+          "subject": "Refactor code structure for improved readability and maintainability"
+        },
+        {
+          "hash": "5febdbce9e57a209a5fb84d6063e097688f12a90",
+          "date": "2025-09-17",
+          "author": "r8vnhill",
+          "subject": "✨➕ Add new icons and course lesson"
+        },
+        {
+          "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
+          "date": "2025-09-16",
+          "author": "r8vnhill",
+          "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        },
+        {
+          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
+          "date": "2025-10-09",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
+        },
+        {
+          "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
+          "date": "2025-10-08",
+          "author": "r8vnhill",
+          "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/basic-patterns/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
+        },
+        {
+          "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        },
+        {
+          "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
+          "date": "2025-10-21",
+          "author": "r8vnhill",
+          "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/basic-patterns/iteration/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/iteration/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/basic-patterns/py/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/basic-patterns/regex-and-versions/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/basic-patterns/regex-and-versions/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/errors/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/errors/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
+          "date": "2025-11-20",
+          "author": "r8vnhill",
+          "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
+        },
+        {
+          "hash": "edbe20af039b365862a1497040e37403dcbca71d",
+          "date": "2025-11-14",
+          "author": "r8vnhill",
+          "subject": "✨ docs(pwsh): add try/catch reference"
+        },
+        {
+          "hash": "dc2bcec9641cdb37071a15c82f417a767cb8e371",
+          "date": "2025-11-12",
+          "author": "r8vnhill",
+          "subject": "📝 docs(repo): clarify catch rationale and require English commit messages"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/errors/bash/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/errors/bash.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "5fccee30a33cb510933bd99e6091e4860fc10afb",
+          "date": "2025-12-18",
+          "author": "r8vnhill",
+          "subject": "✨ feat(ui/code): document scala block component"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/errors/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/errors/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/first-script/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-11",
+      "changes": [
+        {
+          "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
+          "date": "2026-02-11",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        },
+        {
+          "hash": "35e2042677186dd556f0a64dc0fc5f2fb6aeea5f",
+          "date": "2025-10-13",
+          "author": "r8vnhill",
+          "subject": "✨📝 feat(docs/scripting): add `Update-ScriptRequiresVersion` exercise & bump examples to PowerShell 7.5"
+        },
+        {
+          "hash": "edc942c8d179d226f88af974eef2afc4bbdf9406",
+          "date": "2025-10-13",
+          "author": "r8vnhill",
+          "subject": "✨♿💄 feat(ui,links,snippets): add Exercise slots, show ref hints in source links, and provide editor snippet"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/first-script/py/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/gitlab/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/gitlab/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-07",
+      "changes": [
+        {
+          "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
+          "date": "2026-02-07",
+          "author": "r8vnhill",
+          "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
+        },
+        {
+          "hash": "b3181f7ef65fc09cdab86ff55973e975b800d069",
+          "date": "2025-11-20",
+          "author": "r8vnhill",
+          "subject": "♻️✨ refactor(callouts): centralize shell and tokens"
+        },
+        {
+          "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
+          "date": "2025-11-20",
+          "author": "r8vnhill",
+          "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
+        },
+        {
+          "hash": "a0409f187352e3ea9aa4fe8179a16964b2a4d1a0",
+          "date": "2025-10-20",
+          "author": "r8vnhill",
+          "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
+        },
+        {
+          "hash": "a64c6a36e10a5c7d4e36d333fca403fa037d45a5",
+          "date": "2025-10-16",
+          "author": "r8vnhill",
+          "subject": "✨♻️🎨📝🔧 refactor(semantics,notes): Standardize paragraphs with `<P>`, polish TabsTrigger, expand GitLab notes, add “clsx” to dictionary"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/help/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/help/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2025-11-20",
+      "changes": [
+        {
+          "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
+          "date": "2025-11-20",
+          "author": "r8vnhill",
+          "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
+        },
+        {
+          "hash": "9acbdb8e32f31f128035d5d935d0fc3bd1ea229c",
+          "date": "2025-11-15",
+          "author": "r8vnhill",
+          "subject": "✨📝 docs(powershell-help): Refine integrated help lesson"
+        },
+        {
+          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
+          "date": "2025-11-08",
+          "author": "r8vnhill",
+          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
+        },
+        {
+          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
+          "date": "2025-10-09",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
+        },
+        {
+          "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
+          "date": "2025-10-08",
+          "author": "r8vnhill",
+          "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/help/bash/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/help/bash.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
+          "date": "2025-10-09",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
+          "date": "2025-11-08",
+          "author": "r8vnhill",
+          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
+        },
+        {
+          "hash": "93f9ad0694fc6ffc482532e6106365ae772cba79",
+          "date": "2025-11-05",
+          "author": "r8vnhill",
+          "subject": "📝✨🔧 docs(repo): update Copilot instructions, document table components, add VS Code run/debug configs"
+        },
+        {
+          "hash": "eb17bd9f1565e63b197ba6cf5616e55436936f9b",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(code): add Nushell block and inline, polish Nushell page"
+        },
+        {
+          "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-16",
+      "changes": [
+        {
+          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
+          "date": "2026-02-16",
+          "author": "r8vnhill",
+          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
+        },
+        {
+          "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
+          "date": "2026-02-11",
+          "author": "r8vnhill",
+          "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
+        },
+        {
+          "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
+          "date": "2026-02-11",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
+        },
+        {
+          "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
+          "date": "2026-02-07",
+          "author": "r8vnhill",
+          "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/errors/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/errors/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
+          "date": "2025-10-05",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/pipeline-aware/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-11",
+      "changes": [
+        {
+          "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
+          "date": "2026-02-11",
+          "author": "r8vnhill",
+          "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
+        },
+        {
+          "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
+          "date": "2026-02-11",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
+          "date": "2025-10-05",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+        },
+        {
+          "hash": "da2a3844910289a5d65f201be9dc5f85997aa901",
+          "date": "2025-10-04",
+          "author": "r8vnhill",
+          "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-16",
+      "changes": [
+        {
+          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
+          "date": "2026-02-16",
+          "author": "r8vnhill",
+          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
+        },
+        {
+          "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
+          "date": "2025-10-07",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
+        },
+        {
+          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
+          "date": "2025-10-05",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/practice/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/practice/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
+          "date": "2025-10-07",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
+        },
+        {
+          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
+          "date": "2025-10-05",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+        },
+        {
+          "hash": "da2a3844910289a5d65f201be9dc5f85997aa901",
+          "date": "2025-10-04",
+          "author": "r8vnhill",
+          "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
+        },
+        {
+          "hash": "bb9b6390f97c18ea7006f70ed7d982038330bc06",
+          "date": "2025-10-04",
+          "author": "r8vnhill",
+          "subject": "✨ docs(powershell): add examples for GitLab remote configuration and file hashing"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/py/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-16",
+      "changes": [
+        {
+          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
+          "date": "2026-02-16",
+          "author": "r8vnhill",
+          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/should-process/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/should-process/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "d07d8209d82f687762b267a216a4e30e4d885656",
+          "date": "2025-11-10",
+          "author": "r8vnhill",
+          "subject": "📝 docs(scripting/should-process): añadir referencia y criterios de aceptación para ShouldProcess"
+        },
+        {
+          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
+          "date": "2025-11-08",
+          "author": "r8vnhill",
+          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
+        },
+        {
+          "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/structured-output/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/structured-output/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
+        },
+        {
+          "hash": "a0409f187352e3ea9aa4fe8179a16964b2a4d1a0",
+          "date": "2025-10-20",
+          "author": "r8vnhill",
+          "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
+        },
+        {
+          "hash": "fb3b94430ac9c9d4cb47ad86edc54c4e48b4b918",
+          "date": "2025-10-17",
+          "author": "r8vnhill",
+          "subject": "✨📝🔧 docs(structured-output): expand lesson with classes, fixes & aliases"
+        },
+        {
+          "hash": "8be69fd68aabe6de60427c5d334a5768716735d4",
+          "date": "2025-10-17",
+          "author": "r8vnhill",
+          "subject": "✨♿️📝 feat(icons,links/aria,notes): add GridFour; support GitLab line anchors; expand PSCustomObject notes"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/structured-output/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/structured-output/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
+        }
+      ]
+    },
+    "/notes/software-libraries/task-automation/": {
+      "sourceFile": "src/pages/notes/software-libraries/task-automation/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
+          "date": "2025-10-09",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
+        },
+        {
+          "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
+          "date": "2025-10-07",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
+        },
+        {
+          "hash": "dae5b3da41b5d4fdb982bdcf16aaf3f965558ff6",
+          "date": "2025-09-22",
+          "author": "r8vnhill",
+          "subject": "✨🗺️ Add new lesson on task automation and icons"
+        }
+      ]
+    },
+    "/notes/software-libraries/what-is/": {
+      "sourceFile": "src/pages/notes/software-libraries/what-is/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
+          "date": "2025-10-21",
+          "author": "r8vnhill",
+          "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
+        },
+        {
+          "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
+          "date": "2025-10-02",
+          "author": "r8vnhill",
+          "subject": "Refactor code structure for improved readability and maintainability"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        }
+      ]
+    },
+    "/notes/type-fundamentals/": {
+      "sourceFile": "src/pages/notes/type-fundamentals/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        },
+        {
+          "hash": "acf75a4e5ac209fcf018f1c89809b40fcd4d192a",
+          "date": "2025-08-03",
+          "author": "R8V",
+          "subject": "feat: add RepoLink component for GitHub and GitLab links"
+        }
+      ]
+    },
+    "/notes/type-fundamentals/basics/": {
+      "sourceFile": "src/pages/notes/type-fundamentals/basics/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
+          "date": "2025-08-25",
+          "author": "r8vnhill",
+          "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
+        },
+        {
+          "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
+          "date": "2025-08-11",
+          "author": "r8vnhill",
+          "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
+        },
+        {
+          "hash": "28f5e0708650d4e6cc16eebeabef5497e5b940f2",
+          "date": "2025-08-07",
+          "author": "r8vnhill",
+          "subject": "✨ Add references and tooltip system"
+        },
+        {
+          "hash": "dba88126d07e71d1b69efe8aa2ffa0ffe1e9d40b",
+          "date": "2025-08-06",
+          "author": "R8V",
+          "subject": "✨ Add \"Conclusiones\" section with a heading to the Kotlin module"
+        }
+      ]
+    },
+    "/notes/type-fundamentals/basics/functions/": {
+      "sourceFile": "src/pages/notes/type-fundamentals/basics/functions/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        },
+        {
+          "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
+          "date": "2025-08-25",
+          "author": "r8vnhill",
+          "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
+        },
+        {
+          "hash": "0727829dad55d889710402f8b7846bd8f4720840",
+          "date": "2025-08-11",
+          "author": "r8vnhill",
+          "subject": "✨➕ Add new icons and enhance Kotlin functions lesson"
+        },
+        {
+          "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
+          "date": "2025-08-11",
+          "author": "r8vnhill",
+          "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
+        }
+      ]
+    },
+    "/notes/type-fundamentals/basics/functions/py/": {
+      "sourceFile": "src/pages/notes/type-fundamentals/basics/functions/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-02-16",
+      "changes": [
+        {
+          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
+          "date": "2026-02-16",
+          "author": "r8vnhill",
+          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
+        },
+        {
+          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        },
+        {
+          "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
+          "date": "2025-08-25",
+          "author": "r8vnhill",
+          "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
+        }
+      ]
+    },
+    "/notes/type-fundamentals/basics/variables/": {
+      "sourceFile": "src/pages/notes/type-fundamentals/basics/variables/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-01-01",
+      "changes": [
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
+        },
+        {
+          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
+          "date": "2025-09-14",
+          "author": "r8vnhill",
+          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
+        },
+        {
+          "hash": "e4f96bd661c85ef0f63e5931cccaac08e4470a4a",
+          "date": "2025-09-07",
+          "author": "R8V",
+          "subject": "✨📚 Add practical examples for encapsulating logic in setters and enhance variable declaration section"
+        },
+        {
+          "hash": "c94e98efd951f2afc3467d13e3b3b4ad52dae5fb",
+          "date": "2025-09-07",
+          "author": "r8vnhill",
+          "subject": "✨🖼️ Add new icons and expand Kotlin properties notes"
+        }
+      ]
     }
+  }
 }
