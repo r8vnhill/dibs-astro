@@ -53,6 +53,8 @@ const CITATION_LANGUAGE_NAME = "name=\"citation_language\"";
 const OG_LOCALE_ES = "<meta property=\"og:locale\" content=\"es_CL\">";
 const OG_LOCALE_EN = "<meta property=\"og:locale\" content=\"en_GB\">";
 const SOCIAL_IMAGE_PATH = "/online-library.png";
+const DC_TYPE_WEBPAGE = "<meta name=\"DC.type\" content=\"Web Page\">";
+const DC_TYPE_JOURNAL_ARTICLE = "<meta name=\"DC.type\" content=\"Journal Article\">";
 
 let renderHead: AstroRender<Record<string, unknown>>;
 
@@ -142,6 +144,8 @@ describe.concurrent("Head.astro render", () => {
         expect(html).toContain(
             `<meta name="citation_language" content="${LANGUAGE_ES}">`,
         );
+        expect(html).toContain(DC_TYPE_JOURNAL_ARTICLE);
+        expect(html).toContain(`<meta name="DC.identifier" content="${ARTICLE_URL}">`);
 
         // ## JSON-LD structured data ##
         const jsonLd = extractJsonLd(html);
@@ -171,6 +175,8 @@ describe.concurrent("Head.astro render", () => {
             `<meta property="og:url" content="${WEBSITE_URL}">`,
         );
         expect(html).toContain(`<link rel="canonical" href="${WEBSITE_URL}">`);
+        expect(html).toContain(DC_TYPE_WEBPAGE);
+        expect(html).toContain(`<meta name="DC.identifier" content="${WEBSITE_URL}">`);
 
         /**
          * No citation metadata for non-article pages.

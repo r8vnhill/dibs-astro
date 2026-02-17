@@ -152,6 +152,7 @@ function ogLocaleFromLanguage(language: string): string {
 }
 
 const ogLocale = ogLocaleFromLanguage(resolvedMeta.citationLanguage);
+const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 ---
 
 <!-- Character encoding -->
@@ -231,6 +232,25 @@ const ogLocale = ogLocaleFromLanguage(resolvedMeta.citationLanguage);
         </>
     )
 }
+
+<!-- ## Dublin Core metadata ## -->
+
+<meta name="DC.title" content={title} />
+
+{
+    resolvedMeta.citationAuthors.map((author) => (
+        <meta name="DC.creator" content={author} />
+    ))
+}
+
+{
+    resolvedMeta.citationLastModifiedDate
+        && <meta name="DC.date" content={resolvedMeta.citationLastModifiedDate} />
+}
+
+<meta name="DC.identifier" content={resolvedMeta.canonicalUrl} />
+<meta name="DC.language" content={resolvedMeta.citationLanguage} />
+<meta name="DC.type" content={dublinCoreType} />
 
 <!-- ## Schema.org JSON-LD ## -->
 
