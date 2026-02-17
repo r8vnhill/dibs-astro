@@ -1,4 +1,14 @@
 ---
+import { buildHeadPageMeta, type PageMeta } from "~/utils/page-meta";
+
+interface Props {
+    title?: string;
+    description?: string;
+    url?: string;
+    type?: "website" | "article";
+    pageMeta?: PageMeta;
+}
+
 /**
  * Destructure default metadata values from Astro.props.
  * These can be overridden when the component is used.
@@ -8,7 +18,14 @@ const {
     description = "Diseño e Implementación de Bibliotecas de Software",
     url = "https://dibs.ravenhill.cl",
     type = "website",
-} = Astro.props;
+    pageMeta,
+} = Astro.props as Props;
+
+const resolvedMeta = buildHeadPageMeta({
+    title,
+    url,
+    pageMeta: pageMeta ?? { type },
+});
 ---
 
 <!-- Character encoding -->
@@ -39,9 +56,9 @@ const {
 <!-- Title shown on social shares -->
 <meta property="og:title" content={title} />
 <!-- Type of content, e.g., website, article -->
-<meta property="og:type" content={type} />
+<meta property="og:type" content={resolvedMeta.type} />
 <!-- Canonical URL of the page -->
-<meta property="og:url" content={url} />
+<meta property="og:url" content={resolvedMeta.canonicalUrl} />
 <!-- Description shown on social shares -->
 <meta property="og:description" content={description} />
 <!-- Name of the website -->
@@ -56,6 +73,33 @@ const {
 <meta name="twitter:title" content={title} />
 <!-- Description for Twitter preview -->
 <meta name="twitter:description" content={description} />
+
+<!-- Zotero / Highwire citation metadata -->
+<meta name="citation_title" content={title} />
+{
+    resolvedMeta.citationAuthors.map((author) => (
+        <meta name="citation_author" content={author} />
+    ))
+}
+{resolvedMeta.citationDate && <meta name="citation_date" content={resolvedMeta.citationDate} />}
+{
+    resolvedMeta.citationLastModifiedDate &&
+    <meta
+        name="citation_last_modified_date"
+        content={resolvedMeta.citationLastModifiedDate}
+    />
+}
+<meta name="citation_public_url" content={resolvedMeta.canonicalUrl} />
+<meta name="citation_language" content={resolvedMeta.citationLanguage} />
+
+{
+    resolvedMeta.jsonLd && (
+        <script
+            type="application/ld+json"
+            set:html={JSON.stringify(resolvedMeta.jsonLd)}
+        />
+    )
+}
 
 <!-- Custom font for 404 pages -->
 <link

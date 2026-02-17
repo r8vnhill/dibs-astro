@@ -17,6 +17,7 @@
         "predeploy": "pnpm run generate:lesson-metadata",
         "deploy": "astro build && wrangler deploy",
         "test": "vitest",
+        "test:astro-render": "node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts src/components/meta/__tests__/Head.render.test.ts --reporter verbose",
         "test:watch": "vitest --watch",
         "test:ui": "vitest --ui"
     },
@@ -67,7 +68,7 @@
         "shiki-transformer-copy-button": "^0.0.5",
         "tailwindcss": "^4.1.11",
         "typescript": "^5.9.2",
-        "vitest": "^2.1.4",
+        "vitest": "^3.2.4",
         "wrangler": "^4.27.0"
     },
     "lint-staged": {

@@ -26,6 +26,7 @@ export {
 
 // Lesson navigation helpers
 export { normalizeNavigation, resolveAutoNav } from "./navigation.ts";
+export { buildHeadPageMeta, type PageMeta } from "./page-meta.ts";
 
 // Generic utilities
 export {

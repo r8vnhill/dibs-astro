@@ -49,6 +49,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import { normalizeNavigation, resolveAutoNav } from "~/utils";
 import type { RepoRef } from "~/utils/git";
 import { resolveLessonMetadata } from "~/utils/lesson-metadata";
+import type { PageMeta } from "~/utils/page-meta";
 
 /**
  * Props passed to the layout.
@@ -106,6 +107,25 @@ const pathname = Astro.url.pathname;
 
 // Metadata may be absent if the route is not present in the generated dataset.
 const lessonMetadata = resolveLessonMetadata(pathname);
+const lessonPageMeta = lessonMetadata
+    ? {
+        authors: lessonMetadata.authors.map((author) => ({
+            name: author.name,
+            ...(author.url ? { url: author.url } : {}),
+        })),
+        changes: lessonMetadata.changes,
+        ...(lessonMetadata.lastModified
+            ? { lastModified: lessonMetadata.lastModified }
+            : {}),
+    }
+    : {};
+
+const pageMeta: PageMeta = {
+    type: "article",
+    canonicalUrl: Astro.url.href,
+    language: "es",
+    ...lessonPageMeta,
+};
 
 // Attempt to auto-resolve previous/next from course structure.
 const autoNav = resolveAutoNav(pathname, courseStructure);
@@ -121,7 +141,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 );
 ---
 
-<BaseLayout pageTitle={title} {description}>
+<BaseLayout pageTitle={title} {description} {pageMeta}>
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
         <LessonSidebar client:load lessons={courseStructure} />
