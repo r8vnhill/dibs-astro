@@ -1,3 +1,5 @@
+import { WEBSITE_PRIMARY_AUTHOR } from "~/data/site";
+
 /**
  * Defines site-wide metadata constants for use throughout the application.
  */
@@ -16,8 +18,5 @@ export const site = {
      * Information about the copyright holder.
      * Used in the footer and legal attribution.
      */
-    COPYRIGHT_HOLDER: {
-        name: "Ignacio Slater-Muñoz",
-        url: "https://www.ravenhill.cl",
-    } as const,
+    COPYRIGHT_HOLDER: WEBSITE_PRIMARY_AUTHOR,
 } as const;

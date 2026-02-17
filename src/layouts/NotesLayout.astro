@@ -141,7 +141,10 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 );
 ---
 
-<BaseLayout pageTitle={title} {description} {pageMeta}>
+<BaseLayout
+    pageTitle={title} {description}
+    {pageMeta}
+>
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
         <LessonSidebar client:load lessons={courseStructure} />
@@ -185,7 +188,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
                                 >
                                     <icons.ArrowLeft class="w-5 h-5" slot="icon" />
                                 </NavigationButton>
-                            ) : (<div aria-hidden="true" class="hidden sm:block" />)
+                            ) : <div aria-hidden="true" class="hidden sm:block" />
                         }
 
                         {

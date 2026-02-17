@@ -21,6 +21,16 @@
 import type { RepoPlatform, RepoRef } from "~/utils/git";
 
 /**
+ * Primary author information for this website.
+ *
+ * Centralized here so components, utilities and tests avoid duplicating literals.
+ */
+export const WEBSITE_PRIMARY_AUTHOR = {
+    name: "Ignacio Slater-Muñoz",
+    url: "https://www.ravenhill.cl",
+} as const;
+
+/**
  * A utility type for defining partial records with specific keys.
  */
 type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>;

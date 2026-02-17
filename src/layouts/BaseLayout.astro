@@ -1,80 +1,217 @@
 ---
 /**
- * Base layout shared across pages in the DIBS site.
+ * @file BaseLayout.astro
  *
- * Responsibilities:
- * - Sets up the HTML structure and common metadata.
- * - Applies the theme class early to prevent FOUC (Flash Of Unstyled Content).
- * - Includes global CSS and site-wide Header and Footer components.
- * - Provides layout styling for consistent spacing and readability.
+ * Root layout for all pages in the DIBS site.
+ *
+ * This component defines the global HTML skeleton and shared UI structure. All content pages are
+ * rendered inside the `<slot />` of this layout.
+ *
+ * ## Responsibilities
+ *
+ * - Defines the `<html>`, `<head>`, and `<body>` structure.
+ * - Delegates SEO and metadata generation to the {@link Head} component.
+ * - Applies the persisted theme class early to prevent FOUC (Flash Of Unstyled Content).
+ * - Loads global styles (Tailwind + CSS variables).
+ * - Renders site-wide {@link Header} and {@link Footer}.
+ * - Provides accessibility features (skip link).
+ *
+ * ## Design principles
+ *
+ * - Keep layout logic minimal and declarative.
+ * - Avoid business logic here — only presentation and global concerns.
+ * - Centralize metadata and language decisions.
+ * - Fail gracefully in restricted environments (e.g. disabled `localStorage`).
  */
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/header/Header.astro";
 import Head from "~/components/meta/Head.astro";
-import "~/styles/global.css"; // Loads Tailwind styles and CSS variables
+import { getWebsiteRepoRef } from "~/data/site";
+import "~/styles/global.css"; // Tailwind + CSS variables
 import { site } from "~/utils";
 import type { PageMeta } from "~/utils/page-meta";
 
+/**
+ * Props accepted by the layout.
+ */
 type Props = {
+    /**
+     * Page-specific title.
+     *
+     * This value is combined with {@link site.SHORT_TITLE} to generate the final `<title>`.
+     */
     pageTitle: string;
-    description?: string | undefined;
+
+    /**
+     * Optional meta description.
+     *
+     * Passed directly to the {@link Head} component.
+     */
+    description?: string;
+
+    /**
+     * Optional structured page metadata.
+     *
+     * Used to generate canonical URLs, JSON-LD, and citation metadata.
+     */
     pageMeta?: PageMeta;
+
+    /**
+     * Optional document language (BCP 47 tag).
+     *
+     * If omitted, falls back to:
+     *   1. `pageMeta.language`
+     *   2. `"es"`
+     */
+    lang?: string;
 };
 
 // Props passed into the layout
-const { pageTitle, description, pageMeta } = Astro.props as Props;
+const { pageTitle, description, pageMeta, lang } = Astro.props as Props;
 
-// Repository info for GitHub/GitLab links in the header
-const repoInfo = {
-    username: "r8vnhill",
-    repo: "dibs-astro",
-} as const;
+const githubRef = getWebsiteRepoRef("github");
+const gitlabRef = getWebsiteRepoRef("gitlab");
 
-// Construct the full title for the <title> tag
+const githubRepoInfo = githubRef
+    ? {
+        username: githubRef.user,
+        repo: githubRef.repo,
+    }
+    : undefined;
+
+const gitlabRepoInfo = gitlabRef
+    ? {
+        username: gitlabRef.user,
+        repo: gitlabRef.repo,
+    }
+    : undefined;
+
+/**
+ * Full page title used in the `<title>` tag.
+ *
+ * Format:
+ *     <Page Title> | <Site Short Title>
+ */
 const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
 
+/**
+ * Determines the `<html lang="...">` attribute.
+ *
+ * Priority:
+ *   1. Explicit `lang` prop
+ *   2. `pageMeta.language`
+ *   3. Default "es"
+ *
+ * Always trimmed and guaranteed non-empty.
+ */
+const documentLang = (lang ?? pageMeta?.language ?? "es").trim() || "es";
+
+/**
+ * Props passed to the {@link Head} component.
+ *
+ * `description` and `pageMeta` are only included if defined, to avoid leaking unnecessary
+ * `undefined` values.
+ */
 const headProps = {
     title: fullTitle,
     url: Astro.url.href,
     ...(description !== undefined ? { description } : {}),
     ...(pageMeta !== undefined ? { pageMeta } : {}),
 };
+
+const headerProps = {
+    title: site.SHORT_TITLE,
+    ...(gitlabRepoInfo ? { gitlab: gitlabRepoInfo } : {}),
+    ...(githubRepoInfo ? { github: githubRepoInfo } : {}),
+};
 ---
 
 <!--
-    Applies the appropriate theme class to <html> before styles load.
-    This prevents a flash of incorrect theme (e.g., light before dark loads).
-    `is:inline` ensures the script runs early and doesn't wait for hydration.
+    Theme bootstrap script.
+
+    Runs before styles load to prevent FOUC (Flash Of Unstyled Content).
+
+    ## Behavior:
+
+    - Reads the persisted "theme" value from localStorage.
+    - Supports "dark" and "auto".
+    - Falls back to system preference if storage access fails.
+    - Applies the "dark" class to <html> accordingly.
+
+    `is:inline` ensures:
+    - The script is embedded directly in the HTML.
+    - It executes immediately without hydration.
 -->
 <script is:inline>
-    const DARK = "dark";
-    const AUTO = "auto";
+    (() => {
+        const DARK = "dark";
+        const AUTO = "auto";
 
-    const theme = localStorage.theme;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = theme === DARK || (theme === AUTO && prefersDark);
+        try {
+            const theme = localStorage.getItem("theme");
 
-    document.documentElement.classList.toggle(DARK, isDark);
+            const prefersDark = typeof window.matchMedia === "function"
+                && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            const isDark = theme === DARK || (theme === AUTO && prefersDark);
+
+            document.documentElement.classList.toggle(DARK, isDark);
+        } catch {
+            // localStorage may be blocked (privacy mode, sandboxed env, etc.)
+            const prefersDark = typeof window.matchMedia === "function"
+                && window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            document.documentElement.classList.toggle(DARK, prefersDark);
+        }
+    })();
 </script>
 
-<html lang="en">
+<html lang={documentLang}>
     <head>
-        <!-- Includes metadata, favicons, and dynamic <title> -->
+        <!--
+            Delegates:
+            - <title>
+            - meta description
+            - canonical URL
+            - JSON-LD (if article)
+            - favicons
+        -->
         <Head {...headProps} />
-    </head>
-    <body class="min-h-screen bg-base-background text-base-text">
-        <!-- Site-wide header with title and repo links -->
-        <Header
-            title={site.SHORT_TITLE} gitlab={repoInfo}
-            github={repoInfo}
-        />
 
-        <!-- Main content area with padding and width limit for readability -->
-        <main class="w-full pt-16">
+        <!--
+            Informs the browser that both light and dark color schemes are supported.
+            Helps native UI controls match the current theme.
+        -->
+        <meta name="color-scheme" content="light dark" />
+    </head>
+
+    <body class="min-h-screen bg-base-background text-base-text">
+        <!--
+            Accessibility: Skip link.
+            Allows keyboard users to jump directly to main content.
+        -->
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded bg-base-background px-3 py-2"
+        >
+            Saltar al contenido principal
+        </a>
+
+        <!--
+            Global site header.
+            Includes title and repository links.
+        -->
+        <Header {...headerProps} />
+
+        <!--
+            Main content container.
+            Padding-top accounts for fixed header spacing.
+        -->
+        <main id="main-content" class="w-full pt-16">
             <slot />
         </main>
 
-        <!-- Footer with author and technology attribution -->
+        <!-- Global footer -->
         <Footer />
     </body>
 </html>
