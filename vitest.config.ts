@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { getViteConfig } from "astro/config";
 
 // Vitest configuration used by the project.
 // Notes:
@@ -12,7 +12,7 @@ import { defineConfig } from "vitest/config";
 //   (Tailwind + Astro) and don't need to be processed during unit tests; disabling CSS speeds up test runs and avoids
 //   unrelated transform errors in jsdom.
 
-export default defineConfig({
+export default getViteConfig({
     test: {
         // Use jsdom so DOM APIs (document/window) are available for React testing
         environment: "jsdom",

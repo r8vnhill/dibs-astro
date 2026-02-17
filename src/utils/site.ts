@@ -19,4 +19,13 @@ export const site = {
      * Used in the footer and legal attribution.
      */
     COPYRIGHT_HOLDER: WEBSITE_PRIMARY_AUTHOR,
+
+    /**
+     * Shared paths and defaults for <head> metadata.
+     */
+    HEAD: {
+        FAVICON_PATH: "/online-library.ico",
+        SITEMAP_PATH: "/sitemap-index.xml",
+        DEFAULT_SOCIAL_IMAGE: "/online-library.png",
+    } as const,
 } as const;

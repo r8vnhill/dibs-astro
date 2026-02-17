@@ -1,31 +1,157 @@
 ---
+/**
+ * @file Head.astro
+ *
+ * Centralized metadata component for the DIBS site.
+ *
+ * This component is responsible for generating:
+ *
+ * - Standard SEO meta tags (`description`, `canonical`, etc.).
+ * - Open Graph (OG) metadata for social sharing.
+ * - Twitter Card metadata.
+ * - Highwire/Zotero citation metadata (for academic indexing).
+ * - Schema.org JSON-LD structured data (for articles).
+ *
+ * It delegates normalization and canonical resolution to {@link buildHeadPageMeta}, ensuring:
+ *
+ * - Consistent canonical URL logic.
+ * - Clean author normalization.
+ * - Correct conditional JSON-LD generation.
+ *
+ * ## Design Principles
+ *
+ * - Keep metadata generation declarative and centralized.
+ * - Avoid duplicating canonical or type logic.
+ * - Fail gracefully with sensible defaults.
+ * - Only emit article-specific metadata when appropriate.
+ *
+ * This component is intentionally presentation-focused. Business logic (normalization, trimming,
+ * validation) lives in `~/utils/page-meta`.
+ */
+
+import { site } from "~/utils";
 import { buildHeadPageMeta, type PageMeta } from "~/utils/page-meta";
 
+/**
+ * Props accepted by the Head component.
+ */
 interface Props {
+    /**
+     * Page title.
+     *
+     * Defaults to `site.SHORT_TITLE`.
+     */
     title?: string;
+
+    /**
+     * Page meta description.
+     *
+     * Defaults to `site.LONG_TITLE`.
+     */
     description?: string;
+
+    /**
+     * Absolute page URL.
+     *
+     * Used for canonical resolution and Open Graph URL.
+     */
     url?: string;
+
+    /**
+     * Convenience override for page type.
+     *
+     * If both `type` and `pageMeta.type` are provided, `pageMeta.type` takes precedence.
+     */
     type?: "website" | "article";
+
+    /**
+     * Structured page metadata used for:
+     * - Canonical resolution
+     * - Citation fields
+     * - JSON-LD generation
+     */
     pageMeta?: PageMeta;
+
+    /**
+     * Whether to include the retro 404 font.
+     *
+     * Disabled by default to avoid loading the font globally.
+     */
+    include404Font?: boolean;
 }
 
 /**
  * Destructure default metadata values from Astro.props.
- * These can be overridden when the component is used.
+ *
+ * Defaults are designed to:
+ * - Provide valid metadata even if Head is used standalone.
+ * - Keep layout components simple.
  */
 const {
-    title = "DIBS",
-    description = "Diseño e Implementación de Bibliotecas de Software",
+    title = site.SHORT_TITLE,
+    description = site.LONG_TITLE,
     url = "https://dibs.ravenhill.cl",
     type = "website",
     pageMeta,
+    include404Font = false,
 } = Astro.props as Props;
 
+/**
+ * Merge the explicit `type` prop with `pageMeta`.
+ *
+ * ## Precedence:
+ *
+ * 1. `pageMeta.type` (if provided)
+ * 2. `type` prop
+ */
+const mergedPageMeta: PageMeta = {
+    type,
+    ...(pageMeta ?? {}),
+    ...(pageMeta?.type ? { type: pageMeta.type } : {}),
+};
+
+/**
+ * Fully normalized metadata.
+ *
+ * ## Handles:
+ *
+ * - Canonical URL resolution
+ * - Author normalization
+ * - Language defaults
+ * - JSON-LD construction
+ */
 const resolvedMeta = buildHeadPageMeta({
     title,
     url,
-    pageMeta: pageMeta ?? { type },
+    pageMeta: mergedPageMeta,
 });
+
+/**
+ * Whether the current page should emit article-specific metadata.
+ */
+const isArticle = resolvedMeta.type === "article";
+
+/**
+ * Maps a BCP 47 language tag into an Open Graph locale string.
+ *
+ * ## Examples:
+ *
+ * - "es" → "es_CL"
+ * - "es-CL" → "es_CL"
+ * - "en" → "en_GB"
+ *
+ * Falls back to "es_CL" for unknown languages.
+ */
+function ogLocaleFromLanguage(language: string): string {
+    const normalized = language.trim().toLowerCase();
+
+    if (normalized === "es" || normalized.startsWith("es-")) return "es_CL";
+    if (normalized === "en" || normalized.startsWith("en-")) return "en_GB";
+
+    return "es_CL";
+}
+
+const ogLocale = ogLocaleFromLanguage(resolvedMeta.citationLanguage);
 ---
 
 <!-- Character encoding -->
@@ -34,74 +160,95 @@ const resolvedMeta = buildHeadPageMeta({
 <!-- Browser tab title -->
 <title>{title}</title>
 
-<!-- SEO: Meta description used by search engines -->
+<!-- SEO description -->
 <meta name="description" content={description} />
 
-<!-- Favicon for browser tab icon -->
+<!-- Favicon -->
 <link
-    rel="icon" href="/online-library.ico"
+    rel="icon" href={site.HEAD.FAVICON_PATH}
     type="image/x-icon"
 />
 
-<!-- Responsive design -->
+<!-- Responsive layout -->
 <meta name="viewport" content="width=device-width" />
 
-<!-- Generator metadata for Astro -->
+<!-- Generator metadata -->
 <meta name="generator" content={Astro.generator} />
 
-<!-- Sitemap for search engine indexing -->
-<link rel="sitemap" href="/sitemap-index.xml" />
+<!-- Sitemap -->
+<link rel="sitemap" href={site.HEAD.SITEMAP_PATH} />
 
-<!-- Open Graph (OG) metadata for link previews on social platforms -->
-<!-- Title shown on social shares -->
+<!-- Canonical URL -->
+<link rel="canonical" href={resolvedMeta.canonicalUrl} />
+
+<!-- ## Open Graph metadata ## -->
+
 <meta property="og:title" content={title} />
-<!-- Type of content, e.g., website, article -->
 <meta property="og:type" content={resolvedMeta.type} />
-<!-- Canonical URL of the page -->
 <meta property="og:url" content={resolvedMeta.canonicalUrl} />
-<!-- Description shown on social shares -->
 <meta property="og:description" content={description} />
-<!-- Name of the website -->
-<meta property="og:site_name" content="DIBS" />
-<!-- Locale for language and region -->
-<meta property="og:locale" content="es_CL" />
+<meta property="og:site_name" content={site.SHORT_TITLE} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:image" content={site.HEAD.DEFAULT_SOCIAL_IMAGE} />
 
-<!-- Twitter Card metadata for richer sharing -->
-<!-- Card type for preview -->
+<!-- ## Twitter Card metadata ## -->
+
 <meta name="twitter:card" content="summary_large_image" />
-<!-- Title for Twitter preview -->
 <meta name="twitter:title" content={title} />
-<!-- Description for Twitter preview -->
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={site.HEAD.DEFAULT_SOCIAL_IMAGE} />
 
-<!-- Zotero / Highwire citation metadata -->
-<meta name="citation_title" content={title} />
+<!-- ## Highwire / Zotero citation fields ## -->
+
 {
-    resolvedMeta.citationAuthors.map((author) => (
-        <meta name="citation_author" content={author} />
-    ))
+    isArticle && (
+        <>
+            <meta name="citation_title" content={title} />
+
+            {
+                resolvedMeta.citationAuthors.map((author) => (
+                    <meta name="citation_author" content={author} />
+                ))
+            }
+
+            {
+                resolvedMeta.citationDate
+                    && <meta name="citation_date" content={resolvedMeta.citationDate} />
+            }
+
+            {
+                resolvedMeta.citationLastModifiedDate && (
+                    <meta
+                        name="citation_last_modified_date"
+                        content={resolvedMeta.citationLastModifiedDate}
+                    />
+                )
+            }
+
+            <meta name="citation_public_url" content={resolvedMeta.canonicalUrl} />
+
+            <meta name="citation_language" content={resolvedMeta.citationLanguage} />
+        </>
+    )
 }
-{resolvedMeta.citationDate && <meta name="citation_date" content={resolvedMeta.citationDate} />}
-{
-    resolvedMeta.citationLastModifiedDate &&
-    <meta
-        name="citation_last_modified_date"
-        content={resolvedMeta.citationLastModifiedDate}
-    />
-}
-<meta name="citation_public_url" content={resolvedMeta.canonicalUrl} />
-<meta name="citation_language" content={resolvedMeta.citationLanguage} />
+
+<!-- ## Schema.org JSON-LD ## -->
 
 {
     resolvedMeta.jsonLd && (
         <script
-            type="application/ld+json"
+            is:inline type="application/ld+json"
             set:html={JSON.stringify(resolvedMeta.jsonLd)}
         />
     )
 }
 
-<!-- Custom font for 404 pages -->
-<link
-    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"
-/>
+<!-- Optional 404 retro font -->
+{
+    include404Font && (
+        <link
+            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+            rel="stylesheet"
+        />
+    )
+}

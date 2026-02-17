@@ -121,6 +121,7 @@
         "Grotesk",
         "hashtable",
         "heurística",
+        "Highwire",
         "hrefs",
         "icns",
         "idempotente",
@@ -201,7 +202,8 @@
         "vararg",
         "variádicas",
         "viewports",
-        "vitalogy"
+        "vitalogy",
+        "Zotero"
     ],
     "files.associations": {
         "*.css": "tailwindcss"

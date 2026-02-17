@@ -1,3 +1,5 @@
+// @vitest-environment node
+
 /**
  * @file Head.render.test.ts
  *
@@ -27,7 +29,7 @@
 
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { beforeEach, describe, expect, test } from "vitest";
-import { WEBSITE_PRIMARY_AUTHOR } from "~/data/site";
+import { WEBSITE_PRIMARY_AUTHOR } from "../../../data/site";
 import Head from "../Head.astro";
 
 const ARTICLE_URL = "https://dibs.ravenhill.cl/notes/example/";
@@ -41,11 +43,18 @@ const WEBSITE_DESCRIPTION = "Página principal";
 const SECONDARY_AUTHOR = "Proyecto DIBS";
 const JSONLD_CONTEXT = "https://schema.org";
 const JSONLD_TYPE_ARTICLE = "Article";
+const CANONICAL_LINK_REL = "rel=\"canonical\"";
 const OG_TYPE_ARTICLE = "<meta property=\"og:type\" content=\"article\">";
 const OG_TYPE_WEBSITE = "<meta property=\"og:type\" content=\"website\">";
 const CITATION_AUTHOR_NAME = "name=\"citation_author\"";
 const CITATION_DATE_NAME = "name=\"citation_date\"";
 const CITATION_LAST_MODIFIED_NAME = "name=\"citation_last_modified_date\"";
+const CITATION_TITLE_NAME = "name=\"citation_title\"";
+const CITATION_PUBLIC_URL_NAME = "name=\"citation_public_url\"";
+const CITATION_LANGUAGE_NAME = "name=\"citation_language\"";
+const OG_LOCALE_ES = "<meta property=\"og:locale\" content=\"es_CL\">";
+const OG_LOCALE_EN = "<meta property=\"og:locale\" content=\"en_GB\">";
+const SOCIAL_IMAGE_PATH = "/online-library.png";
 
 /**
  * Shared container instance.
@@ -125,6 +134,11 @@ describe.concurrent("Head.astro render", () => {
         ).toBe(1);
 
         expect(html).toContain(`<meta property="og:url" content="${ARTICLE_URL}">`);
+        expect(html).toContain(OG_LOCALE_ES);
+        expect(html).toContain(`<meta property="og:image" content="${SOCIAL_IMAGE_PATH}">`);
+        expect(html).toContain(`<meta name="twitter:image" content="${SOCIAL_IMAGE_PATH}">`);
+        expect(html).toContain(`<link rel="canonical" href="${ARTICLE_URL}">`);
+        expect(html).toContain(CANONICAL_LINK_REL);
 
         // ## Citation metadata ##
         expect(html).toContain(`<meta name="citation_title" content="${ARTICLE_TITLE}">`);
@@ -173,13 +187,17 @@ describe.concurrent("Head.astro render", () => {
         expect(html).toContain(
             `<meta property="og:url" content="${WEBSITE_URL}">`,
         );
+        expect(html).toContain(`<link rel="canonical" href="${WEBSITE_URL}">`);
 
         /**
          * No citation metadata for non-article pages.
          */
+        expect(html).not.toContain(CITATION_TITLE_NAME);
         expect(html).not.toContain(CITATION_AUTHOR_NAME);
         expect(html).not.toContain(CITATION_DATE_NAME);
         expect(html).not.toContain(CITATION_LAST_MODIFIED_NAME);
+        expect(html).not.toContain(CITATION_PUBLIC_URL_NAME);
+        expect(html).not.toContain(CITATION_LANGUAGE_NAME);
 
         /**
          * No JSON-LD for website pages.
@@ -213,5 +231,19 @@ describe.concurrent("Head.astro render", () => {
     ])("$name", async ({ props, expected }) => {
         const html = await renderHead(props);
         expect(html).toContain(expected);
+    });
+
+    test("maps language to Open Graph locale", async () => {
+        const html = await renderHead({
+            title: ARTICLE_TITLE,
+            description: ARTICLE_DESCRIPTION,
+            url: ARTICLE_URL,
+            pageMeta: {
+                type: "article",
+                language: "en-GB",
+            },
+        });
+
+        expect(html).toContain(OG_LOCALE_EN);
     });
 });
