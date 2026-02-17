@@ -2,6 +2,7 @@ stages:
     - install
     - test
     - build
+    - deploy
 
 variables:
     PNPM_CACHE_FOLDER: .pnpm-store
@@ -51,3 +52,25 @@ build:
         paths:
             - dist/
         expire_in: 1 week
+
+deploy:
+    stage: deploy
+    image: node:${NODE_VERSION}-alpine
+    needs:
+        - job: install
+          artifacts: true
+        - job: test
+        - job: build
+          artifacts: true
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+          when: manual
+        - if: '$CI_COMMIT_TAG'
+          when: manual
+        - when: never
+    script:
+        - corepack enable
+        - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm exec wrangler deploy
+    environment:
+        name: production
