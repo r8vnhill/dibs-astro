@@ -37,6 +37,7 @@ test:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
         - pnpm astro check
+        - pnpm test --run
 
 build:
     stage: build
