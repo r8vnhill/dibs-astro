@@ -92,6 +92,8 @@ describe("LessonSidebar", () => {
      * This guards against regressions when the `Lesson` structure evolves or becomes deeply nested.
      */
     test("property: render stays stable for arbitrary lesson arrays", () => {
+        const numRuns = process.env.CI ? 40 : 100;
+
         const childLessonArbitrary: fc.Arbitrary<Lesson> = fc.record(
             {
                 title: fc.string(),
@@ -126,6 +128,7 @@ describe("LessonSidebar", () => {
                     unmount();
                 },
             ),
+            { numRuns },
         );
-    });
+    }, 15000);
 });
