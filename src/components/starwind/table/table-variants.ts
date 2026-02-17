@@ -47,6 +47,13 @@ const baseCellVariants = {
     },
 } as const;
 
+export type TableAlign = keyof typeof baseCellVariants.align;
+export type TableWrap = keyof typeof baseCellVariants.wrap;
+export type TableSize = keyof typeof baseCellVariants.size;
+export type TableTone = "default" | "muted" | "accent";
+export type TableZebra = "none" | "even" | "odd";
+export type TableDensity = "compact" | "comfortable" | "spacious";
+
 // Sensible defaults used by `tableDataCell` and `tableHeaderCell` so callers only
 // need to pass variant keys when deviating from the baseline.
 const baseCellDefaults = {

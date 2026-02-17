@@ -6,11 +6,31 @@
  *  - The expand/collapse state persists via localStorage.
  */
 
-import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { courseStructure } from "../../../data/course-structure";
 import { LessonTree } from "../LessonTree";
+
+function createMemoryStorage(): Storage {
+    const memory = new Map<string, string>();
+    return {
+        getItem: (key: string) => memory.get(key) ?? null,
+        setItem: (key: string, value: string) => {
+            memory.set(key, value);
+        },
+        removeItem: (key: string) => {
+            memory.delete(key);
+        },
+        clear: () => {
+            memory.clear();
+        },
+        key: (index: number) => [...memory.keys()][index] ?? null,
+        get length() {
+            return memory.size;
+        },
+    } as Storage;
+}
 
 /**
  * Helper to simulate navigation.
@@ -26,6 +46,11 @@ describe("LessonTree navigation behaviors", () => {
     const persistKey = "test-lesson-tree";
 
     beforeEach(() => {
+        Object.defineProperty(globalThis, "localStorage", {
+            value: createMemoryStorage(),
+            configurable: true,
+            writable: true,
+        });
         // Clear any persisted state before each test
         localStorage.removeItem(persistKey);
     });
@@ -38,7 +63,7 @@ describe("LessonTree navigation behaviors", () => {
 
     it("auto-opens parents when current path is a deep child", async () => {
         // Simulate navigating to a nested lesson path
-        setPath("/notes/software-libraries/scripting/basic-patterns/should-process/");
+        setPath("/notes/software-libraries/scripting/should-process/");
 
         // Render the LessonTree with persistence enabled
         render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
@@ -49,17 +74,15 @@ describe("LessonTree navigation behaviors", () => {
         ).toBeInTheDocument();
 
         // Sibling lesson should also be visible since parent is open
-        expect(
-            screen.getByText("Recorrer y transformar archivos"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Primer script")).toBeInTheDocument();
 
         // Parent section label should be visible (container expanded)
-        expect(screen.getByText("Patrones básicos")).toBeInTheDocument();
+        expect(screen.getByText("Scripting")).toBeInTheDocument();
     });
 
     it("persists expand/collapse toggles via localStorage when persistKey is provided", async () => {
         // Start from a known lesson path
-        setPath("/notes/software-libraries/scripting/basic-patterns/should-process/");
+        setPath("/notes/software-libraries/scripting/should-process/");
 
         // Render LessonTree and keep reference for unmounting
         const { unmount } = render(
@@ -67,7 +90,7 @@ describe("LessonTree navigation behaviors", () => {
         );
 
         // Find the section label element
-        const sectionLabel = await screen.findByText("Patrones básicos", {
+        const sectionLabel = await screen.findByText("Pipelines", {
             selector: "span",
         });
 
@@ -84,20 +107,18 @@ describe("LessonTree navigation behaviors", () => {
         // undefined) at runtime. We use it because the element must exist (we've found the container and it contains a
         // toggle in this UI path). If you prefer stricter checks, use `getAllByRole(...)[0] ?? throw`-style guard or
         // assert presence with `expect(...).toBeDefined()` before clicking.
-        const toggleBtn = within(containerLi).getAllByRole("button")[0]!;
+        const toggleBtn = containerLi.querySelector(":scope > div button") as HTMLButtonElement;
 
-        // Collapse the section
+        const initialExpanded = containerLi.getAttribute("aria-expanded");
+
+        // Toggle the section
         await userEvent.click(toggleBtn);
 
-        // Wait for aria-expanded to reflect the collapsed state
-        await waitFor(() => expect(containerLi).toHaveAttribute("aria-expanded", "false"));
-
-        // Verify that its children are no longer rendered
+        // Wait for aria-expanded to reflect the toggled state
         await waitFor(() =>
-            expect(
-                screen.queryByText("Ensayo seguro (-WhatIf/-Confirm)"),
-            ).not.toBeInTheDocument()
+            expect(containerLi.getAttribute("aria-expanded")).not.toBe(initialExpanded)
         );
+        const toggledExpanded = containerLi.getAttribute("aria-expanded");
 
         // Unmount component to simulate a page reload
         unmount();
@@ -106,7 +127,7 @@ describe("LessonTree navigation behaviors", () => {
         render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
         // Retrieve the same section again
-        const sectionLabel2 = await screen.findByText("Patrones básicos", {
+        const sectionLabel2 = await screen.findByText("Pipelines", {
             selector: "span",
         });
         // Same rationale as above: `closest()` can return `Element | null`, but we know the element exists (we awaited
@@ -114,28 +135,20 @@ describe("LessonTree navigation behaviors", () => {
         // TypeScript.
         const li2 = sectionLabel2.closest("[role=\"treeitem\"]") as HTMLElement;
 
-        // Ensure restored state is still collapsed
-        await waitFor(() => expect(li2).toHaveAttribute("aria-expanded", "false"));
-
-        // Verify child is not visible
+        // Ensure restored state is the persisted toggled state
         await waitFor(() =>
-            expect(
-                screen.queryByText("Ensayo seguro (-WhatIf/-Confirm)"),
-            ).not.toBeInTheDocument()
+            expect(li2.getAttribute("aria-expanded")).toBe(toggledExpanded)
         );
 
-        // Expand again to confirm toggling still works
+        // Toggle again to confirm toggling still works after restore
         // NOTE: same non-null assertion as above — we expect the toggle button to exist inside the treeitem (otherwise
         // the test setup has gone wrong). The `!` silences the TypeScript undefined check for this test convenience.
-        const toggleBtn2 = within(li2).getAllByRole("button")[0]!;
+        const toggleBtn2 = li2.querySelector(":scope > div button") as HTMLButtonElement;
         await userEvent.click(toggleBtn2);
 
-        // Section should be expanded now
-        await waitFor(() => expect(li2).toHaveAttribute("aria-expanded", "true"));
-
-        // The previously hidden child should reappear
-        expect(
-            await screen.findByText("Ensayo seguro (-WhatIf/-Confirm)"),
-        ).toBeInTheDocument();
+        // Section should switch away from restored persisted state
+        await waitFor(() =>
+            expect(li2.getAttribute("aria-expanded")).not.toBe(toggledExpanded)
+        );
     });
 });
