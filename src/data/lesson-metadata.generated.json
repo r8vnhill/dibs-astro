@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T19:29:01.944Z",
+  "generatedAt": "2026-02-17T22:29:06.469Z",
   "totalLessons": 38,
   "changesLimit": 5,
   "entries": {
@@ -801,8 +801,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-16",
+      "lastModified": "2026-02-17",
       "changes": [
+        {
+          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
+          "date": "2026-02-17",
+          "author": "r8vnhill",
+          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
+        },
         {
           "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
           "date": "2026-02-16",
@@ -871,8 +877,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-16",
+      "lastModified": "2026-02-17",
       "changes": [
+        {
+          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
+          "date": "2026-02-17",
+          "author": "r8vnhill",
+          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
+        },
         {
           "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
           "date": "2026-02-16",
@@ -1180,8 +1192,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-16",
+      "lastModified": "2026-02-17",
       "changes": [
+        {
+          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
+          "date": "2026-02-17",
+          "author": "r8vnhill",
+          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
+        },
         {
           "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
           "date": "2026-02-16",
