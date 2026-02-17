@@ -29,6 +29,7 @@ export { normalizeNavigation, resolveAutoNav } from "./navigation.ts";
 
 // Generic utilities
 export {
+    buildCommitUrl,
     buildRepoLinkText,
     buildRepoUrl,
     DEFAULT_REPO_PLATFORMS,
@@ -37,6 +38,7 @@ export {
     REPO_PLATFORM_HOST,
     REPO_PLATFORM_LABEL,
     type BuildRepoLinkTextOptions,
+    type BuildCommitUrlOptions,
     type BuildRepoUrlOptions,
     type RepoPlatform,
     type RepoRef,

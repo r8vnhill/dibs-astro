@@ -149,6 +149,7 @@
         "mantenibles",
         "markdoc",
         "Markdoc",
+        "miguel",
         "mypy",
         "navs",
         "nulabilidad",
@@ -159,11 +160,13 @@
         "openai",
         "otrxs",
         "overrideable",
+        "ozzy",
         "pagefind",
         "Parseo",
         "personalizándola",
         "pipefail",
         "postcss",
+        "powerslave",
         "preact",
         "prerendered",
         "procons",
@@ -196,7 +199,8 @@
         "unist",
         "vararg",
         "variádicas",
-        "viewports"
+        "viewports",
+        "vitalogy"
     ],
     "files.associations": {
         "*.css": "tailwindcss"

@@ -1,24 +1,117 @@
 ---
+/**
+ * @file LessonMetaPanel.astro
+ *
+ * Renders structured metadata for a lesson page.
+ *
+ * This component is responsible for displaying:
+ *
+ * - Authorship information.
+ * - Last modification date.
+ * - A short list of recent changes (limited to the most recent 3).
+ * - Optional commit links to the website repository across one or more platforms.
+ *
+ * ## Design Goals
+ *
+ * - Keep all data shaping in the frontmatter script section.
+ * - Keep markup declarative and presentation-focused.
+ * - Avoid hard-coded repository URLs inside the template.
+ * - Gracefully handle untrusted `platforms` input.
+ *
+ * ## Responsibilities
+ *
+ * - Normalizes platform selection using {@link normalizePlatforms}.
+ * - Builds commit URLs using {@link buildCommitUrl}.
+ * - Formats ISO dates using {@link formatLessonDate}.
+ * - Filters out unavailable platforms from {@link websiteRepoRefs}.
+ */
+
+import { WEBSITE_REPO_REFS } from "~/data/site";
+import {
+    buildCommitUrl,
+    normalizePlatforms,
+    REPO_PLATFORM_LABEL,
+    type RepoPlatform,
+    type RepoRef,
+} from "~/utils/git";
 import { formatLessonDate, type LessonMetadataEntry } from "~/utils/lesson-metadata";
+import { Link } from "../ui/links";
+import { Mono } from "../ui/font";
 
 interface Props {
+    /**
+     * Parsed lesson metadata for the current page.
+     */
     metadata: LessonMetadataEntry;
+
+    /**
+     * Optional override for repository references used to build commit links.
+     *
+     * Allows:
+     * - Testing with custom repos.
+     * - Multi-site reuse.
+     */
+    websiteRepoRefs?: Partial<Record<RepoPlatform, RepoRef>>;
+
+    /**
+     * Optional platform selection.
+     *
+     * May be:
+     * - Undefined
+     * - Invalid
+     * - Duplicated
+     * - Mixed with unsupported values
+     *
+     * Normalized through {@link normalizePlatforms}.
+     */
+    platforms?: unknown;
 }
 
-const { metadata } = Astro.props as Props;
-const authorsText = metadata.authors.map((author) => author.name).join(", ");
-const lastModified = formatLessonDate(metadata.lastModified);
-const recentChanges = metadata.changes.slice(0, 3);
-const WEBSITE_GITHUB_REPO = "r8vnhill/dibs-astro";
-const WEBSITE_GITLAB_REPO = "r8vnhill/dibs-astro-website";
+const {
+    metadata,
+    websiteRepoRefs = WEBSITE_REPO_REFS,
+    platforms,
+} = Astro.props as Props;
 
-const githubCommitUrl = (hash: string) => `https://github.com/${WEBSITE_GITHUB_REPO}/commit/${hash}`;
-const gitlabCommitUrl = (hash: string) =>
-    `https://gitlab.com/${WEBSITE_GITLAB_REPO}/-/commit/${hash}`;
+// ## Derived presentation values ##
+
+// Join non-empty author names.
+const authorsText = metadata.authors
+    .map((author) => author.name.trim())
+    .filter(Boolean)
+    .join(", ");
+
+// Format last modified date.
+const lastModified = formatLessonDate(metadata.lastModified);
+
+// Normalize and filter platforms.
+const selectedPlatforms = normalizePlatforms(platforms);
+const availablePlatforms = selectedPlatforms.filter(
+    (platform) => Boolean(websiteRepoRefs[platform]),
+);
+
+// Precompute recent change entries for simpler markup.
+const recentChanges = metadata.changes.slice(0, 3).map((change) => ({
+    ...change,
+    shortHash: change.hash.slice(0, 7),
+    formattedDate: formatLessonDate(change.date),
+    links: availablePlatforms.map((platform) => ({
+        platform,
+        label: REPO_PLATFORM_LABEL[platform],
+        href: buildCommitUrl(
+            websiteRepoRefs[platform]!,
+            platform,
+            change.hash,
+        ),
+    })),
+}));
+
+const sectionHeadingId = "lesson-meta-heading";
+const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
 ---
 
 <section
-    aria-label="Metadatos de la lección"
+    aria-labelledby={sectionHeadingId}
     class:list={[
         "rounded-md",
         "border",
@@ -31,52 +124,67 @@ const gitlabCommitUrl = (hash: string) =>
         "mt-3",
     ]}
 >
+    <h2 id={sectionHeadingId} class="font-semibold">
+        Metadatos de la lección
+    </h2>
+
     <dl class="space-y-1">
         <div>
             <dt class="font-semibold inline">Autoría:</dt>
-            <dd class="inline ml-1">{authorsText || "sin autoría registrada"}</dd>
+            <dd class="inline ml-1">
+                {authorsText || "sin autoría registrada"}
+            </dd>
         </div>
         <div>
-            <dt class="font-semibold inline">Última actualización:</dt>
+            <dt class="font-semibold inline">
+                Última actualización:
+            </dt>
             <dd class="inline ml-1">{lastModified}</dd>
         </div>
     </dl>
 
     <div class="mt-2">
-        <p class="font-semibold">Cambios recientes:</p>
+        <h3 id={recentChangesHeadingId} class="font-semibold">
+            Cambios recientes:
+        </h3>
+
         {
             recentChanges.length > 0 ? (
                 <ul class="list-disc list-inside mt-1">
                     {
                         recentChanges.map((change) => (
                             <li>
-                                <code>{change.hash.slice(0, 7)}</code> · {formatLessonDate(change.date)}
-                                {" "}· {change.subject}
-                                <span class="ml-1">
-                                    (
-                                    <a
-                                        href={githubCommitUrl(change.hash)}
-                                        class="underline"
-                                        target="_blank" rel="noreferrer"
-                                    >
-                                        GitHub
-                                    </a>
-                                    {" / "}
-                                    <a
-                                        href={gitlabCommitUrl(change.hash)}
-                                        class="underline"
-                                        target="_blank" rel="noreferrer"
-                                    >
-                                        GitLab
-                                    </a>
+                                <Mono>{change.shortHash}</Mono>
+                                {" · "}
+                                {change.formattedDate}
+                                {" · "}
+                                {change.subject}
+                                {
+                                    change.links.length > 0 && (
+                                        <span class="ml-1">
+                                            (
+                                            {
+                                                change.links.map(
+                                                    (link, index) => (
+                                                    <Fragment>
+                                                        {index > 0 && " / "}
+                                                        <Link href={link.href}>{link.label}</Link>
+                                                    </Fragment>
+                                                ),
+                                                )
+                                            }
+                                            )
+                                        </span>
                                     )
-                                </span>
+                                }
                             </li>
                         ))
                     }
                 </ul>
             ) : (
-                <p class="mt-1">No hay cambios registrados.</p>
+                <p class="mt-1">
+                    No hay cambios registrados.
+                </p>
             )
         }
     </div>

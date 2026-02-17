@@ -193,20 +193,92 @@ export interface BuildRepoLinkTextOptions {
      */
     showPlatform?: boolean;
 }
+/**
+ * Optional configuration for {@link buildCommitUrl}.
+ */
+export interface BuildCommitUrlOptions {
+    /**
+     * Optional subpath appended after the commit route.
+     *
+     * This allows linking to:
+     *
+     * - A specific file within the commit.
+     * - A diff fragment.
+     * - Any platform-supported nested path.
+     *
+     * The value is:
+     *
+     * - Trimmed.
+     * - Normalized by removing leading slashes.
+     *
+     * ## Example
+     *
+     * ```ts
+     * buildCommitUrl(
+     *   { user: "octocat", repo: "hello-world" },
+     *   "github",
+     *   "abc1234",
+     *   { path: "README.md" }
+     * );
+     * // => https://github.com/octocat/hello-world/commit/abc1234/README.md
+     * ```
+     */
+    path?: string;
+}
 
 /**
- * Builds consistent link text for repository links.
+ * Builds consistent, user-facing link text for repository links.
  *
- * ## Guarantees:
+ * This function centralizes formatting logic so UI components do not duplicate string construction
+ * rules.
  *
- * - Trims whitespace from provided label.
- * - Falls back to `${user}/${repo}` when label is empty.
- * - Optionally appends the platform name.
+ * ## Guarantees
  *
- * @param ref Repository reference.
- * @param platform Hosting platform.
+ * - Trims whitespace from a provided `label`.
+ * - Falls back to `${user}/${repo}` if the label is missing or blank.
+ * - Optionally appends the human-readable platform name.
+ * - Never returns an empty string.
+ *
+ * This makes it safe to use directly inside UI components.
+ *
+ * ## Examples
+ *
+ * ### Example 1: Default behavior
+ *
+ * ```ts
+ * buildRepoLinkText(
+ *   { user: "luis-miguel", repo: "soy-como-quiero-ser" },
+ *   "github"
+ * );
+ * // => "luis-miguel/soy-como-quiero-ser"
+ * ```
+ *
+ * ### Example 2: Custom label
+ *
+ * ```ts
+ * buildRepoLinkText(
+ *   { user: "ozzy", repo: "black-rain" },
+ *   "github",
+ *   { label: "Source code" }
+ * );
+ * // => "Source code"
+ * ```
+ *
+ * ### Example 3: With platform suffix
+ *
+ * ```ts
+ * buildRepoLinkText(
+ *   { user: "pearl-jam", repo: "vitalogy" },
+ *   "github",
+ *   { showPlatform: true }
+ * );
+ * // => "pearl-jam/vitalogy (GitHub)"
+ * ```
+ *
+ * @param ref Repository reference ({@link RepoRef}).
+ * @param platform Hosting platform ({@link RepoPlatform}).
  * @param options Formatting options.
- * @returns Visible link text.
+ * @returns Visible link text for rendering.
  */
 export function buildRepoLinkText(
     ref: RepoRef,
@@ -221,6 +293,89 @@ export function buildRepoLinkText(
     return options?.showPlatform
         ? `${baseLabel} (${REPO_PLATFORM_LABEL[platform]})`
         : baseLabel;
+}
+
+/**
+ * Builds the canonical commit URL for a repository.
+ *
+ * This abstracts platform-specific commit routes so that:
+ *
+ * - UI components do not need conditional logic.
+ * - Platform differences are centralized in one place.
+ *
+ * ## Platform Differences
+ *
+ * - GitHub:
+ *   `/commit/{hash}`
+ *
+ * - GitLab:
+ *   `/-/commit/{hash}`
+ *
+ * ## Guarantees
+ *
+ * - Trims whitespace from the commit hash.
+ * - Preserves the full hash (no truncation).
+ * - Normalizes optional extra path segments.
+ * - Delegates final URL construction to {@link buildRepoUrl}.
+ *
+ * ## Examples
+ *
+ * ### Example 1: GitHub
+ *
+ * ```ts
+ * buildCommitUrl(
+ *   { user: "mcr", repo: "the-black-parade" },
+ *   "github",
+ *   "abc1234"
+ * );
+ * // => https://github.com/mcr/the-black-parade/commit/abc1234
+ * ```
+ *
+ * ### Example 2: GitLab
+ *
+ * ```ts
+ * buildCommitUrl(
+ *   { user: "iron-maiden", repo: "powerslave" },
+ *   "gitlab",
+ *   "def5678"
+ * );
+ * // => https://gitlab.com/iron-maiden/powerslave/-/commit/def5678
+ * ```
+ *
+ * ### Example 3: With extra path
+ *
+ * ```ts
+ * buildCommitUrl(
+ *   { user: "judas-priest", repo: "turbo" },
+ *   "github",
+ *   "abc1234",
+ *   { path: "README.md" }
+ * );
+ * // => https://github.com/judas-priest/turbo/commit/abc1234/README.md
+ * ```
+ *
+ * @param ref Repository reference ({@link RepoRef}).
+ * @param platform Hosting platform ({@link RepoPlatform}).
+ * @param hash Commit hash (full or abbreviated).
+ * @param options Optional configuration ({@link BuildCommitUrlOptions}).
+ * @returns Absolute HTTPS URL to the commit.
+ */
+export function buildCommitUrl(
+    ref: RepoRef,
+    platform: RepoPlatform,
+    hash: string,
+    options?: BuildCommitUrlOptions,
+): string {
+    const safeHash = hash.trim();
+
+    const commitPath = platform === "gitlab"
+        ? `-/commit/${safeHash}`
+        : `commit/${safeHash}`;
+
+    const extraPath = options?.path?.trim().replace(/^\/+/, "");
+    const path = extraPath ? `${commitPath}/${extraPath}` : commitPath;
+
+    return buildRepoUrl(ref, platform, { path });
 }
 
 /**
@@ -244,8 +399,8 @@ export function buildRepoLinkText(
  */
 export function isRepoPlatform(value: unknown): value is RepoPlatform {
     return (
-        typeof value === "string" &&
-        (DEFAULT_REPO_PLATFORMS as readonly string[]).includes(value)
+        typeof value === "string"
+        && (DEFAULT_REPO_PLATFORMS as readonly string[]).includes(value)
     );
 }
 
