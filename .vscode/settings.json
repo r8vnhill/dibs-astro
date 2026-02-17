@@ -169,6 +169,8 @@
         "postcss",
         "powerslave",
         "preact",
+        "predeploy",
+        "predev",
         "prerendered",
         "procons",
         "Pyright",
