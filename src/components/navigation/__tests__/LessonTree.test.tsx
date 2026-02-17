@@ -1,19 +1,51 @@
 /**
- * LessonTree navigation behaviors tests.
+ * @file LessonTree.test.tsx
  *
- * These tests validate the navigation and persistence logic of the LessonTree component, ensuring that:
- *  - Deep paths automatically expand their parent nodes.
- *  - The expand/collapse state persists via localStorage.
+ * LessonTree navigation and persistence tests.
+ *
+ * This suite focuses on two user-facing behaviors of the LessonTree component:
+ *
+ * - **Route-driven expansion**: when the current URL points to a deep lesson, the tree should
+ *   automatically expand all ancestor branches so the active lesson is visible.
+ * - **Persisted UI state**: when a `persistKey` is provided, expand/collapse toggles should be
+ *   stored in `localStorage` and restored on the next mount (simulating a page reload).
+ *
+ * ## Testing strategy
+ *
+ * - Uses a **memory-backed Storage** implementation to avoid relying on the environment's
+ *   `localStorage` and to keep tests deterministic.
+ * - Updates `window.history` via `pushState` to simulate navigation without a router.
+ * - Interacts with the UI using user-level events (clicking the toggle button) and asserts
+ *   accessibility state via `aria-expanded` on the relevant `role="treeitem"` element.
+ *
+ * ## Notes
+ *
+ * - The helpers below intentionally fail fast with clear error messages to make DOM structure
+ *   regressions obvious (e.g., a missing tree item wrapper or toggle button).
  */
 
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { courseStructure } from "../../../data/course-structure";
 import { LessonTree } from "../LessonTree";
 
+/**
+ * Creates an in-memory implementation of the Web Storage API.
+ *
+ * This is used to replace `globalThis.localStorage` during tests so they:
+ * - Don't share state with other test files.
+ * - Remain deterministic across environments.
+ * - Avoid any quirks of the test runner's `localStorage` polyfill (if present).
+ *
+ * The implementation supports:
+ * - `getItem`, `setItem`, `removeItem`, `clear`
+ * - `key(index)` iteration
+ * - `length` getter
+ */
 function createMemoryStorage(): Storage {
     const memory = new Map<string, string>();
+
     return {
         getItem: (key: string) => memory.get(key) ?? null,
         setItem: (key: string, value: string) => {
@@ -33,122 +65,170 @@ function createMemoryStorage(): Storage {
 }
 
 /**
- * Helper to simulate navigation.
- * Updates the window's current path, allowing the component to detect the active lesson and auto-open parent branches
- * accordingly.
+ * Simulates navigation by changing the browser history.
+ *
+ * LessonTree is expected to infer the "active lesson" from the current URL and expand parent
+ * branches accordingly. We use `pushState` to update the path without reloading the page.
+ *
+ * @param path New pathname for the test.
  */
 function setPath(path: string) {
     window.history.pushState({}, "test", path);
 }
 
+/**
+ * Walks up the DOM tree to find the closest element representing a tree item.
+ *
+ * The LessonTree is expected to follow ARIA tree semantics where expandable nodes expose
+ * `role="treeitem"` and use `aria-expanded` to represent their open/closed state.
+ *
+ * @param element Any descendant element inside the tree item (e.g., the label span).
+ * @throws Error if no matching ancestor tree item exists.
+ */
+function closestTreeItem(element: Element): HTMLElement {
+    const treeItem = element.closest("[role=\"treeitem\"]");
+    if (!treeItem) {
+        throw new Error("Expected element inside a tree item.");
+    }
+    return treeItem as HTMLElement;
+}
+
+/**
+ * Retrieves the toggle button for a given tree item.
+ *
+ * This helper encodes a structural assumption:
+ * - a direct child `div` under the tree item contains the button.
+ *
+ * If the component structure changes, this function will fail with a targeted error message,
+ * prompting an update to the test selector.
+ *
+ * @param treeItem Tree item root element (role="treeitem").
+ * @throws Error if the toggle button cannot be found.
+ */
+function getToggleButton(treeItem: HTMLElement): HTMLButtonElement {
+    const button = treeItem.querySelector(":scope > div button");
+    if (!button) {
+        throw new Error("Expected toggle button in tree item.");
+    }
+    return button as HTMLButtonElement;
+}
+
 describe("LessonTree navigation behaviors", () => {
-    // Key used to persist expand/collapse state in localStorage
+    /**
+     * Storage key used by LessonTree to persist expand/collapse state.
+     *
+     * Using a test-specific key prevents accidental interference with other suites and makes
+     * it explicit which storage entry the component should be reading/writing.
+     */
     const persistKey = "test-lesson-tree";
 
+    /**
+     * Original `localStorage` reference captured so the test can restore it after each run.
+     */
+    let originalLocalStorage: Storage;
+
     beforeEach(() => {
+        // Replace localStorage with a deterministic in-memory implementation.
+        originalLocalStorage = globalThis.localStorage;
         Object.defineProperty(globalThis, "localStorage", {
             value: createMemoryStorage(),
             configurable: true,
             writable: true,
         });
-        // Clear any persisted state before each test
+
+        // Ensure clean state at the start of each test.
         localStorage.removeItem(persistKey);
     });
 
     afterEach(() => {
-        // Clean up rendered DOM and localStorage after each test
+        // Clean up the rendered DOM and restore global state for isolation.
         cleanup();
         localStorage.removeItem(persistKey);
+
+        Object.defineProperty(globalThis, "localStorage", {
+            value: originalLocalStorage,
+            configurable: true,
+            writable: true,
+        });
+
+        vi.restoreAllMocks();
     });
 
     it("auto-opens parents when current path is a deep child", async () => {
-        // Simulate navigating to a nested lesson path
+        // Navigate directly to a nested lesson.
         setPath("/notes/software-libraries/scripting/should-process/");
 
-        // Render the LessonTree with persistence enabled
+        // Render with persistence enabled (not required for this test, but matches real usage).
         render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        // Expect the active child (deep node) to be visible
+        // The active child should become visible once ancestors are expanded.
         expect(
             await screen.findByText("Ensayo seguro (-WhatIf/-Confirm)"),
         ).toBeInTheDocument();
 
-        // Sibling lesson should also be visible since parent is open
+        // A sibling should also be visible because the parent branch is expanded.
         expect(screen.getByText("Primer script")).toBeInTheDocument();
 
-        // Parent section label should be visible (container expanded)
+        // The ancestor section label should be visible (expanded container).
         expect(screen.getByText("Scripting")).toBeInTheDocument();
     });
 
     it("persists expand/collapse toggles via localStorage when persistKey is provided", async () => {
-        // Start from a known lesson path
+        const user = userEvent.setup();
+
+        // Start from a known path to ensure a consistent initial expansion state.
         setPath("/notes/software-libraries/scripting/should-process/");
 
-        // Render LessonTree and keep reference for unmounting
         const { unmount } = render(
             <LessonTree lessons={courseStructure} persistKey={persistKey} />,
         );
 
-        // Find the section label element
+        // Locate the section label (span) so we can derive the owning tree item.
         const sectionLabel = await screen.findByText("Pipelines", {
             selector: "span",
         });
 
-        // Retrieve its closest treeitem container
-        // NOTE: `Element.closest()` returns `Element | null`. We cast to `HTMLElement` here because Testing Library's
-        // `within()` and the DOM assertion helpers expect an `HTMLElement` (not a generic `Element`). We already
-        // awaited `findByText`, so `sectionLabel` is present; the `as HTMLElement` cast makes the tests type-check
-        // cleanly under TypeScript while keeping runtime behavior unchanged.
-        const containerLi = sectionLabel.closest("[role=\"treeitem\"]") as HTMLElement;
+        const containerItem = closestTreeItem(sectionLabel);
+        const toggleBtn = getToggleButton(containerItem);
 
-        // Locate the toggle button inside that container
-        // NOTE: the trailing `!` is TypeScript's non-null assertion. `getAllByRole` returns an array which may be
-        // empty; indexing [0] yields `Element | undefined`. The `!` tells TypeScript we expect a value here (not
-        // undefined) at runtime. We use it because the element must exist (we've found the container and it contains a
-        // toggle in this UI path). If you prefer stricter checks, use `getAllByRole(...)[0] ?? throw`-style guard or
-        // assert presence with `expect(...).toBeDefined()` before clicking.
-        const toggleBtn = containerLi.querySelector(":scope > div button") as HTMLButtonElement;
+        // Capture initial ARIA expansion state.
+        const initialExpanded = containerItem.getAttribute("aria-expanded");
 
-        const initialExpanded = containerLi.getAttribute("aria-expanded");
+        // Toggle the section (expand/collapse).
+        await user.click(toggleBtn);
 
-        // Toggle the section
-        await userEvent.click(toggleBtn);
+        // The expansion state should change immediately after the interaction.
+        expect(containerItem.getAttribute("aria-expanded")).not.toBe(initialExpanded);
 
-        // Wait for aria-expanded to reflect the toggled state
-        await waitFor(() =>
-            expect(containerLi.getAttribute("aria-expanded")).not.toBe(initialExpanded)
-        );
-        const toggledExpanded = containerLi.getAttribute("aria-expanded");
+        // Record the new state for later comparison.
+        const toggledExpanded = containerItem.getAttribute("aria-expanded");
 
-        // Unmount component to simulate a page reload
+        // Verify that the component persisted state into localStorage.
+        const persistedRaw = localStorage.getItem(persistKey);
+        expect(persistedRaw).not.toBeNull();
+        expect(() => JSON.parse(persistedRaw!)).not.toThrow();
+
+        // Simulate a full reload by unmounting and mounting again.
         unmount();
 
-        // Re-render LessonTree — should restore previous collapsed state from localStorage
         render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        // Retrieve the same section again
+        // Re-locate the same section after remount.
         const sectionLabel2 = await screen.findByText("Pipelines", {
             selector: "span",
         });
-        // Same rationale as above: `closest()` can return `Element | null`, but we know the element exists (we awaited
-        // it), and Testing Library expects an `HTMLElement` when using `within()` and DOM assertions. Cast for
-        // TypeScript.
-        const li2 = sectionLabel2.closest("[role=\"treeitem\"]") as HTMLElement;
+        const containerItem2 = closestTreeItem(sectionLabel2);
 
-        // Ensure restored state is the persisted toggled state
-        await waitFor(() =>
-            expect(li2.getAttribute("aria-expanded")).toBe(toggledExpanded)
-        );
+        // Restore may occur in effects, so wait until the persisted state is applied.
+        await waitFor(() => {
+            expect(containerItem2.getAttribute("aria-expanded")).toBe(toggledExpanded);
+        });
 
-        // Toggle again to confirm toggling still works after restore
-        // NOTE: same non-null assertion as above — we expect the toggle button to exist inside the treeitem (otherwise
-        // the test setup has gone wrong). The `!` silences the TypeScript undefined check for this test convenience.
-        const toggleBtn2 = li2.querySelector(":scope > div button") as HTMLButtonElement;
-        await userEvent.click(toggleBtn2);
+        // Verify toggling still works after restore.
+        const toggleBtn2 = getToggleButton(containerItem2);
+        await user.click(toggleBtn2);
 
-        // Section should switch away from restored persisted state
-        await waitFor(() =>
-            expect(li2.getAttribute("aria-expanded")).not.toBe(toggledExpanded)
-        );
+        // The state should switch away from the restored persisted value.
+        expect(containerItem2.getAttribute("aria-expanded")).not.toBe(toggledExpanded);
     });
 });
