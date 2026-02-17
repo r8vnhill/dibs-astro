@@ -1,9 +1,27 @@
 ---
 import Heading from "~/components/semantics/Heading.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
-import { Danger, Exercise, Explanation, Info, More, Tip } from "~/components/ui/callouts";
+import {
+    Danger,
+    Exercise,
+    Explanation,
+    Info,
+    More,
+    Note,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHeader,
+    TableRow,
+} from "~/components/starwind/table";
 
 import { CodeBlock, InlineCode, InlinePython, PythonBlock } from "~/components/ui/code";
 

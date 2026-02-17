@@ -20,6 +20,9 @@ import { getViteConfig } from "astro/config";
  */
 export default getViteConfig({
     test: {
+        // Run only project test files under src
+        include: ["src/**/__tests__/*.{test,spec}.{ts,tsx}"],
+
         // Use jsdom so DOM APIs (document/window) are available for React testing
         environment: "jsdom",
 
@@ -33,5 +36,11 @@ export default getViteConfig({
 
         // Don't attempt to transform or load CSS during tests (faster + fewer errors)
         css: false,
+
+        // Astro component render tests run with `vitest.astro.config.ts` in a separate suite.
+        exclude: [
+            "node_modules/**",
+            "src/components/**/__tests__/*.render.test.ts",
+        ],
     },
 });

@@ -141,7 +141,7 @@ open newusers.csv
     </NotesSection>
 
     <NotesSection id="h2-select-vs-get">
-        <Heading headingLevel="h2" Icon={icons.Columns}>
+        <Heading headingLevel="h2" Icon={null}>
             <code>select</code> (tabla) vs <code>get</code> (expandir)
         </Heading>
 
@@ -244,7 +244,7 @@ def summarize [
                 (CSV/JSON/TOML/Parquet) y devuelve tablas/objetos listos para filtrar sin parseo
                 manual.
             </ListItem>
-            <ListItem icon={icons.UploadSimple}>
+            <ListItem icon={null}>
                 <B>Salida</B>: <code>to csv</code>, <code>to json</code>, <code>save</code> permiten
                 materializar resultados.
             </ListItem>
@@ -289,7 +289,7 @@ open users.json
                 muchas tareas de <I>ETL</I> se expresan más concisas sobre tablas (p. ej., <code
                 >open</code> + <code>where</code> + <code>update</code>).
             </ListItem>
-            <ListItem icon={icons.Bolt}>
+            <ListItem icon={null}>
                 <B>Nushell →</B> <I>autodetección</I> de formatos y paths de columna simplifican
                 pipelines centrados en datos; no requiere escribir tipos o wrappers.
             </ListItem>
@@ -307,7 +307,7 @@ open users.json
 
         <Hints>
             <List>
-                <ListItem icon={icons.Columns}>
+                <ListItem icon={null}>
                     Si necesitas “expandir propiedad”, usa <code>get</code> (no <code
                     >select</code>).
                 </ListItem>
