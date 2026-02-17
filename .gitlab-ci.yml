@@ -27,7 +27,7 @@ install:
             - ${PNPM_CACHE_FOLDER}
         expire_in: 1 day
 
-test:
+test:astro-check:
     stage: test
     image: node:${NODE_VERSION}-alpine
     needs:
@@ -37,7 +37,28 @@ test:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
         - pnpm astro check
-        - pnpm exec vitest run
+
+test:unit:
+    stage: test
+    image: node:${NODE_VERSION}-alpine
+    needs:
+        - job: install
+          artifacts: true
+    script:
+        - corepack enable
+        - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm exec vitest run --config vitest.config.ts
+
+test:astro-render:
+    stage: test
+    image: node:${NODE_VERSION}-alpine
+    needs:
+        - job: install
+          artifacts: true
+    script:
+        - corepack enable
+        - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm exec vitest run --config vitest.astro.config.ts
 
 build:
     stage: build
@@ -45,6 +66,9 @@ build:
     needs:
         - job: install
           artifacts: true
+        - job: test:astro-check
+        - job: test:unit
+        - job: test:astro-render
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -60,7 +84,9 @@ deploy:
     needs:
         - job: install
           artifacts: true
-        - job: test
+        - job: test:astro-check
+        - job: test:unit
+        - job: test:astro-render
         - job: build
           artifacts: true
     rules:
