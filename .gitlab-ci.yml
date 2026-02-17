@@ -7,6 +7,7 @@ variables:
     PNPM_CACHE_FOLDER: .pnpm-store
     NODE_VERSION: "20"
     PNPM_VERSION: "9"
+    GIT_DEPTH: "0"
 
 cache:
     key: pnpm-${CI_COMMIT_REF_SLUG}-${CI_RUNNER_EXECUTABLE_ARCH}
