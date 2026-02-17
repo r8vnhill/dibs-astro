@@ -26,7 +26,7 @@
  * - Filters out unavailable platforms from {@link websiteRepoRefs}.
  */
 
-import { WEBSITE_REPO_REFS } from "~/data/site";
+import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "~/data/site";
 import {
     buildCommitUrl,
     normalizePlatforms,
@@ -87,7 +87,7 @@ const lastModified = formatLessonDate(metadata.lastModified);
 // Normalize and filter platforms.
 const selectedPlatforms = normalizePlatforms(platforms);
 const availablePlatforms = selectedPlatforms.filter(
-    (platform) => Boolean(websiteRepoRefs[platform]),
+    (platform) => Boolean(websiteRepoRefs[platform] ?? getWebsiteRepoRef(platform)),
 );
 
 // Precompute recent change entries for simpler markup.
@@ -96,13 +96,13 @@ const recentChanges = metadata.changes.slice(0, 3).map((change) => ({
     shortHash: change.hash.slice(0, 7),
     formattedDate: formatLessonDate(change.date),
     links: availablePlatforms.map((platform) => ({
+        repoRef: websiteRepoRefs[platform] ?? getWebsiteRepoRef(platform),
         platform,
         label: REPO_PLATFORM_LABEL[platform],
-        href: buildCommitUrl(
-            websiteRepoRefs[platform]!,
-            platform,
-            change.hash,
-        ),
+    })).filter((link) => Boolean(link.repoRef)).map((link) => ({
+        platform: link.platform,
+        label: link.label,
+        href: buildCommitUrl(link.repoRef!, link.platform, change.hash),
     })),
 }));
 
