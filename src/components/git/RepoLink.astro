@@ -1,22 +1,166 @@
 ---
+/**
+ * @file RepoLink.astro
+ *
+ * External repository link component.
+ *
+ * Renders a consistent, accessible link to a repository hosted on a supported platform (e.g.
+ * GitHub, GitLab). This component is used by higher-level UI panels (such as lesson metadata
+ * panels) to display repository links without duplicating URL and label logic.
+ *
+ * ## Responsibilities:
+ *
+ * - Build a platform-specific repository URL via {@link buildRepoUrl}.
+ * - Build consistent link text via {@link buildRepoLinkText}.
+ * - Provide clear accessibility metadata (`aria-label`) and a helpful tooltip (`title`).
+ * - Render a platform icon (decorative) alongside the link text.
+ *
+ * ## Accessibility:
+ *
+ * - Uses `aria-label` to describe the action (“Open … on …”).
+ * - Marks the icon as decorative with `aria-hidden`.
+ * - Sets a tooltip via `title` (defaults to the same text as the aria-label).
+ *
+ * ## Styling:
+ *
+ * - Uses Tailwind utility classes.
+ * - The label is wrapped in `.truncate` to prevent layout overflow.
+ */
 import * as Icons from "~/assets/img/icons";
-import { REPO_PLATFORM_HOST, type RepoPlatform } from "~/utils/git";
+import {
+    buildRepoLinkText,
+    buildRepoUrl,
+    REPO_PLATFORM_LABEL,
+    type RepoPlatform,
+    type RepoRef,
+} from "~/utils/git";
 
-export interface Props {
-    user: string;
-    repo: string;
+/**
+ * Props accepted by {@link RepoLink}.
+ *
+ * Extends {@link RepoRef} so callers can pass a repository reference without repeating
+ * `{ user, repo }` shapes across components.
+ */
+export interface Props extends RepoRef {
+    /**
+     * Hosting platform used to:
+     *
+     * - Select the base hostname for {@link buildRepoUrl}.
+     * - Derive a human-friendly label via {@link REPO_PLATFORM_LABEL}.
+     * - Choose an icon for display.
+     */
     platform: RepoPlatform;
+
+    /**
+     * Optional override for the visible label.
+     *
+     * When omitted, the link text is derived from `{user}/{repo}`. The final formatting is handled
+     * by {@link buildRepoLinkText}.
+     */
+    label?: string;
+
+    /**
+     * Whether to include the platform name in the visible label.
+     *
+     * Examples:
+     *
+     * - `false` -> `user/repo`
+     * - `true`  -> `user/repo (GitHub)`
+     *
+     * Defaults to `false`.
+     */
+    showPlatform?: boolean;
+
+    /**
+     * Optional tooltip text.
+     *
+     * Defaults to the computed `aria-label`, which is stable and descriptive.
+     */
+    title?: string;
+
+    /**
+     * Optional repository subpath to link to (e.g. `tree/main`, `blob/main/README.md`).
+     *
+     * When provided, it is forwarded to {@link buildRepoUrl} as `{ path }`. This keeps the
+     * component generic enough to link to specific locations inside the repository without
+     * introducing additional components.
+     */
+    path?: string;
 }
 
-const { user, repo, platform } = Astro.props;
-const href = `https://${REPO_PLATFORM_HOST[platform]}/${user}/${repo}`;
+const {
+    user,
+    repo,
+    platform,
+    label,
+    showPlatform = false,
+    title,
+    path,
+} = Astro.props as Props;
 
+/**
+ * Optional URL options.
+ *
+ * `buildRepoUrl` can be called with `undefined` options; we only allocate the object when a path
+ * override is provided.
+ */
+const repoUrlOptions = path === undefined ? undefined : { path };
+
+/**
+ * Final hyperlink target.
+ */
+const href = buildRepoUrl({ user, repo }, platform, repoUrlOptions);
+
+/**
+ * Human-friendly platform name (used in accessibility text).
+ */
+const platformName = REPO_PLATFORM_LABEL[platform];
+
+/**
+ * Options for visible link text.
+ *
+ * If `label` is omitted, the helper derives a sensible default.
+ */
+const linkTextOptions =
+    label === undefined
+        ? { showPlatform }
+        : { label, showPlatform };
+
+/**
+ * Visible link label.
+ *
+ * Delegated to a shared helper to ensure consistent formatting across the site.
+ */
+const linkText = buildRepoLinkText({ user, repo }, platform, linkTextOptions);
+
+/**
+ * Accessible label describing the action of the link.
+ *
+ * Note: This remains explicit even if the visible label is customized.
+ */
+const ariaLabel = `Open ${user}/${repo} on ${platformName}`;
+
+/**
+ * Tooltip shown on hover/focus.
+ *
+ * Defaults to the same content as {@link ariaLabel}.
+ */
+const tooltip = title ?? ariaLabel;
+
+/**
+ * Platform-specific icon component.
+ *
+ * The icon is decorative and hidden from assistive technologies.
+ */
 const Icon = platform === "github" ? Icons.GithubLogo : Icons.GitlabLogo;
 ---
 
 <a
-    href={href} target="_blank"
+    href={href}
+    target="_blank"
     rel="noopener noreferrer"
+    aria-label={ariaLabel}
+    title={tooltip}
     class:list={[
         "inline-flex",
         "items-center",
@@ -27,6 +171,6 @@ const Icon = platform === "github" ? Icons.GithubLogo : Icons.GitlabLogo;
         "text-sm",
     ]}
 >
-    <Icon class="h-4 w-4 shrink-0" />
-    <span class="truncate">{user}/{repo}</span>
+    <Icon class="h-4 w-4 shrink-0" aria-hidden="true" focusable="false" />
+    <span class="truncate">{linkText}</span>
 </a>

@@ -29,10 +29,15 @@ export { normalizeNavigation, resolveAutoNav } from "./navigation.ts";
 
 // Generic utilities
 export {
+    buildRepoLinkText,
+    buildRepoUrl,
     DEFAULT_REPO_PLATFORMS,
     isRepoPlatform,
-    normalizePlatforms as normalisePlatforms,
+    normalizePlatforms,
     REPO_PLATFORM_HOST,
+    REPO_PLATFORM_LABEL,
+    type BuildRepoLinkTextOptions,
+    type BuildRepoUrlOptions,
     type RepoPlatform,
     type RepoRef,
 } from "./git.ts";

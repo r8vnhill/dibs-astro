@@ -1,38 +1,56 @@
 /**
  * @file utils/git.ts
  *
- * Git/repository primitives shared across the site.
+ * Centralized git/repository primitives and helpers.
  *
- * This module centralizes:
+ * ## This module provides a small, well-defined surface for:
  *
- * - A minimal repository reference shape ({@link RepoRef})
- * - The supported hosting platforms ({@link RepoPlatform})
- * - Default platform ordering ({@link DEFAULT_REPO_PLATFORMS})
- * - Platform hostnames ({@link REPO_PLATFORM_HOST})
- * - Small parsing utilities for untrusted inputs ({@link isRepoPlatform},
- *   {@link normalizePlatforms})
+ * - Repository references ({@link RepoRef})
+ * - Supported hosting platforms ({@link RepoPlatform})
+ * - Platform metadata (labels + hostnames)
+ * - URL construction ({@link buildRepoUrl})
+ * - Link text formatting ({@link buildRepoLinkText})
+ * - Validation and normalization helpers
  *
- * Keeping these definitions in one place avoids:
+ * ## Design goals:
  *
- * - Duplicating `"github" | "gitlab"` unions in multiple components.
- * - Divergent defaults (e.g. one component showing GitLab first, another GitHub).
- * - Ad-hoc parsing logic in UI code when values come from frontmatter/JSON.
+ * - Avoid scattering `"github" | "gitlab"` unions across the codebase.
+ * - Keep UI components free of string concatenation logic.
+ * - Ensure safe handling of untrusted inputs (frontmatter, JSON, query params).
+ * - Provide deterministic defaults.
+ *
+ * ## All helpers are:
+ *
+ * - Pure
+ * - Side-effect free
+ * - Easily unit-testable
+ * - Dependency-free
  */
 
 /**
  * Minimal repository reference.
  *
- * This shape is intentionally small so it can be supplied from frontmatter, build-time metadata,
- * or runtime props without transformation.
+ * This is intentionally small and serializable. It represents only the identity of a repository
+ * --- not its URL, branch, or host.
+ *
+ * ## By keeping this minimal, we:
+ *
+ * - Decouple repository identity from hosting concerns.
+ * - Keep props lightweight.
+ * - Enable reuse across build-time and runtime contexts.
  */
 export interface RepoRef {
     /**
-     * Repository owner or organization (e.g. `"r8vnhill"`).
+     * Repository owner or organization.
+     *
+     * Example: `"r8vnhill"`, `"openai"`.
      */
     user: string;
 
     /**
-     * Repository name (e.g. `"dibs"`).
+     * Repository name.
+     *
+     * Example: `"dibs"`, `"astro"`.
      */
     repo: string;
 }
@@ -40,22 +58,27 @@ export interface RepoRef {
 /**
  * Supported git hosting platforms.
  *
- * The rest of the system (e.g. link components) assumes that any platform value is one of these
- * literals.
+ * This union defines the canonical set of allowed platforms. All platform-related logic (labels,
+ * hosts, URL construction) must be derived from this type.
+ *
+ * If a new platform is added, TypeScript will enforce updating:
+ *
+ * - {@link REPO_PLATFORM_HOST}
+ * - {@link REPO_PLATFORM_LABEL}
+ * - Any switch-based logic
  */
 export type RepoPlatform = "github" | "gitlab";
 
 /**
- * Default platform list used by UI components (e.g. `LessonRepoPanel`).
+ * Default platform ordering used by UI components.
  *
- * ## Notes:
+ * ## Key properties:
  *
- * - The array is declared `as const` to:
- *   - preserve literal types (`"gitlab"` not `string`)
- *   - prevent accidental mutation
- * - `satisfies` ensures every element is a valid {@link RepoPlatform}.
+ * - Declared `as const` to preserve literal types.
+ * - Uses `satisfies` to ensure all entries are valid {@link RepoPlatform}.
+ * - Immutable (defensive copy required before modification).
  *
- * Ordering matters: it is the order in which platforms are rendered by default.
+ * Ordering matters --- it determines rendering order in UI panels.
  */
 export const DEFAULT_REPO_PLATFORMS = [
     "gitlab",
@@ -65,8 +88,13 @@ export const DEFAULT_REPO_PLATFORMS = [
 /**
  * Hostnames for each supported platform.
  *
- * This is useful when constructing URLs in a consistent way, without scattering host strings
- * throughout UI components.
+ * Used by {@link buildRepoUrl}.
+ *
+ * ## Keeping hostnames centralized:
+ *
+ * - Prevents duplication.
+ * - Avoids hardcoding in UI components.
+ * - Simplifies adding new platforms.
  */
 export const REPO_PLATFORM_HOST: Record<RepoPlatform, string> = {
     github: "github.com",
@@ -74,74 +102,172 @@ export const REPO_PLATFORM_HOST: Record<RepoPlatform, string> = {
 };
 
 /**
+ * Human-readable platform labels.
+ *
+ * Used for display and accessibility text.
+ */
+export const REPO_PLATFORM_LABEL: Record<RepoPlatform, string> = {
+    github: "GitHub",
+    gitlab: "GitLab",
+};
+
+/**
+ * Options for {@link buildRepoUrl}.
+ */
+export interface BuildRepoUrlOptions {
+    /**
+     * Optional repository subpath.
+     *
+     * Examples:
+     * - `"tree/main"`
+     * - `"blob/main/README.md"`
+     * - `"/tree/main"` (leading slash will be normalized)
+     */
+    path?: string;
+}
+
+/**
+ * Builds the canonical HTTPS repository URL.
+ *
+ * ## Guarantees:
+ *
+ * - Always returns an absolute `https://` URL.
+ * - Never produces double slashes in the appended path.
+ * - Trims and normalizes the optional path.
+ *
+ * ## Does NOT:
+ *
+ * - Validate repository existence.
+ * - Encode path segments.
+ *
+ * ## Examples
+ *
+ * ```ts
+ * buildRepoUrl({ user: "r8vnhill", repo: "dibs" }, "github")
+ * // -> https://github.com/r8vnhill/dibs
+ *
+ * buildRepoUrl(
+ *   { user: "r8vnhill", repo: "dibs" },
+ *   "github",
+ *   { path: "tree/main" }
+ * )
+ * // -> https://github.com/r8vnhill/dibs/tree/main
+ * ```
+ *
+ * @param ref Repository reference.
+ * @param platform Hosting platform.
+ * @param options Optional path configuration.
+ * @returns Absolute repository URL.
+ */
+export function buildRepoUrl(
+    ref: RepoRef,
+    platform: RepoPlatform,
+    options?: BuildRepoUrlOptions,
+): string {
+    const baseUrl = `https://${REPO_PLATFORM_HOST[platform]}/${ref.user}/${ref.repo}`;
+    const rawPath = options?.path?.trim();
+
+    if (!rawPath) {
+        return baseUrl;
+    }
+
+    const normalizedPath = rawPath.replace(/^\/+/, "");
+    return `${baseUrl}/${normalizedPath}`;
+}
+
+/**
+ * Options for {@link buildRepoLinkText}.
+ */
+export interface BuildRepoLinkTextOptions {
+    /**
+     * Optional visible label override.
+     */
+    label?: string;
+
+    /**
+     * Whether to append the platform name.
+     *
+     * Example:
+     * - false -> "user/repo"
+     * - true  -> "user/repo (GitHub)"
+     */
+    showPlatform?: boolean;
+}
+
+/**
+ * Builds consistent link text for repository links.
+ *
+ * ## Guarantees:
+ *
+ * - Trims whitespace from provided label.
+ * - Falls back to `${user}/${repo}` when label is empty.
+ * - Optionally appends the platform name.
+ *
+ * @param ref Repository reference.
+ * @param platform Hosting platform.
+ * @param options Formatting options.
+ * @returns Visible link text.
+ */
+export function buildRepoLinkText(
+    ref: RepoRef,
+    platform: RepoPlatform,
+    options?: BuildRepoLinkTextOptions,
+): string {
+    const trimmedLabel = options?.label?.trim();
+    const baseLabel = trimmedLabel && trimmedLabel.length > 0
+        ? trimmedLabel
+        : `${ref.user}/${ref.repo}`;
+
+    return options?.showPlatform
+        ? `${baseLabel} (${REPO_PLATFORM_LABEL[platform]})`
+        : baseLabel;
+}
+
+/**
  * Type guard for {@link RepoPlatform}.
  *
- * This is designed for validating inputs that may come from:
+ * Used to validate untrusted values.
  *
- * - frontmatter
- * - JSON configuration files
- * - query parameters
+ * ## Designed for:
  *
- * ## Usage:
+ * - Frontmatter parsing
+ * - JSON configuration
+ * - Query parameter handling
  *
- * ### Example 1: Narrowing an unknown value
- * ```ts
- * const platform: unknown = getConfig().platform;
- * if (isRepoPlatform(platform)) {
- *   // platform is now typed as RepoPlatform
- * }
- * ```
+ * ## This function ensures:
  *
- * ### Example 2: Filtering a list
- * ```ts
- * const platforms = ["github", "bad", "gitlab"].filter(isRepoPlatform);
- * // => RepoPlatform[]
- * ```
+ * - Only known platforms are accepted.
+ * - Invalid inputs fail safely.
  *
- * @param value Unknown value to test.
- * @returns `true` if `value` is a supported {@link RepoPlatform}.
+ * @param value Unknown value.
+ * @returns True if value is a supported platform.
  */
 export function isRepoPlatform(value: unknown): value is RepoPlatform {
     return (
-        typeof value === "string"
-        && (DEFAULT_REPO_PLATFORMS as readonly string[]).includes(value)
+        typeof value === "string" &&
+        (DEFAULT_REPO_PLATFORMS as readonly string[]).includes(value)
     );
 }
 
 /**
- * Normalizes a platform selection into a usable {@link RepoPlatform} list.
+ * Normalizes an arbitrary value into a valid platform list.
  *
- * ## Behavior:
+ * ## Guarantees:
  *
- * - If `platforms` is not an array, returns {@link DEFAULT_REPO_PLATFORMS}.
- * - Filters out invalid values using {@link isRepoPlatform}.
- * - Removes duplicates while preserving first-seen order.
- * - If the filtered selection is empty, falls back to {@link DEFAULT_REPO_PLATFORMS}.
+ * - Output is always non-empty.
+ * - Output contains only valid {@link RepoPlatform} values.
+ * - Output contains no duplicates.
+ * - Output preserves first-seen order.
  *
- * This function is intentionally forgiving to keep UI components simple: they can accept `unknown`
- * values (from frontmatter/JSON) and always get a safe result.
+ * ## Fallback behavior:
  *
- * ## Usage:
+ * - Non-array input -> defaults.
+ * - Array with only invalid entries -> defaults.
  *
- * ### Example 1: From frontmatter
- * ```ts
- * const platforms = normalizePlatforms(frontmatter.platforms);
- * ```
+ * This function makes UI components robust against malformed inputs.
  *
- * ### Example 2: Explicit selection
- * ```ts
- * normalizePlatforms(["github", "github", "gitlab"]);
- * // => ["github", "gitlab"]
- * ```
- *
- * ### Example 3: Invalid input falls back
- * ```ts
- * normalizePlatforms(["bitbucket"]);
- * // => ["gitlab", "github"]
- * ```
- * 
- * @param platforms Potential platform list (possibly untrusted).
- * @returns A non-empty list of supported platforms
+ * @param platforms Possibly untrusted value.
+ * @returns Non-empty array of valid platforms.
  */
 export function normalizePlatforms(platforms?: unknown): RepoPlatform[] {
     if (!Array.isArray(platforms)) {
