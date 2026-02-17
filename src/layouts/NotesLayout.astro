@@ -124,9 +124,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 <BaseLayout pageTitle={title} {description}>
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
-        <aside class="flex-none" aria-label="Navegación del curso">
-            <LessonSidebar client:load lessons={courseStructure} />
-        </aside>
+        <LessonSidebar client:load lessons={courseStructure} />
 
         <!-- Main content area -->
         <div
