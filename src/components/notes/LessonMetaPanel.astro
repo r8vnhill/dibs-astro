@@ -34,6 +34,7 @@ import {
     type RepoPlatform,
     type RepoRef,
 } from "~/utils/git";
+import type { PartialRecord } from "~/types/records";
 import { formatLessonDate, type LessonMetadataEntry } from "~/utils/lesson-metadata";
 import { Link } from "../ui/links";
 import { Mono } from "../ui/font";
@@ -51,7 +52,7 @@ interface Props {
      * - Testing with custom repos.
      * - Multi-site reuse.
      */
-    websiteRepoRefs?: Partial<Record<RepoPlatform, RepoRef>>;
+    websiteRepoRefs?: PartialRecord<RepoPlatform, RepoRef>;
 
     /**
      * Optional platform selection.
@@ -124,14 +125,14 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
         "mt-3",
     ]}
 >
-    <h2 id={sectionHeadingId} class="font-semibold">
+    <h2 id={sectionHeadingId} class="font-semibold" data-testid="panel-title">
         Metadatos de la lección
     </h2>
 
     <dl class="space-y-1">
         <div>
             <dt class="font-semibold inline">Autoría:</dt>
-            <dd class="inline ml-1">
+            <dd class="inline ml-1" data-testid="authors-value">
                 {authorsText || "sin autoría registrada"}
             </dd>
         </div>
@@ -139,7 +140,7 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
             <dt class="font-semibold inline">
                 Última actualización:
             </dt>
-            <dd class="inline ml-1">{lastModified}</dd>
+            <dd class="inline ml-1" data-testid="last-updated-value">{lastModified}</dd>
         </div>
     </dl>
 
@@ -150,7 +151,7 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
 
         {
             recentChanges.length > 0 ? (
-                <ul class="list-disc list-inside mt-1">
+                <ul class="list-disc list-inside mt-1" data-testid="changes-list">
                     {
                         recentChanges.map((change) => (
                             <li>
@@ -182,7 +183,7 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
                     }
                 </ul>
             ) : (
-                <p class="mt-1">
+                <p class="mt-1" data-testid="changes-empty">
                     No hay cambios registrados.
                 </p>
             )

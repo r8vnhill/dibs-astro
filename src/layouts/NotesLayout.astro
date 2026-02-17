@@ -142,8 +142,7 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 ---
 
 <BaseLayout
-    pageTitle={title}
-    {...(description !== undefined ? { description } : {})}
+    pageTitle={title} {...(description !== undefined ? { description } : {})}
     {pageMeta}
 >
     <div class="flex">

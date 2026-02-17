@@ -1,5 +1,3 @@
-// @vitest-environment node
-
 /**
  * @file Head.render.test.ts
  *
@@ -27,8 +25,8 @@
  * `buildHeadPageMeta` behaves correctly.
  */
 
-import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { beforeEach, describe, expect, test } from "vitest";
+import { createAstroRenderer, type AstroRender } from "../../../test-utils/astro-render";
 import { WEBSITE_PRIMARY_AUTHOR } from "../../../data/site";
 import Head from "../Head.astro";
 
@@ -56,22 +54,7 @@ const OG_LOCALE_ES = "<meta property=\"og:locale\" content=\"es_CL\">";
 const OG_LOCALE_EN = "<meta property=\"og:locale\" content=\"en_GB\">";
 const SOCIAL_IMAGE_PATH = "/online-library.png";
 
-/**
- * Shared container instance.
- *
- * A fresh container is created before each test to avoid cross-test state leakage.
- */
-let container: Awaited<ReturnType<typeof AstroContainer.create>>;
-
-/**
- * Renders the {@link Head} component to an HTML string.
- *
- * @param props Props passed to the Astro component.
- * @returns Rendered HTML string.
- */
-async function renderHead(props: Record<string, unknown>): Promise<string> {
-    return container.renderToString(Head, { props });
-}
+let renderHead: AstroRender<Record<string, unknown>>;
 
 /**
  * Extracts and parses the JSON-LD script block from the rendered HTML.
@@ -101,14 +84,14 @@ function extractJsonLd(html: string): Record<string, unknown> | undefined {
 
 describe.concurrent("Head.astro render", () => {
     /**
-     * Creates a new Astro rendering container before each test.
+     * Creates a new Astro renderer before each test.
      *
      * This prevents:
      * - Shared state between tests
      * - Side effects across concurrent runs
      */
     beforeEach(async () => {
-        container = await AstroContainer.create();
+        renderHead = await createAstroRenderer<Record<string, unknown>>(Head);
     });
 
     test("renders citation and article metadata for lesson pages", async () => {
