@@ -1,5 +1,4 @@
 stages:
-    - install
     - test
     - build
     - deploy
@@ -10,68 +9,48 @@ variables:
     PNPM_VERSION: "9"
 
 cache:
-    key: pnpm-${CI_COMMIT_REF_SLUG}
+    key: pnpm-${CI_COMMIT_REF_SLUG}-${CI_RUNNER_EXECUTABLE_ARCH}
     paths:
         - ${PNPM_CACHE_FOLDER}
 
-install:
-    stage: install
+test:astro-check:
+    stage: test
     image: node:${NODE_VERSION}-alpine
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
         - pnpm install --frozen-lockfile
-    artifacts:
-        paths:
-            - node_modules/
-            - ${PNPM_CACHE_FOLDER}
-        expire_in: 1 day
-
-test:astro-check:
-    stage: test
-    image: node:${NODE_VERSION}-alpine
-    needs:
-        - job: install
-          artifacts: true
-    script:
-        - corepack enable
-        - corepack prepare pnpm@${PNPM_VERSION} --activate
         - pnpm astro check
 
 test:unit:
     stage: test
     image: node:${NODE_VERSION}-alpine
-    needs:
-        - job: install
-          artifacts: true
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm install --frozen-lockfile
         - pnpm exec vitest run --config vitest.config.ts
 
 test:astro-render:
     stage: test
     image: node:${NODE_VERSION}-alpine
-    needs:
-        - job: install
-          artifacts: true
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm install --frozen-lockfile
         - pnpm exec vitest run --config vitest.astro.config.ts
 
 build:
     stage: build
     image: node:${NODE_VERSION}-alpine
     needs:
-        - job: install
-          artifacts: true
         - job: test:astro-check
         - job: test:unit
         - job: test:astro-render
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm install --frozen-lockfile
         - pnpm build
     artifacts:
         paths:
@@ -82,8 +61,6 @@ deploy:
     stage: deploy
     image: node:${NODE_VERSION}-alpine
     needs:
-        - job: install
-          artifacts: true
         - job: test:astro-check
         - job: test:unit
         - job: test:astro-render
@@ -98,6 +75,7 @@ deploy:
     script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm install --frozen-lockfile
         - pnpm exec wrangler deploy
     environment:
         name: production
