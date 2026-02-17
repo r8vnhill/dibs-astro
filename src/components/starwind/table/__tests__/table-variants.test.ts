@@ -138,7 +138,7 @@ describe.concurrent("table-variants helpers", () => {
     it("does not enable sticky selectors when sticky is false", () => {
         const className = tableHeaderSection({ sticky: false, elevated: true });
         expect(className).not.toContain("[_&th]:sticky");
-        expect(className).not.toContain("[&_th]:top-0");
+        expect(className).not.toContain("[_&th]:top-0");
     });
 
     /**
@@ -226,7 +226,7 @@ describe.concurrent("table-variants helpers", () => {
     it("applies header cell sizing defaults", () => {
         const className = tableHeaderCell({});
         expect(className).toContain("font-semibold");
-        expect(className).toContain("text-sm");
+        expect(className).toContain("text-xs");
     });
 
     /**
@@ -267,6 +267,8 @@ describe.concurrent("table-variants helpers", () => {
                         expect(className).not.toContain("undefined");
                         expect(className).not.toContain("null");
                         expect(className).not.toContain("  ");
+                        const tokens = className.split(/\s+/).filter(Boolean);
+                        expect(new Set(tokens).size).toBe(tokens.length);
                     }
 
                     expect(a).toBe(b);

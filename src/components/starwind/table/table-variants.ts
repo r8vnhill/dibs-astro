@@ -1,34 +1,65 @@
-import { tv } from "tailwind-variants";
-
 /**
  * @file table-variants.ts
  *
- * Centralized Tailwind-Variants (`tv`) helpers used by the small table Astro/React components in
- * `src/components/starwind/table/`.
+ * Centralized Tailwind-Variants (`tv`) helpers used by the table components in:
+ * `src/components/starwind/table/`
  *
- * Rationale:
- * - Keep markup-focused `.astro` files small by moving class/variant logic here.
- * - Provide well-documented defaults and variant names so callers don't guess the available options.
- * - Use CSS custom properties for row/spacer sizing so the same variant API can switch density without touching many
- *   classes.
+ * This module defines **all structural and visual table styling logic** in one place. Components
+ * remain markup-focused while this file owns:
+ *
+ * - Variant names and allowed values
+ * - Sensible defaults
+ * - Density control via CSS custom properties
+ * - Structural behavior (sticky headers, zebra striping, row intent, etc.)
+ *
+ * ## Design Principles
+ *
+ * 1. **Declarative variant API**: Callers never pass raw class names --- only typed variant keys.
+ * 2. **Strong typing**: All variant keys are exported as TypeScript unions derived from config.
+ * 3. **Density via CSS variables**: Cell spacing is controlled at the row level using CSS variables
+ *    (`--table-cell-px`, `--table-cell-py`), so spacing can change without duplicating padding
+ *    utilities across every cell.
+ * 4. **Separation of concerns**:
+ *    - Cell helpers style `<td>` and `<th>`
+ *    - Section helpers style `<thead>`, `<tbody>`, `<tfoot>`
+ *    - Row helper manages interactivity + density
+ *
+ * This structure keeps the system extensible and testable.
  */
 
-// Base classes shared by both header (`th`) and data (`td`) cells. These cover
-// vertical alignment, base text sizing, and a few checkbox-specific layout
-// adjustments (the `:has` selector targets rows containing selection checkboxes).
+import { tv, type VariantProps } from "tailwind-variants";
+
+// ## Shared Cell Foundations ##
+
+/**
+ * Base classes shared by both header (`<th>`) and data (`<td>`) cells.
+ *
+ * Responsibilities:
+ * - Vertical alignment
+ * - Checkbox column layout corrections
+ * - Minor visual alignment for checkbox inputs
+ */
 const baseCellClasses = [
-    "align-middle text-sm",
-    // Remove right padding when the cell contains a checkbox role (selection column)
+    "align-middle",
+
+    /**
+     * If a cell contains a checkbox role (typically a selection column), remove right padding to
+     * visually align the checkbox column.
+     */
     "[&:has([role=checkbox])]:pr-0",
-    // Slight visual nudge to vertically center native checkbox inputs
+
+    /**
+     * Slight vertical adjustment to center native checkbox inputs within the cell line box.
+     */
     "[&>[role=checkbox]]:translate-y-[2px]",
 ];
 
 /**
- * Variant maps used by both header and data cells.
- * - align: text alignment utilities
- * - wrap: control whether cell content wraps or stays on one line
- * - size: font-size variants used to tune compact/comfortable layouts
+ * Core cell variants reused by both `<td>` and `<th>`.
+ *
+ * - align -> horizontal alignment
+ * - wrap  -> wrapping behavior
+ * - size  -> text size scale
  */
 const baseCellVariants = {
     align: {
@@ -47,38 +78,104 @@ const baseCellVariants = {
     },
 } as const;
 
+/**
+ * Horizontal alignment options for cells.
+ */
 export type TableAlign = keyof typeof baseCellVariants.align;
-export type TableWrap = keyof typeof baseCellVariants.wrap;
-export type TableSize = keyof typeof baseCellVariants.size;
-export type TableTone = "default" | "muted" | "accent";
-export type TableZebra = "none" | "even" | "odd";
-export type TableDensity = "compact" | "comfortable" | "spacious";
 
-// Sensible defaults used by `tableDataCell` and `tableHeaderCell` so callers only
-// need to pass variant keys when deviating from the baseline.
+/**
+ * Wrapping behavior for cell content.
+ */
+export type TableWrap = keyof typeof baseCellVariants.wrap;
+
+/**
+ * Font size scale used in cells.
+ */
+export type TableSize = keyof typeof baseCellVariants.size;
+
+// ## Semantic Variants ##
+
+/**
+ * Visual tone variants for data cells.
+ *
+ * - default -> no additional emphasis
+ * - muted   -> reduced emphasis (secondary data)
+ * - accent  -> highlighted cell (important values)
+ */
+const toneVariants = {
+    default: "",
+    muted: "text-muted-foreground",
+    accent: "bg-accent/20 text-foreground",
+} as const;
+
+/**
+ * Zebra striping options for table bodies.
+ */
+const zebraVariants = {
+    none: "",
+    even: "[&_tr:nth-child(even)]:bg-muted/50",
+    odd: "[&_tr:nth-child(odd)]:bg-muted/50",
+} as const;
+
+/**
+ * Utility for defining density spacing via CSS variables.
+ *
+ * This avoids repeating padding utilities across cells and centralizes spacing logic.
+ */
+const densityVars = (px: string, py: string): string =>
+    `[--table-cell-px:${px}] [--table-cell-py:${py}]`;
+
+/**
+ * Density variants that adjust cell padding.
+ */
+const densityVariants = {
+    compact: densityVars("0.5rem", "0.25rem"),
+    comfortable: densityVars("0.75rem", "0.5rem"),
+    spacious: densityVars("1rem", "0.75rem"),
+} as const;
+
+/**
+ * Data cell tone options.
+ */
+export type TableTone = keyof typeof toneVariants;
+
+/**
+ * Zebra striping modes.
+ */
+export type TableZebra = keyof typeof zebraVariants;
+
+/**
+ * Row density options.
+ */
+export type TableDensity = keyof typeof densityVariants;
+
+// ## Defaults ##
+
+/**
+ * Default cell configuration applied unless overridden.
+ */
 const baseCellDefaults = {
     align: "left",
     wrap: "nowrap",
     size: "md",
 } as const;
 
+// ## Cell Variants ##
+
 /**
  * Variants for data cells (`<td>`).
  *
- * Adds a `tone` variant that provides semantic emphasis (muted / accent) while
- * preserving the base alignment/wrapping/size options.
+ * Guarantees:
+ * - Alignment defaults to `left`
+ * - Content defaults to `nowrap`
+ * - Text defaults to `md`
+ * - Tone defaults to `default`
  */
 export const tableDataCell = tv({
     base: baseCellClasses,
     variants: {
         ...baseCellVariants,
-        tone: {
-            default: "",
-            // muted reduces emphasis (useful for helper columns)
-            muted: "text-muted-foreground",
-            // accent gives a subtle background + strong foreground for highlighted cells
-            accent: "bg-accent/20 text-foreground",
-        },
+        tone: toneVariants,
     },
     defaultVariants: {
         ...baseCellDefaults,
@@ -89,11 +186,12 @@ export const tableDataCell = tv({
 /**
  * Variants for header cells (`<th>`).
  *
- * The header cell reuses the same align/wrap/size variants but sets a
- * bolder default (small size + font-semibold) appropriate for table headers.
+ * Differences from data cells:
+ * - Defaults to smaller text size
+ * - Applies `font-semibold`
  */
 export const tableHeaderCell = tv({
-    base: [...baseCellClasses, "font-semibold text-muted-foreground"],
+    base: [...baseCellClasses, "font-semibold"],
     variants: baseCellVariants,
     defaultVariants: {
         ...baseCellDefaults,
@@ -101,22 +199,24 @@ export const tableHeaderCell = tv({
     },
 });
 
+// ## Section Variants ##
+
 /**
- * Structural variants for the table header section (`<thead>` / header rows).
+ * Variants for `<thead>` or header sections.
  *
- * - `sticky` makes header cells sticky to the top (useful for long tables)
- * - `elevated` toggles a small shadow for visual separation
+ * Options:
+ * - sticky   -> header cells become position: sticky
+ * - elevated -> applies subtle shadow for visual separation
  */
 export const tableHeaderSection = tv({
     base: [
         "[_&tr]:border-b",
-        // Ensure header cells default to left-aligned bold text
-        "[_&th]:text-left [&_th]:font-semibold",
+        "[_&th]:text-left [_&th]:font-semibold",
         "bg-muted text-muted-foreground",
     ],
     variants: {
         sticky: {
-            true: "[_&th]:sticky [&_th]:top-0 [&_th]:z-10 [&_th]:bg-background [&_th]:shadow-sm",
+            true: "[_&th]:sticky [_&th]:top-0 [_&th]:z-10 [_&th]:bg-background",
             false: "",
         },
         elevated: {
@@ -131,19 +231,14 @@ export const tableHeaderSection = tv({
 });
 
 /**
- * Variants for the table body section (`<tbody>`).
+ * Variants for `<tbody>`.
  *
- * `zebra` enables striping by row (even/odd). Leave `none` as the default to
- * avoid introducing background noise unless explicitly requested.
+ * Enables optional zebra striping.
  */
 export const tableBodySection = tv({
     base: "[&_tr:last-child]:border-0",
     variants: {
-        zebra: {
-            none: "",
-            even: "[&_tr:nth-child(even)]:bg-muted/50",
-            odd: "[&_tr:nth-child(odd)]:bg-muted/50",
-        },
+        zebra: zebraVariants,
     },
     defaultVariants: {
         zebra: "none",
@@ -151,10 +246,9 @@ export const tableBodySection = tv({
 });
 
 /**
- * Variants for the table foot (`<tfoot>`).
+ * Variants for `<tfoot>`.
  *
- * Footers typically use a muted background and medium font weight to separate
- * totals/summary rows from the body. `muted` toggles the text color.
+ * Designed for totals or summary rows.
  */
 export const tableFootSection = tv({
     base: "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
@@ -169,19 +263,21 @@ export const tableFootSection = tv({
     },
 });
 
+// ## Row-Level Variants ##
+
 /**
- * Row-level styles and variants.
+ * Variants for table rows (`<tr>`).
  *
- * Important: spacing for cells is controlled via CSS variables on the table row
- * (e.g. `--table-cell-px` / `--table-cell-py`). This makes implementing
- * different density options (compact/comfortable/spacious) inexpensive and
- * keeps the `td/th` declarations uniform.
+ * Responsibilities:
+ * - Border + transition styling
+ * - Selection state styling
+ * - Hover behavior
+ * - Density via CSS custom properties
  */
 export const tableRowStyles = tv({
     base: [
         "border-b transition-colors",
         "data-[state=selected]:bg-muted",
-        // Spacing controlled via CSS vars set on the table container, with fallbacks.
         "[&_td]:px-[var(--table-cell-px,0.75rem)] [&_td]:py-[var(--table-cell-py,0.5rem)]",
         "[&_th]:px-[var(--table-cell-px,0.75rem)] [&_th]:py-[var(--table-cell-py,0.5rem)]",
     ],
@@ -195,12 +291,7 @@ export const tableRowStyles = tv({
             true: "hover:bg-muted/50",
             false: "",
         },
-        density: {
-            // Each density option simply sets the CSS vars used by the base spacing rules
-            compact: "[--table-cell-px:0.5rem] [--table-cell-py:0.25rem]",
-            comfortable: "[--table-cell-px:0.75rem] [--table-cell-py:0.5rem]",
-            spacious: "[--table-cell-px:1rem] [--table-cell-py:0.75rem]",
-        },
+        density: densityVariants,
     },
     compoundVariants: [
         {
@@ -214,3 +305,35 @@ export const tableRowStyles = tv({
         hoverable: true,
     },
 });
+
+// ## Public Variant Prop Types ##
+
+/**
+ * Variant props for data cells.
+ */
+export type TableDataCellProps = VariantProps<typeof tableDataCell>;
+
+/**
+ * Variant props for header cells.
+ */
+export type TableHeaderCellProps = VariantProps<typeof tableHeaderCell>;
+
+/**
+ * Variant props for header sections (`<thead>`).
+ */
+export type TableHeaderSectionProps = VariantProps<typeof tableHeaderSection>;
+
+/**
+ * Variant props for body sections (`<tbody>`).
+ */
+export type TableBodySectionProps = VariantProps<typeof tableBodySection>;
+
+/**
+ * Variant props for foot sections (`<tfoot>`).
+ */
+export type TableFootSectionProps = VariantProps<typeof tableFootSection>;
+
+/**
+ * Variant props for table rows (`<tr>`).
+ */
+export type TableRowStylesProps = VariantProps<typeof tableRowStyles>;
