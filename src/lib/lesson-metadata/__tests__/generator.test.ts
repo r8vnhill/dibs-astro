@@ -3,63 +3,105 @@
  *
  * Unit and property-based tests for the lesson-metadata generator helpers.
  *
- * These tests focus on three pure(ish) building blocks exported by `{ts} generator.js`:
+ * This suite validates the behavior of the core building blocks exported by `generator.js`:
  *
- * - {@link readGeneratorConfig}: loads and validates the generator configuration.
- * - {@link readAuthorsByPath}: loads the authors mapping keyed by lesson route.
- * - {@link buildOutput}: produces the final JSON payload with deterministic key ordering.
+ * - {@link readGeneratorConfig}
+ * - {@link readAuthorsByPath}
+ * - {@link buildOutput}
+ * - {@link getChanges}
  *
- * ## The suite combines:
+ * These helpers are intentionally written in a functional style (dependency injection for I/O and
+ * time), which makes them straightforward to test in isolation without touching the real
+ * filesystem or Git.
  *
- * - **DDT** (data-driven testing) via `{ts} test.each(...)` for known edge cases.
- * - **PBT** (property-based testing) via `{ts} fast-check` for invariants that should hold across
- *   a wide range of automatically generated inputs.
+ * ## Testing Strategy
  *
- * ## Why PBT here?
+ * The suite combines:
  *
- * - `buildOutput` must be deterministic: order-independent and key-stable.
- * - Mapping invariants (key equals `entry.path`) are easy to express as properties.
- * - PBT catches “weird” cases that hand-picked examples often miss.
+ * - **Unit tests** for well-defined success and failure scenarios.
+ * - **DDT (Data-Driven Testing)** using `{ts} test.each(...)` for structured edge cases and
+ *   failure-mode matrices.
+ * - **PBT (Property-Based Testing)** using `fast-check` to assert invariants over a large input
+ *   space.
  *
- * ## Notes on determinism
+ * ## Why Property-Based Testing here?
  *
- * Some properties deliberately permute insertion order to ensure the output ordering is derived
- * from sorting keys (not from object insertion order).
+ * `buildOutput` must satisfy structural invariants that are easier to express as properties than
+ * as example-based tests:
  *
- * If you want fully reproducible PBT failures in CI, consider passing a fixed seed:
+ * - Deterministic key ordering (independent of insertion order).
+ * - Output keys must match each embedded `entry.path`.
+ * - Entries should not be accidentally cloned or mutated.
+ *
+ * PBT is especially valuable for catching:
+ *
+ * - Subtle ordering regressions.
+ * - Edge cases involving empty arrays or odd strings.
+ * - Invariants violated by refactors.
+ *
+ * ## Determinism and CI
+ *
+ * For fully reproducible CI failures, you can fix the seed:
  *
  * ```ts
  * fc.assert(property, { seed: 42, numRuns: 200 });
  * ```
+ *
+ * This suite currently relies on fast-check defaults but is structured to support seeded execution
+ * easily.
  */
+
 import fc from "fast-check";
-import { buildOutput, readAuthorsByPath, readGeneratorConfig } from "../generator.js";
+import {
+    buildOutput,
+    getChanges,
+    readAuthorsByPath,
+    readGeneratorConfig,
+} from "../generator.js";
 
 /**
  * Captures warnings emitted by helpers that accept `{ts} warnFn`.
  *
- * This keeps tests small and makes assertions about warning content and count consistent.
+ * ## Many helpers are designed to:
+ *
+ * - Fail gracefully,
+ * - Return safe fallbacks,
+ * - Emit warnings instead of throwing.
+ *
+ * ## This utility keeps tests clean and allows:
+ *
+ * - Assertions on warning count,
+ * - Assertions on warning message content,
+ * - Quiet-mode verification.
+ *
+ * @returns Object containing:
+ *   - `warnings`: collected messages,
+ *   - `warnFn`: function to inject into helpers,
+ *   - `text()`: convenience concatenation.
  */
-const captureWarnings = (): {
+function captureWarnings(): {
     warnings: string[];
     warnFn: (message: string) => void;
     text: () => string;
-} => {
+} {
     const warnings: string[] = [];
+
     return {
         warnings,
         warnFn: (message: string) => warnings.push(message),
         text: () => warnings.join("\n"),
     };
-};
+}
 
 describe.concurrent("readGeneratorConfig", () => {
     /**
-     * The config reader should:
+     * Happy-path contract:
      *
-     * - Accept a `{ts} fallbackAuthorName` string.
-     * - Trim it.
-     * - Return `{ fallbackAuthorName }`.
+     * - Accepts a `{ts} fallbackAuthorName`.
+     * - Trims surrounding whitespace.
+     * - Returns a normalized config object.
+     *
+     * Dependency injection (`loadJson`) avoids real filesystem access.
      */
     test("returns trimmed fallbackAuthorName for valid config", async () => {
         const config = await readGeneratorConfig({
@@ -71,39 +113,58 @@ describe.concurrent("readGeneratorConfig", () => {
     });
 
     /**
-     * Failure mode contract:
+     * Failure-mode contract:
      *
-     * - Throws a stable “outer” error message describing what failed.
-     * - Includes the cause detail (e.g. ENOENT, JSON parse failure, validation failure).
+     * - Throws a stable outer message.
+     * - Preserves underlying cause information.
      *
-     * This is intentionally tested as two separate expectations:
-     *
-     * - One for the stable prefix (so message changes remain controlled).
-     * - One for the cause text (so callers have actionable diagnostics).
+     * This ensures callers:
+     * - Can pattern-match the outer failure,
+     * - Still see actionable diagnostics.
      */
     test.each([
-        [async () => {
-            throw new Error("ENOENT");
-        }, "ENOENT"],
-        [async () => {
-            throw new SyntaxError("Unexpected token");
-        }, "Unexpected token"],
-        [async () => ({ fallbackAuthorName: "" }), "fallbackAuthorName is missing or empty"],
-        [async () => ({ fallbackAuthorName: " " }), "fallbackAuthorName is missing or empty"],
-    ])("fails with stable outer message and includes cause", async (loadJson, causeText) => {
-        await expect(
-            readGeneratorConfig({ configPath: "ignored.json", loadJson }),
-        ).rejects.toThrow(/^Could not load src\/data\/lesson-metadata\.config\.json/);
+        [
+            async () => {
+                throw new Error("ENOENT");
+            },
+            "ENOENT",
+        ],
+        [
+            async () => {
+                throw new SyntaxError("Unexpected token");
+            },
+            "Unexpected token",
+        ],
+        [
+            async () => ({ fallbackAuthorName: "" }),
+            "fallbackAuthorName is missing or empty",
+        ],
+        [
+            async () => ({ fallbackAuthorName: " " }),
+            "fallbackAuthorName is missing or empty",
+        ],
+    ])(
+        "fails with stable outer message and includes cause",
+        async (loadJson, causeText) => {
+            await expect(
+                readGeneratorConfig({ configPath: "ignored.json", loadJson }),
+            ).rejects.toThrow(
+                /^Could not load src\/data\/lesson-metadata\.config\.json/,
+            );
 
-        await expect(
-            readGeneratorConfig({ configPath: "ignored.json", loadJson }),
-        ).rejects.toThrow(causeText);
-    });
+            await expect(
+                readGeneratorConfig({ configPath: "ignored.json", loadJson }),
+            ).rejects.toThrow(causeText);
+        },
+    );
 });
 
 describe.concurrent("readAuthorsByPath", () => {
     /**
-     * Happy path: an object mapping route → authors is returned unchanged.
+     * Happy path:
+     *
+     * - JSON root is an object.
+     * - Mapping is returned unchanged.
      */
     test("returns parsed object when valid", async () => {
         const authors = await readAuthorsByPath({
@@ -115,10 +176,11 @@ describe.concurrent("readAuthorsByPath", () => {
     });
 
     /**
-     * Invalid shape: if the JSON root is not an object (e.g. array), the function:
+     * Invalid root shape:
      *
-     * - warns (unless quiet),
-     * - returns an empty mapping.
+     * - Non-object roots (e.g. arrays) are treated as invalid.
+     * - Returns empty mapping.
+     * - Emits warning unless quiet.
      */
     test("returns empty object and warns when parsed value is invalid shape", async () => {
         const cap = captureWarnings();
@@ -134,11 +196,11 @@ describe.concurrent("readAuthorsByPath", () => {
     });
 
     /**
-     * Load failure: if reading/parsing throws, the function:
+     * Load failure:
      *
-     * - warns (unless quiet),
-     * - returns an empty mapping,
-     * - includes the error message as a “Cause:” suffix for debugging.
+     * - JSON read/parse throws.
+     * - Returns empty mapping.
+     * - Emits warning with “Cause:” suffix.
      */
     test("returns empty object and warns when JSON load fails", async () => {
         const cap = captureWarnings();
@@ -156,7 +218,10 @@ describe.concurrent("readAuthorsByPath", () => {
     });
 
     /**
-     * Quiet mode: suppresses warnings but still returns the safe fallback mapping.
+     * Quiet mode:
+     *
+     * - Suppresses warnings.
+     * - Still returns safe fallback.
      */
     test("quiet mode suppresses warnings", async () => {
         const cap = captureWarnings();
@@ -175,7 +240,7 @@ describe.concurrent("readAuthorsByPath", () => {
     });
 
     /**
-     * Null root: treated as invalid shape and handled like other non-object results.
+     * Null root behaves like other invalid shapes.
      */
     test("returns empty object and warns when parsed value is null", async () => {
         const cap = captureWarnings();
@@ -195,10 +260,10 @@ describe.concurrent("buildOutput", () => {
     /**
      * Output contract:
      *
-     * - `generatedAt` comes from the injected `{ts} now()` (easy to test).
-     * - `totalLessons` equals the number of entries.
+     * - `generatedAt` is injected via `{ts} now()`.
+     * - `totalLessons` matches entry count.
      * - `changesLimit` is propagated.
-     * - `entries` are key-sorted deterministically (lexicographically).
+     * - Keys are lexicographically sorted.
      */
     test("builds expected structure and counts lessons", () => {
         const output = buildOutput({
@@ -220,9 +285,9 @@ describe.concurrent("buildOutput", () => {
     });
 
     /**
-     * Property: The output map keys match each embedded `entry.path`.
+     * Property:
      *
-     * This prevents subtle mismatches where the map key differs from the entry content.
+     * Output keys must equal each embedded `entry.path`.
      */
     test("property: output keys match each entry.path", () => {
         const routeArb = fc
@@ -255,10 +320,9 @@ describe.concurrent("buildOutput", () => {
     });
 
     /**
-     * Property: Key order is deterministic regardless of insertion order.
+     * Property:
      *
-     * To avoid depending on `{ts} Math.random()` inside a property, this test uses a generated
-     * numeric `seed` array to produce a deterministic permutation.
+     * Key ordering is deterministic regardless of insertion order.
      */
     test("property: key order is deterministic regardless of insertion order", () => {
         const routeArb = fc
@@ -301,13 +365,12 @@ describe.concurrent("buildOutput", () => {
     });
 
     /**
-     * Property: `buildOutput` preserves entry object references.
+     * Property:
      *
-     * This asserts a non-copying implementation: entries in the output should be the same object
-     * instances as those in the input mapping.
+     * `buildOutput` preserves entry object references.
      *
-     * If you later decide to deep-clone entries (for immutability), change this test to assert
-     * deep equality instead of reference equality.
+     * This guards against accidental deep cloning.
+     * If immutability is later introduced, update this test accordingly.
      */
     test("property: buildOutput preserves entry object references", () => {
         const routeArb = fc
@@ -337,5 +400,35 @@ describe.concurrent("buildOutput", () => {
                 }
             }),
         );
+    });
+});
+
+describe.concurrent("getChanges", () => {
+    /**
+     * Git failure contract:
+     *
+     * - If `git` is unavailable or fails,
+     * - The function returns an empty list,
+     * - Emits a warning including the underlying cause.
+     *
+     * This ensures:
+     * - CI environments without Git do not break the generator.
+     * - Failures are observable but non-fatal.
+     */
+    test("returns empty list and warns when git is not available", async () => {
+        const cap = captureWarnings();
+
+        const changes = await getChanges({
+            sourceFile: "src/pages/notes/index.astro",
+            cwd: "ignored",
+            warnFn: cap.warnFn,
+            execFileFn: (async () => {
+                throw new Error("spawn git ENOENT");
+            }) as any,
+        });
+
+        expect(changes).toEqual([]);
+        expect(cap.text()).toContain("Could not read git log");
+        expect(cap.text()).toContain("spawn git ENOENT");
     });
 });

@@ -5,6 +5,6 @@ export default getViteConfig({
         environment: "node",
         globals: true,
         css: false,
-        include: ["src/components/meta/__tests__/Head.render.test.ts"],
+        include: ["src/components/**/__tests__/*.render.test.ts"],
     },
 });
