@@ -27,6 +27,7 @@
  */
 
 import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "~/data/site";
+import type { PartialRecord } from "~/types/records";
 import {
     buildCommitUrl,
     normalizePlatforms,
@@ -34,10 +35,9 @@ import {
     type RepoPlatform,
     type RepoRef,
 } from "~/utils/git";
-import type { PartialRecord } from "~/types/records";
 import { formatLessonDate, type LessonMetadataEntry } from "~/utils/lesson-metadata";
-import { Link } from "../ui/links";
 import { Mono } from "../ui/font";
+import { Link } from "../ui/links";
 
 interface Props {
     /**
@@ -125,7 +125,10 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
         "mt-3",
     ]}
 >
-    <h2 id={sectionHeadingId} class="font-semibold" data-testid="panel-title">
+    <h2
+        id={sectionHeadingId} class="font-semibold"
+        data-testid="panel-title"
+    >
         Metadatos de la lección
     </h2>
 
