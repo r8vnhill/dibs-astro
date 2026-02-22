@@ -1,7 +1,7 @@
 {
     "name": "dibs-astro",
     "type": "module",
-    "version": "0.9.1",
+    "version": "0.10.0",
     "scripts": {
         "generate-icons": "node generate-icons-index.js",
         "generate:lesson-metadata": "node scripts/generate-lesson-metadata.mjs",
