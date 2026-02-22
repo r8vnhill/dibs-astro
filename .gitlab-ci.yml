@@ -10,6 +10,8 @@ variables:
     GIT_DEPTH: "0"
     GIT_STRATEGY: clone
     GIT_CLEAN_FLAGS: -ffdx
+    NODE_OPTIONS: --max-old-space-size=3072
+    ASTRO_TELEMETRY_DISABLED: "1"
 
 cache:
     key:
@@ -52,6 +54,9 @@ test:astro-render:
 build:
     stage: build
     image: node:${NODE_VERSION}-alpine
+    variables:
+        # Reduce presión de memoria en compilación Vite/Astro dentro del runner.
+        UV_THREADPOOL_SIZE: "2"
     needs:
         - job: test:astro-check
         - job: test:unit
