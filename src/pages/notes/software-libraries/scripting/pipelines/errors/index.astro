@@ -17,6 +17,7 @@ import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { AuthorList, Book, References } from "~/components/ui/references";
 import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -265,7 +266,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Explanation>
 
         <More headingLevel="h3">
-            <span slot="title">Valores posibles para <PowerShellInline>-ErrorAction</PowerShellInline></span>
+            <span slot="title">Valores posibles para <PowerShellInline
+                >-ErrorAction</PowerShellInline></span>
 
             <Table>
                 <TableHeader>
@@ -817,6 +819,32 @@ import NotesSection from "~/layouts/NotesSection.astro";
             otros contextos.
         </Fragment>
     </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <Book
+                chapter="Controlling Error Reporting Behavior and Intercepting Errors"
+                bookTitle="The Big Book of PowerShell Error Handling"
+                pages={[7, 15]}
+            >
+                <AuthorList slot="authors" authors={[{ firstName: "Dave", lastName: "Wyatt" }]} />
+
+                <Fragment slot="description">
+                    Este capítulo repasa las herramientas principales de PowerShell para controlar y
+                    registrar errores: variables automáticas como <PowerShellInline
+                    >$Error</PowerShellInline>, parámetros comunes como <PowerShellInline
+                    >-ErrorAction</PowerShellInline> y <PowerShellInline
+                    >-ErrorVariable</PowerShellInline>, y estructuras para manejar errores
+                    terminantes (<PowerShellInline>try</PowerShellInline>/<PowerShellInline
+                    >catch</PowerShellInline>/<PowerShellInline>finally</PowerShellInline>,
+                    <PowerShellInline>trap</PowerShellInline>). También explica cómo interpretar
+                    códigos de salida y el estado del último comando (<PowerShellInline
+                    >$LASTEXITCODE</PowerShellInline>, <PowerShellInline>$?</PowerShellInline>), con
+                    consejos sobre cuándo usar cada mecanismo y qué limitaciones considerar.
+                </Fragment>
+            </Book>
+        </Fragment>
+    </References>
 
     <Footnotes>
         <Footnote index={1}>
