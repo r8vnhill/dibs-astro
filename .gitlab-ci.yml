@@ -52,6 +52,11 @@ test:astro-render:
 build:
     stage: build
     image: node:${NODE_VERSION}-alpine
+    variables:
+        # Mitiga "Reached heap limit" durante Astro/Vite build en CI.
+        NODE_OPTIONS: --max-old-space-size=3072
+        UV_THREADPOOL_SIZE: "2"
+        ASTRO_TELEMETRY_DISABLED: "1"
     needs:
         - job: test:astro-check
         - job: test:unit
@@ -71,6 +76,9 @@ build:
 deploy:
     stage: deploy
     image: node:${NODE_VERSION}-alpine
+    variables:
+        NODE_OPTIONS: --max-old-space-size=3072
+        ASTRO_TELEMETRY_DISABLED: "1"
     needs:
         - job: test:astro-check
         - job: test:unit
