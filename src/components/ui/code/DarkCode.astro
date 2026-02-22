@@ -105,6 +105,12 @@ const html = await highlightToHtml({
     pre.has-highlighted .line.highlighted.warning .token {
         color: var(--warning-foreground);
     }
+    pre .line.line-colored,
+    pre .line.line-colored code,
+    pre .line.line-colored span,
+    pre .line.line-colored .token {
+        color: var(--code-line-text-color) !important;
+    }
 
     /* === Diff styling (transformerNotationDiff) === */
     :root {

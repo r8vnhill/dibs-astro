@@ -7,7 +7,7 @@ export default getViteConfig({
         environment: "node",
         globals: true,
         css: false,
-        include: ["src/components/**/__tests__/*.render.test.ts"],
+        include: ["src/**/*.render.test.ts"],
         exclude: ["node_modules/**"],
     },
 });

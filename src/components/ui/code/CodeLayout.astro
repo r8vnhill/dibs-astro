@@ -12,7 +12,9 @@ import {
     transformerNotationHighlight,
 } from "@shikijs/transformers";
 import type { ShikiTransformer } from "shiki";
+import { transformerColorHighlight } from "shiki-transformer-color-highlight";
 import type { availableLanguages } from "~/lib/shiki/highlighter";
+import { transformerNotationLineTextColor } from "~/lib/shiki/transformers";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import CopyButton from "./CopyButton";
 import DarkCode from "./DarkCode.astro";
@@ -103,9 +105,11 @@ const normalizedCode = normalizeIndentation(code);
 
 const commonTransformers = [
     transformerColorizedBrackets(),
+    transformerColorHighlight() as unknown as ShikiTransformer,
     transformerNotationFocus(),
     transformerNotationHighlight(),
     transformerNotationErrorLevel(),
+    transformerNotationLineTextColor(),
     transformerNotationDiff(),
 ];
 ---

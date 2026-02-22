@@ -5,6 +5,26 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] - 2026-02-22
+
+### Added
+
+- Added Shiki line-color support via custom transformers, including integration with `shiki-transformer-color-highlight`.
+- Added a render regression test for `InlineCode.astro` to protect inline wrapping behavior.
+- Added a dedicated Astro render test flow (`test:astro`, `test:watch:astro`) and documented naming conventions for test environments in `AGENTS.md`.
+- Added a recommended bibliography entry to the scripting pipeline error lesson, including references to `$LASTEXITCODE` and related error-handling semantics.
+
+### Changed
+
+- Expanded and restructured the lesson at `notes/software-libraries/scripting/pipelines/errors/` with clearer explanations, updated hints, and a richer exercise around `-ErrorVariable` and batch-level failure handling.
+- Updated code UI components (`OutputBlock`, `InlineCode`, `CodeLayout`, `LightCode`, `DarkCode`) and Shiki highlighter wiring to improve text wrapping and output rendering consistency.
+- Updated Vitest configuration split so Astro render tests use their own config pattern (`*.render.test.ts`) separate from jsdom/unit tests.
+
+### Fixed
+
+- Fixed CI/CD ergonomics by allowing icon generation to be skipped in CI or via `SKIP_ICON_GENERATION=true`.
+- Fixed layout/readability issues in long inline code fragments that previously overflowed content bounds.
+
 ## [0.9.1] - 2026-02-17
 
 ### Added

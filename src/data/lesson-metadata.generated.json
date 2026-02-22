@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-17T22:29:06.469Z",
+  "generatedAt": "2026-02-22T14:36:58.814Z",
   "totalLessons": 38,
   "changesLimit": 5,
   "entries": {
@@ -737,8 +737,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-02-22",
       "changes": [
+        {
+          "hash": "4ad7e555360d517a2156d41fb6a1b6c8e8ec8584",
+          "date": "2026-02-22",
+          "author": "r8vnhill",
+          "subject": "📝 docs(notes): add bibliography source for pipeline error handling"
+        },
+        {
+          "hash": "887ec92325bb2a8ad4a7332b4aa9684b8c2690a9",
+          "date": "2026-02-22",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): improve pipeline error lesson and code rendering"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",

@@ -76,13 +76,37 @@ pnpm deploy   # Pipeline completo: icons → type-check → build → deploy
 ### Testing
 
 ```powershell
-pnpm test           # Ejecuta suite de Vitest
-pnpm test:watch     # Modo watch para TDD
-pnpm test:ui        # Abre UI de Vitest
+pnpm test              # Ejecuta ambas suites: unit/jsdom + render Astro
+pnpm test:unit         # Suite general en jsdom (React, utilidades con DOM)
+pnpm test:astro        # Suite de render de componentes .astro (entorno Node/Astro container)
+pnpm test:watch        # Watch para suite general (jsdom)
+pnpm test:watch:astro  # Watch para suite Astro
+pnpm test:ui           # Abre UI de Vitest
 ```
 
-- Tests de componentes React usan `@testing-library/react` + `jsdom`
-- Ver ejemplos en `src/components/navigation/__tests__/LessonTree.test.tsx`
+- **Ambiente unitario (`vitest.config.ts`)**:
+  - `environment: "jsdom"`
+  - Incluye tests `*.test.ts` / `*.spec.ts` (excluye `*.render.test.ts`)
+  - Uso típico: React Testing Library, utilidades con `document/window`
+- **Ambiente Astro (`vitest.astro.config.ts`)**:
+  - `environment: "node"`
+  - Incluye `src/**/*.render.test.ts`
+  - Uso típico: render de componentes `.astro` con `experimental_AstroContainer`
+- Ver ejemplos:
+  - React/jsdom: `src/components/navigation/__tests__/LessonTree.test.tsx`
+  - Astro render: `src/components/meta/__tests__/Head.render.test.ts`
+
+#### Convención de nombres de tests
+
+- Usa `*.render.test.ts` para tests de render de componentes `.astro` (suite `test:astro`).
+- Usa `*.test.ts` o `*.test.tsx` para tests unitarios/integración en `jsdom` (suite `test:unit`).
+- Usa `*.spec.ts` solo cuando exista una razón explícita de estilo/equipo; por defecto, prefiere `*.test.ts`.
+- Mantén los tests dentro de `__tests__` junto al módulo o componente probado.
+- Ejemplos recomendados:
+  - `src/components/meta/__tests__/Head.render.test.ts`
+  - `src/components/ui/code/__tests__/InlineCode.render.test.ts`
+  - `src/components/navigation/__tests__/LessonTree.test.tsx`
+  - `src/utils/__tests__/page-meta.test.ts`
 
 ### Formateo
 
@@ -144,6 +168,319 @@ Siempre incluir slots descriptivos:
         slot="source"
     />
 </PowerShellBlock>
+```
+
+## Componentes comunes de Astro
+
+### Componentes de layout
+
+#### `<NotesLayout>`
+
+Layout principal para páginas de lecciones. Proporciona estructura, navegación y metadata SEO.
+
+```astro
+<NotesLayout
+    title="Título de la lección"
+    description="Descripción breve para SEO y abstract"
+    timeMultiplier={1.0}  <!-- opcional: ajusta estimación de tiempo de lectura -->
+    git={{ user: "...", repo: "..." }}  <!-- opcional: para source links -->
+>
+    <!-- contenido -->
+</NotesLayout>
+```
+
+#### `<NotesSection>`
+
+Contenedor para secciones principales con ID ancla para navegación interna.
+
+```astro
+<NotesSection id="h2-unique-id">
+    <Heading headingLevel="h2" Icon={icons.IconName}>
+        Título de la sección
+    </Heading>
+    <!-- contenido de la sección -->
+</NotesSection>
+```
+
+#### `<ConclusionsLayout>`
+
+Estructura las conclusiones al final de una lección con tres slots:
+
+```astro
+<ConclusionsLayout>
+    <Fragment slot="conclusions">
+        <P>Resumen general de la lección...</P>
+    </Fragment>
+
+    <Fragment slot="key-points">
+        <ListItem icon={icons.Icon}>Punto clave 1</ListItem>
+        <ListItem icon={icons.Icon}>Punto clave 2</ListItem>
+    </Fragment>
+
+    <Fragment slot="takeaways">
+        <P>Mensaje final o llamado a la acción...</P>
+    </Fragment>
+</ConclusionsLayout>
+```
+
+### Componentes de contenido
+
+#### Componentes semánticos de texto
+
+Ubicados en `src/components/semantics/`:
+
+- `<P>`: Párrafo estándar
+- `<B>`: Texto en negrita (énfasis fuerte)
+- `<I>`: Texto en cursiva (énfasis suave o términos técnicos)
+- `<Mono>`: Texto monoespaciado para código inline corto
+- `<Enquote>`: Citas textuales (maneja tipografía correcta de comillas)
+
+```astro
+<P>
+    Este es un párrafo con <B>énfasis fuerte</B>, <I>énfasis suave</I>,
+    y un comando <Mono>inline</Mono>. También puedes citar:
+    <Enquote>texto entre comillas</Enquote>.
+</P>
+```
+
+#### Listas
+
+```astro
+<List>
+    <ListItem icon={icons.CheckCircle}>
+        Elemento con ícono personalizado
+    </ListItem>
+    <ListItem icon={icons.Warning}>
+        Otro elemento
+    </ListItem>
+</List>
+```
+
+#### `<Heading>`
+
+Encabezados semánticos con soporte para íconos:
+
+```astro
+<Heading headingLevel="h2" Icon={icons.Lightbulb}>
+    Título con ícono
+</Heading>
+
+<Heading headingLevel="h3">
+    Subtítulo sin ícono
+</Heading>
+```
+
+### Componentes de código
+
+Ubicados en `src/components/ui/code/`:
+
+#### Bloques de código por lenguaje
+
+- `<PowerShellBlock>`: Código PowerShell
+- `<NushellBlock>`: Código Nushell
+- `<JsonBlock>`: JSON
+- `<OutputBlock>`: Salida de terminal (sin resaltado)
+- `<TypeScriptBlock>`, `<JavaScriptBlock>`, etc.
+
+```astro
+<PowerShellBlock code={`Get-Process | Where-Object CPU -gt 100`}>
+    <span slot="title">Filtrar procesos por uso de CPU</span>
+    <span slot="footer">Requiere permisos de administrador</span>
+    <DibsSourceLink repo="scripts" file="monitoring/Get-CpuUsage.ps1" slot="source" />
+</PowerShellBlock>
+```
+
+#### Código inline
+
+- `<PowerShellInline code="Get-Process" />`: Código inline resaltado
+- `<Mono>texto</Mono>`: Código inline sin resaltado (más ligero)
+
+### Callouts (componentes de atención)
+
+Ubicados en `src/components/ui/callouts/`:
+
+- `<Definition>`: Definiciones de términos
+- `<Important>`: Información crítica
+- `<Tip>`: Consejos prácticos
+- `<Warning>`: Advertencias
+- `<Note>`: Notas adicionales
+- `<More>`: Información complementaria expandible
+- `<Explanation>`: Explicaciones detalladas
+- `<Question>`: Preguntas para reflexión
+- `<Info>`: Información general
+
+Todos soportan `headingLevel` para subniveles:
+
+```astro
+<Important headingLevel="h3">
+    <span slot="title">Título del callout</span>
+    <P>Contenido del callout...</P>
+</Important>
+
+<Tip>
+    <Fragment slot="title">Sin headingLevel usa estilo por defecto</Fragment>
+    <P>Contenido...</P>
+</Tip>
+```
+
+### Componentes de ejercicios
+
+#### `<Exercise>`
+
+Estructura ejercicios con slots para requisitos, notas, pistas y solución:
+
+```astro
+<Exercise headingLevel="h2">
+    <Fragment slot="title">Título del ejercicio</Fragment>
+
+    <Fragment slot="requirements">
+        <List>
+            <ListItem icon={icons.Target}>Requisito 1</ListItem>
+            <ListItem icon={icons.Target}>Requisito 2</ListItem>
+        </List>
+    </Fragment>
+
+    <Fragment slot="notes">
+        <Definition headingLevel="h4">
+            <span slot="title">Concepto importante</span>
+            <P>Explicación...</P>
+        </Definition>
+    </Fragment>
+
+    <Fragment slot="hints">
+        <List>
+            <ListItem icon={icons.Lightbulb}>Pista 1</ListItem>
+            <ListItem icon={icons.Lightbulb}>Pista 2</ListItem>
+        </List>
+    </Fragment>
+
+    <Fragment slot="solution">
+        <PowerShellBlock code={`...`}>
+            <span slot="title">Solución de referencia</span>
+            <DibsSourceLink repo="..." file="..." slot="source" />
+        </PowerShellBlock>
+    </Fragment>
+
+    <Fragment slot="use">
+        <PowerShellBlock code={`...`}>
+            <span slot="title">Cómo ejecutar la solución</span>
+        </PowerShellBlock>
+    </Fragment>
+</Exercise>
+```
+
+### Componentes de tablas
+
+Ubicados en `src/components/starwind/table/`:
+
+#### Tabla básica con Starwind
+
+```astro
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableCell>Columna 1</TableCell>
+            <TableCell>Columna 2</TableCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        <TableRow>
+            <TableCell>Dato 1</TableCell>
+            <TableCell>Dato 2</TableCell>
+        </TableRow>
+    </TableBody>
+</Table>
+```
+
+#### Manejo de text wrap en celdas
+
+Por defecto, las celdas usan `nowrap` (sin salto de línea). Para columnas con **contenido largo** que debe ajustarse dentro del ancho disponible, usa `wrap="normal"`:
+
+```astro
+<Table>
+    <TableHeader>
+        <TableRow>
+            <TableCell>Parámetro</TableCell>
+            <TableCell wrap="normal">Descripción</TableCell>
+        </TableRow>
+    </TableHeader>
+    <TableBody>
+        <TableRow>
+            <TableCell>-ErrorAction</TableCell>
+            <TableCell wrap="normal">
+                Controla cómo se procesan los errores no terminantes. Los valores posibles son:
+                Continue (por defecto), Stop, SilentlyContinue, Inquire.
+            </TableCell>
+        </TableRow>
+    </TableBody>
+</Table>
+```
+
+**Nota**: No uses `layout="fixed"` junto con columnas muy asimétricas, ya que puede causar problemas de distribución. El comportamiento de wrap es más eficaz con `layout="auto"` (por defecto).
+
+### Componentes de enlaces
+
+#### `<Link>`
+
+Enlaces internos y externos con manejo automático de rutas:
+
+```astro
+<Link href="/notes/path/">Enlace interno</Link>
+<Link href="https://example.com">Enlace externo</Link>
+```
+
+#### `<DibsSourceLink>`
+
+Enlaces a repositorios del código fuente del curso:
+
+```astro
+<DibsSourceLink
+    repo="scripts"  <!-- o "tests", "libraries", etc. -->
+    file="path/to/file.ps1"
+/>
+```
+
+### Referencias bibliográficas
+
+Ubicados en `src/components/ui/references/`:
+
+```astro
+<References>
+    <Fragment slot="recommended">
+        <Book
+            chapter="Chapter title"
+            bookTitle="Book Title"
+            pages={[123, 145]}
+        >
+            <AuthorList
+                slot="authors"
+                authors={[
+                    { firstName: "John", lastName: "Doe" },
+                    { firstName: "Jane", lastName: "Smith" }
+                ]}
+            />
+            <span slot="description">
+                Descripción útil de por qué se recomienda...
+            </span>
+        </Book>
+
+        <WebPage
+            title="Article Title"
+            url="https://example.com/article"
+        >
+            <Link href="https://example.com" slot="location">
+                Nombre del sitio web
+            </Link>
+            <Fragment slot="description">
+                Descripción del recurso...
+            </Fragment>
+        </WebPage>
+    </Fragment>
+
+    <Fragment slot="additional">
+        <!-- Recursos adicionales con la misma estructura -->
+    </Fragment>
+</References>
 ```
 
 ## Integración con otros documentos
