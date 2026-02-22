@@ -223,6 +223,8 @@ export const getChanges = async ({
             [
                 "log",
                 "--follow",
+                "-n",
+                String(changesLimit),
                 "--date=short",
                 "--pretty=format:%H%x00%ad%x00%an%x00%s",
                 "--",

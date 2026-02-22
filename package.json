@@ -16,9 +16,11 @@
         "bibliography:report": "node scripts/bibliography-report.mjs",
         "predeploy": "pnpm run generate:lesson-metadata",
         "deploy": "astro build && wrangler deploy",
-        "test": "vitest",
-        "test:astro-render": "node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts src/components/meta/__tests__/Head.render.test.ts --reporter verbose",
+        "test": "pnpm test:unit && pnpm test:astro",
+        "test:unit": "vitest run",
+        "test:astro": "node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts",
         "test:watch": "vitest --watch",
+        "test:watch:astro": "node ./node_modules/vitest/vitest.mjs --watch --config vitest.astro.config.ts",
         "test:ui": "vitest --ui"
     },
     "dependencies": {
@@ -65,6 +67,7 @@
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "shiki": "^3.9.1",
+        "shiki-transformer-color-highlight": "^1.1.0",
         "shiki-transformer-copy-button": "^0.0.5",
         "tailwindcss": "^4.1.11",
         "typescript": "^5.9.2",

@@ -40,7 +40,7 @@ export default getViteConfig({
         // Astro component render tests run with `vitest.astro.config.ts` in a separate suite.
         exclude: [
             "node_modules/**",
-            "src/components/**/__tests__/*.render.test.ts",
+            "src/**/*.render.test.ts",
         ],
     },
 });

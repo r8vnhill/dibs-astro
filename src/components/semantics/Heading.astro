@@ -34,7 +34,7 @@ const sizeClasses: Record<string, string> = {
 const resolvedSize = sizeClasses[headingLevel] ?? sizeClasses.h3;
 ---
 
-<Tag class:list={["flex items-center gap-2", resolvedSize, className]} {...rest}>
+<Tag class:list={["flex items-start gap-2", resolvedSize, className]} {...rest}>
     <slot name="icon">
         {
             Icon && (
@@ -48,5 +48,7 @@ const resolvedSize = sizeClasses[headingLevel] ?? sizeClasses.h3;
         }
     </slot>
 
-    <slot />
+    <span class="min-w-0">
+        <slot />
+    </span>
 </Tag>

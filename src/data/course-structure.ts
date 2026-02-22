@@ -87,8 +87,8 @@ export const courseStructure: Lesson[] = [
                                     "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
                             },
                             {
-                                title: "Práctica: Composición",
-                                href: "/notes/software-libraries/scripting/pipelines/practice/",
+                                title: "Manejo de errores",
+                                href: "/notes/software-libraries/scripting/pipelines/errors/",
                             },
                         ],
                     },

@@ -41,6 +41,15 @@ export async function highlightToHtml({
     // knows which themes to preload.
     const highlighter = await getHighlighter(supportedThemes as unknown as string[]);
 
+    // `text` is a special Shiki language that does not require grammar loading, but still supports transformers.
+    if (lang.toLowerCase() === "text") {
+        return highlighter.codeToHtml(code, {
+            lang: "text",
+            theme,
+            transformers,
+        });
+    }
+
     // Resolve language aliases (for example `py` -> `python`, `nu` -> `nushell`).
     // `resolvedLang` is a BundledLanguage when we know how to highlight it, otherwise null.
     const { resolvedLang, shouldWarn } = resolveLanguage(lang);
