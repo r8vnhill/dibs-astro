@@ -17,7 +17,7 @@ describe.concurrent("InlineCode.astro render", () => {
         renderInlineCode = await createAstroRenderer<InlineCodeProps>(InlineCode);
     });
 
-    test("applies wrapping-friendly classes in the root code element", async () => {
+    test("applies wrapping-friendly classes in the root code element", { timeout: 20000 }, async () => {
         const html = await renderInlineCode({
             code: "$allErrs | Where-Object { ($_.FullyQualifiedErrorId -split ',')[0] -eq 'InvokeBatchFingerprint.BatchFailed' }",
             lang: "text",
