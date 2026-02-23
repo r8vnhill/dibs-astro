@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T14:36:58.814Z",
+  "generatedAt": "2026-02-23T12:01:41.581Z",
   "totalLessons": 38,
   "changesLimit": 5,
   "entries": {
@@ -739,6 +739,12 @@
       ],
       "lastModified": "2026-02-22",
       "changes": [
+        {
+          "hash": "8cb8f658631d34289480c10bca3d4d8648717e12",
+          "date": "2026-02-22",
+          "author": "r8vnhill",
+          "subject": "📝 docs(changelog): add 0.10.0 release notes and lesson metadata refresh"
+        },
         {
           "hash": "4ad7e555360d517a2156d41fb6a1b6c8e8ec8584",
           "date": "2026-02-22",

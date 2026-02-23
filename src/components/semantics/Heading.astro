@@ -1,52 +1,199 @@
 ---
+/**
+ * @file Heading.astro
+ *
+ * A small, reusable heading component that standardizes:
+ *
+ * - Heading level selection (`h2`–`h6`)
+ * - Responsive typographic sizing per level
+ * - Optional leading icon support (either via a prop-driven icon component or an explicit slot)
+ * - Tailwind-friendly class composition via Astro’s `class:list`
+ *
+ * This component is designed to be:
+ *
+ * - **Predictable**: fixed base layout classes, consistent sizing rules
+ * - **Composable**: consumer can fully override the icon region using a named slot
+ * - **Accessible**: decorative icons are hidden from assistive tech by default, and informative
+ *   icons can be labeled
+ *
+ * ## Usage:
+ *
+ * Render a heading with the default level (`h3`) and no icon.
+ *
+ * ### Example 1: Basic heading
+ *
+ * ```ts
+ * <Heading>Section title</Heading>
+ * ```
+ *
+ * Render a heading with a specific level.
+ *
+ * ### Example 2: Choose the level
+ *
+ * ```ts
+ * <Heading headingLevel="h2">Top-level section</Heading>
+ * ```
+ *
+ * Provide an icon via the `Icon` prop (renders a `FilledIcon` wrapper).
+ *
+ * ### Example 3: Icon via `Icon` prop
+ *
+ * ```ts
+ * import InfoIcon from "~/components/icons/InfoIcon.astro";
+ *
+ * <Heading Icon={InfoIcon}>Information</Heading>
+ * ```
+ *
+ * Override the icon region completely using the `icon` slot.
+ * This takes precedence over the `Icon` prop.
+ *
+ * ### Example 4: Icon via slot (overrides `Icon`)
+ *
+ * ```ts
+ * <Heading>
+ *   <span slot="icon" aria-hidden="true" class="shrink-0">★</span>
+ *   Featured
+ * </Heading>
+ * ```
+ *
+ * Provide a non-decorative icon label for assistive technologies.
+ *
+ * ### Example 5: Informative icon with label
+ *
+ * ```ts
+ * import WarningIcon from "~/components/icons/WarningIcon.astro";
+ *
+ * <Heading
+ *   Icon={WarningIcon}
+ *   decorativeIcon={false}
+ *   iconLabel="Warning"
+ * >
+ *   Caution
+ * </Heading>
+ * ```
+ *
+ * @remarks
+ *   - This component intentionally excludes `{ts} "h1"` to preserve document structure. Use a
+ *     dedicated page-level heading component if you need `{ts} <h1>`.
+ *   - The `icon` slot, when present, overrides the `Icon` prop to keep composition explicit.
+ *   - `decorativeIcon` defaults to `{ts} true`. If you set it to `{ts} false`, provide `iconLabel`
+ *     so the icon has an accessible name.
+ *
+ * @see {@link HeadingLevel}
+ */
+import type { HTMLAttributes } from "astro/types";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
 import FilledIcon from "../ui/callouts/FilledIcon.astro";
 
+/**
+ * Supported HTML heading tags for this component.
+ *
+ * `{ts} "h1"` is excluded to discourage multiple page-level headings.
+ */
+type TagName = Exclude<HeadingLevel, "h1">;
+
+/**
+ * Props for {@link Heading}.
+ *
+ * @remarks
+ *   - Additional HTML attributes (e.g., `{ts} id`, `{ts} title`, `{ts} data-*`) are forwarded to
+ *     the rendered heading element via `{ts} ...rest`.
+ *   - `{ts} class` is omitted from forwarded attributes so this component can control class
+ *     merging.
+ */
 type Props = {
-    Icon?: AstroComponentFactory | null;
-    headingLevel?: Exclude<HeadingLevel, "h1">;
-    class?: string;
-    decorativeIcon?: boolean;
-};
+  /**
+   * Optional Astro component used as the icon glyph. When provided (and when no `icon` slot
+   * exists), it is rendered via {@link FilledIcon}.
+   */
+  Icon?: AstroComponentFactory | null;
+
+  /**
+   * Which heading tag to render (`h2`–`h6`). Defaults to `{ts} "h3"`.
+   */
+  headingLevel?: TagName;
+
+  /**
+   * Additional classes appended to the heading element. Defaults to an empty string.
+   */
+  class?: string;
+
+  /**
+   * Whether the icon is purely decorative. Defaults to `{ts} true`. If `{ts} false`, `iconLabel`
+   * should be provided.
+   */
+  decorativeIcon?: boolean;
+
+  /**
+   * Accessible label used when `decorativeIcon` is `{ts} false`.
+   */
+  iconLabel?: string;
+} & Omit<HTMLAttributes<"h2">, "class">;
 
 const {
-    Icon = null,
-    headingLevel = "h3",
-    class: className = "",
-    decorativeIcon = true,
-    ...rest
-} = Astro.props as Props & Record<string, any>;
+  Icon = null,
+  headingLevel = "h3",
+  class: className = "",
+  decorativeIcon = true,
+  iconLabel,
+  ...rest
+} = Astro.props as Props;
 
+/**
+ * The computed heading tag name (e.g., `{ts} "h2"`).
+ */
 const Tag = headingLevel;
 
 /**
- * Tamaños tipográficos por nivel (h2–h6)
+ * Tailwind typography classes per heading level.
+ *
+ * This is intentionally centralized to keep heading sizing consistent across the site.
  */
-const sizeClasses: Record<string, string> = {
-    h2: "text-xl sm:text-2xl",
-    h3: "text-lg sm:text-xl",
-    h4: "text-base sm:text-lg",
-    h5: "text-sm sm:text-base",
-    h6: "text-xs sm:text-sm",
+const sizeClasses: Record<TagName, string> = {
+  h2: "text-xl sm:text-2xl",
+  h3: "text-lg sm:text-xl",
+  h4: "text-base sm:text-lg",
+  h5: "text-sm sm:text-base",
+  h6: "text-xs sm:text-sm",
 };
 
-const resolvedSize = sizeClasses[headingLevel] ?? sizeClasses.h3;
+/**
+ * Resolve the typography classes for a heading level.
+ *
+ * @param level Heading level used to select the corresponding size classes.
+ * @returns Tailwind class string for the provided level.
+ */
+const sizeFor = (level: TagName): string => sizeClasses[level];
+
+/**
+ * The resolved typography classes for the current heading level.
+ */
+const resolvedSize = sizeFor(headingLevel);
+
+/**
+ * Whether the consumer provided an explicit `icon` slot.
+ *
+ * If present, it takes precedence over the `Icon` prop to keep composition explicit.
+ */
+const hasIconSlot = Astro.slots.has("icon");
 ---
 
 <Tag class:list={["flex items-start gap-2", resolvedSize, className]} {...rest}>
-    <slot name="icon">
-        {
+    {
+        hasIconSlot
+            ? <slot name="icon" />
+        : (
             Icon && (
-                <FilledIcon
-                    {Icon} class="inline-block text-current"
-                    iconClass="shrink-0" size="1em"
-                    variant="outline" decorative={decorativeIcon}
-                    aria-hidden={decorativeIcon ? "true" : "false"}
-                />
-            )
-        }
-    </slot>
+            <FilledIcon
+                {Icon} class="inline-block text-current"
+                iconClass="shrink-0" size="1em"
+                variant="outline" decorative={decorativeIcon}
+                aria-label={!decorativeIcon ? iconLabel : undefined}
+            />
+        )
+        )
+    }
 
     <span class="min-w-0">
         <slot />
