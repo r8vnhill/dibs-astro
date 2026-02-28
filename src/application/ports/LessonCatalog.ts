@@ -1,0 +1,42 @@
+/**
+ * Interfaz del repositorio de lecciones (puerto).
+ * Contrato que define cómo acceder al catálogo de lecciones.
+ *
+ * Implementación actual: adaptador que lee course-structure.ts.
+ * Implementación futura: base de datos, API, etc.
+ */
+
+export interface Lesson {
+    id: string;
+    title: string;
+    slug: string;
+    unit?: string;
+    children?: Lesson[];
+}
+
+/**
+ * Puerto: Catálogo de lecciones.
+ * La capa Application depende de este contrato;
+ * Infrastructure proporciona la implementación concreta.
+ */
+export interface ILessonCatalog {
+    /**
+     * Obtiene la estructura jerárquica completa del catálogo.
+     * @returns árbol de lecciones ordenadas
+     */
+    getCourseStructure(): Promise<Lesson[]>;
+
+    /**
+     * Busca una lección por ruta (pathname).
+     * @param pathname ruta normalizada (ej: /notes/unit/lesson/)
+     * @returns lección encontrada o null
+     */
+    findByPath(pathname: string): Promise<Lesson | null>;
+
+    /**
+     * Obtiene una lista plana de lecciones en orden.
+     * Útil para navegación prev/next.
+     * @returns array lineal de lecciones
+     */
+    flatten(): Promise<Lesson[]>;
+}
