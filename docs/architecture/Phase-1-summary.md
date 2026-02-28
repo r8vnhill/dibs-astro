@@ -506,6 +506,64 @@ import { LessonCatalogAdapter } from "$infrastructure/adapters";
 
 ---
 
+## Bridge pattern: connecting Presentation to Application layer
+
+**Implemented:** `src/presentation/adapters/navigation-bridge.ts`
+
+### Purpose
+
+The bridge provides a **transition pattern** that allows `NotesLayout.astro` to use the new Application layer services while maintaining:
+
+1. **Backward compatibility** with existing routes
+2. **Feature flag control** to toggle between legacy and new implementations
+3. **Testability** via dependency injection
+
+### Implementation details
+
+```typescript
+// Bridge accepts readonly Lesson[] (compatible with courseStructure)
+export async function resolveAutoNavBridge(
+    pathname: string,
+    lessons: readonly Lesson[],
+): Promise<AutoNavResult>
+
+// Feature flag controls implementation
+const USE_NEW_SERVICE = true;
+
+// When true: uses NavigationServiceImpl + LessonCatalogAdapter
+// When false: falls back to legacy utils/navigation.ts
+```
+
+### Usage in NotesLayout
+
+```astro
+// Before (direct call to legacy utils)
+const autoNav = resolveAutoNav(pathname, courseStructure);
+
+// After (via bridge pattern)
+const autoNav = await resolveAutoNavBridge(pathname, courseStructure);
+```
+
+### Benefits
+
+- **Non-breaking:** existing routes work identically
+- **Gradual migration:** feature flag allows A/B testing
+- **Type safety:** maintains strict type checking with `readonly` courseStructure
+- **Testing:** full test coverage (5/5 tests passing)
+
+### Test coverage
+
+```
+src/presentation/adapters/__tests__/navigation-bridge.test.ts
+✅ debe retornar undefined para previous en la primera lección
+✅ debe retornar undefined para next en la última lección
+✅ debe retornar both previous y next para lecciones intermedias
+✅ debe retornar previous y next vacíos para ruta no encontrada
+✅ debe retornar objetos con estructura { title, href }
+```
+
+---
+
 ## Maintenance notes
 
 - **Trailing slashes:** all hrefs end with `/` (astro-website normalization).
@@ -517,7 +575,12 @@ import { LessonCatalogAdapter } from "$infrastructure/adapters";
 
 ## Executive summary
 
-**Phase 1 successfully completed.** Established stratified layered architecture base, defined initial contracts (ports), and implemented Application services + Infrastructure adapters with 100% test coverage. The project is ready for Phase 2 (isolate domain logic) or incrementally connect Presentation without regression risk.
+**Phase 1 successfully completed.** Established stratified layered architecture base, defined initial contracts (ports), and implemented Application services + Infrastructure adapters with 100% test coverage (15/15 tests passing). **Bridge pattern implemented** to connect `NotesLayout` to the new Application layer without breaking existing routes. The project is ready for Phase 2 (isolate domain logic) or incrementally connect more Presentation components.
+
+**Test coverage:** 15/15 ✅
+- Application layer: 5/5 ✅
+- Infrastructure layer: 5/5 ✅ (4 LessonCatalog + 1 integration)
+- Presentation layer: 5/5 ✅ (bridge pattern)
 
 **Blockers:** None. Tests pass, build (astro check) ready, structure prepared for integration.
 

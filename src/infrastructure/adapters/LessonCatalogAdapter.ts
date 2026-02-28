@@ -24,9 +24,18 @@ import {
  */
 export class LessonCatalogAdapter implements ILessonCatalog {
     private flatCache: Lesson[] | null = null;
+    private structure: readonly DomainLesson[];
+
+    /**
+     * Construye un adaptador de catálogo.
+     * @param structure - Estructura del curso (por defecto, courseStructure global)
+     */
+    constructor(structure: readonly DomainLesson[] = courseStructure) {
+        this.structure = structure;
+    }
 
     async getCourseStructure(): Promise<Lesson[]> {
-        return this.mapToSimpleStructure(courseStructure);
+        return this.mapToSimpleStructure(this.structure);
     }
 
     async flatten(): Promise<Lesson[]> {
@@ -34,12 +43,23 @@ export class LessonCatalogAdapter implements ILessonCatalog {
             return this.flatCache;
         }
 
-        const flattened = flattenLessons(courseStructure);
-        this.flatCache = flattened.map<Lesson>((lesson) => ({
-            id: lesson.id,
-            title: lesson.title,
-            slug: this.extractSlug(lesson.href || ""),
-        }));
+        const flattened = flattenLessons(this.structure);
+        this.flatCache = flattened
+            .filter((lesson) => lesson.href) // solo lecciones con href
+            .map<Lesson>((lesson) => {
+                const mapped: Lesson = {
+                    id: lesson.id,
+                    title: lesson.title,
+                    slug: this.extractSlug(lesson.href || ""),
+                };
+
+                // Solo agregar href si existe (evita undefined con exactOptionalPropertyTypes)
+                if (lesson.href) {
+                    mapped.href = lesson.href;
+                }
+
+                return mapped;
+            });
 
         return this.flatCache;
     }
@@ -63,14 +83,25 @@ export class LessonCatalogAdapter implements ILessonCatalog {
     private mapToSimpleStructure(
         domainLessons: readonly DomainLesson[],
     ): Lesson[] {
-        return domainLessons.map((lesson) => ({
-            id: lesson.id,
-            title: lesson.title,
-            slug: this.extractSlug(lesson.href || lesson.id),
-            children: lesson.children
-                ? this.mapToSimpleStructure(lesson.children)
-                : undefined,
-        }));
+        return domainLessons.map((lesson) => {
+            const mapped: Lesson = {
+                id: lesson.id,
+                title: lesson.title,
+                slug: this.extractSlug(lesson.href || lesson.id),
+            };
+
+            // Solo agregar href si existe
+            if (lesson.href) {
+                mapped.href = lesson.href;
+            }
+
+            // Solo agregar children si existen
+            if (lesson.children) {
+                mapped.children = this.mapToSimpleStructure(lesson.children);
+            }
+
+            return mapped;
+        });
     }
 
     /**

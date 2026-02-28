@@ -38,6 +38,7 @@
  * - When there is no “previous” button, a hidden placeholder is used on wide screens to
  *   preserve alignment without adding noise to assistive technologies.
  */
+import { resolveAutoNavBridge } from "$presentation/adapters/navigation-bridge";
 import * as icons from "~/assets/img/icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
@@ -46,7 +47,7 @@ import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { normalizeNavigation, resolveAutoNav } from "~/utils";
+import { normalizeNavigation } from "~/utils";
 import type { RepoRef } from "~/utils/git";
 import { resolveLessonMetadata } from "~/utils/lesson-metadata";
 import type { PageMeta } from "~/utils/page-meta";
@@ -128,7 +129,8 @@ const pageMeta: PageMeta = {
 };
 
 // Attempt to auto-resolve previous/next from course structure.
-const autoNav = resolveAutoNav(pathname, courseStructure);
+// Using the new service via bridge pattern (Application + Infrastructure layers).
+const autoNav = await resolveAutoNavBridge(pathname, courseStructure);
 
 // Allow manual override from frontmatter (if provided).
 const effectivePrevious = previous ?? autoNav.previous ?? undefined;

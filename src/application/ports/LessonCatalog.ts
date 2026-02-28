@@ -10,6 +10,7 @@ export interface Lesson {
     id: string;
     title: string;
     slug: string;
+    href?: string; // ruta completa normalizada (ej: /notes/unit/lesson/)
     unit?: string;
     children?: Lesson[];
 }

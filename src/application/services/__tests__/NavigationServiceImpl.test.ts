@@ -1,5 +1,4 @@
 import type { ILessonCatalog } from "$application/ports";
-import { LessonCatalogAdapter } from "$infrastructure/adapters/LessonCatalogAdapter";
 import { beforeEach, describe, expect, it } from "vitest";
 import { NavigationServiceImpl } from "../NavigationServiceImpl";
 
@@ -28,11 +27,13 @@ describe("NavigationServiceImpl", () => {
                             id: "lesson1",
                             title: "Lesson 1",
                             slug: "lesson1",
+                            href: "/notes/unit1/lesson1/",
                         },
                         {
                             id: "lesson2",
                             title: "Lesson 2",
                             slug: "lesson2",
+                            href: "/notes/unit1/lesson2/",
                         },
                     ],
                 },
@@ -45,6 +46,7 @@ describe("NavigationServiceImpl", () => {
                             id: "lesson3",
                             title: "Lesson 3",
                             slug: "lesson3",
+                            href: "/notes/unit2/lesson3/",
                         },
                     ],
                 },
@@ -53,9 +55,24 @@ describe("NavigationServiceImpl", () => {
             flatten: async () => {
                 // Retorna lista plana esperada por resolveAutoNav
                 return [
-                    { id: "lesson1", title: "Lesson 1", slug: "lesson1" },
-                    { id: "lesson2", title: "Lesson 2", slug: "lesson2" },
-                    { id: "lesson3", title: "Lesson 3", slug: "lesson3" },
+                    {
+                        id: "lesson1",
+                        title: "Lesson 1",
+                        slug: "lesson1",
+                        href: "/notes/unit1/lesson1/",
+                    },
+                    {
+                        id: "lesson2",
+                        title: "Lesson 2",
+                        slug: "lesson2",
+                        href: "/notes/unit1/lesson2/",
+                    },
+                    {
+                        id: "lesson3",
+                        title: "Lesson 3",
+                        slug: "lesson3",
+                        href: "/notes/unit2/lesson3/",
+                    },
                 ];
             },
         };

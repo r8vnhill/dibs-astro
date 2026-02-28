@@ -14,15 +14,13 @@ export class NavigationServiceImpl implements INavigationService {
     async resolveAutoNav(pathname: string): Promise<NavigationResult> {
         const lessons = await this.lessonCatalog.flatten();
 
-        // Extraer slug de la ruta
-        // Ej: /notes/unit/lesson/ → lesson
-        const pathParts = pathname
-            .split("/")
-            .filter((part) => part.length > 0);
-        const currentSlug = pathParts[pathParts.length - 1];
+        // Normalizar pathname para comparación
+        const normalizedPath = this.normalizePath(pathname);
 
-        // Buscar índice de la lección actual
-        const currentIndex = lessons.findIndex((l) => l.slug === currentSlug);
+        // Buscar índice de la lección actual comparando hrefs
+        const currentIndex = lessons.findIndex(
+            (l) => l.href && this.normalizePath(l.href) === normalizedPath,
+        );
         if (currentIndex === -1) {
             return {};
         }
@@ -32,33 +30,42 @@ export class NavigationServiceImpl implements INavigationService {
         // Lección anterior
         if (currentIndex > 0) {
             const prev = lessons[currentIndex - 1];
-            result.previous = {
-                title: prev.title,
-                slug: prev.slug,
-                href: `/notes/${this.slugToPath(prev.slug)}/`,
-            };
+            if (prev) {
+                result.previous = {
+                    title: prev.title,
+                    slug: prev.slug,
+                    href: prev.href || `/notes/${prev.slug}/`,
+                };
+            }
         }
 
         // Lección siguiente
         if (currentIndex < lessons.length - 1) {
             const next = lessons[currentIndex + 1];
-            result.next = {
-                title: next.title,
-                slug: next.slug,
-                href: `/notes/${this.slugToPath(next.slug)}/`,
-            };
+            if (next) {
+                result.next = {
+                    title: next.title,
+                    slug: next.slug,
+                    href: next.href || `/notes/${next.slug}/`,
+                };
+            }
         }
 
         return result;
     }
 
     /**
-     * Convierte un slug a ruta (placeholder).
-     * Nota: ésta es una implementación simplificada.
-     * En una versión real, usaría metadata del catálogo para obtener unit+topic.
+     * Normaliza un pathname para comparación.
+     * Asegura que empieza y termina con /.
      */
-    private slugToPath(slug: string): string {
-        // TODO: integrar información de unidad desde el catálogo
-        return slug;
+    private normalizePath(path: string): string {
+        let normalized = path.trim();
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        if (!normalized.endsWith("/")) {
+            normalized += "/";
+        }
+        return normalized;
     }
 }
