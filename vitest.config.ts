@@ -2,6 +2,8 @@
 
 import { getViteConfig } from "astro/config";
 
+process.env.SKIP_ICON_GENERATION ??= "true";
+
 /**
  * Vitest configuration used by the project.
  *

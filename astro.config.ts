@@ -6,6 +6,8 @@ import "./config/shiki-warn-tracker";
 
 import react from "@astrojs/react";
 
+const isVitestRun = process.env.VITEST === "true";
+
 /**
  * DIBS Astro configuration (concise):
  * - site, trailingSlash and static output for a static-site deployment
@@ -36,12 +38,18 @@ export default defineConfig({
 
     integrations: [
         generateIconsIntegration(),
-        // Custom plugin to trigger HMR when specific files change
-        devServerFileWatcher([
-            "./config/**", // Watch all custom integration and plugin files
-            "./src/assets/**", // Watch all assets for changes
-            "./src/data/**", // Watch all data files for changes
-        ]),
+        ...(
+            isVitestRun
+                ? []
+                : [
+                    // Custom plugin to trigger HMR when specific files change
+                    devServerFileWatcher([
+                        "./config/**", // Watch all custom integration and plugin files
+                        "./src/assets/**", // Watch all assets for changes
+                        "./src/data/**", // Watch all data files for changes
+                    ]),
+                ]
+        ),
         react(),
     ],
 

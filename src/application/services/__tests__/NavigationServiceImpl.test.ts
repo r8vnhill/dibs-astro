@@ -1,7 +1,9 @@
 import type { ILessonCatalog } from "$application/ports";
 import { beforeEach, describe, expect, it } from "vitest";
 import { NavigationServiceImpl } from "../NavigationServiceImpl";
+import * as a from "fs/promises";
 
+a.mkdir
 /**
  * Tests para NavigationService (piloto).
  *
