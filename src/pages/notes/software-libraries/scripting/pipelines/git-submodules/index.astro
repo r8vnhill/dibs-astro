@@ -1,23 +1,13 @@
 ---
 import * as icons from "~/assets/img/icons";
-import { Enquote, P } from "~/components/semantics";
+import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Abstract,
-    Definition,
-    Exercise,
-    Explanation,
-    Important,
-    Info,
-    Note,
-    Warning,
-} from "~/components/ui/callouts";
+import { Abstract, Definition, Explanation, Important } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
-import { DibsSourceLink, Link } from "~/components/ui/links";
+import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
-import ToDo from "~/components/utils/ToDo";
+import { References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -25,7 +15,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="Lab. 2: Git Submodules"
-    description="Laboratorio aplicado para practicar pipeline-awareness y manejo de errores al automatizar tareas sobre múltiples proyectos usando un repositorio índice con submódulos."
+    description="Laboratorio práctico de Git submodules para automatizar tareas en múltiples repositorios: crea un índice de proyectos, ejecuta pipelines con manejo de errores y publícalo en GitLab."
     timeMultiplier={2}
     git={[
         { user: "r8vnhill", repo: "dibs-index" },
@@ -33,14 +23,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
     ]}
 >
     <Abstract>
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "...",
-                ],
-            }}
-        />
+        <P>
+            Este laboratorio conecta lo aprendido sobre <I>pipeline-awareness</I> y <B>manejo de
+                errores</B> en un caso real: coordinar tareas sobre múltiples repositorios
+            versionados de forma independiente mediante un repositorio índice con submódulos.
+        </P>
+        <P>
+            Al finalizar, contarás con un flujo reproducible para crear, inspeccionar, actualizar y
+            publicar ese índice en GitLab, reutilizando scripts de laboratorios previos y
+            manteniendo contratos explícitos de entrada, salida y política de fallos.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-lab-context">
@@ -235,7 +227,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 $errs = @()
                 $params = @{
                     RootPath      = "dibs-index"
-                    GitLabUser    = 'r8vnhill'
+                    GitLabUser    = '<TU-USUARIO>'
                     ErrorAction   = 'SilentlyContinue'
                     ErrorVariable = '+errs'
                 }
@@ -413,10 +405,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         <PowerShellInline>git fetch --all --prune</PowerShellInline> sincroniza
                         referencias remotas y elimina referencias obsoletas (<PowerShellInline
                         >--prune</PowerShellInline>) en el repositorio del submódulo. Luego,{" "}
-                        <PowerShellInline>git submodule update --remote --
-                            &lt;submodule&gt;</PowerShellInline> mueve el submódulo al commit más
-                        reciente de la rama remota configurada en <PowerShellInline
-                        >.gitmodules</PowerShellInline>.
+                        <PowerShellInline code="git submodule update --remote -- <submodule>" />
+                        mueve el submódulo al commit más reciente de la rama remota configurada en
+                        <PowerShellInline>.gitmodules</PowerShellInline>.
                     </P>
                 </ListItem>
 
@@ -447,119 +438,132 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Explanation>
     </NotesSection>
 
-    <Exercise headingLevel="h2">
-        <Fragment slot="title">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
+    <NotesSection id="h2-publish-index-on-gitlab">
+        <Heading headingLevel="h2" Icon={icons.GitlabLogo}>
+            Publicar el índice en GitLab reutilizando Lab 1
+        </Heading>
 
-        <Fragment slot="requirements">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
+        <P>
+            Una vez que el índice ya contiene submódulos, el siguiente paso es publicarlo como
+            repositorio remoto. Aquí no conviene reinventar lógica: puedes reutilizar el script
+            <Mono>Publish-GitRepository.ps1</Mono> del Lab 1 para crear el proyecto en GitLab y
+            configurar el remoto local en una sola operación.
+        </P>
 
-        <Fragment slot="notes">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
+        <PowerShellBlock
+            code={`
+                $publishParams = @{
+                    Path = './dibs-index'
+                    User = '<TU-USUARIO>'
+                    Name = 'dibs-index'
+                }
 
-        <Fragment slot="use">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
+                # Ensayo seguro
+                $publishResult = ./scripts/git/Publish-GitRepository.ps1 @publishParams -WhatIf
 
-        <Fragment slot="hints">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
+                # Publicación real (cuando verifiques el resultado del ensayo)
+                # $publishResult = ./scripts/git/Publish-GitRepository.ps1 @publishParams
 
-        <Fragment slot="solution">
-            <ToDo
-              client:only="react"
-              metadata={{
-                tasks: [
-                  "...",
-                ],
-              }}
-            />
-        </Fragment>
-    </Exercise>
+                $publishResult | Format-List
+            `}
+        >
+            <span slot="title"
+            >Publicar el repositorio índice reutilizando Publish-GitRepository</span>
+            <span slot="footer">
+                Desde <Mono>dibs/</Mono>. Este flujo prepara el remoto, pero no hace <Mono
+                >commit</Mono> ni <Mono>push</Mono>.
+            </span>
+        </PowerShellBlock>
+
+        <OutputBlock
+            code={`
+                Path   : ./dibs-index
+                GitLab : @{Status=Created; Name=dibs-index; Visibility=private; Reason=Repository created.}
+                Remote : @{Action=Added; RemoteName=origin; RemoteUrl=https://gitlab.com/<TU-USUARIO>/dibs-index.git}
+            `}
+        >
+            <span slot="title">Salida esperada (resumen)</span>
+        </OutputBlock>
+
+        <P>
+            Con ese resultado, ya puedes revisar el estado local y decidir explícitamente cuándo
+            publicar contenido:
+        </P>
+
+        <PowerShellBlock
+            code={`
+                git -C ./dibs-index status
+                git -C ./dibs-index remote -v
+                # Si corresponde:
+                git -C ./dibs-index add -A
+                git -C ./dibs-index commit -m "chore: bootstrap index with submodules"
+                git -C ./dibs-index push -u origin main
+            `}
+        >
+            <span slot="title">Verificación final del índice</span>
+        </PowerShellBlock>
+    </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "...",
-                    ],
-                }}
-            />
+            <P>
+                Trabajar con submódulos en este laboratorio permitió trasladar los conceptos de
+                pipeline a un escenario de automatización multi-repo: cada submódulo se modela como
+                objeto, cada etapa produce salida estructurada y cada decisión de error se hace
+                explícita según su impacto local o global.
+            </P>
+            <P>
+                El punto clave no es Git por sí mismo, sino el patrón de diseño: scripts
+                componibles, observables e idempotentes que pueden encadenarse para orquestar
+                sistemas distribuidos sin perder trazabilidad.
+            </P>
         </Fragment>
 
         <Fragment slot="key-points">
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "...",
-                    ],
-                }}
-            />
+            <ListItem icon={icons.TreeStructure}>
+                Modelar submódulos como objetos de pipeline simplifica el procesamiento uniforme por
+                elemento.
+            </ListItem>
+            <ListItem icon={icons.ShieldWarning}>
+                Separar errores terminantes y no terminantes permite mantener continuidad sin
+                ocultar fallos.
+            </ListItem>
+            <ListItem icon={icons.GitlabLogo}>
+                Publicar el índice en GitLab puede resolverse por composición, reutilizando scripts
+                del Lab 1.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                <PowerShellInline>-WhatIf</PowerShellInline>/<PowerShellInline
+                >-Confirm</PowerShellInline> mantiene control operativo antes de afectar entorno
+                local o remoto.
+            </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "...",
-                    ],
-                }}
-            />
+            <P>
+                Si piensas el índice como una interfaz de coordinación entre repositorios, el
+                aprendizaje se vuelve transferible: el mismo enfoque te servirá para bootstrap de
+                entornos, mantenimiento periódico o publicación en lote, siempre priorizando
+                contratos claros y comportamiento determinista.
+            </P>
         </Fragment>
     </ConclusionsLayout>
 
     <References>
         <Fragment slot="recommended">
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        "...",
-                    ],
-                }}
-            />
+            <WebPage
+                title="Git Tools—Submodules"
+                url="https://git-scm.com/book/en/v2/Git-Tools-Submodules"
+                location="Git Book"
+            >
+                <Fragment slot="description">
+                    Referencia completa sobre submódulos: qué son, cómo agregarlos, clonarlos e
+                    integrarlos en flujos colaborativos. Cubre el modelo de sincronización remota,
+                    manejo de cambios locales y estrategias de merge/rebase. Esencial para entender
+                    cómo Git fija versiones específicas de repositorios externos y mantener
+                    reproducibilidad en proyectos multi-repo.
+                </Fragment>
+            </WebPage>
         </Fragment>
     </References>
 </NotesLayout>

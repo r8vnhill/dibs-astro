@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T02:17:13.750Z",
+  "generatedAt": "2026-03-02T15:50:59.140Z",
   "totalLessons": 39,
   "changesLimit": 5,
   "entries": {
@@ -737,8 +737,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-22",
+      "lastModified": "2026-03-02",
       "changes": [
+        {
+          "hash": "d68955ffb60a4b0583aa53fb3216ec8b7fe37246",
+          "date": "2026-03-02",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add Git submodules lab and multi-repo lesson source links"
+        },
         {
           "hash": "8cb8f658631d34289480c10bca3d4d8648717e12",
           "date": "2026-02-22",
@@ -762,12 +768,23 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/pipelines/git-submodules/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/git-submodules/index.astro",
+      "authors": [
         {
-          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-          "date": "2025-10-05",
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-03-02",
+      "changes": [
+        {
+          "hash": "d68955ffb60a4b0583aa53fb3216ec8b7fe37246",
+          "date": "2026-03-02",
           "author": "r8vnhill",
-          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+          "subject": "✨ feat(notes): add Git submodules lab and multi-repo lesson source links"
         }
       ]
     },
@@ -887,15 +904,6 @@
           "subject": "✨ docs(powershell): add examples for GitLab remote configuration and file hashing"
         }
       ]
-    },
-    "/notes/software-libraries/scripting/pipelines/submodules/": {
-      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/submodules/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "changes": []
     },
     "/notes/software-libraries/scripting/py/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/py.astro",
