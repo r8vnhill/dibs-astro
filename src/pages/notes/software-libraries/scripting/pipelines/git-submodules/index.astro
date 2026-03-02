@@ -104,6 +104,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     [ValidateNotNullOrWhiteSpace()]
                     [string] $GitLabUser,
 
+                    # [!code focus:7]
                     [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
                     [ValidateNotNullOrWhiteSpace()]
                     [string] $RemoteName,
@@ -113,17 +114,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     [string] $LocalName
                 )
 
+                # [!code focus:1]
                 begin {
                     Set-StrictMode -Version 3.0
                     $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
 
+                    # [!code focus:2]
                     # RootPath puede apuntar a una ruta que aún no existe (por eso se resuelve aquí).
                     $repoPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($RootPath)
 
                     if ($PSCmdlet.ShouldProcess($repoPath, 'Initialize index repository')) {
                         New-Item -ItemType Directory -Path $repoPath -Force | Out-Null
+                        # [!code focus:1]
                         & $invoker git -C $repoPath init -ErrorAction Stop | Out-Null
                     }
+                # [!code focus:3]
                 }
 
                 process {
@@ -133,6 +138,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                     if ($PSCmdlet.ShouldProcess($target, $action)) {
                         try {
+                            # [!code focus:1]
                             & $invoker git -C $repoPath submodule add $url $LocalName -ErrorAction Stop | Out-Null
                         }
                         catch {
@@ -144,9 +150,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 TargetObject = $target
                                 ErrorId      = 'New-IndexRepo.SubmoduleAddFailed'
                             }
+                            # [!code focus:1]
                             Write-Error @errorParams
                         }
                     }
+                # [!code focus:5]
                 }
 
                 end {
@@ -288,6 +296,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             #Requires -Version 7.5
             [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
             param(
+                # [!code focus:7]
                 [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
                 [string] $Name,
 
@@ -312,25 +321,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     if ($Action -eq 'Fetch') {
                         $fetchTarget = '{0} ({1})' -f $Name, $Path
                         $fetchAction = 'Fetch and prune all remotes'
-                        if (-not $PSCmdlet.ShouldProcess($fetchTarget, $fetchAction)) {
+                        if (!$PSCmdlet.ShouldProcess($fetchTarget, $fetchAction)) {
                             $executionMode = 'Skipped'
                             $skipReason = if ($WhatIfPreference) { 'WhatIf' } else { 'ShouldProcessFalse' }
                         }
                         else {
+                            # [!code focus:1]
                             & $invoker git -C $Path fetch --all --prune | Out-Null
 
                             $repoRoot = Split-Path $Path -Parent
                             $updateAction = 'Update submodule to latest configured remote commit'
-                            if (-not $PSCmdlet.ShouldProcess($fetchTarget, $updateAction)) {
+                            if (!$PSCmdlet.ShouldProcess($fetchTarget, $updateAction)) {
                                 $executionMode = 'Skipped'
                                 $skipReason = if ($WhatIfPreference) { 'WhatIf' } else { 'ShouldProcessFalse' }
                             }
                             else {
+                                # [!code focus:1]
                                 & $invoker git -C $repoRoot submodule update --remote -- $Name | Out-Null
                             }
                         }
                     }
 
+                    # [!code focus:5]
                     $statusResult = & $invoker git -C $Path status --porcelain=v1 -z
                     $statusOutput = @($statusResult.Output)
                     $statusPayload = [string]($statusOutput -join '')
@@ -363,7 +375,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Cmdlet de pipeline para estado y actualización de submódulos</span>
             <DibsSourceLink
                 slot="source" repo="scripts"
-                file="pipeline/Invoke-SubmoduleTask.ps1"
+                file="git/Invoke-SubmoduleTask.ps1"
             />
         </PowerShellBlock>
 
@@ -457,13 +469,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     User = '<TU-USUARIO>'
                     Name = 'dibs-index'
                 }
-
-                # Ensayo seguro
                 $publishResult = ./scripts/git/Publish-GitRepository.ps1 @publishParams -WhatIf
-
-                # Publicación real (cuando verifiques el resultado del ensayo)
-                # $publishResult = ./scripts/git/Publish-GitRepository.ps1 @publishParams
-
                 $publishResult | Format-List
             `}
         >
@@ -471,7 +477,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >Publicar el repositorio índice reutilizando Publish-GitRepository</span>
             <span slot="footer">
                 Desde <Mono>dibs/</Mono>. Este flujo prepara el remoto, pero no hace <Mono
-                >commit</Mono> ni <Mono>push</Mono>.
+                >commit</Mono> ni <Mono>push</Mono>. Si el resultado es correcto, puedes ejecutar
+                sin <PowerShellInline>-WhatIf</PowerShellInline>.
             </span>
         </PowerShellBlock>
 
