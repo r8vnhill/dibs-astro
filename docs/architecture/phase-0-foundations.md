@@ -1,65 +1,231 @@
-# Fase 0 · Fundamentos para la separación por capas
+# Phase 0 · Foundations for Layer Separation
 
-## 1. Mapa del dominio actual
+## What Phase 0 Produced
 
-| Área                    | Elementos relevantes                                                                                 | Acoplamientos detectados                                                                                                                                     |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Contenidos y navegación | `src/data/course-structure.ts`, componentes en `src/components/navigation`, layouts en `src/layouts` | Mezcla de lógica de estructura con detalles de presentación (clases Tailwind, iconografía) y utilidades de normalización en el mismo módulo.                 |
-| Contenido interactivo   | Islas React (`src/components/**.tsx`), hooks en `src/hooks`, utilidades de UI                        | Hooks y componentes combinan efectos del navegador con decisiones de negocio (p. ej. `use-media-query` define naming de breakpoints específico de diseño).   |
-| Renderizado de código   | `src/lib/shiki/**`, componentes bajo `src/components/ui/code`                                        | Alta dependencia entre Shiki y componentes Astro: cada bloque conoce alias y clases de estilo, no existe capa intermedia que encapsule el formato de salida. |
-| Tematización y estilo   | `src/styles`, `scripts/theme-toggle.ts`, `src/utils/theme.ts`                                        | Lógica de modo oscuro dispersa entre script global y utilidades, difícil de sustituir sin tocar múltiples capas.                                             |
-| Configuración del sitio | `src/utils/site.ts`, cabeceras SEO en `src/components/meta`                                          | Definiciones de metadatos conviven con strings de contenido, sin una capa de dominio que represente entidades (curso, lección, autoría).                     |
+Phase 0 established a shared baseline for the refactor: a domain-area map, evidence-backed hotspots, prioritized use cases, a target layered architecture, and measurable gates. It also narrowed the pilot scope for Phase 1 so implementation can start without waiting for all open decisions.
 
-### Oportunidades
+## 1. Current Domain Areas
 
-- Definir entidades del dominio (Curso, Lección, Recurso externo) y normalizarlas antes de llegar a la capa de presentación.
-- Extraer servicios de aplicación para navegación (resolución de "previous/next", chips por lenguaje) y para la generación de bloques de código.
-- Centralizar adaptadores de infraestructura (Shiki, lectura de archivos Markdoc, registro de iconos) para reemplazos futuros.
+### Area: Content and Navigation
 
-## 2. Casos de uso prioritarios
+- Elements: `src/data/course-structure.ts`, `src/layouts/NotesLayout.astro`, `src/components/navigation/*`, `src/utils/navigation.ts`.
+- Couplings: data shape, navigation rules, and rendering concerns are co-located.
+- Risk: navigation behavior changes can accidentally break UI composition and vice versa.
+- Refactor direction: move navigation rules to `application`, keep static catalog access in `infrastructure`, and keep layout rendering in `presentation`.
+- Boundary candidates:
+  - Domain: `Lesson`, `LessonId`, `NavigationPlan`, path normalization rules.
+  - Application: `resolveLessonNavigation`.
+  - Infrastructure: file-backed lesson catalog adapter.
+  - Presentation: layout and sidebar consumers.
 
-1. **Resolver navegación de lecciones**: obtener previous/next normalizados, chips relevantes, estado de progreso. Piloto ideal para validar capas porque mezcla datos estáticos, reglas de negocio y UI.
-2. **Renderizar bloques de código temáticos**: generar HTML semántico independiente de Shiki, permitiendo switches de motor o estilos. Implica coordinación entre dominio (tipo de bloque), aplicación (formateo) e infraestructura (Shiki).
-3. **Gestionar modos de tema**: exponer API neutral (`ThemeService`) consumida por UI y scripts. Permite aislar almacenamiento (localStorage, preferencia de SO) en infraestructura.
-4. **Publicar metadatos de página**: construir head tags a partir de objetos del dominio, evitando que layouts mezclen strings con lógica SEO.
+### Area: Interactive UI Behavior
 
-Se usarán estos casos para medir progreso en Fase 1. Cada uno debe tener tests de aplicación que verifiquen reglas sin depender de Astro/Shiki.
+- Elements: `src/components/navigation/LessonTree.tsx`, `src/hooks/*`, `src/utils/tabs/*`, `src/utils/tooltip/*`.
+- Couplings: UI widgets access browser APIs and persistence directly while encoding behavior rules.
+- Risk: behavior is hard to test without DOM and difficult to reuse outside current widgets.
+- Refactor direction: isolate browser/persistence concerns behind ports and keep UI as command/query callers.
+- Boundary candidates:
+  - Domain: interaction invariants (state transitions).
+  - Application: widget orchestration commands/queries.
+  - Infrastructure: localStorage/event adapters.
+  - Presentation: components and hooks only.
 
-## 3. Arquitectura objetivo (convenciones iniciales)
+### Area: Code Rendering
 
-- **Capas**
-  - `src/domain`: entidades, value objects, reglas puras (sin dependencias de Astro/DOM). Ejemplos: `Lesson`, `NavigationLink`, `CodeSample`.
-  - `src/application`: casos de uso y servicios orquestadores. Dependen del dominio y de puertos definidos (interfaces) para infraestructura. Ejemplo: `generateLessonNavigation(lessonId, tree, settings)`.
-  - `src/infrastructure`: implementaciones de puertos (ShikiHighlighter, NavigationRepository basado en archivos). Se agrupan por proveedor.
-  - `src/presentation`: componentes Astro/React, layouts y hooks. Consumen servicios de aplicación a través de adaptadores ligeros.
+- Elements: `src/lib/shiki/*`, `src/components/ui/code/*`.
+- Couplings: code components know highlighter details, aliases, and styling responsibilities.
+- Risk: replacing Shiki or changing formatting rules requires edits across presentation.
+- Refactor direction: define a highlighting port in `application/ports` and keep Shiki implementation in `infrastructure`.
+- Boundary candidates:
+  - Domain: code block intent and supported variants.
+  - Application: formatting flow and fallback policy.
+  - Infrastructure: Shiki adapter.
+  - Presentation: Astro block components.
 
-- **Patrones**
-  - Definir interfaces tipo `HighlighterGateway`, `LessonCatalog` en `src/application/ports`.
-  - Usar inyección explícita en constructores o argumentos; evitar singletons salvo cachés encapsuladas en infraestructura.
-  - Agrupar pruebas: `__tests__/domain`, `__tests__/application` con Vitest; mocks en `src/test-doubles`.
+### Area: Theme and Preference Management
 
-- **Módulos de migración**
-  - Introducir adaptadores puente (`src/presentation/adapters`) para usar servicios nuevos sin reescribir toda la UI.
-  - Mantener wrappers temporales alrededor de Shiki y datos hasta completar refactor.
+- Elements: `src/scripts/theme-toggle.ts`, `src/utils/theme.ts`, `src/components/ui/theme/*`.
+- Couplings: theme rules and browser side effects (`window`, `document`, `localStorage`) are mixed.
+- Risk: duplicate logic and inconsistent behavior between initial load and interactive updates.
+- Refactor direction: expose `ThemeService` in application and move storage/media-query access to infrastructure.
+- Boundary candidates:
+  - Domain: theme preference model.
+  - Application: preference resolution and command handling.
+  - Infrastructure: media-query and storage adapters.
+  - Presentation: controls and initial script adapter.
 
-## 4. Métricas y guardas
+### Area: Site Metadata
 
-| Métrica                                  | Objetivo                                                                   | Herramienta/Verificación                                                                          |
-| ---------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Dependencias de capa                     | Ningún módulo en `presentation` importa desde `infrastructure` o viceversa | ESLint ruta personalizada o lint rule manual (`no-restricted-imports`) una vez que existan capas. |
-| Cobertura de casos de uso                | ≥ 80% statements en `src/application`                                      | Integrar `vitest --coverage` filtrando carpeta de aplicación.                                     |
-| Pruebas unitarias por entidad            | Cada entidad de dominio con al menos test que cubra reglas críticas        | Añadir checklist en PRs + `todo.md`.                                                              |
-| Warnings en consola por carga de idiomas | 0 recurrentes tras mover Shiki a infraestructura                           | Monitorizar durante `pnpm build` y `pnpm preview`.                                                |
-| Tiempo de build                          | Mantener dentro del baseline actual (registrar ahora)                      | Registrar `pnpm build --filter` y comparar tras cada fase.                                        |
+- Elements: `src/utils/site.ts`, `src/components/meta/Head.astro`, `src/utils/page-meta.ts`.
+- Couplings: metadata construction and content-level decisions are mixed in utility/presentation layers.
+- Risk: metadata policy evolves without clear ownership.
+- Refactor direction: represent metadata inputs as domain objects and construct final tags in application.
+- Boundary candidates:
+  - Domain: `PageMetaInput`, authorship and canonical abstractions.
+  - Application: head metadata assembly.
+  - Infrastructure: optional metadata sources.
+  - Presentation: `<Head />` rendering only.
 
-### Guardas operativas
+## 2. Hotspots (with evidence)
 
-- Registrar estado inicial de métricas (build time, warnings) antes de Fase 1.
-- Documentar nuevos puertos/adaptadores dentro de `docs/architecture/`.
-- Cada PR de refactor debe incluir nota de compatibilidad con contenidos existentes.
+- `src/layouts/NotesLayout.astro`
+  - Symptom: imports `courseStructure` and resolves navigation directly in the layout.
+  - Layer violation cause: presentation depends on data source and navigation rule execution instead of application output.
+- `src/components/navigation/LessonTree.tsx`
+  - Symptom: reads/writes `localStorage` directly for expand/collapse state.
+  - Layer violation cause: presentation owns persistence, which should be infrastructure behind a port.
+- `src/scripts/theme-toggle.ts` and `src/utils/theme.ts`
+  - Symptom: theme policy and browser effects are split across script and utility.
+  - Layer violation cause: application-level policy is not separated from infrastructure side effects.
+- `src/components/ui/code/DarkCode.astro` and `src/components/ui/code/LightCode.astro`
+  - Symptom: components call Shiki-facing helpers directly.
+  - Layer violation cause: presentation is coupled to infrastructure implementation details.
 
-## 5. Preguntas abiertas
+## 3. Prioritized Use Cases (with contracts)
 
-- ¿Necesitamos compatibilidad con múltiples temas de Shiki por usuario o solo dos globales? Afecta el diseño del puerto de resaltado.
-- ¿La navegación dependerá de progresos almacenados (localStorage/remote)? Determina la infraestructura necesaria.
-- ¿El sitio planea internacionalización adicional? Definirlo condiciona entidades de dominio (slugs, títulos por idioma).
+### 3.1 Pilot: Resolve Lesson Navigation (Phase 1 scope)
+
+- Scope for Phase 1: `previous`/`next` only.
+- Out of scope for Phase 1: chips, progress tracking, TOC expansion state.
+- Inputs:
+  - `currentPath: string`
+  - `catalog: LessonCatalog` (port)
+- Outputs:
+  - `NavigationPlan` with `{ previous?: LessonSummary; next?: LessonSummary }`
+- Invariants/rules:
+  - paths are normalized with trailing slash semantics;
+  - missing path yields `{ previous: undefined, next: undefined }`;
+  - container-only nodes without lesson `href` are excluded from linear navigation.
+- Ports needed:
+  - `LessonCatalog` (read-only lesson tree/list provider).
+- What stays in presentation:
+  - button rendering, aria labels, responsive layout behavior.
+
+### 3.2 Render Themed Code Blocks
+
+- Inputs: block payload (`code`, `language`, `variant`, optional title/footer/source).
+- Outputs: semantic HTML payload for presentation blocks.
+- Invariants/rules: unknown language falls back safely to plain escaped output.
+- Ports needed: `HighlighterGateway`.
+- What stays in presentation: block shell markup and slot rendering.
+
+### 3.3 Manage Theme Mode
+
+- Inputs: selected preference (`light | dark | auto`) and system preference signal.
+- Outputs: effective theme and persistence command result.
+- Invariants/rules: `auto` must map deterministically to current media query state.
+- Ports needed: `ThemePreferenceStore`, `SystemThemeProbe`.
+- What stays in presentation: switch UI and event wiring.
+
+### 3.4 Publish Page Metadata
+
+- Inputs: page context (route, title, description, authorship).
+- Outputs: normalized head metadata DTO.
+- Invariants/rules: canonical URL generation and language tag consistency.
+- Ports needed: optional metadata provider.
+- What stays in presentation: tag emission in `<Head />`.
+
+## 4. Target Architecture (Phase 1-ready)
+
+### Layer responsibilities
+
+- `domain`: entities, value objects, pure rules, no framework or browser APIs.
+- `application`: use cases, orchestration, and ports.
+- `infrastructure`: concrete adapters for ports and platform concerns.
+- `presentation`: Astro/React rendering and user interactions.
+
+### Concrete file examples
+
+- `src/domain/lesson/Lesson.ts`
+- `src/domain/navigation/NavigationPlan.ts`
+- `src/application/navigation/resolveLessonNavigation.ts`
+- `src/application/ports/LessonCatalog.ts`
+- `src/infrastructure/catalog/FileLessonCatalog.ts`
+- `src/presentation/adapters/navigation.ts`
+
+### Dependency rules and explicit exceptions
+
+- Allowed:
+  - `presentation -> application`
+  - `application -> domain`
+  - `application -> application/ports`
+  - `infrastructure -> application/ports`
+  - `infrastructure -> domain`
+- Forbidden:
+  - `presentation -> infrastructure`
+  - `domain -> application|infrastructure|presentation`
+  - `application -> presentation`
+- Exception policy:
+  - presentation may use domain types only when re-exported by application outputs;
+  - infrastructure may depend on domain types and application ports;
+  - no direct import from `src/data/*` in presentation once a corresponding port exists.
+
+## 5. Metrics, Guardrails, and Phase 1 Success Criteria
+
+### Baseline status
+
+- Blocked by sandbox permissions (`EPERM`) in this environment.
+- Affected commands:
+  - `pnpm build` (`spawn/rename` during `generate:lesson-metadata`)
+  - `pnpm test:unit` (`esbuild` spawn)
+
+### Baseline measurement plan (despite EPERM)
+
+- Canonical baseline environment: CI runner with full process and file permissions.
+- Record baseline metadata:
+  - OS name/version
+  - Node.js version
+  - `pnpm` version
+  - Vitest version
+- Re-run baseline commands in CI and store results in `reports/architecture/phase-1-baseline.md`.
+
+### Ongoing gates
+
+- Layer dependency gate: no forbidden imports across layers.
+- Coverage gate: `>= 80%` statements in `src/application`.
+- Quality gate: no recurring language-loading warnings after moving highlighting behind a port.
+
+### Additional testing targets
+
+- Behavior-focused tests:
+  - minimum 6 application tests for navigation (first item, last item, missing path, container nodes, normalized path, duplicated slash normalization).
+- PBT target:
+  - at least 1 property-based test for a pure rule (navigation ordering or path normalization).
+
+### Phase 1 success criteria (testable)
+
+- `resolveLessonNavigation` exists under `src/application/navigation`.
+- `LessonCatalog` port exists under `src/application/ports`.
+- File-based adapter exists under `src/infrastructure/catalog`.
+- Presentation consumes navigation via `src/presentation/adapters/navigation.ts`.
+- `NotesLayout` no longer resolves navigation directly from `courseStructure`.
+- Navigation use case meets coverage and minimum test-count targets.
+
+## 6. Closure Status (2026-02-27)
+
+- Phase 0 is completed.
+- Pilot selected and scoped.
+- Architecture and guardrails documented.
+- Phase 1 entry criteria are now actionable.
+
+## 7. Decisions Needed
+
+### DR-001: Shiki theme model
+
+- Question: per-person theme matrix vs two global themes?
+- Default assumption: two global themes (`light`, `dark`).
+
+### DR-002: Navigation progress persistence
+
+- Question: local-only progress or remote-capable progress?
+- Default assumption: local-only via infrastructure adapter.
+
+### DR-003: Internationalization scope
+
+- Question: add multilingual lesson metadata now or later?
+- Default assumption: single language (`es`) in Phase 1.
+
+### DR-004: Canonical source of truth for course structure
+
+- Question: static file, generated metadata, or remote source as canonical catalog?
+- Default assumption: `src/data/course-structure.ts` remains canonical through Phase 1.

@@ -94,21 +94,23 @@ describe("LessonSidebar", () => {
     test("property: render stays stable for arbitrary lesson arrays", () => {
         const numRuns = process.env.CI ? 40 : 100;
 
-        const childLessonArbitrary: fc.Arbitrary<Lesson> = fc.record(
-            {
-                title: fc.string(),
-                href: fc.string(),
-            },
-            { requiredKeys: ["title"] },
-        );
+        const linkLessonArbitrary: fc.Arbitrary<Lesson> = fc.record({
+            kind: fc.constant<"link">("link"),
+            id: fc.string({ minLength: 1 }),
+            title: fc.string({ minLength: 1 }),
+            href: fc.string({ minLength: 1 }),
+        });
 
-        const lessonArbitrary: fc.Arbitrary<Lesson> = fc.record(
-            {
-                title: fc.string(),
-                href: fc.string(),
-                children: fc.array(childLessonArbitrary, { maxLength: 5 }),
-            },
-            { requiredKeys: ["title"] },
+        const groupLessonArbitrary: fc.Arbitrary<Lesson> = fc.record({
+            kind: fc.constant<"group">("group"),
+            id: fc.string({ minLength: 1 }),
+            title: fc.string({ minLength: 1 }),
+            children: fc.array(linkLessonArbitrary, { maxLength: 5 }),
+        });
+
+        const lessonArbitrary: fc.Arbitrary<Lesson> = fc.oneof(
+            linkLessonArbitrary,
+            groupLessonArbitrary,
         );
 
         fc.assert(

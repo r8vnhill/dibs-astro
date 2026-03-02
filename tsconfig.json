@@ -43,6 +43,18 @@
             ],
             "$callouts": [
                 "~/components/ui/callouts/index.ts"
+            ],
+            "$domain/*": [
+                "src/domain/*"
+            ],
+            "$application/*": [
+                "src/application/*"
+            ],
+            "$infrastructure/*": [
+                "src/infrastructure/*"
+            ],
+            "$presentation/*": [
+                "src/presentation/*"
             ]
         },
         "types": [

@@ -10,6 +10,7 @@ import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import type { CodeLanguage } from "astro";
 import { Code } from "astro:components";
 import type { BundledTheme, ThemeRegistration, ThemeRegistrationRaw } from "shiki";
+import { buildInlineCodeClassList } from "./inline-code-classes";
 
 type Props = {
     code?: string;
@@ -42,33 +43,7 @@ const slotCode = codeProp === undefined && Astro.slots.has("default")
     : "";
 const code = codeProp ?? slotCode;
 
-const baseClass = [
-    "inline-block",
-    "align-[0.05em]",
-    "leading-[1.4]",
-    // Tailwind “token” utilities — keep visual identity consistent
-    "text-[0.95em]",
-    "font-mono",
-    // small internal padding; elevation will add more visible padding if requested
-    "rounded",
-    "px-[2px]",
-    "py-[0px]",
-    "whitespace-normal",
-    "break-words",
-    "[overflow-wrap:anywhere]",
-    "bg-transparent", // or `bg-code` if you define one in your theme
-].join(" ");
-
-// extra classes for elevated badge effect (uses base tokens so light/dark are respected)
-const elevateClasses = [
-    "rounded",
-    "border",
-    "border-base-border/60",
-    "bg-base-background/60",
-    "px-1",
-    "py-[1px]",
-    "shadow-inner",
-].join(" ");
+const rootClassList = buildInlineCodeClassList({ className, elevate });
 
 const transformers = brackets ? [transformerColorizedBrackets()] : [];
 const variants = [
@@ -78,7 +53,7 @@ const variants = [
 ---
 
 <code
-    class:list={[baseClass, elevate ? elevateClasses : "", className]} data-lang={lang}
+    class:list={rootClassList} data-lang={lang}
     aria-label={ariaLabel}
 >{
     variants.map(({ wrapperClass, theme }) => (

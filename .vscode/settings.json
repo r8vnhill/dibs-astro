@@ -82,7 +82,15 @@
     "workbench.colorCustomizations": {
         "activityBar.background": "#450971",
         "titleBar.activeBackground": "#610D9E",
-        "titleBar.activeForeground": "#FDFBFF"
+        "titleBar.activeForeground": "#FDFBFF",
+        "titleBar.inactiveBackground": "#450971",
+        "titleBar.inactiveForeground": "#FDFBFF",
+        "statusBar.background": "#450971",
+        "statusBar.foreground": "#FDFBFF",
+        "statusBar.debuggingBackground": "#450971",
+        "statusBar.debuggingForeground": "#FDFBFF",
+        "statusBar.noFolderBackground": "#450971",
+        "statusBar.noFolderForeground": "#FDFBFF"
     },
     "cSpell.words": [
         "Aragorn",
@@ -159,6 +167,7 @@
         "Nushell",
         "observabilidad",
         "octocat",
+        "oneof",
         "openai",
         "otrxs",
         "overrideable",
@@ -188,6 +197,9 @@
         "starwind",
         "stylelintcache",
         "stylesheet",
+        "sublesson",
+        "subpage",
+        "subpages",
         "subshell",
         "Svetlana",
         "tailrec",

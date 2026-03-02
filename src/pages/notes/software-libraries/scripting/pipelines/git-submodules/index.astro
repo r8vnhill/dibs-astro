@@ -1,0 +1,576 @@
+---
+import * as icons from "~/assets/img/icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Abstract, Definition, Explanation, Important } from "~/components/ui/callouts";
+import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import { References, WebPage } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Lab. 2: Git Submodules"
+    description="Laboratorio práctico de Git submodules para automatizar tareas en múltiples repositorios: crea un índice de proyectos, ejecuta pipelines con manejo de errores y publícalo en GitLab."
+    timeMultiplier={2}
+    git={[
+        { user: "r8vnhill", repo: "dibs-index" },
+        { user: "r8vnhill", repo: "dibs-scripts" },
+    ]}
+>
+    <Abstract>
+        <P>
+            Este laboratorio conecta lo aprendido sobre <I>pipeline-awareness</I> y <B>manejo de
+                errores</B> en un caso real: coordinar tareas sobre múltiples repositorios
+            versionados de forma independiente mediante un repositorio índice con submódulos.
+        </P>
+        <P>
+            Al finalizar, contarás con un flujo reproducible para crear, inspeccionar, actualizar y
+            publicar ese índice en GitLab, reutilizando scripts de laboratorios previos y
+            manteniendo contratos explícitos de entrada, salida y política de fallos.
+        </P>
+    </Abstract>
+
+    <NotesSection id="h2-lab-context">
+        <Heading headingLevel="h2" Icon={icons.GitBranch}>
+            Por qué usar submódulos en este laboratorio
+        </Heading>
+
+        <P>
+            En esta unidad ya trabajaste con scripts reutilizables y con decisiones explícitas de
+            error en pipelines. Este laboratorio agrega una dificultad habitual en automatización:
+            <B>coordinar tareas sobre varios repositorios versionados de forma independiente</B>
+            sin perder trazabilidad.
+        </P>
+
+        <Definition headingLevel="h3">
+            <span slot="title">Repositorio índice de proyectos</span>
+            <P>
+                Un <B>submódulo</B> es un repositorio Git referenciado desde otro mediante un commit
+                específico. Un <B>repositorio índice</B> es el repositorio principal que organiza
+                esos submódulos: no implementa la aplicación, sino que fija versiones concretas de
+                varios proyectos externos para asegurar reproducibilidad y coordinar entre piezas
+                autónomas versionadas de forma independiente.
+            </P>
+            <P>
+                En este laboratorio, el índice organiza proyectos del curso como
+                <Mono>astro-website</Mono>, <Mono>scripts</Mono> y <Mono>scripts-py</Mono>.
+            </P>
+        </Definition>
+
+        <Important headingLevel="h3">
+            <span slot="title">Alcance didáctico de este laboratorio</span>
+            <P>
+                Los submódulos son un <B>medio</B>, no el fin. El foco está en practicar a orquestar
+                múltiples proyectos con contratos claros: entrada estructurada, salida tipada,
+                política de errores configurable y observabilidad de fallos. No siempre son la mejor
+                solución; en algunos contextos un monorepo es más simple.
+            </P>
+        </Important>
+    </NotesSection>
+
+    <NotesSection id="h2-prepare-project-index">
+        <Heading headingLevel="h2" Icon={icons.FolderOpen}>
+            Preparar el repositorio índice con submódulos
+        </Heading>
+
+        <P>
+            En este laboratorio vamos a trabajar con un <B>repositorio índice</B>: un repositorio
+            “contenedor” cuya responsabilidad no es implementar una aplicación, sino <B>fijar
+                versiones</B>
+            de varios repositorios del curso en una estructura reproducible.
+        </P>
+
+        <P>
+            La idea clave es que el script sea <B>pipeline-aware</B>: en lugar de iterar manualmente
+            sobre una lista de repositorios, <B>recibe objetos por pipeline</B> (cada uno describe
+            un submódulo), y ejecuta la misma acción de manera uniforme.
+        </P>
+
+        <PowerShellBlock
+            code={`
+                #Requires -Version 7.5
+                [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+                param(
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $RootPath,
+
+                    [Parameter(Mandatory)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $GitLabUser,
+
+                    # [!code focus:7]
+                    [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $RemoteName,
+
+                    [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+                    [ValidateNotNullOrWhiteSpace()]
+                    [string] $LocalName
+                )
+
+                # [!code focus:1]
+                begin {
+                    Set-StrictMode -Version 3.0
+                    $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
+
+                    # [!code focus:2]
+                    # RootPath puede apuntar a una ruta que aún no existe (por eso se resuelve aquí).
+                    $repoPath = $PSCmdlet.GetUnresolvedProviderPathFromPSPath($RootPath)
+
+                    if ($PSCmdlet.ShouldProcess($repoPath, 'Initialize index repository')) {
+                        New-Item -ItemType Directory -Path $repoPath -Force | Out-Null
+                        # [!code focus:1]
+                        & $invoker git -C $repoPath init -ErrorAction Stop | Out-Null
+                    }
+                # [!code focus:3]
+                }
+
+                process {
+                    $url = 'https://gitlab.com/{0}/{1}.git' -f $GitLabUser, $RemoteName
+                    $target = Join-Path $repoPath $LocalName
+                    $action = 'Add submodule "{0}" from "{1}"' -f $LocalName, $url
+
+                    if ($PSCmdlet.ShouldProcess($target, $action)) {
+                        try {
+                            # [!code focus:1]
+                            & $invoker git -C $repoPath submodule add $url $LocalName -ErrorAction Stop | Out-Null
+                        }
+                        catch {
+                            $category = [System.Management.Automation.ErrorCategory]::InvalidOperation
+                            $errorParams = @{
+                                Message      = 'Failed to add submodule "{0}" at "{1}". {2}' -f @(
+                                    $LocalName, $target, $_.Exception.Message)
+                                Category     = $category
+                                TargetObject = $target
+                                ErrorId      = 'New-IndexRepo.SubmoduleAddFailed'
+                            }
+                            # [!code focus:1]
+                            Write-Error @errorParams
+                        }
+                    }
+                # [!code focus:5]
+                }
+
+                end {
+                    & $invoker git -C $repoPath submodule status -ErrorAction Stop
+                }
+            `}
+        >
+            <span slot="title">Crear un repositorio índice y añadir submódulos desde pipeline</span>
+            <DibsSourceLink
+                slot="source" repo="scripts"
+                file="git/New-IndexRepo.ps1"
+            />
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Este script sigue la estructura natural de un pipeline en PowerShell:
+                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
+                >process</PowerShellInline> y <PowerShellInline>end</PowerShellInline>.
+            </P>
+
+            <List>
+                <ListItem icon={icons.GearSix}>
+                    <B>Bloque <PowerShellInline>begin</PowerShellInline> — preparación global:</B>
+                    <P>
+                        Se crea e inicializa el repositorio índice. La llamada a
+                        <PowerShellInline>GetUnresolvedProviderPathFromPSPath</PowerShellInline> es
+                        importante porque la ruta podría no existir todavía. Aquí usamos
+                        <PowerShellInline>-ErrorAction Stop</PowerShellInline> porque si no podemos
+                        inicializar el índice, el resto del pipeline pierde sentido.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <B>Bloque <PowerShellInline>process</PowerShellInline> — ejecución por
+                        elemento</B>
+                    <P>
+                        No hay iteración explícita. PowerShell invoca este bloque una vez por cada
+                        objeto que llega por pipeline, enlazando
+                        <PowerShellInline>RemoteName</PowerShellInline> y <PowerShellInline
+                        >LocalName</PowerShellInline> mediante
+                        <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>.
+                    </P>
+                    <P>
+                        La operación central es <PowerShellInline>git submodule
+                            add</PowerShellInline>, que registra el submódulo y además <B>clona</B>
+                        el repositorio remoto dentro del directorio indicado.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.ShieldWarning}>
+                    <B>Semántica de errores en el pipeline</B>
+                    <P>
+                        En <PowerShellInline>process</PowerShellInline> se emiten errores no
+                        terminantes con <PowerShellInline>Write-Error</PowerShellInline>,
+                        permitiendo continuar con los siguientes submódulos.
+                    </P>
+                    <P>
+                        En cambio, los errores en <PowerShellInline>begin</PowerShellInline> y
+                        <PowerShellInline>end</PowerShellInline>
+                        son terminantes, ya que invalidan el estado global del pipeline.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Bloque <PowerShellInline>end</PowerShellInline> — evidencia final</B>
+                    <P>
+                        Se ejecuta <PowerShellInline>git submodule status</PowerShellInline> para
+                        mostrar el estado consolidado. Esto actúa como verificación observable del
+                        resultado del pipeline.
+                    </P>
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <PowerShellBlock
+            code={`
+                $errs = @()
+                $params = @{
+                    RootPath      = "dibs-index"
+                    GitLabUser    = '<TU-USUARIO>'
+                    ErrorAction   = 'SilentlyContinue'
+                    ErrorVariable = '+errs'
+                }
+
+                $result = @(
+                    [PSCustomObject]@{
+                        RemoteName = 'dibs-astro-website'
+                        LocalName  = 'astro-website'
+                    },
+                    [PSCustomObject]@{
+                        RemoteName = 'dibs-scripts'
+                        LocalName  = 'scripts'
+                    },
+                    [PSCustomObject]@{
+                        RemoteName = 'dibs-scripts-py'
+                        LocalName  = 'scripts-py'
+                    }
+                ) | ./scripts/git/New-IndexRepo.ps1 @params
+
+                Write-Host "=== Errors: ===" -ForegroundColor Red
+                $errs | Format-List -Property TargetObject, Exception
+
+                Write-Host "=== Submodule status: ===" -ForegroundColor Green
+                $result | Format-List
+            `}
+        >
+            <span slot="title">Ejecutar el script con submódulos</span>
+            <span slot="footer">
+                <p><B>Desde <Mono>dibs/</Mono></B></p>
+                <p>
+                    Si has seguido las lecciones principales, deberías tener el repositorio
+                    <Mono>dibs-scripts</Mono>. Si además realizaste las lecciones opcionales de
+                    Python, también deberías contar con <Mono>dibs-scripts-py</Mono>.
+                </p>
+                <p>
+                    El repositorio <Mono>dibs-astro-website</Mono> <B>no debería existir</B>
+                    en tu entorno: corresponde al código fuente de las propias lecciones y no forma
+                    parte de los repositorios que has creado. Aquí se utiliza únicamente como
+                    ejemplo de repositorio no disponible.
+                </p>
+            </span>
+        </PowerShellBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-pipeline-over-submodules">
+        <Heading headingLevel="h2" Icon={icons.Pipe}>
+            Pipeline de objetos sobre submódulos
+        </Heading>
+
+        <P>
+            En este caso, cada elemento del pipeline representa un submódulo y cada salida es un
+            objeto con estado, listo para ser consumido por otras etapas (por ejemplo, filtrado,
+            agrupación o reporte).
+        </P>
+
+        <PowerShellBlock
+            code={`
+            #Requires -Version 7.5
+            [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
+            param(
+                # [!code focus:7]
+                [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+                [string] $Name,
+
+                [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+                [Alias('FullName')]
+                [string] $Path,
+
+                [ValidateSet('Status', 'Fetch')]
+                [string] $Action = 'Status'
+            )
+
+            begin {
+                Set-StrictMode -Version 3.0
+                $invoker = Join-Path $PSScriptRoot '..' 'tools' 'Invoke-Tool.ps1' -Resolve
+            }
+            process {
+                try {
+                    $executionMode = 'Executed'
+                    $statusLabel = 'Unknown'
+                    $skipReason = $null
+
+                    if ($Action -eq 'Fetch') {
+                        $fetchTarget = '{0} ({1})' -f $Name, $Path
+                        $fetchAction = 'Fetch and prune all remotes'
+                        if (!$PSCmdlet.ShouldProcess($fetchTarget, $fetchAction)) {
+                            $executionMode = 'Skipped'
+                            $skipReason = if ($WhatIfPreference) { 'WhatIf' } else { 'ShouldProcessFalse' }
+                        }
+                        else {
+                            # [!code focus:1]
+                            & $invoker git -C $Path fetch --all --prune | Out-Null
+
+                            $repoRoot = Split-Path $Path -Parent
+                            $updateAction = 'Update submodule to latest configured remote commit'
+                            if (!$PSCmdlet.ShouldProcess($fetchTarget, $updateAction)) {
+                                $executionMode = 'Skipped'
+                                $skipReason = if ($WhatIfPreference) { 'WhatIf' } else { 'ShouldProcessFalse' }
+                            }
+                            else {
+                                # [!code focus:1]
+                                & $invoker git -C $repoRoot submodule update --remote -- $Name | Out-Null
+                            }
+                        }
+                    }
+
+                    # [!code focus:5]
+                    $statusResult = & $invoker git -C $Path status --porcelain=v1 -z
+                    $statusOutput = @($statusResult.Output)
+                    $statusPayload = [string]($statusOutput -join '')
+                    $hasPendingChanges = $statusPayload.Length -gt 0
+                    $statusLabel = if ($hasPendingChanges) { 'DirtyOrPending' } else { 'Clean' }
+
+                    [pscustomobject]@{
+                        Submodule = $Name
+                        Path      = $Path
+                        Action    = $Action
+                        Status    = $statusLabel
+                        Mode      = $executionMode
+                        Reason    = $skipReason
+                        Error     = $null
+                    }
+                }
+                catch {
+                    $errorParams = @{
+                        Message      = 'Failed to process submodule "{0}" at "{1}". {2}' -f @(
+                            $Name, $Path, $_.Exception.Message)
+                        Category     = [System.Management.Automation.ErrorCategory]::InvalidOperation
+                        TargetObject = $Path
+                        ErrorId      = 'Invoke-SubmoduleTask.Failed'
+                    }
+                    Write-Error @errorParams
+                }
+            }
+        `}
+        >
+            <span slot="title">Cmdlet de pipeline para estado y actualización de submódulos</span>
+            <DibsSourceLink
+                slot="source" repo="scripts"
+                file="git/Invoke-SubmoduleTask.ps1"
+            />
+        </PowerShellBlock>
+
+        <PowerShellBlock
+            code={`
+                # Ejemplo de consumo: verificar estado de submódulos del índice
+                Get-ChildItem -Path dibs-index -Exclude .gitmodules |
+                    scripts/git/Invoke-SubmoduleTask.ps1 -Action Status
+                # Ejemplo de consumo: actualizar submódulos a última versión remota
+                Get-ChildItem -Path dibs-index -Exclude .gitmodules |
+                    scripts/git/Invoke-SubmoduleTask.ps1 -Action Fetch -WhatIf |
+                    Format-Table
+            `}
+        >
+            <span slot="title">Consumir el cmdlet desde un pipeline</span>
+            <span slot="footer"
+            >Desde <Mono>dibs/</Mono>. Si se ve bien, puedes ejecutar sin <PowerShellInline
+                >-WhatIf</PowerShellInline>.</span>
+        </PowerShellBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.TreeStructure}>
+                    <B>Enlace de parámetros por propiedades</B>
+                    <P>
+                        Cada objeto emitido por <PowerShellInline>Get-ChildItem</PowerShellInline>
+                        incluye propiedades con nombres compatibles con los parámetros del cmdlet:
+                        <PowerShellInline>Name</PowerShellInline> alimenta <PowerShellInline
+                        >-Name</PowerShellInline>, y <PowerShellInline>FullName</PowerShellInline>
+                        (alias de <PowerShellInline>Path</PowerShellInline>) alimenta
+                        <PowerShellInline>-Path</PowerShellInline>. Este patrón permite encadenar
+                        comandos sin construir manualmente argumentos por cada elemento.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.GitBranch}>
+                    <B>Qué hace cada comando de Git</B>
+                    <P>
+                        <PowerShellInline>git fetch --all --prune</PowerShellInline> sincroniza
+                        referencias remotas y elimina referencias obsoletas (<PowerShellInline
+                        >--prune</PowerShellInline>) en el repositorio del submódulo. Luego,{" "}
+                        <PowerShellInline code="git submodule update --remote -- <submodule>" />
+                        mueve el submódulo al commit más reciente de la rama remota configurada en
+                        <PowerShellInline>.gitmodules</PowerShellInline>.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.MagnifyingGlass}>
+                    <B>Cómo se calcula el estado</B>
+                    <P>
+                        <PowerShellInline>git status --porcelain=v1 -z</PowerShellInline> emite un
+                        formato “estable para máquinas”: si la salida tiene contenido, el
+                        repositorio está <PowerShellInline>DirtyOrPending</PowerShellInline>; si
+                        está vacía, se considera <PowerShellInline>Clean</PowerShellInline>. Usar
+                        <PowerShellInline>-z</PowerShellInline> reduce ambigüedades en el parseo.
+                    </P>
+                </ListItem>
+
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <B>Salida compuesta, lista para etapas posteriores</B>
+                    <P>
+                        El cmdlet devuelve un objeto con <PowerShellInline
+                        >Submodule</PowerShellInline>, <PowerShellInline>Path</PowerShellInline>,
+                        <PowerShellInline>Action</PowerShellInline>, <PowerShellInline
+                        >Status</PowerShellInline>, <PowerShellInline>Mode</PowerShellInline> y
+                        <PowerShellInline>Reason</PowerShellInline>. Esto permite, por ejemplo,
+                        filtrar submódulos sucios, resumir por estado o formatear tablas sin volver
+                        a invocar Git.
+                    </P>
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-publish-index-on-gitlab">
+        <Heading headingLevel="h2" Icon={icons.GitlabLogo}>
+            Publicar el índice en GitLab reutilizando Lab 1
+        </Heading>
+
+        <P>
+            Una vez que el índice ya contiene submódulos, el siguiente paso es publicarlo como
+            repositorio remoto. Aquí no conviene reinventar lógica: puedes reutilizar el script
+            <Mono>Publish-GitRepository.ps1</Mono> del Lab 1 para crear el proyecto en GitLab y
+            configurar el remoto local en una sola operación.
+        </P>
+
+        <PowerShellBlock
+            code={`
+                $publishParams = @{
+                    Path = './dibs-index'
+                    User = '<TU-USUARIO>'
+                    Name = 'dibs-index'
+                }
+                $publishResult = ./scripts/git/Publish-GitRepository.ps1 @publishParams -WhatIf
+                $publishResult | Format-List
+            `}
+        >
+            <span slot="title"
+            >Publicar el repositorio índice reutilizando Publish-GitRepository</span>
+            <span slot="footer">
+                Desde <Mono>dibs/</Mono>. Este flujo prepara el remoto, pero no hace <Mono
+                >commit</Mono> ni <Mono>push</Mono>. Si el resultado es correcto, puedes ejecutar
+                sin <PowerShellInline>-WhatIf</PowerShellInline>.
+            </span>
+        </PowerShellBlock>
+
+        <OutputBlock
+            code={`
+                Path   : ./dibs-index
+                GitLab : @{Status=Created; Name=dibs-index; Visibility=private; Reason=Repository created.}
+                Remote : @{Action=Added; RemoteName=origin; RemoteUrl=https://gitlab.com/<TU-USUARIO>/dibs-index.git}
+            `}
+        >
+            <span slot="title">Salida esperada (resumen)</span>
+        </OutputBlock>
+
+        <P>
+            Con ese resultado, ya puedes revisar el estado local y decidir explícitamente cuándo
+            publicar contenido:
+        </P>
+
+        <PowerShellBlock
+            code={`
+                git -C ./dibs-index status
+                git -C ./dibs-index remote -v
+                # Si corresponde:
+                git -C ./dibs-index add -A
+                git -C ./dibs-index commit -m "chore: bootstrap index with submodules"
+                git -C ./dibs-index push -u origin main
+            `}
+        >
+            <span slot="title">Verificación final del índice</span>
+        </PowerShellBlock>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Trabajar con submódulos en este laboratorio permitió trasladar los conceptos de
+                pipeline a un escenario de automatización multi-repo: cada submódulo se modela como
+                objeto, cada etapa produce salida estructurada y cada decisión de error se hace
+                explícita según su impacto local o global.
+            </P>
+            <P>
+                El punto clave no es Git por sí mismo, sino el patrón de diseño: scripts
+                componibles, observables e idempotentes que pueden encadenarse para orquestar
+                sistemas distribuidos sin perder trazabilidad.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.TreeStructure}>
+                Modelar submódulos como objetos de pipeline simplifica el procesamiento uniforme por
+                elemento.
+            </ListItem>
+            <ListItem icon={icons.ShieldWarning}>
+                Separar errores terminantes y no terminantes permite mantener continuidad sin
+                ocultar fallos.
+            </ListItem>
+            <ListItem icon={icons.GitlabLogo}>
+                Publicar el índice en GitLab puede resolverse por composición, reutilizando scripts
+                del Lab 1.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                <PowerShellInline>-WhatIf</PowerShellInline>/<PowerShellInline
+                >-Confirm</PowerShellInline> mantiene control operativo antes de afectar entorno
+                local o remoto.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <P>
+                Si piensas el índice como una interfaz de coordinación entre repositorios, el
+                aprendizaje se vuelve transferible: el mismo enfoque te servirá para bootstrap de
+                entornos, mantenimiento periódico o publicación en lote, siempre priorizando
+                contratos claros y comportamiento determinista.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <References>
+        <Fragment slot="recommended">
+            <WebPage
+                title="Git Tools—Submodules"
+                url="https://git-scm.com/book/en/v2/Git-Tools-Submodules"
+                location="Git Book"
+            >
+                <Fragment slot="description">
+                    Referencia completa sobre submódulos: qué son, cómo agregarlos, clonarlos e
+                    integrarlos en flujos colaborativos. Cubre el modelo de sincronización remota,
+                    manejo de cambios locales y estrategias de merge/rebase. Esencial para entender
+                    cómo Git fija versiones específicas de repositorios externos y mantener
+                    reproducibilidad en proyectos multi-repo.
+                </Fragment>
+            </WebPage>
+        </Fragment>
+    </References>
+</NotesLayout>

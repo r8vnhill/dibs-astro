@@ -46,7 +46,7 @@ interface Props {
      * - Stable across renders when possible (to maximize the benefit of memoization).
      * - Already normalized/validated by the caller (this component treats it as trusted input).
      */
-    lessons: Lesson[];
+    lessons: readonly Lesson[];
 }
 
 /**
