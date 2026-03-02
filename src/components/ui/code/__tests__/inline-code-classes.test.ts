@@ -13,7 +13,8 @@ describe("buildInlineCodeClassList", () => {
         { elevate: false, className: "" },
         { elevate: true, className: "custom-inline" },
     ])("keeps wrapping invariants (%o)", ({ elevate, className }) => {
-        const classNameValue = toClassName(buildInlineCodeClassList({ elevate, className }));
+        const options = className === undefined ? { elevate } : { elevate, className };
+        const classNameValue = toClassName(buildInlineCodeClassList(options));
 
         expect(classNameValue).toContain("whitespace-normal");
         expect(classNameValue).toContain("break-words");

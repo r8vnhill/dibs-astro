@@ -13,7 +13,7 @@ export class Lesson {
     readonly id: LessonId;
     readonly title: string;
     readonly slug: LessonSlug;
-    readonly href?: LessonHref;
+    readonly href: LessonHref | undefined;
 
     private constructor(props: LessonProps) {
         this.id = props.id;

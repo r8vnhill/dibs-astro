@@ -9,7 +9,7 @@ import type { Lesson } from "~/data/course-structure";
  *  - depth: recursion depth (used for indentation)
  */
 interface Props {
-    lessons: Lesson[];
+    lessons: readonly Lesson[];
     depth?: number;
     /**
      * Optional key to persist expand/collapse state in localStorage.
@@ -29,7 +29,7 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
     // Auto-expand parents of active path once per render tree
     useEffect(() => {
         const expanded: Record<string, boolean> = {};
-        const walk = (nodes: Lesson[]): boolean => {
+        const walk = (nodes: readonly Lesson[]): boolean => {
             let matchedSubtree = false;
             for (const node of nodes) {
                 const key = node.href ?? node.title;
@@ -92,7 +92,7 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
         );
     }
 
-    const renderLessons = useCallback((nodes: Lesson[], level: number): ReactNode[] => {
+    const renderLessons = useCallback((nodes: readonly Lesson[], level: number): ReactNode[] => {
         return nodes.map((lesson, index) => {
             const key = lesson.href ?? `${lesson.title}-${level}-${index}`;
             const isActive = lesson.href ? currentPath === lesson.href : false;
