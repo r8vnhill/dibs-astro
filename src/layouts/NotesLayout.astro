@@ -99,7 +99,7 @@ interface Props {
      *
      * When provided, the layout renders repository links via {@link LessonRepoPanel}.
      */
-    git?: RepoRef;
+    git?: RepoRef | readonly RepoRef[];
 }
 
 // Extract current page data and resolve metadata/navigation.

@@ -239,6 +239,12 @@ export const courseStructure = [
                                 title: "Manejo de errores",
                                 href: "/notes/software-libraries/scripting/pipelines/errors/",
                             },
+                            {
+                                kind: "link",
+                                id: "git-submodules",
+                                title: "Lab. 2: Git Submodules",
+                                href: "/notes/software-libraries/scripting/pipelines/git-submodules/",
+                            }
                         ],
                     },
                 ],

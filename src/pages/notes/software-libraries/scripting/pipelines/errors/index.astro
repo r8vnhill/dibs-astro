@@ -18,6 +18,7 @@ import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References } from "~/components/ui/references";
+import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -125,6 +126,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Enquote>falla fuerte</Enquote> según el contexto.
         </P>
 
+
+
         <PowerShellBlock
             code={`
                 #Requires -Version 7.5
@@ -168,7 +171,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     if ($batchFailed) {
                         $batchErrorParams = @{
                             Message      = ("Batch '{0}' failed (at least one item failed)." -f $BatchId)
-                            Category     = 'InvalidOperation'
+                            Category     = [System.Management.Automation.ErrorCategory]::InvalidOperation
                             TargetObject = $BatchId
                             ErrorId      = 'InvokeBatchFingerprint.BatchFailed'
                         }
@@ -723,7 +726,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         if ($batchFailed) {
                             $batchErrorParams = @{
                                 Message      = ("Batch '{0}' failed (at least one item failed)." -f $BatchId)
-                                Category     = 'InvalidOperation'
+                                Category     = [System.Management.Automation.ErrorCategory]::InvalidOperation
                                 TargetObject = $BatchId
                                 ErrorId      = 'InvokeBatchFingerprint.BatchFailed'
                             }

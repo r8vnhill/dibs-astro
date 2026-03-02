@@ -42,7 +42,7 @@ interface Props {
      * { user: "ravenhill", repo: "dibs-scripts" }
      * ```
      */
-    git: RepoRef;
+    git: RepoRef | readonly RepoRef[];
 
     /**
      * Optional list of platforms to render.
@@ -58,6 +58,7 @@ interface Props {
 
 const { git, platforms } = Astro.props as Props;
 const selectedPlatforms = normalizePlatforms(platforms);
+const repositories = Array.isArray(git) ? git : [git];
 
 /**
  * Stable heading id used to associate the section with its label.
@@ -99,11 +100,13 @@ const panelHeadingId = "lesson-repo-panel-heading";
         ]}
     >
         {
-            selectedPlatforms.map((platform) => (
+            repositories.flatMap((repo) =>
+                selectedPlatforms.map((platform) => (
                 <li>
-                    <RepoLink {...git} {platform} />
+                    <RepoLink {...repo} {platform} />
                 </li>
             ))
+            )
         }
     </ul>
 </section>
