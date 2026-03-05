@@ -39,7 +39,7 @@
  */
 
 import { JSDOM } from "jsdom";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { createAstroRenderer } from "../../../../test-utils/astro-render";
 import InlineCode from "../InlineCode.astro";
 
@@ -115,6 +115,7 @@ type InlineCodeProps = {
      * - Elevation does not break wrapping or content rendering.
      */
     elevate?: boolean | undefined;
+    brackets?: boolean | undefined;
 };
 
 /**
@@ -133,10 +134,21 @@ type InlineCodeProps = {
  * - Avoids brittle regex/string assertions.
  * - Enables semantic querying (e.g., `querySelector`).
  */
-async function renderInlineCode(props: InlineCodeProps): Promise<Document> {
+async function renderInlineCode(
+    props: InlineCodeProps,
+    slots?: Record<string, string>,
+): Promise<Document> {
     const render = await createAstroRenderer<InlineCodeProps>(InlineCode);
-    const html = await render(props);
+    const html = await render(props, slots ? { slots } : undefined);
     return new JSDOM(html).window.document;
+}
+
+async function renderInlineCodeHtml(
+    props: InlineCodeProps,
+    slots?: Record<string, string>,
+): Promise<string> {
+    const render = await createAstroRenderer<InlineCodeProps>(InlineCode);
+    return render(props, slots ? { slots } : undefined);
 }
 
 describe("InlineCode.astro render", () => {
@@ -153,8 +165,8 @@ describe("InlineCode.astro render", () => {
         { elevate: false, lang: "text", class: undefined, code: "x" },
         { elevate: true, lang: "text", class: "", code: "x" },
         { elevate: false, lang: "sh", class: "custom-inline", code: "x" },
-        { elevate: true, lang: undefined, class: undefined, code: "" },
-        { elevate: true, lang: "ts", class: "custom-inline", code: undefined },
+        { elevate: true, lang: "txt", class: undefined, code: "x" },
+        { elevate: true, lang: "ts", class: "custom-inline", code: "x" },
     ])(
         "applies wrapping-friendly classes in the root code element (%o)",
         async (props) => {
@@ -203,5 +215,113 @@ describe("InlineCode.astro render", () => {
         expect(code?.textContent ?? "").toContain(
             "InvokeBatchFingerprint.BatchFailed",
         );
+    });
+
+    test.each([
+        { code: undefined, slots: undefined },
+        { code: "", slots: undefined },
+        { code: "   \n\t   ", slots: undefined },
+    ])("does not render markup when code is empty (%o)", async ({ code, slots }) => {
+        const document = await renderInlineCode({ code }, slots);
+        expect(document.querySelector("code")).toBeNull();
+    });
+
+    test("does not render markup when default slot is whitespace only", async () => {
+        const document = await renderInlineCode({}, { default: "  \n\t  " });
+        expect(document.querySelector("code")).toBeNull();
+    });
+
+    test("prefers code prop over default slot content", async () => {
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+        const document = await renderInlineCode(
+            { code: "from-prop", lang: "ts" },
+            { default: "from-slot" },
+        );
+
+        const code = document.querySelector("code");
+        expect(code).not.toBeNull();
+        expect(code?.textContent ?? "").toContain("from-prop");
+        expect(code?.textContent ?? "").not.toContain("from-slot");
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+    });
+
+    test("warns in DEV when both code prop and default slot are provided", async () => {
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+        await renderInlineCode(
+            { code: "from-prop", lang: "ts" },
+            { default: "from-slot" },
+        );
+
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        const firstWarning = warnSpy.mock.calls[0]?.[0];
+        expect(firstWarning).toContain("InlineCode conflict:");
+        expect(firstWarning).toContain("`code` prop takes precedence");
+        expect(firstWarning).toContain("lang=ts");
+        expect(firstWarning).toContain('code prop preview="from-prop"');
+        expect(firstWarning).toContain('slot preview="from-slot"');
+    });
+
+    test("does not warn when a single code source is used", async () => {
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+        await renderInlineCode({ code: "from-prop", lang: "ts" });
+        await renderInlineCode({}, { default: "from-slot" });
+        await renderInlineCode({ code: "from-prop", lang: "ts" }, { default: "   \n\t   " });
+
+        expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    test("forwards aria-label when provided and omits it when undefined", async () => {
+        const withLabel = await renderInlineCode({
+            code: "x",
+            ariaLabel: "Inline shell snippet",
+        });
+        const withLabelCode = withLabel.querySelector("code");
+        expect(withLabelCode?.getAttribute("aria-label")).toBe("Inline shell snippet");
+
+        const withoutLabel = await renderInlineCode({ code: "x", ariaLabel: undefined });
+        const withoutLabelCode = withoutLabel.querySelector("code");
+        expect(withoutLabelCode?.hasAttribute("aria-label")).toBe(false);
+    });
+
+    test("omits data-lang for txt and includes it for non-default languages", async () => {
+        const txtDocument = await renderInlineCode({ code: "x", lang: "txt" });
+        const txtCode = txtDocument.querySelector("code");
+        expect(txtCode?.hasAttribute("data-lang")).toBe(false);
+
+        const tsDocument = await renderInlineCode({ code: "x", lang: "ts" });
+        const tsCode = tsDocument.querySelector("code");
+        expect(tsCode?.getAttribute("data-lang")).toBe("ts");
+    });
+
+    test("disables colorized bracket transformer when brackets is false", async () => {
+        const html = await renderInlineCodeHtml({
+            code: "a[b]",
+            lang: "ts",
+            brackets: false,
+        });
+
+        expect(html).not.toContain("shiki-bracket-highlight");
+    });
+
+    test("changes rendered tokenization when brackets is true", async () => {
+        const htmlWithBrackets = await renderInlineCodeHtml({
+            code: "a[b]",
+            lang: "ts",
+            brackets: true,
+        });
+
+        const htmlWithoutBrackets = await renderInlineCodeHtml({
+            code: "a[b]",
+            lang: "ts",
+            brackets: false,
+        });
+
+        const withBracketSpans = (htmlWithBrackets.match(/<span style=/g) ?? []).length;
+        const withoutBracketSpans = (htmlWithoutBrackets.match(/<span style=/g) ?? []).length;
+
+        expect(htmlWithBrackets).not.toBe(htmlWithoutBrackets);
+        expect(withBracketSpans).toBeGreaterThan(withoutBracketSpans);
     });
 });

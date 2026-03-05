@@ -1,9 +1,53 @@
 ---
 /**
- * InlineCode.astro
+ * @file InlineCode.astro
  *
- * Inline code with dual Shiki themes (light/dark), zero client JS.
- * Extensible themes, optional colorized brackets, and small, testable surface.
+ * Inline code renderer with dual Shiki themes (light/dark) and zero client JS.
+ *
+ * This component renders *two* Shiki-highlighted inline snippets and uses CSS (`dark:hidden` /
+ * `dark:inline`) to show the appropriate variant depending on the active color scheme. This avoids
+ * any client-side theme switching logic while keeping syntax highlighting consistent with the rest
+ * of the site.
+ *
+ * The component is designed to be small and test-friendly:
+ *
+ * - All styling decisions are delegated to [buildInlineCodeClassList].
+ * - Shiki-specific styling is limited to a small, fixed class list.
+ * - Optional transformers (e.g., colorized brackets) are injected via a single toggle.
+ *
+ * ## Usage:
+ *
+ * Prefer the `code` prop for short snippets and for any snippet that contains spaces. Use the
+ * default slot only when the calling site is already producing inline content (e.g., MDX
+ * or Astro templates) and the snippet is a single token with no spaces.
+ *
+ * ### Example 1: Provide code via prop
+ *
+ * ```astro
+ * <InlineCode code="git submodule add" lang="bash" />
+ * ```
+ *
+ * ### Example 2: Provide a single-token snippet via slot
+ *
+ * ```astro
+ * <InlineCode lang="powershell">
+ *   Get-ChildItem
+ * </InlineCode>
+ * ```
+ *
+ * ### Example 3: Disable colorized brackets
+ * ```astro
+ * <InlineCode code="Map<String, Int>" lang="kotlin" brackets={false} />
+ * ```
+ *
+ * @remarks
+ * - If both the `code` prop and a default slot are provided, the `code` prop takes precedence. In
+ *   development, the component emits a warning to help catch accidental duplication.
+ * - The default slot may be formatted unexpectedly for multi-word snippets (whitespace/newline
+ *   normalization from template formatting). Prefer the `code` prop for snippets that include
+ *   spaces.
+ * - If the resolved snippet is empty or whitespace-only, the component renders nothing (no empty
+ *   `<code>` wrapper).
  */
 
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
@@ -12,18 +56,85 @@ import { Code } from "astro:components";
 import type { BundledTheme, ThemeRegistration, ThemeRegistrationRaw } from "shiki";
 import { buildInlineCodeClassList } from "./inline-code-classes";
 
+/**
+ * Props for the `InlineCode` component.
+ */
 type Props = {
+    /**
+     * Inline snippet content.
+     *
+     * If omitted, the component attempts to read code from the default slot. When both are
+     * present, the `code` prop takes precedence.
+     */
     code?: string;
-    lang?: CodeLanguage; // default: "txt"
+
+    /**
+     * Language hint for Shiki highlighting.
+     *
+     * Defaults to `"txt"`, which keeps the snippet semantically “plain text”.
+     */
+    lang?: CodeLanguage;
+
+    /**
+     * Additional CSS classes applied to the root `<code>` element.
+     *
+     * These are merged through `buildInlineCodeClassList`, which is responsible for normalizing
+     * and composing the final class list.
+     */
     class?: string;
-    /** Shiki themes (override from layout/page if needed) */
-    themeLight?: BundledTheme | ThemeRegistration | ThemeRegistrationRaw; // default: "catppuccin-latte"
-    themeDark?: BundledTheme | ThemeRegistration | ThemeRegistrationRaw; // default: "catppuccin-mocha"
-    /** Toggle colorized bracket transformer */
-    brackets?: boolean; // default: true
-    /** Optional label for screen readers when snippet is not self-descriptive */
+
+    /**
+     * Shiki theme used when the site is in light mode.
+     *
+     * Override this from a layout/page to align inline highlighting with your site-wide theme
+     * selection.
+     *
+     * @defaultValue `"catppuccin-latte"`
+     */
+    themeLight?:
+        | BundledTheme
+        | ThemeRegistration
+        | ThemeRegistrationRaw;
+
+    /**
+     * Shiki theme used when the site is in dark mode.
+     *
+     * Override this from a layout/page to align inline highlighting with your site-wide theme
+     * selection.
+     *
+     * @defaultValue `"catppuccin-mocha"`
+     */
+    themeDark?:
+        | BundledTheme
+        | ThemeRegistration
+        | ThemeRegistrationRaw;
+
+    /**
+     * Enables/disables the colorized brackets transformer.
+     *
+     * When enabled, bracket pairs (e.g., `()`, `{}`, `[]`) are highlighted to improve readability
+     * in nested expressions.
+     *
+     * @defaultValue `true`
+     */
+    brackets?: boolean;
+
+    /**
+     * Optional accessible label for screen readers.
+     *
+     * Use this when the snippet content is ambiguous out of context (e.g., a single symbol or
+     * short identifier).
+     */
     ariaLabel?: string;
-    /** Subtle "elevated" badge style to make inline code stand out (uses theme tokens). */
+
+    /**
+     * Enables a subtle “elevated” badge appearance for inline code.
+     *
+     * The concrete styling is defined by `buildInlineCodeClassList` and should use theme tokens so
+     * the result is consistent across light/dark themes.
+     *
+     * @defaultValue `true`
+     */
     elevate?: boolean;
 };
 
@@ -38,31 +149,86 @@ const {
     elevate = true,
 } = Astro.props as Props;
 
-const slotCode = codeProp === undefined && Astro.slots.has("default")
-    ? (await Astro.slots.render("default")).trim()
+const hasDefaultSlot = Astro.slots.has("default");
+const slotCode = hasDefaultSlot && (codeProp === undefined || import.meta.env.DEV)
+    ? await Astro.slots.render("default")
     : "";
-const code = codeProp ?? slotCode;
+const hasMeaningfulSlotCode = slotCode.trim().length > 0;
 
+if (import.meta.env.DEV && codeProp !== undefined && hasMeaningfulSlotCode) {
+    const slotPreview = slotCode.trim().slice(0, 80);
+    const propPreview = codeProp.trim().slice(0, 80);
+    console.warn(
+        [
+            "InlineCode conflict: both `code` prop and default slot were provided;",
+            "`code` prop takes precedence.",
+            `lang=${lang}`,
+            `code prop preview=${JSON.stringify(propPreview)}`,
+            `slot preview=${JSON.stringify(slotPreview)}`,
+        ].join(" "),
+    );
+}
+
+const resolvedCode = codeProp ?? slotCode;
+const hasMeaningfulCode = resolvedCode.trim().length > 0;
+
+/**
+ * Root `<code>` classes are composed by a dedicated builder to:
+ * - keep this component small,
+ * - centralize style tokens,
+ * - and make class composition testable in isolation.
+ */
 const rootClassList = buildInlineCodeClassList({ className, elevate });
 
-const transformers = brackets ? [transformerColorizedBrackets()] : [];
+/**
+ * Shiki's inline component can emit background/shadow styles that are desirable for blocks, but
+ * not for inline code. We force a transparent background and remove shadows to integrate with
+ * surrounding typography.
+ */
+const codeClassList = ["!bg-transparent", "!shadow-none"];
+
+/**
+ * Optional Shiki transformers.
+ *
+ * We keep transformer wiring here to ensure it remains explicit and easy to test (e.g., brackets
+ * on/off behavior).
+ */
+const bracketTransformers = [transformerColorizedBrackets()];
+const codeTransformers = brackets ? { transformers: bracketTransformers } : {};
+
+/**
+ * `data-lang` supports styling hooks (e.g., showing a tooltip or subtle marker). Omitting it for
+ * `"txt"` keeps the DOM cleaner for the default case.
+ */
+const dataLang = lang === "txt" ? undefined : lang;
+
+/**
+ * Light/dark variants are rendered server-side and toggled using CSS to keep the component
+ * client-free.
+ */
 const variants = [
     { wrapperClass: "dark:hidden", theme: themeLight },
     { wrapperClass: "hidden dark:inline", theme: themeDark },
 ];
 ---
 
-<code
-    class:list={rootClassList} data-lang={lang}
-    aria-label={ariaLabel}
->{
-    variants.map(({ wrapperClass, theme }) => (
-        <span class={wrapperClass}>
-            <Code
-                {code} {lang}
-                inline {theme}
-                class:list={["!bg-transparent", "!shadow-none"]} {transformers}
-            />
-        </span>
-    ))
-}</code>
+{
+    hasMeaningfulCode && (
+        <code
+            class:list={rootClassList} data-lang={dataLang}
+            aria-label={ariaLabel}
+        >
+            {
+                variants.map(({ wrapperClass, theme }) => (
+                    <span class={wrapperClass}>
+                        <Code
+                            code={resolvedCode} {lang}
+                            inline {theme}
+                            class:list={codeClassList} {...codeTransformers}
+                        />
+                    </span>
+                ))
+            }
+        </code>
+    )
+}

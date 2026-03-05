@@ -70,7 +70,12 @@ type AstroRenderComponent = Parameters<
  */
 export type AstroRender<Props extends object> = (
     props: Props,
+    options?: AstroRenderOptions,
 ) => Promise<string>;
+
+export interface AstroRenderOptions {
+    slots?: Record<string, string>;
+}
 
 /**
  * Creates a reusable renderer function for a given Astro component.
@@ -104,6 +109,9 @@ export async function createAstroRenderer<Props extends object>(
 ): Promise<AstroRender<Props>> {
     const container = await AstroContainer.create();
 
-    return (props: Props) =>
-        container.renderToString(component, { props: props as any });
+    return (props: Props, options?: AstroRenderOptions) =>
+        container.renderToString(component, {
+            props: props as any,
+            ...(options?.slots ? { slots: options.slots as any } : {}),
+        });
 }
