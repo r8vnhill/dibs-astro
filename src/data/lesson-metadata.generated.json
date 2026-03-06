@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-02T18:19:16.846Z",
+  "generatedAt": "2026-03-06T12:48:32.163Z",
   "totalLessons": 39,
   "changesLimit": 5,
   "entries": {
@@ -740,6 +740,12 @@
       "lastModified": "2026-03-02",
       "changes": [
         {
+          "hash": "28ceedf399ced7dc81643219f9e668861d211677",
+          "date": "2026-03-02",
+          "author": "r8vnhill",
+          "subject": "✅♻️ fix(types): resolve astro check errors for readonly lessons and strict optionals"
+        },
+        {
           "hash": "d68955ffb60a4b0583aa53fb3216ec8b7fe37246",
           "date": "2026-03-02",
           "author": "r8vnhill",
@@ -762,12 +768,6 @@
           "date": "2026-02-22",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): improve pipeline error lesson and code rendering"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },

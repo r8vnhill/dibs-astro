@@ -50,18 +50,69 @@ const referencesProps = {
 
 const referencedIds = Array.from(new Set([...recommended, ...additional]));
 const slotHtml = new Map<string, string>();
+const fallbackTitleById = new Map<string, string>();
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+    typeof value === "object" && value !== null;
+
+const asNonEmptyString = (value: unknown): string | undefined => {
+    if (typeof value !== "string") return undefined;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+};
+
+if (isObject(source) && Array.isArray(source.itemListElement)) {
+    for (const rawItem of source.itemListElement) {
+        if (!isObject(rawItem)) continue;
+        const id = asNonEmptyString(rawItem.identifier);
+        const title = asNonEmptyString(rawItem.name) ?? asNonEmptyString(rawItem.headline);
+        if (id && title) fallbackTitleById.set(id, title);
+    }
+}
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+type BookReference = Extract<NormalizedReference, { type: "Book" }>;
+type WebReference = Extract<NormalizedReference, { type: "WebPage" }>;
+
+const resolvedBookChapter = (ref: BookReference): string | undefined =>
+    ref.chapter || ref.title || fallbackTitleById.get(ref.id);
+
+const resolvedWebTitle = (ref: WebReference): string | undefined =>
+    ref.title || fallbackTitleById.get(ref.id);
+
+const bookChapterProp = (ref: BookReference): { chapter: string } | Record<never, never> => {
+    const chapter = resolvedBookChapter(ref);
+    return chapter ? { chapter } : {};
+};
+
+const webTitleProp = (ref: WebReference): { title: string } | Record<never, never> => {
+    const title = resolvedWebTitle(ref);
+    return title ? { title } : {};
+};
 
 for (const id of referencedIds) {
     const titleName = `title-${id}`;
-    if (Astro.slots.has(titleName)) {
+    try {
         const html = await Astro.slots.render(titleName);
-        slotHtml.set(titleName, html);
+        if (hasMeaningfulContent(html)) {
+            slotHtml.set(titleName, html);
+        }
+    } catch {
+        // Slot is absent; keep default normalized title.
     }
 
     const descriptionName = `description-${id}`;
-    if (Astro.slots.has(descriptionName)) {
+    try {
         const html = await Astro.slots.render(descriptionName);
-        slotHtml.set(descriptionName, html);
+        if (hasMeaningfulContent(html)) {
+            slotHtml.set(descriptionName, html);
+        }
+    } catch {
+        // Slot is absent; no custom description.
     }
 }
 ---
@@ -72,7 +123,7 @@ for (const id of referencedIds) {
             grouped.recommended.map((ref) =>
                 ref.type === "Book" ? (
                 <Book
-                    chapter={ref.chapter} bookTitle={ref.bookTitle}
+                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
                 >
                     {
@@ -99,7 +150,7 @@ for (const id of referencedIds) {
                 </Book>
             ) : (
                 <WebPage
-                    title={ref.title} url={ref.url}
+                    {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
                 >
                     {
@@ -134,7 +185,7 @@ for (const id of referencedIds) {
             grouped.additional.map((ref) =>
                 ref.type === "Book" ? (
                 <Book
-                    chapter={ref.chapter} bookTitle={ref.bookTitle}
+                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
                 >
                     {
@@ -161,7 +212,7 @@ for (const id of referencedIds) {
                 </Book>
             ) : (
                 <WebPage
-                    title={ref.title} url={ref.url}
+                    {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
                 >
                     {

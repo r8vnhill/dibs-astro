@@ -2,6 +2,7 @@
 
 import { getViteConfig } from "astro/config";
 
+// Ensure icon generation is skipped when Vitest loads Astro/Vite config in Node.
 process.env.SKIP_ICON_GENERATION ??= "true";
 
 /**
@@ -23,7 +24,7 @@ process.env.SKIP_ICON_GENERATION ??= "true";
 export default getViteConfig({
     test: {
         // Run only project test files under src
-        include: ["src/**/__tests__/*.{test,spec}.{ts,tsx}"],
+        include: ["src/**/__tests__/**/*.{test,spec}.{ts,tsx}"],
 
         // Use jsdom so DOM APIs (document/window) are available for React testing
         environment: "jsdom",
@@ -36,12 +37,21 @@ export default getViteConfig({
         // where we want explicitness)
         globals: true,
 
+        // Clear and restore mock state between tests to reduce test coupling/leaks.
+        clearMocks: true,
+        restoreMocks: true,
+
         // Don't attempt to transform or load CSS during tests (faster + fewer errors)
         css: false,
 
-        // Astro component render tests run with `vitest.astro.config.ts` in a separate suite.
+        // Astro render tests run in `pnpm test:astro` using `vitest.astro.config.ts` (different
+        // environment and transforms), so we exclude them from the jsdom suite.
         exclude: [
             "node_modules/**",
+            "dist/**",
+            ".astro/**",
+            ".vercel/**",
+            ".netlify/**",
             "src/**/*.render.test.ts",
         ],
     },

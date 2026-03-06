@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.11.1] - 2026-03-06
+
+### Added
+
+- Added a dedicated Astro render regression test for `ReferencesFromJsonLd` to verify title fallback behavior when only `description-*` slots are provided.
+- Expanded `InlineCode` render test coverage with stronger cases around source resolution and rendering contracts.
+
+### Changed
+
+- Refined `InlineCode.astro` internals to make source resolution and usage rules more robust and predictable.
+- Improved Astro render test utilities and Vitest unit config discovery/isolation to reduce config coupling in tests.
+- Reworked the `notes/software-libraries/scripting/pipelines/` lesson with clearer abstract/conclusions and stronger pedagogical progression across filtering, projection, transformation, and JSON pipeline exercises.
+- Regenerated derived metadata/index artifacts (`lesson-metadata.generated.json`, icon index) to reflect the updated lesson/content state.
+
+### Fixed
+
+- Fixed reference title rendering in bibliography components (`ReferencesFromJsonLd`, `Book`, `WebPage`) when empty title slots were present, preserving normalized/fallback titles instead of rendering blank labels.
+
 ## [0.11.0] - 2026-03-02
 
 ### Added
