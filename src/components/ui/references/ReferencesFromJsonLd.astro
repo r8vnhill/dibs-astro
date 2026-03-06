@@ -75,6 +75,25 @@ const hasMeaningfulContent = (html: string): boolean => {
     return plainText.length > 0;
 };
 
+type BookReference = Extract<NormalizedReference, { type: "Book" }>;
+type WebReference = Extract<NormalizedReference, { type: "WebPage" }>;
+
+const resolvedBookChapter = (ref: BookReference): string | undefined =>
+    ref.chapter || ref.title || fallbackTitleById.get(ref.id);
+
+const resolvedWebTitle = (ref: WebReference): string | undefined =>
+    ref.title || fallbackTitleById.get(ref.id);
+
+const bookChapterProp = (ref: BookReference): { chapter: string } | Record<never, never> => {
+    const chapter = resolvedBookChapter(ref);
+    return chapter ? { chapter } : {};
+};
+
+const webTitleProp = (ref: WebReference): { title: string } | Record<never, never> => {
+    const title = resolvedWebTitle(ref);
+    return title ? { title } : {};
+};
+
 for (const id of referencedIds) {
     const titleName = `title-${id}`;
     try {
@@ -104,8 +123,7 @@ for (const id of referencedIds) {
             grouped.recommended.map((ref) =>
                 ref.type === "Book" ? (
                 <Book
-                    chapter={ref.chapter || ref.title || fallbackTitleById.get(ref.id)}
-                    bookTitle={ref.bookTitle}
+                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
                 >
                     {
@@ -132,7 +150,7 @@ for (const id of referencedIds) {
                 </Book>
             ) : (
                 <WebPage
-                    title={ref.title || fallbackTitleById.get(ref.id)} url={ref.url}
+                    {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
                 >
                     {
@@ -167,8 +185,7 @@ for (const id of referencedIds) {
             grouped.additional.map((ref) =>
                 ref.type === "Book" ? (
                 <Book
-                    chapter={ref.chapter || ref.title || fallbackTitleById.get(ref.id)}
-                    bookTitle={ref.bookTitle}
+                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
                 >
                     {
@@ -195,7 +212,7 @@ for (const id of referencedIds) {
                 </Book>
             ) : (
                 <WebPage
-                    title={ref.title || fallbackTitleById.get(ref.id)} url={ref.url}
+                    {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
                 >
                     {
