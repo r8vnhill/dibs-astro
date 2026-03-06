@@ -53,11 +53,31 @@ const pagesLabel = fmtPages(pages, locale);
 const authorsInline = authorsText(authors, locale);
 const byWord = locale === "en" ? "by" : "por";
 const inWord = locale === "en" ? "in" : "en";
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+const chapterSlotHtml = Astro.slots.has("chapter")
+    ? await Astro.slots.render("chapter")
+    : "";
+const bookTitleSlotHtml = Astro.slots.has("bookTitle")
+    ? await Astro.slots.render("bookTitle")
+    : "";
+const authorsSlotHtml = Astro.slots.has("authors")
+    ? await Astro.slots.render("authors")
+    : "";
+const hasChapterSlot = hasMeaningfulContent(chapterSlotHtml);
+const hasBookTitleSlot = hasMeaningfulContent(bookTitleSlotHtml);
+const hasAuthorsSlot = hasMeaningfulContent(authorsSlotHtml);
 ---
 
 <ListItem icon={icons.Book} class="space-y-1">
     <div class="flex flex-wrap items-baseline gap-x-1.5">
-        <Enquote type={quoteType}><slot name="chapter">{chapter}</slot></Enquote>
+        <Enquote type={quoteType}>
+            {hasChapterSlot ? <span set:html={chapterSlotHtml} /> : chapter}
+        </Enquote>
 
         {
             pagesLabel && (
@@ -70,7 +90,7 @@ const inWord = locale === "en" ? "in" : "en";
         <span class="text-muted-foreground">{inWord}</span>
 
         <cite class:list={["not-italic", italicTitle && "italic"]}>
-            <slot name="bookTitle">{bookTitle}</slot>
+            {hasBookTitleSlot ? <span set:html={bookTitleSlotHtml} /> : bookTitle}
         </cite>
 
         <span class="text-muted-foreground">{byWord}</span>
@@ -78,12 +98,12 @@ const inWord = locale === "en" ? "in" : "en";
         {
             authorsInline
                 ? <span>{authorsInline}</span>
-            : <slot name="authors" />
+            : (hasAuthorsSlot ? <span set:html={authorsSlotHtml} /> : null)
         }
     </div>
 
     {
-        Astro.slots.description && (
+        Astro.slots.has("description") && (
             <div class="text-muted-foreground">
                 <slot name="description" />
             </div>
