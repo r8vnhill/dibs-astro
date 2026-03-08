@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-06T12:48:32.163Z",
+  "generatedAt": "2026-03-08T13:48:01.797Z",
   "totalLessons": 39,
   "changesLimit": 5,
   "entries": {
@@ -696,8 +696,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-16",
+      "lastModified": "2026-03-06",
       "changes": [
+        {
+          "hash": "37c4755c27f02af09624eac608170fc5417492e9",
+          "date": "2026-03-06",
+          "author": "r8vnhill",
+          "subject": "✍️🐛 docs(notes): refine pipelines lesson and fix reference title fallback rendering"
+        },
         {
           "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
           "date": "2026-02-16",
@@ -721,12 +727,6 @@
           "date": "2026-02-07",
           "author": "r8vnhill",
           "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
