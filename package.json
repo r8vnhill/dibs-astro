@@ -12,7 +12,7 @@
         "preview": "node scripts/preview-dev.mjs",
         "astro": "astro",
         "fmt": "dprint fmt",
-        "check": "node ./node_modules/astro/astro.js check",
+        "check": "cross-env SKIP_ICON_GENERATION=true node ./node_modules/astro/astro.js check && node scripts/generate-lesson-metadata.mjs --dry-run --quiet",
         "bibliography:report": "node scripts/bibliography-report.mjs",
         "predeploy": "pnpm run generate:lesson-metadata",
         "deploy": "astro build && wrangler deploy",

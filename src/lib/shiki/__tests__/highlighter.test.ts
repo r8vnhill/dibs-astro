@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { __resetHighlighterCacheForTests, __setHighlighterInstanceForTests } from "./cache";
-import { highlightToHtml } from "./highlighter";
+import { __resetHighlighterCacheForTests, __setHighlighterInstanceForTests } from "../cache";
+import { highlightToHtml } from "../highlighter";
 
 const theme = "catppuccin-latte";
 
