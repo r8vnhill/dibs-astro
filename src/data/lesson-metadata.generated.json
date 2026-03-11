@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T20:38:54.750Z",
+  "generatedAt": "2026-03-11T21:03:15.289Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -492,8 +492,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-11",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
           "date": "2026-02-11",
@@ -517,12 +523,6 @@
           "date": "2025-10-13",
           "author": "r8vnhill",
           "subject": "✨📝 feat(docs/scripting): add `Update-ScriptRequiresVersion` exercise & bump examples to PowerShell 7.5"
-        },
-        {
-          "hash": "edc942c8d179d226f88af974eef2afc4bbdf9406",
-          "date": "2025-10-13",
-          "author": "r8vnhill",
-          "subject": "✨♿💄 feat(ui,links,snippets): add Exercise slots, show ref hints in source links, and provide editor snippet"
         }
       ]
     },
@@ -533,7 +533,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-03-11",
+      "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        }
+      ]
     },
     "/notes/software-libraries/scripting/first-script/py/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/py.astro",
@@ -542,8 +550,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -559,8 +573,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-07",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
           "date": "2026-02-07",
@@ -584,12 +604,6 @@
           "date": "2025-10-20",
           "author": "r8vnhill",
           "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
-        },
-        {
-          "hash": "a64c6a36e10a5c7d4e36d333fca403fa037d45a5",
-          "date": "2025-10-16",
-          "author": "r8vnhill",
-          "subject": "✨♻️🎨📝🔧 refactor(semantics,notes): Standardize paragraphs with `<P>`, polish TabsTrigger, expand GitLab notes, add “clsx” to dictionary"
         }
       ]
     },
@@ -705,8 +719,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-06",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "37c4755c27f02af09624eac608170fc5417492e9",
           "date": "2026-03-06",
@@ -730,12 +750,6 @@
           "date": "2026-02-11",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-        },
-        {
-          "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
-          "date": "2026-02-07",
-          "author": "r8vnhill",
-          "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
         }
       ]
     },
@@ -746,8 +760,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-02",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "28ceedf399ced7dc81643219f9e668861d211677",
           "date": "2026-03-02",
@@ -771,12 +791,6 @@
           "date": "2026-02-22",
           "author": "r8vnhill",
           "subject": "📝 docs(notes): add bibliography source for pipeline error handling"
-        },
-        {
-          "hash": "887ec92325bb2a8ad4a7332b4aa9684b8c2690a9",
-          "date": "2026-02-22",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): improve pipeline error lesson and code rendering"
         }
       ]
     },
@@ -787,8 +801,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-02",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "0d6422b1b4caa3cb57bc79d3e61ac785ba4b7ceb",
           "date": "2026-03-02",
@@ -816,8 +836,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-11",
+      "lastModified": "2026-03-11",
       "changes": [
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
         {
           "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
           "date": "2026-02-11",
@@ -841,12 +867,6 @@
           "date": "2025-10-05",
           "author": "r8vnhill",
           "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
-        },
-        {
-          "hash": "da2a3844910289a5d65f201be9dc5f85997aa901",
-          "date": "2025-10-04",
-          "author": "r8vnhill",
-          "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
         }
       ]
     },

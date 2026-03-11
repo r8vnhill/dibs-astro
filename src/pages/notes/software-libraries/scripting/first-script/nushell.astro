@@ -1,15 +1,14 @@
 ---
 import * as icons from "$icons";
-import { Enquote, P } from "~/components/semantics";
+import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Definition, Explanation, Important, Info, More } from "~/components/ui/callouts";
+import { Abstract, Explanation, Important, Info } from "~/components/ui/callouts";
 import { NushellInline, PowerShellInline } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -17,18 +16,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="Comandos reutilizables y validación de parámetros en Nushell"
-    description="Comparativa práctica con PowerShell: cómo organizar comandos reutilizables en Nushell, por qué suele convenir cargar scripts con source, y cómo combinar firmas tipadas con validaciones explícitas manteniendo por ahora una salida basada en strings."
+    description="Lección comparativa sobre cómo Nushell organiza comandos reutilizables con source, firmas tipadas, validaciones explícitas y una separación clara entre generar texto y escribir un README.md."
     git={{ user: "r8vnhill", repo: "dibs-scripts-nushell" }}
 >
     <Abstract>
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "...",
-                ],
-            }}
-        />
+        <P>
+            Esta lección muestra cómo organizar en Nushell un primer conjunto de comandos
+            reutilizables para generar y escribir un <Mono>README.md</Mono>, separando la
+            construcción del contenido, la validación de parámetros y la persistencia en disco.
+        </P>
+
+        <P>
+            El foco está en cargar archivos con <NushellInline>source</NushellInline>, definir
+            firmas tipadas, devolver strings y escribir validaciones explícitas cuando Nushell no
+            ofrece un equivalente declarativo directo a los atributos vistos antes.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-scripts-and-sourced-commands">
@@ -452,15 +454,45 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            ...
+            <P>
+                En esta lección vimos cómo Nushell permite construir una automatización pequeña pero
+                bien organizada a partir de comandos reutilizables. El recorrido pasó por cargar
+                definiciones con <NushellInline>source</NushellInline>, componer comandos que
+                devuelven texto, y separar con claridad la generación del contenido de la escritura
+                efectiva del archivo.
+            </P>
+
+            <P>
+                También apareció una diferencia importante en la validación: además de las firmas
+                tipadas, varias reglas deben expresarse como lógica explícita dentro del comando o
+                en funciones auxiliares.
+            </P>
         </Fragment>
 
         <Fragment slot="key-points">
-            <ListItem icon={null}>...</ListItem>
+            <ListItem icon={icons.Terminal}>
+                <NushellInline>source</NushellInline> carga comandos desde archivos <Mono>.nu</Mono>
+                y permite reutilizarlos en la sesión actual.
+            </ListItem>
+            <ListItem icon={icons.TextT}>
+                Las firmas tipadas de Nushell describen parámetros y flags, pero las validaciones
+                más específicas siguen escribiéndose como código explícito.
+            </ListItem>
+            <ListItem icon={icons.FloppyDisk}>
+                Separar <NushellInline>new-readme</NushellInline> de <NushellInline
+                >write-readme</NushellInline> permite distinguir entre producir texto y realizar un
+                efecto sobre el sistema de archivos.
+            </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
-            ...
+            <P>
+                Lo más valioso de este primer paso no es solo haber generado un <Mono>README.md</Mono>,
+                sino haber practicado una forma de pensar scripts más claros: comandos pequeños,
+                responsabilidades separadas y validaciones visibles. Esa base hace más fácil
+                extender después el script, refactorizarlo o evolucionarlo hacia flujos más ricos
+                sin perder legibilidad.
+            </P>
         </Fragment>
     </ConclusionsLayout>
 </NotesLayout>
