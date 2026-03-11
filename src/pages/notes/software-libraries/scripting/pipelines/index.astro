@@ -325,10 +325,10 @@ const bibliography = JSON.parse(bibliographyRaw);
                             </ListItem>
 
                             <ListItem icon={icons.ArrowDown}>
-                                La opción <PowerShellInline>-First 10</PowerShellInline> limita el
-                                número de objetos que continúan fluyendo en el pipeline. Una vez
-                                alcanzado ese límite, el pipeline deja de producir más objetos. Esto
-                                es equivalente a un <SqlInline>LIMIT</SqlInline> en SQL. Limitar
+                                La opción <PowerShellInline code="-First 10" /> limita el número de
+                                objetos que continúan fluyendo en el pipeline. Una vez alcanzado ese
+                                límite, el pipeline deja de producir más objetos. Esto es
+                                equivalente a un <SqlInline>LIMIT</SqlInline> en SQL. Limitar
                                 resultados temprano en el pipeline puede reducir el trabajo de los
                                 comandos siguientes.
                             </ListItem>

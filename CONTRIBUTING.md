@@ -31,6 +31,17 @@ Tips:
 
 If you prefer not to install dprint globally, run `pnpm dlx dprint fmt` or `npx dprint fmt` instead.
 
+## Inline code snippets
+
+When writing inline highlighted code, prefer the `code` prop for any snippet that contains spaces
+or multiple tokens.
+
+- Recommended: `<PowerShellInline code="git remote" />`
+- Safe to keep via slot: `<PowerShellInline>Get-Process</PowerShellInline>`
+
+This matters because Astro/template formatting may normalize whitespace or line breaks in the
+default slot, which can make multi-word snippets flaky or render differently than expected.
+
 ## Pre-commit hooks (Husky + lint-staged)
 
 This repo uses Husky with lint-staged to automatically format only staged files with dprint on each commit.

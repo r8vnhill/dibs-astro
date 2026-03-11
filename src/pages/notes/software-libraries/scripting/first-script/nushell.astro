@@ -1,0 +1,466 @@
+---
+import * as icons from "$icons";
+import { Enquote, P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Abstract, Definition, Explanation, Important, Info, More } from "~/components/ui/callouts";
+import { NushellInline, PowerShellInline } from "~/components/ui/code";
+import CodeBlock from "~/components/ui/code/CodeBlock.astro";
+import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
+import { B, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Comandos reutilizables y validación de parámetros en Nushell"
+    description="Comparativa práctica con PowerShell: cómo organizar comandos reutilizables en Nushell, por qué suele convenir cargar scripts con source, y cómo combinar firmas tipadas con validaciones explícitas manteniendo por ahora una salida basada en strings."
+    git={{ user: "r8vnhill", repo: "dibs-scripts-nushell" }}
+>
+    <Abstract>
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    "...",
+                ],
+            }}
+        />
+    </Abstract>
+
+    <NotesSection id="h2-scripts-and-sourced-commands">
+        <Heading
+            headingLevel="h2" Icon={icons.Terminal}
+            slot="heading"
+        >
+            Scripts ejecutables versus comandos cargados con <NushellInline>source</NushellInline>
+        </Heading>
+
+        <P>
+            En la lección base distinguimos entre <I>cmdlets</I>, funciones y scripts. En Nushell,
+            para empezar, suele ser más claro pensar en <B>comandos definidos por quien programa</B>
+            dentro de un archivo. Ese archivo puede ejecutarse directamente, pero para conservar
+            integración con el pipeline del shell actual normalmente conviene cargarlo con
+            <NushellInline>source</NushellInline>.
+        </P>
+
+        <CodeBlock
+            code={`
+                export def render-readme-heading [
+                    name: string,
+                    --verbose (-v)
+                ] {
+                    if $verbose {
+                        print $"Preparing README heading for '($name)'"
+                    }
+
+                    $"# ($name)"
+                }
+            `}
+            lang="nu"
+        >
+            <span slot="title"
+            >Comando exportable para reutilizar después de cargar el archivo</span>
+            <DibsSourceLink
+                file="scaffolding/readme-heading.nu" repo="scripts-nushell"
+                slot="source"
+            />
+        </CodeBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.ArrowSquareOut}>
+                    <B><NushellInline>def</NushellInline>:</B> define un comando en Nushell. Aquí
+                    <NushellInline>render-readme-heading</NushellInline> recibe argumentos, ejecuta
+                    un bloque y produce una salida que puede seguir fluyendo por el pipeline.
+                </ListItem>
+
+                <ListItem icon={icons.Export}>
+                    <B><NushellInline>export</NushellInline>:</B> hace que el comando quede
+                    disponible para otros archivos cuando este módulo se cargue con
+                    <NushellInline>source</NushellInline> o se importe desde otro contexto. Sin
+                    <NushellInline>export</NushellInline>, la definición quedaría local al archivo.
+                </ListItem>
+
+                <ListItem icon={icons.SlidersHorizontal}>
+                    <B>Parámetros y flags:</B> <NushellInline code="name: string" /> es un parámetro
+                    obligatorio y tipado; la llamada debe proporcionar un valor. En cambio,
+                    <NushellInline code="--verbose (-v)" /> es un <I>flag</I>
+                    opcional con nombre largo y alias corto, parecido a declarar
+                    <PowerShellInline code={`[Alias('v')] [switch] $Verbose`} /> en PowerShell.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsCurly}>
+                    <B>Interpolación de strings:</B> Nushell permite insertar valores dentro de
+                    texto usando la sintaxis <NushellInline>$"..."</NushellInline>. Dentro de ese
+                    string, cualquier expresión entre paréntesis se evalúa e inserta en el
+                    resultado. En el ejemplo,
+                    <NushellInline code={`$"Preparing README heading for '($name)'"`} />
+                    reemplaza <NushellInline>($name)</NushellInline> por el valor recibido como
+                    argumento.
+                </ListItem>
+
+                <ListItem icon={icons.Bug}>
+                    <B>Salida de depuración explícita:</B> en este ejemplo usamos el patrón
+                    <NushellInline code={`if $verbose { print ... }`} /> para emitir mensajes
+                    adicionales solo cuando el flag está presente. A diferencia de
+                    <PowerShellInline>Write-Verbose</PowerShellInline> en PowerShell, aquí no hay un
+                    canal de verbosidad equivalente activado automáticamente por
+                    <PowerShellInline>-Verbose</PowerShellInline>; el comportamiento se modela de
+                    forma explícita en el propio comando.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowElbowRight}>
+                    <B>Retorno implícito:</B> igual que en PowerShell, no es necesario escribir una
+                    instrucción especial para devolver el resultado. La última expresión evaluada en
+                    el bloque — en este caso
+                    <NushellInline code={`$"# ($name)"`} /> — se emite como salida del comando.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
+
+            <NushellBlock
+                code={`
+                    source ./scaffolding/readme-heading.nu
+
+                    render-readme-heading "Utility Scripts - DIBS" --verbose
+                    render-readme-heading "Utility Scripts - DIBS" | describe
+                `}
+                lang="nu"
+            >
+                <span slot="title">Cargar el archivo y reutilizar sus comandos</span>
+                <span slot="footer">Desde <Mono>scripts-nushell/</Mono></span>
+            </NushellBlock>
+
+            <Explanation headingLevel="h4">
+                <List>
+                    <ListItem icon={icons.DownloadSimple}>
+                        <B><NushellInline>source</NushellInline>:</B> carga y evalúa el archivo
+                        <Mono>.nu</Mono> en la sesión actual. Esto permite usar sus definiciones sin
+                        abrir otro proceso ni perder el contexto del shell actual.
+                    </ListItem>
+
+                    <ListItem icon={icons.Terminal}>
+                        <B>Reutilización inmediata:</B> después de ejecutar
+                        <NushellInline>source ./.../readme-heading.nu</NushellInline>, el comando
+                        <NushellInline>render-readme-heading</NushellInline> queda disponible como
+                        si hubiera sido definido directamente en la sesión interactiva.
+                    </ListItem>
+
+                    <ListItem icon={icons.Info}>
+                        <B><NushellInline>describe</NushellInline>:</B> inspecciona el tipo de la
+                        salida que recibe por pipeline. Aquí sirve para verificar que
+                        <NushellInline>render-readme-heading</NushellInline> produce un valor de
+                        texto, no solo un efecto visual en pantalla.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-first-readme-command">
+        <Heading
+            headingLevel="h2" Icon={icons.FileText}
+            slot="heading"
+        >
+            Generar el contenido inicial del <Mono>README.md</Mono>
+        </Heading>
+
+        <P>
+            Una vez que ya tenemos un comando pequeño para producir el encabezado, el siguiente paso
+            es reutilizarlo y componer una plantilla inicial de <Mono>README.md</Mono> a partir de
+            unos pocos parámetros.
+        </P>
+
+        <P>
+            En esta comparativa nos conviene mantener el foco en una salida simple: el comando
+            <B>genera texto</B> y devuelve ese texto como resultado. La escritura a disco queda como
+            un paso separado. Esto clarifica dónde vive cada responsabilidad.
+        </P>
+
+        <NushellBlock
+            code={`
+                source ./readme-heading.nu
+
+                def new-readme [
+                    name: string
+                    --verbose (-v)
+                ] {
+
+                    if $verbose {
+                        print $"Creating README.md for project '($name)'"
+                    }
+
+                    let timestamp = (date now | format date "%Y-%m-%d %H:%M:%S")
+
+                    let heading = if $verbose {
+                        render-readme-heading $name --verbose
+                    } else {
+                        render-readme-heading $name
+                    }
+
+                    $"($heading)
+
+                Project initialized on ($timestamp).
+
+                Learn more about READMEs at https://www.makeareadme.com/.
+                "
+                }
+            `}
+        >
+            <span slot="title">Generar el contenido inicial del README</span>
+            <DibsSourceLink
+                file="scaffolding/new-readme.nu" repo="scripts-nushell"
+                slot="source"
+            />
+        </NushellBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.DownloadSimple}>
+                    <B><NushellInline code="source ./readme-heading.nu" />:</B> carga el archivo
+                    auxiliar dentro de este archivo para que <NushellInline
+                    >render-readme-heading</NushellInline>
+                    quede disponible y pueda reutilizarse dentro de este comando.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                    <B><NushellInline>let</NushellInline>:</B> permite asignar nombres a valores
+                    intermedios. Aquí se usa para guardar la marca temporal y también el encabezado
+                    generado por el comando auxiliar.
+                </ListItem>
+
+                <ListItem icon={icons.Calendar}>
+                    <B><NushellInline code={`date now | format date "%Y-%m-%d %H:%M:%S"`} />:</B>
+                    obtiene la fecha actual y la convierte en el formato que queremos insertar en el
+                    README.
+                </ListItem>
+
+                <ListItem icon={icons.GitBranch}>
+                    <B>Propagación manual del modo verboso:</B> el bloque <NushellInline
+                        code={`if $verbose { ... } else { ... }`}
+                    />
+                    muestra cómo decidir explícitamente si reenviamos o no el flag al comando
+                    auxiliar. A diferencia de PowerShell, donde la propagación puede ser automática,
+                    aquí la decisión es visible en el código.
+                </ListItem>
+
+                <ListItem icon={icons.TextAa}>
+                    <B>String multilínea interpolado:</B> la expresión final usa <NushellInline
+                        code={`$"..."`}
+                    />
+                    para insertar <NushellInline>($heading)</NushellInline> y <NushellInline
+                    >($timestamp)</NushellInline> dentro del texto completo del archivo.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowElbowRight}>
+                    <B>Retorno final:</B> la última expresión del bloque se emite como salida del
+                    comando, así que <NushellInline>new-readme</NushellInline> produce un string que
+                    luego puede inspeccionarse, transformarse o enviarse por pipeline a otro comando
+                    (como <NushellInline>save</NushellInline>).
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
+
+            <Important headingLevel="h4">
+                <span slot="title">Nota sobre la carga de comandos</span><B><NushellInline
+                    >new-readme.nu</NushellInline> necesita cargar
+                    <NushellInline>readme-heading.nu</NushellInline></B> dentro de su código (la
+                primera línea del comando lo hace). Luego, tu sesión interactiva necesita cargar
+                <NushellInline>new-readme.nu</NushellInline> con <NushellInline
+                >source</NushellInline>
+                para usar <NushellInline>new-readme</NushellInline>. Estos dos <NushellInline
+                >source</NushellInline>
+                aparecen en diferentes contextos: uno dentro del archivo de comando, otro en tu
+                sesión.
+            </Important>
+
+            <P>
+                Igual que en PowerShell, conviene separar la lógica que <B>produce datos</B> de la
+                que <B>realiza efectos</B> como escribir archivos. Aquí, <NushellInline
+                >new-readme</NushellInline> genera el contenido; luego lo guardaremos en disco en un
+                paso separado. Eso también hace el comando más fácil de probar: puedes verificar el
+                string resultante sin depender del sistema de archivos.
+            </P>
+
+            <NushellBlock
+                code={`
+                    source ./scaffolding/new-readme.nu
+
+                    new-readme "Utility Scripts - DIBS" --verbose
+                `}
+            >
+                <span slot="title">Generar el contenido del README</span>
+                <span slot="footer">Desde <Mono>scripts-nushell/</Mono>.</span>
+            </NushellBlock>
+        </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-writing-and-validating-output">
+        <Heading
+            headingLevel="h2" Icon={icons.CheckCircle}
+            slot="heading"
+        >
+            Validar la salida y escribir el archivo
+        </Heading>
+
+        <P>
+            Hasta aquí ya podemos generar el contenido del README como texto. El siguiente paso es
+            validar el directorio de salida y luego escribir el archivo. Esta separación deja más
+            claro qué parte del comando produce datos y cuál realiza efectos sobre el sistema de
+            archivos.
+        </P>
+
+        <P>
+            Aquí aparece una diferencia relevante con PowerShell: Nushell admite parámetros tipados
+            y flags, pero <B>no tiene un equivalente directo</B> a validaciones declarativas por
+            atributos como <PowerShellInline code="[ValidateNotNullOrEmpty()]" /> o
+            <PowerShellInline code="[ValidateScript(...)]" />. Cuando la validación depende del
+            contexto, lo habitual es escribirla de forma explícita dentro del comando o en una
+            función auxiliar.
+        </P>
+
+        <NushellBlock
+            code={`
+                source ./new-readme.nu
+
+                def ensure-output-dir [dir: string] {
+                    if not ($dir | path exists) {
+                        error make {
+                            msg: "The output directory does not exist."
+                        }
+                    }
+
+                    if (($dir | path type) != "dir") {
+                        error make {
+                            msg: "The output path must be a directory."
+                        }
+                    }
+
+                    $dir
+                }
+
+                export def write-readme [
+                    name: string,
+                    --out-dir (-o): string = "."
+                ] {
+                    let out_dir = ensure-output-dir $out_dir
+                    let readme_content = new-readme $name
+                    $readme_content | save ($out_dir | path join "README.md")
+                }
+            `}
+        >
+            <span slot="title">Validar el directorio y guardar el README</span>
+            <DibsSourceLink
+                file="scaffolding/write-readme.nu" repo="scripts-nushell"
+                slot="source"
+            />
+        </NushellBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.Path}>
+                    <B>Validación de ruta:</B> primero se comprueba con <NushellInline>{
+                        "$dir | path exists"
+                    }</NushellInline> que la ruta exista, y luego con <NushellInline>{
+                        "$dir | path type"
+                    }</NushellInline> que corresponda específicamente a un directorio.
+                </ListItem>
+
+                <ListItem icon={icons.WarningCircle}>
+                    <B><NushellInline code="error make" />:</B> construye y lanza un error de forma
+                    explícita. Para este nivel basta entenderlo como la manera de abortar el comando
+                    con un mensaje claro cuando una validación falla.
+                </ListItem>
+
+                <ListItem icon={icons.ShieldCheck}>
+                    <B>Precondición explícita:</B> <NushellInline>ensure-output-dir</NushellInline>
+                    encapsula una regla que debe cumplirse antes de escribir el archivo: la ruta de
+                    salida debe existir y debe ser un directorio. Este patrón modela un contrato
+                    claro que el programa depende de verificar.
+                </ListItem>
+
+                <ListItem icon={icons.GitBranch}>
+                    <B>Validación reutilizable:</B> mover la comprobación a <NushellInline
+                    >ensure-output-dir</NushellInline> evita duplicación y permite reutilizar la
+                    misma regla en otros comandos que también escriban archivos.
+                </ListItem>
+
+                <ListItem icon={icons.TextT}>
+                    <B>Validación explícita en vez de declarativa:</B> a diferencia de PowerShell,
+                    estas reglas no se expresan mediante atributos sobre el parámetro, sino en una
+                    función auxiliar que inspecciona el valor en tiempo de ejecución.
+                </ListItem>
+
+                <ListItem icon={icons.FloppyDisk}>
+                    <B>Efecto principal del comando:</B> en esta etapa el objetivo ya no es producir
+                    texto para seguir transformándolo, sino persistirlo en disco. El foco del
+                    comando pasa desde el valor producido al efecto realizado.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
+
+            <NushellBlock
+                code={`
+                    source ./scaffolding/write-readme.nu
+
+                    write-readme "Utility Scripts - DIBS"
+                    write-readme "Utility Scripts - DIBS" --out-dir ./demo
+                `}
+            >
+                <span slot="title">Escribir el README en el directorio actual o personalizado</span>
+                <span slot="footer">Desde <Mono>scripts-nushell/</Mono>.</span>
+            </NushellBlock>
+
+            <Explanation headingLevel="h4">
+                <List>
+                    <ListItem icon={icons.Terminal}>
+                        <B>Ejecución simple:</B> <NushellInline>write-readme</NushellInline> sin
+                        parámetro <NushellInline>--out-dir</NushellInline> guarda el README en el
+                        directorio actual (valor por defecto <NushellInline>"."</NushellInline>).
+                    </ListItem>
+
+                    <ListItem icon={icons.FolderOpen}>
+                        <B>Directorio personalizado:</B> con el flag <NushellInline
+                        >--out-dir</NushellInline>
+                        o su alias <NushellInline>-o</NushellInline> puedes especificar otro
+                        directorio donde guardar el archivo. El comando validará que ese directorio
+                        exista antes de escribir.
+                    </ListItem>
+
+                    <ListItem icon={icons.CheckCircle}>
+                        <B>Validación automática:</B> si el directorio especificado no existe o no
+                        es un directorio, <NushellInline>write-readme</NushellInline> detiene la
+                        ejecución y emite un mensaje de error antes de escribir nada.
+                    </ListItem>
+                </List>
+            </Explanation>
+        </Info>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            ...
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={null}>...</ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            ...
+        </Fragment>
+    </ConclusionsLayout>
+</NotesLayout>

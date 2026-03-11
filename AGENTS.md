@@ -180,11 +180,15 @@ Layout principal para páginas de lecciones. Proporciona estructura, navegación
 
 ```astro
 <NotesLayout
-    title="Título de la lección"
-    description="Descripción breve para SEO y abstract"
-    timeMultiplier={1.0}  <!-- opcional: ajusta estimación de tiempo de lectura -->
-    git={{ user: "...", repo: "..." }}  <!-- opcional: para source links -->
+    title="Título de la lección" description="Descripción breve para SEO y abstract"
+    timeMultiplier={1.0} <!--
+    opcional: ajusta
+    estimación de
+    tiempo de
+    lectura --
 >
+    git={{ user: "...", repo: "..." }} <!-- opcional: para source links -->
+    >
     <!-- contenido -->
 </NotesLayout>
 ```
@@ -237,8 +241,8 @@ Ubicados en `src/components/semantics/`:
 
 ```astro
 <P>
-    Este es un párrafo con <B>énfasis fuerte</B>, <I>énfasis suave</I>,
-    y un comando <Mono>inline</Mono>. También puedes citar:
+    Este es un párrafo con <B>énfasis fuerte</B>, <I>énfasis suave</I>, y un comando <Mono
+    >inline</Mono>. También puedes citar:
     <Enquote>texto entre comillas</Enquote>.
 </P>
 ```
@@ -286,7 +290,10 @@ Ubicados en `src/components/ui/code/`:
 <PowerShellBlock code={`Get-Process | Where-Object CPU -gt 100`}>
     <span slot="title">Filtrar procesos por uso de CPU</span>
     <span slot="footer">Requiere permisos de administrador</span>
-    <DibsSourceLink repo="scripts" file="monitoring/Get-CpuUsage.ps1" slot="source" />
+    <DibsSourceLink
+        repo="scripts" file="monitoring/Get-CpuUsage.ps1"
+        slot="source"
+    />
 </PowerShellBlock>
 ```
 
@@ -294,6 +301,12 @@ Ubicados en `src/components/ui/code/`:
 
 - `<PowerShellInline code="Get-Process" />`: Código inline resaltado
 - `<Mono>texto</Mono>`: Código inline sin resaltado (más ligero)
+- Para snippets inline con espacios, múltiples tokens o riesgo de normalización por formato del
+  template, usa el prop `code` en componentes como `<InlineCode>`, `<PowerShellInline>`,
+  `<NushellInline>` o `<PythonInline>`.
+- Reserva el slot por defecto para tokens únicos o snippets sin espacios.
+- Ejemplo recomendado: `<PowerShellInline code="git remote" />`
+- Ejemplo a evitar para snippets multi-palabra: `<PowerShellInline>git remote</PowerShellInline>`
 
 ### Callouts (componentes de atención)
 
@@ -357,7 +370,10 @@ Estructura ejercicios con slots para requisitos, notas, pistas y solución:
     <Fragment slot="solution">
         <PowerShellBlock code={`...`}>
             <span slot="title">Solución de referencia</span>
-            <DibsSourceLink repo="..." file="..." slot="source" />
+            <DibsSourceLink
+                repo="..." file="..."
+                slot="source"
+            />
         </PowerShellBlock>
     </Fragment>
 
@@ -448,15 +464,14 @@ Ubicados en `src/components/ui/references/`:
 <References>
     <Fragment slot="recommended">
         <Book
-            chapter="Chapter title"
-            bookTitle="Book Title"
+            chapter="Chapter title" bookTitle="Book Title"
             pages={[123, 145]}
         >
             <AuthorList
                 slot="authors"
                 authors={[
                     { firstName: "John", lastName: "Doe" },
-                    { firstName: "Jane", lastName: "Smith" }
+                    { firstName: "Jane", lastName: "Smith" },
                 ]}
             />
             <span slot="description">
@@ -464,10 +479,7 @@ Ubicados en `src/components/ui/references/`:
             </span>
         </Book>
 
-        <WebPage
-            title="Article Title"
-            url="https://example.com/article"
-        >
+        <WebPage title="Article Title" url="https://example.com/article">
             <Link href="https://example.com" slot="location">
                 Nombre del sitio web
             </Link>

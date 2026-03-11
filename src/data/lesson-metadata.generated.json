@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-08T13:48:01.797Z",
-  "totalLessons": 39,
+  "generatedAt": "2026-03-11T20:38:54.750Z",
+  "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -525,6 +525,15 @@
           "subject": "✨♿💄 feat(ui,links,snippets): add Exercise slots, show ref hints in source links, and provide editor snippet"
         }
       ]
+    },
+    "/notes/software-libraries/scripting/first-script/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/scripting/first-script/py/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/first-script/py.astro",

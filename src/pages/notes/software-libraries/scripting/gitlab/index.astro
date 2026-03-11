@@ -527,8 +527,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         />, añadiendo <PowerShellInline code="--public" /> o <PowerShellInline
                             code="--private"
                         /> según el parámetro <PowerShellInline>-Public</PowerShellInline>.
-                        <PowerShellInline>--defaultBranch main</PowerShellInline> fija el nombre de
-                        la rama principal y los flags <PowerShellInline
+                        <PowerShellInline code="--defaultBranch main" /> fija el nombre de la rama
+                        principal y los flags <PowerShellInline
                         >--public</PowerShellInline>/<PowerShellInline>--private</PowerShellInline>
                         controlan la visibilidad del proyecto en GitLab.
                     </ListItem>
@@ -945,8 +945,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <ListItem icon={icons.Terminal}>
                 <B>Flujo completo automatizado:</B> desde <PowerShellInline code="glab repo view" />
                 para detectar existentes hasta <PowerShellInline code="glab repo create" /> y la
-                configuración del remoto con <PowerShellInline>git remote</PowerShellInline>, todo
-                se ensambla sin pasos repetitivos.
+                configuración del remoto con <PowerShellInline code="git remote" />, todo se
+                ensambla sin pasos repetitivos.
             </ListItem>
 
             <ListItem icon={icons.Hash}>
@@ -992,9 +992,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     la herramienta de línea de comandos para interactuar con GitLab. Cubre
                     autenticación (OAuth y tokens), gestión de repositorios, <I>merge requests</I>,
                     CI/CD pipelines y releases. Útil como referencia para los comandos usados en el
-                    laboratorio (<PowerShellInline>glab auth login</PowerShellInline>,
-                    <PowerShellInline>glab repo create</PowerShellInline>,
-                    <PowerShellInline>glab repo view</PowerShellInline>) y para explorar capacidades
+                    laboratorio (<PowerShellInline code="glab auth login" />,
+                    <PowerShellInline code="glab repo create" />,
+                    <PowerShellInline code="glab repo view" />) y para explorar capacidades
                     avanzadas de automatización con GitLab.
                 </Fragment>
             </WebPage>

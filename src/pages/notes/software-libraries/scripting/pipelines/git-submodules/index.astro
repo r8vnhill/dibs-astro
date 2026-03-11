@@ -183,7 +183,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         Se crea e inicializa el repositorio índice. La llamada a
                         <PowerShellInline>GetUnresolvedProviderPathFromPSPath</PowerShellInline> es
                         importante porque la ruta podría no existir todavía. Aquí usamos
-                        <PowerShellInline>-ErrorAction Stop</PowerShellInline> porque si no podemos
+                        <PowerShellInline code="-ErrorAction Stop" /> porque si no podemos
                         inicializar el índice, el resto del pipeline pierde sentido.
                     </P>
                 </ListItem>
@@ -222,9 +222,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.CheckCircle}>
                     <B>Bloque <PowerShellInline>end</PowerShellInline> — evidencia final</B>
                     <P>
-                        Se ejecuta <PowerShellInline>git submodule status</PowerShellInline> para
-                        mostrar el estado consolidado. Esto actúa como verificación observable del
-                        resultado del pipeline.
+                        Se ejecuta <PowerShellInline code="git submodule status" /> para mostrar el
+                        estado consolidado. Esto actúa como verificación observable del resultado
+                        del pipeline.
                     </P>
                 </ListItem>
             </List>
@@ -414,8 +414,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.GitBranch}>
                     <B>Qué hace cada comando de Git</B>
                     <P>
-                        <PowerShellInline>git fetch --all --prune</PowerShellInline> sincroniza
-                        referencias remotas y elimina referencias obsoletas (<PowerShellInline
+                        <PowerShellInline code="git fetch --all --prune" /> sincroniza referencias
+                        remotas y elimina referencias obsoletas (<PowerShellInline
                         >--prune</PowerShellInline>) en el repositorio del submódulo. Luego,{" "}
                         <PowerShellInline code="git submodule update --remote -- <submodule>" />
                         mueve el submódulo al commit más reciente de la rama remota configurada en
@@ -426,10 +426,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.MagnifyingGlass}>
                     <B>Cómo se calcula el estado</B>
                     <P>
-                        <PowerShellInline>git status --porcelain=v1 -z</PowerShellInline> emite un
-                        formato “estable para máquinas”: si la salida tiene contenido, el
-                        repositorio está <PowerShellInline>DirtyOrPending</PowerShellInline>; si
-                        está vacía, se considera <PowerShellInline>Clean</PowerShellInline>. Usar
+                        <PowerShellInline code="git status --porcelain=v1 -z" /> emite un formato
+                        “estable para máquinas”: si la salida tiene contenido, el repositorio está
+                        <PowerShellInline>DirtyOrPending</PowerShellInline>; si está vacía, se
+                        considera <PowerShellInline>Clean</PowerShellInline>. Usar
                         <PowerShellInline>-z</PowerShellInline> reduce ambigüedades en el parseo.
                     </P>
                 </ListItem>
