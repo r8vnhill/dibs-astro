@@ -28,6 +28,26 @@ const BIBLIOGRAPHY: Record<string, unknown> = {
             name: "Collection Pipeline",
             url: "https://martinfowler.com/articles/collection-pipeline/",
         },
+        {
+            "@type": "ScholarlyArticle",
+            identifier: "bash-in-the-wild",
+            name: "Bash in the Wild: Language Usage, Code Smells, and Bugs",
+            url: "https://doi.org/10.1145/3517193",
+            isPartOf: {
+                "@type": "Periodical",
+                name: "ACM Transactions on Software Engineering and Methodology",
+            },
+        },
+        {
+            "@type": "Thesis",
+            identifier: "bash-usage-thesis",
+            name: "An Empirical Study on Bash Language Usage in Github",
+            url: "http://hdl.handle.net/10012/17036",
+            publisher: {
+                "@type": "CollegeOrUniversity",
+                name: "University of Waterloo",
+            },
+        },
     ],
 };
 
@@ -76,5 +96,18 @@ describe.concurrent("ReferencesFromJsonLd.astro render", () => {
 
         expect(html).toContain("Título personalizado");
         expect(html).not.toContain("The pipeline: Connecting commands");
+    });
+
+    test("renders scholarly articles and theses from JSON-LD", async () => {
+        const html = await renderReferences({
+            source: BIBLIOGRAPHY,
+            recommended: ["bash-in-the-wild"],
+            additional: ["bash-usage-thesis"],
+        });
+
+        expect(html).toContain("Bash in the Wild: Language Usage, Code Smells, and Bugs");
+        expect(html).toContain("ACM Transactions on Software Engineering and Methodology");
+        expect(html).toContain("An Empirical Study on Bash Language Usage in Github");
+        expect(html).toContain("University of Waterloo");
     });
 });

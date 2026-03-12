@@ -1,0 +1,72 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
+import { ListItem } from "~/components/ui/list";
+
+type Props = {
+    title?: string;
+    url?: string;
+    location?: string;
+    author?: string;
+    typeLabel?: string;
+};
+
+const { title, url, location, author, typeLabel = "Referencia" }: Props = Astro.props;
+
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
+const locationSlotHtml = Astro.slots.has("location") ? await Astro.slots.render("location") : "";
+const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
+const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
+const hasLocationSlot = hasMeaningfulContent(locationSlotHtml);
+const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
+---
+
+<ListItem icon={icons.FileText}>
+    <span class="text-muted-foreground">{typeLabel}:</span>{" "}
+    <Enquote type="english-double">
+        {
+            url ? (
+                <a
+                    href={url} target="_blank"
+                    rel="noopener noreferrer" class="hover:underline underline-offset-2"
+                >
+                    {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+                </a>
+            ) : <span>{hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}</span>
+        }
+    </Enquote>
+
+    {
+        hasLocationSlot || location ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">en</span>{" "}
+                {hasLocationSlot ? <span set:html={locationSlotHtml} /> : location}
+            </span>
+        ) : null
+    }
+
+    {
+        hasAuthorSlot || author ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">por</span>{" "}
+                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+            </span>
+        ) : null
+    }
+
+    {
+        Astro.slots.has("description") ? (
+            <div class="text-muted-foreground block">
+                <slot name="description" />
+            </div>
+        ) : null
+    }
+</ListItem>

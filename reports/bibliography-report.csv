@@ -1,4 +1,18 @@
-sourcePath,id,type,title,url,domain,chapter,bookTitle,pageStart,pageEnd,publisher,datePublished,authors,keywords
-src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld,pipeline-deeper,Book,"The pipeline, deeper",,,"The pipeline, deeper","Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS",114,131,Manning Publications Co. LLC,,Travis Plunk,
-src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld,pipeline-connecting-commands,Book,The pipeline: Connecting commands,,,The pipeline: Connecting commands,"Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS",69,83,,,Travis Plunk,
-src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld,collection-pipeline-fowler,WebPage,Collection Pipeline,https://martinfowler.com/articles/collection-pipeline/,martinfowler.com,,,,,martinfowler.com,,Martin Fowler,
+referenceId,type,title,citationCount,lessonCount,tags
+ref:collection-pipeline-fowler,WebPage,Collection Pipeline,1,1,additional
+ref:clig-the-basics,WebPage,Command Line Interface Guidelines,1,1,additional
+ref:nushell-creating-modules,WebPage,Creating Modules,1,1,recommended
+ref:nushell-custom-commands,WebPage,Custom Commands,1,1,recommended
+ref:errors-and-exceptions,Book,Errors and exceptions,1,1,additional
+ref:nushell-export-def,WebPage,Export def,1,1,additional
+ref:handling-errors,Book,Handling errors,1,1,recommended
+ref:improving-your-parameterized-script,Book,Improving your parameterized script,1,1,recommended
+ref:input-and-output-python-distilled,Book,Input and Output,1,1,recommended
+ref:nushell-path-type,WebPage,Path,1,1,additional
+ref:nushell-path-exists,WebPage,Path exists,1,1,additional
+ref:nushell-save,WebPage,Save,1,1,additional
+ref:nushell-string-interpolation,WebPage,String interpolation,1,1,additional
+ref:pipeline-connecting-commands,Book,The pipeline: Connecting commands,1,1,recommended
+ref:nushell-type-signatures,WebPage,Type signatures,1,1,recommended
+ref:nushell-types-of-data,WebPage,Types of Data,1,1,additional
+ref:nushell-use,WebPage,Use,1,1,recommended

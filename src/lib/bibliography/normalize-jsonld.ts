@@ -8,7 +8,7 @@ import type {
     ResolveGroupsOptions,
 } from "./types";
 
-const SUPPORTED_TYPES = new Set(["Book", "WebPage"]);
+const SUPPORTED_TYPES = new Set(["Book", "WebPage", "ScholarlyArticle", "Thesis"]);
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
     typeof value === "object" && value !== null;
@@ -90,6 +90,14 @@ const normalizeAuthors = (value: unknown): AuthorRef[] => {
 const getBookTitle = (value: unknown): string | undefined => {
     if (typeof value === "string") return asString(value);
     if (isObject(value)) return asString(value.name);
+    return undefined;
+};
+
+const getContainerTitle = (value: unknown): string | undefined => {
+    if (typeof value === "string") return asString(value);
+    if (isObject(value)) {
+        return asString(value.name) ?? asString(value.headline);
+    }
     return undefined;
 };
 
@@ -192,6 +200,70 @@ const normalizeItem = (
             chapter: title,
             bookTitle,
             ...(pages ? { pages } : {}),
+            ...(description ? { description } : {}),
+            authors,
+            ...(datePublished ? { datePublished } : {}),
+            keywords,
+            ...(publisherName ? { publisherName } : {}),
+            ...(publisherUrl ? { publisherUrl } : {}),
+            ...(sourceLabel ? { sourceLabel } : {}),
+        };
+    }
+
+    if (rawType === "ScholarlyArticle") {
+        const url = asString(rawItem.url);
+        if (!url) {
+            addError(errors, strict, `[${sourceLabel}] ScholarlyArticle "${id}" is missing "url".`);
+            return null;
+        }
+
+        const pageStart = asNumber(rawItem.pageStart);
+        const pageEnd = asNumber(rawItem.pageEnd);
+        const hasAnyPage = pageStart !== undefined || pageEnd !== undefined;
+        let pages: [number, number] | undefined;
+        if (hasAnyPage) {
+            const start = pageStart ?? pageEnd ?? 0;
+            const end = pageEnd ?? pageStart ?? 0;
+            pages = start <= end ? [start, end] : [end, start];
+        }
+
+        const publication = getContainerTitle(rawItem.isPartOf) ?? publisherName;
+
+        return {
+            id,
+            type: "ScholarlyArticle",
+            rawType,
+            title,
+            url,
+            ...(publication ? { publication } : {}),
+            ...(pages ? { pages } : {}),
+            ...(description ? { description } : {}),
+            authors,
+            ...(datePublished ? { datePublished } : {}),
+            keywords,
+            ...(publisherName ? { publisherName } : {}),
+            ...(publisherUrl ? { publisherUrl } : {}),
+            ...(sourceLabel ? { sourceLabel } : {}),
+        };
+    }
+
+    if (rawType === "Thesis") {
+        const url = asString(rawItem.url);
+        if (!url) {
+            addError(errors, strict, `[${sourceLabel}] Thesis "${id}" is missing "url".`);
+            return null;
+        }
+
+        const institution = getContainerTitle(rawItem.publisher)
+            ?? getContainerTitle(rawItem.sourceOrganization);
+
+        return {
+            id,
+            type: "Thesis",
+            rawType,
+            title,
+            url,
+            ...(institution ? { institution } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),

@@ -9,14 +9,18 @@ import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+
+const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
     title="Comandos reutilizables y validación de parámetros en Nushell"
-    description="Lección comparativa sobre cómo Nushell organiza comandos reutilizables con source, firmas tipadas, validaciones explícitas y una separación clara entre generar texto y escribir un README.md."
+    description="Lección comparativa sobre cómo Nushell organiza comandos reutilizables con módulos, use, firmas tipadas, validaciones explícitas y una separación clara entre generar texto y escribir un README.md."
     git={{ user: "r8vnhill", repo: "dibs-scripts-nushell" }}
 >
     <Abstract>
@@ -27,9 +31,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
 
         <P>
-            El foco está en cargar archivos con <NushellInline>source</NushellInline>, definir
-            firmas tipadas, devolver strings y escribir validaciones explícitas cuando Nushell no
-            ofrece un equivalente declarativo directo a los atributos vistos antes.
+            El foco está en organizar comandos como módulos, importarlos con <NushellInline
+            >use</NushellInline>, definir firmas tipadas, devolver strings y escribir validaciones
+            explícitas cuando Nushell no ofrece un equivalente declarativo directo a los atributos
+            de PowerShell.
         </P>
     </Abstract>
 
@@ -38,15 +43,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
             headingLevel="h2" Icon={icons.Terminal}
             slot="heading"
         >
-            Scripts ejecutables versus comandos cargados con <NushellInline>source</NushellInline>
+            Scripts ejecutables versus módulos importados con <NushellInline>use</NushellInline>
         </Heading>
 
         <P>
             En la lección base distinguimos entre <I>cmdlets</I>, funciones y scripts. En Nushell,
             para empezar, suele ser más claro pensar en <B>comandos definidos por quien programa</B>
-            dentro de un archivo. Ese archivo puede ejecutarse directamente, pero para conservar
-            integración con el pipeline del shell actual normalmente conviene cargarlo con
-            <NushellInline>source</NushellInline>.
+            dentro de archivos de módulo. Esos archivos pueden ejecutarse como scripts en otros
+            escenarios, pero cuando queremos reutilizar comandos entre archivos la vía principal es
+            exportarlos con <NushellInline>export</NushellInline> e importarlos con <NushellInline
+            >use</NushellInline>.
         </P>
 
         <CodeBlock
@@ -64,10 +70,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             `}
             lang="nu"
         >
-            <span slot="title"
-            >Comando exportable para reutilizar después de cargar el archivo</span>
+            <span slot="title">Comando exportado por el módulo para reutilizar con <NushellInline
+                >use</NushellInline></span>
             <DibsSourceLink
-                file="scaffolding/readme-heading.nu" repo="scripts-nushell"
+                file="scaffolding/readme-heading-module.nu" repo="scripts-nushell"
                 slot="source"
             />
         </CodeBlock>
@@ -82,9 +88,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                 <ListItem icon={icons.Export}>
                     <B><NushellInline>export</NushellInline>:</B> hace que el comando quede
-                    disponible para otros archivos cuando este módulo se cargue con
-                    <NushellInline>source</NushellInline> o se importe desde otro contexto. Sin
-                    <NushellInline>export</NushellInline>, la definición quedaría local al archivo.
+                    disponible para otros contextos cuando se importe el módulo con
+                    <NushellInline>use</NushellInline>. Sin <NushellInline>export</NushellInline>,
+                    la definición queda local al módulo.
                 </ListItem>
 
                 <ListItem icon={icons.SlidersHorizontal}>
@@ -129,30 +135,25 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <NushellBlock
                 code={`
-                    source ./scaffolding/readme-heading.nu
+                    use ./scaffolding/readme-heading-module.nu *
 
                     render-readme-heading "Utility Scripts - DIBS" --verbose
                     render-readme-heading "Utility Scripts - DIBS" | describe
                 `}
                 lang="nu"
             >
-                <span slot="title">Cargar el archivo y reutilizar sus comandos</span>
+                <span slot="title">Importar el módulo y reutilizar su comando exportado</span>
                 <span slot="footer">Desde <Mono>scripts-nushell/</Mono></span>
             </NushellBlock>
 
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.DownloadSimple}>
-                        <B><NushellInline>source</NushellInline>:</B> carga y evalúa el archivo
-                        <Mono>.nu</Mono> en la sesión actual. Esto permite usar sus definiciones sin
-                        abrir otro proceso ni perder el contexto del shell actual.
-                    </ListItem>
-
-                    <ListItem icon={icons.Terminal}>
-                        <B>Reutilización inmediata:</B> después de ejecutar
-                        <NushellInline>source ./.../readme-heading.nu</NushellInline>, el comando
-                        <NushellInline>render-readme-heading</NushellInline> queda disponible como
-                        si hubiera sido definido directamente en la sesión interactiva.
+                        <B><NushellInline>use</NushellInline>:</B> importa definiciones exportadas
+                        desde un módulo <Mono>.nu</Mono>. En este caso importamos todas las
+                        definiciones con <NushellInline>*</NushellInline>, pero también podríamos
+                        haber importado solo <NushellInline>[render-readme-heading]</NushellInline>
+                        para limitar el alcance a ese comando específico.
                     </ListItem>
 
                     <ListItem icon={icons.Info}>
@@ -188,9 +189,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <NushellBlock
             code={`
-                source ./readme-heading.nu
+                use ./readme-heading-module.nu [render-readme-heading]
 
-                def new-readme [
+                export def new-readme [
                     name: string
                     --verbose (-v)
                 ] {
@@ -218,7 +219,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <span slot="title">Generar el contenido inicial del README</span>
             <DibsSourceLink
-                file="scaffolding/new-readme.nu" repo="scripts-nushell"
+                file="scaffolding/readme-template-module.nu" repo="scripts-nushell"
                 slot="source"
             />
         </NushellBlock>
@@ -226,10 +227,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.DownloadSimple}>
-                    <B><NushellInline code="source ./readme-heading.nu" />:</B> carga el archivo
-                    auxiliar dentro de este archivo para que <NushellInline
-                    >render-readme-heading</NushellInline>
-                    quede disponible y pueda reutilizarse dentro de este comando.
+                    <B><NushellInline
+                            code="use ./readme-heading-module.nu [render-readme-heading]"
+                        />:</B>
+                    importa el comando exportado del módulo auxiliar para que <NushellInline
+                    >render-readme-heading</NushellInline> quede disponible y pueda reutilizarse
+                    dentro de este módulo.
                 </ListItem>
 
                 <ListItem icon={icons.TextT}>
@@ -274,16 +277,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Uso</span>
 
             <Important headingLevel="h4">
-                <span slot="title">Nota sobre la carga de comandos</span><B><NushellInline
-                    >new-readme.nu</NushellInline> necesita cargar
-                    <NushellInline>readme-heading.nu</NushellInline></B> dentro de su código (la
-                primera línea del comando lo hace). Luego, tu sesión interactiva necesita cargar
-                <NushellInline>new-readme.nu</NushellInline> con <NushellInline
-                >source</NushellInline>
-                para usar <NushellInline>new-readme</NushellInline>. Estos dos <NushellInline
-                >source</NushellInline>
-                aparecen en diferentes contextos: uno dentro del archivo de comando, otro en tu
-                sesión.
+                <span slot="title">Nota sobre importaciones entre módulos</span><B><NushellInline
+                    >readme-template-module.nu</NushellInline> importa
+                    <NushellInline>readme-heading-module.nu</NushellInline></B> para reutilizar
+                <NushellInline>render-readme-heading</NushellInline>. Luego, tu sesión interactiva
+                solo necesita importar <NushellInline>readme-template-module.nu</NushellInline> con
+                <NushellInline>use</NushellInline> para acceder a <NushellInline
+                >new-readme</NushellInline>.
             </Important>
 
             <P>
@@ -296,7 +296,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <NushellBlock
                 code={`
-                    source ./scaffolding/new-readme.nu
+                    use ./scaffolding/readme-template-module.nu *
 
                     new-readme "Utility Scripts - DIBS" --verbose
                 `}
@@ -333,7 +333,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <NushellBlock
             code={`
-                source ./new-readme.nu
+                use ./readme-template-module.nu [new-readme]
 
                 def ensure-output-dir [dir: string] {
                     if not ($dir | path exists) {
@@ -353,7 +353,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                 export def write-readme [
                     name: string,
-                    --out-dir (-o): string = "."
+                    --out-dir (-o): path = "."
                 ] {
                     let out_dir = ensure-output-dir $out_dir
                     let readme_content = new-readme $name
@@ -363,7 +363,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <span slot="title">Validar el directorio y guardar el README</span>
             <DibsSourceLink
-                file="scaffolding/write-readme.nu" repo="scripts-nushell"
+                file="scaffolding/readme-writer-module.nu" repo="scripts-nushell"
                 slot="source"
             />
         </NushellBlock>
@@ -397,6 +397,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     misma regla en otros comandos que también escriban archivos.
                 </ListItem>
 
+                <ListItem icon={icons.Export}>
+                    <B>Definición local del módulo:</B> <NushellInline
+                    >ensure-output-dir</NushellInline> no se exporta, así que funciona como helper
+                    interno. En cambio, <NushellInline>write-readme</NushellInline> sí se exporta y
+                    constituye la API pública del módulo.
+                </ListItem>
+
                 <ListItem icon={icons.TextT}>
                     <B>Validación explícita en vez de declarativa:</B> a diferencia de PowerShell,
                     estas reglas no se expresan mediante atributos sobre el parámetro, sino en una
@@ -416,7 +423,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <NushellBlock
                 code={`
-                    source ./scaffolding/write-readme.nu
+                    use ./scaffolding/readme-writer-module.nu *
 
                     write-readme "Utility Scripts - DIBS"
                     write-readme "Utility Scripts - DIBS" --out-dir ./demo
@@ -457,9 +464,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <P>
                 En esta lección vimos cómo Nushell permite construir una automatización pequeña pero
                 bien organizada a partir de comandos reutilizables. El recorrido pasó por cargar
-                definiciones con <NushellInline>source</NushellInline>, componer comandos que
-                devuelven texto, y separar con claridad la generación del contenido de la escritura
-                efectiva del archivo.
+                definiciones exportadas desde módulos con <NushellInline>use</NushellInline>,
+                componer comandos que devuelven texto, y separar con claridad la generación del
+                contenido de la escritura efectiva del archivo.
             </P>
 
             <P>
@@ -471,8 +478,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Terminal}>
-                <NushellInline>source</NushellInline> carga comandos desde archivos <Mono>.nu</Mono>
-                y permite reutilizarlos en la sesión actual.
+                <NushellInline>use</NushellInline> importa definiciones exportadas desde módulos
+                <Mono>.nu</Mono> y establece una forma clara de reutilización entre archivos.
             </ListItem>
             <ListItem icon={icons.TextT}>
                 Las firmas tipadas de Nushell describen parámetros y flags, pero las validaciones
@@ -487,12 +494,79 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="takeaways">
             <P>
-                Lo más valioso de este primer paso no es solo haber generado un <Mono>README.md</Mono>,
-                sino haber practicado una forma de pensar scripts más claros: comandos pequeños,
-                responsabilidades separadas y validaciones visibles. Esa base hace más fácil
-                extender después el script, refactorizarlo o evolucionarlo hacia flujos más ricos
-                sin perder legibilidad.
+                Lo más valioso de este primer paso no es solo haber generado un <Mono
+                >README.md</Mono>, sino haber practicado una forma de pensar scripts más claros:
+                comandos pequeños, responsabilidades separadas y validaciones visibles. Esa base
+                hace más fácil extender después el script, refactorizarlo o evolucionarlo hacia
+                flujos más ricos sin perder legibilidad.
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <ReferencesFromCatalog
+        source={bibliographyCatalog}
+        lessonId="/notes/software-libraries/scripting/first-script/nushell/"
+    >
+        <Fragment slot="description-ref:nushell-custom-commands">
+            Introducción oficial a la definición de comandos personalizados en Nushell. Resulta la
+            referencia más directa para contrastar firmas, parámetros y retorno implícito con el
+            primer comando que desarrolla esta lección.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-creating-modules">
+            Explica cómo organizar definiciones reutilizables en módulos <Mono>.nu</Mono> y cómo
+            compartirlas entre archivos. Complementa la discusión sobre separar comandos auxiliares
+            y reutilizarlos desde otros scripts.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-type-signatures">
+            Documento clave para entender el sistema de firmas tipadas de Nushell y el contrato que
+            establecen sobre parámetros y valores aceptados. Útil para conectar la sintaxis del
+            ejemplo con su intención de diseño.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-use">
+            Referencia del comando <NushellInline>use</NushellInline>, que es la forma recomendada
+            de importar definiciones exportadas desde módulos. Aclara la diferencia con cargar
+            archivos completos y refuerza el modelo de reutilización entre scripts.
+        </Fragment>
+
+        <Fragment slot="description-ref:clig-the-basics">
+            Guía transversal de diseño de interfaces de línea de comandos. No es específica de
+            Nushell, pero ayuda a justificar decisiones sobre nombres, flags y mensajes que hacen
+            más clara una herramienta pequeña.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-export-def">
+            Documenta la variante exportable de <NushellInline>def</NushellInline>. Es útil para
+            distinguir entre una definición local y una pensada para ser importada desde otro
+            módulo.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-path-exists">
+            Referencia concreta para la validación de rutas antes de escribir archivos. Refuerza la
+            parte de la lección donde la validación explícita aparece como lógica del comando.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-path-type">
+            Explica el tipo <Mono>path</Mono> y operaciones relacionadas con rutas, útil para
+            entender por qué la lección valida directorios antes de persistir el README.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-save">
+            Referencia del comando que persiste la salida en disco. Complementa la separación entre
+            producir texto y realizar el efecto final de escritura.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-string-interpolation">
+            Explica la interpolación de strings en Nushell, que en esta lección se usa para componer
+            encabezados, timestamps y contenido textual del archivo.
+        </Fragment>
+
+        <Fragment slot="description-ref:nushell-types-of-data">
+            Panorama general de los tipos de datos de Nushell. Aporta contexto para ubicar esta
+            lección dentro de una progresión que todavía trabaja con strings antes de avanzar hacia
+            datos estructurados.
+        </Fragment>
+    </ReferencesFromCatalog>
 </NotesLayout>

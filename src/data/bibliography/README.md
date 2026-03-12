@@ -1,52 +1,65 @@
-# Bibliography Datasets (JSON-LD)
+# Bibliography Catalog (JSON-LD Graph)
 
-This folder stores bibliography data used by lesson reference sections.
+This folder stores reference data for lessons. The canonical source is now:
 
-## Location convention
+`src/data/bibliography/catalog.graph.jsonld`
 
-Place files under:
+The project still keeps legacy `*.bibliography.jsonld` `ItemList` files during migration, but new
+work should target the graph catalog.
 
-`src/data/bibliography/<area>/<lesson>.bibliography.jsonld`
+## Canonical model
 
-Example:
+The catalog uses JSON-LD with `@graph` and a mixed vocabulary:
 
-`src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld`
+- `schema.org` for references, people, organizations, and lessons
+- `dibs:` for course-specific usage relations
 
-## Required structure (v1)
+Core node categories:
 
-- Root object:
-  - `@context: "https://schema.org"`
-  - `@type: "ItemList"`
-  - `name`, `about` (optional but recommended)
-  - `itemListElement: []`
-- Each item:
-  - `identifier` (required, unique, stable ID)
-  - `@type` in `Book | WebPage`
+- references: `Book | WebPage | ScholarlyArticle | Thesis`
+- people: `Person`
+- organizations/institutions: `Organization | CollegeOrUniversity`
+- lessons: `LearningResource`
+- usage edges: `dibs:ReferenceUsage`
 
-### Book fields
+## IDs
 
-- `name` (chapter/title)
-- `isPartOf.name` (book title)
-- `author` (optional)
-- `pageStart` / `pageEnd` (optional)
+Use stable IDs:
 
-### WebPage fields
+- references: `ref:<slug>`
+- people: `person:<slug>`
+- organizations: `org:<slug>`
+- lessons: canonical route, for example `/notes/software-libraries/scripting/pipelines/`
+- usage nodes: `usage:<lesson>:<reference>:<tag>`
 
-- `name` (title)
-- `url`
-- `author` or `publisher` (optional)
+## Usage tags
+
+Usage tags live on `dibs:ReferenceUsage` nodes:
+
+- `recommended`
+- `additional`
+- `pending-revision`
+
+UI rendering hides `pending-revision` by default.
 
 ## Rendering model
 
-Lessons classify references directly in `.astro`:
+For graph-backed lessons, use `ReferencesFromCatalog` and provide:
 
-- `recommended: string[]`
-- `additional: string[]`
+- `source`
+- `lessonId`
 
-Descriptions remain in `.astro` using slots:
+Editorial descriptions remain in `.astro` using slots keyed by reference ID:
 
-- `description-{identifier}`
+- `description-{referenceId}`
+- `title-{referenceId}`
+- `publication-{referenceId}` for articles
+- `institution-{referenceId}` for theses
 
-Optional title override:
+## Analysis
 
-- `title-{identifier}`
+The CLI report `pnpm bibliography:report` reads the catalog graph and generates:
+
+- top cited references
+- top cited books
+- counts by lesson and tag

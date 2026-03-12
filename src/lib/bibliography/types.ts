@@ -1,4 +1,5 @@
-export type SupportedReferenceType = "Book" | "WebPage";
+export type SupportedReferenceType = "Book" | "WebPage" | "ScholarlyArticle" | "Thesis";
+export type ReferenceTag = "recommended" | "additional" | "pending-revision";
 
 export type AuthorRef = {
     fullName?: string;
@@ -25,6 +26,7 @@ export type NormalizedBookReference = NormalizedReferenceBase & {
     type: "Book";
     chapter: string;
     bookTitle: string;
+    bookId?: string;
     pages?: [number, number];
 };
 
@@ -34,7 +36,26 @@ export type NormalizedWebReference = NormalizedReferenceBase & {
     location?: string;
 };
 
-export type NormalizedReference = NormalizedBookReference | NormalizedWebReference;
+export type NormalizedArticleReference = NormalizedReferenceBase & {
+    type: "ScholarlyArticle";
+    url: string;
+    publication?: string;
+    publicationId?: string;
+    pages?: [number, number];
+};
+
+export type NormalizedThesisReference = NormalizedReferenceBase & {
+    type: "Thesis";
+    url: string;
+    institution?: string;
+    institutionId?: string;
+};
+
+export type NormalizedReference =
+    | NormalizedBookReference
+    | NormalizedWebReference
+    | NormalizedArticleReference
+    | NormalizedThesisReference;
 
 export type BibliographyJsonLd = {
     "@context"?: string | string[];
@@ -65,4 +86,76 @@ export type ResolveGroupsOptions = {
 export type ResolvedReferenceGroups = {
     recommended: NormalizedReference[];
     additional: NormalizedReference[];
+};
+
+export type CatalogLesson = {
+    id: string;
+    title?: string;
+    rawType: string;
+    url?: string;
+};
+
+export type CatalogUsage = {
+    id: string;
+    lessonId: string;
+    referenceId: string;
+    tags: ReferenceTag[];
+    rawType: string;
+};
+
+export type BibliographyCatalog = {
+    references: NormalizedReference[];
+    referencesById: Map<string, NormalizedReference>;
+    lessons: CatalogLesson[];
+    lessonsById: Map<string, CatalogLesson>;
+    usages: CatalogUsage[];
+    usagesByLessonId: Map<string, CatalogUsage[]>;
+    usagesByReferenceId: Map<string, CatalogUsage[]>;
+};
+
+export type LoadBibliographyCatalogOptions = {
+    strict?: boolean;
+    sourceLabel?: string;
+};
+
+export type GetReferencesForLessonOptions = {
+    includeTags?: ReferenceTag[];
+    excludeTags?: ReferenceTag[];
+    includePendingRevision?: boolean;
+};
+
+export type LessonReferenceEntry = {
+    reference: NormalizedReference;
+    usage: CatalogUsage;
+};
+
+export type LessonReferenceGroups = {
+    recommended: LessonReferenceEntry[];
+    additional: LessonReferenceEntry[];
+    pendingRevision: LessonReferenceEntry[];
+};
+
+export type GetReferenceStatsOptions = {
+    types?: SupportedReferenceType[];
+    includeTags?: ReferenceTag[];
+    excludeTags?: ReferenceTag[];
+    includePendingRevision?: boolean;
+};
+
+export type ReferenceStat = {
+    referenceId: string;
+    type: SupportedReferenceType;
+    title: string;
+    citationCount: number;
+    lessonCount: number;
+    tags: ReferenceTag[];
+};
+
+export type BookCitationStat = {
+    bookKey: string;
+    bookId?: string;
+    bookTitle: string;
+    citationCount: number;
+    lessonCount: number;
+    chapterIds: string[];
 };
