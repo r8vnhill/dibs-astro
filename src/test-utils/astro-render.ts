@@ -75,6 +75,7 @@ export type AstroRender<Props extends object> = (
 
 export interface AstroRenderOptions {
     slots?: Record<string, string>;
+    request?: Request;
 }
 
 /**
@@ -113,5 +114,6 @@ export async function createAstroRenderer<Props extends object>(
         container.renderToString(component, {
             props: props as any,
             ...(options?.slots ? { slots: options.slots as any } : {}),
+            ...(options?.request ? { request: options.request } : {}),
         });
 }

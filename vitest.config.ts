@@ -23,8 +23,11 @@ process.env.SKIP_ICON_GENERATION ??= "true";
  */
 export default getViteConfig({
     test: {
-        // Run only project test files under src
-        include: ["src/**/__tests__/**/*.{test,spec}.{ts,tsx}"],
+        // Run project unit tests under src and scripts
+        include: [
+            "src/**/__tests__/**/*.{test,spec}.{ts,tsx}",
+            "scripts/**/__tests__/**/*.{test,spec}.{ts,tsx,js,mjs}",
+        ],
 
         // Use jsdom so DOM APIs (document/window) are available for React testing
         environment: "jsdom",

@@ -1,52 +1,80 @@
-# Bibliography Datasets (JSON-LD)
+# Bibliography Catalog (Turtle + Generated JSON-LD)
 
-This folder stores bibliography data used by lesson reference sections.
+This folder stores reference data for lessons. The canonical source is now:
 
-## Location convention
+`src/data/bibliography/catalog.graph.ttl`
 
-Place files under:
+The site, reports, and tests consume the generated artifact:
 
-`src/data/bibliography/<area>/<lesson>.bibliography.jsonld`
+`src/data/bibliography/catalog.graph.generated.jsonld`
 
-Example:
+The project still keeps legacy `*.bibliography.jsonld` `ItemList` files during migration, but new
+work should target the Turtle catalog.
 
-`src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld`
+## Canonical model
 
-## Required structure (v1)
+The editorial source uses Turtle with a mixed vocabulary:
 
-- Root object:
-  - `@context: "https://schema.org"`
-  - `@type: "ItemList"`
-  - `name`, `about` (optional but recommended)
-  - `itemListElement: []`
-- Each item:
-  - `identifier` (required, unique, stable ID)
-  - `@type` in `Book | WebPage`
+- `schema.org` for references, people, organizations, and lessons
+- `dibs:` for course-specific usage relations
 
-### Book fields
+Core node categories:
 
-- `name` (chapter/title)
-- `isPartOf.name` (book title)
-- `author` (optional)
-- `pageStart` / `pageEnd` (optional)
+- references: `Book | WebPage | ScholarlyArticle | Thesis`
+- people: `Person`
+- organizations/institutions: `Organization | CollegeOrUniversity`
+- lessons: `LearningResource`
+- usage edges: `dibs:ReferenceUsage`
 
-### WebPage fields
+## IDs
 
-- `name` (title)
-- `url`
-- `author` or `publisher` (optional)
+Use stable IDs:
+
+- references: `ref:<slug>`
+- people: `person:<slug>`
+- organizations: `org:<slug>`
+- lessons: canonical route, for example `/notes/software-libraries/scripting/pipelines/`
+- usage nodes: `usage:<lesson>:<reference>:<tag>`
+
+## Usage tags
+
+Usage tags live on `dibs:ReferenceUsage` nodes via `dibs:tag`:
+
+- `recommended`
+- `additional`
+- `pending-revision`
+
+UI rendering hides `pending-revision` by default.
+
+## Build pipeline
+
+Run `pnpm generate:bibliography-catalog` to:
+
+- parse `catalog.graph.ttl`
+- validate relations and tags
+- normalize the graph
+- write `catalog.graph.generated.jsonld`
+
+The generated file is deterministic and should be committed.
 
 ## Rendering model
 
-Lessons classify references directly in `.astro`:
+For graph-backed lessons, use `ReferencesFromCatalog` and provide:
 
-- `recommended: string[]`
-- `additional: string[]`
+- `source`
+- `lessonId`
 
-Descriptions remain in `.astro` using slots:
+Editorial descriptions remain in `.astro` using slots keyed by reference ID:
 
-- `description-{identifier}`
+- `description-{referenceId}`
+- `title-{referenceId}`
+- `publication-{referenceId}` for articles
+- `institution-{referenceId}` for theses
 
-Optional title override:
+## Analysis
 
-- `title-{identifier}`
+The CLI report `pnpm bibliography:report` reads the generated catalog and generates:
+
+- top cited references
+- top cited books
+- counts by lesson and tag

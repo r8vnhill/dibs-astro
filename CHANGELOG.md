@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-03-12
+
+### Added
+
+- Added a centralized bibliography catalog modeled as a Web of Data graph, with Turtle as the editorial source, a generated JSON-LD artifact, course-wide report generation, and extensible reference rendering for books, web pages, articles, and theses.
+- Added a new comparative Nushell lesson for `first-script`, including catalog-driven references and supporting bibliography data.
+- Added render and unit tests for the new bibliography catalog pipeline, its Turtle-to-JSON-LD generation flow, and catalog-driven reference rendering.
+
+### Changed
+
+- Refined bibliography rendering so lesson references can be resolved from the current Astro route, filtered by pedagogical tags, and hidden automatically when a section ends up empty.
+- Expanded the new Nushell lesson content and its supporting references so the comparison against PowerShell focuses on reusable commands, modules, and validation decisions.
+- Updated project scripts and build hooks so bibliography catalog generation, lesson metadata generation, and reference reports are part of the normal project workflow.
+- Updated `CHANGELOG.md` and the project version to reflect the current release state of the branch.
+
+### Fixed
+
+- Fixed fallback rendering in bibliography components when optional title or description slots are empty, preserving normalized reference data instead of rendering blank headings.
+- Fixed source-link and reference-panel edge cases for route-inferred bibliography rendering and filtered reference groups.
+- Fixed icon export generation so it preserves timestamps but avoids rewriting the generated index when the exported icon set has not changed.
+
 ## [0.11.1] - 2026-03-06
 
 ### Added

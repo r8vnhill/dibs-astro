@@ -8,6 +8,8 @@ import {
 import AuthorList from "./AuthorList.astro";
 import Book from "./Book.astro";
 import References from "./References.astro";
+import ScholarlyArticle from "./ScholarlyArticle.astro";
+import Thesis from "./Thesis.astro";
 import WebPage from "./WebPage.astro";
 
 type Props = {
@@ -42,6 +44,8 @@ const grouped = resolveReferenceGroups(parsed, recommended, additional, {
 
 const descriptionSlotName = (ref: NormalizedReference): string => `description-${ref.id}`;
 const titleSlotName = (ref: NormalizedReference): string => `title-${ref.id}`;
+const publicationSlotName = (ref: ArticleReference): string => `publication-${ref.id}`;
+const institutionSlotName = (ref: ThesisReference): string => `institution-${ref.id}`;
 const referencesProps = {
     ...(heading ? { heading } : {}),
     ...(recommendedHeading ? { recommendedHeading } : {}),
@@ -77,11 +81,19 @@ const hasMeaningfulContent = (html: string): boolean => {
 
 type BookReference = Extract<NormalizedReference, { type: "Book" }>;
 type WebReference = Extract<NormalizedReference, { type: "WebPage" }>;
+type ArticleReference = Extract<NormalizedReference, { type: "ScholarlyArticle" }>;
+type ThesisReference = Extract<NormalizedReference, { type: "Thesis" }>;
 
 const resolvedBookChapter = (ref: BookReference): string | undefined =>
     ref.chapter || ref.title || fallbackTitleById.get(ref.id);
 
 const resolvedWebTitle = (ref: WebReference): string | undefined =>
+    ref.title || fallbackTitleById.get(ref.id);
+
+const resolvedArticleTitle = (ref: ArticleReference): string | undefined =>
+    ref.title || fallbackTitleById.get(ref.id);
+
+const resolvedThesisTitle = (ref: ThesisReference): string | undefined =>
     ref.title || fallbackTitleById.get(ref.id);
 
 const bookChapterProp = (ref: BookReference): { chapter: string } | Record<never, never> => {
@@ -91,6 +103,16 @@ const bookChapterProp = (ref: BookReference): { chapter: string } | Record<never
 
 const webTitleProp = (ref: WebReference): { title: string } | Record<never, never> => {
     const title = resolvedWebTitle(ref);
+    return title ? { title } : {};
+};
+
+const articleTitleProp = (ref: ArticleReference): { title: string } | Record<never, never> => {
+    const title = resolvedArticleTitle(ref);
+    return title ? { title } : {};
+};
+
+const thesisTitleProp = (ref: ThesisReference): { title: string } | Record<never, never> => {
+    const title = resolvedThesisTitle(ref);
     return title ? { title } : {};
 };
 
@@ -114,6 +136,26 @@ for (const id of referencedIds) {
     } catch {
         // Slot is absent; no custom description.
     }
+
+    const publicationName = `publication-${id}`;
+    try {
+        const html = await Astro.slots.render(publicationName);
+        if (hasMeaningfulContent(html)) {
+            slotHtml.set(publicationName, html);
+        }
+    } catch {
+        // Slot is absent; no custom publication.
+    }
+
+    const institutionName = `institution-${id}`;
+    try {
+        const html = await Astro.slots.render(institutionName);
+        if (hasMeaningfulContent(html)) {
+            slotHtml.set(institutionName, html);
+        }
+    } catch {
+        // Slot is absent; no custom institution.
+    }
 }
 ---
 
@@ -121,7 +163,8 @@ for (const id of referencedIds) {
     <Fragment slot="recommended">
         {
             grouped.recommended.map((ref) =>
-                ref.type === "Book" ? (
+                ref.type === "Book"
+                    ? (
                 <Book
                     {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
@@ -148,7 +191,9 @@ for (const id of referencedIds) {
                         ) : null
                     }
                 </Book>
-            ) : (
+            )
+            : ref.type === "WebPage"
+            ? (
                 <WebPage
                     {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
@@ -175,6 +220,80 @@ for (const id of referencedIds) {
                         ) : null
                     }
                 </WebPage>
+            )
+            : ref.type === "ScholarlyArticle"
+            ? (
+                <ScholarlyArticle
+                    {...articleTitleProp(ref)} url={ref.url}
+                    {...(ref.publication ? { publication: ref.publication } : {})}
+                    {...(ref.pages ? { pages: ref.pages } : {})}
+                >
+                    {
+                        slotHtml.has(titleSlotName(ref)) ? (
+                            <Fragment slot="title">
+                                <span set:html={slotHtml.get(titleSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(publicationSlotName(ref)) ? (
+                            <Fragment slot="publication">
+                                <span set:html={slotHtml.get(publicationSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        ref.authors.length > 0 ? (
+                            <AuthorList slot="author" authors={ref.authors} />
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(descriptionSlotName(ref)) ? (
+                            <Fragment slot="description">
+                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+                </ScholarlyArticle>
+            )
+            : (
+                <Thesis
+                    {...thesisTitleProp(ref)} url={ref.url}
+                    {...(ref.institution ? { institution: ref.institution } : {})}
+                >
+                    {
+                        slotHtml.has(titleSlotName(ref)) ? (
+                            <Fragment slot="title">
+                                <span set:html={slotHtml.get(titleSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(institutionSlotName(ref)) ? (
+                            <Fragment slot="institution">
+                                <span set:html={slotHtml.get(institutionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        ref.authors.length > 0 ? (
+                            <AuthorList slot="author" authors={ref.authors} />
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(descriptionSlotName(ref)) ? (
+                            <Fragment slot="description">
+                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+                </Thesis>
             )
             )
         }
@@ -183,7 +302,8 @@ for (const id of referencedIds) {
     <Fragment slot="additional">
         {
             grouped.additional.map((ref) =>
-                ref.type === "Book" ? (
+                ref.type === "Book"
+                    ? (
                 <Book
                     {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
                     {...(ref.pages ? { pages: ref.pages } : {})}
@@ -210,7 +330,9 @@ for (const id of referencedIds) {
                         ) : null
                     }
                 </Book>
-            ) : (
+            )
+            : ref.type === "WebPage"
+            ? (
                 <WebPage
                     {...webTitleProp(ref)} url={ref.url}
                     {...(ref.location ? { location: ref.location } : {})}
@@ -237,6 +359,80 @@ for (const id of referencedIds) {
                         ) : null
                     }
                 </WebPage>
+            )
+            : ref.type === "ScholarlyArticle"
+            ? (
+                <ScholarlyArticle
+                    {...articleTitleProp(ref)} url={ref.url}
+                    {...(ref.publication ? { publication: ref.publication } : {})}
+                    {...(ref.pages ? { pages: ref.pages } : {})}
+                >
+                    {
+                        slotHtml.has(titleSlotName(ref)) ? (
+                            <Fragment slot="title">
+                                <span set:html={slotHtml.get(titleSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(publicationSlotName(ref)) ? (
+                            <Fragment slot="publication">
+                                <span set:html={slotHtml.get(publicationSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        ref.authors.length > 0 ? (
+                            <AuthorList slot="author" authors={ref.authors} />
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(descriptionSlotName(ref)) ? (
+                            <Fragment slot="description">
+                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+                </ScholarlyArticle>
+            )
+            : (
+                <Thesis
+                    {...thesisTitleProp(ref)} url={ref.url}
+                    {...(ref.institution ? { institution: ref.institution } : {})}
+                >
+                    {
+                        slotHtml.has(titleSlotName(ref)) ? (
+                            <Fragment slot="title">
+                                <span set:html={slotHtml.get(titleSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(institutionSlotName(ref)) ? (
+                            <Fragment slot="institution">
+                                <span set:html={slotHtml.get(institutionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+
+                    {
+                        ref.authors.length > 0 ? (
+                            <AuthorList slot="author" authors={ref.authors} />
+                        ) : null
+                    }
+
+                    {
+                        slotHtml.has(descriptionSlotName(ref)) ? (
+                            <Fragment slot="description">
+                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
+                            </Fragment>
+                        ) : null
+                    }
+                </Thesis>
             )
             )
         }

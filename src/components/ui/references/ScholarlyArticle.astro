@@ -1,0 +1,96 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
+import { ListItem } from "~/components/ui/list";
+
+type PageRange = number | [number, number];
+
+type Props = {
+    title?: string;
+    url: string;
+    publication?: string;
+    pages?: PageRange;
+    author?: string;
+};
+
+const { title, url, publication, pages, author }: Props = Astro.props;
+
+const normalizePages = (p?: PageRange) => {
+    if (p == null) return null;
+    if (typeof p === "number") return [p, p] as [number, number];
+    const [a, b] = p;
+    return a <= b ? [a, b] as [number, number] : [b, a] as [number, number];
+};
+
+const fmtPages = (p?: PageRange) => {
+    const norm = normalizePages(p);
+    if (!norm) return null;
+    const [start, end] = norm;
+    return start === end ? `p. ${start}` : `pp. ${start}–${end}`;
+};
+
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
+const publicationSlotHtml = Astro.slots.has("publication")
+    ? await Astro.slots.render("publication")
+    : "";
+const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
+const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
+const hasPublicationSlot = hasMeaningfulContent(publicationSlotHtml);
+const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
+const pagesLabel = fmtPages(pages);
+---
+
+<ListItem icon={icons.FileText}>
+    <Enquote type="english-double">
+        <a
+            href={url} target="_blank"
+            rel="noopener noreferrer" class="hover:underline underline-offset-2"
+        >
+            {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+        </a>
+    </Enquote>
+
+    {
+        pagesLabel ? (
+            <span class="text-muted-foreground">
+                {" "}({pagesLabel})
+            </span>
+        ) : null
+    }
+
+    {
+        hasPublicationSlot || publication ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">en</span>{" "}
+                <cite class="not-italic">
+                    {hasPublicationSlot ? <span set:html={publicationSlotHtml} /> : publication}
+                </cite>
+            </span>
+        ) : null
+    }
+
+    {
+        hasAuthorSlot || author ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">por</span>{" "}
+                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+            </span>
+        ) : null
+    }
+
+    {
+        Astro.slots.has("description") ? (
+            <div class="text-muted-foreground block">
+                <slot name="description" />
+            </div>
+        ) : null
+    }
+</ListItem>

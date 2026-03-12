@@ -1,0 +1,725 @@
+{
+  "@context": [
+    "https://schema.org",
+    {
+      "dibs": "https://dibs.ravenhill.cl/vocab#"
+    }
+  ],
+  "@graph": [
+    {
+      "@id": "person:bruce-payette",
+      "@type": "Person",
+      "givenName": "Bruce",
+      "familyName": "Payette",
+      "url": "https://www.goodreads.com/author/show/441636.Bruce_Payette"
+    },
+    {
+      "@id": "person:chengnian-sun",
+      "@type": "Person",
+      "givenName": "Chengnian",
+      "familyName": "Sun"
+    },
+    {
+      "@id": "person:david-m-beazley",
+      "@type": "Person",
+      "givenName": "David M.",
+      "familyName": "Beazley",
+      "url": "https://en.wikipedia.org/wiki/David_M._Beazley"
+    },
+    {
+      "@id": "person:karl-mazurak",
+      "@type": "Person",
+      "givenName": "Karl",
+      "familyName": "Mazurak"
+    },
+    {
+      "@id": "person:martin-fowler",
+      "@type": "Person",
+      "givenName": "Martin",
+      "familyName": "Fowler",
+      "url": "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)"
+    },
+    {
+      "@id": "person:meiyappan-nagappan",
+      "@type": "Person",
+      "givenName": "Meiyappan",
+      "familyName": "Nagappan"
+    },
+    {
+      "@id": "person:michael-w-godfrey",
+      "@type": "Person",
+      "givenName": "Michael W.",
+      "familyName": "Godfrey"
+    },
+    {
+      "@id": "person:richard-siddaway",
+      "@type": "Person",
+      "givenName": "Richard",
+      "familyName": "Siddaway",
+      "url": "https://www.goodreads.com/author/show/4742136.Richard_Siddaway"
+    },
+    {
+      "@id": "person:steve-zdancewic",
+      "@type": "Person",
+      "givenName": "Steve",
+      "familyName": "Zdancewic"
+    },
+    {
+      "@id": "person:travis-plunk",
+      "@type": "Person",
+      "givenName": "Travis",
+      "familyName": "Plunk"
+    },
+    {
+      "@id": "person:ying-tian",
+      "@type": "Person",
+      "givenName": "Ying",
+      "familyName": "Tian"
+    },
+    {
+      "@id": "person:yue-dong",
+      "@type": "Person",
+      "givenName": "Yue",
+      "familyName": "Dong"
+    },
+    {
+      "@id": "person:zimin-li",
+      "@type": "Person",
+      "givenName": "Zimin",
+      "familyName": "Li"
+    },
+    {
+      "@id": "org:acm",
+      "@type": "Organization",
+      "name": "Association for Computing Machinery",
+      "url": "https://www.acm.org/"
+    },
+    {
+      "@id": "org:clig",
+      "@type": "Organization",
+      "name": "clig.dev",
+      "url": "https://clig.dev/"
+    },
+    {
+      "@id": "org:martin-fowler-site",
+      "@type": "Organization",
+      "name": "martinfowler.com",
+      "url": "https://martinfowler.com"
+    },
+    {
+      "@id": "org:nushell",
+      "@type": "Organization",
+      "name": "Nushell",
+      "url": "https://www.nushell.sh/"
+    },
+    {
+      "@id": "org:university-of-waterloo",
+      "@type": "CollegeOrUniversity",
+      "name": "University of Waterloo",
+      "url": "https://uwaterloo.ca/"
+    },
+    {
+      "@id": "work:acm-tosem",
+      "@type": "CreativeWork",
+      "name": "ACM Transactions on Software Engineering and Methodology",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:learn-powershell-month-lunches-4e",
+      "@type": "CreativeWork",
+      "name": "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS",
+      "author": [
+        {
+          "@id": "person:travis-plunk"
+        }
+      ]
+    },
+    {
+      "@id": "work:plas-2007",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:python-distilled",
+      "@type": "CreativeWork",
+      "name": "Python Distilled",
+      "author": [
+        {
+          "@id": "person:david-m-beazley"
+        }
+      ]
+    },
+    {
+      "@id": "work:windows-powershell-in-action-3e",
+      "@type": "CreativeWork",
+      "name": "Windows PowerShell in Action, Third Edition",
+      "author": [
+        {
+          "@id": "person:bruce-payette"
+        },
+        {
+          "@id": "person:richard-siddaway"
+        }
+      ]
+    },
+    {
+      "@id": "ref:clig-the-basics",
+      "@type": "WebPage",
+      "name": "Command Line Interface Guidelines",
+      "url": "https://clig.dev/#the-basics",
+      "publisher": {
+        "@id": "org:clig"
+      }
+    },
+    {
+      "@id": "ref:collection-pipeline-fowler",
+      "@type": "WebPage",
+      "name": "Collection Pipeline",
+      "url": "https://martinfowler.com/articles/collection-pipeline/",
+      "author": [
+        {
+          "@id": "person:martin-fowler"
+        }
+      ],
+      "publisher": {
+        "@id": "org:martin-fowler-site"
+      }
+    },
+    {
+      "@id": "ref:dong-bash-in-the-wild-2023",
+      "@type": "ScholarlyArticle",
+      "name": "Bash in the Wild: Language Usage, Code Smells, and Bugs",
+      "url": "https://doi.org/10.1145/3517193",
+      "datePublished": "2023",
+      "pageStart": 1,
+      "pageEnd": 22,
+      "author": [
+        {
+          "@id": "person:yue-dong"
+        },
+        {
+          "@id": "person:zimin-li"
+        },
+        {
+          "@id": "person:ying-tian"
+        },
+        {
+          "@id": "person:chengnian-sun"
+        },
+        {
+          "@id": "person:michael-w-godfrey"
+        },
+        {
+          "@id": "person:meiyappan-nagappan"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:acm-tosem"
+      }
+    },
+    {
+      "@id": "ref:errors-and-exceptions",
+      "@type": "Book",
+      "name": "Errors and exceptions",
+      "pageStart": 531,
+      "pageEnd": 562,
+      "author": [
+        {
+          "@id": "person:bruce-payette"
+        },
+        {
+          "@id": "person:richard-siddaway"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
+      "@id": "ref:handling-errors",
+      "@type": "Book",
+      "name": "Handling errors",
+      "pageStart": 279,
+      "pageEnd": 286,
+      "author": [
+        {
+          "@id": "person:travis-plunk"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:learn-powershell-month-lunches-4e"
+      }
+    },
+    {
+      "@id": "ref:improving-your-parameterized-script",
+      "@type": "Book",
+      "name": "Improving your parameterized script",
+      "pageStart": 249,
+      "pageEnd": 258,
+      "author": [
+        {
+          "@id": "person:travis-plunk"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:learn-powershell-month-lunches-4e"
+      }
+    },
+    {
+      "@id": "ref:input-and-output-python-distilled",
+      "@type": "Book",
+      "name": "Input and Output",
+      "pageStart": 262,
+      "pageEnd": 311,
+      "author": [
+        {
+          "@id": "person:david-m-beazley"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:python-distilled"
+      }
+    },
+    {
+      "@id": "ref:li-bash-language-usage-2021",
+      "@type": "Thesis",
+      "name": "An Empirical Study on Bash Language Usage in Github",
+      "url": "http://hdl.handle.net/10012/17036",
+      "datePublished": "2021",
+      "author": [
+        {
+          "@id": "person:zimin-li"
+        }
+      ],
+      "publisher": {
+        "@id": "org:university-of-waterloo"
+      }
+    },
+    {
+      "@id": "ref:mazurak-a-bash-2007",
+      "@type": "ScholarlyArticle",
+      "name": "A BASH: Finding bugs in bash scripts",
+      "url": "https://doi.org/10.1145/1255329.1255347",
+      "datePublished": "2007",
+      "pageStart": 105,
+      "pageEnd": 114,
+      "author": [
+        {
+          "@id": "person:karl-mazurak"
+        },
+        {
+          "@id": "person:steve-zdancewic"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:plas-2007"
+      }
+    },
+    {
+      "@id": "ref:nushell-creating-modules",
+      "@type": "WebPage",
+      "name": "Creating Modules",
+      "url": "https://www.nushell.sh/book/modules/creating_modules.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-custom-commands",
+      "@type": "WebPage",
+      "name": "Custom Commands",
+      "url": "https://www.nushell.sh/book/custom_commands.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-export-def",
+      "@type": "WebPage",
+      "name": "Export def",
+      "url": "https://www.nushell.sh/commands/docs/export_def.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-path-exists",
+      "@type": "WebPage",
+      "name": "Path exists",
+      "url": "https://www.nushell.sh/commands/docs/path_exists.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-path-type",
+      "@type": "WebPage",
+      "name": "Path",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-save",
+      "@type": "WebPage",
+      "name": "Save",
+      "url": "https://www.nushell.sh/commands/docs/save.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-string-interpolation",
+      "@type": "WebPage",
+      "name": "String interpolation",
+      "url": "https://www.nushell.sh/book/working_with_strings.html#string-interpolation",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-type-signatures",
+      "@type": "WebPage",
+      "name": "Type signatures",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/type_signatures.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-types-of-data",
+      "@type": "WebPage",
+      "name": "Types of Data",
+      "url": "https://www.nushell.sh/book/types_of_data.html#nothing-null",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-use",
+      "@type": "WebPage",
+      "name": "Use",
+      "url": "https://www.nushell.sh/commands/docs/use.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:pipeline-connecting-commands",
+      "@type": "Book",
+      "name": "The pipeline: Connecting commands",
+      "pageStart": 69,
+      "pageEnd": 83,
+      "author": [
+        {
+          "@id": "person:travis-plunk"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:learn-powershell-month-lunches-4e"
+      }
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/errors/",
+      "@type": "LearningResource",
+      "name": "Errores y manejo de fallos en scripts",
+      "url": "/notes/software-libraries/scripting/errors/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/first-script/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en PowerShell",
+      "url": "/notes/software-libraries/scripting/first-script/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/first-script/nushell/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en Nushell",
+      "url": "/notes/software-libraries/scripting/first-script/nushell/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/first-script/py/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en Python",
+      "url": "/notes/software-libraries/scripting/first-script/py/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/pipelines/",
+      "@type": "LearningResource",
+      "name": "Pipelines I: PowerShell declarativo",
+      "url": "/notes/software-libraries/scripting/pipelines/"
+    },
+    {
+      "@id": "usage:errors-errors-and-exceptions-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/errors/"
+      },
+      "dibs:reference": {
+        "@id": "ref:errors-and-exceptions"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:errors-handling-errors-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/errors/"
+      },
+      "dibs:reference": {
+        "@id": "ref:handling-errors"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:first-script-improving-parameterized-script-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/"
+      },
+      "dibs:reference": {
+        "@id": "ref:improving-your-parameterized-script"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-clig-the-basics-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:clig-the-basics"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-dong-bash-in-the-wild-2023-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:dong-bash-in-the-wild-2023"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-li-bash-language-usage-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:li-bash-language-usage-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-mazurak-a-bash-2007-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mazurak-a-bash-2007"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-creating-modules-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-creating-modules"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-custom-commands-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-custom-commands"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-export-def-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-export-def"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-path-exists-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-path-exists"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-path-type-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-path-type"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-save-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-save"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-string-interpolation-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-string-interpolation"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-type-signatures-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-type-signatures"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-types-of-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-types-of-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-nushell-nushell-use-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-use"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:first-script-py-input-and-output-python-distilled-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/first-script/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:input-and-output-python-distilled"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-collection-pipeline-fowler-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/"
+      },
+      "dibs:reference": {
+        "@id": "ref:collection-pipeline-fowler"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-pipeline-connecting-commands-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pipeline-connecting-commands"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    }
+  ]
+}

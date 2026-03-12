@@ -340,7 +340,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </ListItem>
 
                     <ListItem icon={icons.Hash}>
-                        <B><PowerShellInline>(Get-FileHash ...).Hash</PowerShellInline>:</B>
+                        <B><PowerShellInline code="(Get-FileHash ...).Hash" />:</B>
                         <PowerShellInline>Get-FileHash</PowerShellInline> devuelve un objeto con
                         información del cálculo (incluyendo el algoritmo y el hash). Al acceder a la
                         propiedad <PowerShellInline>.Hash</PowerShellInline> extraemos el valor de
@@ -371,7 +371,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     >ValueFromPipelineByPropertyName</PowerShellInline> es que el cmdlet <B>no
                         depende</B> de un productor específico. Mientras exista una propiedad
                     compatible (o un alias), el pipeline encaja sin <Enquote>adaptadores</Enquote>
-                    como <PowerShellInline>Select-Object -Property ...</PowerShellInline>.
+                    como <PowerShellInline code="Select-Object -Property ..." />.
                 </P>
 
                 <P>

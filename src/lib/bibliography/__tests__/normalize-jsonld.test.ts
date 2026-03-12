@@ -60,6 +60,63 @@ describe("parseBibliography", () => {
         });
     });
 
+    it("parses a valid ScholarlyArticle with publication and pages", () => {
+        const parsed = parseBibliography({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: [
+                {
+                    "@type": "ScholarlyArticle",
+                    identifier: "article-1",
+                    name: "Bash in the Wild: Language Usage, Code Smells, and Bugs",
+                    url: "https://doi.org/10.1145/3517193",
+                    pageStart: 1,
+                    pageEnd: 22,
+                    isPartOf: {
+                        "@type": "Periodical",
+                        name: "ACM Transactions on Software Engineering and Methodology",
+                    },
+                },
+            ],
+        });
+
+        expect(parsed.items).toHaveLength(1);
+        expect(parsed.items[0]).toMatchObject({
+            id: "article-1",
+            type: "ScholarlyArticle",
+            url: "https://doi.org/10.1145/3517193",
+            publication: "ACM Transactions on Software Engineering and Methodology",
+            pages: [1, 22],
+        });
+    });
+
+    it("parses a valid Thesis with institution", () => {
+        const parsed = parseBibliography({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: [
+                {
+                    "@type": "Thesis",
+                    identifier: "thesis-1",
+                    name: "An Empirical Study on Bash Language Usage in Github",
+                    url: "http://hdl.handle.net/10012/17036",
+                    publisher: {
+                        "@type": "CollegeOrUniversity",
+                        name: "University of Waterloo",
+                    },
+                },
+            ],
+        });
+
+        expect(parsed.items).toHaveLength(1);
+        expect(parsed.items[0]).toMatchObject({
+            id: "thesis-1",
+            type: "Thesis",
+            url: "http://hdl.handle.net/10012/17036",
+            institution: "University of Waterloo",
+        });
+    });
+
     it("throws when an item is missing identifier", () => {
         expect(() =>
             parseBibliography({

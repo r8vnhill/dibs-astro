@@ -1,0 +1,192 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Bibliografia de la leccion: First Script en Nushell",
+  "about": "Nushell custom commands, modules, validation, and scripting references",
+  "itemListElement": [
+    {
+      "@type": "WebPage",
+      "identifier": "clig-the-basics",
+      "name": "Command Line Interface Guidelines",
+      "url": "https://clig.dev/#the-basics",
+      "publisher": {
+        "@type": "Organization",
+        "name": "clig.dev",
+        "url": "https://clig.dev/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-creating-modules",
+      "name": "Creating Modules",
+      "url": "https://www.nushell.sh/book/modules/creating_modules.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-custom-commands",
+      "name": "Custom Commands",
+      "url": "https://www.nushell.sh/book/custom_commands.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "ScholarlyArticle",
+      "identifier": "dong-bash-in-the-wild-2023",
+      "name": "Bash in the Wild: Language Usage, Code Smells, and Bugs",
+      "url": "https://doi.org/10.1145/3517193",
+      "datePublished": "2023",
+      "pageStart": 1,
+      "pageEnd": 22,
+      "author": [
+        { "@type": "Person", "givenName": "Yue", "familyName": "Dong" },
+        { "@type": "Person", "givenName": "Zimin", "familyName": "Li" },
+        { "@type": "Person", "givenName": "Ying", "familyName": "Tian" },
+        { "@type": "Person", "givenName": "Chengnian", "familyName": "Sun" },
+        { "@type": "Person", "givenName": "Michael W.", "familyName": "Godfrey" },
+        { "@type": "Person", "givenName": "Meiyappan", "familyName": "Nagappan" }
+      ],
+      "isPartOf": {
+        "@type": "Periodical",
+        "name": "ACM Transactions on Software Engineering and Methodology"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Association for Computing Machinery",
+        "url": "https://www.acm.org/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-export-def",
+      "name": "Export def",
+      "url": "https://www.nushell.sh/commands/docs/export_def.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "Thesis",
+      "identifier": "li-bash-language-usage-2021",
+      "name": "An Empirical Study on Bash Language Usage in Github",
+      "url": "http://hdl.handle.net/10012/17036",
+      "datePublished": "2021",
+      "author": [
+        { "@type": "Person", "givenName": "Zimin", "familyName": "Li" }
+      ],
+      "publisher": {
+        "@type": "CollegeOrUniversity",
+        "name": "University of Waterloo",
+        "url": "https://uwaterloo.ca/"
+      }
+    },
+    {
+      "@type": "ScholarlyArticle",
+      "identifier": "mazurak-a-bash-2007",
+      "name": "A BASH: Finding bugs in bash scripts",
+      "url": "https://doi.org/10.1145/1255329.1255347",
+      "datePublished": "2007",
+      "pageStart": 105,
+      "pageEnd": 114,
+      "author": [
+        { "@type": "Person", "givenName": "Karl", "familyName": "Mazurak" },
+        { "@type": "Person", "givenName": "Steve", "familyName": "Zdancewic" }
+      ],
+      "isPartOf": {
+        "@type": "CreativeWork",
+        "name": "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Association for Computing Machinery",
+        "url": "https://www.acm.org/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-path-type",
+      "name": "Path",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-path-exists",
+      "name": "Path exists",
+      "url": "https://www.nushell.sh/commands/docs/path_exists.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-save",
+      "name": "Save",
+      "url": "https://www.nushell.sh/commands/docs/save.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-string-interpolation",
+      "name": "String interpolation",
+      "url": "https://www.nushell.sh/book/working_with_strings.html#string-interpolation",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-type-signatures",
+      "name": "Type signatures",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/type_signatures.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-types-of-data",
+      "name": "Types of Data",
+      "url": "https://www.nushell.sh/book/types_of_data.html#nothing-null",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "identifier": "nushell-use",
+      "name": "Use",
+      "url": "https://www.nushell.sh/commands/docs/use.html",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nushell",
+        "url": "https://www.nushell.sh/"
+      }
+    }
+  ]
+}

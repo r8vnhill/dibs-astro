@@ -309,7 +309,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <List>
                 <ListItem icon={icons.Gauge}>
                     <PythonInline code={`level = ...`} /> selecciona el nivel global. Cuando
-                    <PythonInline>verbose == True</PythonInline>
+                    <PythonInline code="verbose == True" />
                     usamos <PythonInline>logging.DEBUG</PythonInline> (mensajes detallados); si no,
                     usamos <PythonInline>logging.WARNING</PythonInline> (solo advertencias y más
                     graves).
@@ -417,16 +417,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.FolderSimple}>
-                    <PythonInline>mkdir(parents=True, exist_ok=True)</PythonInline> crea el
-                    directorio de salida si no existe. Con <PythonInline>parents=True</PythonInline>
+                    <PythonInline code="mkdir(parents=True, exist_ok=True)" /> crea el directorio de
+                    salida si no existe. Con <PythonInline>parents=True</PythonInline>
                     se crean también directorios intermedios, y con <PythonInline
                     >exist_ok=True</PythonInline> no falla si ya existía.
                 </ListItem>
 
                 <ListItem icon={icons.LockKey}>
-                    <PythonInline>with target.open(...) as f:</PythonInline> abre el archivo de
-                    forma segura: al salir del bloque se cierra automáticamente, incluso si ocurre
-                    un error.
+                    <PythonInline code="with target.open(...) as f:" /> abre el archivo de forma
+                    segura: al salir del bloque se cierra automáticamente, incluso si ocurre un
+                    error.
                 </ListItem>
 
                 <ListItem icon={icons.PencilLine}>
@@ -455,16 +455,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
 
                 <ListItem icon={icons.ArrowSquareOut}>
-                    <PythonInline>return 0</PythonInline> y <PythonInline
-                    >sys.exit(...)</PythonInline> establecen el código de salida del proceso. Esto
-                    es importante para automatización (CI, scripts, tareas): <PythonInline
-                    >0</PythonInline>
+                    <PythonInline code="return 0" /> y <PythonInline code="sys.exit(...)" />
+                    establecen el código de salida del proceso. Esto es importante para
+                    automatización (CI, scripts, tareas): <PythonInline>0</PythonInline>
                     suele indicar éxito, y otros valores indican fallas.
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
-                    <PythonInline>if __name__ == "__main__":</PythonInline> hace que el archivo se
-                    pueda ejecutar como script sin que <PythonInline>main</PythonInline> corra al
+                    <PythonInline code='if __name__ == "__main__":' /> hace que el archivo se pueda
+                    ejecutar como script sin que <PythonInline>main</PythonInline> corra al
                     importarlo como módulo. Además, <PythonInline>sys.argv[1:]</PythonInline> omite
                     el primer argumento (el nombre del programa).
                 </ListItem>
@@ -478,7 +477,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >módulo</I> (o submódulo) usando el sistema de importaciones, en lugar de un archivo
             <Mono>.py</Mono> directo. Esto asegura que los imports funcionen correctamente dentro
             del paquete (<Mono>readme_gen</Mono>) y que el punto de entrada sea el bloque
-            <PythonInline>if __name__ == "__main__"</PythonInline>.
+            <PythonInline code='if __name__ == "__main__"' />.
 
             <PowerShellBlock
                 code={`
@@ -535,8 +534,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
-                    El patrón <PythonInline>if __name__ == "__main__"</PythonInline> define un punto
-                    de entrada claro y reusable.
+                    El patrón <PythonInline code='if __name__ == "__main__"' /> define un punto de
+                    entrada claro y reusable.
                 </ListItem>
             </List>
         </Fragment>

@@ -125,8 +125,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Enquote>falla fuerte</Enquote> según el contexto.
         </P>
 
-
-
         <PowerShellBlock
             code={`
                 #Requires -Version 7.5
@@ -222,8 +220,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                             Ignore</PowerShellInline>.</B> Las llamadas a <PowerShellInline
                     >Get-Item</PowerShellInline> y <PowerShellInline>Get-FileHash</PowerShellInline>
                     usan <Mono>Ignore</Mono> para evitar que sus errores lleguen al stream.
-                    Verificamos el resultado (<PowerShellInline>$null -eq $item</PowerShellInline>)
-                    y emitimos <I>nuestro</I> error con <PowerShellInline
+                    Verificamos el resultado (<PowerShellInline code="$null -eq $item" />) y
+                    emitimos <I>nuestro</I> error con <PowerShellInline
                     >Write-Error</PowerShellInline>: mensaje claro, categoría semántica y ErrorId
                     estructurado.
                 </ListItem>
@@ -508,15 +506,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.EyeSlash}>
-                    <B><PowerShellInline>-ErrorAction SilentlyContinue</PowerShellInline></B>
+                    <B><PowerShellInline code="-ErrorAction SilentlyContinue" /></B>
                     suprime la impresión de errores en pantalla, pero <B>no elimina</B> el error:
                     igual puede ser capturado con <PowerShellInline
                     >-ErrorVariable</PowerShellInline>.
                 </ListItem>
 
                 <ListItem icon={icons.Plus}>
-                    <B><PowerShellInline>-ErrorVariable +errs</PowerShellInline></B> usa el modo
-                    acumulativo: PowerShell agrega cada error como un <PowerShellInline
+                    <B><PowerShellInline code="-ErrorVariable +errs" /></B> usa el modo acumulativo:
+                    PowerShell agrega cada error como un <PowerShellInline
                     >[ErrorRecord]</PowerShellInline> al arreglo <PowerShellInline
                     >$errs</PowerShellInline>.
                 </ListItem>
@@ -633,7 +631,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </ListItem>
 
                         <ListItem icon={icons.Plus}>
-                            Use <PowerShellInline>-ErrorVariable +batchErrs</PowerShellInline> (modo
+                            Use <PowerShellInline code="-ErrorVariable +batchErrs" /> (modo
                             acumulativo) al invocar el script por cada batch, para acumular errores
                             <B>por batch fallido</B>.
                         </ListItem>

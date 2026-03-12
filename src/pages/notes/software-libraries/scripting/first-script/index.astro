@@ -13,7 +13,7 @@ import {
 import { MarkdownInline, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { DibsSourceLink, Link, PythonLink } from "~/components/ui/links";
+import { DibsSourceLink, Link, NushellLink, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -707,6 +707,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <LinksLayout title="Comparativas y otros ecosistemas">
         <PythonLink />
+        <NushellLink />
     </LinksLayout>
 
     <References>

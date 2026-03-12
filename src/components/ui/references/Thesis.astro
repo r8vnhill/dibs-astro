@@ -1,0 +1,68 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
+import { ListItem } from "~/components/ui/list";
+
+type Props = {
+    title?: string;
+    url: string;
+    institution?: string;
+    author?: string;
+};
+
+const { title, url, institution, author }: Props = Astro.props;
+
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
+const institutionSlotHtml = Astro.slots.has("institution")
+    ? await Astro.slots.render("institution")
+    : "";
+const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
+const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
+const hasInstitutionSlot = hasMeaningfulContent(institutionSlotHtml);
+const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
+---
+
+<ListItem icon={icons.Student}>
+    <Enquote type="english-double">
+        <a
+            href={url} target="_blank"
+            rel="noopener noreferrer" class="hover:underline underline-offset-2"
+        >
+            {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+        </a>
+    </Enquote>
+
+    {
+        hasInstitutionSlot || institution ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">en</span>{" "}
+                {hasInstitutionSlot ? <span set:html={institutionSlotHtml} /> : institution}
+            </span>
+        ) : null
+    }
+
+    {
+        hasAuthorSlot || author ? (
+            <span>
+                {" "}
+                <span class="text-muted-foreground">por</span>{" "}
+                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+            </span>
+        ) : null
+    }
+
+    {
+        Astro.slots.has("description") ? (
+            <div class="text-muted-foreground block">
+                <slot name="description" />
+            </div>
+        ) : null
+    }
+</ListItem>

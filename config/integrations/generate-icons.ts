@@ -18,8 +18,12 @@ function createWatcherPlugin(logger: AstroIntegrationLogger) {
         name: "generate-icons-hmr",
         handleHotUpdate(ctx: { file: string }) {
             if (ctx.file.startsWith(ICONS_DIR) && ctx.file.endsWith(".svg")) {
-                generateIconsIndex();
-                logger.info("Regenerated icon exports after SVG change.");
+                const { changed } = generateIconsIndex();
+                logger.info(
+                    changed
+                        ? "Regenerated icon exports after SVG change."
+                        : "Icon exports already up to date after SVG change.",
+                );
             }
         },
     };
@@ -35,7 +39,10 @@ export function generateIconsIntegration(): AstroIntegration {
                     return;
                 }
 
-                generateIconsIndex();
+                const { changed } = generateIconsIndex();
+                logger.info(
+                    changed ? "Generated icon exports." : "Icon exports already up to date.",
+                );
 
                 updateConfig({
                     vite: {
@@ -51,8 +58,12 @@ export function generateIconsIntegration(): AstroIntegration {
                     return;
                 }
 
-                generateIconsIndex({ quiet: true });
-                logger.info("Generated icon exports before build.");
+                const { changed } = generateIconsIndex({ quiet: true });
+                logger.info(
+                    changed
+                        ? "Generated icon exports before build."
+                        : "Icon exports already up to date before build.",
+                );
             },
         },
     };

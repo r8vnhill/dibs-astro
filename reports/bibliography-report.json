@@ -1,70 +1,266 @@
 {
-    "generatedAt": "2026-02-11T22:06:26.262Z",
-    "filesScanned": 2,
-    "lessons": [
-        {
-            "sourcePath": "src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld",
-            "lessonName": "Bibliografia de la leccion: Pipelines II",
-            "lessonAbout": "PowerShell pipeline-awareness",
-            "totalReferences": 1,
-            "byType": {
-                "Book": 1
-            }
-        },
-        {
-            "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
-            "lessonName": "Bibliografia de la leccion: Pipelines I",
-            "lessonAbout": "PowerShell pipelines",
-            "totalReferences": 2,
-            "byType": {
-                "Book": 1,
-                "WebPage": 1
-            }
-        }
-    ],
-    "totals": {
-        "references": 3,
-        "byType": {
-            "Book": 2,
-            "WebPage": 1
-        }
+  "generatedAt": "2026-03-12T11:47:24.391Z",
+  "catalogPath": "src/data/bibliography/catalog.graph.generated.jsonld",
+  "totals": {
+    "references": 20,
+    "lessons": 5,
+    "usages": 20,
+    "visibleUsages": 17
+  },
+  "topReferences": [
+    {
+      "referenceId": "ref:collection-pipeline-fowler",
+      "type": "WebPage",
+      "title": "Collection Pipeline",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
     },
-    "topDomains": [
-        {
-            "key": "martinfowler.com",
-            "count": 1
-        }
-    ],
-    "topAuthors": [
-        {
-            "key": "Travis Plunk",
-            "count": 2
-        },
-        {
-            "key": "Martin Fowler",
-            "count": 1
-        }
-    ],
-    "missingDatePublished": [
-        {
-            "id": "pipeline-deeper",
-            "sourcePath": "src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld",
-            "type": "Book",
-            "title": "The pipeline, deeper"
-        },
-        {
-            "id": "pipeline-connecting-commands",
-            "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
-            "type": "Book",
-            "title": "The pipeline: Connecting commands"
-        },
-        {
-            "id": "collection-pipeline-fowler",
-            "sourcePath": "src/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld",
-            "type": "WebPage",
-            "title": "Collection Pipeline"
-        }
-    ],
-    "duplicateUrls": [],
-    "warnings": []
+    {
+      "referenceId": "ref:clig-the-basics",
+      "type": "WebPage",
+      "title": "Command Line Interface Guidelines",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-creating-modules",
+      "type": "WebPage",
+      "title": "Creating Modules",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-custom-commands",
+      "type": "WebPage",
+      "title": "Custom Commands",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:errors-and-exceptions",
+      "type": "Book",
+      "title": "Errors and exceptions",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-export-def",
+      "type": "WebPage",
+      "title": "Export def",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:handling-errors",
+      "type": "Book",
+      "title": "Handling errors",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:improving-your-parameterized-script",
+      "type": "Book",
+      "title": "Improving your parameterized script",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:input-and-output-python-distilled",
+      "type": "Book",
+      "title": "Input and Output",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-path-type",
+      "type": "WebPage",
+      "title": "Path",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-path-exists",
+      "type": "WebPage",
+      "title": "Path exists",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-save",
+      "type": "WebPage",
+      "title": "Save",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-string-interpolation",
+      "type": "WebPage",
+      "title": "String interpolation",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:pipeline-connecting-commands",
+      "type": "Book",
+      "title": "The pipeline: Connecting commands",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-type-signatures",
+      "type": "WebPage",
+      "title": "Type signatures",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-types-of-data",
+      "type": "WebPage",
+      "title": "Types of Data",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:nushell-use",
+      "type": "WebPage",
+      "title": "Use",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    }
+  ],
+  "topBooks": [
+    {
+      "bookKey": "work:learn-powershell-month-lunches-4e",
+      "bookId": "work:learn-powershell-month-lunches-4e",
+      "bookTitle": "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS",
+      "citationCount": 3,
+      "lessonCount": 3,
+      "chapterIds": [
+        "ref:handling-errors",
+        "ref:improving-your-parameterized-script",
+        "ref:pipeline-connecting-commands"
+      ]
+    },
+    {
+      "bookKey": "work:python-distilled",
+      "bookId": "work:python-distilled",
+      "bookTitle": "Python Distilled",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "chapterIds": [
+        "ref:input-and-output-python-distilled"
+      ]
+    },
+    {
+      "bookKey": "work:windows-powershell-in-action-3e",
+      "bookId": "work:windows-powershell-in-action-3e",
+      "bookTitle": "Windows PowerShell in Action, Third Edition",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "chapterIds": [
+        "ref:errors-and-exceptions"
+      ]
+    }
+  ],
+  "referencesByTagAndLesson": [
+    {
+      "lessonId": "/notes/software-libraries/scripting/errors/",
+      "lessonTitle": "Errores y manejo de fallos en scripts",
+      "tag": "additional",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/errors/",
+      "lessonTitle": "Errores y manejo de fallos en scripts",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/first-script/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en PowerShell",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/first-script/nushell/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
+      "tag": "additional",
+      "count": 7
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/first-script/nushell/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
+      "tag": "recommended",
+      "count": 4
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/first-script/py/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en Python",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/pipelines/",
+      "lessonTitle": "Pipelines I: PowerShell declarativo",
+      "tag": "additional",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/pipelines/",
+      "lessonTitle": "Pipelines I: PowerShell declarativo",
+      "tag": "recommended",
+      "count": 1
+    }
+  ]
 }

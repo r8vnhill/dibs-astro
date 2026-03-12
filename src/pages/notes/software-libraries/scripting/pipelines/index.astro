@@ -22,13 +22,13 @@ import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { List, ListItem } from "~/components/ui/list";
-import { ReferencesFromJsonLd } from "~/components/ui/references";
-import bibliographyRaw from "~/data/bibliography/software-libraries/scripting/pipelines.bibliography.jsonld?raw";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
-const bibliography = JSON.parse(bibliographyRaw);
+const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
@@ -325,10 +325,10 @@ const bibliography = JSON.parse(bibliographyRaw);
                             </ListItem>
 
                             <ListItem icon={icons.ArrowDown}>
-                                La opción <PowerShellInline>-First 10</PowerShellInline> limita el
-                                número de objetos que continúan fluyendo en el pipeline. Una vez
-                                alcanzado ese límite, el pipeline deja de producir más objetos. Esto
-                                es equivalente a un <SqlInline>LIMIT</SqlInline> en SQL. Limitar
+                                La opción <PowerShellInline code="-First 10" /> limita el número de
+                                objetos que continúan fluyendo en el pipeline. Una vez alcanzado ese
+                                límite, el pipeline deja de producir más objetos. Esto es
+                                equivalente a un <SqlInline>LIMIT</SqlInline> en SQL. Limitar
                                 resultados temprano en el pipeline puede reducir el trabajo de los
                                 comandos siguientes.
                             </ListItem>
@@ -648,11 +648,8 @@ const bibliography = JSON.parse(bibliographyRaw);
         </Fragment>
     </ConclusionsLayout>
 
-    <ReferencesFromJsonLd
-        source={bibliography} recommended={["pipeline-connecting-commands"]}
-        additional={["collection-pipeline-fowler"]}
-    >
-        <Fragment slot="description-pipeline-connecting-commands">
+    <ReferencesFromCatalog source={bibliographyCatalog}>
+        <Fragment slot="description-ref:pipeline-connecting-commands">
             Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets, por qué
             el flujo de objetos es distinto al de shells tradicionales, y cómo exportar resultados a
             CSV/JSON/XML. Incluye ejemplos prácticos con <PowerShellInline
@@ -660,7 +657,7 @@ const bibliography = JSON.parse(bibliographyRaw);
             guiados para afianzar el uso del pipeline.
         </Fragment>
 
-        <Fragment slot="description-collection-pipeline-fowler">
+        <Fragment slot="description-ref:collection-pipeline-fowler">
             Artículo fundacional sobre el patrón Collection Pipeline: cómo encadenar operaciones
             declarativas (<Mono>map</Mono>, <Mono>filter</Mono>, <Mono>reduce</Mono>, <Mono
             >group-by</Mono>) para transformar colecciones. Compara sintaxis en múltiples lenguajes
@@ -668,5 +665,5 @@ const bibliography = JSON.parse(bibliographyRaw);
             temas avanzados como laziness, paralelismo e inmutabilidad. Incluye un catálogo
             detallado de operaciones comunes con ejemplos visuales.
         </Fragment>
-    </ReferencesFromJsonLd>
+    </ReferencesFromCatalog>
 </NotesLayout>
