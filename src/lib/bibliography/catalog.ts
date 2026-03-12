@@ -423,9 +423,12 @@ export const loadBibliographyCatalog = (
     const errors: string[] = [];
 
     if (!isObject(source)) fail(`[${sourceLabel}] catalog source must be an object.`);
-    const sourceObject = source;
-    const graph = Array.isArray(sourceObject["@graph"]) ? sourceObject["@graph"] : null;
-    if (!graph) fail(`[${sourceLabel}] catalog must include an "@graph" array.`);
+    const sourceObject = source as Record<string, unknown>;
+    const rawGraph = sourceObject["@graph"];
+    if (!Array.isArray(rawGraph)) {
+        fail(`[${sourceLabel}] catalog must include an "@graph" array.`);
+    }
+    const graph = rawGraph as unknown[];
 
     const nodesById = new Map<string, Record<string, unknown>>();
     for (const rawNode of graph) {

@@ -104,143 +104,6 @@ for (const id of referencedIds) {
         }
     }
 }
-
-const renderReference = (ref: NormalizedReference) => {
-    switch (ref.type) {
-        case "Book":
-            return (
-                <Book
-                    chapter={ref.chapter}
-                    bookTitle={ref.bookTitle}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {slotHtml.has(titleSlotName(ref))
-                        ? (
-                            <Fragment slot="chapter">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {ref.authors.length > 0
-                        ? <AuthorList slot="authors" authors={ref.authors} />
-                        : null}
-
-                    {slotHtml.has(descriptionSlotName(ref))
-                        ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-                </Book>
-            );
-        case "WebPage":
-            return (
-                <WebPage
-                    title={ref.title}
-                    url={ref.url}
-                    {...(ref.location ? { location: ref.location } : {})}
-                >
-                    {slotHtml.has(titleSlotName(ref))
-                        ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {ref.authors.length > 0
-                        ? <AuthorList slot="author" authors={ref.authors} />
-                        : null}
-
-                    {slotHtml.has(descriptionSlotName(ref))
-                        ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-                </WebPage>
-            );
-        case "ScholarlyArticle":
-            return (
-                <ScholarlyArticle
-                    title={ref.title}
-                    url={ref.url}
-                    {...(ref.publication ? { publication: ref.publication } : {})}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {slotHtml.has(titleSlotName(ref))
-                        ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {slotHtml.has(publicationSlotName(ref))
-                        ? (
-                            <Fragment slot="publication">
-                                <span set:html={slotHtml.get(publicationSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {ref.authors.length > 0
-                        ? <AuthorList slot="author" authors={ref.authors} />
-                        : null}
-
-                    {slotHtml.has(descriptionSlotName(ref))
-                        ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-                </ScholarlyArticle>
-            );
-        case "Thesis":
-            return (
-                <Thesis
-                    title={ref.title}
-                    url={ref.url}
-                    {...(ref.institution ? { institution: ref.institution } : {})}
-                >
-                    {slotHtml.has(titleSlotName(ref))
-                        ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {slotHtml.has(institutionSlotName(ref))
-                        ? (
-                            <Fragment slot="institution">
-                                <span set:html={slotHtml.get(institutionSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-
-                    {ref.authors.length > 0
-                        ? <AuthorList slot="author" authors={ref.authors} />
-                        : null}
-
-                    {slotHtml.has(descriptionSlotName(ref))
-                        ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        )
-                        : null}
-                </Thesis>
-            );
-    }
-
-    const exhaustiveCheck: never = ref;
-    throw new Error(`Unsupported reference type: ${JSON.stringify(exhaustiveCheck)}`);
-};
 ---
 
 <References {...referencesProps}>
@@ -249,7 +112,195 @@ const renderReference = (ref: NormalizedReference) => {
             <Fragment slot="recommended">
                 {
                     grouped.recommended.map((entry) => {
-                        return renderReference(entry.reference);
+                        const ref = entry.reference;
+
+                        switch (ref.type) {
+                            case "Book":
+                                return (
+                        <Book
+                            chapter={ref.chapter} bookTitle={ref.bookTitle}
+                            {...(ref.pages ? { pages: ref.pages } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="chapter">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="authors" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </Book>
+                    );
+                    case "WebPage":
+                        return (
+                        <WebPage
+                            title={ref.title} url={ref.url}
+                            {...(ref.location ? { location: ref.location } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </WebPage>
+                    );
+                    case "ScholarlyArticle":
+                        return (
+                        <ScholarlyArticle
+                            title={ref.title} url={ref.url}
+                            {...(
+                                ref.publication
+                                    ? { publication: ref.publication }
+                                    : {}
+                            )}
+                            {...(ref.pages ? { pages: ref.pages } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(publicationSlotName(ref))
+                                    ? (
+                                    <Fragment slot="publication">
+                                        <span
+                                            set:html={slotHtml.get(
+                                                publicationSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </ScholarlyArticle>
+                    );
+                    case "Thesis":
+                        return (
+                        <Thesis
+                            title={ref.title} url={ref.url}
+                            {...(
+                                ref.institution
+                                    ? { institution: ref.institution }
+                                    : {}
+                            )}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(institutionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="institution">
+                                        <span
+                                            set:html={slotHtml.get(
+                                                institutionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </Thesis>
+                    );
+                        }
                     })
                 }
             </Fragment>
@@ -261,7 +312,195 @@ const renderReference = (ref: NormalizedReference) => {
             <Fragment slot="additional">
                 {
                     grouped.additional.map((entry) => {
-                        return renderReference(entry.reference);
+                        const ref = entry.reference;
+
+                        switch (ref.type) {
+                            case "Book":
+                                return (
+                        <Book
+                            chapter={ref.chapter} bookTitle={ref.bookTitle}
+                            {...(ref.pages ? { pages: ref.pages } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="chapter">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="authors" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </Book>
+                    );
+                    case "WebPage":
+                        return (
+                        <WebPage
+                            title={ref.title} url={ref.url}
+                            {...(ref.location ? { location: ref.location } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </WebPage>
+                    );
+                    case "ScholarlyArticle":
+                        return (
+                        <ScholarlyArticle
+                            title={ref.title} url={ref.url}
+                            {...(
+                                ref.publication
+                                    ? { publication: ref.publication }
+                                    : {}
+                            )}
+                            {...(ref.pages ? { pages: ref.pages } : {})}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(publicationSlotName(ref))
+                                    ? (
+                                    <Fragment slot="publication">
+                                        <span
+                                            set:html={slotHtml.get(
+                                                publicationSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </ScholarlyArticle>
+                    );
+                    case "Thesis":
+                        return (
+                        <Thesis
+                            title={ref.title} url={ref.url}
+                            {...(
+                                ref.institution
+                                    ? { institution: ref.institution }
+                                    : {}
+                            )}
+                        >
+                            {
+                                slotHtml.has(titleSlotName(ref))
+                                    ? (
+                                    <Fragment slot="title">
+                                        <span set:html={slotHtml.get(titleSlotName(ref))} />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(institutionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="institution">
+                                        <span
+                                            set:html={slotHtml.get(
+                                                institutionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+
+                            {
+                                ref.authors.length > 0
+                                    ? <AuthorList slot="author" authors={ref.authors} />
+                                : null
+                            }
+
+                            {
+                                slotHtml.has(descriptionSlotName(ref))
+                                    ? (
+                                    <Fragment slot="description">
+                                        <div
+                                            set:html={slotHtml.get(
+                                                descriptionSlotName(ref),
+                                            )}
+                                        />
+                                    </Fragment>
+                                )
+                                : null
+                            }
+                        </Thesis>
+                    );
+                        }
                     })
                 }
             </Fragment>

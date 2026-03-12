@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T12:26:13.172Z",
+  "generatedAt": "2026-03-12T13:35:34.411Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -536,6 +536,12 @@
       "lastModified": "2026-03-12",
       "changes": [
         {
+          "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(references): refine catalog-driven bibliography rendering"
+        },
+        {
           "hash": "36765ae2e8d400be33b91d43ce60fa5ec35edb6a",
           "date": "2026-03-12",
           "author": "r8vnhill",
@@ -740,6 +746,12 @@
       "lastModified": "2026-03-12",
       "changes": [
         {
+          "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(references): refine catalog-driven bibliography rendering"
+        },
+        {
           "hash": "36765ae2e8d400be33b91d43ce60fa5ec35edb6a",
           "date": "2026-03-12",
           "author": "r8vnhill",
@@ -762,12 +774,6 @@
           "date": "2026-03-06",
           "author": "r8vnhill",
           "subject": "✍️🐛 docs(notes): refine pipelines lesson and fix reference title fallback rendering"
-        },
-        {
-          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
-          "date": "2026-02-16",
-          "author": "r8vnhill",
-          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
         }
       ]
     },
