@@ -4,7 +4,7 @@ import ReferencesFromCatalog from "../ReferencesFromCatalog.astro";
 
 type ReferencesFromCatalogProps = {
     source: Record<string, unknown>;
-    lessonId: string;
+    lessonId?: string;
 };
 
 const CATALOG: Record<string, unknown> = {
@@ -75,6 +75,15 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         expect(html).not.toContain("Internal Draft");
     });
 
+    test("does not render the additional references section when it is empty", async () => {
+        const html = await renderReferences({
+            source: CATALOG,
+            lessonId: "/notes/lesson-a/",
+        });
+
+        expect(html).not.toContain("Referencias adicionales");
+    });
+
     test("supports description slots keyed by reference id", async () => {
         const html = await renderReferences(
             {
@@ -89,5 +98,19 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         );
 
         expect(html).toContain("Descripción catálogo");
+    });
+
+    test("can resolve the lesson id from Astro.url.pathname", async () => {
+        const html = await renderReferences(
+            {
+                source: CATALOG,
+            },
+            {
+                request: new Request("https://dibs.ravenhill.cl/notes/lesson-a/"),
+            },
+        );
+
+        expect(html).toContain("Chapter One");
+        expect(html).not.toContain("Internal Draft");
     });
 });

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T11:47:47.253Z",
+  "generatedAt": "2026-03-12T12:26:13.172Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -536,6 +536,12 @@
       "lastModified": "2026-03-12",
       "changes": [
         {
+          "hash": "36765ae2e8d400be33b91d43ce60fa5ec35edb6a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(bibliography): migrate catalog source to turtle"
+        },
+        {
           "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
           "date": "2026-03-12",
           "author": "r8vnhill",
@@ -734,6 +740,12 @@
       "lastModified": "2026-03-12",
       "changes": [
         {
+          "hash": "36765ae2e8d400be33b91d43ce60fa5ec35edb6a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(bibliography): migrate catalog source to turtle"
+        },
+        {
           "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
           "date": "2026-03-12",
           "author": "r8vnhill",
@@ -756,12 +768,6 @@
           "date": "2026-02-16",
           "author": "r8vnhill",
           "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
-        },
-        {
-          "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
-          "date": "2026-02-11",
-          "author": "r8vnhill",
-          "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
         }
       ]
     },

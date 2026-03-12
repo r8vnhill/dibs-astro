@@ -503,70 +503,91 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         </Fragment>
     </ConclusionsLayout>
 
-    <ReferencesFromCatalog
-        source={bibliographyCatalog}
-        lessonId="/notes/software-libraries/scripting/first-script/nushell/"
-    >
+    <ReferencesFromCatalog source={bibliographyCatalog}>
         <Fragment slot="description-ref:nushell-custom-commands">
-            Introducción oficial a la definición de comandos personalizados en Nushell. Resulta la
-            referencia más directa para contrastar firmas, parámetros y retorno implícito con el
-            primer comando que desarrolla esta lección.
+            Capítulo amplio sobre cómo definir comandos personalizados en Nushell: parámetros
+            posicionales, flags, tipos, entrada y salida por <I>pipeline</I>, retorno implícito,
+            documentación integrada y cambios de entorno. Conviene leerlo si quieres una visión de
+            conjunto de lo que puede hacer un comando más allá de los ejemplos mínimos de esta
+            lección.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-creating-modules">
-            Explica cómo organizar definiciones reutilizables en módulos <Mono>.nu</Mono> y cómo
-            compartirlas entre archivos. Complementa la discusión sobre separar comandos auxiliares
-            y reutilizarlos desde otros scripts.
+            Explica cómo construir módulos reutilizables en archivos <Mono>.nu</Mono>, cómo
+            importarlos con <NushellInline>use</NushellInline>, qué se exporta y qué permanece
+            local, y cómo escalar hacia submódulos, <NushellInline>export use</NushellInline> y
+            <NushellInline>export-env</NushellInline>. Es la referencia clave para decidir cuándo un
+            archivo debe pensarse como script y cuándo como módulo.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-type-signatures">
-            Documento clave para entender el sistema de firmas tipadas de Nushell y el contrato que
-            establecen sobre parámetros y valores aceptados. Útil para conectar la sintaxis del
-            ejemplo con su intención de diseño.
+            Describe la sintaxis de firmas tipadas en Nushell: el uso de <Mono>:</Mono> y
+            <Mono>-></Mono>, los tipos básicos y compuestos, y la forma en que esos tipos se aplican
+            a variables, parámetros, flags y firmas de entrada/salida. Es útil si quieres entender
+            con más precisión qué contrato expresa una firma y qué validaciones puede detectar
+            Nushell antes de ejecutar.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-use">
-            Referencia del comando <NushellInline>use</NushellInline>, que es la forma recomendada
-            de importar definiciones exportadas desde módulos. Aclara la diferencia con cargar
-            archivos completos y refuerza el modelo de reutilización entre scripts.
+            Referencia breve y directa del comando <NushellInline>use</NushellInline>. Muestra las
+            formas principales de importación: traer un miembro concreto, importar varios, importar
+            todo con <NushellInline>*</NushellInline> o mantener los nombres cualificados por el
+            módulo. Es especialmente útil como chuleta rápida cuando ya entendiste el modelo general
+            de módulos.
         </Fragment>
 
         <Fragment slot="description-ref:clig-the-basics">
-            Guía transversal de diseño de interfaces de línea de comandos. No es específica de
-            Nushell, pero ayuda a justificar decisiones sobre nombres, flags y mensajes que hacen
-            más clara una herramienta pequeña.
+            Guía de diseño de interfaces de línea de comandos pensada para herramientas reales, no
+            para un lenguaje concreto. Resume principios sobre ayuda, salida estándar, mensajes de
+            error, nombres de flags, confirmaciones, descubribilidad y robustez. Puede interesarte
+            si quieres evaluar la calidad de un comando desde la experiencia de uso y no solo desde
+            su corrección técnica.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-export-def">
-            Documenta la variante exportable de <NushellInline>def</NushellInline>. Es útil para
-            distinguir entre una definición local y una pensada para ser importada desde otro
-            módulo.
+            Página de referencia muy concentrada sobre <NushellInline>export def</NushellInline>.
+            Presenta su firma, los flags disponibles como <NushellInline>--env</NushellInline> y
+            <NushellInline>--wrapped</NushellInline>, y un ejemplo mínimo de exportación desde un
+            módulo. Merece la pena si buscas confirmar la sintaxis exacta sin releer el capítulo
+            completo de módulos.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-path-exists">
-            Referencia concreta para la validación de rutas antes de escribir archivos. Refuerza la
-            parte de la lección donde la validación explícita aparece como lógica del comando.
+            Referencia puntual del comando <NushellInline>path exists</NushellInline>. Indica qué
+            recibe, qué devuelve y qué limitaciones tiene, por ejemplo que no distingue entre
+            archivo y directorio y que ciertos problemas de permisos pueden aparecer como
+            inexistencia. Es útil para entender qué garantiza realmente esta validación y qué no.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-path-type">
-            Explica el tipo <Mono>path</Mono> y operaciones relacionadas con rutas, útil para
-            entender por qué la lección valida directorios antes de persistir el README.
+            Explica qué significa anotar un parámetro como <Mono>path</Mono> en Nushell y por qué no
+            equivale simplemente a un <Mono>string</Mono>: expansión automática de
+            <Mono>~</Mono> y <Mono>.</Mono>, diferencias de tratamiento sintáctico y comandos
+            habituales para trabajar con rutas. Ayuda a entender por qué usar <Mono>path</Mono>
+            mejora la intención del comando incluso antes de la validación en tiempo de ejecución.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-save">
-            Referencia del comando que persiste la salida en disco. Complementa la separación entre
-            producir texto y realizar el efecto final de escritura.
+            Referencia del comando <NushellInline>save</NushellInline>, centrada en persistir la
+            salida de un <I>pipeline</I> en disco. Resume opciones como sobrescribir, anexar,
+            guardar en binario o separar <Mono>stderr</Mono>. Conviene si quieres ver qué hace
+            exactamente Nushell al escribir distintos tipos de datos en archivos.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-string-interpolation">
-            Explica la interpolación de strings en Nushell, que en esta lección se usa para componer
-            encabezados, timestamps y contenido textual del archivo.
+            Sección específica del capítulo de strings dedicada a la interpolación con
+            <NushellInline code={`$"..."`} /> y <NushellInline code={`$'...'`} />. Explica cómo
+            insertar expresiones entre paréntesis, cuándo hay secuencias de escape y cómo tratar
+            paréntesis literales. Es una lectura breve pero útil para evitar errores sutiles al
+            construir texto dinámico.
         </Fragment>
 
         <Fragment slot="description-ref:nushell-types-of-data">
-            Panorama general de los tipos de datos de Nushell. Aporta contexto para ubicar esta
-            lección dentro de una progresión que todavía trabaja con strings antes de avanzar hacia
-            datos estructurados.
+            Panorama general del sistema de tipos de Nushell: valores básicos, datos estructurados,
+            cierres, tablas, <Mono>null</Mono>/<Mono>nothing</Mono> y el papel de
+            <NushellInline>describe</NushellInline> para inspeccionarlos. Es una buena referencia si
+            quieres situar esta lección dentro del modelo más amplio de Nushell, donde los strings
+            son solo un caso entre muchos otros tipos de datos.
         </Fragment>
     </ReferencesFromCatalog>
 </NotesLayout>

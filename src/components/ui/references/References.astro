@@ -28,9 +28,21 @@ const {
     additionalHeading = "Referencias adicionales",
 }: Props = Astro.props;
 
-// Determine whether the parent passed content into the named slots
-const hasRecommended = !!Astro.slots.recommended;
-const hasAdditional = !!Astro.slots.additional;
+const hasMeaningfulContent = (html: string): boolean => {
+    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
+    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
+    return plainText.length > 0;
+};
+
+const recommendedHtml = Astro.slots.recommended
+    ? await Astro.slots.render("recommended")
+    : "";
+const additionalHtml = Astro.slots.additional
+    ? await Astro.slots.render("additional")
+    : "";
+
+const hasRecommended = hasMeaningfulContent(recommendedHtml);
+const hasAdditional = hasMeaningfulContent(additionalHtml);
 ---
 
 <NotesSection id="references" class="exclude-from-reading-time">

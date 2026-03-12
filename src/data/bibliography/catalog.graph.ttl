@@ -329,11 +329,11 @@ usage:errors-errors-and-exceptions-additional
   dibs:reference ref:errors-and-exceptions ;
   dibs:tag "additional" .
 
-usage:first-script-nushell-nushell-custom-commands-recommended
+usage:first-script-nushell-nushell-custom-commands-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-custom-commands ;
-  dibs:tag "recommended" .
+  dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-creating-modules-recommended
   a dibs:ReferenceUsage ;
@@ -341,59 +341,59 @@ usage:first-script-nushell-nushell-creating-modules-recommended
   dibs:reference ref:nushell-creating-modules ;
   dibs:tag "recommended" .
 
-usage:first-script-nushell-nushell-type-signatures-recommended
+usage:first-script-nushell-nushell-type-signatures-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-type-signatures ;
-  dibs:tag "recommended" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-use-recommended
+usage:first-script-nushell-nushell-use-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-use ;
-  dibs:tag "recommended" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-clig-the-basics-additional
+usage:first-script-nushell-clig-the-basics-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:clig-the-basics ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-export-def-additional
+usage:first-script-nushell-nushell-export-def-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-export-def ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-path-exists-additional
+usage:first-script-nushell-nushell-path-exists-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-path-exists ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-path-type-additional
+usage:first-script-nushell-nushell-path-type-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-path-type ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-save-additional
+usage:first-script-nushell-nushell-save-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-save ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-string-interpolation-additional
+usage:first-script-nushell-nushell-string-interpolation-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-string-interpolation ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
-usage:first-script-nushell-nushell-types-of-data-additional
+usage:first-script-nushell-nushell-types-of-data-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-types-of-data ;
-  dibs:tag "additional" .
+  dibs:tag "pending-revision" .
 
 usage:first-script-nushell-dong-bash-in-the-wild-2023-pending
   a dibs:ReferenceUsage ;

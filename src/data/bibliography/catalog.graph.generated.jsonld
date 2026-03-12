@@ -501,7 +501,7 @@
       ]
     },
     {
-      "@id": "usage:first-script-nushell-clig-the-basics-additional",
+      "@id": "usage:first-script-nushell-clig-the-basics-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -510,7 +510,7 @@
         "@id": "ref:clig-the-basics"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
@@ -566,7 +566,7 @@
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-custom-commands-recommended",
+      "@id": "usage:first-script-nushell-nushell-custom-commands-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -575,11 +575,11 @@
         "@id": "ref:nushell-custom-commands"
       },
       "dibs:tags": [
-        "recommended"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-export-def-additional",
+      "@id": "usage:first-script-nushell-nushell-export-def-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -588,11 +588,11 @@
         "@id": "ref:nushell-export-def"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-path-exists-additional",
+      "@id": "usage:first-script-nushell-nushell-path-exists-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -601,11 +601,11 @@
         "@id": "ref:nushell-path-exists"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-path-type-additional",
+      "@id": "usage:first-script-nushell-nushell-path-type-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -614,11 +614,11 @@
         "@id": "ref:nushell-path-type"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-save-additional",
+      "@id": "usage:first-script-nushell-nushell-save-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -627,11 +627,11 @@
         "@id": "ref:nushell-save"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-string-interpolation-additional",
+      "@id": "usage:first-script-nushell-nushell-string-interpolation-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -640,11 +640,11 @@
         "@id": "ref:nushell-string-interpolation"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-type-signatures-recommended",
+      "@id": "usage:first-script-nushell-nushell-type-signatures-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -653,11 +653,11 @@
         "@id": "ref:nushell-type-signatures"
       },
       "dibs:tags": [
-        "recommended"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-types-of-data-additional",
+      "@id": "usage:first-script-nushell-nushell-types-of-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -666,11 +666,11 @@
         "@id": "ref:nushell-types-of-data"
       },
       "dibs:tags": [
-        "additional"
+        "pending-revision"
       ]
     },
     {
-      "@id": "usage:first-script-nushell-nushell-use-recommended",
+      "@id": "usage:first-script-nushell-nushell-use-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
         "@id": "/notes/software-libraries/scripting/first-script/nushell/"
@@ -679,7 +679,7 @@
         "@id": "ref:nushell-use"
       },
       "dibs:tags": [
-        "recommended"
+        "pending-revision"
       ]
     },
     {
