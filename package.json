@@ -1,7 +1,7 @@
 {
     "name": "dibs-astro",
     "type": "module",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "scripts": {
         "generate-icons": "node generate-icons-index.js",
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",
