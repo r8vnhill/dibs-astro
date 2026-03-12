@@ -167,9 +167,10 @@ const resolveLinkedTitle = (
     const id = resolveNodeId(value);
     if (id) {
         const node = nodesById.get(id);
+        const title = node ? getNodeTitle(node) : undefined;
         return {
-            id,
-            ...(node ? { title: getNodeTitle(node) } : {}),
+            ...(id ? { id } : {}),
+            ...(title ? { title } : {}),
         };
     }
 
@@ -337,11 +338,13 @@ const isLessonNode = (node: Record<string, unknown>): boolean => {
 const normalizeLessonNode = (node: Record<string, unknown>): CatalogLesson | null => {
     const id = asString(node["@id"]);
     if (!id) return null;
+    const title = asString(node.name);
+    const url = asString(node.url);
     return {
         id,
         rawType: getType(node["@type"]),
-        ...(asString(node.name) ? { title: asString(node.name) } : {}),
-        ...(asString(node.url) ? { url: asString(node.url) } : {}),
+        ...(title ? { title } : {}),
+        ...(url ? { url } : {}),
     };
 };
 
@@ -420,7 +423,8 @@ export const loadBibliographyCatalog = (
     const errors: string[] = [];
 
     if (!isObject(source)) fail(`[${sourceLabel}] catalog source must be an object.`);
-    const graph = Array.isArray(source["@graph"]) ? source["@graph"] : null;
+    const sourceObject = source;
+    const graph = Array.isArray(sourceObject["@graph"]) ? sourceObject["@graph"] : null;
     if (!graph) fail(`[${sourceLabel}] catalog must include an "@graph" array.`);
 
     const nodesById = new Map<string, Record<string, unknown>>();
