@@ -1,15 +1,19 @@
-# Bibliography Catalog (JSON-LD Graph)
+# Bibliography Catalog (Turtle + Generated JSON-LD)
 
 This folder stores reference data for lessons. The canonical source is now:
 
-`src/data/bibliography/catalog.graph.jsonld`
+`src/data/bibliography/catalog.graph.ttl`
+
+The site, reports, and tests consume the generated artifact:
+
+`src/data/bibliography/catalog.graph.generated.jsonld`
 
 The project still keeps legacy `*.bibliography.jsonld` `ItemList` files during migration, but new
-work should target the graph catalog.
+work should target the Turtle catalog.
 
 ## Canonical model
 
-The catalog uses JSON-LD with `@graph` and a mixed vocabulary:
+The editorial source uses Turtle with a mixed vocabulary:
 
 - `schema.org` for references, people, organizations, and lessons
 - `dibs:` for course-specific usage relations
@@ -34,13 +38,24 @@ Use stable IDs:
 
 ## Usage tags
 
-Usage tags live on `dibs:ReferenceUsage` nodes:
+Usage tags live on `dibs:ReferenceUsage` nodes via `dibs:tag`:
 
 - `recommended`
 - `additional`
 - `pending-revision`
 
 UI rendering hides `pending-revision` by default.
+
+## Build pipeline
+
+Run `pnpm generate:bibliography-catalog` to:
+
+- parse `catalog.graph.ttl`
+- validate relations and tags
+- normalize the graph
+- write `catalog.graph.generated.jsonld`
+
+The generated file is deterministic and should be committed.
 
 ## Rendering model
 
@@ -58,7 +73,7 @@ Editorial descriptions remain in `.astro` using slots keyed by reference ID:
 
 ## Analysis
 
-The CLI report `pnpm bibliography:report` reads the catalog graph and generates:
+The CLI report `pnpm bibliography:report` reads the generated catalog and generates:
 
 - top cited references
 - top cited books

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
-const catalogPath = path.join(projectRoot, "src/data/bibliography/catalog.graph.jsonld");
+const catalogPath = path.join(projectRoot, "src/data/bibliography/catalog.graph.generated.jsonld");
 const outputDir = path.join(projectRoot, "reports");
 const outputJson = path.join(outputDir, "bibliography-report.json");
 const outputCsv = path.join(outputDir, "bibliography-report.csv");

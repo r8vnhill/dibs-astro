@@ -1,0 +1,414 @@
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+person:travis-plunk
+  a schema:Person ;
+  schema:givenName "Travis" ;
+  schema:familyName "Plunk" .
+
+person:martin-fowler
+  a schema:Person ;
+  schema:givenName "Martin" ;
+  schema:familyName "Fowler" ;
+  schema:url "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)" .
+
+person:david-m-beazley
+  a schema:Person ;
+  schema:givenName "David M." ;
+  schema:familyName "Beazley" ;
+  schema:url "https://en.wikipedia.org/wiki/David_M._Beazley" .
+
+person:bruce-payette
+  a schema:Person ;
+  schema:givenName "Bruce" ;
+  schema:familyName "Payette" ;
+  schema:url "https://www.goodreads.com/author/show/441636.Bruce_Payette" .
+
+person:richard-siddaway
+  a schema:Person ;
+  schema:givenName "Richard" ;
+  schema:familyName "Siddaway" ;
+  schema:url "https://www.goodreads.com/author/show/4742136.Richard_Siddaway" .
+
+person:yue-dong
+  a schema:Person ;
+  schema:givenName "Yue" ;
+  schema:familyName "Dong" .
+
+person:zimin-li
+  a schema:Person ;
+  schema:givenName "Zimin" ;
+  schema:familyName "Li" .
+
+person:ying-tian
+  a schema:Person ;
+  schema:givenName "Ying" ;
+  schema:familyName "Tian" .
+
+person:chengnian-sun
+  a schema:Person ;
+  schema:givenName "Chengnian" ;
+  schema:familyName "Sun" .
+
+person:michael-w-godfrey
+  a schema:Person ;
+  schema:givenName "Michael W." ;
+  schema:familyName "Godfrey" .
+
+person:meiyappan-nagappan
+  a schema:Person ;
+  schema:givenName "Meiyappan" ;
+  schema:familyName "Nagappan" .
+
+person:karl-mazurak
+  a schema:Person ;
+  schema:givenName "Karl" ;
+  schema:familyName "Mazurak" .
+
+person:steve-zdancewic
+  a schema:Person ;
+  schema:givenName "Steve" ;
+  schema:familyName "Zdancewic" .
+
+org:nushell
+  a schema:Organization ;
+  schema:name "Nushell" ;
+  schema:url "https://www.nushell.sh/" .
+
+org:clig
+  a schema:Organization ;
+  schema:name "clig.dev" ;
+  schema:url "https://clig.dev/" .
+
+org:martin-fowler-site
+  a schema:Organization ;
+  schema:name "martinfowler.com" ;
+  schema:url "https://martinfowler.com" .
+
+org:acm
+  a schema:Organization ;
+  schema:name "Association for Computing Machinery" ;
+  schema:url "https://www.acm.org/" .
+
+org:university-of-waterloo
+  a schema:CollegeOrUniversity ;
+  schema:name "University of Waterloo" ;
+  schema:url "https://uwaterloo.ca/" .
+
+work:learn-powershell-month-lunches-4e
+  a schema:CreativeWork ;
+  schema:name "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS" ;
+  schema:author person:travis-plunk .
+
+work:python-distilled
+  a schema:CreativeWork ;
+  schema:name "Python Distilled" ;
+  schema:author person:david-m-beazley .
+
+work:windows-powershell-in-action-3e
+  a schema:CreativeWork ;
+  schema:name "Windows PowerShell in Action, Third Edition" ;
+  schema:author person:bruce-payette, person:richard-siddaway .
+
+work:acm-tosem
+  a schema:CreativeWork ;
+  schema:name "ACM Transactions on Software Engineering and Methodology" ;
+  schema:publisher org:acm .
+
+work:plas-2007
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security" ;
+  schema:publisher org:acm .
+
+ref:pipeline-connecting-commands
+  a schema:Book ;
+  schema:name "The pipeline: Connecting commands" ;
+  schema:pageStart 69 ;
+  schema:pageEnd 83 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:collection-pipeline-fowler
+  a schema:WebPage ;
+  schema:name "Collection Pipeline" ;
+  schema:url "https://martinfowler.com/articles/collection-pipeline/" ;
+  schema:author person:martin-fowler ;
+  schema:publisher org:martin-fowler-site .
+
+ref:improving-your-parameterized-script
+  a schema:Book ;
+  schema:name "Improving your parameterized script" ;
+  schema:pageStart 249 ;
+  schema:pageEnd 258 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:input-and-output-python-distilled
+  a schema:Book ;
+  schema:name "Input and Output" ;
+  schema:pageStart 262 ;
+  schema:pageEnd 311 ;
+  schema:author person:david-m-beazley ;
+  schema:isPartOf work:python-distilled .
+
+ref:handling-errors
+  a schema:Book ;
+  schema:name "Handling errors" ;
+  schema:pageStart 279 ;
+  schema:pageEnd 286 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:errors-and-exceptions
+  a schema:Book ;
+  schema:name "Errors and exceptions" ;
+  schema:pageStart 531 ;
+  schema:pageEnd 562 ;
+  schema:author person:bruce-payette, person:richard-siddaway ;
+  schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:clig-the-basics
+  a schema:WebPage ;
+  schema:name "Command Line Interface Guidelines" ;
+  schema:url "https://clig.dev/#the-basics" ;
+  schema:publisher org:clig .
+
+ref:nushell-creating-modules
+  a schema:WebPage ;
+  schema:name "Creating Modules" ;
+  schema:url "https://www.nushell.sh/book/modules/creating_modules.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-custom-commands
+  a schema:WebPage ;
+  schema:name "Custom Commands" ;
+  schema:url "https://www.nushell.sh/book/custom_commands.html" ;
+  schema:publisher org:nushell .
+
+ref:dong-bash-in-the-wild-2023
+  a schema:ScholarlyArticle ;
+  schema:name "Bash in the Wild: Language Usage, Code Smells, and Bugs" ;
+  schema:url "https://doi.org/10.1145/3517193" ;
+  schema:datePublished "2023" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 22 ;
+  schema:author person:yue-dong, person:zimin-li, person:ying-tian, person:chengnian-sun, person:michael-w-godfrey, person:meiyappan-nagappan ;
+  schema:isPartOf work:acm-tosem ;
+  schema:publisher org:acm .
+
+ref:nushell-export-def
+  a schema:WebPage ;
+  schema:name "Export def" ;
+  schema:url "https://www.nushell.sh/commands/docs/export_def.html" ;
+  schema:publisher org:nushell .
+
+ref:li-bash-language-usage-2021
+  a schema:Thesis ;
+  schema:name "An Empirical Study on Bash Language Usage in Github" ;
+  schema:url "http://hdl.handle.net/10012/17036" ;
+  schema:datePublished "2021" ;
+  schema:author person:zimin-li ;
+  schema:publisher org:university-of-waterloo .
+
+ref:mazurak-a-bash-2007
+  a schema:ScholarlyArticle ;
+  schema:name "A BASH: Finding bugs in bash scripts" ;
+  schema:url "https://doi.org/10.1145/1255329.1255347" ;
+  schema:datePublished "2007" ;
+  schema:pageStart 105 ;
+  schema:pageEnd 114 ;
+  schema:author person:karl-mazurak, person:steve-zdancewic ;
+  schema:isPartOf work:plas-2007 ;
+  schema:publisher org:acm .
+
+ref:nushell-path-type
+  a schema:WebPage ;
+  schema:name "Path" ;
+  schema:url "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-path-exists
+  a schema:WebPage ;
+  schema:name "Path exists" ;
+  schema:url "https://www.nushell.sh/commands/docs/path_exists.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-save
+  a schema:WebPage ;
+  schema:name "Save" ;
+  schema:url "https://www.nushell.sh/commands/docs/save.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-string-interpolation
+  a schema:WebPage ;
+  schema:name "String interpolation" ;
+  schema:url "https://www.nushell.sh/book/working_with_strings.html#string-interpolation" ;
+  schema:publisher org:nushell .
+
+ref:nushell-type-signatures
+  a schema:WebPage ;
+  schema:name "Type signatures" ;
+  schema:url "https://www.nushell.sh/lang-guide/chapters/types/type_signatures.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-types-of-data
+  a schema:WebPage ;
+  schema:name "Types of Data" ;
+  schema:url "https://www.nushell.sh/book/types_of_data.html#nothing-null" ;
+  schema:publisher org:nushell .
+
+ref:nushell-use
+  a schema:WebPage ;
+  schema:name "Use" ;
+  schema:url "https://www.nushell.sh/commands/docs/use.html" ;
+  schema:publisher org:nushell .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/>
+  a schema:LearningResource ;
+  schema:name "Pipelines I: PowerShell declarativo" ;
+  schema:url "/notes/software-libraries/scripting/pipelines/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/>
+  a schema:LearningResource ;
+  schema:name "Comandos reutilizables y validación de parámetros en PowerShell" ;
+  schema:url "/notes/software-libraries/scripting/first-script/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/py/>
+  a schema:LearningResource ;
+  schema:name "Comandos reutilizables y validación de parámetros en Python" ;
+  schema:url "/notes/software-libraries/scripting/first-script/py/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/>
+  a schema:LearningResource ;
+  schema:name "Comandos reutilizables y validación de parámetros en Nushell" ;
+  schema:url "/notes/software-libraries/scripting/first-script/nushell/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/>
+  a schema:LearningResource ;
+  schema:name "Errores y manejo de fallos en scripts" ;
+  schema:url "/notes/software-libraries/scripting/errors/" .
+
+usage:pipelines-pipeline-connecting-commands-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/> ;
+  dibs:reference ref:pipeline-connecting-commands ;
+  dibs:tag "recommended" .
+
+usage:pipelines-collection-pipeline-fowler-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/> ;
+  dibs:reference ref:collection-pipeline-fowler ;
+  dibs:tag "additional" .
+
+usage:first-script-improving-parameterized-script-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/> ;
+  dibs:reference ref:improving-your-parameterized-script ;
+  dibs:tag "recommended" .
+
+usage:first-script-py-input-and-output-python-distilled-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/py/> ;
+  dibs:reference ref:input-and-output-python-distilled ;
+  dibs:tag "recommended" .
+
+usage:errors-handling-errors-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/> ;
+  dibs:reference ref:handling-errors ;
+  dibs:tag "recommended" .
+
+usage:errors-errors-and-exceptions-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/> ;
+  dibs:reference ref:errors-and-exceptions ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-custom-commands-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-custom-commands ;
+  dibs:tag "recommended" .
+
+usage:first-script-nushell-nushell-creating-modules-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-creating-modules ;
+  dibs:tag "recommended" .
+
+usage:first-script-nushell-nushell-type-signatures-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-type-signatures ;
+  dibs:tag "recommended" .
+
+usage:first-script-nushell-nushell-use-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-use ;
+  dibs:tag "recommended" .
+
+usage:first-script-nushell-clig-the-basics-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:clig-the-basics ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-export-def-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-export-def ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-path-exists-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-path-exists ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-path-type-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-path-type ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-save-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-save ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-string-interpolation-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-string-interpolation ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-nushell-types-of-data-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:nushell-types-of-data ;
+  dibs:tag "additional" .
+
+usage:first-script-nushell-dong-bash-in-the-wild-2023-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:dong-bash-in-the-wild-2023 ;
+  dibs:tag "pending-revision" .
+
+usage:first-script-nushell-li-bash-language-usage-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:li-bash-language-usage-2021 ;
+  dibs:tag "pending-revision" .
+
+usage:first-script-nushell-mazurak-a-bash-2007-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:reference ref:mazurak-a-bash-2007 ;
+  dibs:tag "pending-revision" .

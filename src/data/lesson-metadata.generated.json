@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-12T00:17:58.294Z",
+  "generatedAt": "2026-03-12T11:47:47.253Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -533,8 +533,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-12",
       "changes": [
+        {
+          "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
+        },
         {
           "hash": "8bf39445c07c4bdfabebfe348d2d31ad22fddc69",
           "date": "2026-03-11",
@@ -725,8 +731,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-12",
       "changes": [
+        {
+          "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -750,12 +762,6 @@
           "date": "2026-02-11",
           "author": "r8vnhill",
           "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
-        },
-        {
-          "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
-          "date": "2026-02-11",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
         }
       ]
     },
