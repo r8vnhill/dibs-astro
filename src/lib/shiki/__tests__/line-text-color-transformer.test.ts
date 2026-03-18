@@ -1,41 +1,42 @@
 import { describe, expect, it } from "vitest";
+import { transformerNotationLineTextColor } from "../line-text-color-transformer";
 import {
-    __testing,
-    transformerNotationLineTextColor,
-} from "../line-text-color-transformer";
+    appendInlineStyle,
+    getMetaKey,
+    parseInlineLineColorDirective,
+    sanitizeCssColor,
+} from "../line-text-color-helpers";
 
 describe("line-text-color-transformer helpers", () => {
     it("sanitizes conservative CSS colors", () => {
-        expect(__testing.sanitizeCssColor("red")).toBe("red");
-        expect(__testing.sanitizeCssColor(" rgb(10, 20, 30) ")).toBe("rgb(10, 20, 30)");
-        expect(__testing.sanitizeCssColor("")).toBeNull();
-        expect(__testing.sanitizeCssColor(" ")).toBeNull();
-        expect(__testing.sanitizeCssColor("red;display:block")).toBeNull();
-        expect(__testing.sanitizeCssColor("var(--accent)")).toBe("var(--accent)");
+        expect(sanitizeCssColor("red")).toBe("red");
+        expect(sanitizeCssColor(" rgb(10, 20, 30) ")).toBe("rgb(10, 20, 30)");
+        expect(sanitizeCssColor("")).toBeNull();
+        expect(sanitizeCssColor(" ")).toBeNull();
+        expect(sanitizeCssColor("red;display:block")).toBeNull();
+        expect(sanitizeCssColor("var(--accent)")).toBe("var(--accent)");
     });
 
     it("parses inline color directives and strips the annotation from content", () => {
         expect(
-            __testing.parseInlineLineColorDirective(
-                "Write-Host 'hola' # [!code color: rgb(10, 20, 30)]",
-            ),
+            parseInlineLineColorDirective("Write-Host 'hola' # [!code color: rgb(10, 20, 30)]"),
         ).toEqual({
             color: "rgb(10, 20, 30)",
             content: "Write-Host 'hola'",
         });
-        expect(__testing.parseInlineLineColorDirective("Write-Host 'hola'")).toBeNull();
+        expect(parseInlineLineColorDirective("Write-Host 'hola'")).toBeNull();
     });
 
     it("appends inline styles ending with a semicolon", () => {
-        expect(__testing.appendInlineStyle(undefined, "--x:red")).toBe("--x:red;");
-        expect(__testing.appendInlineStyle("color:blue", "--x:red")).toBe("color:blue;--x:red;");
-        expect(__testing.appendInlineStyle("color:blue;", "--x:red")).toBe("color:blue;--x:red;");
+        expect(appendInlineStyle(undefined, "--x:red")).toBe("--x:red;");
+        expect(appendInlineStyle("color:blue", "--x:red")).toBe("color:blue;--x:red;");
+        expect(appendInlineStyle("color:blue;", "--x:red")).toBe("color:blue;--x:red;");
     });
 
     it("uses a stable fallback meta key for non-object metadata", () => {
-        expect(__testing.getMetaKey(undefined)).toBe(__testing.getMetaKey(null));
-        expect(__testing.getMetaKey("meta")).toBe(__testing.getMetaKey(1));
-        expect(__testing.getMetaKey({})).not.toBe(__testing.getMetaKey({}));
+        expect(getMetaKey(undefined)).toBe(getMetaKey(null));
+        expect(getMetaKey("meta")).toBe(getMetaKey(1));
+        expect(getMetaKey({})).not.toBe(getMetaKey({}));
     });
 });
 

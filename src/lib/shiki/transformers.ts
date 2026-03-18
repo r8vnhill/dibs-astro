@@ -7,7 +7,7 @@
  * dedicated modules:
  *
  * - `applyTailwindClasses` injects normalized Tailwind utility classes into Shiki-generated
- *   `<pre>` and `<code>` nodes.
+ *   `<pre>` and `<code>` nodes, accepting either strings or string arrays as input.
  * - `transformerNotationLineTextColor` parses inline `[!code color:...]` directives and applies a
  *   per-line text color via CSS custom properties.
  *
