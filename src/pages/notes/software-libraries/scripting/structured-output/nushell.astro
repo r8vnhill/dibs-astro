@@ -1,21 +1,22 @@
 ---
 import * as icons from "$icons";
-import { Enquote, P } from "~/components/semantics";
+import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Important, Info, More, Warning } from "~/components/ui/callouts";
+import { Abstract, Explanation, Info } from "~/components/ui/callouts";
 import { NushellInline, OutputBlock, PowerShellInline } from "~/components/ui/code";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
-import { B, I } from "~/components/ui/font";
-import { DibsSourceLink, Link } from "~/components/ui/links";
-import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import { B, Dash, I } from "~/components/ui/font";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
+import { DibsSourceLink } from "~/components/ui/links";
+import { ListItem } from "~/components/ui/list";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout
-    title="Salida estructurada en Nushell" description="..."
+    title="Salida estructurada en Nushell"
+    description="Lección sobre la sintaxis de records y listas en Nushell para representar datos estructurados de forma clara."
     git={{ user: "r8vnhill", repo: "dibs-scripts-nushell" }}
     previous={{
         title: "Comandos reutilizables y validación de parámetros",
@@ -23,14 +24,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
     }}
 >
     <Abstract>
-        <ToDo
-            client:only="react"
-            metadata={{
-                tasks: [
-                    "...",
-                ],
-            }}
-        />
+        <P>
+            Nushell permite producir datos estructurados desde el comienzo mediante <I>records</I> y
+            listas. Al igual que PowerShell, en vez de construir texto y luego reinterpretarlo,
+            puedes trabajar directamente con valores que conservan su forma.
+        </P>
+
+        <P>
+            El objetivo de esta lección es distinguir entre un <I>record</I> y una lista de
+            <I>records</I>, y entender por qué ambos pueden verse como tabla sin dejar de ser datos
+            estructurados.
+        </P>
     </Abstract>
 
     <NotesSection id="h2-records-as-default">
@@ -44,20 +48,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             En la lección de PowerShell, el recorrido iba desde <PowerShellInline
             >[hashtable]</PowerShellInline> hacia <PowerShellInline
-            >[PSCustomObject]</PowerShellInline> para obtener una salida más cómoda de reutilizar.
-            En Nushell, ese paso es más corto: un <I>record</I> ya representa desde el inicio un
-            valor estructurado con campos nombrados. No es lo mismo que <PowerShellInline
-            >[PSCustomObject]</PowerShellInline>, pero cumple un rol similar de estructurar datos
-            para que puedan seguir fluyendo por el <I>pipeline</I> sin perder su forma ni necesidad
-            de conversión a texto.
+            >[PSCustomObject]</PowerShellInline>. En Nushell, ese paso aparece antes: un <I
+            >record</I> ya representa desde el inicio un valor estructurado con campos nombrados. No
+            es lo mismo que <PowerShellInline>[PSCustomObject]</PowerShellInline>, pero cumple un
+            rol similar al preservar la forma de los datos sin reducirlos a texto.
         </P>
-
-        <More headingLevel="h3">
-            <span slot="title">Nota sobre los ejemplos</span>
-            Los ejemplos de esta sección están inspirados en <Link
-                href="https://www.imdb.com/title/tt1740707/"
-            ><I>Trolljegeren</I> (Troll Hunter)</Link>, la película noruega de 2010.
-        </More>
 
         <NushellBlock
             code={`
@@ -74,12 +69,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 }
             `}
         >
-            <span slot="title">Avistamiento como <I>record</I></span>
+            <span slot="title">Avistamiento como <I>record</I><FootnoteRef index={1} /></span>
             <DibsSourceLink
                 slot="source" file="structured-output/sighting-module.nu"
                 repo="scripts-nushell"
             />
         </NushellBlock>
+
+        <Explanation headingLevel="h3">
+            <B><NushellInline code="{ k: v }" /></B> crea un <I>record</I> <Dash kind="em" /> un
+            valor compuesto por campos nombrados. Luego puedes acceder a sus propiedades como:
+            <NushellInline>$record.key</NushellInline>.
+        </Explanation>
 
         <Info headingLevel="h3" icon={icons.PlayCircle}>
             <span slot="title">Uso</span>
@@ -91,12 +92,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     let sighting = new-sighting --location "Jøtunheimen Mountains" --sighted_at (date now) --troll_type "Mountain Troll"
 
                     $sighting
-                    $sighting | describe
-                    $sighting | get troll_type
-                    $sighting.location
                 `}
             >
-                <span slot="title">Ejecutar el comando e inspeccionar su salida</span>
+                <span slot="title">Ejecutar el comando y ver su salida</span>
             </NushellBlock>
 
             <OutputBlock
@@ -106,298 +104,125 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     │ troll_type │ Mountain Troll        │
                     │ sighted_at │ 20 seconds ago        │
                     ╰────────────┴───────────────────────╯
-                    record<location: string, troll_type: string, sighted_at: datetime>
-                    Mountain Troll
-                    Jøtunheimen Mountains
+                `}
+            />
+
+            <P>
+                Aunque Nushell lo muestre con una disposición tabular, el resultado sigue siendo un
+                único valor estructurado con campos nombrados. Esa visualización no lo convierte en
+                tabla como tipo de dato aparte.
+            </P>
+        </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-lists-and-tables">
+        <Heading
+            headingLevel="h2" Icon={icons.Table}
+            slot="heading"
+        >Listas de <I>records</I> y visualización tabular</Heading>
+
+        <P>
+            Un <I>record</I> representa una entidad. Una lista de <I>records</I> representa varias
+            entidades con la misma estructura.
+        </P>
+
+        <P>
+            Cuando la consola recibe una lista de <I>records</I> con la misma forma, puede mostrarla
+            como tabla. Esa tabla es una visualización de los datos, no un tipo distinto ni una
+            transformación de su forma subyacente.
+        </P>
+
+        <NushellBlock
+            code={`
+                export def get-explorations [] {
+                    [
+                        { world: "Desert of Time", hazard: "Temporal Distortion", explorer: "Cocona" }
+                        { world: "School Paradise", hazard: "Memory Loop", explorer: "Papika" }
+                        { world: "Candy Kingdom", hazard: "Illusion Collapse", explorer: "Yayaka" }
+                    ]
+                }
+            `}
+        >
+            <span slot="title">
+                Módulo que exporta una lista homogénea de <I>records</I><FootnoteRef index={2} />
+            </span>
+            <span slot="footer">
+                La tabla emerge de la forma del dato devuelto por el comando exportado: una lista
+                cuyos elementos comparten las mismas columnas.
+            </span>
+            <DibsSourceLink
+                slot="source" file="structured-output/exploration-module.nu"
+                repo="scripts-nushell"
+            />
+        </NushellBlock>
+
+        <Explanation headingLevel="h3">
+            <B><NushellInline code="[ ... ]" />:</B> crea una lista que puede contener múltiples
+            valores; aquí, múltiples <I>records</I>.
+        </Explanation>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
+
+            <NushellBlock
+                code={`
+                    use ./structured-output/exploration-module.nu *
+
+                    let explorations = (get-explorations)
+
+                    $explorations
+                `}
+            >
+                <span slot="title">Importar el módulo y ver la lista exportada</span>
+            </NushellBlock>
+
+            <OutputBlock
+                code={`
+                    ╭───┬─────────────────┬─────────────────────┬──────────╮
+                    │ # │      world      │       hazard        │ explorer │
+                    ├───┼─────────────────┼─────────────────────┼──────────┤
+                    │ 0 │ Desert of Time  │ Temporal Distortion │ Cocona   │
+                    │ 1 │ School Paradise │ Memory Loop         │ Papika   │
+                    │ 2 │ Candy Kingdom   │ Illusion Collapse   │ Yayaka   │
+                    ╰───┴─────────────────┴─────────────────────┴──────────╯
                 `}
             />
         </Info>
-
-        <Explanation headingLevel="h3">
-            <List>
-                <ListItem icon={icons.BracketsCurly}>
-                    <B><I>Record</I>:</B> agrupa varios campos nombrados dentro de un único valor
-                    estructurado. Puede verse con forma tabular al mostrarse en pantalla, pero no
-                    debe confundirse con una tabla de varias filas.
-                </ListItem>
-
-                <ListItem icon={icons.CursorClick}>
-                    <B>Acceso por campo:</B> expresiones como <NushellInline
-                        code="$sighting.location"
-                    />
-                    o <NushellInline code="$sighting | get troll_type" /> permiten reutilizar un
-                    campo sin convertir antes el resultado ni serializarlo como texto.
-                </ListItem>
-
-                <ListItem icon={icons.Info}>
-                    <B><NushellInline>describe</NushellInline>:</B> ayuda a inspeccionar la forma
-                    real del dato. No solo muestra que es un <I>record</I>, sino también los nombres
-                    de sus campos y los tipos asociados a cada uno.
-                </ListItem>
-            </List>
-        </Explanation>
     </NotesSection>
 
-    <!--
-        <NotesSection id="h2-lists-and-tables">
-            <Heading
-                headingLevel="h2" Icon={icons.Table}
-                slot="heading"
-            >
-                Listas de <I>records</I> y visualización tabular
-            </Heading>
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            Un <I>record</I> y una lista de <I>records</I> no son lo mismo, aunque ambos puedan
+            mostrarse de forma tabular. Lo importante es reconocer qué valor estás produciendo.
+        </Fragment>
 
-            <P>
-                Una diferencia importante con la lección base es que en Nushell la representación
-                tabular no depende de un tipo especial equivalente a <PowerShellInline
-                    code="[PSCustomObject]"
-                />. Si produces una lista de <I>records</I> con la misma forma, la consola puede
-                presentarla como tabla sin que tengas que reorganizar la salida.
-            </P>
+        <Fragment slot="key-points">
+            <ListItem icon={icons.BracketsCurly}>
+                Un <I>record</I> modela una entidad con campos nombrados.
+            </ListItem>
+            <ListItem icon={icons.Table}>
+                Una lista de <I>records</I> modela varias entidades con la misma estructura.
+            </ListItem>
+            <ListItem icon={icons.Lightbulb}>
+                La tabla es una forma de mostrar los datos, no un tipo distinto.
+            </ListItem>
+        </Fragment>
 
-            <More headingLevel="h3">
-                <span slot="title">Nota sobre los ejemplos</span>
-                Los ejemplos de esta sección están inspirados en <Link
-                    href="https://myanimelist.net/anime/32979/Flip_Flappers"
-                ><I>Flip Flappers</I>
-                </Link>, una serie anime sobre la exploración de mundos alternativos.
-            </More>
+        <Fragment slot="takeaways">
+            La lección de fondo no es solo que Nushell pueda mostrar tablas, sino que permite
+            conservar la forma de los datos desde el origen. Cuando esa forma se entiende bien, la
+            salida deja de ser un detalle visual y pasa a ser una base real para reutilizar,
+            inspeccionar y componer comandos.
+        </Fragment>
+    </ConclusionsLayout>
 
-            <NushellBlock
-                code={`
-                # pure-explorations.nu
-                let explorations = [
-                    { world: "Desert of Time", hazard: "Temporal Distortion", explorer: "Cocona", discovered_at: 2025-10-17T20:55:44 }
-                    { world: "School Paradise", hazard: "Memory Loop", explorer: "Papika", discovered_at: 2025-10-17T20:57:12 }
-                    { world: "Candy Kingdom", hazard: "Illusion Collapse", explorer: "Yayaka", discovered_at: 2025-10-17T21:03:08 }
-                ]
-
-                $explorations
-            `}
-            >
-                <span slot="title">Script que devuelve una lista homogénea de <I>records</I></span>
-                <span slot="footer">
-                    La tabla emerge de la forma del dato devuelto por el script: una lista cuyos
-                    elementos comparten las mismas columnas.
-                </span>
-            </NushellBlock>
-
-            <Info headingLevel="h3" icon={icons.PlayCircle}>
-                <span slot="title">Uso</span>
-
-                <NushellBlock
-                    code={`
-                    let explorations = (nu ./pure-explorations.nu | from nuon)
-
-                    $explorations
-                    $explorations | where hazard == "Temporal Distortion"
-                    $explorations | select world explorer
-                `}
-                >
-                    <span slot="title">Ejecutar el script y seguir transformando la lista</span>
-                </NushellBlock>
-            </Info>
-
-            <Info headingLevel="h3" icon={icons.PlayCircle}>
-                <span slot="title">Qué conviene observar</span>
-
-                <List>
-                    <ListItem icon={icons.Table}>
-                        <B>La tabla es una vista:</B> lo importante no es <I>imprimir bonito</I>, sino
-                        que cada fila sigue siendo un valor estructurado reutilizable.
-                    </ListItem>
-
-                    <ListItem icon={icons.Funnel}>
-                        <B>Filtrado por columnas:</B> <NushellInline
-                            code='where hazard == "Temporal Distortion"'
-                        />
-                        opera sobre el contenido estructurado, no sobre texto ya renderizado.
-                    </ListItem>
-
-                    <ListItem icon={icons.Table}>
-                        <B>Selección explícita:</B> <NushellInline code="select world explorer" />
-                        deja claro qué columnas quieres conservar en la etapa siguiente.
-                    </ListItem>
-                </List>
-            </Info>
-
-            <P>
-                En PowerShell, buena parte del esfuerzo de la lección base consistía en conseguir una
-                salida tabular consistente para que otras herramientas y comandos pudieran consumirla
-                mejor. En Nushell, esa ventaja aparece mucho antes, porque la estructura ya forma parte
-                del flujo normal del shell.
-            </P>
-        </NotesSection>
-
-        <NotesSection id="h2-pipeline-ergonomics">
-            <Heading
-                headingLevel="h2" Icon={icons.Pipe}
-                slot="heading"
-            >
-                Ergonomía del <I>pipeline</I>: transformar, inspeccionar y serializar
-            </Heading>
-
-            <P>
-                La lección base insistía en devolver objetos porque eso habilita reutilización futura.
-                Nushell lleva esa idea aún más lejos: como el <I>pipeline</I> opera de forma natural
-                sobre datos estructurados, puedes seguir transformando la salida sin cambiar de modelo
-                mental.
-            </P>
-
-            <NushellBlock
-                code={`
-                # troll-sightings.nu
-                let sightings = [
-                    { location: "Jøtunheimen", troll_type: "Mountain Troll", distance_km: 12 }
-                    { location: "Trøndelag", troll_type: "Forest Troll", distance_km: 7 }
-                    { location: "Nordmarka", troll_type: "Riverside Troll", distance_km: 35 }
-                ]
-
-                $sightings
-            `}
-            >
-                <span slot="title">Script que emite avistamientos reutilizables en el <I
-                    >pipeline</I></span>
-                <span slot="footer">
-                    <NushellInline>get</NushellInline>, <NushellInline>where</NushellInline>,
-                    <NushellInline>select</NushellInline> y <NushellInline>to json</NushellInline>
-                    se aplican después, sobre la salida estructurada del script.
-                </span>
-            </NushellBlock>
-
-            <Info headingLevel="h3" icon={icons.PlayCircle}>
-                <span slot="title">Uso</span>
-
-                <NushellBlock
-                    code={`
-                    let sightings = (nu ./troll-sightings.nu | from nuon)
-
-                    $sightings | get location
-                    $sightings | where distance_km < 20 | select location troll_type
-                    $sightings | to json
-                `}
-                >
-                    <span slot="title">Consumir la salida del script desde otros comandos</span>
-                </NushellBlock>
-            </Info>
-
-            <Explanation headingLevel="h3">
-                <List>
-                    <ListItem icon={icons.TextAlignLeft}>
-                        <B><NushellInline>get</NushellInline>:</B> extrae una columna o campo y la
-                        convierte en la nueva salida del flujo.
-                    </ListItem>
-
-                    <ListItem icon={icons.Funnel}>
-                        <B><NushellInline>where</NushellInline>:</B> filtra por condiciones que se
-                        evalúan directamente sobre cada fila o valor.
-                    </ListItem>
-
-                    <ListItem icon={icons.ArrowsClockwise}>
-                        <B><NushellInline>to json</NushellInline>:</B> muestra que serializar es un paso
-                        posterior y opcional. Primero trabajas con estructura; solo conviertes a texto
-                        cuando realmente lo necesitas para interoperar.
-                    </ListItem>
-                </List>
-            </Explanation>
-
-            <Important headingLevel="h3">
-                Esta es una de las ventajas más visibles de Nushell frente a la lección base: la salida
-                estructurada no solo mejora la presentación, sino que organiza casi todo el flujo de
-                trabajo del shell.
-            </Important>
-        </NotesSection>
-
-        <NotesSection id="h2-real-differences">
-            <Heading
-                headingLevel="h2" Icon={icons.ArrowsLeftRight}
-                slot="heading"
-            >
-                Diferencias reales y límites de la comparación
-            </Heading>
-
-            <P>
-                No conviene forzar equivalencias exactas. Aunque la comparación con PowerShell ayuda a
-                orientarse, Nushell no replica el mismo modelo de <I>diccionario</I> más
-                <I>objeto de salida</I>. Su fortaleza está en tratar <I>records</I>, listas y tablas
-                como materiales básicos del shell.
-            </P>
-
-            <Warning headingLevel="h3">
-                <span slot="title">Qué no conviene asumir</span>
-
-                <List>
-                    <ListItem icon={icons.Warning}>
-                        <B>No hay un clon de <PowerShellInline code="[PSCustomObject]" />:</B> el valor
-                        pedagógico está en el cambio de modelo mental, no en encontrar un reemplazo
-                        uno-a-uno.
-                    </ListItem>
-
-                    <ListItem icon={icons.WarningCircle}>
-                        <B>La tabla no es el dato final:</B> lo que importa es la lista de
-                        <I>records</I> subyacente; la tabla es una presentación conveniente.
-                    </ListItem>
-
-                    <ListItem icon={icons.BracketsCurly}>
-                        <B>Configuración y salida no se separan igual:</B> la lección base usa
-                        <PowerShellInline code="[hashtable]" /> tanto para parámetros como para datos
-                        transitorios. En Nushell, esa frontera suele modelarse de forma más uniforme con
-                        valores estructurados y comandos que operan directamente sobre ellos.
-                    </ListItem>
-                </List>
-            </Warning>
-
-            <P>
-                Dicho de forma práctica: si en PowerShell la decisión era <Enquote>¿cuándo conviene
-                    devolver <PowerShellInline code="[PSCustomObject]" />?</Enquote>, en Nushell la
-                pregunta suele ser <Enquote>¿qué forma de dato quiero que siga fluyendo por el
-                    pipeline?</Enquote>.
-            </P>
-        </NotesSection>
-
-        <ConclusionsLayout>
-            <Fragment slot="conclusions">
-                <P>
-                    La lección base enseñaba a pasar desde estructuras útiles para configurar o agrupar
-                    datos hacia una salida más adecuada para consumo posterior. En Nushell, ese camino
-                    es más corto porque el shell ya parte desde valores estructurados como
-                    <I>records</I>, listas y tablas.
-                </P>
-
-                <P>
-                    La comparación más valiosa, entonces, no es sintáctica sino conceptual: Nushell
-                    vuelve natural trabajar con datos estructurados desde el principio, mientras que en
-                    PowerShell esa intención suele hacerse explícita cuando eliges devolver un objeto en
-                    vez de texto.
-                </P>
-            </Fragment>
-
-            <Fragment slot="key-points">
-                <ListItem icon={icons.BracketsCurly}>
-                    Un <I>record</I> en Nushell cumple gran parte del rol conceptual que en la lección
-                    base se perseguía con salida estructurada reutilizable.
-                </ListItem>
-
-                <ListItem icon={icons.Table}>
-                    Una lista homogénea de <I>records</I> puede mostrarse como tabla sin depender de un
-                    tipo especial análogo a <PowerShellInline code="[PSCustomObject]" />.
-                </ListItem>
-
-                <ListItem icon={icons.Pipe}>
-                    El <I>pipeline</I> de Nushell conserva y explota la estructura con comandos como
-                    <NushellInline>get</NushellInline>, <NushellInline>where</NushellInline>,
-                    <NushellInline>select</NushellInline> y <NushellInline>to json</NushellInline>.
-                </ListItem>
-            </Fragment>
-
-            <Fragment slot="takeaways">
-                <P>
-                    Si en PowerShell aprendiste a preferir objetos sobre texto cuando quieres comunicar
-                    datos, en Nushell la intuición equivalente es todavía más fuerte: diseña la forma
-                    del dato que debe circular y deja que la presentación sea una consecuencia del
-                    <I>pipeline</I>, no su punto de partida.
-                </P>
-            </Fragment>
-        </ConclusionsLayout>
-    -->
+    <Footnotes>
+        <Footnote index={1}>
+            Ejemplo inspirado en <I href="https://www.imdb.com/title/tt1740707/">Trolljegeren</I>.
+        </Footnote>
+        <Footnote index={2}>
+            Ejemplo inspirado en <I href="https://myanimelist.net/anime/32979/Flip_Flappers"
+            >Flip Flappers</I>.
+        </Footnote>
+    </Footnotes>
 </NotesLayout>
