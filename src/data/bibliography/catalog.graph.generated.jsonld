@@ -7,11 +7,35 @@
   ],
   "@graph": [
     {
+      "@id": "person:aanand-prasad",
+      "@type": "Person",
+      "givenName": "Aanand",
+      "familyName": "Prasad"
+    },
+    {
+      "@id": "person:arjen-tebbenhof",
+      "@type": "Person",
+      "givenName": "Arjen",
+      "familyName": "Tebbenhof"
+    },
+    {
+      "@id": "person:ben-firshman",
+      "@type": "Person",
+      "givenName": "Ben",
+      "familyName": "Firshman"
+    },
+    {
       "@id": "person:bruce-payette",
       "@type": "Person",
       "givenName": "Bruce",
       "familyName": "Payette",
       "url": "https://www.goodreads.com/author/show/441636.Bruce_Payette"
+    },
+    {
+      "@id": "person:carl-tashian",
+      "@type": "Person",
+      "givenName": "Carl",
+      "familyName": "Tashian"
     },
     {
       "@id": "person:chengnian-sun",
@@ -25,6 +49,12 @@
       "givenName": "David M.",
       "familyName": "Beazley",
       "url": "https://en.wikipedia.org/wiki/David_M._Beazley"
+    },
+    {
+      "@id": "person:eva-parish",
+      "@type": "Person",
+      "givenName": "Eva",
+      "familyName": "Parish"
     },
     {
       "@id": "person:karl-mazurak",
@@ -57,6 +87,12 @@
       "givenName": "Richard",
       "familyName": "Siddaway",
       "url": "https://www.goodreads.com/author/show/4742136.Richard_Siddaway"
+    },
+    {
+      "@id": "person:rob-bell",
+      "@type": "Person",
+      "givenName": "Rob",
+      "familyName": "Bell"
     },
     {
       "@id": "person:steve-zdancewic",
@@ -95,10 +131,28 @@
       "url": "https://www.acm.org/"
     },
     {
+      "@id": "org:atomic-spin",
+      "@type": "Organization",
+      "name": "Atomic Spin",
+      "url": "https://spin.atomicobject.com/"
+    },
+    {
       "@id": "org:clig",
       "@type": "Organization",
       "name": "clig.dev",
       "url": "https://clig.dev/"
+    },
+    {
+      "@id": "org:heroku-dev-center",
+      "@type": "Organization",
+      "name": "Heroku Dev Center",
+      "url": "https://devcenter.heroku.com/"
+    },
+    {
+      "@id": "org:jdriven-blog",
+      "@type": "Organization",
+      "name": "JDriven Blog",
+      "url": "https://jdriven.com/blog/"
     },
     {
       "@id": "org:martin-fowler-site",
@@ -168,10 +222,25 @@
       ]
     },
     {
+      "@id": "ref:atomic-spin-introduction-to-nushell",
+      "@type": "WebPage",
+      "name": "Introduction to Nushell: The Shell That Treats Everything as Data",
+      "url": "https://spin.atomicobject.com/nushell-treats-everything-as-data/",
+      "datePublished": "2026-01-26",
+      "author": [
+        {
+          "@id": "person:rob-bell"
+        }
+      ],
+      "publisher": {
+        "@id": "org:atomic-spin"
+      }
+    },
+    {
       "@id": "ref:clig-the-basics",
       "@type": "WebPage",
       "name": "Command Line Interface Guidelines",
-      "url": "https://clig.dev/#the-basics",
+      "url": "https://clig.dev/",
       "publisher": {
         "@id": "org:clig"
       }
@@ -259,6 +328,16 @@
       }
     },
     {
+      "@id": "ref:heroku-cli-style-guide",
+      "@type": "WebPage",
+      "name": "CLI Style Guide",
+      "url": "https://devcenter.heroku.com/articles/cli-style-guide",
+      "datePublished": "2025-01-31",
+      "publisher": {
+        "@id": "org:heroku-dev-center"
+      }
+    },
+    {
       "@id": "ref:improving-your-parameterized-script",
       "@type": "Book",
       "name": "Improving your parameterized script",
@@ -286,6 +365,21 @@
       ],
       "isPartOf": {
         "@id": "work:python-distilled"
+      }
+    },
+    {
+      "@id": "ref:jdriven-nushell-basics-structured-data",
+      "@type": "WebPage",
+      "name": "Nushell basics: structured data in your shell",
+      "url": "https://jdriven.com/blog/2025/10/nushell/",
+      "datePublished": "2025-10-30",
+      "author": [
+        {
+          "@id": "person:arjen-tebbenhof"
+        }
+      ],
+      "publisher": {
+        "@id": "org:jdriven-blog"
       }
     },
     {
@@ -354,6 +448,24 @@
       }
     },
     {
+      "@id": "ref:nushell-list",
+      "@type": "WebPage",
+      "name": "List",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/basic_types/list.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-navigating-structured-data",
+      "@type": "WebPage",
+      "name": "Navigating and Accessing Structured Data",
+      "url": "https://www.nushell.sh/book/navigating_structured_data.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-path-exists",
       "@type": "WebPage",
       "name": "Path exists",
@@ -367,6 +479,15 @@
       "@type": "WebPage",
       "name": "Path",
       "url": "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-record",
+      "@type": "WebPage",
+      "name": "Record",
+      "url": "https://www.nushell.sh/lang-guide/chapters/types/basic_types/record.html",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -417,6 +538,33 @@
       }
     },
     {
+      "@id": "ref:nushell-working-with-lists",
+      "@type": "WebPage",
+      "name": "Working with Lists",
+      "url": "https://www.nushell.sh/book/working_with_lists.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-working-with-records",
+      "@type": "WebPage",
+      "name": "Working with Records",
+      "url": "https://www.nushell.sh/book/working_with_records.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-working-with-tables",
+      "@type": "WebPage",
+      "name": "Working with Tables",
+      "url": "https://www.nushell.sh/book/working_with_tables.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:pipeline-connecting-commands",
       "@type": "Book",
       "name": "The pipeline: Connecting commands",
@@ -460,6 +608,12 @@
       "@type": "LearningResource",
       "name": "Pipelines I: PowerShell declarativo",
       "url": "/notes/software-libraries/scripting/pipelines/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/structured-output/nushell/",
+      "@type": "LearningResource",
+      "name": "Salida estructurada en Nushell",
+      "url": "/notes/software-libraries/scripting/structured-output/nushell/"
     },
     {
       "@id": "usage:errors-errors-and-exceptions-additional",
@@ -719,6 +873,136 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-atomic-spin-introduction-to-nushell-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:atomic-spin-introduction-to-nushell"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-clig-the-basics-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:clig-the-basics"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-heroku-cli-style-guide-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:heroku-cli-style-guide"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:jdriven-nushell-basics-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-list-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-list"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-navigating-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-navigating-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-record-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-record"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-working-with-lists-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-working-with-lists"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-working-with-records-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-working-with-records"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-nushell-nushell-working-with-tables-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-working-with-tables"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     }
   ]

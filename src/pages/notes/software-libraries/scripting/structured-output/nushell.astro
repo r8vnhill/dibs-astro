@@ -9,9 +9,13 @@ import { B, Dash, I } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink } from "~/components/ui/links";
 import { ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+
+const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
@@ -215,6 +219,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
             inspeccionar y componer comandos.
         </Fragment>
     </ConclusionsLayout>
+
+    <ReferencesFromCatalog source={bibliographyCatalog}>
+        <Fragment slot="description-ref:nushell-working-with-records">
+            Explica cómo Nushell trata los <I>records</I> como valores estructurados equivalentes,
+            en la práctica, a una fila individual de una tabla. Recorre su sintaxis de creación, la
+            forma en que se muestran en consola y varias operaciones básicas para trabajar con ellos
+            sin perder su estructura. También muestra cómo agregar o actualizar campos, combinar <I
+            >records</I>, recorrer sus pares clave-valor e identificar qué comandos de tablas
+            también se aplican a este tipo de dato. Es una buena lectura si quieres profundizar en
+            el modelo mental detrás de los <I>records</I> más allá de los ejemplos introductorios de
+            esta lección.
+        </Fragment>
+    </ReferencesFromCatalog>
 
     <Footnotes>
         <Footnote index={1}>

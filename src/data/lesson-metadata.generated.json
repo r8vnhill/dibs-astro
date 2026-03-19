@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-18T21:02:36.354Z",
+  "generatedAt": "2026-03-19T13:08:32.627Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -533,8 +533,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-12",
+      "lastModified": "2026-03-19",
       "changes": [
+        {
+          "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
+        },
         {
           "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
           "date": "2026-03-12",
@@ -558,12 +564,6 @@
           "date": "2026-03-11",
           "author": "r8vnhill",
           "subject": "📝 docs(first-script): polish Nushell lesson summary and closure"
-        },
-        {
-          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
-          "date": "2026-03-11",
-          "author": "r8vnhill",
-          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
         }
       ]
     },
@@ -1088,8 +1088,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-19",
       "changes": [
+        {
+          "hash": "1833b9e65a91917b565da9dae0df29c1642448a2",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": "✨📝 feat(icons): import phosphor icon set and document usage"
+        },
+        {
+          "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
