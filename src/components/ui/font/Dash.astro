@@ -1,0 +1,36 @@
+---
+import InlineText from "./InlineText.astro";
+
+type DashKind = "hyphen" | "en" | "em" | "minus";
+
+type Props = {
+    kind?: DashKind;
+    length?: number;
+    class?: string;
+    ariaLabel?: string;
+};
+
+const dashByKind: Record<DashKind, string> = {
+    hyphen: "-",
+    en: "–",
+    em: "—",
+    minus: "−",
+};
+
+const {
+    kind = "en",
+    length = 1,
+    class: className,
+    ariaLabel,
+} = Astro.props as Props;
+
+const normalizedLength = Math.max(1, Math.trunc(length));
+const content = dashByKind[kind].repeat(normalizedLength);
+const inlineTextProps = {
+    as: "span" as const,
+    ...(className ? { class: className } : {}),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+};
+---
+
+<InlineText {...inlineTextProps}>{content}</InlineText>
