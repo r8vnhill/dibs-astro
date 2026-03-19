@@ -1,78 +1,129 @@
 /**
- * Bridge pattern: conecta Presentation con Application layer.
+ * Presentation adapter for automatic lesson navigation.
  *
- * Este módulo proporciona una función adaptadora que permite a los componentes
- * de presentación (como NotesLayout) usar el nuevo servicio de navegación de
- * la capa Application sin romper la interfaz existente.
+ * This module exposes a small, stable API consumed by the presentation layer (e.g.,
+ * `NotesLayout`). Its responsibility is to:
  *
- * ## Ventajas del patrón bridge
+ * 1. Receive the current lesson pathname and the course structure.
+ * 2. Delegate navigation resolution to the Application layer.
+ * 3. Return only the minimal, serializable data required by the UI.
  *
- * 1. **Compatibilidad**: mantiene la firma de la función original
- * 2. **Transición gradual**: permite cambiar entre implementaciones
- * 3. **Desacoplamiento**: Presentation no depende directamente de Infrastructure
- * 4. **Testing**: facilita pruebas unitarias con mocks del servicio
+ * The adapter intentionally hides infrastructure and domain details from the presentation layer.
+ * In particular:
+ *
+ * - `LessonCatalogAdapter` remains internal to this module.
+ * - `NavigationServiceImpl` is constructed locally.
+ * - UI consumers receive only `{ title, href }` pairs.
+ *
+ * This keeps the layout components independent of domain concepts such as `NavigationNode`,
+ * `slug`, or catalog implementations.
+ *
+ * ## Data Flow
+ *
+ * - `NotesLayout` calls `resolveAutoNav(pathname, lessons)`.
+ * - `resolveAutoNav(...)` creates `NavigationServiceImpl`.
+ * - `NavigationServiceImpl` reads lessons through `LessonCatalogAdapter`.
+ * - `LessonCatalogAdapter` derives navigable entries from the course structure.
+ *
+ * ## Design Goals
+ *
+ * - Preserve **layer isolation** (Presentation -> Application -> Infrastructure).
+ * - Return only **UI-safe, serializable values**.
+ * - Keep the public API **stable even if the navigation service evolves**.
+ * - Make the adapter easy to **unit test** by accepting the lesson structure directly instead of
+ *   reading from global state.
  */
 
+import type { INavigationService, NavigationNode } from "$application/ports";
 import { NavigationServiceImpl } from "$application/services/NavigationServiceImpl";
 import { LessonCatalogAdapter } from "$infrastructure/adapters/LessonCatalogAdapter";
 import type { Lesson } from "~/data/course-structure";
-import { resolveAutoNav as legacyResolveAutoNav } from "~/utils/navigation";
 
 /**
- * Feature flag para controlar qué implementación usar.
+ * Navigation link consumed by the presentation layer.
  *
- * - `true`: usa el nuevo servicio de Application layer
- * - `false`: usa la implementación legacy de utils/navigation.ts
- *
- * Esto permite validar la nueva implementación sin romper rutas existentes.
+ * Only the fields needed for rendering are exposed. This avoids leaking domain objects into the UI.
  */
-const USE_NEW_SERVICE = true;
-
-/**
- * Tipo de retorno compatible con la interfaz legacy.
- */
-export type AutoNavResult = {
-    previous: { title: string; href: string } | undefined;
-    next: { title: string; href: string } | undefined;
+export type AutoNavLink = {
+    title: string;
+    href: string;
 };
 
 /**
- * Bridge para resolución automática de navegación.
+ * Public automatic-navigation result returned to the UI.
  *
- * Mantiene la misma interfaz que `resolveAutoNav` de `utils/navigation.ts`,
- * pero internamente usa el nuevo servicio de Application layer.
+ * Properties are **optional and omitted when unavailable**:
  *
- * @param pathname - Ruta actual (ej: /notes/unit/lesson/)
- * @param lessons - Estructura del curso (usado para crear el catálogo)
- * @returns Objeto con previous y next (undefined si no existen)
+ * - `previous` is absent for the first lesson.
+ * - `next` is absent for the last lesson.
  *
- * @example
- * const { previous, next } = await resolveAutoNavBridge("/notes/foo/bar/", courseStructure);
+ * Omitting properties instead of returning `null` keeps the resulting object simpler for
+ * templating and conditional rendering.
  */
-export async function resolveAutoNavBridge(
+export type AutoNavResult = {
+    previous?: AutoNavLink;
+    next?: AutoNavLink;
+};
+
+/**
+ * Narrows a domain navigation node to the minimal shape used by the UI.
+ *
+ * This prevents presentation components from depending on domain types such as `NavigationNode`.
+ */
+const toAutoNavLink = (
+    node: NavigationNode | undefined,
+): AutoNavLink | undefined => node ? { title: node.title, href: node.href } : undefined;
+
+/**
+ * Local composition root for the automatic-navigation use case.
+ *
+ * Constructs the navigation service together with its infrastructure dependencies. Keeping this
+ * wiring local avoids exposing catalog implementation details to the presentation layer.
+ */
+function createNavigationService(lessons: readonly Lesson[]): INavigationService {
+    const catalog = new LessonCatalogAdapter(lessons);
+    return new NavigationServiceImpl(catalog);
+}
+
+/**
+ * Resolves previous/next lesson navigation for a given pathname.
+ *
+ * The function delegates navigation logic to the Application service, then converts the result
+ * into the minimal shape required by the UI.
+ *
+ * ## Notes
+ *
+ * - The adapter intentionally **reconstructs the service per invocation**. Navigation resolution
+ *   is lightweight and the stateless construction simplifies testability.
+ * - The presentation layer remains unaware of the internal navigation model.
+ *
+ * @param pathname
+ *   Absolute or relative lesson path used to locate the current node.
+ * @param lessons
+ *   Immutable course structure describing the ordered lesson catalog.
+ * @returns
+ *   An {@link AutoNavResult} containing optional links to the neighboring lessons in the catalog.
+ * @example
+ * ```ts
+ * const nav = await resolveAutoNav(currentPath, lessons);
+ *
+ * if (nav.previous) {
+ *   console.log(nav.previous.title);
+ * }
+ * ```
+ */
+export async function resolveAutoNav(
     pathname: string,
     lessons: readonly Lesson[],
 ): Promise<AutoNavResult> {
-    if (!USE_NEW_SERVICE) {
-        // Fallback a implementación legacy (síncrona)
-        // Cast necesario porque courseStructure es readonly pero resolveAutoNav espera Lesson[]
-        return legacyResolveAutoNav(pathname, lessons as Lesson[]);
-    }
-
-    // Usar nuevo servicio (Application layer)
-    // Crear catálogo con la estructura proporcionada (permite testing con mocks)
-    const catalog = new LessonCatalogAdapter(lessons);
-    const navigationService = new NavigationServiceImpl(catalog);
-
+    const navigationService = createNavigationService(lessons);
     const result = await navigationService.resolveAutoNav(pathname);
 
-    // Adaptar formato de NavigationResult a AutoNavResult
+    const previous = toAutoNavLink(result.previous);
+    const next = toAutoNavLink(result.next);
+
     return {
-        previous: result.previous
-            ? { title: result.previous.title, href: result.previous.href }
-            : undefined,
-        next: result.next
-            ? { title: result.next.title, href: result.next.href }
-            : undefined,
+        ...(previous ? { previous } : {}),
+        ...(next ? { next } : {}),
     };
 }

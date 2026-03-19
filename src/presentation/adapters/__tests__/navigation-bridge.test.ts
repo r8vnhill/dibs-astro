@@ -1,12 +1,12 @@
 /**
  * @file navigation-bridge.test.ts
  *
- * Tests para el bridge pattern que conecta NotesLayout con Application layer.
+ * Tests para el adaptador de presentación que conecta NotesLayout con Application layer.
  *
  * Estos tests verifican:
- * - Compatibilidad con la interfaz legacy de resolveAutoNav
  * - Corrección de la adaptación de tipos NavigationResult → AutoNavResult
- * - Comportamiento correcto del nuevo servicio via bridge
+ * - Contrato público estable para NotesLayout
+ * - Comportamiento correcto del servicio nuevo vía adaptador
  */
 
 import { describe, expect, it } from "vitest";
@@ -45,14 +45,13 @@ const mockCourseStructure: Lesson[] = [
 ];
 
 describe("navigation-bridge", () => {
-    describe("resolveAutoNavBridge", () => {
+    describe("resolveAutoNav", () => {
         it("debe retornar undefined para previous en la primera lección", async () => {
-            // Importación dinámica para asegurar que el módulo se carga correctamente
-            const { resolveAutoNavBridge } = await import(
+            const { resolveAutoNav } = await import(
                 "$presentation/adapters/navigation-bridge"
             );
 
-            const result = await resolveAutoNavBridge(
+            const result = await resolveAutoNav(
                 "/notes/introduccion/conceptos-basicos/",
                 mockCourseStructure,
             );
@@ -63,11 +62,11 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar undefined para next en la última lección", async () => {
-            const { resolveAutoNavBridge } = await import(
+            const { resolveAutoNav } = await import(
                 "$presentation/adapters/navigation-bridge"
             );
 
-            const result = await resolveAutoNavBridge(
+            const result = await resolveAutoNav(
                 "/notes/introduccion/primer-script/",
                 mockCourseStructure,
             );
@@ -78,11 +77,11 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar both previous y next para lecciones intermedias", async () => {
-            const { resolveAutoNavBridge } = await import(
+            const { resolveAutoNav } = await import(
                 "$presentation/adapters/navigation-bridge"
             );
 
-            const result = await resolveAutoNavBridge(
+            const result = await resolveAutoNav(
                 "/notes/introduccion/configuracion/",
                 mockCourseStructure,
             );
@@ -94,11 +93,11 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar previous y next vacíos para ruta no encontrada", async () => {
-            const { resolveAutoNavBridge } = await import(
+            const { resolveAutoNav } = await import(
                 "$presentation/adapters/navigation-bridge"
             );
 
-            const result = await resolveAutoNavBridge(
+            const result = await resolveAutoNav(
                 "/notes/not-found/",
                 mockCourseStructure,
             );
@@ -108,11 +107,11 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar objetos con estructura { title, href }", async () => {
-            const { resolveAutoNavBridge } = await import(
+            const { resolveAutoNav } = await import(
                 "$presentation/adapters/navigation-bridge"
             );
 
-            const result = await resolveAutoNavBridge(
+            const result = await resolveAutoNav(
                 "/notes/introduccion/configuracion/",
                 mockCourseStructure,
             );
@@ -125,6 +124,28 @@ describe("navigation-bridge", () => {
             // Verificar trailing slashes
             expect(result.previous?.href).toMatch(/\/$/);
             expect(result.next?.href).toMatch(/\/$/);
+        });
+
+        it("debe exponer solo title y href en los enlaces públicos", async () => {
+            const { resolveAutoNav } = await import(
+                "$presentation/adapters/navigation-bridge"
+            );
+
+            const result = await resolveAutoNav(
+                "/notes/introduccion/configuracion/",
+                mockCourseStructure,
+            );
+
+            expect(result.previous).toEqual({
+                title: "Lección 1: Conceptos básicos",
+                href: "/notes/introduccion/conceptos-basicos/",
+            });
+            expect(result.next).toEqual({
+                title: "Lección 3: Primer script",
+                href: "/notes/introduccion/primer-script/",
+            });
+            expect(result.previous).not.toHaveProperty("slug");
+            expect(result.next).not.toHaveProperty("slug");
         });
     });
 });
