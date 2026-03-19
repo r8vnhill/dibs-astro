@@ -105,10 +105,10 @@ describe("applyTailwindClasses", () => {
         };
         const transformer = applyTailwindClasses(options);
         const context = {} as never;
-        const preNode = {
+        const preNode: ClassableNode = {
             properties: { class: "base alpha" },
         };
-        const codeNode = {
+        const codeNode: ClassableNode = {
             properties: { className: ["mono"], class: "legacy" },
         };
 
