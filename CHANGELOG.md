@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] - 2026-03-19
+
+### Added
+
+- Added the full Phosphor icon set to the project, together with third-party asset attribution and bundled license documentation for downstream reuse.
+- Added catalog-backed bibliography entries for the Nushell structured-output lesson, including official Nushell and structured-data references with lesson-level usage metadata.
+- Added a reusable `Dash` font component with Astro render tests to support command and output styling in lesson content.
+
+### Changed
+
+- Reworked the Nushell structured-output lesson around reusable commands, staged comparisons, and clearer progression from inspection to transformation workflows.
+- Refined Shiki class transformers and their tests so highlighted code normalizes Tailwind token merging more predictably across string and array inputs.
+- Updated bibliography, related-course, and CI/project documentation to match the current icon workflow, bibliography pipeline, and dependency management setup.
+
+### Fixed
+
+- Fixed `ReferencesFromCatalog` rendering so catalog-driven bibliography sections render safely in Astro and continue to pass `astro check` under strict typing.
+- Fixed bibliography catalog normalization edge cases that affected reference rendering and generated lesson metadata for bibliography-backed lessons.
+
 ## [0.12.0] - 2026-03-12
 
 ### Added

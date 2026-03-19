@@ -75,6 +75,36 @@ person:steve-zdancewic
   schema:givenName "Steve" ;
   schema:familyName "Zdancewic" .
 
+person:rob-bell
+  a schema:Person ;
+  schema:givenName "Rob" ;
+  schema:familyName "Bell" .
+
+person:aanand-prasad
+  a schema:Person ;
+  schema:givenName "Aanand" ;
+  schema:familyName "Prasad" .
+
+person:ben-firshman
+  a schema:Person ;
+  schema:givenName "Ben" ;
+  schema:familyName "Firshman" .
+
+person:carl-tashian
+  a schema:Person ;
+  schema:givenName "Carl" ;
+  schema:familyName "Tashian" .
+
+person:eva-parish
+  a schema:Person ;
+  schema:givenName "Eva" ;
+  schema:familyName "Parish" .
+
+person:arjen-tebbenhof
+  a schema:Person ;
+  schema:givenName "Arjen" ;
+  schema:familyName "Tebbenhof" .
+
 org:nushell
   a schema:Organization ;
   schema:name "Nushell" ;
@@ -89,6 +119,21 @@ org:martin-fowler-site
   a schema:Organization ;
   schema:name "martinfowler.com" ;
   schema:url "https://martinfowler.com" .
+
+org:atomic-spin
+  a schema:Organization ;
+  schema:name "Atomic Spin" ;
+  schema:url "https://spin.atomicobject.com/" .
+
+org:heroku-dev-center
+  a schema:Organization ;
+  schema:name "Heroku Dev Center" ;
+  schema:url "https://devcenter.heroku.com/" .
+
+org:jdriven-blog
+  a schema:Organization ;
+  schema:name "JDriven Blog" ;
+  schema:url "https://jdriven.com/blog/" .
 
 org:acm
   a schema:Organization ;
@@ -175,7 +220,7 @@ ref:errors-and-exceptions
 ref:clig-the-basics
   a schema:WebPage ;
   schema:name "Command Line Interface Guidelines" ;
-  schema:url "https://clig.dev/#the-basics" ;
+  schema:url "https://clig.dev/" ;
   schema:publisher org:clig .
 
 ref:nushell-creating-modules
@@ -268,6 +313,65 @@ ref:nushell-use
   schema:url "https://www.nushell.sh/commands/docs/use.html" ;
   schema:publisher org:nushell .
 
+ref:atomic-spin-introduction-to-nushell
+  a schema:WebPage ;
+  schema:name "Introduction to Nushell: The Shell That Treats Everything as Data" ;
+  schema:url "https://spin.atomicobject.com/nushell-treats-everything-as-data/" ;
+  schema:datePublished "2026-01-26" ;
+  schema:author person:rob-bell ;
+  schema:publisher org:atomic-spin .
+
+ref:heroku-cli-style-guide
+  a schema:WebPage ;
+  schema:name "CLI Style Guide" ;
+  schema:url "https://devcenter.heroku.com/articles/cli-style-guide" ;
+  schema:datePublished "2025-01-31" ;
+  schema:publisher org:heroku-dev-center .
+
+ref:nushell-list
+  a schema:WebPage ;
+  schema:name "List" ;
+  schema:url "https://www.nushell.sh/lang-guide/chapters/types/basic_types/list.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-navigating-structured-data
+  a schema:WebPage ;
+  schema:name "Navigating and Accessing Structured Data" ;
+  schema:url "https://www.nushell.sh/book/navigating_structured_data.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-record
+  a schema:WebPage ;
+  schema:name "Record" ;
+  schema:url "https://www.nushell.sh/lang-guide/chapters/types/basic_types/record.html" ;
+  schema:publisher org:nushell .
+
+ref:jdriven-nushell-basics-structured-data
+  a schema:WebPage ;
+  schema:name "Nushell basics: structured data in your shell" ;
+  schema:url "https://jdriven.com/blog/2025/10/nushell/" ;
+  schema:datePublished "2025-10-30" ;
+  schema:author person:arjen-tebbenhof ;
+  schema:publisher org:jdriven-blog .
+
+ref:nushell-working-with-lists
+  a schema:WebPage ;
+  schema:name "Working with Lists" ;
+  schema:url "https://www.nushell.sh/book/working_with_lists.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-working-with-records
+  a schema:WebPage ;
+  schema:name "Working with Records" ;
+  schema:url "https://www.nushell.sh/book/working_with_records.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-working-with-tables
+  a schema:WebPage ;
+  schema:name "Working with Tables" ;
+  schema:url "https://www.nushell.sh/book/working_with_tables.html" ;
+  schema:publisher org:nushell .
+
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/>
   a schema:LearningResource ;
   schema:name "Pipelines I: PowerShell declarativo" ;
@@ -287,6 +391,11 @@ ref:nushell-use
   a schema:LearningResource ;
   schema:name "Comandos reutilizables y validación de parámetros en Nushell" ;
   schema:url "/notes/software-libraries/scripting/first-script/nushell/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/>
+  a schema:LearningResource ;
+  schema:name "Salida estructurada en Nushell" ;
+  schema:url "/notes/software-libraries/scripting/structured-output/nushell/" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/>
   a schema:LearningResource ;
@@ -411,4 +520,64 @@ usage:first-script-nushell-mazurak-a-bash-2007-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
   dibs:reference ref:mazurak-a-bash-2007 ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-atomic-spin-introduction-to-nushell-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:atomic-spin-introduction-to-nushell ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-heroku-cli-style-guide-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:heroku-cli-style-guide ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-nushell-list-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-list ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-nushell-navigating-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-navigating-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-clig-the-basics-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:clig-the-basics ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-nushell-record-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-record ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:jdriven-nushell-basics-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-nushell-working-with-lists-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-working-with-lists ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-nushell-nushell-working-with-records-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-working-with-records ;
+  dibs:tag "recommended" .
+
+usage:structured-output-nushell-nushell-working-with-tables-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:reference ref:nushell-working-with-tables ;
   dibs:tag "pending-revision" .
