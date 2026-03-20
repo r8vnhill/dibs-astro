@@ -341,8 +341,8 @@ export function* walkLessons(
         yield {
             ...lesson,
             depth,
-            parents,
-            parentIds,
+            parents: Object.freeze([...parents]),
+            parentIds: Object.freeze([...parentIds]),
         };
 
         if (lesson.children?.length) {

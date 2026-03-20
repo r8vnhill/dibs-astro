@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { flattenLessons } from "../course-structure";
-import { arbLessonTree, countNodes } from "./course-structure.test-support";
+import { arbLessonTree, countNodes, preorderIds } from "./course-structure.test-support";
 
 describe("course-structure flattening (PBT)", () => {
     it("satisfies flattening invariants for random valid trees", () => {
@@ -10,6 +10,7 @@ describe("course-structure flattening (PBT)", () => {
                 const flattened = flattenLessons(tree);
 
                 expect(flattened.length).toBe(countNodes(tree));
+                expect(flattened.map((node) => node.id)).toEqual(preorderIds(tree));
 
                 if (flattened.length > 0) {
                     expect(flattened[0]?.depth).toBe(0);
@@ -24,6 +25,13 @@ describe("course-structure flattening (PBT)", () => {
                     expect(node.parents.length).toBe(node.depth);
                     expect(node.parentIds.length).toBe(node.depth);
                     expect(node.parents.length).toBe(node.parentIds.length);
+                    expect(Object.isFrozen(node.parents)).toBe(true);
+                    expect(Object.isFrozen(node.parentIds)).toBe(true);
+
+                    if (node.depth === 0) {
+                        expect(node.parents).toEqual([]);
+                        expect(node.parentIds).toEqual([]);
+                    }
 
                     const reconstructedParents = node.parentIds.map((id) => titleById.get(id));
                     expect(reconstructedParents).toEqual(node.parents);

@@ -128,6 +128,31 @@ export function countNodes(lessons: readonly Lesson[]): number {
 }
 
 /**
+ * Collects lesson IDs in pre-order traversal.
+ *
+ * This mirrors the ordering contract used by `flattenLessons`.
+ *
+ * @param lessons Root nodes of the forest.
+ * @returns IDs in pre-order.
+ */
+export function preorderIds(lessons: readonly Lesson[]): readonly string[] {
+    const result: string[] = [];
+
+    const visit = (nodes: readonly Lesson[]): void => {
+        for (const lesson of nodes) {
+            result.push(lesson.id);
+
+            if (lesson.children?.length) {
+                visit(lesson.children);
+            }
+        }
+    };
+
+    visit(lessons);
+    return result;
+}
+
+/**
  * Intermediate shape used to generate lesson trees before materializing them into [Lesson] values.
  *
  * This separation lets us:
