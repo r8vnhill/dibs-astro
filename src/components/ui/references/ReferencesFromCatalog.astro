@@ -13,6 +13,7 @@ import References from "./References.astro";
 import ScholarlyArticle from "./ScholarlyArticle.astro";
 import Thesis from "./Thesis.astro";
 import WebPage from "./WebPage.astro";
+import { resolveOptionalSlot } from "./reference-content";
 
 type Props = {
     source: BibliographyCatalog | Record<string, unknown>;
@@ -72,12 +73,6 @@ const titleSlotName = (ref: NormalizedReference): string => `title-${ref.id}`;
 const publicationSlotName = (ref: NormalizedReference): string => `publication-${ref.id}`;
 const institutionSlotName = (ref: NormalizedReference): string => `institution-${ref.id}`;
 
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
-
 const referencedIds = Array.from(
     new Set([
         ...grouped.recommended.map((entry) => entry.reference.id),
@@ -94,13 +89,9 @@ for (const id of referencedIds) {
             `institution-${id}`,
         ]
     ) {
-        try {
-            const html = await Astro.slots.render(slotName);
-            if (hasMeaningfulContent(html)) {
-                slotHtml.set(slotName, html);
-            }
-        } catch {
-            // Slot absent; keep defaults.
+        const resolvedSlot = await resolveOptionalSlot(Astro.slots, slotName);
+        if (resolvedSlot.hasContent) {
+            slotHtml.set(slotName, resolvedSlot.html);
         }
     }
 }

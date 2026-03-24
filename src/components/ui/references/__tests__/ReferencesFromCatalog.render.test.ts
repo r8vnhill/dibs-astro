@@ -25,6 +25,7 @@ const CATALOG: Record<string, unknown> = {
             "@id": "ref:chapter-1",
             "@type": "Book",
             name: "Chapter One",
+            pageStart: 9,
             isPartOf: { "@id": "work:book-1" },
             author: [{ "@id": "person:author-1" }],
         },
@@ -72,6 +73,7 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         });
 
         expect(html).toContain("Chapter One");
+        expect(html).toContain("(p. 9)");
         expect(html).not.toContain("Internal Draft");
     });
 

@@ -1,5 +1,8 @@
+import type { PageReference } from "./pages";
+
 export type SupportedReferenceType = "Book" | "WebPage" | "ScholarlyArticle" | "Thesis";
 export type ReferenceTag = "recommended" | "additional" | "pending-revision";
+export type { PageReference } from "./pages";
 
 export type AuthorRef = {
     fullName?: string;
@@ -27,7 +30,7 @@ export type NormalizedBookReference = NormalizedReferenceBase & {
     chapter: string;
     bookTitle: string;
     bookId?: string;
-    pages?: [number, number];
+    pages?: PageReference;
 };
 
 export type NormalizedWebReference = NormalizedReferenceBase & {
@@ -41,7 +44,7 @@ export type NormalizedArticleReference = NormalizedReferenceBase & {
     url: string;
     publication?: string;
     publicationId?: string;
-    pages?: [number, number];
+    pages?: PageReference;
 };
 
 export type NormalizedThesisReference = NormalizedReferenceBase & {

@@ -2,6 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
+import { resolveOptionalSlot, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
     title?: string;
@@ -11,21 +12,10 @@ type Props = {
 };
 
 const { title, url, institution, author }: Props = Astro.props;
-
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
-
-const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
-const institutionSlotHtml = Astro.slots.has("institution")
-    ? await Astro.slots.render("institution")
-    : "";
-const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
-const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
-const hasInstitutionSlot = hasMeaningfulContent(institutionSlotHtml);
-const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
+const titleSlot = await resolveOptionalSlot(Astro.slots, "title");
+const institutionSlot = await resolveOptionalSlot(Astro.slots, "institution");
+const authorSlot = await resolveOptionalSlot(Astro.slots, "author");
+const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
 ---
 
 <ListItem icon={icons.Student}>
@@ -34,32 +24,34 @@ const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
             href={url} target="_blank"
             rel="noopener noreferrer" class="hover:underline underline-offset-2"
         >
-            {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+            {titleSlot.hasContent ? <slot name="title" /> : title}
         </a>
     </Enquote>
 
     {
-        hasInstitutionSlot || institution ? (
+        institutionSlot.hasContent || institution ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">en</span>{" "}
-                {hasInstitutionSlot ? <span set:html={institutionSlotHtml} /> : institution}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
+                    " "
+                }
+                {institutionSlot.hasContent ? <slot name="institution" /> : institution}
             </span>
         ) : null
     }
 
     {
-        hasAuthorSlot || author ? (
+        authorSlot.hasContent || author ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">por</span>{" "}
-                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
+                    " "
+                }
+                {authorSlot.hasContent ? <slot name="author" /> : author}
             </span>
         ) : null
     }
 
     {
-        Astro.slots.has("description") ? (
+        descriptionSlot.hasContent ? (
             <div class="text-muted-foreground block">
                 <slot name="description" />
             </div>

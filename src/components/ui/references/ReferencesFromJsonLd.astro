@@ -7,6 +7,7 @@ import {
 } from "~/lib/bibliography";
 import AuthorList from "./AuthorList.astro";
 import Book from "./Book.astro";
+import { resolveOptionalSlot } from "./reference-content";
 import References from "./References.astro";
 import ScholarlyArticle from "./ScholarlyArticle.astro";
 import Thesis from "./Thesis.astro";
@@ -73,11 +74,6 @@ if (isObject(source) && Array.isArray(source.itemListElement)) {
         if (id && title) fallbackTitleById.set(id, title);
     }
 }
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
 
 type BookReference = Extract<NormalizedReference, { type: "Book" }>;
 type WebReference = Extract<NormalizedReference, { type: "WebPage" }>;
@@ -118,43 +114,27 @@ const thesisTitleProp = (ref: ThesisReference): { title: string } | Record<never
 
 for (const id of referencedIds) {
     const titleName = `title-${id}`;
-    try {
-        const html = await Astro.slots.render(titleName);
-        if (hasMeaningfulContent(html)) {
-            slotHtml.set(titleName, html);
-        }
-    } catch {
-        // Slot is absent; keep default normalized title.
+    const titleSlot = await resolveOptionalSlot(Astro.slots, titleName);
+    if (titleSlot.hasContent) {
+        slotHtml.set(titleName, titleSlot.html);
     }
 
     const descriptionName = `description-${id}`;
-    try {
-        const html = await Astro.slots.render(descriptionName);
-        if (hasMeaningfulContent(html)) {
-            slotHtml.set(descriptionName, html);
-        }
-    } catch {
-        // Slot is absent; no custom description.
+    const descriptionSlot = await resolveOptionalSlot(Astro.slots, descriptionName);
+    if (descriptionSlot.hasContent) {
+        slotHtml.set(descriptionName, descriptionSlot.html);
     }
 
     const publicationName = `publication-${id}`;
-    try {
-        const html = await Astro.slots.render(publicationName);
-        if (hasMeaningfulContent(html)) {
-            slotHtml.set(publicationName, html);
-        }
-    } catch {
-        // Slot is absent; no custom publication.
+    const publicationSlot = await resolveOptionalSlot(Astro.slots, publicationName);
+    if (publicationSlot.hasContent) {
+        slotHtml.set(publicationName, publicationSlot.html);
     }
 
     const institutionName = `institution-${id}`;
-    try {
-        const html = await Astro.slots.render(institutionName);
-        if (hasMeaningfulContent(html)) {
-            slotHtml.set(institutionName, html);
-        }
-    } catch {
-        // Slot is absent; no custom institution.
+    const institutionSlot = await resolveOptionalSlot(Astro.slots, institutionName);
+    if (institutionSlot.hasContent) {
+        slotHtml.set(institutionName, institutionSlot.html);
     }
 }
 ---

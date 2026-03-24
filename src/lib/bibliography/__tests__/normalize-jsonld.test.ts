@@ -34,7 +34,7 @@ describe("parseBibliography", () => {
             type: "Book",
             chapter: "The pipeline: Connecting commands",
             bookTitle: "Learn PowerShell in a month of lunches",
-            pages: [69, 83],
+            pages: { start: 69, end: 83 },
         });
     });
 
@@ -86,7 +86,7 @@ describe("parseBibliography", () => {
             type: "ScholarlyArticle",
             url: "https://doi.org/10.1145/3517193",
             publication: "ACM Transactions on Software Engineering and Methodology",
-            pages: [1, 22],
+            pages: { start: 1, end: 22 },
         });
     });
 

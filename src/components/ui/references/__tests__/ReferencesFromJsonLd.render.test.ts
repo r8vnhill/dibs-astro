@@ -33,6 +33,8 @@ const BIBLIOGRAPHY: Record<string, unknown> = {
             identifier: "bash-in-the-wild",
             name: "Bash in the Wild: Language Usage, Code Smells, and Bugs",
             url: "https://doi.org/10.1145/3517193",
+            pageStart: 22,
+            pageEnd: 1,
             isPartOf: {
                 "@type": "Periodical",
                 name: "ACM Transactions on Software Engineering and Methodology",
@@ -107,6 +109,7 @@ describe.concurrent("ReferencesFromJsonLd.astro render", () => {
 
         expect(html).toContain("Bash in the Wild: Language Usage, Code Smells, and Bugs");
         expect(html).toContain("ACM Transactions on Software Engineering and Methodology");
+        expect(html).toContain("(pp. 1-22)");
         expect(html).toContain("An Empirical Study on Bash Language Usage in Github");
         expect(html).toContain("University of Waterloo");
     });

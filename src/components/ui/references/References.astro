@@ -10,6 +10,7 @@ import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { List } from "~/components/ui/list";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { resolveOptionalSlot } from "./reference-content";
 
 // Define the props that this component accepts
 type Props = {
@@ -28,21 +29,8 @@ const {
     additionalHeading = "Referencias adicionales",
 }: Props = Astro.props;
 
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
-
-const recommendedHtml = Astro.slots.recommended
-    ? await Astro.slots.render("recommended")
-    : "";
-const additionalHtml = Astro.slots.additional
-    ? await Astro.slots.render("additional")
-    : "";
-
-const hasRecommended = hasMeaningfulContent(recommendedHtml);
-const hasAdditional = hasMeaningfulContent(additionalHtml);
+const recommendedSlot = await resolveOptionalSlot(Astro.slots, "recommended");
+const additionalSlot = await resolveOptionalSlot(Astro.slots, "additional");
 ---
 
 <NotesSection id="references" class="exclude-from-reading-time">
@@ -52,7 +40,7 @@ const hasAdditional = hasMeaningfulContent(additionalHtml);
     >{heading}</Heading>
 
     {
-        hasRecommended && (
+        recommendedSlot.hasContent && (
             <NotesSection id="recommended-references">
                 <Heading
                     headingLevel="h3" Icon={icons.Bookmarks}
@@ -68,7 +56,7 @@ const hasAdditional = hasMeaningfulContent(additionalHtml);
     }
 
     {
-        hasAdditional && (
+        additionalSlot.hasContent && (
             <NotesSection id="additional-references">
                 <Heading headingLevel="h3" Icon={icons.Files}>
                     {additionalHeading}

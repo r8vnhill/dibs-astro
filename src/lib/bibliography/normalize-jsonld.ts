@@ -7,6 +7,7 @@ import type {
     ResolvedReferenceGroups,
     ResolveGroupsOptions,
 } from "./types";
+import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 
 const SUPPORTED_TYPES = new Set(["Book", "WebPage", "ScholarlyArticle", "Thesis"]);
 
@@ -184,13 +185,8 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const hasAnyPage = pageStart !== undefined || pageEnd !== undefined;
-        let pages: [number, number] | undefined;
-        if (hasAnyPage) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         return {
             id,
@@ -219,13 +215,8 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const hasAnyPage = pageStart !== undefined || pageEnd !== undefined;
-        let pages: [number, number] | undefined;
-        if (hasAnyPage) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         const publication = getContainerTitle(rawItem.isPartOf) ?? publisherName;
 

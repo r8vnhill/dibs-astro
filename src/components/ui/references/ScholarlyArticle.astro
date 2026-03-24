@@ -1,49 +1,113 @@
 ---
+/**
+ * Renders a single scholarly article reference within the shared references list.
+ *
+ * This component is intended for journal articles, conference papers, and similar works that are
+ * cited as standalone texts but may also reference a containing publication such as a journal,
+ * proceedings volume, or magazine. The title is always rendered as an external link, while the
+ * remaining metadata is rendered only when meaningful content is available.
+ *
+ * ## Content can be provided in two ways:
+ *
+ * - Via props, using simple string metadata for common cases.
+ * - Via named slots, when the caller needs richer markup such as emphasis, inline links, small
+ *   annotations, or custom formatting.
+ *
+ * Named slots take precedence over their corresponding props, but only when their rendered content
+ * is considered meaningful. Empty slots, whitespace-only slots, or slots containing only ignored
+ * markup such as HTML comments are treated as absent so the component can safely fall back to the
+ * matching prop.
+ *
+ * ## Supported slots:
+ *
+ * - `title`: Replaces the linked title text.
+ * - `publication`: Replaces the container publication name rendered after the Spanish `en` label.
+ * - `author`: Replaces the author text rendered after the Spanish `por` label.
+ * - `description`: Adds an optional muted block below the main citation line.
+ *
+ * ## Metadata rendering rules:
+ *
+ * - `url` is required because the title is always rendered as an external link.
+ * - `pages` is formatted through the shared bibliography utilities so page references remain
+ *   consistent across all bibliography components.
+ * - Publication and author metadata are omitted entirely when neither a meaningful slot nor a
+ *   fallback prop is available.
+ * - The description block is rendered only when the `description` slot contains meaningful content.
+ *
+ * ## Accessibility and presentation notes:
+ *
+ * - The title is wrapped in English double quotation marks via {@link Enquote}.
+ * - The reference is displayed inside {@link ListItem} with the article/file icon so it aligns
+ *   visually with the rest of the bibliography system.
+ * - External links use `target="_blank"` together with `rel="noopener noreferrer"` to avoid
+ *   leaking the opener context.
+ */
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-
-type PageRange = number | [number, number];
+import { formatPageReference, type PageReference } from "~/lib/bibliography";
+import { resolveOptionalSlot, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
+    /**
+     * Fallback article title used when the `title` slot does not provide meaningful content.
+     *
+     * This should usually be the canonical title of the article or paper.
+     */
     title?: string;
+
+    /**
+     * Canonical external URL for the article.
+     *
+     * This may be a publisher URL, DOI resolver URL, repository URL, or another stable public
+     * reference target.
+     */
     url: string;
+
+    /**
+     * Fallback container publication name.
+     *
+     * Typical values include journal names, conference proceedings, magazines, edited volumes, or
+     * other parent publications in which the article appears.
+     */
     publication?: string;
-    pages?: PageRange;
+
+    /**
+     * Optional page reference for the cited article.
+     *
+     * The value is formatted by the shared bibliography layer through {@link formatPageReference}
+     * so that all reference components use the same normalization and display rules.
+     */
+    pages?: PageReference;
+
+    /**
+     * Fallback author text used when the `author` slot does not provide meaningful content.
+     *
+     * This is intentionally a plain string so callers can pass a compact inline representation such
+     * as a single author, multiple authors, or an institutional author.
+     */
     author?: string;
 };
 
 const { title, url, publication, pages, author }: Props = Astro.props;
 
-const normalizePages = (p?: PageRange) => {
-    if (p == null) return null;
-    if (typeof p === "number") return [p, p] as [number, number];
-    const [a, b] = p;
-    return a <= b ? [a, b] as [number, number] : [b, a] as [number, number];
-};
+// ## Resolve each optional metadata slot once during component setup. ##
+// The helper determines whether the slot exists and whether its rendered output contains meaningful
+// content. This lets the template remain declarative and prevents repeated slot-resolution logic
+// during rendering.
+const titleSlot = await resolveOptionalSlot(Astro.slots, "title");
+const publicationSlot = await resolveOptionalSlot(Astro.slots, "publication");
+const authorSlot = await resolveOptionalSlot(Astro.slots, "author");
+const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
 
-const fmtPages = (p?: PageRange) => {
-    const norm = normalizePages(p);
-    if (!norm) return null;
-    const [start, end] = norm;
-    return start === end ? `p. ${start}` : `pp. ${start}–${end}`;
-};
+// ## Pre-format the page reference so the template only deals with presentation. ##
+const pagesLabel = formatPageReference(pages);
 
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
-
-const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
-const publicationSlotHtml = Astro.slots.has("publication")
-    ? await Astro.slots.render("publication")
-    : "";
-const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
-const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
-const hasPublicationSlot = hasMeaningfulContent(publicationSlotHtml);
-const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
-const pagesLabel = fmtPages(pages);
+// ## Aggregate presence checks for optional inline metadata fragments. ##
+// A fragment is rendered when either a meaningful slot is present or the corresponding fallback
+// prop was provided.
+const hasPublication = publicationSlot.hasContent || !!publication;
+const hasAuthor = authorSlot.hasContent || !!author;
 ---
 
 <ListItem icon={icons.FileText}>
@@ -52,7 +116,7 @@ const pagesLabel = fmtPages(pages);
             href={url} target="_blank"
             rel="noopener noreferrer" class="hover:underline underline-offset-2"
         >
-            {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+            {titleSlot.hasContent ? <slot name="title" /> : title}
         </a>
     </Enquote>
 
@@ -65,29 +129,31 @@ const pagesLabel = fmtPages(pages);
     }
 
     {
-        hasPublicationSlot || publication ? (
+        hasPublication ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">en</span>{" "}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
+                    " "
+                }
                 <cite class="not-italic">
-                    {hasPublicationSlot ? <span set:html={publicationSlotHtml} /> : publication}
+                    {publicationSlot.hasContent ? <slot name="publication" /> : publication}
                 </cite>
             </span>
         ) : null
     }
 
     {
-        hasAuthorSlot || author ? (
+        hasAuthor ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">por</span>{" "}
-                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
+                    " "
+                }
+                {authorSlot.hasContent ? <slot name="author" /> : author}
             </span>
         ) : null
     }
 
     {
-        Astro.slots.has("description") ? (
+        descriptionSlot.hasContent ? (
             <div class="text-muted-foreground block">
                 <slot name="description" />
             </div>

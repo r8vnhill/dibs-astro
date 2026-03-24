@@ -31,6 +31,8 @@ Este documento proporciona contexto y convenciones esenciales para agentes de IA
 
 - El contenido educativo, la documentación y los mensajes de usuario están en **español**.
 - Los comentarios de código, nombres de variables y funciones siguen convenciones en inglés (estándar del ecosistema).
+- La documentación que vive dentro del código fuente también debe escribirse en **inglés**:
+  comentarios de archivo, docstrings, JSDoc/TSDoc y notas inline para quienes desarrollan.
 - Mantén consistencia con el tono formal-técnico del material existente.
 
 ## Arquitectura del proyecto

@@ -8,6 +8,12 @@ export {
     getUsagesForReference,
     loadBibliographyCatalog,
 } from "./catalog";
+export {
+    formatPageReference,
+    pageReferenceFromBounds,
+    isValidPageNumber,
+    normalizePageReference,
+} from "./pages";
 export { parseBibliography, resolveReferenceGroups } from "./normalize-jsonld";
 export type {
     AuthorRef,
@@ -34,3 +40,4 @@ export type {
     ResolveGroupsOptions,
     SupportedReferenceType,
 } from "./types";
+export type { PageReference } from "./pages";
