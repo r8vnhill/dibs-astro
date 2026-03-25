@@ -37,7 +37,8 @@ export interface ILessonCatalog {
     /**
      * Obtiene una lista plana de lecciones en orden.
      * Útil para navegación prev/next.
-     * @returns array lineal de lecciones
+     * Todas las lecciones planas tienen `href` garantizado.
+     * @returns array lineal de lecciones con href siempre presente
      */
-    flatten(): Promise<Lesson[]>;
+    flatten(): Promise<Array<Lesson & { href: string }>>;
 }

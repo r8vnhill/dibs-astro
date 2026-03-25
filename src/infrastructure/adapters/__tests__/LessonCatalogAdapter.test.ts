@@ -24,11 +24,13 @@ describe("LessonCatalogAdapter", () => {
         expect(Array.isArray(flattened)).toBe(true);
         expect(flattened.length).toBeGreaterThan(0);
 
-        // Verificar que todos tengan slug
+        // Todas las lecciones planas tienen slug, título, id y href garantizados
         flattened.forEach((lesson) => {
             expect(lesson.slug).toBeDefined();
             expect(lesson.title).toBeDefined();
             expect(lesson.id).toBeDefined();
+            expect(lesson.href).toBeDefined();
+            expect(lesson.href.startsWith("/")).toBe(true);
         });
     });
 
