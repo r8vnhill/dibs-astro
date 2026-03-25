@@ -14,7 +14,11 @@ export {
     isValidPageNumber,
     normalizePageReference,
 } from "./pages";
-export { parseBibliography, resolveReferenceGroups } from "./normalize-jsonld";
+export {
+    extractFallbackTitles,
+    parseBibliography,
+    resolveReferenceGroups,
+} from "./normalize-jsonld";
 export type {
     AuthorRef,
     BibliographyCatalog,

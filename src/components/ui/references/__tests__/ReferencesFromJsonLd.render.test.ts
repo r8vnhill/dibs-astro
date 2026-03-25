@@ -113,4 +113,158 @@ describe.concurrent("ReferencesFromJsonLd.astro render", () => {
         expect(html).toContain("An Empirical Study on Bash Language Usage in Github");
         expect(html).toContain("University of Waterloo");
     });
+
+    describe("DDT: reference types with slot overrides", () => {
+        test.each<{
+            name: string;
+            refId: string;
+            titleOverride?: string;
+            publicationOverride?: string;
+            institutionOverride?: string;
+            expectedTitle?: string;
+            expectedPublication?: string;
+            expectedInstitution?: string;
+            notContains?: string;
+        }>([
+            {
+                name: "Book with title override",
+                refId: "pipeline-connecting-commands",
+                titleOverride: "Custom Book Title",
+                expectedTitle: "Custom Book Title",
+                notContains: "The pipeline: Connecting commands",
+            },
+            {
+                name: "WebPage with title override",
+                refId: "collection-pipeline-fowler",
+                titleOverride: "Custom Web Title",
+                expectedTitle: "Custom Web Title",
+                notContains: "Collection Pipeline",
+            },
+            {
+                name: "Article with publication override",
+                refId: "bash-in-the-wild",
+                publicationOverride: "Custom Publication",
+                expectedTitle: "Bash in the Wild: Language Usage, Code Smells, and Bugs",
+                expectedPublication: "Custom Publication",
+                notContains: "ACM Transactions",
+            },
+            {
+                name: "Thesis with institution override",
+                refId: "bash-usage-thesis",
+                institutionOverride: "Custom University",
+                expectedTitle: "An Empirical Study on Bash Language Usage in Github",
+                expectedInstitution: "Custom University",
+                notContains: "University of Waterloo",
+            },
+        ])(
+            "$name",
+            async ({
+                refId,
+                titleOverride,
+                publicationOverride,
+                institutionOverride,
+                expectedTitle,
+                expectedPublication,
+                expectedInstitution,
+                notContains,
+            }) => {
+                const slots: Record<string, string> = {};
+
+                if (titleOverride) {
+                    slots[`title-${refId}`] = titleOverride;
+                }
+                if (publicationOverride) {
+                    slots[`publication-${refId}`] = publicationOverride;
+                }
+                if (institutionOverride) {
+                    slots[`institution-${refId}`] = institutionOverride;
+                }
+
+                const html = await renderReferences(
+                    {
+                        source: BIBLIOGRAPHY,
+                        recommended: [refId],
+                    },
+                    { slots },
+                );
+
+                if (expectedTitle) {
+                    expect(html).toContain(expectedTitle);
+                }
+                if (expectedPublication) {
+                    expect(html).toContain(expectedPublication);
+                }
+                if (expectedInstitution) {
+                    expect(html).toContain(expectedInstitution);
+                }
+                if (notContains) {
+                    expect(html).not.toContain(notContains);
+                }
+            },
+        );
+    });
+
+    describe("DDT: fallback title extraction from raw source", () => {
+        test.each<{
+            name: string;
+            source: Record<string, unknown>;
+            refId: string;
+            expectedInHtml: string;
+        }>([
+            {
+                name: "extracts name as fallback when available",
+                source: {
+                    itemListElement: [
+                        {
+                            "@type": "WebPage",
+                            identifier: "web-1",
+                            name: "Web Title from Name Field",
+                            url: "https://example.com",
+                        },
+                    ],
+                },
+                refId: "web-1",
+                expectedInHtml: "Web Title from Name Field",
+            },
+            {
+                name: "uses headline as fallback when name is missing",
+                source: {
+                    itemListElement: [
+                        {
+                            "@type": "WebPage",
+                            identifier: "web-2",
+                            headline: "Web Title from Headline",
+                            url: "https://example.com",
+                        },
+                    ],
+                },
+                refId: "web-2",
+                expectedInHtml: "Web Title from Headline",
+            },
+        ])("$name", async ({ source, refId, expectedInHtml }) => {
+            const html = await renderReferences({
+                source,
+                recommended: [refId],
+                strict: false,
+            });
+
+            expect(html).toContain(expectedInHtml);
+        });
+    });
+
+    test("renders recommended and additional sections together", async () => {
+        const html = await renderReferences({
+            source: BIBLIOGRAPHY,
+            recommended: ["pipeline-connecting-commands", "collection-pipeline-fowler"],
+            additional: ["bash-in-the-wild", "bash-usage-thesis"],
+        });
+
+        // Recommended section should contain first two references
+        expect(html).toContain("The pipeline: Connecting commands");
+        expect(html).toContain("Collection Pipeline");
+
+        // Additional section should contain last two references
+        expect(html).toContain("Bash in the Wild");
+        expect(html).toContain("University of Waterloo");
+    });
 });

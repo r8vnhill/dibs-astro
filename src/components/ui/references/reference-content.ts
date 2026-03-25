@@ -187,3 +187,82 @@ export async function resolveOptionalSlots<TName extends string>(
 
     return Object.fromEntries(entries) as Record<TName, ResolvedSlotContent>;
 }
+
+/**
+ * Prepared slot overrides for a single reference.
+ *
+ * Each property is optional; when absent or empty, the reference component falls back to its
+ * normalized property (e.g., `ref.title`, `ref.publication`, `ref.institution`).
+ */
+export type PreparedReferenceSlots = {
+    title?: string;
+    description?: string;
+    publication?: string;
+    institution?: string;
+};
+
+/**
+ * Prepared slot overrides keyed by reference id.
+ *
+ * This is the return type of `prepareSlotsForReferences`, encoding all meaningful slot overrides
+ * discovered during resolution across a batch of reference identifiers.
+ */
+export type PreparedReferenceSlotsById = Record<string, PreparedReferenceSlots>;
+
+/**
+ * Resolves all metadata slots for a batch of references in a single async pass.
+ *
+ * ## Behavior:
+ *
+ * This helper scans slots with synthesized names like `title-${id}`, `description-${id}`, etc.,
+ * classifying each as meaningful or empty. Meaningful slots are captured in the returned record;
+ * empty or absent slots are omitted.
+ *
+ * The result is a by-id record that references can use to check for overrides without
+ * duplicating the slot-name synthesis and resolution logic.
+ *
+ * ## Slot-name convention:
+ *
+ * - `title-${id}`: Title override
+ * - `description-${id}`: Description override
+ * - `publication-${id}`: Publication override (for articles)
+ * - `institution-${id}`: Institution override (for theses)
+ *
+ * @param slots Slot source implementing the minimal Astro-like contract.
+ * @param referencedIds Array of reference identifiers to scan for slots.
+ * @returns A record mapping each id to its prepared slot overrides (empty object if none found).
+ */
+export async function prepareSlotsForReferences(
+    slots: SlotLike,
+    referencedIds: string[],
+): Promise<PreparedReferenceSlotsById> {
+    const slotsByRef: PreparedReferenceSlotsById = {};
+
+    for (const id of referencedIds) {
+        const prepared: PreparedReferenceSlots = {};
+
+        const titleSlot = await resolveOptionalSlot(slots, `title-${id}`);
+        if (isMeaningfulSlotContent(titleSlot)) {
+            prepared.title = titleSlot.html;
+        }
+
+        const descriptionSlot = await resolveOptionalSlot(slots, `description-${id}`);
+        if (isMeaningfulSlotContent(descriptionSlot)) {
+            prepared.description = descriptionSlot.html;
+        }
+
+        const publicationSlot = await resolveOptionalSlot(slots, `publication-${id}`);
+        if (isMeaningfulSlotContent(publicationSlot)) {
+            prepared.publication = publicationSlot.html;
+        }
+
+        const institutionSlot = await resolveOptionalSlot(slots, `institution-${id}`);
+        if (isMeaningfulSlotContent(institutionSlot)) {
+            prepared.institution = institutionSlot.html;
+        }
+
+        slotsByRef[id] = prepared;
+    }
+
+    return slotsByRef;
+}

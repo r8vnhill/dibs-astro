@@ -1,25 +1,97 @@
 ---
+/**
+ * Assembles and renders bibliography references from a JSON-LD source.
+ *
+ * This component is the JSON-LD-facing orchestration layer for the references UI. It parses a
+ * bibliography-like source, resolves the requested recommended and additional reference groups,
+ * prepares any meaningful slot overrides, and then delegates per-reference rendering to
+ * {@link ReferenceEntry}.
+ *
+ * The component is intentionally coordination-oriented. It does not decide how individual
+ * reference kinds render. Rendering details for specific reference types belong in
+ * {@link ReferenceEntry} and the leaf reference components it uses.
+ *
+ * ## Responsibilities
+ *
+ * - Parse and validate the raw bibliography source.
+ * - Resolve the `recommended` and `additional` identifier groups.
+ * - Extract raw fallback titles from the original source when normalized titles are unavailable.
+ * - Resolve slot overrides only for the referenced identifiers.
+ * - Pass prepared reference data to {@link References} and {@link ReferenceEntry}.
+ *
+ * ## Rendering model
+ *
+ * The component renders through {@link References}, filling its `recommended` and `additional`
+ * slots only when those groups contain entries. Each resolved reference is rendered through a
+ * single {@link ReferenceEntry} instance.
+ *
+ * ## Error handling
+ *
+ * Parsing and group resolution both honor the `strict` flag. When `strict` is `true`, malformed
+ * data or inconsistent group references are expected to be treated as errors by the bibliography
+ * helpers. When `strict` is `false`, those helpers may recover more permissively.
+ */
+
 import {
-    type BibliographyJsonLd,
-    type NormalizedReference,
+    extractFallbackTitles,
     parseBibliography,
     resolveReferenceGroups,
 } from "~/lib/bibliography";
-import AuthorList from "./AuthorList.astro";
-import Book from "./Book.astro";
-import { resolveOptionalSlot } from "./reference-content";
+import type { BibliographyJsonLd } from "~/lib/bibliography";
+import { prepareSlotsForReferences } from "./reference-content";
+import ReferenceEntry from "./ReferenceEntry.astro";
 import References from "./References.astro";
-import ScholarlyArticle from "./ScholarlyArticle.astro";
-import Thesis from "./Thesis.astro";
-import WebPage from "./WebPage.astro";
 
+/**
+ * Props accepted by {@link ReferencesFromJsonLd}.
+ */
 type Props = {
-    source: BibliographyJsonLd | Record<string, unknown>;
+    /**
+     * Raw bibliography source.
+     *
+     * This is typically a JSON-LD bibliography object, but a broader record-shaped value is also
+     * accepted so the parsing layer can perform the final validation and normalization.
+     */
+    source:
+        | BibliographyJsonLd
+        | Record<string, unknown>;
+
+    /**
+     * Reference identifiers to render in the recommended section.
+     *
+     * The order of this array is preserved by the grouping helper unless the bibliography layer
+     * explicitly normalizes it differently.
+     */
     recommended: string[];
+
+    /**
+     * Reference identifiers to render in the additional section.
+     *
+     * Defaults to an empty array so the component can omit that section entirely when no
+     * additional references are requested.
+     */
     additional?: string[];
+
+    /**
+     * Optional heading for the outer {@link References} container.
+     */
     heading?: string;
+
+    /**
+     * Optional heading for the recommended references section.
+     */
     recommendedHeading?: string;
+
+    /**
+     * Optional heading for the additional references section.
+     */
     additionalHeading?: string;
+
+    /**
+     * Controls whether bibliography parsing and group resolution should behave strictly.
+     *
+     * Defaults to `true`.
+     */
     strict?: boolean;
 };
 
@@ -33,388 +105,97 @@ const {
     strict = true,
 }: Props = Astro.props;
 
+/**
+ * Parse the raw source into the normalized bibliography representation used by the rendering
+ * pipeline.
+ *
+ * The `sourceLabel` is included so downstream diagnostics can identify this component as the
+ * parsing boundary.
+ */
 const parsed = parseBibliography(source, {
     strict,
     sourceLabel: "ReferencesFromJsonLd",
 });
 
+/**
+ * Resolve the requested reference groups against the parsed bibliography.
+ *
+ * This step determines which references are available for the `recommended` and `additional` slots
+ * rendered below.
+ */
 const grouped = resolveReferenceGroups(parsed, recommended, additional, {
     strict,
     sourceLabel: "ReferencesFromJsonLd",
 });
 
-const descriptionSlotName = (ref: NormalizedReference): string => `description-${ref.id}`;
-const titleSlotName = (ref: NormalizedReference): string => `title-${ref.id}`;
-const publicationSlotName = (ref: ArticleReference): string => `publication-${ref.id}`;
-const institutionSlotName = (ref: ThesisReference): string => `institution-${ref.id}`;
+/**
+ * Extract fallback titles directly from the raw source.
+ *
+ * These titles are only used when the normalized reference model does not provide one, which helps
+ * preserve useful user-facing labels even when the source is partially incomplete.
+ */
+const fallbackTitles = extractFallbackTitles(source);
+
+/**
+ * Collect the distinct identifiers referenced by either group.
+ *
+ * Slot preparation is restricted to this set so the component resolves only the overrides that can
+ * actually be rendered.
+ */
+const referencedIds = Array.from(new Set([...recommended, ...additional]));
+
+/**
+ * Resolve per-reference slot overrides once for the whole render pass.
+ *
+ * The prepared slot data is shared by both groups so recommended and additional entries use the
+ * same slot-resolution rules and do not repeat work.
+ */
+const preparedSlots = await prepareSlotsForReferences(Astro.slots, referencedIds);
+
+/**
+ * Build the props object for the outer {@link References} wrapper.
+ *
+ * Optional headings are added only when present so the wrapper receives a minimal prop set.
+ */
 const referencesProps = {
     ...(heading ? { heading } : {}),
     ...(recommendedHeading ? { recommendedHeading } : {}),
     ...(additionalHeading ? { additionalHeading } : {}),
 };
-
-const referencedIds = Array.from(new Set([...recommended, ...additional]));
-const slotHtml = new Map<string, string>();
-const fallbackTitleById = new Map<string, string>();
-
-const isObject = (value: unknown): value is Record<string, unknown> =>
-    typeof value === "object" && value !== null;
-
-const asNonEmptyString = (value: unknown): string | undefined => {
-    if (typeof value !== "string") return undefined;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : undefined;
-};
-
-if (isObject(source) && Array.isArray(source.itemListElement)) {
-    for (const rawItem of source.itemListElement) {
-        if (!isObject(rawItem)) continue;
-        const id = asNonEmptyString(rawItem.identifier);
-        const title = asNonEmptyString(rawItem.name) ?? asNonEmptyString(rawItem.headline);
-        if (id && title) fallbackTitleById.set(id, title);
-    }
-}
-
-type BookReference = Extract<NormalizedReference, { type: "Book" }>;
-type WebReference = Extract<NormalizedReference, { type: "WebPage" }>;
-type ArticleReference = Extract<NormalizedReference, { type: "ScholarlyArticle" }>;
-type ThesisReference = Extract<NormalizedReference, { type: "Thesis" }>;
-
-const resolvedBookChapter = (ref: BookReference): string | undefined =>
-    ref.chapter || ref.title || fallbackTitleById.get(ref.id);
-
-const resolvedWebTitle = (ref: WebReference): string | undefined =>
-    ref.title || fallbackTitleById.get(ref.id);
-
-const resolvedArticleTitle = (ref: ArticleReference): string | undefined =>
-    ref.title || fallbackTitleById.get(ref.id);
-
-const resolvedThesisTitle = (ref: ThesisReference): string | undefined =>
-    ref.title || fallbackTitleById.get(ref.id);
-
-const bookChapterProp = (ref: BookReference): { chapter: string } | Record<never, never> => {
-    const chapter = resolvedBookChapter(ref);
-    return chapter ? { chapter } : {};
-};
-
-const webTitleProp = (ref: WebReference): { title: string } | Record<never, never> => {
-    const title = resolvedWebTitle(ref);
-    return title ? { title } : {};
-};
-
-const articleTitleProp = (ref: ArticleReference): { title: string } | Record<never, never> => {
-    const title = resolvedArticleTitle(ref);
-    return title ? { title } : {};
-};
-
-const thesisTitleProp = (ref: ThesisReference): { title: string } | Record<never, never> => {
-    const title = resolvedThesisTitle(ref);
-    return title ? { title } : {};
-};
-
-for (const id of referencedIds) {
-    const titleName = `title-${id}`;
-    const titleSlot = await resolveOptionalSlot(Astro.slots, titleName);
-    if (titleSlot.kind === "meaningful") {
-        slotHtml.set(titleName, titleSlot.html);
-    }
-
-    const descriptionName = `description-${id}`;
-    const descriptionSlot = await resolveOptionalSlot(Astro.slots, descriptionName);
-    if (descriptionSlot.kind === "meaningful") {
-        slotHtml.set(descriptionName, descriptionSlot.html);
-    }
-
-    const publicationName = `publication-${id}`;
-    const publicationSlot = await resolveOptionalSlot(Astro.slots, publicationName);
-    if (publicationSlot.kind === "meaningful") {
-        slotHtml.set(publicationName, publicationSlot.html);
-    }
-
-    const institutionName = `institution-${id}`;
-    const institutionSlot = await resolveOptionalSlot(Astro.slots, institutionName);
-    if (institutionSlot.kind === "meaningful") {
-        slotHtml.set(institutionName, institutionSlot.html);
-    }
-}
 ---
 
 <References {...referencesProps}>
-    <Fragment slot="recommended">
-        {
-            grouped.recommended.map((ref) =>
-                ref.type === "Book"
-                    ? (
-                <Book
-                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="chapter">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
+    {
+        grouped.recommended.length > 0 && (
+            <Fragment slot="recommended">
+                {
+                    grouped.recommended.map((ref) => (
+                        <ReferenceEntry
+                            reference={ref} preparedSlots={preparedSlots[ref.id] || {}}
+                            {...(fallbackTitles[ref.id]
+                                ? { fallbackTitle: fallbackTitles[ref.id] }
+                                : {})}
+                        />
+                    ))
+                }
+            </Fragment>
+        )
+    }
 
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="authors" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </Book>
-            )
-            : ref.type === "WebPage"
-            ? (
-                <WebPage
-                    {...webTitleProp(ref)} url={ref.url}
-                    {...(ref.location ? { location: ref.location } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </WebPage>
-            )
-            : ref.type === "ScholarlyArticle"
-            ? (
-                <ScholarlyArticle
-                    {...articleTitleProp(ref)} url={ref.url}
-                    {...(ref.publication ? { publication: ref.publication } : {})}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(publicationSlotName(ref)) ? (
-                            <Fragment slot="publication">
-                                <span set:html={slotHtml.get(publicationSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </ScholarlyArticle>
-            )
-            : (
-                <Thesis
-                    {...thesisTitleProp(ref)} url={ref.url}
-                    {...(ref.institution ? { institution: ref.institution } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(institutionSlotName(ref)) ? (
-                            <Fragment slot="institution">
-                                <span set:html={slotHtml.get(institutionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </Thesis>
-            )
-            )
-        }
-    </Fragment>
-
-    <Fragment slot="additional">
-        {
-            grouped.additional.map((ref) =>
-                ref.type === "Book"
-                    ? (
-                <Book
-                    {...bookChapterProp(ref)} bookTitle={ref.bookTitle}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="chapter">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="authors" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </Book>
-            )
-            : ref.type === "WebPage"
-            ? (
-                <WebPage
-                    {...webTitleProp(ref)} url={ref.url}
-                    {...(ref.location ? { location: ref.location } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </WebPage>
-            )
-            : ref.type === "ScholarlyArticle"
-            ? (
-                <ScholarlyArticle
-                    {...articleTitleProp(ref)} url={ref.url}
-                    {...(ref.publication ? { publication: ref.publication } : {})}
-                    {...(ref.pages ? { pages: ref.pages } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(publicationSlotName(ref)) ? (
-                            <Fragment slot="publication">
-                                <span set:html={slotHtml.get(publicationSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </ScholarlyArticle>
-            )
-            : (
-                <Thesis
-                    {...thesisTitleProp(ref)} url={ref.url}
-                    {...(ref.institution ? { institution: ref.institution } : {})}
-                >
-                    {
-                        slotHtml.has(titleSlotName(ref)) ? (
-                            <Fragment slot="title">
-                                <span set:html={slotHtml.get(titleSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(institutionSlotName(ref)) ? (
-                            <Fragment slot="institution">
-                                <span set:html={slotHtml.get(institutionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-
-                    {
-                        ref.authors.length > 0 ? (
-                            <AuthorList slot="author" authors={ref.authors} />
-                        ) : null
-                    }
-
-                    {
-                        slotHtml.has(descriptionSlotName(ref)) ? (
-                            <Fragment slot="description">
-                                <div set:html={slotHtml.get(descriptionSlotName(ref))} />
-                            </Fragment>
-                        ) : null
-                    }
-                </Thesis>
-            )
-            )
-        }
-    </Fragment>
+    {
+        grouped.additional.length > 0 && (
+            <Fragment slot="additional">
+                {
+                    grouped.additional.map((ref) => (
+                        <ReferenceEntry
+                            reference={ref} preparedSlots={preparedSlots[ref.id] || {}}
+                            {...(fallbackTitles[ref.id]
+                                ? { fallbackTitle: fallbackTitles[ref.id] }
+                                : {})}
+                        />
+                    ))
+                }
+            </Fragment>
+        )
+    }
 </References>

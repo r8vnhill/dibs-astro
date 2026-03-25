@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseBibliography } from "../normalize-jsonld";
+import { extractFallbackTitles, parseBibliography } from "../normalize-jsonld";
 
 describe("parseBibliography", () => {
     it("parses a valid Book reference with authors and pages", () => {
@@ -170,5 +170,136 @@ describe("parseBibliography", () => {
                 ],
             })
         ).toThrow(/unsupported @type/i);
+    });
+});
+
+describe("extractFallbackTitles", () => {
+    it("extracts name as fallback title when present", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    identifier: "ref-1",
+                    name: "Reference Title",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({ "ref-1": "Reference Title" });
+    });
+
+    it("uses headline as fallback when name is missing", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    identifier: "ref-1",
+                    headline: "Alternative Title",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({ "ref-1": "Alternative Title" });
+    });
+
+    it("prefers name over headline", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    identifier: "ref-1",
+                    name: "Preferred Title",
+                    headline: "Alternative Title",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({ "ref-1": "Preferred Title" });
+    });
+
+    it("skips items without identifier", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    name: "Orphan Title",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({});
+    });
+
+    it("skips items with empty or whitespace-only titles", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    identifier: "ref-1",
+                    name: "   ",
+                    headline: "",
+                },
+                {
+                    identifier: "ref-2",
+                    name: "",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({});
+    });
+
+    it("skips non-object items in itemListElement", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                "string-item",
+                123,
+                null,
+                {
+                    identifier: "ref-1",
+                    name: "Valid Title",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({ "ref-1": "Valid Title" });
+    });
+
+    it("returns empty object when source is not an object", () => {
+        expect(extractFallbackTitles(null)).toEqual({});
+        expect(extractFallbackTitles(undefined)).toEqual({});
+        expect(extractFallbackTitles("string")).toEqual({});
+        expect(extractFallbackTitles(123)).toEqual({});
+    });
+
+    it("returns empty object when itemListElement is missing or not an array", () => {
+        expect(extractFallbackTitles({})).toEqual({});
+        expect(extractFallbackTitles({ itemListElement: null })).toEqual({});
+        expect(extractFallbackTitles({ itemListElement: "not-array" })).toEqual({});
+    });
+
+    it("handles multiple references with mixed valid and invalid entries", () => {
+        const titles = extractFallbackTitles({
+            itemListElement: [
+                {
+                    identifier: "ref-1",
+                    name: "First Reference",
+                },
+                {
+                    // missing identifier
+                    name: "Orphaned",
+                },
+                {
+                    identifier: "ref-2",
+                    headline: "Second Reference",
+                },
+                null,
+                {
+                    identifier: "ref-3",
+                    name: "",
+                    headline: "   ",
+                },
+            ],
+        });
+
+        expect(titles).toEqual({
+            "ref-1": "First Reference",
+            "ref-2": "Second Reference",
+        });
     });
 });
