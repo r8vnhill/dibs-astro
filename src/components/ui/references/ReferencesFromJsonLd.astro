@@ -115,25 +115,25 @@ const thesisTitleProp = (ref: ThesisReference): { title: string } | Record<never
 for (const id of referencedIds) {
     const titleName = `title-${id}`;
     const titleSlot = await resolveOptionalSlot(Astro.slots, titleName);
-    if (titleSlot.hasContent) {
+    if (titleSlot.kind === "meaningful") {
         slotHtml.set(titleName, titleSlot.html);
     }
 
     const descriptionName = `description-${id}`;
     const descriptionSlot = await resolveOptionalSlot(Astro.slots, descriptionName);
-    if (descriptionSlot.hasContent) {
+    if (descriptionSlot.kind === "meaningful") {
         slotHtml.set(descriptionName, descriptionSlot.html);
     }
 
     const publicationName = `publication-${id}`;
     const publicationSlot = await resolveOptionalSlot(Astro.slots, publicationName);
-    if (publicationSlot.hasContent) {
+    if (publicationSlot.kind === "meaningful") {
         slotHtml.set(publicationName, publicationSlot.html);
     }
 
     const institutionName = `institution-${id}`;
     const institutionSlot = await resolveOptionalSlot(Astro.slots, institutionName);
-    if (institutionSlot.hasContent) {
+    if (institutionSlot.kind === "meaningful") {
         slotHtml.set(institutionName, institutionSlot.html);
     }
 }

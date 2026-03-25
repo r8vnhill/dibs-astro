@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { resolveOptionalSlot, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
     title?: string;
@@ -13,10 +13,12 @@ type Props = {
 };
 
 const { title, url, location, author, typeLabel = "Referencia" }: Props = Astro.props;
-const titleSlot = await resolveOptionalSlot(Astro.slots, "title");
-const locationSlot = await resolveOptionalSlot(Astro.slots, "location");
-const authorSlot = await resolveOptionalSlot(Astro.slots, "author");
-const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
+const {
+    title: titleSlot,
+    location: locationSlot,
+    author: authorSlot,
+    description: descriptionSlot,
+} = await resolveOptionalSlots(Astro.slots, ["title", "location", "author", "description"]);
 ---
 
 <ListItem icon={icons.FileText}>
@@ -28,36 +30,36 @@ const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
                     href={url} target="_blank"
                     rel="noopener noreferrer" class="hover:underline underline-offset-2"
                 >
-                    {titleSlot.hasContent ? <slot name="title" /> : title}
+                    {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
                 </a>
-            ) : <span>{titleSlot.hasContent ? <slot name="title" /> : title}</span>
+            ) : <span>{titleSlot.kind === "meaningful" ? <slot name="title" /> : title}</span>
         }
     </Enquote>
 
     {
-        locationSlot.hasContent || location ? (
+        locationSlot.kind === "meaningful" || location ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
-                {locationSlot.hasContent ? <slot name="location" /> : location}
+                {locationSlot.kind === "meaningful" ? <slot name="location" /> : location}
             </span>
         ) : null
     }
 
     {
-        authorSlot.hasContent || author ? (
+        authorSlot.kind === "meaningful" || author ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
                     " "
                 }
-                {authorSlot.hasContent ? <slot name="author" /> : author}
+                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
             </span>
         ) : null
     }
 
     {
-        descriptionSlot.hasContent ? (
+        descriptionSlot.kind === "meaningful" ? (
             <div class="text-muted-foreground block">
                 <slot name="description" />
             </div>

@@ -3,7 +3,7 @@ import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import { formatPageReference, type PageReference } from "~/lib/bibliography";
-import { resolveOptionalSlot, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
     chapter?: string;
@@ -35,16 +35,18 @@ const pagesLabel = formatPageReference(pages);
 const authorsInline = authorsText(authors, locale);
 const byWord = locale === "en" ? "by" : SPANISH_REFERENCE_META_LABELS.by;
 const inWord = locale === "en" ? "in" : SPANISH_REFERENCE_META_LABELS.in;
-const chapterSlot = await resolveOptionalSlot(Astro.slots, "chapter");
-const bookTitleSlot = await resolveOptionalSlot(Astro.slots, "bookTitle");
-const authorsSlot = await resolveOptionalSlot(Astro.slots, "authors");
-const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
+const {
+    chapter: chapterSlot,
+    bookTitle: bookTitleSlot,
+    authors: authorsSlot,
+    description: descriptionSlot,
+} = await resolveOptionalSlots(Astro.slots, ["chapter", "bookTitle", "authors", "description"]);
 ---
 
 <ListItem icon={icons.Book} class="space-y-1">
     <div class="flex flex-wrap items-baseline gap-x-1.5">
         <Enquote type={quoteType}>
-            {chapterSlot.hasContent ? <slot name="chapter" /> : chapter}
+            {chapterSlot.kind === "meaningful" ? <slot name="chapter" /> : chapter}
         </Enquote>
 
         {
@@ -58,7 +60,7 @@ const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
         <span class="text-muted-foreground">{inWord}</span>
 
         <cite class:list={["not-italic", italicTitle && "italic"]}>
-            {bookTitleSlot.hasContent ? <slot name="bookTitle" /> : bookTitle}
+            {bookTitleSlot.kind === "meaningful" ? <slot name="bookTitle" /> : bookTitle}
         </cite>
 
         <span class="text-muted-foreground">{byWord}</span>
@@ -66,12 +68,12 @@ const descriptionSlot = await resolveOptionalSlot(Astro.slots, "description");
         {
             authorsInline
                 ? <span>{authorsInline}</span>
-            : (authorsSlot.hasContent ? <slot name="authors" /> : null)
+            : (authorsSlot.kind === "meaningful" ? <slot name="authors" /> : null)
         }
     </div>
 
     {
-        descriptionSlot.hasContent && (
+        descriptionSlot.kind === "meaningful" && (
             <div class="text-muted-foreground">
                 <slot name="description" />
             </div>

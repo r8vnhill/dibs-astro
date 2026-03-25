@@ -10,7 +10,7 @@ import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { List } from "~/components/ui/list";
 import NotesSection from "~/layouts/NotesSection.astro";
-import { resolveOptionalSlot } from "./reference-content";
+import { resolveOptionalSlots } from "./reference-content";
 
 // Define the props that this component accepts
 type Props = {
@@ -29,8 +29,10 @@ const {
     additionalHeading = "Referencias adicionales",
 }: Props = Astro.props;
 
-const recommendedSlot = await resolveOptionalSlot(Astro.slots, "recommended");
-const additionalSlot = await resolveOptionalSlot(Astro.slots, "additional");
+const {
+    recommended: recommendedSlot,
+    additional: additionalSlot,
+} = await resolveOptionalSlots(Astro.slots, ["recommended", "additional"]);
 ---
 
 <NotesSection id="references" class="exclude-from-reading-time">
@@ -40,7 +42,7 @@ const additionalSlot = await resolveOptionalSlot(Astro.slots, "additional");
     >{heading}</Heading>
 
     {
-        recommendedSlot.hasContent && (
+        recommendedSlot.kind === "meaningful" && (
             <NotesSection id="recommended-references">
                 <Heading
                     headingLevel="h3" Icon={icons.Bookmarks}
@@ -56,7 +58,7 @@ const additionalSlot = await resolveOptionalSlot(Astro.slots, "additional");
     }
 
     {
-        additionalSlot.hasContent && (
+        additionalSlot.kind === "meaningful" && (
             <NotesSection id="additional-references">
                 <Heading headingLevel="h3" Icon={icons.Files}>
                     {additionalHeading}

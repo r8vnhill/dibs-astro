@@ -30,7 +30,7 @@ describe("pages utilities", () => {
     });
 
     it("keeps a missing end as a single-page reference", () => {
-        expect(normalizePageReference({ start: 9, end: undefined })).toEqual({ start: 9 });
+        expect(normalizePageReference({ start: 9 })).toEqual({ start: 9 });
     });
 
     it("rejects invalid values", () => {

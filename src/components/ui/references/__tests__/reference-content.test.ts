@@ -1,21 +1,36 @@
 import { describe, expect, it, vi } from "vitest";
-import { hasMeaningfulContent, resolveOptionalSlot } from "../reference-content";
+import {
+    hasMeaningfulTextContent,
+    resolveOptionalSlot,
+    resolveOptionalSlots,
+} from "../reference-content";
 
 describe("reference-content utilities", () => {
     it("detects meaningful plain text", () => {
-        expect(hasMeaningfulContent("Texto")).toBe(true);
+        expect(hasMeaningfulTextContent("Texto")).toBe(true);
     });
 
     it("detects meaningful html with text", () => {
-        expect(hasMeaningfulContent("<strong>Texto</strong>")).toBe(true);
+        expect(hasMeaningfulTextContent("<strong>Texto</strong>")).toBe(true);
     });
 
     it("rejects empty html", () => {
-        expect(hasMeaningfulContent("   ")).toBe(false);
+        expect(hasMeaningfulTextContent("   ")).toBe(false);
     });
 
     it("rejects comment-only html", () => {
-        expect(hasMeaningfulContent("<!-- comentario -->")).toBe(false);
+        expect(hasMeaningfulTextContent("<!-- comentario -->")).toBe(false);
+    });
+
+    it("rejects tag-only and media-only html", () => {
+        expect(hasMeaningfulTextContent("<span></span>")).toBe(false);
+        expect(hasMeaningfulTextContent("<img src=\"x\" alt=\"\" />")).toBe(false);
+    });
+
+    it("rejects non-breaking-space entities as empty text", () => {
+        expect(hasMeaningfulTextContent("&nbsp;")).toBe(false);
+        expect(hasMeaningfulTextContent("&#160;")).toBe(false);
+        expect(hasMeaningfulTextContent("&#xA0;")).toBe(false);
     });
 
     it("returns empty result when slot is absent", async () => {
@@ -25,7 +40,7 @@ describe("reference-content utilities", () => {
         };
 
         await expect(resolveOptionalSlot(slots, "title")).resolves.toEqual({
-            hasContent: false,
+            kind: "empty",
             html: "",
         });
         expect(slots.render).not.toHaveBeenCalled();
@@ -38,8 +53,8 @@ describe("reference-content utilities", () => {
         };
 
         await expect(resolveOptionalSlot(slots, "title")).resolves.toEqual({
-            hasContent: false,
-            html: "<!-- vacío -->",
+            kind: "empty",
+            html: "",
         });
     });
 
@@ -50,8 +65,37 @@ describe("reference-content utilities", () => {
         };
 
         await expect(resolveOptionalSlot(slots, "title")).resolves.toEqual({
-            hasContent: true,
+            kind: "meaningful",
             html: "<em>Título</em>",
         });
+    });
+
+    it("resolves multiple optional slots in one call", async () => {
+        const slotValues: Record<string, string> = {
+            title: "<strong>Título</strong>",
+            author: "<!-- vacío -->",
+        };
+
+        const slots = {
+            has: vi.fn((name: string) => name in slotValues),
+            render: vi.fn((name: string) => Promise.resolve(slotValues[name] ?? "")),
+        };
+
+        const resolved = await resolveOptionalSlots(slots, ["title", "author", "publication"]);
+
+        expect(resolved).toEqual({
+            title: { kind: "meaningful", html: "<strong>Título</strong>" },
+            author: { kind: "empty", html: "" },
+            publication: { kind: "empty", html: "" },
+        });
+    });
+
+    it("returns an empty object for an empty slot list", async () => {
+        const slots = {
+            has: vi.fn().mockReturnValue(false),
+            render: vi.fn().mockResolvedValue(""),
+        };
+
+        await expect(resolveOptionalSlots(slots, [])).resolves.toEqual({});
     });
 });

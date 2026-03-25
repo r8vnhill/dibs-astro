@@ -9,11 +9,11 @@ import {
 } from "~/lib/bibliography";
 import AuthorList from "./AuthorList.astro";
 import Book from "./Book.astro";
+import { resolveOptionalSlot } from "./reference-content";
 import References from "./References.astro";
 import ScholarlyArticle from "./ScholarlyArticle.astro";
 import Thesis from "./Thesis.astro";
 import WebPage from "./WebPage.astro";
-import { resolveOptionalSlot } from "./reference-content";
 
 type Props = {
     source: BibliographyCatalog | Record<string, unknown>;
@@ -90,7 +90,7 @@ for (const id of referencedIds) {
         ]
     ) {
         const resolvedSlot = await resolveOptionalSlot(Astro.slots, slotName);
-        if (resolvedSlot.hasContent) {
+        if (resolvedSlot.kind === "meaningful") {
             slotHtml.set(slotName, resolvedSlot.html);
         }
     }
