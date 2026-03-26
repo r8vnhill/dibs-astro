@@ -20,7 +20,7 @@ import {
     PowerShellInline,
     XmlBlock,
 } from "~/components/ui/code";
-import { Dash, Mono } from "~/components/ui/font";
+import { Arrow, Dash, Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -143,7 +143,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 )
                 begin { $count = 0 }
                 process { $count++ }
-                end { [pscustomobject]@{ ItemsProcessed = $count } }
+                end { [PSCustomObject]@{ ItemsProcessed = $count } }
             `}
         >
             <span slot="title">Estructura mínima: begin → process → end</span>
@@ -188,7 +188,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     process {
                         Write-Verbose "[process] Processing number: $Number"
                         $count++
-                        [pscustomobject]@{
+                        [PSCustomObject]@{
                             Original = $Number
                             Doubled  = $Number * 2
                         }
@@ -280,38 +280,39 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 headingLevel="h3" Icon={icons.Tag}
                 slot="heading"
             >
-                <Mono>ByPropertyName</Mono>: un cmdlet, múltiples productores
+                <Mono>ByPropertyName</Mono>: un comando, múltiples productores
             </Heading>
 
             <P>
-                La estrategia <PowerShellInline>ValueFromPipeline</PowerShellInline> funciona cuando
-                tu parámetro consume el <B>objeto completo</B>. Pero a menudo trabajas con <B
-                >objetos ricos</B> (archivos, registros, servicios) y solo necesitas <B>algunas
-                    propiedades</B> específicas.
+                <PowerShellInline>ValueFromPipeline</PowerShellInline> funciona cuando PowerShell
+                puede enlazar directamente el valor u objeto entrante al parámetro.
+                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> entra en juego
+                cuando no quieres enlazar el objeto completo, sino <B>extraer propiedades
+                    concretas</B> del objeto entrante.
             </P>
 
             <P>
-                Aquí entra <B><PowerShellInline
-                    >ValueFromPipelineByPropertyName</PowerShellInline></B>. En lugar de consumir el
-                objeto entero, PowerShell <I>busca propiedades por nombre</I> en el objeto entrante
-                y las enlaza a tus parámetros. Resultado: el mismo cmdlet puede aceptar productores
-                completamente distintos siempre que tengan propiedades compatibles.
+                A diferencia del ejemplo anterior, aquí lo importante no es el valor en sí, sino
+                <B>cómo se llaman las propiedades</B> del objeto que entra al pipeline. En cada
+                iteración, PowerShell toma <B>un único objeto entrante</B> y trata de rellenar los
+                parámetros buscando nombres compatibles en ese objeto. No combina propiedades de
+                productores distintos automáticamente.
             </P>
 
             <List>
                 <ListItem icon={icons.ArrowRight}>
-                    <B><Mono>ByValue</Mono>:</B> PowerShell intenta enlazar directamente el valor
-                    entrante al parámetro, convirtiéndolo si el tipo declarado lo permite.
+                    <B><Mono>ByValue</Mono>:</B> PowerShell intenta enlazar directamente el objeto o
+                    valor entrante al parámetro.
                 </ListItem>
                 <ListItem icon={icons.Tag}>
-                    <B><Mono>ByPropertyName</Mono>:</B> el parámetro se rellena <B>buscando</B> una
-                    propiedad compatible en el objeto entrante.
+                    <B><Mono>ByPropertyName</Mono>:</B> PowerShell intenta rellenar el parámetro
+                    buscando una propiedad compatible en el objeto entrante.
                 </ListItem>
             </List>
 
             <P>
-                Ejemplo: validar integridad de archivos. Recibiremos una ruta y un hash esperado (de
-                cualquier productor) y emitiremos un objeto con el resultado.
+                Ejemplo: validar integridad de archivos. Recibiremos objetos que expongan una ruta
+                y, opcionalmente, un hash esperado, usando nombres de propiedad compatibles.
             </P>
 
             <PowerShellBlock
@@ -336,7 +337,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     process {
                         $actual = (Get-FileHash -LiteralPath $Path -Algorithm $Algorithm).Hash
 
-                        [pscustomobject]@{
+                        [PSCustomObject]@{
                             Path         = $Path
                             Algorithm    = $Algorithm
                             ActualHash   = $actual
@@ -352,6 +353,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     slot="source"
                 />
             </PowerShellBlock>
+
+            <P>
+                En este ejemplo, PowerShell puede resolver el <I>binding</I> así:
+            </P>
+
+            <List>
+                <ListItem icon={icons.Signpost}>
+                    <Mono>path</Mono>, <Mono>Path</Mono>, <Mono>FullName</Mono> o <Mono
+                    >LiteralPath</Mono> <Arrow direction="right" /> <Mono>Path</Mono>
+                </ListItem>
+                <ListItem icon={icons.Signpost}>
+                    <Mono>hash</Mono> o <Mono>Hash</Mono> <Arrow direction="right" /> <Mono
+                    >ExpectedHash</Mono>
+                </ListItem>
+            </List>
 
             <Explanation headingLevel="h4">
                 <List>
@@ -377,12 +393,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                     <ListItem icon={icons.Hash}>
                         <B><PowerShellInline code="(Get-FileHash ...).Hash" />:</B>
-                        <PowerShellInline>Get-FileHash</PowerShellInline> devuelve un objeto con
-                        información del cálculo (incluyendo el algoritmo y el hash). Al acceder a la
-                        propiedad <PowerShellInline>.Hash</PowerShellInline> extraemos el valor de
-                        hash como string para compararlo con <Mono>ExpectedHash</Mono>. Esta
-                        comparación produce <Mono>Match</Mono> (true/false), o <Mono>null</Mono> si
-                        no se entregó un hash esperado.
+                        <PowerShellInline>Get-FileHash</PowerShellInline> devuelve un objeto. Al
+                        acceder a la propiedad <PowerShellInline>.Hash</PowerShellInline>
+                        extraemos solo el valor del hash como string, que luego se compara con
+                        <PowerShellInline>ExpectedHash</PowerShellInline> para calcular
+                        <PowerShellInline>Match</PowerShellInline>.
                     </ListItem>
                 </List>
 
@@ -392,6 +407,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     >Match</Mono>), lo que permite seguir componiendo el pipeline: filtrar por <Mono
                     >Match</Mono>, ordenar, exportar a JSON/CSV, etc.
                 </P>
+
+                <P>
+                    Si el objeto entrante no trae una propiedad compatible con <PowerShellInline
+                    >ExpectedHash</PowerShellInline>, el parámetro queda sin valor y
+                    <PowerShellInline>Match</PowerShellInline> se emite como <PowerShellInline
+                    >$null</PowerShellInline>.
+                </P>
             </Explanation>
 
             <NotesSection id="h4-same-cmdlet-different-producers">
@@ -399,24 +421,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     headingLevel="h4" Icon={icons.ArrowsMerge}
                     slot="heading"
                 >
-                    El mismo cmdlet, dos productores distintos
+                    El mismo comando, dos fuentes de objetos distintas
                 </Heading>
 
                 <P>
                     La ventaja de <PowerShellInline
-                    >ValueFromPipelineByPropertyName</PowerShellInline> es que el cmdlet <B>no
-                        depende</B> de un productor específico. Mientras exista una propiedad
-                    compatible (o un alias), el pipeline encaja sin <Enquote>adaptadores</Enquote>
-                    como <PowerShellInline code="Select-Object -Property ..." />.
+                    >ValueFromPipelineByPropertyName</PowerShellInline> es que el comando no queda
+                    amarrado a un único productor. Puede recibir objetos de orígenes distintos,
+                    siempre que cada objeto tenga propiedades con nombres compatibles (o aliases
+                    compatibles).
                 </P>
 
                 <P>
                     En este ejemplo, el productor entrega una ruta y (opcionalmente) un hash
-                    esperado. Como <Mono>ExpectedHash</Mono> <B>no</B> es obligatorio, el cmdlet
-                    también puede usarse en modo <Enquote>inspección</Enquote> solo para calcular
-                    hashes (por ejemplo, desde <PowerShellInline>Get-ChildItem</PowerShellInline>),
-                    pero la idea central aquí es mostrar <B>dos productores exportados</B>: JSON y
-                    CLIXML.
+                    esperado. Como <Mono>ExpectedHash</Mono> <B>no</B> es obligatorio, el comando
+                    también puede usarse solo para calcular hashes. La idea central aquí es mostrar
+                    <B>dos fuentes de objetos distintas</B>: JSON y CLIXML.
                 </P>
 
                 <PowerShellBlock
@@ -462,23 +482,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </span>
                     <span slot="footer">
                         CLIXML preserva objetos y nombres de propiedades. El cmdlet encaja por
-                        nombre (y alias) sin necesidad de transformar cada elemento.
+                        nombre (y alias) sin necesidad de renombrar ni reconstruir cada objeto
+                        manualmente.
                     </span>
                 </PowerShellBlock>
 
                 <More headingLevel="h5"><span slot="title">¿Qué es CLIXML?</span>
 
-                    <P>CLIXML (<Enquote><Link
+                    <P>
+                        CLIXML (<Enquote><Link
                                 href="https://en.wikipedia.org/wiki/Common_Language_Infrastructure"
                             >Common Language Infrastructure</Link> XML</Enquote>) es el formato que
                         PowerShell (y otros lenguajes de .NET) usa para serializar y deserializar
                         objetos manteniendo su <B>estructura</B> (propiedades) de forma confiable.
                         Típicamente se genera con <PowerShellInline>Export-CliXml</PowerShellInline>
-                        y se lee con <PowerShellInline>Import-CliXml</PowerShellInline>.</P>
+                        y se lee con <PowerShellInline>Import-CliXml</PowerShellInline>.
+                    </P>
 
-                    <P>Igual que para JSON, puedes encontrar archivos CLIXML de ejemplo en el <Link
+                    <P>
+                        Igual que para JSON, puedes encontrar archivos CLIXML de ejemplo en el <Link
                             href="https://gitlab.com/r8vnhill/dibs-scripts/-/tree/main/tests"
-                        >repositorio de scripts de DIBS</Link>.</P>
+                        >repositorio de scripts de DIBS</Link>.
+                    </P>
 
                     <XmlBlock
                         code={`
@@ -508,17 +533,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     </XmlBlock>
                 </More>
 
-                <Tip headingLevel="h5">
-                    <span slot="title">Uso adicional: calcular hashes sin hash esperado</span>
-
-                    <P>
-                        Como <Mono>ExpectedHash</Mono> es opcional, también puedes usar
-                        <PowerShellInline>Test-FileHash</PowerShellInline> para <B>calcular</B>
-                        hashes desde otros productores (por ejemplo, <PowerShellInline
-                        >Get-ChildItem</PowerShellInline>), y decidir más adelante cómo compararlos
-                        o exportarlos.
-                    </P>
-                </Tip>
+                <P>
+                    Como <Mono>ExpectedHash</Mono> es opcional, el mismo comando también puede
+                    usarse solo para calcular hashes y seguir procesando esos resultados en el
+                    pipeline.
+                </P>
             </NotesSection>
 
             <Important headingLevel="h4">
@@ -566,28 +585,63 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
 
             <P>
-                En este ejercicio diseñarás un flujo que:
+                El objetivo no es solo validar servicios, sino demostrar que un mismo cmdlet puede
+                integrarse con productores distintos gracias a <PowerShellInline
+                >ValueFromPipelineByPropertyName</PowerShellInline>.
+            </P>
+
+            <P>
+                En este ejercicio diseña un flujo con estos bloques:
             </P>
 
             <List>
-                <ListItem icon={icons.FileCode}>
-                    Lea un manifiesto en <B>JSON</B>.
+                <ListItem icon={icons.SignIn}>
+                    Entrada:
+                    <List>
+                        <ListItem icon={icons.FileCode}>
+                            Lea un manifiesto en <B>JSON</B>.
+                        </ListItem>
+                        <ListItem icon={icons.Table}>
+                            Lea un manifiesto equivalente en <B>CSV</B>.
+                        </ListItem>
+                    </List>
                 </ListItem>
-                <ListItem icon={icons.Table}>
-                    Lea un manifiesto equivalente en <B>CSV</B>.
-                </ListItem>
+
                 <ListItem icon={icons.Gear}>
-                    Pase ambos al mismo cmdlet <Mono>Test-ServiceCompliance.ps1</Mono>.
+                    Procesamiento:
+                    <List>
+                        <ListItem icon={icons.Gear}>
+                            Pase ambos al mismo cmdlet <Mono>Test-ServiceCompliance.ps1</Mono>.
+                        </ListItem>
+                        <ListItem icon={icons.Funnel}>
+                            Filtre solo los incumplimientos.
+                        </ListItem>
+                        <ListItem icon={icons.WarningCircle}>
+                            Distinga en el reporte entre <B>servicio ausente</B> y <B>servicio
+                                presente con estado incorrecto</B>.
+                        </ListItem>
+                        <ListItem icon={icons.ArrowsClockwise}>
+                            Si <PowerShellInline code="Get-Service -Name $Name" /> devuelve
+                            múltiples coincidencias, emita <B>un resultado por cada servicio</B>.
+                        </ListItem>
+                        <ListItem icon={icons.Signpost}>
+                            Intente resolver el ejercicio <B>sin</B> adaptadores intermedios de
+                            renombrado (por ejemplo, sin <PowerShellInline
+                            >Select-Object</PowerShellInline> antes del cmdlet).
+                        </ListItem>
+                    </List>
                 </ListItem>
-                <ListItem icon={icons.Funnel}>
-                    Filtre solo los incumplimientos.
-                </ListItem>
-                <ListItem icon={icons.WarningCircle}>
-                    Distinga en el reporte entre <B>servicio ausente</B> y <B>servicio presente con
-                        estado incorrecto</B>.
-                </ListItem>
-                <ListItem icon={icons.FileArrowDown}>
-                    Genere un reporte final en JSON.
+                <ListItem icon={icons.SignOut}>
+                    Salida:
+                    <List>
+                        <ListItem icon={icons.FileArrowDown}>
+                            Genere un reporte final en JSON.
+                        </ListItem>
+                        <ListItem icon={icons.CheckCircle}>
+                            La salida debe mantener el <B>mismo esquema</B> tanto para entrada JSON
+                            como para entrada CSV.
+                        </ListItem>
+                    </List>
                 </ListItem>
             </List>
 
@@ -623,6 +677,23 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >
                 <span slot="title">Ejemplo de manifiesto CSV</span>
             </CsvBlock>
+
+            <JsonBlock
+                code={`
+                    [
+                        {
+                            "Name": "NONEXISTENT_SERVICE",
+                            "ExpectedStatus": "Running",
+                            "Status": null,
+                            "Exists": false,
+                            "Match": false,
+                            "NonComplianceType": "MissingService"
+                        }
+                    ]
+                `}
+            >
+                <span slot="title">Ejemplo mínimo de salida esperada</span>
+            </JsonBlock>
         </Fragment>
 
         <Fragment slot="notes">
@@ -632,10 +703,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 transforman en <B>propiedades</B>.
             </P>
             <P>
-                <B>Legible por máquina:</B> mientras procesas el pipeline, <B>mantén datos como
-                    objetos</B>, no como texto formateado. Solo en el paso final (<PowerShellInline
-                >ConvertTo-Json</PowerShellInline>) serializa para guardar. Esto permite filtrar,
-                buscar, y reutilizar el flujo sin re-parsear.
+                <B>Legible por máquina:</B> mantén el flujo como <B>objetos</B> mientras procesas.
+                Usa <PowerShellInline>ConvertTo-Json</PowerShellInline> solo al final, cuando vayas
+                a guardar o exportar el reporte.
             </P>
             <P>
                 Puedes consultar el estado de un servicio con: <PowerShellInline
@@ -706,7 +776,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         $services = @(Get-Service -Name $Name -ErrorAction SilentlyContinue)
 
                         if ($services.Count -eq 0) {
-                            [pscustomobject]@{
+                            [PSCustomObject]@{
                                 Name              = $Name
                                 ExpectedStatus    = $ExpectedStatus
                                 Status            = $null
@@ -721,7 +791,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         $services | ForEach-Object {
                             $isMatch = $_.Status -eq $ExpectedStatus
 
-                            [pscustomobject]@{
+                            [PSCustomObject]@{
                                 Name              = $_.Name
                                 ExpectedStatus    = $ExpectedStatus
                                 Status            = $_.Status
