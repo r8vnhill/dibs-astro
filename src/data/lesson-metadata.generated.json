@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-26T11:36:08.674Z",
-  "totalLessons": 40,
+  "generatedAt": "2026-03-26T19:46:45.352Z",
+  "totalLessons": 41,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -231,8 +231,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2025-10-02",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
           "date": "2025-10-02",
@@ -260,8 +266,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -285,12 +297,6 @@
           "date": "2025-10-09",
           "author": "r8vnhill",
           "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-        },
-        {
-          "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
-          "date": "2025-10-08",
-          "author": "r8vnhill",
-          "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
         }
       ]
     },
@@ -411,8 +417,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -436,12 +448,6 @@
           "date": "2025-11-12",
           "author": "r8vnhill",
           "subject": "📝 docs(repo): clarify catch rationale and require English commit messages"
-        },
-        {
-          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-          "date": "2025-10-15",
-          "author": "r8vnhill",
-          "subject": "Add Python scripting notes and comparison with PowerShell"
         }
       ]
     },
@@ -492,8 +498,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -517,12 +529,6 @@
           "date": "2025-10-24",
           "author": "r8vnhill",
           "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
-        },
-        {
-          "hash": "35e2042677186dd556f0a64dc0fc5f2fb6aeea5f",
-          "date": "2025-10-13",
-          "author": "r8vnhill",
-          "subject": "✨📝 feat(docs/scripting): add `Update-ScriptRequiresVersion` exercise & bump examples to PowerShell 7.5"
         }
       ]
     },
@@ -574,8 +580,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -638,8 +650,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2025-11-20",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
           "date": "2025-11-20",
@@ -663,12 +681,6 @@
           "date": "2025-10-09",
           "author": "r8vnhill",
           "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
-        },
-        {
-          "hash": "ff0c9b7926aaf4022009b3dd8199a4e6c77c7425",
-          "date": "2025-10-08",
-          "author": "r8vnhill",
-          "subject": "✨📝🍱♿♻️ InlineCode improvements, new “Help” & “First script” lessons, and bookmark icon"
         }
       ]
     },
@@ -784,8 +796,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -809,12 +827,6 @@
           "date": "2026-02-22",
           "author": "r8vnhill",
           "subject": "📝 docs(changelog): add 0.10.0 release notes and lesson metadata refresh"
-        },
-        {
-          "hash": "4ad7e555360d517a2156d41fb6a1b6c8e8ec8584",
-          "date": "2026-02-22",
-          "author": "r8vnhill",
-          "subject": "📝 docs(notes): add bibliography source for pipeline error handling"
         }
       ]
     },
@@ -853,6 +865,15 @@
         }
       ]
     },
+    "/notes/software-libraries/scripting/pipelines/nushell/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/nushell.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
+    },
     "/notes/software-libraries/scripting/pipelines/pipeline-aware/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/index.astro",
       "authors": [
@@ -862,6 +883,24 @@
       ],
       "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "677f4ea3d5962f28604dad471d46f3a36b869225",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🔖📝 chore(release): bump version to 0.13.1 and update changelog"
+        },
+        {
+          "hash": "90aede12b07e2b6e5773fe83828d51063b8c267d",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "✨📚 feat(fonts,lessons): add Arrow primitive and sharpen pipeline-aware lesson"
+        },
+        {
+          "hash": "b10aa20e478b0efa4b0c9838de1972f42c8343e9",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚✨ refactor(lessons): tighten pipeline-awareness II by value explanation"
+        },
         {
           "hash": "46f00c40b8b8866e43233e1fdd29aacdbe8e49c5",
           "date": "2026-03-26",
@@ -873,24 +912,6 @@
           "date": "2026-03-11",
           "author": "r8vnhill",
           "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
-        },
-        {
-          "hash": "bceffa19818fa341c4a544eff338810f5d4f1bae",
-          "date": "2026-02-11",
-          "author": "r8vnhill",
-          "subject": "✨ feat(bibliography): add JSON-LD bibliography pipeline and references component"
-        },
-        {
-          "hash": "d5b05d6c633d44d7959459ffc455e5fac255e6d9",
-          "date": "2026-02-11",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -1164,8 +1185,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1228,8 +1255,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1253,12 +1286,6 @@
           "date": "2025-08-07",
           "author": "r8vnhill",
           "subject": "✨ Add references and tooltip system"
-        },
-        {
-          "hash": "dba88126d07e71d1b69efe8aa2ffa0ffe1e9d40b",
-          "date": "2025-08-06",
-          "author": "R8V",
-          "subject": "✨ Add \"Conclusiones\" section with a heading to the Kotlin module"
         }
       ]
     },

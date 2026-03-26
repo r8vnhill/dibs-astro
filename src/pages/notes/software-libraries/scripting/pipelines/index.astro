@@ -21,10 +21,12 @@ import {
 import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
+import { NushellLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
@@ -647,6 +649,10 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NushellLink />
+    </LinksLayout>
 
     <ReferencesFromCatalog source={bibliographyCatalog}>
         <Fragment slot="description-ref:pipeline-connecting-commands">
