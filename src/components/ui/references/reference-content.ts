@@ -57,6 +57,25 @@ export type ResolvedSlotContent =
     };
 
 /**
+ * Resolved inline field ready for presentation-level rendering.
+ *
+ * This captures the decision of whether a field should render from trusted slot HTML, from a plain
+ * text prop fallback, or not at all.
+ */
+export type ResolvedInlineField =
+    | {
+        kind: "missing";
+    }
+    | {
+        kind: "slot";
+        html: string;
+    }
+    | {
+        kind: "text";
+        text: string;
+    };
+
+/**
  * Fixed inline labels used by the Spanish bibliography presentation layer.
  *
  * These labels are kept here because several reference components share the same small vocabulary
@@ -134,6 +153,27 @@ export function hasMeaningfulTextContent(html: string): boolean {
 export const isMeaningfulSlotContent = (
     content: ResolvedSlotContent,
 ): content is Extract<ResolvedSlotContent, { kind: "meaningful" }> => content.kind === "meaningful";
+
+/**
+ * Resolves a display field from slot content first and prop fallback second.
+ *
+ * This helper is intentionally pure and presentation-agnostic: it decides only which source wins,
+ * leaving punctuation, labels, and wrapping markup to the component template.
+ */
+export function resolveInlineField(
+    slotContent: ResolvedSlotContent,
+    fallbackText?: string,
+): ResolvedInlineField {
+    if (isMeaningfulSlotContent(slotContent)) {
+        return { kind: "slot", html: slotContent.html };
+    }
+
+    if (fallbackText) {
+        return { kind: "text", text: fallbackText };
+    }
+
+    return { kind: "missing" };
+}
 
 /**
  * Resolves one named slot and classifies it as meaningful or empty.

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
     hasMeaningfulTextContent,
     prepareSlotsForReferences,
+    resolveInlineField,
     resolveOptionalSlot,
     resolveOptionalSlots,
 } from "../reference-content";
@@ -98,6 +99,33 @@ describe("reference-content utilities", () => {
         };
 
         await expect(resolveOptionalSlots(slots, [])).resolves.toEqual({});
+    });
+
+    describe("resolveInlineField", () => {
+        it("prefers meaningful slot content over fallback text", () => {
+            expect(
+                resolveInlineField(
+                    { kind: "meaningful", html: "<strong>Título</strong>" },
+                    "Título base",
+                ),
+            ).toEqual({
+                kind: "slot",
+                html: "<strong>Título</strong>",
+            });
+        });
+
+        it("uses fallback text when slot content is empty", () => {
+            expect(resolveInlineField({ kind: "empty", html: "" }, "Título base")).toEqual({
+                kind: "text",
+                text: "Título base",
+            });
+        });
+
+        it("returns missing when neither slot content nor fallback text exists", () => {
+            expect(resolveInlineField({ kind: "empty", html: "" })).toEqual({
+                kind: "missing",
+            });
+        });
     });
 });
 

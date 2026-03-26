@@ -1,24 +1,122 @@
 ---
+/**
+ * Renders a generic bibliography entry when no more specialized reference component is required.
+ *
+ * This component fills the gap between strongly typed reference variants such as `WebPage`,
+ * `ScholarlyArticle`, or `Thesis` and fully ad hoc caller markup. It provides one stable
+ * presentation shape for references that still fit the shared bibliography conventions but do not
+ * warrant their own dedicated component.
+ *
+ * The rendered structure consists of:
+ *
+ * - a presentation prefix such as `Referencia:`
+ * - a required quoted title
+ * - an optional external link wrapped around that title
+ * - optional inline metadata for location and author
+ * - an optional description block rendered below the main reference line
+ *
+ * Content may come from either props or named slots:
+ *
+ * - `title`, `location`, and `author` support prop fallbacks plus slot overrides
+ * - `description` is intentionally slot-only
+ *
+ * Slot content takes precedence only when it is meaningful after the shared slot-resolution rules
+ * are applied. Empty slots, whitespace-only slots, or slots containing only ignored markup fall
+ * back to their corresponding props.
+ *
+ * ## Contract notes
+ *
+ * - A title is required. Callers must provide it either through the `title` prop or through a
+ *   meaningful `title` slot.
+ * - `url` is optional by design. When present, the title is rendered as an external link; when
+ *   absent, the same content is rendered as plain quoted text.
+ * - `description` remains slot-only so richer markup stays explicit at the call site instead of
+ *   introducing a second plain-text fallback contract.
+ * - Missing title content is treated as invalid input and causes the component to throw rather than
+ *   render empty quotation marks into the bibliography list.
+ *
+ * ## Rendering responsibilities
+ *
+ * This component is responsible only for generic reference layout. It does not parse bibliography
+ * sources, normalize JSON-LD, resolve ids, or decide which specialized component should be used for
+ * typed reference families.
+ */
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import { MissingReferenceTitleError } from "./ReferenceContractError";
+import {
+    resolveInlineField,
+    resolveOptionalSlots,
+    SPANISH_REFERENCE_META_LABELS,
+} from "./reference-content";
 
+/**
+ * Props accepted by `GenericReference`.
+ */
 type Props = {
+    /**
+     * Fallback title used when the `title` slot does not provide meaningful content.
+     *
+     * This field is optional at the type level because callers may instead provide the title
+     * through a named slot. At runtime, however, the component requires at least one meaningful
+     * title source.
+     */
     title?: string;
+
+    /**
+     * Optional external URL for the reference.
+     *
+     * When present, the title is rendered as a link that opens in a new browsing context. When
+     * absent, the title is rendered as plain quoted text.
+     */
     url?: string;
+
+    /**
+     * Optional source, container, or location label rendered inline after the title.
+     *
+     * Examples include a site name, archive, collection, event, or other container-style label.
+     */
     location?: string;
+
+    /**
+     * Optional authorship label rendered inline after the location fragment.
+     */
     author?: string;
+
+    /**
+     * Presentation-only prefix shown before the quoted title.
+     *
+     * Defaults to `"Referencia"` so callers can omit it for the common generic-reference case.
+     */
     typeLabel?: string;
 };
 
 const { title, url, location, author, typeLabel = "Referencia" }: Props = Astro.props;
+
+// ## Resolve all supported optional slots once during component setup. ##
+// The result classifies each slot as meaningful or empty so the template can stay declarative and
+// avoid repeating slot-inspection logic inline.
 const {
     title: titleSlot,
     location: locationSlot,
     author: authorSlot,
     description: descriptionSlot,
 } = await resolveOptionalSlots(Astro.slots, ["title", "location", "author", "description"]);
+
+// ## Collapse each inline field into a single resolved representation. ##
+// These resolved values encode whether the winning content comes from a slot, from a prop fallback,
+// or is missing entirely.
+const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedLocation = resolveInlineField(locationSlot, location);
+const resolvedAuthor = resolveInlineField(authorSlot, author);
+
+// ## Enforce the component's title invariant before rendering. ##
+// References without any meaningful title source are treated as invalid data instead of rendering
+// empty quoted punctuation into the bibliography list.
+if (resolvedTitle.kind === "missing") {
+    throw new MissingReferenceTitleError();
+}
 ---
 
 <ListItem icon={icons.FileText}>
@@ -30,30 +128,50 @@ const {
                     href={url} target="_blank"
                     rel="noopener noreferrer" class="hover:underline underline-offset-2"
                 >
-                    {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
+                    {
+                        resolvedTitle.kind === "slot"
+                            ? <span set:html={resolvedTitle.html} />
+                        : resolvedTitle.text
+                    }
                 </a>
-            ) : <span>{titleSlot.kind === "meaningful" ? <slot name="title" /> : title}</span>
+            ) : (
+                <span>
+                    {
+                        resolvedTitle.kind === "slot"
+                            ? <span set:html={resolvedTitle.html} />
+                        : resolvedTitle.text
+                    }
+                </span>
+            )
         }
     </Enquote>
 
     {
-        locationSlot.kind === "meaningful" || location ? (
+        resolvedLocation.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
-                {locationSlot.kind === "meaningful" ? <slot name="location" /> : location}
+                {
+                    resolvedLocation.kind === "slot"
+                        ? <span set:html={resolvedLocation.html} />
+                    : resolvedLocation.text
+                }
             </span>
         ) : null
     }
 
     {
-        authorSlot.kind === "meaningful" || author ? (
+        resolvedAuthor.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
                     " "
                 }
-                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
+                {
+                    resolvedAuthor.kind === "slot"
+                        ? <span set:html={resolvedAuthor.html} />
+                    : resolvedAuthor.text
+                }
             </span>
         ) : null
     }
