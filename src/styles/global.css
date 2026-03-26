@@ -4,14 +4,11 @@ structured imports for theme, utilities, and components.
 It ensures consistent layout, font rendering, and utility behavior across the application.
 */
 
-/* == Font Imports
-Import fonts from Google Fonts for global typography:
-- Inter: General-purpose UI font (weights 400–700).
-- Fira Code: Monospaced font for code snippets.
-- Space Grotesk: Modern sans-serif for headings or branding.
-- Press Start 2P: Retro pixel font for special UI elements.
+/* == Font Loading
+Remote fonts are loaded from <head> instead of CSS.
+Keeping network @import out of the global stylesheet avoids Vite/Astro module fetch stalls
+that manifest as `vite:invoke fetchModule` timeouts while importing this file from layouts.
 */
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700&family=Press+Start+2P&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap");
 
 /* == Tailwind CSS Base Layer
 Imports Tailwind's base styles (including preflight, utilities, and components).

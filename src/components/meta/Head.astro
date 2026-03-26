@@ -173,6 +173,19 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 <!-- Responsive layout -->
 <meta name="viewport" content="width=device-width" />
 
+<!--
+    Global font loading lives in <head>, not in global.css, to keep Vite's CSS module graph local.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+    rel="preconnect" href="https://fonts.gstatic.com"
+    crossorigin="anonymous"
+/>
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap"
+/>
+
 <!-- Generator metadata -->
 <meta name="generator" content={Astro.generator} />
 
@@ -237,11 +250,7 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 
 <meta name="DC.title" content={title} />
 
-{
-    resolvedMeta.citationAuthors.map((author) => (
-        <meta name="DC.creator" content={author} />
-    ))
-}
+{resolvedMeta.citationAuthors.map((author) => <meta name="DC.creator" content={author} />)}
 
 {
     resolvedMeta.citationLastModifiedDate

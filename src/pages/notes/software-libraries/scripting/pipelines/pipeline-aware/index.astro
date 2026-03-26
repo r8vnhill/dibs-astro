@@ -9,6 +9,7 @@ import {
     Explanation,
     Important,
     More,
+    Note,
     Tip,
 } from "~/components/ui/callouts";
 import {
@@ -19,7 +20,7 @@ import {
     PowerShellInline,
     XmlBlock,
 } from "~/components/ui/code";
-import { Mono } from "~/components/ui/font";
+import { Dash, Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -33,7 +34,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="Pipelines II: Pipeline-awareness"
-    description="Aprende pipeline-awareness en PowerShell: begin/process/end, binding ByValue/ByPropertyName y funciones componibles orientadas a objetos."
+    description="Aprende pipeline-awareness en PowerShell: begin/process/end, binding ByValue/ByPropertyName y componentes reutilizables orientadas a objetos."
     timeMultiplier={2}
     git={{
         repo: "dibs-scripts",
@@ -42,9 +43,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Abstract>
         <P>
-            En esta lección aprenderás a escribir scripts y funciones <I>pipeline-aware</I> que se
-            comportan como cmdlets reales: reciben objetos desde el pipeline, procesan cada entrada
-            de forma incremental y emiten resultados que siguen siendo componibles.
+            En esta lección aprenderás a escribir código <I>pipeline-aware</I> que se comporta como
+            cmdlets reales: reciben objetos desde el pipeline, procesan cada entrada de forma
+            incremental y emiten resultados que siguen siendo componibles. Esto aplica a scripts,
+            funciones, filtros personalizados y cualquier componente que participar en
+            automatización.
         </P>
         <P>
             Trabajarás con <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
@@ -62,58 +65,97 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Definition>
             <span slot="title">Pipeline-awareness</span>
 
-            Denominaremos <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de una
-            función o script para <I>recibir, procesar y emitir objetos a través del pipeline</I> de
-            forma progresiva. En lugar de esperar a que todos los datos estén disponibles, un
-            componente <I>pipeline-aware</I> responde a cada elemento en el momento en que llega,
-            manteniendo la continuidad del flujo.
+            Denominaremos <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de
+            procesar objetos <B>mientras llegan</B> en lugar de acumularlos primero. Un componente
+            <I>pipeline-aware</I> responde a cada elemento en streaming, emitiendo resultados que
+            otros comandos pueden captar y transformar inmediatamente, sin esperar a que se
+            recopilen todos los datos.
         </Definition>
 
         <P>
-            En PowerShell, esta característica permite que las funciones participen activamente en
-            el flujo de datos, comportándose como cualquier otro cmdlet del sistema. Para lograrlo,
-            PowerShell define tres bloques fundamentales:
+            En PowerShell, se logra con tres bloques: uno para inicialización (si es necesaria),
+            otro para procesar cada objeto que llega, y otro para limpieza final (si es necesaria).
         </P>
 
         <List>
             <ListItem icon={icons.PlayCircle}>
-                El bloque <PowerShellInline code="begin" /> se ejecuta una sola vez al inicio del
-                flujo. Aquí se suelen realizar inicializaciones potencialmente costosas o
-                configuraciones que deben ejecutarse solo una vez, como abrir conexiones a bases de
-                datos, crear estructuras de apoyo o inicializar contadores.
+                <PowerShellInline code="begin" />: se ejecuta <B>una sola vez</B> al inicio. Úsalo
+                solo si necesitas inicializar recursos costosos (una conexión, un contador, una
+                colección). Si no hay setup, omítelo.
             </ListItem>
 
             <ListItem icon={icons.Cpu}>
-                El bloque <PowerShellInline code="process" /> constituye el núcleo del pipeline. Se
-                ejecuta tantas veces como objetos lleguen desde el flujo, permitiendo procesar cada
-                elemento individualmente a medida que fluye. Esto habilita un <B>procesamiento
-                    incremental</B>, ideal para grandes volúmenes de datos sin necesidad de
-                cargarlos por completo en memoria.
+                <PowerShellInline code="process" />: <B>el corazón</B>. Se invoca para cada objeto
+                que llega por el pipeline. Aquí transformas, validas, o calculas; y emites un objeto
+                que sigue fluyendo.
             </ListItem>
 
             <ListItem icon={icons.FlagCheckered}>
-                Finalmente, el bloque <PowerShellInline code="end" /> se ejecuta una única vez al
-                finalizar la entrada. Aquí se suelen liberar recursos, cerrar conexiones o generar
-                resultados globales que dependen del conjunto completo de datos procesados.
+                <PowerShellInline code="end" />: se ejecuta <B>una sola vez</B> al cierre. Úsalo
+                para liberar recursos o generar un resumen final. Si no hay cleanup, omítelo.
             </ListItem>
         </List>
 
-        <P>
-            Esta separación de responsabilidades mantiene la claridad estructural: <I
-            >inicialización</I> en <B>begin</B>, <I>transformación</I> en <B>process</B> y <I
-            >limpieza</I> en <B>end</B>.
-        </P>
+        <Important headingLevel="h3">
+            <span slot="title">Punto clave</span>
+
+            Muchos componentes <I>pipeline-aware</I> solo necesitan <PowerShellInline
+                code="process"
+            /> <Dash kind="em" /> los bloques <PowerShellInline code="begin" /> y <PowerShellInline
+                code="end"
+            /> son opcionales.
+        </Important>
+
+        <Tip headingLevel="h3">
+            Tres reglas fundamentales para mantener el flujo:
+            <List>
+                <ListItem icon={icons.Cube}>
+                    <B>Emite objetos, no texto:</B> usa <PowerShellInline
+                    >[PSCustomObject]</PowerShellInline> o instancias de clases, no
+                    <PowerShellInline>Write-Host</PowerShellInline> ni formatos. El objeto que
+                    emites sigue fluyendo hacia el siguiente cmdlet.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <B>Serializa solo al final:</B> formatea (JSON, tablas, CSV) <B>después</B> de
+                    procesar todo el pipeline, nunca en el medio. Early formatting rompe la
+                    capacidad de composición.
+                </ListItem>
+                <ListItem icon={icons.Pipe}>
+                    <B>Procesa incrementalmente:</B> cada invocación de <PowerShellInline
+                        code="process"
+                    /> maneja <B>un objeto</B>, permitiendo streaming de datos enormes sin llenar
+                    memoria.
+                </ListItem>
+            </List>
+        </Tip>
 
         <P>
-            En este contexto, es preferible que las funciones no formateen su salida ni produzcan
-            texto, sino que <B>emitan objetos</B>, de modo que puedan seguir componiéndose con otros
-            comandos del pipeline.
+            Para ver esto en acción, veamos un ejemplo mínimo. El siguiente script cuenta objetos
+            mientras llegan:
         </P>
 
+        <PowerShellBlock
+            code={`
+                [CmdletBinding()]
+                param(
+                    [Parameter(ValueFromPipeline)]
+                    [int] $Number
+                )
+                begin { $count = 0 }
+                process { $count++ }
+                end { [pscustomobject]@{ ItemsProcessed = $count } }
+            `}
+        >
+            <span slot="title">Estructura mínima: begin → process → end</span>
+            <span slot="footer">Emite un objeto resumen cuando termina el pipeline</span>
+            <span slot="source">Get-Count.ps1</span>
+        </PowerShellBlock>
+
         <P>
-            Este enfoque convierte a los scripts en componentes <I>componibles</I> dentro del
-            ecosistema de PowerShell: cada bloque cumple un propósito bien definido y los resultados
-            pueden seguir fluyendo hacia el siguiente cmdlet.
+            Al ejecutar <PowerShellInline code="1..5 | ./Get-Count.ps1" />, el script recibe cinco
+            números uno a uno en <PowerShellInline code="process" />, suma el contador en cada
+            invocación, y al final emite un objeto con propiedades nombradas. Nota que el resultado
+            es <B>estructurado y reutilizable</B>, no texto sin formato.
         </P>
 
         <NotesSection id="h3-pipeline-aware-example-doubling">
@@ -125,15 +167,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                El siguiente ejemplo muestra un script estilo cmdlet <I>pipeline-aware</I>:
-                <B>recibe</B> valores desde el pipeline, los <B>procesa</B> uno a uno y <B>emite</B>
-                objetos que pueden seguir fluyendo hacia otros comandos.
-            </P>
-
-            <P>
-                Para visualizar el ciclo de vida (<PowerShellInline code="begin" /> →
-                <PowerShellInline code="process" /> → <PowerShellInline code="end" />), el script
-                incluye mensajes con <PowerShellInline>Write-Verbose</PowerShellInline>.
+                Veamos un ejemplo más realista. Este script recibe números y los duplica, mostrando
+                el flujo con <PowerShellInline>Write-Verbose</PowerShellInline> para diagnóstico.
             </P>
 
             <PowerShellBlock
@@ -218,29 +253,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
             />
 
             <P>
-                En la salida se observan los mensajes <Mono>VERBOSE</Mono> (diagnóstico) y, debajo,
-                el resultado real del pipeline: objetos con las columnas
-                <Mono>Original</Mono> y <Mono>Doubled</Mono>.
-            </P>
-
-            <P>
-                Este pipeline muestra cómo un script <I>pipeline-aware</I> se integra naturalmente
-                con otros cmdlets: recibe datos, emite objetos estructurados y permite seguir
-                componiendo operaciones sin perder información.
-            </P>
-
-            <P>
-                La opción <PowerShellInline>-Verbose</PowerShellInline> se usa solo con fines
-                ilustrativos para observar el ciclo <PowerShellInline>begin</PowerShellInline> →
-                <PowerShellInline>process</PowerShellInline> → <PowerShellInline
-                >end</PowerShellInline>. La salida útil del pipeline sigue siendo el flujo de <B
-                >objetos</B>, que puede filtrarse con <PowerShellInline
-                >Where-Object</PowerShellInline> como cualquier cmdlet del sistema.
-            </P>
-
-            <P>
-                Escribir scripts de esta forma los convierte en <B>bloques reutilizables</B> del
-                pipeline, no en comandos aislados.
+                En la salida se observan los mensajes <Mono>VERBOSE</Mono> (diagnóstico del ciclo de
+                ejecución) y, debajo, el resultado real: objetos con propiedades <Mono
+                >Original</Mono> y <Mono>Doubled</Mono>. La opción <PowerShellInline
+                >-Verbose</PowerShellInline> es solo ilustrativa; el valor real del pipeline es el
+                flujo de objetos que <PowerShellInline>Where-Object</PowerShellInline> puede filtrar
+                como en cualquier cmdlet.
             </P>
         </NotesSection>
 
@@ -253,29 +271,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                En el ejemplo anterior, <PowerShellInline>ValueFromPipeline</PowerShellInline>
-                consume el
-                <B>objeto completo</B> que fluye por el pipeline. Eso es ideal cuando tu cmdlet
-                necesita el valor entero (por ejemplo, un número).
+                La estrategia <PowerShellInline>ValueFromPipeline</PowerShellInline> funciona cuando
+                tu parámetro consume el <B>objeto completo</B>. Pero a menudo trabajas con <B
+                >objetos ricos</B> (archivos, registros, servicios) y solo necesitas <B>algunas
+                    propiedades</B> específicas.
             </P>
 
             <P>
-                Pero en PowerShell, gran parte del trabajo real ocurre con <B>objetos ricos</B> como
-                <PowerShellInline>[FileInfo]</PowerShellInline> o registros importados desde JSON.
-                En esos casos, tu cmdlet suele necesitar <B>solo algunas propiedades</B>, como una
-                ruta y, tal vez, un valor esperado.
+                Aquí entra <B><PowerShellInline
+                    >ValueFromPipelineByPropertyName</PowerShellInline></B>. En lugar de consumir el
+                objeto entero, PowerShell <I>busca propiedades por nombre</I> en el objeto entrante
+                y las enlaza a tus parámetros. Resultado: el mismo cmdlet puede aceptar productores
+                completamente distintos siempre que tengan propiedades compatibles.
             </P>
 
-            <P>
-                Para eso existe <B><PowerShellInline
-                    >ValueFromPipelineByPropertyName</PowerShellInline></B>: en vez de consumir el
-                objeto completo, PowerShell hace <I>binding</I> de parámetros usando el <B>nombre de
-                    propiedades</B> del objeto entrante.
-            </P>
+            <List>
+                <ListItem icon={icons.ArrowRight}>
+                    <B><Mono>ByValue</Mono>:</B> el parámetro recibe el objeto completo tal cual
+                    llega.
+                </ListItem>
+                <ListItem icon={icons.Tag}>
+                    <B><Mono>ByPropertyName</Mono>:</B> el parámetro se rellena <B>buscando</B> una
+                    propiedad compatible en el objeto entrante.
+                </ListItem>
+            </List>
 
             <P>
-                Ahora construyamos un cmdlet realista: validar integridad de archivos. La idea es
-                calcular el hash real de cada archivo y compararlo con un valor esperado.
+                Ejemplo: validar integridad de archivos. Recibiremos una ruta y un hash esperado (de
+                cualquier productor) y emitiremos un objeto con el resultado.
             </P>
 
             <PowerShellBlock
@@ -399,31 +422,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <span slot="footer">Desde la raíz del proyecto</span>
                 </PowerShellBlock>
 
-                <More headingLevel="h5">
-                    <span slot="title">Ejemplo de manifiesto JSON</span>
+                <Note headingLevel="h5">
+                    <span slot="title">Nota rápida sobre el manifiesto JSON</span>
 
-                    Puedes encontrar archivos para probar este cmdlet en el <Link
-                        href="https://gitlab.com/r8vnhill/dibs-scripts/-/tree/main/tests"
-                    >repositorio de scripts de DIBS</Link>.
-
-                    <JsonBlock
-                        code={`
-                            [
-                                {
-                                    "path": "tests/fixtures/alpha.txt",
-                                    "hash": "F19..."
-                                },
-                                {
-                                    "path": "tests/fixtures/beta.txt",
-                                    "hash": "196..."
-                                },
-                                ...
-                            ]
-                        `}
-                    >
-                        <span slot="title">Estructura del manifiesto JSON</span>
-                    </JsonBlock>
-                </More>
+                    <P>
+                        En JSON basta con exponer propiedades compatibles (<Mono>path</Mono> y
+                        <Mono>hash</Mono>) para que el <I>binding</I> por nombre funcione sin
+                        adaptadores. Puedes revisar ejemplos completos en el <Link
+                            href="https://gitlab.com/r8vnhill/dibs-scripts/-/tree/main/tests"
+                        >repositorio de scripts de DIBS</Link>.
+                    </P>
+                </Note>
 
                 <PowerShellBlock
                     code={`
@@ -435,7 +444,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     `}
                 >
                     <span slot="title">
-                        Uso 2: CLIXML + <PowerShellInline>ConvertFrom-CliXml</PowerShellInline>
+                        Uso 2: CLIXML + <PowerShellInline>Import-CliXml</PowerShellInline>
                         (binding desde propiedades exportadas)
                     </span>
                     <span slot="footer">
@@ -532,9 +541,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </NotesSection>
 
     <Exercise headingLevel="h2">
-        <Fragment slot="title">
-            Auditoría de servicios — validar cumplimiento desde JSON y CSV
-        </Fragment>
+        <span slot="title">
+            Auditoría de servicios <Dash kind="em" /> validar cumplimiento desde JSON y CSV
+        </span>
 
         <Fragment slot="requirements">
             <P>
@@ -559,6 +568,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
                 <ListItem icon={icons.Funnel}>
                     Filtre solo los incumplimientos.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    Distinga en el reporte entre <B>servicio ausente</B> y <B>servicio presente con
+                        estado incorrecto</B>.
                 </ListItem>
                 <ListItem icon={icons.FileArrowDown}>
                     Genere un reporte final en JSON.
@@ -606,11 +619,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 transforman en <B>propiedades</B>.
             </P>
             <P>
+                <B>Legible por máquina:</B> mientras procesas el pipeline, <B>mantén datos como
+                    objetos</B>, no como texto formateado. Solo en el paso final (<PowerShellInline
+                >ConvertTo-Json</PowerShellInline>) serializa para guardar. Esto permite filtrar,
+                buscar, y reutilizar el flujo sin re-parsear.
+            </P>
+            <P>
                 Puedes consultar el estado de un servicio con: <PowerShellInline
                     code="Get-Service -Name $Name -ErrorAction SilentlyContinue"
-                />. Esto podría devolver una lista de servicios (si el nombre es ambiguo), un solo
-                servicio o <PowerShellInline code={`$null`} /> (si no existe ningún servicio con ese
-                nombre).
+                />. Esto devuelve una matriz de servicios (si el nombre es ambiguo), uno solo (si
+                existe) o <PowerShellInline code={`$null`} /> (si no existe).
             </P>
         </Fragment>
 
@@ -622,7 +640,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         ConvertFrom-Json |
                         ./pipeline/Test-ServiceCompliance.ps1 |
                         # ...
-                    
+
                     # Productor 2: CSV
                     Import-Csv -Path tests/services.csv |
                         ./pipeline/Test-ServiceCompliance.ps1 |
@@ -641,12 +659,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="hints">
             <List>
                 <ListItem icon={icons.FileArrowDown}>
-                    Serializa solo al final con <PowerShellInline>ConvertTo-Json</PowerShellInline>
-                    → <PowerShellInline>Set-Content</PowerShellInline>.
+                    <B>Serializa solo al final.</B> Emite objetos mientras procesas; usa
+                    <PowerShellInline>ConvertTo-Json</PowerShellInline> solo al cierre del pipeline.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    Asegúrate de que tu objeto emita claramente si es "MissingService" o
+                    "WrongStatus" para que quien consume el reporte entienda por qué falló.
                 </ListItem>
                 <ListItem icon={icons.ArrowsClockwise}>
-                    <PowerShellInline code={`ForEach-Object`} /> puede ser útil para manejar los
-                    casos donde un servicio existe 0, 1 o múltiples veces.
+                    <PowerShellInline code={`ForEach-Object`} /> es útil para servicios ambiguos (0,
+                    1, o múltiples coincidencias).
                 </ListItem>
             </List>
         </Fragment>
@@ -668,11 +690,31 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         Set-StrictMode -Version 3.0
                     }
                     process {
-                        Get-Service -Name $Name -ErrorAction SilentlyContinue | ForEach-Object {
+                        $services = @(Get-Service -Name $Name -ErrorAction SilentlyContinue)
+
+                        if ($services.Count -eq 0) {
                             [pscustomobject]@{
-                                Name   = $Name
-                                Status = $_.Status
-                                Match  = $_.Status -eq $ExpectedStatus
+                                Name              = $Name
+                                ExpectedStatus    = $ExpectedStatus
+                                Status            = $null
+                                Exists            = $false
+                                Match             = $false
+                                NonComplianceType = 'MissingService'
+                            }
+
+                            return
+                        }
+
+                        $services | ForEach-Object {
+                            $isMatch = $_.Status -eq $ExpectedStatus
+
+                            [pscustomobject]@{
+                                Name              = $_.Name
+                                ExpectedStatus    = $ExpectedStatus
+                                Status            = $_.Status
+                                Exists            = $true
+                                Match             = $isMatch
+                                NonComplianceType = if ($isMatch) { $null } else { 'WrongStatus' }
                             }
                         }
                     }
@@ -688,7 +730,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 code={`
                     Import-Csv -Path ./tests/services.csv |
                         ./pipeline/Test-ServiceCompliance.ps1 |
-                        Where-Object { -not $_.Match } |       
+                        Where-Object { -not $_.Match } |
+                        Select-Object Name, ExpectedStatus, Status, NonComplianceType |
                         ConvertTo-Json |
                         Set-Content -Path "non-compliant.json"
                 `}
@@ -699,51 +742,63 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Diseñar componentes <I>pipeline-aware</I> implica pensar en el flujo completo:
-                inicializar una vez, transformar por elemento y cerrar de forma explícita cuando el
-                pipeline termina. Esa estructura permite que scripts propios se comporten con la
-                misma consistencia que los cmdlets nativos.
+                La esencia de <I>pipeline-awareness</I> es <B>procesar datos en streaming</B>: cada
+                objeto que llega se transforma y emite inmediatamente, sin acumular. Esto requiere
+                tres disciplinas:
             </P>
+
+            <List>
+                <ListItem icon={icons.Pipe}>
+                    <B>Emitir objetos, no texto:</B> mantén datos estructurados dentro del pipeline
+                    para que otros comandos puedan componerse.
+                </ListItem>
+                <ListItem icon={icons.Clock}>
+                    <B>Serializar al final:</B> formatea (JSON, tablas) solo después de haber
+                    procesado todo, no en el medio del flujo.
+                </ListItem>
+                <ListItem icon={icons.Plug}>
+                    <B>Reutilizar por contrato:</B> define parámetros con aliases para que el cmdlet
+                    funcione con múltiples productores sin adaptadores intermedios.
+                </ListItem>
+            </List>
+
             <P>
-                Al combinar <PowerShellInline>ValueFromPipeline</PowerShellInline> y
-                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>, puedes
-                reutilizar el mismo cmdlet con productores distintos sin convertir datos a texto ni
-                acoplarte a una sola fuente.
+                Cuando combinas <PowerShellInline>ValueFromPipeline</PowerShellInline> y
+                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>, tu mismo
+                cmdlet se vuelve agnóstico respecto al origen de datos. Eso es lo que hace que
+                PowerShell escale: pequeños comandos que cooperan a través de objetos bien
+                definidos.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Pipe}>
-                Un script <I>pipeline-aware</I> procesa datos en streaming con
-                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
-                >process</PowerShellInline>
-                y <PowerShellInline>end</PowerShellInline>.
-            </ListItem>
-            <ListItem icon={icons.ArrowRight}>
-                <PowerShellInline>ValueFromPipeline</PowerShellInline> es ideal cuando consumes el
-                valor completo que llega por el flujo.
-            </ListItem>
-            <ListItem icon={icons.Tag}>
-                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> permite
-                integrar múltiples productores por nombre de propiedad y alias.
+                <PowerShellInline>process</PowerShellInline> es el corazón; <PowerShellInline
+                >begin</PowerShellInline> y <PowerShellInline>end</PowerShellInline> son opcionales.
             </ListItem>
             <ListItem icon={icons.Cube}>
-                Emitir objetos estructurados mantiene el pipeline componible para filtrar, ordenar,
-                exportar o serializar al final.
+                Emite <B>objetos</B>, no strings formateados.
             </ListItem>
             <ListItem icon={icons.WarningCircle}>
-                El <I>binding</I> por nombre requiere evitar ambigüedades entre parámetros para no
-                provocar errores de resolución.
+                Serializa solo al final del pipeline, nunca en el medio.
+            </ListItem>
+            <ListItem icon={icons.Tag}>
+                Usa aliases en parámetros para que <PowerShellInline
+                >ValueFromPipelineByPropertyName</PowerShellInline> funcione con múltiples
+                productores.
             </ListItem>
         </Fragment>
 
         <Fragment slot="takeaways">
             <P>
-                Cuando diseñas scripts para pipeline, dejas de pensar en comandos aislados y
-                empiezas a construir piezas que cooperan entre sí. Ese cambio de enfoque mejora la
-                mantenibilidad, reduce adaptaciones innecesarias entre etapas y hace que tus
-                automatizaciones crezcan de forma más estable a medida que el proyecto se vuelve más
-                complejo.
+                Pipeline-awareness transforma tus scripts de herramientas aisladas a componentes que
+                cooperan. Pensar en streaming, en objetos reutilizables y en contratos claros entre
+                productor y consumidor permite construir automatizaciones más consistentes, más
+                fáciles de combinar y más sencillas de extender sin reescribir cada etapa del flujo.
+            </P>
+            <P>
+                La clave es pensar en <B>contratos reutilizables</B> entre componentes, no en casos
+                específicos.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -753,7 +808,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="The pipeline, deeper"
                 bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
-                pages={[114, 131]}
+                pages={{ start: 114, end: 131 }}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
