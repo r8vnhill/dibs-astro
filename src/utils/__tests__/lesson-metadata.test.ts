@@ -84,7 +84,7 @@ const makeDataset = (): LessonMetadataDataset => ({
 
 const dataset = makeDataset();
 
-describe.concurrent("normalizeLessonPathname", () => {
+describe("normalizeLessonPathname", () => {
     /**
      * Data-driven examples for normalization behavior.
      *
@@ -158,7 +158,7 @@ describe.concurrent("normalizeLessonPathname", () => {
     });
 });
 
-describe.concurrent("formatLessonDate", () => {
+describe("formatLessonDate", () => {
     /**
      * Missing dates are mapped to a stable placeholder label.
      */
@@ -198,7 +198,7 @@ describe.concurrent("formatLessonDate", () => {
     });
 });
 
-describe.concurrent("dataset resolution", () => {
+describe("dataset resolution", () => {
     /**
      * Resolution should succeed across common pathname variants:
      *

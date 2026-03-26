@@ -93,7 +93,7 @@ function captureWarnings(): {
     };
 }
 
-describe.concurrent("readGeneratorConfig", () => {
+describe("readGeneratorConfig", () => {
     /**
      * Happy-path contract:
      *
@@ -159,7 +159,7 @@ describe.concurrent("readGeneratorConfig", () => {
     );
 });
 
-describe.concurrent("readAuthorsByPath", () => {
+describe("readAuthorsByPath", () => {
     /**
      * Happy path:
      *
@@ -256,7 +256,7 @@ describe.concurrent("readAuthorsByPath", () => {
     });
 });
 
-describe.concurrent("buildOutput", () => {
+describe("buildOutput", () => {
     /**
      * Output contract:
      *
@@ -403,7 +403,7 @@ describe.concurrent("buildOutput", () => {
     });
 });
 
-describe.concurrent("getChanges", () => {
+describe("getChanges", () => {
     /**
      * Git failure contract:
      *

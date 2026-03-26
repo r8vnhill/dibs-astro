@@ -998,7 +998,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Handling errors"
                 bookTitle="Learn PowerShell in a Month of Lunches, fourth edition: Covers Windows, Linux, and MacOS"
-                pages={[279, 286]}
+                pages={{ start: 279, end: 286 }}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
@@ -1028,7 +1028,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Errors and exceptions"
                 bookTitle="Windows PowerShell in Action, Third Edition"
-                pages={[531, 562]}
+                pages={{ start: 531, end: 562 }}
             >
                 <AuthorList
                     slot="authors"

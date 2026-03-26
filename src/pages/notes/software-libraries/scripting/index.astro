@@ -320,7 +320,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <References>
         <Fragment slot="recommended">
             <Book
-                chapter="Meet PowerShell" pages={[8, 24]}
+                chapter="Meet PowerShell" pages={{ start: 8, end: 24 }}
                 bookTitle="Learn Powershell in a Month of Lunches, Fourth Edition: Covers Windows, Linux, and macOS"
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />

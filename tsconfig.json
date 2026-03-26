@@ -59,7 +59,8 @@
         },
         "types": [
             "astro/client",
-            "vitest/globals"
+            "vitest/globals",
+            "@testing-library/jest-dom"
         ],
         "target": "ESNext",
         "module": "ESNext",

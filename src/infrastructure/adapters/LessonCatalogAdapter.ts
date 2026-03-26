@@ -2,6 +2,7 @@ import type { ILessonCatalog, Lesson } from "$application/ports";
 import {
     courseStructure,
     flattenLessons,
+    type FlattenedLesson,
     type Lesson as DomainLesson,
 } from "~/data/course-structure";
 
@@ -45,7 +46,7 @@ export class LessonCatalogAdapter implements ILessonCatalog {
 
         const flattened = flattenLessons(this.structure);
         this.flatCache = flattened
-            .filter((lesson): lesson is DomainLesson & { href: string } => !!lesson.href)
+            .filter(hasHref)
             .map<Lesson & { href: string }>((lesson) => ({
                 id: lesson.id,
                 title: lesson.title,
@@ -108,4 +109,8 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         // Si es un ID, normalízalo (reemplaza guiones y números)
         return hrefOrId;
     }
+}
+
+function hasHref(lesson: FlattenedLesson): lesson is FlattenedLesson & { href: string } {
+    return typeof lesson.href === "string";
 }

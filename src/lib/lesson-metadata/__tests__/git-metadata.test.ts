@@ -59,7 +59,7 @@ const FALLBACK_AUTHOR = "Proyecto DIBS";
 const SAMPLE_SOURCE = "src/pages/notes/software-libraries/scripting/first-script/index.astro";
 const SAMPLE_ROUTE = "/notes/software-libraries/scripting/first-script/";
 
-describe.concurrent("sourceFileToLessonPath", () => {
+describe("sourceFileToLessonPath", () => {
     /**
      * Example-based tests cover known mappings and edge cases:
      *
@@ -133,7 +133,7 @@ describe.concurrent("sourceFileToLessonPath", () => {
     });
 });
 
-describe.concurrent("parseGitLogOutput", () => {
+describe("parseGitLogOutput", () => {
     /**
      * Contract: This parser is designed for `git log --date=short` (ISO short dates).
      *
@@ -205,7 +205,7 @@ describe.concurrent("parseGitLogOutput", () => {
     });
 });
 
-describe.concurrent("parseGitLogLine", () => {
+describe("parseGitLogLine", () => {
     /**
      * Example-based coverage for:
      *
@@ -270,7 +270,7 @@ describe.concurrent("parseGitLogLine", () => {
     });
 });
 
-describe.concurrent("toIsoShortDate", () => {
+describe("toIsoShortDate", () => {
     /**
      * ISO short dates (`YYYY-MM-DD`) are accepted and normalized by trimming whitespace.
      */
@@ -296,7 +296,7 @@ describe.concurrent("toIsoShortDate", () => {
     );
 });
 
-describe.concurrent("resolveAuthors", () => {
+describe("resolveAuthors", () => {
     /**
      * If no explicit authors exist for a path, the configured fallback is used.
      */
@@ -315,7 +315,7 @@ describe.concurrent("resolveAuthors", () => {
     });
 });
 
-describe.concurrent("buildLessonMetadataEntry", () => {
+describe("buildLessonMetadataEntry", () => {
     /**
      * Metadata entries:
      *
