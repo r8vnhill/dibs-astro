@@ -277,34 +277,6 @@ export const courseStructure = [
             },
         ],
     },
-    {
-        kind: "group",
-        id: "unit-2",
-        title: "Unidad 2 - Fundamentos de tipos y representaciones de datos",
-        href: "/notes/type-fundamentals/",
-        children: [
-            {
-                kind: "group",
-                id: "kotlin-basics",
-                title: "Kotlin",
-                href: "/notes/type-fundamentals/basics/",
-                children: [
-                    {
-                        kind: "link",
-                        id: "kotlin-functions",
-                        title: "Funciones",
-                        href: "/notes/type-fundamentals/basics/functions/",
-                    },
-                    {
-                        kind: "link",
-                        id: "kotlin-variables",
-                        title: "Variables",
-                        href: "/notes/type-fundamentals/basics/variables/",
-                    },
-                ],
-            },
-        ],
-    },
 ] as const satisfies readonly Lesson[];
 
 /**
