@@ -784,20 +784,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 Match             = $false
                                 NonComplianceType = 'MissingService'
                             }
-
-                            return
                         }
+                        else {
+                            $services | ForEach-Object {
+                                $isMatch = $_.Status -eq $ExpectedStatus
 
-                        $services | ForEach-Object {
-                            $isMatch = $_.Status -eq $ExpectedStatus
-
-                            [PSCustomObject]@{
-                                Name              = $_.Name
-                                ExpectedStatus    = $ExpectedStatus
-                                Status            = $_.Status
-                                Exists            = $true
-                                Match             = $isMatch
-                                NonComplianceType = if ($isMatch) { $null } else { 'WrongStatus' }
+                                [PSCustomObject]@{
+                                    Name              = $_.Name
+                                    ExpectedStatus    = $ExpectedStatus
+                                    Status            = $_.Status
+                                    Exists            = $true
+                                    Match             = $isMatch
+                                    NonComplianceType = if ($isMatch) { $null } else { 'WrongStatus' }
+                                }
                             }
                         }
                     }
