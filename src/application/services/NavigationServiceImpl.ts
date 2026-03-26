@@ -19,7 +19,7 @@ export class NavigationServiceImpl implements INavigationService {
 
         // Buscar índice de la lección actual comparando hrefs
         const currentIndex = lessons.findIndex(
-            (l) => l.href && this.normalizePath(l.href) === normalizedPath,
+            (l) => this.normalizePath(l.href) === normalizedPath,
         );
         if (currentIndex === -1) {
             return {};
@@ -34,7 +34,7 @@ export class NavigationServiceImpl implements INavigationService {
                 result.previous = {
                     title: prev.title,
                     slug: prev.slug,
-                    href: prev.href || `/notes/${prev.slug}/`,
+                    href: prev.href,
                 };
             }
         }
@@ -46,7 +46,7 @@ export class NavigationServiceImpl implements INavigationService {
                 result.next = {
                     title: next.title,
                     slug: next.slug,
-                    href: next.href || `/notes/${next.slug}/`,
+                    href: next.href,
                 };
             }
         }

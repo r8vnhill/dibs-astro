@@ -25,6 +25,7 @@ const CATALOG: Record<string, unknown> = {
             "@id": "ref:chapter-1",
             "@type": "Book",
             name: "Chapter One",
+            pageStart: 9,
             isPartOf: { "@id": "work:book-1" },
             author: [{ "@id": "person:author-1" }],
         },
@@ -72,6 +73,7 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         });
 
         expect(html).toContain("Chapter One");
+        expect(html).toContain("(p. 9)");
         expect(html).not.toContain("Internal Draft");
     });
 
@@ -112,5 +114,58 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
 
         expect(html).toContain("Chapter One");
         expect(html).not.toContain("Internal Draft");
+    });
+
+    describe("DDT: reference slot overrides by type", () => {
+        test("applies title slot override to Book references", async () => {
+            const html = await renderReferences(
+                {
+                    source: CATALOG,
+                    lessonId: "/notes/lesson-a/",
+                },
+                {
+                    slots: {
+                        "title-ref:chapter-1": "Custom Chapter Title",
+                    },
+                },
+            );
+
+            expect(html).toContain("Custom Chapter Title");
+            expect(html).not.toContain("Chapter One");
+        });
+
+        test("applies description slot override without affecting normalized title", async () => {
+            const html = await renderReferences(
+                {
+                    source: CATALOG,
+                    lessonId: "/notes/lesson-a/",
+                },
+                {
+                    slots: {
+                        "description-ref:chapter-1": "Custom description text",
+                    },
+                },
+            );
+
+            expect(html).toContain("Chapter One");
+            expect(html).toContain("Custom description text");
+        });
+    });
+
+    test("applies title slot override without affecting other references", async () => {
+        const html = await renderReferences(
+            {
+                source: CATALOG,
+                lessonId: "/notes/lesson-a/",
+            },
+            {
+                slots: {
+                    "title-ref:chapter-1": "Modified Title",
+                },
+            },
+        );
+
+        expect(html).toContain("Modified Title");
+        expect(html).not.toContain("Chapter One");
     });
 });

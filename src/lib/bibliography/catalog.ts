@@ -14,6 +14,7 @@ import type {
     ReferenceTag,
     SupportedReferenceType,
 } from "./types";
+import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 
 const SUPPORTED_REFERENCE_TYPES = new Set<SupportedReferenceType>([
     "Book",
@@ -229,12 +230,8 @@ const normalizeReferenceNode = (
 
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        let pages: [number, number] | undefined;
-        if (pageStart !== undefined || pageEnd !== undefined) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         return {
             id,
@@ -284,12 +281,8 @@ const normalizeReferenceNode = (
         const container = resolveLinkedTitle(node.isPartOf, nodesById);
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        let pages: [number, number] | undefined;
-        if (pageStart !== undefined || pageEnd !== undefined) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         return {
             id,

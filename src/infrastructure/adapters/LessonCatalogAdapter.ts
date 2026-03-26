@@ -2,6 +2,7 @@ import type { ILessonCatalog, Lesson } from "$application/ports";
 import {
     courseStructure,
     flattenLessons,
+    type FlattenedLesson,
     type Lesson as DomainLesson,
 } from "~/data/course-structure";
 
@@ -23,7 +24,7 @@ import {
  * Nota: Por ahora simula async para futura compatibilidad con APIs/DBs.
  */
 export class LessonCatalogAdapter implements ILessonCatalog {
-    private flatCache: Lesson[] | null = null;
+    private flatCache: Array<Lesson & { href: string }> | null = null;
     private structure: readonly DomainLesson[];
 
     /**
@@ -38,40 +39,27 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         return this.mapToSimpleStructure(this.structure);
     }
 
-    async flatten(): Promise<Lesson[]> {
+    async flatten(): Promise<Array<Lesson & { href: string }>> {
         if (this.flatCache) {
             return this.flatCache;
         }
 
         const flattened = flattenLessons(this.structure);
         this.flatCache = flattened
-            .filter((lesson) => lesson.href) // solo lecciones con href
-            .map<Lesson>((lesson) => {
-                const mapped: Lesson = {
-                    id: lesson.id,
-                    title: lesson.title,
-                    slug: this.extractSlug(lesson.href || ""),
-                };
-
-                // Solo agregar href si existe (evita undefined con exactOptionalPropertyTypes)
-                if (lesson.href) {
-                    mapped.href = lesson.href;
-                }
-
-                return mapped;
-            });
+            .filter(hasHref)
+            .map<Lesson & { href: string }>((lesson) => ({
+                id: lesson.id,
+                title: lesson.title,
+                slug: this.extractSlug(lesson.href),
+                href: lesson.href,
+            }));
 
         return this.flatCache;
     }
 
     async findByPath(pathname: string): Promise<Lesson | null> {
         const flattened = await this.flatten();
-        const result = flattened.find((lesson) => {
-            const expectedPath = `/notes/${lesson.slug}/`;
-            return pathname === expectedPath;
-        });
-
-        return result || null;
+        return flattened.find((lesson) => lesson.href === pathname) ?? null;
     }
 
     /**
@@ -121,4 +109,8 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         // Si es un ID, normalízalo (reemplaza guiones y números)
         return hrefOrId;
     }
+}
+
+function hasHref(lesson: FlattenedLesson): lesson is FlattenedLesson & { href: string } {
+    return typeof lesson.href === "string";
 }

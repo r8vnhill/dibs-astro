@@ -29,6 +29,24 @@ Useful commands:
 - `pnpm check` runs the static checks used by the project.
 - `pnpm deploy` runs the full pipeline for release.
 
+## Troubleshooting
+
+### `vite:invoke fetchModule` timeout while importing `src/styles/global.css`
+
+If Astro/Vite reports an error like:
+
+```text
+Error: transport invoke timed out after 60000ms
+... "name":"fetchModule" ... "/src/styles/global.css"
+```
+
+check whether `src/styles/global.css` contains any remote `@import url(...)` statements, especially
+Google Fonts. In this project, loading fonts from CSS caused the Vite module runner to stall while
+resolving the global stylesheet imported by `src/layouts/BaseLayout.astro`.
+
+The fix is to keep `global.css` local-only and move remote font loading into `<head>` link tags.
+The current implementation does that in `src/components/meta/Head.astro`.
+
 ## Project Structure
 
 - `src/pages/` contains the site pages, including the course notes.

@@ -7,6 +7,7 @@ import type {
     ResolvedReferenceGroups,
     ResolveGroupsOptions,
 } from "./types";
+import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 
 const SUPPORTED_TYPES = new Set(["Book", "WebPage", "ScholarlyArticle", "Thesis"]);
 
@@ -184,13 +185,8 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const hasAnyPage = pageStart !== undefined || pageEnd !== undefined;
-        let pages: [number, number] | undefined;
-        if (hasAnyPage) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         return {
             id,
@@ -219,13 +215,8 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const hasAnyPage = pageStart !== undefined || pageEnd !== undefined;
-        let pages: [number, number] | undefined;
-        if (hasAnyPage) {
-            const start = pageStart ?? pageEnd ?? 0;
-            const end = pageEnd ?? pageStart ?? 0;
-            pages = start <= end ? [start, end] : [end, start];
-        }
+        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
+            ?? undefined;
 
         const publication = getContainerTitle(rawItem.isPartOf) ?? publisherName;
 
@@ -408,3 +399,51 @@ export const resolveReferenceGroups = (
         additional: pick(additionalIds),
     };
 };
+
+/**
+ * Extract fallback titles from raw JSON-LD source for bibliography references.
+ *
+ * This helper scans the `itemListElement` array looking for usable title data (preferring `name`
+ * over `headline`) and returns a map keyed by reference id. Non-string values, non-object items,
+ * and whitespace-only titles are filtered out.
+ *
+ * This is useful when the consuming UI needs to display titles for references that may lack a
+ * normalized `title` field from the parsed bibliography, allowing slot overrides to take
+ * precedence and fallback titles as final resort.
+ *
+ * @param source - Raw input (ideally JSON-LD object with `itemListElement`)
+ * @returns map from reference id to fallback title string
+ */
+export function extractFallbackTitles(
+    source: unknown,
+): Record<string, string> {
+    const fallbackTitles: Record<string, string> = {};
+
+    if (typeof source !== "object" || source === null) {
+        return fallbackTitles;
+    }
+
+    const sourceObj = source as Record<string, unknown>;
+
+    if (!Array.isArray(sourceObj.itemListElement)) {
+        return fallbackTitles;
+    }
+
+    for (const rawItem of sourceObj.itemListElement) {
+        if (typeof rawItem !== "object" || rawItem === null) {
+            continue;
+        }
+
+        const item = rawItem as Record<string, unknown>;
+        const id = asString(item.identifier);
+        if (!id) continue;
+
+        // Prefer 'name' over 'headline' for title fallback
+        const title = asString(item.name) ?? asString(item.headline);
+        if (title) {
+            fallbackTitles[id] = title;
+        }
+    }
+
+    return fallbackTitles;
+}

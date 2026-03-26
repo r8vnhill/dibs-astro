@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.13.1] - 2026-03-26
+
+### Added
+
+- Added a reusable `Arrow` inline typography primitive with Astro render coverage, so lesson content can express directional notation without repeating ad hoc markup.
+- Added a shared reference-entry rendering pipeline for bibliography components, together with broader render and unit coverage for slot resolution, fallback titles, and page-scoped reference lookup.
+- Added repository troubleshooting guidance for the recurring Vite `fetchModule` timeout triggered when `src/styles/global.css` pulls remote fonts.
+
+### Changed
+
+- Refined the `pipeline-aware` lesson with clearer `ByValue` and `ByPropertyName` explanations, stronger producer examples, improved exercise framing, and more precise guidance around streaming structured objects through PowerShell pipelines.
+- Simplified bibliography rendering internals so catalog-backed and JSON-LD-backed references share the same normalized content and rendering path.
+- Tightened lesson and navigation domain modeling so auto-navigation and lesson identity rely on clearer value objects and fewer presentation-layer assumptions.
+
+### Fixed
+
+- Fixed the recurring Vite/Astro stylesheet timeout by moving remote Google Fonts loading out of `src/styles/global.css` and into document head links.
+- Fixed a broad set of Phosphor SVG assets so solid circles inherit `currentColor` correctly instead of rendering without fill color.
+
 ## [0.13.0] - 2026-03-19
 
 ### Added

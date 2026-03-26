@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T13:08:32.627Z",
+  "generatedAt": "2026-03-26T11:36:08.674Z",
   "totalLessons": 40,
   "changesLimit": 5,
   "entries": {
@@ -860,8 +860,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "46f00c40b8b8866e43233e1fdd29aacdbe8e49c5",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚✨ refactor(lessons): tighten pipeline-awareness II for streaming clarity"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -885,12 +891,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-          "date": "2025-10-05",
-          "author": "r8vnhill",
-          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
         }
       ]
     },
@@ -1090,6 +1090,12 @@
       ],
       "lastModified": "2026-03-19",
       "changes": [
+        {
+          "hash": "74c4c9f81c74a43e702be589507992ae03d831b6",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": "📚✨ feat(bibliography): add Nushell structured-output references"
+        },
         {
           "hash": "1833b9e65a91917b565da9dae0df29c1642448a2",
           "date": "2026-03-19",

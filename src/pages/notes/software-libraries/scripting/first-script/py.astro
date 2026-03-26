@@ -560,7 +560,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="recommended">
             <Book
                 chapter="Input and Output" bookTitle="Python Distilled"
-                pages={[262, 311]}
+                pages={{ start: 262, end: 311 }}
             >
                 <AuthorList
                     slot="authors"

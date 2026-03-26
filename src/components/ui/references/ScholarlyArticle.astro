@@ -1,49 +1,61 @@
 ---
+/**
+ * Renders a scholarly article reference in the shared bibliography list.
+ *
+ * The component accepts plain string props for common metadata and named slots when richer markup
+ * is needed. Slot content only wins when the rendered output is meaningful; otherwise the matching
+ * prop is used as a fallback.
+ *
+ * Supported slots:
+ * - `title`
+ * - `publication`
+ * - `author`
+ * - `description`
+ *
+ * Rendering rules:
+ * - `url` is required because the title is always linked externally.
+ * - `pages` is formatted through the shared bibliography utility.
+ * - `description` is rendered only when the slot contains meaningful content.
+ */
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-
-type PageRange = number | [number, number];
+import { formatPageReference, type PageReference } from "~/lib/bibliography";
+import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
+    /** Fallback article title when the `title` slot is absent or empty. */
     title?: string;
+
+    /** Canonical external URL for the article. */
     url: string;
+
+    /** Fallback container publication name. */
     publication?: string;
-    pages?: PageRange;
+
+    /** Optional page reference formatted by the shared bibliography layer. */
+    pages?: PageReference;
+
+    /** Fallback author text when the `author` slot is absent or empty. */
     author?: string;
 };
 
 const { title, url, publication, pages, author }: Props = Astro.props;
 
-const normalizePages = (p?: PageRange) => {
-    if (p == null) return null;
-    if (typeof p === "number") return [p, p] as [number, number];
-    const [a, b] = p;
-    return a <= b ? [a, b] as [number, number] : [b, a] as [number, number];
-};
+// Resolve optional slots once so the template stays declarative.
+const {
+    title: titleSlot,
+    publication: publicationSlot,
+    author: authorSlot,
+    description: descriptionSlot,
+} = await resolveOptionalSlots(Astro.slots, ["title", "publication", "author", "description"]);
 
-const fmtPages = (p?: PageRange) => {
-    const norm = normalizePages(p);
-    if (!norm) return null;
-    const [start, end] = norm;
-    return start === end ? `p. ${start}` : `pp. ${start}–${end}`;
-};
+// Pre-format the page reference so the template only handles presentation.
+const pagesLabel = formatPageReference(pages);
 
-const hasMeaningfulContent = (html: string): boolean => {
-    const withoutComments = html.replace(/<!--[\s\S]*?-->/g, "");
-    const plainText = withoutComments.replace(/<[^>]+>/g, "").trim();
-    return plainText.length > 0;
-};
-
-const titleSlotHtml = Astro.slots.has("title") ? await Astro.slots.render("title") : "";
-const publicationSlotHtml = Astro.slots.has("publication")
-    ? await Astro.slots.render("publication")
-    : "";
-const authorSlotHtml = Astro.slots.has("author") ? await Astro.slots.render("author") : "";
-const hasTitleSlot = hasMeaningfulContent(titleSlotHtml);
-const hasPublicationSlot = hasMeaningfulContent(publicationSlotHtml);
-const hasAuthorSlot = hasMeaningfulContent(authorSlotHtml);
-const pagesLabel = fmtPages(pages);
+// Render inline metadata when a meaningful slot or a fallback prop is available.
+const hasPublication = publicationSlot.kind === "meaningful" || !!publication;
+const hasAuthor = authorSlot.kind === "meaningful" || !!author;
 ---
 
 <ListItem icon={icons.FileText}>
@@ -52,7 +64,7 @@ const pagesLabel = fmtPages(pages);
             href={url} target="_blank"
             rel="noopener noreferrer" class="hover:underline underline-offset-2"
         >
-            {hasTitleSlot ? <span set:html={titleSlotHtml} /> : title}
+            {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
         </a>
     </Enquote>
 
@@ -65,29 +77,35 @@ const pagesLabel = fmtPages(pages);
     }
 
     {
-        hasPublicationSlot || publication ? (
+        hasPublication ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">en</span>{" "}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
+                    " "
+                }
                 <cite class="not-italic">
-                    {hasPublicationSlot ? <span set:html={publicationSlotHtml} /> : publication}
+                    {
+                        publicationSlot.kind === "meaningful" ? (
+                            <slot name="publication" />
+                        ) : publication
+                    }
                 </cite>
             </span>
         ) : null
     }
 
     {
-        hasAuthorSlot || author ? (
+        hasAuthor ? (
             <span>
-                {" "}
-                <span class="text-muted-foreground">por</span>{" "}
-                {hasAuthorSlot ? <span set:html={authorSlotHtml} /> : author}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
+                    " "
+                }
+                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
             </span>
         ) : null
     }
 
     {
-        Astro.slots.has("description") ? (
+        descriptionSlot.kind === "meaningful" ? (
             <div class="text-muted-foreground block">
                 <slot name="description" />
             </div>

@@ -1,0 +1,32 @@
+---
+import InlineText from "./InlineText.astro";
+
+type ArrowDirection = "up" | "down" | "left" | "right";
+
+type Props = {
+    direction?: ArrowDirection;
+    class?: string;
+    ariaLabel?: string;
+};
+
+const arrowByDirection: Record<ArrowDirection, string> = {
+    up: "↑",
+    down: "↓",
+    left: "←",
+    right: "→",
+};
+
+const {
+    direction = "right",
+    class: className,
+    ariaLabel,
+} = Astro.props as Props;
+
+const inlineTextProps = {
+    as: "span" as const,
+    ...(className ? { class: className } : {}),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+};
+---
+
+<InlineText {...inlineTextProps}>{arrowByDirection[direction]}</InlineText>

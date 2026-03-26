@@ -405,7 +405,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Using the help system"
                 bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
-                pages={[25, 41]}
+                pages={{ start: 25, end: 41 }}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 

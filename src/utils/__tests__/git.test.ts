@@ -57,7 +57,7 @@ import {
     REPO_PLATFORM_LABEL,
 } from "../git";
 
-describe.concurrent("isRepoPlatform", () => {
+describe("isRepoPlatform", () => {
     /**
      * Ensures every platform declared in DEFAULT_REPO_PLATFORMS is accepted by the type guard.
      *
@@ -122,7 +122,7 @@ describe.concurrent("isRepoPlatform", () => {
     });
 });
 
-describe.concurrent("normalizePlatforms", () => {
+describe("normalizePlatforms", () => {
     /**
      * When input is missing, the function must return defaults.
      *
@@ -218,7 +218,7 @@ describe.concurrent("normalizePlatforms", () => {
     });
 });
 
-describe.concurrent("buildRepoUrl", () => {
+describe("buildRepoUrl", () => {
     /**
      * Validates canonical base URL construction.
      *
@@ -320,7 +320,7 @@ describe.concurrent("buildRepoUrl", () => {
  * The goal is to guarantee that UI components (e.g. `LessonMetaPanel`) can safely rely on
  * `buildCommitUrl` without platform-specific logic leaking into presentation code.
  */
-describe.concurrent("buildCommitUrl", () => {
+describe("buildCommitUrl", () => {
     /**
      * Ensures canonical commit URLs are generated for both platforms.
      *
@@ -400,7 +400,7 @@ describe.concurrent("buildCommitUrl", () => {
     });
 });
 
-describe.concurrent("buildRepoLinkText", () => {
+describe("buildRepoLinkText", () => {
     /**
      * Whitespace-only labels must not override the default.
      *

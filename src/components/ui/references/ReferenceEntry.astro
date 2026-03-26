@@ -1,0 +1,182 @@
+---
+/**
+ * Internal reference entry renderer.
+ *
+ * This component handles rendering of a single normalized reference with prepared slot overrides
+ * and optional fallback titles. It is an implementation detail of the references UI layer and
+ * should not be imported directly outside this component hierarchy.
+ *
+ * The component encapsulates:
+ * - Per-type rendering dispatch (Book, WebPage, ScholarlyArticle, Thesis)
+ * - Slot override application with `set:html` trust boundary
+ * - Title resolution logic (slot override → fallback → normalized property)
+ * - Author and metadata rendering
+ */
+
+import type {
+    NormalizedArticleReference,
+    NormalizedBookReference,
+    NormalizedReference,
+    NormalizedThesisReference,
+    NormalizedWebReference,
+} from "~/lib/bibliography";
+import AuthorList from "./AuthorList.astro";
+import Book from "./Book.astro";
+import type { PreparedReferenceSlots } from "./reference-content";
+import ScholarlyArticle from "./ScholarlyArticle.astro";
+import Thesis from "./Thesis.astro";
+import WebPage from "./WebPage.astro";
+
+interface Props {
+    /**
+     * The normalized reference to render.
+     */
+    reference: NormalizedReference;
+
+    /**
+     * Prepared slot overrides for this reference (title, description, publication, institution).
+     * If absent or a key is not present, the reference's normalized property is used as fallback.
+     */
+    preparedSlots: PreparedReferenceSlots;
+
+    /**
+     * Optional fallback title from raw source, used when the reference has no normalized title
+     * and no title slot override.
+     *
+     * In most cases where title is present in the normalized reference, this is unused because
+     * the reference already has a meaningful title. It is primarily useful for JSON-LD sources
+     * where title extraction may have failed but raw metadata is available.
+     */
+    fallbackTitle?: string | undefined;
+}
+
+const { reference: ref, preparedSlots, fallbackTitle } = Astro.props;
+
+/**
+ * Resolve the display title for this reference.
+ *
+ * Priority:
+ * 1. Title slot override (if meaningful)
+ * 2. Reference normalized title
+ * 3. Fallback title (e.g., from JSON-LD extraction)
+ * 4. Empty string (unlikely in practice with validated references)
+ */
+const resolveDisplayTitle = (ref: NormalizedReference): string => {
+    if (preparedSlots.title) return preparedSlots.title;
+    if (ref.type === "Book") return ref.chapter || ref.title;
+    return ref.title || fallbackTitle || "";
+};
+
+/**
+ * Resolve description override, defaulting to empty if none prepared.
+ */
+const getDescriptionOverride = (): string | undefined => preparedSlots.description;
+
+/**
+ * Resolve publication override (for articles), defaulting to empty if none prepared.
+ */
+const getPublicationOverride = (): string | undefined => preparedSlots.publication;
+
+/**
+ * Resolve institution override (for theses), defaulting to empty if none prepared.
+ */
+const getInstitutionOverride = (): string | undefined => preparedSlots.institution;
+---
+
+{
+    ref.type === "Book"
+        ? (
+        <Book
+            chapter={resolveDisplayTitle(ref)}
+            bookTitle={(ref as NormalizedBookReference).bookTitle}
+            {...((ref as NormalizedBookReference).pages
+                ? { pages: (ref as NormalizedBookReference).pages }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {ref.authors.length > 0 && <AuthorList slot="authors" authors={ref.authors} />}
+        </Book>
+    )
+    : ref.type === "WebPage"
+    ? (
+        <WebPage
+            title={resolveDisplayTitle(ref)} url={(ref as NormalizedWebReference).url}
+            {...((ref as NormalizedWebReference).location
+                ? { location: (ref as NormalizedWebReference).location }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </WebPage>
+    )
+    : ref.type === "ScholarlyArticle"
+    ? (
+        <ScholarlyArticle
+            title={resolveDisplayTitle(ref)} url={(ref as NormalizedArticleReference).url}
+            {...((ref as NormalizedArticleReference).publication
+                ? { publication: (ref as NormalizedArticleReference).publication }
+                : {})}
+            {...((ref as NormalizedArticleReference).pages
+                ? { pages: (ref as NormalizedArticleReference).pages }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {
+                getPublicationOverride() && (
+                    <Fragment slot="publication">
+                        <span set:html={getPublicationOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </ScholarlyArticle>
+    )
+    : (
+        <Thesis
+            title={resolveDisplayTitle(ref)} url={(ref as NormalizedThesisReference).url}
+            {...((ref as NormalizedThesisReference).institution
+                ? { institution: (ref as NormalizedThesisReference).institution }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {
+                getInstitutionOverride() && (
+                    <Fragment slot="institution">
+                        <span set:html={getInstitutionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </Thesis>
+    )
+}
