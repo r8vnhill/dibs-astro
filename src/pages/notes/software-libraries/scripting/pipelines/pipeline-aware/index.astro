@@ -163,12 +163,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 headingLevel="h3" Icon={icons.Code}
                 slot="heading"
             >
-                <Mono>ByValue</Mono>: pasando objetos completos por el pipeline
+                <Mono>ByValue</Mono>: pasando valores directamente por el pipeline
             </Heading>
 
             <P>
-                Veamos un ejemplo más realista. Este script recibe números y los duplica, mostrando
-                el flujo con <PowerShellInline>Write-Verbose</PowerShellInline> para diagnóstico.
+                Veamos un ejemplo sencillo de enlace <Mono>ByValue</Mono>. Este script recibe
+                números desde el pipeline, los duplica y usa <PowerShellInline
+                >Write-Verbose</PowerShellInline> para mostrar cuándo se ejecuta cada bloque.
             </P>
 
             <PowerShellBlock
@@ -209,19 +210,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <ListItem icon={icons.ArrowRight}>
                         <B><PowerShellInline>ValueFromPipeline</PowerShellInline>:</B> indica que el
                         parámetro <PowerShellInline>$Number</PowerShellInline> puede recibir valores
-                        que vienen desde el pipeline. Eso permite escribir
+                        que vienen desde el pipeline. En este caso, el valor entrante se enlaza
+                        <B>directamente</B> a <PowerShellInline>$Number</PowerShellInline> porque
+                        PowerShell puede asociarlo o convertirlo al tipo <PowerShellInline
+                        >[int]</PowerShellInline>. A esto se le llama enlace (o <I>binding</I>) <I
+                        >by value</I>. Antes de cada ejecución de <PowerShellInline
+                        >process</PowerShellInline>, PowerShell intenta realizar ese enlace para el
+                        objeto entrante. Eso permite escribir
                         <PowerShellInline code="1..5 | ./Get-DoubledNumber.ps1" /> sin construir
                         listas ni llamar manualmente al script para cada elemento.
                     </ListItem>
 
                     <ListItem icon={icons.Cube}>
-                        <B>Emisión de objetos en <PowerShellInline code="process" />:</B> la última
-                        expresión del bloque <PowerShellInline code="process" /> es un
-                        <PowerShellInline>[pscustomobject]</PowerShellInline> con las propiedades
-                        <PowerShellInline>Original</PowerShellInline> y
-                        <PowerShellInline>Doubled</PowerShellInline>. Ese objeto es lo que <B>sigue
-                            fluyendo por el pipeline</B>, listo para ser filtrado, ordenado,
-                        exportado o serializado.
+                        <B>Emisión de objetos en <PowerShellInline>process</PowerShellInline>:</B>
+                        la última expresión del bloque <PowerShellInline>process</PowerShellInline>
+                        emite un <PowerShellInline>[PSCustomObject]</PowerShellInline> con las
+                        propiedades <PowerShellInline>Original</PowerShellInline> y
+                        <PowerShellInline>Doubled</PowerShellInline>. Ese objeto sigue fluyendo por
+                        el pipeline y puede ser filtrado, ordenado, exportado o serializado.
+                        <PowerShellInline>Write-Verbose</PowerShellInline> no emite ese objeto: sus
+                        mensajes viajan por el <I>verbose stream</I>, mientras que
+                        <PowerShellInline>Where-Object</PowerShellInline> trabaja sobre el <I>output
+                            stream</I> que contiene los objetos reales.
                     </ListItem>
                 </List>
             </Explanation>
@@ -256,9 +266,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 En la salida se observan los mensajes <Mono>VERBOSE</Mono> (diagnóstico del ciclo de
                 ejecución) y, debajo, el resultado real: objetos con propiedades <Mono
                 >Original</Mono> y <Mono>Doubled</Mono>. La opción <PowerShellInline
-                >-Verbose</PowerShellInline> es solo ilustrativa; el valor real del pipeline es el
-                flujo de objetos que <PowerShellInline>Where-Object</PowerShellInline> puede filtrar
-                como en cualquier cmdlet.
+                >-Verbose</PowerShellInline> es solo ilustrativa: <PowerShellInline
+                >Write-Verbose</PowerShellInline> escribe en el <I>verbose stream</I>, no en el
+                mismo flujo que los objetos emitidos por <PowerShellInline
+                >process</PowerShellInline>. Por eso <PowerShellInline
+                >Where-Object</PowerShellInline> filtra los objetos del pipeline y no los mensajes
+                de diagnóstico.
             </P>
         </NotesSection>
 
@@ -287,8 +300,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.ArrowRight}>
-                    <B><Mono>ByValue</Mono>:</B> el parámetro recibe el objeto completo tal cual
-                    llega.
+                    <B><Mono>ByValue</Mono>:</B> PowerShell intenta enlazar directamente el valor
+                    entrante al parámetro, convirtiéndolo si el tipo declarado lo permite.
                 </ListItem>
                 <ListItem icon={icons.Tag}>
                     <B><Mono>ByPropertyName</Mono>:</B> el parámetro se rellena <B>buscando</B> una
