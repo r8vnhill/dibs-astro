@@ -8,10 +8,11 @@ type Props = {
     title?: string;
     url: string;
     institution?: string;
+    institutionUrl?: string;
     author?: string;
 };
 
-const { title, url, institution, author }: Props = Astro.props;
+const { title, url, institution, institutionUrl, author }: Props = Astro.props;
 const {
     title: titleSlot,
     institution: institutionSlot,
@@ -36,7 +37,20 @@ const {
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
-                {institutionSlot.kind === "meaningful" ? <slot name="institution" /> : institution}
+                {
+                    institutionSlot.kind === "meaningful" ? (
+                        <slot name="institution" />
+                    ) : institution && institutionUrl ? (
+                        <a
+                            href={institutionUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="hover:underline underline-offset-2"
+                        >
+                            {institution}
+                        </a>
+                    ) : institution
+                }
             </span>
         ) : null
     }

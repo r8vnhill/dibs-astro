@@ -105,6 +105,50 @@ person:arjen-tebbenhof
   schema:givenName "Arjen" ;
   schema:familyName "Tebbenhof" .
 
+person:shivam-handa
+  a schema:Person ;
+  schema:givenName "Shivam" ;
+  schema:familyName "Handa" .
+
+person:konstantinos-kallas
+  a schema:Person ;
+  schema:givenName "Konstantinos" ;
+  schema:familyName "Kallas" .
+
+person:nikos-vasilakis
+  a schema:Person ;
+  schema:givenName "Nikos" ;
+  schema:familyName "Vasilakis" .
+
+person:martin-c-rinard
+  a schema:Person ;
+  schema:givenName "Martin C." ;
+  schema:familyName "Rinard" .
+
+person:brian-w-kernighan
+  a schema:Person ;
+  schema:givenName "Brian W." ;
+  schema:familyName "Kernighan" .
+
+person:rob-pike
+  a schema:Person ;
+  schema:givenName "Rob" ;
+  schema:familyName "Pike" .
+
+person:jeffrey-p-snover
+  a schema:Person ;
+  schema:givenName "Jeffrey P." ;
+  schema:familyName "Snover" .
+
+person:mark-volkmann
+  a schema:Person ;
+  schema:givenName "Mark" ;
+  schema:familyName "Volkmann" .
+
+person:sdwheeler
+  a schema:Person ;
+  schema:familyName "sdwheeler" .
+
 org:nushell
   a schema:Organization ;
   schema:name "Nushell" ;
@@ -145,6 +189,21 @@ org:university-of-waterloo
   schema:name "University of Waterloo" ;
   schema:url "https://uwaterloo.ca/" .
 
+org:microsoft-learn
+  a schema:Organization ;
+  schema:name "Microsoft Learn" ;
+  schema:url "https://learn.microsoft.com/" .
+
+org:dispatch-youtube
+  a schema:Organization ;
+  schema:name "Dispatch" ;
+  schema:url "https://www.youtube.com/" .
+
+org:prentice-hall
+  a schema:Organization ;
+  schema:name "Prentice Hall" ;
+  schema:url "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/" .
+
 work:learn-powershell-month-lunches-4e
   a schema:CreativeWork ;
   schema:name "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS" ;
@@ -169,6 +228,17 @@ work:plas-2007
   a schema:CreativeWork ;
   schema:name "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security" ;
   schema:publisher org:acm .
+
+work:proc-acm-program-lang
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the ACM on Programming Languages" ;
+  schema:publisher org:acm .
+
+work:unix-programming-environment
+  a schema:CreativeWork ;
+  schema:name "The UNIX programming environment" ;
+  schema:author person:brian-w-kernighan, person:rob-pike ;
+  schema:publisher org:prentice-hall .
 
 ref:pipeline-connecting-commands
   a schema:Book ;
@@ -372,10 +442,133 @@ ref:nushell-working-with-tables
   schema:url "https://www.nushell.sh/book/working_with_tables.html" ;
   schema:publisher org:nushell .
 
+ref:nushell-new-type-shell-video
+  a schema:VideoObject ;
+  schema:name "Nushell: A new type of shell!" ;
+  schema:url "https://www.youtube.com/watch?v=GPqV6rLfKR4" ;
+  schema:datePublished "2024-11-29" ;
+  schema:author org:dispatch-youtube ;
+  schema:publisher org:dispatch-youtube .
+
+ref:nushell-filters
+  a schema:WebPage ;
+  schema:name "Filters | Nushell" ;
+  schema:url "https://www.nushell.sh/commands/categories/filters.html" ;
+  schema:publisher org:nushell .
+
+ref:handa-order-aware-dataflow-pipelines-2021
+  a schema:ScholarlyArticle ;
+  schema:name "An order-aware dataflow model for parallel Unix pipelines" ;
+  schema:url "https://dl.acm.org/doi/10.1145/3473570" ;
+  schema:datePublished "2021" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 28 ;
+  schema:author person:shivam-handa, person:konstantinos-kallas, person:nikos-vasilakis, person:martin-c-rinard ;
+  schema:isPartOf work:proc-acm-program-lang ;
+  schema:publisher org:acm .
+
+ref:nushell-jq-vs-nushell
+  a schema:WebPage ;
+  schema:name "jq vs Nushell | Nushell" ;
+  schema:url "https://www.nushell.sh/cookbook/jq_v_nushell.html" ;
+  schema:publisher org:nushell .
+
+ref:microsoft-powershell-more-on-parameters
+  a schema:WebPage ;
+  schema:name "Advanced Tools & Scripting with PowerShell 3.0: (05) More on Parameters" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/advpowershell3/05" ;
+  schema:datePublished "2013-08-09" ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-getting-started-powershell-3
+  a schema:WebPage ;
+  schema:name "Getting Started with PowerShell 3.0" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/getstartedpowershell3/" ;
+  schema:publisher org:microsoft-learn .
+
+ref:kernighan-pike-unix-programming-environment-1984
+  a schema:Book ;
+  schema:name "The UNIX programming environment" ;
+  schema:datePublished "1984" ;
+  schema:author person:brian-w-kernighan, person:rob-pike ;
+  schema:isPartOf work:unix-programming-environment .
+
+ref:volkmann-nushell-overview
+  a schema:WebPage ;
+  schema:name "Nushell" ;
+  schema:url "https://mvolkmann.github.io/blog/nushell/?v=1.1.1" ;
+  schema:author person:mark-volkmann .
+
+ref:nushell-open-command
+  a schema:WebPage ;
+  schema:name "open | Nushell" ;
+  schema:url "https://www.nushell.sh/commands/docs/open.html" ;
+  schema:publisher org:nushell .
+
+ref:windows-powershell-in-action-3e-book
+  a schema:Book ;
+  schema:name "Windows powershell in action" ;
+  schema:datePublished "2018" ;
+  schema:author person:bruce-payette, person:richard-siddaway ;
+  schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:microsoft-about-functions-advanced
+  a schema:WebPage ;
+  schema:name "about_Functions_Advanced - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced?view=powershell-7.6" ;
+  schema:author person:sdwheeler ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-about-objects
+  a schema:WebPage ;
+  schema:name "about_Objects - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_objects?view=powershell-7.6" ;
+  schema:author person:sdwheeler ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-about-pipelines
+  a schema:WebPage ;
+  schema:name "about_Pipelines - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pipelines?view=powershell-7.5" ;
+  schema:datePublished "2025-12-28" ;
+  schema:publisher org:microsoft-learn .
+
+ref:snover-monad-manifesto-2002
+  a schema:CreativeWork ;
+  schema:name "Monad Manifesto" ;
+  schema:datePublished "2002-08-08" ;
+  schema:author person:jeffrey-p-snover .
+
+ref:nushell-thinking-in-nu
+  a schema:WebPage ;
+  schema:name "Thinking in Nu | Nushell" ;
+  schema:url "https://www.nushell.sh/book/thinking_in_nu.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-pipelines
+  a schema:WebPage ;
+  schema:name "Pipelines" ;
+  schema:url "https://www.nushell.sh/book/pipelines.html" ;
+  schema:datePublished "2026-01-27" ;
+  schema:publisher org:nushell .
+
+ref:snover-windows-powershell-unplugged-2015
+  a schema:VideoObject ;
+  schema:name "Windows PowerShell Unplugged" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/ignite-2015/brk4451" ;
+  schema:datePublished "2015-05-04" ;
+  schema:author person:jeffrey-p-snover ;
+  schema:publisher org:microsoft-learn .
+
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/>
   a schema:LearningResource ;
   schema:name "Pipelines I: PowerShell declarativo" ;
   schema:url "/notes/software-libraries/scripting/pipelines/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/>
+  a schema:LearningResource ;
+  schema:name "Pipelines declarativos en Nushell" ;
+  schema:url "/notes/software-libraries/scripting/pipelines/nushell/" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/>
   a schema:LearningResource ;
@@ -581,3 +774,123 @@ usage:structured-output-nushell-nushell-working-with-tables-pending
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-working-with-tables ;
   dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:atomic-spin-introduction-to-nushell ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-custom-commands-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-custom-commands ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-new-type-shell-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-new-type-shell-video ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-filters-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-filters ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:handa-order-aware-dataflow-pipelines-2021 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-jq-vs-nushell-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-jq-vs-nushell ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-powershell-more-on-parameters ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-getting-started-powershell-3 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:kernighan-pike-unix-programming-environment-1984 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-navigating-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-navigating-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-volkmann-nushell-overview-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:volkmann-nushell-overview ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-open-command-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-open-command ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:windows-powershell-in-action-3e-book ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-functions-advanced-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-functions-advanced ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-objects-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-objects ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-pipelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-pipelines ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:jdriven-nushell-basics-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-thinking-in-nu-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-thinking-in-nu ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:snover-windows-powershell-unplugged-2015 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-pipelines-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-pipelines ;
+  dibs:tag "recommended" .

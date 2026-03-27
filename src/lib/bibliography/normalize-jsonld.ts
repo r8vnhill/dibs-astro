@@ -9,7 +9,7 @@ import type {
 } from "./types";
 import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 
-const SUPPORTED_TYPES = new Set(["Book", "WebPage", "ScholarlyArticle", "Thesis"]);
+const SUPPORTED_TYPES = new Set(["Book", "WebPage", "VideoObject", "ScholarlyArticle", "Thesis"]);
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
     typeof value === "object" && value !== null;
@@ -227,6 +227,13 @@ const normalizeItem = (
             title,
             url,
             ...(publication ? { publication } : {}),
+            ...(asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url) || url
+                ? {
+                    publicationUrl:
+                        asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url)
+                        ?? url,
+                }
+                : {}),
             ...(pages ? { pages } : {}),
             ...(description ? { description } : {}),
             authors,
@@ -255,6 +262,48 @@ const normalizeItem = (
             title,
             url,
             ...(institution ? { institution } : {}),
+            ...(asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
+                    || asString(
+                        (rawItem.sourceOrganization as Record<string, unknown> | undefined)?.url,
+                    )
+                    || url
+                ? {
+                    institutionUrl:
+                        asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
+                        ?? asString(
+                            (rawItem.sourceOrganization as Record<string, unknown> | undefined)
+                                ?.url,
+                        )
+                        ?? url,
+                }
+                : {}),
+            ...(description ? { description } : {}),
+            authors,
+            ...(datePublished ? { datePublished } : {}),
+            keywords,
+            ...(publisherName ? { publisherName } : {}),
+            ...(publisherUrl ? { publisherUrl } : {}),
+            ...(sourceLabel ? { sourceLabel } : {}),
+        };
+    }
+
+    if (rawType === "VideoObject") {
+        const url = asString(rawItem.url);
+        if (!url) {
+            addError(errors, strict, `[${sourceLabel}] VideoObject "${id}" is missing "url".`);
+            return null;
+        }
+
+        const platform = publisherName ?? getLocationFromUrl(url);
+
+        return {
+            id,
+            type: "VideoObject",
+            rawType,
+            title,
+            url,
+            ...(platform ? { platform } : {}),
+            ...(publisherUrl || url ? { platformUrl: publisherUrl ?? url } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -280,6 +329,7 @@ const normalizeItem = (
         title,
         url,
         ...(location ? { location } : {}),
+        ...(publisherUrl || url ? { locationUrl: publisherUrl ?? url } : {}),
         ...(description ? { description } : {}),
         authors,
         ...(datePublished ? { datePublished } : {}),

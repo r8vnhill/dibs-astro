@@ -50,6 +50,24 @@ const BIBLIOGRAPHY: Record<string, unknown> = {
                 name: "University of Waterloo",
             },
         },
+        {
+            "@type": "VideoObject",
+            identifier: "nushell-video",
+            name: "Nushell: A new type of shell!",
+            url: "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+            datePublished: "2024-11-29",
+            author: [
+                {
+                    "@type": "Organization",
+                    name: "Dispatch",
+                },
+            ],
+            publisher: {
+                "@type": "Organization",
+                name: "Dispatch",
+                url: "https://www.youtube.com/",
+            },
+        },
     ],
 };
 
@@ -114,6 +132,17 @@ describe.concurrent("ReferencesFromJsonLd.astro render", () => {
         expect(html).toContain("University of Waterloo");
     });
 
+    test("renders videos from JSON-LD with platform metadata", async () => {
+        const html = await renderReferences({
+            source: BIBLIOGRAPHY,
+            recommended: ["nushell-video"],
+        });
+
+        expect(html).toContain("Nushell: A new type of shell!");
+        expect(html).toContain("Dispatch");
+        expect(html).toContain("2024-11-29");
+    });
+
     describe("DDT: reference types with slot overrides", () => {
         test.each<{
             name: string;
@@ -147,6 +176,13 @@ describe.concurrent("ReferencesFromJsonLd.astro render", () => {
                 expectedTitle: "Bash in the Wild: Language Usage, Code Smells, and Bugs",
                 expectedPublication: "Custom Publication",
                 notContains: "ACM Transactions",
+            },
+            {
+                name: "Video with title override",
+                refId: "nushell-video",
+                titleOverride: "Custom Video Title",
+                expectedTitle: "Custom Video Title",
+                notContains: "Nushell: A new type of shell!",
             },
             {
                 name: "Thesis with institution override",

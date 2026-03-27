@@ -25,6 +25,12 @@
       "familyName": "Firshman"
     },
     {
+      "@id": "person:brian-w-kernighan",
+      "@type": "Person",
+      "givenName": "Brian W.",
+      "familyName": "Kernighan"
+    },
+    {
       "@id": "person:bruce-payette",
       "@type": "Person",
       "givenName": "Bruce",
@@ -57,10 +63,34 @@
       "familyName": "Parish"
     },
     {
+      "@id": "person:jeffrey-p-snover",
+      "@type": "Person",
+      "givenName": "Jeffrey P.",
+      "familyName": "Snover"
+    },
+    {
       "@id": "person:karl-mazurak",
       "@type": "Person",
       "givenName": "Karl",
       "familyName": "Mazurak"
+    },
+    {
+      "@id": "person:konstantinos-kallas",
+      "@type": "Person",
+      "givenName": "Konstantinos",
+      "familyName": "Kallas"
+    },
+    {
+      "@id": "person:mark-volkmann",
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Volkmann"
+    },
+    {
+      "@id": "person:martin-c-rinard",
+      "@type": "Person",
+      "givenName": "Martin C.",
+      "familyName": "Rinard"
     },
     {
       "@id": "person:martin-fowler",
@@ -82,6 +112,12 @@
       "familyName": "Godfrey"
     },
     {
+      "@id": "person:nikos-vasilakis",
+      "@type": "Person",
+      "givenName": "Nikos",
+      "familyName": "Vasilakis"
+    },
+    {
       "@id": "person:richard-siddaway",
       "@type": "Person",
       "givenName": "Richard",
@@ -93,6 +129,23 @@
       "@type": "Person",
       "givenName": "Rob",
       "familyName": "Bell"
+    },
+    {
+      "@id": "person:rob-pike",
+      "@type": "Person",
+      "givenName": "Rob",
+      "familyName": "Pike"
+    },
+    {
+      "@id": "person:sdwheeler",
+      "@type": "Person",
+      "familyName": "sdwheeler"
+    },
+    {
+      "@id": "person:shivam-handa",
+      "@type": "Person",
+      "givenName": "Shivam",
+      "familyName": "Handa"
     },
     {
       "@id": "person:steve-zdancewic",
@@ -143,6 +196,12 @@
       "url": "https://clig.dev/"
     },
     {
+      "@id": "org:dispatch-youtube",
+      "@type": "Organization",
+      "name": "Dispatch",
+      "url": "https://www.youtube.com/"
+    },
+    {
       "@id": "org:heroku-dev-center",
       "@type": "Organization",
       "name": "Heroku Dev Center",
@@ -161,16 +220,38 @@
       "url": "https://martinfowler.com"
     },
     {
+      "@id": "org:microsoft-learn",
+      "@type": "Organization",
+      "name": "Microsoft Learn",
+      "url": "https://learn.microsoft.com/"
+    },
+    {
       "@id": "org:nushell",
       "@type": "Organization",
       "name": "Nushell",
       "url": "https://www.nushell.sh/"
     },
     {
+      "@id": "org:prentice-hall",
+      "@type": "Organization",
+      "name": "Prentice Hall",
+      "url": "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/"
+    },
+    {
       "@id": "org:university-of-waterloo",
       "@type": "CollegeOrUniversity",
       "name": "University of Waterloo",
       "url": "https://uwaterloo.ca/"
+    },
+    {
+      "@id": "ref:snover-monad-manifesto-2002",
+      "@type": "CreativeWork",
+      "name": "Monad Manifesto",
+      "author": [
+        {
+          "@id": "person:jeffrey-p-snover"
+        }
+      ]
     },
     {
       "@id": "work:acm-tosem",
@@ -199,6 +280,14 @@
       }
     },
     {
+      "@id": "work:proc-acm-program-lang",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the ACM on Programming Languages",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:python-distilled",
       "@type": "CreativeWork",
       "name": "Python Distilled",
@@ -207,6 +296,22 @@
           "@id": "person:david-m-beazley"
         }
       ]
+    },
+    {
+      "@id": "work:unix-programming-environment",
+      "@type": "CreativeWork",
+      "name": "The UNIX programming environment",
+      "author": [
+        {
+          "@id": "person:brian-w-kernighan"
+        },
+        {
+          "@id": "person:rob-pike"
+        }
+      ],
+      "publisher": {
+        "@id": "org:prentice-hall"
+      }
     },
     {
       "@id": "work:windows-powershell-in-action-3e",
@@ -313,6 +418,35 @@
       }
     },
     {
+      "@id": "ref:handa-order-aware-dataflow-pipelines-2021",
+      "@type": "ScholarlyArticle",
+      "name": "An order-aware dataflow model for parallel Unix pipelines",
+      "url": "https://dl.acm.org/doi/10.1145/3473570",
+      "datePublished": "2021",
+      "pageStart": 1,
+      "pageEnd": 28,
+      "author": [
+        {
+          "@id": "person:shivam-handa"
+        },
+        {
+          "@id": "person:konstantinos-kallas"
+        },
+        {
+          "@id": "person:nikos-vasilakis"
+        },
+        {
+          "@id": "person:martin-c-rinard"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:proc-acm-program-lang"
+      }
+    },
+    {
       "@id": "ref:handling-errors",
       "@type": "Book",
       "name": "Handling errors",
@@ -383,6 +517,23 @@
       }
     },
     {
+      "@id": "ref:kernighan-pike-unix-programming-environment-1984",
+      "@type": "Book",
+      "name": "The UNIX programming environment",
+      "datePublished": "1984",
+      "author": [
+        {
+          "@id": "person:brian-w-kernighan"
+        },
+        {
+          "@id": "person:rob-pike"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:unix-programming-environment"
+      }
+    },
+    {
       "@id": "ref:li-bash-language-usage-2021",
       "@type": "Thesis",
       "name": "An Empirical Study on Bash Language Usage in Github",
@@ -421,6 +572,63 @@
       }
     },
     {
+      "@id": "ref:microsoft-about-functions-advanced",
+      "@type": "WebPage",
+      "name": "about_Functions_Advanced - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced?view=powershell-7.6",
+      "author": [
+        {
+          "@id": "person:sdwheeler"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-about-objects",
+      "@type": "WebPage",
+      "name": "about_Objects - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_objects?view=powershell-7.6",
+      "author": [
+        {
+          "@id": "person:sdwheeler"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-about-pipelines",
+      "@type": "WebPage",
+      "name": "about_Pipelines - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pipelines?view=powershell-7.5",
+      "datePublished": "2025-12-28",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-getting-started-powershell-3",
+      "@type": "WebPage",
+      "name": "Getting Started with PowerShell 3.0",
+      "url": "https://learn.microsoft.com/en-us/shows/getstartedpowershell3/",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-powershell-more-on-parameters",
+      "@type": "WebPage",
+      "name": "Advanced Tools & Scripting with PowerShell 3.0: (05) More on Parameters",
+      "url": "https://learn.microsoft.com/en-us/shows/advpowershell3/05",
+      "datePublished": "2013-08-09",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
       "@id": "ref:nushell-creating-modules",
       "@type": "WebPage",
       "name": "Creating Modules",
@@ -448,6 +656,24 @@
       }
     },
     {
+      "@id": "ref:nushell-filters",
+      "@type": "WebPage",
+      "name": "Filters | Nushell",
+      "url": "https://www.nushell.sh/commands/categories/filters.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-jq-vs-nushell",
+      "@type": "WebPage",
+      "name": "jq vs Nushell | Nushell",
+      "url": "https://www.nushell.sh/cookbook/jq_v_nushell.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-list",
       "@type": "WebPage",
       "name": "List",
@@ -466,6 +692,30 @@
       }
     },
     {
+      "@id": "ref:nushell-new-type-shell-video",
+      "@type": "VideoObject",
+      "name": "Nushell: A new type of shell!",
+      "url": "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+      "datePublished": "2024-11-29",
+      "author": [
+        {
+          "@id": "org:dispatch-youtube"
+        }
+      ],
+      "publisher": {
+        "@id": "org:dispatch-youtube"
+      }
+    },
+    {
+      "@id": "ref:nushell-open-command",
+      "@type": "WebPage",
+      "name": "open | Nushell",
+      "url": "https://www.nushell.sh/commands/docs/open.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-path-exists",
       "@type": "WebPage",
       "name": "Path exists",
@@ -479,6 +729,16 @@
       "@type": "WebPage",
       "name": "Path",
       "url": "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-pipelines",
+      "@type": "WebPage",
+      "name": "Pipelines",
+      "url": "https://www.nushell.sh/book/pipelines.html",
+      "datePublished": "2026-01-27",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -506,6 +766,15 @@
       "@type": "WebPage",
       "name": "String interpolation",
       "url": "https://www.nushell.sh/book/working_with_strings.html#string-interpolation",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-thinking-in-nu",
+      "@type": "WebPage",
+      "name": "Thinking in Nu | Nushell",
+      "url": "https://www.nushell.sh/book/thinking_in_nu.html",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -580,6 +849,49 @@
       }
     },
     {
+      "@id": "ref:snover-windows-powershell-unplugged-2015",
+      "@type": "VideoObject",
+      "name": "Windows PowerShell Unplugged",
+      "url": "https://learn.microsoft.com/en-us/shows/ignite-2015/brk4451",
+      "datePublished": "2015-05-04",
+      "author": [
+        {
+          "@id": "person:jeffrey-p-snover"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:volkmann-nushell-overview",
+      "@type": "WebPage",
+      "name": "Nushell",
+      "url": "https://mvolkmann.github.io/blog/nushell/?v=1.1.1",
+      "author": [
+        {
+          "@id": "person:mark-volkmann"
+        }
+      ]
+    },
+    {
+      "@id": "ref:windows-powershell-in-action-3e-book",
+      "@type": "Book",
+      "name": "Windows powershell in action",
+      "datePublished": "2018",
+      "author": [
+        {
+          "@id": "person:bruce-payette"
+        },
+        {
+          "@id": "person:richard-siddaway"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
       "@id": "/notes/software-libraries/scripting/errors/",
       "@type": "LearningResource",
       "name": "Errores y manejo de fallos en scripts",
@@ -608,6 +920,12 @@
       "@type": "LearningResource",
       "name": "Pipelines I: PowerShell declarativo",
       "url": "/notes/software-libraries/scripting/pipelines/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/pipelines/nushell/",
+      "@type": "LearningResource",
+      "name": "Pipelines declarativos en Nushell",
+      "url": "/notes/software-libraries/scripting/pipelines/nushell/"
     },
     {
       "@id": "/notes/software-libraries/scripting/structured-output/nushell/",
@@ -860,6 +1178,266 @@
       },
       "dibs:tags": [
         "additional"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:atomic-spin-introduction-to-nushell"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:handa-order-aware-dataflow-pipelines-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:jdriven-nushell-basics-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kernighan-pike-unix-programming-environment-1984"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-functions-advanced-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-functions-advanced"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-objects-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-objects"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-pipelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-pipelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-getting-started-powershell-3"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-powershell-more-on-parameters"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-custom-commands-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-custom-commands"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-filters-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-filters"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-jq-vs-nushell-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-jq-vs-nushell"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-navigating-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-navigating-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-new-type-shell-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-new-type-shell-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-open-command-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-open-command"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-pipelines-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-pipelines"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-thinking-in-nu-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-thinking-in-nu"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:snover-windows-powershell-unplugged-2015"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-volkmann-nushell-overview-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:volkmann-nushell-overview"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:windows-powershell-in-action-3e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {

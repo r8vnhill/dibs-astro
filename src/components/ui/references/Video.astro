@@ -1,0 +1,87 @@
+---
+/**
+ * Renders a video reference in the shared bibliography list.
+ *
+ * The component follows the same fallback and slot rules as the rest of the reference family,
+ * while prioritizing author and platform metadata for audiovisual material.
+ */
+import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
+import { ListItem } from "~/components/ui/list";
+import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+
+type Props = {
+    title?: string;
+    url: string;
+    platform?: string;
+    platformUrl?: string;
+    author?: string;
+    date?: string;
+};
+
+const { title, url, platform, platformUrl, author, date }: Props = Astro.props;
+const {
+    title: titleSlot,
+    platform: platformSlot,
+    author: authorSlot,
+    description: descriptionSlot,
+} = await resolveOptionalSlots(Astro.slots, ["title", "platform", "author", "description"]);
+---
+
+<ListItem icon={icons.PlayCircle}>
+    <Enquote type="english-double">
+        <a
+            href={url} target="_blank"
+            rel="noopener noreferrer" class="hover:underline underline-offset-2"
+        >
+            {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
+        </a>
+    </Enquote>
+
+    {
+        authorSlot.kind === "meaningful" || author ? (
+            <span>
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
+                    authorSlot.kind === "meaningful" ? <slot name="author" /> : author
+                }
+            </span>
+        ) : null
+    }
+
+    {
+        platformSlot.kind === "meaningful" || platform ? (
+            <span>
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
+                    platformSlot.kind === "meaningful" ? (
+                        <slot name="platform" />
+                    ) : platform && platformUrl ? (
+                        <a
+                            href={platformUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="hover:underline underline-offset-2"
+                        >
+                            {platform}
+                        </a>
+                    ) : platform
+                }
+            </span>
+        ) : null
+    }
+
+    {
+        date ? (
+            <span class="text-muted-foreground">
+                {" "}({date})
+            </span>
+        ) : null
+    }
+
+    {
+        descriptionSlot.kind === "meaningful" ? (
+            <div class="text-muted-foreground block">
+                <slot name="description" />
+            </div>
+        ) : null
+    }
+</ListItem>

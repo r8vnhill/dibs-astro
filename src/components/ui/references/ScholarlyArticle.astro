@@ -33,6 +33,9 @@ type Props = {
     /** Fallback container publication name. */
     publication?: string;
 
+    /** Optional URL for the publication metadata. */
+    publicationUrl?: string;
+
     /** Optional page reference formatted by the shared bibliography layer. */
     pages?: PageReference;
 
@@ -40,7 +43,7 @@ type Props = {
     author?: string;
 };
 
-const { title, url, publication, pages, author }: Props = Astro.props;
+const { title, url, publication, publicationUrl, pages, author }: Props = Astro.props;
 
 // Resolve optional slots once so the template stays declarative.
 const {
@@ -86,6 +89,15 @@ const hasAuthor = authorSlot.kind === "meaningful" || !!author;
                     {
                         publicationSlot.kind === "meaningful" ? (
                             <slot name="publication" />
+                        ) : publication && publicationUrl ? (
+                            <a
+                                href={publicationUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="hover:underline underline-offset-2"
+                            >
+                                {publication}
+                            </a>
                         ) : publication
                     }
                 </cite>

@@ -35,6 +35,7 @@ export type {
     NormalizedBookReference,
     NormalizedReference,
     NormalizedThesisReference,
+    NormalizedVideoReference,
     NormalizedWebReference,
     ParseBibliographyOptions,
     ParsedBibliography,

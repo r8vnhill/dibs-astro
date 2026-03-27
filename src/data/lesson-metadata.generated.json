@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-26T19:46:45.352Z",
+  "generatedAt": "2026-03-27T07:46:40.700Z",
   "totalLessons": 41,
   "changesLimit": 5,
   "entries": {
@@ -755,8 +755,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-12",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
         {
           "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
           "date": "2026-03-12",
@@ -780,12 +786,6 @@
           "date": "2026-03-11",
           "author": "r8vnhill",
           "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
-        },
-        {
-          "hash": "37c4755c27f02af09624eac608170fc5417492e9",
-          "date": "2026-03-06",
-          "author": "r8vnhill",
-          "subject": "✍️🐛 docs(notes): refine pipelines lesson and fix reference title fallback rendering"
         }
       ]
     },
@@ -872,7 +872,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-03-26",
+      "changes": [
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        }
+      ]
     },
     "/notes/software-libraries/scripting/pipelines/pipeline-aware/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/pipelines/pipeline-aware/index.astro",
@@ -922,8 +930,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-17",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
         {
           "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
           "date": "2026-02-17",
@@ -1109,8 +1123,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-19",
+      "lastModified": "2026-03-26",
       "changes": [
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
         {
           "hash": "74c4c9f81c74a43e702be589507992ae03d831b6",
           "date": "2026-03-19",
@@ -1134,12 +1154,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
         }
       ]
     },

@@ -6,6 +6,7 @@ type ScholarlyArticleProps = {
     title?: string;
     url: string;
     publication?: string;
+    publicationUrl?: string;
     pages?: { start: number; end?: number };
     author?: string;
 };
@@ -22,12 +23,14 @@ describe.concurrent("ScholarlyArticle.astro render", () => {
             title: "Bash in the Wild",
             url: "https://doi.org/10.1145/3517193",
             publication: "TOSEM",
+            publicationUrl: "https://dl.acm.org/journal/tosem",
             author: "Quien investiga",
         });
 
         expect(html).toContain("Bash in the Wild");
         expect(html).toContain("TOSEM");
         expect(html).toContain("Quien investiga");
+        expect(html).toContain('href="https://dl.acm.org/journal/tosem"');
         expect(html).toContain(">en<");
         expect(html).toContain(">por<");
     });

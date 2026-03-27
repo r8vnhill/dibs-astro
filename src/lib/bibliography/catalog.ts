@@ -19,6 +19,7 @@ import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 const SUPPORTED_REFERENCE_TYPES = new Set<SupportedReferenceType>([
     "Book",
     "WebPage",
+    "VideoObject",
     "ScholarlyArticle",
     "Thesis",
 ]);
@@ -164,19 +165,25 @@ const resolveAuthors = (
 const resolveLinkedTitle = (
     value: unknown,
     nodesById: Map<string, Record<string, unknown>>,
-): { id?: string; title?: string } => {
+): { id?: string; title?: string; url?: string } => {
     const id = resolveNodeId(value);
     if (id) {
         const node = nodesById.get(id);
         const title = node ? getNodeTitle(node) : undefined;
+        const url = node ? asString(node.url) : undefined;
         return {
             ...(id ? { id } : {}),
             ...(title ? { title } : {}),
+            ...(url ? { url } : {}),
         };
     }
 
     const title = getNodeTitle(value);
-    return title ? { title } : {};
+    const url = isObject(value) ? asString(value.url) : undefined;
+    return {
+        ...(title ? { title } : {}),
+        ...(url ? { url } : {}),
+    };
 };
 
 const normalizeReferenceNode = (
@@ -267,6 +274,31 @@ const normalizeReferenceNode = (
             title,
             url,
             ...(location ? { location } : {}),
+            ...(publisher.publisherUrl || url
+                ? { locationUrl: publisher.publisherUrl ?? url }
+                : {}),
+            ...(description ? { description } : {}),
+            authors,
+            ...(datePublished ? { datePublished } : {}),
+            keywords,
+            ...(publisher.publisherName ? { publisherName: publisher.publisherName } : {}),
+            ...(publisher.publisherUrl ? { publisherUrl: publisher.publisherUrl } : {}),
+            sourceLabel,
+        };
+    }
+
+    if (rawType === "VideoObject") {
+        const platform = publisher.publisherName ?? getLocationFromUrl(url);
+        return {
+            id,
+            type: "VideoObject",
+            rawType,
+            title,
+            url,
+            ...(platform ? { platform } : {}),
+            ...(publisher.publisherUrl || url
+                ? { platformUrl: publisher.publisherUrl ?? url }
+                : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -292,6 +324,7 @@ const normalizeReferenceNode = (
             url,
             ...(container.title ? { publication: container.title } : {}),
             ...(container.id ? { publicationId: container.id } : {}),
+            ...(container.url || url ? { publicationUrl: container.url ?? url } : {}),
             ...(pages ? { pages } : {}),
             ...(description ? { description } : {}),
             authors,
@@ -312,6 +345,7 @@ const normalizeReferenceNode = (
         url,
         ...(institutionRef.title ? { institution: institutionRef.title } : {}),
         ...(institutionRef.id ? { institutionId: institutionRef.id } : {}),
+        ...(institutionRef.url || url ? { institutionUrl: institutionRef.url ?? url } : {}),
         ...(description ? { description } : {}),
         authors,
         ...(datePublished ? { datePublished } : {}),

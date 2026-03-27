@@ -16,4 +16,5 @@ export { default as ReferencesFromCatalog } from "./ReferencesFromCatalog.astro"
 export { default as ReferencesFromJsonLd } from "./ReferencesFromJsonLd.astro";
 export { default as ScholarlyArticle } from "./ScholarlyArticle.astro";
 export { default as Thesis } from "./Thesis.astro";
+export { default as Video } from "./Video.astro";
 export { default as WebPage } from "./WebPage.astro";

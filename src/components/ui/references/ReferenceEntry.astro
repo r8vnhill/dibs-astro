@@ -18,6 +18,7 @@ import type {
     NormalizedBookReference,
     NormalizedReference,
     NormalizedThesisReference,
+    NormalizedVideoReference,
     NormalizedWebReference,
 } from "~/lib/bibliography";
 import AuthorList from "./AuthorList.astro";
@@ -25,6 +26,7 @@ import Book from "./Book.astro";
 import type { PreparedReferenceSlots } from "./reference-content";
 import ScholarlyArticle from "./ScholarlyArticle.astro";
 import Thesis from "./Thesis.astro";
+import Video from "./Video.astro";
 import WebPage from "./WebPage.astro";
 
 interface Props {
@@ -111,6 +113,9 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
             {...((ref as NormalizedWebReference).location
                 ? { location: (ref as NormalizedWebReference).location }
                 : {})}
+            {...((ref as NormalizedWebReference).locationUrl
+                ? { locationUrl: (ref as NormalizedWebReference).locationUrl }
+                : {})}
         >
             {
                 getDescriptionOverride() && (
@@ -123,12 +128,40 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
             {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
         </WebPage>
     )
+    : ref.type === "VideoObject"
+    ? (
+        <Video
+            title={resolveDisplayTitle(ref)} url={(ref as NormalizedVideoReference).url}
+            {...((ref as NormalizedVideoReference).platform
+                ? { platform: (ref as NormalizedVideoReference).platform }
+                : {})}
+            {...((ref as NormalizedVideoReference).platformUrl
+                ? { platformUrl: (ref as NormalizedVideoReference).platformUrl }
+                : {})}
+            {...((ref as NormalizedVideoReference).datePublished
+                ? { date: (ref as NormalizedVideoReference).datePublished }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </Video>
+    )
     : ref.type === "ScholarlyArticle"
     ? (
         <ScholarlyArticle
             title={resolveDisplayTitle(ref)} url={(ref as NormalizedArticleReference).url}
             {...((ref as NormalizedArticleReference).publication
                 ? { publication: (ref as NormalizedArticleReference).publication }
+                : {})}
+            {...((ref as NormalizedArticleReference).publicationUrl
+                ? { publicationUrl: (ref as NormalizedArticleReference).publicationUrl }
                 : {})}
             {...((ref as NormalizedArticleReference).pages
                 ? { pages: (ref as NormalizedArticleReference).pages }
@@ -158,6 +191,9 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
             title={resolveDisplayTitle(ref)} url={(ref as NormalizedThesisReference).url}
             {...((ref as NormalizedThesisReference).institution
                 ? { institution: (ref as NormalizedThesisReference).institution }
+                : {})}
+            {...((ref as NormalizedThesisReference).institutionUrl
+                ? { institutionUrl: (ref as NormalizedThesisReference).institutionUrl }
                 : {})}
         >
             {

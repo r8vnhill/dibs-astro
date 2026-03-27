@@ -25,12 +25,16 @@ type Props = {
      */
     location?: string;
     /**
+     * Optional URL for the source or site metadata.
+     */
+    locationUrl?: string;
+    /**
      * Author or contributor name (if not passed via slot).
      */
     author?: string;
 };
 
-const { url, title, location, author }: Props = Astro.props;
+const { url, title, location, locationUrl, author }: Props = Astro.props;
 const {
     title: titleSlot,
     location: locationSlot,
@@ -53,7 +57,20 @@ const {
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
-                {locationSlot.kind === "meaningful" ? <slot name="location" /> : location}
+                {
+                    locationSlot.kind === "meaningful" ? (
+                        <slot name="location" />
+                    ) : location && locationUrl ? (
+                        <a
+                            href={locationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="hover:underline underline-offset-2"
+                        >
+                            {location}
+                        </a>
+                    ) : location
+                }
             </span>
         ) : null
     }
