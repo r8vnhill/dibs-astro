@@ -14,8 +14,21 @@ import type {
     ReferenceTag,
     SupportedReferenceType,
 } from "./types";
-import { normalizePageReference, pageReferenceFromBounds } from "./pages";
+import { parsePageReference } from "./pages";
 
+/**
+ * Catalog loader and query helpers for the generated bibliography graph.
+ *
+ * This module turns the JSON-LD catalog artifact into a normalized in-memory index tailored to the
+ * site UI:
+ * - reference nodes become `NormalizedReference` values ready for rendering;
+ * - lesson nodes become `CatalogLesson` entries keyed by lesson id;
+ * - usage nodes become `CatalogUsage` links that drive per-lesson reference groups and stats.
+ *
+ * The loader is intentionally permissive in non-strict mode: malformed nodes are skipped and
+ * collected as warnings instead of failing the whole import. Query helpers operate only on the
+ * normalized catalog produced by `loadBibliographyCatalog`.
+ */
 const SUPPORTED_REFERENCE_TYPES = new Set<SupportedReferenceType>([
     "Book",
     "WebPage",
@@ -237,8 +250,7 @@ const normalizeReferenceNode = (
 
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         return {
             id,
@@ -313,8 +325,7 @@ const normalizeReferenceNode = (
         const container = resolveLinkedTitle(node.isPartOf, nodesById);
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         return {
             id,
@@ -356,6 +367,11 @@ const normalizeReferenceNode = (
     };
 };
 
+/**
+ * Lessons are represented either as explicit `LearningResource` nodes or as `/notes/...` entries
+ * emitted by the generated graph. This helper keeps that boundary in one place so callers do not
+ * need to duplicate catalog-shape knowledge.
+ */
 const isLessonNode = (node: Record<string, unknown>): boolean => {
     const rawType = getType(node["@type"]);
     const id = asString(node["@id"]);
@@ -441,6 +457,13 @@ const normalizeUsageNode = (
     };
 };
 
+/**
+ * Loads the generated bibliography graph and builds lookup maps used by lesson pages and reference
+ * statistics.
+ *
+ * In strict mode, malformed graph nodes fail fast. In non-strict mode they are skipped and
+ * reported through a warning batch once loading finishes.
+ */
 export const loadBibliographyCatalog = (
     source: unknown,
     options: LoadBibliographyCatalogOptions = {},
@@ -545,6 +568,12 @@ export const loadBibliographyCatalog = (
     };
 };
 
+/**
+ * Resolves the effective include/exclude tag filters shared by lesson and stats queries.
+ *
+ * By default, public consumers see `recommended` and `additional` entries while
+ * `pending-revision` stays hidden unless explicitly requested.
+ */
 const getFilterTags = (options: GetReferencesForLessonOptions | GetReferenceStatsOptions = {}) => {
     const includeTags = options.includeTags ?? DEFAULT_INCLUDE_TAGS;
     const excludeTags = options.excludeTags
@@ -581,6 +610,12 @@ const uniqueEntries = (entries: LessonReferenceEntry[]): LessonReferenceEntry[] 
     return unique;
 };
 
+/**
+ * Returns the reference groups visible for a lesson after tag filtering and de-duplication.
+ *
+ * If the same reference is tagged multiple ways for the same lesson, precedence is:
+ * `recommended` -> `additional` -> `pending-revision`.
+ */
 export const getReferencesForLesson = (
     catalog: BibliographyCatalog,
     lessonId: string,
@@ -631,16 +666,21 @@ export const getReferencesForLesson = (
     };
 };
 
+/** Returns a normalized reference by id from the precomputed catalog index. */
 export const getReferenceById = (
     catalog: BibliographyCatalog,
     referenceId: string,
 ): NormalizedReference | undefined => catalog.referencesById.get(referenceId);
 
+/** Returns every usage edge that points to the given reference id. */
 export const getUsagesForReference = (
     catalog: BibliographyCatalog,
     referenceId: string,
 ): CatalogUsage[] => catalog.usagesByReferenceId.get(referenceId) ?? [];
 
+/**
+ * Aggregates citation counts and lesson counts for references that pass the provided filters.
+ */
 export const getReferenceStats = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
@@ -685,11 +725,16 @@ export const getReferenceStats = (
         .sort((a, b) => b.citationCount - a.citationCount || a.title.localeCompare(b.title));
 };
 
+/** Alias for `getReferenceStats` kept for callers that want the query name to reflect ordering. */
 export const getMostCitedReferences = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
 ): ReferenceStat[] => getReferenceStats(catalog, options);
 
+/**
+ * Aggregates chapter-level book citations into book-level stats keyed by book id when available,
+ * or by title as a fallback for catalogs without a stable book node id.
+ */
 export const getMostCitedBooks = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
@@ -739,6 +784,10 @@ export const getMostCitedBooks = (
         );
 };
 
+/**
+ * Returns unique references that appear at least once with the requested tag anywhere in the
+ * catalog.
+ */
 export const getReferencesByTag = (
     catalog: BibliographyCatalog,
     tag: ReferenceTag,

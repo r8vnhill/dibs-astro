@@ -7,8 +7,19 @@ import type {
     ResolvedReferenceGroups,
     ResolveGroupsOptions,
 } from "./types";
-import { normalizePageReference, pageReferenceFromBounds } from "./pages";
+import { parsePageReference } from "./pages";
 
+/**
+ * JSON-LD normalization helpers for bibliography sources that use the simpler `ItemList` shape.
+ *
+ * Unlike `catalog.ts`, which consumes the generated graph artifact, this module accepts raw
+ * bibliography JSON-LD and projects it into the shared `NormalizedReference` model used by the UI.
+ *
+ * The parser is intentionally narrow:
+ * - only a small set of reference types is supported;
+ * - page bounds are delegated to the shared page-reference parser;
+ * - strict mode fails fast, while non-strict mode skips malformed entries and reports warnings.
+ */
 const SUPPORTED_TYPES = new Set(["Book", "WebPage", "VideoObject", "ScholarlyArticle", "Thesis"]);
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
@@ -185,8 +196,7 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         return {
             id,
@@ -215,8 +225,7 @@ const normalizeItem = (
 
         const pageStart = asNumber(rawItem.pageStart);
         const pageEnd = asNumber(rawItem.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         const publication = getContainerTitle(rawItem.isPartOf) ?? publisherName;
 
@@ -340,6 +349,13 @@ const normalizeItem = (
     };
 };
 
+/**
+ * Parse a bibliography JSON-LD `ItemList` into normalized references keyed by `identifier`.
+ *
+ * The return value preserves input order for `items` and also builds a `byId` map for later
+ * grouping. Duplicate identifiers are rejected because group resolution relies on them as stable
+ * keys.
+ */
 export const parseBibliography = (
     source: unknown,
     options: ParseBibliographyOptions = {},
@@ -401,6 +417,12 @@ export const parseBibliography = (
     };
 };
 
+/**
+ * Resolve curated recommended/additional groups from a previously parsed bibliography.
+ *
+ * In strict mode, duplicate ids across groups and unknown ids are treated as authoring errors. In
+ * all modes, each output group preserves the first occurrence order from the provided id list.
+ */
 export const resolveReferenceGroups = (
     parsed: ParsedBibliography,
     recommendedIds: string[],
@@ -451,18 +473,11 @@ export const resolveReferenceGroups = (
 };
 
 /**
- * Extract fallback titles from raw JSON-LD source for bibliography references.
+ * Extract fallback titles directly from raw JSON-LD without requiring full normalization.
  *
- * This helper scans the `itemListElement` array looking for usable title data (preferring `name`
- * over `headline`) and returns a map keyed by reference id. Non-string values, non-object items,
- * and whitespace-only titles are filtered out.
- *
- * This is useful when the consuming UI needs to display titles for references that may lack a
- * normalized `title` field from the parsed bibliography, allowing slot overrides to take
- * precedence and fallback titles as final resort.
- *
- * @param source - Raw input (ideally JSON-LD object with `itemListElement`)
- * @returns map from reference id to fallback title string
+ * This helper is used by UIs that want a lightweight id -> title map even when a full
+ * `parseBibliography` pass is not available or would be too strict for the current context.
+ * `name` takes precedence over `headline`, and malformed entries are ignored.
  */
 export function extractFallbackTitles(
     source: unknown,
