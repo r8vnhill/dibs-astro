@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T07:46:40.700Z",
+  "generatedAt": "2026-03-27T08:51:02.954Z",
   "totalLessons": 41,
   "changesLimit": 5,
   "entries": {
@@ -872,8 +872,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "67ea712d2e0b247a22dd6832d81324d49ef4ed77",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(bibliography): add catalog-backed video references"
+        },
         {
           "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
           "date": "2026-03-26",
