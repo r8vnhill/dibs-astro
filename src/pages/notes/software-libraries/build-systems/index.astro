@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Important, Info, Tip } from "~/components/ui/callouts";
+import { Important, Info, Tip } from "~/components/ui/callouts";
 import { List, ListItem } from "~/components/ui/list";
 import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
@@ -16,7 +16,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Sistemas de construcción">
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             A medida que los proyectos crecen, un <em>build system</em> se vuelve tan importante
             como el propio código. No solo compila archivos: <strong>automatiza y orquesta</strong>
@@ -32,7 +32,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             En resumen, es el <strong>motor silencioso</strong> que transforma tu código en software
             <em>reproducible, distribuible y profesional</em>.
         </p>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="build-system">
         <Heading headingLevel="h2" Icon={icons.Hammer}>

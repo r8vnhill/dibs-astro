@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Hints,
@@ -28,9 +27,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
         href: "/notes/software-libraries/scripting/pipelines/nushell/",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         ...
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-nu-overview">
         <Heading headingLevel="h2" Icon={icons.Pipe}>

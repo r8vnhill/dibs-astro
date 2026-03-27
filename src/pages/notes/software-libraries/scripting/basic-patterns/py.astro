@@ -1,6 +1,5 @@
 ---
 import { Heading } from "~/components/semantics";
-import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo.tsx";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -11,9 +10,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Si estás leyendo esto es porque se me olvidó agregar la descripción. Se agradece si me lo recuerdas."
     timeMultiplier={1.5} git={{ user: "r8vnhill", repo: "..." }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         ...
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-dry-run">
         <Heading

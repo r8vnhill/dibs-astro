@@ -3,7 +3,6 @@ import * as icons from "$icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Definition,
     Explanation,
     Important,
@@ -40,7 +39,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell/",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Nushell y PowerShell comparten la idea de expresar trabajo como una secuencia de
             transformaciones, pero ponen el foco en modelos distintos de dato. En Nushell, el
@@ -53,7 +52,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             <Enquote>mejor</Enquote>, sino entender en qué escenarios la simplicidad declarativa de
             Nushell resulta especialmente conveniente.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-nushell-pipeline-model">
         <Heading headingLevel="h2" Icon={icons.Table}>

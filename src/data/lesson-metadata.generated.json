@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-27T08:51:02.954Z",
-  "totalLessons": 41,
+  "generatedAt": "2026-03-27T21:21:37.392Z",
+  "totalLessons": 42,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -875,6 +875,12 @@
       "lastModified": "2026-03-27",
       "changes": [
         {
+          "hash": "a6f279de54aefa62fbf99d4e2675080cb6fddb4c",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "📝 feat(pipelines): expand the Nushell lesson examples"
+        },
+        {
           "hash": "67ea712d2e0b247a22dd6832d81324d49ef4ed77",
           "date": "2026-03-27",
           "author": "r8vnhill",
@@ -1162,6 +1168,15 @@
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
+    },
+    "/notes/software-libraries/scripting/structured-output/py/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/structured-output/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/task-automation/": {
       "sourceFile": "src/pages/notes/software-libraries/task-automation/index.astro",

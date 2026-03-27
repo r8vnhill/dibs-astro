@@ -12,6 +12,8 @@
  * container. The raw API:
  *
  * - Requires creating a container via `{ts} AstroContainer.create()`.
+ * - Requires loading any framework renderers needed by child components (for example React
+ *   islands rendered from inside an Astro layout).
  * - Requires calling `{ts} container.renderToString(...)`.
  * - Returns an HTML string.
  *
@@ -33,6 +35,22 @@
  * - Focused on behavior
  * - Free from container boilerplate
  *
+ * ## Renderer loading
+ *
+ * This project uses the React integration in production (`astro.config.ts`), and some Astro
+ * components under test transitively render React-backed children. A plain container created
+ * without renderers is therefore insufficient for layout-level tests such as `NotesLayout`.
+ *
+ * To keep callers simple, this helper eagerly loads the React container renderer once per created
+ * test container. That makes the helper suitable for:
+ *
+ * - plain Astro components;
+ * - Astro components that include React children;
+ * - shared layout tests that should not need custom renderer setup.
+ *
+ * If the project later adds more framework integrations used in Astro tests, extend this helper
+ * rather than duplicating container bootstrapping across suites.
+ *
  * ## Type Strategy
  *
  * The `AstroRenderComponent` type is derived directly from the container's `renderToString`
@@ -49,6 +67,8 @@
  */
 
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
+import { loadRenderers } from "astro:container";
+import { getContainerRenderer as getReactContainerRenderer } from "@astrojs/react";
 
 /**
  * Extracts the component parameter type accepted by `AstroContainer.renderToString`.
@@ -74,7 +94,14 @@ export type AstroRender<Props extends object> = (
 ) => Promise<string>;
 
 export interface AstroRenderOptions {
+    /**
+     * Optional named slots to inject into the rendered Astro component.
+     */
     slots?: Record<string, string>;
+
+    /**
+     * Optional request used to populate `Astro.request` / `Astro.url` dependent code paths.
+     */
     request?: Request;
 }
 
@@ -85,7 +112,8 @@ export interface AstroRenderOptions {
  *
  * - A new Astro container is created once per call to this factory.
  * - Tests typically call this inside `{ts} beforeEach` to ensure isolation.
- * - The container instance is reused for all render calls returned by the generated function.
+ * - The container instance and its loaded renderers are reused for all render calls returned by
+ *   the generated function.
  *
  * ## Why the `{ts} as any` cast?
  *
@@ -108,7 +136,10 @@ export interface AstroRenderOptions {
 export async function createAstroRenderer<Props extends object>(
     component: AstroRenderComponent,
 ): Promise<AstroRender<Props>> {
-    const container = await AstroContainer.create();
+    // Keep renderer setup centralized so layout tests do not need to know which framework-backed
+    // children an Astro component pulls in transitively.
+    const renderers = await loadRenderers([getReactContainerRenderer()]);
+    const container = await AstroContainer.create({ renderers });
 
     return (props: Props, options?: AstroRenderOptions) =>
         container.renderToString(component, {

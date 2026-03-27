@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Danger,
     Exercise,
     Explanation,
@@ -27,7 +26,7 @@ const title = "Declaración de variables";
         repo: "intro-kt",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             En la mayoría de los lenguajes las variables son simples contenedores de datos. En
             Kotlin, en cambio, son <strong>propiedades</strong> que pueden incluir lógica de acceso,
@@ -58,7 +57,7 @@ const title = "Declaración de variables";
             <strong>buenas prácticas de diseño</strong>, para escribir código claro, seguro y
             mantenible.
         </p>
-    </Abstract>
+    </Fragment>
     <NotesSection id="variable-declaration">
         <Heading
             headingLevel="h2" Icon={icons.Archive}

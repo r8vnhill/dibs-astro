@@ -2,7 +2,7 @@
 import * as icons from "$icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Important, Info } from "~/components/ui/callouts";
+import { Explanation, Important, Info } from "~/components/ui/callouts";
 import { NushellInline, PowerShellInline } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
@@ -28,7 +28,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         href: "/notes/software-libraries/scripting/structured-output/nushell",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Esta lección muestra cómo organizar en Nushell un primer conjunto de comandos
             reutilizables para generar y escribir un <Mono>README.md</Mono>, separando la
@@ -41,7 +41,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             explícitas cuando Nushell no ofrece un equivalente declarativo directo a los atributos
             de PowerShell.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-scripts-and-sourced-commands">
         <Heading

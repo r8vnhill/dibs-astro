@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Important, Info, Note, Warning } from "~/components/ui/callouts";
+import { Explanation, Important, Info, Note, Warning } from "~/components/ui/callouts";
 import Question from "~/components/ui/callouts/Question.astro";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
@@ -30,7 +30,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             ],
         }}
     />
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Este laboratorio condensa varias lecciones en un flujo real: retomamos validaciones,
             salida tipada y herramientas de línea de comandos, y las combinamos en un proceso que
@@ -44,7 +44,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             />; al final tendrás un "flujo de automatización" de PowerShell listo para automatizar
             tareas similares en otros proyectos.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-intro">
         <Heading

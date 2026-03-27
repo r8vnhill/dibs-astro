@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Important, Info, More, Note, Tip } from "~/components/ui/callouts";
+import { Important, Info, More, Note, Tip } from "~/components/ui/callouts";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -18,7 +18,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Bibliotecas de software"
     description="Qué es una biblioteca de software y por qué importa: APIs, relación con frameworks/servicios/paquetes, categorías clave y base para diseñarlas en Kotlin."
 >
-    <Abstract><p>
+    <Fragment slot="abstract"><p>
             Esta lección presenta la <B>biblioteca de software</B> como una de las piezas
             fundamentales del desarrollo moderno: colecciones de funciones, clases y componentes que
             encapsulan soluciones <B>reutilizables</B>. Al verlas como
@@ -40,7 +40,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Con estas bases, damos el paso hacia el objetivo central del curso:
             <B>diseñar y publicar bibliotecas en Kotlin</B> aplicando principios sólidos de diseño
             de APIs que guiarán nuestras propias implementaciones.
-        </p></Abstract>
+        </p></Fragment>
 
     <NotesSection id="h2-what-is">
         <Heading

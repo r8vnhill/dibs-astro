@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Important,
@@ -26,7 +25,7 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     description="Simula y confirma acciones con SupportsShouldProcess, -WhatIf y -Confirm para ensayar cambios sin riesgos. Aprende a envolver efectos en ShouldProcess y a decidir el ConfirmImpact correcto."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Esta lección introduce el <B>patrón de ensayo seguro</B> en PowerShell: simular o
             confirmar acciones antes de aplicarlas. Verás cómo aprovechar el soporte integrado del
@@ -38,7 +37,7 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
             cuándo pedir confirmación. Con ejemplos prácticos, aplicarás el patrón para prevenir
             errores y construir scripts más confiables sin alterar su funcionamiento.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-dry-run-pattern">
         <Heading headingLevel="h2" Icon={icons.ShieldCheck}>

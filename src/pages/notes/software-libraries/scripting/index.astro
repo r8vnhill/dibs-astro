@@ -3,7 +3,6 @@ import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Definition,
     Explanation,
     Important,
@@ -30,7 +29,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Introducción práctica a PowerShell 7+: scripting en Windows, macOS y Linux, pipeline de objetos, rutas portables con Join-Path y un workspace listo para automatizar."
     git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Esta lección introduce el concepto de <B>scripting</B> como una forma práctica de
             automatizar tareas repetitivas y construir herramientas reutilizables. Presenta <B
@@ -44,7 +43,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             portables y la preferencia por comandos explícitos en lugar de aliases. Este será el
             punto de partida para escribir scripts claros, seguros y mantenibles.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-scripting-powershell">
         <Heading

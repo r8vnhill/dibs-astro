@@ -12,7 +12,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/starwind/tooltip";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Info,
@@ -42,7 +41,7 @@ const title = "Declaración de funciones";
         repo: "intro-kt",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             Las funciones son una herramienta esencial para construir software reutilizable, legible
             y organizado. Kotlin facilita su declaración mediante una sintaxis concisa y expresiva,
@@ -62,7 +61,7 @@ const title = "Declaración de funciones";
             No es necesario dominar todos los detalles desde el principio: a medida que avancemos en
             el curso, retomaremos y profundizaremos los conceptos más relevantes.
         </p>
-    </Abstract>
+    </Fragment>
     <NotesSection>
         <Heading
             headingLevel="h2" slot="heading"

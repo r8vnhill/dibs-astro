@@ -4,7 +4,6 @@ import fs from "fs";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -18,6 +17,7 @@ import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import NushellLink from "~/components/ui/links/NushellLink.astro";
+import PythonLink from "~/components/ui/links/PythonLink.astro";
 import { List, ListItem } from "~/components/ui/list";
 import { References, WebPage } from "~/components/ui/references";
 import { NotesSection } from "~/layouts";
@@ -36,7 +36,7 @@ const newPersonPSCustomCode = fs.readFileSync(
     description="Aprende a producir salida estructurada en PowerShell para que tus scripts comuniquen datos de forma clara y reutilizable. Esta lección explica cómo usar diccionarios ([hashtable]) para almacenar configuraciones o pasar parámetros, y cómo convertirlos en objetos personalizados ([PSCustomObject]) para obtener resultados tabulares consistentes. Incluye un ejercicio práctico donde crearás un comando que devuelve un resultado de éxito o fallo simulado."
     git={{ repo: "dibs-scripts", user: "r8vnhill" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Esta lección introduce la idea de generar <I>salida estructurada</I> en PowerShell, un
             paso esencial para construir scripts reutilizables y fáciles de integrar con otros
@@ -55,7 +55,7 @@ const newPersonPSCustomCode = fs.readFileSync(
             comando que simula una comprobación de conexión y devuelve un objeto con el resultado de
             éxito o fallo, reforzando la utilidad de esta representación estructurada.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-hash-tables">
         <Heading
@@ -679,6 +679,7 @@ const newPersonPSCustomCode = fs.readFileSync(
     </ConclusionsLayout>
 
     <LinksLayout title="Comparativas y otros ecosistemas">
+        <PythonLink />
         <NushellLink />
     </LinksLayout>
 

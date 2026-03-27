@@ -2,7 +2,7 @@
 import * as icons from "$icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Info } from "~/components/ui/callouts";
+import { Explanation, Info } from "~/components/ui/callouts";
 import { NushellInline, OutputBlock, PowerShellInline } from "~/components/ui/code";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
 import { B, Dash, I } from "~/components/ui/font";
@@ -31,7 +31,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         href: "/notes/software-libraries/scripting/pipelines/nushell/",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Nushell permite producir datos estructurados desde el comienzo mediante <I>records</I> y
             listas. Al igual que PowerShell, en vez de construir texto y luego reinterpretarlo,
@@ -43,7 +43,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             <I>records</I>, y entender por qué ambos pueden verse como tabla sin dejar de ser datos
             estructurados.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-records-as-default">
         <Heading

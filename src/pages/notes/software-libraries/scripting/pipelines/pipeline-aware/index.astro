@@ -3,7 +3,6 @@ import * as icons from "~/assets/img/icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -41,7 +40,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         user: "r8vnhill",
     }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             En esta lección aprenderás a escribir código <I>pipeline-aware</I> que se comporta como
             cmdlets reales: reciben objetos desde el pipeline, procesan cada entrada de forma
@@ -55,7 +54,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             estrategias de <I>binding</I> por valor y por nombre de propiedad para conectar
             productores distintos sin romper el flujo de objetos.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-pipeline-aware">
         <Heading headingLevel="h2" Icon={icons.Pipe}>

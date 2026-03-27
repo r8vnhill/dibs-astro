@@ -11,7 +11,6 @@ import {
 } from "~/components/starwind/table";
 import Table from "~/components/starwind/table/Table.astro";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -42,7 +41,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Guía práctica de manejo de errores terminantes en PowerShell: promover fallos a terminantes con -ErrorAction Stop, capturarlos con try/catch/finally y ejecutar comandos externos de forma segura con Get-Command. Mencionamos errores no terminantes solo como contraste; los veremos más adelante con el pipeline."
     timeMultiplier={1.5} git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Al terminar esta lección podrás <B>controlar el flujo con errores terminantes</B> en
             PowerShell: promover fallos con <PowerShellInline code="-ErrorAction Stop" />,
@@ -60,7 +59,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             entorno. El ejercicio final consolida estas ideas implementando un <I>fallback</I>
             simple entre herramientas, priorizando <B>capacidades reales</B> por sobre suposiciones.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-terminating-errors">
         <Heading

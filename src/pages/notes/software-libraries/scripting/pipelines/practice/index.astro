@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Hints,
@@ -23,7 +22,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Pipelines III: Caso práctico y composición" description="Definir descripción"
     timeMultiplier={2}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <ToDo
             client:only="react"
             metadata={{
@@ -32,7 +31,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 ],
             }}
         />
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="...">
         <Heading

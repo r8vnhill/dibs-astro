@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Note } from "~/components/ui/callouts";
-import Abstract from "~/components/ui/callouts/Abstract.astro";
 import { InlineKotlin } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -17,7 +16,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Introducción a la automatización de tareas">
-    <Abstract>
+    <Fragment slot="abstract">
         La automatización de tareas convierte actividades manuales y repetitivas en procesos <B
         >predecibles, reproducibles y compartidos</B>. En el contexto del desarrollo de bibliotecas
         de software, esto implica
@@ -29,7 +28,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         construir procesos <B>fiables y sostenibles</B>. El objetivo es desarrollar una <B
         >mentalidad de automatización</B> que permita diseñar flujos claros, repetibles y listos
         para escalar junto al equipo.
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-task-automation">
         <Heading
