@@ -25,6 +25,12 @@
       "familyName": "Firshman"
     },
     {
+      "@id": "person:brett-slatkin",
+      "@type": "Person",
+      "givenName": "Brett",
+      "familyName": "Slatkin"
+    },
+    {
       "@id": "person:brian-w-kernighan",
       "@type": "Person",
       "givenName": "Brian W.",
@@ -79,6 +85,12 @@
       "@type": "Person",
       "givenName": "Konstantinos",
       "familyName": "Kallas"
+    },
+    {
+      "@id": "person:luciano-ramalho",
+      "@type": "Person",
+      "givenName": "Luciano",
+      "familyName": "Ramalho"
     },
     {
       "@id": "person:mark-volkmann",
@@ -154,6 +166,12 @@
       "familyName": "Zdancewic"
     },
     {
+      "@id": "person:tim-bray",
+      "@type": "Person",
+      "givenName": "Tim",
+      "familyName": "Bray"
+    },
+    {
       "@id": "person:travis-plunk",
       "@type": "Person",
       "givenName": "Travis",
@@ -184,10 +202,28 @@
       "url": "https://www.acm.org/"
     },
     {
+      "@id": "org:addison-wesley",
+      "@type": "Organization",
+      "name": "Addison-Wesley",
+      "url": "https://www.informit.com/imprint/index.aspx?st=61087"
+    },
+    {
       "@id": "org:atomic-spin",
       "@type": "Organization",
       "name": "Atomic Spin",
       "url": "https://spin.atomicobject.com/"
+    },
+    {
+      "@id": "org:attrs-project",
+      "@type": "Organization",
+      "name": "attrs",
+      "url": "https://www.attrs.org/en/stable/"
+    },
+    {
+      "@id": "org:cattrs-project",
+      "@type": "Organization",
+      "name": "cattrs",
+      "url": "https://catt.rs/en/stable/"
     },
     {
       "@id": "org:clig",
@@ -206,6 +242,12 @@
       "@type": "Organization",
       "name": "Heroku Dev Center",
       "url": "https://devcenter.heroku.com/"
+    },
+    {
+      "@id": "org:ietf",
+      "@type": "Organization",
+      "name": "Internet Engineering Task Force",
+      "url": "https://www.ietf.org/"
     },
     {
       "@id": "org:jdriven-blog",
@@ -232,16 +274,58 @@
       "url": "https://www.nushell.sh/"
     },
     {
+      "@id": "org:oreilly",
+      "@type": "Organization",
+      "name": "O'Reilly Media",
+      "url": "https://www.oreilly.com/"
+    },
+    {
       "@id": "org:prentice-hall",
       "@type": "Organization",
       "name": "Prentice Hall",
       "url": "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/"
     },
     {
+      "@id": "org:pycon-us",
+      "@type": "Organization",
+      "name": "PyCon US",
+      "url": "https://www.youtube.com/@PyConUS"
+    },
+    {
+      "@id": "org:pydantic",
+      "@type": "Organization",
+      "name": "Pydantic",
+      "url": "https://docs.pydantic.dev/latest/"
+    },
+    {
+      "@id": "org:pygotham",
+      "@type": "Organization",
+      "name": "PyGotham",
+      "url": "https://www.pygotham.com/"
+    },
+    {
+      "@id": "org:python-docs",
+      "@type": "Organization",
+      "name": "Python documentation",
+      "url": "https://docs.python.org/3/"
+    },
+    {
+      "@id": "org:python-peps",
+      "@type": "Organization",
+      "name": "Python Enhancement Proposals (PEPs)",
+      "url": "https://peps.python.org/"
+    },
+    {
       "@id": "org:university-of-waterloo",
       "@type": "CollegeOrUniversity",
       "name": "University of Waterloo",
       "url": "https://uwaterloo.ca/"
+    },
+    {
+      "@id": "org:youtube",
+      "@type": "Organization",
+      "name": "YouTube",
+      "url": "https://www.youtube.com/"
     },
     {
       "@id": "ref:snover-monad-manifesto-2002",
@@ -259,6 +343,32 @@
       "name": "ACM Transactions on Software Engineering and Methodology",
       "publisher": {
         "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:effective-python-3e",
+      "@type": "CreativeWork",
+      "name": "Effective Python: 125 specific ways to write better Python",
+      "author": [
+        {
+          "@id": "person:brett-slatkin"
+        }
+      ],
+      "publisher": {
+        "@id": "org:addison-wesley"
+      }
+    },
+    {
+      "@id": "work:fluent-python-2e",
+      "@type": "CreativeWork",
+      "name": "Fluent python: clear, concise, and effective programming",
+      "author": [
+        {
+          "@id": "person:luciano-ramalho"
+        }
+      ],
+      "publisher": {
+        "@id": "org:oreilly"
       }
     },
     {
@@ -342,6 +452,24 @@
       }
     },
     {
+      "@id": "ref:attrs-why-not",
+      "@type": "WebPage",
+      "name": "Why not… - attrs 26.1.0 documentation",
+      "url": "https://www.attrs.org/en/stable/why.html",
+      "publisher": {
+        "@id": "org:attrs-project"
+      }
+    },
+    {
+      "@id": "ref:cattrs-documentation",
+      "@type": "WebPage",
+      "name": "cattrs 26.1.0 documentation",
+      "url": "https://catt.rs/en/stable/#",
+      "publisher": {
+        "@id": "org:cattrs-project"
+      }
+    },
+    {
       "@id": "ref:clig-the-basics",
       "@type": "WebPage",
       "name": "Command Line Interface Guidelines",
@@ -362,6 +490,21 @@
       ],
       "publisher": {
         "@id": "org:martin-fowler-site"
+      }
+    },
+    {
+      "@id": "ref:dataclasses-are-here-2018-video",
+      "@type": "VideoObject",
+      "name": "Dataclasses are here. Now what?",
+      "url": "https://www.youtube.com/watch?v=zHY1oaYxxjA",
+      "datePublished": "2018-11-14",
+      "author": [
+        {
+          "@id": "org:pygotham"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pygotham"
       }
     },
     {
@@ -400,6 +543,20 @@
       }
     },
     {
+      "@id": "ref:effective-python-3e-book",
+      "@type": "Book",
+      "name": "Effective Python: 125 specific ways to write better Python",
+      "datePublished": "2025",
+      "author": [
+        {
+          "@id": "person:brett-slatkin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:effective-python-3e"
+      }
+    },
+    {
       "@id": "ref:errors-and-exceptions",
       "@type": "Book",
       "name": "Errors and exceptions",
@@ -415,6 +572,20 @@
       ],
       "isPartOf": {
         "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
+      "@id": "ref:fluent-python-2e-book",
+      "@type": "Book",
+      "name": "Fluent python: clear, concise, and effective programming",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@id": "person:luciano-ramalho"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:fluent-python-2e"
       }
     },
     {
@@ -469,6 +640,15 @@
       "datePublished": "2025-01-31",
       "publisher": {
         "@id": "org:heroku-dev-center"
+      }
+    },
+    {
+      "@id": "ref:hettinger-dataclasses-pycon-2018-video",
+      "@type": "VideoObject",
+      "name": "(2) Raymond Hettinger - Dataclasses: The code generator to end all code generators - PyCon 2018 - YouTube",
+      "url": "https://www.youtube.com/watch?v=T-TwcmT6Rcw",
+      "publisher": {
+        "@id": "org:youtube"
       }
     },
     {
@@ -546,6 +726,21 @@
       ],
       "publisher": {
         "@id": "org:university-of-waterloo"
+      }
+    },
+    {
+      "@id": "ref:lucas-serialization-more-than-pickling-2022",
+      "@type": "VideoObject",
+      "name": "Talk - Joseph Lucas: Serialization  More than pickling",
+      "url": "https://www.youtube.com/watch?v=ygrjAGDU1J8",
+      "datePublished": "2022-05-23",
+      "author": [
+        {
+          "@id": "org:pycon-us"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pycon-us"
       }
     },
     {
@@ -834,6 +1029,24 @@
       }
     },
     {
+      "@id": "ref:pep-557-data-classes",
+      "@type": "WebPage",
+      "name": "PEP 557 – Data Classes | peps.python.org",
+      "url": "https://peps.python.org/pep-0557/",
+      "publisher": {
+        "@id": "org:python-peps"
+      }
+    },
+    {
+      "@id": "ref:pep-613-explicit-type-aliases",
+      "@type": "WebPage",
+      "name": "PEP 613 – Explicit Type Aliases | peps.python.org",
+      "url": "https://peps.python.org/pep-0613/",
+      "publisher": {
+        "@id": "org:python-peps"
+      }
+    },
+    {
       "@id": "ref:pipeline-connecting-commands",
       "@type": "Book",
       "name": "The pipeline: Connecting commands",
@@ -846,6 +1059,71 @@
       ],
       "isPartOf": {
         "@id": "work:learn-powershell-month-lunches-4e"
+      }
+    },
+    {
+      "@id": "ref:pydantic-models-docs",
+      "@type": "WebPage",
+      "name": "Models - Pydantic Validation",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "publisher": {
+        "@id": "org:pydantic"
+      }
+    },
+    {
+      "@id": "ref:python-dataclasses-docs",
+      "@type": "WebPage",
+      "name": "dataclasses — Data Classes",
+      "url": "https://docs.python.org/3/library/dataclasses.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-distilled-book",
+      "@type": "Book",
+      "name": "Python Distilled",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@id": "person:david-m-beazley"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:python-distilled"
+      }
+    },
+    {
+      "@id": "ref:python-json-docs",
+      "@type": "WebPage",
+      "name": "json — JSON encoder and decoder",
+      "url": "https://docs.python.org/3/library/json.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-typing-docs",
+      "@type": "WebPage",
+      "name": "typing — Support for type hints",
+      "url": "https://docs.python.org/3/library/typing.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:rfc-8259-json-data-interchange-format",
+      "@type": "WebPage",
+      "name": "The JavaScript Object Notation (JSON) Data Interchange Format",
+      "url": "https://datatracker.ietf.org/doc/rfc8259",
+      "datePublished": "2017-12",
+      "author": [
+        {
+          "@id": "person:tim-bray"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ietf"
       }
     },
     {
@@ -932,6 +1210,12 @@
       "@type": "LearningResource",
       "name": "Salida estructurada en Nushell",
       "url": "/notes/software-libraries/scripting/structured-output/nushell/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/structured-output/py/",
+      "@type": "LearningResource",
+      "name": "Salida estructurada en Python",
+      "url": "/notes/software-libraries/scripting/structured-output/py/"
     },
     {
       "@id": "usage:errors-errors-and-exceptions-additional",
@@ -1578,6 +1862,201 @@
       },
       "dibs:reference": {
         "@id": "ref:nushell-working-with-tables"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-attrs-why-not-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:attrs-why-not"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-cattrs-documentation-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:cattrs-documentation"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-dataclasses-are-here-2018-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:dataclasses-are-here-2018-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-effective-python-3e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:effective-python-3e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-fluent-python-2e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:fluent-python-2e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:hettinger-dataclasses-pycon-2018-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lucas-serialization-more-than-pickling-2022"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pep-557-data-classes-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pep-557-data-classes"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pep-613-explicit-type-aliases-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pep-613-explicit-type-aliases"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pydantic-models-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pydantic-models-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-dataclasses-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-dataclasses-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-distilled-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-distilled-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-json-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-json-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-typing-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-typing-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-rfc-8259-json-data-interchange-format-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rfc-8259-json-data-interchange-format"
       },
       "dibs:tags": [
         "pending-revision"

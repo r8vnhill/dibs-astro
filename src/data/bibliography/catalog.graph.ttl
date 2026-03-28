@@ -149,6 +149,21 @@ person:sdwheeler
   a schema:Person ;
   schema:familyName "sdwheeler" .
 
+person:tim-bray
+  a schema:Person ;
+  schema:givenName "Tim" ;
+  schema:familyName "Bray" .
+
+person:luciano-ramalho
+  a schema:Person ;
+  schema:givenName "Luciano" ;
+  schema:familyName "Ramalho" .
+
+person:brett-slatkin
+  a schema:Person ;
+  schema:givenName "Brett" ;
+  schema:familyName "Slatkin" .
+
 org:nushell
   a schema:Organization ;
   schema:name "Nushell" ;
@@ -199,6 +214,61 @@ org:dispatch-youtube
   schema:name "Dispatch" ;
   schema:url "https://www.youtube.com/" .
 
+org:youtube
+  a schema:Organization ;
+  schema:name "YouTube" ;
+  schema:url "https://www.youtube.com/" .
+
+org:ietf
+  a schema:Organization ;
+  schema:name "Internet Engineering Task Force" ;
+  schema:url "https://www.ietf.org/" .
+
+org:python-docs
+  a schema:Organization ;
+  schema:name "Python documentation" ;
+  schema:url "https://docs.python.org/3/" .
+
+org:python-peps
+  a schema:Organization ;
+  schema:name "Python Enhancement Proposals (PEPs)" ;
+  schema:url "https://peps.python.org/" .
+
+org:cattrs-project
+  a schema:Organization ;
+  schema:name "cattrs" ;
+  schema:url "https://catt.rs/en/stable/" .
+
+org:pydantic
+  a schema:Organization ;
+  schema:name "Pydantic" ;
+  schema:url "https://docs.pydantic.dev/latest/" .
+
+org:attrs-project
+  a schema:Organization ;
+  schema:name "attrs" ;
+  schema:url "https://www.attrs.org/en/stable/" .
+
+org:oreilly
+  a schema:Organization ;
+  schema:name "O'Reilly Media" ;
+  schema:url "https://www.oreilly.com/" .
+
+org:addison-wesley
+  a schema:Organization ;
+  schema:name "Addison-Wesley" ;
+  schema:url "https://www.informit.com/imprint/index.aspx?st=61087" .
+
+org:pycon-us
+  a schema:Organization ;
+  schema:name "PyCon US" ;
+  schema:url "https://www.youtube.com/@PyConUS" .
+
+org:pygotham
+  a schema:Organization ;
+  schema:name "PyGotham" ;
+  schema:url "https://www.pygotham.com/" .
+
 org:prentice-hall
   a schema:Organization ;
   schema:name "Prentice Hall" ;
@@ -239,6 +309,18 @@ work:unix-programming-environment
   schema:name "The UNIX programming environment" ;
   schema:author person:brian-w-kernighan, person:rob-pike ;
   schema:publisher org:prentice-hall .
+
+work:fluent-python-2e
+  a schema:CreativeWork ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:author person:luciano-ramalho ;
+  schema:publisher org:oreilly .
+
+work:effective-python-3e
+  a schema:CreativeWork ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:author person:brett-slatkin ;
+  schema:publisher org:addison-wesley .
 
 ref:pipeline-connecting-commands
   a schema:Book ;
@@ -286,6 +368,105 @@ ref:errors-and-exceptions
   schema:pageEnd 562 ;
   schema:author person:bruce-payette, person:richard-siddaway ;
   schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:python-distilled-book
+  a schema:Book ;
+  schema:name "Python Distilled" ;
+  schema:datePublished "2022" ;
+  schema:author person:david-m-beazley ;
+  schema:isPartOf work:python-distilled .
+
+ref:rfc-8259-json-data-interchange-format
+  a schema:WebPage ;
+  schema:name "The JavaScript Object Notation (JSON) Data Interchange Format" ;
+  schema:url "https://datatracker.ietf.org/doc/rfc8259" ;
+  schema:datePublished "2017-12" ;
+  schema:author person:tim-bray ;
+  schema:publisher org:ietf .
+
+ref:cattrs-documentation
+  a schema:WebPage ;
+  schema:name "cattrs 26.1.0 documentation" ;
+  schema:url "https://catt.rs/en/stable/#" ;
+  schema:publisher org:cattrs-project .
+
+ref:python-dataclasses-docs
+  a schema:WebPage ;
+  schema:name "dataclasses — Data Classes" ;
+  schema:url "https://docs.python.org/3/library/dataclasses.html" ;
+  schema:publisher org:python-docs .
+
+ref:python-json-docs
+  a schema:WebPage ;
+  schema:name "json — JSON encoder and decoder" ;
+  schema:url "https://docs.python.org/3/library/json.html" ;
+  schema:publisher org:python-docs .
+
+ref:fluent-python-2e-book
+  a schema:Book ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:datePublished "2022" ;
+  schema:author person:luciano-ramalho ;
+  schema:isPartOf work:fluent-python-2e .
+
+ref:pydantic-models-docs
+  a schema:WebPage ;
+  schema:name "Models - Pydantic Validation" ;
+  schema:url "https://docs.pydantic.dev/latest/concepts/models/" ;
+  schema:publisher org:pydantic .
+
+ref:pep-557-data-classes
+  a schema:WebPage ;
+  schema:name "PEP 557 – Data Classes | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0557/" ;
+  schema:publisher org:python-peps .
+
+ref:pep-613-explicit-type-aliases
+  a schema:WebPage ;
+  schema:name "PEP 613 – Explicit Type Aliases | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0613/" ;
+  schema:publisher org:python-peps .
+
+ref:hettinger-dataclasses-pycon-2018-video
+  a schema:VideoObject ;
+  schema:name "(2) Raymond Hettinger - Dataclasses: The code generator to end all code generators - PyCon 2018 - YouTube" ;
+  schema:url "https://www.youtube.com/watch?v=T-TwcmT6Rcw" ;
+  schema:publisher org:youtube .
+
+ref:lucas-serialization-more-than-pickling-2022
+  a schema:VideoObject ;
+  schema:name "Talk - Joseph Lucas: Serialization  More than pickling" ;
+  schema:url "https://www.youtube.com/watch?v=ygrjAGDU1J8" ;
+  schema:datePublished "2022-05-23" ;
+  schema:author org:pycon-us ;
+  schema:publisher org:pycon-us .
+
+ref:dataclasses-are-here-2018-video
+  a schema:VideoObject ;
+  schema:name "Dataclasses are here. Now what?" ;
+  schema:url "https://www.youtube.com/watch?v=zHY1oaYxxjA" ;
+  schema:datePublished "2018-11-14" ;
+  schema:author org:pygotham ;
+  schema:publisher org:pygotham .
+
+ref:effective-python-3e-book
+  a schema:Book ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:datePublished "2025" ;
+  schema:author person:brett-slatkin ;
+  schema:isPartOf work:effective-python-3e .
+
+ref:python-typing-docs
+  a schema:WebPage ;
+  schema:name "typing — Support for type hints" ;
+  schema:url "https://docs.python.org/3/library/typing.html" ;
+  schema:publisher org:python-docs .
+
+ref:attrs-why-not
+  a schema:WebPage ;
+  schema:name "Why not… - attrs 26.1.0 documentation" ;
+  schema:url "https://www.attrs.org/en/stable/why.html" ;
+  schema:publisher org:attrs-project .
 
 ref:clig-the-basics
   a schema:WebPage ;
@@ -585,6 +766,11 @@ ref:snover-windows-powershell-unplugged-2015
   schema:name "Comandos reutilizables y validación de parámetros en Nushell" ;
   schema:url "/notes/software-libraries/scripting/first-script/nushell/" .
 
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/>
+  a schema:LearningResource ;
+  schema:name "Salida estructurada en Python" ;
+  schema:url "/notes/software-libraries/scripting/structured-output/py/" .
+
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/>
   a schema:LearningResource ;
   schema:name "Salida estructurada en Nushell" ;
@@ -755,6 +941,96 @@ usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
   dibs:reference ref:jdriven-nushell-basics-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-distilled-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-distilled-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-rfc-8259-json-data-interchange-format-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:rfc-8259-json-data-interchange-format ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-cattrs-documentation-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:cattrs-documentation ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-dataclasses-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-dataclasses-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-json-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-json-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-fluent-python-2e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:fluent-python-2e-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pydantic-models-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pydantic-models-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pep-557-data-classes-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pep-557-data-classes ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pep-613-explicit-type-aliases-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pep-613-explicit-type-aliases ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:hettinger-dataclasses-pycon-2018-video ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:lucas-serialization-more-than-pickling-2022 ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-dataclasses-are-here-2018-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:dataclasses-are-here-2018-video ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-effective-python-3e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:effective-python-3e-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-typing-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-typing-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-attrs-why-not-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:attrs-why-not ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-working-with-lists-pending
