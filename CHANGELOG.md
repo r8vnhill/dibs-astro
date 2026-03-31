@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-03-31
+
+### Added
+
+- Added the new `Taxonomía básica de artefactos de software` lesson and reordered Unit 1 so the course now introduces the artifact map before focusing on libraries as a specific artifact type.
+- Added new lesson content and comparative material across the scripting block, including Nushell-focused lessons, richer structured-output content, and the `Git Submodules` lab.
+- Added a centralized bibliography catalog workflow with catalog-backed lesson references, richer reference renderers, and supporting tests for books, webpages, articles, theses, and videos.
+- Added layered navigation/catalog foundations, Astro render test helpers, and new reusable typography primitives that strengthen the project’s content and UI authoring surface.
+
+### Changed
+
+- Reworked `software-libraries` lesson sequencing and framing, including the taxonomy lesson, `what-is`, and several scripting/build-related pages, so the unit progresses more coherently from artifact taxonomy to automation and library design.
+- Modernized the editorial and technical workflow around bibliography generation, lesson metadata, Astro render testing, architecture documentation, and agent-facing project guidance.
+- Expanded and normalized the icon system and its generation pipeline so the project now ships a much broader, more reliable icon set without requiring ad hoc per-file handling.
+
+### Fixed
+
+- Fixed bibliography rendering edge cases across catalog-backed and JSON-LD-backed references, including fallback titles, page-range normalization, description overrides, and safe handling of malformed `pending-revision` entries.
+- Fixed navigation and test reliability issues by reducing flaky adapter imports, loosening overly brittle course-structure expectations, and stabilizing costly Astro render tests.
+- Fixed presentation issues affecting the final site, including font-loading behavior, icon color inheritance, and related rendering inconsistencies in shared UI components.
+
 ## [0.13.1] - 2026-03-26
 
 ### Added
