@@ -7,8 +7,15 @@
  */
 
 import * as icons from "~/assets/img/icons";
+import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import {
+    resolveInlineField,
+    resolveLinkedInlineField,
+    resolveOptionalSlots,
+    SPANISH_REFERENCE_META_LABELS,
+} from "./reference-content";
+import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
 
 // Define props and destructure them from Astro.props
 type Props = {
@@ -41,55 +48,77 @@ const {
     author: authorSlot,
     description: descriptionSlot,
 } = await resolveOptionalSlots(Astro.slots, ["title", "location", "author", "description"]);
+
+const externalLinkAttrs = {
+    target: "_blank",
+    rel: "noopener noreferrer",
+    class: "hover:underline underline-offset-2",
+} as const;
+
+const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedLocation = resolveLinkedInlineField(locationSlot, location, locationUrl);
+const resolvedAuthor = resolveInlineField(authorSlot, author);
+
+if (resolvedTitle.kind === "missing") {
+    throw new MissingReferenceTitleError();
+}
+
+if (import.meta.env.DEV && locationUrl && !location) {
+    throw new ReferenceContractError("WebPage `locationUrl` requires `location`.");
+}
 ---
 
 <ListItem icon={icons.Globe}>
-    “<a
-        href={url} target="_blank"
-        rel="noopener noreferrer" class="hover:underline underline-offset-2"
-    >
-        {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
-    </a>”
+    <Enquote type="english-double">
+        <a href={url} {...externalLinkAttrs}>
+            {
+                resolvedTitle.kind === "slot"
+                    ? <span set:html={resolvedTitle.html} />
+                : resolvedTitle.text
+            }
+        </a>
+    </Enquote>
 
     {
-        locationSlot.kind === "meaningful" || location ? (
+        resolvedLocation.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
                 {
-                    locationSlot.kind === "meaningful" ? (
-                        <slot name="location" />
-                    ) : location && locationUrl ? (
-                        <a
-                            href={locationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="hover:underline underline-offset-2"
-                        >
-                            {location}
+                    resolvedLocation.kind === "slot"
+                        ? <span set:html={resolvedLocation.html} />
+                    : resolvedLocation.kind === "link"
+                    ? (
+                        <a href={resolvedLocation.href} {...externalLinkAttrs}>
+                            {resolvedLocation.text}
                         </a>
-                    ) : location
+                    )
+                    : resolvedLocation.text
                 }
             </span>
         ) : null
     }
 
     {
-        authorSlot.kind === "meaningful" || author ? (
+        resolvedAuthor.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
                     " "
                 }
-                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
+                {
+                    resolvedAuthor.kind === "slot"
+                        ? <span set:html={resolvedAuthor.html} />
+                    : resolvedAuthor.text
+                }
             </span>
         ) : null
     }
 
     {
         descriptionSlot.kind === "meaningful" ? (
-            <div class="text-muted-foreground block">
-                <slot name="description" />
+            <div class="text-muted-foreground">
+                <span set:html={descriptionSlot.html} />
             </div>
         ) : null
     }

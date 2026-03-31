@@ -32,7 +32,7 @@ describe.concurrent("Video.astro render", () => {
         expect(html).toContain("Dispatch");
         expect(html).toContain("Quien presenta");
         expect(html).toContain("2024-11-29");
-        expect(html).toContain('href="https://www.youtube.com/"');
+        expect(html).toContain("href=\"https://www.youtube.com/\"");
         expect(html).toContain(">en<");
         expect(html).toContain(">por<");
     });
@@ -76,5 +76,13 @@ describe.concurrent("Video.astro render", () => {
         );
 
         expect(html).toContain("Descripción de video");
+    });
+
+    test("throws when no meaningful title source exists", async () => {
+        await expect(
+            renderVideo({
+                url: "https://example.com/video",
+            }),
+        ).rejects.toThrow(/title/i);
     });
 });

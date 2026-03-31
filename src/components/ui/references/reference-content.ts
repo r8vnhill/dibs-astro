@@ -76,6 +76,31 @@ export type ResolvedInlineField =
     };
 
 /**
+ * Resolved inline field that may optionally render as an external link.
+ *
+ * Slot HTML always wins over prop fallbacks. Link rendering is reserved for prop-backed content,
+ * because slot content is already treated as caller-authored presentation markup and should not be
+ * wrapped automatically.
+ */
+export type ResolvedLinkedInlineField =
+    | {
+        kind: "missing";
+    }
+    | {
+        kind: "slot";
+        html: string;
+    }
+    | {
+        kind: "text";
+        text: string;
+    }
+    | {
+        kind: "link";
+        text: string;
+        href: string;
+    };
+
+/**
  * Fixed inline labels used by the Spanish bibliography presentation layer.
  *
  * These labels are kept here because several reference components share the same small vocabulary
@@ -173,6 +198,34 @@ export function resolveInlineField(
     }
 
     return { kind: "missing" };
+}
+
+/**
+ * Resolves a display field from slot content first and prop fallback second, with optional link
+ * semantics for prop-backed content.
+ *
+ * When slot content is meaningful it always wins and is returned as trusted HTML. Otherwise the
+ * helper falls back to plain text and upgrades it to a link only when both fallback text and
+ * fallback URL are present.
+ */
+export function resolveLinkedInlineField(
+    slotContent: ResolvedSlotContent,
+    fallbackText?: string,
+    fallbackUrl?: string,
+): ResolvedLinkedInlineField {
+    if (isMeaningfulSlotContent(slotContent)) {
+        return { kind: "slot", html: slotContent.html };
+    }
+
+    if (!fallbackText) {
+        return { kind: "missing" };
+    }
+
+    if (fallbackUrl) {
+        return { kind: "link", text: fallbackText, href: fallbackUrl };
+    }
+
+    return { kind: "text", text: fallbackText };
 }
 
 /**

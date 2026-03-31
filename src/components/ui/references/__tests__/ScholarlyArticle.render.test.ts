@@ -30,7 +30,7 @@ describe.concurrent("ScholarlyArticle.astro render", () => {
         expect(html).toContain("Bash in the Wild");
         expect(html).toContain("TOSEM");
         expect(html).toContain("Quien investiga");
-        expect(html).toContain('href="https://dl.acm.org/journal/tosem"');
+        expect(html).toContain("href=\"https://dl.acm.org/journal/tosem\"");
         expect(html).toContain(">en<");
         expect(html).toContain(">por<");
     });
@@ -117,5 +117,13 @@ describe.concurrent("ScholarlyArticle.astro render", () => {
 
         expect(withDescription).toContain("Descripción útil");
         expect(withoutDescription).not.toContain("Descripción útil");
+    });
+
+    test("throws when no meaningful title source exists", async () => {
+        await expect(
+            renderArticle({
+                url: "https://example.com/article",
+            }),
+        ).rejects.toThrow(/title/i);
     });
 });

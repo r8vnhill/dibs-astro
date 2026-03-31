@@ -27,7 +27,7 @@ describe.concurrent("WebPage.astro render", () => {
         });
 
         expect(html).toContain("Pipelines");
-        expect(html).toContain('href="https://www.nushell.sh/"');
+        expect(html).toContain("href=\"https://www.nushell.sh/\"");
         expect(html).toMatch(/>\s*Nushell\s*<\/a>/);
         expect(html).toContain("Equipo Nushell");
     });
@@ -42,12 +42,20 @@ describe.concurrent("WebPage.astro render", () => {
             },
             {
                 slots: {
-                    location: '<strong data-slot="location">Nushell slot</strong>',
+                    location: "<strong data-slot=\"location\">Nushell slot</strong>",
                 },
             },
         );
 
-        expect(html).toContain('data-slot="location"');
+        expect(html).toContain("data-slot=\"location\"");
         expect(html).toContain("Nushell slot");
+    });
+
+    test("throws when no meaningful title source exists", async () => {
+        await expect(
+            renderWebPage({
+                url: "https://example.com/page",
+            }),
+        ).rejects.toThrow(/title/i);
     });
 });

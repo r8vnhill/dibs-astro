@@ -1,8 +1,10 @@
+import fc from "fast-check";
 import { describe, expect, it, vi } from "vitest";
 import {
     hasMeaningfulTextContent,
     prepareSlotsForReferences,
     resolveInlineField,
+    resolveLinkedInlineField,
     resolveOptionalSlot,
     resolveOptionalSlots,
 } from "../reference-content";
@@ -125,6 +127,73 @@ describe("reference-content utilities", () => {
             expect(resolveInlineField({ kind: "empty", html: "" })).toEqual({
                 kind: "missing",
             });
+        });
+    });
+
+    describe("resolveLinkedInlineField", () => {
+        it("prefers meaningful slot content over prop text and url", () => {
+            expect(
+                resolveLinkedInlineField(
+                    { kind: "meaningful", html: "<strong>Institución</strong>" },
+                    "Institution base",
+                    "https://example.com",
+                ),
+            ).toEqual({
+                kind: "slot",
+                html: "<strong>Institución</strong>",
+            });
+        });
+
+        it("returns a link when prop text and url are both available", () => {
+            expect(
+                resolveLinkedInlineField(
+                    { kind: "empty", html: "" },
+                    "Institution base",
+                    "https://example.com",
+                ),
+            ).toEqual({
+                kind: "link",
+                text: "Institution base",
+                href: "https://example.com",
+            });
+        });
+
+        it("returns plain text when prop text exists without url", () => {
+            expect(resolveLinkedInlineField({ kind: "empty", html: "" }, "Institution base"))
+                .toEqual(
+                    {
+                        kind: "text",
+                        text: "Institution base",
+                    },
+                );
+        });
+
+        it("returns missing when neither slot nor prop text exists", () => {
+            expect(resolveLinkedInlineField({ kind: "empty", html: "" })).toEqual({
+                kind: "missing",
+            });
+        });
+
+        it("property: meaningful slot content always wins", () => {
+            fc.assert(
+                fc.property(
+                    fc.string(),
+                    fc.option(fc.string()),
+                    fc.option(fc.webUrl()),
+                    (html, text, url) => {
+                        const result = resolveLinkedInlineField(
+                            { kind: "meaningful", html },
+                            text ?? undefined,
+                            url ?? undefined,
+                        );
+
+                        expect(result).toEqual({
+                            kind: "slot",
+                            html,
+                        });
+                    },
+                ),
+            );
         });
     });
 });
