@@ -105,6 +105,65 @@ person:arjen-tebbenhof
   schema:givenName "Arjen" ;
   schema:familyName "Tebbenhof" .
 
+person:shivam-handa
+  a schema:Person ;
+  schema:givenName "Shivam" ;
+  schema:familyName "Handa" .
+
+person:konstantinos-kallas
+  a schema:Person ;
+  schema:givenName "Konstantinos" ;
+  schema:familyName "Kallas" .
+
+person:nikos-vasilakis
+  a schema:Person ;
+  schema:givenName "Nikos" ;
+  schema:familyName "Vasilakis" .
+
+person:martin-c-rinard
+  a schema:Person ;
+  schema:givenName "Martin C." ;
+  schema:familyName "Rinard" .
+
+person:brian-w-kernighan
+  a schema:Person ;
+  schema:givenName "Brian W." ;
+  schema:familyName "Kernighan" .
+
+person:rob-pike
+  a schema:Person ;
+  schema:givenName "Rob" ;
+  schema:familyName "Pike" .
+
+person:jeffrey-p-snover
+  a schema:Person ;
+  schema:givenName "Jeffrey P." ;
+  schema:familyName "Snover" .
+
+person:mark-volkmann
+  a schema:Person ;
+  schema:givenName "Mark" ;
+  schema:familyName "Volkmann" .
+
+person:sdwheeler
+  a schema:Person ;
+  schema:familyName "sdwheeler" .
+
+person:tim-bray
+  a schema:Person ;
+  schema:givenName "Tim" ;
+  schema:familyName "Bray" .
+
+person:luciano-ramalho
+  a schema:Person ;
+  schema:givenName "Luciano" ;
+  schema:familyName "Ramalho" .
+
+person:brett-slatkin
+  a schema:Person ;
+  schema:givenName "Brett" ;
+  schema:familyName "Slatkin" .
+
 org:nushell
   a schema:Organization ;
   schema:name "Nushell" ;
@@ -145,6 +204,76 @@ org:university-of-waterloo
   schema:name "University of Waterloo" ;
   schema:url "https://uwaterloo.ca/" .
 
+org:microsoft-learn
+  a schema:Organization ;
+  schema:name "Microsoft Learn" ;
+  schema:url "https://learn.microsoft.com/" .
+
+org:dispatch-youtube
+  a schema:Organization ;
+  schema:name "Dispatch" ;
+  schema:url "https://www.youtube.com/" .
+
+org:youtube
+  a schema:Organization ;
+  schema:name "YouTube" ;
+  schema:url "https://www.youtube.com/" .
+
+org:ietf
+  a schema:Organization ;
+  schema:name "Internet Engineering Task Force" ;
+  schema:url "https://www.ietf.org/" .
+
+org:python-docs
+  a schema:Organization ;
+  schema:name "Python documentation" ;
+  schema:url "https://docs.python.org/3/" .
+
+org:python-peps
+  a schema:Organization ;
+  schema:name "Python Enhancement Proposals (PEPs)" ;
+  schema:url "https://peps.python.org/" .
+
+org:cattrs-project
+  a schema:Organization ;
+  schema:name "cattrs" ;
+  schema:url "https://catt.rs/en/stable/" .
+
+org:pydantic
+  a schema:Organization ;
+  schema:name "Pydantic" ;
+  schema:url "https://docs.pydantic.dev/latest/" .
+
+org:attrs-project
+  a schema:Organization ;
+  schema:name "attrs" ;
+  schema:url "https://www.attrs.org/en/stable/" .
+
+org:oreilly
+  a schema:Organization ;
+  schema:name "O'Reilly Media" ;
+  schema:url "https://www.oreilly.com/" .
+
+org:addison-wesley
+  a schema:Organization ;
+  schema:name "Addison-Wesley" ;
+  schema:url "https://www.informit.com/imprint/index.aspx?st=61087" .
+
+org:pycon-us
+  a schema:Organization ;
+  schema:name "PyCon US" ;
+  schema:url "https://www.youtube.com/@PyConUS" .
+
+org:pygotham
+  a schema:Organization ;
+  schema:name "PyGotham" ;
+  schema:url "https://www.pygotham.com/" .
+
+org:prentice-hall
+  a schema:Organization ;
+  schema:name "Prentice Hall" ;
+  schema:url "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/" .
+
 work:learn-powershell-month-lunches-4e
   a schema:CreativeWork ;
   schema:name "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS" ;
@@ -169,6 +298,29 @@ work:plas-2007
   a schema:CreativeWork ;
   schema:name "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security" ;
   schema:publisher org:acm .
+
+work:proc-acm-program-lang
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the ACM on Programming Languages" ;
+  schema:publisher org:acm .
+
+work:unix-programming-environment
+  a schema:CreativeWork ;
+  schema:name "The UNIX programming environment" ;
+  schema:author person:brian-w-kernighan, person:rob-pike ;
+  schema:publisher org:prentice-hall .
+
+work:fluent-python-2e
+  a schema:CreativeWork ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:author person:luciano-ramalho ;
+  schema:publisher org:oreilly .
+
+work:effective-python-3e
+  a schema:CreativeWork ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:author person:brett-slatkin ;
+  schema:publisher org:addison-wesley .
 
 ref:pipeline-connecting-commands
   a schema:Book ;
@@ -216,6 +368,105 @@ ref:errors-and-exceptions
   schema:pageEnd 562 ;
   schema:author person:bruce-payette, person:richard-siddaway ;
   schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:python-distilled-book
+  a schema:Book ;
+  schema:name "Python Distilled" ;
+  schema:datePublished "2022" ;
+  schema:author person:david-m-beazley ;
+  schema:isPartOf work:python-distilled .
+
+ref:rfc-8259-json-data-interchange-format
+  a schema:WebPage ;
+  schema:name "The JavaScript Object Notation (JSON) Data Interchange Format" ;
+  schema:url "https://datatracker.ietf.org/doc/rfc8259" ;
+  schema:datePublished "2017-12" ;
+  schema:author person:tim-bray ;
+  schema:publisher org:ietf .
+
+ref:cattrs-documentation
+  a schema:WebPage ;
+  schema:name "cattrs 26.1.0 documentation" ;
+  schema:url "https://catt.rs/en/stable/#" ;
+  schema:publisher org:cattrs-project .
+
+ref:python-dataclasses-docs
+  a schema:WebPage ;
+  schema:name "dataclasses — Data Classes" ;
+  schema:url "https://docs.python.org/3/library/dataclasses.html" ;
+  schema:publisher org:python-docs .
+
+ref:python-json-docs
+  a schema:WebPage ;
+  schema:name "json — JSON encoder and decoder" ;
+  schema:url "https://docs.python.org/3/library/json.html" ;
+  schema:publisher org:python-docs .
+
+ref:fluent-python-2e-book
+  a schema:Book ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:datePublished "2022" ;
+  schema:author person:luciano-ramalho ;
+  schema:isPartOf work:fluent-python-2e .
+
+ref:pydantic-models-docs
+  a schema:WebPage ;
+  schema:name "Models - Pydantic Validation" ;
+  schema:url "https://docs.pydantic.dev/latest/concepts/models/" ;
+  schema:publisher org:pydantic .
+
+ref:pep-557-data-classes
+  a schema:WebPage ;
+  schema:name "PEP 557 – Data Classes | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0557/" ;
+  schema:publisher org:python-peps .
+
+ref:pep-613-explicit-type-aliases
+  a schema:WebPage ;
+  schema:name "PEP 613 – Explicit Type Aliases | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0613/" ;
+  schema:publisher org:python-peps .
+
+ref:hettinger-dataclasses-pycon-2018-video
+  a schema:VideoObject ;
+  schema:name "(2) Raymond Hettinger - Dataclasses: The code generator to end all code generators - PyCon 2018 - YouTube" ;
+  schema:url "https://www.youtube.com/watch?v=T-TwcmT6Rcw" ;
+  schema:publisher org:youtube .
+
+ref:lucas-serialization-more-than-pickling-2022
+  a schema:VideoObject ;
+  schema:name "Talk - Joseph Lucas: Serialization  More than pickling" ;
+  schema:url "https://www.youtube.com/watch?v=ygrjAGDU1J8" ;
+  schema:datePublished "2022-05-23" ;
+  schema:author org:pycon-us ;
+  schema:publisher org:pycon-us .
+
+ref:dataclasses-are-here-2018-video
+  a schema:VideoObject ;
+  schema:name "Dataclasses are here. Now what?" ;
+  schema:url "https://www.youtube.com/watch?v=zHY1oaYxxjA" ;
+  schema:datePublished "2018-11-14" ;
+  schema:author org:pygotham ;
+  schema:publisher org:pygotham .
+
+ref:effective-python-3e-book
+  a schema:Book ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:datePublished "2025" ;
+  schema:author person:brett-slatkin ;
+  schema:isPartOf work:effective-python-3e .
+
+ref:python-typing-docs
+  a schema:WebPage ;
+  schema:name "typing — Support for type hints" ;
+  schema:url "https://docs.python.org/3/library/typing.html" ;
+  schema:publisher org:python-docs .
+
+ref:attrs-why-not
+  a schema:WebPage ;
+  schema:name "Why not… - attrs 26.1.0 documentation" ;
+  schema:url "https://www.attrs.org/en/stable/why.html" ;
+  schema:publisher org:attrs-project .
 
 ref:clig-the-basics
   a schema:WebPage ;
@@ -372,10 +623,133 @@ ref:nushell-working-with-tables
   schema:url "https://www.nushell.sh/book/working_with_tables.html" ;
   schema:publisher org:nushell .
 
+ref:nushell-new-type-shell-video
+  a schema:VideoObject ;
+  schema:name "Nushell: A new type of shell!" ;
+  schema:url "https://www.youtube.com/watch?v=GPqV6rLfKR4" ;
+  schema:datePublished "2024-11-29" ;
+  schema:author org:dispatch-youtube ;
+  schema:publisher org:dispatch-youtube .
+
+ref:nushell-filters
+  a schema:WebPage ;
+  schema:name "Filters | Nushell" ;
+  schema:url "https://www.nushell.sh/commands/categories/filters.html" ;
+  schema:publisher org:nushell .
+
+ref:handa-order-aware-dataflow-pipelines-2021
+  a schema:ScholarlyArticle ;
+  schema:name "An order-aware dataflow model for parallel Unix pipelines" ;
+  schema:url "https://dl.acm.org/doi/10.1145/3473570" ;
+  schema:datePublished "2021" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 28 ;
+  schema:author person:shivam-handa, person:konstantinos-kallas, person:nikos-vasilakis, person:martin-c-rinard ;
+  schema:isPartOf work:proc-acm-program-lang ;
+  schema:publisher org:acm .
+
+ref:nushell-jq-vs-nushell
+  a schema:WebPage ;
+  schema:name "jq vs Nushell | Nushell" ;
+  schema:url "https://www.nushell.sh/cookbook/jq_v_nushell.html" ;
+  schema:publisher org:nushell .
+
+ref:microsoft-powershell-more-on-parameters
+  a schema:WebPage ;
+  schema:name "Advanced Tools & Scripting with PowerShell 3.0: (05) More on Parameters" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/advpowershell3/05" ;
+  schema:datePublished "2013-08-09" ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-getting-started-powershell-3
+  a schema:WebPage ;
+  schema:name "Getting Started with PowerShell 3.0" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/getstartedpowershell3/" ;
+  schema:publisher org:microsoft-learn .
+
+ref:kernighan-pike-unix-programming-environment-1984
+  a schema:Book ;
+  schema:name "The UNIX programming environment" ;
+  schema:datePublished "1984" ;
+  schema:author person:brian-w-kernighan, person:rob-pike ;
+  schema:isPartOf work:unix-programming-environment .
+
+ref:volkmann-nushell-overview
+  a schema:WebPage ;
+  schema:name "Nushell" ;
+  schema:url "https://mvolkmann.github.io/blog/nushell/?v=1.1.1" ;
+  schema:author person:mark-volkmann .
+
+ref:nushell-open-command
+  a schema:WebPage ;
+  schema:name "open | Nushell" ;
+  schema:url "https://www.nushell.sh/commands/docs/open.html" ;
+  schema:publisher org:nushell .
+
+ref:windows-powershell-in-action-3e-book
+  a schema:Book ;
+  schema:name "Windows powershell in action" ;
+  schema:datePublished "2018" ;
+  schema:author person:bruce-payette, person:richard-siddaway ;
+  schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:microsoft-about-functions-advanced
+  a schema:WebPage ;
+  schema:name "about_Functions_Advanced - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced?view=powershell-7.6" ;
+  schema:author person:sdwheeler ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-about-objects
+  a schema:WebPage ;
+  schema:name "about_Objects - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_objects?view=powershell-7.6" ;
+  schema:author person:sdwheeler ;
+  schema:publisher org:microsoft-learn .
+
+ref:microsoft-about-pipelines
+  a schema:WebPage ;
+  schema:name "about_Pipelines - PowerShell" ;
+  schema:url "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pipelines?view=powershell-7.5" ;
+  schema:datePublished "2025-12-28" ;
+  schema:publisher org:microsoft-learn .
+
+ref:snover-monad-manifesto-2002
+  a schema:CreativeWork ;
+  schema:name "Monad Manifesto" ;
+  schema:datePublished "2002-08-08" ;
+  schema:author person:jeffrey-p-snover .
+
+ref:nushell-thinking-in-nu
+  a schema:WebPage ;
+  schema:name "Thinking in Nu | Nushell" ;
+  schema:url "https://www.nushell.sh/book/thinking_in_nu.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-pipelines
+  a schema:WebPage ;
+  schema:name "Pipelines" ;
+  schema:url "https://www.nushell.sh/book/pipelines.html" ;
+  schema:datePublished "2026-01-27" ;
+  schema:publisher org:nushell .
+
+ref:snover-windows-powershell-unplugged-2015
+  a schema:VideoObject ;
+  schema:name "Windows PowerShell Unplugged" ;
+  schema:url "https://learn.microsoft.com/en-us/shows/ignite-2015/brk4451" ;
+  schema:datePublished "2015-05-04" ;
+  schema:author person:jeffrey-p-snover ;
+  schema:publisher org:microsoft-learn .
+
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/>
   a schema:LearningResource ;
   schema:name "Pipelines I: PowerShell declarativo" ;
   schema:url "/notes/software-libraries/scripting/pipelines/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/>
+  a schema:LearningResource ;
+  schema:name "Pipelines declarativos en Nushell" ;
+  schema:url "/notes/software-libraries/scripting/pipelines/nushell/" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/>
   a schema:LearningResource ;
@@ -391,6 +765,11 @@ ref:nushell-working-with-tables
   a schema:LearningResource ;
   schema:name "Comandos reutilizables y validación de parámetros en Nushell" ;
   schema:url "/notes/software-libraries/scripting/first-script/nushell/" .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/>
+  a schema:LearningResource ;
+  schema:name "Salida estructurada en Python" ;
+  schema:url "/notes/software-libraries/scripting/structured-output/py/" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/>
   a schema:LearningResource ;
@@ -564,6 +943,96 @@ usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending
   dibs:reference ref:jdriven-nushell-basics-structured-data ;
   dibs:tag "pending-revision" .
 
+usage:structured-output-py-python-distilled-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-distilled-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-rfc-8259-json-data-interchange-format-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:rfc-8259-json-data-interchange-format ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-cattrs-documentation-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:cattrs-documentation ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-dataclasses-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-dataclasses-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-json-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-json-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-fluent-python-2e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:fluent-python-2e-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pydantic-models-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pydantic-models-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pep-557-data-classes-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pep-557-data-classes ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-pep-613-explicit-type-aliases-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:pep-613-explicit-type-aliases ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:hettinger-dataclasses-pycon-2018-video ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:lucas-serialization-more-than-pickling-2022 ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-dataclasses-are-here-2018-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:dataclasses-are-here-2018-video ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-effective-python-3e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:effective-python-3e-book ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-python-typing-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:python-typing-docs ;
+  dibs:tag "pending-revision" .
+
+usage:structured-output-py-attrs-why-not-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:reference ref:attrs-why-not ;
+  dibs:tag "pending-revision" .
+
 usage:structured-output-nushell-nushell-working-with-lists-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
@@ -580,4 +1049,471 @@ usage:structured-output-nushell-nushell-working-with-tables-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-working-with-tables ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:atomic-spin-introduction-to-nushell ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-custom-commands-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-custom-commands ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-new-type-shell-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-new-type-shell-video ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-filters-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-filters ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:handa-order-aware-dataflow-pipelines-2021 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-jq-vs-nushell-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-jq-vs-nushell ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-powershell-more-on-parameters ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-getting-started-powershell-3 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:kernighan-pike-unix-programming-environment-1984 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-navigating-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-navigating-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-volkmann-nushell-overview-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:volkmann-nushell-overview ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-open-command-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-open-command ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:windows-powershell-in-action-3e-book ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-functions-advanced-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-functions-advanced ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-objects-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-objects ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-microsoft-about-pipelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:microsoft-about-pipelines ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:jdriven-nushell-basics-structured-data ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-thinking-in-nu-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-thinking-in-nu ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:snover-windows-powershell-unplugged-2015 ;
+  dibs:tag "pending-revision" .
+
+usage:pipelines-nushell-nushell-pipelines-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-pipelines ;
+  dibs:tag "recommended" .
+
+person:joshua-bloch
+  a schema:Person ;
+  schema:givenName "Joshua" ;
+  schema:familyName "Bloch" .
+
+person:martin-reddy
+  a schema:Person ;
+  schema:givenName "Martin" ;
+  schema:familyName "Reddy" .
+
+person:johannes-sametinger
+  a schema:Person ;
+  schema:givenName "Johannes" ;
+  schema:familyName "Sametinger" .
+
+person:john-ousterhout
+  a schema:Person ;
+  schema:givenName "John" ;
+  schema:familyName "Ousterhout" .
+
+org:kotlin-help
+  a schema:Organization ;
+  schema:name "Kotlin Help" ;
+  schema:url "https://kotlinlang.org/docs/" .
+
+org:gradle-docs
+  a schema:Organization ;
+  schema:name "Gradle Documentation" ;
+  schema:url "https://docs.gradle.org/current/userguide/" .
+
+org:intellij-platform-plugin-sdk-help
+  a schema:Organization ;
+  schema:name "IntelliJ Platform Plugin SDK Help" ;
+  schema:url "https://plugins.jetbrains.com/docs/intellij/" .
+
+org:maven
+  a schema:Organization ;
+  schema:name "Apache Maven" ;
+  schema:url "https://maven.apache.org/" .
+
+org:rust-book
+  a schema:Organization ;
+  schema:name "The Rust Programming Language" ;
+  schema:url "https://doc.rust-lang.org/book/" .
+
+org:npm-docs
+  a schema:Organization ;
+  schema:name "npm Docs" ;
+  schema:url "https://docs.npmjs.com/" .
+
+org:python-packaging-user-guide
+  a schema:Organization ;
+  schema:name "Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/" .
+
+org:requests-docs
+  a schema:Organization ;
+  schema:name "Requests documentation" ;
+  schema:url "https://requests.readthedocs.io/en/latest/" .
+
+org:jfrog
+  a schema:Organization ;
+  schema:name "JFrog" ;
+  schema:url "https://jfrog.com/" .
+
+org:yaknyam-press
+  a schema:Organization ;
+  schema:name "Yaknyam Press" .
+
+org:morgan-kaufmann
+  a schema:Organization ;
+  schema:name "Morgan Kaufmann" .
+
+org:springer
+  a schema:Organization ;
+  schema:name "Springer" .
+
+work:oopsla-2006-companion
+  a schema:CreativeWork ;
+  schema:name "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications" ;
+  schema:publisher org:acm .
+
+ref:kotlin-backward-compatibility-guidelines
+  a schema:WebPage ;
+  schema:name "Backward compatibility guidelines for library authors | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:kotlin-informative-documentation-guidelines
+  a schema:WebPage ;
+  schema:name "Best practices for library authors to create informative documentation | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-informative-documentation.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:bloch-how-to-design-good-api-2006
+  a schema:ScholarlyArticle ;
+  schema:name "How to design a good API and why it matters" ;
+  schema:url "https://dl.acm.org/doi/10.1145/1176617.1176622" ;
+  schema:datePublished "2006-10-22" ;
+  schema:pageStart 506 ;
+  schema:pageEnd 507 ;
+  schema:author person:joshua-bloch ;
+  schema:isPartOf work:oopsla-2006-companion ;
+  schema:publisher org:acm .
+
+ref:gradle-plugin-development-plugin
+  a schema:WebPage ;
+  schema:name "Gradle Plugin Development Plugin" ;
+  schema:url "https://docs.gradle.org/current/userguide/java_gradle_plugin.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-plugin-reference
+  a schema:WebPage ;
+  schema:name "Gradle Plugin Reference" ;
+  schema:url "https://docs.gradle.org/current/userguide/plugin_reference.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-user-manual
+  a schema:WebPage ;
+  schema:name "Gradle User Manual" ;
+  schema:url "https://docs.gradle.org/current/userguide/userguide.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:intellij-platform-sdk
+  a schema:WebPage ;
+  schema:name "IntelliJ Platform SDK | IntelliJ Platform Plugin SDK" ;
+  schema:url "https://plugins.jetbrains.com/docs/intellij/welcome.html" ;
+  schema:publisher org:intellij-platform-plugin-sdk-help .
+
+ref:kotlin-library-authors-guidelines-introduction
+  a schema:WebPage ;
+  schema:name "Introduction to library authors' guidelines | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-introduction.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:gradle-introduction-to-plugins
+  a schema:WebPage ;
+  schema:name "Introduction to Plugins" ;
+  schema:url "https://docs.gradle.org/current/userguide/plugins.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:kotlin-evolution-principles
+  a schema:WebPage ;
+  schema:name "Kotlin evolution principles | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/kotlin-evolution-principles.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:maven-central-repository
+  a schema:WebPage ;
+  schema:name "Maven Central Repository – Maven" ;
+  schema:url "https://maven.apache.org/repository/" ;
+  schema:publisher org:maven .
+
+ref:rust-packages-and-crates
+  a schema:WebPage ;
+  schema:name "Packages and Crates - The Rust Programming Language" ;
+  schema:url "https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html" ;
+  schema:publisher org:rust-book .
+
+ref:npm-about-packages-and-modules
+  a schema:WebPage ;
+  schema:name "About packages and modules | npm Docs" ;
+  schema:url "https://docs.npmjs.com/about-packages-and-modules" ;
+  schema:publisher org:npm-docs .
+
+ref:python-packaging-projects
+  a schema:WebPage ;
+  schema:name "Packaging Python Projects - Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/tutorials/packaging-projects/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:python-packaging-user-guide
+  a schema:WebPage ;
+  schema:name "Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:reddy-api-design-for-cpp-2024
+  a schema:Book ;
+  schema:name "API design for C++" ;
+  schema:datePublished "2024" ;
+  schema:author person:martin-reddy ;
+  schema:publisher org:morgan-kaufmann .
+
+ref:requests-http-for-humans
+  a schema:WebPage ;
+  schema:name "Requests: HTTP for Humans™ — Requests 2.33.1 documentation" ;
+  schema:url "https://requests.readthedocs.io/en/latest/" ;
+  schema:publisher org:requests-docs .
+
+ref:jfrog-what-are-software-artifacts
+  a schema:WebPage ;
+  schema:name "What are Software Artifacts?" ;
+  schema:url "https://jfrog.com/learn/devops/software-artifact/" ;
+  schema:publisher org:jfrog .
+
+ref:sametinger-software-engineering-reusable-components-1997
+  a schema:Book ;
+  schema:name "Software engineering with reusable components" ;
+  schema:datePublished "1997" ;
+  schema:author person:johannes-sametinger ;
+  schema:publisher org:springer .
+
+ref:python-writing-pyproject-toml
+  a schema:WebPage ;
+  schema:name "Writing your pyproject.toml - Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:ousterhout-philosophy-software-design-2021
+  a schema:Book ;
+  schema:name "A Philosophy of Software Design" ;
+  schema:datePublished "2021" ;
+  schema:author person:john-ousterhout ;
+  schema:publisher org:yaknyam-press .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/>
+  a schema:LearningResource ;
+  schema:name "Taxonomía básica de artefactos de software" ;
+  schema:url "/notes/software-libraries/artifacts-taxonomy/" .
+
+usage:software-artifacts-taxonomy-kotlin-backward-compatibility-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-backward-compatibility-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-informative-documentation-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-informative-documentation-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-bloch-how-to-design-good-api-2006-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:bloch-how-to-design-good-api-2006 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-plugin-development-plugin-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-plugin-development-plugin ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-plugin-reference-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-plugin-reference ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-user-manual-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-user-manual ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-intellij-platform-sdk-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:intellij-platform-sdk ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-library-authors-guidelines-introduction-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-library-authors-guidelines-introduction ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-introduction-to-plugins-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-introduction-to-plugins ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-evolution-principles-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-evolution-principles ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-maven-central-repository-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:maven-central-repository ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-rust-packages-and-crates-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:rust-packages-and-crates ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-npm-about-packages-and-modules-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:npm-about-packages-and-modules ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-packaging-projects-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-packaging-projects ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-packaging-user-guide-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-packaging-user-guide ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-reddy-api-design-for-cpp-2024-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:reddy-api-design-for-cpp-2024 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-requests-http-for-humans-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:requests-http-for-humans ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-jfrog-what-are-software-artifacts-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:jfrog-what-are-software-artifacts ;
+  dibs:tag "recommended" .
+
+usage:software-artifacts-taxonomy-sametinger-software-engineering-reusable-components-1997-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:sametinger-software-engineering-reusable-components-1997 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-writing-pyproject-toml-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-writing-pyproject-toml ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-ousterhout-philosophy-software-design-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:ousterhout-philosophy-software-design-2021 ;
   dibs:tag "pending-revision" .

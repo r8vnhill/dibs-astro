@@ -1,7 +1,6 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -12,7 +11,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Comparación entre PowerShell y Python como lenguajes de scripting, destacando sus fortalezas, limitaciones y contextos de uso."
     git={{ user: "r8vnhill", repo: "..." }}
 >
-    <Abstract>...</Abstract>
+    <Fragment slot="abstract">...</Fragment>
 
     <NotesSection id="...">
         <Heading

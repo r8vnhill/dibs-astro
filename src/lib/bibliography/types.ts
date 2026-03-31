@@ -1,6 +1,11 @@
 import type { PageReference } from "./pages";
 
-export type SupportedReferenceType = "Book" | "WebPage" | "ScholarlyArticle" | "Thesis";
+export type SupportedReferenceType =
+    | "Book"
+    | "WebPage"
+    | "VideoObject"
+    | "ScholarlyArticle"
+    | "Thesis";
 export type ReferenceTag = "recommended" | "additional" | "pending-revision";
 export type { PageReference } from "./pages";
 
@@ -37,6 +42,14 @@ export type NormalizedWebReference = NormalizedReferenceBase & {
     type: "WebPage";
     url: string;
     location?: string;
+    locationUrl?: string;
+};
+
+export type NormalizedVideoReference = NormalizedReferenceBase & {
+    type: "VideoObject";
+    url: string;
+    platform?: string;
+    platformUrl?: string;
 };
 
 export type NormalizedArticleReference = NormalizedReferenceBase & {
@@ -44,6 +57,7 @@ export type NormalizedArticleReference = NormalizedReferenceBase & {
     url: string;
     publication?: string;
     publicationId?: string;
+    publicationUrl?: string;
     pages?: PageReference;
 };
 
@@ -52,11 +66,13 @@ export type NormalizedThesisReference = NormalizedReferenceBase & {
     url: string;
     institution?: string;
     institutionId?: string;
+    institutionUrl?: string;
 };
 
 export type NormalizedReference =
     | NormalizedBookReference
     | NormalizedWebReference
+    | NormalizedVideoReference
     | NormalizedArticleReference
     | NormalizedThesisReference;
 

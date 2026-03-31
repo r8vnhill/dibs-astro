@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Definition, More, Tip } from "~/components/ui/callouts";
+import { Definition, More, Tip } from "~/components/ui/callouts";
 import { InlineBash, InlinePowerShell, Terminals } from "~/components/ui/code";
 import { Footnote, FootnoteRef } from "~/components/ui/footnotes";
 import Footnotes from "~/components/ui/footnotes/Footnotes.astro";
@@ -13,9 +13,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Veritas Ep. 1: Tu primer proyecto con Gradle">
-    <Abstract>
+    <Fragment slot="abstract">
         <ToDo client:only="react" />
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="veritas-intro">
         <Heading headingLevel="h2" Icon={icons.ListChecks}>

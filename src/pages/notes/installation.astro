@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import Abstract from "~/components/ui/callouts/Abstract.astro";
 import Info from "~/components/ui/callouts/Info.astro";
 import Note from "~/components/ui/callouts/Note.astro";
 import Tip from "~/components/ui/callouts/Tip.astro";
@@ -23,7 +22,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Herramientas necesarias y recomendadas" timeMultiplier={2.5}>
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             Antes de comenzar a construir bibliotecas de software, necesitamos preparar nuestro
             entorno de trabajo. Estas herramientas serán tu base para escribir código con confianza,
@@ -36,7 +35,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             >opcionales pero recomendadas</strong> para mejorar tu experiencia y agilizar tu flujo
             de trabajo.
         </p>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="essential-tools">
         <Heading

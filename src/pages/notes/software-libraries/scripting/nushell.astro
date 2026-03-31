@@ -13,7 +13,7 @@ import {
     TableRow,
 } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import { Abstract, Definition, Explanation, Important, Info } from "~/components/ui/callouts";
+import { Definition, Explanation, Important, Info } from "~/components/ui/callouts";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
 import NushellInline from "~/components/ui/code/nushell/NushellInline.astro";
@@ -34,7 +34,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Introducción práctica a Nushell: instalación, workspace base, path join y comparativa con PowerShell para elegir cuándo usar cada uno."
     previous={{ title: "Introducción a PowerShell", href: "/notes/software-libraries/scripting/" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             En esta lección conocerás <B>Nushell</B>, un shell moderno que comparte la filosofía de
             PowerShell, pero con un enfoque más <B>simple y orientado a datos tabulares</B>. A
@@ -52,7 +52,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             automatizar tareas del sistema o para trabajar con datos estructurados de manera
             eficiente.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="nushell-intro-install">
         <Heading headingLevel="h2" Icon={icons.Table}>

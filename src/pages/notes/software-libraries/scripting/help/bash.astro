@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Heading, P } from "~/components/semantics";
-import { Abstract, Explanation, More, Tip, Warning } from "~/components/ui/callouts";
+import { Explanation, More, Tip, Warning } from "~/components/ui/callouts";
 import Question from "~/components/ui/callouts/Question.astro";
 import { BashBlock, OutputBlock } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
@@ -16,7 +16,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Bash: Descubrimiento y ayuda integrada"
     description="Si estás leyendo esto, es porque se me olvidó actualizar el meta description en el frontmatter."
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <ToDo
             client:only="react"
             metadata={{
@@ -25,7 +25,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 ],
             }}
         />
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-discovery-bash">
         <Heading

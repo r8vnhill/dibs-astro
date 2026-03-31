@@ -4,7 +4,6 @@ import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Info,
@@ -27,7 +26,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Pipelines III: Manejo de errores"
     description="Introduce el manejo de errores en pipelines de PowerShell con -ErrorAction y -ErrorVariable, con ejemplos y un ejercicio por lotes para explorar decisiones de continuidad."
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             En PowerShell, manejar errores no consiste solo en capturar excepciones, sino en definir
             explícitamente qué significa fallar dentro de un flujo de elementos. En el contexto del
@@ -45,7 +44,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             la política de error, permitiendo decidir si se privilegia la continuidad, la atomicidad
             o la medición de fallos.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-why-error-semantics">
         <Heading headingLevel="h2" Icon={icons.Scales}>

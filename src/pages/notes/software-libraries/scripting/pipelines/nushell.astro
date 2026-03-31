@@ -1,0 +1,494 @@
+---
+import * as icons from "$icons";
+import { Enquote, P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+    Definition,
+    Explanation,
+    Important,
+    Info,
+    Note,
+    Tip,
+    Warning,
+} from "~/components/ui/callouts";
+import { NushellInline, OutputBlock, PowerShellInline } from "~/components/ui/code";
+import NushellBlock from "~/components/ui/code/nushell/NushellBlock.astro";
+import { B, I } from "~/components/ui/font";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
+import { Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+
+const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
+---
+
+<NotesLayout
+    title="Pipelines declarativos en Nushell"
+    description="Compara PowerShell y Nushell cuando el foco está en la forma de los datos: simplicidad declarativa frente a mayor generalidad de orientación a objetos (OOP)."
+    git={{ user: "r8vnhill", repo: "dibs-scripts-nushell" }}
+    previous={{
+        title: "Salida estructurada en Nushell",
+        href: "/notes/software-libraries/scripting/structured-output/nushell/",
+    }}
+    next={{
+        title: "Pipeline-awareness en Nushell",
+        href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/nushell/",
+    }}
+>
+    <Fragment slot="abstract">
+        <P>
+            Nushell y PowerShell comparten la idea de expresar trabajo como una secuencia de
+            transformaciones, pero ponen el foco en modelos distintos de dato. En Nushell, el
+            pipeline suele hacer más visible la forma estructurada de records, listas y tablas.
+        </P>
+
+        <P>
+            En esta lección compararemos ambos enfoques y veremos operaciones nucleares como
+            filtrar, proyectar, ordenar y limitar. El objetivo no es decidir cuál herramienta es
+            <Enquote>mejor</Enquote>, sino entender en qué escenarios la simplicidad declarativa de
+            Nushell resulta especialmente conveniente.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-nushell-pipeline-model">
+        <Heading headingLevel="h2" Icon={icons.Table}>
+            El pipeline en Nushell: datos con forma visible
+        </Heading>
+
+        <Definition headingLevel="h3">
+            <span slot="title">Pipeline declarativo en Nushell</span>
+
+            <P>
+                En Nushell, el pipeline conecta comandos que transforman datos estructurados, como
+                <I>records</I>, listas y tablas. Igual que en PowerShell, la intención se expresa
+                como una secuencia de transformaciones, pero aquí la forma del dato suele mantenerse
+                más visible durante el flujo.
+            </P>
+        </Definition>
+
+        <P>
+            Por eso Nushell resulta especialmente cómodo cuando el problema se parece a una
+            colección homogénea de datos: archivos, filas de CSV, resultados JSON o respuestas de
+            API con estructura relativamente estable.
+        </P>
+
+        <P>
+            En ese escenario, inspeccionar columnas, seleccionar campos, filtrar filas y reformatear
+            resultados suele ser más directo, porque la forma del dato se mantiene explícita durante
+            el pipeline.
+        </P>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Trade-off práctico: simplicidad vs generalidad</span>
+
+            <P>
+                PowerShell también puede usarse cuando lo que importa es la forma del dato, pero su
+                paradigma de orientación a objetos (OOP) más completo permite además asociar
+                comportamiento y funcionalidades a los objetos.
+            </P>
+
+            <P>
+                Nushell prioriza un modelo más simple y declarativo, centrado en transformar
+                estructura visible. Esa simplicidad acelera muchos flujos tabulares, con el costo de
+                cubrir menos escenarios donde el comportamiento del objeto es parte central del
+                problema.
+            </P>
+        </Warning>
+
+        <Tip headingLevel="h3">
+            Si tu problema es principalmente transformar datos homogéneos, Nushell suele ser una
+            opción más directa; si necesitas explotar comportamiento de objetos y ecosistema .NET,
+            PowerShell suele ser más natural.
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-core-pipeline-operations">
+        <Heading headingLevel="h2" Icon={icons.Toolbox}>
+            Operaciones nucleares del pipeline
+        </Heading>
+
+        <Info headingLevel="h3">
+            <span slot="title">Equivalencias pedagógicas útiles</span>
+
+            <Warning headingLevel="h4">
+                Estas equivalencias son útiles para orientarte, pero no implican que ambos comandos
+                tengan exactamente el mismo alcance ni las mismas convenciones de uso.
+            </Warning>
+
+            <List>
+                <ListItem icon={icons.Funnel}>
+                    <B>Filtrar:</B> <NushellInline>where</NushellInline> ocupa el lugar conceptual
+                    de <PowerShellInline>Where-Object</PowerShellInline>.
+                </ListItem>
+
+                <ListItem icon={icons.Columns}>
+                    <B>Proyectar columnas:</B> <NushellInline>select</NushellInline> deja visibles
+                    solo las columnas relevantes y conserva la estructura tabular.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowElbowRight}>
+                    <B>Extraer campos:</B> <NushellInline>get</NushellInline> accede al contenido de
+                    una columna, campo o ruta dentro del dato. En muchos casos cumple un papel
+                    parecido al de expandir una propiedad en PowerShell.
+                </ListItem>
+
+                <ListItem icon={icons.SortAscending}>
+                    <B>Ordenar y limitar:</B> <NushellInline>sort-by</NushellInline> y
+                    <NushellInline>first</NushellInline> permiten expresar con claridad el patrón <I
+                    >ordenar y luego quedarse con una parte</I>.
+                </ListItem>
+
+                <ListItem icon={icons.MagicWand}>
+                    <B>Transformar:</B> <NushellInline code="update" /> e <NushellInline
+                        code="insert"
+                    /> sirven para modificar o agregar columnas, mientras que <NushellInline
+                        code="each"
+                    /> permite transformar cada elemento de forma más general.
+                </ListItem>
+
+                <ListItem icon={icons.Tag}>
+                    <B>Renombrar columnas:</B> <NushellInline code="rename" /> ayuda a adaptar la
+                    forma del dato cuando necesitas alinear nombres entre etapas del pipeline.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Important headingLevel="h3">
+            <span slot="title">Cuándo conviene cada enfoque</span>
+
+            <List>
+                <ListItem icon={icons.Lightning}>
+                    <B>Nushell suele destacar</B> cuando la tarea es transformar datos con forma
+                    homogénea de principio a fin.
+                </ListItem>
+                <ListItem icon={icons.GearSix}>
+                    <B>PowerShell suele ser más natural</B> cuando, además de forma, necesitas
+                    aprovechar objetos con comportamiento y ecosistemas amplios de cmdlets y
+                    bibliotecas.
+                </ListItem>
+            </List>
+        </Important>
+    </NotesSection>
+
+    <NotesSection id="h2-comparable-flow">
+        <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
+            Un pipeline básico en Nushell
+        </Heading>
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    select name kind role |
+                    sort-by name |
+                    first 10
+            `}
+        >
+            <span slot="title">
+                Filtrar, proyectar, ordenar y limitar en Nushell.<FootnoteRef index={1} />
+            </span>
+            <span slot="footer">
+                El pipeline mantiene datos estructurados de principio a fin, sin pasar por texto
+                intermedio cuando la entrada ya tiene una forma estable.
+            </span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                ╭───┬─────────┬────────┬─────────╮
+                │ # │  name   │  kind  │  role   │
+                ├───┼─────────┼────────┼─────────┤
+                │ 0 │ Balin   │ dwarf  │ warrior │
+                │ 1 │ Bilbo   │ hobbit │ burglar │
+                │ 2 │ Gandalf │ wizard │ guide   │
+                │ 3 │ Thorin  │ dwarf  │ leader  │
+                ╰───┴─────────┴────────┴─────────╯
+            `}
+        />
+
+        <Explanation>
+            <List>
+                <ListItem icon={icons.BracketsCurly}>
+                    <B><NushellInline>open</NushellInline></B> deserializa automáticamente formatos
+                    como JSON y entrega una estructura ya navegable.
+                </ListItem>
+
+                <ListItem icon={icons.Funnel}>
+                    <B><NushellInline code="where on_the_quest" /></B> expresa el filtro
+                    directamente sobre la columna, sin bloque adicional; la condición se lee más
+                    cerca de los datos que transforma.
+                </ListItem>
+
+                <ListItem icon={icons.Columns}>
+                    <B><NushellInline>select</NushellInline></B> deja visibles solo las columnas
+                    relevantes, manteniendo la estructura tabular.
+                </ListItem>
+
+                <ListItem icon={icons.SortAscending}>
+                    <B><NushellInline code="sort-by name" /></B> ordena la tabla según la columna
+                    indicada antes de limitar los resultados.
+                </ListItem>
+
+                <ListItem icon={icons.ListNumbers}>
+                    <B><NushellInline code="first" /></B> limita resultados al final, después de
+                    filtrar, proyectar y ordenar.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-same-dataset-variations">
+        <Heading headingLevel="h2" Icon={icons.MagicWand}>
+            Variaciones sobre el mismo dataset
+        </Heading>
+
+        <Note headingLevel="h3">
+            <span slot="title">Nota breve sobre bloques y “lambdas”</span>
+
+            <P>
+                Cuando encuentres expresiones como <NushellInline code="each {|item| $item }" /> o
+                <NushellInline code="update role {|row| $row }" />, conviene leerlas como <B
+                >bloques parametrizados</B>. Si vienes de otros lenguajes, cumplen un papel parecido
+                al de una <I>lambda</I>: reciben un valor, lo nombran y producen un resultado.
+            </P>
+
+            <P>
+                La sintaxis general es <NushellInline code="{|param| body }" />. Entre las barras
+                verticales declaras el nombre del parámetro y, dentro del cuerpo, accedes a ese
+                valor con <NushellInline code="$param" /> o a sus campos con expresiones como
+                <NushellInline code="$param.name" />.
+            </P>
+        </Note>
+
+        <P>
+            Una ventaja de Nushell es que pequeñas variaciones sobre el mismo dataset se traducen
+            en cambios pequeños y legibles dentro del pipeline. La estructura base se conserva y
+            puedes decidir si filtrar, resumir, ordenar, transformar cada fila o enriquecer la
+            tabla.
+        </P>
+
+        <NushellBlock
+            code={`open companions.json | where on_the_quest`}
+        >
+            <span slot="title">Quedarse solo con quienes siguen en la quest</span>
+            <span slot="footer">
+                Esta variación corresponde a la parte más simple del flujo: partir desde la tabla y
+                filtrar los registros relevantes.
+            </span>
+        </NushellBlock>
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    select name kind role |
+                    sort-by name |
+                    first 10
+            `}
+        >
+            <span slot="title">Construir una tabla compacta para revisar rápido la compañía</span>
+            <span slot="footer">
+                Aquí reaparece el flujo base completo: filtrar, proyectar, ordenar y limitar sin
+                perder la estructura tabular.
+            </span>
+        </NushellBlock>
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    sort-by name |
+                    each {|companion| $"($companion.name) the ($companion.kind)" }
+            `}
+        >
+            <span slot="title">Transformar records en encabezados breves con <NushellInline
+                code="each"
+            /></span>
+            <span slot="footer">
+                Aquí <NushellInline code="each" /> cambia la forma del flujo: de una tabla de
+                records a una lista de valores derivados.
+            </span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                ╭───┬────────────────────╮
+                │ 0 │ Balin the dwarf    │
+                │ 1 │ Bilbo the hobbit   │
+                │ 2 │ Gandalf the wizard │
+                │ 3 │ Thorin the dwarf   │
+                ╰───┴────────────────────╯
+            `}
+        />
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    sort-by name |
+                    get name
+            `}
+        >
+            <span slot="title">Extraer una columna concreta con <NushellInline code="get" /></span>
+            <span slot="footer">
+                Esta variación prioriza acceso directo a una columna y devuelve una lista de
+                valores simples.
+            </span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                ╭───┬─────────╮
+                │ 0 │ Balin   │
+                │ 1 │ Bilbo   │
+                │ 2 │ Gandalf │
+                │ 3 │ Thorin  │
+                ╰───┴─────────╯
+            `}
+        />
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    sort-by name |
+                    select name role |
+                    rename companion quest_role
+            `}
+        >
+            <span slot="title">Renombrar columnas para adaptar la salida con <NushellInline
+                code="rename"
+            /></span>
+            <span slot="footer">
+                Aquí no cambias el contenido: cambias la forma nominal de la tabla para alinear
+                nombres con la siguiente etapa del pipeline.
+            </span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                ╭───┬───────────┬────────────╮
+                │ # │ companion │ quest_role │
+                ├───┼───────────┼────────────┤
+                │ 0 │ Balin     │ warrior    │
+                │ 1 │ Bilbo     │ burglar    │
+                │ 2 │ Gandalf   │ guide      │
+                │ 3 │ Thorin    │ leader     │
+                ╰───┴───────────┴────────────╯
+            `}
+        />
+
+        <NushellBlock
+            code={`
+                open companions.json |
+                    where on_the_quest |
+                    update role {|companion| $companion.role | str upcase } |
+                    insert summary {|companion| $"($companion.name) from ($companion.homeland)" } |
+                    sort-by name |
+                    select name kind role summary
+            `}
+        >
+            <span slot="title">Enriquecer cada fila con <NushellInline code="update" /> e
+                <NushellInline code="insert" /></span>
+            <span slot="footer">
+                El pipeline sigue siendo estructurado, pero ahora no solo selecciona: también
+                rehace contenido, agrega una columna derivada y mantiene resultados ordenados.
+            </span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                ╭───┬─────────┬────────┬─────────┬──────────────────────╮
+                │ # │  name   │  kind  │  role   │       summary        │
+                ├───┼─────────┼────────┼─────────┼──────────────────────┤
+                │ 0 │ Bilbo   │ hobbit │ BURGLAR │ Bilbo from The Shire │
+                │ 1 │ Gandalf │ wizard │ GUIDE   │ Gandalf from Valinor │
+                │ 2 │ Thorin  │ dwarf  │ LEADER  │ Thorin from Erebor   │
+                │ 3 │ Balin   │ dwarf  │ WARRIOR │ Balin from Erebor    │
+                ╰───┴─────────┴────────┴─────────┴──────────────────────╯
+            `}
+        />
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Nushell ofrece un pipeline especialmente legible cuando el trabajo consiste en
+                transformar datos con estructura homogénea. En esos casos, operaciones como filtrar,
+                proyectar, ordenar o limitar se combinan con naturalidad con otras como transformar
+                cada elemento o enriquecer columnas, manteniendo la forma del dato visible durante
+                todo el flujo.
+            </P>
+
+            <P>
+                Esa claridad no reemplaza a PowerShell en todos los escenarios, pero sí muestra un
+                trade-off importante: Nushell simplifica muchos procesos tabulares precisamente
+                porque privilegia un modelo más declarativo y menos centrado en objetos con
+                comportamiento. Cuando la tarea consiste en leer una tabla, ajustarla y producir
+                otra salida estructurada, esa elección suele traducirse en menos fricción para quien
+                mantiene el script.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Table}>
+                Nushell destaca cuando la estructura del dato permanece visible y estable de
+                principio a fin.
+            </ListItem>
+            <ListItem icon={icons.ArrowsMerge}>
+                Su pipeline favorece transformaciones pequeñas y legibles sobre records, listas y
+                tablas, incluso cuando cambias de filtrar a resumir o derivar nuevas salidas.
+            </ListItem>
+            <ListItem icon={icons.MagicWand}>
+                Comandos como <NushellInline code="each" />, <NushellInline code="update" /> e
+                <NushellInline code="insert" /> ayudan a transformar o enriquecer datos sin romper
+                el flujo declarativo.
+            </ListItem>
+            <ListItem icon={icons.Scales}>
+                El trade-off entre simplicidad declarativa (Nushell) y mayor generalidad orientada
+                a objetos (PowerShell) guía qué herramienta resulta más natural en cada tarea.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="takeaways">
+            <P>
+                Al diseñar scripts o bibliotecas pequeñas, no basta con preguntarse qué herramienta
+                “puede” resolver el problema. También conviene pensar qué modelo de dato deja más
+                clara la intención del flujo y reduce mejor la fricción para leer, transformar y
+                reutilizar resultados.
+            </P>
+
+            <P>
+                Desde esa perspectiva, Nushell resulta especialmente atractivo cuando la tarea se
+                parece a una cadena de transformaciones sobre datos visibles y reutilizables. La
+                próxima lección toma esa base y avanza hacia <I>pipeline-awareness</I>: diseñar
+                comandos que participen de forma natural en flujos encadenados y respeten la forma
+                de los datos de entrada y salida.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <ReferencesFromCatalog source={bibliographyCatalog}>
+        <Fragment slot="description-ref:nushell-pipelines">
+            Capítulo central del libro de Nushell sobre cómo se componen los <I>pipelines</I> más
+            allá de la intuición básica de <Enquote>encadenar comandos</Enquote>. Recorre la idea
+            de entradas, filtros y salidas, explica con bastante detalle cómo funciona
+            <NushellInline>$in</NushellInline> en expresiones, cierres y bloques, y muestra qué
+            cambia cuando el flujo involucra comandos externos, renderizado tabular o conversiones
+            a texto. Vale la pena si quieres profundizar en el modelo mental del pipeline en
+            Nushell y no solo memorizar comandos sueltos.
+        </Fragment>
+    </ReferencesFromCatalog>
+
+    <Footnotes>
+        <Footnote index={1}>
+            Ejemplo inspirado en <Link
+                href="https://www.goodreads.com/book/show/5907.The_Hobbit_or_There_and_Back_Again"
+            >The Hobbit de J.R.R. Tolkien</Link>.
+        </Footnote>
+    </Footnotes>
+</NotesLayout>

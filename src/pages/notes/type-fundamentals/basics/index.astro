@@ -11,7 +11,6 @@ import {
 } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -48,7 +47,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     timeMultiplier={1.2}
 >
     <Gato />
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             Kotlin es un lenguaje moderno, <strong>pragmático</strong> y <strong>claro</strong>, con
             foco en la <strong>seguridad</strong>. Combina de forma eficaz la <strong>programación
@@ -75,7 +74,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             A través de ejemplos simples y comparaciones prácticas, sentaremos las bases que guiarán
             el resto del curso.
         </p>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="what-you-will-learn">
         <Heading

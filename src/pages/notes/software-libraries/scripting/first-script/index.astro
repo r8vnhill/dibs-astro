@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import { Heading, P } from "~/components/semantics";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -27,7 +26,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Aprende a crear tu primer script en PowerShell con parámetros validados, mensajes de diagnóstico y salida reutilizable. Comprende las diferencias entre cmdlets, funciones y scripts, y aplica validaciones declarativas para escribir automatizaciones seguras y mantenibles."
     timeMultiplier={1.5} git={{ user: "r8vnhill", repo: "dibs-scripts" }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             En esta lección damos el salto de ejecutar comandos aislados a <B>construir un script
                 reutilizable</B> con parámetros y validación. Empezaremos diferenciando <I
@@ -42,7 +41,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <PowerShellInline code="-f" /> para generar texto robusto. Al finalizar, tendrás un
             patrón de script listo para extender y aplicar en proyectos reales.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-cmdlets-funciones-scripts">
         <Heading

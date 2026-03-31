@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Heading, P } from "~/components/semantics";
-import { Abstract, Explanation, Info, More, Note, Tip, Warning } from "~/components/ui/callouts";
+import { Explanation, Info, More, Note, Tip, Warning } from "~/components/ui/callouts";
 import Question from "~/components/ui/callouts/Question.astro";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
@@ -17,7 +17,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Descubrimiento y ayuda integrada"
     description="Descubre PowerShell sin salir de la terminal: usa Get-Command para encontrar cmdlets, Get-Help para dominar parámetros y ejemplos, y los temas about_* para conceptos clave. Incluye buenas prácticas, atajos y plantillas de documentación en scripts."
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Esta lección introduce las herramientas de <B>autodescubrimiento</B> de PowerShell: cómo
             usar
@@ -35,7 +35,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             PowerShell con autonomía, adoptando una mentalidad exploratoria centrada en descubrir
             antes que memorizar.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-get-command">
         <Heading

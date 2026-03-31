@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Explanation, Note, Tip } from "~/components/ui/callouts";
+import { Explanation, Note, Tip } from "~/components/ui/callouts";
 import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
@@ -11,7 +11,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Principios de Diseño de Bibliotecas de Software">
-    <Abstract>
+    <Fragment slot="abstract">
         Cuando pensamos en bibliotecas de software, en realidad estamos pensando en sus <strong
         >APIs</strong>: la superficie que otras personas van a usar. Por eso, los mismos principios
         que guían el diseño de una buena API —claridad, consistencia, simplicidad y estabilidad— son
@@ -20,7 +20,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         una herramienta confiable y reutilizable. En esta sección veremos qué hace que una API (y
         por extensión una biblioteca) sea buena, y cómo estos criterios nos servirán de guía al
         diseñar nuestras propias bibliotecas.
-    </Abstract>
+    </Fragment>
 
     <Note>
         <ToDo

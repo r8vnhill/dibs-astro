@@ -9,6 +9,7 @@
  * - Comportamiento correcto del servicio nuevo vía adaptador
  */
 
+import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
 import { describe, expect, it } from "vitest";
 import type { Lesson } from "~/data/course-structure";
 
@@ -47,10 +48,6 @@ const mockCourseStructure: Lesson[] = [
 describe("navigation-bridge", () => {
     describe("resolveAutoNav", () => {
         it("debe retornar undefined para previous en la primera lección", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/introduccion/conceptos-basicos/",
                 mockCourseStructure,
@@ -62,10 +59,6 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar undefined para next en la última lección", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/introduccion/primer-script/",
                 mockCourseStructure,
@@ -77,10 +70,6 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar both previous y next para lecciones intermedias", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/introduccion/configuracion/",
                 mockCourseStructure,
@@ -93,10 +82,6 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar previous y next vacíos para ruta no encontrada", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/not-found/",
                 mockCourseStructure,
@@ -107,10 +92,6 @@ describe("navigation-bridge", () => {
         });
 
         it("debe retornar objetos con estructura { title, href }", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/introduccion/configuracion/",
                 mockCourseStructure,
@@ -127,10 +108,6 @@ describe("navigation-bridge", () => {
         });
 
         it("debe exponer solo title y href en los enlaces públicos", async () => {
-            const { resolveAutoNav } = await import(
-                "$presentation/adapters/navigation-bridge"
-            );
-
             const result = await resolveAutoNav(
                 "/notes/introduccion/configuracion/",
                 mockCourseStructure,

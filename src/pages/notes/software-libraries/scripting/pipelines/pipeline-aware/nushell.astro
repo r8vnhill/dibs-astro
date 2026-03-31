@@ -2,7 +2,6 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Exercise,
     Explanation,
     Hints,
@@ -23,10 +22,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
 <NotesLayout
     title="Pipeline-awareness en Nushell" description="..."
     timeMultiplier={1.6}
+    previous={{
+        title: "Pipelines declarativos en Nushell",
+        href: "/notes/software-libraries/scripting/pipelines/nushell/",
+    }}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         ...
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-nu-overview">
         <Heading headingLevel="h2" Icon={icons.Pipe}>

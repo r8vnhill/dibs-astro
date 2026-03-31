@@ -24,6 +24,11 @@ ref:chapter-1 a schema:Book ;
   schema:pageStart 10 ;
   schema:pageEnd 20 .
 
+ref:video-1 a schema:VideoObject ;
+  schema:name "A new type of shell!" ;
+  schema:url "https://www.youtube.com/watch?v=GPqV6rLfKR4" ;
+  schema:author person:ada .
+
 <https://dibs.ravenhill.cl/notes/lesson-a/> a schema:LearningResource ;
   schema:name "Lesson A" ;
   schema:url "/notes/lesson-a/" .
@@ -32,6 +37,11 @@ usage:lesson-a-chapter-1 a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/lesson-a/> ;
   dibs:reference ref:chapter-1 ;
   dibs:tag "recommended" .
+
+usage:lesson-a-video-1 a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/lesson-a/> ;
+  dibs:reference ref:video-1 ;
+  dibs:tag "additional" .
 `;
 
 describe("buildCatalogArtifactFromTurtle", () => {
@@ -56,6 +66,13 @@ describe("buildCatalogArtifactFromTurtle", () => {
                     author: [{ "@id": "person:ada" }],
                 }),
                 expect.objectContaining({
+                    "@id": "ref:video-1",
+                    "@type": "VideoObject",
+                    name: "A new type of shell!",
+                    url: "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+                    author: [{ "@id": "person:ada" }],
+                }),
+                expect.objectContaining({
                     "@id": "/notes/lesson-a/",
                     "@type": "LearningResource",
                     url: "/notes/lesson-a/",
@@ -65,6 +82,12 @@ describe("buildCatalogArtifactFromTurtle", () => {
                     "@type": "dibs:ReferenceUsage",
                     "dibs:reference": { "@id": "ref:chapter-1" },
                     "dibs:tags": ["recommended"],
+                }),
+                expect.objectContaining({
+                    "@id": "usage:lesson-a-video-1",
+                    "@type": "dibs:ReferenceUsage",
+                    "dibs:reference": { "@id": "ref:video-1" },
+                    "dibs:tags": ["additional"],
                 }),
             ]),
         );
@@ -106,5 +129,37 @@ usage:broken a dibs:ReferenceUsage ;
                 sourceLabel: "missing-node.ttl",
             })
         ).toThrow(/points to missing node/);
+    });
+
+    it("ignores pending-revision usages that only reference unsupported nodes", () => {
+        const pendingDraft = `
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+ref:draft-video a schema:MediaObject ;
+  schema:name "Internal draft video" .
+
+<https://dibs.ravenhill.cl/notes/lesson-draft/> a schema:LearningResource ;
+  schema:name "Draft lesson" ;
+  schema:url "/notes/lesson-draft/" .
+
+usage:lesson-draft-video a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/lesson-draft/> ;
+  dibs:reference ref:draft-video ;
+  dibs:tag "pending-revision" .
+`;
+
+        const artifact = buildCatalogArtifactFromTurtle(pendingDraft, {
+            sourceLabel: "pending-draft.ttl",
+        });
+
+        expect(artifact["@graph"]).not.toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({ "@id": "ref:draft-video" }),
+                expect.objectContaining({ "@id": "usage:lesson-draft-video" }),
+            ]),
+        );
     });
 });

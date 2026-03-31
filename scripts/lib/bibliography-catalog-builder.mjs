@@ -26,6 +26,7 @@ const CATEGORY_ORDER = {
     CreativeWork: 3,
     Book: 4,
     WebPage: 4,
+    VideoObject: 4,
     ScholarlyArticle: 4,
     Thesis: 4,
     LearningResource: 5,
@@ -35,6 +36,7 @@ const CATEGORY_ORDER = {
 const REFERENCE_TYPES = new Set([
     "Book",
     "WebPage",
+    "VideoObject",
     "ScholarlyArticle",
     "Thesis",
 ]);
@@ -152,6 +154,14 @@ const sortGraphNodes = (graph) =>
         return categoryA - categoryB || a["@id"].localeCompare(b["@id"]);
     });
 
+const getUsageTagLiterals = (record, sourceLabel) =>
+    (record.predicates.get(`${DIBS}tag`) ?? []).map((value) => {
+        if (value.termType !== "Literal") {
+            fail(sourceLabel, `usage "${record.id}" has a non-literal dibs:tag.`);
+        }
+        return value.value;
+    });
+
 export const buildCatalogArtifactFromTurtle = (
     ttl,
     options = {},
@@ -184,6 +194,33 @@ export const buildCatalogArtifactFromTurtle = (
     const recordsById = new Map(
         Array.from(recordsByIri.values(), (record) => [record.id, record]),
     );
+    const pendingReferenceIds = new Set();
+    const publishedReferenceIds = new Set();
+    const pendingLessonIds = new Set();
+    const publishedLessonIds = new Set();
+
+    for (const record of recordsByIri.values()) {
+        const types = getNodeTypes(record, sourceLabel);
+        if (types[0] !== "dibs:ReferenceUsage") continue;
+
+        const tags = getUsageTagLiterals(record, sourceLabel);
+        const isPendingRevision = tags.includes("pending-revision");
+        const lessonId = namedRefs(record, `${DIBS}lesson`, sourceLabel)[0];
+        const referenceId = namedRefs(record, `${DIBS}reference`, sourceLabel)[0];
+        const lessonTargets = isPendingRevision ? pendingLessonIds : publishedLessonIds;
+        const referenceTargets = isPendingRevision ? pendingReferenceIds : publishedReferenceIds;
+
+        if (lessonId) lessonTargets.add(lessonId);
+        if (referenceId) referenceTargets.add(referenceId);
+    }
+
+    const pendingOnlyReferenceIds = new Set(
+        Array.from(pendingReferenceIds).filter((id) => !publishedReferenceIds.has(id)),
+    );
+    const pendingOnlyLessonIds = new Set(
+        Array.from(pendingLessonIds).filter((id) => !publishedLessonIds.has(id)),
+    );
+    const skippedPendingNodeIds = new Set();
 
     const graph = [];
 
@@ -230,7 +267,7 @@ export const buildCatalogArtifactFromTurtle = (
                 ensureNodeCategory(
                     recordsById,
                     id,
-                    new Set(["Person"]),
+                    new Set(["Person", "Organization", "CollegeOrUniversity"]),
                     sourceLabel,
                     `work "${record.id}" author`,
                 )
@@ -258,63 +295,75 @@ export const buildCatalogArtifactFromTurtle = (
         }
 
         if (REFERENCE_TYPES.has(primaryType)) {
-            const name = scalarLiteral(record, `${SCHEMA}name`, sourceLabel);
-            if (!name) fail(sourceLabel, `reference "${record.id}" is missing schema:name.`);
-            const authors = namedRefs(record, `${SCHEMA}author`, sourceLabel);
-            authors.forEach((id) =>
-                ensureNodeCategory(
-                    recordsById,
-                    id,
-                    new Set(["Person"]),
-                    sourceLabel,
-                    `reference "${record.id}" author`,
-                )
-            );
-            const publisherId = namedRefs(record, `${SCHEMA}publisher`, sourceLabel)[0];
-            if (publisherId) {
-                ensureNodeCategory(
-                    recordsById,
-                    publisherId,
-                    new Set(["Organization", "CollegeOrUniversity"]),
-                    sourceLabel,
-                    `reference "${record.id}" publisher`,
+            try {
+                const name = scalarLiteral(record, `${SCHEMA}name`, sourceLabel);
+                if (!name) fail(sourceLabel, `reference "${record.id}" is missing schema:name.`);
+                const authors = namedRefs(record, `${SCHEMA}author`, sourceLabel);
+                authors.forEach((id) =>
+                    ensureNodeCategory(
+                        recordsById,
+                        id,
+                        new Set(["Person", "Organization", "CollegeOrUniversity"]),
+                        sourceLabel,
+                        `reference "${record.id}" author`,
+                    )
                 );
-            }
-            const isPartOfId = namedRefs(record, `${SCHEMA}isPartOf`, sourceLabel)[0];
-            if (isPartOfId) {
-                ensureNodeCategory(
-                    recordsById,
-                    isPartOfId,
-                    new Set(["CreativeWork"]),
-                    sourceLabel,
-                    `reference "${record.id}" isPartOf`,
-                );
-            }
+                const publisherId = namedRefs(record, `${SCHEMA}publisher`, sourceLabel)[0];
+                if (publisherId) {
+                    ensureNodeCategory(
+                        recordsById,
+                        publisherId,
+                        new Set(["Organization", "CollegeOrUniversity"]),
+                        sourceLabel,
+                        `reference "${record.id}" publisher`,
+                    );
+                }
+                const isPartOfId = namedRefs(record, `${SCHEMA}isPartOf`, sourceLabel)[0];
+                if (isPartOfId) {
+                    ensureNodeCategory(
+                        recordsById,
+                        isPartOfId,
+                        new Set(["CreativeWork"]),
+                        sourceLabel,
+                        `reference "${record.id}" isPartOf`,
+                    );
+                }
 
-            graph.push({
-                "@id": record.id,
-                "@type": primaryType,
-                name,
-                ...(scalarUrl(record, `${SCHEMA}url`, sourceLabel)
-                    ? { url: scalarUrl(record, `${SCHEMA}url`, sourceLabel) }
-                    : {}),
-                ...(scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel)
-                    ? {
-                        datePublished: scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel),
-                    }
-                    : {}),
-                ...(scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) != null
-                    ? { pageStart: scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) }
-                    : {}),
-                ...(scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) != null
-                    ? { pageEnd: scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) }
-                    : {}),
-                ...(authors.length > 0
-                    ? { author: authors.map((id) => ({ "@id": id })) }
-                    : {}),
-                ...(publisherId ? { publisher: { "@id": publisherId } } : {}),
-                ...(isPartOfId ? { isPartOf: { "@id": isPartOfId } } : {}),
-            });
+                graph.push({
+                    "@id": record.id,
+                    "@type": primaryType,
+                    name,
+                    ...(scalarUrl(record, `${SCHEMA}url`, sourceLabel)
+                        ? { url: scalarUrl(record, `${SCHEMA}url`, sourceLabel) }
+                        : {}),
+                    ...(scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel)
+                        ? {
+                            datePublished: scalarLiteral(
+                                record,
+                                `${SCHEMA}datePublished`,
+                                sourceLabel,
+                            ),
+                        }
+                        : {}),
+                    ...(scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) != null
+                        ? { pageStart: scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) }
+                        : {}),
+                    ...(scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) != null
+                        ? { pageEnd: scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) }
+                        : {}),
+                    ...(authors.length > 0
+                        ? { author: authors.map((id) => ({ "@id": id })) }
+                        : {}),
+                    ...(publisherId ? { publisher: { "@id": publisherId } } : {}),
+                    ...(isPartOfId ? { isPartOf: { "@id": isPartOfId } } : {}),
+                });
+            } catch (error) {
+                if (pendingOnlyReferenceIds.has(record.id)) {
+                    skippedPendingNodeIds.add(record.id);
+                    continue;
+                }
+                throw error;
+            }
             continue;
         }
 
@@ -334,12 +383,8 @@ export const buildCatalogArtifactFromTurtle = (
         if (primaryType === "dibs:ReferenceUsage") {
             const lessonId = namedRefs(record, `${DIBS}lesson`, sourceLabel)[0];
             const referenceId = namedRefs(record, `${DIBS}reference`, sourceLabel)[0];
-            const tags = (record.predicates.get(`${DIBS}tag`) ?? []).map((value) => {
-                if (value.termType !== "Literal") {
-                    fail(sourceLabel, `usage "${record.id}" has a non-literal dibs:tag.`);
-                }
-                return value.value;
-            });
+            const tags = getUsageTagLiterals(record, sourceLabel);
+            const isPendingRevision = tags.includes("pending-revision");
 
             if (!lessonId) fail(sourceLabel, `usage "${record.id}" is missing dibs:lesson.`);
             if (!referenceId) {
@@ -349,6 +394,25 @@ export const buildCatalogArtifactFromTurtle = (
             for (const tag of tags) {
                 if (!ALLOWED_USAGE_TAGS.has(tag)) {
                     fail(sourceLabel, `usage "${record.id}" has unsupported tag "${tag}".`);
+                }
+            }
+
+            if (isPendingRevision) {
+                if (
+                    skippedPendingNodeIds.has(lessonId) || skippedPendingNodeIds.has(referenceId)
+                    || !recordsById.has(lessonId) || !recordsById.has(referenceId)
+                ) {
+                    continue;
+                }
+
+                const lessonTypes = getNodeTypes(recordsById.get(lessonId), sourceLabel);
+                const referenceTypes = getNodeTypes(recordsById.get(referenceId), sourceLabel);
+
+                if (
+                    !lessonTypes.includes("LearningResource")
+                    || !referenceTypes.some((type) => REFERENCE_TYPES.has(type))
+                ) {
+                    continue;
                 }
             }
 
@@ -374,6 +438,11 @@ export const buildCatalogArtifactFromTurtle = (
                 "dibs:reference": { "@id": referenceId },
                 "dibs:tags": Array.from(new Set(tags)),
             });
+            continue;
+        }
+
+        if (pendingOnlyReferenceIds.has(record.id) || pendingOnlyLessonIds.has(record.id)) {
+            skippedPendingNodeIds.add(record.id);
             continue;
         }
 

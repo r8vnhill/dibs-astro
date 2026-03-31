@@ -75,6 +75,7 @@ describe("parseBibliography", () => {
                     isPartOf: {
                         "@type": "Periodical",
                         name: "ACM Transactions on Software Engineering and Methodology",
+                        url: "https://dl.acm.org/journal/tosem",
                     },
                 },
             ],
@@ -86,7 +87,39 @@ describe("parseBibliography", () => {
             type: "ScholarlyArticle",
             url: "https://doi.org/10.1145/3517193",
             publication: "ACM Transactions on Software Engineering and Methodology",
+            publicationUrl: "https://dl.acm.org/journal/tosem",
             pages: { start: 1, end: 22 },
+        });
+    });
+
+    it("parses a valid VideoObject with platform metadata", () => {
+        const parsed = parseBibliography({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: [
+                {
+                    "@type": "VideoObject",
+                    identifier: "video-1",
+                    name: "Nushell: A new type of shell!",
+                    url: "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+                    datePublished: "2024-11-29",
+                    publisher: {
+                        "@type": "Organization",
+                        name: "Dispatch",
+                        url: "https://www.youtube.com/",
+                    },
+                },
+            ],
+        });
+
+        expect(parsed.items).toHaveLength(1);
+        expect(parsed.items[0]).toMatchObject({
+            id: "video-1",
+            type: "VideoObject",
+            url: "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+            platform: "Dispatch",
+            platformUrl: "https://www.youtube.com/",
+            datePublished: "2024-11-29",
         });
     });
 
@@ -103,6 +136,7 @@ describe("parseBibliography", () => {
                     publisher: {
                         "@type": "CollegeOrUniversity",
                         name: "University of Waterloo",
+                        url: "https://uwaterloo.ca/",
                     },
                 },
             ],
@@ -114,6 +148,33 @@ describe("parseBibliography", () => {
             type: "Thesis",
             url: "http://hdl.handle.net/10012/17036",
             institution: "University of Waterloo",
+            institutionUrl: "https://uwaterloo.ca/",
+        });
+    });
+
+    it("falls back to the reference url when metadata-specific url is missing", () => {
+        const parsed = parseBibliography({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: [
+                {
+                    "@type": "WebPage",
+                    identifier: "web-1",
+                    name: "Pipelines",
+                    url: "https://www.nushell.sh/book/pipelines.html",
+                    publisher: {
+                        "@type": "Organization",
+                        name: "Nushell",
+                    },
+                },
+            ],
+        });
+
+        expect(parsed.items[0]).toMatchObject({
+            id: "web-1",
+            type: "WebPage",
+            location: "Nushell",
+            locationUrl: "https://www.nushell.sh/book/pipelines.html",
         });
     });
 

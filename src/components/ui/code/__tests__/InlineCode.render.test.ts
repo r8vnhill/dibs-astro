@@ -39,7 +39,7 @@
  */
 
 import { JSDOM } from "jsdom";
-import { describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { createAstroRenderer } from "../../../../test-utils/astro-render";
 import InlineCode from "../InlineCode.astro";
 
@@ -118,6 +118,8 @@ type InlineCodeProps = {
     brackets?: boolean | undefined;
 };
 
+let render: Awaited<ReturnType<typeof createAstroRenderer<InlineCodeProps>>>;
+
 /**
  * Renders {@link InlineCode.astro} with the given props and returns a parsed {@link Document}.
  *
@@ -138,7 +140,6 @@ async function renderInlineCode(
     props: InlineCodeProps,
     slots?: Record<string, string>,
 ): Promise<Document> {
-    const render = await createAstroRenderer<InlineCodeProps>(InlineCode);
     const html = await render(props, slots ? { slots } : undefined);
     return new JSDOM(html).window.document;
 }
@@ -147,11 +148,14 @@ async function renderInlineCodeHtml(
     props: InlineCodeProps,
     slots?: Record<string, string>,
 ): Promise<string> {
-    const render = await createAstroRenderer<InlineCodeProps>(InlineCode);
     return render(props, slots ? { slots } : undefined);
 }
 
 describe("InlineCode.astro render", () => {
+    beforeAll(async () => {
+        render = await createAstroRenderer<InlineCodeProps>(InlineCode);
+    });
+
     /**
      * Ensures that the root `<code>` element always includes
      * wrapping-safe classes, regardless of prop combinations.
@@ -197,7 +201,7 @@ describe("InlineCode.astro render", () => {
      * Verifies that provided `code` content is rendered inside the `<code>` element.
      *
      * This guards against regressions where:
-     * 
+     *
      * - content is not passed through,
      * - escaping/formatting changes break rendering,
      * - DOM structure shifts unexpectedly.
@@ -258,8 +262,8 @@ describe("InlineCode.astro render", () => {
         expect(firstWarning).toContain("InlineCode conflict:");
         expect(firstWarning).toContain("`code` prop takes precedence");
         expect(firstWarning).toContain("lang=ts");
-        expect(firstWarning).toContain('code prop preview="from-prop"');
-        expect(firstWarning).toContain('slot preview="from-slot"');
+        expect(firstWarning).toContain("code prop preview=\"from-prop\"");
+        expect(firstWarning).toContain("slot preview=\"from-slot\"");
     });
 
     test("does not warn when a single code source is used", async () => {

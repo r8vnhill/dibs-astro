@@ -1,7 +1,6 @@
 ---
 import * as icons from "$icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import { NotesSection } from "~/layouts";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -11,6 +10,22 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     title="Manejo de errores en Nushell (comparativa con PowerShell)"
     description="Lección comparativa: cómo manejar fallos en Nushell asumiendo que ya conoces el modelo de errores en PowerShell. Cubrimos try/catch, estrategias para seguir procesando en lote, creación de errores propios (error make) y un patrón seguro para ejecutar comandos externos con complete."
 >
+    <Fragment slot="abstract">
+        <ToDo
+            client:only="react"
+            metadata={{
+                tasks: [
+                    `Ya viste que, en <Mono>PowerShell</Mono>, la gran pregunta es <B>cuándo</B> convertir
+                un fallo en terminante para controlar el flujo (y cuándo seguir y reportar). En
+                <B>Nushell</B> el enfoque es un poco distinto: una condición de error <B>termina</B>
+                la evaluación del comando/bloque, y tú decides explícitamente si quieres
+                <B>capturar</B>, <B>ignorar</B> o <B>convertir</B> ese fallo en <I>datos</I> para
+                seguir procesando.`,
+                ],
+            }}
+        />
+    </Fragment>
+
     <NotesSection id="h2-intro">
         <Heading
             headingLevel="h2" Icon={icons.TerminalWindow}
@@ -18,22 +33,6 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
         >
             Idea general
         </Heading>
-
-        <Abstract>
-            <ToDo
-                client:only="react"
-                metadata={{
-                    tasks: [
-                        `Ya viste que, en <Mono>PowerShell</Mono>, la gran pregunta es <B>cuándo</B> convertir
-                un fallo en terminante para controlar el flujo (y cuándo seguir y reportar). En
-                <B>Nushell</B> el enfoque es un poco distinto: una condición de error <B>termina</B>
-                la evaluación del comando/bloque, y tú decides explícitamente si quieres
-                <B>capturar</B>, <B>ignorar</B> o <B>convertir</B> ese fallo en <I>datos</I> para
-                seguir procesando.`,
-                    ],
-                }}
-            />
-        </Abstract>
     </NotesSection>
 
     <ToDo

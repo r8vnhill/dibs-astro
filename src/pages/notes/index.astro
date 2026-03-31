@@ -13,7 +13,7 @@ import {
     TableRow,
 } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import { Abstract, Important, More, Note } from "~/components/ui/callouts";
+import { Important, More, Note } from "~/components/ui/callouts";
 import { BashScript } from "~/components/ui/code";
 import { PowerShellBlock } from "~/components/ui/code";
 import { InlineBash, InlineKotlin, InlinePowerShell } from "~/components/ui/code";
@@ -27,7 +27,7 @@ const title = "¿Cómo usar este apunte?";
 ---
 
 <NotesLayout {title}>
-    <Abstract headingLevel="h2" class="mt-6">
+    <Fragment slot="abstract">
         <p>
             Este apunte es una guía de referencia rápida y un complemento a las clases, pensado para
             que puedas profundizar en los temas cuando lo necesites.
@@ -38,7 +38,7 @@ const title = "¿Cómo usar este apunte?";
             comprender los conceptos, este apunte ofrece una mirada más profunda para reforzar y
             aplicar lo aprendido.
         </p>
-    </Abstract>
+    </Fragment>
 
     <Important title="Mejor en pantallas grandes">
         El sitio está optimizado para su uso en computadoras.

@@ -25,6 +25,18 @@
       "familyName": "Firshman"
     },
     {
+      "@id": "person:brett-slatkin",
+      "@type": "Person",
+      "givenName": "Brett",
+      "familyName": "Slatkin"
+    },
+    {
+      "@id": "person:brian-w-kernighan",
+      "@type": "Person",
+      "givenName": "Brian W.",
+      "familyName": "Kernighan"
+    },
+    {
       "@id": "person:bruce-payette",
       "@type": "Person",
       "givenName": "Bruce",
@@ -57,10 +69,58 @@
       "familyName": "Parish"
     },
     {
+      "@id": "person:jeffrey-p-snover",
+      "@type": "Person",
+      "givenName": "Jeffrey P.",
+      "familyName": "Snover"
+    },
+    {
+      "@id": "person:johannes-sametinger",
+      "@type": "Person",
+      "givenName": "Johannes",
+      "familyName": "Sametinger"
+    },
+    {
+      "@id": "person:john-ousterhout",
+      "@type": "Person",
+      "givenName": "John",
+      "familyName": "Ousterhout"
+    },
+    {
+      "@id": "person:joshua-bloch",
+      "@type": "Person",
+      "givenName": "Joshua",
+      "familyName": "Bloch"
+    },
+    {
       "@id": "person:karl-mazurak",
       "@type": "Person",
       "givenName": "Karl",
       "familyName": "Mazurak"
+    },
+    {
+      "@id": "person:konstantinos-kallas",
+      "@type": "Person",
+      "givenName": "Konstantinos",
+      "familyName": "Kallas"
+    },
+    {
+      "@id": "person:luciano-ramalho",
+      "@type": "Person",
+      "givenName": "Luciano",
+      "familyName": "Ramalho"
+    },
+    {
+      "@id": "person:mark-volkmann",
+      "@type": "Person",
+      "givenName": "Mark",
+      "familyName": "Volkmann"
+    },
+    {
+      "@id": "person:martin-c-rinard",
+      "@type": "Person",
+      "givenName": "Martin C.",
+      "familyName": "Rinard"
     },
     {
       "@id": "person:martin-fowler",
@@ -68,6 +128,12 @@
       "givenName": "Martin",
       "familyName": "Fowler",
       "url": "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)"
+    },
+    {
+      "@id": "person:martin-reddy",
+      "@type": "Person",
+      "givenName": "Martin",
+      "familyName": "Reddy"
     },
     {
       "@id": "person:meiyappan-nagappan",
@@ -80,6 +146,12 @@
       "@type": "Person",
       "givenName": "Michael W.",
       "familyName": "Godfrey"
+    },
+    {
+      "@id": "person:nikos-vasilakis",
+      "@type": "Person",
+      "givenName": "Nikos",
+      "familyName": "Vasilakis"
     },
     {
       "@id": "person:richard-siddaway",
@@ -95,10 +167,33 @@
       "familyName": "Bell"
     },
     {
+      "@id": "person:rob-pike",
+      "@type": "Person",
+      "givenName": "Rob",
+      "familyName": "Pike"
+    },
+    {
+      "@id": "person:sdwheeler",
+      "@type": "Person",
+      "familyName": "sdwheeler"
+    },
+    {
+      "@id": "person:shivam-handa",
+      "@type": "Person",
+      "givenName": "Shivam",
+      "familyName": "Handa"
+    },
+    {
       "@id": "person:steve-zdancewic",
       "@type": "Person",
       "givenName": "Steve",
       "familyName": "Zdancewic"
+    },
+    {
+      "@id": "person:tim-bray",
+      "@type": "Person",
+      "givenName": "Tim",
+      "familyName": "Bray"
     },
     {
       "@id": "person:travis-plunk",
@@ -131,10 +226,28 @@
       "url": "https://www.acm.org/"
     },
     {
+      "@id": "org:addison-wesley",
+      "@type": "Organization",
+      "name": "Addison-Wesley",
+      "url": "https://www.informit.com/imprint/index.aspx?st=61087"
+    },
+    {
       "@id": "org:atomic-spin",
       "@type": "Organization",
       "name": "Atomic Spin",
       "url": "https://spin.atomicobject.com/"
+    },
+    {
+      "@id": "org:attrs-project",
+      "@type": "Organization",
+      "name": "attrs",
+      "url": "https://www.attrs.org/en/stable/"
+    },
+    {
+      "@id": "org:cattrs-project",
+      "@type": "Organization",
+      "name": "cattrs",
+      "url": "https://catt.rs/en/stable/"
     },
     {
       "@id": "org:clig",
@@ -143,10 +256,34 @@
       "url": "https://clig.dev/"
     },
     {
+      "@id": "org:dispatch-youtube",
+      "@type": "Organization",
+      "name": "Dispatch",
+      "url": "https://www.youtube.com/"
+    },
+    {
+      "@id": "org:gradle-docs",
+      "@type": "Organization",
+      "name": "Gradle Documentation",
+      "url": "https://docs.gradle.org/current/userguide/"
+    },
+    {
       "@id": "org:heroku-dev-center",
       "@type": "Organization",
       "name": "Heroku Dev Center",
       "url": "https://devcenter.heroku.com/"
+    },
+    {
+      "@id": "org:ietf",
+      "@type": "Organization",
+      "name": "Internet Engineering Task Force",
+      "url": "https://www.ietf.org/"
+    },
+    {
+      "@id": "org:intellij-platform-plugin-sdk-help",
+      "@type": "Organization",
+      "name": "IntelliJ Platform Plugin SDK Help",
+      "url": "https://plugins.jetbrains.com/docs/intellij/"
     },
     {
       "@id": "org:jdriven-blog",
@@ -155,10 +292,45 @@
       "url": "https://jdriven.com/blog/"
     },
     {
+      "@id": "org:jfrog",
+      "@type": "Organization",
+      "name": "JFrog",
+      "url": "https://jfrog.com/"
+    },
+    {
+      "@id": "org:kotlin-help",
+      "@type": "Organization",
+      "name": "Kotlin Help",
+      "url": "https://kotlinlang.org/docs/"
+    },
+    {
       "@id": "org:martin-fowler-site",
       "@type": "Organization",
       "name": "martinfowler.com",
       "url": "https://martinfowler.com"
+    },
+    {
+      "@id": "org:maven",
+      "@type": "Organization",
+      "name": "Apache Maven",
+      "url": "https://maven.apache.org/"
+    },
+    {
+      "@id": "org:microsoft-learn",
+      "@type": "Organization",
+      "name": "Microsoft Learn",
+      "url": "https://learn.microsoft.com/"
+    },
+    {
+      "@id": "org:morgan-kaufmann",
+      "@type": "Organization",
+      "name": "Morgan Kaufmann"
+    },
+    {
+      "@id": "org:npm-docs",
+      "@type": "Organization",
+      "name": "npm Docs",
+      "url": "https://docs.npmjs.com/"
     },
     {
       "@id": "org:nushell",
@@ -167,10 +339,96 @@
       "url": "https://www.nushell.sh/"
     },
     {
+      "@id": "org:oreilly",
+      "@type": "Organization",
+      "name": "O'Reilly Media",
+      "url": "https://www.oreilly.com/"
+    },
+    {
+      "@id": "org:prentice-hall",
+      "@type": "Organization",
+      "name": "Prentice Hall",
+      "url": "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/"
+    },
+    {
+      "@id": "org:pycon-us",
+      "@type": "Organization",
+      "name": "PyCon US",
+      "url": "https://www.youtube.com/@PyConUS"
+    },
+    {
+      "@id": "org:pydantic",
+      "@type": "Organization",
+      "name": "Pydantic",
+      "url": "https://docs.pydantic.dev/latest/"
+    },
+    {
+      "@id": "org:pygotham",
+      "@type": "Organization",
+      "name": "PyGotham",
+      "url": "https://www.pygotham.com/"
+    },
+    {
+      "@id": "org:python-docs",
+      "@type": "Organization",
+      "name": "Python documentation",
+      "url": "https://docs.python.org/3/"
+    },
+    {
+      "@id": "org:python-packaging-user-guide",
+      "@type": "Organization",
+      "name": "Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/"
+    },
+    {
+      "@id": "org:python-peps",
+      "@type": "Organization",
+      "name": "Python Enhancement Proposals (PEPs)",
+      "url": "https://peps.python.org/"
+    },
+    {
+      "@id": "org:requests-docs",
+      "@type": "Organization",
+      "name": "Requests documentation",
+      "url": "https://requests.readthedocs.io/en/latest/"
+    },
+    {
+      "@id": "org:rust-book",
+      "@type": "Organization",
+      "name": "The Rust Programming Language",
+      "url": "https://doc.rust-lang.org/book/"
+    },
+    {
+      "@id": "org:springer",
+      "@type": "Organization",
+      "name": "Springer"
+    },
+    {
       "@id": "org:university-of-waterloo",
       "@type": "CollegeOrUniversity",
       "name": "University of Waterloo",
       "url": "https://uwaterloo.ca/"
+    },
+    {
+      "@id": "org:yaknyam-press",
+      "@type": "Organization",
+      "name": "Yaknyam Press"
+    },
+    {
+      "@id": "org:youtube",
+      "@type": "Organization",
+      "name": "YouTube",
+      "url": "https://www.youtube.com/"
+    },
+    {
+      "@id": "ref:snover-monad-manifesto-2002",
+      "@type": "CreativeWork",
+      "name": "Monad Manifesto",
+      "author": [
+        {
+          "@id": "person:jeffrey-p-snover"
+        }
+      ]
     },
     {
       "@id": "work:acm-tosem",
@@ -178,6 +436,32 @@
       "name": "ACM Transactions on Software Engineering and Methodology",
       "publisher": {
         "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:effective-python-3e",
+      "@type": "CreativeWork",
+      "name": "Effective Python: 125 specific ways to write better Python",
+      "author": [
+        {
+          "@id": "person:brett-slatkin"
+        }
+      ],
+      "publisher": {
+        "@id": "org:addison-wesley"
+      }
+    },
+    {
+      "@id": "work:fluent-python-2e",
+      "@type": "CreativeWork",
+      "name": "Fluent python: clear, concise, and effective programming",
+      "author": [
+        {
+          "@id": "person:luciano-ramalho"
+        }
+      ],
+      "publisher": {
+        "@id": "org:oreilly"
       }
     },
     {
@@ -191,9 +475,25 @@
       ]
     },
     {
+      "@id": "work:oopsla-2006-companion",
+      "@type": "CreativeWork",
+      "name": "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:plas-2007",
       "@type": "CreativeWork",
       "name": "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:proc-acm-program-lang",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the ACM on Programming Languages",
       "publisher": {
         "@id": "org:acm"
       }
@@ -207,6 +507,22 @@
           "@id": "person:david-m-beazley"
         }
       ]
+    },
+    {
+      "@id": "work:unix-programming-environment",
+      "@type": "CreativeWork",
+      "name": "The UNIX programming environment",
+      "author": [
+        {
+          "@id": "person:brian-w-kernighan"
+        },
+        {
+          "@id": "person:rob-pike"
+        }
+      ],
+      "publisher": {
+        "@id": "org:prentice-hall"
+      }
     },
     {
       "@id": "work:windows-powershell-in-action-3e",
@@ -237,6 +553,44 @@
       }
     },
     {
+      "@id": "ref:attrs-why-not",
+      "@type": "WebPage",
+      "name": "Why not… - attrs 26.1.0 documentation",
+      "url": "https://www.attrs.org/en/stable/why.html",
+      "publisher": {
+        "@id": "org:attrs-project"
+      }
+    },
+    {
+      "@id": "ref:bloch-how-to-design-good-api-2006",
+      "@type": "ScholarlyArticle",
+      "name": "How to design a good API and why it matters",
+      "url": "https://dl.acm.org/doi/10.1145/1176617.1176622",
+      "datePublished": "2006-10-22",
+      "pageStart": 506,
+      "pageEnd": 507,
+      "author": [
+        {
+          "@id": "person:joshua-bloch"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:oopsla-2006-companion"
+      }
+    },
+    {
+      "@id": "ref:cattrs-documentation",
+      "@type": "WebPage",
+      "name": "cattrs 26.1.0 documentation",
+      "url": "https://catt.rs/en/stable/#",
+      "publisher": {
+        "@id": "org:cattrs-project"
+      }
+    },
+    {
       "@id": "ref:clig-the-basics",
       "@type": "WebPage",
       "name": "Command Line Interface Guidelines",
@@ -257,6 +611,21 @@
       ],
       "publisher": {
         "@id": "org:martin-fowler-site"
+      }
+    },
+    {
+      "@id": "ref:dataclasses-are-here-2018-video",
+      "@type": "VideoObject",
+      "name": "Dataclasses are here. Now what?",
+      "url": "https://www.youtube.com/watch?v=zHY1oaYxxjA",
+      "datePublished": "2018-11-14",
+      "author": [
+        {
+          "@id": "org:pygotham"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pygotham"
       }
     },
     {
@@ -295,6 +664,20 @@
       }
     },
     {
+      "@id": "ref:effective-python-3e-book",
+      "@type": "Book",
+      "name": "Effective Python: 125 specific ways to write better Python",
+      "datePublished": "2025",
+      "author": [
+        {
+          "@id": "person:brett-slatkin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:effective-python-3e"
+      }
+    },
+    {
       "@id": "ref:errors-and-exceptions",
       "@type": "Book",
       "name": "Errors and exceptions",
@@ -310,6 +693,85 @@
       ],
       "isPartOf": {
         "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
+      "@id": "ref:fluent-python-2e-book",
+      "@type": "Book",
+      "name": "Fluent python: clear, concise, and effective programming",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@id": "person:luciano-ramalho"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:fluent-python-2e"
+      }
+    },
+    {
+      "@id": "ref:gradle-introduction-to-plugins",
+      "@type": "WebPage",
+      "name": "Introduction to Plugins",
+      "url": "https://docs.gradle.org/current/userguide/plugins.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-plugin-development-plugin",
+      "@type": "WebPage",
+      "name": "Gradle Plugin Development Plugin",
+      "url": "https://docs.gradle.org/current/userguide/java_gradle_plugin.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-plugin-reference",
+      "@type": "WebPage",
+      "name": "Gradle Plugin Reference",
+      "url": "https://docs.gradle.org/current/userguide/plugin_reference.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-user-manual",
+      "@type": "WebPage",
+      "name": "Gradle User Manual",
+      "url": "https://docs.gradle.org/current/userguide/userguide.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:handa-order-aware-dataflow-pipelines-2021",
+      "@type": "ScholarlyArticle",
+      "name": "An order-aware dataflow model for parallel Unix pipelines",
+      "url": "https://dl.acm.org/doi/10.1145/3473570",
+      "datePublished": "2021",
+      "pageStart": 1,
+      "pageEnd": 28,
+      "author": [
+        {
+          "@id": "person:shivam-handa"
+        },
+        {
+          "@id": "person:konstantinos-kallas"
+        },
+        {
+          "@id": "person:nikos-vasilakis"
+        },
+        {
+          "@id": "person:martin-c-rinard"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:proc-acm-program-lang"
       }
     },
     {
@@ -335,6 +797,15 @@
       "datePublished": "2025-01-31",
       "publisher": {
         "@id": "org:heroku-dev-center"
+      }
+    },
+    {
+      "@id": "ref:hettinger-dataclasses-pycon-2018-video",
+      "@type": "VideoObject",
+      "name": "(2) Raymond Hettinger - Dataclasses: The code generator to end all code generators - PyCon 2018 - YouTube",
+      "url": "https://www.youtube.com/watch?v=T-TwcmT6Rcw",
+      "publisher": {
+        "@id": "org:youtube"
       }
     },
     {
@@ -368,6 +839,15 @@
       }
     },
     {
+      "@id": "ref:intellij-platform-sdk",
+      "@type": "WebPage",
+      "name": "IntelliJ Platform SDK | IntelliJ Platform Plugin SDK",
+      "url": "https://plugins.jetbrains.com/docs/intellij/welcome.html",
+      "publisher": {
+        "@id": "org:intellij-platform-plugin-sdk-help"
+      }
+    },
+    {
       "@id": "ref:jdriven-nushell-basics-structured-data",
       "@type": "WebPage",
       "name": "Nushell basics: structured data in your shell",
@@ -383,6 +863,68 @@
       }
     },
     {
+      "@id": "ref:jfrog-what-are-software-artifacts",
+      "@type": "WebPage",
+      "name": "What are Software Artifacts?",
+      "url": "https://jfrog.com/learn/devops/software-artifact/",
+      "publisher": {
+        "@id": "org:jfrog"
+      }
+    },
+    {
+      "@id": "ref:kernighan-pike-unix-programming-environment-1984",
+      "@type": "Book",
+      "name": "The UNIX programming environment",
+      "datePublished": "1984",
+      "author": [
+        {
+          "@id": "person:brian-w-kernighan"
+        },
+        {
+          "@id": "person:rob-pike"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:unix-programming-environment"
+      }
+    },
+    {
+      "@id": "ref:kotlin-backward-compatibility-guidelines",
+      "@type": "WebPage",
+      "name": "Backward compatibility guidelines for library authors | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-evolution-principles",
+      "@type": "WebPage",
+      "name": "Kotlin evolution principles | Kotlin",
+      "url": "https://kotlinlang.org/docs/kotlin-evolution-principles.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-informative-documentation-guidelines",
+      "@type": "WebPage",
+      "name": "Best practices for library authors to create informative documentation | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-informative-documentation.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-library-authors-guidelines-introduction",
+      "@type": "WebPage",
+      "name": "Introduction to library authors' guidelines | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-introduction.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
       "@id": "ref:li-bash-language-usage-2021",
       "@type": "Thesis",
       "name": "An Empirical Study on Bash Language Usage in Github",
@@ -395,6 +937,30 @@
       ],
       "publisher": {
         "@id": "org:university-of-waterloo"
+      }
+    },
+    {
+      "@id": "ref:lucas-serialization-more-than-pickling-2022",
+      "@type": "VideoObject",
+      "name": "Talk - Joseph Lucas: Serialization  More than pickling",
+      "url": "https://www.youtube.com/watch?v=ygrjAGDU1J8",
+      "datePublished": "2022-05-23",
+      "author": [
+        {
+          "@id": "org:pycon-us"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pycon-us"
+      }
+    },
+    {
+      "@id": "ref:maven-central-repository",
+      "@type": "WebPage",
+      "name": "Maven Central Repository – Maven",
+      "url": "https://maven.apache.org/repository/",
+      "publisher": {
+        "@id": "org:maven"
       }
     },
     {
@@ -418,6 +984,72 @@
       },
       "isPartOf": {
         "@id": "work:plas-2007"
+      }
+    },
+    {
+      "@id": "ref:microsoft-about-functions-advanced",
+      "@type": "WebPage",
+      "name": "about_Functions_Advanced - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced?view=powershell-7.6",
+      "author": [
+        {
+          "@id": "person:sdwheeler"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-about-objects",
+      "@type": "WebPage",
+      "name": "about_Objects - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_objects?view=powershell-7.6",
+      "author": [
+        {
+          "@id": "person:sdwheeler"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-about-pipelines",
+      "@type": "WebPage",
+      "name": "about_Pipelines - PowerShell",
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pipelines?view=powershell-7.5",
+      "datePublished": "2025-12-28",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-getting-started-powershell-3",
+      "@type": "WebPage",
+      "name": "Getting Started with PowerShell 3.0",
+      "url": "https://learn.microsoft.com/en-us/shows/getstartedpowershell3/",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:microsoft-powershell-more-on-parameters",
+      "@type": "WebPage",
+      "name": "Advanced Tools & Scripting with PowerShell 3.0: (05) More on Parameters",
+      "url": "https://learn.microsoft.com/en-us/shows/advpowershell3/05",
+      "datePublished": "2013-08-09",
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:npm-about-packages-and-modules",
+      "@type": "WebPage",
+      "name": "About packages and modules | npm Docs",
+      "url": "https://docs.npmjs.com/about-packages-and-modules",
+      "publisher": {
+        "@id": "org:npm-docs"
       }
     },
     {
@@ -448,6 +1080,24 @@
       }
     },
     {
+      "@id": "ref:nushell-filters",
+      "@type": "WebPage",
+      "name": "Filters | Nushell",
+      "url": "https://www.nushell.sh/commands/categories/filters.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-jq-vs-nushell",
+      "@type": "WebPage",
+      "name": "jq vs Nushell | Nushell",
+      "url": "https://www.nushell.sh/cookbook/jq_v_nushell.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-list",
       "@type": "WebPage",
       "name": "List",
@@ -466,6 +1116,30 @@
       }
     },
     {
+      "@id": "ref:nushell-new-type-shell-video",
+      "@type": "VideoObject",
+      "name": "Nushell: A new type of shell!",
+      "url": "https://www.youtube.com/watch?v=GPqV6rLfKR4",
+      "datePublished": "2024-11-29",
+      "author": [
+        {
+          "@id": "org:dispatch-youtube"
+        }
+      ],
+      "publisher": {
+        "@id": "org:dispatch-youtube"
+      }
+    },
+    {
+      "@id": "ref:nushell-open-command",
+      "@type": "WebPage",
+      "name": "open | Nushell",
+      "url": "https://www.nushell.sh/commands/docs/open.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-path-exists",
       "@type": "WebPage",
       "name": "Path exists",
@@ -479,6 +1153,16 @@
       "@type": "WebPage",
       "name": "Path",
       "url": "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-pipelines",
+      "@type": "WebPage",
+      "name": "Pipelines",
+      "url": "https://www.nushell.sh/book/pipelines.html",
+      "datePublished": "2026-01-27",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -506,6 +1190,15 @@
       "@type": "WebPage",
       "name": "String interpolation",
       "url": "https://www.nushell.sh/book/working_with_strings.html#string-interpolation",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-thinking-in-nu",
+      "@type": "WebPage",
+      "name": "Thinking in Nu | Nushell",
+      "url": "https://www.nushell.sh/book/thinking_in_nu.html",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -565,6 +1258,38 @@
       }
     },
     {
+      "@id": "ref:ousterhout-philosophy-software-design-2021",
+      "@type": "Book",
+      "name": "A Philosophy of Software Design",
+      "datePublished": "2021",
+      "author": [
+        {
+          "@id": "person:john-ousterhout"
+        }
+      ],
+      "publisher": {
+        "@id": "org:yaknyam-press"
+      }
+    },
+    {
+      "@id": "ref:pep-557-data-classes",
+      "@type": "WebPage",
+      "name": "PEP 557 – Data Classes | peps.python.org",
+      "url": "https://peps.python.org/pep-0557/",
+      "publisher": {
+        "@id": "org:python-peps"
+      }
+    },
+    {
+      "@id": "ref:pep-613-explicit-type-aliases",
+      "@type": "WebPage",
+      "name": "PEP 613 – Explicit Type Aliases | peps.python.org",
+      "url": "https://peps.python.org/pep-0613/",
+      "publisher": {
+        "@id": "org:python-peps"
+      }
+    },
+    {
       "@id": "ref:pipeline-connecting-commands",
       "@type": "Book",
       "name": "The pipeline: Connecting commands",
@@ -578,6 +1303,193 @@
       "isPartOf": {
         "@id": "work:learn-powershell-month-lunches-4e"
       }
+    },
+    {
+      "@id": "ref:pydantic-models-docs",
+      "@type": "WebPage",
+      "name": "Models - Pydantic Validation",
+      "url": "https://docs.pydantic.dev/latest/concepts/models/",
+      "publisher": {
+        "@id": "org:pydantic"
+      }
+    },
+    {
+      "@id": "ref:python-dataclasses-docs",
+      "@type": "WebPage",
+      "name": "dataclasses — Data Classes",
+      "url": "https://docs.python.org/3/library/dataclasses.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-distilled-book",
+      "@type": "Book",
+      "name": "Python Distilled",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@id": "person:david-m-beazley"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:python-distilled"
+      }
+    },
+    {
+      "@id": "ref:python-json-docs",
+      "@type": "WebPage",
+      "name": "json — JSON encoder and decoder",
+      "url": "https://docs.python.org/3/library/json.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-packaging-projects",
+      "@type": "WebPage",
+      "name": "Packaging Python Projects - Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/tutorials/packaging-projects/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
+      "@id": "ref:python-packaging-user-guide",
+      "@type": "WebPage",
+      "name": "Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
+      "@id": "ref:python-typing-docs",
+      "@type": "WebPage",
+      "name": "typing — Support for type hints",
+      "url": "https://docs.python.org/3/library/typing.html",
+      "publisher": {
+        "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-writing-pyproject-toml",
+      "@type": "WebPage",
+      "name": "Writing your pyproject.toml - Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
+      "@id": "ref:reddy-api-design-for-cpp-2024",
+      "@type": "Book",
+      "name": "API design for C++",
+      "datePublished": "2024",
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "publisher": {
+        "@id": "org:morgan-kaufmann"
+      }
+    },
+    {
+      "@id": "ref:requests-http-for-humans",
+      "@type": "WebPage",
+      "name": "Requests: HTTP for Humans™ — Requests 2.33.1 documentation",
+      "url": "https://requests.readthedocs.io/en/latest/",
+      "publisher": {
+        "@id": "org:requests-docs"
+      }
+    },
+    {
+      "@id": "ref:rfc-8259-json-data-interchange-format",
+      "@type": "WebPage",
+      "name": "The JavaScript Object Notation (JSON) Data Interchange Format",
+      "url": "https://datatracker.ietf.org/doc/rfc8259",
+      "datePublished": "2017-12",
+      "author": [
+        {
+          "@id": "person:tim-bray"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ietf"
+      }
+    },
+    {
+      "@id": "ref:rust-packages-and-crates",
+      "@type": "WebPage",
+      "name": "Packages and Crates - The Rust Programming Language",
+      "url": "https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html",
+      "publisher": {
+        "@id": "org:rust-book"
+      }
+    },
+    {
+      "@id": "ref:sametinger-software-engineering-reusable-components-1997",
+      "@type": "Book",
+      "name": "Software engineering with reusable components",
+      "datePublished": "1997",
+      "author": [
+        {
+          "@id": "person:johannes-sametinger"
+        }
+      ],
+      "publisher": {
+        "@id": "org:springer"
+      }
+    },
+    {
+      "@id": "ref:snover-windows-powershell-unplugged-2015",
+      "@type": "VideoObject",
+      "name": "Windows PowerShell Unplugged",
+      "url": "https://learn.microsoft.com/en-us/shows/ignite-2015/brk4451",
+      "datePublished": "2015-05-04",
+      "author": [
+        {
+          "@id": "person:jeffrey-p-snover"
+        }
+      ],
+      "publisher": {
+        "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:volkmann-nushell-overview",
+      "@type": "WebPage",
+      "name": "Nushell",
+      "url": "https://mvolkmann.github.io/blog/nushell/?v=1.1.1",
+      "author": [
+        {
+          "@id": "person:mark-volkmann"
+        }
+      ]
+    },
+    {
+      "@id": "ref:windows-powershell-in-action-3e-book",
+      "@type": "Book",
+      "name": "Windows powershell in action",
+      "datePublished": "2018",
+      "author": [
+        {
+          "@id": "person:bruce-payette"
+        },
+        {
+          "@id": "person:richard-siddaway"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
+      "@id": "/notes/software-libraries/artifacts-taxonomy/",
+      "@type": "LearningResource",
+      "name": "Taxonomía básica de artefactos de software",
+      "url": "/notes/software-libraries/artifacts-taxonomy/"
     },
     {
       "@id": "/notes/software-libraries/scripting/errors/",
@@ -610,10 +1522,22 @@
       "url": "/notes/software-libraries/scripting/pipelines/"
     },
     {
+      "@id": "/notes/software-libraries/scripting/pipelines/nushell/",
+      "@type": "LearningResource",
+      "name": "Pipelines declarativos en Nushell",
+      "url": "/notes/software-libraries/scripting/pipelines/nushell/"
+    },
+    {
       "@id": "/notes/software-libraries/scripting/structured-output/nushell/",
       "@type": "LearningResource",
       "name": "Salida estructurada en Nushell",
       "url": "/notes/software-libraries/scripting/structured-output/nushell/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/structured-output/py/",
+      "@type": "LearningResource",
+      "name": "Salida estructurada en Python",
+      "url": "/notes/software-libraries/scripting/structured-output/py/"
     },
     {
       "@id": "usage:errors-errors-and-exceptions-additional",
@@ -863,6 +1787,266 @@
       ]
     },
     {
+      "@id": "usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:atomic-spin-introduction-to-nushell"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:handa-order-aware-dataflow-pipelines-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:jdriven-nushell-basics-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kernighan-pike-unix-programming-environment-1984"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-functions-advanced-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-functions-advanced"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-objects-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-objects"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-about-pipelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-about-pipelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-getting-started-powershell-3"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:microsoft-powershell-more-on-parameters"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-custom-commands-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-custom-commands"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-filters-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-filters"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-jq-vs-nushell-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-jq-vs-nushell"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-navigating-structured-data-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-navigating-structured-data"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-new-type-shell-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-new-type-shell-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-open-command-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-open-command"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-pipelines-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-pipelines"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-nushell-thinking-in-nu-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-thinking-in-nu"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:snover-windows-powershell-unplugged-2015"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-volkmann-nushell-overview-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:volkmann-nushell-overview"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:windows-powershell-in-action-3e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
       "@id": "usage:pipelines-pipeline-connecting-commands-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
@@ -873,6 +2057,279 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-bloch-how-to-design-good-api-2006-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:bloch-how-to-design-good-api-2006"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-introduction-to-plugins-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-introduction-to-plugins"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-plugin-development-plugin-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-plugin-development-plugin"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-plugin-reference-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-plugin-reference"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-user-manual-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-user-manual"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-intellij-platform-sdk-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:intellij-platform-sdk"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-jfrog-what-are-software-artifacts-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:jfrog-what-are-software-artifacts"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-backward-compatibility-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-backward-compatibility-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-evolution-principles-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-evolution-principles"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-informative-documentation-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-informative-documentation-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-library-authors-guidelines-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-library-authors-guidelines-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-maven-central-repository-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:maven-central-repository"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-npm-about-packages-and-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-packages-and-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-ousterhout-philosophy-software-design-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:ousterhout-philosophy-software-design-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-packaging-projects-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-packaging-projects"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-packaging-user-guide-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-packaging-user-guide"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-writing-pyproject-toml-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-writing-pyproject-toml"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-reddy-api-design-for-cpp-2024-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-api-design-for-cpp-2024"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-requests-http-for-humans-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:requests-http-for-humans"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-rust-packages-and-crates-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rust-packages-and-crates"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-sametinger-software-engineering-reusable-components-1997-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sametinger-software-engineering-reusable-components-1997"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {
@@ -1000,6 +2457,201 @@
       },
       "dibs:reference": {
         "@id": "ref:nushell-working-with-tables"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-attrs-why-not-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:attrs-why-not"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-cattrs-documentation-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:cattrs-documentation"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-dataclasses-are-here-2018-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:dataclasses-are-here-2018-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-effective-python-3e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:effective-python-3e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-fluent-python-2e-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:fluent-python-2e-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:hettinger-dataclasses-pycon-2018-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lucas-serialization-more-than-pickling-2022"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pep-557-data-classes-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pep-557-data-classes"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pep-613-explicit-type-aliases-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pep-613-explicit-type-aliases"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-pydantic-models-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:pydantic-models-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-dataclasses-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-dataclasses-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-distilled-book-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-distilled-book"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-json-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-json-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-python-typing-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-typing-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:structured-output-py-rfc-8259-json-data-interchange-format-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rfc-8259-json-data-interchange-format"
       },
       "dibs:tags": [
         "pending-revision"

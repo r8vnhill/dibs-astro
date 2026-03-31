@@ -1,7 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Note, Tip } from "~/components/ui/callouts";
+import { Note, Tip } from "~/components/ui/callouts";
 import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, References, WebPage } from "~/components/ui/references";
@@ -11,7 +11,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Lógica de negocio y lógica de aplicación">
-    <Abstract>
+    <Fragment slot="abstract">
         <p>
             En la lección anterior entendimos que <strong>una biblioteca es, en esencia, una
                 API</strong>: un conjunto de funciones, tipos y abstracciones diseñadas para ser
@@ -29,7 +29,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Comprender esta separación es fundamental para construir bibliotecas reutilizables,
             mantenibles y resistentes al cambio tecnológico.
         </p>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="business-logic">
         <Heading

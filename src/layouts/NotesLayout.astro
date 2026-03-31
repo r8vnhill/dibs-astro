@@ -9,6 +9,7 @@
  * - A persistent course sidebar (tree navigation) built from `courseStructure`.
  * - The lesson header (title + reading time estimate).
  * - Optional lesson metadata panels (authors, last modified, recent changes, repo links).
+ * - A dedicated abstract callout rendered from the named `abstract` slot.
  * - The lesson body via the default `<slot />`.
  * - Previous/next navigation controls (manual overrides or auto-resolved).
  *
@@ -18,23 +19,32 @@
  * - **Auto navigation:** {@link resolveAutoNav} uses `courseStructure` and current pathname.
  * - **Lesson metadata:** {@link resolveLessonMetadata} uses the generated metadata dataset (see
  *   `src/data/lesson-metadata.generated.json`).
+ * - **Abstract content:** provided by the page through `slot="abstract"`, with a placeholder
+ *   fallback when absent.
  *
  * ## Navigation precedence
  *
  * Previous/next links may be provided by the page frontmatter and/or derived from the course
- * structure. Resolution follows this precedence:
+ * structure. `previous` accepts either a single link or a list of links, which allows comparative
+ * or branch-style lessons to point back to more than one relevant page. Resolution follows this
+ * precedence:
  *
  * 1. Explicit `previous`/`next` props (frontmatter override)
  * 2. Auto navigation from {@link resolveAutoNav}
  * 3. Omit navigation button when neither is available
  *
- * Links are normalized by {@link normalizeNavigation} to ensure consistent routing (e.g. trailing
- * slashes and collapsed separators).
+ * Manual `previous` arrays replace the auto-resolved previous link entirely; they are not merged.
+ *
+ * Links are normalized by {@link normalizePreviousNavigation} and {@link normalizeNavigation} to
+ * ensure consistent routing (e.g. trailing slashes and collapsed separators).
  *
  * ## Accessibility
  *
  * - Sidebar is wrapped in `<aside>` with an explicit `aria-label`.
+ * - The abstract remains a semantic callout rendered before the lesson body.
  * - Prev/next controls are wrapped in `<nav>` with an `aria-label`.
+ * - Multiple previous links are rendered as a vertical list of buttons on the left side of the
+ *   navigation block.
  * - When there is no “previous” button, a hidden placeholder is used on wide screens to
  *   preserve alignment without adding noise to assistive technologies.
  */
@@ -45,9 +55,15 @@ import NavigationButton from "~/components/navigation/NavigationButton.astro";
 import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
 import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
+import { Abstract } from "~/components/ui/callouts";
+import ToDo from "~/components/utils/ToDo";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import { normalizeNavigation } from "~/utils";
+import {
+    normalizeNavigation,
+    normalizePreviousNavigation,
+    type NavigationLinkInput,
+} from "~/utils";
 import type { RepoRef } from "~/utils/git";
 import { resolveLessonMetadata } from "~/utils/lesson-metadata";
 import type { PageMeta } from "~/utils/page-meta";
@@ -55,7 +71,9 @@ import type { PageMeta } from "~/utils/page-meta";
 /**
  * Props passed to the layout.
  *
- * Lesson pages typically set these values from frontmatter.
+ * Lesson pages typically set these values from frontmatter. The layout intentionally keeps the
+ * navigation payload small (`title` + `href`) so pages can override navigation without depending
+ * on the full course-structure lesson shape.
  */
 interface Props {
     /**
@@ -77,14 +95,16 @@ interface Props {
      *
      * If omitted, the layout attempts to auto-resolve it from the course structure.
      */
-    next?: { title: string; href: string };
+    next?: NavigationLinkInput;
 
     /**
      * Optional previous lesson navigation override.
      *
-     * If omitted, the layout attempts to auto-resolve it from the course structure.
+     * When an array is provided, every entry is rendered as its own “previous” button in the
+     * order received. If omitted, the layout attempts to auto-resolve a single previous lesson
+     * from the course structure.
      */
-    previous?: { title: string; href: string };
+    previous?: NavigationLinkInput | readonly NavigationLinkInput[];
 
     /**
      * Multiplier applied to the reading-time estimate.
@@ -131,14 +151,17 @@ const pageMeta: PageMeta = {
 // Attempt to auto-resolve previous/next from course structure.
 const autoNav = await resolveAutoNav(pathname, courseStructure);
 
-// Allow manual override from frontmatter (if provided).
+// Allow manual override from frontmatter (if provided). Manual previous arrays intentionally
+// replace the auto-resolved previous lesson instead of merging with it.
 const effectivePrevious = previous ?? autoNav.previous ?? undefined;
 const effectiveNext = next ?? autoNav.next ?? undefined;
 
-// Normalize hrefs for consistency (e.g. ensure trailing slashes).
-const { normalizedNext, normalizedPrevious } = normalizeNavigation(
+// Normalize hrefs for consistency (e.g. ensure trailing slashes). Previous links are normalized as
+// a list because the template renders them as a left-side stack when more than one is provided.
+const normalizedPreviousList = normalizePreviousNavigation(effectivePrevious);
+const { normalizedNext } = normalizeNavigation(
     effectiveNext,
-    effectivePrevious,
+    Array.isArray(effectivePrevious) ? effectivePrevious[0] : effectivePrevious,
 );
 ---
 
@@ -163,10 +186,23 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
 
             {git && <LessonRepoPanel {git} />}
 
+            <Abstract headingLevel="h2">
+                <slot name="abstract">
+                    <ToDo
+                        client:only="react"
+                        metadata={{
+                            tasks: [
+                                "Agregar abstract",
+                            ],
+                        }}
+                    />
+                </slot>
+            </Abstract>
+
             <slot />
 
             {
-                (normalizedNext || normalizedPrevious) && (
+                (normalizedNext || normalizedPreviousList.length > 0) && (
                     <nav
                         aria-label="Siguiente o anterior lección"
                         class:list={[
@@ -182,13 +218,20 @@ const { normalizedNext, normalizedPrevious } = normalizeNavigation(
                         ]}
                     >
                         {
-                            normalizedPrevious ? (
-                                <NavigationButton
-                                    href={normalizedPrevious.href} label={normalizedPrevious.title}
-                                    iconPosition="left"
-                                >
-                                    <icons.ArrowLeft class="w-5 h-5" slot="icon" />
-                                </NavigationButton>
+                            normalizedPreviousList.length > 0 ? (
+                                <div class:list={["flex", "flex-col", "gap-4"]}>
+                                    {
+                                        normalizedPreviousList.map((previousLink) => (
+                                            <NavigationButton
+                                                href={previousLink.href}
+                                                label={previousLink.title}
+                                                iconPosition="left"
+                                            >
+                                                <icons.ArrowLeft class="w-5 h-5" slot="icon" />
+                                            </NavigationButton>
+                                        ))
+                                    }
+                                </div>
                             ) : <div aria-hidden="true" class="hidden sm:block" />
                         }
 

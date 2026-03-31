@@ -13,7 +13,6 @@ import {
   TooltipTrigger,
 } from "~/components/starwind/tooltip";
 import {
-  Abstract,
   Danger,
   Important,
   Info,
@@ -39,7 +38,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Introducción a los Modelos de Dominio">
-  <Abstract>
+  <Fragment slot="abstract">
     <p>
       Esta lección introduce el <strong>modelado de dominio</strong> como la práctica
       de representar en el código los conceptos, reglas y relaciones reales del problema
@@ -58,7 +57,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
       que potencian el modelado de dominios y permiten construir bibliotecas claras,
       consistentes y sostenibles.
     </p>
-  </Abstract>
+  </Fragment>
 
   <NotesSection id="what-is-domain-model">
     <Heading headingLevel="h2" slot="heading" Icon={icons.TreeStructure}>

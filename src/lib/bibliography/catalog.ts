@@ -1,3 +1,4 @@
+import { parsePageReference } from "./pages";
 import type {
     AuthorRef,
     BibliographyCatalog,
@@ -14,11 +15,24 @@ import type {
     ReferenceTag,
     SupportedReferenceType,
 } from "./types";
-import { normalizePageReference, pageReferenceFromBounds } from "./pages";
 
+/**
+ * Catalog loader and query helpers for the generated bibliography graph.
+ *
+ * This module turns the JSON-LD catalog artifact into a normalized in-memory index tailored to the
+ * site UI:
+ * - reference nodes become `NormalizedReference` values ready for rendering;
+ * - lesson nodes become `CatalogLesson` entries keyed by lesson id;
+ * - usage nodes become `CatalogUsage` links that drive per-lesson reference groups and stats.
+ *
+ * The loader is intentionally permissive in non-strict mode: malformed nodes are skipped and
+ * collected as warnings instead of failing the whole import. Query helpers operate only on the
+ * normalized catalog produced by `loadBibliographyCatalog`.
+ */
 const SUPPORTED_REFERENCE_TYPES = new Set<SupportedReferenceType>([
     "Book",
     "WebPage",
+    "VideoObject",
     "ScholarlyArticle",
     "Thesis",
 ]);
@@ -65,6 +79,11 @@ const resolveNodeId = (value: unknown): string | undefined => {
 
 const toArray = (value: unknown): unknown[] =>
     Array.isArray(value) ? value : value == null ? [] : [value];
+
+const getUsageTags = (node: Record<string, unknown>): ReferenceTag[] =>
+    toArray(node["dibs:tags"] ?? node.tags)
+        .map(asString)
+        .filter((tag): tag is ReferenceTag => !!tag && SUPPORTED_TAGS.has(tag as ReferenceTag));
 
 const fail = (message: string): never => {
     throw new Error(message);
@@ -164,19 +183,25 @@ const resolveAuthors = (
 const resolveLinkedTitle = (
     value: unknown,
     nodesById: Map<string, Record<string, unknown>>,
-): { id?: string; title?: string } => {
+): { id?: string; title?: string; url?: string } => {
     const id = resolveNodeId(value);
     if (id) {
         const node = nodesById.get(id);
         const title = node ? getNodeTitle(node) : undefined;
+        const url = node ? asString(node.url) : undefined;
         return {
             ...(id ? { id } : {}),
             ...(title ? { title } : {}),
+            ...(url ? { url } : {}),
         };
     }
 
     const title = getNodeTitle(value);
-    return title ? { title } : {};
+    const url = isObject(value) ? asString(value.url) : undefined;
+    return {
+        ...(title ? { title } : {}),
+        ...(url ? { url } : {}),
+    };
 };
 
 const normalizeReferenceNode = (
@@ -185,18 +210,27 @@ const normalizeReferenceNode = (
     sourceLabel: string,
     strict: boolean,
     errors: string[],
+    toleratedReferenceIds: Set<string>,
 ): NormalizedReference | null => {
     const id = asString(node["@id"]);
     const rawType = getType(node["@type"]);
     const title = asString(node.name) ?? asString(node.headline);
 
     if (!id || !SUPPORTED_REFERENCE_TYPES.has(rawType as SupportedReferenceType)) return null;
+    const effectiveStrict = strict && !toleratedReferenceIds.has(id);
     if (!title) {
-        addError(errors, strict, `[${sourceLabel}] reference "${id}" is missing "name".`);
+        addError(errors, effectiveStrict, `[${sourceLabel}] reference "${id}" is missing "name".`);
         return null;
     }
 
-    const authors = resolveAuthors(node.author, nodesById, errors, strict, sourceLabel, id);
+    const authors = resolveAuthors(
+        node.author,
+        nodesById,
+        errors,
+        effectiveStrict,
+        sourceLabel,
+        id,
+    );
     const description = asString(node.description);
     const datePublished = asString(node.datePublished);
     const keywords = toArray(node.keywords).map(asString).filter((item): item is string => !!item);
@@ -208,7 +242,7 @@ const normalizeReferenceNode = (
         if (!publisherNode) {
             addError(
                 errors,
-                strict,
+                effectiveStrict,
                 `[${sourceLabel}] reference "${id}" points to missing publisher "${publisherId}".`,
             );
         } else {
@@ -222,7 +256,7 @@ const normalizeReferenceNode = (
         if (!bookTitle) {
             addError(
                 errors,
-                strict,
+                effectiveStrict,
                 `[${sourceLabel}] Book "${id}" is missing a resolvable "isPartOf".`,
             );
             return null;
@@ -230,8 +264,7 @@ const normalizeReferenceNode = (
 
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         return {
             id,
@@ -254,7 +287,7 @@ const normalizeReferenceNode = (
 
     const url = asString(node.url);
     if (!url) {
-        addError(errors, strict, `[${sourceLabel}] reference "${id}" is missing "url".`);
+        addError(errors, effectiveStrict, `[${sourceLabel}] reference "${id}" is missing "url".`);
         return null;
     }
 
@@ -267,6 +300,31 @@ const normalizeReferenceNode = (
             title,
             url,
             ...(location ? { location } : {}),
+            ...(publisher.publisherUrl || url
+                ? { locationUrl: publisher.publisherUrl ?? url }
+                : {}),
+            ...(description ? { description } : {}),
+            authors,
+            ...(datePublished ? { datePublished } : {}),
+            keywords,
+            ...(publisher.publisherName ? { publisherName: publisher.publisherName } : {}),
+            ...(publisher.publisherUrl ? { publisherUrl: publisher.publisherUrl } : {}),
+            sourceLabel,
+        };
+    }
+
+    if (rawType === "VideoObject") {
+        const platform = publisher.publisherName ?? getLocationFromUrl(url);
+        return {
+            id,
+            type: "VideoObject",
+            rawType,
+            title,
+            url,
+            ...(platform ? { platform } : {}),
+            ...(publisher.publisherUrl || url
+                ? { platformUrl: publisher.publisherUrl ?? url }
+                : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -281,8 +339,7 @@ const normalizeReferenceNode = (
         const container = resolveLinkedTitle(node.isPartOf, nodesById);
         const pageStart = asNumber(node.pageStart);
         const pageEnd = asNumber(node.pageEnd);
-        const pages = normalizePageReference(pageReferenceFromBounds(pageStart, pageEnd))
-            ?? undefined;
+        const pages = parsePageReference(pageStart, pageEnd);
 
         return {
             id,
@@ -292,6 +349,7 @@ const normalizeReferenceNode = (
             url,
             ...(container.title ? { publication: container.title } : {}),
             ...(container.id ? { publicationId: container.id } : {}),
+            ...(container.url || url ? { publicationUrl: container.url ?? url } : {}),
             ...(pages ? { pages } : {}),
             ...(description ? { description } : {}),
             authors,
@@ -312,6 +370,7 @@ const normalizeReferenceNode = (
         url,
         ...(institutionRef.title ? { institution: institutionRef.title } : {}),
         ...(institutionRef.id ? { institutionId: institutionRef.id } : {}),
+        ...(institutionRef.url || url ? { institutionUrl: institutionRef.url ?? url } : {}),
         ...(description ? { description } : {}),
         authors,
         ...(datePublished ? { datePublished } : {}),
@@ -322,6 +381,11 @@ const normalizeReferenceNode = (
     };
 };
 
+/**
+ * Lessons are represented either as explicit `LearningResource` nodes or as `/notes/...` entries
+ * emitted by the generated graph. This helper keeps that boundary in one place so callers do not
+ * need to duplicate catalog-shape knowledge.
+ */
 const isLessonNode = (node: Record<string, unknown>): boolean => {
     const rawType = getType(node["@type"]);
     const id = asString(node["@id"]);
@@ -348,29 +412,40 @@ const normalizeUsageNode = (
     sourceLabel: string,
     strict: boolean,
     errors: string[],
+    toleratedUsageIds: Set<string>,
 ): CatalogUsage | null => {
     const id = asString(node["@id"]);
     if (!id) {
         addError(errors, strict, `[${sourceLabel}] usage node is missing "@id".`);
         return null;
     }
+    const effectiveStrict = strict && !toleratedUsageIds.has(id);
+    const tags = getUsageTags(node);
 
     const lessonId = resolveNodeId(node["dibs:lesson"] ?? node.lesson);
     if (!lessonId) {
-        addError(errors, strict, `[${sourceLabel}] usage "${id}" is missing lesson reference.`);
+        addError(
+            errors,
+            effectiveStrict,
+            `[${sourceLabel}] usage "${id}" is missing lesson reference.`,
+        );
         return null;
     }
 
     const referenceId = resolveNodeId(node["dibs:reference"] ?? node.reference);
     if (!referenceId) {
-        addError(errors, strict, `[${sourceLabel}] usage "${id}" is missing reference link.`);
+        addError(
+            errors,
+            effectiveStrict,
+            `[${sourceLabel}] usage "${id}" is missing reference link.`,
+        );
         return null;
     }
 
     if (!lessonsById.has(lessonId)) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" points to missing lesson "${lessonId}".`,
         );
         return null;
@@ -379,20 +454,16 @@ const normalizeUsageNode = (
     if (!referencesById.has(referenceId)) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" points to missing reference "${referenceId}".`,
         );
         return null;
     }
 
-    const tags = toArray(node["dibs:tags"] ?? node.tags)
-        .map(asString)
-        .filter((tag): tag is ReferenceTag => !!tag && SUPPORTED_TAGS.has(tag as ReferenceTag));
-
     if (tags.length === 0) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" must have at least one valid tag.`,
         );
         return null;
@@ -407,6 +478,47 @@ const normalizeUsageNode = (
     };
 };
 
+const collectPendingTolerance = (
+    nodesById: Map<string, Record<string, unknown>>,
+): { pendingOnlyReferenceIds: Set<string>; pendingOnlyUsageIds: Set<string> } => {
+    const tagsByReferenceId = new Map<string, Set<ReferenceTag>>();
+    const pendingOnlyUsageIds = new Set<string>();
+
+    for (const node of nodesById.values()) {
+        if (getType(node["@type"]) !== "dibs:ReferenceUsage") continue;
+
+        const usageId = asString(node["@id"]);
+        const referenceId = resolveNodeId(node["dibs:reference"] ?? node.reference);
+        const tags = getUsageTags(node);
+
+        if (usageId && tags.length === 1 && tags[0] === "pending-revision") {
+            pendingOnlyUsageIds.add(usageId);
+        }
+
+        if (!referenceId || tags.length === 0) continue;
+
+        const existing = tagsByReferenceId.get(referenceId) ?? new Set<ReferenceTag>();
+        tags.forEach((tag) => existing.add(tag));
+        tagsByReferenceId.set(referenceId, existing);
+    }
+
+    const pendingOnlyReferenceIds = new Set<string>();
+    for (const [referenceId, tags] of tagsByReferenceId) {
+        if (tags.size === 1 && tags.has("pending-revision")) {
+            pendingOnlyReferenceIds.add(referenceId);
+        }
+    }
+
+    return { pendingOnlyReferenceIds, pendingOnlyUsageIds };
+};
+
+/**
+ * Loads the generated bibliography graph and builds lookup maps used by lesson pages and reference
+ * statistics.
+ *
+ * In strict mode, malformed graph nodes fail fast. In non-strict mode they are skipped and
+ * reported through a warning batch once loading finishes.
+ */
 export const loadBibliographyCatalog = (
     source: unknown,
     options: LoadBibliographyCatalogOptions = {},
@@ -441,6 +553,8 @@ export const loadBibliographyCatalog = (
         nodesById.set(id, rawNode);
     }
 
+    const { pendingOnlyReferenceIds, pendingOnlyUsageIds } = collectPendingTolerance(nodesById);
+
     const references: NormalizedReference[] = [];
     const referencesById = new Map<string, NormalizedReference>();
     const lessons: CatalogLesson[] = [];
@@ -455,6 +569,7 @@ export const loadBibliographyCatalog = (
                 sourceLabel,
                 strict,
                 errors,
+                pendingOnlyReferenceIds,
             );
             if (!normalized) continue;
             references.push(normalized);
@@ -483,6 +598,7 @@ export const loadBibliographyCatalog = (
             sourceLabel,
             strict,
             errors,
+            pendingOnlyUsageIds,
         );
         if (!usage) continue;
         usages.push(usage);
@@ -511,6 +627,12 @@ export const loadBibliographyCatalog = (
     };
 };
 
+/**
+ * Resolves the effective include/exclude tag filters shared by lesson and stats queries.
+ *
+ * By default, public consumers see `recommended` and `additional` entries while
+ * `pending-revision` stays hidden unless explicitly requested.
+ */
 const getFilterTags = (options: GetReferencesForLessonOptions | GetReferenceStatsOptions = {}) => {
     const includeTags = options.includeTags ?? DEFAULT_INCLUDE_TAGS;
     const excludeTags = options.excludeTags
@@ -547,6 +669,12 @@ const uniqueEntries = (entries: LessonReferenceEntry[]): LessonReferenceEntry[] 
     return unique;
 };
 
+/**
+ * Returns the reference groups visible for a lesson after tag filtering and de-duplication.
+ *
+ * If the same reference is tagged multiple ways for the same lesson, precedence is:
+ * `recommended` -> `additional` -> `pending-revision`.
+ */
 export const getReferencesForLesson = (
     catalog: BibliographyCatalog,
     lessonId: string,
@@ -597,16 +725,21 @@ export const getReferencesForLesson = (
     };
 };
 
+/** Returns a normalized reference by id from the precomputed catalog index. */
 export const getReferenceById = (
     catalog: BibliographyCatalog,
     referenceId: string,
 ): NormalizedReference | undefined => catalog.referencesById.get(referenceId);
 
+/** Returns every usage edge that points to the given reference id. */
 export const getUsagesForReference = (
     catalog: BibliographyCatalog,
     referenceId: string,
 ): CatalogUsage[] => catalog.usagesByReferenceId.get(referenceId) ?? [];
 
+/**
+ * Aggregates citation counts and lesson counts for references that pass the provided filters.
+ */
 export const getReferenceStats = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
@@ -651,11 +784,16 @@ export const getReferenceStats = (
         .sort((a, b) => b.citationCount - a.citationCount || a.title.localeCompare(b.title));
 };
 
+/** Alias for `getReferenceStats` kept for callers that want the query name to reflect ordering. */
 export const getMostCitedReferences = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
 ): ReferenceStat[] => getReferenceStats(catalog, options);
 
+/**
+ * Aggregates chapter-level book citations into book-level stats keyed by book id when available,
+ * or by title as a fallback for catalogs without a stable book node id.
+ */
 export const getMostCitedBooks = (
     catalog: BibliographyCatalog,
     options: GetReferenceStatsOptions = {},
@@ -705,6 +843,10 @@ export const getMostCitedBooks = (
         );
 };
 
+/**
+ * Returns unique references that appear at least once with the requested tag anywhere in the
+ * catalog.
+ */
 export const getReferencesByTag = (
     catalog: BibliographyCatalog,
     tag: ReferenceTag,

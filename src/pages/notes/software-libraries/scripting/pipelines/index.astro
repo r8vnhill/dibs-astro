@@ -3,7 +3,6 @@ import * as icons from "~/assets/img/icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import {
-    Abstract,
     Definition,
     Exercise,
     Explanation,
@@ -21,10 +20,12 @@ import {
 import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
+import { NushellLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
@@ -36,7 +37,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
     description="Aprende a diseñar pipelines declarativos en PowerShell para filtrar, proyectar, transformar, ordenar y serializar objetos con claridad y eficiencia."
     timeMultiplier={2}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             En PowerShell, el <B>pipeline</B> es un modelo de trabajo orientado a objetos: cada
             cmdlet recibe datos estructurados, los procesa y entrega resultados al siguiente paso.
@@ -46,7 +47,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             <B>filtrar</B>, <B>proyectar</B> y <B>transformar</B> datos, manteniendo el foco en el
             flujo de objetos desde la fuente hasta la salida.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-pipeline-intuition">
         <Heading headingLevel="h2" Icon={icons.ArrowsMerge}>
@@ -647,6 +648,10 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NushellLink />
+    </LinksLayout>
 
     <ReferencesFromCatalog source={bibliographyCatalog}>
         <Fragment slot="description-ref:pipeline-connecting-commands">

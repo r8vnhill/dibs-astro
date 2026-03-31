@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Abstract, Definition, Explanation, Important } from "~/components/ui/callouts";
+import { Definition, Explanation, Important } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
@@ -22,7 +22,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         { user: "r8vnhill", repo: "dibs-scripts" },
     ]}
 >
-    <Abstract>
+    <Fragment slot="abstract">
         <P>
             Este laboratorio conecta lo aprendido sobre <I>pipeline-awareness</I> y <B>manejo de
                 errores</B> en un caso real: coordinar tareas sobre múltiples repositorios
@@ -33,7 +33,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             publicar ese índice en GitLab, reutilizando scripts de laboratorios previos y
             manteniendo contratos explícitos de entrada, salida y política de fallos.
         </P>
-    </Abstract>
+    </Fragment>
 
     <NotesSection id="h2-lab-context">
         <Heading headingLevel="h2" Icon={icons.GitBranch}>
