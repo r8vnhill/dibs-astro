@@ -1,3 +1,4 @@
+import { parsePageReference } from "./pages";
 import type {
     AuthorRef,
     BibliographyCatalog,
@@ -14,7 +15,6 @@ import type {
     ReferenceTag,
     SupportedReferenceType,
 } from "./types";
-import { parsePageReference } from "./pages";
 
 /**
  * Catalog loader and query helpers for the generated bibliography graph.
@@ -79,6 +79,11 @@ const resolveNodeId = (value: unknown): string | undefined => {
 
 const toArray = (value: unknown): unknown[] =>
     Array.isArray(value) ? value : value == null ? [] : [value];
+
+const getUsageTags = (node: Record<string, unknown>): ReferenceTag[] =>
+    toArray(node["dibs:tags"] ?? node.tags)
+        .map(asString)
+        .filter((tag): tag is ReferenceTag => !!tag && SUPPORTED_TAGS.has(tag as ReferenceTag));
 
 const fail = (message: string): never => {
     throw new Error(message);
@@ -205,18 +210,27 @@ const normalizeReferenceNode = (
     sourceLabel: string,
     strict: boolean,
     errors: string[],
+    toleratedReferenceIds: Set<string>,
 ): NormalizedReference | null => {
     const id = asString(node["@id"]);
     const rawType = getType(node["@type"]);
     const title = asString(node.name) ?? asString(node.headline);
 
     if (!id || !SUPPORTED_REFERENCE_TYPES.has(rawType as SupportedReferenceType)) return null;
+    const effectiveStrict = strict && !toleratedReferenceIds.has(id);
     if (!title) {
-        addError(errors, strict, `[${sourceLabel}] reference "${id}" is missing "name".`);
+        addError(errors, effectiveStrict, `[${sourceLabel}] reference "${id}" is missing "name".`);
         return null;
     }
 
-    const authors = resolveAuthors(node.author, nodesById, errors, strict, sourceLabel, id);
+    const authors = resolveAuthors(
+        node.author,
+        nodesById,
+        errors,
+        effectiveStrict,
+        sourceLabel,
+        id,
+    );
     const description = asString(node.description);
     const datePublished = asString(node.datePublished);
     const keywords = toArray(node.keywords).map(asString).filter((item): item is string => !!item);
@@ -228,7 +242,7 @@ const normalizeReferenceNode = (
         if (!publisherNode) {
             addError(
                 errors,
-                strict,
+                effectiveStrict,
                 `[${sourceLabel}] reference "${id}" points to missing publisher "${publisherId}".`,
             );
         } else {
@@ -242,7 +256,7 @@ const normalizeReferenceNode = (
         if (!bookTitle) {
             addError(
                 errors,
-                strict,
+                effectiveStrict,
                 `[${sourceLabel}] Book "${id}" is missing a resolvable "isPartOf".`,
             );
             return null;
@@ -273,7 +287,7 @@ const normalizeReferenceNode = (
 
     const url = asString(node.url);
     if (!url) {
-        addError(errors, strict, `[${sourceLabel}] reference "${id}" is missing "url".`);
+        addError(errors, effectiveStrict, `[${sourceLabel}] reference "${id}" is missing "url".`);
         return null;
     }
 
@@ -398,29 +412,40 @@ const normalizeUsageNode = (
     sourceLabel: string,
     strict: boolean,
     errors: string[],
+    toleratedUsageIds: Set<string>,
 ): CatalogUsage | null => {
     const id = asString(node["@id"]);
     if (!id) {
         addError(errors, strict, `[${sourceLabel}] usage node is missing "@id".`);
         return null;
     }
+    const effectiveStrict = strict && !toleratedUsageIds.has(id);
+    const tags = getUsageTags(node);
 
     const lessonId = resolveNodeId(node["dibs:lesson"] ?? node.lesson);
     if (!lessonId) {
-        addError(errors, strict, `[${sourceLabel}] usage "${id}" is missing lesson reference.`);
+        addError(
+            errors,
+            effectiveStrict,
+            `[${sourceLabel}] usage "${id}" is missing lesson reference.`,
+        );
         return null;
     }
 
     const referenceId = resolveNodeId(node["dibs:reference"] ?? node.reference);
     if (!referenceId) {
-        addError(errors, strict, `[${sourceLabel}] usage "${id}" is missing reference link.`);
+        addError(
+            errors,
+            effectiveStrict,
+            `[${sourceLabel}] usage "${id}" is missing reference link.`,
+        );
         return null;
     }
 
     if (!lessonsById.has(lessonId)) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" points to missing lesson "${lessonId}".`,
         );
         return null;
@@ -429,20 +454,16 @@ const normalizeUsageNode = (
     if (!referencesById.has(referenceId)) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" points to missing reference "${referenceId}".`,
         );
         return null;
     }
 
-    const tags = toArray(node["dibs:tags"] ?? node.tags)
-        .map(asString)
-        .filter((tag): tag is ReferenceTag => !!tag && SUPPORTED_TAGS.has(tag as ReferenceTag));
-
     if (tags.length === 0) {
         addError(
             errors,
-            strict,
+            effectiveStrict,
             `[${sourceLabel}] usage "${id}" must have at least one valid tag.`,
         );
         return null;
@@ -455,6 +476,40 @@ const normalizeUsageNode = (
         tags,
         rawType: getType(node["@type"]),
     };
+};
+
+const collectPendingTolerance = (
+    nodesById: Map<string, Record<string, unknown>>,
+): { pendingOnlyReferenceIds: Set<string>; pendingOnlyUsageIds: Set<string> } => {
+    const tagsByReferenceId = new Map<string, Set<ReferenceTag>>();
+    const pendingOnlyUsageIds = new Set<string>();
+
+    for (const node of nodesById.values()) {
+        if (getType(node["@type"]) !== "dibs:ReferenceUsage") continue;
+
+        const usageId = asString(node["@id"]);
+        const referenceId = resolveNodeId(node["dibs:reference"] ?? node.reference);
+        const tags = getUsageTags(node);
+
+        if (usageId && tags.length === 1 && tags[0] === "pending-revision") {
+            pendingOnlyUsageIds.add(usageId);
+        }
+
+        if (!referenceId || tags.length === 0) continue;
+
+        const existing = tagsByReferenceId.get(referenceId) ?? new Set<ReferenceTag>();
+        tags.forEach((tag) => existing.add(tag));
+        tagsByReferenceId.set(referenceId, existing);
+    }
+
+    const pendingOnlyReferenceIds = new Set<string>();
+    for (const [referenceId, tags] of tagsByReferenceId) {
+        if (tags.size === 1 && tags.has("pending-revision")) {
+            pendingOnlyReferenceIds.add(referenceId);
+        }
+    }
+
+    return { pendingOnlyReferenceIds, pendingOnlyUsageIds };
 };
 
 /**
@@ -498,6 +553,8 @@ export const loadBibliographyCatalog = (
         nodesById.set(id, rawNode);
     }
 
+    const { pendingOnlyReferenceIds, pendingOnlyUsageIds } = collectPendingTolerance(nodesById);
+
     const references: NormalizedReference[] = [];
     const referencesById = new Map<string, NormalizedReference>();
     const lessons: CatalogLesson[] = [];
@@ -512,6 +569,7 @@ export const loadBibliographyCatalog = (
                 sourceLabel,
                 strict,
                 errors,
+                pendingOnlyReferenceIds,
             );
             if (!normalized) continue;
             references.push(normalized);
@@ -540,6 +598,7 @@ export const loadBibliographyCatalog = (
             sourceLabel,
             strict,
             errors,
+            pendingOnlyUsageIds,
         );
         if (!usage) continue;
         usages.push(usage);

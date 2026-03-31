@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import fs from "node:fs";
+import { describe, expect, it } from "vitest";
 import {
     getMostCitedBooks,
     getReferencesForLesson,
@@ -188,6 +188,61 @@ describe("bibliography catalog", () => {
 
         expect(grouped.pendingRevision).toHaveLength(1);
         expect(grouped.pendingRevision[0]?.reference.id).toBe("ref:web-1");
+    });
+
+    it("skips malformed references when they are used only as pending-revision", () => {
+        const catalog = loadBibliographyCatalog({
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@id": "ref:broken-book",
+                    "@type": "Book",
+                    name: "Broken draft book",
+                },
+                {
+                    "@id": "/notes/lesson-a/",
+                    "@type": "LearningResource",
+                    name: "Lesson A",
+                },
+                {
+                    "@id": "usage:a:pending-broken",
+                    "@type": "dibs:ReferenceUsage",
+                    "dibs:lesson": { "@id": "/notes/lesson-a/" },
+                    "dibs:reference": { "@id": "ref:broken-book" },
+                    "dibs:tags": ["pending-revision"],
+                },
+            ],
+        });
+
+        expect(catalog.referencesById.has("ref:broken-book")).toBe(false);
+        expect(getReferencesForLesson(catalog, "/notes/lesson-a/").recommended).toHaveLength(0);
+    });
+
+    it("keeps strict failures for malformed visible references", () => {
+        expect(() =>
+            loadBibliographyCatalog({
+                "@context": "https://schema.org",
+                "@graph": [
+                    {
+                        "@id": "ref:broken-book",
+                        "@type": "Book",
+                        name: "Broken visible book",
+                    },
+                    {
+                        "@id": "/notes/lesson-a/",
+                        "@type": "LearningResource",
+                        name: "Lesson A",
+                    },
+                    {
+                        "@id": "usage:a:recommended-broken",
+                        "@type": "dibs:ReferenceUsage",
+                        "dibs:lesson": { "@id": "/notes/lesson-a/" },
+                        "dibs:reference": { "@id": "ref:broken-book" },
+                        "dibs:tags": ["recommended"],
+                    },
+                ],
+            })
+        ).toThrow(/missing a resolvable "isPartOf"/);
     });
 
     it("computes reference and book citation stats across lessons", () => {

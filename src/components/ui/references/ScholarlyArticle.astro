@@ -20,7 +20,12 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { formatPageReference, type PageReference } from "~/lib/bibliography";
+import {
+    formatPageReference,
+    normalizePageReference,
+    type PageReference,
+    type PageReferenceInput,
+} from "~/lib/bibliography";
 import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
@@ -37,7 +42,7 @@ type Props = {
     publicationUrl?: string;
 
     /** Optional page reference formatted by the shared bibliography layer. */
-    pages?: PageReference;
+    pages?: PageReference | PageReferenceInput;
 
     /** Fallback author text when the `author` slot is absent or empty. */
     author?: string;
@@ -54,7 +59,7 @@ const {
 } = await resolveOptionalSlots(Astro.slots, ["title", "publication", "author", "description"]);
 
 // Pre-format the page reference so the template only handles presentation.
-const pagesLabel = formatPageReference(pages);
+const pagesLabel = formatPageReference(normalizePageReference(pages));
 
 // Render inline metadata when a meaningful slot or a fallback prop is available.
 const hasPublication = publicationSlot.kind === "meaningful" || !!publication;
@@ -87,18 +92,18 @@ const hasAuthor = authorSlot.kind === "meaningful" || !!author;
                 }
                 <cite class="not-italic">
                     {
-                        publicationSlot.kind === "meaningful" ? (
-                            <slot name="publication" />
-                        ) : publication && publicationUrl ? (
+                        publicationSlot.kind === "meaningful"
+                            ? <slot name="publication" />
+                        : publication && publicationUrl
+                        ? (
                             <a
-                                href={publicationUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="hover:underline underline-offset-2"
+                                href={publicationUrl} target="_blank"
+                                rel="noopener noreferrer" class="hover:underline underline-offset-2"
                             >
                                 {publication}
                             </a>
-                        ) : publication
+                        )
+                        : publication
                     }
                 </cite>
             </span>

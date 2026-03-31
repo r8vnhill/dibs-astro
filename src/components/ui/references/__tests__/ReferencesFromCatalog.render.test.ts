@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test } from "vitest";
 import fs from "node:fs";
+import { beforeEach, describe, expect, test } from "vitest";
 import { type AstroRender, createAstroRenderer } from "../../../../test-utils/astro-render";
 import ReferencesFromCatalog from "../ReferencesFromCatalog.astro";
 
@@ -102,6 +102,35 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         expect(html).toContain("A new type of shell!");
         expect(html).toContain("Dispatch");
         expect(html).not.toContain("Internal Draft");
+    });
+
+    test("ignores malformed pending-revision references without failing render", async () => {
+        const catalogWithBrokenPending = {
+            ...CATALOG,
+            "@graph": [
+                ...(CATALOG["@graph"] as Record<string, unknown>[]),
+                {
+                    "@id": "ref:broken-book",
+                    "@type": "Book",
+                    name: "Broken draft book",
+                },
+                {
+                    "@id": "usage:a:pending-broken",
+                    "@type": "dibs:ReferenceUsage",
+                    "dibs:lesson": { "@id": "/notes/lesson-a/" },
+                    "dibs:reference": { "@id": "ref:broken-book" },
+                    "dibs:tags": ["pending-revision"],
+                },
+            ],
+        };
+
+        const html = await renderReferences({
+            source: catalogWithBrokenPending,
+            lessonId: "/notes/lesson-a/",
+        });
+
+        expect(html).toContain("Chapter One");
+        expect(html).not.toContain("Broken draft book");
     });
 
     test("does not render the additional references section when it is empty", async () => {
@@ -236,7 +265,7 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         expect(html).toContain("Pipelines");
         expect(html).toContain("Descripción de prueba para la referencia recomendada");
         expect(html).toContain("nushell.sh/book/pipelines.html");
-        expect(html).toContain('href="https://www.nushell.sh/"');
+        expect(html).toContain("href=\"https://www.nushell.sh/\"");
         expect(html).toMatch(/>\s*Nushell\s*<\/a>/);
     });
 });

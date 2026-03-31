@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-27T21:21:37.392Z",
-  "totalLessons": 42,
+  "generatedAt": "2026-03-31T21:20:47.102Z",
+  "totalLessons": 43,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -10,8 +10,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -35,12 +41,6 @@
           "date": "2025-08-03",
           "author": "r8vnhill",
           "subject": "✨ Add new icons and lesson navigation enhancements"
-        },
-        {
-          "hash": "c6f2f2e1b6c0b706b9c171e4a66d6a2852e4d36a",
-          "date": "2025-08-02",
-          "author": "r8vnhill",
-          "subject": "✨🔧 Bump version and add lesson navigation sidebar"
         }
       ]
     },
@@ -51,8 +51,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -76,12 +82,6 @@
           "date": "2025-09-26",
           "author": "r8vnhill",
           "subject": "✨📝💄🖼️🐛 Revamp installation guide, add UI components & icons, diff-highlighting, and fix tabs scoping"
-        },
-        {
-          "hash": "5ae95de66afe2442785edb997ee122c32e6c4eb1",
-          "date": "2025-09-25",
-          "author": "r8vnhill",
-          "subject": "feat: add Question callout component and related styles"
         }
       ]
     },
@@ -114,6 +114,15 @@
         }
       ]
     },
+    "/notes/software-libraries/artifacts-taxonomy/": {
+      "sourceFile": "src/pages/notes/software-libraries/artifacts-taxonomy/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
+    },
     "/notes/software-libraries/build-systems/": {
       "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
       "authors": [
@@ -121,8 +130,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -144,8 +159,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -167,8 +188,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -196,8 +223,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -231,8 +264,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -266,8 +305,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -291,12 +336,6 @@
           "date": "2025-10-15",
           "author": "r8vnhill",
           "subject": "Add Python scripting notes and comparison with PowerShell"
-        },
-        {
-          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-          "date": "2025-10-09",
-          "author": "r8vnhill",
-          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
         }
       ]
     },
@@ -371,8 +410,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -417,8 +462,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -442,12 +493,6 @@
           "date": "2025-11-14",
           "author": "r8vnhill",
           "subject": "✨ docs(pwsh): add try/catch reference"
-        },
-        {
-          "hash": "dc2bcec9641cdb37071a15c82f417a767cb8e371",
-          "date": "2025-11-12",
-          "author": "r8vnhill",
-          "subject": "📝 docs(repo): clarify catch rationale and require English commit messages"
         }
       ]
     },
@@ -481,8 +526,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -498,8 +549,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -523,12 +580,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-          "date": "2025-10-24",
-          "author": "r8vnhill",
-          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
         }
       ]
     },
@@ -539,8 +590,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-19",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
           "date": "2026-03-19",
@@ -564,12 +621,6 @@
           "date": "2026-03-12",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
-        },
-        {
-          "hash": "8bf39445c07c4bdfabebfe348d2d31ad22fddc69",
-          "date": "2026-03-11",
-          "author": "r8vnhill",
-          "subject": "📝 docs(first-script): polish Nushell lesson summary and closure"
         }
       ]
     },
@@ -580,8 +631,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -609,8 +666,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -634,12 +697,6 @@
           "date": "2025-11-20",
           "author": "r8vnhill",
           "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-        },
-        {
-          "hash": "a0409f187352e3ea9aa4fe8179a16964b2a4d1a0",
-          "date": "2025-10-20",
-          "author": "r8vnhill",
-          "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
         }
       ]
     },
@@ -650,8 +707,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -675,12 +738,6 @@
           "date": "2025-11-08",
           "author": "r8vnhill",
           "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-        },
-        {
-          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-          "date": "2025-10-09",
-          "author": "r8vnhill",
-          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
         }
       ]
     },
@@ -691,8 +748,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -714,8 +777,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -739,12 +808,6 @@
           "date": "2025-10-29",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(code): add Nushell block and inline, polish Nushell page"
-        },
-        {
-          "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
         }
       ]
     },
@@ -755,8 +818,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
           "date": "2026-03-26",
@@ -780,12 +849,6 @@
           "date": "2026-03-12",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
-        },
-        {
-          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
-          "date": "2026-03-11",
-          "author": "r8vnhill",
-          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
         }
       ]
     },
@@ -796,8 +859,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -821,12 +890,6 @@
           "date": "2026-03-02",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add Git submodules lab and multi-repo lesson source links"
-        },
-        {
-          "hash": "8cb8f658631d34289480c10bca3d4d8648717e12",
-          "date": "2026-02-22",
-          "author": "r8vnhill",
-          "subject": "📝 docs(changelog): add 0.10.0 release notes and lesson metadata refresh"
         }
       ]
     },
@@ -837,8 +900,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-11",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
           "date": "2026-03-11",
@@ -875,6 +944,12 @@
       "lastModified": "2026-03-27",
       "changes": [
         {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
           "hash": "a6f279de54aefa62fbf99d4e2675080cb6fddb4c",
           "date": "2026-03-27",
           "author": "r8vnhill",
@@ -901,8 +976,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "677f4ea3d5962f28604dad471d46f3a36b869225",
           "date": "2026-03-26",
@@ -926,12 +1007,6 @@
           "date": "2026-03-26",
           "author": "r8vnhill",
           "subject": "📚✨ refactor(lessons): tighten pipeline-awareness II for streaming clarity"
-        },
-        {
-          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
-          "date": "2026-03-11",
-          "author": "r8vnhill",
-          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
         }
       ]
     },
@@ -942,8 +1017,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
           "date": "2026-03-26",
@@ -967,12 +1048,6 @@
           "date": "2025-10-07",
           "author": "r8vnhill",
           "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
-        },
-        {
-          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
-          "date": "2025-10-05",
-          "author": "r8vnhill",
-          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
         }
       ]
     },
@@ -983,8 +1058,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1008,12 +1089,6 @@
           "date": "2025-10-04",
           "author": "r8vnhill",
           "subject": "✨📝🎨♻️ Add “Pipeline-awareness” lesson, improve callouts & tidy layouts"
-        },
-        {
-          "hash": "bb9b6390f97c18ea7006f70ed7d982038330bc06",
-          "date": "2025-10-04",
-          "author": "r8vnhill",
-          "subject": "✨ docs(powershell): add examples for GitLab remote configuration and file hashing"
         }
       ]
     },
@@ -1024,8 +1099,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-17",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
           "date": "2026-02-17",
@@ -1053,8 +1134,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1078,12 +1165,6 @@
           "date": "2025-10-29",
           "author": "r8vnhill",
           "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
-        },
-        {
-          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-          "date": "2025-10-24",
-          "author": "r8vnhill",
-          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
         }
       ]
     },
@@ -1094,8 +1175,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1119,12 +1206,6 @@
           "date": "2025-10-17",
           "author": "r8vnhill",
           "subject": "✨📝🔧 docs(structured-output): expand lesson with classes, fixes & aliases"
-        },
-        {
-          "hash": "8be69fd68aabe6de60427c5d334a5768716735d4",
-          "date": "2025-10-17",
-          "author": "r8vnhill",
-          "subject": "✨♿️📝 feat(icons,links/aria,notes): add GridFour; support GitLab line anchors; expand PSCustomObject notes"
         }
       ]
     },
@@ -1135,8 +1216,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
           "date": "2026-03-26",
@@ -1160,12 +1247,6 @@
           "date": "2026-03-19",
           "author": "r8vnhill",
           "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -1176,7 +1257,21 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-03-28",
+      "changes": [
+        {
+          "hash": "f1fc94f0f34f2397bd85d282459a589dbcccad3f",
+          "date": "2026-03-28",
+          "author": "r8vnhill",
+          "subject": "📚 feat(bibliography): add Python structured-output catalog references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        }
+      ]
     },
     "/notes/software-libraries/task-automation/": {
       "sourceFile": "src/pages/notes/software-libraries/task-automation/index.astro",
@@ -1185,8 +1280,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1220,8 +1321,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -1245,12 +1352,6 @@
           "date": "2025-10-02",
           "author": "r8vnhill",
           "subject": "Refactor code structure for improved readability and maintainability"
-        },
-        {
-          "hash": "155c2aef8825aca50cd2c907654788961ef7fe33",
-          "date": "2025-09-14",
-          "author": "r8vnhill",
-          "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
         }
       ]
     },
@@ -1290,8 +1391,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-26",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
           "date": "2026-03-26",
@@ -1315,12 +1422,6 @@
           "date": "2025-08-11",
           "author": "r8vnhill",
           "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
-        },
-        {
-          "hash": "28f5e0708650d4e6cc16eebeabef5497e5b940f2",
-          "date": "2025-08-07",
-          "author": "r8vnhill",
-          "subject": "✨ Add references and tooltip system"
         }
       ]
     },
@@ -1331,8 +1432,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1356,12 +1463,6 @@
           "date": "2025-08-11",
           "author": "r8vnhill",
           "subject": "✨➕ Add new icons and enhance Kotlin functions lesson"
-        },
-        {
-          "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
-          "date": "2025-08-11",
-          "author": "r8vnhill",
-          "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
         }
       ]
     },
@@ -1413,8 +1514,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-03-27",
       "changes": [
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1438,12 +1545,6 @@
           "date": "2025-09-07",
           "author": "R8V",
           "subject": "✨📚 Add practical examples for encapsulating logic in setters and enhance variable declaration section"
-        },
-        {
-          "hash": "c94e98efd951f2afc3467d13e3b3b4ad52dae5fb",
-          "date": "2025-09-07",
-          "author": "r8vnhill",
-          "subject": "✨🖼️ Add new icons and expand Kotlin properties notes"
         }
       ]
     }

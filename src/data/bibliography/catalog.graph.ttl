@@ -1170,3 +1170,350 @@ usage:pipelines-nushell-nushell-pipelines-recommended
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-pipelines ;
   dibs:tag "recommended" .
+
+person:joshua-bloch
+  a schema:Person ;
+  schema:givenName "Joshua" ;
+  schema:familyName "Bloch" .
+
+person:martin-reddy
+  a schema:Person ;
+  schema:givenName "Martin" ;
+  schema:familyName "Reddy" .
+
+person:johannes-sametinger
+  a schema:Person ;
+  schema:givenName "Johannes" ;
+  schema:familyName "Sametinger" .
+
+person:john-ousterhout
+  a schema:Person ;
+  schema:givenName "John" ;
+  schema:familyName "Ousterhout" .
+
+org:kotlin-help
+  a schema:Organization ;
+  schema:name "Kotlin Help" ;
+  schema:url "https://kotlinlang.org/docs/" .
+
+org:gradle-docs
+  a schema:Organization ;
+  schema:name "Gradle Documentation" ;
+  schema:url "https://docs.gradle.org/current/userguide/" .
+
+org:intellij-platform-plugin-sdk-help
+  a schema:Organization ;
+  schema:name "IntelliJ Platform Plugin SDK Help" ;
+  schema:url "https://plugins.jetbrains.com/docs/intellij/" .
+
+org:maven
+  a schema:Organization ;
+  schema:name "Apache Maven" ;
+  schema:url "https://maven.apache.org/" .
+
+org:rust-book
+  a schema:Organization ;
+  schema:name "The Rust Programming Language" ;
+  schema:url "https://doc.rust-lang.org/book/" .
+
+org:npm-docs
+  a schema:Organization ;
+  schema:name "npm Docs" ;
+  schema:url "https://docs.npmjs.com/" .
+
+org:python-packaging-user-guide
+  a schema:Organization ;
+  schema:name "Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/" .
+
+org:requests-docs
+  a schema:Organization ;
+  schema:name "Requests documentation" ;
+  schema:url "https://requests.readthedocs.io/en/latest/" .
+
+org:jfrog
+  a schema:Organization ;
+  schema:name "JFrog" ;
+  schema:url "https://jfrog.com/" .
+
+org:yaknyam-press
+  a schema:Organization ;
+  schema:name "Yaknyam Press" .
+
+org:morgan-kaufmann
+  a schema:Organization ;
+  schema:name "Morgan Kaufmann" .
+
+org:springer
+  a schema:Organization ;
+  schema:name "Springer" .
+
+work:oopsla-2006-companion
+  a schema:CreativeWork ;
+  schema:name "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications" ;
+  schema:publisher org:acm .
+
+ref:kotlin-backward-compatibility-guidelines
+  a schema:WebPage ;
+  schema:name "Backward compatibility guidelines for library authors | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:kotlin-informative-documentation-guidelines
+  a schema:WebPage ;
+  schema:name "Best practices for library authors to create informative documentation | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-informative-documentation.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:bloch-how-to-design-good-api-2006
+  a schema:ScholarlyArticle ;
+  schema:name "How to design a good API and why it matters" ;
+  schema:url "https://dl.acm.org/doi/10.1145/1176617.1176622" ;
+  schema:datePublished "2006-10-22" ;
+  schema:pageStart 506 ;
+  schema:pageEnd 507 ;
+  schema:author person:joshua-bloch ;
+  schema:isPartOf work:oopsla-2006-companion ;
+  schema:publisher org:acm .
+
+ref:gradle-plugin-development-plugin
+  a schema:WebPage ;
+  schema:name "Gradle Plugin Development Plugin" ;
+  schema:url "https://docs.gradle.org/current/userguide/java_gradle_plugin.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-plugin-reference
+  a schema:WebPage ;
+  schema:name "Gradle Plugin Reference" ;
+  schema:url "https://docs.gradle.org/current/userguide/plugin_reference.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-user-manual
+  a schema:WebPage ;
+  schema:name "Gradle User Manual" ;
+  schema:url "https://docs.gradle.org/current/userguide/userguide.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:intellij-platform-sdk
+  a schema:WebPage ;
+  schema:name "IntelliJ Platform SDK | IntelliJ Platform Plugin SDK" ;
+  schema:url "https://plugins.jetbrains.com/docs/intellij/welcome.html" ;
+  schema:publisher org:intellij-platform-plugin-sdk-help .
+
+ref:kotlin-library-authors-guidelines-introduction
+  a schema:WebPage ;
+  schema:name "Introduction to library authors' guidelines | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/api-guidelines-introduction.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:gradle-introduction-to-plugins
+  a schema:WebPage ;
+  schema:name "Introduction to Plugins" ;
+  schema:url "https://docs.gradle.org/current/userguide/plugins.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:kotlin-evolution-principles
+  a schema:WebPage ;
+  schema:name "Kotlin evolution principles | Kotlin" ;
+  schema:url "https://kotlinlang.org/docs/kotlin-evolution-principles.html" ;
+  schema:publisher org:kotlin-help .
+
+ref:maven-central-repository
+  a schema:WebPage ;
+  schema:name "Maven Central Repository – Maven" ;
+  schema:url "https://maven.apache.org/repository/" ;
+  schema:publisher org:maven .
+
+ref:rust-packages-and-crates
+  a schema:WebPage ;
+  schema:name "Packages and Crates - The Rust Programming Language" ;
+  schema:url "https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html" ;
+  schema:publisher org:rust-book .
+
+ref:npm-about-packages-and-modules
+  a schema:WebPage ;
+  schema:name "About packages and modules | npm Docs" ;
+  schema:url "https://docs.npmjs.com/about-packages-and-modules" ;
+  schema:publisher org:npm-docs .
+
+ref:python-packaging-projects
+  a schema:WebPage ;
+  schema:name "Packaging Python Projects - Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/tutorials/packaging-projects/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:python-packaging-user-guide
+  a schema:WebPage ;
+  schema:name "Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:reddy-api-design-for-cpp-2024
+  a schema:Book ;
+  schema:name "API design for C++" ;
+  schema:datePublished "2024" ;
+  schema:author person:martin-reddy ;
+  schema:publisher org:morgan-kaufmann .
+
+ref:requests-http-for-humans
+  a schema:WebPage ;
+  schema:name "Requests: HTTP for Humans™ — Requests 2.33.1 documentation" ;
+  schema:url "https://requests.readthedocs.io/en/latest/" ;
+  schema:publisher org:requests-docs .
+
+ref:jfrog-what-are-software-artifacts
+  a schema:WebPage ;
+  schema:name "What are Software Artifacts?" ;
+  schema:url "https://jfrog.com/learn/devops/software-artifact/" ;
+  schema:publisher org:jfrog .
+
+ref:sametinger-software-engineering-reusable-components-1997
+  a schema:Book ;
+  schema:name "Software engineering with reusable components" ;
+  schema:datePublished "1997" ;
+  schema:author person:johannes-sametinger ;
+  schema:publisher org:springer .
+
+ref:python-writing-pyproject-toml
+  a schema:WebPage ;
+  schema:name "Writing your pyproject.toml - Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/" ;
+  schema:publisher org:python-packaging-user-guide .
+
+ref:ousterhout-philosophy-software-design-2021
+  a schema:Book ;
+  schema:name "A Philosophy of Software Design" ;
+  schema:datePublished "2021" ;
+  schema:author person:john-ousterhout ;
+  schema:publisher org:yaknyam-press .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/>
+  a schema:LearningResource ;
+  schema:name "Taxonomía básica de artefactos de software" ;
+  schema:url "/notes/software-libraries/artifacts-taxonomy/" .
+
+usage:software-artifacts-taxonomy-kotlin-backward-compatibility-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-backward-compatibility-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-informative-documentation-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-informative-documentation-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-bloch-how-to-design-good-api-2006-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:bloch-how-to-design-good-api-2006 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-plugin-development-plugin-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-plugin-development-plugin ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-plugin-reference-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-plugin-reference ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-user-manual-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-user-manual ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-intellij-platform-sdk-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:intellij-platform-sdk ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-library-authors-guidelines-introduction-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-library-authors-guidelines-introduction ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-gradle-introduction-to-plugins-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:gradle-introduction-to-plugins ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-kotlin-evolution-principles-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:kotlin-evolution-principles ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-maven-central-repository-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:maven-central-repository ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-rust-packages-and-crates-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:rust-packages-and-crates ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-npm-about-packages-and-modules-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:npm-about-packages-and-modules ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-packaging-projects-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-packaging-projects ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-packaging-user-guide-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-packaging-user-guide ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-reddy-api-design-for-cpp-2024-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:reddy-api-design-for-cpp-2024 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-requests-http-for-humans-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:requests-http-for-humans ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-jfrog-what-are-software-artifacts-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:jfrog-what-are-software-artifacts ;
+  dibs:tag "recommended" .
+
+usage:software-artifacts-taxonomy-sametinger-software-engineering-reusable-components-1997-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:sametinger-software-engineering-reusable-components-1997 ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-python-writing-pyproject-toml-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:python-writing-pyproject-toml ;
+  dibs:tag "pending-revision" .
+
+usage:software-artifacts-taxonomy-ousterhout-philosophy-software-design-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
+  dibs:reference ref:ousterhout-philosophy-software-design-2021 ;
+  dibs:tag "pending-revision" .

@@ -75,6 +75,24 @@
       "familyName": "Snover"
     },
     {
+      "@id": "person:johannes-sametinger",
+      "@type": "Person",
+      "givenName": "Johannes",
+      "familyName": "Sametinger"
+    },
+    {
+      "@id": "person:john-ousterhout",
+      "@type": "Person",
+      "givenName": "John",
+      "familyName": "Ousterhout"
+    },
+    {
+      "@id": "person:joshua-bloch",
+      "@type": "Person",
+      "givenName": "Joshua",
+      "familyName": "Bloch"
+    },
+    {
       "@id": "person:karl-mazurak",
       "@type": "Person",
       "givenName": "Karl",
@@ -110,6 +128,12 @@
       "givenName": "Martin",
       "familyName": "Fowler",
       "url": "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)"
+    },
+    {
+      "@id": "person:martin-reddy",
+      "@type": "Person",
+      "givenName": "Martin",
+      "familyName": "Reddy"
     },
     {
       "@id": "person:meiyappan-nagappan",
@@ -238,6 +262,12 @@
       "url": "https://www.youtube.com/"
     },
     {
+      "@id": "org:gradle-docs",
+      "@type": "Organization",
+      "name": "Gradle Documentation",
+      "url": "https://docs.gradle.org/current/userguide/"
+    },
+    {
       "@id": "org:heroku-dev-center",
       "@type": "Organization",
       "name": "Heroku Dev Center",
@@ -250,10 +280,28 @@
       "url": "https://www.ietf.org/"
     },
     {
+      "@id": "org:intellij-platform-plugin-sdk-help",
+      "@type": "Organization",
+      "name": "IntelliJ Platform Plugin SDK Help",
+      "url": "https://plugins.jetbrains.com/docs/intellij/"
+    },
+    {
       "@id": "org:jdriven-blog",
       "@type": "Organization",
       "name": "JDriven Blog",
       "url": "https://jdriven.com/blog/"
+    },
+    {
+      "@id": "org:jfrog",
+      "@type": "Organization",
+      "name": "JFrog",
+      "url": "https://jfrog.com/"
+    },
+    {
+      "@id": "org:kotlin-help",
+      "@type": "Organization",
+      "name": "Kotlin Help",
+      "url": "https://kotlinlang.org/docs/"
     },
     {
       "@id": "org:martin-fowler-site",
@@ -262,10 +310,27 @@
       "url": "https://martinfowler.com"
     },
     {
+      "@id": "org:maven",
+      "@type": "Organization",
+      "name": "Apache Maven",
+      "url": "https://maven.apache.org/"
+    },
+    {
       "@id": "org:microsoft-learn",
       "@type": "Organization",
       "name": "Microsoft Learn",
       "url": "https://learn.microsoft.com/"
+    },
+    {
+      "@id": "org:morgan-kaufmann",
+      "@type": "Organization",
+      "name": "Morgan Kaufmann"
+    },
+    {
+      "@id": "org:npm-docs",
+      "@type": "Organization",
+      "name": "npm Docs",
+      "url": "https://docs.npmjs.com/"
     },
     {
       "@id": "org:nushell",
@@ -310,16 +375,44 @@
       "url": "https://docs.python.org/3/"
     },
     {
+      "@id": "org:python-packaging-user-guide",
+      "@type": "Organization",
+      "name": "Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/"
+    },
+    {
       "@id": "org:python-peps",
       "@type": "Organization",
       "name": "Python Enhancement Proposals (PEPs)",
       "url": "https://peps.python.org/"
     },
     {
+      "@id": "org:requests-docs",
+      "@type": "Organization",
+      "name": "Requests documentation",
+      "url": "https://requests.readthedocs.io/en/latest/"
+    },
+    {
+      "@id": "org:rust-book",
+      "@type": "Organization",
+      "name": "The Rust Programming Language",
+      "url": "https://doc.rust-lang.org/book/"
+    },
+    {
+      "@id": "org:springer",
+      "@type": "Organization",
+      "name": "Springer"
+    },
+    {
       "@id": "org:university-of-waterloo",
       "@type": "CollegeOrUniversity",
       "name": "University of Waterloo",
       "url": "https://uwaterloo.ca/"
+    },
+    {
+      "@id": "org:yaknyam-press",
+      "@type": "Organization",
+      "name": "Yaknyam Press"
     },
     {
       "@id": "org:youtube",
@@ -380,6 +473,14 @@
           "@id": "person:travis-plunk"
         }
       ]
+    },
+    {
+      "@id": "work:oopsla-2006-companion",
+      "@type": "CreativeWork",
+      "name": "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications",
+      "publisher": {
+        "@id": "org:acm"
+      }
     },
     {
       "@id": "work:plas-2007",
@@ -458,6 +559,26 @@
       "url": "https://www.attrs.org/en/stable/why.html",
       "publisher": {
         "@id": "org:attrs-project"
+      }
+    },
+    {
+      "@id": "ref:bloch-how-to-design-good-api-2006",
+      "@type": "ScholarlyArticle",
+      "name": "How to design a good API and why it matters",
+      "url": "https://dl.acm.org/doi/10.1145/1176617.1176622",
+      "datePublished": "2006-10-22",
+      "pageStart": 506,
+      "pageEnd": 507,
+      "author": [
+        {
+          "@id": "person:joshua-bloch"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:oopsla-2006-companion"
       }
     },
     {
@@ -589,6 +710,42 @@
       }
     },
     {
+      "@id": "ref:gradle-introduction-to-plugins",
+      "@type": "WebPage",
+      "name": "Introduction to Plugins",
+      "url": "https://docs.gradle.org/current/userguide/plugins.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-plugin-development-plugin",
+      "@type": "WebPage",
+      "name": "Gradle Plugin Development Plugin",
+      "url": "https://docs.gradle.org/current/userguide/java_gradle_plugin.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-plugin-reference",
+      "@type": "WebPage",
+      "name": "Gradle Plugin Reference",
+      "url": "https://docs.gradle.org/current/userguide/plugin_reference.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-user-manual",
+      "@type": "WebPage",
+      "name": "Gradle User Manual",
+      "url": "https://docs.gradle.org/current/userguide/userguide.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
       "@id": "ref:handa-order-aware-dataflow-pipelines-2021",
       "@type": "ScholarlyArticle",
       "name": "An order-aware dataflow model for parallel Unix pipelines",
@@ -682,6 +839,15 @@
       }
     },
     {
+      "@id": "ref:intellij-platform-sdk",
+      "@type": "WebPage",
+      "name": "IntelliJ Platform SDK | IntelliJ Platform Plugin SDK",
+      "url": "https://plugins.jetbrains.com/docs/intellij/welcome.html",
+      "publisher": {
+        "@id": "org:intellij-platform-plugin-sdk-help"
+      }
+    },
+    {
       "@id": "ref:jdriven-nushell-basics-structured-data",
       "@type": "WebPage",
       "name": "Nushell basics: structured data in your shell",
@@ -694,6 +860,15 @@
       ],
       "publisher": {
         "@id": "org:jdriven-blog"
+      }
+    },
+    {
+      "@id": "ref:jfrog-what-are-software-artifacts",
+      "@type": "WebPage",
+      "name": "What are Software Artifacts?",
+      "url": "https://jfrog.com/learn/devops/software-artifact/",
+      "publisher": {
+        "@id": "org:jfrog"
       }
     },
     {
@@ -711,6 +886,42 @@
       ],
       "isPartOf": {
         "@id": "work:unix-programming-environment"
+      }
+    },
+    {
+      "@id": "ref:kotlin-backward-compatibility-guidelines",
+      "@type": "WebPage",
+      "name": "Backward compatibility guidelines for library authors | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-evolution-principles",
+      "@type": "WebPage",
+      "name": "Kotlin evolution principles | Kotlin",
+      "url": "https://kotlinlang.org/docs/kotlin-evolution-principles.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-informative-documentation-guidelines",
+      "@type": "WebPage",
+      "name": "Best practices for library authors to create informative documentation | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-informative-documentation.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
+      }
+    },
+    {
+      "@id": "ref:kotlin-library-authors-guidelines-introduction",
+      "@type": "WebPage",
+      "name": "Introduction to library authors' guidelines | Kotlin",
+      "url": "https://kotlinlang.org/docs/api-guidelines-introduction.html",
+      "publisher": {
+        "@id": "org:kotlin-help"
       }
     },
     {
@@ -741,6 +952,15 @@
       ],
       "publisher": {
         "@id": "org:pycon-us"
+      }
+    },
+    {
+      "@id": "ref:maven-central-repository",
+      "@type": "WebPage",
+      "name": "Maven Central Repository – Maven",
+      "url": "https://maven.apache.org/repository/",
+      "publisher": {
+        "@id": "org:maven"
       }
     },
     {
@@ -821,6 +1041,15 @@
       "datePublished": "2013-08-09",
       "publisher": {
         "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:npm-about-packages-and-modules",
+      "@type": "WebPage",
+      "name": "About packages and modules | npm Docs",
+      "url": "https://docs.npmjs.com/about-packages-and-modules",
+      "publisher": {
+        "@id": "org:npm-docs"
       }
     },
     {
@@ -1029,6 +1258,20 @@
       }
     },
     {
+      "@id": "ref:ousterhout-philosophy-software-design-2021",
+      "@type": "Book",
+      "name": "A Philosophy of Software Design",
+      "datePublished": "2021",
+      "author": [
+        {
+          "@id": "person:john-ousterhout"
+        }
+      ],
+      "publisher": {
+        "@id": "org:yaknyam-press"
+      }
+    },
+    {
       "@id": "ref:pep-557-data-classes",
       "@type": "WebPage",
       "name": "PEP 557 – Data Classes | peps.python.org",
@@ -1103,12 +1346,62 @@
       }
     },
     {
+      "@id": "ref:python-packaging-projects",
+      "@type": "WebPage",
+      "name": "Packaging Python Projects - Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/tutorials/packaging-projects/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
+      "@id": "ref:python-packaging-user-guide",
+      "@type": "WebPage",
+      "name": "Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
       "@id": "ref:python-typing-docs",
       "@type": "WebPage",
       "name": "typing — Support for type hints",
       "url": "https://docs.python.org/3/library/typing.html",
       "publisher": {
         "@id": "org:python-docs"
+      }
+    },
+    {
+      "@id": "ref:python-writing-pyproject-toml",
+      "@type": "WebPage",
+      "name": "Writing your pyproject.toml - Python Packaging User Guide",
+      "url": "https://packaging.python.org/en/latest/guides/writing-pyproject-toml/",
+      "publisher": {
+        "@id": "org:python-packaging-user-guide"
+      }
+    },
+    {
+      "@id": "ref:reddy-api-design-for-cpp-2024",
+      "@type": "Book",
+      "name": "API design for C++",
+      "datePublished": "2024",
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "publisher": {
+        "@id": "org:morgan-kaufmann"
+      }
+    },
+    {
+      "@id": "ref:requests-http-for-humans",
+      "@type": "WebPage",
+      "name": "Requests: HTTP for Humans™ — Requests 2.33.1 documentation",
+      "url": "https://requests.readthedocs.io/en/latest/",
+      "publisher": {
+        "@id": "org:requests-docs"
       }
     },
     {
@@ -1124,6 +1417,29 @@
       ],
       "publisher": {
         "@id": "org:ietf"
+      }
+    },
+    {
+      "@id": "ref:rust-packages-and-crates",
+      "@type": "WebPage",
+      "name": "Packages and Crates - The Rust Programming Language",
+      "url": "https://doc.rust-lang.org/book/ch07-01-packages-and-crates.html",
+      "publisher": {
+        "@id": "org:rust-book"
+      }
+    },
+    {
+      "@id": "ref:sametinger-software-engineering-reusable-components-1997",
+      "@type": "Book",
+      "name": "Software engineering with reusable components",
+      "datePublished": "1997",
+      "author": [
+        {
+          "@id": "person:johannes-sametinger"
+        }
+      ],
+      "publisher": {
+        "@id": "org:springer"
       }
     },
     {
@@ -1168,6 +1484,12 @@
       "isPartOf": {
         "@id": "work:windows-powershell-in-action-3e"
       }
+    },
+    {
+      "@id": "/notes/software-libraries/artifacts-taxonomy/",
+      "@type": "LearningResource",
+      "name": "Taxonomía básica de artefactos de software",
+      "url": "/notes/software-libraries/artifacts-taxonomy/"
     },
     {
       "@id": "/notes/software-libraries/scripting/errors/",
@@ -1735,6 +2057,279 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-bloch-how-to-design-good-api-2006-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:bloch-how-to-design-good-api-2006"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-introduction-to-plugins-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-introduction-to-plugins"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-plugin-development-plugin-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-plugin-development-plugin"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-plugin-reference-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-plugin-reference"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-gradle-user-manual-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-user-manual"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-intellij-platform-sdk-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:intellij-platform-sdk"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-jfrog-what-are-software-artifacts-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:jfrog-what-are-software-artifacts"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-backward-compatibility-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-backward-compatibility-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-evolution-principles-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-evolution-principles"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-informative-documentation-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-informative-documentation-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-kotlin-library-authors-guidelines-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-library-authors-guidelines-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-maven-central-repository-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:maven-central-repository"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-npm-about-packages-and-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-packages-and-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-ousterhout-philosophy-software-design-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:ousterhout-philosophy-software-design-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-packaging-projects-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-packaging-projects"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-packaging-user-guide-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-packaging-user-guide"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-python-writing-pyproject-toml-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:python-writing-pyproject-toml"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-reddy-api-design-for-cpp-2024-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-api-design-for-cpp-2024"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-requests-http-for-humans-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:requests-http-for-humans"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-rust-packages-and-crates-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rust-packages-and-crates"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:software-artifacts-taxonomy-sametinger-software-engineering-reusable-components-1997-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/artifacts-taxonomy/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sametinger-software-engineering-reusable-components-1997"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {

@@ -169,8 +169,14 @@ export const courseStructure = [
         children: [
             {
                 kind: "link",
+                id: "software-artifacts-taxonomy",
+                title: "Taxonomía básica de artefactos de software",
+                href: "/notes/software-libraries/artifacts-taxonomy/",
+            },
+            {
+                kind: "link",
                 id: "lib-what-is",
-                title: "Bibliotecas de software",
+                title: "La biblioteca como artefacto de software",
                 href: "/notes/software-libraries/what-is/",
             },
             {
@@ -231,7 +237,8 @@ export const courseStructure = [
                                 kind: "link",
                                 id: "pipeline-aware",
                                 title: "Pipeline-awareness",
-                                href: "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
+                                href:
+                                    "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
                             },
                             {
                                 kind: "link",
@@ -243,8 +250,9 @@ export const courseStructure = [
                                 kind: "link",
                                 id: "git-submodules",
                                 title: "Lab. 2: Git Submodules",
-                                href: "/notes/software-libraries/scripting/pipelines/git-submodules/",
-                            }
+                                href:
+                                    "/notes/software-libraries/scripting/pipelines/git-submodules/",
+                            },
                         ],
                     },
                 ],
