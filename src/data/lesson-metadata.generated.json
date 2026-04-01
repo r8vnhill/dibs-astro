@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-01T14:21:21.169Z",
+  "generatedAt": "2026-04-01T22:54:35.367Z",
   "totalLessons": 43,
   "changesLimit": 5,
   "entries": {
@@ -1329,8 +1329,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-31",
+      "lastModified": "2026-04-01",
       "changes": [
+        {
+          "hash": "29b762d3b4473989c146624d72509690b534a360",
+          "date": "2026-04-01",
+          "author": "r8vnhill",
+          "subject": "♻️📝 refactor(bibliography): harden page references and lesson refs"
+        },
+        {
+          "hash": "e2ba905a05bcbf422a3934651886e5d63b2fe118",
+          "date": "2026-04-01",
+          "author": "r8vnhill",
+          "subject": "♻️📝 refactor(dev-shiki): add transport retries and catalog refs"
+        },
         {
           "hash": "ca9053e6abac86aed9c03a0bc8a91db5e67615b8",
           "date": "2026-03-31",
@@ -1348,18 +1360,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "🐛✅ fix(types): unblock astro check in CI"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },

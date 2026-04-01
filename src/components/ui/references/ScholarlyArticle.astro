@@ -22,9 +22,10 @@ import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
     formatPageReference,
-    normalizePageReference,
+    isPageReference,
     type PageReference,
     type PageReferenceInput,
+    parsePageReferenceInput,
 } from "~/lib/bibliography";
 import {
     resolveInlineField,
@@ -65,7 +66,8 @@ const {
 } = await resolveOptionalSlots(Astro.slots, ["title", "publication", "author", "description"]);
 
 // Pre-format the page reference so the template only handles presentation.
-const pagesLabel = formatPageReference(normalizePageReference(pages));
+const normalizedPages = isPageReference(pages) ? pages : parsePageReferenceInput(pages);
+const pagesLabel = formatPageReference(normalizedPages);
 
 const externalLinkAttrs = {
     target: "_blank",
