@@ -25,6 +25,12 @@
       "familyName": "Firshman"
     },
     {
+      "@id": "person:brad-a-myers",
+      "@type": "Person",
+      "givenName": "Brad A.",
+      "familyName": "Myers"
+    },
+    {
       "@id": "person:brett-slatkin",
       "@type": "Person",
       "givenName": "Brett",
@@ -75,10 +81,22 @@
       "familyName": "Snover"
     },
     {
+      "@id": "person:jeffrey-stylos",
+      "@type": "Person",
+      "givenName": "Jeffrey",
+      "familyName": "Stylos"
+    },
+    {
       "@id": "person:johannes-sametinger",
       "@type": "Person",
       "givenName": "Johannes",
       "familyName": "Sametinger"
+    },
+    {
+      "@id": "person:john-geewax",
+      "@type": "Person",
+      "givenName": "John",
+      "familyName": "Geewax"
     },
     {
       "@id": "person:john-ousterhout",
@@ -103,6 +121,12 @@
       "@type": "Person",
       "givenName": "Konstantinos",
       "familyName": "Kallas"
+    },
+    {
+      "@id": "person:kyo-kang",
+      "@type": "Person",
+      "givenName": "Kyo",
+      "familyName": "Kang"
     },
     {
       "@id": "person:luciano-ramalho",
@@ -202,6 +226,12 @@
       "familyName": "Plunk"
     },
     {
+      "@id": "person:w-b-frakes",
+      "@type": "Person",
+      "givenName": "W.B.",
+      "familyName": "Frakes"
+    },
+    {
       "@id": "person:ying-tian",
       "@type": "Person",
       "givenName": "Ying",
@@ -272,6 +302,12 @@
       "@type": "Organization",
       "name": "Heroku Dev Center",
       "url": "https://devcenter.heroku.com/"
+    },
+    {
+      "@id": "org:ieee",
+      "@type": "Organization",
+      "name": "Institute of Electrical and Electronics Engineers",
+      "url": "https://www.ieee.org/"
     },
     {
       "@id": "org:ietf",
@@ -410,6 +446,12 @@
       "url": "https://uwaterloo.ca/"
     },
     {
+      "@id": "org:wikipedia",
+      "@type": "Organization",
+      "name": "Wikipedia",
+      "url": "https://www.wikipedia.org/"
+    },
+    {
       "@id": "org:yaknyam-press",
       "@type": "Organization",
       "name": "Yaknyam Press"
@@ -439,6 +481,14 @@
       }
     },
     {
+      "@id": "work:communications-of-the-acm",
+      "@type": "CreativeWork",
+      "name": "Commun. ACM",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:effective-python-3e",
       "@type": "CreativeWork",
       "name": "Effective Python: 125 specific ways to write better Python",
@@ -462,6 +512,14 @@
       ],
       "publisher": {
         "@id": "org:oreilly"
+      }
+    },
+    {
+      "@id": "work:ieee-transactions-software-engineering",
+      "@type": "CreativeWork",
+      "name": "IEEE Transactions on Software Engineering",
+      "publisher": {
+        "@id": "org:ieee"
       }
     },
     {
@@ -522,6 +580,14 @@
       ],
       "publisher": {
         "@id": "org:prentice-hall"
+      }
+    },
+    {
+      "@id": "work:wapi-2017",
+      "@type": "CreativeWork",
+      "name": "2017 IEEE/ACM 1st International Workshop on API Usage and Evolution (WAPI)",
+      "publisher": {
+        "@id": "org:ieee"
       }
     },
     {
@@ -707,6 +773,29 @@
       ],
       "isPartOf": {
         "@id": "work:fluent-python-2e"
+      }
+    },
+    {
+      "@id": "ref:frakes-software-reuse-research-2005",
+      "@type": "ScholarlyArticle",
+      "name": "Software reuse research: status and future",
+      "url": "https://ieeexplore.ieee.org/abstract/document/1492369",
+      "datePublished": "2005-07",
+      "pageStart": 529,
+      "pageEnd": 536,
+      "author": [
+        {
+          "@id": "person:w-b-frakes"
+        },
+        {
+          "@id": "person:kyo-kang"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:ieee-transactions-software-engineering"
       }
     },
     {
@@ -940,6 +1029,16 @@
       }
     },
     {
+      "@id": "ref:library-computing-wikipedia-2025",
+      "@type": "WebPage",
+      "name": "Library (computing)",
+      "url": "https://en.wikipedia.org/w/index.php?title=Library_(computing)&oldid=1305094870",
+      "datePublished": "2025-08-10",
+      "publisher": {
+        "@id": "org:wikipedia"
+      }
+    },
+    {
       "@id": "ref:lucas-serialization-more-than-pickling-2022",
       "@type": "VideoObject",
       "name": "Talk - Joseph Lucas: Serialization  More than pickling",
@@ -1041,6 +1140,49 @@
       "datePublished": "2013-08-09",
       "publisher": {
         "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:myers-human-centered-methods-api-usability-2017",
+      "@type": "ScholarlyArticle",
+      "name": "Human-Centered Methods for Improving API Usability",
+      "url": "https://ieeexplore.ieee.org/document/7965483/",
+      "datePublished": "2017-05",
+      "pageStart": 2,
+      "pageEnd": 2,
+      "author": [
+        {
+          "@id": "person:brad-a-myers"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:wapi-2017"
+      }
+    },
+    {
+      "@id": "ref:myers-improving-api-usability-2016",
+      "@type": "ScholarlyArticle",
+      "name": "Improving API usability",
+      "url": "https://dl.acm.org/doi/10.1145/2896587",
+      "datePublished": "2016-05-23",
+      "pageStart": 62,
+      "pageEnd": 69,
+      "author": [
+        {
+          "@id": "person:brad-a-myers"
+        },
+        {
+          "@id": "person:jeffrey-stylos"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:communications-of-the-acm"
       }
     },
     {
@@ -1540,6 +1682,12 @@
       "url": "/notes/software-libraries/scripting/structured-output/py/"
     },
     {
+      "@id": "/notes/software-libraries/what-is/",
+      "@type": "LearningResource",
+      "name": "La biblioteca como artefacto de software",
+      "url": "/notes/software-libraries/what-is/"
+    },
+    {
       "@id": "usage:errors-errors-and-exceptions-additional",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
@@ -1771,6 +1919,149 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-bloch-how-to-design-good-api-2006-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:bloch-how-to-design-good-api-2006"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-frakes-software-reuse-research-2005-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:frakes-software-reuse-research-2005"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-backward-compatibility-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-backward-compatibility-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-evolution-principles-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-evolution-principles"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-informative-documentation-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-informative-documentation-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-library-authors-guidelines-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-library-authors-guidelines-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-library-computing-wikipedia-2025-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:library-computing-wikipedia-2025"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-myers-human-centered-methods-api-usability-2017-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:myers-human-centered-methods-api-usability-2017"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-myers-improving-api-usability-2016-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:myers-improving-api-usability-2016"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-ousterhout-philosophy-software-design-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:ousterhout-philosophy-software-design-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-sametinger-software-engineering-reusable-components-1997-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sametinger-software-engineering-reusable-components-1997"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {

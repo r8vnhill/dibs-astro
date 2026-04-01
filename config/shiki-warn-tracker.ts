@@ -16,6 +16,8 @@
  *   module layout changes or the import fails. This makes the helper safe to keep in the repo.
  */
 
+import { runWithDevTransportRetry } from "../src/utils/dev-transport-retry";
+
 // Preserve the original console.warn for non-Shiki warnings.
 const originalWarn = console.warn.bind(console);
 
@@ -39,7 +41,12 @@ void (async () => {
             import.meta.url,
         );
         // runtime patch for Astro's markdown highlighter
-        const markdownRemarkShiki = await import(/* @vite-ignore */ moduleUrl.href);
+        const markdownRemarkShiki = await runWithDevTransportRetry(
+            () => import(/* @vite-ignore */ moduleUrl.href),
+            {
+                label: "astro markdown shiki runtime patch import",
+            },
+        );
         const originalCreate = markdownRemarkShiki.createShikiHighlighter;
         if (typeof originalCreate !== "function") return;
 

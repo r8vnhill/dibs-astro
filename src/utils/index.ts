@@ -6,6 +6,13 @@
  * if a helper is exported here, other modules can usually depend on it without reaching into
  * subpaths.
  *
+ * Export policy:
+ * - Keep broadly reusable helpers here, not feature-local implementation details.
+ * - Prefer exporting stable helpers that are safe to reuse across layouts, content rendering, and
+ *   infrastructure code.
+ * - Development-only helpers may still be exported here when they support shared runtime behavior
+ *   across subsystems, such as the transient transport retry used by Shiki-related dev flows.
+ *
  * Example:
  * `import { resolveAutoNav, formatLessonDate, site } from "~/utils";`
  */
@@ -32,27 +39,32 @@ export {
 // next/previous pairs, while `normalizePreviousNavigation` exposes the newer list-based shape that
 // `NotesLayout` uses for multi-link "previous" navigation.
 export {
+    type NavigationLinkInput,
     normalizeNavigation,
     normalizeNavigationLink,
     normalizePreviousNavigation,
     resolveAutoNav,
-    type NavigationLinkInput,
 } from "./navigation.ts";
 export { buildHeadPageMeta, type PageMeta } from "./page-meta.ts";
 
-// Generic utilities
+// Generic and cross-cutting runtime utilities
+export {
+    type DevTransportRetryOptions,
+    isRetryableDevTransportError,
+    runWithDevTransportRetry,
+} from "./dev-transport-retry.ts";
 export {
     buildCommitUrl,
+    type BuildCommitUrlOptions,
     buildRepoLinkText,
+    type BuildRepoLinkTextOptions,
     buildRepoUrl,
+    type BuildRepoUrlOptions,
     DEFAULT_REPO_PLATFORMS,
     isRepoPlatform,
     normalizePlatforms,
     REPO_PLATFORM_HOST,
     REPO_PLATFORM_LABEL,
-    type BuildRepoLinkTextOptions,
-    type BuildCommitUrlOptions,
-    type BuildRepoUrlOptions,
     type RepoPlatform,
     type RepoRef,
 } from "./git.ts";

@@ -7,6 +7,8 @@ const theme = "catppuccin-latte";
 describe("highlightToHtml", () => {
     afterEach(() => {
         vi.restoreAllMocks();
+        delete process.env.DIBS_DEV_RETRY_ENABLED;
+        __resetHighlighterCacheForTests();
     });
 
     it("renders highlighted html for bundled language aliases", async () => {
@@ -70,8 +72,42 @@ describe("highlightToHtml", () => {
             expect.stringContaining("language \"bash\" could not be loaded"),
             loadError,
         );
+    });
 
-        __resetHighlighterCacheForTests();
+    it("retries transient timeout failures when loading a language in development", async () => {
+        process.env.DIBS_DEV_RETRY_ENABLED = "true";
+
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+        let loadAttempts = 0;
+
+        const mockHighlighter = {
+            getLoadedLanguages: () => [] as string[],
+            loadLanguage: vi.fn(async () => {
+                loadAttempts += 1;
+                if (loadAttempts === 1) {
+                    const error = new Error("fetchModule timed out during vite:invoke") as Error & {
+                        code?: string;
+                    };
+                    error.code = "ETIMEDOUT";
+                    throw error;
+                }
+            }),
+            codeToHtml: vi.fn(() => "<pre class=\"shiki\"><code>echo hi</code></pre>"),
+        };
+
+        __setHighlighterInstanceForTests(mockHighlighter as never);
+
+        const html = await highlightToHtml({
+            code: "echo hi",
+            lang: "bash",
+            theme,
+        });
+
+        expect(html).toContain("echo hi");
+        expect(mockHighlighter.loadLanguage).toHaveBeenCalledTimes(2);
+        expect(mockHighlighter.codeToHtml).toHaveBeenCalledTimes(1);
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(String(warn.mock.calls[0]?.[0] ?? "")).toContain("[dev-retry]");
     });
 });
 

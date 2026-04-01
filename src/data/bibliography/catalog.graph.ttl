@@ -1191,6 +1191,31 @@ person:john-ousterhout
   schema:givenName "John" ;
   schema:familyName "Ousterhout" .
 
+person:john-geewax
+  a schema:Person ;
+  schema:givenName "John" ;
+  schema:familyName "Geewax" .
+
+person:w-b-frakes
+  a schema:Person ;
+  schema:givenName "W.B." ;
+  schema:familyName "Frakes" .
+
+person:kyo-kang
+  a schema:Person ;
+  schema:givenName "Kyo" ;
+  schema:familyName "Kang" .
+
+person:brad-a-myers
+  a schema:Person ;
+  schema:givenName "Brad A." ;
+  schema:familyName "Myers" .
+
+person:jeffrey-stylos
+  a schema:Person ;
+  schema:givenName "Jeffrey" ;
+  schema:familyName "Stylos" .
+
 org:kotlin-help
   a schema:Organization ;
   schema:name "Kotlin Help" ;
@@ -1248,9 +1273,34 @@ org:springer
   a schema:Organization ;
   schema:name "Springer" .
 
+org:ieee
+  a schema:Organization ;
+  schema:name "Institute of Electrical and Electronics Engineers" ;
+  schema:url "https://www.ieee.org/" .
+
+org:wikipedia
+  a schema:Organization ;
+  schema:name "Wikipedia" ;
+  schema:url "https://www.wikipedia.org/" .
+
 work:oopsla-2006-companion
   a schema:CreativeWork ;
   schema:name "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications" ;
+  schema:publisher org:acm .
+
+work:ieee-transactions-software-engineering
+  a schema:CreativeWork ;
+  schema:name "IEEE Transactions on Software Engineering" ;
+  schema:publisher org:ieee .
+
+work:wapi-2017
+  a schema:CreativeWork ;
+  schema:name "2017 IEEE/ACM 1st International Workshop on API Usage and Evolution (WAPI)" ;
+  schema:publisher org:ieee, org:acm .
+
+work:communications-of-the-acm
+  a schema:CreativeWork ;
+  schema:name "Commun. ACM" ;
   schema:publisher org:acm .
 
 ref:kotlin-backward-compatibility-guidelines
@@ -1386,6 +1436,130 @@ ref:ousterhout-philosophy-software-design-2021
   schema:datePublished "2021" ;
   schema:author person:john-ousterhout ;
   schema:publisher org:yaknyam-press .
+
+ref:geewax-api-design-patterns-2021
+  a schema:Book ;
+  schema:name "API design patterns" ;
+  schema:datePublished "2021" ;
+  schema:author person:john-geewax ;
+  schema:publisher org:manning .
+
+ref:frakes-software-reuse-research-2005
+  a schema:ScholarlyArticle ;
+  schema:name "Software reuse research: status and future" ;
+  schema:url "https://ieeexplore.ieee.org/abstract/document/1492369" ;
+  schema:datePublished "2005-07" ;
+  schema:pageStart 529 ;
+  schema:pageEnd 536 ;
+  schema:author person:w-b-frakes, person:kyo-kang ;
+  schema:isPartOf work:ieee-transactions-software-engineering ;
+  schema:publisher org:ieee .
+
+ref:myers-improving-api-usability-2016
+  a schema:ScholarlyArticle ;
+  schema:name "Improving API usability" ;
+  schema:url "https://dl.acm.org/doi/10.1145/2896587" ;
+  schema:datePublished "2016-05-23" ;
+  schema:pageStart 62 ;
+  schema:pageEnd 69 ;
+  schema:author person:brad-a-myers, person:jeffrey-stylos ;
+  schema:isPartOf work:communications-of-the-acm ;
+  schema:publisher org:acm .
+
+ref:myers-human-centered-methods-api-usability-2017
+  a schema:ScholarlyArticle ;
+  schema:name "Human-Centered Methods for Improving API Usability" ;
+  schema:url "https://ieeexplore.ieee.org/document/7965483/" ;
+  schema:datePublished "2017-05" ;
+  schema:pageStart 2 ;
+  schema:pageEnd 2 ;
+  schema:author person:brad-a-myers ;
+  schema:isPartOf work:wapi-2017 ;
+  schema:publisher org:ieee .
+
+ref:library-computing-wikipedia-2025
+  a schema:WebPage ;
+  schema:name "Library (computing)" ;
+  schema:url "https://en.wikipedia.org/w/index.php?title=Library_(computing)&oldid=1305094870" ;
+  schema:datePublished "2025-08-10" ;
+  schema:publisher org:wikipedia .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/what-is/>
+  a schema:LearningResource ;
+  schema:name "La biblioteca como artefacto de software" ;
+  schema:url "/notes/software-libraries/what-is/" .
+
+usage:lib-what-is-kotlin-library-authors-guidelines-introduction-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:kotlin-library-authors-guidelines-introduction ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-kotlin-backward-compatibility-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:kotlin-backward-compatibility-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-kotlin-informative-documentation-guidelines-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:kotlin-informative-documentation-guidelines ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-kotlin-evolution-principles-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:kotlin-evolution-principles ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-bloch-how-to-design-good-api-2006-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:bloch-how-to-design-good-api-2006 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-frakes-software-reuse-research-2005-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:frakes-software-reuse-research-2005 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-geewax-api-design-patterns-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:geewax-api-design-patterns-2021 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-myers-improving-api-usability-2016-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:myers-improving-api-usability-2016 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-myers-human-centered-methods-api-usability-2017-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:myers-human-centered-methods-api-usability-2017 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-sametinger-software-engineering-reusable-components-1997-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:sametinger-software-engineering-reusable-components-1997 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-ousterhout-philosophy-software-design-2021-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:ousterhout-philosophy-software-design-2021 ;
+  dibs:tag "pending-revision" .
+
+usage:lib-what-is-library-computing-wikipedia-2025-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:library-computing-wikipedia-2025 ;
+  dibs:tag "recommended" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/>
   a schema:LearningResource ;

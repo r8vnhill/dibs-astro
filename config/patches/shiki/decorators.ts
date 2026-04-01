@@ -18,6 +18,7 @@
  */
 
 import { isSpecialLang } from "shiki";
+import { runWithDevTransportRetry } from "../../../src/utils/dev-transport-retry";
 import { createDefaultTransformer } from "./transformers";
 import type { HighlightDecorator, HighlightExecutor } from "./types";
 
@@ -61,7 +62,12 @@ export function withLanguageLoading(): HighlightDecorator {
             try {
                 // Load language on demand; most highlights will find the language already loaded but this supports
                 // dynamic lists.
-                await highlighter.loadLanguage(resolvedLang as any);
+                await runWithDevTransportRetry(
+                    () => highlighter.loadLanguage(resolvedLang as any),
+                    {
+                        label: `patched markdown shiki language load (${resolvedLang})`,
+                    },
+                );
             } catch {
                 const langStr = lang === resolvedLang
                     ? `"${lang}"`

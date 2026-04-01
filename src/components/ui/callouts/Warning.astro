@@ -1,4 +1,16 @@
 ---
+/**
+ * Thin variant wrapper for the "warning" callout.
+ *
+ * This component exists so page authors can write `<Warning>` instead of wiring the generic
+ * `CalloutShell` with the `"warning"` variant and its default title/icon each time. It keeps the
+ * public API aligned with the rest of the callout family:
+ *
+ * - `title` and `icon` default to the variant-level values declared in `shared.ts`
+ * - a meaningful `title` slot overrides the visible heading content
+ * - layout, heading semantics, collapsible behavior, and accessibility are delegated to
+ *   `CalloutShell`
+ */
 import CalloutShell from "./CalloutShell.astro";
 import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
@@ -6,9 +18,12 @@ import type { BaseCalloutProps } from "./shared";
 const variant = "warning" as const;
 const variantConfig = calloutVariants[variant];
 
+// Preserve the shared callout prop surface while injecting the warning-specific defaults.
 const { title = variantConfig.title, icon = variantConfig.icon, ...rest } = Astro.props as
     & BaseCalloutProps
     & Record<string, any>;
+
+// Only forward the named title slot when the caller actually provided one.
 const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell

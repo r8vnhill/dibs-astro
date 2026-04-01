@@ -17,6 +17,7 @@
  */
 
 import { createCssVariablesTheme, createHighlighter } from "shiki";
+import { runWithDevTransportRetry } from "../../../src/utils/dev-transport-retry";
 import {
     composeDecorators,
     withAliasResolution,
@@ -49,14 +50,20 @@ export async function createShikiHighlighter({
 
     // Create the underlying Shiki highlighter. We always include `plaintext`
     // so there's a safe fallback language available.
-    const highlighter = await createHighlighter({
-        langs: ["plaintext", ...langs],
-        langAlias,
-        themes: Object.values(themes).length
-            ? Object.values(themes)
-            : [resolvedTheme],
-        warnings: false,
-    } as any) as HighlighterInstance;
+    const highlighter = await runWithDevTransportRetry(
+        () =>
+            createHighlighter({
+                langs: ["plaintext", ...langs],
+                langAlias,
+                themes: Object.values(themes).length
+                    ? Object.values(themes)
+                    : [resolvedTheme],
+                warnings: false,
+            } as any),
+        {
+            label: "patched markdown shiki highlighter creation",
+        },
+    ) as HighlighterInstance;
 
     // Base executor that simply forwards to Shiki's `codeToHtml` or
     // `codeToHast` depending on the requested format.

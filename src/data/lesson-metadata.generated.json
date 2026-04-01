@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-31T21:20:47.102Z",
+  "generatedAt": "2026-04-01T14:21:21.169Z",
   "totalLessons": 43,
   "changesLimit": 5,
   "entries": {
@@ -121,7 +121,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-03-31",
+      "changes": [
+        {
+          "hash": "4ba92112ff1f25ba2f3d9939da8129e425489106",
+          "date": "2026-03-31",
+          "author": "r8vnhill",
+          "subject": "📝✨ feat(unit-1): add software artifacts taxonomy lesson"
+        }
+      ]
     },
     "/notes/software-libraries/build-systems/": {
       "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
@@ -1321,8 +1329,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-03-31",
       "changes": [
+        {
+          "hash": "ca9053e6abac86aed9c03a0bc8a91db5e67615b8",
+          "date": "2026-03-31",
+          "author": "r8vnhill",
+          "subject": "📝🔖 chore(release): prepare 0.14.0 release notes"
+        },
+        {
+          "hash": "4ba92112ff1f25ba2f3d9939da8129e425489106",
+          "date": "2026-03-31",
+          "author": "r8vnhill",
+          "subject": "📝✨ feat(unit-1): add software artifacts taxonomy lesson"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1340,18 +1360,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
-          "date": "2025-10-21",
-          "author": "r8vnhill",
-          "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
-        },
-        {
-          "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
-          "date": "2025-10-02",
-          "author": "r8vnhill",
-          "subject": "Refactor code structure for improved readability and maintainability"
         }
       ]
     },

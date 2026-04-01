@@ -159,7 +159,7 @@ export const calloutVariants: Record<CalloutVariant, CalloutVariantConfig> = {
     question: { title: "Piensa rápido", icon: icons.Question },
     solution: { title: "Solución", icon: icons.CheckCircle },
     tip: { title: "Tip", icon: icons.Lightbulb },
-    warning: { title: "Precaución", icon: icons.Warning },
+    warning: { title: "Cuidado", icon: icons.Warning },
 };
 
 /**

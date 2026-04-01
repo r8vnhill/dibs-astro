@@ -8,6 +8,7 @@
 import { createHighlighter } from "shiki";
 import type { BundledTheme } from "shiki";
 import type { ShikiTransformer } from "shiki";
+import { runWithDevTransportRetry } from "~/utils";
 import { availableLanguages } from "./language-aliases";
 
 type HighlighterInstance = ReturnType<typeof createHighlighter>;
@@ -30,10 +31,16 @@ export async function getHighlighter(
     supportedThemes: readonly string[] = ["catppuccin-latte", "catppuccin-mocha"],
 ) {
     if (!highlighterPromise) {
-        highlighterPromise = createHighlighter({
-            themes: [...supportedThemes] as unknown as BundledTheme[],
-            langs: availableLanguages,
-        });
+        highlighterPromise = runWithDevTransportRetry(
+            () =>
+                createHighlighter({
+                    themes: [...supportedThemes] as unknown as BundledTheme[],
+                    langs: availableLanguages,
+                }),
+            {
+                label: "shared shiki highlighter creation",
+            },
+        );
         globalCache.__dibsShikiHighlighter = highlighterPromise;
     }
     return highlighterPromise;

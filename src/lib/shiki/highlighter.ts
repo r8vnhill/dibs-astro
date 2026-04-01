@@ -11,6 +11,7 @@
  */
 import type { BundledTheme } from "shiki";
 import type { ShikiTransformer } from "shiki";
+import { runWithDevTransportRetry } from "~/utils";
 import { getHighlighter } from "./cache";
 import { buildPlainHtml } from "./html";
 import { resolveLanguage } from "./language-aliases";
@@ -57,7 +58,12 @@ export async function highlightToHtml({
     if (resolvedLang) {
         try {
             if (!highlighter.getLoadedLanguages().includes(resolvedLang)) {
-                await highlighter.loadLanguage(resolvedLang);
+                await runWithDevTransportRetry(
+                    () => highlighter.loadLanguage(resolvedLang),
+                    {
+                        label: `shiki language load (${resolvedLang})`,
+                    },
+                );
             }
 
             return highlighter.codeToHtml(code, {
