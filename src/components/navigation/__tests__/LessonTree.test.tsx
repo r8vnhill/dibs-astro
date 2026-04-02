@@ -184,9 +184,7 @@ describe("LessonTree navigation behaviors", () => {
         );
 
         // Locate the section label (span) so we can derive the owning tree item.
-        const sectionLabel = await screen.findByText("Pipelines", {
-            selector: "span",
-        });
+        const sectionLabel = await screen.findByText("Pipelines");
 
         const containerItem = closestTreeItem(sectionLabel);
         const toggleBtn = getToggleButton(containerItem);
@@ -214,9 +212,7 @@ describe("LessonTree navigation behaviors", () => {
         render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
         // Re-locate the same section after remount.
-        const sectionLabel2 = await screen.findByText("Pipelines", {
-            selector: "span",
-        });
+        const sectionLabel2 = await screen.findByText("Pipelines");
         const containerItem2 = closestTreeItem(sectionLabel2);
 
         // Restore may occur in effects, so wait until the persisted state is applied.
@@ -230,5 +226,21 @@ describe("LessonTree navigation behaviors", () => {
 
         // The state should switch away from the restored persisted value.
         expect(containerItem2.getAttribute("aria-expanded")).not.toBe(toggledExpanded);
+    });
+
+    it("keeps hover styling scoped to the interactive link instead of the parent tree item", async () => {
+        setPath("/notes/software-libraries/scripting/should-process/");
+
+        render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+        const sectionLabel = await screen.findByText("Scripting");
+        const sectionTreeItem = closestTreeItem(sectionLabel);
+        const childLink = await screen.findByRole("link", { name: "Primer script" });
+
+        expect(sectionTreeItem.className).not.toContain("group");
+        expect(childLink.className).toContain("hover:bg-base-border/10");
+        expect(childLink.className).toContain("hover:text-primary");
+        expect(childLink.className).not.toContain("group-hover");
+        expect(sectionLabel.className).not.toContain("group-hover");
     });
 });

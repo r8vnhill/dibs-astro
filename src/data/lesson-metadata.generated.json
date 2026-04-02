@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-01T22:54:35.367Z",
-  "totalLessons": 43,
+  "generatedAt": "2026-04-02T16:24:57.623Z",
+  "totalLessons": 44,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -313,8 +313,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-01",
       "changes": [
+        {
+          "hash": "7927415af10d73509f943835aa4eebbaca3f251b",
+          "date": "2026-04-01",
+          "author": "r8vnhill",
+          "subject": "🌐🐟 feat(home): add editorial landing and fish scripting entry"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -338,12 +344,6 @@
           "date": "2025-10-29",
           "author": "r8vnhill",
           "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
-        },
-        {
-          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-          "date": "2025-10-15",
-          "author": "r8vnhill",
-          "subject": "Add Python scripting notes and comparison with PowerShell"
         }
       ]
     },
@@ -777,6 +777,15 @@
           "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
         }
       ]
+    },
+    "/notes/software-libraries/scripting/node/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/node.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/scripting/nushell/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/nushell.astro",

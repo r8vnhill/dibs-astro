@@ -1691,3 +1691,288 @@ usage:software-artifacts-taxonomy-ousterhout-philosophy-software-design-2021-pen
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;
   dibs:reference ref:ousterhout-philosophy-software-design-2021 ;
   dibs:tag "pending-revision" .
+
+person:luciano-mammino
+  a schema:Person ;
+  schema:givenName "Luciano" ;
+  schema:familyName "Mammino" .
+
+person:mario-casciaro
+  a schema:Person ;
+  schema:givenName "Mario" ;
+  schema:familyName "Casciaro" .
+
+person:david-flanagan
+  a schema:Person ;
+  schema:givenName "David" ;
+  schema:familyName "Flanagan" .
+
+person:axel-rauschmayer
+  a schema:Person ;
+  schema:givenName "Axel" ;
+  schema:familyName "Rauschmayer" ;
+  schema:url "https://dr-axel.de" .
+
+person:haiyang-sun
+  a schema:Person ;
+  schema:givenName "Haiyang" ;
+  schema:familyName "Sun" .
+
+person:daniele-bonetta
+  a schema:Person ;
+  schema:givenName "Daniele" ;
+  schema:familyName "Bonetta" .
+
+person:filippo-schiavio
+  a schema:Person ;
+  schema:givenName "Filippo" ;
+  schema:familyName "Schiavio" .
+
+person:walter-binder
+  a schema:Person ;
+  schema:givenName "Walter" ;
+  schema:familyName "Binder" .
+
+org:nodejs
+  a schema:Organization ;
+  schema:name "Node.js" ;
+  schema:url "https://nodejs.org/" .
+
+org:mdn-web-docs
+  a schema:Organization ;
+  schema:name "MDN Web Docs" ;
+  schema:url "https://developer.mozilla.org/" .
+
+org:exploringjs
+  a schema:Organization ;
+  schema:name "Exploring JS" ;
+  schema:url "https://exploringjs.com/" .
+
+org:nodejs-design-patterns
+  a schema:Organization ;
+  schema:name "Node.js Design Patterns" ;
+  schema:url "https://nodejsdesignpatterns.com/" .
+
+work:nodejs-design-patterns-4e
+  a schema:CreativeWork ;
+  schema:name "Node.js Design Patterns - Fourth Edition" ;
+  schema:author person:luciano-mammino, person:mario-casciaro .
+
+work:javascript-definitive-guide-7e
+  a schema:CreativeWork ;
+  schema:name "JavaScript: the definitive guide: master the world's most-used programming language" ;
+  schema:author person:david-flanagan .
+
+work:javascript-for-impatient-programmers
+  a schema:CreativeWork ;
+  schema:name "JavaScript for impatient programmers" ;
+  schema:author person:axel-rauschmayer .
+
+work:cgo-2019
+  a schema:CreativeWork ;
+  schema:name "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)" ;
+  schema:publisher org:ieee .
+
+ref:casciaro-nodejs-design-patterns-4e
+  a schema:Book ;
+  schema:name "Node.js Design Patterns - Fourth Edition" ;
+  schema:url "https://nodejsdesignpatterns.com/" ;
+  schema:datePublished "2024" ;
+  schema:isPartOf work:nodejs-design-patterns-4e ;
+  schema:publisher org:oreilly .
+
+ref:npm-downloading-installing-nodejs-and-npm
+  a schema:WebPage ;
+  schema:name "Downloading and installing Node.js and npm | npm Docs" ;
+  schema:url "https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" ;
+  schema:publisher org:npm-docs .
+
+ref:nodejs-file-system-docs
+  a schema:WebPage ;
+  schema:name "File system | Node.js v25.9.0 Documentation" ;
+  schema:url "https://nodejs.org/api/fs.html" ;
+  schema:publisher org:nodejs .
+
+ref:flanagan-javascript-definitive-guide-7e
+  a schema:Book ;
+  schema:name "JavaScript: the definitive guide: master the world's most-used programming language" ;
+  schema:datePublished "2020" ;
+  schema:isPartOf work:javascript-definitive-guide-7e ;
+  schema:publisher org:oreilly .
+
+ref:mdn-javascript-guide
+  a schema:WebPage ;
+  schema:name "JavaScript Guide - JavaScript | MDN" ;
+  schema:url "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" ;
+  schema:datePublished "2025-11-07" ;
+  schema:publisher org:mdn-web-docs .
+
+ref:mdn-javascript-modules
+  a schema:WebPage ;
+  schema:name "JavaScript modules - JavaScript | MDN" ;
+  schema:url "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules" ;
+  schema:datePublished "2025-11-03" ;
+  schema:publisher org:mdn-web-docs .
+
+ref:nodejs-ecmascript-modules-docs
+  a schema:WebPage ;
+  schema:name "Modules: ECMAScript modules | Node.js v25.9.0 Documentation" ;
+  schema:url "https://nodejs.org/api/esm.html" ;
+  schema:publisher org:nodejs .
+
+ref:nodejs-event-loop-inside-out-video
+  a schema:VideoObject ;
+  schema:name "Node's Event Loop From the Inside Out by Sam Roberts, IBM" ;
+  schema:url "https://www.youtube.com/watch?v=P9csgxBgaZ8" ;
+  schema:datePublished "2016-12-15" ;
+  schema:author org:nodejs ;
+  schema:publisher org:youtube .
+
+ref:nodejs-introduction
+  a schema:WebPage ;
+  schema:name "Node.js — Introduction to Node.js" ;
+  schema:url "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs" ;
+  schema:publisher org:nodejs .
+
+ref:npm-about-npm
+  a schema:WebPage ;
+  schema:name "About npm | npm Docs" ;
+  schema:url "https://docs.npmjs.com/about-npm" ;
+  schema:publisher org:npm-docs .
+
+ref:nodejs-path-docs
+  a schema:WebPage ;
+  schema:name "Path | Node.js v25.9.0 Documentation" ;
+  schema:url "https://nodejs.org/api/path.html" ;
+  schema:publisher org:nodejs .
+
+ref:rauschmayer-javascript-impatient-programmers
+  a schema:Book ;
+  schema:name "JavaScript for impatient programmers" ;
+  schema:datePublished "2019" ;
+  schema:isPartOf work:javascript-for-impatient-programmers .
+
+ref:exploringjs-shell-scripting-nodejs
+  a schema:WebPage ;
+  schema:name "Shell scripting with Node.js" ;
+  schema:url "https://exploringjs.com/nodejs-shell-scripting/" ;
+  schema:publisher org:exploringjs .
+
+ref:rauschmayer-getting-started-with-nodejs
+  a schema:WebPage ;
+  schema:name "Getting started with Node.js" ;
+  schema:url "https://exploringjs.com/nodejs-shell-scripting/ch_getting-started-with-nodejs.html" ;
+  schema:author person:axel-rauschmayer ;
+  schema:publisher org:exploringjs .
+
+ref:sun-reasoning-about-nodejs-event-loop-2019
+  a schema:ScholarlyArticle ;
+  schema:name "Reasoning about the Node.js Event Loop using Async Graphs" ;
+  schema:url "https://ieeexplore.ieee.org/document/8661173/" ;
+  schema:datePublished "2019" ;
+  schema:pageStart 61 ;
+  schema:pageEnd 72 ;
+  schema:author person:haiyang-sun, person:daniele-bonetta, person:filippo-schiavio, person:walter-binder ;
+  schema:isPartOf work:cgo-2019 ;
+  schema:publisher org:ieee .
+
+<https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/>
+  a schema:LearningResource ;
+  schema:name "Introducción a scripting con Node.js" ;
+  schema:url "/notes/software-libraries/scripting/node/" .
+
+usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:casciaro-nodejs-design-patterns-4e ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-npm-downloading-installing-nodejs-and-npm-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:npm-downloading-installing-nodejs-and-npm ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-nodejs-file-system-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:nodejs-file-system-docs ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-flanagan-javascript-definitive-guide-7e-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:flanagan-javascript-definitive-guide-7e ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-mdn-javascript-guide-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:mdn-javascript-guide ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-mdn-javascript-modules-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:mdn-javascript-modules ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-nodejs-ecmascript-modules-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:nodejs-ecmascript-modules-docs ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-nodejs-event-loop-inside-out-video-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:nodejs-event-loop-inside-out-video ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-nodejs-introduction-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:nodejs-introduction ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-npm-about-npm-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:npm-about-npm ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-npm-about-packages-and-modules-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:npm-about-packages-and-modules ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-nodejs-path-docs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:nodejs-path-docs ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-rauschmayer-javascript-impatient-programmers-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:rauschmayer-javascript-impatient-programmers ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-exploringjs-shell-scripting-nodejs-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:exploringjs-shell-scripting-nodejs ;
+  dibs:tag "pending-revision" .
+
+usage:scripting-node-rauschmayer-getting-started-with-nodejs-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:rauschmayer-getting-started-with-nodejs ;
+  dibs:tag "recommended" .
+
+usage:scripting-node-sun-reasoning-about-nodejs-event-loop-2019-pending
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:reference ref:sun-reasoning-about-nodejs-event-loop-2019 ;
+  dibs:tag "pending-revision" .

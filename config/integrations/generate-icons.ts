@@ -7,41 +7,65 @@ const ICONS_DIR = path.resolve(
     fileURLToPath(new URL("../../src/assets/img/icons", import.meta.url)),
 );
 
-function isIconGenerationDisabled(): boolean {
+const LOGOS_DIR = path.resolve(
+    fileURLToPath(new URL("../../src/assets/img/logos", import.meta.url)),
+);
+
+const ASSET_DIRS = { icons: ICONS_DIR, logos: LOGOS_DIR } as const;
+
+function isIndexGenerationDisabled(): boolean {
     const skipByFlag = process.env.SKIP_ICON_GENERATION === "true";
     const skipByCi = process.env.CI === "true";
     return skipByFlag || skipByCi;
 }
 
+function getAssetType(filePath: string): keyof typeof ASSET_DIRS | null {
+    if (filePath.startsWith(ICONS_DIR)) return "icons";
+    if (filePath.startsWith(LOGOS_DIR)) return "logos";
+    return null;
+}
+
 function createWatcherPlugin(logger: AstroIntegrationLogger) {
     return {
-        name: "generate-icons-hmr",
+        name: "generate-assets-index-hmr",
         handleHotUpdate(ctx: { file: string }) {
-            if (ctx.file.startsWith(ICONS_DIR) && ctx.file.endsWith(".svg")) {
-                const { changed } = generateIconsIndex();
-                logger.info(
-                    changed
-                        ? "Regenerated icon exports after SVG change."
-                        : "Icon exports already up to date after SVG change.",
-                );
-            }
+            if (!ctx.file.endsWith(".svg")) return;
+
+            const assetType = getAssetType(ctx.file);
+            if (!assetType) return;
+
+            const { changed } = generateIconsIndex({ assetType, quiet: false });
+            logger.info(
+                changed
+                    ? `Regenerated ${assetType} index after SVG change.`
+                    : `${
+                        assetType.charAt(0).toUpperCase() + assetType.slice(1)
+                    } index already up to date after SVG change.`,
+            );
         },
     };
 }
 
 export function generateIconsIntegration(): AstroIntegration {
     return {
-        name: "generate-icons-integration",
+        name: "generate-assets-integration",
         hooks: {
             "astro:config:setup"({ logger, updateConfig }) {
-                if (isIconGenerationDisabled()) {
-                    logger.info("Icon generation skipped by env flag (SKIP_ICON_GENERATION/CI).");
+                if (isIndexGenerationDisabled()) {
+                    logger.info(
+                        "Asset index generation skipped by env flag (SKIP_ICON_GENERATION/CI).",
+                    );
                     return;
                 }
 
-                const { changed } = generateIconsIndex();
+                const iconResult = generateIconsIndex({ assetType: "icons", quiet: false });
+                const logoResult = generateIconsIndex({ assetType: "logos", quiet: false });
+
+                const changed = iconResult.changed || logoResult.changed;
                 logger.info(
-                    changed ? "Generated icon exports." : "Icon exports already up to date.",
+                    changed
+                        ? "Generated asset indices."
+                        : "Asset indices already up to date.",
                 );
 
                 updateConfig({
@@ -51,18 +75,21 @@ export function generateIconsIntegration(): AstroIntegration {
                 });
             },
             "astro:build:start"({ logger }) {
-                if (isIconGenerationDisabled()) {
+                if (isIndexGenerationDisabled()) {
                     logger.info(
-                        "Icon generation skipped before build by env flag (SKIP_ICON_GENERATION/CI).",
+                        "Asset index generation skipped before build by env flag (SKIP_ICON_GENERATION/CI).",
                     );
                     return;
                 }
 
-                const { changed } = generateIconsIndex({ quiet: true });
+                const iconResult = generateIconsIndex({ assetType: "icons", quiet: true });
+                const logoResult = generateIconsIndex({ assetType: "logos", quiet: true });
+
+                const changed = iconResult.changed || logoResult.changed;
                 logger.info(
                     changed
-                        ? "Generated icon exports before build."
-                        : "Icon exports already up to date before build.",
+                        ? "Generated asset indices before build."
+                        : "Asset indices already up to date before build.",
                 );
             },
         },

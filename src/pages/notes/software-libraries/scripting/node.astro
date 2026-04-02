@@ -1,0 +1,481 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFoot,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "~/components/starwind/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
+import { Definition, Explanation, Info } from "~/components/ui/callouts";
+import {
+    JavaScriptBlock,
+    JavaScriptInline,
+    PowerShellBlock,
+    PowerShellInline,
+} from "~/components/ui/code";
+import { B, I } from "~/components/ui/font";
+import Mono from "~/components/ui/font/Mono.astro";
+import { List, ListItem } from "~/components/ui/list";
+import Cons from "~/components/ui/procons/Cons.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Introducción a scripting con Node.js"
+    description="Comparación práctica entre PowerShell y Node.js para scripting: instalación, workspace base y criterios para elegir Node cuando conviene trabajar como programa pequeño dentro del ecosistema JavaScript."
+    previous={{ title: "Introducción a PowerShell", href: "/notes/software-libraries/scripting/" }}
+>
+    <Fragment slot="abstract">
+        <P>
+            Si ya entendiste cómo abordamos el <I>scripting</I> con PowerShell, esta lección muestra
+            qué cambia cuando usamos <B>Node.js</B> para resolver problemas parecidos. El foco no
+            está en desarrollo web, sino en ver cómo JavaScript, ejecutado fuera del navegador,
+            permite escribir scripts que se parecen más a <B>programas pequeños</B> que a sesiones
+            de shell.
+        </P>
+
+        <P>
+            Veremos cómo instalar Node.js, preparar una estructura base de trabajo y contrastar su
+            enfoque con PowerShell. La pregunta central no es si uno reemplaza al otro, sino
+            <B>qué aporta Node.js al scripting</B> cuando conviene trabajar con módulos,
+            <Mono>npm</Mono>, archivos de configuración, <I>JSON</I> y tooling del ecosistema
+            JavaScript.
+        </P>
+    </Fragment>
+
+    <NotesSection id="node-intro">
+        <Heading headingLevel="h2" Icon={icons.Lightning}>
+            JavaScript y Node.js: ¿Qué son y cómo instalarlos?
+        </Heading>
+
+        <Definition headingLevel="h3">
+            <span slot="title">¿Qué es JavaScript?</span>
+
+            <P>
+                <B>JavaScript</B> es un lenguaje de programación de propósito general. Se hizo
+                conocido por su uso en el navegador, donde permite añadir interacción y
+                comportamiento dinámico a las páginas web, pero hoy también puede utilizarse en
+                otros contextos. En esta lección nos interesa porque muchas herramientas modernas
+                del ecosistema de desarrollo ya trabajan con JavaScript, <I>JSON</I> y paquetes
+                distribuidos con <Mono>npm</Mono>.
+            </P>
+        </Definition>
+
+        <Info headingLevel="h3">
+            <span slot="title">Características clave</span>
+            <List>
+                <ListItem icon={icons.Globe}>
+                    <B>Lenguaje ampliamente usado</B>: está presente en múltiples herramientas y
+                    ecosistemas, especialmente en desarrollo web.
+                </ListItem>
+                <ListItem icon={icons.TreeStructure}>
+                    <B>Multiparadigma</B>: permite combinar funciones, objetos, módulos y distintos
+                    estilos de programación.
+                </ListItem>
+                <ListItem icon={icons.Wrench}>
+                    <B>Útil para scripting</B>: puede emplearse para automatizar tareas, procesar
+                    datos y construir utilidades pequeñas.
+                </ListItem>
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    <B>Portable</B>: el mismo lenguaje puede usarse en distintos sistemas cuando
+                    existe un entorno de ejecución adecuado.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Definition headingLevel="h3">
+            <span slot="title">¿Qué es Node.js?</span>
+
+            <P>
+                <B>Node.js</B> es un <I>runtime</I> que permite ejecutar <B>JavaScript</B> fuera del
+                navegador. Gracias a eso, un lenguaje que muchas personas conocen por su uso en
+                páginas web también puede utilizarse para crear programas de línea de comandos,
+                automatizar flujos de trabajo y trabajar con recursos del sistema.
+            </P>
+
+            <P>
+                En la práctica, Node.js aporta las capacidades necesarias para que un script pueda
+                leer y escribir archivos, trabajar con variables de entorno, ejecutar procesos,
+                acceder a la red y reutilizar paquetes del ecosistema. Por eso, cuando queremos usar
+                JavaScript en la terminal, lo que realmente instalamos es <B>Node.js</B>.
+            </P>
+        </Definition>
+
+        <Info>
+            <span slot="title">Características clave</span>
+            <List>
+                <ListItem icon={icons.Terminal}>
+                    <B>Entorno de ejecución</B>: permite correr programas JavaScript desde la
+                    terminal, sin depender del navegador.
+                </ListItem>
+                <ListItem icon={icons.HardDrive}>
+                    <B>Acceso al sistema</B>: ofrece APIs para trabajar con archivos, procesos,
+                    rutas, variables de entorno y red.
+                </ListItem>
+                <ListItem icon={icons.Package}>
+                    <B>Ecosistema amplio</B>: incluye <Mono>npm</Mono>, que facilita instalar
+                    dependencias y reutilizar herramientas ya existentes.
+                </ListItem>
+                <ListItem icon={icons.FlowArrow}>
+                    <B>Enfoque distinto de PowerShell</B>: no se organiza alrededor de <I
+                    >cmdlets</I> ni de un <I>pipeline</I> de objetos, sino del uso de APIs, módulos
+                    y paquetes.
+                </ListItem>
+            </List>
+        </Info>
+
+        <P>
+            La diferencia principal entre ambos conceptos es simple: <B>JavaScript es el
+                lenguaje</B>, mientras que <B>Node.js es el entorno que permite ejecutarlo fuera del
+                navegador</B>. Por eso, en esta sección no instalaremos <Enquote
+            >JavaScript</Enquote> directamente, sino <B>Node.js</B>, que es lo que nos permitirá
+            escribir y ejecutar scripts desde la terminal.
+        </P>
+
+        <P>
+            Dicho de otra forma: si PowerShell parte desde la idea de <I>shell</I> con comandos
+            especializados, Node.js parte desde la idea de <B>programa pequeño</B> que reutiliza
+            módulos y APIs. Esa diferencia de enfoque es la que conviene tener presente durante toda
+            la comparación.
+        </P>
+
+        <P>
+            En el curso usaremos gestores de paquetes para instalar Node.js. A continuación se
+            muestran los comandos recomendados según el sistema operativo.
+        </P>
+
+        <Tabs defaultValue="windows">
+            <TabsList>
+                <TabsTrigger value="windows">Windows</TabsTrigger>
+                <TabsTrigger value="macos">macOS</TabsTrigger>
+                <TabsTrigger value="linux">Linux (Nix)</TabsTrigger>
+            </TabsList>
+            <TabsContent value="windows">
+                <PowerShellBlock code={`scoop install nodejs`}>
+                    <span slot="title">Desde la terminal</span>
+                </PowerShellBlock>
+            </TabsContent>
+            <TabsContent value="macos">
+                <PowerShellBlock code={`brew install node`}>
+                    <span slot="title">Desde la terminal</span>
+                </PowerShellBlock>
+            </TabsContent>
+            <TabsContent value="linux">
+                <PowerShellBlock code={`nix profile add nixpkgs#nodejs`}>
+                    <span slot="title">Desde la terminal</span>
+                </PowerShellBlock>
+            </TabsContent>
+        </Tabs>
+
+        <P>
+            Estas instalaciones también dejan disponible <Mono>npm</Mono>, el gestor de paquetes de
+            Node.js. Para verificar que ambos comandos quedaron correctamente configurados, ejecuta:
+        </P>
+
+        <PowerShellBlock
+            code={`
+                node --version
+                npm --version
+            `}
+        >
+            <span slot="title">Verificar la instalación</span>
+        </PowerShellBlock>
+
+        <P>
+            Si ambos comandos muestran un número de versión, la instalación quedó lista. Si alguno
+            no se reconoce, cierra y vuelve a abrir la terminal antes de intentarlo otra vez.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-base-workspace-structure">
+        <Heading
+            headingLevel="h2" Icon={icons.Compass}
+            slot="heading"
+        >
+            Estructura base del workspace
+        </Heading>
+
+        <P>
+            Antes de escribir scripts más interesantes, conviene preparar una estructura mínima de
+            trabajo. En este caso, comenzaremos creando el directorio <Mono
+            >dibs/scripts-node</Mono>, que servirá como punto de partida para guardar los scripts
+            del proyecto.
+        </P>
+
+        <P>
+            La idea no es solo crear una carpeta, sino también mostrar cómo <B>Node.js</B> puede
+            encargarse de tareas simples de automatización sin depender de comandos propios de un
+            shell particular. Así, el mismo script puede reutilizarse en distintos entornos con un
+            comportamiento predecible.
+        </P>
+
+        <P>
+            En esta lección mantendremos la sintaxis moderna de <I>ESM</I>, usando
+            <JavaScriptInline code="import" />. Para que el ejemplo sea ejecutable sin introducir
+            todavía un <Mono>package.json</Mono>, guardaremos el archivo con extensión
+            <Mono>.mjs</Mono>, que Node.js reconoce directamente como módulo.
+        </P>
+
+        <JavaScriptBlock
+            code={`
+                import { mkdirSync } from "node:fs";
+                import { join } from "node:path";
+
+                const scriptsPath = join("dibs", "scripts-node");
+
+                mkdirSync(scriptsPath, { recursive: true });
+            `}
+        >
+            <span slot="title">Crear el directorio base del workspace</span>
+            <span slot="footer">
+                Crea <Mono>dibs/scripts-node</Mono> si no existe, incluyendo carpetas intermedias.
+            </span>
+            <span slot="source">create-workspace.mjs</span>
+        </JavaScriptBlock>
+
+        <P>
+            Este script construye la ruta del directorio y luego la crea en disco. Si alguna carpeta
+            intermedia todavía no existe, también se genera automáticamente.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Uso</span>
+
+            <P>
+                Guarda el archivo en la raíz del repositorio como <Mono>create-workspace.mjs</Mono>
+                y ejecútalo con <Mono>node</Mono>:
+            </P>
+
+            <PowerShellBlock code={`
+                node ./create-workspace.mjs
+            `}>
+                <span slot="title">Ejecutar el script</span>
+                <span slot="footer">Desde <Mono>scripts-node</Mono></span>
+            </PowerShellBlock>
+
+            <P>
+                Después de ejecutarlo, debería existir el directorio <Mono>dibs/scripts-node</Mono>
+                dentro del workspace.
+            </P>
+        </Info>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.Code}>
+                    <B>La declaración <JavaScriptInline code="const" /></B> crea una variable cuyo
+                    valor no se reasignará más adelante. Aquí se usa para guardar en
+                    <JavaScriptInline code="scriptsPath" /> la ruta que después se creará en disco.
+                </ListItem>
+                <ListItem icon={icons.HardDrive}>
+                    <B>El módulo <JavaScriptInline code="node:fs" /></B> permite trabajar con el
+                    sistema de archivos. Aquí se importa <JavaScriptInline code="mkdirSync" /> con
+                    <JavaScriptInline code='import { mkdirSync } from "node:fs"' />, manteniendo la
+                    sintaxis ESM que hoy domina buena parte del ecosistema JavaScript.
+                </ListItem>
+                <ListItem icon={icons.ArrowsLeftRight}>
+                    <B>La función <JavaScriptInline code='join("dibs", "scripts-node")' /></B>
+                    construye una ruta portable a partir de fragmentos. Así Node.js usa
+                    automáticamente el separador correcto según el sistema operativo.
+                </ListItem>
+                <ListItem icon={icons.FileCode}>
+                    <B>La extensión <Mono>.mjs</Mono></B> le indica a Node.js que este archivo debe
+                    tratarse como módulo ESM. Eso permite usar <JavaScriptInline code="import" />
+                    sin tener que configurar todavía un <Mono>package.json</Mono>.
+                </ListItem>
+                <ListItem icon={icons.Folders}>
+                    <B>La llamada <JavaScriptInline
+                            code="mkdirSync(scriptsPath, { recursive: true })"
+                        /></B>
+                    crea el directorio objetivo y también las carpetas intermedias necesarias si
+                    todavía no existen. Eso vuelve el script más cómodo de reutilizar durante la
+                    preparación del workspace.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="node-vs-powershell">
+        <Heading headingLevel="h2" Icon={icons.ArrowsClockwise}>
+            Node.js vs PowerShell: cuándo usar cada uno
+        </Heading>
+
+        <P>
+            PowerShell y Node.js resuelven automatización, pero lo hacen desde lugares distintos.
+            <B>PowerShell</B> destaca cuando el trabajo está muy cerca del sistema operativo y sus
+            herramientas de administración. <B>Node.js</B> destaca cuando el script necesita vivir
+            como programa pequeño, integrarse con el ecosistema JavaScript o manipular archivos de
+            proyecto, configuraciones y formatos comunes en tooling moderno.
+        </P>
+
+        <Table>
+            <TableCaption>Comparativa rápida entre Node.js y PowerShell</TableCaption>
+            <TableHeader>
+                <TableRow>
+                    <TableHead wrap="normal">Aspecto</TableHead>
+                    <TableHead wrap="normal">Node.js</TableHead>
+                    <TableHead wrap="normal">PowerShell</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell wrap="normal">Modelo principal</TableCell>
+                    <TableCell wrap="normal"
+                    >Programa JavaScript ejecutado por un runtime; ideal para scripts con módulos y
+                        lógica reutilizable.</TableCell>
+                    <TableCell wrap="normal"
+                    >Shell con cmdlets y pipeline de objetos; ideal para automatización orientada al
+                        sistema.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Forma de trabajar con datos</TableCell>
+                    <TableCell wrap="normal"
+                    >Transforma <Mono>JSON</Mono>, texto y archivos de proyecto con módulos y
+                        funciones; encaja muy bien en tooling, CLIs y utilidades
+                        pequeñas.</TableCell>
+                    <TableCell wrap="normal"
+                    >Encadena cmdlets que emiten y consumen objetos; resulta muy fuerte para
+                        administración del sistema y automatización operativa.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Ecosistema</TableCell>
+                    <TableCell wrap="normal"
+                    >Amplio ecosistema de paquetes con <Mono>npm</Mono>; muy útil para CLIs, build,
+                        validación y automatización de proyectos web.</TableCell>
+                    <TableCell wrap="normal"
+                    >Ecosistema maduro de módulos y herramientas administrativas; fuerte presencia
+                        en automatización de infraestructura.</TableCell>
+                </TableRow>
+                <TableRow>
+                    <TableCell wrap="normal">Modo de trabajo</TableCell>
+                    <TableCell wrap="normal"
+                    >Natural para quienes ya programan en JavaScript; se estructura como programa
+                        pequeño con validaciones y lógica clara.</TableCell>
+                    <TableCell wrap="normal"
+                    >Muy expresivo para tareas del sistema; gira alrededor de cmdlets, pipeline de
+                        objetos y convenciones como <Enquote>Verb-Noun</Enquote>.</TableCell>
+                </TableRow>
+            </TableBody>
+            <TableFoot>
+                <TableRow>
+                    <TableCell wrap="normal">Resumen</TableCell>
+                    <TableCell wrap="normal"
+                    >Ideal para utilidades de desarrollo, procesamiento de archivos y scripts
+                        ligados al ecosistema JavaScript.</TableCell>
+                    <TableCell wrap="normal"
+                    >Ideal para administración del sistema, automatización operativa y tareas que
+                        aprovechan objetos y herramientas del entorno.</TableCell>
+                </TableRow>
+            </TableFoot>
+        </Table>
+
+        <ProCons>
+            <Pros title="Cuándo considerar Node.js">
+                <List>
+                    <ListItem icon={icons.BracketsCurly}>
+                        Automatización ligada a <Mono>JSON</Mono>, archivos de configuración,
+                        utilidades de build, CLIs y herramientas del ecosistema JavaScript.
+                    </ListItem>
+                    <ListItem icon={icons.Package}>
+                        Reutilización de paquetes, módulos y lógica JavaScript dentro del mismo
+                        proyecto, sin cambiar de lenguaje.
+                    </ListItem>
+                    <ListItem icon={icons.Code}>
+                        Scripts que se parecen más a una herramienta pequeña que a una sesión de
+                        shell: validaciones, transformaciones y orquestación de procesos.
+                    </ListItem>
+                </List>
+            </Pros>
+            <Cons>
+                <List>
+                    <ListItem icon={icons.WarningCircle}>
+                        Para muchas tareas del sistema, PowerShell ya ofrece comandos específicos,
+                        mientras que Node.js suele depender de procesos externos o librerías.
+                    </ListItem>
+                    <ListItem icon={icons.Terminal}>
+                        No cuenta con un pipeline de objetos equivalente al de PowerShell, así que
+                        ciertos flujos administrativos resultan menos directos.
+                    </ListItem>
+                    <ListItem icon={icons.HardDrive}>
+                        Si el trabajo depende mucho de administración en Windows, módulos de
+                        infraestructura o integración profunda con .NET, Node.js suele ser una capa
+                        adicional en lugar de la opción principal.
+                    </ListItem>
+                </List>
+            </Cons>
+        </ProCons>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                En esta lección vimos que <B>Node.js</B> permite llevar JavaScript al terreno del
+                scripting y la automatización desde la terminal. Más que un reemplazo de PowerShell,
+                funciona como otro modelo para resolver problemas: en lugar de apoyarse en <I
+                >cmdlets</I> y <I>pipeline</I> de objetos, organiza el trabajo como programas
+                pequeños que combinan módulos, APIs del sistema y paquetes del ecosistema.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Lightning}>
+                <B>JavaScript</B> es el lenguaje, mientras que <B>Node.js</B> es el entorno que lo
+                ejecuta fuera del navegador para construir scripts y herramientas de terminal.
+            </ListItem>
+
+            <ListItem icon={icons.Folders}>
+                Node.js ofrece APIs para trabajar con archivos, rutas, procesos y variables de
+                entorno, lo que permite automatizar tareas sin depender de un shell específico.
+            </ListItem>
+
+            <ListItem icon={icons.Package}>
+                El ecosistema de <Mono>npm</Mono> vuelve a Node.js especialmente conveniente para
+                CLIs, tooling de proyecto y utilidades que reutilizan paquetes existentes.
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsClockwise}>
+                Frente a PowerShell, Node.js destaca cuando conviene pensar el script como un
+                programa pequeño y portable más que como una secuencia de comandos administrativos.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                La comparación con PowerShell deja una idea central: no existe una única herramienta
+                correcta para automatizar. Cuando el trabajo gira en torno a archivos de proyecto,
+                configuraciones, <I>JSON</I> y tooling del ecosistema JavaScript, Node.js ofrece una
+                base natural para escribir scripts claros, portables y fáciles de extender. En la
+                práctica, ambas herramientas pueden convivir y complementarse según la tarea.
+            </P>
+
+            <P>
+                En el recorrido principal del curso seguiremos profundizando scripting con
+                PowerShell. Esta lección funciona como punto de contraste: ayuda a reconocer cuándo
+                conviene quedarse en un shell orientado al sistema y cuándo vale más la pena pensar
+                el script como una herramienta pequeña dentro de un proyecto JavaScript.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <ReferencesFromCatalog>
+        <Fragment slot="description-ref:rauschmayer-getting-started-with-nodejs">
+            Este capítulo sirve para pasar rápido de la idea general de <B>Node.js</B> a su uso en
+            terminal. Recorre lo esencial: ayuda, verificación, <I>REPL</I>, <PowerShellInline
+                code="node -p"
+            /> y ejecución de módulos <Mono>.mjs</Mono> con <JavaScriptInline code="import" />.
+            También ayuda a reforzar la idea de Node.js como entorno para scripts que ya se parecen
+            a programas pequeños.
+        </Fragment>
+    </ReferencesFromCatalog>
+</NotesLayout>

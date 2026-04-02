@@ -1,0 +1,27 @@
+---
+/**
+ * JavaScriptBlock.astro
+ * ---------------------
+ * Specialized code block for JavaScript snippets used in comparative lessons and
+ * small CLI examples.
+ */
+import * as Icons from "~/assets/img/icons";
+import { CodeBlock } from "~/components/ui/code";
+
+const { code, class: className = "" } = Astro.props;
+---
+
+<CodeBlock
+    lang="javascript" icon={Icons.FileJs}
+    {code} class={className}
+>
+    <Fragment slot="title">
+        <slot name="title" />
+    </Fragment>
+    <Fragment slot="source">
+        <slot name="source" />
+    </Fragment>
+    <Fragment slot="footer">
+        <slot name="footer" />
+    </Fragment>
+</CodeBlock>

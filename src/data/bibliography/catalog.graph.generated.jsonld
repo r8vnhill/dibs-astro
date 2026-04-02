@@ -19,6 +19,13 @@
       "familyName": "Tebbenhof"
     },
     {
+      "@id": "person:axel-rauschmayer",
+      "@type": "Person",
+      "givenName": "Axel",
+      "familyName": "Rauschmayer",
+      "url": "https://dr-axel.de"
+    },
+    {
       "@id": "person:ben-firshman",
       "@type": "Person",
       "givenName": "Ben",
@@ -62,6 +69,18 @@
       "familyName": "Sun"
     },
     {
+      "@id": "person:daniele-bonetta",
+      "@type": "Person",
+      "givenName": "Daniele",
+      "familyName": "Bonetta"
+    },
+    {
+      "@id": "person:david-flanagan",
+      "@type": "Person",
+      "givenName": "David",
+      "familyName": "Flanagan"
+    },
+    {
       "@id": "person:david-m-beazley",
       "@type": "Person",
       "givenName": "David M.",
@@ -73,6 +92,18 @@
       "@type": "Person",
       "givenName": "Eva",
       "familyName": "Parish"
+    },
+    {
+      "@id": "person:filippo-schiavio",
+      "@type": "Person",
+      "givenName": "Filippo",
+      "familyName": "Schiavio"
+    },
+    {
+      "@id": "person:haiyang-sun",
+      "@type": "Person",
+      "givenName": "Haiyang",
+      "familyName": "Sun"
     },
     {
       "@id": "person:jeffrey-p-snover",
@@ -129,10 +160,22 @@
       "familyName": "Kang"
     },
     {
+      "@id": "person:luciano-mammino",
+      "@type": "Person",
+      "givenName": "Luciano",
+      "familyName": "Mammino"
+    },
+    {
       "@id": "person:luciano-ramalho",
       "@type": "Person",
       "givenName": "Luciano",
       "familyName": "Ramalho"
+    },
+    {
+      "@id": "person:mario-casciaro",
+      "@type": "Person",
+      "givenName": "Mario",
+      "familyName": "Casciaro"
     },
     {
       "@id": "person:mark-volkmann",
@@ -232,6 +275,12 @@
       "familyName": "Frakes"
     },
     {
+      "@id": "person:walter-binder",
+      "@type": "Person",
+      "givenName": "Walter",
+      "familyName": "Binder"
+    },
+    {
       "@id": "person:ying-tian",
       "@type": "Person",
       "givenName": "Ying",
@@ -290,6 +339,12 @@
       "@type": "Organization",
       "name": "Dispatch",
       "url": "https://www.youtube.com/"
+    },
+    {
+      "@id": "org:exploringjs",
+      "@type": "Organization",
+      "name": "Exploring JS",
+      "url": "https://exploringjs.com/"
     },
     {
       "@id": "org:gradle-docs",
@@ -352,6 +407,12 @@
       "url": "https://maven.apache.org/"
     },
     {
+      "@id": "org:mdn-web-docs",
+      "@type": "Organization",
+      "name": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/"
+    },
+    {
       "@id": "org:microsoft-learn",
       "@type": "Organization",
       "name": "Microsoft Learn",
@@ -361,6 +422,18 @@
       "@id": "org:morgan-kaufmann",
       "@type": "Organization",
       "name": "Morgan Kaufmann"
+    },
+    {
+      "@id": "org:nodejs",
+      "@type": "Organization",
+      "name": "Node.js",
+      "url": "https://nodejs.org/"
+    },
+    {
+      "@id": "org:nodejs-design-patterns",
+      "@type": "Organization",
+      "name": "Node.js Design Patterns",
+      "url": "https://nodejsdesignpatterns.com/"
     },
     {
       "@id": "org:npm-docs",
@@ -481,6 +554,14 @@
       }
     },
     {
+      "@id": "work:cgo-2019",
+      "@type": "CreativeWork",
+      "name": "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)",
+      "publisher": {
+        "@id": "org:ieee"
+      }
+    },
+    {
       "@id": "work:communications-of-the-acm",
       "@type": "CreativeWork",
       "name": "Commun. ACM",
@@ -523,12 +604,45 @@
       }
     },
     {
+      "@id": "work:javascript-definitive-guide-7e",
+      "@type": "CreativeWork",
+      "name": "JavaScript: the definitive guide: master the world's most-used programming language",
+      "author": [
+        {
+          "@id": "person:david-flanagan"
+        }
+      ]
+    },
+    {
+      "@id": "work:javascript-for-impatient-programmers",
+      "@type": "CreativeWork",
+      "name": "JavaScript for impatient programmers",
+      "author": [
+        {
+          "@id": "person:axel-rauschmayer"
+        }
+      ]
+    },
+    {
       "@id": "work:learn-powershell-month-lunches-4e",
       "@type": "CreativeWork",
       "name": "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS",
       "author": [
         {
           "@id": "person:travis-plunk"
+        }
+      ]
+    },
+    {
+      "@id": "work:nodejs-design-patterns-4e",
+      "@type": "CreativeWork",
+      "name": "Node.js Design Patterns - Fourth Edition",
+      "author": [
+        {
+          "@id": "person:luciano-mammino"
+        },
+        {
+          "@id": "person:mario-casciaro"
         }
       ]
     },
@@ -648,6 +762,19 @@
       }
     },
     {
+      "@id": "ref:casciaro-nodejs-design-patterns-4e",
+      "@type": "Book",
+      "name": "Node.js Design Patterns - Fourth Edition",
+      "url": "https://nodejsdesignpatterns.com/",
+      "datePublished": "2024",
+      "publisher": {
+        "@id": "org:oreilly"
+      },
+      "isPartOf": {
+        "@id": "work:nodejs-design-patterns-4e"
+      }
+    },
+    {
       "@id": "ref:cattrs-documentation",
       "@type": "WebPage",
       "name": "cattrs 26.1.0 documentation",
@@ -759,6 +886,27 @@
       ],
       "isPartOf": {
         "@id": "work:windows-powershell-in-action-3e"
+      }
+    },
+    {
+      "@id": "ref:exploringjs-shell-scripting-nodejs",
+      "@type": "WebPage",
+      "name": "Shell scripting with Node.js",
+      "url": "https://exploringjs.com/nodejs-shell-scripting/",
+      "publisher": {
+        "@id": "org:exploringjs"
+      }
+    },
+    {
+      "@id": "ref:flanagan-javascript-definitive-guide-7e",
+      "@type": "Book",
+      "name": "JavaScript: the definitive guide: master the world's most-used programming language",
+      "datePublished": "2020",
+      "publisher": {
+        "@id": "org:oreilly"
+      },
+      "isPartOf": {
+        "@id": "work:javascript-definitive-guide-7e"
       }
     },
     {
@@ -1086,6 +1234,26 @@
       }
     },
     {
+      "@id": "ref:mdn-javascript-guide",
+      "@type": "WebPage",
+      "name": "JavaScript Guide - JavaScript | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+      "datePublished": "2025-11-07",
+      "publisher": {
+        "@id": "org:mdn-web-docs"
+      }
+    },
+    {
+      "@id": "ref:mdn-javascript-modules",
+      "@type": "WebPage",
+      "name": "JavaScript modules - JavaScript | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules",
+      "datePublished": "2025-11-03",
+      "publisher": {
+        "@id": "org:mdn-web-docs"
+      }
+    },
+    {
       "@id": "ref:microsoft-about-functions-advanced",
       "@type": "WebPage",
       "name": "about_Functions_Advanced - PowerShell",
@@ -1186,10 +1354,79 @@
       }
     },
     {
+      "@id": "ref:nodejs-ecmascript-modules-docs",
+      "@type": "WebPage",
+      "name": "Modules: ECMAScript modules | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/esm.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-event-loop-inside-out-video",
+      "@type": "VideoObject",
+      "name": "Node's Event Loop From the Inside Out by Sam Roberts, IBM",
+      "url": "https://www.youtube.com/watch?v=P9csgxBgaZ8",
+      "datePublished": "2016-12-15",
+      "author": [
+        {
+          "@id": "org:nodejs"
+        }
+      ],
+      "publisher": {
+        "@id": "org:youtube"
+      }
+    },
+    {
+      "@id": "ref:nodejs-file-system-docs",
+      "@type": "WebPage",
+      "name": "File system | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/fs.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-introduction",
+      "@type": "WebPage",
+      "name": "Node.js — Introduction to Node.js",
+      "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-path-docs",
+      "@type": "WebPage",
+      "name": "Path | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/path.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:npm-about-npm",
+      "@type": "WebPage",
+      "name": "About npm | npm Docs",
+      "url": "https://docs.npmjs.com/about-npm",
+      "publisher": {
+        "@id": "org:npm-docs"
+      }
+    },
+    {
       "@id": "ref:npm-about-packages-and-modules",
       "@type": "WebPage",
       "name": "About packages and modules | npm Docs",
       "url": "https://docs.npmjs.com/about-packages-and-modules",
+      "publisher": {
+        "@id": "org:npm-docs"
+      }
+    },
+    {
+      "@id": "ref:npm-downloading-installing-nodejs-and-npm",
+      "@type": "WebPage",
+      "name": "Downloading and installing Node.js and npm | npm Docs",
+      "url": "https://docs.npmjs.com/downloading-and-installing-node-js-and-npm",
       "publisher": {
         "@id": "org:npm-docs"
       }
@@ -1524,6 +1761,29 @@
       }
     },
     {
+      "@id": "ref:rauschmayer-getting-started-with-nodejs",
+      "@type": "WebPage",
+      "name": "Getting started with Node.js",
+      "url": "https://exploringjs.com/nodejs-shell-scripting/ch_getting-started-with-nodejs.html",
+      "author": [
+        {
+          "@id": "person:axel-rauschmayer"
+        }
+      ],
+      "publisher": {
+        "@id": "org:exploringjs"
+      }
+    },
+    {
+      "@id": "ref:rauschmayer-javascript-impatient-programmers",
+      "@type": "Book",
+      "name": "JavaScript for impatient programmers",
+      "datePublished": "2019",
+      "isPartOf": {
+        "@id": "work:javascript-for-impatient-programmers"
+      }
+    },
+    {
       "@id": "ref:reddy-api-design-for-cpp-2024",
       "@type": "Book",
       "name": "API design for C++",
@@ -1600,6 +1860,35 @@
       }
     },
     {
+      "@id": "ref:sun-reasoning-about-nodejs-event-loop-2019",
+      "@type": "ScholarlyArticle",
+      "name": "Reasoning about the Node.js Event Loop using Async Graphs",
+      "url": "https://ieeexplore.ieee.org/document/8661173/",
+      "datePublished": "2019",
+      "pageStart": 61,
+      "pageEnd": 72,
+      "author": [
+        {
+          "@id": "person:haiyang-sun"
+        },
+        {
+          "@id": "person:daniele-bonetta"
+        },
+        {
+          "@id": "person:filippo-schiavio"
+        },
+        {
+          "@id": "person:walter-binder"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:cgo-2019"
+      }
+    },
+    {
       "@id": "ref:volkmann-nushell-overview",
       "@type": "WebPage",
       "name": "Nushell",
@@ -1656,6 +1945,12 @@
       "@type": "LearningResource",
       "name": "Comandos reutilizables y validación de parámetros en Python",
       "url": "/notes/software-libraries/scripting/first-script/py/"
+    },
+    {
+      "@id": "/notes/software-libraries/scripting/node/",
+      "@type": "LearningResource",
+      "name": "Introducción a scripting con Node.js",
+      "url": "/notes/software-libraries/scripting/node/"
     },
     {
       "@id": "/notes/software-libraries/scripting/pipelines/",
@@ -2348,6 +2643,214 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:casciaro-nodejs-design-patterns-4e"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-exploringjs-shell-scripting-nodejs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:exploringjs-shell-scripting-nodejs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-flanagan-javascript-definitive-guide-7e-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:flanagan-javascript-definitive-guide-7e"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-mdn-javascript-guide-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mdn-javascript-guide"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-mdn-javascript-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mdn-javascript-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-ecmascript-modules-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-ecmascript-modules-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-event-loop-inside-out-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-event-loop-inside-out-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-file-system-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-file-system-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-path-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-path-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-about-npm-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-npm"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-about-packages-and-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-packages-and-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-downloading-installing-nodejs-and-npm-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-downloading-installing-nodejs-and-npm"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-rauschmayer-getting-started-with-nodejs-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rauschmayer-getting-started-with-nodejs"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-rauschmayer-javascript-impatient-programmers-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rauschmayer-javascript-impatient-programmers"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-sun-reasoning-about-nodejs-event-loop-2019-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sun-reasoning-about-nodejs-event-loop-2019"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {

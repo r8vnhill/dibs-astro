@@ -104,7 +104,7 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
                     key={key}
                     role="treeitem"
                     aria-expanded={hasChildren ? isOpen : undefined}
-                    className={clsx("group", indentPadding(level), "relative")}
+                    className={clsx("tree-node", indentPadding(level), "relative")}
                 >
                     <div className="flex items-center gap-1.5">
                         {hasChildren
@@ -116,19 +116,13 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
                                     href={lesson.href}
                                     aria-current={isActive ? "page" : undefined}
                                     className={clsx(
-                                        "group flex-1 block mx-2 no-underline outline-none focus:outline-none shadow-none ring-0 border-0 border-l-0",
+                                        "flex-1 block mx-2 rounded-lg px-3 py-1.5 text-sm no-underline outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 shadow-none ring-0 border-0 border-l-0 transition-colors",
+                                        isActive
+                                            ? "bg-primary/15 text-primary font-semibold"
+                                            : "text-base-text hover:bg-base-border/10 hover:text-primary focus-visible:bg-base-border/10 focus-visible:text-primary",
                                     )}
                                 >
-                                    <span
-                                        className={clsx(
-                                            "block rounded-lg px-3 py-1.5 text-sm transition-colors",
-                                            isActive
-                                                ? "bg-primary/15 text-primary font-semibold"
-                                                : "text-base-text group-hover:bg-base-border/10 group-hover:text-primary",
-                                        )}
-                                    >
-                                        {lesson.title}
-                                    </span>
+                                    {lesson.title}
                                 </a>
                             )
                             : (

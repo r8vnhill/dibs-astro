@@ -20,9 +20,11 @@ import NotesSection from "./NotesSection.astro";
         </List>
     </NotesSection>
 
-    <NotesSection id="takeaways">
-        <Heading headingLevel="h3" Icon={Icons.Toolbox}>¿Qué nos llevamos?</Heading>
+    <NotesSection id="closing-reflection">
+        <Heading headingLevel="h3" Icon={Icons.ChatCircleText}>Reflexión de cierre</Heading>
 
-        <slot name="takeaways" />
+        {Astro.slots.has("closing-reflection")
+            ? <slot name="closing-reflection" />
+            : <slot name="takeaways" />}
     </NotesSection>
 </NotesSection>

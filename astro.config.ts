@@ -18,8 +18,9 @@ const isVitestRun = process.env.VITEST === "true";
  * Notes:
  * - Code highlighting is implemented by local Shiki helpers; Astro's Markdown highlighting is set
  *   to Prism to avoid the built-in Shiki instantiation during markdown processing.
- * - `./config/shiki-warn-tracker` is imported for an early runtime patch that suppresses redundant
- *   Shiki warnings and applies a small cache for the markdown-remark highlighter.
+ * - `./config/shiki-warn-tracker` suppresses redundant Shiki warnings and keeps Astro's internal
+ *   markdown-Shiki runtime patch enabled for builds. The runtime patch stays off by default in
+ *   local development to avoid `vite:invoke fetchModule` transport stalls during cold starts.
  */
 export default defineConfig({
     // Used to generate correct absolute URLs during build

@@ -20,10 +20,7 @@ import { List, ListItem } from "~/components/ui/list";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
-import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import { ReferencesFromCatalog } from "~/components/ui/references";
-
-const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
@@ -454,7 +451,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             <P>
                 Al diseñar scripts o bibliotecas pequeñas, no basta con preguntarse qué herramienta
                 “puede” resolver el problema. También conviene pensar qué modelo de dato deja más
@@ -472,7 +469,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         </Fragment>
     </ConclusionsLayout>
 
-    <ReferencesFromCatalog source={bibliographyCatalog}>
+    <ReferencesFromCatalog>
         <Fragment slot="description-ref:nushell-pipelines">
             Capítulo central del libro de Nushell sobre cómo se componen los <I>pipelines</I> más
             allá de la intuición básica de <Enquote>encadenar comandos</Enquote>. Recorre la idea
