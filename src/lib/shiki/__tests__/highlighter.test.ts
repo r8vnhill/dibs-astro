@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { __resetHighlighterCacheForTests, __setHighlighterInstanceForTests } from "../cache";
+import { __resetHighlighterCacheForTests, __setHighlighterForTests } from "../cache";
 import { highlightToHtml } from "../highlighter";
 
 const theme = "catppuccin-latte";
@@ -57,7 +57,7 @@ describe("highlightToHtml", () => {
             codeToHtml: vi.fn(),
         };
 
-        __setHighlighterInstanceForTests(mockHighlighter as never);
+        __setHighlighterForTests(mockHighlighter as never);
 
         const html = await highlightToHtml({
             code: "echo hi",
@@ -95,7 +95,7 @@ describe("highlightToHtml", () => {
             codeToHtml: vi.fn(() => "<pre class=\"shiki\"><code>echo hi</code></pre>"),
         };
 
-        __setHighlighterInstanceForTests(mockHighlighter as never);
+        __setHighlighterForTests(mockHighlighter as never);
 
         const html = await highlightToHtml({
             code: "echo hi",

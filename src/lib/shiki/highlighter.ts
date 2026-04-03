@@ -9,17 +9,15 @@
  *
  * Test helpers live in `cache.ts` so they remain clearly internal and aren't part of the main highlighting API.
  */
-import type { BundledTheme } from "shiki";
 import type { ShikiTransformer } from "shiki";
 import { runWithDevTransportRetry } from "~/utils";
 import { getHighlighter } from "./cache";
+import { SHIKI_DEFAULT_THEMES } from "./config";
 import { buildPlainHtml } from "./html";
 import { resolveLanguage } from "./language-aliases";
 
-export const supportedThemes = ["catppuccin-latte", "catppuccin-mocha"] as const;
-type SupportedTheme = (typeof supportedThemes)[number];
-
-type HighlightTheme = SupportedTheme | BundledTheme | string;
+export const supportedThemes = SHIKI_DEFAULT_THEMES;
+type HighlightTheme = (typeof SHIKI_DEFAULT_THEMES)[number] | string;
 
 interface HighlightOptions {
     code: string;
@@ -38,9 +36,8 @@ export async function highlightToHtml({
     fallbackPreClasses = [],
     fallbackCodeClasses = [],
 }: HighlightOptions) {
-    // Get (or create) the shared highlighter instance. We pass the supported themes list so the underlying creator
-    // knows which themes to preload.
-    const highlighter = await getHighlighter(supportedThemes as unknown as string[]);
+    // Get (or create) the shared highlighter instance preloaded with the project's default themes.
+    const highlighter = await getHighlighter();
 
     // `text` is a special Shiki language that does not require grammar loading, but still supports transformers.
     if (lang.toLowerCase() === "text") {
@@ -99,5 +96,5 @@ const missingLanguageWarnings = new Set<string>();
 const failedLanguageWarnings = new Set<string>();
 
 // Re-exports for compatibility with existing components and tests
-export { __resetHighlighterCacheForTests, __setHighlighterInstanceForTests } from "./cache";
+export { __resetHighlighterCacheForTests, __setHighlighterForTests } from "./cache";
 export { availableLanguages } from "./language-aliases";
