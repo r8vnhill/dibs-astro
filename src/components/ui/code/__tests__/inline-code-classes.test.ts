@@ -14,6 +14,7 @@ describe("buildInlineCodeClassList", () => {
             "leading-[1.4]",
             "text-[0.95em]",
             "font-mono",
+            "[font-weight:inherit]",
             "rounded",
             "px-[2px]",
             "py-[0px]",
@@ -31,6 +32,7 @@ describe("buildInlineCodeClassList", () => {
             "leading-[1.4]",
             "text-[0.95em]",
             "font-mono",
+            "[font-weight:inherit]",
             "rounded",
             "px-[2px]",
             "py-[0px]",
@@ -66,6 +68,7 @@ describe("buildInlineCodeClassList", () => {
             "leading-[1.4]",
             "text-[0.95em]",
             "font-mono",
+            "[font-weight:inherit]",
             "rounded",
             "px-[2px]",
             "py-[0px]",
@@ -95,6 +98,7 @@ describe("buildInlineCodeClassList", () => {
         expect(classList).toContain("whitespace-normal");
         expect(classList).toContain("break-words");
         expect(classList).toContain("[overflow-wrap:anywhere]");
+        expect(classList).toContain("[font-weight:inherit]");
         expect(classList).not.toContain("whitespace-nowrap");
 
         if (className?.trim()) {
@@ -113,6 +117,7 @@ describe("buildInlineCodeClassList", () => {
             expect(classList).toContain("whitespace-normal");
             expect(classList).toContain("break-words");
             expect(classList).toContain("[overflow-wrap:anywhere]");
+            expect(classList).toContain("[font-weight:inherit]");
             expect(classList).not.toContain("whitespace-nowrap");
 
             if (!normalizedClassName) {

@@ -5,10 +5,11 @@ import { Explanation, Info, More, Note, Tip, Warning } from "~/components/ui/cal
 import Question from "~/components/ui/callouts/Question.astro";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
-import { Link } from "~/components/ui/links";
+import { Link, NodeLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -399,6 +400,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             vayas encontrando en tu entorno.
         </Fragment>
     </ConclusionsLayout>
+
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NodeLink />
+    </LinksLayout>
 
     <References>
         <Fragment slot="recommended">

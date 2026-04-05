@@ -1,0 +1,6 @@
+---
+const { class: className = "", ...rest } = Astro.props as Record<string, any>;
+---
+<svg data-testid="test-icon" class={className} {...rest}>
+    <circle cx="8" cy="8" r="7" />
+</svg>

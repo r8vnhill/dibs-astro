@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-05T17:06:16.193Z",
-  "totalLessons": 44,
+  "generatedAt": "2026-04-05T23:21:00.453Z",
+  "totalLessons": 45,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -807,6 +807,15 @@
           "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
         }
       ]
+    },
+    "/notes/software-libraries/scripting/help/node/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/help/node.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/scripting/node/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/node.astro",

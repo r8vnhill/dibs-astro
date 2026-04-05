@@ -26,7 +26,7 @@
 
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { courseStructure } from "../../../data/course-structure";
 import { LessonTree } from "../LessonTree";
 
@@ -113,12 +113,26 @@ function getToggleButton(treeItem: HTMLElement): HTMLButtonElement {
     return button as HTMLButtonElement;
 }
 
-describe("LessonTree navigation behaviors", () => {
+/**
+ * LessonTree component behaviors contract.
+ *
+ * The suite protects two distinct user-facing behaviors:
+ *
+ * - **Route-driven expansion**: When navigating to a deep lesson, the tree automatically expands
+ *   all ancestor branches to reveal the currently active page.
+ * - **Persisted UI state**: When a `persistKey` is provided, expand/collapse toggles are stored in
+ *   `localStorage` and restored on component remount (simulating a page reload).
+ * - **Accessibility**: Active navigation targets are marked with `aria-current="page"` and styled
+ *   accordingly, even during client-side navigation.
+ * - **Styling scoping**: Hover effects on child links do not leak to parent tree items via
+ *   shared group selectors.
+ */
+describe("LessonTree", () => {
     /**
      * Storage key used by LessonTree to persist expand/collapse state.
      *
-     * Using a test-specific key prevents accidental interference with other suites and makes
-     * it explicit which storage entry the component should be reading/writing.
+     * Using a consistent test-specific key prevents interference with other suites and documents
+     * which storage entry the component reads and writes.
      */
     const persistKey = "test-lesson-tree";
 
@@ -154,93 +168,177 @@ describe("LessonTree navigation behaviors", () => {
         vi.restoreAllMocks();
     });
 
-    it("auto-opens parents when current path is a deep child", async () => {
-        // Navigate directly to a nested lesson.
-        setPath("/notes/software-libraries/scripting/should-process/");
+    describe("given the current page is a deep child in the lesson tree", () => {
+        describe("when the component is rendered", () => {
+            test("then all ancestor sections are expanded to show the active page", async () => {
+                setPath("/notes/software-libraries/scripting/should-process/");
 
-        // Render with persistence enabled (not required for this test, but matches real usage).
-        render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        // The active child should become visible once ancestors are expanded.
-        expect(
-            await screen.findByText("Ensayo seguro (-WhatIf/-Confirm)"),
-        ).toBeInTheDocument();
+                // The active child should be visible after ancestors expand.
+                expect(
+                    await screen.findByText("Ensayo seguro (-WhatIf/-Confirm)"),
+                ).toBeInTheDocument();
 
-        // A sibling should also be visible because the parent branch is expanded.
-        expect(screen.getByText("Primer script")).toBeInTheDocument();
+                // Sibling is visible because parent branch is expanded.
+                expect(screen.getByText("Primer script")).toBeInTheDocument();
 
-        // The ancestor section label should be visible (expanded container).
-        expect(screen.getByText("Scripting")).toBeInTheDocument();
+                // Ancestor section label is visible (expanded container).
+                expect(screen.getByText("Scripting")).toBeInTheDocument();
+            });
+        });
     });
 
-    it("persists expand/collapse toggles via localStorage when persistKey is provided", async () => {
-        const user = userEvent.setup();
+    describe("given expand/collapse toggles with persistence enabled", () => {
+        describe("when a toggle button is clicked", () => {
+            test("then the expansion state changes immediately", async () => {
+                const user = userEvent.setup();
 
-        // Start from a known path to ensure a consistent initial expansion state.
-        setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/software-libraries/scripting/should-process/");
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        const { unmount } = render(
-            <LessonTree lessons={courseStructure} persistKey={persistKey} />,
-        );
+                const sectionLabel = await screen.findByText("Pipelines");
+                const containerItem = closestTreeItem(sectionLabel);
+                const toggleBtn = getToggleButton(containerItem);
 
-        // Locate the section label (span) so we can derive the owning tree item.
-        const sectionLabel = await screen.findByText("Pipelines");
+                const initialExpanded = containerItem.getAttribute("aria-expanded");
+                await user.click(toggleBtn);
 
-        const containerItem = closestTreeItem(sectionLabel);
-        const toggleBtn = getToggleButton(containerItem);
+                expect(containerItem.getAttribute("aria-expanded")).not.toBe(initialExpanded);
+            });
 
-        // Capture initial ARIA expansion state.
-        const initialExpanded = containerItem.getAttribute("aria-expanded");
+            test("then the new state is persisted to localStorage", async () => {
+                const user = userEvent.setup();
 
-        // Toggle the section (expand/collapse).
-        await user.click(toggleBtn);
+                setPath("/notes/software-libraries/scripting/should-process/");
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        // The expansion state should change immediately after the interaction.
-        expect(containerItem.getAttribute("aria-expanded")).not.toBe(initialExpanded);
+                const sectionLabel = await screen.findByText("Pipelines");
+                const containerItem = closestTreeItem(sectionLabel);
+                const toggleBtn = getToggleButton(containerItem);
 
-        // Record the new state for later comparison.
-        const toggledExpanded = containerItem.getAttribute("aria-expanded");
+                await user.click(toggleBtn);
 
-        // Verify that the component persisted state into localStorage.
-        const persistedRaw = localStorage.getItem(persistKey);
-        expect(persistedRaw).not.toBeNull();
-        expect(() => JSON.parse(persistedRaw!)).not.toThrow();
-
-        // Simulate a full reload by unmounting and mounting again.
-        unmount();
-
-        render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
-
-        // Re-locate the same section after remount.
-        const sectionLabel2 = await screen.findByText("Pipelines");
-        const containerItem2 = closestTreeItem(sectionLabel2);
-
-        // Restore may occur in effects, so wait until the persisted state is applied.
-        await waitFor(() => {
-            expect(containerItem2.getAttribute("aria-expanded")).toBe(toggledExpanded);
+                const persistedRaw = localStorage.getItem(persistKey);
+                expect(persistedRaw).not.toBeNull();
+                expect(() => JSON.parse(persistedRaw!)).not.toThrow();
+            });
         });
 
-        // Verify toggling still works after restore.
-        const toggleBtn2 = getToggleButton(containerItem2);
-        await user.click(toggleBtn2);
+        describe("when the component remounts after the state was persisted", () => {
+            test("then the persisted toggle state is restored", async () => {
+                const user = userEvent.setup();
 
-        // The state should switch away from the restored persisted value.
-        expect(containerItem2.getAttribute("aria-expanded")).not.toBe(toggledExpanded);
+                setPath("/notes/software-libraries/scripting/should-process/");
+                const { unmount } = render(
+                    <LessonTree lessons={courseStructure} persistKey={persistKey} />,
+                );
+
+                const sectionLabel = await screen.findByText("Pipelines");
+                const containerItem = closestTreeItem(sectionLabel);
+                const toggleBtn = getToggleButton(containerItem);
+
+                await user.click(toggleBtn);
+                const toggledExpanded = containerItem.getAttribute("aria-expanded");
+
+                // Unmount and remount to simulate page reload.
+                unmount();
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+                const sectionLabel2 = await screen.findByText("Pipelines");
+                const containerItem2 = closestTreeItem(sectionLabel2);
+
+                await waitFor(() => {
+                    expect(containerItem2.getAttribute("aria-expanded")).toBe(toggledExpanded);
+                });
+            });
+
+            test("then toggling still works after restore", async () => {
+                const user = userEvent.setup();
+
+                setPath("/notes/software-libraries/scripting/should-process/");
+                const { unmount } = render(
+                    <LessonTree lessons={courseStructure} persistKey={persistKey} />,
+                );
+
+                const sectionLabel = await screen.findByText("Pipelines");
+                const containerItem = closestTreeItem(sectionLabel);
+                const toggleBtn = getToggleButton(containerItem);
+
+                await user.click(toggleBtn);
+                const toggledExpanded = containerItem.getAttribute("aria-expanded");
+
+                unmount();
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+                const sectionLabel2 = await screen.findByText("Pipelines");
+                const containerItem2 = closestTreeItem(sectionLabel2);
+
+                await waitFor(() => {
+                    expect(containerItem2.getAttribute("aria-expanded")).toBe(toggledExpanded);
+                });
+
+                const toggleBtn2 = getToggleButton(containerItem2);
+                await user.click(toggleBtn2);
+
+                expect(containerItem2.getAttribute("aria-expanded")).not.toBe(toggledExpanded);
+            });
+        });
     });
 
-    it("keeps hover styling scoped to the interactive link instead of the parent tree item", async () => {
-        setPath("/notes/software-libraries/scripting/should-process/");
+    describe("given a rendered lesson tree", () => {
+        describe("when hover styling is applied to child links", () => {
+            test("then hover classes are scoped to the link, not the parent tree item", async () => {
+                setPath("/notes/software-libraries/scripting/should-process/");
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-        render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+                const sectionLabel = await screen.findByText("Scripting");
+                const sectionTreeItem = closestTreeItem(sectionLabel);
+                const childLink = await screen.findByRole("link", { name: "Primer script" });
 
-        const sectionLabel = await screen.findByText("Scripting");
-        const sectionTreeItem = closestTreeItem(sectionLabel);
-        const childLink = await screen.findByRole("link", { name: "Primer script" });
+                expect(sectionTreeItem.className).not.toContain("group");
+                expect(childLink.className).toContain("hover:bg-base-border/10");
+                expect(childLink.className).toContain("hover:text-primary");
+                expect(childLink.className).not.toContain("group-hover");
+                expect(sectionLabel.className).not.toContain("group-hover");
+            });
+        });
+    });
 
-        expect(sectionTreeItem.className).not.toContain("group");
-        expect(childLink.className).toContain("hover:bg-base-border/10");
-        expect(childLink.className).toContain("hover:text-primary");
-        expect(childLink.className).not.toContain("group-hover");
-        expect(sectionLabel.className).not.toContain("group-hover");
+    describe("given initial navigation to a lesson page", () => {
+        describe("when the tree is rendered", () => {
+            test("then the active lesson is marked with aria-current without waiting for effects", async () => {
+                setPath("/notes/software-libraries/scripting/help/");
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+                const activeLink = await screen.findByRole("link", { name: "Ayuda" });
+
+                expect(activeLink).toHaveAttribute("aria-current", "page");
+                expect(activeLink.className).toContain("bg-primary/15");
+            });
+        });
+    });
+
+    describe("given the component is mounted and the user navigates internally", () => {
+        describe("when the pathname changes and a popstate event fires", () => {
+            test("then the active lesson indicator updates to the new path", async () => {
+                setPath("/notes/software-libraries/scripting/help/");
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+                const initialActive = await screen.findByRole("link", { name: "Ayuda" });
+                expect(initialActive).toHaveAttribute("aria-current", "page");
+
+                setPath("/notes/software-libraries/scripting/first-script/");
+                window.dispatchEvent(new PopStateEvent("popstate"));
+
+                await waitFor(() => {
+                    expect(
+                        screen.getByRole("link", { name: "Primer script" }),
+                    ).toHaveAttribute("aria-current", "page");
+                });
+
+                expect(initialActive).not.toHaveAttribute("aria-current", "page");
+            });
+        });
     });
 });

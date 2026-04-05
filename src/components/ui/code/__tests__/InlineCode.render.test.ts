@@ -186,6 +186,7 @@ describe("InlineCode.astro render", () => {
             expect(className).toContain("whitespace-normal");
             expect(className).toContain("break-words");
             expect(className).toContain("[overflow-wrap:anywhere]");
+            expect(className).toContain("[font-weight:inherit]");
 
             // Ensure no conflicting nowrap behavior
             expect(className).not.toContain("whitespace-nowrap");
@@ -219,6 +220,17 @@ describe("InlineCode.astro render", () => {
         expect(code?.textContent ?? "").toContain(
             "InvokeBatchFingerprint.BatchFailed",
         );
+    });
+
+    test("includes the class that lets font weight inherit from surrounding emphasis", async () => {
+        const document = await renderInlineCode({
+            code: "npm help",
+            lang: "powershell",
+        });
+
+        const code = document.querySelector("code");
+        expect(code).not.toBeNull();
+        expect(code?.getAttribute("class") ?? "").toContain("[font-weight:inherit]");
     });
 
     test.each([

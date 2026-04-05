@@ -50,23 +50,23 @@ const {
                  * - Shrinks to fit content
                  * - Uses inline styles for dynamic font size/color
                  * - Adds top margin to align visually with multiline content
+                 * - .listitem__icon class enables automatic color inheritance from parent callout
                  */
                 (
         (
                 <span
-                    class="flex-shrink-0"
+                    class:list={["flex-shrink-0", "listitem__icon"]}
                     style={{
                         fontSize: iconSize,
-                        color: iconColor,
+                        color: iconColor === "currentColor"
+                            ? "var(--callout-title-color, currentColor)"
+                            : iconColor,
                         lineHeight: 1,
                         marginTop: "3px",
                     }}
                     aria-hidden="true"
                 >
-                    <Icon
-                        width="1em" height="1em"
-                        class="text-primary"
-                    />
+                    <Icon width="1em" height="1em" />
                 </span>
             )
                 )

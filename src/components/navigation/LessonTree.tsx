@@ -19,11 +19,28 @@ interface Props {
 }
 
 export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persistKey }: Props) {
-    const [currentPath, setCurrentPath] = useState<string>("/");
+    const [currentPath, setCurrentPath] = useState<string>(() => {
+        if (typeof window === "undefined") return "/";
+        return window.location.pathname;
+    });
     const [open, setOpen] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
-        setCurrentPath(window.location.pathname);
+        const syncPathFromLocation = () => {
+            setCurrentPath(window.location.pathname);
+        };
+
+        // Sync once after mount and keep in sync for history navigation.
+        syncPathFromLocation();
+        window.addEventListener("popstate", syncPathFromLocation);
+
+        // Keep compatibility if Astro view transitions are enabled later.
+        document.addEventListener("astro:page-load", syncPathFromLocation);
+
+        return () => {
+            window.removeEventListener("popstate", syncPathFromLocation);
+            document.removeEventListener("astro:page-load", syncPathFromLocation);
+        };
     }, []);
 
     // Auto-expand parents of active path once per render tree

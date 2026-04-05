@@ -1,0 +1,295 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, Heading, P } from "~/components/semantics";
+import { Explanation, Important, Info, Tip } from "~/components/ui/callouts";
+import Question from "~/components/ui/callouts/Question.astro";
+import {
+    BashBlock,
+    JavaScriptBlock,
+    JavaScriptInline,
+    OutputBlock,
+    PowerShellBlock,
+    PowerShellInline,
+} from "~/components/ui/code";
+import { B, Dash, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Node.js: descubrimiento y ayuda para CLI"
+    description="Comparativa entre PowerShell y Node.js para descubrir comandos y consultar ayuda en scripting CLI: runtime, binarios npm y documentación de módulos estándar."
+    previous={[{
+        title: "Descubrimiento y ayuda integrada",
+        href: "/notes/software-libraries/scripting/help/",
+    }, {
+        title: "Introducción a scripting con Node.js",
+        href: "/notes/software-libraries/scripting/node/",
+    }]}
+    git={{
+        repo: "dibs-scripts-node",
+        user: "r8vnhill",
+    }}
+>
+    <NotesSection id="h2-discover-node-cli">
+        <Heading
+            headingLevel="h2" Icon={icons.MagnifyingGlass}
+            slot="heading"
+        >
+            Descubrir <Enquote>qué existe</Enquote> en Node.js
+        </Heading>
+
+        <P>
+            A diferencia de PowerShell, Node.js no concentra el descubrimiento en un único comando.
+            Según lo que quieras explorar, conviene mirar el runtime, los scripts del proyecto o las
+            herramientas del ecosistema.
+        </P>
+
+        <PowerShellBlock
+            code={`
+                # Runtime de Node.js
+                node --help
+
+                # Gestor de paquetes y scripts del proyecto
+                npm help
+                npm help run
+
+                # Ejecución de herramientas del ecosistema
+                npx --help # o npm exec --help
+            `}
+        >
+            <Fragment slot="title">Desde la terminal</Fragment>
+            <span slot="footer">Descubrimiento por capas en CLI con Node.js</span>
+        </PowerShellBlock>
+
+        <Explanation>
+            <List>
+                <ListItem icon={icons.Cpu}>
+                    <B><PowerShellInline code="node --help" /></B> muestra la ayuda general del
+                    ejecutable <PowerShellInline code="node" />. Desde ahí puedes descubrir flags,
+                    modos de ejecución y opciones propias del runtime.
+                </ListItem>
+
+                <ListItem icon={icons.Package}>
+                    <B><PowerShellInline code="npm help" /></B> abre la ayuda general de
+                    <PowerShellInline code="npm" />, mientras que <B><PowerShellInline
+                            code="npm help run"
+                        /></B> se enfoca en el subcomando <Mono>run</Mono>. Eso permite distinguir
+                    entre las capacidades del gestor de paquetes en general y las de una operación
+                    específica.
+                </ListItem>
+
+                <ListItem icon={icons.TerminalWindow}>
+                    <B><PowerShellInline code="npx" /></B> sirve para ejecutar binarios publicados
+                    como paquetes, sin que necesariamente formen parte de los comandos base del
+                    sistema. Por su parte,
+                    <B><PowerShellInline code="npx --help" /> <Dash kind="em" /> o <PowerShellInline
+                            code="npm exec --help"
+                        /> <Dash kind="em" /></B> muestra cómo invocar esas herramientas y qué
+                    opciones ofrece ese mecanismo de ejecución.
+                </ListItem>
+
+                <ListItem icon={icons.Scales}>
+                    <B>Diferencia práctica con PowerShell</B>: en PowerShell gran parte del
+                    descubrimiento pasa por una superficie más unificada; en Node.js suele
+                    repartirse entre la ayuda del runtime, la ayuda de <PowerShellInline
+                        code="npm"
+                    /> y las herramientas que el proyecto o el ecosistema ponen a disposición.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-help-node-api">
+        <Heading
+            headingLevel="h2" Icon={icons.Binoculars}
+            slot="heading"
+        >
+            Inspeccionar módulos para descubrir capacidades
+        </Heading>
+
+        <P>
+            En Node.js, una parte importante del descubrimiento no pasa por un comando único, sino
+            por los <B>módulos</B> que el <I>runtime</I> pone a disposición. Cuando ya sabes qué
+            módulo quieres explorar, una forma rápida de orientarte es importar sus <I>exports</I> y
+            mirar qué nombres ofrece.
+        </P>
+
+        <P>
+            Eso no reemplaza la documentación oficial, pero sí ayuda a responder una pregunta
+            práctica: <Enquote>¿qué funciones existen aquí y cómo se llaman?</Enquote>. Para una
+            primera inspección, basta con cargar el módulo y listar parte de sus claves públicas.
+        </P>
+
+        <JavaScriptBlock
+            code={`
+                import * as fs from "node:fs/promises";
+
+                console.log(Object.keys(fs).slice(0, 10));
+                console.log("Total exports:", Object.keys(fs).length);
+            `}
+        >
+            <Fragment slot="title">Inspección rápida de exports en módulos estándar</Fragment>
+            <span slot="footer">
+                Complementa la inspección con la referencia oficial de Node.js para detalles de
+                firma y comportamiento.
+            </span>
+            <DibsSourceLink
+                slot="source" file="help/inspect-fs-promises.mjs"
+                repo="scripts-node"
+            />
+        </JavaScriptBlock>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Uso</span>
+
+            <P>
+                Guarda el script dentro del directorio <Mono>help/</Mono> del proyecto y ejecútalo
+                con <Mono>node</Mono>. La salida mostrará una parte de los nombres exportados por el
+                módulo <Mono>node:fs/promises</Mono>.
+            </P>
+
+            <PowerShellBlock code={`node ./help/inspect-fs-promises.mjs`}>
+                <span slot="title">Ejecución del script</span>
+                <span slot="footer">Desde <Mono>scripts-node/</Mono></span>
+            </PowerShellBlock>
+
+            <OutputBlock
+                code={`
+                    [
+                        'access',    'appendFile',
+                        'chmod',     'chown',
+                        'constants', 'copyFile',
+                        'cp',        'default',
+                        'glob',      'lchmod'
+                    ]
+                    Total exports: 34
+                `}
+            >
+                <span slot="title">Ejemplo de salida parcial</span>
+            </OutputBlock>
+        </Info>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Qué aporta esta estrategia</span>
+
+            <List>
+                <ListItem icon={icons.MagnifyingGlass}>
+                    <B>Hace visible la superficie del módulo</B>: permite identificar rápidamente
+                    qué funciones o utilidades expone.
+                </ListItem>
+
+                <ListItem icon={icons.Lightning}>
+                    <B>Sirve como orientación inicial</B>: ayuda a ubicar nombres plausibles antes
+                    de pasar a la documentación o a ejemplos más detallados.
+                </ListItem>
+
+                <ListItem icon={icons.Scales}>
+                    <B>No sustituye la referencia oficial</B>: ver el nombre de un <I>export</I> no
+                    basta para conocer su firma, sus parámetros ni su comportamiento exacto.
+                </ListItem>
+
+                <ListItem icon={icons.PuzzlePiece}>
+                    <B>Encaja con el estilo de Node.js</B>: a diferencia de PowerShell, aquí buena
+                    parte del descubrimiento depende de explorar módulos, APIs y documentación, no
+                    de una superficie única de comandos.
+                </ListItem>
+            </List>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-help-node-jsdoc">
+        <Heading
+            headingLevel="h2" Icon={icons.NotePencil}
+            slot="heading"
+        >
+            JSDoc como ayuda cerca del código
+        </Heading>
+
+        <P>
+            En Node.js, una parte del descubrimiento no ocurre en la terminal ni en la referencia
+            oficial, sino <B>dentro del propio proyecto</B>. Cuando documentas funciones con <B
+            >JSDoc</B>, dejas descripciones, parámetros y valores de retorno justo al lado del
+            código, lo que vuelve más fácil entender <Enquote>qué hace esto</Enquote> sin salir del
+            editor.
+        </P>
+
+        <P>
+            Esa estrategia no reemplaza la documentación del runtime ni de los módulos estándar,
+            pero sí ayuda mucho en scripts y utilidades propias. Además, herramientas basadas en
+            TypeScript pueden usar esas anotaciones para ofrecer mejores <I>hovers</I>, firmas e
+            IntelliSense en archivos JavaScript. <B>Si quieres ir un paso más allá</B>,
+            <JavaScriptInline code="// @ts-check" /> también permite activar comprobaciones de tipos
+            en archivos <Mono>.js</Mono>.
+        </P>
+
+        <JavaScriptBlock
+            code={`
+                // @ts-check
+
+                /**
+                 * Read and parse a JSON file from disk.
+                 *
+                 * @param {string} filePath Path to the JSON file.
+                 * @returns {Promise<Record<string, unknown>>} Parsed JSON object.
+                 * @throws {Error} If the file cannot be read or parsed.
+                 */
+                export async function readJsonFile(filePath) {
+                    const fs = await import("node:fs/promises");
+                    const raw = await fs.readFile(filePath, "utf8");
+                    return JSON.parse(raw);
+                }
+            `}
+        >
+            <Fragment slot="title">JSDoc en una utilidad propia</Fragment>
+            <span slot="footer">
+                JSDoc deja ayuda cerca del código y mejora la experiencia de descubrimiento dentro
+                del editor.
+            </span>
+            <DibsSourceLink
+                slot="source" file="help/read-json-file.js"
+                repo="scripts-node"
+            />
+        </JavaScriptBlock>
+
+        <Info headingLevel="h3" icon={icons.PlayCircle}>
+            <span slot="title">Qué aporta</span>
+
+            <List>
+                <ListItem icon={icons.MagnifyingGlass}>
+                    <B>Hace visible la intención</B>: una descripción breve ayuda a entender para
+                    qué existe la función antes de leer toda su implementación.
+                </ListItem>
+
+                <ListItem icon={icons.ListNumbers}>
+                    <B>Documenta entradas y salidas</B>: etiquetas como <Mono>@param</Mono> y
+                    <Mono>@returns</Mono> dejan claro qué recibe la función y qué devuelve.
+                </ListItem>
+
+                <ListItem icon={icons.Lightning}>
+                    <B>Mejora el tooling</B>: en proyectos JavaScript, JSDoc puede alimentar la
+                    ayuda contextual del editor y complementar la inferencia automática de tipos.
+                </ListItem>
+
+                <ListItem icon={icons.WarningCircle}>
+                    <B>No sustituye el diseño</B>: JSDoc ayuda a descubrir una API, pero no arregla
+                    una función confusa o una interfaz mal nombrada.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Cuándo conviene usarlo</span>
+
+            <P>
+                JSDoc resulta especialmente útil cuando tus scripts ya dejaron de ser líneas sueltas
+                de automatización y empiezan a parecerse a una pequeña herramienta reusable. En ese
+                punto, documentar funciones, módulos y parámetros ayuda tanto a otras personas como
+                a tu yo del futuro.
+            </P>
+        </Tip>
+    </NotesSection>
+</NotesLayout>
