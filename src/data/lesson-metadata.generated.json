@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-02T22:22:54.599Z",
+  "generatedAt": "2026-04-05T17:06:16.193Z",
   "totalLessons": 44,
   "changesLimit": 5,
   "entries": {
@@ -999,6 +999,12 @@
       "lastModified": "2026-04-02",
       "changes": [
         {
+          "hash": "98dcc4114e75d9cfab87a4f8a7591a413f3b025b",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "📝 📚 docs(notes): refine Nushell pipeline lesson and document Vite timeout findings"
+        },
+        {
           "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
           "date": "2026-04-02",
           "author": "r8vnhill",
@@ -1021,12 +1027,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(bibliography): add catalog-backed video references"
-        },
-        {
-          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
         }
       ]
     },

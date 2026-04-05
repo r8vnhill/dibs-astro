@@ -8,6 +8,13 @@ import {
 
 const LINE_COLOR_CLASS = "line-colored";
 
+/**
+ * Creates a Shiki transformer that accepts inline `[!code color:...]` directives.
+ *
+ * `preprocess()` strips the directive from each source line and stores the sanitized color keyed
+ * by the current Shiki metadata object plus its 1-based line number. Later, `line()` looks up that
+ * stored color and annotates the rendered line node with a class and CSS custom property.
+ */
 export function transformerNotationLineTextColor(): ShikiTransformer {
     const lineColorsByMeta = new WeakMap<object, Map<number, string>>();
 
