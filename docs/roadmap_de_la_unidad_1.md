@@ -1,160 +1,183 @@
 # Roadmap de la Unidad 1
 
-## Summary
+## Summary (Versión Actualizada)
 
-Este roadmap traduce los tópicos de la Unidad 1 a trabajo concreto sobre el material **actualmente indexado** en [course-structure.ts](/e:/teaching/DIBS/projects/astro-website/src/data/course-structure.ts). La conclusión principal es esta:
+Este roadmap ha sido **regenerado** tras la reestructuración de 7 a 8 unidades del curso. Los cambios más significativos son:
 
-- la sección de scripting **no necesita crecer**;
-- los huecos reales están en la capa conceptual que rodea a bibliotecas, APIs y build;
-- el trabajo futuro debe enfocarse en completar esos huecos sin seguir expandiendo shell scripting.
+1. **La Unidad 1 es ahora puramente conceptual**: introduce qué es una biblioteca, la distingue de otras artefactos, y sienta criterios de diseño de interfaces públicas.
+2. **Scripting, automatización y build pasan a la Unidad 2**: esos tópicos forman un primer **caso de estudio concreto** de diseño reusable, no parte de la introducción conceptual.
+3. **El horizonte pedagógico cambia**: la Unidad 1 ya no antecede modelado del dominio directamente; ahora antecede scripting como *laboratorio de API*.
 
-La meta es que la Unidad 1 cubra de forma explícita todos sus tópicos fundacionales antes de pasar a modelado del dominio.
+### Conclusión principal
+
+- La Unidad 1 actual **contiene material que pertenece a la Unidad 2** (scripting, automatización, build);
+- los huecos reales están en **ergonomía de APIs, criterios de calidad y experiencia de consumo**;
+- gran parte del material conceptual necesario **ya existe pero está huérfano** (e.g., design-principles);
+- el trabajo futuro debe ser: (1) Re-indexar y reorganizar lo que existe, (2) Movilizar scripting a U2, (3) Llenar huecos específicos de conceptos puros.
+
+La meta es que la Unidad 1 cubra de forma explícita todos sus tópicos conceptuales **sin mezclar implementación** antes de pasar a scripting como primer laboratorio en la Unidad 2.
+
+---
 
 ## Roadmap
 
-### 1. Cerrar la taxonomía básica de artefactos de software
+### Contexto: Inventario actual vs. pedagogía nueva
 
-Abrir la unidad con una lección de taxonomía básica de artefactos, antes de entrar en
-`Bibliotecas de software` y `Introducción a la automatización de tareas`.
+La Unidad 1 **actualmente** contiene:
 
-**Tema de la lección**
+| En course-structure.ts | Tipo | Destino en nueva estructura |
+|---|---|---|
+| Taxonomía de artefactos | ✓ Lección conceptual | **Mantener en U1** |
+| La biblioteca como artefacto | ✓ Lección conceptual | **Mantener en U1** |
+| Automatización de tareas | ⚠️ Introducción de tema | **Mover a U2** (profundidad) |
+| **Scripting** (toda la sección) | ✗ Implementación/tooling | **Mover a U2** (integralmente) |
+| **Build systems / Veritas** | ✗ Implementación/tooling | **Mover a U2 o después** |
+| Lógica de negocio vs aplicación | ✗ Temprano para U1 | **Mover a U3** |
+| Modelos de dominio | ✗ Temprano para U1 | **Mover a U3** |
 
-- biblioteca;
-- aplicación;
-- paquete;
-- herramienta;
-- script.
+| En disco pero NO indexado | Tipo | Acción |
+|---|---|---|
+| design-principles | ✓ Lección conceptual crítica | **Re-indexar e integrar en U1** |
 
-**Problema que resuelve**
+### Tópicos pedagógicos de la nueva Unidad 1
 
-- hoy esos conceptos aparecen fragmentados;
-- la unidad todavía no los compara en una sola superficie pedagógica;
-- falta una respuesta clara a “qué tipo de artefacto estamos diseñando y para quién”.
+Según [course-syllabus-draft.md](course-syllabus-draft.md), la Unidad 1 debe cubrir:
 
-**Resultado esperado**
+1. **Qué es una biblioteca de software y qué problema resuelve**
+2. **Diferencia entre biblioteca, aplicación, herramienta, script, paquete y framework**
+3. **Bibliotecas como contratos de uso para otras personas desarrolladoras**
+4. **API pública, consumo, ergonomía y claridad**
+5. **Reusabilidad, composición y estabilidad como propiedades deseables**
+6. **Experiencia de uso de una interfaz pública**
+7. **Criterios iniciales para juzgar la calidad de una biblioteca**
 
-- la unidad instala desde el comienzo una respuesta clara a “qué artefacto estamos diseñando y para
-  quién”;
-- el estudiantado puede distinguir qué se diseña para ser consumido como biblioteca;
-- entiende cuándo un script es solo automatización local y cuándo una herramienta o paquete empiezan a requerir otro tipo de contrato;
-- queda mejor preparado para leer el resto de la unidad como diseño de interfaces para otras personas desarrolladoras.
+### Análisis de cobertura: qué falta y qué sobra
 
-### 2. Hacer explícita la experiencia de uso de APIs
+| Tópico | Cobertura actual | Status | Acción |
+|---|---|---|---|
+| T1: Qué es una biblioteca | ✓ `lib-what-is` | **CUBIERTO** | Revisar completitud |
+| T2: Diferencias entre artefactos | ✓ `artifacts-taxonomy` | **CUBIERTO** | Revisar completitud |
+| T3: Bibliotecas como contratos | ✓ `lib-what-is` | **CUBIERTO** | Revisar completitud |
+| T4: Ergonomía y claridad de API | ⚠️ `design-principles` (huérfana) | **PARCIAL** | Re-indexar + completar |
+| T5: Reusabilidad y composición | ✗ Disperso/ausente | **FALTA** | Crear nueva lección |
+| T6: Experiencia de consumo | ⚠️ `design-principles` (huérfana) | **PARCIAL** | Re-indexar + expandir |
+| T7: Criterios de calidad | ⚠️ En `design-principles` | **PARCIAL** | Re-indexar + sistematizar |
+| ✗ Scripting (10+ lecciones) | ✓ Existe pero mal ubicada | **OFF-TOPIC** | **Mover a U2** |
+| ✗ Build systems (Veritas) | ✓ Existe pero mal ubicada | **OFF-TOPIC** | **Mover a U2** |
+| ✗ Lógica de negocio vs app | ✓ Existe pero temprano | **OFF-TOPIC** | **Mover a U3** |
+| ✗ Modelos de dominio | ✓ Existe pero temprano | **OFF-TOPIC** | **Mover a U3** |
 
-Agregar una lección nueva después de la lección anterior y antes de entrar en `Sistemas de construcción` o `Introducción a PowerShell`.
+---
 
-**Tema de la lección**
+### Tareas concretas
 
-- ergonomía de API;
-- claridad del contrato;
-- discoverability;
-- composición;
-- defaults;
-- errores útiles;
-- costo cognitivo para quien consume la interfaz.
+#### 1. Re-indexar y reorganizar lecciones existentes
 
-**Problema que resuelve**
+**Problema**: La lección `design-principles` existe pero es huérfana (no está en course-structure.ts).
 
-- `Bibliotecas de software` instala bien la idea de API como contrato;
-- pero la unidad todavía no convierte esa idea en criterios concretos de diseño de interfaz pública;
-- el curso quiere formar criterio sobre APIs para otras personas desarrolladoras, y esa conversación todavía no tiene una lección propia en la Unidad 1.
+**Acción**:
+- Añadir `design-principles` como lección indexada en [course-structure.ts](../astro-website/src/data/course-structure.ts) en la Unidad 1
+- Posicionarla después de las definiciones básicas (T1–T3) y antes de otros tópicos
+- Revisar su contenido para asegurar que cubre ergonomía (T4), experiencia de consumo (T6) y criterios de calidad (T7)
 
-**Resultado esperado**
+**Ubicación recomendada en la secuencia**:
+1. Taxonomía básica de artefactos → T2
+2. La biblioteca como artefacto → T1, T3
+3. **Principios de diseño de bibliotecas** → T4, T6, T7 (NUEVA POSICIÓN)
+4. (Resto de lecciones conceptuales a crear)
 
-- la unidad deja instalado desde temprano que una buena biblioteca no solo “funciona”, sino que también guía su uso;
-- el resto del curso gana un vocabulario común para hablar de claridad, ergonomía y composición;
-- se conecta mejor el foco de la unidad con el temario nuevo.
+#### 2. Crear lección: "Reusabilidad y Composición como Diseño"
 
-### 3. Completar el ciclo mínimo de trabajo de una biblioteca
+**Problema**: T5 (reusabilidad, composición y estabilidad) no tiene una lección conceptual.
 
-Agregar una lección nueva después de `Sistemas de construcción` o después de `Veritas Ep. 1`.
+**Tema de la lección**:
+- Qué significa "reusable";
+- Una API reusable facilita composición y evita acoplamiento;
+- Ejemplos conceptuales (sin código): por qué una interfaz "cerrada" vs "abierta" cambia la facilidad de composición;
+- Criterios para reconocer si una API es reusable;
+- Relación entre claridad de contrato y reusabilidad.
 
-**Tema de la lección**
+**Prerequisito**: Llenará el hueco entre "principios de diseño" y "que es una biblioteca bien diseñada".
 
-- ciclo local mínimo de trabajo;
-- build;
-- prueba mínima;
-- verificación observable;
-- repetibilidad;
-- criterio de éxito o fallo.
+#### 3. Migrar contenido a la Unidad 2
 
-**Problema que resuelve**
+**Problema**: Scripting, build systems, task automation profunda no pertenecen a la Unidad 1 conceptual.
 
-- `Sistemas de construcción` explica bien qué hace un build system;
-- `Veritas Ep. 1` muestra arranque de proyecto;
-- pero la unidad todavía no enseña explícitamente qué significa sostener una biblioteca con un loop mínimo de trabajo.
+**Acción**:
+- Crear la estructura de la Unidad 2 en course-structure.ts (aún no existe)
+- ID sugerido: `unit-2` (o `unit-2-scripting` si se quiere preservar URLs)
+- Mover todo el grupo `scripting` de U1 a U2
+- Mover `build-systems` de U1 a U2
+- Mover o refactorizar `task-automation`: dejar solo la introducción conceptual en U1 ("por qué automatizar"), llevar profundidad a U2
 
-**Resultado esperado**
+**Leciones que se mueven**:
+```
+U1 "scripting" (group, 10+ lessons) → U2
+U1 "build-systems" (group, Veritas) → U2
+```
 
-- el estudiantado entiende qué debería poder ejecutar siempre sobre una biblioteca aunque el proyecto todavía sea pequeño;
-- build, test y verificación dejan de ser promesa del temario y pasan a ser práctica visible;
-- se prepara el terreno para unidades posteriores sin meter todavía testing avanzado.
+#### 4. Migrar contenido a la Unidad 3
 
-### 4. Reubicar el material que ya no pertenece al corazón de la Unidad 1
+**Problema**: `business-vs-app` y `domain-models` son tópicos de modelado del dominio, no de introducción a bibliotecas.
 
-Planificar la salida progresiva de estas lecciones del núcleo de la Unidad 1:
+**Acción**:
+- Mover estas lecciones de U1 a U3 ("Modelado del dominio")
+- En course-structure.ts, crear la estructura de U3 y ubicar estas lecciones allí
 
-- `Lógica de negocio y lógica de aplicación`
-- `Modelos de dominio`
+#### 5. Completar la página índice de la Unidad 1
 
-**Problema que resuelve**
+**Problema**: La página `/notes/software-libraries/index.astro` contiene un `<ToDo>`.
 
-- ambas lecciones son valiosas, pero hoy ocupan espacio que el temario nuevo reserva para fundamentos de bibliotecas, APIs y build;
-- además, encajan mejor con unidades posteriores del roadmap general del curso.
+**Acción**:
+- Reemplazar el `<ToDo>` por una síntesis real que:
+  - Presente el propósito de la Unidad 1 (distinguir bibliotecas, entender el diseño de interfaces públicas)
+  - Mapee la progresión de lecciones
+  - Destaque qué sabrá el estudiantado al terminarla
+  - Señale la transición a la Unidad 2 (scripting como primer laboratorio)
 
-**Resultado esperado**
+---
 
-- la Unidad 1 queda más coherente con su propósito fundacional;
-- el paso hacia modelado del dominio ocurre en el momento correcto del curso;
-- disminuye la tensión entre `course-structure` y el temario propuesto.
+## Orden Recomendado (Unidad 1 después de cambios)
 
-### 5. Completar la página índice de la unidad
+El flujo esperado de la Unidad 1 será **PURAMENTE CONCEPTUAL**:
 
-Reemplazar el `ToDo` en [software-libraries/index.astro](/e:/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/index.astro) por una página real de apertura/cierre de unidad.
+1. **Taxonomía básica de artefactos de software** (T2)
+   - Conceptos claros: biblioteca, aplicación, herramienta, script, paquete, framework
 
-**Tema de la página**
+2. **La biblioteca como artefacto de software** (T1, T3)
+   - Qué es una biblioteca, cuál es su propósito, para quién se diseña
 
-- propósito de la Unidad 1;
-- mapa de progresión;
-- relación entre bibliotecas, automatización, scripting y build;
-- qué criterios debería llevarse el estudiantado al terminar la unidad.
+3. **Principios de diseño de bibliotecas** (T4, T6, T7)
+   - Re-indexada desde `design-principles`
+   - Ergonomía, experiencia de consumo, criterios de calidad
 
-**Problema que resuelve**
+4. **Reusabilidad y composición como propiedades del diseño** (T5)
+   - NUEVA lección conceptual
+   - Por qué reusable, cómo la claridad habilita composición
 
-- hoy la unidad no tiene una síntesis navegable que ayude a entender su forma;
-- eso debilita la progresión incluso aunque las lecciones individuales sean buenas.
+5. **Página índice/cierre de la Unidad 1**
+   - Síntesis de los conceptos
+   - Transición a Unidad 2 (scripting como primer laboratorio)
 
-**Resultado esperado**
+---
 
-- la unidad gana cohesión narrativa;
-- las nuevas lecciones intermedias se integran mejor;
-- queda un punto de referencia claro para futuras reorganizaciones.
+## Acceptance Criteria (Actualizado)
 
-## Orden Recomendado
+- **Cada tópico T1–T7** de la pedagogía nueva debe quedar cubierto explícitamente en alguna lección de U1.
+- **No hay implementación/tooling en U1**: build, scripting, PowerShell, etc., pertenecen a U2 o posterior.
+- **Scripting y build-systems removidos** de U1 en course-structure.ts y movidos a U2.
+- **business-vs-app y domain-models removidos** de U1 en course-structure.ts y ubicados en U3.
+- **design-principles re-indexada** en course-structure.ts bajo U1.
+- **Nueva lección "Reusabilidad y Composición"** creada y indexada en U1.
+- **Página índice de U1** no contiene `<ToDo>` placeholder; presenta síntesis clara.
+- La Unidad 1 se lee como **introducción conceptual a bibliotecas para otras personas desarrolladoras**, no como antesala de herramientas.
 
-La secuencia futura de la Unidad 1 debería quedar así:
+---
 
-1. Taxonomía básica de artefactos de software
-2. La biblioteca como artefacto de software
-3. Ergonomía y experiencia de uso de APIs
-4. Introducción a la automatización de tareas
-5. Sistemas de construcción
-6. Veritas Ep. 1
-7. Ciclo mínimo de trabajo: build, test y verificación
-8. Introducción a PowerShell
-9. bloque actual de scripting
-10. mover `Lógica de negocio y lógica de aplicación` y `Modelos de dominio` fuera de la unidad en una iteración posterior
+## Assumptions (Actualizado)
 
-## Acceptance Criteria
-
-- Cada tópico declarado en la Unidad 1 debe quedar cubierto por al menos una lección explícita.
-- La sección de scripting debe mantenerse estable, sin crecer para compensar huecos conceptuales ajenos.
-- La Unidad 1 debe leerse como fundamentos de bibliotecas para otras personas desarrolladoras, no como antesala de modelado del dominio.
-- `business-vs-app` y `domain-models` deben quedar identificadas como candidatas a reubicación.
-- La página índice de la unidad debe dejar de estar vacía.
-
-## Assumptions
-
-- Solo se consideran lecciones indexadas en `course-structure.ts`.
-- El material no indexado se trata como deprecado o desactualizado y no se usa para justificar cobertura actual.
-- El roadmap prioriza coherencia pedagógica de la unidad antes que maximizar cantidad de contenido.
+- Solo se consideran lecciones en `course-structure.ts` o archivos .astro que existen en curso-structure.ts o src/pages/notes/software-libraries/.
+- **design-principles existe pero nunca fue indexada**: es un activo valioso que debe recuperarse.
+- El cambio a 8 unidades separa claramente conceptual (U1) de implementación (U2–U8).
+- El roadmap prioriza **coherencia pedagógica y separación de concerns** antes que cantidad de contenido.
+- Los cambios a course-structure.ts requieren actualizar cualquier página que reference la estructura anterior.

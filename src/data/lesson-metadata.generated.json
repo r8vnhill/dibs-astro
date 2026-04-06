@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-05T23:21:00.453Z",
+  "generatedAt": "2026-04-06T00:56:00.880Z",
   "totalLessons": 45,
   "changesLimit": 5,
   "entries": {
@@ -739,8 +739,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-04-02",
+      "lastModified": "2026-04-05",
       "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
         {
           "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
           "date": "2026-04-02",
@@ -764,12 +770,6 @@
           "date": "2025-11-20",
           "author": "r8vnhill",
           "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-        },
-        {
-          "hash": "9acbdb8e32f31f128035d5d935d0fc3bd1ea229c",
-          "date": "2025-11-15",
-          "author": "r8vnhill",
-          "subject": "✨📝 docs(powershell-help): Refine integrated help lesson"
         }
       ]
     },
@@ -815,7 +815,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-05",
+      "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        }
+      ]
     },
     "/notes/software-libraries/scripting/node/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/node.astro",
@@ -824,8 +832,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-04-02",
+      "lastModified": "2026-04-05",
       "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
         {
           "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
           "date": "2026-04-02",

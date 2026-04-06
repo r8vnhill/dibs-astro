@@ -186,6 +186,12 @@ export const courseStructure = [
                 href: "/notes/software-libraries/task-automation/",
             },
             {
+                kind: "link",
+                id: "design-principles",
+                title: "Principios de diseño de bibliotecas",
+                href: "/notes/software-libraries/design-principles/",
+            },
+            {
                 kind: "group",
                 id: "scripting",
                 title: "Scripting",

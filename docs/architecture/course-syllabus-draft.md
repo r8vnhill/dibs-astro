@@ -1,6 +1,6 @@
 # Temario Propuesto para Diseño de Bibliotecas de Software
 
-Este documento propone un temario completo, desde la unidad 1 hasta la unidad 7, con un enfoque
+Este documento propone un temario completo, desde la unidad 1 hasta la unidad 8, con un enfoque
 agnóstico al lenguaje, al toolchain y al proyecto de referencia. El hilo conductor no es enseñar
 una biblioteca concreta ni una herramienta específica, sino estudiar cómo se diseñan bibliotecas y
 APIs orientadas a otras personas desarrolladoras.
@@ -25,35 +25,58 @@ caso de estudio, para que el aprendizaje no se disperse en ejemplos aislados.
 La intención es que el curso siga siendo transferible aunque cambien el lenguaje principal, las
 herramientas de automatización, el mecanismo de publicación o el caso de estudio concreto.
 
-## Unidad 1. Bibliotecas para otras personas desarrolladoras y APIs reusables
+## Unidad 1. Introducción conceptual a las bibliotecas de software
 
-**Foco:** instalar el curso como un espacio de diseño de interfaces públicas para otras personas
-desarrolladoras, mostrando qué distingue a una biblioteca reusable de una aplicación, herramienta o
-script aislado.
+**Foco:** introducir qué es una biblioteca de software como artefacto reusable orientado a otras personas desarrolladoras, distinguiéndola de aplicaciones, herramientas, scripts y paquetes, e instalando el curso como un espacio de diseño de interfaces públicas.
 
 **Tópicos principales:**
 
-- bibliotecas de software como contratos de uso para otras personas desarrolladoras;
-- diferencia entre biblioteca, aplicación, paquete, herramienta y script;
-- reusabilidad, ergonomía y composición como propiedades de una buena API;
+- qué es una biblioteca de software y qué problema resuelve;
+- diferencia entre biblioteca, aplicación, herramienta, script, paquete y framework;
+- bibliotecas como contratos de uso para otras personas desarrolladoras;
+- API pública, consumo, ergonomía y claridad;
+- reusabilidad, composición y estabilidad como propiedades deseables;
 - experiencia de uso de una interfaz pública;
-- automatización y scripting como contexto de integración;
-- propósito de un sistema de build en el trabajo cotidiano sobre bibliotecas;
-- build, test y verificación mínimos para sostener el trabajo del curso.
+- criterios iniciales para juzgar la calidad de una biblioteca.
 
 **Resultados pedagógicos esperados:**
 
-- el estudiantado distingue bibliotecas, aplicaciones, herramientas, scripts y paquetes;
-- comprende que una API pública está diseñada para otras personas desarrolladoras, no para
-  usuarias finales;
-- reconoce que claridad, composición y ergonomía son parte del diseño de una interfaz reusable;
-- entiende que automatización, build y testing son soportes del diseño de bibliotecas, no fines en
-  sí mismos;
-- puede describir qué hace que una interfaz sea más fácil o más difícil de consumir.
+- el estudiantado distingue con claridad biblioteca, aplicación, herramienta, script, paquete y framework;
+- comprende que una biblioteca se diseña para ser consumida por otras personas desarrolladoras;
+- reconoce que una API pública no es solo un detalle técnico, sino una interfaz de uso que puede orientar o dificultar el trabajo;
+- identifica reusabilidad, composición, claridad y ergonomía como dimensiones centrales del diseño de bibliotecas;
+- puede explicar por qué el diseño de una biblioteca exige decisiones distintas a las de una aplicación de uso final.
 
 ----
 
-## Unidad 2. Modelado del dominio y representación del problema
+## Unidad 2. Bibliotecas de scripting y automatización
+
+**Foco:** estudiar las bibliotecas de scripting como un primer caso concreto de diseño reusable, mostrando cómo encapsulan automatización, integran herramientas, estructuran tareas repetibles y obligan a pensar en interfaces claras, composición y validación.
+
+**Tópicos principales:**
+
+- scripting como forma de construir software reusable de apoyo;
+- diferencia entre script aislado y biblioteca de scripting;
+- comandos, funciones, módulos y tareas como superficies de API;
+- automatización de flujos técnicos y operativos;
+- composición de comandos o tareas;
+- validación de entradas, salida estructurada y manejo de errores;
+- propósito de un sistema de build como soporte de automatización;
+- build, test y verificación mínimos para sostener bibliotecas de scripting;
+- bibliotecas de scripting como puente entre diseño de API e integración con herramientas.
+
+**Resultados pedagógicos esperados:**
+
+- el estudiantado distingue un script puntual de una biblioteca reusable de scripting;
+- comprende que incluso en contextos de automatización existe diseño de interfaz pública;
+- puede analizar comandos, funciones o módulos como contratos de uso;
+- reconoce la importancia de validación, composición y predictibilidad en bibliotecas de scripting;
+- entiende que build, testing y automatización no son fines en sí mismos, sino soportes para diseñar y sostener una biblioteca usable;
+- dispone de un primer caso de estudio donde el problema de API aparece temprano y de forma concreta.
+
+----
+
+## Unidad 3. Modelado del dominio y representación del problema
 
 **Foco:** estudiar cómo las decisiones fundamentales de modelado del dominio habilitan o limitan
 distintos estilos de API.
@@ -80,7 +103,7 @@ distintos estilos de API.
   representación del problema;
 - reconoce que el modelado del dominio condiciona la experiencia de uso de la biblioteca.
 
-## Unidad 3. Núcleo de la biblioteca y contratos
+## Unidad 4. Núcleo de la biblioteca y contratos
 
 **Foco:** transformar el modelado del dominio en una arquitectura mínima de biblioteca, con
 contratos claros y límites explícitos entre responsabilidades.
@@ -104,7 +127,7 @@ contratos claros y límites explícitos entre responsabilidades.
 - dispone de una base arquitectónica sobre la cual luego componer, hacer más expresiva y
   evolucionar la biblioteca.
 
-## Unidad 4. APIs de composición
+## Unidad 5. APIs de composición
 
 **Foco:** mostrar cómo se diseñan APIs componibles, es decir, interfaces que permiten encadenar
 operaciones, preservar propiedades e incorporar reglas del dominio sin perder legibilidad.
@@ -132,7 +155,7 @@ operaciones, preservar propiedades e incorporar reglas del dominio sin perder le
   más rígidas;
 - adquiere criterios para juzgar correctitud, expresividad y mantenibilidad en APIs componibles.
 
-## Unidad 5. APIs expresivas y guiadas por uso
+## Unidad 6. APIs expresivas y guiadas por uso
 
 **Foco:** estudiar cómo se diseñan APIs más expresivas, guiadas por intención y apoyadas en
 abstracciones avanzadas que ayuden a prevenir errores de uso y a comunicar mejor el dominio.
@@ -161,7 +184,7 @@ abstracciones avanzadas que ayuden a prevenir errores de uso y a comunicar mejor
 - compara distintos mecanismos expresivos como decisiones de experiencia para otras personas
   desarrolladoras.
 
-## Unidad 6. Contratos públicos, estabilidad y evolución
+## Unidad 7. Contratos públicos, estabilidad y evolución
 
 **Foco:** analizar qué implica publicar, estabilizar y evolucionar APIs para otras personas
 desarrolladoras una vez que ya se han explorado distintos estilos de interfaz.
@@ -191,7 +214,7 @@ desarrolladoras una vez que ya se han explorado distintos estilos de interfaz.
 - relaciona claridad del contrato, decisiones del núcleo y costo de evolución a lo largo del
   tiempo.
 
-## Unidad 7. Extensibilidad, integración y ecosistema
+## Unidad 8. Extensibilidad, integración y ecosistema
 
 **Foco:** cerrar el curso estudiando cómo una biblioteca pasa de una API estable a una pieza que se
 integra con otras, admite extensión y participa en un ecosistema reusable.
@@ -274,6 +297,6 @@ tiempo disponible o la profundidad del proyecto los vuelven especialmente releva
 - Conviene que el recorrido del curso haga visibles decisiones de diseño, prototipos de API o
   tradeoffs sobre una misma biblioteca o caso de estudio, sin convertir esa continuidad en una
   estructura evaluativa rígida.
-- La progresión esperada del curso es: fundamentos de bibliotecas para otras personas
-  desarrolladoras, modelado del dominio, núcleo y contratos, composición, abstracciones avanzadas,
+- La progresión esperada del curso es: introducción a bibliotecas de software, scripting y
+  automatización, modelado del dominio, núcleo y contratos, composición, abstracciones avanzadas,
   estabilidad pública y evolución del ecosistema.

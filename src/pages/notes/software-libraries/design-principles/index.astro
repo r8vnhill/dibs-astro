@@ -11,16 +11,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Principios de Diseño de Bibliotecas de Software">
-    <Fragment slot="abstract">
-        Cuando pensamos en bibliotecas de software, en realidad estamos pensando en sus <strong
-        >APIs</strong>: la superficie que otras personas van a usar. Por eso, los mismos principios
-        que guían el diseño de una buena API —claridad, consistencia, simplicidad y estabilidad— son
-        también los que determinan la calidad de una biblioteca. Una API bien diseñada facilita la
-        adopción y reduce errores; una biblioteca bien diseñada, al exponer esa API, se convierte en
-        una herramienta confiable y reutilizable. En esta sección veremos qué hace que una API (y
-        por extensión una biblioteca) sea buena, y cómo estos criterios nos servirán de guía al
-        diseñar nuestras propias bibliotecas.
-    </Fragment>
 
     <Note>
         <ToDo
@@ -33,6 +23,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             }}
         />
     </Note>
+
     <NotesSection id="model-the-problem">
         <Heading
             headingLevel="h3" slot="heading"
@@ -40,6 +31,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             Modelar el Problema Correctamente
         </Heading>
+        
         <p>
             Una API bien diseñada debe proporcionar una <strong>abstracción clara y
                 efectiva</strong> del problema que resuelve.
@@ -130,7 +122,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             println("Trabajo en segundo plano")
         }
 
-        // Los detalles de scheduling, hilos y colas internas 
+        // Los detalles de scheduling, hilos y colas internas
         // quedan completamente ocultos tras la API.
       `}
         >
