@@ -44,11 +44,11 @@ describe.concurrent("ScholarlyArticle.astro render", () => {
         const rangeHtml = await renderArticle({
             title: "Artículo",
             url: "https://example.com/article",
-            pages: { start: 12, end: 7 },
+            pages: { start: 7, end: 12 },
         });
 
         expect(singlePageHtml).toContain("(p. 7)");
-        expect(rangeHtml).toContain("(pp. 7-12)");
+        expect(rangeHtml).toContain("(pp. 7–12)");
     });
 
     test("prefers meaningful slot content over props", async () => {

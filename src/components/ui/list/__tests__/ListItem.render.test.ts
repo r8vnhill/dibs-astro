@@ -24,7 +24,7 @@ describe("ListItem.astro render", () => {
 
         expect(iconWrapper).toBeTruthy();
         expect(iconWrapper?.getAttribute("style") ?? "").toContain(
-            "color:var(--callout-title-color, currentColor)",
+            "color:var(--callout-title-color, var(--color-primary, currentColor))",
         );
     });
 

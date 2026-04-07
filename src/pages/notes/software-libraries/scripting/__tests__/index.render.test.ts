@@ -36,7 +36,7 @@ describe.concurrent("Scripting lesson render", () => {
 
         expect(html).toContain("Introducción a scripting con Node.js");
         expect(html).toContain("Introducción a PowerShell");
-        expect(html).toContain("Node.js como herramienta de scripting");
+        expect(html).toContain("programa pequeño");
         expect(html).toContain("Node.js vs PowerShell");
     });
 });
