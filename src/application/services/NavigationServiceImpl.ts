@@ -2,70 +2,28 @@ import type { INavigationService, NavigationResult } from "$application/ports";
 import type { ILessonCatalog } from "$application/ports";
 
 /**
- * Implementación del servicio de navegación.
- * Orquesta la resolución de prev/next usando el catálogo de lecciones.
+ * Navigation service implementation that resolves adjacent lessons (previous/next) for
+ * auto-navigation.
  *
- * Esta es la capa Application: depende de puertos (ILessonCatalog)
- * que serán implementados en Infrastructure.
+ * This service delegates all navigation logic to {@link ILessonCatalog.findAdjacentByHref}, which
+ * handles pathname normalization, lesson lookup, and adjacent lesson resolution. The catalog is
+ * the semantic home for navigation queries since it owns the lesson data structure.
+ *
+ * Instantiated in {@link src/presentation/adapters/navigation-bridge.ts} once per route render.
+ * Used by layout components to populate breadcrumb and auto-navigation UI.
  */
 export class NavigationServiceImpl implements INavigationService {
-    constructor(private lessonCatalog: ILessonCatalog) {}
-
-    async resolveAutoNav(pathname: string): Promise<NavigationResult> {
-        const lessons = await this.lessonCatalog.flatten();
-
-        // Normalizar pathname para comparación
-        const normalizedPath = this.normalizePath(pathname);
-
-        // Buscar índice de la lección actual comparando hrefs
-        const currentIndex = lessons.findIndex(
-            (l) => this.normalizePath(l.href) === normalizedPath,
-        );
-        if (currentIndex === -1) {
-            return {};
-        }
-
-        const result: NavigationResult = {};
-
-        // Lección anterior
-        if (currentIndex > 0) {
-            const prev = lessons[currentIndex - 1];
-            if (prev) {
-                result.previous = {
-                    title: prev.title,
-                    slug: prev.slug,
-                    href: prev.href,
-                };
-            }
-        }
-
-        // Lección siguiente
-        if (currentIndex < lessons.length - 1) {
-            const next = lessons[currentIndex + 1];
-            if (next) {
-                result.next = {
-                    title: next.title,
-                    slug: next.slug,
-                    href: next.href,
-                };
-            }
-        }
-
-        return result;
-    }
+    constructor(private readonly lessonCatalog: ILessonCatalog) {}
 
     /**
-     * Normaliza un pathname para comparación.
-     * Asegura que empieza y termina con /.
+     * Resolves the previous and next lessons for a given pathname.
+     *
+     * @param pathname
+     *   The current lesson's normalized pathname (e.g., `/notes/scripting/pipes/`)
+     * @returns
+     *   Promise resolving to NavigationResult with optional `previous` and `next` lesson nodes
      */
-    private normalizePath(path: string): string {
-        let normalized = path.trim();
-        if (!normalized.startsWith("/")) {
-            normalized = "/" + normalized;
-        }
-        if (!normalized.endsWith("/")) {
-            normalized += "/";
-        }
-        return normalized;
+    async resolveAutoNav(pathname: string): Promise<NavigationResult> {
+        return this.lessonCatalog.findAdjacentByHref(pathname);
     }
 }

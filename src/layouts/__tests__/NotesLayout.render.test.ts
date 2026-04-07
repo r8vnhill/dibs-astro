@@ -99,7 +99,7 @@ describe.concurrent("NotesLayout.astro render", () => {
                 title: "Leccion de prueba",
                 previous: {
                     title: "PowerShell",
-                    href: "/notes/software-libraries/scripting/structured-output",
+                    href: "/notes/scripting/structured-output",
                 },
             },
             {
@@ -118,7 +118,7 @@ describe.concurrent("NotesLayout.astro render", () => {
         expect(previousLinks).toHaveLength(1);
         expect(previousLinks[0]?.textContent).toContain("PowerShell");
         expect(previousLinks[0]?.getAttribute("href")).toBe(
-            "/notes/software-libraries/scripting/structured-output/",
+            "/notes/scripting/structured-output/",
         );
     });
 
@@ -129,16 +129,16 @@ describe.concurrent("NotesLayout.astro render", () => {
                 previous: [
                     {
                         title: "PowerShell",
-                        href: "/notes/software-libraries/scripting/structured-output",
+                        href: "/notes/scripting/structured-output",
                     },
                     {
                         title: "Nushell",
-                        href: "/notes/software-libraries/scripting/structured-output/nushell",
+                        href: "/notes/scripting/structured-output/nushell",
                     },
                 ],
                 next: {
                     title: "Pipelines",
-                    href: "/notes/software-libraries/scripting/pipelines",
+                    href: "/notes/scripting/pipelines",
                 },
             },
             {
@@ -161,8 +161,8 @@ describe.concurrent("NotesLayout.astro render", () => {
             "Nushell",
         ]);
         expect(previousLinks.map((link) => link.getAttribute("href"))).toEqual([
-            "/notes/software-libraries/scripting/structured-output/",
-            "/notes/software-libraries/scripting/structured-output/nushell/",
+            "/notes/scripting/structured-output/",
+            "/notes/scripting/structured-output/nushell/",
         ]);
         expect(nextLink?.textContent).toContain("Pipelines");
     });
@@ -203,17 +203,17 @@ describe.concurrent("NotesLayout.astro render", () => {
                 previous: [
                     {
                         title: "PowerShell",
-                        href: "/notes/software-libraries/scripting/structured-output",
+                        href: "/notes/scripting/structured-output",
                     },
                     {
                         title: "Nushell",
-                        href: "/notes/software-libraries/scripting/structured-output/nushell",
+                        href: "/notes/scripting/structured-output/nushell",
                     },
                 ],
             },
             {
                 request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/scripting/should-process/",
+                    "https://dibs.ravenhill.cl/notes/scripting/should-process/",
                 ),
                 slots: {
                     abstract: "<p>Resumen breve</p>",

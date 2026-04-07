@@ -56,8 +56,8 @@ import {
  */
 const PAGES_ROOT = "src/pages";
 const FALLBACK_AUTHOR = "Proyecto DIBS";
-const SAMPLE_SOURCE = "src/pages/notes/software-libraries/scripting/first-script/index.astro";
-const SAMPLE_ROUTE = "/notes/software-libraries/scripting/first-script/";
+const SAMPLE_SOURCE = "src/pages/notes/scripting/first-script/index.astro";
+const SAMPLE_ROUTE = "/notes/scripting/first-script/";
 
 describe("sourceFileToLessonPath", () => {
     /**

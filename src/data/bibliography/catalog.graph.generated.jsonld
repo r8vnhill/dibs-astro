@@ -2057,6 +2057,60 @@
       }
     },
     {
+      "@id": "/notes/scripting/errors/",
+      "@type": "LearningResource",
+      "name": "Errores y manejo de fallos en scripts",
+      "url": "/notes/scripting/errors/"
+    },
+    {
+      "@id": "/notes/scripting/first-script/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en PowerShell",
+      "url": "/notes/scripting/first-script/"
+    },
+    {
+      "@id": "/notes/scripting/first-script/nushell/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en Nushell",
+      "url": "/notes/scripting/first-script/nushell/"
+    },
+    {
+      "@id": "/notes/scripting/first-script/py/",
+      "@type": "LearningResource",
+      "name": "Comandos reutilizables y validación de parámetros en Python",
+      "url": "/notes/scripting/first-script/py/"
+    },
+    {
+      "@id": "/notes/scripting/node/",
+      "@type": "LearningResource",
+      "name": "Introducción a scripting con Node.js",
+      "url": "/notes/scripting/node/"
+    },
+    {
+      "@id": "/notes/scripting/pipelines/",
+      "@type": "LearningResource",
+      "name": "Pipelines I: PowerShell declarativo",
+      "url": "/notes/scripting/pipelines/"
+    },
+    {
+      "@id": "/notes/scripting/pipelines/nushell/",
+      "@type": "LearningResource",
+      "name": "Pipelines declarativos en Nushell",
+      "url": "/notes/scripting/pipelines/nushell/"
+    },
+    {
+      "@id": "/notes/scripting/structured-output/nushell/",
+      "@type": "LearningResource",
+      "name": "Salida estructurada en Nushell",
+      "url": "/notes/scripting/structured-output/nushell/"
+    },
+    {
+      "@id": "/notes/scripting/structured-output/py/",
+      "@type": "LearningResource",
+      "name": "Salida estructurada en Python",
+      "url": "/notes/scripting/structured-output/py/"
+    },
+    {
       "@id": "/notes/software-libraries/api-design/fundamentals/",
       "@type": "LearningResource",
       "name": "Diseñar la API de una biblioteca desde el dominio",
@@ -2067,60 +2121,6 @@
       "@type": "LearningResource",
       "name": "Taxonomía básica de artefactos de software",
       "url": "/notes/software-libraries/artifacts-taxonomy/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/errors/",
-      "@type": "LearningResource",
-      "name": "Errores y manejo de fallos en scripts",
-      "url": "/notes/software-libraries/scripting/errors/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/first-script/",
-      "@type": "LearningResource",
-      "name": "Comandos reutilizables y validación de parámetros en PowerShell",
-      "url": "/notes/software-libraries/scripting/first-script/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/first-script/nushell/",
-      "@type": "LearningResource",
-      "name": "Comandos reutilizables y validación de parámetros en Nushell",
-      "url": "/notes/software-libraries/scripting/first-script/nushell/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/first-script/py/",
-      "@type": "LearningResource",
-      "name": "Comandos reutilizables y validación de parámetros en Python",
-      "url": "/notes/software-libraries/scripting/first-script/py/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/node/",
-      "@type": "LearningResource",
-      "name": "Introducción a scripting con Node.js",
-      "url": "/notes/software-libraries/scripting/node/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/pipelines/",
-      "@type": "LearningResource",
-      "name": "Pipelines I: PowerShell declarativo",
-      "url": "/notes/software-libraries/scripting/pipelines/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/pipelines/nushell/",
-      "@type": "LearningResource",
-      "name": "Pipelines declarativos en Nushell",
-      "url": "/notes/software-libraries/scripting/pipelines/nushell/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/structured-output/nushell/",
-      "@type": "LearningResource",
-      "name": "Salida estructurada en Nushell",
-      "url": "/notes/software-libraries/scripting/structured-output/nushell/"
-    },
-    {
-      "@id": "/notes/software-libraries/scripting/structured-output/py/",
-      "@type": "LearningResource",
-      "name": "Salida estructurada en Python",
-      "url": "/notes/software-libraries/scripting/structured-output/py/"
     },
     {
       "@id": "/notes/software-libraries/what-is/",
@@ -2184,7 +2184,7 @@
       "@id": "usage:errors-errors-and-exceptions-additional",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/errors/"
+        "@id": "/notes/scripting/errors/"
       },
       "dibs:reference": {
         "@id": "ref:errors-and-exceptions"
@@ -2197,7 +2197,7 @@
       "@id": "usage:errors-handling-errors-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/errors/"
+        "@id": "/notes/scripting/errors/"
       },
       "dibs:reference": {
         "@id": "ref:handling-errors"
@@ -2210,7 +2210,7 @@
       "@id": "usage:first-script-improving-parameterized-script-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/"
+        "@id": "/notes/scripting/first-script/"
       },
       "dibs:reference": {
         "@id": "ref:improving-your-parameterized-script"
@@ -2223,7 +2223,7 @@
       "@id": "usage:first-script-nushell-clig-the-basics-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:clig-the-basics"
@@ -2236,7 +2236,7 @@
       "@id": "usage:first-script-nushell-dong-bash-in-the-wild-2023-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:dong-bash-in-the-wild-2023"
@@ -2249,7 +2249,7 @@
       "@id": "usage:first-script-nushell-li-bash-language-usage-2021-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:li-bash-language-usage-2021"
@@ -2262,7 +2262,7 @@
       "@id": "usage:first-script-nushell-mazurak-a-bash-2007-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:mazurak-a-bash-2007"
@@ -2275,7 +2275,7 @@
       "@id": "usage:first-script-nushell-nushell-creating-modules-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-creating-modules"
@@ -2288,7 +2288,7 @@
       "@id": "usage:first-script-nushell-nushell-custom-commands-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-custom-commands"
@@ -2301,7 +2301,7 @@
       "@id": "usage:first-script-nushell-nushell-export-def-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-export-def"
@@ -2314,7 +2314,7 @@
       "@id": "usage:first-script-nushell-nushell-path-exists-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-path-exists"
@@ -2327,7 +2327,7 @@
       "@id": "usage:first-script-nushell-nushell-path-type-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-path-type"
@@ -2340,7 +2340,7 @@
       "@id": "usage:first-script-nushell-nushell-save-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-save"
@@ -2353,7 +2353,7 @@
       "@id": "usage:first-script-nushell-nushell-string-interpolation-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-string-interpolation"
@@ -2366,7 +2366,7 @@
       "@id": "usage:first-script-nushell-nushell-type-signatures-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-type-signatures"
@@ -2379,7 +2379,7 @@
       "@id": "usage:first-script-nushell-nushell-types-of-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-types-of-data"
@@ -2392,7 +2392,7 @@
       "@id": "usage:first-script-nushell-nushell-use-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/nushell/"
+        "@id": "/notes/scripting/first-script/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-use"
@@ -2405,7 +2405,7 @@
       "@id": "usage:first-script-py-input-and-output-python-distilled-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/first-script/py/"
+        "@id": "/notes/scripting/first-script/py/"
       },
       "dibs:reference": {
         "@id": "ref:input-and-output-python-distilled"
@@ -2574,7 +2574,7 @@
       "@id": "usage:pipelines-collection-pipeline-fowler-additional",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/"
+        "@id": "/notes/scripting/pipelines/"
       },
       "dibs:reference": {
         "@id": "ref:collection-pipeline-fowler"
@@ -2587,7 +2587,7 @@
       "@id": "usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:atomic-spin-introduction-to-nushell"
@@ -2600,7 +2600,7 @@
       "@id": "usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:handa-order-aware-dataflow-pipelines-2021"
@@ -2613,7 +2613,7 @@
       "@id": "usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:jdriven-nushell-basics-structured-data"
@@ -2626,7 +2626,7 @@
       "@id": "usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:kernighan-pike-unix-programming-environment-1984"
@@ -2639,7 +2639,7 @@
       "@id": "usage:pipelines-nushell-microsoft-about-functions-advanced-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:microsoft-about-functions-advanced"
@@ -2652,7 +2652,7 @@
       "@id": "usage:pipelines-nushell-microsoft-about-objects-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:microsoft-about-objects"
@@ -2665,7 +2665,7 @@
       "@id": "usage:pipelines-nushell-microsoft-about-pipelines-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:microsoft-about-pipelines"
@@ -2678,7 +2678,7 @@
       "@id": "usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:microsoft-getting-started-powershell-3"
@@ -2691,7 +2691,7 @@
       "@id": "usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:microsoft-powershell-more-on-parameters"
@@ -2704,7 +2704,7 @@
       "@id": "usage:pipelines-nushell-nushell-custom-commands-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-custom-commands"
@@ -2717,7 +2717,7 @@
       "@id": "usage:pipelines-nushell-nushell-filters-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-filters"
@@ -2730,7 +2730,7 @@
       "@id": "usage:pipelines-nushell-nushell-jq-vs-nushell-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-jq-vs-nushell"
@@ -2743,7 +2743,7 @@
       "@id": "usage:pipelines-nushell-nushell-navigating-structured-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-navigating-structured-data"
@@ -2756,7 +2756,7 @@
       "@id": "usage:pipelines-nushell-nushell-new-type-shell-video-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-new-type-shell-video"
@@ -2769,7 +2769,7 @@
       "@id": "usage:pipelines-nushell-nushell-open-command-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-open-command"
@@ -2782,7 +2782,7 @@
       "@id": "usage:pipelines-nushell-nushell-pipelines-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-pipelines"
@@ -2795,7 +2795,7 @@
       "@id": "usage:pipelines-nushell-nushell-thinking-in-nu-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-thinking-in-nu"
@@ -2808,7 +2808,7 @@
       "@id": "usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:snover-windows-powershell-unplugged-2015"
@@ -2821,7 +2821,7 @@
       "@id": "usage:pipelines-nushell-volkmann-nushell-overview-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:volkmann-nushell-overview"
@@ -2834,7 +2834,7 @@
       "@id": "usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/nushell/"
+        "@id": "/notes/scripting/pipelines/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:windows-powershell-in-action-3e-book"
@@ -2847,7 +2847,7 @@
       "@id": "usage:pipelines-pipeline-connecting-commands-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/pipelines/"
+        "@id": "/notes/scripting/pipelines/"
       },
       "dibs:reference": {
         "@id": "ref:pipeline-connecting-commands"
@@ -2860,7 +2860,7 @@
       "@id": "usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:casciaro-nodejs-design-patterns-4e"
@@ -2873,7 +2873,7 @@
       "@id": "usage:scripting-node-exploringjs-shell-scripting-nodejs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:exploringjs-shell-scripting-nodejs"
@@ -2886,7 +2886,7 @@
       "@id": "usage:scripting-node-flanagan-javascript-definitive-guide-7e-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:flanagan-javascript-definitive-guide-7e"
@@ -2899,7 +2899,7 @@
       "@id": "usage:scripting-node-mdn-javascript-guide-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:mdn-javascript-guide"
@@ -2912,7 +2912,7 @@
       "@id": "usage:scripting-node-mdn-javascript-modules-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:mdn-javascript-modules"
@@ -2925,7 +2925,7 @@
       "@id": "usage:scripting-node-nodejs-ecmascript-modules-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:nodejs-ecmascript-modules-docs"
@@ -2938,7 +2938,7 @@
       "@id": "usage:scripting-node-nodejs-event-loop-inside-out-video-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:nodejs-event-loop-inside-out-video"
@@ -2951,7 +2951,7 @@
       "@id": "usage:scripting-node-nodejs-file-system-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:nodejs-file-system-docs"
@@ -2964,7 +2964,7 @@
       "@id": "usage:scripting-node-nodejs-introduction-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:nodejs-introduction"
@@ -2977,7 +2977,7 @@
       "@id": "usage:scripting-node-nodejs-path-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:nodejs-path-docs"
@@ -2990,7 +2990,7 @@
       "@id": "usage:scripting-node-npm-about-npm-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:npm-about-npm"
@@ -3003,7 +3003,7 @@
       "@id": "usage:scripting-node-npm-about-packages-and-modules-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:npm-about-packages-and-modules"
@@ -3016,7 +3016,7 @@
       "@id": "usage:scripting-node-npm-downloading-installing-nodejs-and-npm-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:npm-downloading-installing-nodejs-and-npm"
@@ -3029,7 +3029,7 @@
       "@id": "usage:scripting-node-rauschmayer-getting-started-with-nodejs-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:rauschmayer-getting-started-with-nodejs"
@@ -3042,7 +3042,7 @@
       "@id": "usage:scripting-node-rauschmayer-javascript-impatient-programmers-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:rauschmayer-javascript-impatient-programmers"
@@ -3055,7 +3055,7 @@
       "@id": "usage:scripting-node-sun-reasoning-about-nodejs-event-loop-2019-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/node/"
+        "@id": "/notes/scripting/node/"
       },
       "dibs:reference": {
         "@id": "ref:sun-reasoning-about-nodejs-event-loop-2019"
@@ -3341,7 +3341,7 @@
       "@id": "usage:structured-output-nushell-atomic-spin-introduction-to-nushell-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:atomic-spin-introduction-to-nushell"
@@ -3354,7 +3354,7 @@
       "@id": "usage:structured-output-nushell-clig-the-basics-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:clig-the-basics"
@@ -3367,7 +3367,7 @@
       "@id": "usage:structured-output-nushell-heroku-cli-style-guide-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:heroku-cli-style-guide"
@@ -3380,7 +3380,7 @@
       "@id": "usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:jdriven-nushell-basics-structured-data"
@@ -3393,7 +3393,7 @@
       "@id": "usage:structured-output-nushell-nushell-list-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-list"
@@ -3406,7 +3406,7 @@
       "@id": "usage:structured-output-nushell-nushell-navigating-structured-data-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-navigating-structured-data"
@@ -3419,7 +3419,7 @@
       "@id": "usage:structured-output-nushell-nushell-record-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-record"
@@ -3432,7 +3432,7 @@
       "@id": "usage:structured-output-nushell-nushell-working-with-lists-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-working-with-lists"
@@ -3445,7 +3445,7 @@
       "@id": "usage:structured-output-nushell-nushell-working-with-records-recommended",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-working-with-records"
@@ -3458,7 +3458,7 @@
       "@id": "usage:structured-output-nushell-nushell-working-with-tables-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/nushell/"
+        "@id": "/notes/scripting/structured-output/nushell/"
       },
       "dibs:reference": {
         "@id": "ref:nushell-working-with-tables"
@@ -3471,7 +3471,7 @@
       "@id": "usage:structured-output-py-attrs-why-not-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:attrs-why-not"
@@ -3484,7 +3484,7 @@
       "@id": "usage:structured-output-py-cattrs-documentation-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:cattrs-documentation"
@@ -3497,7 +3497,7 @@
       "@id": "usage:structured-output-py-dataclasses-are-here-2018-video-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:dataclasses-are-here-2018-video"
@@ -3510,7 +3510,7 @@
       "@id": "usage:structured-output-py-effective-python-3e-book-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:effective-python-3e-book"
@@ -3523,7 +3523,7 @@
       "@id": "usage:structured-output-py-fluent-python-2e-book-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:fluent-python-2e-book"
@@ -3536,7 +3536,7 @@
       "@id": "usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:hettinger-dataclasses-pycon-2018-video"
@@ -3549,7 +3549,7 @@
       "@id": "usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:lucas-serialization-more-than-pickling-2022"
@@ -3562,7 +3562,7 @@
       "@id": "usage:structured-output-py-pep-557-data-classes-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:pep-557-data-classes"
@@ -3575,7 +3575,7 @@
       "@id": "usage:structured-output-py-pep-613-explicit-type-aliases-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:pep-613-explicit-type-aliases"
@@ -3588,7 +3588,7 @@
       "@id": "usage:structured-output-py-pydantic-models-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:pydantic-models-docs"
@@ -3601,7 +3601,7 @@
       "@id": "usage:structured-output-py-python-dataclasses-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:python-dataclasses-docs"
@@ -3614,7 +3614,7 @@
       "@id": "usage:structured-output-py-python-distilled-book-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:python-distilled-book"
@@ -3627,7 +3627,7 @@
       "@id": "usage:structured-output-py-python-json-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:python-json-docs"
@@ -3640,7 +3640,7 @@
       "@id": "usage:structured-output-py-python-typing-docs-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:python-typing-docs"
@@ -3653,7 +3653,7 @@
       "@id": "usage:structured-output-py-rfc-8259-json-data-interchange-format-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
-        "@id": "/notes/software-libraries/scripting/structured-output/py/"
+        "@id": "/notes/scripting/structured-output/py/"
       },
       "dibs:reference": {
         "@id": "ref:rfc-8259-json-data-interchange-format"

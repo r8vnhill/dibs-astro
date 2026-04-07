@@ -6,6 +6,8 @@
  * Implementación futura: base de datos, API, etc.
  */
 
+import type { NavigationResult } from "./NavigationService";
+
 export interface Lesson {
     id: string;
     title: string;
@@ -41,4 +43,16 @@ export interface ILessonCatalog {
      * @returns array lineal de lecciones con href siempre presente
      */
     flatten(): Promise<Array<Lesson & { href: string }>>;
+
+    /**
+     * Busca las lecciones adyacentes (anterior y siguiente) para una ruta dada.
+     *
+     * Encapsula la normalización de rutas y búsqueda de índice.
+     * Esto mueve la responsabilidad de navegación al catálogo,
+     * que es el dueño natural de la estructura y orden de lecciones.
+     *
+     * @param href ruta normalizada (ej: /notes/unit/lesson/) o variante (con query/hash/slashes)
+     * @returns objeto con lecciones anterior y siguiente (propiedades undefined si no existen)
+     */
+    findAdjacentByHref(href: string): Promise<NavigationResult>;
 }

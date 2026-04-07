@@ -161,55 +161,55 @@
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/errors/",
+      "lessonId": "/notes/scripting/errors/",
       "lessonTitle": "Errores y manejo de fallos en scripts",
       "tag": "additional",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/errors/",
+      "lessonId": "/notes/scripting/errors/",
       "lessonTitle": "Errores y manejo de fallos en scripts",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/first-script/",
+      "lessonId": "/notes/scripting/first-script/",
       "lessonTitle": "Comandos reutilizables y validación de parámetros en PowerShell",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/first-script/nushell/",
+      "lessonId": "/notes/scripting/first-script/nushell/",
       "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/first-script/py/",
+      "lessonId": "/notes/scripting/first-script/py/",
       "lessonTitle": "Comandos reutilizables y validación de parámetros en Python",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/pipelines/",
+      "lessonId": "/notes/scripting/pipelines/",
       "lessonTitle": "Pipelines I: PowerShell declarativo",
       "tag": "additional",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/pipelines/",
+      "lessonId": "/notes/scripting/pipelines/",
       "lessonTitle": "Pipelines I: PowerShell declarativo",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/pipelines/nushell/",
+      "lessonId": "/notes/scripting/pipelines/nushell/",
       "lessonTitle": "Pipelines declarativos en Nushell",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/scripting/structured-output/nushell/",
+      "lessonId": "/notes/scripting/structured-output/nushell/",
       "lessonTitle": "Salida estructurada en Nushell",
       "tag": "recommended",
       "count": 1

@@ -1,8 +1,9 @@
 import type { ILessonCatalog, Lesson } from "$application/ports";
+import type { NavigationResult } from "$application/ports/NavigationService";
 import {
     courseStructure,
-    flattenLessons,
     type FlattenedLesson,
+    flattenLessons,
     type Lesson as DomainLesson,
 } from "~/data/course-structure";
 
@@ -62,6 +63,77 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         return flattened.find((lesson) => lesson.href === pathname) ?? null;
     }
 
+    async findAdjacentByHref(href: string): Promise<NavigationResult> {
+        const lessons = await this.flatten();
+        const normalizedSearch = this.normalizePath(href);
+        const currentIndex = lessons.findIndex(
+            (lesson) => this.normalizePath(lesson.href) === normalizedSearch,
+        );
+
+        if (currentIndex < 0) {
+            return {};
+        }
+
+        const result: NavigationResult = {};
+        const prev = this.toNavigationNode(lessons[currentIndex - 1]);
+        const next = this.toNavigationNode(lessons[currentIndex + 1]);
+
+        if (prev) result.previous = prev;
+        if (next) result.next = next;
+
+        return result;
+    }
+
+    /**
+     * Normaliza una ruta para comparación consistente.
+     *
+     * Reglas de normalización:
+     * 1. Elimina query params y hash fragments
+     * 2. Garantiza slash inicial
+     * 3. Colapsa múltiples slashes consecutivos a uno
+     * 4. Garantiza slash final
+     *
+     * Ejemplos:
+     * - "/foo?x=1" → "/foo/"
+     * - "foo#section" → "/foo/"
+     * - "//foo//bar" → "/foo/bar/"
+     * - "foo" → "/foo/"
+     */
+    private normalizePath(path: string): string {
+        // 1. Elimina query params y hash
+        const trimmed = path.trim();
+        const withoutQuery = trimmed.split(/[?#]/)[0] ?? "";
+
+        // 2. Garantiza slash inicial
+        const withLeadingSlash = withoutQuery.startsWith("/")
+            ? withoutQuery
+            : `/${withoutQuery}`;
+
+        // 3. Colapsa múltiples slashes
+        const collapsedSlashes = withLeadingSlash.replace(/\/{2,}/g, "/");
+
+        // 4. Garantiza slash final
+        return collapsedSlashes.endsWith("/")
+            ? collapsedSlashes
+            : `${collapsedSlashes}/`;
+    }
+
+    /**
+     * Convierte una lección a un nodo de navegación.
+     * Retorna undefined si la lección es undefined (para bordes de lista).
+     */
+    private toNavigationNode(lesson: (Lesson & { href: string }) | undefined) {
+        if (!lesson) {
+            return undefined;
+        }
+
+        return {
+            title: lesson.title,
+            slug: lesson.slug,
+            href: lesson.href,
+        };
+    }
+
     /**
      * Mapea la estructura jerárquica actual a una forma simplificada.
      *
@@ -94,7 +166,7 @@ export class LessonCatalogAdapter implements ILessonCatalog {
 
     /**
      * Extrae un slug legible de una ruta.
-     * Ej: /notes/software-libraries/scripting/help/ → help
+     * Ej: /notes/scripting/help/ → help
      * Fallback: usa una versión normalizada del id.
      */
     private extractSlug(hrefOrId: string): string {

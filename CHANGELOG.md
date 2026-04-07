@@ -115,7 +115,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 - Refined `InlineCode.astro` internals to make source resolution and usage rules more robust and predictable.
 - Improved Astro render test utilities and Vitest unit config discovery/isolation to reduce config coupling in tests.
-- Reworked the `notes/software-libraries/scripting/pipelines/` lesson with clearer abstract/conclusions and stronger pedagogical progression across filtering, projection, transformation, and JSON pipeline exercises.
+- Reworked the `notes/scripting/pipelines/` lesson with clearer abstract/conclusions and stronger pedagogical progression across filtering, projection, transformation, and JSON pipeline exercises.
 - Regenerated derived metadata/index artifacts (`lesson-metadata.generated.json`, icon index) to reflect the updated lesson/content state.
 
 ### Fixed
@@ -132,7 +132,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 - Added comprehensive course structure test coverage, including flattening, validation, property-based tests, and shared test support utilities.
 - Added `inline-code-classes` utility and focused tests to harden inline code rendering behavior.
 - Added render tests for `LessonRepoPanel` to validate multi-repository source link rendering.
-- Added the new lesson `Lab. 2: Git Submodules` under `notes/software-libraries/scripting/pipelines/git-submodules/`.
+- Added the new lesson `Lab. 2: Git Submodules` under `notes/scripting/pipelines/git-submodules/`.
 - Added architecture documentation for Phase 1 (checklists, summaries, tree, and ADR-001 for layered architecture).
 - Added a new icon asset `shield-warning.svg`.
 
@@ -163,7 +163,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- Expanded and restructured the lesson at `notes/software-libraries/scripting/pipelines/errors/` with clearer explanations, updated hints, and a richer exercise around `-ErrorVariable` and batch-level failure handling.
+- Expanded and restructured the lesson at `notes/scripting/pipelines/errors/` with clearer explanations, updated hints, and a richer exercise around `-ErrorVariable` and batch-level failure handling.
 - Updated code UI components (`OutputBlock`, `InlineCode`, `CodeLayout`, `LightCode`, `DarkCode`) and Shiki highlighter wiring to improve text wrapping and output rendering consistency.
 - Updated Vitest configuration split so Astro render tests use their own config pattern (`*.render.test.ts`) separate from jsdom/unit tests.
 

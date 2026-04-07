@@ -13,45 +13,45 @@
 @prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
 @prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/>
+<https://dibs.ravenhill.cl/notes/scripting/pipelines/>
   a schema:LearningResource ;
   schema:name "Pipelines I: PowerShell declarativo" ;
-  schema:url "/notes/software-libraries/scripting/pipelines/" .
+  schema:url "/notes/scripting/pipelines/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/>
+<https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/>
   a schema:LearningResource ;
   schema:name "Pipelines declarativos en Nushell" ;
-  schema:url "/notes/software-libraries/scripting/pipelines/nushell/" .
+  schema:url "/notes/scripting/pipelines/nushell/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/>
+<https://dibs.ravenhill.cl/notes/scripting/first-script/>
   a schema:LearningResource ;
   schema:name "Comandos reutilizables y validación de parámetros en PowerShell" ;
-  schema:url "/notes/software-libraries/scripting/first-script/" .
+  schema:url "/notes/scripting/first-script/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/py/>
+<https://dibs.ravenhill.cl/notes/scripting/first-script/py/>
   a schema:LearningResource ;
   schema:name "Comandos reutilizables y validación de parámetros en Python" ;
-  schema:url "/notes/software-libraries/scripting/first-script/py/" .
+  schema:url "/notes/scripting/first-script/py/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/>
+<https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/>
   a schema:LearningResource ;
   schema:name "Comandos reutilizables y validación de parámetros en Nushell" ;
-  schema:url "/notes/software-libraries/scripting/first-script/nushell/" .
+  schema:url "/notes/scripting/first-script/nushell/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/>
+<https://dibs.ravenhill.cl/notes/scripting/structured-output/py/>
   a schema:LearningResource ;
   schema:name "Salida estructurada en Python" ;
-  schema:url "/notes/software-libraries/scripting/structured-output/py/" .
+  schema:url "/notes/scripting/structured-output/py/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/>
+<https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/>
   a schema:LearningResource ;
   schema:name "Salida estructurada en Nushell" ;
-  schema:url "/notes/software-libraries/scripting/structured-output/nushell/" .
+  schema:url "/notes/scripting/structured-output/nushell/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/>
+<https://dibs.ravenhill.cl/notes/scripting/errors/>
   a schema:LearningResource ;
   schema:name "Errores y manejo de fallos en scripts" ;
-  schema:url "/notes/software-libraries/scripting/errors/" .
+  schema:url "/notes/scripting/errors/" .
 
 <https://dibs.ravenhill.cl/notes/software-libraries/what-is/>
   a schema:LearningResource ;
@@ -68,398 +68,398 @@
   schema:name "Diseñar la API de una biblioteca desde el dominio" ;
   schema:url "/notes/software-libraries/api-design/fundamentals/" .
 
-<https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/>
+<https://dibs.ravenhill.cl/notes/scripting/node/>
   a schema:LearningResource ;
   schema:name "Introducción a scripting con Node.js" ;
-  schema:url "/notes/software-libraries/scripting/node/" .
+  schema:url "/notes/scripting/node/" .
 
 usage:pipelines-pipeline-connecting-commands-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/> ;
   dibs:reference ref:pipeline-connecting-commands ;
   dibs:tag "recommended" .
 
 usage:pipelines-collection-pipeline-fowler-additional
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/> ;
   dibs:reference ref:collection-pipeline-fowler ;
   dibs:tag "additional" .
 
 usage:first-script-improving-parameterized-script-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/> ;
   dibs:reference ref:improving-your-parameterized-script ;
   dibs:tag "recommended" .
 
 usage:first-script-py-input-and-output-python-distilled-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/py/> ;
   dibs:reference ref:input-and-output-python-distilled ;
   dibs:tag "recommended" .
 
 usage:errors-handling-errors-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/errors/> ;
   dibs:reference ref:handling-errors ;
   dibs:tag "recommended" .
 
 usage:errors-errors-and-exceptions-additional
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/errors/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/errors/> ;
   dibs:reference ref:errors-and-exceptions ;
   dibs:tag "additional" .
 
 usage:first-script-nushell-nushell-custom-commands-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-custom-commands ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-creating-modules-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-creating-modules ;
   dibs:tag "recommended" .
 
 usage:first-script-nushell-nushell-type-signatures-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-type-signatures ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-use-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-use ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-clig-the-basics-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:clig-the-basics ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-export-def-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-export-def ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-path-exists-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-path-exists ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-path-type-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-path-type ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-save-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-save ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-string-interpolation-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-string-interpolation ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-nushell-types-of-data-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:nushell-types-of-data ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-dong-bash-in-the-wild-2023-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:dong-bash-in-the-wild-2023 ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-li-bash-language-usage-2021-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:li-bash-language-usage-2021 ;
   dibs:tag "pending-revision" .
 
 usage:first-script-nushell-mazurak-a-bash-2007-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/first-script/nushell/> ;
   dibs:reference ref:mazurak-a-bash-2007 ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-atomic-spin-introduction-to-nushell-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:atomic-spin-introduction-to-nushell ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-heroku-cli-style-guide-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:heroku-cli-style-guide ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-list-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-list ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-navigating-structured-data-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-navigating-structured-data ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-clig-the-basics-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:clig-the-basics ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-record-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-record ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-jdriven-nushell-basics-structured-data-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:jdriven-nushell-basics-structured-data ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-python-distilled-book-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:python-distilled-book ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-rfc-8259-json-data-interchange-format-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:rfc-8259-json-data-interchange-format ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-cattrs-documentation-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:cattrs-documentation ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-python-dataclasses-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:python-dataclasses-docs ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-python-json-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:python-json-docs ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-fluent-python-2e-book-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:fluent-python-2e-book ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-pydantic-models-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:pydantic-models-docs ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-pep-557-data-classes-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:pep-557-data-classes ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-pep-613-explicit-type-aliases-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:pep-613-explicit-type-aliases ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-hettinger-dataclasses-pycon-2018-video-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:hettinger-dataclasses-pycon-2018-video ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-lucas-serialization-more-than-pickling-2022-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:lucas-serialization-more-than-pickling-2022 ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-dataclasses-are-here-2018-video-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:dataclasses-are-here-2018-video ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-effective-python-3e-book-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:effective-python-3e-book ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-python-typing-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:python-typing-docs ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-py-attrs-why-not-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/py/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/py/> ;
   dibs:reference ref:attrs-why-not ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-working-with-lists-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-working-with-lists ;
   dibs:tag "pending-revision" .
 
 usage:structured-output-nushell-nushell-working-with-records-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-working-with-records ;
   dibs:tag "recommended" .
 
 usage:structured-output-nushell-nushell-working-with-tables-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/structured-output/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/structured-output/nushell/> ;
   dibs:reference ref:nushell-working-with-tables ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-atomic-spin-introduction-to-nushell-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:atomic-spin-introduction-to-nushell ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-custom-commands-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-custom-commands ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-new-type-shell-video-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-new-type-shell-video ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-filters-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-filters ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-handa-order-aware-dataflow-pipelines-2021-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:handa-order-aware-dataflow-pipelines-2021 ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-jq-vs-nushell-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-jq-vs-nushell ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-microsoft-powershell-more-on-parameters-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:microsoft-powershell-more-on-parameters ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-microsoft-getting-started-powershell-3-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:microsoft-getting-started-powershell-3 ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-kernighan-pike-unix-programming-environment-1984-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:kernighan-pike-unix-programming-environment-1984 ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-navigating-structured-data-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-navigating-structured-data ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-volkmann-nushell-overview-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:volkmann-nushell-overview ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-open-command-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-open-command ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-windows-powershell-in-action-3e-book-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:windows-powershell-in-action-3e-book ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-microsoft-about-functions-advanced-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:microsoft-about-functions-advanced ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-microsoft-about-objects-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:microsoft-about-objects ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-microsoft-about-pipelines-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:microsoft-about-pipelines ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-jdriven-nushell-basics-structured-data-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:jdriven-nushell-basics-structured-data ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-thinking-in-nu-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-thinking-in-nu ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-snover-windows-powershell-unplugged-2015-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:snover-windows-powershell-unplugged-2015 ;
   dibs:tag "pending-revision" .
 
 usage:pipelines-nushell-nushell-pipelines-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
   dibs:reference ref:nushell-pipelines ;
   dibs:tag "recommended" .
 
@@ -687,96 +687,96 @@ usage:api-design-fundamentals-martin-functions-2011-additional
 
 usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:casciaro-nodejs-design-patterns-4e ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-npm-downloading-installing-nodejs-and-npm-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:npm-downloading-installing-nodejs-and-npm ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-nodejs-file-system-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:nodejs-file-system-docs ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-flanagan-javascript-definitive-guide-7e-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:flanagan-javascript-definitive-guide-7e ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-mdn-javascript-guide-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:mdn-javascript-guide ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-mdn-javascript-modules-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:mdn-javascript-modules ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-nodejs-ecmascript-modules-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:nodejs-ecmascript-modules-docs ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-nodejs-event-loop-inside-out-video-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:nodejs-event-loop-inside-out-video ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-nodejs-introduction-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:nodejs-introduction ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-npm-about-npm-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:npm-about-npm ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-npm-about-packages-and-modules-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:npm-about-packages-and-modules ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-nodejs-path-docs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:nodejs-path-docs ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-rauschmayer-javascript-impatient-programmers-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:rauschmayer-javascript-impatient-programmers ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-exploringjs-shell-scripting-nodejs-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:exploringjs-shell-scripting-nodejs ;
   dibs:tag "pending-revision" .
 
 usage:scripting-node-rauschmayer-getting-started-with-nodejs-recommended
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:rauschmayer-getting-started-with-nodejs ;
   dibs:tag "recommended" .
 
 usage:scripting-node-sun-reasoning-about-nodejs-event-loop-2019-pending
   a dibs:ReferenceUsage ;
-  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/> ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/node/> ;
   dibs:reference ref:sun-reasoning-about-nodejs-event-loop-2019 ;
   dibs:tag "pending-revision" .

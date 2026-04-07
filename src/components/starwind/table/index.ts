@@ -1,3 +1,21 @@
+/**
+ * Barrel export for Starwind table components.
+ *
+ * Provides two import patterns for lesson pages to render data tables with semantic HTML
+ * (`<table>`, `<thead>`, `<tbody>`, etc.):
+ * 1. Named imports for composition:
+ *    ```ts
+ *    import {
+ *      Table, TableHeader, TableBody, TableRow, TableCell
+ *    } from "~/components/starwind/table"
+ *    ```
+ * 2. Legacy object syntax (default export): `Table.Root`, `Table.Header`, `Table.Body`,
+ *    `Table.Row`, `Table.Cell`
+ *
+ * Used across lesson pages (scripting, type-fundamentals) to display parameter lists, data
+ * comparisons, and function signatures.
+ */
+
 import Table from "./Table.astro";
 import TableBody from "./TableBody.astro";
 import TableCaption from "./TableCaption.astro";
@@ -6,15 +24,6 @@ import TableFoot from "./TableFoot.astro";
 import TableHead from "./TableHead.astro";
 import TableHeader from "./TableHeader.astro";
 import TableRow from "./TableRow.astro";
-
-export type { TableProps } from "./Table.astro";
-export type { TableBodyProps } from "./TableBody.astro";
-export type { TableCaptionProps } from "./TableCaption.astro";
-export type { TableCellProps } from "./TableCell.astro";
-export type { TableFootProps } from "./TableFoot.astro";
-export type { TableHeadCellProps } from "./TableHead.astro";
-export type { TableHeaderProps } from "./TableHeader.astro";
-export type { TableRowProps } from "./TableRow.astro";
 
 export { Table, TableBody, TableCaption, TableCell, TableFoot, TableHead, TableHeader, TableRow };
 
