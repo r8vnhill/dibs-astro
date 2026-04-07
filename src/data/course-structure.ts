@@ -1,3 +1,5 @@
+import { courseStructure as internalCourseStructure } from "./course-structure/index";
+
 /**
  * Base properties shared by all lesson entries.
  *
@@ -148,150 +150,7 @@ export type FlattenedLesson = Lesson & {
  * - Tree-shaking
  * - Deterministic navigation ordering
  */
-export const courseStructure = [
-    {
-        kind: "link",
-        id: "how-to-start",
-        title: "¿Cómo usar este apunte?",
-        href: "/notes/",
-    },
-    {
-        kind: "link",
-        id: "installation",
-        title: "Herramientas necesarias y recomendadas",
-        href: "/notes/installation/",
-    },
-    {
-        kind: "group",
-        id: "unit-1",
-        title: "Unidad 1 - Introducción al desarrollo de bibliotecas de software",
-        href: "/notes/software-libraries/",
-        children: [
-            {
-                kind: "link",
-                id: "software-artifacts-taxonomy",
-                title: "Taxonomía básica de artefactos de software",
-                href: "/notes/software-libraries/artifacts-taxonomy/",
-            },
-            {
-                kind: "link",
-                id: "lib-what-is",
-                title: "La biblioteca como artefacto de software",
-                href: "/notes/software-libraries/what-is/",
-            },
-            {
-                kind: "link",
-                id: "task-automation",
-                title: "Automatización de tareas",
-                href: "/notes/software-libraries/task-automation/",
-            },
-            {
-                kind: "link",
-                id: "design-principles",
-                title: "Principios de diseño de bibliotecas",
-                href: "/notes/software-libraries/design-principles/",
-            },
-            {
-                kind: "group",
-                id: "scripting",
-                title: "Scripting",
-                href: "/notes/software-libraries/scripting/",
-                children: [
-                    {
-                        kind: "link",
-                        id: "scripting-help",
-                        title: "Ayuda",
-                        href: "/notes/software-libraries/scripting/help/",
-                    },
-                    {
-                        kind: "link",
-                        id: "first-script",
-                        title: "Primer script",
-                        href: "/notes/software-libraries/scripting/first-script/",
-                    },
-                    {
-                        kind: "link",
-                        id: "structured-output",
-                        title: "Salida estructurada",
-                        href: "/notes/software-libraries/scripting/structured-output/",
-                    },
-                    {
-                        kind: "link",
-                        id: "should-process",
-                        title: "Ensayo seguro (-WhatIf/-Confirm)",
-                        href: "/notes/software-libraries/scripting/should-process/",
-                    },
-                    {
-                        kind: "link",
-                        id: "scripting-errors",
-                        title: "Manejo de errores",
-                        href: "/notes/software-libraries/scripting/errors/",
-                    },
-                    {
-                        kind: "link",
-                        id: "lab-gitlab",
-                        title: "Lab. 1: GitLab",
-                        href: "/notes/software-libraries/scripting/gitlab/",
-                    },
-                    {
-                        kind: "group",
-                        id: "pipelines",
-                        title: "Pipelines",
-                        href: "/notes/software-libraries/scripting/pipelines/",
-                        children: [
-                            {
-                                kind: "link",
-                                id: "pipeline-aware",
-                                title: "Pipeline-awareness",
-                                href:
-                                    "/notes/software-libraries/scripting/pipelines/pipeline-aware/",
-                            },
-                            {
-                                kind: "link",
-                                id: "pipeline-errors",
-                                title: "Manejo de errores",
-                                href: "/notes/software-libraries/scripting/pipelines/errors/",
-                            },
-                            {
-                                kind: "link",
-                                id: "git-submodules",
-                                title: "Lab. 2: Git Submodules",
-                                href:
-                                    "/notes/software-libraries/scripting/pipelines/git-submodules/",
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                kind: "group",
-                id: "build-systems",
-                title: "Sistemas de construcción",
-                href: "/notes/software-libraries/build-systems/",
-                children: [
-                    {
-                        kind: "link",
-                        id: "veritas-1",
-                        title: "Veritas: Ep. 1",
-                        href: "/notes/software-libraries/build-systems/veritas-1/",
-                    },
-                ],
-            },
-            {
-                kind: "link",
-                id: "business-vs-app",
-                title: "Lógica de negocio y aplicación",
-                href: "/notes/software-libraries/business-vs-app/",
-            },
-            {
-                kind: "link",
-                id: "domain-models",
-                title: "Modelos de dominio",
-                href: "/notes/software-libraries/domain-models/",
-            },
-        ],
-    },
-] as const satisfies readonly Lesson[];
+export const courseStructure: readonly Lesson[] = internalCourseStructure;
 
 /**
  * Generator that walks the lesson tree using pre-order traversal.
@@ -396,7 +255,17 @@ export function validateCourseStructure(
     const seenIds = new Set<string>();
     const seenHrefs = new Set<string>();
 
-    function validate(lesson: Lesson, path: string): void {
+    function normalizeHref(href: string): string {
+        let normalizedHref = href.startsWith("/") ? href : `/${href}`;
+
+        if (normalizedHref.length > 1 && !normalizedHref.endsWith("/")) {
+            normalizedHref += "/";
+        }
+
+        return normalizedHref;
+    }
+
+    function validate(lesson: Lesson, path: string, parentHref?: string): void {
         if (seenIds.has(lesson.id)) {
             throw new Error(
                 `Duplicate lesson ID "${lesson.id}" at ${path}. IDs must be unique.`,
@@ -405,17 +274,29 @@ export function validateCourseStructure(
         seenIds.add(lesson.id);
 
         if (lesson.href) {
+            const normalizedHref = normalizeHref(lesson.href);
+
             if (!lesson.href.endsWith("/")) {
                 throw new Error(
                     `Lesson "${lesson.id}" href "${lesson.href}" must end with trailing slash.`,
                 );
             }
-            if (seenHrefs.has(lesson.href)) {
+            if (seenHrefs.has(normalizedHref)) {
                 throw new Error(
                     `Duplicate href "${lesson.href}" at ${path}. Each href must be unique.`,
                 );
             }
-            seenHrefs.add(lesson.href);
+            seenHrefs.add(normalizedHref);
+
+            if (
+                parentHref &&
+                normalizedHref !== parentHref &&
+                !normalizedHref.startsWith(parentHref)
+            ) {
+                throw new Error(
+                    `Lesson "${lesson.id}" href "${lesson.href}" must be nested under parent href "${parentHref}".`,
+                );
+            }
         }
 
         if (lesson.kind === "group" && !lesson.children?.length) {
@@ -425,8 +306,10 @@ export function validateCourseStructure(
         }
 
         if (lesson.children?.length) {
+            const lessonHref = lesson.href ? normalizeHref(lesson.href) : parentHref;
+
             for (const child of lesson.children) {
-                validate(child, `${path} > ${lesson.id}`);
+                validate(child, `${path} > ${lesson.id}`, lessonHref);
             }
         }
     }

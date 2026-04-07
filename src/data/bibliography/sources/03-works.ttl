@@ -1,0 +1,119 @@
+# Canonical parent works reused by specific bibliography references.
+#
+# Keep whole books, proceedings, journals, and other container-level creative works here when
+# chapters, papers, or sections cite them via `schema:isPartOf`. This file is for reusable
+# publication metadata, not for lesson-facing citations with page ranges or URLs; those concrete
+# references belong in `04-references.ttl`.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+work:learn-powershell-month-lunches-4e
+  a schema:CreativeWork ;
+  schema:name "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS" ;
+  schema:author person:travis-plunk .
+
+work:python-distilled
+  a schema:CreativeWork ;
+  schema:name "Python Distilled" ;
+  schema:author person:david-m-beazley .
+
+work:windows-powershell-in-action-3e
+  a schema:CreativeWork ;
+  schema:name "Windows PowerShell in Action, Third Edition" ;
+  schema:author person:bruce-payette, person:richard-siddaway .
+
+work:acm-tosem
+  a schema:CreativeWork ;
+  schema:name "ACM Transactions on Software Engineering and Methodology" ;
+  schema:publisher org:acm .
+
+work:plas-2007
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security" ;
+  schema:publisher org:acm .
+
+work:proc-acm-program-lang
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the ACM on Programming Languages" ;
+  schema:publisher org:acm .
+
+work:unix-programming-environment
+  a schema:CreativeWork ;
+  schema:name "The UNIX programming environment" ;
+  schema:author person:brian-w-kernighan, person:rob-pike ;
+  schema:publisher org:prentice-hall .
+
+work:fluent-python-2e
+  a schema:CreativeWork ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:author person:luciano-ramalho ;
+  schema:publisher org:oreilly .
+
+work:effective-python-3e
+  a schema:CreativeWork ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:author person:brett-slatkin ;
+  schema:publisher org:addison-wesley .
+
+work:oopsla-2006-companion
+  a schema:CreativeWork ;
+  schema:name "Companion to the 21st ACM SIGPLAN symposium on Object-oriented programming systems, languages, and applications" ;
+  schema:publisher org:acm .
+
+work:ieee-transactions-software-engineering
+  a schema:CreativeWork ;
+  schema:name "IEEE Transactions on Software Engineering" ;
+  schema:publisher org:ieee .
+
+work:wapi-2017
+  a schema:CreativeWork ;
+  schema:name "2017 IEEE/ACM 1st International Workshop on API Usage and Evolution (WAPI)" ;
+  schema:publisher org:ieee, org:acm .
+
+work:communications-of-the-acm
+  a schema:CreativeWork ;
+  schema:name "Commun. ACM" ;
+  schema:publisher org:acm .
+
+work:design-web-apis
+  a schema:CreativeWork ;
+  schema:name "The design of web APIs" ;
+  schema:author person:arnaud-lauret ;
+  schema:publisher org:manning .
+
+work:api-design-for-cpp
+  a schema:CreativeWork ;
+  schema:name "API design for C++" ;
+  schema:author person:martin-reddy ;
+  schema:publisher org:morgan-kaufmann .
+
+work:clean-code-collection
+  a schema:CreativeWork ;
+  schema:name "Clean code collection" ;
+  schema:author person:robert-c-martin ;
+  schema:publisher org:pearson-education .
+
+work:cgo-2019
+  a schema:CreativeWork ;
+  schema:name "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)" ;
+  schema:publisher org:ieee .
+
+work:nodejs-design-patterns-4e
+  a schema:CreativeWork ;
+  schema:name "Node.js Design Patterns - Fourth Edition" ;
+  schema:author person:luciano-mammino, person:mario-casciaro .
+
+work:javascript-definitive-guide-7e
+  a schema:CreativeWork ;
+  schema:name "JavaScript: the definitive guide: master the world's most-used programming language" ;
+  schema:author person:david-flanagan .
+
+work:javascript-for-impatient-programmers
+  a schema:CreativeWork ;
+  schema:name "JavaScript for impatient programmers" ;
+  schema:author person:axel-rauschmayer .

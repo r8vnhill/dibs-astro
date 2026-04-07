@@ -59,7 +59,7 @@ const {
                     style={{
                         fontSize: iconSize,
                         color: iconColor === "currentColor"
-                            ? "var(--callout-title-color, currentColor)"
+                            ? "var(--callout-title-color, var(--color-primary, currentColor))"
                             : iconColor,
                         lineHeight: 1,
                         marginTop: "3px",

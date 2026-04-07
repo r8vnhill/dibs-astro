@@ -22,7 +22,7 @@ import {
 } from "~/components/ui/callouts";
 import {
   CBlock,
-  InlineKotlin,
+  KotlinInline,
   InlinePowerShell,
   InlinePython,
   KotlinBlock,
@@ -167,7 +167,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
           <Fragment slot="title">
             <strong>Modelo de dominio:</strong>
-            <InlineKotlin code={`Instant`} /> y <InlineKotlin
+            <KotlinInline code={`Instant`} /> y <KotlinInline
               code={`LocalDateTime`}
             />
             comunican semántica y habilitan operaciones seguras (zona horaria, conversión,
@@ -186,9 +186,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
           <InlinePython code={`time`} />, que expone primitivas. Python también
           incluye
           <InlinePython code={`datetime`} />, que ofrece un modelo de dominio
-          más expresivo y cercano a la idea de <InlineKotlin code={`Instant`} />
+          más expresivo y cercano a la idea de <KotlinInline code={`Instant`} />
           y
-          <InlineKotlin code={`LocalDateTime`} /> en Kotlin.
+          <KotlinInline code={`LocalDateTime`} /> en Kotlin.
         </Important>
       </TabsContent>
     </Tabs>
@@ -215,9 +215,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
       <Tip>
         <Fragment slot="title">Tipos primero</Fragment>
-        Usar tipos de dominio en lugar de primitivas genéricas (como <InlineKotlin
+        Usar tipos de dominio en lugar de primitivas genéricas (como <KotlinInline
           code="Int"
-        />, <InlineKotlin code="String" /> o <InlinePython code="float" />)
+        />, <KotlinInline code="String" /> o <InlinePython code="float" />)
         reduce ambigüedades y errores. Cada tipo captura un concepto específico
         del dominio, haciendo el código más expresivo y seguro.
       </Tip>
@@ -286,14 +286,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
           <Danger>
             <Fragment slot="title">Problemas</Fragment>
-            Verbos mezclados (<InlineKotlin code="add" />/<InlineKotlin
+            Verbos mezclados (<KotlinInline code="add" />/<KotlinInline
               code="remove"
-            />/<InlineKotlin code="uninstall" />/<InlineKotlin
+            />/<KotlinInline code="uninstall" />/<KotlinInline
               code="install"
-            />), sustantivos cambiantes (<InlineKotlin
+            />), sustantivos cambiantes (<KotlinInline
               code="Package"
-            />/<InlineKotlin code="Dependency" />/<InlineKotlin code="Pkgs" />),
-            pluralización irregular, y prefijos (<InlineKotlin code="batch" />)
+            />/<KotlinInline code="Dependency" />/<KotlinInline code="Pkgs" />),
+            pluralización irregular, y prefijos (<KotlinInline code="batch" />)
             usados de forma asimétrica.
           </Danger>
         </TabsContent>
@@ -324,18 +324,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Fragment slot="title">Mejoras</Fragment>
             <p>
               Usa verbos uniformes: si existen varias formas de nombrar algo,
-              elige una y sé consistente. Evita mezclar <InlineKotlin
+              elige una y sé consistente. Evita mezclar <KotlinInline
                 code="install"
               /> con
-              <InlineKotlin code="remove" />, o <InlineKotlin code="add" /> con
-              <InlineKotlin code="uninstall" />. Quienes usan la API deben poder
+              <KotlinInline code="remove" />, o <KotlinInline code="add" /> con
+              <KotlinInline code="uninstall" />. Quienes usan la API deben poder
               anticipar el verbo complementario de forma natural: si existe
-              <InlineKotlin code="install" />, esperarán <InlineKotlin
+              <KotlinInline code="install" />, esperarán <KotlinInline
                 code="uninstall"
-              />, no <InlineKotlin code="remove" />. Y si conviven <InlineKotlin
+              />, no <KotlinInline code="remove" />. Y si conviven <KotlinInline
                 code="install"
               />
-              y <InlineKotlin code="add" />, surge la duda: ¿son sinónimos? ¿por
+              y <KotlinInline code="add" />, surge la duda: ¿son sinónimos? ¿por
               qué hay dos formas de expresar lo mismo? ¿o significan cosas
               distintas? Estas ambigüedades generan fricción y confusión que
               podemos evitar con consistencia.
@@ -412,8 +412,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
           <Danger>
             <Fragment slot="title">Problemas</Fragment>
-            Nombres como <InlineKotlin code="a1" /> y
-            <InlineKotlin code="a2" /> no aportan contexto ni ayudan a entender la
+            Nombres como <KotlinInline code="a1" /> y
+            <KotlinInline code="a2" /> no aportan contexto ni ayudan a entender la
             función.
           </Danger>
         </TabsContent>
@@ -433,8 +433,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
           <Tip>
             <Fragment slot="title">Mejoras</Fragment>
-            Nombres como <InlineKotlin code="source" /> y
-            <InlineKotlin code="destination" /> dejan claro el propósito de cada
+            Nombres como <KotlinInline code="source" /> y
+            <KotlinInline code="destination" /> dejan claro el propósito de cada
             argumento.
           </Tip>
         </TabsContent>
@@ -608,9 +608,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <List>
       <ListItem icon={icons.Cube}>
         <strong>Tipos ricos:</strong> el sistema de tipos de Kotlin permite expresar
-        mejor la semántica del dominio mediante <InlineKotlin
+        mejor la semántica del dominio mediante <KotlinInline
           code="data class"
-        />, <InlineKotlin code="sealed class" />, <InlineKotlin
+        />, <KotlinInline code="sealed class" />, <KotlinInline
           code="value class"
         /> y más. Incluso se proyecta incluir <Link
           href="https://en.wikipedia.org/wiki/Union_type"
@@ -674,7 +674,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <Fragment slot="key-points">
       <ListItem icon={icons.Cube}>
         <strong>Tipos de dominio:</strong> reemplazar primitivas genéricas por tipos
-        específicos (p. ej. <InlineKotlin code="Instant" /> en lugar de <InlinePython
+        específicos (p. ej. <KotlinInline code="Instant" /> en lugar de <InlinePython
           code="float"
         />) mejora la expresividad y la seguridad.
       </ListItem>

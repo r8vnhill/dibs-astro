@@ -19,6 +19,13 @@
       "familyName": "Tebbenhof"
     },
     {
+      "@id": "person:arnaud-lauret",
+      "@type": "Person",
+      "givenName": "Arnaud",
+      "familyName": "Lauret",
+      "url": "https://apihandyman.io"
+    },
+    {
       "@id": "person:axel-rauschmayer",
       "@type": "Person",
       "givenName": "Axel",
@@ -240,6 +247,12 @@
       "familyName": "Pike"
     },
     {
+      "@id": "person:robert-c-martin",
+      "@type": "Person",
+      "givenName": "Robert C.",
+      "familyName": "Martin"
+    },
+    {
       "@id": "person:sdwheeler",
       "@type": "Person",
       "familyName": "sdwheeler"
@@ -395,6 +408,11 @@
       "url": "https://kotlinlang.org/docs/"
     },
     {
+      "@id": "org:manning",
+      "@type": "Organization",
+      "name": "Manning Publications"
+    },
+    {
       "@id": "org:martin-fowler-site",
       "@type": "Organization",
       "name": "martinfowler.com",
@@ -452,6 +470,11 @@
       "@type": "Organization",
       "name": "O'Reilly Media",
       "url": "https://www.oreilly.com/"
+    },
+    {
+      "@id": "org:pearson-education",
+      "@type": "Organization",
+      "name": "Pearson Education, Limited"
     },
     {
       "@id": "org:prentice-hall",
@@ -554,6 +577,19 @@
       }
     },
     {
+      "@id": "work:api-design-for-cpp",
+      "@type": "CreativeWork",
+      "name": "API design for C++",
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "publisher": {
+        "@id": "org:morgan-kaufmann"
+      }
+    },
+    {
       "@id": "work:cgo-2019",
       "@type": "CreativeWork",
       "name": "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)",
@@ -562,11 +598,37 @@
       }
     },
     {
+      "@id": "work:clean-code-collection",
+      "@type": "CreativeWork",
+      "name": "Clean code collection",
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pearson-education"
+      }
+    },
+    {
       "@id": "work:communications-of-the-acm",
       "@type": "CreativeWork",
       "name": "Commun. ACM",
       "publisher": {
         "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:design-web-apis",
+      "@type": "CreativeWork",
+      "name": "The design of web APIs",
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "publisher": {
+        "@id": "org:manning"
       }
     },
     {
@@ -947,6 +1009,20 @@
       }
     },
     {
+      "@id": "ref:geewax-api-design-patterns-2021",
+      "@type": "Book",
+      "name": "API design patterns",
+      "datePublished": "2021",
+      "author": [
+        {
+          "@id": "person:john-geewax"
+        }
+      ],
+      "publisher": {
+        "@id": "org:manning"
+      }
+    },
+    {
       "@id": "ref:gradle-introduction-to-plugins",
       "@type": "WebPage",
       "name": "Introduction to Plugins",
@@ -1162,6 +1238,22 @@
       }
     },
     {
+      "@id": "ref:lauret-designing-api-for-users-2019",
+      "@type": "Book",
+      "name": "Designing an API for its users",
+      "datePublished": "2019",
+      "pageStart": 17,
+      "pageEnd": 42,
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:design-web-apis"
+      }
+    },
+    {
       "@id": "ref:li-bash-language-usage-2021",
       "@type": "Thesis",
       "name": "An Empirical Study on Bash Language Usage in Github",
@@ -1199,6 +1291,38 @@
       ],
       "publisher": {
         "@id": "org:pycon-us"
+      }
+    },
+    {
+      "@id": "ref:martin-functions-2011",
+      "@type": "Book",
+      "name": "Functions",
+      "datePublished": "2011",
+      "pageStart": 78,
+      "pageEnd": 106,
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:clean-code-collection"
+      }
+    },
+    {
+      "@id": "ref:martin-meaningful-names-2011",
+      "@type": "Book",
+      "name": "Meaningful Names",
+      "datePublished": "2011",
+      "pageStart": 60,
+      "pageEnd": 77,
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:clean-code-collection"
       }
     },
     {
@@ -1798,6 +1922,22 @@
       }
     },
     {
+      "@id": "ref:reddy-qualities-2024",
+      "@type": "Book",
+      "name": "Qualities",
+      "datePublished": "2024",
+      "pageStart": 25,
+      "pageEnd": 80,
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:api-design-for-cpp"
+      }
+    },
+    {
       "@id": "ref:requests-http-for-humans",
       "@type": "WebPage",
       "name": "Requests: HTTP for Humans™ — Requests 2.33.1 documentation",
@@ -1917,6 +2057,12 @@
       }
     },
     {
+      "@id": "/notes/software-libraries/api-design/fundamentals/",
+      "@type": "LearningResource",
+      "name": "Diseñar la API de una biblioteca desde el dominio",
+      "url": "/notes/software-libraries/api-design/fundamentals/"
+    },
+    {
       "@id": "/notes/software-libraries/artifacts-taxonomy/",
       "@type": "LearningResource",
       "name": "Taxonomía básica de artefactos de software",
@@ -1981,6 +2127,58 @@
       "@type": "LearningResource",
       "name": "La biblioteca como artefacto de software",
       "url": "/notes/software-libraries/what-is/"
+    },
+    {
+      "@id": "usage:api-design-fundamentals-lauret-designing-api-for-users-2019-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lauret-designing-api-for-users-2019"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-martin-functions-2011-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:martin-functions-2011"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-martin-meaningful-names-2011-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:martin-meaningful-names-2011"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-reddy-qualities-2024-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-qualities-2024"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
     },
     {
       "@id": "usage:errors-errors-and-exceptions-additional",
@@ -2237,6 +2435,19 @@
       },
       "dibs:reference": {
         "@id": "ref:frakes-software-reuse-research-2005"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-geewax-api-design-patterns-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:geewax-api-design-patterns-2021"
       },
       "dibs:tags": [
         "pending-revision"

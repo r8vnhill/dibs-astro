@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-06T00:56:00.880Z",
-  "totalLessons": 45,
+  "generatedAt": "2026-04-06T12:57:42.245Z",
+  "totalLessons": 46,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -113,6 +113,15 @@
           "subject": "feat: add RepoLink component for GitHub and GitLab links"
         }
       ]
+    },
+    "/notes/software-libraries/api-design/fundamentals/": {
+      "sourceFile": "src/pages/notes/software-libraries/api-design/fundamentals/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/artifacts-taxonomy/": {
       "sourceFile": "src/pages/notes/software-libraries/artifacts-taxonomy/index.astro",
@@ -249,8 +258,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-05",
       "changes": [
+        {
+          "hash": "41d7d291cee5054bc6666815a667cdd47a1ef9fc",
+          "date": "2026-04-05",
+          "author": "R8V",
+          "subject": "feat: add design principles section and update lesson metadata"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -274,12 +289,6 @@
           "date": "2025-09-14",
           "author": "R8V",
           "subject": "✨🖼️ Add new icons: BugDroid, EyeSlash, Rows, and Signpost; update icons index timestamp"
-        },
-        {
-          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-          "date": "2025-09-14",
-          "author": "r8vnhill",
-          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
         }
       ]
     },

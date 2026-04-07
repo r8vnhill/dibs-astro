@@ -1,0 +1,268 @@
+# Canonical person nodes referenced by works, references, and lesson usages.
+#
+# Keep one `person:<slug>` node per real person and reuse it from the other TTL fragments
+# instead of duplicating author data inline. Store only stable identity metadata here
+# (`givenName`, `familyName`, and optional public profile URLs). Publishers, venues, and
+# documentation sites belong in `02-organizations.ttl`, not in this file.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+person:travis-plunk
+  a schema:Person ;
+  schema:givenName "Travis" ;
+  schema:familyName "Plunk" .
+
+person:martin-fowler
+  a schema:Person ;
+  schema:givenName "Martin" ;
+  schema:familyName "Fowler" ;
+  schema:url "https://en.wikipedia.org/wiki/Martin_Fowler_(software_engineer)" .
+
+person:david-m-beazley
+  a schema:Person ;
+  schema:givenName "David M." ;
+  schema:familyName "Beazley" ;
+  schema:url "https://en.wikipedia.org/wiki/David_M._Beazley" .
+
+person:bruce-payette
+  a schema:Person ;
+  schema:givenName "Bruce" ;
+  schema:familyName "Payette" ;
+  schema:url "https://www.goodreads.com/author/show/441636.Bruce_Payette" .
+
+person:richard-siddaway
+  a schema:Person ;
+  schema:givenName "Richard" ;
+  schema:familyName "Siddaway" ;
+  schema:url "https://www.goodreads.com/author/show/4742136.Richard_Siddaway" .
+
+person:yue-dong
+  a schema:Person ;
+  schema:givenName "Yue" ;
+  schema:familyName "Dong" .
+
+person:zimin-li
+  a schema:Person ;
+  schema:givenName "Zimin" ;
+  schema:familyName "Li" .
+
+person:ying-tian
+  a schema:Person ;
+  schema:givenName "Ying" ;
+  schema:familyName "Tian" .
+
+person:chengnian-sun
+  a schema:Person ;
+  schema:givenName "Chengnian" ;
+  schema:familyName "Sun" .
+
+person:michael-w-godfrey
+  a schema:Person ;
+  schema:givenName "Michael W." ;
+  schema:familyName "Godfrey" .
+
+person:meiyappan-nagappan
+  a schema:Person ;
+  schema:givenName "Meiyappan" ;
+  schema:familyName "Nagappan" .
+
+person:karl-mazurak
+  a schema:Person ;
+  schema:givenName "Karl" ;
+  schema:familyName "Mazurak" .
+
+person:steve-zdancewic
+  a schema:Person ;
+  schema:givenName "Steve" ;
+  schema:familyName "Zdancewic" .
+
+person:rob-bell
+  a schema:Person ;
+  schema:givenName "Rob" ;
+  schema:familyName "Bell" .
+
+person:aanand-prasad
+  a schema:Person ;
+  schema:givenName "Aanand" ;
+  schema:familyName "Prasad" .
+
+person:ben-firshman
+  a schema:Person ;
+  schema:givenName "Ben" ;
+  schema:familyName "Firshman" .
+
+person:carl-tashian
+  a schema:Person ;
+  schema:givenName "Carl" ;
+  schema:familyName "Tashian" .
+
+person:eva-parish
+  a schema:Person ;
+  schema:givenName "Eva" ;
+  schema:familyName "Parish" .
+
+person:arjen-tebbenhof
+  a schema:Person ;
+  schema:givenName "Arjen" ;
+  schema:familyName "Tebbenhof" .
+
+person:shivam-handa
+  a schema:Person ;
+  schema:givenName "Shivam" ;
+  schema:familyName "Handa" .
+
+person:konstantinos-kallas
+  a schema:Person ;
+  schema:givenName "Konstantinos" ;
+  schema:familyName "Kallas" .
+
+person:nikos-vasilakis
+  a schema:Person ;
+  schema:givenName "Nikos" ;
+  schema:familyName "Vasilakis" .
+
+person:martin-c-rinard
+  a schema:Person ;
+  schema:givenName "Martin C." ;
+  schema:familyName "Rinard" .
+
+person:brian-w-kernighan
+  a schema:Person ;
+  schema:givenName "Brian W." ;
+  schema:familyName "Kernighan" .
+
+person:rob-pike
+  a schema:Person ;
+  schema:givenName "Rob" ;
+  schema:familyName "Pike" .
+
+person:jeffrey-p-snover
+  a schema:Person ;
+  schema:givenName "Jeffrey P." ;
+  schema:familyName "Snover" .
+
+person:mark-volkmann
+  a schema:Person ;
+  schema:givenName "Mark" ;
+  schema:familyName "Volkmann" .
+
+person:sdwheeler
+  a schema:Person ;
+  schema:familyName "sdwheeler" .
+
+person:tim-bray
+  a schema:Person ;
+  schema:givenName "Tim" ;
+  schema:familyName "Bray" .
+
+person:luciano-ramalho
+  a schema:Person ;
+  schema:givenName "Luciano" ;
+  schema:familyName "Ramalho" .
+
+person:brett-slatkin
+  a schema:Person ;
+  schema:givenName "Brett" ;
+  schema:familyName "Slatkin" .
+
+person:joshua-bloch
+  a schema:Person ;
+  schema:givenName "Joshua" ;
+  schema:familyName "Bloch" .
+
+person:martin-reddy
+  a schema:Person ;
+  schema:givenName "Martin" ;
+  schema:familyName "Reddy" .
+
+person:arnaud-lauret
+  a schema:Person ;
+  schema:givenName "Arnaud" ;
+  schema:familyName "Lauret" ;
+  schema:url "https://apihandyman.io" .
+
+person:robert-c-martin
+  a schema:Person ;
+  schema:givenName "Robert C." ;
+  schema:familyName "Martin" .
+
+person:johannes-sametinger
+  a schema:Person ;
+  schema:givenName "Johannes" ;
+  schema:familyName "Sametinger" .
+
+person:john-ousterhout
+  a schema:Person ;
+  schema:givenName "John" ;
+  schema:familyName "Ousterhout" .
+
+person:john-geewax
+  a schema:Person ;
+  schema:givenName "John" ;
+  schema:familyName "Geewax" .
+
+person:w-b-frakes
+  a schema:Person ;
+  schema:givenName "W.B." ;
+  schema:familyName "Frakes" .
+
+person:kyo-kang
+  a schema:Person ;
+  schema:givenName "Kyo" ;
+  schema:familyName "Kang" .
+
+person:brad-a-myers
+  a schema:Person ;
+  schema:givenName "Brad A." ;
+  schema:familyName "Myers" .
+
+person:jeffrey-stylos
+  a schema:Person ;
+  schema:givenName "Jeffrey" ;
+  schema:familyName "Stylos" .
+
+person:luciano-mammino
+  a schema:Person ;
+  schema:givenName "Luciano" ;
+  schema:familyName "Mammino" .
+
+person:mario-casciaro
+  a schema:Person ;
+  schema:givenName "Mario" ;
+  schema:familyName "Casciaro" .
+
+person:david-flanagan
+  a schema:Person ;
+  schema:givenName "David" ;
+  schema:familyName "Flanagan" .
+
+person:axel-rauschmayer
+  a schema:Person ;
+  schema:givenName "Axel" ;
+  schema:familyName "Rauschmayer" ;
+  schema:url "https://dr-axel.de" .
+
+person:haiyang-sun
+  a schema:Person ;
+  schema:givenName "Haiyang" ;
+  schema:familyName "Sun" .
+
+person:daniele-bonetta
+  a schema:Person ;
+  schema:givenName "Daniele" ;
+  schema:familyName "Bonetta" .
+
+person:filippo-schiavio
+  a schema:Person ;
+  schema:givenName "Filippo" ;
+  schema:familyName "Schiavio" .
+
+person:walter-binder
+  a schema:Person ;
+  schema:givenName "Walter" ;
+  schema:familyName "Binder" .

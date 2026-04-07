@@ -104,6 +104,10 @@ $RECYCLE.BIN/
 *.entregable.*
 docs/**/*.pdf
 
+### Bibliography assembly ###
+# Intermediate TTL assembly file (generated from sources/)
+src/data/bibliography/catalog.graph.generated.ttl
+
 ### Personal notes ###
 *.
 todo.md

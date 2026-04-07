@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Explanation, Note, Tip } from "~/components/ui/callouts";
-import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
+import { KotlinInline, KotlinBlock } from "~/components/ui/code";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ToDo from "~/components/utils/ToDo";
@@ -63,7 +63,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 >kotlinx-datetime (Kotlin)</Link></Fragment>
         </KotlinBlock>
         <Explanation>
-            <InlineKotlin code="Instant" />, <InlineKotlin code="LocalDateTime" /> y <InlineKotlin
+            <KotlinInline code="Instant" />, <KotlinInline code="LocalDateTime" /> y <KotlinInline
                 code="TimeZone"
             /> son tipos distintos que reflejan conceptos diferentes del tiempo. Esto evita
             ambigüedades comunes como mezclar milisegundos, fechas locales o zonas horarias en un
@@ -134,7 +134,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Explanation>
             La API de <code>kotlinx.coroutines</code> ofrece primitivas simples como
-            <InlineKotlin code="launch { ... }" /> y <InlineKotlin code="async { ... }" /> que
+            <KotlinInline code="launch { ... }" /> y <KotlinInline code="async { ... }" /> que
             abstraen toda la complejidad de la planificación de tareas y la gestión de hilos. Quien
             usa la biblioteca no necesita conocer los mecanismos internos de colas, despachadores o
             cooperatividad, lo que le permite concentrarse en el problema a resolver y no en la

@@ -22,7 +22,7 @@ export {
 } from "./js/InlineJavaScript.astro";
 export { default as JavaScriptBlock } from "./js/JavaScriptBlock.astro";
 export { default as JsonBlock } from "./json/JsonBlock.astro";
-export { default as InlineKotlin } from "./kt/InlineKotlin.astro";
+export { default as KotlinInline } from "./kt/KotlinInline.astro";
 export { default as KotlinBlock } from "./kt/KotlinBlock.astro";
 export { default as MarkdownInline } from "./md/MarkdownInline.astro";
 export { default as NushellInline } from "./nushell/NushellInline.astro";

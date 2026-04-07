@@ -1,0 +1,721 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, Heading, P } from "~/components/semantics";
+import { Definition, Important, Info, More, Tip, Warning } from "~/components/ui/callouts";
+import { KotlinInline, PythonBlock, PythonInline } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import Cons from "~/components/ui/procons/Cons.astro";
+import ProCons from "~/components/ui/procons/ProCons.astro";
+import Pros from "~/components/ui/procons/Pros.astro";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Diseñar la API de una biblioteca desde el dominio"
+    description="Aprende cinco principios fundamentales para diseñar APIs claras, robustas y centradas en quien las consume: dominio, encapsulación, minimalidad, usabilidad y perspectiva de consumidor."
+    timeMultiplier={1.2}
+>
+    <Fragment slot="abstract">
+        <P>
+            En la lección anterior establecimos que una biblioteca es una API: un contrato entre
+            quienes la implementan y quienes la usan. Pero ¿con qué criterios discutimos si ese
+            contrato es de buena calidad? Esta lección propone un primer vocabulario: cinco
+            principios que ayudan a construir APIs claras, robustas y orientadas al uso real.
+        </P>
+        <P>
+            Una buena API refleja los conceptos del problema, protege reglas críticas, limita
+            deliberadamente su superficie, comunica claramente y anticipa cómo quien consume la
+            usará. El objetivo no es agotar cada principio, sino dotarte de criterios para nombrar
+            decisiones de diseño y reconocer estos temas cuando reaparezcan en contextos más
+            concretos del curso.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-domain-model">
+        <Heading
+            headingLevel="h2" Icon={icons.PuzzlePiece}
+            slot="heading"
+        >
+            Modelo del dominio: la API refleja conceptos del problema
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberOne}>
+            <span slot="title">Primer principio</span>
+
+            <P>
+                Si el problema es hacer visible y accesible el mundo que la biblioteca modela,
+                entonces el nombre de cada tipo y función debe nombrar un concepto real del dominio,
+                no un detalle de implementación.
+            </P>
+        </Definition>
+
+        <P>
+            Una API bien diseñada debe <B>modelar con claridad los conceptos centrales del
+                problema</B> que resuelve. Esto significa que sus tipos, funciones y estructuras
+            deben nombrar conceptos reales del mundo que modelan, no abstracciones de implementación
+            ni detalles técnicos.
+        </P>
+
+        <Info headingLevel="h3">
+            <Fragment slot="title">Modelo de dominio en una API</Fragment>
+
+            <P>
+                Un <B>modelo de dominio</B> es la representación de los conceptos, reglas y
+                relaciones que una biblioteca necesita expresar para resolver un problema.
+            </P>
+
+            <P>
+                La API debería exponer como <B>tipos explícitos</B> aquellos conceptos del dominio
+                que tienen identidad, reglas o restricciones propias. Para que eso funcione, los
+                nombres deben ser suficientemente claros dentro del contexto de la biblioteca: un
+                tipo como <Mono>Address</Mono> comunica mejor que uno ambiguo como <Mono
+                >Direction</Mono> si lo que se modela es una dirección postal. Cuando el contexto no
+                basta, conviene preferir nombres más específicos que ayuden a entender la intención
+                sin depender por completo de documentación externa.
+            </P>
+        </Info>
+
+        <List>
+            <ListItem icon={icons.Target}>
+                <B>Nombres claros</B>: cada tipo o función debe nombrar un concepto del dominio, no
+                una estructura de datos. Prefiere <Mono>Account</Mono> sobre <Mono>HashMap</Mono>.
+            </ListItem>
+            <ListItem icon={icons.Link}>
+                <B>Relaciones explícitas</B>: si el dominio dice que una orden de compra tiene
+                múltiples artículos, la API debe reflejar esa relación de forma clara y segura.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                <B>Invariantes representados</B>: si una transferencia bancaria nunca puede tener
+                monto negativo, usa un tipo que imposibilite esa situación, no validaciones
+                posteriores.
+            </ListItem>
+        </List>
+
+        <Important headingLevel="h3">
+            El dominio modela no solo <B>datos</B>, sino también <B>comportamiento</B>. Operaciones
+            como <KotlinInline code="transfer()" />, <KotlinInline code="validate()" />,
+            <KotlinInline code="issueInvoice()" /> también son parte del modelo. Cada una expresa
+            intención del dominio, no solo cómo cambian los datos internos.
+        </Important>
+
+        <NotesSection id="h3-address-library">
+            <Heading
+                headingLevel="h3" Icon={icons.Code}
+                slot="heading"
+            >
+                Caso de estudio: biblioteca de direcciones (modelado de dominio)
+            </Heading>
+
+            <ProCons>
+                <Cons title="Mal diseño">
+                    <span>Exponer solo una función como <PythonInline
+                            code="validate_address(str)"
+                        />
+                        que reciba toda la dirección como texto. Así, quien consume debe parsear,
+                        separar componentes y manejar por su cuenta gran parte de los errores del
+                        dominio.</span>
+                </Cons>
+                <Pros title="Buen diseño">
+                    <span>Exponer tipos como <PythonInline code="Country" />, <PythonInline
+                            code="PostalCode"
+                        /> y <PythonInline code="Address" />, con validaciones encapsuladas. Así,
+                        quien consume construye una <PythonInline code="Address" /> usando
+                        componentes con significado propio, y la biblioteca puede proteger
+                        invariantes como la relación entre país y código postal.</span>
+                </Pros>
+            </ProCons>
+
+            <P class="my-6">
+                Esto no impide ofrecer una función de conveniencia para parsear direcciones desde
+                texto, pero esa función no debería reemplazar a una API cuyo modelo principal
+                refleje los conceptos del dominio.
+            </P>
+
+            <Warning headingLevel="h4">
+                <span slot="title">Pitfall: usar primitivos en lugar de tipos de dominio</span>
+
+                <P>
+                    En una biblioteca de direcciones, modelar todo como <KotlinInline
+                        code="String"
+                    /> vuelve más fácil confundir campos, aceptar combinaciones inválidas o
+                    postergar reglas importantes hasta muy tarde. Tipos como <KotlinInline
+                        code="Country"
+                    />, <KotlinInline code="PostalCode" /> o <KotlinInline code="Address" />
+                    permiten expresar mejor el dominio y hacer que ciertos errores sean más
+                    difíciles de cometer.
+                </P>
+            </Warning>
+        </NotesSection>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Criterio: cuándo introducir un tipo de dominio</span>
+
+            <P>
+                No todo concepto del dominio merece su propio tipo público. Introduce tipos cuando
+                el concepto cumple al menos una de estas características:
+            </P>
+
+            <List>
+                <ListItem icon={icons.Target}>
+                    <B>Tiene reglas o restricciones</B>: p. ej., un código postal válido, un monto
+                    no negativo, un correo con formato específico.
+                </ListItem>
+                <ListItem icon={icons.Link}>
+                    <B>Tiene identidad o significado propio</B>: p. ej., <KotlinInline
+                        code="Account"
+                    /> no es solo un número; es un concepto con historial, propietario, estado.
+                </ListItem>
+                <ListItem icon={icons.ShieldCheck}>
+                    <B>Necesita métodos especializados</B>: p. ej., <KotlinInline code="Address" />
+                    podría tener <KotlinInline code="normalize()" /> o <KotlinInline
+                        code="distance_to(other)"
+                    />.
+                </ListItem>
+            </List>
+
+            <P>
+                Si un concepto es solo un agregado transitorio de datos sin reglas, un tipo
+                primitivo o una tupla/record anónima puede bastar.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-encapsulation">
+        <Heading
+            headingLevel="h2" Icon={icons.Lock}
+            slot="heading"
+        >
+            Encapsulacion: ocultar implementacion y proteger invariantes
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberTwo}>
+            <span slot="title">Segundo principio</span>
+
+            <P>
+                Si el problema es garantizar que ciertos invariantes nunca puedan romperse y que la
+                biblioteca pueda evolucionar sin sorpresas, entonces la implementación debe quedarse
+                privada y las reglas críticas deben ser imposibles de romper desde afuera.
+            </P>
+        </Definition>
+
+        <P>
+            La <B>encapsulación</B> es el acto de ocultar detalles de implementación tras una
+            interfaz pública clara. Permite que tu biblioteca evolucione sin romper el código de
+            quien la usa, y protege los invariantes del dominio (las reglas que nunca pueden
+            romperse).
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Encapsulacion en una API</span>
+
+            <P>
+                Una API encapsulada expone solo la información que quien consume necesita conocer y
+                mantiene privados los detalles internos: cómo se almacenan los datos, qué algoritmos
+                se usan, qué estructuras de caché o índices hay. Si el dominio tiene reglas
+                invariantes (p. ej., una orden siempre debe tener al menos un articulo), la
+                encapsulación garantiza que esas reglas no puedan romperse desde afuera.
+            </P>
+        </Info>
+
+        <Tip headingLevel="h3">
+            <List>
+                <ListItem icon={icons.EyeSlash}>
+                    <B>Ocultar detalles</B>: no expongas estructuras internas como si fueran parte
+                    de la interfaz pública. Usa visibilidades privadas y módulos para separar lo
+                    interno de lo público.
+                </ListItem>
+                <ListItem icon={icons.ShieldWarning}>
+                    <B>Proteger invariantes</B>: si la regla del dominio dice "un saldo nunca puede
+                    ser negativo", haz imposible desde fuera romper esa regla. Usa constructores
+                    privados y métodos verificadores.
+                </ListItem>
+                <ListItem icon={icons.Columns}>
+                    <B>Libertad de evolucionar</B>: si quieres cambiar la estructura interna de una
+                    clase sin afectar consumidores, primero debes haber ocultado esa estructura tras
+                    métodos públicos.
+                </ListItem>
+            </List>
+        </Tip>
+
+        <NotesSection id="h3-bank-account-example">
+            <Heading
+                headingLevel="h3" Icon={icons.Code}
+                slot="heading"
+            >
+                Ejemplo: cuenta bancaria con invariantes (encapsulación)
+            </Heading>
+
+            <P>
+                Una cuenta bancaria tiene saldo. La regla invariante es: <Enquote>el saldo nunca
+                    puede ser negativo</Enquote>. Si expones el saldo como campo público
+                modificable, alguien podría hacer <KotlinInline code="account.balance = -100" />,
+                rompiendo el invariante.
+            </P>
+
+            <Tip headingLevel="h4">
+                <span slot="title">Solución</span>
+
+                Usa un constructor privado, una factory privada, y métodos públicos que verifiquen
+                invariantes antes de modificar el estado. Ahora la biblioteca garantiza que ningún
+                saldo será nunca negativo, y puedes cambiar internamente cómo almacenas o calculas
+                el saldo sin romper código externo.
+            </Tip>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-minimality">
+        <Heading
+            headingLevel="h2" Icon={icons.Rows}
+            slot="heading"
+        >
+            Minimalidad útil: pequeño pero completo
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberThree}>
+            <span slot="title">Tercer principio</span>
+
+            <P>
+                Si el problema es que quien usa acceda fácilmente a lo que necesita sin abrumarle
+                con opciones innecesarias, entonces cada elemento público debe justificar claramente
+                su existencia.
+            </P>
+        </Definition>
+
+        <P>
+            Una API debería ser <B>tan pequeña como sea posible sin dejar vacíos importantes en el
+                problema que pretende resolver</B>. Eso implica exponer solo los tipos, funciones y
+            métodos que aportan valor real, porque el exceso de opciones aumenta la complejidad,
+            confunde a quien consume y amplía la superficie de error.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">¿Qué significa <Enquote>minimalidad útil</Enquote>?</span>
+
+            <P>
+                <I>Minimalidad útil</I> no significa ofrecer menos de lo necesario, sino <I>evitar
+                    variantes, extensiones y conveniencias que no aportan</I> claramente al problema
+                que la biblioteca resuelve. Una API pequeña se aprende más rápido, se usa con menos
+                ambigüedad y también suele ser más fácil de mantener y evolucionar.
+            </P>
+
+            <List>
+                <ListItem icon={icons.Equals}>
+                    <B>No expongas alternativas equivalentes</B>: si una operación ya está bien
+                    representada por <PythonInline code="get_balance()" />, evita sumar variantes
+                    como <PythonInline code="fetch_balance()" />, <PythonInline
+                        code="consult_balance()"
+                    /> o <PythonInline code="balance_getter()" /> sin una diferencia real de
+                    comportamiento.
+                </ListItem>
+                <ListItem icon={icons.MagicWand}>
+                    <B>No incluyas funcionalidades <Enquote>por si acaso</Enquote></B>: no agregues
+                    opciones que nadie necesita todavía. Cada elemento público nuevo amplía la API y
+                    hace más difícil su evolución futura.
+                </ListItem>
+                <ListItem icon={icons.ArrowsOut}>
+                    <B>Evita operaciones demasiado específicas</B>: si un caso particular puede
+                    resolverse combinando bien la API principal, probablemente no necesita una
+                    función pública propia.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Pero sí, sé completo</B>: si una capacidad forma parte del problema central
+                    que la biblioteca promete resolver, no la omitas. La minimalidad útil elimina lo
+                    accesorio, no lo esencial.
+                </ListItem>
+            </List>
+        </Info>
+
+        <More headingLevel="h3" icon={icons.Code}>
+            <Fragment slot="title">Núcleo y conveniencias: un equilibrio necesario</Fragment>
+
+            <P>
+                Una API puede tener un núcleo pequeño y compacto, y además ofrecer funciones de
+                conveniencia para hacer más cómodo su uso. La clave es que cada conveniencia
+                justifique claramente su existencia: debe resolver un caso frecuente, ahorrar código
+                repetitivo o mejorar la claridad sin introducir ambigüedad.
+            </P>
+
+            <P>
+                Idealmente, las funciones de conveniencia deberían construirse sobre el núcleo, no
+                reemplazarlo ni duplicarlo con reglas distintas. Si una conveniencia no puede
+                explicarse en términos del núcleo, quizás no sea solo una ayuda ergonómica, sino una
+                capacidad distinta que requiere su propio diseño.
+            </P>
+
+            <P>
+                Por ejemplo, una biblioteca de direcciones podría exponer un núcleo como
+                <PythonInline code="create_from_parts(country, postal_code, street)" /> y además
+                ofrecer una conveniencia como <PythonInline code="parse_address(raw_address)" />
+                para casos en que la entrada inicial llega como texto. La segunda no reemplaza al
+                modelo principal, pero puede ser útil si simplifica un caso de uso frecuente.
+            </P>
+        </More>
+
+        <NotesSection id="h3-shopping-cart-api">
+            <Heading
+                slot="heading" headingLevel="h3"
+                Icon={icons.ShoppingCart}
+            >
+                Caso de estudio: interfaz de carrito de compras (minimalidad útil)
+            </Heading>
+
+            <P>
+                Una biblioteca de carrito de compras podría exponer innecesariamente métodos como
+                <PythonInline code="get_item_by_index()" />, <PythonInline
+                    code="sort_items_alphabetically()"
+                />, <PythonInline code="count_items()" />, <PythonInline
+                    code="list_items_as_json()"
+                />, todos a la vez. El resultado es una API abrumadora.
+            </P>
+
+            <Tip headingLevel="h4">
+                <span slot="title">Enfoque minimalista</span>
+
+                Expone solo <PythonInline code="add_item()" />, <PythonInline
+                    code="remove_item()"
+                />, <PythonInline code="list_items()" /> (que devuelve una colección inmutable). Si
+                alguien necesita ordenar, filtra desde fuera. Si necesita JSON, usa serialización
+                estándar. La API es clara y pequeña.
+            </Tip>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-usability">
+        <Heading
+            headingLevel="h2" Icon={icons.Lightbulb}
+            slot="heading"
+        >
+            Usabilidad: consistencia, descubribilidad y APIs difíciles de usar mal
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFour}>
+            <span slot="title">Cuarto principio</span>
+
+            <P>
+                Si el problema es que quien consume entienda rápidamente qué hace cada operación,
+                entonces los nombres deben ser consistentes, los tipos deben evitar errores
+                silenciosos y los errores deben ser informativos.
+            </P>
+        </Definition>
+
+        <P>
+            Una API es usable cuando quien la consume puede orientarse con poca fricción, descubrir
+            sus operaciones principales y equivocarse difícilmente. Esto se logra con consistencia,
+            nombres claros, tipos significativos y errores que realmente ayuden.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Las tres dimensiones de la usabilidad</span>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Consistencia</B>: mantén patrones estables en nombres y política de retorno.
+                </ListItem>
+                <ListItem icon={icons.Binoculars}>
+                    <B>Descubribilidad</B>: los nombres deben sugerir qué hacen. Prefiere verbos
+                    claros y específicos del dominio (<Mono>transferFunds</Mono>, <Mono
+                    >registerAccount</Mono>) antes que genéricos (<Mono>exec</Mono>, <Mono
+                    >process</Mono>). Si el IDE muestra autocompletado, debería ser fácil
+                    orientarse.
+                </ListItem>
+                <ListItem icon={icons.ShieldWarning}>
+                    <B>Difícil de usar mal</B>: usa tipos para que el compilador rechace código
+                    incorrecto. Crea tipos específicos (<Mono>Email</Mono>, <Mono>Amount</Mono>) en
+                    lugar de primitivos genéricos. Así quien consume no puede pasar datos inválidos
+                    ni en orden equivocado.
+                </ListItem>
+            </List>
+        </Info>
+
+        <NotesSection>
+            <Heading
+                slot="heading" headingLevel="h3"
+                Icon={icons.Code}
+            >
+                Ejemplo: orden de parámetros y tipos (usabilidad)
+            </Heading>
+
+            <P>
+                Imagina una función de transferencia.
+            </P>
+
+            <PythonBlock
+                code={`
+                    def transfer(string_1, string_2, number, boolean): ...
+                `}
+            >
+                <span slot="title">Versión confusa</span>
+                <span slot="footer">
+                    ¿Qué es cada parámetro? ¿Cuál es el origen y cuál el destino? ¿El número es el
+                    monto o la cantidad de intentos? ¿El booleano activa un registro, fuerza la
+                    operación o cambia otra regla de negocio? Este tipo de firma obliga a recordar
+                    demasiado y vuelve la API más fácil de usar mal.
+                </span>
+            </PythonBlock>
+
+            <PythonBlock
+                code={`
+                    def transfer(
+                        origin: Account,
+                        destination: Account,
+                        amount: Amount,
+                        retry_on_failure: RetryPolicy
+                    ) -> TransferResult: ...
+                `}
+            >
+                <span slot="title">Versión clara</span>
+                <span slot="footer">
+                    Aquí la intención es visible. Los tipos reducen errores posibles, el orden tiene
+                    significado semántico, y el nombre de cada parámetro sugiere claramente su
+                    propósito.
+                </span>
+            </PythonBlock>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-consumer-perspective">
+        <Heading
+            headingLevel="h2" Icon={icons.User}
+            slot="heading"
+        >
+            Perspectiva de quien consume: diseñar para quien usará tu API
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFive}>
+            <span slot="title">Quinto principio (transversal)</span>
+
+            <P>
+                Todos los principios anteriores dicen: piensa en quien usa la API. Es el criterio
+                más importante porque guía todas las decisiones. Modelar bien el dominio, proteger
+                invariantes, limitar opciones y comunicar claramente solo tienen sentido si están
+                pensados desde el punto de vista de quien le dará uso.
+            </P>
+        </Definition>
+
+        <P>
+            Este principio atraviesa a todos los demás: <B>diseña la API pensando en quien la va a
+                usar</B>, no solo en quien la implementa. Eso implica priorizar claridad, anticipar
+            errores comunes y contrastar el diseño con casos de uso reales.
+        </P>
+
+        <Important headingLevel="h3">
+            <span slot="title">Empatía con quien consume</span>
+
+            <P>
+                Una API bien diseñada muestra <B>empatía</B> con quien la consume. Eso no significa
+                complacer cualquier petición, sino entender necesidades reales, errores probables y
+                el contexto en que otras personas usarán tu código.
+            </P>
+
+            <P>
+                Por ejemplo, si tu biblioteca maneja dinero, conviene anticipar confusiones entre
+                unidades, errores frecuentes al construir montos o dudas sobre cómo manejar fallos.
+                Los tipos, los nombres y los ejemplos deberían ayudar a evitar esas fricciones.
+            </P>
+        </Important>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Tres criterios clave para aplicar esta perspectiva</span>
+            <List>
+                <ListItem icon={icons.Target}>
+                    <B>Haz fácil lo común, sin sacrificar lo importante</B>: la operación más
+                    frecuente debería ser reconocible y requerir pocos pasos, pero los casos
+                    especiales deben tener respuestas claras.
+                </ListItem>
+                <ListItem icon={icons.BookmarkSimple}>
+                    <B>Errores que comunican claridad</B>: si algo falla, el error debe explicar por
+                    qué sucedió y sugerir cómo reaccionar. No expongas detalles internos confusos ni
+                    códigos enigmáticos.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Valida tu diseño con casos reales</B>: antes de publicar, usa tu propia API.
+                    Implementa un caso de uso completo. ¿Fue intuitivo? ¿Fácil de extender? Si no,
+                    todavía hay deuda de diseño.
+                </ListItem>
+            </List>
+        </Tip>
+
+        <NotesSection id="h3-bank-transfer-api">
+            <Heading
+                slot="heading" headingLevel="h3"
+                Icon={icons.Money}
+            >
+                Caso de estudio: API de transferencias bancarias (usabilidad y manejo de errores)
+            </Heading>
+
+            <NotesSection id="h4-version-1">
+                <Heading
+                    slot="heading" headingLevel="h4"
+                    Icon={icons.WarningCircle}
+                >
+                    Versión 1 (sin perspectiva de consumidor)
+                </Heading>
+
+                La API expone una función <KotlinInline
+                    code="transfer(origin: String, destination: String, amount: Double): Int"
+                />. Si falla, devuelve un código numérico <Mono>{`(0, 1, 2, 3)`}</Mono> que quien
+                consume debe memorizar o buscar en documentación. Además, <KotlinInline
+                    code="Double"
+                /> es una representación poco adecuada para dinero, porque introduce ambigüedad y
+                posibles errores de precisión. <B>El resultado:</B> errores difíciles de
+                diagnosticar y poco contexto para decidir cómo reaccionar.
+            </NotesSection>
+
+            <NotesSection id="h4-version-2">
+                <Heading
+                    slot="heading" headingLevel="h4"
+                    Icon={icons.CheckCircle}
+                >
+                    Versión 2 (con perspectiva de consumidor)
+                </Heading>
+
+                <P>
+                    La API expone <KotlinInline
+                        code="transfer(origin: String, destination: String, amount: Amount): Result<TransferId, TransferError>"
+                    />. Los errores no son códigos ni strings, sino tipos específicos:
+                </P>
+
+                <List>
+                    <ListItem icon={icons.Coins}>
+                        <KotlinInline code="InsufficientFunds { missingAmount: Amount }" />
+                    </ListItem>
+                    <ListItem icon={icons.UserCircleDashed}>
+                        <KotlinInline code="AccountNotFound { accountId: AccountId }" />
+                    </ListItem>
+                    <ListItem icon={icons.WifiSlash}>
+                        <KotlinInline code="NetworkError { retryable: Boolean }" />
+                    </ListItem>
+                </List>
+
+                <P>
+                    Cada tipo de error no solo comunica qué falló, sino que adjunta exactamente la
+                    información necesaria para decidir cómo reaccionar: cuánto falta, qué cuenta es
+                    inválida, si vale la pena reintentar.
+                </P>
+
+                <P>
+                    Así, quien consume no solo sabe qué falló, sino que tiene información disponible
+                    para manejar cada caso. La API comunica mejor, reduce la dependencia de
+                    documentación externa y hace mucho más explícito el tratamiento de errores. En
+                    lenguajes con soporte adecuado, este diseño incluso puede ayudar a verificar de
+                    forma exhaustiva los casos que deben manejarse.
+                </P>
+            </NotesSection>
+        </NotesSection>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Una API bien diseñada no expone primero detalles técnicos, sino conceptos del
+                problema que resultan reconocibles para quien la usa. Por eso, modelar el dominio,
+                encapsular invariantes y elegir con cuidado la superficie pública no son decisiones
+                independientes: juntas determinan qué tan clara, segura y expresiva será la
+                biblioteca.
+            </P>
+            <P>
+                La minimalidad útil, la usabilidad y la perspectiva de quien consume completan ese
+                diseño. Una API pequeña pero suficiente, consistente en sus nombres y difícil de
+                usar mal permite trabajar con mayor confianza, reduce errores evitables y vuelve más
+                evidente la intención del código que la utiliza.
+            </P>
+            <P>
+                También conviene leer estos principios como un punto de partida para la conversación
+                del curso, no como una discusión cerrada. Iremos retomándolos cuando aparezcan en
+                contextos más específicos, de modo que cada uno gane matices a medida que el diseño
+                de bibliotecas se vuelva más concreto.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.PuzzlePiece}>
+                Una buena API refleja los conceptos centrales del dominio en sus tipos, operaciones
+                y relaciones.
+            </ListItem>
+            <ListItem icon={icons.Lock}>
+                Encapsular no es solo ocultar implementación: también implica proteger invariantes y
+                evitar estados inválidos.
+            </ListItem>
+            <ListItem icon={icons.Rows}>
+                La minimalidad útil elimina lo accesorio sin dejar vacíos importantes en el problema
+                que la biblioteca promete resolver.
+            </ListItem>
+            <ListItem icon={icons.Lightbulb}>
+                La usabilidad depende de consistencia, descubribilidad, tipos significativos y
+                errores que orienten con claridad.
+            </ListItem>
+            <ListItem icon={icons.User}>
+                Diseñar desde la perspectiva de quien consume obliga a validar la API con casos
+                reales, defaults razonables y flujos de uso concretos.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Diseñar bibliotecas no es acumular funcionalidades, sino tomar decisiones sobre qué
+                conceptos merecen existir en la API, qué errores deberían prevenirse desde el diseño
+                y qué experiencia tendrá la persona que la use. Una API realmente lograda no solo
+                funciona: también enseña, orienta y hace más natural resolver el problema para el
+                que fue creada.
+            </P>
+            <P>
+                A lo largo del curso, estos cinco principios reaparecerán en contextos más
+                específicos: cuando entres en decisiones de modelado de datos, cuando documentes
+                APIs, cuando tengas que pensar en evolución y compatibilidad, y cuando diseñes
+                herramientas que quien desarrolla usa directamente. Cada contexto los enriquecerá
+                con nuevos matices. Por ahora, lo importante es contar con estos términos para
+                nombrar decisiones bien y reconocer estos problemas cuando surjan.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <ReferencesFromCatalog>
+        <Fragment slot="description-ref:reddy-qualities-2024">
+            Esta lectura puede interesarte si quieres profundizar varios de los principios
+            presentados en la lección desde una perspectiva de diseño más detallada. Reddy
+            desarrolla con mayor calma ideas como <B>modelar el dominio</B>, elegir una <B
+            >abstracción</B> que realmente responda al problema, identificar los <B>objetos
+                clave</B>, ocultar detalles de implementación y reducir el acoplamiento. Resulta
+            especialmente útil para pasar de la intuición general de <Enquote>una buena API debe ser
+                clara y fácil de usar</Enquote> a criterios más concretos para evaluar la superficie
+            pública de una biblioteca.
+        </Fragment>
+
+        <Fragment slot="description-ref:lauret-designing-api-for-users-2019">
+            Una vez comprendida la importancia de la <B>perspectiva de quien consume</B>, Lauret
+            ofrece un marco más operativo para llevarla al diseño real. Este capítulo profundiza en
+            cómo traducir la empatía en decisiones concretas: versionado, evolución sin ruptura,
+            manejo significativo de errores y patrones de compatibilidad. Aunque el foco está en
+            APIs REST y HTTP, los principios de consistencia, descubribilidad y comunicación clara
+            que desarrolla son igualmente valiosos para cualquier interfaz de biblioteca.
+        </Fragment>
+
+        <Fragment slot="description-ref:martin-meaningful-names-2011">
+            Este capítulo es especialmente útil para llevar a la práctica dos principios de la
+            lección: <B>modelar el dominio</B> y construir una <B>usabilidad</B> más clara. Martin
+            explica en profundidad por qué los nombres importan tanto en el código: cómo elegir
+            nombres que revelen intención, eviten desinformación, se pronuncien con naturalidad y
+            puedan buscarse sin ambigüedad. Sus criterios conectan directamente con aquello que
+            vuelve a una API fácil de entender y difícil de usar mal. Si después de esta lección
+            dudas sobre cómo nombrar un tipo, un parámetro o un método, este capítulo ofrece
+            principios concretos que van más allá de la intuición o la preferencia personal.
+        </Fragment>
+
+        <Fragment slot="description-ref:martin-functions-2011">
+            Este capítulo complementa muy bien lo aprendido sobre <B>minimalidad útil</B> y <B
+            >usabilidad</B>. Martin muestra de manera concreta cómo refactorizar funciones confusas
+            hasta convertirlas en funciones que <I>hacen una sola cosa, la hacen bien y solo esa
+                cosa</I>. Sus criterios sobre tamaño, nivel de abstracción, nombres descriptivos y
+            parámetros se conectan directamente con el diseño de APIs: una función pública con
+            demasiados argumentos o con varios niveles de abstracción resulta más difícil de usar, y
+            un tipo con demasiados métodos tampoco refleja una interfaz minimalista. Si después de
+            esta lección te preguntas cómo refactorizar los métodos de una API para volverlos más
+            pequeños, claros y fáciles de testear, aquí encontrarás criterios concretos y ejemplos
+            de transformación paso a paso.
+        </Fragment>
+    </ReferencesFromCatalog>
+</NotesLayout>

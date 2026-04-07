@@ -106,6 +106,7 @@
         "comunícalo",
         "corrutinas",
         "covariante",
+        "descubribilidad",
         "Dmitry",
         "donotpresent",
         "dotenv",
@@ -151,6 +152,7 @@
         "kotlin",
         "labelledby",
         "LASTEXITCODE",
+        "lauret",
         "linux",
         "littlefoot",
         "Littlefoot",
@@ -161,6 +163,7 @@
         "markdoc",
         "Markdoc",
         "miguel",
+        "minimalidad",
         "mypy",
         "navs",
         "nulabilidad",
@@ -187,6 +190,7 @@
         "procons",
         "Pyright",
         "reasignación",
+        "reddy",
         "rehype",
         "Rivendell",
         "SDKMAN",
@@ -239,5 +243,8 @@
             "createTheme(?:<\\w+>)?\\s*\\(([^)]*)\\)",
             "{?\\s?[\\w].*:\\s*?[\"'`]([^\"'`]*).*?,?\\s?}?"
         ]
-    ]
+    ],
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }

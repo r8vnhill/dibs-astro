@@ -1,8 +1,13 @@
 # Bibliography Catalog (Turtle + Generated JSON-LD)
 
-This folder stores reference data for lessons. The canonical source is now:
+This folder stores reference data for lessons. The editorial source now lives in numbered Turtle
+fragments under:
 
-`src/data/bibliography/catalog.graph.ttl`
+`src/data/bibliography/sources/`
+
+The build step assembles those fragments into:
+
+`src/data/bibliography/catalog.graph.generated.ttl`
 
 The site, reports, and tests consume the generated artifact:
 
@@ -46,11 +51,27 @@ Usage tags live on `dibs:ReferenceUsage` nodes via `dibs:tag`:
 
 UI rendering hides `pending-revision` by default.
 
+## Editing the catalog
+
+To add or modify references:
+
+1. **Determine the appropriate source file** (01–05) based on entity type
+   - Use `01-persons.ttl` for Person entities
+   - Use `02-organizations.ttl` for organizations
+   - Use `03-works.ttl` for books and published works
+   - Use `04-references.ttl` for specific chapters, articles, and web pages
+   - Use `05-usages.ttl` for lesson-to-reference relationships
+2. **Edit the themed file** directly with your additions/changes
+3. Each source file includes its own `@prefix` declarations for independence
+4. **Do not manually edit** `catalog.graph.generated.ttl` or `catalog.graph.generated.jsonld`
+   - These are build artifacts regenerated automatically
+
 ## Build pipeline
 
 Run `pnpm generate:bibliography-catalog` to:
 
-- parse `catalog.graph.ttl`
+- assemble `sources/*.ttl` into `catalog.graph.generated.ttl`
+- parse the assembled TTL graph
 - validate relations and tags
 - normalize the graph
 - write `catalog.graph.generated.jsonld`

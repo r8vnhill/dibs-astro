@@ -181,3 +181,167 @@ El flujo esperado de la Unidad 1 será **PURAMENTE CONCEPTUAL**:
 - El cambio a 8 unidades separa claramente conceptual (U1) de implementación (U2–U8).
 - El roadmap prioriza **coherencia pedagógica y separación de concerns** antes que cantidad de contenido.
 - Los cambios a course-structure.ts requieren actualizar cualquier página que reference la estructura anterior.
+
+----
+
+Voy a revisar rápidamente patrones del repositorio para estructurar las 2-3 lecciones con el estilo del proyecto, y en paralelo consolidaré una propuesta que priorice sólo lo relevante a diseño de bibliotecas como APIs con trazabilidad de fuentes. Luego te muestro un plan concreto y editable.
+
+Revisar patrones de lecciones
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes)
+
+Searched for files matching `**/src/data/course-structure.ts`, 1 match
+
+Searched for regex `References|<Book|<WebPage`, 15 results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/type-fundamentals)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-structure.ts#1-1), lines 1 to 100
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-structure.ts#100-100), lines 100 to 300
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/type-fundamentals/basics)
+
+Searched for files matching `**/src/components/ui/references/*.astro`, 14 matches
+
+Searched for text `ReferencesFromCatalog`, 20 results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#1-1), lines 1 to 150
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#300-300), lines 300 to 400
+
+Searched for files matching `**/src/data/bibliography-catalog.json src/data/bibliography-catalog.*`, no matches
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/components/ui/references/LessonReferencesFromCatalog.astro)
+
+Searched for text `bibliography-catalog`, 20 results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/components/ui/references/ReferencesFromCatalog.astro#1-1), lines 1 to 100
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data)
+
+Searched for text `LessonReferencesFromCatalog`, 10 results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/scripts/build-bibliography-catalog.mjs)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/structured-output/py.astro#1-1), lines 1 to 150
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/catalog.graph.ttl#1-1), lines 1 to 100
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/software-libraries)
+
+Searched for text `usage:scripting-structured-output`, no results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/catalog.graph.ttl#100-100), lines 100 to 600
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/software-libraries/scripting)
+
+Searched for text `dibs:usageOfReference`, no results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld)
+
+Searched for text `usage:`, 30 results
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/catalog.graph.ttl#700-700), lines 700 to 900
+
+Semantic workspace search is not currently available
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#200-200), lines 200 to 700
+
+Searched for files matching `**/src/lib/bibliography*`, no matches
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/lib)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/lib/bibliography)
+
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro)
+
+Estoy extrayendo los hallazgos del subagente para aterrizar la propuesta en el formato real de tus lecciones y en su sistema de referencias. Enseguida te comparto un plan de tópicos con fuentes por bloque.
+
+Read [](file:///b%3A/scoop/apps/vscode/1.113.0/data/user-data/User/workspaceStorage/427d48984ec60010684dd5d26e5008b9/GitHub.copilot-chat/chat-session-resources/6f225820-8f4c-45f0-9678-b927cc78802d/call_kxmeS26D8vwOOxiqdx2XGC55__vscode-1775442545221/content.txt)
+
+Ya tengo el patrón real del repositorio y la forma correcta de mantener trazabilidad bibliográfica. Ahora voy a alinear dos decisiones de alcance (2 vs 3 lecciones y nivel de profundidad) para que el plan quede ejecutable sin suposiciones fuertes.
+
+Analyzing your answers...
+
+Perfecto, con esas respuestas voy a cerrar una propuesta de 2 lecciones con enfoque conceptual y referencias trazables por bloque temático. Después la persisto en memoria de sesión para que quede lista para handoff.
+
+Read memory
+
+Created memory file [](file:///b%3A/scoop/apps/vscode/1.113.0/data/user-data/User/workspaceStorage/427d48984ec60010684dd5d26e5008b9/GitHub.copilot-chat/memory-tool/memories/NmYyMjU4MjAtOGY0Yy00NWYwLTk2NzgtYjkyN2NjNzg4MDJk/plan.md)
+
+## Plan: Serie de 2 lecciones sobre diseño de bibliotecas como API
+
+Propongo una serie conceptual de 2 lecciones, centrada en decisiones de diseño (no en detalle de implementación), con trazabilidad explícita por tema hacia bibliografías originales. Ya dejé este plan persistido en memoria de sesión para handoff y refinamiento.
+
+### 1. Lección 1
+Título sugerido: Diseñar la API desde el dominio y las tareas de uso
+
+Objetivo:
+Que el estudiantado pueda decidir qué entra en la API pública de una biblioteca y por qué.
+
+Tópicos clave:
+1. Modelar el dominio antes que la implementación.
+2. Encapsulación y ocultamiento de detalles internos.
+3. Minimalidad útil: núcleo pequeño pero completo.
+4. Usabilidad de la API: consistencia, descubribilidad y dificultad de mal uso.
+5. Perspectiva de consumo: diseñar para objetivos de quien usa la API, no para estructura interna.
+6. Claridad en nombres y funciones como soporte de diseño.
+
+Trazabilidad de fuentes:
+1. API Design for C++, Chapter 2.
+2. The Design of Web APIs, Chapter 2.
+3. Clean Code, Chapters 2 y 3.
+
+### 2. Lección 2
+Título sugerido: Evolucionar la API sin romper compatibilidad
+
+Objetivo:
+Que el estudiantado pueda proponer evolución compatible de una API de biblioteca y justificar decisiones de estabilidad.
+
+Tópicos clave:
+1. Ciclo de vida de API y tipos de compatibilidad.
+2. Estrategias de cambio: agregar sin romper, deprecación y retiro.
+3. Versionado y comunicación de cambios.
+4. Cambios rompientes “invisibles” (contrato observable).
+5. Documentación como parte del contrato público.
+6. Testing de regresión como red de seguridad evolutiva.
+
+Trazabilidad de fuentes:
+1. API Design for C++, Chapter 10.
+2. API Design for C++, Chapters 11 y 12.
+3. The Design of Web APIs, Chapter 9.
+4. The Design of Web APIs, Chapters 12 y 13.
+5. Write the Docs.
+
+## Matriz mínima de referencias (por bloque)
+1. Diseño de dominio, encapsulación, minimalidad, usabilidad, acoplamiento:
+API Design for C++, Chapter 2.
+2. Evolución, compatibilidad, versionado, deprecación:
+API Design for C++, Chapter 10.
+3. Documentación y pruebas:
+API Design for C++, Chapters 11 y 12.
+4. Perspectiva consumidora y extensibilidad:
+The Design of Web APIs, Chapters 2 y 9.
+5. Apoyo transversal de claridad y documentación:
+Clean Code; Write the Docs.
+
+## Alcance aplicado a tu pedido
+1. Incluido: solo lo relevante a diseño de bibliotecas como instancias de API.
+2. Excluido: detalle operativo de APIs web (HTTP fino), tooling y contenido periférico no esencial.
+3. Cumplido: no “citar” tus notas como fuente primaria; se referencia la bibliografía original por capítulo/tema.
+
+## Referencias de estructura del repositorio usadas para alinear formato
+1. design-relevant-work.md
+2. course-structure.ts
+3. catalog.graph.ttl
+4. index.astro
+5. py.astro
+
+Si quieres, en la siguiente iteración te lo convierto a formato listo para clase por lección: objetivo, preguntas guía, secuencia de subtemas y referencias recommended/additional por sección.
