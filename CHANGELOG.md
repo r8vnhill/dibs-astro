@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.15.0] - 2026-04-07
+
+### Added
+
+- Added the new `Diseñar la API de una biblioteca desde el dominio` lesson under `software-libraries`, extending Unit 1 with an introductory discussion of domain modeling, encapsulation, minimality, and consumer-focused API design.
+- Added a modular bibliography catalog workflow based on Turtle source fragments, generated catalog artifacts, lesson-level reference usages, and supporting scripts/tests for catalog assembly and validation.
+- Added new course-structure test coverage and a dedicated `LessonTreeBuilder`, together with broader render coverage for references, layout navigation, inline code, and shared UI primitives.
+
+### Changed
+
+- Refactored the internal course-structure authoring model into composable modules and builders while preserving the public `src/data/course-structure.ts` facade used by navigation and lesson metadata consumers.
+- Reworked bibliography authoring and rendering so lessons resolve recommended references from the centralized catalog, with clearer source separation across persons, organizations, works, references, and usages.
+- Renamed the Kotlin inline code component to `KotlinInline`, refreshed related exports/usages, and updated several lesson pages, tests, and project docs to match the current Unit 1 structure and bibliography workflow.
+
+### Fixed
+
+- Fixed catalog integrity and rendering issues that prevented lesson bibliography descriptions and usages from appearing correctly when generated data or `schema:isPartOf` relationships were incomplete.
+- Fixed Astro render expectations around page-range normalization, current navigation order, and reference fallback handling so the test suite reflects the current content model more reliably.
+
 ## [0.14.0] - 2026-03-31
 
 ### Added
