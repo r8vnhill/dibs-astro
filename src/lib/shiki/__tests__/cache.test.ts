@@ -20,8 +20,8 @@ describe("createHighlighterStore", () => {
 
     it("initializes lazily and reuses the same promise across repeated gets", async () => {
         const createdHighlighter = { codeToHtml: vi.fn() };
-        const create = vi.fn(async () => createdHighlighter);
-        const store = createHighlighterStore({ create });
+        const create = vi.fn(async () => createdHighlighter as any);
+        const store = createHighlighterStore({ create } as any);
 
         const first = store.get();
         const second = store.get();
@@ -33,8 +33,8 @@ describe("createHighlighterStore", () => {
 
     it("reuses the in-flight promise for concurrent callers", async () => {
         const pending = deferred<{ id: string }>();
-        const create = vi.fn(() => pending.promise);
-        const store = createHighlighterStore({ create });
+        const create = vi.fn(() => pending.promise as any);
+        const store = createHighlighterStore({ create } as any);
 
         const first = store.get();
         const second = store.get();
@@ -50,9 +50,9 @@ describe("createHighlighterStore", () => {
 
     it("clears the cached promise on reset and creates again on the next get", async () => {
         const create = vi.fn()
-            .mockResolvedValueOnce({ id: "first" })
-            .mockResolvedValueOnce({ id: "second" });
-        const store = createHighlighterStore({ create });
+            .mockResolvedValueOnce({ id: "first" } as any)
+            .mockResolvedValueOnce({ id: "second" } as any);
+        const store = createHighlighterStore({ create } as any);
 
         await expect(store.get()).resolves.toEqual({ id: "first" });
 
@@ -70,10 +70,10 @@ describe("createHighlighterStore", () => {
             expectedId: "promised",
         },
     ])("uses the injected $label until reset", async ({ value, expectedId }) => {
-        const create = vi.fn(async () => ({ id: "created" }));
-        const store = createHighlighterStore({ create });
+        const create = vi.fn(async () => ({ id: "created" } as any));
+        const store = createHighlighterStore({ create } as any);
 
-        store.setForTests(value);
+        store.setForTests(value as any);
 
         await expect(store.get()).resolves.toEqual({ id: expectedId });
         expect(create).not.toHaveBeenCalled();
@@ -85,10 +85,10 @@ describe("createHighlighterStore", () => {
     });
 
     it("treats a null test value as restoring lazy initialization", async () => {
-        const create = vi.fn(async () => ({ id: "created" }));
-        const store = createHighlighterStore({ create });
+        const create = vi.fn(async () => ({ id: "created" } as any));
+        const store = createHighlighterStore({ create } as any);
 
-        store.setForTests({ id: "injected" });
+        store.setForTests({ id: "injected" } as any);
         store.setForTests(null);
 
         await expect(store.get()).resolves.toEqual({ id: "created" });
@@ -98,7 +98,8 @@ describe("createHighlighterStore", () => {
     it("clears the cached rejected promise and allows a later retry to recover", async () => {
         const create = vi.fn()
             .mockRejectedValueOnce(new Error("boom"))
-            .mockResolvedValueOnce({ id: "recovered" });
+            .mockResolvedValueOnce({ id: "recovered" } as any)
+
         const onSet = vi.fn();
         const store = createHighlighterStore({ create, onSet });
 

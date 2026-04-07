@@ -1,6 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Explanation, Important, More, Tip, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
@@ -313,7 +314,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <References>
         <Fragment slot="recommended">
             <Book
-                chapter="Meet PowerShell" pages={{ start: 8, end: 24 }}
+                chapter="Meet PowerShell" pages={parsePageReferenceInput({ start: 8, end: 24 })!}
                 bookTitle="Learn Powershell in a Month of Lunches, Fourth Edition: Covers Windows, Linux, and macOS"
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />

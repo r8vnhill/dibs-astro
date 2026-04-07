@@ -3,14 +3,7 @@ import * as icons from "~/assets/img/icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
-import {
-    Exercise,
-    Explanation,
-    Info,
-    More,
-    Tip,
-    Warning,
-} from "~/components/ui/callouts";
+import { Exercise, Explanation, Info, More, Tip, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -20,6 +13,7 @@ import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -826,7 +820,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Controlling Error Reporting Behavior and Intercepting Errors"
                 bookTitle="The Big Book of PowerShell Error Handling"
-                pages={{ start: 7, end: 15 }}
+                pages={parsePageReferenceInput({ start: 7, end: 15 })!}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Dave", lastName: "Wyatt" }]} />
 

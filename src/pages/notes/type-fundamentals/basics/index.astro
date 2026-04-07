@@ -28,6 +28,7 @@ import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
 import Pros from "~/components/ui/procons/Pros.astro";
 import { AuthorList, Book, References } from "~/components/ui/references";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 import Gato from "~/fragments/notes/type-fundamentals/basics/Gato.astro";
 import InitializeKotlinApplicationBash from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationBash.astro";
 import InitializeKotlinApplicationPs1 from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationPs1.astro";
@@ -812,7 +813,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     <References>
         <Fragment slot="recommended">
             <Book
-                chapter="Kotlin: what and why" pages={{ start: 3, end: 16 }}
+                chapter="Kotlin: what and why" pages={parsePageReferenceInput({ start: 3, end: 16 })!}
                 bookTitle="Kotlin in Action"
             >
                 <AuthorList

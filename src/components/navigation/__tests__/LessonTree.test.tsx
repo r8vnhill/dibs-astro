@@ -86,7 +86,7 @@ function setPath(path: string) {
  * @throws Error if no matching ancestor tree item exists.
  */
 function closestTreeItem(element: Element): HTMLElement {
-    const treeItem = element.closest("[role=\"treeitem\"]");
+    const treeItem = element.closest('[role="treeitem"]');
     if (!treeItem) {
         throw new Error("Expected element inside a tree item.");
     }
@@ -171,20 +171,17 @@ describe("LessonTree", () => {
     describe("given the current page is a deep child in the lesson tree", () => {
         describe("when the component is rendered", () => {
             test("then all ancestor sections are expanded to show the active page", async () => {
-                setPath("/notes/software-libraries/scripting/should-process/");
+                    setPath("/notes/software-libraries/api-design/fundamentals/");
 
-                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+                    render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                // The active child should be visible after ancestors expand.
-                expect(
-                    await screen.findByText("Ensayo seguro (-WhatIf/-Confirm)"),
-                ).toBeInTheDocument();
+                    // The active child should be visible after ancestors expand.
+                    expect(
+                        await screen.findByText("Diseñar la API desde el dominio"),
+                    ).toBeInTheDocument();
 
-                // Sibling is visible because parent branch is expanded.
-                expect(screen.getByText("Primer script")).toBeInTheDocument();
-
-                // Ancestor section label is visible (expanded container).
-                expect(screen.getByText("Scripting")).toBeInTheDocument();
+                    // Ancestor section label is visible (expanded container).
+                    expect(screen.getByText("Principios de diseño de APIs")).toBeInTheDocument();
             });
         });
     });
@@ -194,10 +191,10 @@ describe("LessonTree", () => {
             test("then the expansion state changes immediately", async () => {
                 const user = userEvent.setup();
 
-                setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const sectionLabel = await screen.findByText("Pipelines");
+                const sectionLabel = await screen.findByText("Principios de diseño de APIs");
                 const containerItem = closestTreeItem(sectionLabel);
                 const toggleBtn = getToggleButton(containerItem);
 
@@ -210,10 +207,10 @@ describe("LessonTree", () => {
             test("then the new state is persisted to localStorage", async () => {
                 const user = userEvent.setup();
 
-                setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const sectionLabel = await screen.findByText("Pipelines");
+                const sectionLabel = await screen.findByText("Principios de dise\u00f1o de APIs");
                 const containerItem = closestTreeItem(sectionLabel);
                 const toggleBtn = getToggleButton(containerItem);
 
@@ -229,12 +226,12 @@ describe("LessonTree", () => {
             test("then the persisted toggle state is restored", async () => {
                 const user = userEvent.setup();
 
-                setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 const { unmount } = render(
                     <LessonTree lessons={courseStructure} persistKey={persistKey} />,
                 );
 
-                const sectionLabel = await screen.findByText("Pipelines");
+                const sectionLabel = await screen.findByText("Principios de dise\u00f1o de APIs");
                 const containerItem = closestTreeItem(sectionLabel);
                 const toggleBtn = getToggleButton(containerItem);
 
@@ -245,7 +242,7 @@ describe("LessonTree", () => {
                 unmount();
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const sectionLabel2 = await screen.findByText("Pipelines");
+                const sectionLabel2 = await screen.findByText("Principios de dise\u00f1o de APIs");
                 const containerItem2 = closestTreeItem(sectionLabel2);
 
                 await waitFor(() => {
@@ -256,12 +253,12 @@ describe("LessonTree", () => {
             test("then toggling still works after restore", async () => {
                 const user = userEvent.setup();
 
-                setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 const { unmount } = render(
                     <LessonTree lessons={courseStructure} persistKey={persistKey} />,
                 );
 
-                const sectionLabel = await screen.findByText("Pipelines");
+                const sectionLabel = await screen.findByText("Principios de dise\u00f1o de APIs");
                 const containerItem = closestTreeItem(sectionLabel);
                 const toggleBtn = getToggleButton(containerItem);
 
@@ -271,7 +268,7 @@ describe("LessonTree", () => {
                 unmount();
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const sectionLabel2 = await screen.findByText("Pipelines");
+                const sectionLabel2 = await screen.findByText("Principios de dise\u00f1o de APIs");
                 const containerItem2 = closestTreeItem(sectionLabel2);
 
                 await waitFor(() => {
@@ -289,12 +286,12 @@ describe("LessonTree", () => {
     describe("given a rendered lesson tree", () => {
         describe("when hover styling is applied to child links", () => {
             test("then hover classes are scoped to the link, not the parent tree item", async () => {
-                setPath("/notes/software-libraries/scripting/should-process/");
+                setPath("/notes/installation/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const sectionLabel = await screen.findByText("Scripting");
+                const sectionLabel = await screen.findByText("Principios de diseño de APIs");
                 const sectionTreeItem = closestTreeItem(sectionLabel);
-                const childLink = await screen.findByRole("link", { name: "Primer script" });
+                const childLink = await screen.findByRole("link", { name: "Dise\u00f1ar la API desde el dominio" });
 
                 expect(sectionTreeItem.className).not.toContain("group");
                 expect(childLink.className).toContain("hover:bg-base-border/10");
@@ -308,10 +305,10 @@ describe("LessonTree", () => {
     describe("given initial navigation to a lesson page", () => {
         describe("when the tree is rendered", () => {
             test("then the active lesson is marked with aria-current without waiting for effects", async () => {
-                setPath("/notes/software-libraries/scripting/help/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const activeLink = await screen.findByRole("link", { name: "Ayuda" });
+                const activeLink = await screen.findByRole("link", { name: "Diseñar la API desde el dominio" });
 
                 expect(activeLink).toHaveAttribute("aria-current", "page");
                 expect(activeLink.className).toContain("bg-primary/15");
@@ -322,18 +319,18 @@ describe("LessonTree", () => {
     describe("given the component is mounted and the user navigates internally", () => {
         describe("when the pathname changes and a popstate event fires", () => {
             test("then the active lesson indicator updates to the new path", async () => {
-                setPath("/notes/software-libraries/scripting/help/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                const initialActive = await screen.findByRole("link", { name: "Ayuda" });
+                const initialActive = await screen.findByRole("link", { name: "Diseñar la API desde el dominio" });
                 expect(initialActive).toHaveAttribute("aria-current", "page");
 
-                setPath("/notes/software-libraries/scripting/first-script/");
+                setPath("/notes/installation/");
                 window.dispatchEvent(new PopStateEvent("popstate"));
 
                 await waitFor(() => {
                     expect(
-                        screen.getByRole("link", { name: "Primer script" }),
+                        screen.getByRole("link", { name: "Herramientas necesarias y recomendadas" }),
                     ).toHaveAttribute("aria-current", "page");
                 });
 

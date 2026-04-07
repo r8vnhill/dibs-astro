@@ -165,9 +165,9 @@ describe("pages utilities", () => {
         test.each([
             { name: "single page", input: { start: 7 }, expected: "p. 7" },
             { name: "equal bounds", input: { start: 7, end: 7 }, expected: "p. 7" },
-            { name: "ordered range", input: { start: 7, end: 12 }, expected: "pp. 7-12" },
+            { name: "ordered range", input: { start: 7, end: 12 }, expected: "pp. 7–12" },
         ])("formats $name", ({ input, expected }) => {
-            expect(formatPageReference(input)).toBe(expected);
+            expect(formatPageReference(parsePageReference(input.start, input.end))).toBe(expected);
         });
 
         test("returns undefined for missing input", () => {
@@ -186,7 +186,7 @@ describe("pages utilities", () => {
         // Formatting is now presentation-only, so invalid domain repair is out of scope here.
         test("does not revalidate or reorder references", () => {
             const reference = { start: 12, end: 7 } as unknown as PageReference;
-            expect(formatPageReference(reference)).toBe("pp. 12-7");
+            expect(formatPageReference(reference)).toBe("pp. 12–7");
         });
 
         test("matches parsed formatting for valid references", () => {

@@ -1,14 +1,7 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { Heading, P } from "~/components/semantics";
-import {
-    Definition,
-    Exercise,
-    Explanation,
-    More,
-    Note,
-    Tip,
-} from "~/components/ui/callouts";
+import { Definition, Exercise, Explanation, More, Note, Tip } from "~/components/ui/callouts";
 import { MarkdownInline, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
@@ -19,6 +12,7 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -714,7 +708,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Improving your parameterized script"
                 bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS"
-                pages={{ start: 249, end: 258 }}
+                pages={parsePageReferenceInput({ start: 249, end: 258 })!}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
