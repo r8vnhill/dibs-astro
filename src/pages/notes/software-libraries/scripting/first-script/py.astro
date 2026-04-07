@@ -13,6 +13,7 @@ import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -544,7 +545,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </List>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             <P>
                 Más allá de la sintaxis, esta lección busca dejar una idea central: escribir scripts
                 no es solo <I>hacer que algo funcione</I>, sino definir contratos claros entre quien
@@ -564,7 +565,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="recommended">
             <Book
                 chapter="Input and Output" bookTitle="Python Distilled"
-                pages={{ start: 262, end: 311 }}
+                pages={parsePageReferenceInput({ start: 262, end: 311 })!}
             >
                 <AuthorList
                     slot="authors"

@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/
 import { Important, More, Note } from "~/components/ui/callouts";
 import { BashScript } from "~/components/ui/code";
 import { PowerShellBlock } from "~/components/ui/code";
-import { InlineBash, InlineKotlin, InlinePowerShell } from "~/components/ui/code";
+import { InlineBash, KotlinInline, InlinePowerShell } from "~/components/ui/code";
 import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
@@ -122,7 +122,7 @@ const title = "¿Cómo usar este apunte?";
             slot="heading"
         >
             <span class="sr-only">Contenido opcional</span>
-            <InlineKotlin code="cajita == opcional" />
+            <KotlinInline code="cajita == opcional" />
         </Heading>
 
         <p>Todo lo que esté en una caja como la siguiente:</p>

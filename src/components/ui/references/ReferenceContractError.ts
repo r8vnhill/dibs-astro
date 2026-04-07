@@ -16,7 +16,9 @@ export class ReferenceContractError extends Error {
  */
 export class MissingReferenceTitleError extends ReferenceContractError {
     constructor() {
-        super("GenericReference requires a title via the `title` prop or a meaningful `title` slot.");
+        super(
+            "Reference component requires a title via the `title` prop or a meaningful `title` slot.",
+        );
         this.name = "MissingReferenceTitleError";
     }
 }

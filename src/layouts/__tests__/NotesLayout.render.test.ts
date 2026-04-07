@@ -34,9 +34,9 @@
  */
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import { createAstroRenderer, type AstroRender } from "../../test-utils/astro-render";
-import NotesLayout from "../NotesLayout.astro";
 import type { NavigationLinkInput } from "~/utils";
+import { type AstroRender, createAstroRenderer } from "../../test-utils/astro-render";
+import NotesLayout from "../NotesLayout.astro";
 
 interface LayoutProps {
     title: string;
@@ -88,8 +88,8 @@ describe.concurrent("NotesLayout.astro render", () => {
             },
         );
 
-        expect(html).toContain('component-url="~/components/utils/ToDo"');
-        expect(html).toContain('client="only"');
+        expect(html).toContain("component-url=\"~/components/utils/ToDo\"");
+        expect(html).toContain("client=\"only\"");
         expect(html).toContain("Contenido principal");
     });
 
@@ -112,8 +112,8 @@ describe.concurrent("NotesLayout.astro render", () => {
         );
 
         const doc = parseHtml(html);
-        const nav = doc.querySelector('nav[aria-label="Siguiente o anterior lección"]');
-        const previousLinks = [...(nav?.querySelectorAll('a[rel="prev"]') ?? [])];
+        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
+        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
 
         expect(previousLinks).toHaveLength(1);
         expect(previousLinks[0]?.textContent).toContain("PowerShell");
@@ -151,9 +151,9 @@ describe.concurrent("NotesLayout.astro render", () => {
         );
 
         const doc = parseHtml(html);
-        const nav = doc.querySelector('nav[aria-label="Siguiente o anterior lección"]');
-        const previousLinks = [...(nav?.querySelectorAll('a[rel="prev"]') ?? [])];
-        const nextLink = nav?.querySelector('a[rel="next"]');
+        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
+        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
+        const nextLink = nav?.querySelector("a[rel=\"next\"]");
 
         expect(previousLinks).toHaveLength(2);
         expect(previousLinks.map((link) => link.textContent?.replace(/\s+/g, " ").trim())).toEqual([
@@ -170,11 +170,11 @@ describe.concurrent("NotesLayout.astro render", () => {
     test("uses auto navigation previous when there is no manual override", async () => {
         const html = await renderLayout(
             {
-                title: "Ensayo seguro (-WhatIf/-Confirm)",
+                title: "Diseñar la API desde el dominio",
             },
             {
                 request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/scripting/should-process/",
+                    "https://dibs.ravenhill.cl/notes/software-libraries/api-design/fundamentals/",
                 ),
                 slots: {
                     abstract: "<p>Resumen breve</p>",
@@ -184,15 +184,15 @@ describe.concurrent("NotesLayout.astro render", () => {
         );
 
         const doc = parseHtml(html);
-        const nav = doc.querySelector('nav[aria-label="Siguiente o anterior lección"]');
-        const previousLinks = [...(nav?.querySelectorAll('a[rel="prev"]') ?? [])];
+        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
+        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
 
         // This route is part of the real course structure, so the expected previous link comes
         // from production navigation data rather than from a test double.
         expect(previousLinks).toHaveLength(1);
-        expect(previousLinks[0]?.textContent).toContain("Salida estructurada");
+        expect(previousLinks[0]?.textContent).toContain("La biblioteca como artefacto de software");
         expect(previousLinks[0]?.getAttribute("href")).toBe(
-            "/notes/software-libraries/scripting/structured-output/",
+            "/notes/software-libraries/what-is/",
         );
     });
 
@@ -201,8 +201,14 @@ describe.concurrent("NotesLayout.astro render", () => {
             {
                 title: "Ensayo seguro (-WhatIf/-Confirm)",
                 previous: [
-                    { title: "PowerShell", href: "/notes/software-libraries/scripting/structured-output" },
-                    { title: "Nushell", href: "/notes/software-libraries/scripting/structured-output/nushell" },
+                    {
+                        title: "PowerShell",
+                        href: "/notes/software-libraries/scripting/structured-output",
+                    },
+                    {
+                        title: "Nushell",
+                        href: "/notes/software-libraries/scripting/structured-output/nushell",
+                    },
                 ],
             },
             {
@@ -217,8 +223,8 @@ describe.concurrent("NotesLayout.astro render", () => {
         );
 
         const doc = parseHtml(html);
-        const nav = doc.querySelector('nav[aria-label="Siguiente o anterior lección"]');
-        const previousLinks = [...(nav?.querySelectorAll('a[rel="prev"]') ?? [])];
+        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
+        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
 
         expect(previousLinks.map((link) => link.textContent?.replace(/\s+/g, " ").trim())).toEqual([
             "PowerShell",

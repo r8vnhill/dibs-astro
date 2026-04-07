@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-31T21:20:47.102Z",
-  "totalLessons": 43,
+  "generatedAt": "2026-04-06T12:57:42.245Z",
+  "totalLessons": 46,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -114,6 +114,15 @@
         }
       ]
     },
+    "/notes/software-libraries/api-design/fundamentals/": {
+      "sourceFile": "src/pages/notes/software-libraries/api-design/fundamentals/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
+    },
     "/notes/software-libraries/artifacts-taxonomy/": {
       "sourceFile": "src/pages/notes/software-libraries/artifacts-taxonomy/index.astro",
       "authors": [
@@ -121,7 +130,21 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-02",
+      "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "4ba92112ff1f25ba2f3d9939da8129e425489106",
+          "date": "2026-03-31",
+          "author": "r8vnhill",
+          "subject": "📝✨ feat(unit-1): add software artifacts taxonomy lesson"
+        }
+      ]
     },
     "/notes/software-libraries/build-systems/": {
       "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
@@ -130,8 +153,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -188,8 +217,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -223,8 +258,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-05",
       "changes": [
+        {
+          "hash": "41d7d291cee5054bc6666815a667cdd47a1ef9fc",
+          "date": "2026-04-05",
+          "author": "R8V",
+          "subject": "feat: add design principles section and update lesson metadata"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -248,12 +289,6 @@
           "date": "2025-09-14",
           "author": "R8V",
           "subject": "✨🖼️ Add new icons: BugDroid, EyeSlash, Rows, and Signpost; update icons index timestamp"
-        },
-        {
-          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-          "date": "2025-09-14",
-          "author": "r8vnhill",
-          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
         }
       ]
     },
@@ -264,8 +299,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -289,12 +330,6 @@
           "date": "2025-09-17",
           "author": "r8vnhill",
           "subject": "✨➕ Add new icons and course lesson"
-        },
-        {
-          "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
-          "date": "2025-09-16",
-          "author": "r8vnhill",
-          "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
         }
       ]
     },
@@ -305,8 +340,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "7927415af10d73509f943835aa4eebbaca3f251b",
+          "date": "2026-04-01",
+          "author": "r8vnhill",
+          "subject": "🌐🐟 feat(home): add editorial landing and fish scripting entry"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -324,18 +371,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "aaea80f926069394e1968b84ccc982c220d6d9d0",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "📝✨ feat(notes): add comparative Nushell lesson and navigation link"
-        },
-        {
-          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-          "date": "2025-10-15",
-          "author": "r8vnhill",
-          "subject": "Add Python scripting notes and comparison with PowerShell"
         }
       ]
     },
@@ -462,8 +497,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -487,12 +528,6 @@
           "date": "2025-11-20",
           "author": "r8vnhill",
           "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-        },
-        {
-          "hash": "edbe20af039b365862a1497040e37403dcbca71d",
-          "date": "2025-11-14",
-          "author": "r8vnhill",
-          "subject": "✨ docs(pwsh): add try/catch reference"
         }
       ]
     },
@@ -549,8 +584,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -574,12 +615,6 @@
           "date": "2026-02-11",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add pipeline-aware lesson content and typed code blocks"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -590,8 +625,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -615,12 +656,6 @@
           "date": "2026-03-12",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(bibliography): migrate catalog source to turtle"
-        },
-        {
-          "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
-          "date": "2026-03-12",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
         }
       ]
     },
@@ -631,8 +666,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -666,8 +707,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -691,12 +738,6 @@
           "date": "2025-11-20",
           "author": "r8vnhill",
           "subject": "♻️✨ refactor(callouts): centralize shell and tokens"
-        },
-        {
-          "hash": "893ef233f2f72b5e892948ac27b463cb7d6023ac",
-          "date": "2025-11-20",
-          "author": "r8vnhill",
-          "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
         }
       ]
     },
@@ -707,8 +748,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-05",
       "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -726,18 +779,6 @@
           "date": "2025-11-20",
           "author": "r8vnhill",
           "subject": "📝 docs(scripting): refine GitLab lab content and CLI notes"
-        },
-        {
-          "hash": "9acbdb8e32f31f128035d5d935d0fc3bd1ea229c",
-          "date": "2025-11-15",
-          "author": "r8vnhill",
-          "subject": "✨📝 docs(powershell-help): Refine integrated help lesson"
-        },
-        {
-          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-          "date": "2025-11-08",
-          "author": "r8vnhill",
-          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
         }
       ]
     },
@@ -748,8 +789,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -770,6 +817,46 @@
         }
       ]
     },
+    "/notes/software-libraries/scripting/help/node/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/help/node.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-05",
+      "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        }
+      ]
+    },
+    "/notes/software-libraries/scripting/node/": {
+      "sourceFile": "src/pages/notes/software-libraries/scripting/node.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-05",
+      "changes": [
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        }
+      ]
+    },
     "/notes/software-libraries/scripting/nushell/": {
       "sourceFile": "src/pages/notes/software-libraries/scripting/nushell.astro",
       "authors": [
@@ -777,8 +864,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -802,12 +895,6 @@
           "date": "2025-11-05",
           "author": "r8vnhill",
           "subject": "📝✨🔧 docs(repo): update Copilot instructions, document table components, add VS Code run/debug configs"
-        },
-        {
-          "hash": "eb17bd9f1565e63b197ba6cf5616e55436936f9b",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(code): add Nushell block and inline, polish Nushell page"
         }
       ]
     },
@@ -818,8 +905,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -843,12 +936,6 @@
           "date": "2026-03-12",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(bibliography): migrate catalog source to turtle"
-        },
-        {
-          "hash": "63242d5564b5db74d4b076faeb21e7d7bb41720e",
-          "date": "2026-03-12",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(bibliography): centralize references in a graph catalog"
         }
       ]
     },
@@ -859,8 +946,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -884,12 +977,6 @@
           "date": "2026-03-02",
           "author": "r8vnhill",
           "subject": "✅♻️ fix(types): resolve astro check errors for readonly lessons and strict optionals"
-        },
-        {
-          "hash": "d68955ffb60a4b0583aa53fb3216ec8b7fe37246",
-          "date": "2026-03-02",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add Git submodules lab and multi-repo lesson source links"
         }
       ]
     },
@@ -900,8 +987,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -925,12 +1018,6 @@
           "date": "2026-03-02",
           "author": "r8vnhill",
           "subject": "📝 feat(notes): complete git submodules lesson content and SEO copy"
-        },
-        {
-          "hash": "d68955ffb60a4b0583aa53fb3216ec8b7fe37246",
-          "date": "2026-03-02",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add Git submodules lab and multi-repo lesson source links"
         }
       ]
     },
@@ -941,8 +1028,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "98dcc4114e75d9cfab87a4f8a7591a413f3b025b",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "📝 📚 docs(notes): refine Nushell pipeline lesson and document Vite timeout findings"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -960,12 +1059,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(bibliography): add catalog-backed video references"
-        },
-        {
-          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
         }
       ]
     },
@@ -976,8 +1069,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1001,12 +1100,6 @@
           "date": "2026-03-26",
           "author": "r8vnhill",
           "subject": "📚✨ refactor(lessons): tighten pipeline-awareness II by value explanation"
-        },
-        {
-          "hash": "46f00c40b8b8866e43233e1fdd29aacdbe8e49c5",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "📚✨ refactor(lessons): tighten pipeline-awareness II for streaming clarity"
         }
       ]
     },
@@ -1017,8 +1110,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1042,12 +1141,6 @@
           "date": "2026-02-16",
           "author": "r8vnhill",
           "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
-        },
-        {
-          "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
-          "date": "2025-10-07",
-          "author": "r8vnhill",
-          "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
         }
       ]
     },
@@ -1134,8 +1227,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1159,12 +1258,6 @@
           "date": "2025-11-08",
           "author": "r8vnhill",
           "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-        },
-        {
-          "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
         }
       ]
     },
@@ -1175,8 +1268,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1200,12 +1299,6 @@
           "date": "2025-10-20",
           "author": "r8vnhill",
           "subject": "✨📝🔧 feat(ui): add ToDo reporting + structured-output exercise; add Circle icon and $callouts alias"
-        },
-        {
-          "hash": "fb3b94430ac9c9d4cb47ad86edc54c4e48b4b918",
-          "date": "2025-10-17",
-          "author": "r8vnhill",
-          "subject": "✨📝🔧 docs(structured-output): expand lesson with classes, fixes & aliases"
         }
       ]
     },
@@ -1216,8 +1309,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1241,12 +1340,6 @@
           "date": "2026-03-19",
           "author": "r8vnhill",
           "subject": "✨📝 feat(icons): import phosphor icon set and document usage"
-        },
-        {
-          "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
-          "date": "2026-03-19",
-          "author": "r8vnhill",
-          "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
         }
       ]
     },
@@ -1257,8 +1350,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-28",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "f1fc94f0f34f2397bd85d282459a589dbcccad3f",
           "date": "2026-03-28",
@@ -1280,8 +1379,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1305,12 +1410,6 @@
           "date": "2025-10-07",
           "author": "r8vnhill",
           "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
-        },
-        {
-          "hash": "dae5b3da41b5d4fdb982bdcf16aaf3f965558ff6",
-          "date": "2025-09-22",
-          "author": "r8vnhill",
-          "subject": "✨🗺️ Add new lesson on task automation and icons"
         }
       ]
     },
@@ -1321,37 +1420,37 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
         {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
           "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         },
         {
-          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
-          "date": "2026-03-26",
+          "hash": "29b762d3b4473989c146624d72509690b534a360",
+          "date": "2026-04-01",
           "author": "r8vnhill",
-          "subject": "🐛✅ fix(types): unblock astro check in CI"
+          "subject": "♻️📝 refactor(bibliography): harden page references and lesson refs"
         },
         {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
+          "hash": "e2ba905a05bcbf422a3934651886e5d63b2fe118",
+          "date": "2026-04-01",
           "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+          "subject": "♻️📝 refactor(dev-shiki): add transport retries and catalog refs"
         },
         {
-          "hash": "efadb06f7f0b6a1e25ecb92f65d9cfb63c045a99",
-          "date": "2025-10-21",
+          "hash": "ca9053e6abac86aed9c03a0bc8a91db5e67615b8",
+          "date": "2026-03-31",
           "author": "r8vnhill",
-          "subject": "♻️🎨🧹 refactor(notes): normalize Astro semantics, tidy imports, and remove obsolete ToDo"
+          "subject": "📝🔖 chore(release): prepare 0.14.0 release notes"
         },
         {
-          "hash": "b287b18d526723e92aa1df6468013b9df21775ac",
-          "date": "2025-10-02",
+          "hash": "4ba92112ff1f25ba2f3d9939da8129e425489106",
+          "date": "2026-03-31",
           "author": "r8vnhill",
-          "subject": "Refactor code structure for improved readability and maintainability"
+          "subject": "📝✨ feat(unit-1): add software artifacts taxonomy lesson"
         }
       ]
     },
@@ -1391,8 +1490,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1416,12 +1521,6 @@
           "date": "2025-08-25",
           "author": "r8vnhill",
           "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
-        },
-        {
-          "hash": "7f0aee43989c58db5aac8fe01ac2d7e3755ebc2e",
-          "date": "2025-08-11",
-          "author": "r8vnhill",
-          "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
         }
       ]
     },
@@ -1432,8 +1531,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1457,12 +1562,6 @@
           "date": "2025-08-25",
           "author": "r8vnhill",
           "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
-        },
-        {
-          "hash": "0727829dad55d889710402f8b7846bd8f4720840",
-          "date": "2025-08-11",
-          "author": "r8vnhill",
-          "subject": "✨➕ Add new icons and enhance Kotlin functions lesson"
         }
       ]
     },
@@ -1473,8 +1572,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-02-17",
+      "lastModified": "2026-04-02",
       "changes": [
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
         {
           "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
           "date": "2026-02-17",
@@ -1498,12 +1603,6 @@
           "date": "2025-09-14",
           "author": "r8vnhill",
           "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-        },
-        {
-          "hash": "c3a7e0bebe3700791dea86dc466c5bc2a0d9fc10",
-          "date": "2025-08-25",
-          "author": "r8vnhill",
-          "subject": "feat: Enhance Kotlin notes with variable declaration section and improve global CSS font imports"
         }
       ]
     },

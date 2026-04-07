@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Note, Tip } from "~/components/ui/callouts";
-import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
+import { KotlinInline, KotlinBlock } from "~/components/ui/code";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -254,7 +254,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <Fragment slot="title">
                 <strong>Lógica de aplicación (API REST):</strong> adapta HTTP↔️dominio y delega en
-                <InlineKotlin code={`createOrder`} />.
+                <KotlinInline code={`createOrder`} />.
             </Fragment>
         </KotlinBlock>
 
@@ -278,14 +278,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <Fragment slot="title">
                 <strong>Lógica de aplicación (UI):</strong> obtiene datos de la vista, llama a
-                <InlineKotlin code={`createOrder`} /> y presenta el resultado.
+                <KotlinInline code={`createOrder`} /> y presenta el resultado.
             </Fragment>
         </KotlinBlock>
 
         <Tip class="mt-3">
             Las reglas del dominio se mantienen en la función de la biblioteca. La aplicación solo
             <em>traduce</em> entradas/salidas (HTTP, UI) y orquesta el flujo. Cambiar Ktor por otro
-            framework web, o Compose por otro toolkit de UI, no afecta la validez de <InlineKotlin
+            framework web, o Compose por otro toolkit de UI, no afecta la validez de <KotlinInline
                 code={`createOrder`}
             />.
         </Tip>
@@ -329,7 +329,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             <p>
                 El gran aprendizaje es que <strong>las bibliotecas deben capturar el corazón del
                     dominio</strong>, mientras que la aplicación se adapta al contexto tecnológico.

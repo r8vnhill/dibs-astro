@@ -10,12 +10,9 @@ import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink } from "~/components/ui/links";
 import { ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
-import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
-
-const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
@@ -216,7 +213,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             La lección de fondo no es solo que Nushell pueda mostrar tablas, sino que permite
             conservar la forma de los datos desde el origen. Cuando esa forma se entiende bien, la
             salida deja de ser un detalle visual y pasa a ser una base real para reutilizar,
@@ -224,7 +221,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         </Fragment>
     </ConclusionsLayout>
 
-    <ReferencesFromCatalog source={bibliographyCatalog}>
+    <ReferencesFromCatalog>
         <Fragment slot="description-ref:nushell-working-with-records">
             Explica cómo Nushell trata los <I>records</I> como valores estructurados equivalentes,
             en la práctica, a una fila individual de una tabla. Recorre su sintaxis de creación, la

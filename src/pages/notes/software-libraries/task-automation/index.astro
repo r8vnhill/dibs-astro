@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Note } from "~/components/ui/callouts";
-import { InlineKotlin } from "~/components/ui/code";
+import { KotlinInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import Mono from "~/components/ui/font/Mono.astro";
@@ -269,7 +269,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             Automatizar no es un lujo, sino una práctica esencial para que el software crezca con
             orden y confianza. Al adoptar la mentalidad de diseñar tareas claras y repetibles,
             sentamos las bases para procesos más eficientes y equipos que colaboran mejor. La
@@ -334,7 +334,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <Link href="https://es.wikipedia.org/wiki/Idempotencia">idempotencia</Link>
                 describe la propiedad de una operación que, al aplicarse varias veces, produce el
                 mismo resultado que si se aplicara una sola vez. Un ejemplo clásico es la operación
-                lógica OR con un valor verdadero: una vez que el resultado es <InlineKotlin
+                lógica OR con un valor verdadero: una vez que el resultado es <KotlinInline
                     code="true"
                 />, repetir la operación no lo modifica.
                 <br />

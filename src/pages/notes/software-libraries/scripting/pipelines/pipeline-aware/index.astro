@@ -29,6 +29,7 @@ import { AuthorList, Book, References } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -870,7 +871,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             <P>
                 Pipeline-awareness transforma tus scripts de herramientas aisladas a componentes que
                 cooperan. Pensar en streaming, en objetos reutilizables y en contratos claros entre
@@ -889,7 +890,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="The pipeline, deeper"
                 bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
-                pages={{ start: 114, end: 131 }}
+                pages={parsePageReferenceInput({ start: 114, end: 131 })!}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 

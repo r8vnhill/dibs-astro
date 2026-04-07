@@ -1,0 +1,30 @@
+---
+import { NodejsLogo } from "~/assets/img/logos";
+import { resolveLanguageHref } from "./helpers";
+import LangLink from "./LangLink.astro";
+
+type Props = {
+    slug?: string;
+    name?: string;
+    class?: string;
+};
+
+const {
+    slug,
+    name = "Node.js",
+    class: className,
+} = Astro.props as Props;
+
+const { href } = resolveLanguageHref(Astro.url.pathname, slug, "node");
+---
+
+<span class="contents">
+    <LangLink
+        {href} {name}
+        class:list={[className]}
+    >
+        <Fragment slot="icon">
+            <NodejsLogo class="inline-block size-6 object-contain" aria-hidden="true" />
+        </Fragment>
+    </LangLink>
+</span>

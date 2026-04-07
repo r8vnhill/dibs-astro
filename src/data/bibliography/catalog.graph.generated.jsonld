@@ -19,10 +19,30 @@
       "familyName": "Tebbenhof"
     },
     {
+      "@id": "person:arnaud-lauret",
+      "@type": "Person",
+      "givenName": "Arnaud",
+      "familyName": "Lauret",
+      "url": "https://apihandyman.io"
+    },
+    {
+      "@id": "person:axel-rauschmayer",
+      "@type": "Person",
+      "givenName": "Axel",
+      "familyName": "Rauschmayer",
+      "url": "https://dr-axel.de"
+    },
+    {
       "@id": "person:ben-firshman",
       "@type": "Person",
       "givenName": "Ben",
       "familyName": "Firshman"
+    },
+    {
+      "@id": "person:brad-a-myers",
+      "@type": "Person",
+      "givenName": "Brad A.",
+      "familyName": "Myers"
     },
     {
       "@id": "person:brett-slatkin",
@@ -56,6 +76,18 @@
       "familyName": "Sun"
     },
     {
+      "@id": "person:daniele-bonetta",
+      "@type": "Person",
+      "givenName": "Daniele",
+      "familyName": "Bonetta"
+    },
+    {
+      "@id": "person:david-flanagan",
+      "@type": "Person",
+      "givenName": "David",
+      "familyName": "Flanagan"
+    },
+    {
       "@id": "person:david-m-beazley",
       "@type": "Person",
       "givenName": "David M.",
@@ -69,16 +101,40 @@
       "familyName": "Parish"
     },
     {
+      "@id": "person:filippo-schiavio",
+      "@type": "Person",
+      "givenName": "Filippo",
+      "familyName": "Schiavio"
+    },
+    {
+      "@id": "person:haiyang-sun",
+      "@type": "Person",
+      "givenName": "Haiyang",
+      "familyName": "Sun"
+    },
+    {
       "@id": "person:jeffrey-p-snover",
       "@type": "Person",
       "givenName": "Jeffrey P.",
       "familyName": "Snover"
     },
     {
+      "@id": "person:jeffrey-stylos",
+      "@type": "Person",
+      "givenName": "Jeffrey",
+      "familyName": "Stylos"
+    },
+    {
       "@id": "person:johannes-sametinger",
       "@type": "Person",
       "givenName": "Johannes",
       "familyName": "Sametinger"
+    },
+    {
+      "@id": "person:john-geewax",
+      "@type": "Person",
+      "givenName": "John",
+      "familyName": "Geewax"
     },
     {
       "@id": "person:john-ousterhout",
@@ -105,10 +161,28 @@
       "familyName": "Kallas"
     },
     {
+      "@id": "person:kyo-kang",
+      "@type": "Person",
+      "givenName": "Kyo",
+      "familyName": "Kang"
+    },
+    {
+      "@id": "person:luciano-mammino",
+      "@type": "Person",
+      "givenName": "Luciano",
+      "familyName": "Mammino"
+    },
+    {
       "@id": "person:luciano-ramalho",
       "@type": "Person",
       "givenName": "Luciano",
       "familyName": "Ramalho"
+    },
+    {
+      "@id": "person:mario-casciaro",
+      "@type": "Person",
+      "givenName": "Mario",
+      "familyName": "Casciaro"
     },
     {
       "@id": "person:mark-volkmann",
@@ -173,6 +247,12 @@
       "familyName": "Pike"
     },
     {
+      "@id": "person:robert-c-martin",
+      "@type": "Person",
+      "givenName": "Robert C.",
+      "familyName": "Martin"
+    },
+    {
       "@id": "person:sdwheeler",
       "@type": "Person",
       "familyName": "sdwheeler"
@@ -200,6 +280,18 @@
       "@type": "Person",
       "givenName": "Travis",
       "familyName": "Plunk"
+    },
+    {
+      "@id": "person:w-b-frakes",
+      "@type": "Person",
+      "givenName": "W.B.",
+      "familyName": "Frakes"
+    },
+    {
+      "@id": "person:walter-binder",
+      "@type": "Person",
+      "givenName": "Walter",
+      "familyName": "Binder"
     },
     {
       "@id": "person:ying-tian",
@@ -262,6 +354,12 @@
       "url": "https://www.youtube.com/"
     },
     {
+      "@id": "org:exploringjs",
+      "@type": "Organization",
+      "name": "Exploring JS",
+      "url": "https://exploringjs.com/"
+    },
+    {
       "@id": "org:gradle-docs",
       "@type": "Organization",
       "name": "Gradle Documentation",
@@ -272,6 +370,12 @@
       "@type": "Organization",
       "name": "Heroku Dev Center",
       "url": "https://devcenter.heroku.com/"
+    },
+    {
+      "@id": "org:ieee",
+      "@type": "Organization",
+      "name": "Institute of Electrical and Electronics Engineers",
+      "url": "https://www.ieee.org/"
     },
     {
       "@id": "org:ietf",
@@ -304,6 +408,11 @@
       "url": "https://kotlinlang.org/docs/"
     },
     {
+      "@id": "org:manning",
+      "@type": "Organization",
+      "name": "Manning Publications"
+    },
+    {
       "@id": "org:martin-fowler-site",
       "@type": "Organization",
       "name": "martinfowler.com",
@@ -316,6 +425,12 @@
       "url": "https://maven.apache.org/"
     },
     {
+      "@id": "org:mdn-web-docs",
+      "@type": "Organization",
+      "name": "MDN Web Docs",
+      "url": "https://developer.mozilla.org/"
+    },
+    {
       "@id": "org:microsoft-learn",
       "@type": "Organization",
       "name": "Microsoft Learn",
@@ -325,6 +440,18 @@
       "@id": "org:morgan-kaufmann",
       "@type": "Organization",
       "name": "Morgan Kaufmann"
+    },
+    {
+      "@id": "org:nodejs",
+      "@type": "Organization",
+      "name": "Node.js",
+      "url": "https://nodejs.org/"
+    },
+    {
+      "@id": "org:nodejs-design-patterns",
+      "@type": "Organization",
+      "name": "Node.js Design Patterns",
+      "url": "https://nodejsdesignpatterns.com/"
     },
     {
       "@id": "org:npm-docs",
@@ -343,6 +470,11 @@
       "@type": "Organization",
       "name": "O'Reilly Media",
       "url": "https://www.oreilly.com/"
+    },
+    {
+      "@id": "org:pearson-education",
+      "@type": "Organization",
+      "name": "Pearson Education, Limited"
     },
     {
       "@id": "org:prentice-hall",
@@ -410,6 +542,12 @@
       "url": "https://uwaterloo.ca/"
     },
     {
+      "@id": "org:wikipedia",
+      "@type": "Organization",
+      "name": "Wikipedia",
+      "url": "https://www.wikipedia.org/"
+    },
+    {
       "@id": "org:yaknyam-press",
       "@type": "Organization",
       "name": "Yaknyam Press"
@@ -439,6 +577,61 @@
       }
     },
     {
+      "@id": "work:api-design-for-cpp",
+      "@type": "CreativeWork",
+      "name": "API design for C++",
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "publisher": {
+        "@id": "org:morgan-kaufmann"
+      }
+    },
+    {
+      "@id": "work:cgo-2019",
+      "@type": "CreativeWork",
+      "name": "2019 IEEE/ACM International Symposium on Code Generation and Optimization (CGO)",
+      "publisher": {
+        "@id": "org:ieee"
+      }
+    },
+    {
+      "@id": "work:clean-code-collection",
+      "@type": "CreativeWork",
+      "name": "Clean code collection",
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "publisher": {
+        "@id": "org:pearson-education"
+      }
+    },
+    {
+      "@id": "work:communications-of-the-acm",
+      "@type": "CreativeWork",
+      "name": "Commun. ACM",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:design-web-apis",
+      "@type": "CreativeWork",
+      "name": "The design of web APIs",
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "publisher": {
+        "@id": "org:manning"
+      }
+    },
+    {
       "@id": "work:effective-python-3e",
       "@type": "CreativeWork",
       "name": "Effective Python: 125 specific ways to write better Python",
@@ -465,12 +658,53 @@
       }
     },
     {
+      "@id": "work:ieee-transactions-software-engineering",
+      "@type": "CreativeWork",
+      "name": "IEEE Transactions on Software Engineering",
+      "publisher": {
+        "@id": "org:ieee"
+      }
+    },
+    {
+      "@id": "work:javascript-definitive-guide-7e",
+      "@type": "CreativeWork",
+      "name": "JavaScript: the definitive guide: master the world's most-used programming language",
+      "author": [
+        {
+          "@id": "person:david-flanagan"
+        }
+      ]
+    },
+    {
+      "@id": "work:javascript-for-impatient-programmers",
+      "@type": "CreativeWork",
+      "name": "JavaScript for impatient programmers",
+      "author": [
+        {
+          "@id": "person:axel-rauschmayer"
+        }
+      ]
+    },
+    {
       "@id": "work:learn-powershell-month-lunches-4e",
       "@type": "CreativeWork",
       "name": "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS",
       "author": [
         {
           "@id": "person:travis-plunk"
+        }
+      ]
+    },
+    {
+      "@id": "work:nodejs-design-patterns-4e",
+      "@type": "CreativeWork",
+      "name": "Node.js Design Patterns - Fourth Edition",
+      "author": [
+        {
+          "@id": "person:luciano-mammino"
+        },
+        {
+          "@id": "person:mario-casciaro"
         }
       ]
     },
@@ -522,6 +756,14 @@
       ],
       "publisher": {
         "@id": "org:prentice-hall"
+      }
+    },
+    {
+      "@id": "work:wapi-2017",
+      "@type": "CreativeWork",
+      "name": "2017 IEEE/ACM 1st International Workshop on API Usage and Evolution (WAPI)",
+      "publisher": {
+        "@id": "org:ieee"
       }
     },
     {
@@ -579,6 +821,19 @@
       },
       "isPartOf": {
         "@id": "work:oopsla-2006-companion"
+      }
+    },
+    {
+      "@id": "ref:casciaro-nodejs-design-patterns-4e",
+      "@type": "Book",
+      "name": "Node.js Design Patterns - Fourth Edition",
+      "url": "https://nodejsdesignpatterns.com/",
+      "datePublished": "2024",
+      "publisher": {
+        "@id": "org:oreilly"
+      },
+      "isPartOf": {
+        "@id": "work:nodejs-design-patterns-4e"
       }
     },
     {
@@ -696,6 +951,27 @@
       }
     },
     {
+      "@id": "ref:exploringjs-shell-scripting-nodejs",
+      "@type": "WebPage",
+      "name": "Shell scripting with Node.js",
+      "url": "https://exploringjs.com/nodejs-shell-scripting/",
+      "publisher": {
+        "@id": "org:exploringjs"
+      }
+    },
+    {
+      "@id": "ref:flanagan-javascript-definitive-guide-7e",
+      "@type": "Book",
+      "name": "JavaScript: the definitive guide: master the world's most-used programming language",
+      "datePublished": "2020",
+      "publisher": {
+        "@id": "org:oreilly"
+      },
+      "isPartOf": {
+        "@id": "work:javascript-definitive-guide-7e"
+      }
+    },
+    {
       "@id": "ref:fluent-python-2e-book",
       "@type": "Book",
       "name": "Fluent python: clear, concise, and effective programming",
@@ -707,6 +983,43 @@
       ],
       "isPartOf": {
         "@id": "work:fluent-python-2e"
+      }
+    },
+    {
+      "@id": "ref:frakes-software-reuse-research-2005",
+      "@type": "ScholarlyArticle",
+      "name": "Software reuse research: status and future",
+      "url": "https://ieeexplore.ieee.org/abstract/document/1492369",
+      "datePublished": "2005-07",
+      "pageStart": 529,
+      "pageEnd": 536,
+      "author": [
+        {
+          "@id": "person:w-b-frakes"
+        },
+        {
+          "@id": "person:kyo-kang"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:ieee-transactions-software-engineering"
+      }
+    },
+    {
+      "@id": "ref:geewax-api-design-patterns-2021",
+      "@type": "Book",
+      "name": "API design patterns",
+      "datePublished": "2021",
+      "author": [
+        {
+          "@id": "person:john-geewax"
+        }
+      ],
+      "publisher": {
+        "@id": "org:manning"
       }
     },
     {
@@ -925,6 +1238,22 @@
       }
     },
     {
+      "@id": "ref:lauret-designing-api-for-users-2019",
+      "@type": "Book",
+      "name": "Designing an API for its users",
+      "datePublished": "2019",
+      "pageStart": 17,
+      "pageEnd": 42,
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:design-web-apis"
+      }
+    },
+    {
       "@id": "ref:li-bash-language-usage-2021",
       "@type": "Thesis",
       "name": "An Empirical Study on Bash Language Usage in Github",
@@ -940,6 +1269,16 @@
       }
     },
     {
+      "@id": "ref:library-computing-wikipedia-2025",
+      "@type": "WebPage",
+      "name": "Library (computing)",
+      "url": "https://en.wikipedia.org/w/index.php?title=Library_(computing)&oldid=1305094870",
+      "datePublished": "2025-08-10",
+      "publisher": {
+        "@id": "org:wikipedia"
+      }
+    },
+    {
       "@id": "ref:lucas-serialization-more-than-pickling-2022",
       "@type": "VideoObject",
       "name": "Talk - Joseph Lucas: Serialization  More than pickling",
@@ -952,6 +1291,38 @@
       ],
       "publisher": {
         "@id": "org:pycon-us"
+      }
+    },
+    {
+      "@id": "ref:martin-functions-2011",
+      "@type": "Book",
+      "name": "Functions",
+      "datePublished": "2011",
+      "pageStart": 78,
+      "pageEnd": 106,
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:clean-code-collection"
+      }
+    },
+    {
+      "@id": "ref:martin-meaningful-names-2011",
+      "@type": "Book",
+      "name": "Meaningful Names",
+      "datePublished": "2011",
+      "pageStart": 60,
+      "pageEnd": 77,
+      "author": [
+        {
+          "@id": "person:robert-c-martin"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:clean-code-collection"
       }
     },
     {
@@ -984,6 +1355,26 @@
       },
       "isPartOf": {
         "@id": "work:plas-2007"
+      }
+    },
+    {
+      "@id": "ref:mdn-javascript-guide",
+      "@type": "WebPage",
+      "name": "JavaScript Guide - JavaScript | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide",
+      "datePublished": "2025-11-07",
+      "publisher": {
+        "@id": "org:mdn-web-docs"
+      }
+    },
+    {
+      "@id": "ref:mdn-javascript-modules",
+      "@type": "WebPage",
+      "name": "JavaScript modules - JavaScript | MDN",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules",
+      "datePublished": "2025-11-03",
+      "publisher": {
+        "@id": "org:mdn-web-docs"
       }
     },
     {
@@ -1044,10 +1435,122 @@
       }
     },
     {
+      "@id": "ref:myers-human-centered-methods-api-usability-2017",
+      "@type": "ScholarlyArticle",
+      "name": "Human-Centered Methods for Improving API Usability",
+      "url": "https://ieeexplore.ieee.org/document/7965483/",
+      "datePublished": "2017-05",
+      "pageStart": 2,
+      "pageEnd": 2,
+      "author": [
+        {
+          "@id": "person:brad-a-myers"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:wapi-2017"
+      }
+    },
+    {
+      "@id": "ref:myers-improving-api-usability-2016",
+      "@type": "ScholarlyArticle",
+      "name": "Improving API usability",
+      "url": "https://dl.acm.org/doi/10.1145/2896587",
+      "datePublished": "2016-05-23",
+      "pageStart": 62,
+      "pageEnd": 69,
+      "author": [
+        {
+          "@id": "person:brad-a-myers"
+        },
+        {
+          "@id": "person:jeffrey-stylos"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:communications-of-the-acm"
+      }
+    },
+    {
+      "@id": "ref:nodejs-ecmascript-modules-docs",
+      "@type": "WebPage",
+      "name": "Modules: ECMAScript modules | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/esm.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-event-loop-inside-out-video",
+      "@type": "VideoObject",
+      "name": "Node's Event Loop From the Inside Out by Sam Roberts, IBM",
+      "url": "https://www.youtube.com/watch?v=P9csgxBgaZ8",
+      "datePublished": "2016-12-15",
+      "author": [
+        {
+          "@id": "org:nodejs"
+        }
+      ],
+      "publisher": {
+        "@id": "org:youtube"
+      }
+    },
+    {
+      "@id": "ref:nodejs-file-system-docs",
+      "@type": "WebPage",
+      "name": "File system | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/fs.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-introduction",
+      "@type": "WebPage",
+      "name": "Node.js — Introduction to Node.js",
+      "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:nodejs-path-docs",
+      "@type": "WebPage",
+      "name": "Path | Node.js v25.9.0 Documentation",
+      "url": "https://nodejs.org/api/path.html",
+      "publisher": {
+        "@id": "org:nodejs"
+      }
+    },
+    {
+      "@id": "ref:npm-about-npm",
+      "@type": "WebPage",
+      "name": "About npm | npm Docs",
+      "url": "https://docs.npmjs.com/about-npm",
+      "publisher": {
+        "@id": "org:npm-docs"
+      }
+    },
+    {
       "@id": "ref:npm-about-packages-and-modules",
       "@type": "WebPage",
       "name": "About packages and modules | npm Docs",
       "url": "https://docs.npmjs.com/about-packages-and-modules",
+      "publisher": {
+        "@id": "org:npm-docs"
+      }
+    },
+    {
+      "@id": "ref:npm-downloading-installing-nodejs-and-npm",
+      "@type": "WebPage",
+      "name": "Downloading and installing Node.js and npm | npm Docs",
+      "url": "https://docs.npmjs.com/downloading-and-installing-node-js-and-npm",
       "publisher": {
         "@id": "org:npm-docs"
       }
@@ -1382,6 +1885,29 @@
       }
     },
     {
+      "@id": "ref:rauschmayer-getting-started-with-nodejs",
+      "@type": "WebPage",
+      "name": "Getting started with Node.js",
+      "url": "https://exploringjs.com/nodejs-shell-scripting/ch_getting-started-with-nodejs.html",
+      "author": [
+        {
+          "@id": "person:axel-rauschmayer"
+        }
+      ],
+      "publisher": {
+        "@id": "org:exploringjs"
+      }
+    },
+    {
+      "@id": "ref:rauschmayer-javascript-impatient-programmers",
+      "@type": "Book",
+      "name": "JavaScript for impatient programmers",
+      "datePublished": "2019",
+      "isPartOf": {
+        "@id": "work:javascript-for-impatient-programmers"
+      }
+    },
+    {
       "@id": "ref:reddy-api-design-for-cpp-2024",
       "@type": "Book",
       "name": "API design for C++",
@@ -1393,6 +1919,22 @@
       ],
       "publisher": {
         "@id": "org:morgan-kaufmann"
+      }
+    },
+    {
+      "@id": "ref:reddy-qualities-2024",
+      "@type": "Book",
+      "name": "Qualities",
+      "datePublished": "2024",
+      "pageStart": 25,
+      "pageEnd": 80,
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:api-design-for-cpp"
       }
     },
     {
@@ -1458,6 +2000,35 @@
       }
     },
     {
+      "@id": "ref:sun-reasoning-about-nodejs-event-loop-2019",
+      "@type": "ScholarlyArticle",
+      "name": "Reasoning about the Node.js Event Loop using Async Graphs",
+      "url": "https://ieeexplore.ieee.org/document/8661173/",
+      "datePublished": "2019",
+      "pageStart": 61,
+      "pageEnd": 72,
+      "author": [
+        {
+          "@id": "person:haiyang-sun"
+        },
+        {
+          "@id": "person:daniele-bonetta"
+        },
+        {
+          "@id": "person:filippo-schiavio"
+        },
+        {
+          "@id": "person:walter-binder"
+        }
+      ],
+      "publisher": {
+        "@id": "org:ieee"
+      },
+      "isPartOf": {
+        "@id": "work:cgo-2019"
+      }
+    },
+    {
       "@id": "ref:volkmann-nushell-overview",
       "@type": "WebPage",
       "name": "Nushell",
@@ -1484,6 +2055,12 @@
       "isPartOf": {
         "@id": "work:windows-powershell-in-action-3e"
       }
+    },
+    {
+      "@id": "/notes/software-libraries/api-design/fundamentals/",
+      "@type": "LearningResource",
+      "name": "Diseñar la API de una biblioteca desde el dominio",
+      "url": "/notes/software-libraries/api-design/fundamentals/"
     },
     {
       "@id": "/notes/software-libraries/artifacts-taxonomy/",
@@ -1516,6 +2093,12 @@
       "url": "/notes/software-libraries/scripting/first-script/py/"
     },
     {
+      "@id": "/notes/software-libraries/scripting/node/",
+      "@type": "LearningResource",
+      "name": "Introducción a scripting con Node.js",
+      "url": "/notes/software-libraries/scripting/node/"
+    },
+    {
       "@id": "/notes/software-libraries/scripting/pipelines/",
       "@type": "LearningResource",
       "name": "Pipelines I: PowerShell declarativo",
@@ -1538,6 +2121,64 @@
       "@type": "LearningResource",
       "name": "Salida estructurada en Python",
       "url": "/notes/software-libraries/scripting/structured-output/py/"
+    },
+    {
+      "@id": "/notes/software-libraries/what-is/",
+      "@type": "LearningResource",
+      "name": "La biblioteca como artefacto de software",
+      "url": "/notes/software-libraries/what-is/"
+    },
+    {
+      "@id": "usage:api-design-fundamentals-lauret-designing-api-for-users-2019-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lauret-designing-api-for-users-2019"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-martin-functions-2011-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:martin-functions-2011"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-martin-meaningful-names-2011-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:martin-meaningful-names-2011"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-fundamentals-reddy-qualities-2024-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/fundamentals/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-qualities-2024"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
     },
     {
       "@id": "usage:errors-errors-and-exceptions-additional",
@@ -1771,6 +2412,162 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-bloch-how-to-design-good-api-2006-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:bloch-how-to-design-good-api-2006"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-frakes-software-reuse-research-2005-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:frakes-software-reuse-research-2005"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-geewax-api-design-patterns-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:geewax-api-design-patterns-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-backward-compatibility-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-backward-compatibility-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-evolution-principles-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-evolution-principles"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-informative-documentation-guidelines-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-informative-documentation-guidelines"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-kotlin-library-authors-guidelines-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-library-authors-guidelines-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-library-computing-wikipedia-2025-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:library-computing-wikipedia-2025"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-myers-human-centered-methods-api-usability-2017-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:myers-human-centered-methods-api-usability-2017"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-myers-improving-api-usability-2016-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:myers-improving-api-usability-2016"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-ousterhout-philosophy-software-design-2021-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:ousterhout-philosophy-software-design-2021"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-sametinger-software-engineering-reusable-components-1997-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sametinger-software-engineering-reusable-components-1997"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {
@@ -2057,6 +2854,214 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:casciaro-nodejs-design-patterns-4e"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-exploringjs-shell-scripting-nodejs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:exploringjs-shell-scripting-nodejs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-flanagan-javascript-definitive-guide-7e-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:flanagan-javascript-definitive-guide-7e"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-mdn-javascript-guide-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mdn-javascript-guide"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-mdn-javascript-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mdn-javascript-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-ecmascript-modules-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-ecmascript-modules-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-event-loop-inside-out-video-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-event-loop-inside-out-video"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-file-system-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-file-system-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-introduction-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-introduction"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-nodejs-path-docs-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nodejs-path-docs"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-about-npm-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-npm"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-about-packages-and-modules-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-about-packages-and-modules"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-npm-downloading-installing-nodejs-and-npm-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:npm-downloading-installing-nodejs-and-npm"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-rauschmayer-getting-started-with-nodejs-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rauschmayer-getting-started-with-nodejs"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-rauschmayer-javascript-impatient-programmers-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:rauschmayer-javascript-impatient-programmers"
+      },
+      "dibs:tags": [
+        "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:scripting-node-sun-reasoning-about-nodejs-event-loop-2019-pending",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/scripting/node/"
+      },
+      "dibs:reference": {
+        "@id": "ref:sun-reasoning-about-nodejs-event-loop-2019"
+      },
+      "dibs:tags": [
+        "pending-revision"
       ]
     },
     {

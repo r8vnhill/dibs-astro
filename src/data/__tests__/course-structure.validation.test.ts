@@ -137,4 +137,117 @@ describe("course-structure validation", () => {
             validateCourseStructure(invalid);
         }).toThrow(/"\/parent\/child" must end with trailing slash/);
     });
+
+    it("accepts group children nested under the parent href", () => {
+        const valid: readonly Lesson[] = [
+            group({
+                id: "unit",
+                title: "Unit",
+                href: "/unit/",
+                children: [
+                    link({ id: "lesson", title: "Lesson", href: "/unit/lesson/" }),
+                    group({
+                        id: "nested",
+                        title: "Nested",
+                        href: "/unit/nested/",
+                        children: [
+                            link({
+                                id: "leaf",
+                                title: "Leaf",
+                                href: "/unit/nested/leaf/",
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+        ];
+
+        expect(() => {
+            validateCourseStructure(valid);
+        }).not.toThrow();
+    });
+
+    it("accepts link children nested under the parent href", () => {
+        const valid: readonly Lesson[] = [
+            link({
+                id: "parent-link",
+                title: "Parent",
+                href: "/parent/",
+                children: [
+                    link({
+                        id: "child-link",
+                        title: "Child",
+                        href: "/parent/child/",
+                    }),
+                ],
+            }),
+        ];
+
+        expect(() => {
+            validateCourseStructure(valid);
+        }).not.toThrow();
+    });
+
+    it("rejects group child href outside the parent prefix", () => {
+        const invalid: readonly Lesson[] = [
+            group({
+                id: "unit",
+                title: "Unit",
+                href: "/unit/",
+                children: [
+                    link({
+                        id: "lesson",
+                        title: "Lesson",
+                        href: "/other/lesson/",
+                    }),
+                ],
+            }),
+        ];
+
+        expect(() => {
+            validateCourseStructure(invalid);
+        }).toThrow(/must be nested under parent href "\/unit\/"/);
+    });
+
+    it("rejects link child href outside the parent prefix", () => {
+        const invalid: readonly Lesson[] = [
+            link({
+                id: "parent-link",
+                title: "Parent",
+                href: "/parent/",
+                children: [
+                    link({
+                        id: "child-link",
+                        title: "Child",
+                        href: "/sibling/child/",
+                    }),
+                ],
+            }),
+        ];
+
+        expect(() => {
+            validateCourseStructure(invalid);
+        }).toThrow(/must be nested under parent href "\/parent\/"/);
+    });
+
+    it("normalizes the parent href before checking nested paths", () => {
+        const invalid: readonly Lesson[] = [
+            group({
+                id: "unit",
+                title: "Unit",
+                href: "/unit/",
+                children: [
+                    link({
+                        id: "lesson",
+                        title: "Lesson",
+                        href: "/unit-2/lesson/",
+                    }),
+                ],
+            }),
+        ];
+
+        expect(() => {
+            validateCourseStructure(invalid);
+        }).toThrow(/must be nested under parent href "\/unit\/"/);
+    });
 });

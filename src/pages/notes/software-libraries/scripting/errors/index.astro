@@ -34,6 +34,7 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -148,7 +149,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <PowerShellBlock
             code={`
-                #Requires -Version 7.5 
+                #Requires -Version 7.5
                 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
                 param(
                     [Parameter(Mandatory)]
@@ -459,7 +460,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             $cmds = @(Get-Command -Name $Name -CommandType Application -ErrorAction Stop)
             if ($cmds.Count -gt 1) {
-                Write-Warning ("Multiple executables named '{0}' were found. Using: {1}" -f 
+                Write-Warning ("Multiple executables named '{0}' were found. Using: {1}" -f
                     $Name, $cmds[0].Source)
             }
             $path = $cmds[0].Source
@@ -483,7 +484,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             }
             else {
                 $nl = [Environment]::NewLine
-                $msg = ('{0} {1} returned exit code {2}.{3}Output:{3}{4}' -f $Name, ($Rest -join ' '), 
+                $msg = ('{0} {1} returned exit code {2}.{3}Output:{3}{4}' -f $Name, ($Rest -join ' '),
                     $LASTEXITCODE, $nl, ($out -join $nl))
                 throw [System.Exception]::new($msg)
             }
@@ -979,7 +980,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <P slot="takeaways">
+        <P slot="closing-reflection">
             <B>El buen manejo de errores es diseño, no accidente.</B> Elevar fallos a terminantes,
             envolver herramientas externas y devolver objetos no es “ser más estricto”: es ser
             <B>más predecible</B>. Si registras con intención, priorizas la salida estructurada
@@ -997,7 +998,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Handling errors"
                 bookTitle="Learn PowerShell in a Month of Lunches, fourth edition: Covers Windows, Linux, and MacOS"
-                pages={{ start: 279, end: 286 }}
+                pages={parsePageReferenceInput({ start: 279, end: 286 })!}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
@@ -1027,7 +1028,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Book
                 chapter="Errors and exceptions"
                 bookTitle="Windows PowerShell in Action, Third Edition"
-                pages={{ start: 531, end: 562 }}
+                pages={parsePageReferenceInput({ start: 531, end: 562 })!}
             >
                 <AuthorList
                     slot="authors"

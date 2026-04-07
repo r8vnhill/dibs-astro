@@ -22,11 +22,18 @@ import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
     formatPageReference,
-    normalizePageReference,
+    isPageReference,
     type PageReference,
     type PageReferenceInput,
+    parsePageReferenceInput,
 } from "~/lib/bibliography";
-import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import {
+    resolveInlineField,
+    resolveLinkedInlineField,
+    resolveOptionalSlots,
+    SPANISH_REFERENCE_META_LABELS,
+} from "./reference-content";
+import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
 
 type Props = {
     /** Fallback article title when the `title` slot is absent or empty. */
@@ -59,20 +66,40 @@ const {
 } = await resolveOptionalSlots(Astro.slots, ["title", "publication", "author", "description"]);
 
 // Pre-format the page reference so the template only handles presentation.
-const pagesLabel = formatPageReference(normalizePageReference(pages));
+const normalizedPages = isPageReference(pages) ? pages : parsePageReferenceInput(pages);
+const pagesLabel = formatPageReference(normalizedPages);
 
-// Render inline metadata when a meaningful slot or a fallback prop is available.
-const hasPublication = publicationSlot.kind === "meaningful" || !!publication;
-const hasAuthor = authorSlot.kind === "meaningful" || !!author;
+const externalLinkAttrs = {
+    target: "_blank",
+    rel: "noopener noreferrer",
+    class: "hover:underline underline-offset-2",
+} as const;
+
+const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedPublication = resolveLinkedInlineField(
+    publicationSlot,
+    publication,
+    publicationUrl,
+);
+const resolvedAuthor = resolveInlineField(authorSlot, author);
+
+if (resolvedTitle.kind === "missing") {
+    throw new MissingReferenceTitleError();
+}
+
+if (import.meta.env.DEV && publicationUrl && !publication) {
+    throw new ReferenceContractError("ScholarlyArticle `publicationUrl` requires `publication`.");
+}
 ---
 
 <ListItem icon={icons.FileText}>
     <Enquote type="english-double">
-        <a
-            href={url} target="_blank"
-            rel="noopener noreferrer" class="hover:underline underline-offset-2"
-        >
-            {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
+        <a href={url} {...externalLinkAttrs}>
+            {
+                resolvedTitle.kind === "slot"
+                    ? <span set:html={resolvedTitle.html} />
+                : resolvedTitle.text
+            }
         </a>
     </Enquote>
 
@@ -85,25 +112,22 @@ const hasAuthor = authorSlot.kind === "meaningful" || !!author;
     }
 
     {
-        hasPublication ? (
+        resolvedPublication.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
                     " "
                 }
                 <cite class="not-italic">
                     {
-                        publicationSlot.kind === "meaningful"
-                            ? <slot name="publication" />
-                        : publication && publicationUrl
+                        resolvedPublication.kind === "slot"
+                            ? <span set:html={resolvedPublication.html} />
+                        : resolvedPublication.kind === "link"
                         ? (
-                            <a
-                                href={publicationUrl} target="_blank"
-                                rel="noopener noreferrer" class="hover:underline underline-offset-2"
-                            >
-                                {publication}
+                            <a href={resolvedPublication.href} {...externalLinkAttrs}>
+                                {resolvedPublication.text}
                             </a>
                         )
-                        : publication
+                        : resolvedPublication.text
                     }
                 </cite>
             </span>
@@ -111,20 +135,24 @@ const hasAuthor = authorSlot.kind === "meaningful" || !!author;
     }
 
     {
-        hasAuthor ? (
+        resolvedAuthor.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
                     " "
                 }
-                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
+                {
+                    resolvedAuthor.kind === "slot"
+                        ? <span set:html={resolvedAuthor.html} />
+                    : resolvedAuthor.text
+                }
             </span>
         ) : null
     }
 
     {
         descriptionSlot.kind === "meaningful" ? (
-            <div class="text-muted-foreground block">
-                <slot name="description" />
+            <div class="text-muted-foreground">
+                <span set:html={descriptionSlot.html} />
             </div>
         ) : null
     }

@@ -1,27 +1,17 @@
 {
-  "generatedAt": "2026-03-12T11:47:24.391Z",
+  "generatedAt": "2026-04-01T15:06:00.350Z",
   "catalogPath": "src/data/bibliography/catalog.graph.generated.jsonld",
   "totals": {
-    "references": 20,
-    "lessons": 5,
-    "usages": 20,
-    "visibleUsages": 17
+    "references": 80,
+    "lessons": 10,
+    "usages": 97,
+    "visibleUsages": 11
   },
   "topReferences": [
     {
       "referenceId": "ref:collection-pipeline-fowler",
       "type": "WebPage",
       "title": "Collection Pipeline",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "additional"
-      ]
-    },
-    {
-      "referenceId": "ref:clig-the-basics",
-      "type": "WebPage",
-      "title": "Command Line Interface Guidelines",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -39,29 +29,9 @@
       ]
     },
     {
-      "referenceId": "ref:nushell-custom-commands",
-      "type": "WebPage",
-      "title": "Custom Commands",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "recommended"
-      ]
-    },
-    {
       "referenceId": "ref:errors-and-exceptions",
       "type": "Book",
       "title": "Errors and exceptions",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "additional"
-      ]
-    },
-    {
-      "referenceId": "ref:nushell-export-def",
-      "type": "WebPage",
-      "title": "Export def",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -99,43 +69,23 @@
       ]
     },
     {
-      "referenceId": "ref:nushell-path-type",
+      "referenceId": "ref:library-computing-wikipedia-2025",
       "type": "WebPage",
-      "title": "Path",
+      "title": "Library (computing)",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
-        "additional"
+        "recommended"
       ]
     },
     {
-      "referenceId": "ref:nushell-path-exists",
+      "referenceId": "ref:nushell-pipelines",
       "type": "WebPage",
-      "title": "Path exists",
+      "title": "Pipelines",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
-        "additional"
-      ]
-    },
-    {
-      "referenceId": "ref:nushell-save",
-      "type": "WebPage",
-      "title": "Save",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "additional"
-      ]
-    },
-    {
-      "referenceId": "ref:nushell-string-interpolation",
-      "type": "WebPage",
-      "title": "String interpolation",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "additional"
+        "recommended"
       ]
     },
     {
@@ -149,9 +99,9 @@
       ]
     },
     {
-      "referenceId": "ref:nushell-type-signatures",
+      "referenceId": "ref:jfrog-what-are-software-artifacts",
       "type": "WebPage",
-      "title": "Type signatures",
+      "title": "What are Software Artifacts?",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -159,19 +109,9 @@
       ]
     },
     {
-      "referenceId": "ref:nushell-types-of-data",
+      "referenceId": "ref:nushell-working-with-records",
       "type": "WebPage",
-      "title": "Types of Data",
-      "citationCount": 1,
-      "lessonCount": 1,
-      "tags": [
-        "additional"
-      ]
-    },
-    {
-      "referenceId": "ref:nushell-use",
-      "type": "WebPage",
-      "title": "Use",
+      "title": "Working with Records",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -215,6 +155,12 @@
   ],
   "referencesByTagAndLesson": [
     {
+      "lessonId": "/notes/software-libraries/artifacts-taxonomy/",
+      "lessonTitle": "Taxonomía básica de artefactos de software",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
       "lessonId": "/notes/software-libraries/scripting/errors/",
       "lessonTitle": "Errores y manejo de fallos en scripts",
       "tag": "additional",
@@ -235,14 +181,8 @@
     {
       "lessonId": "/notes/software-libraries/scripting/first-script/nushell/",
       "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
-      "tag": "additional",
-      "count": 7
-    },
-    {
-      "lessonId": "/notes/software-libraries/scripting/first-script/nushell/",
-      "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
       "tag": "recommended",
-      "count": 4
+      "count": 1
     },
     {
       "lessonId": "/notes/software-libraries/scripting/first-script/py/",
@@ -259,6 +199,24 @@
     {
       "lessonId": "/notes/software-libraries/scripting/pipelines/",
       "lessonTitle": "Pipelines I: PowerShell declarativo",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/pipelines/nushell/",
+      "lessonTitle": "Pipelines declarativos en Nushell",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/scripting/structured-output/nushell/",
+      "lessonTitle": "Salida estructurada en Nushell",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/what-is/",
+      "lessonTitle": "La biblioteca como artefacto de software",
       "tag": "recommended",
       "count": 1
     }

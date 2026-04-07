@@ -18,7 +18,7 @@ import {
     Solution,
     Tip,
 } from "~/components/ui/callouts";
-import { InlineKotlin, KotlinBlock } from "~/components/ui/code";
+import { KotlinInline, KotlinBlock } from "~/components/ui/code";
 import CodeBlock from "~/components/ui/code/CodeBlock.astro";
 import InlineCode from "~/components/ui/code/InlineCode.astro";
 import ShellBlock from "~/components/ui/code/ShellBlock.astro";
@@ -28,6 +28,7 @@ import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
 import Pros from "~/components/ui/procons/Pros.astro";
 import { AuthorList, Book, References } from "~/components/ui/references";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 import Gato from "~/fragments/notes/type-fundamentals/basics/Gato.astro";
 import InitializeKotlinApplicationBash from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationBash.astro";
 import InitializeKotlinApplicationPs1 from "~/fragments/notes/type-fundamentals/basics/InitializeKotlinApplicationPs1.astro";
@@ -239,36 +240,36 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
         <Explanation>
             <List>
                 <ListItem icon={Icons.Users}>
-                    Se define una <InlineKotlin code="data class" /> llamada
-                    <InlineKotlin code="Person" /> con dos propiedades: <InlineKotlin code="name" />
-                    de tipo <InlineKotlin code="String" />
-                    y <InlineKotlin code="age" /> de tipo <InlineKotlin code="Int?" /> (puede ser
+                    Se define una <KotlinInline code="data class" /> llamada
+                    <KotlinInline code="Person" /> con dos propiedades: <KotlinInline code="name" />
+                    de tipo <KotlinInline code="String" />
+                    y <KotlinInline code="age" /> de tipo <KotlinInline code="Int?" /> (puede ser
                     nulo).
                 </ListItem>
 
                 <ListItem icon={Icons.SlidersHorizontal}>
-                    La propiedad <InlineKotlin code="age" /> tiene un valor por defecto
-                    (<InlineKotlin code="null" />), lo que permite omitirla al crear una instancia.
+                    La propiedad <KotlinInline code="age" /> tiene un valor por defecto
+                    (<KotlinInline code="null" />), lo que permite omitirla al crear una instancia.
                 </ListItem>
 
                 <ListItem icon={Icons.ListBullets}>
-                    Se crea una lista inmutable con <InlineKotlin code="listOf" />, que contiene dos
-                    objetos <InlineKotlin code="Person" />.
+                    Se crea una lista inmutable con <KotlinInline code="listOf" />, que contiene dos
+                    objetos <KotlinInline code="Person" />.
                 </ListItem>
 
                 <ListItem icon={Icons.PencilSimple}>
                     En la segunda instancia se utiliza una <strong>asignación nombrada</strong>
-                    (<InlineKotlin code="age = 43" />) para mayor claridad y legibilidad.
+                    (<KotlinInline code="age = 43" />) para mayor claridad y legibilidad.
                 </ListItem>
 
                 <ListItem icon={Icons.SortAscending}>
-                    Se emplea <InlineKotlin code="minByOrNull" /> junto con el operador Elvis
-                    (<InlineKotlin code="?:" />) para ignorar los valores nulos y encontrar la
+                    Se emplea <KotlinInline code="minByOrNull" /> junto con el operador Elvis
+                    (<KotlinInline code="?:" />) para ignorar los valores nulos y encontrar la
                     persona más joven.
                 </ListItem>
 
                 <ListItem icon={Icons.ShieldCheck}>
-                    Si todas las edades fueran nulas, se usa <InlineKotlin code="Int.MAX_VALUE" />
+                    Si todas las edades fueran nulas, se usa <KotlinInline code="Int.MAX_VALUE" />
                     como valor de reemplazo para evitar errores.
                 </ListItem>
 
@@ -344,7 +345,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                     </ListItem>
                     <ListItem icon={Icons.ShieldCheck}>
                         <strong>Seguridad frente a nulls</strong>: su sistema de tipos previene
-                        errores comunes como <InlineKotlin code="NullPointerException" />,
+                        errores comunes como <KotlinInline code="NullPointerException" />,
                         reforzando la robustez de las APIs y facilitando contratos más confiables.
                     </ListItem>
                     <ListItem icon={Icons.PuzzlePiece}>
@@ -386,7 +387,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                     <ListItem icon={Icons.Scan}>
                         <strong>Pattern matching limitado</strong>: Kotlin no cuenta con un sistema
                         tan expresivo como Scala, Rust o Haskell. Aunque
-                        <InlineKotlin code="when" lang="kotlin" /> y las jerarquías selladas
+                        <KotlinInline code="when" lang="kotlin" /> y las jerarquías selladas
                         permiten cierto control, no existe una sintaxis declarativa para hacer match
                         de estructuras anidadas ni extraer múltiples valores simultáneamente. El
                         compilador K2 abre la puerta a posibles mejoras en este terreno a futuro.
@@ -801,7 +802,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                 Con <strong>Gradle</strong> puedes crear y ejecutar un proyecto base reproducible.
             </ListItem>
         </Fragment>
-        <p slot="takeaways">
+        <p slot="closing-reflection">
             La “caja de herramientas” inicial para seguir construyendo: un entorno que compila, un
             primer contacto con la <strong>filosofía del lenguaje</strong>
             y hábitos que nos acompañarán todo el curso: preferir la <strong
@@ -812,7 +813,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
     <References>
         <Fragment slot="recommended">
             <Book
-                chapter="Kotlin: what and why" pages={{ start: 3, end: 16 }}
+                chapter="Kotlin: what and why" pages={parsePageReferenceInput({ start: 3, end: 16 })!}
                 bookTitle="Kotlin in Action"
             >
                 <AuthorList

@@ -47,6 +47,10 @@ resolving the global stylesheet imported by `src/layouts/BaseLayout.astro`.
 The fix is to keep `global.css` local-only and move remote font loading into `<head>` link tags.
 The current implementation does that in `src/components/meta/Head.astro`.
 
+For the broader repository-specific findings around this error, including the Shiki runtime patch
+interaction during development, see
+[`docs/troubleshooting-vite-fetchmodule-timeout.md`](./docs/troubleshooting-vite-fetchmodule-timeout.md).
+
 ## Project Structure
 
 - `src/pages/` contains the site pages, including the course notes.

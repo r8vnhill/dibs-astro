@@ -5,12 +5,14 @@ import { Explanation, Info, More, Note, Tip, Warning } from "~/components/ui/cal
 import Question from "~/components/ui/callouts/Question.astro";
 import { PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
-import { Link } from "~/components/ui/links";
+import { Link, NodeLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import LinksLayout from "~/layouts/LinksLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 ---
 
 <NotesLayout
@@ -389,7 +391,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             PowerShell está diseñado para el <I>descubrimiento progresivo</I>: cada herramienta
             revela pistas sobre la siguiente. Conocer y usar <PowerShellInline code="Get-Command" />
             y <PowerShellInline code="Get-Help" /> no solo te hace más independiente, sino que te
@@ -400,12 +402,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
     </ConclusionsLayout>
 
+    <LinksLayout title="Comparativas y otros ecosistemas">
+        <NodeLink />
+    </LinksLayout>
+
     <References>
         <Fragment slot="recommended">
             <Book
                 chapter="Using the help system"
                 bookTitle="Learn PowerShell in a month of lunches, fourth edition: Covers windows, linux, and MacOS"
-                pages={{ start: 25, end: 41 }}
+                pages={parsePageReferenceInput({ start: 25, end: 41 })!}
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 

@@ -1,0 +1,13 @@
+# Prefix declarations shared by every bibliography source fragment.
+#
+# This file must stay first in the numbered `sources/` sequence because the assembly
+# step copies it verbatim and strips `@prefix` lines from the remaining TTL files.
+# Keep only namespace declarations here; lesson, usage, reference, person, org, and
+# work triples belong in their dedicated numbered fragments.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .

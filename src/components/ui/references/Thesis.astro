@@ -1,14 +1,87 @@
 ---
+/**
+ * Renders a thesis reference inside the shared bibliography list.
+ *
+ * This component follows the same slot-first resolution model used across the reference family,
+ * but specializes the inline metadata for academic theses: the primary title links to the thesis
+ * itself, while the secondary metadata emphasizes institution and author instead of publication
+ * venue or platform.
+ *
+ * The component resolves optional content before rendering so the template can stay mostly
+ * declarative:
+ *
+ * - `title` is required at render time, either through a meaningful `title` slot or through the
+ *   `title` prop fallback
+ * - `institution` and `author` are optional inline metadata fields
+ * - `description` is optional block content rendered only when the slot is meaningful
+ *
+ * ## Slot/prop precedence:
+ *
+ * - meaningful slot content always wins over the corresponding prop fallback
+ * - prop-backed institution text may be wrapped in a link via `institutionUrl`
+ * - slot-backed institution content is treated as caller-authored markup and is never wrapped
+ *   automatically
+ *
+ * ## Contract checks:
+ *
+ * - the component throws when no title can be resolved, avoiding empty quoted links in the
+ *   bibliography
+ * - in development, `institutionUrl` without `institution` is treated as a contract error because
+ *   the URL would have no visible label
+ *
+ * ## Supported named slots:
+ *
+ * - `title`
+ * - `institution`
+ * - `author`
+ * - `description`
+ */
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import {
+    resolveInlineField,
+    resolveLinkedInlineField,
+    resolveOptionalSlots,
+    SPANISH_REFERENCE_META_LABELS,
+} from "./reference-content";
+import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
 
+/**
+ * Props for the Thesis reference component.
+ */
 type Props = {
+    /**
+     * Fallback thesis title used when the `title` slot is absent or does not contain meaningful
+     * content.
+     */
     title?: string;
+
+    /**
+     * Canonical external URL for the thesis.
+     *
+     * The resolved title is always rendered as a link to this URL.
+     */
     url: string;
+
+    /**
+     * Fallback institution name rendered inline after the title when the `institution` slot is
+     * absent or empty.
+     */
     institution?: string;
+
+    /**
+     * Optional URL used only for prop-backed institution text.
+     *
+     * This value is ignored when the institution comes from a meaningful slot, because slot
+     * content is treated as already-authored markup.
+     */
     institutionUrl?: string;
+
+    /**
+     * Fallback author text rendered inline after the institution when the `author` slot is absent
+     * or empty.
+     */
     author?: string;
 };
 
@@ -19,57 +92,82 @@ const {
     author: authorSlot,
     description: descriptionSlot,
 } = await resolveOptionalSlots(Astro.slots, ["title", "institution", "author", "description"]);
+
+/**
+ * Shared external-link attributes used across bibliography references.
+ *
+ * Keeping these attributes centralized avoids drift in target, rel, and underline styling across
+ * title and metadata links.
+ */
+const externalLinkAttrs = {
+    target: "_blank",
+    rel: "noopener noreferrer",
+    class: "hover:underline underline-offset-2",
+} as const;
+
+// ## Resolve slot/prop precedence before entering the template. ##
+// Precomputing these values keeps the markup focused on structure rather than fallback rules.
+const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedInstitution = resolveLinkedInlineField(institutionSlot, institution, institutionUrl);
+const resolvedAuthor = resolveInlineField(authorSlot, author);
+
+// ## A thesis reference must always expose a visible title. ##
+if (resolvedTitle.kind === "missing") {
+    throw new MissingReferenceTitleError();
+}
+
+// ## `institutionUrl` only makes sense when there is prop-backed institution text to label the
+// link. ##
+if (import.meta.env.DEV && institutionUrl && !institution) {
+    throw new ReferenceContractError("Thesis `institutionUrl` requires `institution`.");
+}
 ---
 
 <ListItem icon={icons.Student}>
     <Enquote type="english-double">
-        <a
-            href={url} target="_blank"
-            rel="noopener noreferrer" class="hover:underline underline-offset-2"
-        >
-            {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
+        <a href={url} {...externalLinkAttrs}>
+            {
+                resolvedTitle.kind === "slot"
+                    ? <span set:html={resolvedTitle.html} />
+                : resolvedTitle.text
+            }
         </a>
     </Enquote>
 
     {
-        institutionSlot.kind === "meaningful" || institution ? (
+        resolvedInstitution.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
-                    " "
-                }
-                {
-                    institutionSlot.kind === "meaningful" ? (
-                        <slot name="institution" />
-                    ) : institution && institutionUrl ? (
-                        <a
-                            href={institutionUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="hover:underline underline-offset-2"
-                        >
-                            {institution}
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
+                    resolvedInstitution.kind === "slot"
+                        ? <span set:html={resolvedInstitution.html} />
+                    : resolvedInstitution.kind === "link"
+                    ? (
+                        <a href={resolvedInstitution.href} {...externalLinkAttrs}>
+                            {resolvedInstitution.text}
                         </a>
-                    ) : institution
+                    )
+                    : resolvedInstitution.text
                 }
             </span>
         ) : null
     }
 
     {
-        authorSlot.kind === "meaningful" || author ? (
+        resolvedAuthor.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
-                    " "
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
+                    resolvedAuthor.kind === "slot"
+                        ? <span set:html={resolvedAuthor.html} />
+                    : resolvedAuthor.text
                 }
-                {authorSlot.kind === "meaningful" ? <slot name="author" /> : author}
             </span>
         ) : null
     }
 
     {
         descriptionSlot.kind === "meaningful" ? (
-            <div class="text-muted-foreground block">
-                <slot name="description" />
+            <div class="text-muted-foreground">
+                <span set:html={descriptionSlot.html} />
             </div>
         ) : null
     }

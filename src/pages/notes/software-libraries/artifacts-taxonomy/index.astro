@@ -9,12 +9,9 @@ import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
-import bibliographyCatalogRaw from "~/data/bibliography/catalog.graph.generated.jsonld?raw";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
-
-const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
 ---
 
 <NotesLayout
@@ -577,7 +574,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             La taxonomía no es un desvío antes del contenido <Enquote>real</Enquote> del curso, sino
             la base que permite discutirlo con precisión. Una vez distinguido el mapa general de
             artefactos, podemos entrar en la biblioteca como un caso particular y evaluar su diseño
@@ -591,9 +588,7 @@ const bibliographyCatalog = JSON.parse(bibliographyCatalogRaw);
         </Footnote>
     </Footnotes>
 
-    <ReferencesFromCatalog
-        source={bibliographyCatalog} lessonId="/notes/software-libraries/artifacts-taxonomy/"
-    >
+    <ReferencesFromCatalog lessonId="/notes/software-libraries/artifacts-taxonomy/">
         <Fragment slot="description-ref:jfrog-what-are-software-artifacts">
             Te puede interesar si quieres ampliar la noción de artefacto más allá de biblioteca,
             paquete o binario aislado. El texto conecta artefactos con su papel en la cadena de

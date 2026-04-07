@@ -1,0 +1,26 @@
+---
+/**
+ * Convenience wrapper for lesson pages that render references from the shared bibliography catalog.
+ *
+ * This wrapper keeps the common case short by relying on `ReferencesFromCatalog` defaults:
+ * the shared catalog source and the current page pathname as lesson ID. Keep using the base
+ * component when a page needs a custom source or named slots such as `description-ref:*`.
+ */
+import type { ReferenceTag } from "~/lib/bibliography";
+import ReferencesFromCatalog from "./ReferencesFromCatalog.astro";
+
+type Props = {
+    lessonId?: string;
+    includeTags?: ReferenceTag[];
+    excludeTags?: ReferenceTag[];
+    includePendingRevision?: boolean;
+    heading?: string;
+    recommendedHeading?: string;
+    additionalHeading?: string;
+    strict?: boolean;
+};
+
+const props = Astro.props as Props;
+---
+
+<ReferencesFromCatalog {...props} />

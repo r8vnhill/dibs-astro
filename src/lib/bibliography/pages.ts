@@ -1,54 +1,82 @@
 /**
- * Loose page-reference shape accepted from bibliography parsers, catalog loaders, and other
- * external inputs.
+ * Loose page-reference shape accepted at module boundaries.
  *
- * This type models the untrusted edge of the page-reference subsystem. Callers may provide:
+ * Use this type for data that comes from bibliography parsers, catalog loaders, frontmatter, or
+ * any other source that has not been validated yet.
+ *
+ * It intentionally permits incomplete or invalid values, including:
  *
  * - missing bounds;
- * - invalid numeric values; or
+ * - non-page numeric values; and
  * - reversed ranges.
  *
- * Those cases are intentionally permitted here so parsing functions can act as the normalization
- * boundary between external data and the trusted internal domain model represented by
- * {@link PageReference}.
+ * That makes {@link PageReferenceInput} a suitable edge type for external data, while
+ * {@link PageReference} remains the trusted internal representation used by formatting helpers and
+ * UI code.
  *
- * Both properties are optional because upstream loaders may encounter partial metadata and still
- * need to preserve that intermediate shape until validation occurs.
+ * Both properties are optional because upstream loaders may need to preserve partial metadata
+ * before validation occurs.
  */
-export type UnsafePageReference = Readonly<{
+export type PageReferenceInput = Readonly<{
     start?: number;
     end?: number;
 }>;
 
 /**
- * Validated page reference used by bibliography helpers and reference components.
+ * Structural shape shared by trusted page references before branding.
  *
- * A {@link PageReference} is trusted application data:
- *
- * - `start` is always a positive integer;
- * - `end`, when present, is also a positive integer; and
- * - parsing guarantees that `start <= end`.
- *
- * The `end` property remains optional so single-page citations do not need an artificial range.
- * When `end` is present and equal to `start`, that explicit shape is preserved by parsing even
- * though formatting still renders it as a single page.
+ * Keep this alias internal so callers interact with the branded {@link PageReference} type rather
+ * than its raw object shape.
  */
-export type PageReference = Readonly<{
+type PageReferenceShape = Readonly<{
     start: number;
     end?: number;
 }>;
 
 /**
+ * Unique brand used to distinguish validated page references from loose objects.
+ *
+ * The brand prevents code outside this module from manufacturing trusted {@link PageReference}
+ * values by shape alone.
+ */
+declare const pageReferenceBrand: unique symbol;
+
+/**
+ * Validated page reference used by bibliography helpers and reference components.
+ *
+ * A {@link PageReference} represents trusted application data with these guarantees:
+ *
+ * - `start` is always a positive integer;
+ * - `end`, when present, is also a positive integer; and
+ * - `start <= end` always holds.
+ *
+ * The `end` property stays optional so single-page references do not require an artificial range.
+ * When parsing receives equal bounds, that explicit shape is preserved even though formatting
+ * still renders it as a single page.
+ *
+ * The intended construction paths are:
+ *
+ * - {@link parsePageReference};
+ * - {@link parsePageReferenceInput}; and
+ * - {@link isPageReference} when refining `unknown` values at runtime.
+ */
+export type PageReference = PageReferenceShape & {
+    readonly [pageReferenceBrand]: true;
+};
+
+/**
  * Formatting policy for inline page labels.
  *
- * These options control only presentation, not validation or normalization. They let callers reuse
- * the same {@link PageReference} with different bibliography or UI conventions by overriding:
+ * These options affect presentation only. They do not participate in validation or normalization.
  *
- * - the label for a single page;
- * - the label for a page range; and
- * - the separator used between range bounds.
+ * Use them to format the same {@link PageReference} with different bibliography or UI conventions
+ * by overriding:
  *
- * The defaults match the current site convention: `p.` / `pp.` with a hyphen.
+ * - the label used for a single page;
+ * - the label used for a page range; and
+ * - the separator placed between range bounds.
+ *
+ * The module defaults are `p.`, `pp.`, and `–`.
  */
 export type PageFormatOptions = Readonly<{
     singleLabel: string;
@@ -59,19 +87,19 @@ export type PageFormatOptions = Readonly<{
 /**
  * Default inline formatting policy for page references.
  *
- * This constant is intentionally internal to the module. Callers that need a different style can
- * pass their own {@link PageFormatOptions} to {@link formatPageReference}.
+ * This constant remains internal because callers can pass custom {@link PageFormatOptions}
+ * directly to {@link formatPageReference} when they need a different convention.
  */
 const DEFAULT_PAGE_FORMAT: PageFormatOptions = {
     singleLabel: "p.",
     rangeLabel: "pp.",
-    separator: "-",
+    separator: "–",
 };
 
 /**
  * Returns whether a number is a valid bibliography page number.
  *
- * A valid page number must be a positive integer. The function rejects:
+ * A valid page number must be a positive safe integer. This excludes:
  *
  * - `0`;
  * - negative numbers;
@@ -79,33 +107,76 @@ const DEFAULT_PAGE_FORMAT: PageFormatOptions = {
  * - `NaN`; and
  * - infinities.
  *
- * @param value
- *   Number to validate.
- * @returns
- *   `true` when `value` is a positive integer page number.
+ * @param value Number to validate.
+ * @returns `true` when `value` is a valid page number.
  */
-export const isValidPageNumber = (value: number): boolean => Number.isInteger(value) && value > 0;
+export const isValidPageNumber = (value: number): boolean =>
+    Number.isSafeInteger(value) && value > 0;
 
 /**
- * Converts a raw numeric value into a valid page number or `undefined`.
+ * Converts a raw numeric value into a valid page number.
  *
- * This helper is intentionally internal. It centralizes the rule that invalid or absent values do
- * not throw and instead collapse to `undefined`, which keeps the public parsers small and
- * consistent.
+ * This helper centralizes the rule that invalid or absent values collapse to `undefined` instead
+ * of throwing. That keeps the public parsers small, consistent, and easy to compose with optional
+ * metadata flows.
  *
- * @param value
- *   Raw numeric value to validate.
- * @returns
- *   The original value when it is a valid page number; otherwise `undefined`.
+ * @param value Raw numeric value to validate.
+ * @returns The original value when it is valid, or `undefined` otherwise.
  */
 const toPageNumber = (value?: number): number | undefined =>
     value !== undefined && isValidPageNumber(value) ? value : undefined;
 
 /**
+ * Applies the trust brand to an already validated page-reference shape.
+ *
+ * Keep this helper local to the module so callers cannot bypass the validation boundary enforced
+ * by the public parsers and runtime guard.
+ *
+ * @param start Valid first page.
+ * @param end Optional valid last page.
+ * @returns A branded {@link PageReference}.
+ */
+const toPageReference = (start: number, end?: number): PageReference =>
+    ({ start, ...(end !== undefined ? { end } : {}) }) as PageReference;
+
+/**
+ * Returns whether an unknown value satisfies the {@link PageReference} contract.
+ *
+ * This guard is useful at runtime boundaries where data may already have object shape but is not
+ * yet trusted statically, such as decoded JSON payloads, catalog records, or test fixtures built
+ * from `unknown`.
+ *
+ * Unlike the parsing helpers, this function only validates. It does not reorder reversed bounds or
+ * otherwise normalize the value.
+ *
+ * @param value Value to inspect.
+ * @returns `true` when `value` matches the runtime invariants of
+ * {@link PageReference}.
+ */
+export function isPageReference(value: unknown): value is PageReference {
+    if (!value || typeof value !== "object") {
+        return false;
+    }
+
+    const candidate = value as { start?: unknown; end?: unknown };
+
+    if (typeof candidate.start !== "number" || !isValidPageNumber(candidate.start)) {
+        return false;
+    }
+
+    if (candidate.end === undefined) {
+        return true;
+    }
+
+    return typeof candidate.end === "number"
+        && isValidPageNumber(candidate.end)
+        && candidate.start <= candidate.end;
+}
+
+/**
  * Parses raw page bounds into a validated, normalized {@link PageReference}.
  *
- * This function is the main constructor for trusted page-reference values built from loose numeric
- * bounds.
+ * This is the main constructor for trusted page-reference values built from loose numeric bounds.
  *
  * ## Normalization rules:
  *
@@ -115,13 +186,16 @@ const toPageNumber = (value?: number): number | undefined =>
  * - reversed bounds are reordered; and
  * - equal bounds remain explicit as `{ start, end }`.
  *
- * This parser does not throw. Invalid or incomplete input is represented as `undefined` so callers
- * can naturally compose it with optional metadata flows.
+ * The function never throws. Invalid or incomplete input is represented as `undefined`, which
+ * makes it easy to compose with optional metadata flows.
  *
- * @param start First page of the reference.
- * @param end Optional last page of the reference.
- * @returns A validated, normalized {@link PageReference}, or `undefined` when
- * the input does not describe a valid reference.
+ * @param start
+ *   First page of the reference.
+ * @param end
+ *   Optional last page of the reference.
+ * @returns
+ *   A validated, normalized {@link PageReference}, or `undefined` when the input does not describe
+ *   a valid reference.
  */
 export function parsePageReference(
     start?: number,
@@ -130,24 +204,24 @@ export function parsePageReference(
     const pageStart = toPageNumber(start);
     if (pageStart === undefined) return undefined;
 
-    if (end === undefined) return { start: pageStart };
+    if (end === undefined) return toPageReference(pageStart);
 
     const pageEnd = toPageNumber(end);
     if (pageEnd === undefined) return undefined;
 
     return pageStart <= pageEnd
-        ? { start: pageStart, end: pageEnd }
-        : { start: pageEnd, end: pageStart };
+        ? toPageReference(pageStart, pageEnd)
+        : toPageReference(pageEnd, pageStart);
 }
 
 /**
- * Parses a loose {@link UnsafePageReference} into a validated, normalized {@link PageReference}.
+ * Parses a loose {@link PageReferenceInput} into a validated, normalized {@link PageReference}.
  *
- * This is the object-shaped counterpart to {@link parsePageReference}. It is useful when page data
- * comes from loaders, parsers, frontmatter, or catalog records that already package bounds into a
- * single object.
+ * This is the object-shaped counterpart to {@link parsePageReference}. It is useful when page
+ * metadata already arrives packaged as a single object, such as in loaders, parsers, frontmatter,
+ * or catalog records.
  *
- * The function delegates all validation and normalization to {@link parsePageReference}, so both
+ * Validation and normalization are fully delegated to {@link parsePageReference}, so both public
  * entry points always share the same semantics.
  *
  * @param input
@@ -157,34 +231,14 @@ export function parsePageReference(
  *   invalid.
  */
 export const parsePageReferenceInput = (
-    input?: UnsafePageReference,
+    input?: PageReferenceInput,
 ): PageReference | undefined => parsePageReference(input?.start, input?.end);
-
-/**
- * Compatibility wrapper around the parser-first API.
- *
- * New code should prefer {@link parsePageReference} when working with raw numeric bounds or
- * {@link parsePageReferenceInput} when working with object-shaped input.
- *
- * This wrapper exists to keep older callers on the same normalization semantics while the
- * subsystem gradually converges on parser-oriented naming. It does not add extra behavior beyond
- * delegating to {@link parsePageReferenceInput}.
- *
- * @param pages
- *   Loose page-reference object to normalize.
- * @returns
- *   A validated, normalized {@link PageReference}, or `undefined` when the input is missing or
- *   invalid.
- */
-export const normalizePageReference = (
-    pages?: UnsafePageReference,
-): PageReference | undefined => parsePageReferenceInput(pages);
 
 /**
  * Formats a validated {@link PageReference} for inline bibliography display.
  *
- * This function assumes the input is already trusted. It does not perform validation or
- * reordering; those responsibilities belong to the parsing functions.
+ * This function assumes the input is already trusted. It does not validate, normalize, or reorder
+ * bounds. Those responsibilities belong to the parsing functions.
  *
  * ## Formatting rules:
  *
@@ -192,8 +246,8 @@ export const normalizePageReference = (
  * - single pages render as `<singleLabel> n`; and
  * - ranges render as `<rangeLabel> start<separator>end`.
  *
- * When a parsed reference preserves an explicit `{ start, end }` with equal bounds, formatting
- * still renders it as a single page.
+ * When parsing preserved an explicit `{ start, end }` with equal bounds, formatting still renders
+ * the result as a single page.
  *
  * @param pages
  *   Validated page reference to format.
@@ -202,12 +256,15 @@ export const normalizePageReference = (
  * @returns
  *   A formatted page label, or `undefined` when `pages` is missing.
  */
-export const formatPageReference = (
+export function formatPageReference(
     pages?: PageReference,
     options: PageFormatOptions = DEFAULT_PAGE_FORMAT,
-): string | undefined =>
-    !pages
-        ? undefined
-        : (pages.end === undefined || pages.start === pages.end
-            ? `${options.singleLabel} ${pages.start}`
-            : `${options.rangeLabel} ${pages.start}${options.separator}${pages.end}`);
+): string | undefined {
+    if (!pages) return undefined;
+
+    const isSinglePage = pages.end === undefined || pages.start === pages.end;
+
+    return isSinglePage
+        ? `${options.singleLabel} ${pages.start}`
+        : `${options.rangeLabel} ${pages.start}${options.separator}${pages.end}`;
+}

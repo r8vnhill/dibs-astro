@@ -30,6 +30,7 @@ const baseInlineCodeClasses = Object.freeze([
     "leading-[1.4]",
     "text-[0.95em]",
     "font-mono",
+    "[font-weight:inherit]",
     "rounded",
     "px-[2px]",
     "py-[0px]",

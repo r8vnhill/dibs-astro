@@ -17,12 +17,13 @@ import {
     type LoadBibliographyCatalogOptions,
     type ReferenceTag,
 } from "~/lib/bibliography";
+import { bibliographyCatalog as defaultBibliographyCatalog } from "~/data/bibliography/catalog";
 import { prepareSlotsForReferences } from "./reference-content";
 import ReferenceEntry from "./ReferenceEntry.astro";
 import References from "./References.astro";
 
 type Props = {
-    source: BibliographyCatalog | Record<string, unknown>;
+    source?: BibliographyCatalog | Record<string, unknown>;
     lessonId?: string;
     includeTags?: ReferenceTag[];
     excludeTags?: ReferenceTag[];
@@ -34,7 +35,7 @@ type Props = {
 };
 
 const {
-    source,
+    source = defaultBibliographyCatalog,
     lessonId,
     includeTags,
     excludeTags,

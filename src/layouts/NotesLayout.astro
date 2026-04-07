@@ -60,9 +60,9 @@ import ToDo from "~/components/utils/ToDo";
 import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import {
+    type NavigationLinkInput,
     normalizeNavigation,
     normalizePreviousNavigation,
-    type NavigationLinkInput,
 } from "~/utils";
 import type { RepoRef } from "~/utils/git";
 import { resolveLessonMetadata } from "~/utils/lesson-metadata";
@@ -221,10 +221,11 @@ const { normalizedNext } = normalizeNavigation(
                             normalizedPreviousList.length > 0 ? (
                                 <div class:list={["flex", "flex-col", "gap-4"]}>
                                     {
-                                        normalizedPreviousList.map((previousLink) => (
+                                        normalizedPreviousList.map((
+                                            previousLink,
+                                        ) => (
                                             <NavigationButton
-                                                href={previousLink.href}
-                                                label={previousLink.title}
+                                                href={previousLink.href} label={previousLink.title}
                                                 iconPosition="left"
                                             >
                                                 <icons.ArrowLeft class="w-5 h-5" slot="icon" />
@@ -312,7 +313,7 @@ const { normalizedNext } = normalizeNavigation(
     }
 
     /* Indentation for grouped subtrees */
-    .lesson-tree .group {
+    .lesson-tree .tree-node {
         padding-left: 0.75rem; /* extra space for the tree line */
     }
 

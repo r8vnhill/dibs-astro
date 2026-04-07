@@ -1,0 +1,219 @@
+# Canonical organization and institution nodes reused across the bibliography graph.
+#
+# Use this file for publishers, documentation sites, conferences, and academic institutions that
+# are referenced from works or references. Prefer one stable `org:<slug>` node per real entity and
+# link to it from the other fragments instead of copying names and URLs inline. Reserve
+# `schema:CollegeOrUniversity` for academic institutions; use `schema:Organization` for everything
+# else.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+org:nushell
+  a schema:Organization ;
+  schema:name "Nushell" ;
+  schema:url "https://www.nushell.sh/" .
+
+org:clig
+  a schema:Organization ;
+  schema:name "clig.dev" ;
+  schema:url "https://clig.dev/" .
+
+org:martin-fowler-site
+  a schema:Organization ;
+  schema:name "martinfowler.com" ;
+  schema:url "https://martinfowler.com" .
+
+org:atomic-spin
+  a schema:Organization ;
+  schema:name "Atomic Spin" ;
+  schema:url "https://spin.atomicobject.com/" .
+
+org:heroku-dev-center
+  a schema:Organization ;
+  schema:name "Heroku Dev Center" ;
+  schema:url "https://devcenter.heroku.com/" .
+
+org:jdriven-blog
+  a schema:Organization ;
+  schema:name "JDriven Blog" ;
+  schema:url "https://jdriven.com/blog/" .
+
+org:acm
+  a schema:Organization ;
+  schema:name "Association for Computing Machinery" ;
+  schema:url "https://www.acm.org/" .
+
+org:university-of-waterloo
+  a schema:CollegeOrUniversity ;
+  schema:name "University of Waterloo" ;
+  schema:url "https://uwaterloo.ca/" .
+
+org:microsoft-learn
+  a schema:Organization ;
+  schema:name "Microsoft Learn" ;
+  schema:url "https://learn.microsoft.com/" .
+
+org:dispatch-youtube
+  a schema:Organization ;
+  schema:name "Dispatch" ;
+  schema:url "https://www.youtube.com/" .
+
+org:youtube
+  a schema:Organization ;
+  schema:name "YouTube" ;
+  schema:url "https://www.youtube.com/" .
+
+org:ietf
+  a schema:Organization ;
+  schema:name "Internet Engineering Task Force" ;
+  schema:url "https://www.ietf.org/" .
+
+org:python-docs
+  a schema:Organization ;
+  schema:name "Python documentation" ;
+  schema:url "https://docs.python.org/3/" .
+
+org:python-peps
+  a schema:Organization ;
+  schema:name "Python Enhancement Proposals (PEPs)" ;
+  schema:url "https://peps.python.org/" .
+
+org:cattrs-project
+  a schema:Organization ;
+  schema:name "cattrs" ;
+  schema:url "https://catt.rs/en/stable/" .
+
+org:pydantic
+  a schema:Organization ;
+  schema:name "Pydantic" ;
+  schema:url "https://docs.pydantic.dev/latest/" .
+
+org:attrs-project
+  a schema:Organization ;
+  schema:name "attrs" ;
+  schema:url "https://www.attrs.org/en/stable/" .
+
+org:oreilly
+  a schema:Organization ;
+  schema:name "O'Reilly Media" ;
+  schema:url "https://www.oreilly.com/" .
+
+org:addison-wesley
+  a schema:Organization ;
+  schema:name "Addison-Wesley" ;
+  schema:url "https://www.informit.com/imprint/index.aspx?st=61087" .
+
+org:pycon-us
+  a schema:Organization ;
+  schema:name "PyCon US" ;
+  schema:url "https://www.youtube.com/@PyConUS" .
+
+org:pygotham
+  a schema:Organization ;
+  schema:name "PyGotham" ;
+  schema:url "https://www.pygotham.com/" .
+
+org:prentice-hall
+  a schema:Organization ;
+  schema:name "Prentice Hall" ;
+  schema:url "https://www.pearson.com/en-us/subject-catalog/p/prentice-hall/P200000001582/" .
+
+org:kotlin-help
+  a schema:Organization ;
+  schema:name "Kotlin Help" ;
+  schema:url "https://kotlinlang.org/docs/" .
+
+org:gradle-docs
+  a schema:Organization ;
+  schema:name "Gradle Documentation" ;
+  schema:url "https://docs.gradle.org/current/userguide/" .
+
+org:intellij-platform-plugin-sdk-help
+  a schema:Organization ;
+  schema:name "IntelliJ Platform Plugin SDK Help" ;
+  schema:url "https://plugins.jetbrains.com/docs/intellij/" .
+
+org:maven
+  a schema:Organization ;
+  schema:name "Apache Maven" ;
+  schema:url "https://maven.apache.org/" .
+
+org:rust-book
+  a schema:Organization ;
+  schema:name "The Rust Programming Language" ;
+  schema:url "https://doc.rust-lang.org/book/" .
+
+org:npm-docs
+  a schema:Organization ;
+  schema:name "npm Docs" ;
+  schema:url "https://docs.npmjs.com/" .
+
+org:python-packaging-user-guide
+  a schema:Organization ;
+  schema:name "Python Packaging User Guide" ;
+  schema:url "https://packaging.python.org/en/latest/" .
+
+org:requests-docs
+  a schema:Organization ;
+  schema:name "Requests documentation" ;
+  schema:url "https://requests.readthedocs.io/en/latest/" .
+
+org:jfrog
+  a schema:Organization ;
+  schema:name "JFrog" ;
+  schema:url "https://jfrog.com/" .
+
+org:yaknyam-press
+  a schema:Organization ;
+  schema:name "Yaknyam Press" .
+
+org:morgan-kaufmann
+  a schema:Organization ;
+  schema:name "Morgan Kaufmann" .
+
+org:manning
+  a schema:Organization ;
+  schema:name "Manning Publications" .
+
+org:pearson-education
+  a schema:Organization ;
+  schema:name "Pearson Education, Limited" .
+
+org:springer
+  a schema:Organization ;
+  schema:name "Springer" .
+
+org:ieee
+  a schema:Organization ;
+  schema:name "Institute of Electrical and Electronics Engineers" ;
+  schema:url "https://www.ieee.org/" .
+
+org:wikipedia
+  a schema:Organization ;
+  schema:name "Wikipedia" ;
+  schema:url "https://www.wikipedia.org/" .
+
+org:nodejs
+  a schema:Organization ;
+  schema:name "Node.js" ;
+  schema:url "https://nodejs.org/" .
+
+org:mdn-web-docs
+  a schema:Organization ;
+  schema:name "MDN Web Docs" ;
+  schema:url "https://developer.mozilla.org/" .
+
+org:exploringjs
+  a schema:Organization ;
+  schema:name "Exploring JS" ;
+  schema:url "https://exploringjs.com/" .
+
+org:nodejs-design-patterns
+  a schema:Organization ;
+  schema:name "Node.js Design Patterns" ;
+  schema:url "https://nodejsdesignpatterns.com/" .

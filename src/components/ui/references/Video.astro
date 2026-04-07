@@ -8,7 +8,13 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import {
+    resolveInlineField,
+    resolveLinkedInlineField,
+    resolveOptionalSlots,
+    SPANISH_REFERENCE_META_LABELS,
+} from "./reference-content";
+import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
 
 type Props = {
     title?: string;
@@ -26,44 +32,62 @@ const {
     author: authorSlot,
     description: descriptionSlot,
 } = await resolveOptionalSlots(Astro.slots, ["title", "platform", "author", "description"]);
+
+const externalLinkAttrs = {
+    target: "_blank",
+    rel: "noopener noreferrer",
+    class: "hover:underline underline-offset-2",
+} as const;
+
+const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedAuthor = resolveInlineField(authorSlot, author);
+const resolvedPlatform = resolveLinkedInlineField(platformSlot, platform, platformUrl);
+
+if (resolvedTitle.kind === "missing") {
+    throw new MissingReferenceTitleError();
+}
+
+if (import.meta.env.DEV && platformUrl && !platform) {
+    throw new ReferenceContractError("Video `platformUrl` requires `platform`.");
+}
 ---
 
 <ListItem icon={icons.PlayCircle}>
     <Enquote type="english-double">
-        <a
-            href={url} target="_blank"
-            rel="noopener noreferrer" class="hover:underline underline-offset-2"
-        >
-            {titleSlot.kind === "meaningful" ? <slot name="title" /> : title}
+        <a href={url} {...externalLinkAttrs}>
+            {
+                resolvedTitle.kind === "slot"
+                    ? <span set:html={resolvedTitle.html} />
+                : resolvedTitle.text
+            }
         </a>
     </Enquote>
 
     {
-        authorSlot.kind === "meaningful" || author ? (
+        resolvedAuthor.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
-                    authorSlot.kind === "meaningful" ? <slot name="author" /> : author
+                    resolvedAuthor.kind === "slot"
+                        ? <span set:html={resolvedAuthor.html} />
+                    : resolvedAuthor.text
                 }
             </span>
         ) : null
     }
 
     {
-        platformSlot.kind === "meaningful" || platform ? (
+        resolvedPlatform.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
-                    platformSlot.kind === "meaningful" ? (
-                        <slot name="platform" />
-                    ) : platform && platformUrl ? (
-                        <a
-                            href={platformUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="hover:underline underline-offset-2"
-                        >
-                            {platform}
+                    resolvedPlatform.kind === "slot"
+                        ? <span set:html={resolvedPlatform.html} />
+                    : resolvedPlatform.kind === "link"
+                    ? (
+                        <a href={resolvedPlatform.href} {...externalLinkAttrs}>
+                            {resolvedPlatform.text}
                         </a>
-                    ) : platform
+                    )
+                    : resolvedPlatform.text
                 }
             </span>
         ) : null
@@ -79,8 +103,8 @@ const {
 
     {
         descriptionSlot.kind === "meaningful" ? (
-            <div class="text-muted-foreground block">
-                <slot name="description" />
+            <div class="text-muted-foreground">
+                <span set:html={descriptionSlot.html} />
             </div>
         ) : null
     }

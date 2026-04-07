@@ -1,21 +1,15 @@
 ---
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
+import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Definition,
-    Explanation,
-    Important,
-    More,
-    Tip,
-    Warning,
-} from "~/components/ui/callouts";
+import { Definition, Explanation, Important, More, Tip, Warning } from "~/components/ui/callouts";
 import { OutputBlock, PowerShellBlock, PowerShellInline } from "~/components/ui/code";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
 import Mono from "~/components/ui/font/Mono.astro";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { Link, NushellLink, PythonLink } from "~/components/ui/links";
+import { Link, NodeLink, NushellLink, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { AuthorList, Book, References, WebPage } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -296,7 +290,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </Fragment>
 
-        <Fragment slot="takeaways">
+        <Fragment slot="closing-reflection">
             <P>
                 Todo comienza con un paso pequeño: decidir que una tarea no merece repetirse
                 manualmente. Convertirla en un script no solo ahorra tiempo, también captura
@@ -312,6 +306,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </ConclusionsLayout>
 
     <LinksLayout>
+        <NodeLink />
         <PythonLink />
         <NushellLink />
     </LinksLayout>
@@ -319,7 +314,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <References>
         <Fragment slot="recommended">
             <Book
-                chapter="Meet PowerShell" pages={{ start: 8, end: 24 }}
+                chapter="Meet PowerShell" pages={parsePageReferenceInput({ start: 8, end: 24 })!}
                 bookTitle="Learn Powershell in a Month of Lunches, Fourth Edition: Covers Windows, Linux, and macOS"
             >
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />

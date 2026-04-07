@@ -158,4 +158,9 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
     .callout__body :where(p:last-child) {
         margin-bottom: 0;
     }
+
+    /* Automatically apply callout accent color to list item icons */
+    :where(.callout) :where(.listitem__icon) {
+        color: var(--callout-title-color);
+    }
 </style>
