@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.16.0] - 2026-04-08
+
+### Added
+
+- Added the new `Evolucionar una API sin romper compatibilidad` lesson under `software-libraries/api-design`, expanding the API design sequence with lifecycle, compatibility, deprecation, versioning, regression testing, and curated bibliography guidance.
+- Added dedicated tests for Kotlin code block rendering and definition callout behavior, plus expanded coverage for lesson-catalog trail and navigation behavior.
+
+### Changed
+
+- Moved scripting lesson routes from `notes/software-libraries/scripting/*` to `notes/scripting/*`, and added automatic legacy redirects so existing links continue resolving to the new paths.
+- Consolidated lesson-route canonicalization into `LessonHref` and delegated adjacent-lesson resolution to the lesson catalog port so auto-navigation uses a single semantic route-normalization path.
+- Updated Unit 1 structure, bibliography usages, and generated lesson metadata to include the new API evolution lesson and keep navigation/reference data aligned.
+
+### Fixed
+
+- Fixed bibliography/reference rendering edge cases around slot-driven descriptions and fallback content handling in reference components and related tests.
+- Fixed navigation and metadata test expectations after the scripting-route move and route-normalization refactor, reducing brittle assumptions in render and unit suites.
+
 ## [0.15.0] - 2026-04-07
 
 ### Added
