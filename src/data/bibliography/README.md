@@ -38,7 +38,7 @@ Use stable IDs:
 - references: `ref:<slug>`
 - people: `person:<slug>`
 - organizations: `org:<slug>`
-- lessons: canonical route, for example `/notes/software-libraries/scripting/pipelines/`
+- lessons: canonical route, for example `/notes/scripting/pipelines/`
 - usage nodes: `usage:<lesson>:<reference>:<tag>`
 
 ## Usage tags

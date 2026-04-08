@@ -5,6 +5,24 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.16.0] - 2026-04-08
+
+### Added
+
+- Added the new `Evolucionar una API sin romper compatibilidad` lesson under `software-libraries/api-design`, expanding the API design sequence with lifecycle, compatibility, deprecation, versioning, regression testing, and curated bibliography guidance.
+- Added dedicated tests for Kotlin code block rendering and definition callout behavior, plus expanded coverage for lesson-catalog trail and navigation behavior.
+
+### Changed
+
+- Moved scripting lesson routes from `notes/software-libraries/scripting/*` to `notes/scripting/*`, and added automatic legacy redirects so existing links continue resolving to the new paths.
+- Consolidated lesson-route canonicalization into `LessonHref` and delegated adjacent-lesson resolution to the lesson catalog port so auto-navigation uses a single semantic route-normalization path.
+- Updated Unit 1 structure, bibliography usages, and generated lesson metadata to include the new API evolution lesson and keep navigation/reference data aligned.
+
+### Fixed
+
+- Fixed bibliography/reference rendering edge cases around slot-driven descriptions and fallback content handling in reference components and related tests.
+- Fixed navigation and metadata test expectations after the scripting-route move and route-normalization refactor, reducing brittle assumptions in render and unit suites.
+
 ## [0.15.0] - 2026-04-07
 
 ### Added
@@ -115,7 +133,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 - Refined `InlineCode.astro` internals to make source resolution and usage rules more robust and predictable.
 - Improved Astro render test utilities and Vitest unit config discovery/isolation to reduce config coupling in tests.
-- Reworked the `notes/software-libraries/scripting/pipelines/` lesson with clearer abstract/conclusions and stronger pedagogical progression across filtering, projection, transformation, and JSON pipeline exercises.
+- Reworked the `notes/scripting/pipelines/` lesson with clearer abstract/conclusions and stronger pedagogical progression across filtering, projection, transformation, and JSON pipeline exercises.
 - Regenerated derived metadata/index artifacts (`lesson-metadata.generated.json`, icon index) to reflect the updated lesson/content state.
 
 ### Fixed
@@ -132,7 +150,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 - Added comprehensive course structure test coverage, including flattening, validation, property-based tests, and shared test support utilities.
 - Added `inline-code-classes` utility and focused tests to harden inline code rendering behavior.
 - Added render tests for `LessonRepoPanel` to validate multi-repository source link rendering.
-- Added the new lesson `Lab. 2: Git Submodules` under `notes/software-libraries/scripting/pipelines/git-submodules/`.
+- Added the new lesson `Lab. 2: Git Submodules` under `notes/scripting/pipelines/git-submodules/`.
 - Added architecture documentation for Phase 1 (checklists, summaries, tree, and ADR-001 for layered architecture).
 - Added a new icon asset `shield-warning.svg`.
 
@@ -163,7 +181,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- Expanded and restructured the lesson at `notes/software-libraries/scripting/pipelines/errors/` with clearer explanations, updated hints, and a richer exercise around `-ErrorVariable` and batch-level failure handling.
+- Expanded and restructured the lesson at `notes/scripting/pipelines/errors/` with clearer explanations, updated hints, and a richer exercise around `-ErrorVariable` and batch-level failure handling.
 - Updated code UI components (`OutputBlock`, `InlineCode`, `CodeLayout`, `LightCode`, `DarkCode`) and Shiki highlighter wiring to improve text wrapping and output rendering consistency.
 - Updated Vitest configuration split so Astro render tests use their own config pattern (`*.render.test.ts`) separate from jsdom/unit tests.
 

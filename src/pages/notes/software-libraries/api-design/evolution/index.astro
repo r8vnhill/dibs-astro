@@ -1,0 +1,598 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, Heading, P } from "~/components/semantics";
+import { Danger, Definition, Info, More, Tip, Warning } from "~/components/ui/callouts";
+import { KotlinBlock, KotlinInline } from "~/components/ui/code";
+import { B, Dash, I, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Evolucionar una API sin romper compatibilidad"
+    description="Evoluciona APIs publicadas manteniendo compatibilidad: estrategias de adición, deprecación guiada, versionado semántico y tests de regresión para cambios seguros."
+    timeMultiplier={1.15}
+>
+    <Fragment slot="abstract">
+        <P>
+            En la lección anterior vimos qué vuelve buena a una API pública. Pero diseñarla bien una
+            vez no basta. Las bibliotecas evolucionan: agregan capacidades, corrigen errores y
+            revisan decisiones pasadas. La pregunta ahora es otra: <B>cómo cambiar una API publicada
+                sin convertir esa evolución en una fuente de ruptura</B>.
+        </P>
+
+        <P>
+            Evolucionar una API no consiste solo en seguir agregando cosas. Una vez publicada, cada
+            cambio debe medirse también por su impacto en quienes ya dependen de esa interfaz. Esta
+            lección propone un criterio para enfrentar ese problema: distinguir qué puede cambiarse
+            con libertad, qué debe preservarse como parte del contrato público y cómo introducir
+            mejoras sin convertir la evolución en una fuente de ruptura innecesaria.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-lifecycle">
+        <Heading
+            headingLevel="h2" Icon={icons.Clock}
+            slot="heading"
+        >
+            Publicación y ciclo de vida de una API
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberOne}>
+            <span slot="title">Publicar crea compromiso</span>
+
+            <P>
+                Antes de publicar puedes rediseñar con libertad razonable. Después de publicar, la
+                API adquiere compromisos con quienes dependen de ella. <B>Cada elemento público se
+                    convierte en una promesa.</B>
+            </P>
+        </Definition>
+
+        <P>
+            Una API pública tiene un <B>ciclo de vida</B> que determina qué cambios son aceptables
+            en cada momento. En la etapa <I>prerelease</I> todavía es posible rediseñar nombres,
+            firmas y estructuras sin costo externo. Una vez publicada, cada cambio debe evaluarse no
+            solo por su calidad interna, sino también por su impacto en compatibilidad, migración,
+            documentación y flujos de trabajo ya establecidos sobre la interfaz pública.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Cuatro momentos del ciclo de vida</span>
+
+            <List>
+                <ListItem icon={icons.Flask}>
+                    <B>Prerelease</B>: el diseño todavía está en exploración. Cambios internos y de
+                    firma pueden ser sanos porque no hay un contrato público estable.
+                </ListItem>
+
+                <ListItem icon={icons.Package}>
+                    <B>Mantenimiento</B>: la API ya fue publicada y ahora debe crecer con cuidado,
+                    minimizando ruptura para quien la consume. Conviene preferir adición a
+                    modificación destructiva.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Madurez</B>: la API se considera estable. Los cambios son principalmente
+                    correctivos o extensiones menores, siempre respetando compatibilidad.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <B>Deprecación</B>: la API sigue disponible para no romper dependencias
+                    existentes, pero ya no se recomienda para trabajo nuevo. Debe incluir reemplazos
+                    claros, advertencias y ruta de migración.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Después de publicar, cada cambio tiene costo externo</span>
+
+            <P>
+                Desde el paso a <I>prerelease</I>, el criterio de diseño cambia. Cada modificación
+                debe evaluarse también por su impacto en compatibilidad, migración, documentación y
+                automatizaciones construidas sobre la interfaz pública. Una mejora internamente
+                elegante que rompe código dependiente es un cambio que daña, no que mejora, la
+                biblioteca.
+            </P>
+        </Warning>
+    </NotesSection>
+
+    <NotesSection id="h2-compatibility">
+        <Heading
+            headingLevel="h2" Icon={icons.ShieldCheck}
+            slot="heading"
+        >
+            Compatibilidad como contrato observable
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberTwo}>
+            <span slot="title">La compatibilidad no se limita a la firma</span>
+
+            <P>
+                Una API es compatible cuando quien ya la integró puede seguir trabajando sin
+                reescribir su integración ni enfrentar cambios en el comportamiento observable que
+                la API prometía.
+            </P>
+        </Definition>
+
+        <P>
+            Hablar de <B>compatibilidad</B> no es hablar solo de firmas y nombres públicos. El
+            contrato de una API incluye también lo que quien la consume puede observar de forma
+            estable: <B>errores esperados, orden de resultados, valores por defecto, semántica de
+                retorno y momento en que ocurren las validaciones</B>. No toda conducta visible
+            forma parte del contrato: la compatibilidad protege aquello que la API <B>documenta,
+                garantiza o sostiene de manera consistente</B> para sus consumidores.
+        </P>
+
+        <Warning headingLevel="h3">
+            <span slot="title">No toda compatibilidad protege lo mismo</span>
+
+            <List>
+                <ListItem icon={icons.FileArrowUp}>
+                    <B>Compatibilidad de fuente</B>: el código cliente sigue compilando sin cambios.
+                </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <B>Compatibilidad de comportamiento</B>: el comportamiento observable sigue
+                    siendo el esperado para los casos ya soportados.
+                </ListItem>
+                <ListItem icon={icons.Package}>
+                    <B>Compatibilidad binaria</B>: en algunos ecosistemas, reemplazar la biblioteca
+                    sin recompilar también importa. No profundizaremos en ABI, pero conviene
+                    recordar que no toda ruptura se ve al nivel del código fuente.
+                </ListItem>
+            </List>
+        </Warning>
+
+        <Danger headingLevel="h3">
+            <span slot="title">
+                Pitfall: pensar que un cambio interno es invisible por definición
+            </span>
+
+            <P>
+                Si una función validaba antes de escribir estado y ahora escribe estado antes de
+                fallar, la firma sigue intacta, pero el contrato observable cambió y puede romper
+                integraciones. Lo mismo ocurre si cambia el orden de resultados o el tipo de error
+                ante una condición específica. <B>Interno</B> no siempre significa <B
+                >inobservable</B>. Mientras más pública y madura es una API, mayor cuidado requiere
+                distinguir entre cambios genuinamente invisibles y cambios que alteran el contrato.
+            </P>
+        </Danger>
+    </NotesSection>
+
+    <NotesSection id="h2-safe-additions">
+        <Heading
+            headingLevel="h2" Icon={icons.PlusCircle}
+            slot="heading"
+        >
+            Estrategias para agregar sin romper
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberThree}>
+            <span slot="title">Ampliar sin reemplazar</span>
+
+            <P>
+                Cuando necesitas ampliar una API publicada, suele ser más seguro <B>agregar</B>
+                capacidades nuevas que reemplazar de forma destructiva lo que ya existe.
+            </P>
+        </Definition>
+
+        <P>
+            En evolución de APIs, una regla práctica útil es preferir cambios por <B>adición</B>.
+            Agregar una nueva función, una sobrecarga o un nuevo tipo suele generar menos fricción
+            que modificar una firma ya establecida, porque conserva la ruta existente mientras
+            introduce una alternativa mejor.
+        </P>
+
+        <KotlinBlock
+            code={`
+                // [!code --]
+                fun parseConfig(raw: String, strict: Boolean = false): Config
+
+                // Cambio destructivo:
+                // [!code ++]
+                fun parseConfig(raw: String, mode: ParseMode): Config
+            `}
+        >
+            <span slot="title">Editar una firma estable puede romper sin necesidad</span>
+            <span slot="footer">
+                El segundo cambio puede parecer una mejora de diseño, pero obliga a adaptar llamadas
+                existentes. Si la API ya es pública, conviene evaluar rutas menos disruptivas.
+            </span>
+        </KotlinBlock>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Opciones más seguras para evolucionar</span>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>Agregar una nueva operación</B>: por ejemplo, <KotlinInline
+                        code="parseConfigWithMode(...)"
+                    /> cuando la nueva variante expresa un caso de uso distinto.
+                </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    <B>Agregar una sobrecarga</B>: mantener la forma anterior y sumar una variante
+                    más expresiva.
+                </ListItem>
+                <ListItem icon={icons.FlowArrow}>
+                    <B>Introducir una capacidad opt-in</B>: parámetros, opciones o tipos nuevos que
+                    amplíen la API sin alterar silenciosamente los casos ya existentes.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <B>Deprecar con guía</B>: si la nueva ruta reemplaza a otra, conviene marcar la
+                    anterior como deprecada y acompañarla con una migración clara.
+                </ListItem>
+            </List>
+        </Tip>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Agregar también exige criterio</span>
+
+            <P>
+                <B class="text-primary">Agregar no es automáticamente bueno.</B> Una API puede
+                volverse inconsistente, redundante o difícil de aprender si acumula variantes sin un
+                diseño claro. Evolucionar de forma compatible no consiste en <Enquote>no tocar
+                    nada</Enquote>, sino en ampliar la capacidad de la biblioteca sin volver confuso
+                su contrato.
+            </P>
+        </Warning>
+    </NotesSection>
+
+    <NotesSection id="h2-deprecation">
+        <Heading
+            headingLevel="h2" Icon={icons.Recycle}
+            slot="heading"
+        >
+            Deprecación, reemplazo y retiro
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFour}>
+            <span slot="title">Deprecación como transición guiada</span>
+
+            <P>
+                Deprecar no es abandonar ni borrar. Es declarar que una parte de la API sigue
+                existiendo para no romper dependencias, pero ya no es el camino recomendado para
+                trabajo nuevo. Una deprecación bien diseñada comunica <B>qué</B> se desaconseja,
+                <B>por qué</B>, <B>con qué se reemplaza</B> y <B>cuánto tiempo</B> existe la
+                transición antes de retiro.
+            </P>
+        </Definition>
+
+        <P>
+            La <B>deprecación</B> permite evolucionar una API sin forzar una ruptura inmediata. Su
+            función es dar tiempo para migrar de forma planificada, comunicando con claridad qué
+            deja de recomendarse, por qué existe una alternativa mejor y cuánto durará la transición
+            antes del retiro.
+        </P>
+
+        <P>
+            El <B>retiro</B> viene después, no en lugar de la deprecación: es el paso final de una
+            transición manejada. Mientras que deprecar avisa y guía, retirar remover la API después
+            de una ventana suficiente de adaptación. Una buena política de retiro incluye aviso
+            visible en documentación y tooling, reemplazo claro, tiempo razonable entre aviso y
+            retiro, y guía de migración cuando el cambio no es trivial.
+        </P>
+
+        <Danger headingLevel="h3">
+            <span slot="title">
+                Retirar sin transición no solo rompe código: rompe la capacidad de planificar
+            </span>
+
+            <P>
+                Si una función desaparece de una versión a la siguiente sin aviso claro, la
+                biblioteca obliga a reaccionar en vez de permitir planificar. Una API confiable no
+                oculta su evolución: la comunica y ofrece una ventana razonable de adaptación. La
+                ruta ordenada es advertir, guiar, esperar y finalmente retirar; no pasar
+                directamente de disponible a removido.
+            </P>
+        </Danger>
+
+        <NotesSection id="h3-deprecation-example">
+            <Heading
+                headingLevel="h3" Icon={icons.Code}
+                slot="heading"
+            >
+                Ejemplo: sustituir una función por otra más precisa
+            </Heading>
+
+            <P>
+                Supón que una biblioteca publicó <KotlinInline code="parse(raw: String): Config" />
+                y más adelante necesita distinguir distintas políticas de validación. En vez de
+                sustituirla de inmediato por <KotlinInline
+                    code="parse(raw: String, mode: ParseMode): Config"
+                />, una evolución más cuidadosa sería:
+            </P>
+
+            <List>
+                <ListItem icon={icons.NumberCircleOne}>
+                    Introducir la nueva operación o una nueva sobrecarga.
+                </ListItem>
+                <ListItem icon={icons.NumberCircleTwo}>
+                    Mantener la forma anterior y marcarla como <I>deprecada</I>.
+                </ListItem>
+                <ListItem icon={icons.NumberCircleThree}>
+                    Explicar con qué se reemplaza, cuándo conviene usarlo y qué cambia en la
+                    práctica.
+                </ListItem>
+                <ListItem icon={icons.NumberCircleFour}>
+                    Retirar la versión anterior solo después de una transición visible, documentada
+                    y razonable.
+                </ListItem>
+            </List>
+
+            <KotlinBlock
+                code={`
+                    @Deprecated(
+                        message = "Use parse(raw, mode) instead. " +
+                            "The strict validation is now explicit via ParseMode.STRICT.",
+                        replaceWith = ReplaceWith("parse(raw, ParseMode.LENIENT)")
+                    )
+                    fun parse(raw: String): Config = parse(raw, ParseMode.LENIENT)
+
+                    fun parse(raw: String, mode: ParseMode): Config { /* ... */ }
+                `}
+            >
+                <span slot="title">
+                    Cómo comunicar una transición: <KotlinInline code="@Deprecated" /> con
+                    alternativa clara
+                </span>
+                <span slot="footer">
+                    La operación antigua se mantiene, pero directamente apunta hacia la nueva. El
+                    compilador avisa a quien usa la forma anterior.
+                </span>
+            </KotlinBlock>
+
+            <P>
+                Durante la transición, la forma antigua incluso puede delegar en la nueva para
+                centralizar la lógica sin romper a quienes todavía dependen de la API antigua. Así
+                se evita mantener dos implementaciones distintas mientras se guía a las personas
+                usuarias hacia el camino recomendado.
+            </P>
+        </NotesSection>
+    </NotesSection>
+
+    <NotesSection id="h2-versioning">
+        <Heading
+            headingLevel="h2" Icon={icons.GitBranch}
+            slot="heading"
+        >
+            Versionado como comunicación de cambio
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFive}>
+            <span slot="title">La versión comunica riesgo y cautela</span>
+
+            <P>
+                El número de versión no es solo un rótulo. Es una forma de comunicar qué tipo de
+                cambio ocurrió y <B>cuánta cautela</B> conviene tener al actualizar.
+            </P>
+        </Definition>
+
+        <P>
+            En muchos ecosistemas, el esquema de Versionado Semántico (<Mono
+            >major.minor.patch</Mono>) funciona como convención:
+        </P>
+
+        <List>
+            <ListItem icon={icons.WarningCircle}>
+                <B>Major</B> para cambios incompatibles <Dash kind="em" /> por ejemplo, una
+                funcionalidad pasa de deprecada a eliminada, o una función cambia su contrato de
+                forma que rompe expectativas previas.
+            </ListItem>
+            <ListItem icon={icons.PlusCircle}>
+                <B>Minor</B> para cambios compatibles que agregan capacidad sin romper lo existente
+                <Dash kind="em" /> por ejemplo, agregar una función nueva o una sobrecarga.
+            </ListItem>
+            <ListItem icon={icons.Wrench}>
+                <B>Patch</B> para correcciones acotadas sin cambios de API <Dash kind="em" /> por
+                ejemplo, corregir un error en la implementación sin alterar la firma ni el contrato
+                observable.
+            </ListItem>
+        </List>
+
+        <P>
+            La versión comunica el <B>tamaño esperado del cambio</B>; el changelog y la guía de
+            migración explican <B>cómo actuar</B> frente a él. Una versión bien usada no oculta
+            rupturas ni erosiona confianza, incluso cuando introduce cambios mayores.
+        </P>
+
+        <More headingLevel="h3">
+            <span slot="title">La excepción de las versiones tempranas (0.x)</span>
+
+            <P>
+                En etapas de exploración, muchas bibliotecas usan <Mono>0.major.minor</Mono> para
+                comunicar que la API todavía puede cambiar con mayor libertad. Aun así, esa
+                inestabilidad debe comunicarse con claridad: incluso en 0.x, quien depende de la
+                biblioteca merece saber cuándo esperar cambios incompatibles y cuándo contar con
+                estabilidad relativa.
+            </P>
+        </More>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Criterio práctico para quien actualiza</span>
+
+            <P>
+                No pienses el versionado solo desde quien publica la biblioteca. Piénsalo desde la
+                persona que actualiza una dependencia en un proyecto real. Lo que esa persona
+                necesita saber no es solo <Enquote>qué cambió</Enquote>, sino <B>qué riesgo asumo
+                    actualizando, qué acciones debo tomar y cuánto tiempo me exige la migración</B>.
+                Una versión mayor, un changelog claro y una guía de migración juntos responden esa
+                pregunta. Separados, no bastan.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-regression-tests">
+        <Heading
+            headingLevel="h2" Icon={icons.TestTube}
+            slot="heading"
+        >
+            Tests de regresión como red de seguridad
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberSix}>
+            <span slot="title">El contrato también se fija con tests</span>
+
+            <P>
+                Si la API pública es un contrato, entonces los tests de regresión son una forma de
+                volver ese contrato ejecutable y verificable cada vez que la biblioteca cambia.
+            </P>
+        </Definition>
+
+        <P>
+            La evolución compatible no se sostiene solo con criterio de diseño ni con buena
+            comunicación. También necesita verificación. El versionado puede anticipar riesgo y la
+            deprecación puede guiar la transición, pero los tests de regresión son los que permiten
+            comprobar que una mejora no alteró silenciosamente el contrato observable de la API.
+        </P>
+
+        <P>
+            Una lección habitual en evolución de APIs es que no basta con confiar en memoria o
+            intuición. Los <B>tests de regresión</B> permiten verificar que una nueva versión sigue
+            respetando expectativas ya públicas: resultados prometidos, errores documentados,
+            secuencias de uso válidas y casos límite que otras personas ya integraron en su trabajo.
+        </P>
+
+        <P>
+            En este contexto, los tests más valiosos no son los que describen detalles internos de
+            la implementación, sino los que fijan comportamientos públicos que otras personas pueden
+            observar y esperar de forma estable. Un buen test de regresión no protege cualquier
+            detalle: protege <B>aquello que la API hizo razonable depender</B>.
+        </P>
+
+        <KotlinBlock
+            code={`
+                test("parseConfig should use default timeout of 5 seconds") {
+                    val config = parseConfig("timeout=5")
+
+                    config.timeout shouldBe 5.seconds
+                }
+            `}
+        >
+            <span slot="title">
+                Un test puede proteger una expectativa pública pequeña pero valiosa
+            </span>
+
+            <span slot="footer">
+                El objetivo no es probar toda la implementación, sino fijar una expectativa que no
+                debería romperse silenciosamente al introducir nuevas opciones o políticas.
+            </span>
+        </KotlinBlock>
+
+        <P>
+            En general, conviene escribir estos tests desde la perspectiva de quien consume la API,
+            no desde la estructura interna de su implementación. Si los cambios internos no alteran
+            lo que esta persona observa, los tests deberían seguir pasando; si pasan pero el API se
+            vuelve más confusa o difícil de migrar, entonces los tests no fueron suficientemente
+            exhaustivos.
+        </P>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Qué conviene fijar con tests de regresión</span>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    Casos de uso centrales ya publicados.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    Errores o validaciones que quien consume probablemente maneja de forma
+                    explícita.
+                </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    Comportamientos que deben mantenerse al agregar nuevas rutas compatibles.
+                </ListItem>
+            </List>
+        </Tip>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Evolucionar una API sin romper compatibilidad implica reconocer que publicar crea
+                compromisos. Desde ese momento, cada cambio debe evaluarse también por su impacto en
+                quienes ya dependen de la interfaz pública.
+            </P>
+
+            <P>
+                Cambiar bien no significa dejar todo inmóvil, sino ampliar con criterio, guiar las
+                transiciones cuando haga falta y verificar con tests que el contrato observable
+                sigue cumpliéndose. Una buena API puede evolucionar sin volverse una fuente de
+                ruptura innecesaria.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.CheckCircle}>
+                Publicar una API crea compromisos: después de ese punto, cada cambio tiene costo
+                externo.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                La compatibilidad protege el contrato observable, no solo firmas y nombres.
+            </ListItem>
+            <ListItem icon={icons.PlusCircle}>
+                Cuando sea posible, conviene ampliar por adición antes que reemplazar de forma
+                destructiva.
+            </ListItem>
+            <ListItem icon={icons.Recycle}>
+                Deprecar bien implica advertir, justificar, reemplazar y dar tiempo antes de
+                retirar.
+            </ListItem>
+            <ListItem icon={icons.GitBranch}>
+                La versión comunica el riesgo esperado de actualizar; el changelog y la migración
+                explican cómo actuar.
+            </ListItem>
+            <ListItem icon={icons.TestTube}>
+                Los tests de regresión fijan expectativas públicas y ayudan a evitar rupturas
+                silenciosas.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Hemos visto que evolucionar una API bien requiere decisiones: qué cambios son
+                seguros, cómo marcar lo que se depreca, cómo comunicar riesgo mediante versiones, y
+                cómo fijar expectativas con tests. Pero estas decisiones de ingeniería todavía son
+                insuficientes. El versionado comunica un número; los tests ejecutables verifican
+                expectativas; pero para que otras personas comprendan qué cambió, por qué, qué
+                alternativas existen y cómo migrar, necesitamos <B>comunicación clara</B>.
+            </P>
+
+            <P>
+                Por eso la documentación no es un adorno que se agrega después. Cuando la API
+                evolucionó bien, la documentación se convierte en parte del contrato: no es un
+                manual secundario, sino el lugar donde se articula el cambio, se justifican las
+                rupturas, se guían las migraciones y se sostiene la confianza en el criterio de
+                quien mantiene la biblioteca. Eso es lo que estudiaremos a continuación.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <ReferencesFromCatalog>
+        <Fragment slot="description-ref:reddy-versioning-2024">
+            Recomendado si quieres profundizar en la parte más operativa de esta lección: distingue
+            con más detalle los tipos de compatibilidad, desarrolla estrategias de versionado,
+            deprecación y retiro, y muestra por qué mantener una API exige revisar cambios con el
+            mismo cuidado con que se diseña.
+        </Fragment>
+
+        <Fragment slot="description-ref:reddy-testing-2024">
+            Útil para profundizar en tests de regresión y en otras estrategias de testing para APIs,
+            especialmente si quieres pasar de la idea general de <Enquote>verificar el
+                contrato</Enquote> a prácticas más concretas.
+        </Fragment>
+
+        <Fragment slot="description-ref:lauret-evolving-an-api-design-2019">
+            Recomendado si quieres profundizar en ejemplos concretos de evolución de APIs: muestra
+            con bastante detalle qué tipos de cambios introducen breaking changes, cómo evaluar
+            distintas estrategias de versionado y por qué diseñar con extensibilidad en mente reduce
+            el costo de cambiar sin romper.
+        </Fragment>
+
+        <Fragment slot="description-ref:lauret-growing-apis-2019">
+            Recomendado si quieres ampliar la lección hacia el trabajo que rodea la evolución de una
+            API: conecta compatibilidad y cambio con ciclo de vida, guías de diseño, revisiones y
+            comunicación, mostrando que mantener una biblioteca no es solo una cuestión de código,
+            sino también de coordinación y criterio compartido.
+        </Fragment>
+    </ReferencesFromCatalog>
+</NotesLayout>

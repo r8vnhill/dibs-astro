@@ -18,7 +18,7 @@ describe.concurrent("LessonReferencesFromCatalog.astro render", () => {
 
     test("renders references from the shared catalog with explicit lessonId", async () => {
         const html = await renderReferences({
-            lessonId: "/notes/software-libraries/scripting/pipelines/nushell/",
+            lessonId: "/notes/scripting/pipelines/nushell/",
         });
 
         expect(html).toContain("Pipelines");
@@ -30,7 +30,7 @@ describe.concurrent("LessonReferencesFromCatalog.astro render", () => {
             {},
             {
                 request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/scripting/pipelines/nushell/",
+                    "https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/",
                 ),
             },
         );
@@ -47,7 +47,7 @@ describe.concurrent("LessonReferencesFromCatalog.astro render", () => {
         expect(JSON.stringify(generatedCatalog)).toContain("pending-revision");
 
         const html = await renderReferences({
-            lessonId: "/notes/software-libraries/scripting/node/",
+            lessonId: "/notes/scripting/node/",
         });
 
         expect(html).not.toContain("About npm | npm Docs");

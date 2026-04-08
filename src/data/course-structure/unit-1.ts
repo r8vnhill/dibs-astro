@@ -8,6 +8,11 @@ const apiDesignLessons = new LessonTreeBuilder()
         "Diseñar la API desde el dominio",
         `${coursePaths.apiDesignFundamentals}/`,
     )
+    .link(
+        "evolution",
+        "Evolucionar una API sin romper compatibilidad",
+        `${coursePaths.apiDesignEvolution}/`,
+    )
     .build();
 
 export const unit1Lessons: readonly Lesson[] = new LessonTreeBuilder()

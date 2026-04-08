@@ -252,7 +252,7 @@ describe.concurrent("ReferencesFromCatalog.astro render", () => {
         const html = await renderReferences(
             {
                 source: generatedCatalog,
-                lessonId: "/notes/software-libraries/scripting/pipelines/nushell/",
+                lessonId: "/notes/scripting/pipelines/nushell/",
             },
             {
                 slots: {

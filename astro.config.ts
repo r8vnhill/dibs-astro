@@ -1,5 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, sharpImageService } from "astro/config";
+import { readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
 import { generateIconsIntegration } from "./config/integrations/generate-icons";
 import "./config/shiki-warn-tracker";
@@ -7,6 +9,43 @@ import "./config/shiki-warn-tracker";
 import react from "@astrojs/react";
 
 const isVitestRun = process.env.VITEST === "true";
+const scriptingPagesDir = "./src/pages/notes/scripting";
+
+function walkAstroPages(dir: string): string[] {
+    return readdirSync(dir)
+        .flatMap((entry) => {
+            const entryPath = join(dir, entry);
+            const stats = statSync(entryPath);
+            if (stats.isDirectory()) {
+                if (entry.startsWith("__")) {
+                    return [];
+                }
+                return walkAstroPages(entryPath);
+            }
+            return entryPath.endsWith(".astro") ? [entryPath] : [];
+        });
+}
+
+function pageFileToRoute(filePath: string): string {
+    const filePathFromRoot = relative("src/pages", filePath).replaceAll("\\", "/");
+    const withoutExtension = filePathFromRoot.slice(0, -".astro".length);
+    const routePath = withoutExtension.endsWith("/index")
+        ? withoutExtension.slice(0, -"/index".length)
+        : withoutExtension;
+
+    return `/${routePath}/`;
+}
+
+function buildLegacyScriptingRedirects(): Record<string, string> {
+    return Object.fromEntries(
+        walkAstroPages(scriptingPagesDir)
+            .map((filePath) => pageFileToRoute(filePath))
+            .map((newRoute) => [
+                newRoute.replace("/notes/scripting/", "/notes/software-libraries/scripting/"),
+                newRoute,
+            ]),
+    );
+}
 
 /**
  * DIBS Astro configuration (concise):
@@ -31,6 +70,8 @@ export default defineConfig({
 
     // Enables full static prerendering of the site
     output: "static",
+
+    redirects: buildLegacyScriptingRedirects(),
 
     // Disable Astro's bundled Shiki instance; custom components handle highlighting
     markdown: {

@@ -272,14 +272,14 @@ describe("bibliography catalog", () => {
 
         const grouped = getReferencesForLesson(
             catalog,
-            "/notes/software-libraries/scripting/pipelines/nushell/",
+            "/notes/scripting/pipelines/nushell/",
         );
 
         expect(grouped.recommended).not.toHaveLength(0);
         expect(grouped.recommended.map((entry) => entry.reference.id)).toContain(
             "ref:nushell-pipelines",
         );
-        expect(catalog.lessonsById.has("/notes/software-libraries/scripting/pipelines/nushell/"))
+        expect(catalog.lessonsById.has("/notes/scripting/pipelines/nushell/"))
             .toBe(true);
         expect(catalog.referencesById.has("ref:nushell-pipelines")).toBe(true);
     });

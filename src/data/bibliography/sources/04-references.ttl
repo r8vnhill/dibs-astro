@@ -544,12 +544,48 @@ ref:reddy-qualities-2024
   schema:author person:martin-reddy ;
   schema:isPartOf work:api-design-for-cpp .
 
+ref:reddy-versioning-2024
+  a schema:Book ;
+  schema:name "Versioning" ;
+  schema:datePublished "2024" ;
+  schema:pageStart 383 ;
+  schema:pageEnd 414 ;
+  schema:author person:martin-reddy ;
+  schema:isPartOf work:api-design-for-cpp .
+
+ref:reddy-testing-2024
+  a schema:Book ;
+  schema:name "Testing" ;
+  schema:datePublished "2024" ;
+  schema:pageStart 443 ;
+  schema:pageEnd 486 ;
+  schema:author person:martin-reddy ;
+  schema:isPartOf work:api-design-for-cpp .
+
 ref:lauret-designing-api-for-users-2019
   a schema:Book ;
   schema:name "Designing an API for its users" ;
   schema:datePublished "2019" ;
   schema:pageStart 17 ;
   schema:pageEnd 42 ;
+  schema:author person:arnaud-lauret ;
+  schema:isPartOf work:design-web-apis .
+
+ref:lauret-evolving-an-api-design-2019
+  a schema:Book ;
+  schema:name "Evolving an API design" ;
+  schema:datePublished "2019" ;
+  schema:pageStart 213 ;
+  schema:pageEnd 245 ;
+  schema:author person:arnaud-lauret ;
+  schema:isPartOf work:design-web-apis .
+
+ref:lauret-growing-apis-2019
+  a schema:Book ;
+  schema:name "Growing APIs" ;
+  schema:datePublished "2019" ;
+  schema:pageStart 334 ;
+  schema:pageEnd 353 ;
   schema:author person:arnaud-lauret ;
   schema:isPartOf work:design-web-apis .
 

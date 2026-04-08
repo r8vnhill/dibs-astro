@@ -43,7 +43,7 @@ import {
  * - start with `/`
  * - end with `/`
  */
-const SAMPLE_ROUTE = "/notes/software-libraries/scripting/first-script/";
+const SAMPLE_ROUTE = "/notes/scripting/first-script/";
 
 /**
  * Creates a small in-memory dataset fixture.
@@ -67,7 +67,7 @@ const makeDataset = (): LessonMetadataDataset => ({
             changes: [],
         },
         [SAMPLE_ROUTE]: {
-            sourceFile: "src/pages/notes/software-libraries/scripting/first-script/index.astro",
+            sourceFile: "src/pages/notes/scripting/first-script/index.astro",
             authors: [{ name: "Proyecto DIBS" }],
             lastModified: "2026-02-11",
             changes: [
@@ -207,9 +207,9 @@ describe("dataset resolution", () => {
      * - full URL input
      */
     test.each([
-        "/notes/software-libraries/scripting/first-script",
-        "/notes//software-libraries///scripting/first-script/",
-        "https://dibs.ravenhill.cl/notes/software-libraries/scripting/first-script",
+        "/notes/scripting/first-script",
+        "/notes//scripting///first-script/",
+        "https://dibs.ravenhill.cl/notes/scripting/first-script",
     ])("resolves metadata for matching path variants: %s", (input) => {
         const resolved = resolveLessonMetadata(input, dataset);
         expect(resolved?.lastModified).toBe("2026-02-11");

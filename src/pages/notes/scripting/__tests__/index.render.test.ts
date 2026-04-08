@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { createAstroRenderer } from "../../../../../test-utils/astro-render";
+import { createAstroRenderer } from "../../../../test-utils/astro-render";
 import ScriptingPage from "../index.astro";
 import NodePage from "../node.astro";
 
@@ -11,13 +11,13 @@ describe.concurrent("Scripting lesson render", () => {
             {},
             {
                 request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/scripting/",
+                    "https://dibs.ravenhill.cl/notes/scripting/",
                 ),
             },
         );
 
         expect(html).toContain("Node.js");
-        expect(html).toContain("/notes/software-libraries/scripting/node/");
+        expect(html).toContain("/notes/scripting/node/");
         expect(html).toContain("Python");
         expect(html).toContain("Nushell");
     });
@@ -29,7 +29,7 @@ describe.concurrent("Scripting lesson render", () => {
             {},
             {
                 request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/scripting/node/",
+                    "https://dibs.ravenhill.cl/notes/scripting/node/",
                 ),
             },
         );

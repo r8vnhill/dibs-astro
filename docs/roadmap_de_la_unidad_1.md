@@ -202,7 +202,7 @@ Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-struct
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-structure.ts#100-100), lines 100 to 300
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting)
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting)
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/type-fundamentals/basics)
 
@@ -210,9 +210,9 @@ Searched for files matching `**/src/components/ui/references/*.astro`, 14 matche
 
 Searched for text `ReferencesFromCatalog`, 20 results
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#1-1), lines 1 to 150
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting/first-script/index.astro#1-1), lines 1 to 150
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#300-300), lines 300 to 400
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting/first-script/index.astro#300-300), lines 300 to 400
 
 Searched for files matching `**/src/data/bibliography-catalog.json src/data/bibliography-catalog.*`, no matches
 
@@ -230,7 +230,7 @@ Read [](file:///e%3A/teaching/DIBS/projects/astro-website/scripts/build-bibliogr
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography)
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/structured-output/py.astro#1-1), lines 1 to 150
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting/structured-output/py.astro#1-1), lines 1 to 150
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/catalog.graph.ttl#1-1), lines 1 to 100
 
@@ -240,11 +240,11 @@ Searched for text `usage:scripting-structured-output`, no results
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/catalog.graph.ttl#100-100), lines 100 to 600
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/software-libraries/scripting)
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/scripting)
 
 Searched for text `dibs:usageOfReference`, no results
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/software-libraries/scripting/pipeline-aware.bibliography.jsonld)
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/scripting/pipeline-aware.bibliography.jsonld)
 
 Searched for text `usage:`, 30 results
 
@@ -252,7 +252,7 @@ Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/bibliography/
 
 Semantic workspace search is not currently available
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro#200-200), lines 200 to 700
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting/first-script/index.astro#200-200), lines 200 to 700
 
 Searched for files matching `**/src/lib/bibliography*`, no matches
 
@@ -260,7 +260,7 @@ Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/lib)
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/lib/bibliography)
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/software-libraries/scripting/first-script/index.astro)
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/pages/notes/scripting/first-script/index.astro)
 
 Estoy extrayendo los hallazgos del subagente para aterrizar la propuesta en el formato real de tus lecciones y en su sistema de referencias. Enseguida te comparto un plan de tópicos con fuentes por bloque.
 

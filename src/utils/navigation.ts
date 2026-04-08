@@ -15,6 +15,7 @@
  * need course-aware navigation should use {@link resolveAutoNav}.
  */
 
+import { LessonHref } from "$domain/value-objects/LessonHref";
 import { type FlattenedLesson, flattenLessons, type Lesson } from "~/data/course-structure";
 
 /**
@@ -55,9 +56,7 @@ type NavigationLink = NavigationLinkInput & Lesson;
  * normalizeHref("/") // "/"
  */
 function normalizeHref(href: string): string {
-    let result = href.startsWith("/") ? href : `/${href}`;
-    if (result.length > 1 && !result.endsWith("/")) result += "/";
-    return result;
+    return LessonHref.create(href).value;
 }
 
 /**

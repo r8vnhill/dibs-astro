@@ -27,12 +27,12 @@ import {
 
 const firstPrevious: NavigationLinkInput = {
     title: "PowerShell",
-    href: "/notes/software-libraries/scripting/structured-output",
+    href: "/notes/scripting/structured-output",
 };
 
 const secondPrevious: NavigationLinkInput = {
     title: "Nushell",
-    href: "notes/software-libraries/scripting/structured-output/nushell",
+    href: "notes/scripting/structured-output/nushell",
 };
 
 describe("navigation utils", () => {
@@ -45,7 +45,7 @@ describe("navigation utils", () => {
             expect(normalizePreviousNavigation(firstPrevious)).toEqual([
                 {
                     title: "PowerShell",
-                    href: "/notes/software-libraries/scripting/structured-output/",
+                    href: "/notes/scripting/structured-output/",
                 },
             ]);
         });
@@ -54,11 +54,11 @@ describe("navigation utils", () => {
             expect(normalizePreviousNavigation([firstPrevious, secondPrevious])).toEqual([
                 {
                     title: "PowerShell",
-                    href: "/notes/software-libraries/scripting/structured-output/",
+                    href: "/notes/scripting/structured-output/",
                 },
                 {
                     title: "Nushell",
-                    href: "/notes/software-libraries/scripting/structured-output/nushell/",
+                    href: "/notes/scripting/structured-output/nushell/",
                 },
             ]);
         });
@@ -76,17 +76,17 @@ describe("navigation utils", () => {
         test("keeps next behavior unchanged", () => {
             expect(
                 normalizeNavigation(
-                    { title: "Pipelines", href: "notes/software-libraries/scripting/pipelines" },
+                    { title: "Pipelines", href: "notes/scripting/pipelines" },
                     firstPrevious,
                 ),
             ).toEqual({
                 normalizedNext: {
                     title: "Pipelines",
-                    href: "/notes/software-libraries/scripting/pipelines/",
+                    href: "/notes/scripting/pipelines/",
                 },
                 normalizedPrevious: {
                     title: "PowerShell",
-                    href: "/notes/software-libraries/scripting/structured-output/",
+                    href: "/notes/scripting/structured-output/",
                 },
             });
         });

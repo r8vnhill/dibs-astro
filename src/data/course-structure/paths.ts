@@ -1,7 +1,7 @@
 const notes = "/notes";
 const softwareLibraries = `${notes}/software-libraries`;
 const apiDesign = `${softwareLibraries}/api-design`;
-const scripting = `${softwareLibraries}/scripting`;
+const scripting = `${notes}/scripting`;
 const pipelines = `${scripting}/pipelines`;
 const buildSystems = `${softwareLibraries}/build-systems`;
 
