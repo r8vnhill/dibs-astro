@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T00:15:12.674Z",
+  "generatedAt": "2026-04-08T12:28:03.755Z",
   "totalLessons": 46,
   "changesLimit": 5,
   "entries": {
@@ -1243,8 +1243,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-04-02",
+      "lastModified": "2026-04-08",
       "changes": [
+        {
+          "hash": "217ece5e92a2dba7477000589786c3cb7a369a9c",
+          "date": "2026-04-08",
+          "author": "r8vnhill",
+          "subject": "📝🧪 chore(notes): refine artifacts taxonomy and harden webpage references"
+        },
         {
           "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
           "date": "2026-04-02",

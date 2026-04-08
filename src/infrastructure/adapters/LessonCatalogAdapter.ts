@@ -8,6 +8,18 @@ import {
 } from "~/data/course-structure";
 
 /**
+ * Nodo en un trail de breadcrumbs.
+ *
+ * Representa un paso en el camino desde la raíz hasta la lección actual.
+ * - Grupos sin `href` aparecen como texto (href: undefined)
+ * - Lecciones con `href` aparecen como enlaces navegables
+ */
+export type TrailNode = {
+    title: string;
+    href?: string;
+};
+
+/**
  * Adaptador de infraestructura para el catálogo de lecciones.
  *
  * Implementa el puerto ILessonCatalog usando la estructura actual
@@ -82,6 +94,78 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         if (next) result.next = next;
 
         return result;
+    }
+
+    /**
+     * Extrae el trail de ancestros desde la raíz hasta la lección actual.
+     *
+     * ## Guarantees:
+     *
+     * - Retorna array ordenado: [ancestor1, ancestor2, ..., current]
+     * - Grupos sin `href` aparecen con href: undefined
+     * - Por defecto EXCLUYE "Apuntes" root (depth=0) de los ancestros
+     * - Si la ruta no existe, retorna array vacío []
+     * - `includeApuntesRoot: true` prepende raíz sintética
+     *
+     * ## Para breadcrumbs:
+     *
+     * El presentador puede prepender "Apuntes" usando `includeApuntesRoot: true`.
+     *
+     * @param href - Ruta a buscar (normalizará automáticamente)
+     * @param options - { includeApuntesRoot?: boolean } - si incluir raíz sintética
+     * @returns Trail de nodos desde ancestros hasta lección actual (excluyendo root por defecto)
+     */
+    async findTrailByHref(
+        href: string,
+        options: { includeApuntesRoot?: boolean } = { includeApuntesRoot: false },
+    ): Promise<readonly TrailNode[]> {
+        const flattened = flattenLessons(this.structure);
+        const normalizedSearch = this.normalizePath(href);
+
+        // Buscar la lección en la estructura aplanada
+        const current = flattened.find(
+            (lesson) => this.normalizePath(lesson.href || "") === normalizedSearch,
+        );
+
+        if (!current) {
+            return [];
+        }
+
+        const trail: TrailNode[] = [];
+
+        // Incluir raíz sintética si se solicita
+        if (options.includeApuntesRoot) {
+            trail.push({ title: "Apuntes", href: "/notes/" });
+        }
+
+        // Agregar ancestros EXCLUYENDO la raíz (depth=0)
+        // Los parentIds incluyen el root, así que saltamos el índice 0
+        const ancestorIds = current.parentIds.slice(1);
+
+        for (let i = 0; i < ancestorIds.length; i++) {
+            const parentId = ancestorIds[i]!;
+            const expectedDepth = i + 1; // +1 porque saltamos el root (depth=0)
+
+            // Buscar el nodo ancestro por ID y depth
+            const ancestor = flattened.find(
+                (lesson) => lesson.id === parentId && lesson.depth === expectedDepth,
+            );
+
+            if (ancestor) {
+                trail.push({
+                    title: ancestor.title,
+                    href: ancestor.href,
+                });
+            }
+        }
+
+        // Agregar la lección actual
+        trail.push({
+            title: current.title,
+            href: current.href,
+        });
+
+        return Object.freeze(trail);
     }
 
     /**

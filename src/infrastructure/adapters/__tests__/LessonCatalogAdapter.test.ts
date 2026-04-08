@@ -1,5 +1,6 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
+import type { Lesson as DomainLesson } from "~/data/course-structure";
 import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 /**
@@ -224,6 +225,113 @@ describe("LessonCatalogAdapter", () => {
                     return !normalized.slice(1).includes("//");
                 }),
             );
+        });
+    });
+
+    describe("findTrailByHref (Red phase)", () => {
+        /**
+         * Fixture mínima para testing aislado de la lógica de trail.
+         *
+         * Estructura:
+         * - Apuntes (root, no href)
+         *   - Section A (grupo, sin href)
+         *     - Lesson A1 (/notes/section-a/lesson-a1/)
+         *   - Section B (grupo, con href /notes/section-b/)
+         *     - Lesson B1 (/notes/section-b/lesson-b1/)
+         */
+        function makeTestTree(): readonly DomainLesson[] {
+            return [
+                {
+                    id: "apuntes-root",
+                    title: "Apuntes",
+                    kind: "group",
+                    children: [
+                        {
+                            id: "section-a",
+                            title: "Section A",
+                            kind: "group",
+                            children: [
+                                {
+                                    id: "lesson-a1",
+                                    title: "Lesson A1",
+                                    kind: "link",
+                                    href: "/notes/section-a/lesson-a1/",
+                                },
+                            ],
+                        },
+                        {
+                            id: "section-b",
+                            title: "Section B",
+                            kind: "group",
+                            href: "/notes/section-b/",
+                            children: [
+                                {
+                                    id: "lesson-b1",
+                                    title: "Lesson B1",
+                                    kind: "link",
+                                    href: "/notes/section-b/lesson-b1/",
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+        }
+
+        it("debe extraer trail de lección intermedia con ancestros", async () => {
+            const testAdapter = new LessonCatalogAdapter(makeTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/section-a/lesson-a1/");
+
+            expect(trail).toHaveLength(2);
+            expect(trail[0]!.title).toBe("Section A");
+            expect(trail[0]!.href).toBeUndefined(); // grupo sin href
+            expect(trail[1]!.title).toBe("Lesson A1");
+            expect(trail[1]!.href).toBe("/notes/section-a/lesson-a1/");
+        });
+
+        it("debe retornar sólo current para lección sin ancestros", async () => {
+            // Crear fixture con lección a nivel raíz
+            const treeWithTopLevel: readonly DomainLesson[] = [
+                {
+                    id: "apuntes-root",
+                    title: "Apuntes",
+                    kind: "group",
+                    href: "/notes/",
+                    children: [
+                        {
+                            id: "top-level",
+                            title: "Top Level Lesson",
+                            kind: "link",
+                            href: "/notes/top-level/",
+                        },
+                    ],
+                },
+            ];
+
+            const testAdapter = new LessonCatalogAdapter(treeWithTopLevel);
+            const trail = await testAdapter.findTrailByHref("/notes/top-level/");
+
+            expect(trail).toHaveLength(1);
+            expect(trail[0]!.title).toBe("Top Level Lesson");
+            expect(trail[0]!.href).toBe("/notes/top-level/");
+        });
+
+        it("debe retornar array vacío para ruta no encontrada", async () => {
+            const testAdapter = new LessonCatalogAdapter(makeTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/does-not-exist/");
+
+            expect(trail).toHaveLength(0);
+        });
+
+        it("debe incluir grupos sin href como nodos de texto en trail", async () => {
+            const testAdapter = new LessonCatalogAdapter(makeTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/section-b/lesson-b1/");
+
+            expect(trail).toHaveLength(2);
+            expect(trail[0]!.title).toBe("Section B");
+            expect(trail[0]!.href).toBe("/notes/section-b/");
+            expect(trail[1]!.title).toBe("Lesson B1");
+            expect(trail[1]!.href).toBe("/notes/section-b/lesson-b1/");
         });
     });
 });
