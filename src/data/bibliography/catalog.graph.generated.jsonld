@@ -207,7 +207,8 @@
       "@id": "person:martin-reddy",
       "@type": "Person",
       "givenName": "Martin",
-      "familyName": "Reddy"
+      "familyName": "Reddy",
+      "url": "https://www.martinreddy.com"
     },
     {
       "@id": "person:meiyappan-nagappan",
@@ -1254,6 +1255,38 @@
       }
     },
     {
+      "@id": "ref:lauret-evolving-an-api-design-2019",
+      "@type": "Book",
+      "name": "Evolving an API design",
+      "datePublished": "2019",
+      "pageStart": 213,
+      "pageEnd": 245,
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:design-web-apis"
+      }
+    },
+    {
+      "@id": "ref:lauret-growing-apis-2019",
+      "@type": "Book",
+      "name": "Growing APIs",
+      "datePublished": "2019",
+      "pageStart": 334,
+      "pageEnd": 353,
+      "author": [
+        {
+          "@id": "person:arnaud-lauret"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:design-web-apis"
+      }
+    },
+    {
       "@id": "ref:li-bash-language-usage-2021",
       "@type": "Thesis",
       "name": "An Empirical Study on Bash Language Usage in Github",
@@ -1938,6 +1971,38 @@
       }
     },
     {
+      "@id": "ref:reddy-testing-2024",
+      "@type": "Book",
+      "name": "Testing",
+      "datePublished": "2024",
+      "pageStart": 443,
+      "pageEnd": 486,
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:api-design-for-cpp"
+      }
+    },
+    {
+      "@id": "ref:reddy-versioning-2024",
+      "@type": "Book",
+      "name": "Versioning",
+      "datePublished": "2024",
+      "pageStart": 383,
+      "pageEnd": 414,
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:api-design-for-cpp"
+      }
+    },
+    {
       "@id": "ref:requests-http-for-humans",
       "@type": "WebPage",
       "name": "Requests: HTTP for Humans™ — Requests 2.33.1 documentation",
@@ -2111,6 +2176,12 @@
       "url": "/notes/scripting/structured-output/py/"
     },
     {
+      "@id": "/notes/software-libraries/api-design/evolution/",
+      "@type": "LearningResource",
+      "name": "Evolucionar una API sin romper compatibilidad",
+      "url": "/notes/software-libraries/api-design/evolution/"
+    },
+    {
       "@id": "/notes/software-libraries/api-design/fundamentals/",
       "@type": "LearningResource",
       "name": "Diseñar la API de una biblioteca desde el dominio",
@@ -2127,6 +2198,58 @@
       "@type": "LearningResource",
       "name": "La biblioteca como artefacto de software",
       "url": "/notes/software-libraries/what-is/"
+    },
+    {
+      "@id": "usage:api-design-evolution-lauret-evolving-an-api-design-2019-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/evolution/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lauret-evolving-an-api-design-2019"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-evolution-lauret-growing-apis-2019-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/evolution/"
+      },
+      "dibs:reference": {
+        "@id": "ref:lauret-growing-apis-2019"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-evolution-reddy-testing-2024-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/evolution/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-testing-2024"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-evolution-reddy-versioning-2024-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/evolution/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-versioning-2024"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
     },
     {
       "@id": "usage:api-design-fundamentals-lauret-designing-api-for-users-2019-additional",

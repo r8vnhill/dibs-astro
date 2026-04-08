@@ -163,4 +163,10 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
     :where(.callout) :where(.listitem__icon) {
         color: var(--callout-title-color);
     }
+
+    /* Slotted content does not receive the component scope attribute, so bold text must be
+       targeted globally from the scoped body wrapper. */
+    .callout__body :global(:where(strong, b)) {
+        color: var(--callout-title-color);
+    }
 </style>

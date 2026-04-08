@@ -68,6 +68,11 @@
   schema:name "Diseñar la API de una biblioteca desde el dominio" ;
   schema:url "/notes/software-libraries/api-design/fundamentals/" .
 
+<https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/>
+  a schema:LearningResource ;
+  schema:name "Evolucionar una API sin romper compatibilidad" ;
+  schema:url "/notes/software-libraries/api-design/evolution/" .
+
 <https://dibs.ravenhill.cl/notes/scripting/node/>
   a schema:LearningResource ;
   schema:name "Introducción a scripting con Node.js" ;
@@ -683,6 +688,30 @@ usage:api-design-fundamentals-martin-functions-2011-additional
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/fundamentals/> ;
   dibs:reference ref:martin-functions-2011 ;
+  dibs:tag "additional" .
+
+usage:api-design-evolution-reddy-versioning-2024-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/> ;
+  dibs:reference ref:reddy-versioning-2024 ;
+  dibs:tag "recommended" .
+
+usage:api-design-evolution-reddy-testing-2024-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/> ;
+  dibs:reference ref:reddy-testing-2024 ;
+  dibs:tag "additional" .
+
+usage:api-design-evolution-lauret-evolving-an-api-design-2019-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/> ;
+  dibs:reference ref:lauret-evolving-an-api-design-2019 ;
+  dibs:tag "additional" .
+
+usage:api-design-evolution-lauret-growing-apis-2019-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/> ;
+  dibs:reference ref:lauret-growing-apis-2019 ;
   dibs:tag "additional" .
 
 usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending

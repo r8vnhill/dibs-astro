@@ -178,7 +178,8 @@ person:joshua-bloch
 person:martin-reddy
   a schema:Person ;
   schema:givenName "Martin" ;
-  schema:familyName "Reddy" .
+  schema:familyName "Reddy" ;
+  schema:url "https://www.martinreddy.com" .
 
 person:arnaud-lauret
   a schema:Person ;

@@ -24,6 +24,21 @@ describe("course-structure validation", () => {
         );
     });
 
+    it("keeps api-design lessons in fundamentals then evolution order", () => {
+        const flattened = flattenLessons(courseStructure);
+        const apiDesignLessonIds = flattened
+            .filter((lesson) =>
+                lesson.href?.startsWith("/notes/software-libraries/api-design/")
+                && lesson.kind === "link"
+            )
+            .map((lesson) => lesson.id);
+
+        expect(apiDesignLessonIds).toEqual([
+            "fundamentals",
+            "evolution",
+        ]);
+    });
+
     it("rejects duplicate IDs", () => {
         const invalid: readonly Lesson[] = [
             link({ id: "dup", title: "First", href: "/first/" }),
