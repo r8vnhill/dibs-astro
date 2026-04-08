@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createAstroRenderer } from "../../../../test-utils/astro-render";
 import Definition from "../Definition.astro";
@@ -26,8 +28,9 @@ describe("Definition.astro render", () => {
 
         expect(html).toContain("<strong>énfasis</strong>");
 
+        const testDir = dirname(fileURLToPath(import.meta.url));
         const source = readFileSync(
-            "e:\\teaching\\DIBS\\projects\\astro-website\\src\\components\\ui\\callouts\\CalloutShell.astro",
+            join(testDir, "../CalloutShell.astro"),
             "utf8",
         );
 
