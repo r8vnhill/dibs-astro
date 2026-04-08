@@ -193,8 +193,12 @@ export function resolveInlineField(
         return { kind: "slot", html: slotContent.html };
     }
 
-    if (fallbackText) {
-        return { kind: "text", text: fallbackText };
+    const normalizedFallbackText = fallbackText === undefined
+        ? undefined
+        : normalizeInlineWhitespace(decodeHtmlWhitespaceEntities(fallbackText));
+
+    if (normalizedFallbackText) {
+        return { kind: "text", text: normalizedFallbackText };
     }
 
     return { kind: "missing" };
@@ -217,15 +221,19 @@ export function resolveLinkedInlineField(
         return { kind: "slot", html: slotContent.html };
     }
 
-    if (!fallbackText) {
+    const normalizedFallbackText = fallbackText === undefined
+        ? undefined
+        : normalizeInlineWhitespace(decodeHtmlWhitespaceEntities(fallbackText));
+
+    if (!normalizedFallbackText) {
         return { kind: "missing" };
     }
 
     if (fallbackUrl) {
-        return { kind: "link", text: fallbackText, href: fallbackUrl };
+        return { kind: "link", text: normalizedFallbackText, href: fallbackUrl };
     }
 
-    return { kind: "text", text: fallbackText };
+    return { kind: "text", text: normalizedFallbackText };
 }
 
 /**

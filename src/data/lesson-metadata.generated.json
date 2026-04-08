@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T17:25:09.856Z",
+  "generatedAt": "2026-04-08T00:15:12.674Z",
   "totalLessons": 46,
   "changesLimit": 5,
   "entries": {
@@ -92,7 +92,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "7927415af10d73509f943835aa4eebbaca3f251b",
+          "date": "2026-04-01",
+          "author": "r8vnhill",
+          "subject": "🌐🐟 feat(home): add editorial landing and fish scripting entry"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        }
+      ]
     },
     "/notes/scripting/basic-patterns/": {
       "sourceFile": "src/pages/notes/scripting/basic-patterns/index.astro",
@@ -101,7 +133,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
+        },
+        {
+          "hash": "29e32209b7932f7c2d4d265baf984ebd6b6184d0",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨📝 feat(notes/ui): add secure-delete exercise, clarify ShouldProcess, and UI tweaks"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
     },
     "/notes/scripting/basic-patterns/iteration/": {
       "sourceFile": "src/pages/notes/scripting/basic-patterns/iteration/index.astro",
@@ -110,7 +174,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
     },
     "/notes/scripting/basic-patterns/py/": {
       "sourceFile": "src/pages/notes/scripting/basic-patterns/py.astro",
@@ -119,7 +203,33 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        }
+      ]
     },
     "/notes/scripting/basic-patterns/regex-and-versions/": {
       "sourceFile": "src/pages/notes/scripting/basic-patterns/regex-and-versions/index.astro",
@@ -128,7 +238,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
+          "date": "2025-10-24",
+          "author": "r8vnhill",
+          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
+        }
+      ]
     },
     "/notes/scripting/errors/": {
       "sourceFile": "src/pages/notes/scripting/errors/index.astro",
@@ -137,7 +267,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        }
+      ]
     },
     "/notes/scripting/errors/bash/": {
       "sourceFile": "src/pages/notes/scripting/errors/bash.astro",
@@ -146,7 +308,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "5fccee30a33cb510933bd99e6091e4860fc10afb",
+          "date": "2025-12-18",
+          "author": "r8vnhill",
+          "subject": "✨ feat(ui/code): document scala block component"
+        }
+      ]
     },
     "/notes/scripting/errors/nushell/": {
       "sourceFile": "src/pages/notes/scripting/errors/nushell.astro",
@@ -155,7 +337,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
     },
     "/notes/scripting/first-script/": {
       "sourceFile": "src/pages/notes/scripting/first-script/index.astro",
@@ -164,7 +366,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        }
+      ]
     },
     "/notes/scripting/first-script/nushell/": {
       "sourceFile": "src/pages/notes/scripting/first-script/nushell.astro",
@@ -173,7 +407,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
+        },
+        {
+          "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(references): refine catalog-driven bibliography rendering"
+        }
+      ]
     },
     "/notes/scripting/first-script/py/": {
       "sourceFile": "src/pages/notes/scripting/first-script/py.astro",
@@ -182,7 +448,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        }
+      ]
     },
     "/notes/scripting/gitlab/": {
       "sourceFile": "src/pages/notes/scripting/gitlab/index.astro",
@@ -191,7 +489,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
+        {
+          "hash": "71178bcc1bf2e198ca8885347a39cd8e22169ffe",
+          "date": "2026-02-07",
+          "author": "r8vnhill",
+          "subject": "✨🖼️ feat(ui/code,assets,notes): add SQL code components, new icons, and content updates"
+        }
+      ]
     },
     "/notes/scripting/help/": {
       "sourceFile": "src/pages/notes/scripting/help/index.astro",
@@ -200,7 +530,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        }
+      ]
     },
     "/notes/scripting/help/bash/": {
       "sourceFile": "src/pages/notes/scripting/help/bash.astro",
@@ -209,7 +571,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
+          "date": "2025-10-09",
+          "author": "r8vnhill",
+          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
+        }
+      ]
     },
     "/notes/scripting/help/node/": {
       "sourceFile": "src/pages/notes/scripting/help/node.astro",
@@ -218,7 +612,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
+        },
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        }
+      ]
     },
     "/notes/scripting/node/": {
       "sourceFile": "src/pages/notes/scripting/node.astro",
@@ -227,7 +641,27 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
+          "date": "2026-04-05",
+          "author": "r8vnhill",
+          "subject": "Add Node.js CLI discovery and help documentation"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        }
+      ]
     },
     "/notes/scripting/nushell/": {
       "sourceFile": "src/pages/notes/scripting/nushell.astro",
@@ -236,7 +670,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
+          "date": "2025-11-08",
+          "author": "r8vnhill",
+          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
+        }
+      ]
     },
     "/notes/scripting/pipelines/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/index.astro",
@@ -245,7 +711,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
+        {
+          "hash": "4443cc654aececd4b50d481ef096ece34670f75a",
+          "date": "2026-03-12",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(references): refine catalog-driven bibliography rendering"
+        }
+      ]
     },
     "/notes/scripting/pipelines/errors/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/errors/index.astro",
@@ -254,7 +752,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🐛✅ fix(types): unblock astro check in CI"
+        }
+      ]
     },
     "/notes/scripting/pipelines/git-submodules/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/git-submodules/index.astro",
@@ -263,7 +793,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "29b0ae025ab3f7554d9c5dca957d6d0f7bc172a1",
+          "date": "2026-03-11",
+          "author": "r8vnhill",
+          "subject": "📝✨ docs(scripting): add Nushell first-script lesson and inline code guidance"
+        },
+        {
+          "hash": "0d6422b1b4caa3cb57bc79d3e61ac785ba4b7ceb",
+          "date": "2026-03-02",
+          "author": "r8vnhill",
+          "subject": "📝 feat(notes): refine Git submodules lesson examples and metadata"
+        }
+      ]
     },
     "/notes/scripting/pipelines/nushell/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/nushell.astro",
@@ -272,7 +834,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "98dcc4114e75d9cfab87a4f8a7591a413f3b025b",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "📝 📚 docs(notes): refine Nushell pipeline lesson and document Vite timeout findings"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "a6f279de54aefa62fbf99d4e2675080cb6fddb4c",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "📝 feat(pipelines): expand the Nushell lesson examples"
+        }
+      ]
     },
     "/notes/scripting/pipelines/pipeline-aware/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/pipeline-aware/index.astro",
@@ -281,7 +875,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "677f4ea3d5962f28604dad471d46f3a36b869225",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "🔖📝 chore(release): bump version to 0.13.1 and update changelog"
+        }
+      ]
     },
     "/notes/scripting/pipelines/pipeline-aware/nushell/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/pipeline-aware/nushell.astro",
@@ -290,7 +916,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
+        {
+          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
+          "date": "2026-02-17",
+          "author": "r8vnhill",
+          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
+        }
+      ]
     },
     "/notes/scripting/pipelines/practice/": {
       "sourceFile": "src/pages/notes/scripting/pipelines/practice/index.astro",
@@ -299,7 +957,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "007a74b42f2f12f7719c019a1107ecd6509e3de3",
+          "date": "2025-10-07",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor Nushell and Task Automation pages: streamline imports, enhance content structure, and improve clarity of automation principles and tasks"
+        },
+        {
+          "hash": "fecb04f74a4f7fe48e6a8c985f48ab2b321a53d4",
+          "date": "2025-10-05",
+          "author": "r8vnhill",
+          "subject": "♻️ Refactor GitLab submodule tutorial: restructure content, enhance explanations, and update scripts for clarity and usability"
+        }
+      ]
     },
     "/notes/scripting/py/": {
       "sourceFile": "src/pages/notes/scripting/py.astro",
@@ -308,7 +998,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
+          "date": "2026-02-17",
+          "author": "r8vnhill",
+          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
+        },
+        {
+          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
+          "date": "2026-02-16",
+          "author": "r8vnhill",
+          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
+        },
+        {
+          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
+          "date": "2025-10-15",
+          "author": "r8vnhill",
+          "subject": "Add Python scripting notes and comparison with PowerShell"
+        }
+      ]
     },
     "/notes/scripting/should-process/": {
       "sourceFile": "src/pages/notes/scripting/should-process/index.astro",
@@ -317,7 +1039,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "d07d8209d82f687762b267a216a4e30e4d885656",
+          "date": "2025-11-10",
+          "author": "r8vnhill",
+          "subject": "📝 docs(scripting/should-process): añadir referencia y criterios de aceptación para ShouldProcess"
+        }
+      ]
     },
     "/notes/scripting/structured-output/": {
       "sourceFile": "src/pages/notes/scripting/structured-output/index.astro",
@@ -326,7 +1080,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
+          "date": "2025-10-29",
+          "author": "r8vnhill",
+          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
+        }
+      ]
     },
     "/notes/scripting/structured-output/nushell/": {
       "sourceFile": "src/pages/notes/scripting/structured-output/nushell.astro",
@@ -335,7 +1121,39 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
+          "date": "2026-03-26",
+          "author": "r8vnhill",
+          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
+        },
+        {
+          "hash": "74c4c9f81c74a43e702be589507992ae03d831b6",
+          "date": "2026-03-19",
+          "author": "r8vnhill",
+          "subject": "📚✨ feat(bibliography): add Nushell structured-output references"
+        }
+      ]
     },
     "/notes/scripting/structured-output/py/": {
       "sourceFile": "src/pages/notes/scripting/structured-output/py.astro",
@@ -344,7 +1162,33 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-07",
+      "changes": [
+        {
+          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "f1fc94f0f34f2397bd85d282459a589dbcccad3f",
+          "date": "2026-03-28",
+          "author": "r8vnhill",
+          "subject": "📚 feat(bibliography): add Python structured-output catalog references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        }
+      ]
     },
     "/notes/software-libraries/": {
       "sourceFile": "src/pages/notes/software-libraries/index.astro",
