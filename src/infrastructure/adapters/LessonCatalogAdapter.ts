@@ -1,5 +1,6 @@
 import type { ILessonCatalog, Lesson } from "$application/ports";
 import type { NavigationResult } from "$application/ports/NavigationService";
+import { LessonHref } from "$domain/value-objects/LessonHref";
 import {
     courseStructure,
     type FlattenedLesson,
@@ -77,9 +78,9 @@ export class LessonCatalogAdapter implements ILessonCatalog {
 
     async findAdjacentByHref(href: string): Promise<NavigationResult> {
         const lessons = await this.flatten();
-        const normalizedSearch = this.normalizePath(href);
+        const normalizedSearch = LessonHref.create(href).value;
         const currentIndex = lessons.findIndex(
-            (lesson) => this.normalizePath(lesson.href) === normalizedSearch,
+            (lesson) => LessonHref.create(lesson.href).value === normalizedSearch,
         );
 
         if (currentIndex < 0) {
@@ -120,11 +121,11 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         options: { includeApuntesRoot?: boolean } = { includeApuntesRoot: false },
     ): Promise<readonly TrailNode[]> {
         const flattened = flattenLessons(this.structure);
-        const normalizedSearch = this.normalizePath(href);
+        const normalizedSearch = LessonHref.create(href).value;
 
         // Buscar la lección en la estructura aplanada
         const current = flattened.find(
-            (lesson) => this.normalizePath(lesson.href || "") === normalizedSearch,
+            (lesson) => lesson.href && LessonHref.create(lesson.href).value === normalizedSearch,
         );
 
         if (!current) {
@@ -152,54 +153,21 @@ export class LessonCatalogAdapter implements ILessonCatalog {
             );
 
             if (ancestor) {
-                trail.push({
-                    title: ancestor.title,
-                    href: ancestor.href,
-                });
+                trail.push(this.toTrailNode(ancestor));
             }
         }
 
         // Agregar la lección actual
-        trail.push({
-            title: current.title,
-            href: current.href,
-        });
+        trail.push(this.toTrailNode(current));
 
         return Object.freeze(trail);
     }
 
-    /**
-     * Normaliza una ruta para comparación consistente.
-     *
-     * Reglas de normalización:
-     * 1. Elimina query params y hash fragments
-     * 2. Garantiza slash inicial
-     * 3. Colapsa múltiples slashes consecutivos a uno
-     * 4. Garantiza slash final
-     *
-     * Ejemplos:
-     * - "/foo?x=1" → "/foo/"
-     * - "foo#section" → "/foo/"
-     * - "//foo//bar" → "/foo/bar/"
-     * - "foo" → "/foo/"
-     */
-    private normalizePath(path: string): string {
-        // 1. Elimina query params y hash
-        const trimmed = path.trim();
-        const withoutQuery = trimmed.split(/[?#]/)[0] ?? "";
-
-        // 2. Garantiza slash inicial
-        const withLeadingSlash = withoutQuery.startsWith("/")
-            ? withoutQuery
-            : `/${withoutQuery}`;
-
-        // 3. Colapsa múltiples slashes
-        const collapsedSlashes = withLeadingSlash.replace(/\/{2,}/g, "/");
-
-        // 4. Garantiza slash final
-        return collapsedSlashes.endsWith("/")
-            ? collapsedSlashes
-            : `${collapsedSlashes}/`;
+    private toTrailNode(lesson: Pick<FlattenedLesson, "title" | "href">): TrailNode {
+        return {
+            title: lesson.title,
+            ...(lesson.href ? { href: lesson.href } : {}),
+        };
     }
 
     /**

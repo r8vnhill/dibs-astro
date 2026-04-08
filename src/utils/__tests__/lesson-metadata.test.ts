@@ -208,7 +208,7 @@ describe("dataset resolution", () => {
      */
     test.each([
         "/notes/scripting/first-script",
-        "/notes//software-libraries///scripting/first-script/",
+        "/notes//scripting///first-script/",
         "https://dibs.ravenhill.cl/notes/scripting/first-script",
     ])("resolves metadata for matching path variants: %s", (input) => {
         const resolved = resolveLessonMetadata(input, dataset);

@@ -75,7 +75,7 @@ describe("sourceFileToLessonPath", () => {
         ["src/pages/foo/bar.astro", "/foo/bar/"],
         ["src/pages//foo//index.astro", "/foo/"],
         [
-            "src\\pages\\notes\\software-libraries\\scripting\\first-script\\index.astro",
+            "src\\pages\\notes\\scripting\\first-script\\index.astro",
             SAMPLE_ROUTE,
         ],
     ])("maps %s to %s", (input, expected) => {

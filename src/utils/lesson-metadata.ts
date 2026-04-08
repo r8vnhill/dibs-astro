@@ -31,6 +31,7 @@
  *
  * {@link normalizeLessonPathname} enforces these invariants for lookup keys.
  */
+import { LessonHref } from "$domain/value-objects/LessonHref";
 import { z } from "zod";
 import metadataRaw from "../data/lesson-metadata.generated.json";
 
@@ -206,9 +207,7 @@ export const normalizeLessonPathname = (pathname: string): string => {
     if (trimmed.length === 0) return "/";
 
     const withoutOrigin = trimmed.replace(/^https?:\/\/[^/]+/i, "");
-    const withLeading = withoutOrigin.startsWith("/") ? withoutOrigin : `/${withoutOrigin}`;
-    const compact = withLeading.replace(/\/+/g, "/");
-    return compact.endsWith("/") ? compact : `${compact}/`;
+    return LessonHref.create(withoutOrigin).value;
 };
 
 /**

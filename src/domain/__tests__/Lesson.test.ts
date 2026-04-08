@@ -48,20 +48,58 @@ describe("LessonSlug", () => {
 // ─── LessonHref ──────────────────────────────────────────────────────────────
 
 describe("LessonHref", () => {
-    it("adds trailing slash when missing", () => {
+    it("trims surrounding whitespace", () => {
+        expect(LessonHref.create("  /notes/unit-1/lesson-1/  ").value).toBe(
+            "/notes/unit-1/lesson-1/",
+        );
+    });
+
+    it("adds leading slash when missing", () => {
+        expect(LessonHref.create("notes/unit-1/lesson-1").value).toBe(
+            "/notes/unit-1/lesson-1/",
+        );
+    });
+
+    it("enforces trailing slash", () => {
         expect(LessonHref.create("/notes/unit-1/lesson-1").value).toBe(
             "/notes/unit-1/lesson-1/",
         );
     });
 
-    it("keeps existing trailing slash", () => {
-        expect(LessonHref.create("/notes/unit-1/lesson-1/").value).toBe(
+    it("collapses repeated slashes", () => {
+        expect(LessonHref.create("//notes///unit-1//lesson-1//").value).toBe(
             "/notes/unit-1/lesson-1/",
         );
     });
 
-    it("throws when not starting with /", () => {
-        expect(() => LessonHref.create("notes/lesson")).toThrow();
+    it("strips query parameters", () => {
+        expect(LessonHref.create("/notes/unit-1/lesson-1/?lang=es").value).toBe(
+            "/notes/unit-1/lesson-1/",
+        );
+    });
+
+    it("strips hash fragments", () => {
+        expect(LessonHref.create("/notes/unit-1/lesson-1/#intro").value).toBe(
+            "/notes/unit-1/lesson-1/",
+        );
+    });
+
+    it("is idempotent for canonical values", () => {
+        const canonical = LessonHref.create("/notes/unit-1/lesson-1/");
+
+        expect(LessonHref.create(canonical.value).value).toBe(canonical.value);
+    });
+
+    it("preserves root", () => {
+        expect(LessonHref.create("/").value).toBe("/");
+    });
+
+    it("rejects empty string", () => {
+        expect(() => LessonHref.create("")).toThrow("LessonHref cannot be empty");
+    });
+
+    it("rejects whitespace-only input", () => {
+        expect(() => LessonHref.create("   ")).toThrow("LessonHref cannot be empty");
     });
 });
 
