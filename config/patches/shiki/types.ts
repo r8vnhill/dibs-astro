@@ -1,56 +1,77 @@
+import type { Highlighter, ShikiTransformer } from "shiki";
+
 /*
- * Lightweight, local type definitions used by the Shiki highlight pipeline modules in `config/patches/shiki/`.
+ * Focused types for the patched markdown Shiki wrapper.
  *
- * These types are intentionally compact and only describe the surface area required by the decorator pipeline and
- * factory. They are not intended to be a full mapping of the Shiki runtime API.
+ * These types intentionally model only the subset of the Shiki API used by the
+ * local factory and decorator pipeline.
  */
 
-// The concrete highlighter type returned by shiki.createHighlighter(). We capture it as a single alias so the rest of
-// the codebase can reference Shiki's instance without importing `shiki` directly in many places.
-export type HighlighterInstance = Awaited<ReturnType<typeof import("shiki").createHighlighter>>;
+export type HighlighterInstance = Highlighter;
+export type HighlighterTheme = Exclude<
+    Parameters<typeof import("shiki").createHighlighter>[0]["themes"],
+    undefined
+>[number];
+export type HighlighterThemeMap = Record<string, HighlighterTheme>;
+export type HighlighterThemeRenderOptions =
+    | { theme: HighlighterTheme | "css-variables" }
+    | { themes: HighlighterThemeMap };
 
-// Options supported by the highlighter factory. Keep the shape minimal so callers can pass either a theme name or a
-// custom themes map.
+export interface HighlightCallOptions {
+    inline?: boolean;
+    defaultColor?: boolean | string;
+    meta?: string;
+    transformers?: ShikiTransformer[];
+    attributes?: Record<string, unknown>;
+    wrap?: boolean;
+}
+
 export interface HighlighterOptions {
-    // additional languages to pre-load
     langs?: string[];
-    // a single theme (string or theme object). The factory accepts either a theme name (e.g. 'github-dark') or a
-    // CSS-variables theme object.
-    theme?: unknown;
-    // optional map of named themes; when provided the factory exposes them via `themeOptions` so callers can pick among
-    // multiple themes.
-    themes?: Record<string, unknown>;
-    // map of language aliases, e.g. { ts: 'typescript' }
+    theme?: HighlighterTheme | "css-variables";
+    themes?: HighlighterThemeMap;
     langAlias?: Record<string, string>;
 }
 
-// Supported output formats from the highlighting pipeline. "hast" means a Hypertext Abstract Syntax Tree (used by
-// remark/rehype stacks).
-export type HighlightFormat = "html" | "hast";
-
-// State object passed through the decorator pipeline. Decorators and transformers may read and mutate parts of this
-// object (for example `resolvedLang` or `transformers`). Keep fields permissive where the pipeline requires
-// flexibility.
-export interface HighlightState {
-    code: string; // source code to highlight
-    format: HighlightFormat; // desired output format
-    lang: string; // requested language (may be an alias)
-    resolvedLang: string; // language after alias resolution
-    inline: boolean; // whether the code block should be treated as inline
-    options?: Record<string, any>; // optional caller-provided options/meta
-    // either { theme } or { themes } depending on what the factory was invoked with; transformers and the executor read
-    // from this field.
-    themeOptions: { theme?: unknown; themes?: Record<string, unknown> };
-    // transformer functions applied after Shiki produces HTML/HAST. The pipeline prepends a default transformer and
-    // then appends user-supplied ones.
-    transformers: any[];
-    // the Shiki highlighter instance used to perform language-specific highlighting
-    highlighter: HighlighterInstance;
-    // language alias map (copied from factory options)
+export interface NormalizedHighlighterConfig {
+    cacheKey: string;
+    langs: string[];
     langAlias: Record<string, string>;
+    registrationThemes: HighlighterTheme[];
+    renderThemeOptions: HighlighterThemeRenderOptions;
 }
 
-// An executor receives the mutable state and must return the highlighted output (format depends on `state.format`). A
-// decorator wraps an executor to provide additional behaviour.
-export type HighlightExecutor = (state: HighlightState) => Promise<any>;
+export type HighlightFormat = "html" | "hast";
+export type HighlightHtmlResult = Awaited<ReturnType<HighlighterInstance["codeToHtml"]>>;
+export type HighlightHastResult = Awaited<ReturnType<HighlighterInstance["codeToHast"]>>;
+export type HighlightResult = HighlightHtmlResult | HighlightHastResult;
+
+export interface HighlightState {
+    code: string;
+    format: HighlightFormat;
+    highlighter: HighlighterInstance;
+    inline: boolean;
+    lang: string;
+    resolvedLang: string;
+    langAlias: Record<string, string>;
+    options?: HighlightCallOptions;
+    themeOptions: HighlighterThemeRenderOptions;
+    transformers: ShikiTransformer[];
+}
+
+export type HighlightExecutor = (state: HighlightState) => Promise<HighlightResult>;
 export type HighlightDecorator = (next: HighlightExecutor) => HighlightExecutor;
+
+export interface PatchedHighlighter {
+    codeToHtml(
+        code: string,
+        lang?: string,
+        options?: HighlightCallOptions,
+    ): Promise<HighlightHtmlResult>;
+    codeToHast(
+        code: string,
+        lang?: string,
+        options?: HighlightCallOptions,
+    ): Promise<HighlightHastResult>;
+    dispose(): Promise<void>;
+}

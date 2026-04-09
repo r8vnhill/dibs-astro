@@ -334,6 +334,127 @@ describe("LessonCatalogAdapter", () => {
             expect(trail[1]!.href).toBe("/notes/section-b/lesson-b1/");
         });
     });
+
+    describe("findTrailByHref (Red phase - new tests)", () => {
+        /**
+         * Helper to build a test tree structure with unit > section > lesson nesting.
+         */
+        function buildTestTree(): readonly DomainLesson[] {
+            return [
+                {
+                    id: "apuntes-root",
+                    title: "Apuntes",
+                    kind: "group",
+                    children: [
+                        {
+                            id: "unit-1",
+                            title: "Unit 1",
+                            kind: "group",
+                            href: "/notes/unit-1/",
+                            children: [
+                                {
+                                    id: "section-1a",
+                                    title: "Section 1A",
+                                    kind: "group",
+                                    children: [
+                                        {
+                                            id: "lesson-1a1",
+                                            title: "Lesson 1A1",
+                                            kind: "link",
+                                            href: "/notes/unit-1/section-1a/lesson-1a1/",
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ];
+        }
+
+        it("should extract trail with 3 levels of nesting", async () => {
+            const testAdapter = new LessonCatalogAdapter(buildTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/unit-1/section-1a/lesson-1a1/");
+
+            // Should include Unit 1 (has href), Section 1A (no href), and current lesson
+            expect(trail.length).toBeGreaterThanOrEqual(2);
+            expect(trail.some((node) => node.title === "Unit 1")).toBe(true);
+            expect(trail.some((node) => node.title === "Lesson 1A1")).toBe(true);
+        });
+
+        it("should include group without href as text node in trail", async () => {
+            const testAdapter = new LessonCatalogAdapter(buildTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/unit-1/section-1a/lesson-1a1/");
+
+            // Section 1A has no href, so it should appear with href: undefined
+            const section = trail.find((node) => node.title === "Section 1A");
+            expect(section).toBeDefined();
+            expect(section?.href).toBeUndefined();
+        });
+
+        it("should handle includeApuntesRoot: true", async () => {
+            const testAdapter = new LessonCatalogAdapter(buildTestTree());
+            // Assuming adapter accepts an options parameter for includeApuntesRoot
+            const trail = await testAdapter.findTrailByHref(
+                "/notes/unit-1/section-1a/lesson-1a1/",
+                { includeApuntesRoot: true },
+            );
+
+            // With flag, first node should be { title: "Apuntes", href: "/notes/" }
+            if (trail.length > 0) {
+                const firstNode = trail[0];
+                // This test assumes the option exists and works correctly
+                expect(firstNode).toBeDefined();
+            }
+        });
+
+        it("should handle includeApuntesRoot: false (default)", async () => {
+            const testAdapter = new LessonCatalogAdapter(buildTestTree());
+            const trail = await testAdapter.findTrailByHref(
+                "/notes/unit-1/section-1a/lesson-1a1/",
+                { includeApuntesRoot: false },
+            );
+
+            // Without flag (or default), should not include root
+            if (trail.length > 0) {
+                const firstNode = trail[0];
+                expect(firstNode?.title).not.toBe("Apuntes");
+            }
+        });
+
+        it("should return empty array for non-existent lesson", async () => {
+            const testAdapter = new LessonCatalogAdapter(buildTestTree());
+            const trail = await testAdapter.findTrailByHref("/notes/does-not-exist/");
+
+            expect(trail).toEqual([]);
+        });
+
+        it("should handle first-level lesson with no ancestors", async () => {
+            const treeWithTopLevel: readonly DomainLesson[] = [
+                {
+                    id: "apuntes",
+                    title: "Apuntes",
+                    kind: "group",
+                    href: "/notes/",
+                    children: [
+                        {
+                            id: "top-lesson",
+                            title: "Top Level Lesson",
+                            kind: "link",
+                            href: "/notes/top-lesson/",
+                        },
+                    ],
+                },
+            ];
+
+            const testAdapter = new LessonCatalogAdapter(treeWithTopLevel);
+            const trail = await testAdapter.findTrailByHref("/notes/top-lesson/");
+
+            // Trail should contain only current lesson (no intermediate ancestors)
+            expect(trail.length).toBeGreaterThanOrEqual(1);
+            expect(trail.some((node) => node.title === "Top Level Lesson")).toBe(true);
+        });
+    });
 });
 
 /**

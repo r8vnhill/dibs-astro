@@ -1,5 +1,7 @@
 import type { ILessonCatalog, Lesson } from "$application/ports";
 import type { NavigationResult } from "$application/ports/NavigationService";
+import { LessonTrail, type TrailNode } from "$domain/entities/LessonTrail";
+import { LessonSequenceService } from "$domain/services/LessonSequenceService";
 import { LessonHref } from "$domain/value-objects/LessonHref";
 import {
     courseStructure,
@@ -8,17 +10,8 @@ import {
     type Lesson as DomainLesson,
 } from "~/data/course-structure";
 
-/**
- * Nodo en un trail de breadcrumbs.
- *
- * Representa un paso en el camino desde la raíz hasta la lección actual.
- * - Grupos sin `href` aparecen como texto (href: undefined)
- * - Lecciones con `href` aparecen como enlaces navegables
- */
-export type TrailNode = {
-    title: string;
-    href?: string;
-};
+// Re-export TrailNode for callers of the adapter
+export type { TrailNode };
 
 /**
  * Adaptador de infraestructura para el catálogo de lecciones.
@@ -78,21 +71,17 @@ export class LessonCatalogAdapter implements ILessonCatalog {
 
     async findAdjacentByHref(href: string): Promise<NavigationResult> {
         const lessons = await this.flatten();
-        const normalizedSearch = LessonHref.create(href).value;
-        const currentIndex = lessons.findIndex(
-            (lesson) => LessonHref.create(lesson.href).value === normalizedSearch,
+
+        // Delegate to pure domain service with normalizer function
+        const adjacent = LessonSequenceService.findAdjacent(
+            lessons,
+            href,
+            (h: string) => LessonHref.create(h).value,
         );
 
-        if (currentIndex < 0) {
-            return {};
-        }
-
         const result: NavigationResult = {};
-        const prev = this.toNavigationNode(lessons[currentIndex - 1]);
-        const next = this.toNavigationNode(lessons[currentIndex + 1]);
-
-        if (prev) result.previous = prev;
-        if (next) result.next = next;
+        if (adjacent.previous) result.previous = adjacent.previous;
+        if (adjacent.next) result.next = adjacent.next;
 
         return result;
     }
@@ -123,7 +112,7 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         const flattened = flattenLessons(this.structure);
         const normalizedSearch = LessonHref.create(href).value;
 
-        // Buscar la lección en la estructura aplanada
+        // Find the current lesson in the flattened structure
         const current = flattened.find(
             (lesson) => lesson.href && LessonHref.create(lesson.href).value === normalizedSearch,
         );
@@ -132,57 +121,44 @@ export class LessonCatalogAdapter implements ILessonCatalog {
             return [];
         }
 
-        const trail: TrailNode[] = [];
+        // Build map from ancestor IDs to TrailNodes (excluding root at depth=0)
+        const idToNode = new Map<string, TrailNode>();
 
-        // Incluir raíz sintética si se solicita
-        if (options.includeApuntesRoot) {
-            trail.push({ title: "Apuntes", href: "/notes/" });
-        }
-
-        // Agregar ancestros EXCLUYENDO la raíz (depth=0)
-        // Los parentIds incluyen el root, así que saltamos el índice 0
-        const ancestorIds = current.parentIds.slice(1);
-
+        // Map all ancestors except the root (depth=0)
+        const ancestorIds = current.parentIds.slice(1); // Skip root
         for (let i = 0; i < ancestorIds.length; i++) {
-            const parentId = ancestorIds[i]!;
-            const expectedDepth = i + 1; // +1 porque saltamos el root (depth=0)
+            const ancestorId = ancestorIds[i]!;
+            const expectedDepth = i + 1; // Depths start at 1 after skipping root
 
-            // Buscar el nodo ancestro por ID y depth
             const ancestor = flattened.find(
-                (lesson) => lesson.id === parentId && lesson.depth === expectedDepth,
+                (lesson) => lesson.id === ancestorId && lesson.depth === expectedDepth,
             );
 
             if (ancestor) {
-                trail.push(this.toTrailNode(ancestor));
+                idToNode.set(ancestorId, this.toTrailNode(ancestor));
             }
         }
 
-        // Agregar la lección actual
-        trail.push(this.toTrailNode(current));
+        // Build trail from ancestry
+        const currentNode = this.toTrailNode(current);
+        const trail = LessonTrail.buildFromAncestry(ancestorIds, idToNode, currentNode);
 
-        return Object.freeze(trail);
+        // Prepend synthetic root if requested
+        if (options.includeApuntesRoot) {
+            const nodesWithRoot: TrailNode[] = [
+                { title: "Apuntes", href: "/notes/" },
+                ...trail.nodes,
+            ];
+            return Object.freeze(nodesWithRoot);
+        }
+
+        return trail.nodes;
     }
 
     private toTrailNode(lesson: Pick<FlattenedLesson, "title" | "href">): TrailNode {
         return {
             title: lesson.title,
             ...(lesson.href ? { href: lesson.href } : {}),
-        };
-    }
-
-    /**
-     * Convierte una lección a un nodo de navegación.
-     * Retorna undefined si la lección es undefined (para bordes de lista).
-     */
-    private toNavigationNode(lesson: (Lesson & { href: string }) | undefined) {
-        if (!lesson) {
-            return undefined;
-        }
-
-        return {
-            title: lesson.title,
-            slug: lesson.slug,
-            href: lesson.href,
         };
     }
 
