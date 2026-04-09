@@ -1,0 +1,21 @@
+{
+    "name": "@ravenhill/content-core",
+    "version": "0.0.0",
+    "type": "module",
+    "private": true,
+    "description": "Content abstraction layer for reusable documentation and learning systems.",
+    "exports": {
+        ".": {
+            "types": "./src/index.ts",
+            "default": "./src/index.ts"
+        }
+    },
+    "types": "./src/index.ts",
+    "typesVersions": {
+        "*": {
+            ".": [
+                "./src/index.ts"
+            ]
+        }
+    }
+}
