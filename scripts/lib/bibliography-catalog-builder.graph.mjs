@@ -13,30 +13,29 @@ export const sortGraphNodes = (graph) =>
         return categoryA - categoryB || a["@id"].localeCompare(b["@id"]);
     });
 
-export const buildPersonNode = (record, scalarLiteral, scalarUrl, sourceLabel) => ({
-    "@id": record.id,
-    "@type": "Person",
-    ...(scalarLiteral(record, `${SCHEMA}givenName`, sourceLabel)
-        ? { givenName: scalarLiteral(record, `${SCHEMA}givenName`, sourceLabel) }
-        : {}),
-    ...(scalarLiteral(record, `${SCHEMA}familyName`, sourceLabel)
-        ? { familyName: scalarLiteral(record, `${SCHEMA}familyName`, sourceLabel) }
-        : {}),
-    ...(scalarUrl(record, `${SCHEMA}url`, sourceLabel)
-        ? { url: scalarUrl(record, `${SCHEMA}url`, sourceLabel) }
-        : {}),
-});
+export const buildPersonNode = (record, scalarLiteral, scalarUrlLiteral, sourceLabel) => {
+    const givenName = scalarLiteral(record, `${SCHEMA}givenName`, sourceLabel);
+    const familyName = scalarLiteral(record, `${SCHEMA}familyName`, sourceLabel);
+    const url = scalarUrlLiteral(record, `${SCHEMA}url`, sourceLabel);
 
-export const buildOrganizationNode = (record, scalarLiteral, scalarUrl, fail, sourceLabel) => {
+    return {
+        "@id": record.id,
+        "@type": "Person",
+        ...(givenName ? { givenName } : {}),
+        ...(familyName ? { familyName } : {}),
+        ...(url ? { url } : {}),
+    };
+};
+
+export const buildOrganizationNode = (record, scalarLiteral, scalarUrlLiteral, fail, sourceLabel) => {
     const name = scalarLiteral(record, `${SCHEMA}name`, sourceLabel);
+    const url = scalarUrlLiteral(record, `${SCHEMA}url`, sourceLabel);
     if (!name) fail(sourceLabel, `organization "${record.id}" is missing schema:name.`);
     return {
         "@id": record.id,
         "@type": record.primaryType,
         name,
-        ...(scalarUrl(record, `${SCHEMA}url`, sourceLabel)
-            ? { url: scalarUrl(record, `${SCHEMA}url`, sourceLabel) }
-            : {}),
+        ...(url ? { url } : {}),
     };
 };
 
@@ -86,7 +85,7 @@ export const buildReferenceNode = (
     record,
     recordsById,
     scalarLiteral,
-    scalarUrl,
+    scalarUrlLiteral,
     scalarInteger,
     namedRefs,
     ensureNodeCategory,
@@ -126,22 +125,19 @@ export const buildReferenceNode = (
         );
     }
 
+    const url = scalarUrlLiteral(record, `${SCHEMA}url`, sourceLabel);
+    const datePublished = scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel);
+    const pageStart = scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel);
+    const pageEnd = scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel);
+
     return {
         "@id": record.id,
         "@type": record.primaryType,
         name,
-        ...(scalarUrl(record, `${SCHEMA}url`, sourceLabel)
-            ? { url: scalarUrl(record, `${SCHEMA}url`, sourceLabel) }
-            : {}),
-        ...(scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel)
-            ? { datePublished: scalarLiteral(record, `${SCHEMA}datePublished`, sourceLabel) }
-            : {}),
-        ...(scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) != null
-            ? { pageStart: scalarInteger(record, `${SCHEMA}pageStart`, sourceLabel) }
-            : {}),
-        ...(scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) != null
-            ? { pageEnd: scalarInteger(record, `${SCHEMA}pageEnd`, sourceLabel) }
-            : {}),
+        ...(url ? { url } : {}),
+        ...(datePublished ? { datePublished } : {}),
+        ...(pageStart != null ? { pageStart } : {}),
+        ...(pageEnd != null ? { pageEnd } : {}),
         ...(authors.length > 0
             ? { author: authors.map((id) => ({ "@id": id })) }
             : {}),
@@ -150,9 +146,15 @@ export const buildReferenceNode = (
     };
 };
 
-export const buildLearningResourceNode = (record, scalarLiteral, scalarUrl, fail, sourceLabel) => {
+export const buildLearningResourceNode = (
+    record,
+    scalarLiteral,
+    scalarUrlLiteral,
+    fail,
+    sourceLabel,
+) => {
     const name = scalarLiteral(record, `${SCHEMA}name`, sourceLabel);
-    const url = scalarUrl(record, `${SCHEMA}url`, sourceLabel);
+    const url = scalarUrlLiteral(record, `${SCHEMA}url`, sourceLabel);
     if (!name) fail(sourceLabel, `lesson "${record.id}" is missing schema:name.`);
     return {
         "@id": record.id,
