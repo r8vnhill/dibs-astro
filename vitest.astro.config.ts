@@ -7,7 +7,7 @@ process.env.SKIP_ICON_GENERATION ??= "true";
 export default getViteConfig({
     test: {
         environment: "node",
-        globals: true,
+        globals: false,
         css: false,
         include: ["src/**/*.render.test.ts"],
         exclude: ["node_modules/**"],

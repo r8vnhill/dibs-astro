@@ -30,7 +30,7 @@
 import { LessonSequenceService } from "$domain/services/LessonSequenceService";
 import { type NavigationNode } from "$domain/value-objects/AdjacentLessons";
 import fc from "fast-check";
-import { describe, expect, test } from "vitest";
+import { describe, expect, suite, test } from "vitest";
 
 suite("LessonSequenceService", () => {
     /**

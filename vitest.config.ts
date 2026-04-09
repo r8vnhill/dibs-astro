@@ -14,9 +14,8 @@ process.env.SKIP_ICON_GENERATION ??= "true";
  *   interact with DOM APIs (Testing Library + jsdom).
  * - `setupFiles` points to a small bootstrap that installs matchers (jest-dom) and any global test
  *   setup required by the suite.
- * - `globals: true` enables the familiar global test APIs (describe/it/expect) without importing
- *   them in every file. We still import them in some tests for explicitness, but enabling globals
- *   keeps third-party tests simpler.
+ * - Test APIs are imported explicitly in every test file; `globals` stays disabled so suites do
+ *   not rely on ambient `describe` / `test` / `expect`.
  * - `css: false` disables CSS processing/transforming within Vitest. The project styles are built
  *   by the real toolchain (Tailwind + Astro) and don't need to be processed during unit tests;
  *   disabling CSS speeds up test runs and avoids unrelated transform errors in jsdom.
@@ -36,9 +35,8 @@ export default getViteConfig({
         // to project root
         setupFiles: ["./src/test/setup.ts"],
 
-        // Allow `describe`/`it`/`expect` as globals (optional --- we still import them in tests
-        // where we want explicitness)
-        globals: true,
+        // Keep test APIs explicit in each file instead of relying on ambient globals.
+        globals: false,
 
         // Clear and restore mock state between tests to reduce test coupling/leaks.
         clearMocks: true,
