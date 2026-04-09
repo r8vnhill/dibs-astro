@@ -56,7 +56,7 @@ export async function highlightToHtml({
         try {
             if (!highlighter.getLoadedLanguages().includes(resolvedLang)) {
                 await runWithDevTransportRetry(
-                    () => highlighter.loadLanguage(resolvedLang),
+                    async (_signal) => await highlighter.loadLanguage(resolvedLang),
                     {
                         label: `shiki language load (${resolvedLang})`,
                     },

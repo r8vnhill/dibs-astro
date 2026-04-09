@@ -1,11 +1,12 @@
 /**
- * Characterization tests for the current `dev-transport-retry` behavior.
+ * Behavioral tests for `dev-transport-retry`.
  *
- * This file captures the observable contract of the existing helper before the planned abortable
- * refactor changes its timeout and cancellation semantics.
+ * This file captures the observable contract of the helper, including the abortable timeout
+ * semantics introduced by the current refactor.
  *
  * The goal of this suite is not only to protect useful behavior, but also to make today's
- * limitations explicit so later TDD phases can replace them deliberately rather than accidentally.
+ * limitations and guarantees explicit so later TDD phases can evolve them deliberately rather than
+ * accidentally.
  *
  * ## What this suite documents
  *
@@ -13,19 +14,13 @@
  *
  * - behavior worth preserving, such as retry orchestration, retry/no-retry branching, delay usage,
  *   and logging; and
- * - current limitations that are intentionally documented during the characterization phase, such
- *   as observational timeouts that reject the wrapper promise without cancelling the original
- *   async work.
+ * - timeout and cancellation guarantees, such as aborting timed-out attempts before a retry can
+ *   start.
  *
  * ## Why characterization matters here
  *
- * The next refactor is expected to break part of the current behavior on purpose by introducing
- * per-attempt cancellation with an abortable operation signature. These tests therefore serve as a
- * baseline:
- *
- * - some examples should continue to pass after the refactor;
- * - others should fail in a way that clearly signals an intentional semantic improvement rather
- *   than a regression.
+ * The suite keeps the broader retry policy characterized while making the new per-attempt
+ * cancellation contract explicit.
  *
  * ## Suite structure
  *
@@ -50,10 +45,8 @@ import { isRetryableDevTransportError, runWithDevTransportRetry } from "../dev-t
  * - timeout-triggered retries; and
  * - retry logging.
  *
- * Several timeout-related examples intentionally document flawed behavior in the current
- * implementation, including the fact that timed-out operations may continue running and overlap
- * with later retries. Those examples should remain explicit until the abortable refactor replaces
- * them with stronger guarantees.
+ * Timeout-related examples now describe the stronger cancellation guarantee: timed-out attempts
+ * are aborted and the next retry starts only after the aborted attempt has settled.
  */
 suite("runWithDevTransportRetry", () => {
     describe("given retry is enabled and failures are retryable", () => {
@@ -66,7 +59,7 @@ suite("runWithDevTransportRetry", () => {
                     let attempts = 0;
 
                     const result = await runWithDevTransportRetry(
-                        async () => {
+                        async (_signal) => {
                             attempts += 1;
                             if (attempts < 3) {
                                 const error = new Error("vite:invoke transport timed out") as
@@ -109,7 +102,7 @@ suite("runWithDevTransportRetry", () => {
 
                     await expect(
                         runWithDevTransportRetry(
-                            async () => {
+                            async (_signal) => {
                                 attempts += 1;
                                 const error = new Error("fetchModule timed out") as Error & {
                                     code?: string;
@@ -149,7 +142,7 @@ suite("runWithDevTransportRetry", () => {
 
                 await expect(
                     runWithDevTransportRetry(
-                        async () => {
+                        async (_signal) => {
                             throw error;
                         },
                         {
@@ -176,7 +169,7 @@ suite("runWithDevTransportRetry", () => {
 
                 await expect(
                     runWithDevTransportRetry(
-                        async () => {
+                        async (_signal) => {
                             attempts += 1;
                             throw new Error(
                                 "vite:invoke request failed because fetchModule timed out",
@@ -208,7 +201,7 @@ suite("runWithDevTransportRetry", () => {
                 let attempts = 0;
 
                 const pending = runWithDevTransportRetry(
-                    async () => {
+                    async (_signal) => {
                         attempts += 1;
                         return await new Promise<string>(() => {});
                     },
@@ -244,10 +237,14 @@ suite("runWithDevTransportRetry", () => {
                     let attempts = 0;
 
                     const pending = runWithDevTransportRetry(
-                        async () => {
+                        async (signal) => {
                             attempts += 1;
                             if (attempts === 1) {
-                                return await new Promise<string>(() => {});
+                                return await new Promise<string>((_, reject) => {
+                                    signal.addEventListener("abort", () => {
+                                        reject(signal.reason);
+                                    }, { once: true });
+                                });
                             }
 
                             return "recovered";
@@ -273,28 +270,79 @@ suite("runWithDevTransportRetry", () => {
                 },
             );
 
+            test("then the timed-out operation is aborted", async () => {
+                vi.useFakeTimers();
+
+                const sleep = vi.fn(async () => {});
+                const observedSignals: AbortSignal[] = [];
+                let attempts = 0;
+
+                const pending = runWithDevTransportRetry(
+                    async (signal) => {
+                        attempts += 1;
+                        observedSignals.push(signal);
+                        if (attempts === 1) {
+                            return await new Promise<string>((_, reject) => {
+                                signal.addEventListener("abort", () => reject(signal.reason), {
+                                    once: true,
+                                });
+                            });
+                        }
+
+                        return "recovered";
+                    },
+                    {
+                        enabled: true,
+                        attempts: 2,
+                        timeoutMs: 10,
+                        jitterRatio: 0,
+                        baseDelayMs: 1,
+                        maxDelayMs: 1,
+                        sleep,
+                        logger: vi.fn(),
+                    },
+                );
+
+                await vi.advanceTimersByTimeAsync(20);
+
+                await expect(pending).resolves.toBe("recovered");
+                expect(observedSignals).toHaveLength(2);
+                expect(observedSignals[0]?.aborted).toBe(true);
+                expect(observedSignals[0]?.reason).toMatchObject({
+                    name: "DevTransportTimeoutError",
+                });
+                expect(observedSignals[1]?.aborted).toBe(false);
+
+                vi.useRealTimers();
+            });
+
             test(
-                "then the original timed-out operation is not cancelled and may continue running",
+                "then the next retry does not start until the timed-out attempt has been aborted and settled",
                 async () => {
                     vi.useFakeTimers();
 
                     const sleep = vi.fn(async () => {});
+                    const events: string[] = [];
                     let attempts = 0;
-                    let firstResolved = false;
-                    let resolveFirst!: (value: string) => void;
 
                     const pending = runWithDevTransportRetry(
-                        async () => {
+                        async (signal) => {
                             attempts += 1;
+                            events.push(`start:${attempts}`);
+
                             if (attempts === 1) {
-                                return await new Promise<string>((resolve) => {
-                                    resolveFirst = (value) => {
-                                        firstResolved = true;
-                                        resolve(value);
-                                    };
+                                return await new Promise<string>((_, reject) => {
+                                    signal.addEventListener("abort", () => {
+                                        events.push(`abort:${attempts}`);
+                                        queueMicrotask(() => {
+                                            events.push(`settled:${attempts}`);
+                                            reject(signal.reason);
+                                        });
+                                    }, { once: true });
                                 });
                             }
 
+                            events.push(`success:${attempts}`);
                             return "recovered";
                         },
                         {
@@ -312,55 +360,57 @@ suite("runWithDevTransportRetry", () => {
                     await vi.advanceTimersByTimeAsync(20);
                     await expect(pending).resolves.toBe("recovered");
 
-                    expect(firstResolved).toBe(false);
-                    resolveFirst("late-success");
-                    await vi.advanceTimersByTimeAsync(0);
-                    expect(firstResolved).toBe(true);
+                    expect(events).toEqual([
+                        "start:1",
+                        "abort:1",
+                        "settled:1",
+                        "start:2",
+                        "success:2",
+                    ]);
 
                     vi.useRealTimers();
                 },
             );
 
-            test(
-                "then overlapping work is still possible in the current implementation",
-                async () => {
-                    vi.useFakeTimers();
+            test("then the operation can observe that its signal was aborted", async () => {
+                vi.useFakeTimers();
 
-                    const sleep = vi.fn(async () => {});
-                    let activeAttempts = 0;
-                    let maxConcurrentAttempts = 0;
+                const sleep = vi.fn(async () => {});
+                let abortedInsideHandler = false;
+                let attempts = 0;
 
-                    const pending = runWithDevTransportRetry(
-                        async () => {
-                            activeAttempts += 1;
-                            maxConcurrentAttempts = Math.max(maxConcurrentAttempts, activeAttempts);
+                const pending = runWithDevTransportRetry(
+                    async (signal) => {
+                        attempts += 1;
+                        if (attempts === 1) {
+                            return await new Promise<string>((_, reject) => {
+                                signal.addEventListener("abort", () => {
+                                    abortedInsideHandler = signal.aborted;
+                                    reject(signal.reason);
+                                }, { once: true });
+                            });
+                        }
 
-                            if (activeAttempts === 1) {
-                                return await new Promise<string>(() => {});
-                            }
+                        return "recovered";
+                    },
+                    {
+                        enabled: true,
+                        attempts: 2,
+                        timeoutMs: 10,
+                        jitterRatio: 0,
+                        baseDelayMs: 1,
+                        maxDelayMs: 1,
+                        sleep,
+                        logger: vi.fn(),
+                    },
+                );
 
-                            activeAttempts -= 1;
-                            return "recovered";
-                        },
-                        {
-                            enabled: true,
-                            attempts: 2,
-                            timeoutMs: 10,
-                            jitterRatio: 0,
-                            baseDelayMs: 1,
-                            maxDelayMs: 1,
-                            sleep,
-                            logger: vi.fn(),
-                        },
-                    );
+                await vi.advanceTimersByTimeAsync(20);
+                await expect(pending).resolves.toBe("recovered");
+                expect(abortedInsideHandler).toBe(true);
 
-                    await vi.advanceTimersByTimeAsync(20);
-                    await expect(pending).resolves.toBe("recovered");
-                    expect(maxConcurrentAttempts).toBeGreaterThan(1);
-
-                    vi.useRealTimers();
-                },
-            );
+                vi.useRealTimers();
+            });
         });
     });
 
@@ -372,7 +422,7 @@ suite("runWithDevTransportRetry", () => {
                 let attempts = 0;
 
                 await runWithDevTransportRetry(
-                    async () => {
+                    async (_signal) => {
                         attempts += 1;
                         if (attempts === 1) {
                             const error = new Error("network error") as Error & { code?: string };
@@ -394,6 +444,63 @@ suite("runWithDevTransportRetry", () => {
                 );
 
                 expect(String(logger.mock.calls[0]?.[0] ?? "")).toContain("retrying (1/2)");
+            });
+        });
+    });
+
+    describe("given the operation succeeds before the timeout", () => {
+        describe("when the first attempt completes successfully", () => {
+            test("then the provided signal is not aborted", async () => {
+                let observedSignal!: AbortSignal;
+
+                const result = await runWithDevTransportRetry(
+                    async (signal) => {
+                        observedSignal = signal;
+                        return "ok";
+                    },
+                    {
+                        enabled: true,
+                        attempts: 2,
+                        timeoutMs: 10,
+                        logger: vi.fn(),
+                    },
+                );
+
+                expect(result).toBe("ok");
+                expect(observedSignal.aborted).toBe(false);
+            });
+        });
+    });
+
+    describe("given retry is enabled and a retryable non-timeout error occurs", () => {
+        describe("when the operation succeeds on the next attempt", () => {
+            test("then it still retries under the abortable operation signature", async () => {
+                const sleep = vi.fn(async () => {});
+                let attempts = 0;
+
+                const result = await runWithDevTransportRetry(
+                    async (_signal) => {
+                        attempts += 1;
+                        if (attempts === 1) {
+                            throw new Error("socket hang up");
+                        }
+
+                        return "ok";
+                    },
+                    {
+                        enabled: true,
+                        attempts: 2,
+                        jitterRatio: 0,
+                        baseDelayMs: 1,
+                        maxDelayMs: 1,
+                        sleep,
+                        logger: vi.fn(),
+                    },
+                );
+
+                expect(result).toBe("ok");
+                expect(attempts).toBe(2);
+                expect(sleep).toHaveBeenCalledTimes(1);
             });
         });
     });

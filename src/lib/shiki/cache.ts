@@ -173,7 +173,7 @@ function syncGlobalHighlighterPromise(value: HighlighterPromise | null) {
  */
 const createSharedHighlighter = (): HighlighterPromise =>
     runWithDevTransportRetry(
-        () =>
+        async (_signal) =>
             createHighlighter({
                 themes: [...SHIKI_DEFAULT_THEMES],
                 langs: availableLanguages,

@@ -52,7 +52,7 @@
  */
 
 import fc from "fast-check";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test } from "vitest";
 import {
     buildOutput,
     getChanges,

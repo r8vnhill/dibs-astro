@@ -63,7 +63,7 @@ export function withLanguageLoading(): HighlightDecorator {
                 // Load language on demand; most highlights will find the language already loaded but this supports
                 // dynamic lists.
                 await runWithDevTransportRetry(
-                    () => highlighter.loadLanguage(resolvedLang),
+                    async (_signal) => await highlighter.loadLanguage(resolvedLang),
                     {
                         label: `patched markdown shiki language load (${resolvedLang})`,
                     },
