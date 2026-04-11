@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T19:56:29.956Z",
+  "generatedAt": "2026-04-11T20:29:20.761Z",
   "totalLessons": 47,
   "changesLimit": 5,
   "entries": {
@@ -1226,7 +1226,21 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-08",
+      "changes": [
+        {
+          "hash": "05b752a59bb7879606e2894c0537ae9b17b2e63c",
+          "date": "2026-04-08",
+          "author": "r8vnhill",
+          "subject": "♻️ refactor: remove unused 'Important' callout import from API evolution notes"
+        },
+        {
+          "hash": "4e5dc7819f38358ddd4d371fa73c4484d211f584",
+          "date": "2026-04-08",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes,references): add API evolution lesson and catalog references"
+        }
+      ]
     },
     "/notes/software-libraries/api-design/fundamentals/": {
       "sourceFile": "src/pages/notes/software-libraries/api-design/fundamentals/index.astro",
