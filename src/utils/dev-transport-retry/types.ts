@@ -1,15 +1,47 @@
-/**
- * Logger callback used by the retry helper.
- *
- * The helper emits log messages only for retry-related events:
- *
- * - before waiting for a retry after a retryable failure; and
- * - after the final failure when retries have been exhausted.
- *
- * @param message Human-readable retry event message.
- * @param error Optional error associated with the event.
- */
-export type RetryLogger = (message: string, error?: unknown) => void;
+export interface DevTransportRetryContext {
+    /**
+     * Abort signal for the currently started attempt.
+     */
+    signal: AbortSignal;
+
+    /**
+     * 1-based index of the currently started attempt.
+     */
+    attempt: number;
+
+    /**
+     * Effective attempt budget for this invocation.
+     *
+     * This is the total number of attempts the helper may start for the current run, so it is `1`
+     * when retry is disabled even if the raw configured `attempts` value is higher.
+     */
+    maxAttempts: number;
+}
+
+export type RetryEvent =
+    | {
+        type: "retry-scheduled";
+        label: string;
+        attempt: number;
+        nextAttempt: number;
+        maxAttempts: number;
+        delayMs: number;
+        error: unknown;
+    }
+    | {
+        type: "final-failure";
+        label: string;
+        attempt: number;
+        maxAttempts: number;
+        error: unknown;
+    }
+    | {
+        type: "cancelled";
+        label: string;
+        attempt?: number;
+        maxAttempts: number;
+        error: unknown;
+    };
 
 /**
  * User-facing configuration for `runWithDevTransportRetry`.
@@ -29,7 +61,7 @@ export type RetryLogger = (message: string, error?: unknown) => void;
  */
 export interface DevTransportRetryOptions {
     /**
-     * Descriptive label used in retry log messages.
+     * Descriptive label included in retry events.
      *
      * Defaults to `"operation"`.
      */
@@ -83,11 +115,16 @@ export interface DevTransportRetryOptions {
     jitterRatio?: number;
 
     /**
-     * Logger used for retry-related messages.
-     *
-     * Defaults to `defaultRetryLogger`.
+     * Optional top-level abort signal for the full retry orchestration.
      */
-    logger?: RetryLogger;
+    signal?: AbortSignal;
+
+    /**
+     * Structured observer for retry-related events.
+     *
+     * Defaults to a no-op function.
+     */
+    onRetryEvent?: (event: RetryEvent) => void;
 
     /**
      * Predicate that decides whether a failure is retryable.
@@ -103,7 +140,7 @@ export interface DevTransportRetryOptions {
      *
      * Defaults to `defaultSleep`.
      */
-    sleep?: (ms: number) => Promise<void>;
+    sleep?: (ms: number, signal: AbortSignal) => Promise<void>;
 
     /**
      * Random number generator used for jitter calculation.
@@ -122,7 +159,8 @@ export interface DevTransportRetryOptions {
  *
  * - applying defaults;
  * - consulting environment variables; and
- * - injecting default implementations for collaborators such as logging, sleeping, and randomness.
+ * - injecting default implementations for collaborators such as retry events, sleeping, and
+ *   randomness.
  */
 export interface ResolvedDevTransportRetryOptions {
     label: string;
@@ -132,8 +170,9 @@ export interface ResolvedDevTransportRetryOptions {
     maxDelayMs: number;
     timeoutMs: number;
     jitterRatio: number;
-    logger: RetryLogger;
+    signal?: AbortSignal;
+    onRetryEvent: (event: RetryEvent) => void;
     shouldRetry: (error: unknown) => boolean;
-    sleep: (ms: number) => Promise<void>;
+    sleep: (ms: number, signal: AbortSignal) => Promise<void>;
     random: () => number;
 }

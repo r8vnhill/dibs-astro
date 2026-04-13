@@ -375,7 +375,7 @@ async function createPatchedHighlighter(
     } satisfies Parameters<typeof createHighlighter>[0];
 
     const highlighter = await runWithDevTransportRetry(
-        async (_signal) => await createHighlighter(highlighterOptions),
+        async ({ signal: _signal }) => await createHighlighter(highlighterOptions),
         {
             label: "patched markdown shiki highlighter creation",
         },

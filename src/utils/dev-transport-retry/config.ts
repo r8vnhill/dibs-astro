@@ -6,11 +6,14 @@ import {
     DEFAULT_MAX_DELAY_MS,
     DEFAULT_TIMEOUT_MS,
 } from "./defaults";
-import { defaultRetryLogger, defaultSleep } from "./timing";
+import { defaultSleep } from "./timing";
 import type { DevTransportRetryOptions, ResolvedDevTransportRetryOptions } from "./types";
 
 /**
  * Resolves user-facing retry options into the normalized internal form used by the helper.
+ *
+ * This module is the single source of truth for resolved-option invariants such as normalized
+ * numeric ranges, default collaborators, and the minimum attempt budget.
  *
  * Resolution order is:
  *
@@ -56,7 +59,8 @@ export function resolveDevTransportRetryOptions(
             DEFAULT_TIMEOUT_MS,
         ),
         jitterRatio: coerceNonNegativeFloat(options.jitterRatio, DEFAULT_JITTER_RATIO),
-        logger: options.logger ?? defaultRetryLogger,
+        ...(options.signal ? { signal: options.signal } : {}),
+        onRetryEvent: options.onRetryEvent ?? (() => {}),
         shouldRetry: options.shouldRetry ?? isRetryableDevTransportError,
         sleep: options.sleep ?? defaultSleep,
         random: options.random ?? Math.random,

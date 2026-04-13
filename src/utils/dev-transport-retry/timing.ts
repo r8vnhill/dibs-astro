@@ -1,4 +1,4 @@
-import type { ResolvedDevTransportRetryOptions } from "./types";
+import type { DevTransportRetryContext, ResolvedDevTransportRetryOptions } from "./types";
 
 /**
  * Computes the delay before the next retry attempt.
@@ -58,6 +58,50 @@ function createTimeoutError(label: string, timeoutMs: number) {
     return error;
 }
 
+function abortSignalWithFallbackReason(signal: AbortSignal, fallbackReason: unknown) {
+    return signal.reason === undefined ? fallbackReason : signal.reason;
+}
+
+/**
+ * Combines a per-attempt timeout controller with an optional orchestration signal.
+ *
+ * This helper decides only how abort signals are merged for a single attempt. It does not decide
+ * retry policy, attempt budgeting, or event ordering.
+ */
+export function composeAbortSignals(
+    timeoutController: AbortController,
+    externalSignal: AbortSignal | undefined,
+    fallbackReason: unknown,
+) {
+    if (!externalSignal) {
+        return {
+            signal: timeoutController.signal,
+            cleanup() {},
+        };
+    }
+
+    if (externalSignal.aborted) {
+        timeoutController.abort(abortSignalWithFallbackReason(externalSignal, fallbackReason));
+        return {
+            signal: timeoutController.signal,
+            cleanup() {},
+        };
+    }
+
+    const abortFromExternal = () => {
+        timeoutController.abort(abortSignalWithFallbackReason(externalSignal, fallbackReason));
+    };
+
+    externalSignal.addEventListener("abort", abortFromExternal, { once: true });
+
+    return {
+        signal: timeoutController.signal,
+        cleanup() {
+            externalSignal.removeEventListener("abort", abortFromExternal);
+        },
+    };
+}
+
 /**
  * Runs a single attempt with timeout-based abort signalling.
  *
@@ -75,12 +119,15 @@ function createTimeoutError(label: string, timeoutMs: number) {
  * @returns The successful attempt result, or throws the timeout/failure that ended the attempt.
  */
 export async function runAttemptWithTimeout<T>(
-    operation: (signal: AbortSignal) => Promise<T>,
+    operation: (context: DevTransportRetryContext) => Promise<T>,
     timeoutMs: number,
     label: string,
+    context: Omit<DevTransportRetryContext, "signal">,
+    externalSignal?: AbortSignal,
 ): Promise<T> {
     const controller = new AbortController();
     const timeoutError = createTimeoutError(label, timeoutMs);
+    const { signal, cleanup } = composeAbortSignals(controller, externalSignal, timeoutError);
     let timedOut = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -90,7 +137,10 @@ export async function runAttemptWithTimeout<T>(
             controller.abort(timeoutError);
         }, timeoutMs);
 
-        const result = await operation(controller.signal);
+        const result = await operation({
+            ...context,
+            signal,
+        });
 
         if (timedOut) {
             throw timeoutError;
@@ -104,6 +154,7 @@ export async function runAttemptWithTimeout<T>(
 
         throw error;
     } finally {
+        cleanup();
         if (timer) {
             clearTimeout(timer);
         }
@@ -111,26 +162,29 @@ export async function runAttemptWithTimeout<T>(
 }
 
 /**
- * Default sleep implementation used between retries.
+ * Default abort-aware sleep used between retries.
  *
  * @param ms Delay duration in milliseconds.
+ * @param signal Signal that can interrupt the wait.
  * @returns Promise that resolves after the requested delay.
  */
-export const defaultSleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+export const defaultSleep = (ms: number, signal: AbortSignal) =>
+    new Promise<void>((resolve, reject) => {
+        if (signal.aborted) {
+            reject(signal.reason);
+            return;
+        }
 
-/**
- * Default logger used when callers do not provide a custom logger.
- *
- * Messages are forwarded to `console.warn`, optionally along with the associated error.
- *
- * @param message Retry-related log message.
- * @param error Optional error associated with the event.
- */
-export function defaultRetryLogger(message: string, error?: unknown) {
-    if (error === undefined) {
-        console.warn(message);
-        return;
-    }
+        const timer = setTimeout(() => {
+            signal.removeEventListener("abort", abortSleep);
+            resolve();
+        }, ms);
 
-    console.warn(message, error);
-}
+        const abortSleep = () => {
+            clearTimeout(timer);
+            signal.removeEventListener("abort", abortSleep);
+            reject(signal.reason);
+        };
+
+        signal.addEventListener("abort", abortSleep, { once: true });
+    });
