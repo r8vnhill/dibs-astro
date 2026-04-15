@@ -1,29 +1,30 @@
 # Temario Propuesto para Diseño de Bibliotecas de Software
 
-Este documento propone un temario completo, desde la unidad 1 hasta la unidad 8, con un enfoque
+Este documento propone un temario completo, desde la unidad 1 hasta la unidad 9, con un enfoque
 agnóstico al lenguaje, al toolchain y al proyecto de referencia. El hilo conductor no es enseñar
 una biblioteca concreta ni una herramienta específica, sino estudiar cómo se diseñan bibliotecas y
 APIs orientadas a otras personas desarrolladoras.
 
 La pregunta conductora del curso pasa a ser:
 
-**¿Cómo diseñar bibliotecas para otras personas desarrolladoras cuyas APIs representen bien el dominio, orienten el uso correcto y permitan crecer en expresividad sin perder claridad ni estabilidad?**
+**¿Cómo diseñar bibliotecas para otras personas desarrolladoras cuyas APIs representen bien el dominio, orienten el uso correcto y permitan crecer en expresividad, ergonomía o capacidades sin deformar el núcleo del modelo ni perder claridad ni estabilidad?**
 
 Desde esa perspectiva, el curso ya no se organiza principalmente como una progresión del lifecycle
 de una biblioteca, sino como una exploración de decisiones de modelado, diseño del núcleo,
-composición, abstracciones avanzadas y sus tradeoffs. La publicación, el versionado, la
-extensibilidad y la evolución siguen siendo importantes, pero aparecen como consecuencia del diseño
-de la interfaz pública y no como eje pedagógico inicial.
+composición, enriquecimiento del modelo, diseño de superficies expresivas y sus tradeoffs. La
+publicación, el versionado, la extensibilidad y la evolución siguen siendo importantes, pero
+aparecen como consecuencia del diseño de la interfaz pública y no como eje pedagógico inicial.
 
 Esta versión del temario asume explícitamente un semestre con prioridades pedagógicas. No todos los
 temas tendrán la misma profundidad: el núcleo del curso está en modelado del dominio, diseño del
-núcleo de la biblioteca, composición y abstracciones avanzadas, mientras que otros temas quedan
-reservados para cierre o profundización futura. A lo largo del semestre conviene que cada unidad
-deje visible una decisión de diseño, un tradeoff o una forma de API sobre una misma biblioteca o
-caso de estudio, para que el aprendizaje no se disperse en ejemplos aislados.
+núcleo de la biblioteca, composición, enriquecimiento de tipos y diseño de APIs expresivas,
+mientras que otros temas quedan reservados para cierre o profundización futura. A lo largo del
+semestre conviene que cada unidad deje visible una decisión de diseño, un tradeoff o una forma de
+API sobre una misma biblioteca o caso de estudio, para que el aprendizaje no se disperse en
+ejemplos aislados.
 
 La intención es que el curso siga siendo transferible aunque cambien el lenguaje principal, las
-herramientas de automatización, el mecanismo de publicación o el caso de estudio concreto.
+herramientas de automatización, el mecanismoz de publicación o el caso de estudio concreto.
 
 ## Unidad 1. Introducción conceptual a las bibliotecas de software
 
@@ -81,24 +82,36 @@ herramientas de automatización, el mecanismo de publicación o el caso de estud
 **Foco:** estudiar cómo las decisiones fundamentales de modelado del dominio habilitan o limitan
 distintos estilos de API.
 
+La unidad avanza desde mecanismos que solo mejoran el nombre hacia mecanismos que restringen,
+componen, representan alternativas, distinguen identidad y separan el dominio de sus
+representaciones de frontera.
+
 **Tópicos principales:**
 
 - lenguaje ubicuo;
 - lógica de negocio vs. lógica de aplicación;
-- entidades y value objects;
+- type aliases como nombres de dominio sin seguridad adicional;
+- value objects e inline value classes como encapsulación de invariantes pequeñas;
+- tipos producto como composición de valores significativos en conceptos de dominio;
+- tipos suma y ADTs para representar alternativas, estados válidos y restricciones;
+- entidades vs. value objects;
 - invariantes y reglas del dominio;
-- estados válidos, alternativas y restricciones;
-- tipos algebraicos;
 - separación entre reglas, coordinación y efectos;
+- DTOs como representaciones de frontera para transporte, persistencia, serialización o integración;
 - delegación y composición de comportamiento cuando ayuden a clarificar el modelo.
 
 **Resultados pedagógicos esperados:**
 
 - el estudiantado identifica reglas del dominio, coordinación de casos de uso y efectos externos
   sin mezclarlos;
-- adquiere un vocabulario estable para hablar de entidades, invariantes, estados y restricciones;
+- adquiere un vocabulario estable para hablar de aliases, value objects, tipos producto, tipos
+  suma, entidades, invariantes, estados y restricciones;
+- distingue entre nombrar un valor, restringirlo, componerlo, representar sus alternativas y darle
+  identidad propia;
 - puede comparar cómo cambia una futura API según se modele con identidad, valor, estados
   explícitos o transformaciones sobre datos;
+- entiende que un DTO no reemplaza al modelo de dominio, sino que cumple una función de frontera
+  cuando la biblioteca debe integrarse, persistir, transportar o serializar datos;
 - entiende que varias decisiones de diseño de interfaz son, antes que nada, decisiones de
   representación del problema;
 - reconoce que el modelado del dominio condiciona la experiencia de uso de la biblioteca.
@@ -155,36 +168,60 @@ operaciones, preservar propiedades e incorporar reglas del dominio sin perder le
   más rígidas;
 - adquiere criterios para juzgar correctitud, expresividad y mantenibilidad en APIs componibles.
 
-## Unidad 6. APIs expresivas y guiadas por uso
+## Unidad 6. Enriquecimiento de tipos y capacidades
 
-**Foco:** estudiar cómo se diseñan APIs más expresivas, guiadas por intención y apoyadas en
-abstracciones avanzadas que ayuden a prevenir errores de uso y a comunicar mejor el dominio.
+**Foco:** estudiar cómo agregar comportamiento, ergonomía o capacidades a una API sin sobrecargar
+el núcleo del modelo ni mezclar responsabilidades que conviene mantener separadas.
+
+**Tópicos principales:**
+
+- enriquecimiento de tipos como problema de diseño de API;
+- comportamiento intrínseco vs. comportamiento derivado o contextual;
+- decorator pattern como extensión por composición;
+- funciones de extensión o mecanismos equivalentes;
+- capacidades contextuales o requisitos contextuales;
+- typeclasses o mecanismos análogos de polimorfismo ad hoc;
+- resolución de capacidades sin acoplar el dominio a detalles accesorios;
+- tradeoffs entre descubribilidad, claridad, magia implícita y mantenibilidad.
+
+**Resultados pedagógicos esperados:**
+
+- el estudiantado distingue entre comportamiento que pertenece al núcleo del modelo y
+  comportamiento que conviene agregar externamente;
+- puede comparar decorator, extensiones, capacidades contextuales y mecanismos análogos como
+  estrategias distintas de enriquecimiento;
+- comprende cuándo una API gana claridad al mover capacidades fuera del tipo principal;
+- reconoce los riesgos de ocultar dependencias o volver opaca la interfaz;
+- diseña mecanismos de enriquecimiento que aumentan expresividad sin deteriorar el contrato público.
+
+## Unidad 7. APIs expresivas y guiadas por uso
+
+**Foco:** estudiar cómo se diseñan superficies de API más expresivas, legibles y guiadas por
+intención, distinguiendo esa expresividad de alto nivel del enriquecimiento del núcleo del modelo.
 
 **Tópicos principales:**
 
 - diseño de interfaces orientadas a claridad y expresividad;
 - DSLs internas o mecanismos equivalentes de expresividad;
 - builders;
-- funciones de extensión o mecanismos similares para mejorar ergonomía;
-- capacidades contextuales;
-- typeclasses o mecanismos análogos cuando aporten una mejora real al diseño;
 - restricciones declarativas sobre el uso de la API;
 - escenarios de uso legibles y consistentes con el lenguaje del dominio;
+- diseño de superficies de uso orientadas a intención;
 - tradeoffs entre expresividad, complejidad y mantenibilidad.
 
 **Resultados pedagógicos esperados:**
 
-- el estudiantado comprende que las abstracciones avanzadas se justifican por problemas concretos de
-  diseño de interfaz, no por sofisticación técnica;
-- puede explicar qué gana quien consume una biblioteca cuando una API usa builders, DSLs,
-  capacidades contextuales o mecanismos equivalentes;
-- reconoce qué complejidad agrega cada estilo de abstracción y cuándo vale la pena introducirlo;
+- el estudiantado comprende que las abstracciones expresivas se justifican por problemas concretos
+  de diseño de interfaz, no por sofisticación técnica;
+- puede explicar qué gana quien consume una biblioteca cuando una API usa builders, DSLs o
+  restricciones declarativas para hacer más legibles los escenarios de uso;
+- reconoce qué complejidad agrega cada mecanismo expresivo y cuándo vale la pena introducirlo;
 - diseña APIs que comuniquen intención, orienten el uso correcto y hagan visibles las restricciones
   relevantes;
 - compara distintos mecanismos expresivos como decisiones de experiencia para otras personas
   desarrolladoras.
 
-## Unidad 7. Contratos públicos, estabilidad y evolución
+## Unidad 8. Contratos públicos, estabilidad y evolución
 
 **Foco:** analizar qué implica publicar, estabilizar y evolucionar APIs para otras personas
 desarrolladoras una vez que ya se han explorado distintos estilos de interfaz.
@@ -214,7 +251,7 @@ desarrolladoras una vez que ya se han explorado distintos estilos de interfaz.
 - relaciona claridad del contrato, decisiones del núcleo y costo de evolución a lo largo del
   tiempo.
 
-## Unidad 8. Extensibilidad, integración y ecosistema
+## Unidad 9. Extensibilidad, integración y ecosistema
 
 **Foco:** cerrar el curso estudiando cómo una biblioteca pasa de una API estable a una pieza que se
 integra con otras, admite extensión y participa en un ecosistema reusable.
@@ -292,11 +329,13 @@ tiempo disponible o la profundidad del proyecto los vuelven especialmente releva
   núcleo, expresividad, publicación y extensibilidad.
 - Las abstracciones avanzadas deben enseñarse como herramientas para resolver problemas de diseño de
   interfaces, no como un catálogo de técnicas.
+- Conviene distinguir entre enriquecer tipos o capacidades alrededor del modelo y diseñar
+  superficies de API expresivas para escenarios de uso de alto nivel.
 - El curso tiene un núcleo prioritario y una periferia opcional: no todos los temas requieren la
   misma profundidad en un semestre.
 - Conviene que el recorrido del curso haga visibles decisiones de diseño, prototipos de API o
   tradeoffs sobre una misma biblioteca o caso de estudio, sin convertir esa continuidad en una
   estructura evaluativa rígida.
 - La progresión esperada del curso es: introducción a bibliotecas de software, scripting y
-  automatización, modelado del dominio, núcleo y contratos, composición, abstracciones avanzadas,
-  estabilidad pública y evolución del ecosistema.
+  automatización, modelado del dominio, núcleo y contratos, composición, enriquecimiento de tipos y
+  capacidades, APIs expresivas y guiadas por uso, estabilidad pública y evolución del ecosistema.
