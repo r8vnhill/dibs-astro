@@ -203,6 +203,7 @@ intención, distinguiendo esa expresividad de alto nivel del enriquecimiento del
 
 - diseño de interfaces orientadas a claridad y expresividad;
 - DSLs internas o mecanismos equivalentes de expresividad;
+- DSLs de aserción: matchers, constraints y fluent assertions como superficies expresivas de testing;
 - builders;
 - restricciones declarativas sobre el uso de la API;
 - escenarios de uso legibles y consistentes con el lenguaje del dominio;
@@ -215,6 +216,8 @@ intención, distinguiendo esa expresividad de alto nivel del enriquecimiento del
   de diseño de interfaz, no por sofisticación técnica;
 - puede explicar qué gana quien consume una biblioteca cuando una API usa builders, DSLs o
   restricciones declarativas para hacer más legibles los escenarios de uso;
+- reconoce las DSLs de aserción como un caso concreto de API expresiva orientada a intención,
+  legibilidad y restricciones de uso en testing;
 - reconoce qué complejidad agrega cada mecanismo expresivo y cuándo vale la pena introducirlo;
 - diseña APIs que comuniquen intención, orienten el uso correcto y hagan visibles las restricciones
   relevantes;
@@ -281,6 +284,10 @@ integra con otras, admite extensión y participa en un ecosistema reusable.
 
 El testing acompaña el crecimiento del diseño y se elige según el tipo de API y el tipo de contrato
 que se quiere proteger:
+
+En este eje también aparecen las DSLs de aserción como bibliotecas con diseño de interfaz propio,
+donde matchers, constraints y fluent assertions permiten expresar intención, restricciones y nivel
+de abstracción en los escenarios de prueba.
 
 1. BDD para expresar comportamiento esperado y lenguaje del dominio.
 2. DDT para reglas simples, matrices de casos, contratos e invariantes tempranos.

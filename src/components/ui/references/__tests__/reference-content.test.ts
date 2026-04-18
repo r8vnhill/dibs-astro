@@ -9,35 +9,30 @@ import {
     resolveOptionalSlots,
 } from "../reference-content";
 
-describe("reference-content utilities", () => {
-    it("detects meaningful plain text", () => {
+describe("hasMeaningfulTextContent", () => {
+    it.each([
+        { html: "", expected: false },
+        { html: " ", expected: false },
+        { html: "&nbsp;", expected: false },
+        { html: "&#160;", expected: false },
+        { html: "&#xA0;", expected: false },
+        { html: "<!-- comment -->", expected: false },
+        { html: "<span></span>", expected: false },
+        { html: "<span>text</span>", expected: true },
+        { html: "<strong> x </strong>", expected: true },
+        { html: "<img src='x' alt='' />", expected: false },
+        { html: "<span>&nbsp;text&nbsp;</span>", expected: true },
+    ])("classifies $html as $expected", ({ html, expected }) => {
+        expect(hasMeaningfulTextContent(html)).toBe(expected);
+    });
+
+    it("treats plain text as meaningful", () => {
         expect(hasMeaningfulTextContent("Texto")).toBe(true);
     });
+});
 
-    it("detects meaningful html with text", () => {
-        expect(hasMeaningfulTextContent("<strong>Texto</strong>")).toBe(true);
-    });
-
-    it("rejects empty html", () => {
-        expect(hasMeaningfulTextContent("   ")).toBe(false);
-    });
-
-    it("rejects comment-only html", () => {
-        expect(hasMeaningfulTextContent("<!-- comentario -->")).toBe(false);
-    });
-
-    it("rejects tag-only and media-only html", () => {
-        expect(hasMeaningfulTextContent("<span></span>")).toBe(false);
-        expect(hasMeaningfulTextContent("<img src=\"x\" alt=\"\" />")).toBe(false);
-    });
-
-    it("rejects non-breaking-space entities as empty text", () => {
-        expect(hasMeaningfulTextContent("&nbsp;")).toBe(false);
-        expect(hasMeaningfulTextContent("&#160;")).toBe(false);
-        expect(hasMeaningfulTextContent("&#xA0;")).toBe(false);
-    });
-
-    it("returns empty result when slot is absent", async () => {
+describe("resolveOptionalSlot", () => {
+    it("returns the empty result when the slot is absent and skips rendering", async () => {
         const slots = {
             has: vi.fn().mockReturnValue(false),
             render: vi.fn(),
@@ -50,10 +45,10 @@ describe("reference-content utilities", () => {
         expect(slots.render).not.toHaveBeenCalled();
     });
 
-    it("returns empty result when rendered slot is empty", async () => {
+    it("returns the empty result when rendered content is not meaningful", async () => {
         const slots = {
             has: vi.fn().mockReturnValue(true),
-            render: vi.fn().mockResolvedValue("<!-- vacío -->"),
+            render: vi.fn().mockResolvedValue("<!-- empty -->"),
         };
 
         await expect(resolveOptionalSlot(slots, "title")).resolves.toEqual({
@@ -62,7 +57,7 @@ describe("reference-content utilities", () => {
         });
     });
 
-    it("returns html when rendered slot is meaningful", async () => {
+    it("preserves original html when rendered content is meaningful", async () => {
         const slots = {
             has: vi.fn().mockReturnValue(true),
             render: vi.fn().mockResolvedValue("<em>Título</em>"),
@@ -74,6 +69,18 @@ describe("reference-content utilities", () => {
         });
     });
 
+    it("propagates render failures unchanged", async () => {
+        const error = new Error("render failed");
+        const slots = {
+            has: vi.fn().mockReturnValue(true),
+            render: vi.fn().mockRejectedValue(error),
+        };
+
+        await expect(resolveOptionalSlot(slots, "title")).rejects.toThrow(error);
+    });
+});
+
+describe("resolveOptionalSlots", () => {
     it("resolves multiple optional slots in one call", async () => {
         const slotValues: Record<string, string> = {
             title: "<strong>Título</strong>",
@@ -102,99 +109,123 @@ describe("reference-content utilities", () => {
 
         await expect(resolveOptionalSlots(slots, [])).resolves.toEqual({});
     });
+});
 
-    describe("resolveInlineField", () => {
-        it("prefers meaningful slot content over fallback text", () => {
-            expect(
-                resolveInlineField(
-                    { kind: "meaningful", html: "<strong>Título</strong>" },
-                    "Título base",
-                ),
-            ).toEqual({
-                kind: "slot",
-                html: "<strong>Título</strong>",
-            });
-        });
-
-        it("uses fallback text when slot content is empty", () => {
-            expect(resolveInlineField({ kind: "empty", html: "" }, "Título base")).toEqual({
-                kind: "text",
-                text: "Título base",
-            });
-        });
-
-        it("returns missing when neither slot content nor fallback text exists", () => {
-            expect(resolveInlineField({ kind: "empty", html: "" })).toEqual({
-                kind: "missing",
-            });
+describe("resolveInlineField", () => {
+    it("prefers meaningful slot content over fallback text", () => {
+        expect(
+            resolveInlineField(
+                { kind: "meaningful", html: "<strong>Título</strong>" },
+                "Título base",
+            ),
+        ).toEqual({
+            kind: "slot",
+            html: "<strong>Título</strong>",
         });
     });
 
-    describe("resolveLinkedInlineField", () => {
-        it("prefers meaningful slot content over prop text and url", () => {
-            expect(
-                resolveLinkedInlineField(
-                    { kind: "meaningful", html: "<strong>Institución</strong>" },
-                    "Institution base",
-                    "https://example.com",
-                ),
-            ).toEqual({
-                kind: "slot",
-                html: "<strong>Institución</strong>",
-            });
+    it("returns normalized fallback text when the slot is empty", () => {
+        expect(resolveInlineField({ kind: "empty", html: "" }, "  Título   base  ")).toEqual({
+            kind: "text",
+            text: "Título base",
         });
+    });
 
-        it("returns a link when prop text and url are both available", () => {
-            expect(
-                resolveLinkedInlineField(
-                    { kind: "empty", html: "" },
-                    "Institution base",
-                    "https://example.com",
-                ),
-            ).toEqual({
-                kind: "link",
+    it("returns missing when fallback text is blank", () => {
+        expect(resolveInlineField({ kind: "empty", html: "" }, "   ")).toEqual({
+            kind: "missing",
+        });
+    });
+
+    it("returns missing when fallback text only contains non-breaking-space entities", () => {
+        expect(resolveInlineField({ kind: "empty", html: "" }, " &nbsp; &#160; ")).toEqual({
+            kind: "missing",
+        });
+    });
+});
+
+describe("resolveLinkedInlineField", () => {
+    it("prefers meaningful slot content over prop text and url", () => {
+        expect(
+            resolveLinkedInlineField(
+                { kind: "meaningful", html: "<strong>Institución</strong>" },
+                "Institution base",
+                "https://example.com",
+            ),
+        ).toEqual({
+            kind: "slot",
+            html: "<strong>Institución</strong>",
+        });
+    });
+
+    it("returns a link when prop text and url are both usable", () => {
+        expect(
+            resolveLinkedInlineField(
+                { kind: "empty", html: "" },
+                "Institution base",
+                "https://example.com",
+            ),
+        ).toEqual({
+            kind: "link",
+            text: "Institution base",
+            href: "https://example.com",
+        });
+    });
+
+    it("returns plain text when prop text exists without a url", () => {
+        expect(resolveLinkedInlineField({ kind: "empty", html: "" }, "Institution base")).toEqual(
+            {
+                kind: "text",
                 text: "Institution base",
-                href: "https://example.com",
-            });
-        });
+            },
+        );
+    });
 
-        it("returns plain text when prop text exists without url", () => {
-            expect(resolveLinkedInlineField({ kind: "empty", html: "" }, "Institution base"))
-                .toEqual(
-                    {
-                        kind: "text",
-                        text: "Institution base",
-                    },
-                );
+    it("returns plain text when prop text is usable and the url is blank", () => {
+        expect(
+            resolveLinkedInlineField(
+                { kind: "empty", html: "" },
+                "Institution base",
+                "   ",
+            ),
+        ).toEqual({
+            kind: "text",
+            text: "Institution base",
         });
+    });
 
-        it("returns missing when neither slot nor prop text exists", () => {
-            expect(resolveLinkedInlineField({ kind: "empty", html: "" })).toEqual({
-                kind: "missing",
-            });
+    it("returns missing when fallback text is blank even if a url exists", () => {
+        expect(
+            resolveLinkedInlineField(
+                { kind: "empty", html: "" },
+                "   ",
+                "https://example.com",
+            ),
+        ).toEqual({
+            kind: "missing",
         });
+    });
 
-        it("property: meaningful slot content always wins", () => {
-            fc.assert(
-                fc.property(
-                    fc.string(),
-                    fc.option(fc.string()),
-                    fc.option(fc.webUrl()),
-                    (html, text, url) => {
-                        const result = resolveLinkedInlineField(
-                            { kind: "meaningful", html },
-                            text ?? undefined,
-                            url ?? undefined,
-                        );
+    it("property: meaningful slot content always wins", () => {
+        fc.assert(
+            fc.property(
+                fc.string(),
+                fc.option(fc.string()),
+                fc.option(fc.webUrl()),
+                (html, text, url) => {
+                    const result = resolveLinkedInlineField(
+                        { kind: "meaningful", html },
+                        text ?? undefined,
+                        url ?? undefined,
+                    );
 
-                        expect(result).toEqual({
-                            kind: "slot",
-                            html,
-                        });
-                    },
-                ),
-            );
-        });
+                    expect(result).toEqual({
+                        kind: "slot",
+                        html,
+                    });
+                },
+            ),
+        );
     });
 });
 
@@ -315,5 +346,46 @@ describe("prepareSlotsForReferences", () => {
                 institution: "Institution Override",
             },
         });
+    });
+
+    it("treats duplicate ids as one logical reference in the final output", async () => {
+        const slotValues: Record<string, string> = {
+            "title-ref-1": "Title Override",
+        };
+
+        const slots = {
+            has: vi.fn((name: string) => name in slotValues),
+            render: vi.fn((name: string) => Promise.resolve(slotValues[name] ?? "")),
+        };
+
+        const prepared = await prepareSlotsForReferences(slots, ["ref-1", "ref-1"]);
+
+        expect(prepared).toEqual({
+            "ref-1": {
+                title: "Title Override",
+            },
+        });
+    });
+
+    it("does not repeat slot-resolution work for duplicate ids", async () => {
+        const slotValues: Record<string, string> = {
+            "title-ref-1": "Title Override",
+        };
+
+        const slots = {
+            has: vi.fn((name: string) => name in slotValues),
+            render: vi.fn((name: string) => Promise.resolve(slotValues[name] ?? "")),
+        };
+
+        await prepareSlotsForReferences(slots, ["ref-1", "ref-1"]);
+
+        expect(slots.has).toHaveBeenCalledTimes(4);
+        expect(slots.render).toHaveBeenCalledTimes(1);
+        expect(slots.has.mock.calls.map(([name]) => name)).toEqual([
+            "title-ref-1",
+            "description-ref-1",
+            "publication-ref-1",
+            "institution-ref-1",
+        ]);
     });
 });
