@@ -1,8 +1,8 @@
-import type { ILessonCatalog, Lesson } from "$application/ports";
-import type { NavigationResult } from "$application/ports/NavigationService";
 import { LessonTrail, type TrailNode } from "$domain/entities/LessonTrail";
+import type { LessonNavigationRepository } from "$domain/repositories";
 import { LessonSequenceService } from "$domain/services/LessonSequenceService";
 import { LessonHref } from "$domain/value-objects/LessonHref";
+import type { AdjacentLessons } from "$domain/value-objects/AdjacentLessons";
 import {
     courseStructure,
     type FlattenedLesson,
@@ -30,8 +30,8 @@ export type { TrailNode };
  *
  * Nota: Por ahora simula async para futura compatibilidad con APIs/DBs.
  */
-export class LessonCatalogAdapter implements ILessonCatalog {
-    private flatCache: Array<Lesson & { href: string }> | null = null;
+export class LessonCatalogAdapter implements LessonNavigationRepository {
+    private flatCache: Array<FlattenedLesson & { href: string }> | null = null;
     private structure: readonly DomainLesson[];
 
     /**
@@ -42,11 +42,11 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         this.structure = structure;
     }
 
-    async getCourseStructure(): Promise<Lesson[]> {
-        return this.mapToSimpleStructure(this.structure);
+    async getCourseStructure(): Promise<readonly DomainLesson[]> {
+        return this.structure;
     }
 
-    async flatten(): Promise<Array<Lesson & { href: string }>> {
+    async flatten(): Promise<Array<FlattenedLesson & { href: string }>> {
         if (this.flatCache) {
             return this.flatCache;
         }
@@ -54,36 +54,28 @@ export class LessonCatalogAdapter implements ILessonCatalog {
         const flattened = flattenLessons(this.structure);
         this.flatCache = flattened
             .filter(hasHref)
-            .map<Lesson & { href: string }>((lesson) => ({
-                id: lesson.id,
-                title: lesson.title,
-                slug: this.extractSlug(lesson.href),
-                href: lesson.href,
-            }));
+            .map((lesson) => lesson);
 
         return this.flatCache;
     }
 
-    async findByPath(pathname: string): Promise<Lesson | null> {
+    async findByPath(pathname: string): Promise<FlattenedLesson | null> {
         const flattened = await this.flatten();
         return flattened.find((lesson) => lesson.href === pathname) ?? null;
     }
 
-    async findAdjacentByHref(href: string): Promise<NavigationResult> {
+    async findAdjacentTo(href: LessonHref): Promise<AdjacentLessons> {
         const lessons = await this.flatten();
 
-        // Delegate to pure domain service with normalizer function
-        const adjacent = LessonSequenceService.findAdjacent(
-            lessons,
-            href,
+        return LessonSequenceService.findAdjacent(
+            lessons.map((lesson) => ({
+                title: lesson.title,
+                slug: lesson.id,
+                href: lesson.href,
+            })),
+            href.value,
             (h: string) => LessonHref.create(h).value,
         );
-
-        const result: NavigationResult = {};
-        if (adjacent.previous) result.previous = adjacent.previous;
-        if (adjacent.next) result.next = adjacent.next;
-
-        return result;
     }
 
     /**
@@ -160,54 +152,6 @@ export class LessonCatalogAdapter implements ILessonCatalog {
             title: lesson.title,
             ...(lesson.href ? { href: lesson.href } : {}),
         };
-    }
-
-    /**
-     * Mapea la estructura jerárquica actual a una forma simplificada.
-     *
-     * Nota: esta función es private porque es detalles de la implementación.
-     * El puerto no expone este mapeo.
-     */
-    private mapToSimpleStructure(
-        domainLessons: readonly DomainLesson[],
-    ): Lesson[] {
-        return domainLessons.map((lesson) => {
-            const mapped: Lesson = {
-                id: lesson.id,
-                title: lesson.title,
-                slug: this.extractSlug(lesson.href || lesson.id),
-            };
-
-            // Solo agregar href si existe
-            if (lesson.href) {
-                mapped.href = lesson.href;
-            }
-
-            // Solo agregar children si existen
-            if (lesson.children) {
-                mapped.children = this.mapToSimpleStructure(lesson.children);
-            }
-
-            return mapped;
-        });
-    }
-
-    /**
-     * Extrae un slug legible de una ruta.
-     * Ej: /notes/scripting/help/ → help
-     * Fallback: usa una versión normalizada del id.
-     */
-    private extractSlug(hrefOrId: string): string {
-        if (!hrefOrId) return "";
-
-        // Si es una ruta (comienza con /), extrae el último segmento
-        if (hrefOrId.startsWith("/")) {
-            const parts = hrefOrId.split("/").filter((p) => p.length > 0);
-            return parts[parts.length - 1] || "root";
-        }
-
-        // Si es un ID, normalízalo (reemplaza guiones y números)
-        return hrefOrId;
     }
 }
 

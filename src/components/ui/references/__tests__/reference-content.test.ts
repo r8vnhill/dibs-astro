@@ -2,6 +2,8 @@ import fc from "fast-check";
 import { describe, expect, it, vi } from "vitest";
 import {
     hasMeaningfulTextContent,
+    normalizeFallbackText,
+    normalizeHref,
     prepareSlotsForReferences,
     resolveInlineField,
     resolveLinkedInlineField,
@@ -112,6 +114,34 @@ describe("resolveOptionalSlots", () => {
 });
 
 describe("resolveInlineField", () => {
+    describe("normalizeFallbackText", () => {
+        it("returns undefined for undefined input", () => {
+            expect(normalizeFallbackText()).toBeUndefined();
+        });
+
+        it("returns undefined for blank input", () => {
+            expect(normalizeFallbackText("   ")).toBeUndefined();
+        });
+
+        it("trims surrounding whitespace", () => {
+            expect(normalizeFallbackText("  Título base  ")).toBe("Título base");
+        });
+
+        it("collapses repeated inline whitespace", () => {
+            expect(normalizeFallbackText("Título   base\t\tcon\nsaltos")).toBe(
+                "Título base con saltos",
+            );
+        });
+
+        it("treats non-breaking-space entities as blank when no meaningful text remains", () => {
+            expect(normalizeFallbackText(" &nbsp; &#160; &#xA0; ")).toBeUndefined();
+        });
+
+        it("preserves meaningful text after normalization", () => {
+            expect(normalizeFallbackText("  Título &nbsp; base  ")).toBe("Título base");
+        });
+    });
+
     it("prefers meaningful slot content over fallback text", () => {
         expect(
             resolveInlineField(
@@ -145,6 +175,28 @@ describe("resolveInlineField", () => {
 });
 
 describe("resolveLinkedInlineField", () => {
+    describe("normalizeHref", () => {
+        it("returns undefined for undefined input", () => {
+            expect(normalizeHref()).toBeUndefined();
+        });
+
+        it("returns undefined for empty input", () => {
+            expect(normalizeHref("")).toBeUndefined();
+        });
+
+        it("returns undefined for whitespace-only input", () => {
+            expect(normalizeHref("   ")).toBeUndefined();
+        });
+
+        it("trims surrounding whitespace from usable urls", () => {
+            expect(normalizeHref("  https://example.com/path  ")).toBe("https://example.com/path");
+        });
+
+        it("preserves non-empty url strings without extra validation", () => {
+            expect(normalizeHref("mailto:test@example.com")).toBe("mailto:test@example.com");
+        });
+    });
+
     it("prefers meaningful slot content over prop text and url", () => {
         expect(
             resolveLinkedInlineField(

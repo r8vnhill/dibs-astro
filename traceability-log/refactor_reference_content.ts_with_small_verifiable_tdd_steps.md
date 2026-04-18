@@ -156,7 +156,7 @@ This phase should minimize ambiguity before implementation changes begin.
 * The current behavior is expressed clearly enough that refactoring can proceed without guesswork.
 * Edge cases around empty HTML, fallback text, and duplicate ids are covered.
 
-## Phase 2: Extract fallback normalization
+## ~~Phase 2: Extract fallback normalization~~
 
 Introduce:
 
@@ -190,7 +190,7 @@ Optional PBT:
 * duplicated normalization logic is removed
 * inline and linked-inline behavior remains stable apart from the intentional blank-URL tightening
 
-## Phase 3: Extract pure slot classification
+## ~~Phase 3: Extract pure slot classification~~
 
 Introduce:
 

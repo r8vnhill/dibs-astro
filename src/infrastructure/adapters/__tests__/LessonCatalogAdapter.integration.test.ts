@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { LessonHref } from "$domain/value-objects/LessonHref";
 import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 const adapter = new LessonCatalogAdapter();
@@ -18,7 +19,6 @@ describe("LessonCatalogAdapter", () => {
         expect(flattened.length).toBeGreaterThan(0);
 
         flattened.forEach((lesson) => {
-            expect(lesson.slug).toBeDefined();
             expect(lesson.title).toBeDefined();
             expect(lesson.id).toBeDefined();
             expect(lesson.href).toBeDefined();
@@ -93,12 +93,12 @@ describe("LessonCatalogAdapter", () => {
         }
     });
 
-    describe("findAdjacentByHref", () => {
+    describe("findAdjacentTo", () => {
         it("returns only next for the first lesson", async () => {
             const flattened = await getFlattenedLessons();
             const firstLesson = getFirstLesson(flattened);
 
-            const result = await adapter.findAdjacentByHref(firstLesson.href);
+            const result = await findAdjacentToHref(firstLesson.href);
 
             expect(result.previous).toBeUndefined();
             expect(result.next).toBeDefined();
@@ -110,27 +110,27 @@ describe("LessonCatalogAdapter", () => {
             const middleLesson = getMiddleLesson(flattened);
             const middleIndex = flattened.indexOf(middleLesson);
 
-            const result = await adapter.findAdjacentByHref(middleLesson.href);
+            const result = await findAdjacentToHref(middleLesson.href);
 
             expect(result.previous).toBeDefined();
             expect(result.next).toBeDefined();
-            expect(result.previous?.slug).toBe(flattened[middleIndex - 1]?.slug);
-            expect(result.next?.slug).toBe(flattened[middleIndex + 1]?.slug);
+            expect(result.previous?.href).toBe(flattened[middleIndex - 1]?.href);
+            expect(result.next?.href).toBe(flattened[middleIndex + 1]?.href);
         });
 
         it("returns only previous for the last lesson", async () => {
             const flattened = await getFlattenedLessons();
             const lastLesson = getLastLesson(flattened);
 
-            const result = await adapter.findAdjacentByHref(lastLesson.href);
+            const result = await findAdjacentToHref(lastLesson.href);
 
             expect(result.previous).toBeDefined();
             expect(result.next).toBeUndefined();
-            expect(result.previous?.slug).toBe(flattened[flattened.length - 2]?.slug);
+            expect(result.previous?.href).toBe(flattened[flattened.length - 2]?.href);
         });
 
         it("returns an empty result for a missing route", async () => {
-            const result = await adapter.findAdjacentByHref("/notes/nonexistent/path/");
+            const result = await findAdjacentToHref("/notes/nonexistent/path/");
 
             expect(result.previous).toBeUndefined();
             expect(result.next).toBeUndefined();
@@ -138,20 +138,20 @@ describe("LessonCatalogAdapter", () => {
 
         it("ignores query params when resolving adjacent lessons", async () => {
             const firstLesson = getFirstLesson(await getFlattenedLessons());
-            const resultWithQuery = await adapter.findAdjacentByHref(
+            const resultWithQuery = await findAdjacentToHref(
                 `${firstLesson.href}?section=intro&lang=es`,
             );
 
-            const resultPlain = await adapter.findAdjacentByHref(firstLesson.href);
+            const resultPlain = await findAdjacentToHref(firstLesson.href);
 
             expect(resultWithQuery).toEqual(resultPlain);
         });
 
         it("ignores hash fragments when resolving adjacent lessons", async () => {
             const firstLesson = getFirstLesson(await getFlattenedLessons());
-            const resultWithHash = await adapter.findAdjacentByHref(`${firstLesson.href}#section`);
+            const resultWithHash = await findAdjacentToHref(`${firstLesson.href}#section`);
 
-            const resultPlain = await adapter.findAdjacentByHref(firstLesson.href);
+            const resultPlain = await findAdjacentToHref(firstLesson.href);
 
             expect(resultWithHash).toEqual(resultPlain);
         });
@@ -159,19 +159,19 @@ describe("LessonCatalogAdapter", () => {
         it("handles repeated slashes when resolving adjacent lessons", async () => {
             const firstLesson = getFirstLesson(await getFlattenedLessons());
             const malformedHref = firstLesson.href.replace(/\//g, "//");
-            const resultMalformed = await adapter.findAdjacentByHref(malformedHref);
+            const resultMalformed = await findAdjacentToHref(malformedHref);
 
-            const resultPlain = await adapter.findAdjacentByHref(firstLesson.href);
+            const resultPlain = await findAdjacentToHref(firstLesson.href);
 
             expect(resultMalformed).toEqual(resultPlain);
         });
 
         it("returns the same result for equivalent href variants", async () => {
             const canonicalHref = getFirstLesson(await getFlattenedLessons()).href;
-            const canonicalResult = await adapter.findAdjacentByHref(canonicalHref);
+            const canonicalResult = await findAdjacentToHref(canonicalHref);
 
             for (const variant of noisyHrefVariants(canonicalHref)) {
-                const result = await adapter.findAdjacentByHref(variant);
+                const result = await findAdjacentToHref(variant);
                 expect(result).toEqual(canonicalResult);
             }
         });
@@ -179,7 +179,7 @@ describe("LessonCatalogAdapter", () => {
         it.each(["", "   "])(
             "throws for an invalid href: %j",
             async (invalidHref) => {
-                await expect(adapter.findAdjacentByHref(invalidHref)).rejects.toThrow(
+                await expect(async () => findAdjacentToHref(invalidHref)).rejects.toThrow(
                     "LessonHref cannot be empty",
                 );
             },
@@ -190,7 +190,7 @@ describe("LessonCatalogAdapter", () => {
             const lastIndex = flattened.length - 1;
 
             for (const [index, lesson] of flattened.entries()) {
-                const result = await adapter.findAdjacentByHref(lesson.href);
+                const result = await findAdjacentToHref(lesson.href);
 
                 if (index === 0) {
                     expect(result.previous).toBeUndefined();
@@ -217,8 +217,8 @@ describe("LessonCatalogAdapter", () => {
                     throw new Error("Could not resolve an adjacent catalog pair");
                 }
 
-                const currentResult = await adapter.findAdjacentByHref(current.href);
-                const nextResult = await adapter.findAdjacentByHref(next.href);
+                const currentResult = await findAdjacentToHref(current.href);
+                const nextResult = await findAdjacentToHref(next.href);
 
                 expect(currentResult.next?.href).toBe(next.href);
                 expect(nextResult.previous?.href).toBe(current.href);
@@ -246,6 +246,10 @@ async function getFlattenedLessons() {
     }
 
     return flattened;
+}
+
+function findAdjacentToHref(href: string) {
+    return adapter.findAdjacentTo(LessonHref.create(href));
 }
 
 function getFirstLesson(flattened: Awaited<ReturnType<typeof adapter.flatten>>): Awaited<

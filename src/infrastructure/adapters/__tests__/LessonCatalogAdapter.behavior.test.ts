@@ -153,12 +153,22 @@ function lessonNode({
     href?: string;
     children?: readonly DomainLesson[];
 }): DomainLesson {
+    if (kind === "link") {
+        return {
+            id,
+            title,
+            kind,
+            href: href ?? `/notes/${id}/`,
+            ...(children ? { children } : {}),
+        };
+    }
+
     return {
         id,
         title,
         kind,
         ...(href ? { href } : {}),
-        ...(children ? { children } : {}),
+        children: children ?? [],
     };
 }
 

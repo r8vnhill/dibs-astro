@@ -1,7 +1,7 @@
 /**
  * Public domain-layer barrel.
  *
- * This module defines the stable import surface for the lesson domain. It re-exports the domain
+ * This module defines the stable import surface for the domain layer. It re-exports the domain
  * concepts that application, presentation, and infrastructure code are expected to depend on
  * directly, while keeping the internal folder structure private.
  *
@@ -16,7 +16,7 @@
  *
  * ## Export groups
  *
- * This barrel exposes:
+ * This barrel exposes lesson-focused domain concepts:
  *
  * - lesson entities that represent the core lesson model;
  * - navigation-related value objects used to model lesson identity, paths, and adjacency;
@@ -30,6 +30,7 @@
  */
 export { Lesson, type LessonProps } from "./entities/Lesson";
 export { LessonTrail, type TrailNode } from "./entities/LessonTrail";
+export type { LessonNavigationRepository } from "./repositories";
 export { LessonSequenceService } from "./services/LessonSequenceService";
 export { AdjacentLessons, type NavigationNode } from "./value-objects/AdjacentLessons";
 export { LessonHref } from "./value-objects/LessonHref";

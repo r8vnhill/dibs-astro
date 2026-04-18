@@ -8,7 +8,6 @@
 
 export interface NavigationNode {
     title: string;
-    slug: string;
     href: string; // normalizada con trailing slash
 }
 

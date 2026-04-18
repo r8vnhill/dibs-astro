@@ -146,6 +146,38 @@ export const decodeHtmlWhitespaceEntities = (text: string): string =>
 export const normalizeInlineWhitespace = (text: string): string => text.replace(/\s+/g, " ").trim();
 
 /**
+ * Normalizes prop-backed fallback text for inline metadata fields.
+ *
+ * This mirrors the existing fallback-text behavior used by the resolvers: decode common HTML
+ * whitespace entities, collapse inline whitespace, and reject blank results.
+ */
+export function normalizeFallbackText(text?: string): string | undefined {
+    if (text === undefined) {
+        return undefined;
+    }
+
+    const normalizedText = normalizeInlineWhitespace(decodeHtmlWhitespaceEntities(text));
+
+    return normalizedText || undefined;
+}
+
+/**
+ * Normalizes a fallback href by trimming surrounding whitespace and rejecting blank values.
+ *
+ * This helper intentionally does not validate URL structure; it only centralizes the module's
+ * blank-value policy for optional link fallbacks.
+ */
+export function normalizeHref(href?: string): string | undefined {
+    if (href === undefined) {
+        return undefined;
+    }
+
+    const normalizedHref = href.trim();
+
+    return normalizedHref || undefined;
+}
+
+/**
  * Returns whether rendered HTML contains meaningful visible text.
  *
  * The classification pipeline:
@@ -193,9 +225,7 @@ export function resolveInlineField(
         return { kind: "slot", html: slotContent.html };
     }
 
-    const normalizedFallbackText = fallbackText === undefined
-        ? undefined
-        : normalizeInlineWhitespace(decodeHtmlWhitespaceEntities(fallbackText));
+    const normalizedFallbackText = normalizeFallbackText(fallbackText);
 
     if (normalizedFallbackText) {
         return { kind: "text", text: normalizedFallbackText };
@@ -221,16 +251,16 @@ export function resolveLinkedInlineField(
         return { kind: "slot", html: slotContent.html };
     }
 
-    const normalizedFallbackText = fallbackText === undefined
-        ? undefined
-        : normalizeInlineWhitespace(decodeHtmlWhitespaceEntities(fallbackText));
+    const normalizedFallbackText = normalizeFallbackText(fallbackText);
 
     if (!normalizedFallbackText) {
         return { kind: "missing" };
     }
 
-    if (fallbackUrl) {
-        return { kind: "link", text: normalizedFallbackText, href: fallbackUrl };
+    const normalizedHref = normalizeHref(fallbackUrl);
+
+    if (normalizedHref) {
+        return { kind: "link", text: normalizedFallbackText, href: normalizedHref };
     }
 
     return { kind: "text", text: normalizedFallbackText };

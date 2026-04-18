@@ -1,66 +1,50 @@
-import type { ILessonCatalog } from "$application/ports";
-import type { NavigationResult } from "$application/ports/NavigationService";
+import type { LessonNavigationRepository } from "$domain/repositories";
+import { AdjacentLessons } from "$domain/value-objects/AdjacentLessons";
+import { LessonHref } from "$domain/value-objects/LessonHref";
 import { beforeEach, describe, expect, it } from "vitest";
 import { NavigationServiceImpl } from "../NavigationServiceImpl";
 
 /**
  * Tests para NavigationServiceImpl.
  *
- * Ahora que el servicio delega a findAdjacentByHref,
+ * Ahora que el servicio delega a un repositorio de navegación de dominio,
  * verificamos que:
- * 1. El servicio correctamente invoca el catálogo
- * 2. Los resultados se pasan sin modificación
- * 3. La delegación es transparente
+ * 1. El servicio canonicaliza el pathname en el borde de aplicación
+ * 2. La delegación se hace a través del contrato de dominio
+ * 3. El resultado expuesto mantiene solo { title, href }
  *
- * Nota: la lógica de normalización y búsqueda se prueба completamente
+ * Nota: la lógica de normalización y búsqueda se prueba completamente
  * en LessonCatalogAdapter.test.ts con PBT + DDT.
  */
 
 describe("NavigationServiceImpl", () => {
     let navigationService: NavigationServiceImpl;
-    let lessonCatalog: ILessonCatalog;
+    let lessonNavigationRepository: LessonNavigationRepository;
+    let receivedHref: LessonHref | undefined;
 
     beforeEach(() => {
-        // Mock del catálogo que implementa findAdjacentByHref
-        lessonCatalog = {
-            getCourseStructure: async () => [],
-            findByPath: async () => null,
-            flatten: async () => [],
-            // Simulamos respuestas pre-calculadas sin hacer flatten() internamente
-            findAdjacentByHref: async (href: string): Promise<NavigationResult> => {
-                const responses: { [key: string]: NavigationResult } = {
-                    "/notes/unit1/lesson1/": {
-                        next: {
-                            title: "Lesson 2",
-                            slug: "lesson2",
-                            href: "/notes/unit1/lesson2/",
-                        },
-                    },
-                    "/notes/unit1/lesson2/": {
-                        previous: {
-                            title: "Lesson 1",
-                            slug: "lesson1",
-                            href: "/notes/unit1/lesson1/",
-                        },
-                        next: {
-                            title: "Lesson 3",
-                            slug: "lesson3",
-                            href: "/notes/unit2/lesson3/",
-                        },
-                    },
-                    "/notes/unit2/lesson3/": {
-                        previous: {
-                            title: "Lesson 2",
-                            slug: "lesson2",
-                            href: "/notes/unit1/lesson2/",
-                        },
-                    },
+        lessonNavigationRepository = {
+            findAdjacentTo: async (href: LessonHref) => {
+                receivedHref = href;
+                const responses: Record<string, AdjacentLessons> = {
+                    "/notes/unit1/lesson1/": AdjacentLessons.create(
+                        undefined,
+                        { title: "Lesson 2", slug: "lesson2", href: "/notes/unit1/lesson2/" },
+                    ),
+                    "/notes/unit1/lesson2/": AdjacentLessons.create(
+                        { title: "Lesson 1", slug: "lesson1", href: "/notes/unit1/lesson1/" },
+                        { title: "Lesson 3", slug: "lesson3", href: "/notes/unit2/lesson3/" },
+                    ),
+                    "/notes/unit2/lesson3/": AdjacentLessons.create(
+                        { title: "Lesson 2", slug: "lesson2", href: "/notes/unit1/lesson2/" },
+                    ),
                 };
-                return responses[href] ?? {};
+                return responses[href.value] ?? AdjacentLessons.create();
             },
         };
 
-        navigationService = new NavigationServiceImpl(lessonCatalog);
+        navigationService = new NavigationServiceImpl(lessonNavigationRepository);
+        receivedHref = undefined;
     });
 
     it("debe retornar undefined para previous en la primera lección", async () => {
@@ -68,23 +52,23 @@ describe("NavigationServiceImpl", () => {
 
         expect(result.previous).toBeUndefined();
         expect(result.next).toBeDefined();
-        expect(result.next?.slug).toBe("lesson2");
+        expect(result.next?.href).toBe("/notes/unit1/lesson2/");
     });
 
     it("debe retornar previous y next para una lección del medio", async () => {
         const result = await navigationService.resolveAutoNav("/notes/unit1/lesson2/");
 
         expect(result.previous).toBeDefined();
-        expect(result.previous?.slug).toBe("lesson1");
+        expect(result.previous?.href).toBe("/notes/unit1/lesson1/");
         expect(result.next).toBeDefined();
-        expect(result.next?.slug).toBe("lesson3");
+        expect(result.next?.href).toBe("/notes/unit2/lesson3/");
     });
 
     it("debe retornar undefined para next en la última lección", async () => {
         const result = await navigationService.resolveAutoNav("/notes/unit2/lesson3/");
 
         expect(result.previous).toBeDefined();
-        expect(result.previous?.slug).toBe("lesson2");
+        expect(result.previous?.href).toBe("/notes/unit1/lesson2/");
         expect(result.next).toBeUndefined();
     });
 
@@ -97,16 +81,25 @@ describe("NavigationServiceImpl", () => {
         expect(result.next).toBeUndefined();
     });
 
-    it("debe delegar correctamente a findAdjacentByHref sin modificar resultado", async () => {
-        // El servicio es ahora transparente: solo pasa a través del resultado del catálogo
+    it("canonicaliza el pathname antes de delegar al repositorio", async () => {
+        const result = await navigationService.resolveAutoNav(
+            " notes//unit1/lesson1?lang=es#intro ",
+        );
+
+        expect(receivedHref?.value).toBe("/notes/unit1/lesson1/");
+        expect(result.next).toEqual({
+            title: "Lesson 2",
+            href: "/notes/unit1/lesson2/",
+        });
+    });
+
+    it("expone un resultado sin slug", async () => {
         const result = await navigationService.resolveAutoNav("/notes/unit1/lesson1/");
 
-        // Verificar que el formato NavigationResult es correcto
-        if (result.next) {
-            expect(result.next).toHaveProperty("title");
-            expect(result.next).toHaveProperty("slug");
-            expect(result.next).toHaveProperty("href");
-            expect(result.next.href).toMatch(/\/$/); // tiene trailing slash
-        }
+        expect(result.next).toEqual({
+            title: "Lesson 2",
+            href: "/notes/unit1/lesson2/",
+        });
+        expect(result.next).not.toHaveProperty("slug");
     });
 });
