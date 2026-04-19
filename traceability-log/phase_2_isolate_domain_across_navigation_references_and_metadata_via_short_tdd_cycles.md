@@ -75,7 +75,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move the pure decision logic from `reference-content.ts` into a domain module free of Astro references.
    - Leave a thin adapter in the references UI layer that converts Astro slot I/O into domain inputs and renders domain outputs.
 
-5. **Cycle 5: Isolate lesson metadata rules**
+5. ~~**Cycle 5: Isolate lesson metadata rules**~~
    - Add domain tests for:
      - normalized lesson lookup keys
      - ISO short date parsing

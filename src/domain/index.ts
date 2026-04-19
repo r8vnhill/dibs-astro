@@ -1,37 +1,47 @@
 /**
- * Public domain-layer barrel.
+ * Public barrel for the domain layer.
  *
- * This module defines the stable import surface for the domain layer. It re-exports the domain concepts that 
- * application, presentation, and infrastructure code are expected to depend on directly, while keeping the internal 
+ * This module defines the stable public import surface for domain code. It re-exports the domain concepts that 
+ * application, presentation, and infrastructure layers are expected to consume directly, while keeping the internal 
  * folder structure private.
  *
  * ## Why this module exists
  *
- * Importing domain symbols through a single entry point provides a few practical benefits:
+ * Routing external imports through a single entry point provides several practical benefits:
  *
- * - it gives external layers a compact and predictable import path;
- * - it reduces coupling to the internal organization of the domain package;
- * - it makes future refactors of domain files less disruptive;
- * - it communicates which domain types are intended to be part of the public API.
+ * - it gives other layers a compact, predictable import path;
+ * - it reduces coupling to the internal layout of the domain package;
+ * - it makes internal refactors less disruptive;
+ * - it signals which domain symbols are intended to be public.
  *
  * ## Export groups
  *
- * This barrel exposes lesson-focused domain concepts and utilities:
+ * This barrel exposes the following domain concerns:
  *
- * - lesson entities that represent the core lesson model;
- * - navigation-related value objects used to model lesson identity, paths, and adjacency;
- * - domain services that derive sequencing and navigation behavior from lesson data;
- * - reference-content utilities for HTML parsing, normalization, validation, and classification of rendered lesson
- *   content.
+ * - **lesson entities**: core lesson models and trail representations;
+ * - **lesson metadata**: pathname normalization, date parsing, and date display rules;
+ * - **lesson navigation**: value objects and services for lesson identity, paths, and adjacency;
+ * - **reference content**: classification, normalization, validation, and resolution of rendered reference content.
  *
  * ## Usage
  *
- * Prefer importing from this module when consuming domain concepts from outside the domain layer itself. Internal 
- * domain modules may still use deeper imports when that helps avoid circular dependencies or keeps implementation 
- * details local.
+ * Prefer importing from this module when consuming domain concepts from outside the domain layer.
+ *
+ * Internal domain modules may still use deeper imports when doing so avoids circular dependencies or keeps 
+ * implementation details local.
  */
 export { Lesson, type LessonProps } from "./entities/Lesson";
 export { LessonTrail, type TrailNode } from "./entities/LessonTrail";
+export {
+    DEFAULT_LESSON_METADATA_LOCALE,
+    formatDate,
+    formatLessonDate,
+    normalizeLessonMetadataPathname,
+    parseIsoShortDate,
+    resolveLessonDateDisplay,
+    UNKNOWN_LESSON_DATE_LABEL,
+    type LessonDateDisplayResult
+} from "./lesson-metadata";
 export {
     classifyRenderedReferenceContent,
     decodeHtmlWhitespaceEntities,

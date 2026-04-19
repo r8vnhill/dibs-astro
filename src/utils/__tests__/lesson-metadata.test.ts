@@ -5,16 +5,14 @@
  *
  * This suite validates the public API exported by `{ts} lesson-metadata.ts`:
  *
- * - {@link normalizeLessonPathname}: canonicalizes pathnames/URLs to dataset route keys.
- * - {@link formatLessonDate}: formats ISO short dates for UI display.
  * - {@link resolveLessonMetadata}: resolves a metadata entry by pathname/URL.
  * - {@link parseLessonMetadataDataset}: runtime-validates dataset shapes (Zod boundary).
  * - {@link getLessonMetadataDataset}: loads and caches the validated generated dataset.
  *
  * ## The tests combine:
  *
- * - **DDT** via `{ts} test.each` for known examples and edge cases.
- * - **PBT** via `{ts} fast-check` for invariants that should hold across many inputs.
+ * - **DDT** via `{ts} test.each` for dataset lookup and validation edge cases.
+ * - **PBT** via `{ts} fast-check` for lookup invariants over known normalized keys.
  *
  * ## Notes on caching
  *
@@ -26,14 +24,10 @@ import fc from "fast-check";
 import { describe, expect, test } from "vitest";
 import {
     __resetLessonMetadataCache,
-    DEFAULT_LOCALE,
-    formatLessonDate,
     getLessonMetadataDataset,
     type LessonMetadataDataset,
-    normalizeLessonPathname,
     parseLessonMetadataDataset,
     resolveLessonMetadata,
-    UNKNOWN_DATE_LABEL,
 } from "../lesson-metadata";
 
 /**
@@ -84,120 +78,6 @@ const makeDataset = (): LessonMetadataDataset => ({
 });
 
 const dataset = makeDataset();
-
-describe("normalizeLessonPathname", () => {
-    /**
-     * Data-driven examples for normalization behavior.
-     *
-     * The normalizer accepts both:
-     *
-     * - raw path strings (`notes/a`, `/notes/a/`)
-     * - full URLs (`https://dibs.../notes/a`)
-     *
-     * and always returns a canonical route ending in `/`.
-     */
-    test.each([
-        ["notes/a", "/notes/a/"],
-        ["/notes//a//", "/notes/a/"],
-        [" ", "/"],
-        ["", "/"],
-        ["https://dibs.ravenhill.cl/notes/a", "/notes/a/"],
-        ["http://dibs.ravenhill.cl/notes/a", "/notes/a/"],
-        ["HTTPS://dibs.ravenhill.cl/notes/a", "/notes/a/"],
-        ["/", "/"],
-        ["////", "/"],
-    ])("normalizes %s to %s", (input, expected) => {
-        expect(normalizeLessonPathname(input)).toBe(expected);
-    });
-
-    /**
-     * Property: normalization is idempotent and enforces route invariants.
-     *
-     * ## Invariants:
-     *
-     * - `normalize(normalize(x)) === normalize(x)`
-     * - output starts with `/`
-     * - output ends with `/`
-     * - output has no repeated slashes (`//`)
-     */
-    test("is idempotent and stable", () => {
-        const pathnameArb = fc.string();
-
-        fc.assert(
-            fc.property(pathnameArb, (pathname) => {
-                const once = normalizeLessonPathname(pathname);
-                const twice = normalizeLessonPathname(once);
-
-                expect(twice).toBe(once);
-                expect(once.startsWith("/")).toBe(true);
-                expect(once.endsWith("/")).toBe(true);
-                expect(once.includes("//")).toBe(false);
-            }),
-        );
-    });
-
-    /**
-     * Property: full URLs have their origin stripped.
-     *
-     * This ensures callers can pass `window.location.href`-like inputs without leaking hostnames
-     * into lookup keys.
-     */
-    test("strips origin for generated http/https urls", () => {
-        const hostArb = fc.stringMatching(/^[a-z0-9-]{1,12}(\.[a-z0-9-]{1,12})+$/);
-        const tailArb = fc.stringMatching(/^[a-z0-9/-]{1,40}$/);
-        const protocolArb = fc.constantFrom("http", "https", "HTTP", "HTTPS");
-
-        fc.assert(
-            fc.property(hostArb, tailArb, protocolArb, (host, tail, protocol) => {
-                const withOrigin = `${protocol}://${host}/${tail}`;
-                const normalized = normalizeLessonPathname(withOrigin);
-
-                expect(normalized.startsWith("/")).toBe(true);
-                expect(normalized.includes(host)).toBe(false);
-            }),
-        );
-    });
-});
-
-describe("formatLessonDate", () => {
-    /**
-     * Missing dates are mapped to a stable placeholder label.
-     */
-    test("returns placeholder for undefined", () => {
-        expect(formatLessonDate(undefined)).toBe(UNKNOWN_DATE_LABEL);
-    });
-
-    /**
-     * Default-locale formatting is validated with stable properties rather than exact string
-     * matches, because month names can vary with runtime ICU data.
-     */
-    test("formats ISO short date in default locale with stable properties", () => {
-        const formatted = formatLessonDate("2026-02-16", DEFAULT_LOCALE);
-        expect(formatted.length).toBeGreaterThan(0);
-        expect(formatted).toContain("2026");
-    });
-
-    /**
-     * English formatting can be asserted exactly to ensure the formatting pipeline is
-     * deterministic when the locale is controlled.
-     *
-     * If CI environments ever lack full ICU, consider loosening this assertion to stable
-     * properties (as done for the default locale test).
-     */
-    test("formats ISO short date with deterministic en-GB output", () => {
-        expect(formatLessonDate("2026-02-16", "en-GB")).toBe("16 February 2026");
-    });
-
-    /**
-     * Invalid date strings are returned as-is.
-     *
-     * This preserves debuggability (the caller can see the original value) and avoids masking data
-     * issues with misleading placeholders.
-     */
-    test("returns raw date when format is invalid", () => {
-        expect(formatLessonDate("invalid")).toBe("invalid");
-    });
-});
 
 describe("dataset resolution", () => {
     /**
