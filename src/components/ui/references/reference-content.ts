@@ -326,11 +326,23 @@ export async function resolveOptionalSlots<TName extends string>(
  * normalized property (e.g., `ref.title`, `ref.publication`, `ref.institution`).
  */
 export type PreparedReferenceSlots = {
-    title?: string;
-    description?: string;
-    publication?: string;
-    institution?: string;
+    [K in ReferenceSlotKey]?: string;
 };
+
+/**
+ * Supported per-reference slot override keys for batched preparation.
+ *
+ * Keeping this list centralized ensures batching behavior, synthesized slot names, and prepared
+ * result typing evolve together.
+ */
+const REFERENCE_SLOT_KEYS = [
+    "title",
+    "description",
+    "publication",
+    "institution",
+] as const;
+
+type ReferenceSlotKey = (typeof REFERENCE_SLOT_KEYS)[number];
 
 /**
  * Prepared slot overrides keyed by reference id.
@@ -345,9 +357,10 @@ export type PreparedReferenceSlotsById = Record<string, PreparedReferenceSlots>;
  *
  * ## Behavior:
  *
- * This helper scans slots with synthesized names like `title-${id}`, `description-${id}`, etc.,
- * classifying each as meaningful or empty. Meaningful slots are captured in the returned record;
- * empty or absent slots are omitted.
+ * This helper scans the supported per-reference slot overrides defined in
+ * {@link REFERENCE_SLOT_KEYS}. For each unique reference id it synthesizes slot names like
+ * `title-${id}` and `description-${id}`, classifies each as meaningful or empty, and keeps only
+ * meaningful overrides in the returned record.
  *
  * The result is a by-id record that references can use to check for overrides without
  * duplicating the slot-name synthesis and resolution logic.
@@ -367,29 +380,21 @@ export async function prepareSlotsForReferences(
     slots: SlotLike,
     referencedIds: string[],
 ): Promise<PreparedReferenceSlotsById> {
-    const slotsByRef: PreparedReferenceSlotsById = {};
+    if (referencedIds.length === 0) {
+        return {};
+    }
 
-    for (const id of referencedIds) {
+    const slotsByRef: PreparedReferenceSlotsById = {};
+    const uniqueReferencedIds = Array.from(new Set(referencedIds));
+
+    for (const id of uniqueReferencedIds) {
         const prepared: PreparedReferenceSlots = {};
 
-        const titleSlot = await resolveOptionalSlot(slots, `title-${id}`);
-        if (isMeaningfulSlotContent(titleSlot)) {
-            prepared.title = titleSlot.html;
-        }
-
-        const descriptionSlot = await resolveOptionalSlot(slots, `description-${id}`);
-        if (isMeaningfulSlotContent(descriptionSlot)) {
-            prepared.description = descriptionSlot.html;
-        }
-
-        const publicationSlot = await resolveOptionalSlot(slots, `publication-${id}`);
-        if (isMeaningfulSlotContent(publicationSlot)) {
-            prepared.publication = publicationSlot.html;
-        }
-
-        const institutionSlot = await resolveOptionalSlot(slots, `institution-${id}`);
-        if (isMeaningfulSlotContent(institutionSlot)) {
-            prepared.institution = institutionSlot.html;
+        for (const key of REFERENCE_SLOT_KEYS) {
+            const resolvedSlot = await resolveOptionalSlot(slots, `${key}-${id}`);
+            if (isMeaningfulSlotContent(resolvedSlot)) {
+                prepared[key] = resolvedSlot.html;
+            }
         }
 
         slotsByRef[id] = prepared;

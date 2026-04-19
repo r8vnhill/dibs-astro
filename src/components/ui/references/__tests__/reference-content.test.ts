@@ -400,6 +400,33 @@ describe("prepareSlotsForReferences", () => {
         });
     });
 
+    it("queries exactly the schema-driven slot names for each unique id", async () => {
+        const slotValues: Record<string, string> = {
+            "title-ref-1": "Title Override",
+            "publication-ref-2": "Publication Override",
+        };
+
+        const slots = {
+            has: vi.fn((name: string) => name in slotValues),
+            render: vi.fn((name: string) => Promise.resolve(slotValues[name] ?? "")),
+        };
+
+        await prepareSlotsForReferences(slots, ["ref-1", "ref-2"]);
+
+        expect(slots.has.mock.calls.map(([name]) => name)).toEqual([
+            "title-ref-1",
+            "description-ref-1",
+            "publication-ref-1",
+            "institution-ref-1",
+            "title-ref-2",
+            "description-ref-2",
+            "publication-ref-2",
+            "institution-ref-2",
+        ]);
+        expect(slots.has).not.toHaveBeenCalledWith("author-ref-1");
+        expect(slots.has).not.toHaveBeenCalledWith("author-ref-2");
+    });
+
     it("treats duplicate ids as one logical reference in the final output", async () => {
         const slotValues: Record<string, string> = {
             "title-ref-1": "Title Override",
@@ -415,6 +442,30 @@ describe("prepareSlotsForReferences", () => {
         expect(prepared).toEqual({
             "ref-1": {
                 title: "Title Override",
+            },
+        });
+    });
+
+    it("deduplicates repeated ids while preserving first-seen output order", async () => {
+        const slotValues: Record<string, string> = {
+            "title-ref-2": "Title 2",
+            "title-ref-1": "Title 1",
+        };
+
+        const slots = {
+            has: vi.fn((name: string) => name in slotValues),
+            render: vi.fn((name: string) => Promise.resolve(slotValues[name] ?? "")),
+        };
+
+        const prepared = await prepareSlotsForReferences(slots, ["ref-2", "ref-1", "ref-2"]);
+
+        expect(Object.keys(prepared)).toEqual(["ref-2", "ref-1"]);
+        expect(prepared).toEqual({
+            "ref-2": {
+                title: "Title 2",
+            },
+            "ref-1": {
+                title: "Title 1",
             },
         });
     });
