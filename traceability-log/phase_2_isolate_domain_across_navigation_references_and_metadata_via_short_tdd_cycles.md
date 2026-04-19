@@ -84,7 +84,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move the pure rules from `lesson-metadata.ts` into domain types/services.
    - Keep generated JSON import and zod validation in an infrastructure-facing module.
 
-6. **Cycle 6: Introduce domain repositories and inversion points**
+6. ~~**Cycle 6: Introduce domain repositories and inversion points**~~
    - Define domain repository interfaces for:
      - lesson catalog access
      - lesson metadata access

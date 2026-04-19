@@ -1,34 +1,26 @@
 /**
- * Public barrel for the domain layer.
+ * Domain-layer public barrel.
  *
- * This module defines the stable public import surface for domain code. It re-exports the domain concepts that 
- * application, presentation, and infrastructure layers are expected to consume directly, while keeping the internal 
+ * This module defines the stable import surface for the domain layer. It re-exports the domain concepts that 
+ * application, infrastructure, and presentation code are expected to consume directly, while keeping the internal 
  * folder structure private.
  *
- * ## Why this module exists
+ * Routing external imports through this entry point provides a few practical benefits:
  *
- * Routing external imports through a single entry point provides several practical benefits:
+ * - it gives other layers one predictable import path
+ * - it reduces coupling to the internal organization of the domain layer
+ * - it makes internal refactors less disruptive
+ * - it clarifies which domain types and utilities are part of the intended public surface
  *
- * - it gives other layers a compact, predictable import path;
- * - it reduces coupling to the internal layout of the domain package;
- * - it makes internal refactors less disruptive;
- * - it signals which domain symbols are intended to be public.
+ * The exports are grouped around a few domain concerns:
  *
- * ## Export groups
+ * - lesson entities and trail models
+ * - lesson metadata value types and formatting helpers
+ * - lesson navigation value objects and repository contracts
+ * - reference-content normalization and resolution utilities
  *
- * This barrel exposes the following domain concerns:
- *
- * - **lesson entities**: core lesson models and trail representations;
- * - **lesson metadata**: pathname normalization, date parsing, and date display rules;
- * - **lesson navigation**: value objects and services for lesson identity, paths, and adjacency;
- * - **reference content**: classification, normalization, validation, and resolution of rendered reference content.
- *
- * ## Usage
- *
- * Prefer importing from this module when consuming domain concepts from outside the domain layer.
- *
- * Internal domain modules may still use deeper imports when doing so avoids circular dependencies or keeps 
- * implementation details local.
+ * External layers should prefer importing from this barrel. Internal domain modules may still use deeper imports when 
+ * that keeps implementation details private or avoids unnecessary coupling between sibling modules.
  */
 export { Lesson, type LessonProps } from "./entities/Lesson";
 export { LessonTrail, type TrailNode } from "./entities/LessonTrail";
@@ -40,7 +32,10 @@ export {
     parseIsoShortDate,
     resolveLessonDateDisplay,
     UNKNOWN_LESSON_DATE_LABEL,
-    type LessonDateDisplayResult
+    type LessonDateDisplayResult,
+    type LessonMetadataAuthor,
+    type LessonMetadataChange,
+    type LessonMetadataRecord
 } from "./lesson-metadata";
 export {
     classifyRenderedReferenceContent,
@@ -60,7 +55,7 @@ export {
     type ResolvedRequiredInlineField,
     type ResolvedSlotContent
 } from "./reference-content";
-export type { LessonNavigationRepository } from "./repositories";
+export type { LessonMetadataRepository, LessonNavigationRepository } from "./repositories";
 export { LessonSequenceService } from "./services/LessonSequenceService";
 export { AdjacentLessons, type NavigationNode } from "./value-objects/AdjacentLessons";
 export { LessonHref } from "./value-objects/LessonHref";

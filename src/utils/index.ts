@@ -1,26 +1,49 @@
 /**
- * Central export barrel for shared utility helpers and utility types.
+ * Public barrel for shared utility helpers, constants, and types.
  *
- * This file groups utilities by concern so callers can import from `~/utils` without needing to
- * know each module path. It also acts as the public utility surface for internal application code:
- * if a helper is exported here, other modules can usually depend on it without reaching into
- * subpaths.
+ * This module defines the stable import surface for cross-cutting utilities used across layouts, components, 
+ * infrastructure adapters, and tests. It provides one predictable entry point for helpers that are intentionally 
+ * reusable, while keeping feature-local and implementation-specific modules private to their own subpaths.
  *
- * Export policy:
- * - Keep broadly reusable helpers here, not feature-local implementation details.
- * - Prefer exporting stable helpers that are safe to reuse across layouts, content rendering, and
- *   infrastructure code.
- * - Development-only helpers may still be exported here when they support shared runtime behavior
- *   across subsystems, such as the transient transport retry used by Shiki-related dev flows.
+ * ## Export policy
  *
- * Example:
- * `import { resolveAutoNav, formatLessonDate, site } from "~/utils";`
+ * This barrel should only expose utilities that are:
+ *
+ * - broadly reusable across multiple features or layers;
+ * - stable enough to be treated as part of the shared utility API;
+ * - safe to import from rendering code, infrastructure code, and tests.
+ *
+ * Modules that are narrowly scoped to a single feature, or that mainly exist as internal implementation details, 
+ * should not be re-exported here.
+ *
+ * Development-oriented helpers may still be exported when they support shared runtime behavior or local development 
+ * workflows used across the project.
+ *
+ * ## Export groups
+ *
+ * This barrel currently exposes utilities for:
+ *
+ * - heading and semantic typing;
+ * - lesson metadata parsing, dataset resolution, and date formatting;
+ * - lesson navigation normalization and automatic adjacency resolution;
+ * - page metadata construction;
+ * - generic runtime and repository-link helpers;
+ * - theme detection and theme application.
+ *
+ * ## Usage
+ *
+ * Prefer importing shared utilities from this module when the re-exported symbol is part of the intended public 
+ * utility surface.
+ *
+ * ```typescript
+ * import { formatLessonDate, normalizeNavigation, site } from "~/utils";
+ * ```
  */
 
-// Heading/semantics helpers
+// Heading and semantic helpers
 export type { HeadingLevel } from "./heading-level.ts";
 
-// Lesson metadata runtime helpers (generated JSON resolution + formatting)
+// Lesson metadata runtime helpers (dataset parsing, JSON resolution, and formatting)
 export {
     DEFAULT_LOCALE,
     formatDate,
@@ -29,15 +52,14 @@ export {
     normalizeLessonPathname,
     parseIsoShortDate,
     parseLessonMetadataDataset,
-    resolveLessonMetadata,
     UNKNOWN_DATE_LABEL,
 } from "./lesson-metadata.ts";
 
 // Lesson navigation helpers
 //
-// `normalizeNavigationLink` and `normalizeNavigation` keep the historical singular contract used by
-// next/previous pairs, while `normalizePreviousNavigation` exposes the newer list-based shape that
-// `NotesLayout` uses for multi-link "previous" navigation.
+// `normalizeNavigationLink` and `normalizeNavigation` preserve the historical single-link contract used by 
+// next/previous navigation pairs, while `normalizePreviousNavigation` exposes the newer list-based shape consumed by 
+// `NotesLayout` for multi-link "previous" navigation.
 export {
     type NavigationLinkInput,
     normalizeNavigation,
@@ -45,9 +67,11 @@ export {
     normalizePreviousNavigation,
     resolveAutoNav,
 } from "./navigation.ts";
+
+// Page metadata helpers
 export { buildHeadPageMeta, type PageMeta } from "./page-meta.ts";
 
-// Generic and cross-cutting runtime utilities
+// Generic cross-cutting runtime utilities
 export {
     type DevTransportRetryOptions,
     isRetryableDevTransportError,
@@ -72,7 +96,7 @@ export { pickRandom } from "./random.ts";
 export { site } from "./site.ts";
 export type { default as StyledComponent } from "./styled-component.ts";
 
-// Theme utilities
+// Theme helpers
 export {
     applyTheme,
     getColorSchemeMediaQuery,

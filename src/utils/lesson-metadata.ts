@@ -1,7 +1,7 @@
 /**
  * @file lesson-metadata.ts
  *
- * Runtime-safe accessors and utilities for the generated lesson metadata dataset.
+ * Infrastructure-facing accessors and utilities for the generated lesson metadata dataset.
  *
  * This module wraps `lesson-metadata.generated.json` with:
  *
@@ -19,6 +19,12 @@
  * - `entries`: route → metadata entry map (routes are normalized and end in `/`).
  *
  * Validation is performed once on first access and cached via {@link getLessonMetadataDataset}.
+ *
+ * ## Architectural role
+ *
+ * After Cycle 6, production callers in Presentation and Application should no longer depend on
+ * this module directly. It remains the infrastructure support layer behind
+ * `LessonMetadataAdapter`, plus a compatibility/testing surface for transitional callers.
  *
  * ## Normalized route contract
  *
