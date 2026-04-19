@@ -1,37 +1,12 @@
-import fc from "fast-check";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, expectTypeOf, it, vi } from "vitest";
 import {
     hasMeaningfulTextContent,
-    normalizeFallbackText,
-    normalizeHref,
     prepareSlotsForReferences,
-    resolveInlineField,
-    resolveLinkedInlineField,
     resolveOptionalSlot,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
 } from "../reference-content";
-
-describe("hasMeaningfulTextContent", () => {
-    it.each([
-        { html: "", expected: false },
-        { html: " ", expected: false },
-        { html: "&nbsp;", expected: false },
-        { html: "&#160;", expected: false },
-        { html: "&#xA0;", expected: false },
-        { html: "<!-- comment -->", expected: false },
-        { html: "<span></span>", expected: false },
-        { html: "<span>text</span>", expected: true },
-        { html: "<strong> x </strong>", expected: true },
-        { html: "<img src='x' alt='' />", expected: false },
-        { html: "<span>&nbsp;text&nbsp;</span>", expected: true },
-    ])("classifies $html as $expected", ({ html, expected }) => {
-        expect(hasMeaningfulTextContent(html)).toBe(expected);
-    });
-
-    it("treats plain text as meaningful", () => {
-        expect(hasMeaningfulTextContent("Texto")).toBe(true);
-    });
-});
+import { MissingReferenceTitleError } from "../ReferenceContractError";
 
 describe("resolveOptionalSlot", () => {
     it("returns the empty result when the slot is absent and skips rendering", async () => {
@@ -69,6 +44,19 @@ describe("resolveOptionalSlot", () => {
             kind: "meaningful",
             html: "<em>Título</em>",
         });
+    });
+
+    it("classifies rendered html with the shared domain rules", async () => {
+        const slots = {
+            has: vi.fn().mockReturnValue(true),
+            render: vi.fn().mockResolvedValue("<img src='x' alt='' />"),
+        };
+
+        await expect(resolveOptionalSlot(slots, "title")).resolves.toEqual({
+            kind: "empty",
+            html: "",
+        });
+        expect(hasMeaningfulTextContent("<img src='x' alt='' />")).toBe(false);
     });
 
     it("propagates render failures unchanged", async () => {
@@ -113,40 +101,12 @@ describe("resolveOptionalSlots", () => {
     });
 });
 
-describe("resolveInlineField", () => {
-    describe("normalizeFallbackText", () => {
-        it("returns undefined for undefined input", () => {
-            expect(normalizeFallbackText()).toBeUndefined();
-        });
-
-        it("returns undefined for blank input", () => {
-            expect(normalizeFallbackText("   ")).toBeUndefined();
-        });
-
-        it("trims surrounding whitespace", () => {
-            expect(normalizeFallbackText("  Título base  ")).toBe("Título base");
-        });
-
-        it("collapses repeated inline whitespace", () => {
-            expect(normalizeFallbackText("Título   base\t\tcon\nsaltos")).toBe(
-                "Título base con saltos",
-            );
-        });
-
-        it("treats non-breaking-space entities as blank when no meaningful text remains", () => {
-            expect(normalizeFallbackText(" &nbsp; &#160; &#xA0; ")).toBeUndefined();
-        });
-
-        it("preserves meaningful text after normalization", () => {
-            expect(normalizeFallbackText("  Título &nbsp; base  ")).toBe("Título base");
-        });
-    });
-
-    it("prefers meaningful slot content over fallback text", () => {
+describe("resolveRequiredTitleField", () => {
+    it("returns a valid title when slot content is meaningful", () => {
         expect(
-            resolveInlineField(
+            resolveRequiredTitleField(
                 { kind: "meaningful", html: "<strong>Título</strong>" },
-                "Título base",
+                undefined,
             ),
         ).toEqual({
             kind: "slot",
@@ -154,134 +114,55 @@ describe("resolveInlineField", () => {
         });
     });
 
-    it("returns normalized fallback text when the slot is empty", () => {
-        expect(resolveInlineField({ kind: "empty", html: "" }, "  Título   base  ")).toEqual({
-            kind: "text",
-            text: "Título base",
-        });
-    });
-
-    it("returns missing when fallback text is blank", () => {
-        expect(resolveInlineField({ kind: "empty", html: "" }, "   ")).toEqual({
-            kind: "missing",
-        });
-    });
-
-    it("returns missing when fallback text only contains non-breaking-space entities", () => {
-        expect(resolveInlineField({ kind: "empty", html: "" }, " &nbsp; &#160; ")).toEqual({
-            kind: "missing",
-        });
-    });
-});
-
-describe("resolveLinkedInlineField", () => {
-    describe("normalizeHref", () => {
-        it("returns undefined for undefined input", () => {
-            expect(normalizeHref()).toBeUndefined();
-        });
-
-        it("returns undefined for empty input", () => {
-            expect(normalizeHref("")).toBeUndefined();
-        });
-
-        it("returns undefined for whitespace-only input", () => {
-            expect(normalizeHref("   ")).toBeUndefined();
-        });
-
-        it("trims surrounding whitespace from usable urls", () => {
-            expect(normalizeHref("  https://example.com/path  ")).toBe("https://example.com/path");
-        });
-
-        it("preserves non-empty url strings without extra validation", () => {
-            expect(normalizeHref("mailto:test@example.com")).toBe("mailto:test@example.com");
-        });
-    });
-
-    it("prefers meaningful slot content over prop text and url", () => {
-        expect(
-            resolveLinkedInlineField(
-                { kind: "meaningful", html: "<strong>Institución</strong>" },
-                "Institution base",
-                "https://example.com",
-            ),
-        ).toEqual({
-            kind: "slot",
-            html: "<strong>Institución</strong>",
-        });
-    });
-
-    it("returns a link when prop text and url are both usable", () => {
-        expect(
-            resolveLinkedInlineField(
-                { kind: "empty", html: "" },
-                "Institution base",
-                "https://example.com",
-            ),
-        ).toEqual({
-            kind: "link",
-            text: "Institution base",
-            href: "https://example.com",
-        });
-    });
-
-    it("returns plain text when prop text exists without a url", () => {
-        expect(resolveLinkedInlineField({ kind: "empty", html: "" }, "Institution base")).toEqual(
-            {
-                kind: "text",
-                text: "Institution base",
-            },
-        );
-    });
-
-    it("returns plain text when prop text is usable and the url is blank", () => {
-        expect(
-            resolveLinkedInlineField(
-                { kind: "empty", html: "" },
-                "Institution base",
-                "   ",
-            ),
-        ).toEqual({
-            kind: "text",
-            text: "Institution base",
-        });
-    });
-
-    it("returns missing when fallback text is blank even if a url exists", () => {
-        expect(
-            resolveLinkedInlineField(
-                { kind: "empty", html: "" },
-                "   ",
-                "https://example.com",
-            ),
-        ).toEqual({
-            kind: "missing",
-        });
-    });
-
-    it("property: meaningful slot content always wins", () => {
-        fc.assert(
-            fc.property(
-                fc.string(),
-                fc.option(fc.string()),
-                fc.option(fc.webUrl()),
-                (html, text, url) => {
-                    const result = resolveLinkedInlineField(
-                        { kind: "meaningful", html },
-                        text ?? undefined,
-                        url ?? undefined,
-                    );
-
-                    expect(result).toEqual({
-                        kind: "slot",
-                        html,
-                    });
-                },
-            ),
+    it("maps the invalid title domain result to MissingReferenceTitleError", () => {
+        expect(() => resolveRequiredTitleField({ kind: "empty", html: "" }, "   ")).toThrow(
+            MissingReferenceTitleError,
         );
     });
 });
 
 describe("prepareSlotsForReferences", () => {
+    it("requests all schema-derived slots for one id before the first pending render resolves", async () => {
+        let releaseTitleRender: (() => void) | undefined;
+        const renderedSlots = new Set(["title-ref-1", "description-ref-1", "publication-ref-1"]);
+
+        const slots = {
+            has: vi.fn().mockReturnValue(true),
+            render: vi.fn((name: string) => {
+                if (name === "title-ref-1") {
+                    return new Promise<string>((resolve) => {
+                        releaseTitleRender = () => resolve("Title Override");
+                    });
+                }
+
+                return Promise.resolve(
+                    renderedSlots.has(name) ? `${name} override` : "<!-- empty -->",
+                );
+            }),
+        };
+
+        const preparedPromise = prepareSlotsForReferences(slots, ["ref-1"]);
+
+        await vi.waitFor(() => {
+            expect(slots.render.mock.calls.map(([name]) => name)).toEqual([
+                "title-ref-1",
+                "description-ref-1",
+                "publication-ref-1",
+                "institution-ref-1",
+            ]);
+        });
+
+        releaseTitleRender?.();
+
+        await expect(preparedPromise).resolves.toEqual({
+            "ref-1": {
+                title: "Title Override",
+                description: "description-ref-1 override",
+                publication: "publication-ref-1 override",
+            },
+        });
+    });
+
     it("prepares meaningful slot overrides for a single reference", async () => {
         const slotValues: Record<string, string> = {
             "title-ref-1": "<strong>Custom Title</strong>",
@@ -490,5 +371,22 @@ describe("prepareSlotsForReferences", () => {
             "publication-ref-1",
             "institution-ref-1",
         ]);
+    });
+
+    it("preserves literal id unions for readonly tuples and widens plain string arrays", () => {
+        const slots = {
+            has: vi.fn().mockReturnValue(false),
+            render: vi.fn().mockResolvedValue(""),
+        };
+
+        const literalIds = ["ref-1", "ref-2"] as const;
+        const widenedIds: string[] = ["ref-1", "ref-2"];
+
+        expectTypeOf(prepareSlotsForReferences(slots, literalIds)).toEqualTypeOf<
+            Promise<Record<"ref-1" | "ref-2", import("../reference-content").PreparedReferenceSlots>>
+        >();
+        expectTypeOf(prepareSlotsForReferences(slots, widenedIds)).toEqualTypeOf<
+            Promise<Record<string, import("../reference-content").PreparedReferenceSlots>>
+        >();
     });
 });

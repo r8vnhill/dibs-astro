@@ -1,5 +1,18 @@
 # Refactor `reference-content.ts` with Small, Verifiable TDD Steps
 
+## Closure Note
+
+Closed on 2026-04-19 after Phase 5 completed and the caller-facing validation plan passed on the current branch state.
+
+Validation used:
+
+* `src/components/ui/references/__tests__/reference-content.test.ts`
+* `src/components/ui/references/__tests__/ScholarlyArticle.render.test.ts`
+* `src/components/ui/references/__tests__/Thesis.render.test.ts`
+* `src/components/ui/references/__tests__/GenericReference.render.test.ts`
+
+Phases 1-5 are complete. The refactor closed without caller-visible regressions in render output, metadata precedence, or omission behavior.
+
 ## Summary
 
 Refactor `reference-content.ts` to remove duplicated fallback normalization, make slot-content classification a first-class pure concern, and replace manual reference-slot batching with a schema-driven, parallelized flow.
@@ -220,7 +233,7 @@ Keep `resolveOptionalSlot(...)` tests focused on orchestration:
 * HTML classification can be tested independently of slot I/O
 * `resolveOptionalSlot(...)` becomes small, explicit, and low-risk
 
-## Phase 4: Refactor batched reference preparation into a schema-driven flow
+## ~~Phase 4: Refactor batched reference preparation into a schema-driven flow~~
 
 Introduce `REFERENCE_SLOT_KEYS` and replace the manual four-field branch structure with a schema-based loop.
 
@@ -246,7 +259,7 @@ Implementation shape:
 * supported field names live in one place
 * output shape remains backward compatible
 
-## Phase 5: Parallelize per-reference resolution and tighten types
+## ~~Phase 5: Parallelize per-reference resolution and tighten types~~
 
 After the schema-driven flow is stable, replace per-field serial awaits with `Promise.all(...)`.
 
@@ -315,6 +328,10 @@ Then contract/regression coverage through:
 * `ScholarlyArticle.render.test.ts`
 * `Thesis.render.test.ts`
 * `GenericReference.render.test.ts`
+
+Status:
+
+* Completed on 2026-04-19 as part of the final close-out pass recorded above.
 
 ## Risks and Mitigations
 

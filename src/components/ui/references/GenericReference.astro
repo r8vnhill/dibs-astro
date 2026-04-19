@@ -44,10 +44,10 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import { MissingReferenceTitleError } from "./ReferenceContractError";
 import {
     resolveInlineField,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 
@@ -107,16 +107,9 @@ const {
 // ## Collapse each inline field into a single resolved representation. ##
 // These resolved values encode whether the winning content comes from a slot, from a prop fallback,
 // or is missing entirely.
-const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
 const resolvedLocation = resolveInlineField(locationSlot, location);
 const resolvedAuthor = resolveInlineField(authorSlot, author);
-
-// ## Enforce the component's title invariant before rendering. ##
-// References without any meaningful title source are treated as invalid data instead of rendering
-// empty quoted punctuation into the bibliography list.
-if (resolvedTitle.kind === "missing") {
-    throw new MissingReferenceTitleError();
-}
 ---
 
 <ListItem icon={icons.FileText}>

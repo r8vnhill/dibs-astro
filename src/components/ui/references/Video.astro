@@ -12,9 +12,10 @@ import {
     resolveInlineField,
     resolveLinkedInlineField,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
-import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
+import { ReferenceContractError } from "./ReferenceContractError";
 
 type Props = {
     title?: string;
@@ -39,13 +40,9 @@ const externalLinkAttrs = {
     class: "hover:underline underline-offset-2",
 } as const;
 
-const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
 const resolvedAuthor = resolveInlineField(authorSlot, author);
 const resolvedPlatform = resolveLinkedInlineField(platformSlot, platform, platformUrl);
-
-if (resolvedTitle.kind === "missing") {
-    throw new MissingReferenceTitleError();
-}
 
 if (import.meta.env.DEV && platformUrl && !platform) {
     throw new ReferenceContractError("Video `platformUrl` requires `platform`.");

@@ -42,7 +42,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 
 ## Short TDD Cycles
 
-1. **Cycle 1: Canonical lesson route value object**
+1. ~~**Cycle 1: Canonical lesson route value object**~~
    - Write domain tests for canonical lesson path normalization:
      - trims whitespace
      - enforces leading/trailing slash
@@ -51,7 +51,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Implement a domain value object for lesson href/path.
    - Refactor `LessonCatalogAdapter`, navigation helpers, and lesson metadata lookup to consume this value object instead of reimplementing normalization.
 
-2. **Cycle 2: Domain lesson trail and adjacency rules**
+2. ~~**Cycle 2: Domain lesson trail and adjacency rules**~~
    - Add domain tests for:
      - adjacent lesson resolution
      - missing lesson lookup
@@ -60,12 +60,12 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move those pure rules out of `LessonCatalogAdapter` into domain services/entities.
    - Keep the adapter responsible only for mapping `courseStructure` into domain objects.
 
-3. **Cycle 3: Replace application dependence on adapter-shaped lesson data**
+3. ~~**Cycle 3: Replace application dependence on adapter-shaped lesson data**~~
    - Add application/service tests that assert behavior using domain repository interfaces rather than concrete flattened arrays.
    - Refactor `NavigationServiceImpl` so it depends only on a domain-oriented repository/service contract.
    - Eliminate application knowledge of slug extraction or path normalization details.
 
-4. **Cycle 4: Extract reference content classification to Domain**
+4. ~~**Cycle 4: Extract reference content classification to Domain**~~
    - Add domain tests for:
      - meaningful vs empty content
      - whitespace/entity normalization

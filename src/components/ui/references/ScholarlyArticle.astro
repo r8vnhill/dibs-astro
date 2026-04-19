@@ -31,9 +31,10 @@ import {
     resolveInlineField,
     resolveLinkedInlineField,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
-import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
+import { ReferenceContractError } from "./ReferenceContractError";
 
 type Props = {
     /** Fallback article title when the `title` slot is absent or empty. */
@@ -75,17 +76,13 @@ const externalLinkAttrs = {
     class: "hover:underline underline-offset-2",
 } as const;
 
-const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
 const resolvedPublication = resolveLinkedInlineField(
     publicationSlot,
     publication,
     publicationUrl,
 );
 const resolvedAuthor = resolveInlineField(authorSlot, author);
-
-if (resolvedTitle.kind === "missing") {
-    throw new MissingReferenceTitleError();
-}
 
 if (import.meta.env.DEV && publicationUrl && !publication) {
     throw new ReferenceContractError("ScholarlyArticle `publicationUrl` requires `publication`.");
