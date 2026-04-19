@@ -85,21 +85,21 @@ export class LessonCatalogAdapter implements LessonNavigationRepository {
      *
      * - Retorna array ordenado: [ancestor1, ancestor2, ..., current]
      * - Grupos sin `href` aparecen con href: undefined
-     * - Por defecto EXCLUYE "Apuntes" root (depth=0) de los ancestros
+     * - Por defecto excluye el root sintético `Notes` (depth=0) de los ancestros
      * - Si la ruta no existe, retorna array vacío []
-     * - `includeApuntesRoot: true` prepende raíz sintética
+     * - `includeNotesRoot: true` prepende raíz sintética
      *
      * ## Para breadcrumbs:
      *
-     * El presentador puede prepender "Apuntes" usando `includeApuntesRoot: true`.
+     * El presentador puede prepender `Notes` usando `includeNotesRoot: true`.
      *
      * @param href - Ruta a buscar (normalizará automáticamente)
-     * @param options - { includeApuntesRoot?: boolean } - si incluir raíz sintética
+     * @param options - { includeNotesRoot?: boolean } - si incluir raíz sintética
      * @returns Trail de nodos desde ancestros hasta lección actual (excluyendo root por defecto)
      */
     async findTrailByHref(
         href: string,
-        options: { includeApuntesRoot?: boolean } = { includeApuntesRoot: false },
+        options: { includeNotesRoot?: boolean } = { includeNotesRoot: false },
     ): Promise<readonly TrailNode[]> {
         const flattened = flattenLessons(this.structure);
         const normalizedSearch = LessonHref.create(href).value;
@@ -136,9 +136,9 @@ export class LessonCatalogAdapter implements LessonNavigationRepository {
         const trail = LessonTrail.buildFromAncestry(ancestorIds, idToNode, currentNode);
 
         // Prepend synthetic root if requested
-        if (options.includeApuntesRoot) {
+        if (options.includeNotesRoot) {
             const nodesWithRoot: TrailNode[] = [
-                { title: "Apuntes", href: "/notes/" },
+                { title: "Notes", href: "/notes/" },
                 ...trail.nodes,
             ];
             return Object.freeze(nodesWithRoot);

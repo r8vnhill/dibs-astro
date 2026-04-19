@@ -85,7 +85,7 @@ It should cover:
 * exact ordered trail when an ancestor does **not** have `href`;
 * exact one-node trail for a top-level lesson;
 * empty trail for a missing lesson;
-* `includeApuntesRoot` behavior with exact before/after expectations;
+* `includeNotesRoot` behavior with exact before/after expectations;
 * preorder-sensitive traversal expectations when relevant.
 
 This file should replace the current duplicated fixture builders with:
@@ -182,13 +182,13 @@ with exact expectations on:
 * title;
 * `href` vs `undefined`.
 
-### `includeApuntesRoot` contract
+### `includeNotesRoot` contract
 
 Define the behavior precisely:
 
 * default behavior excludes the root node;
 * opt-in behavior prepends **exactly one** root node;
-* that node is exactly `{ title: "Apuntes", href: "/notes/" }`;
+* that node is exactly `{ title: "Notes", href: "/notes/" }`;
 * the remaining nodes match the default trail exactly.
 
 ## Naming and Style Cleanup
@@ -275,7 +275,7 @@ Not allowed:
 * changing method names or signatures without necessity;
 * introducing a new adapter-only public API unless no better domain abstraction exists.
 
-`findTrailByHref(..., { includeApuntesRoot?: boolean })` should keep its current shape and semantics.
+`findTrailByHref(..., { includeNotesRoot?: boolean })` should keep its current shape and semantics.
 
 ## Verification
 

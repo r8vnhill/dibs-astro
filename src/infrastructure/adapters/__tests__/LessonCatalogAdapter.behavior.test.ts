@@ -1,17 +1,25 @@
+/**
+ * Behavior tests for {@link LessonCatalogAdapter}.
+ *
+ * This suite exercises `findTrailByHref(...)` through a small set of representative hierarchy shapes. Its main goal is
+ * to verify the breadcrumb-style trail returned by the adapter, including:
+ *
+ * - ancestor inclusion for nested lessons;
+ * - omission of the synthetic `Notes` root by default;
+ * - optional inclusion of that root when requested;
+ * - href normalization for equivalent path variants; and
+ * - rejection of blank href inputs.
+ *
+ * The fixtures are intentionally small and explicit. Each one models a different catalog shape so the expected trail
+ * can be read directly from the test data.
+ */
+
 import { describe, expect, it } from "vitest";
 import type { Lesson as DomainLesson } from "~/data/course-structure";
 import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 describe("LessonCatalogAdapter", () => {
     describe("findTrailByHref with grouped sections", () => {
-        /**
-         * Fixture for grouped-section trail behavior:
-         * - Apuntes (root, no href)
-         *   - Section A (group without href)
-         *     - Lesson A1 (/notes/section-a/lesson-a1/)
-         *   - Section B (group with href /notes/section-b/)
-         *     - Lesson B1 (/notes/section-b/lesson-b1/)
-         */
         it("returns a trail for a nested lesson with ancestors", async () => {
             const testAdapter = adapterForGroupedSections();
             const trail = await testAdapter.findTrailByHref("/notes/section-a/lesson-a1/");
@@ -25,7 +33,7 @@ describe("LessonCatalogAdapter", () => {
 
         it("returns only the current lesson for a top-level lesson", async () => {
             const testAdapter = adapterForTopLevelLesson({
-                rootId: "apuntes-root",
+                rootId: "notes-root",
                 lessonId: "top-level",
             });
             const trail = await testAdapter.findTrailByHref("/notes/top-level/");
@@ -66,28 +74,28 @@ describe("LessonCatalogAdapter", () => {
             ]);
         });
 
-        it("prepends the Apuntes root when includeApuntesRoot is true", async () => {
+        it("prepends the Notes root when includeNotesRoot is true", async () => {
             const testAdapter = adapterForDeepNesting();
             const defaultTrail = await testAdapter.findTrailByHref(
                 "/notes/unit-1/section-1a/lesson-1a1/",
             );
             const trail = await testAdapter.findTrailByHref(
                 "/notes/unit-1/section-1a/lesson-1a1/",
-                { includeApuntesRoot: true },
+                { includeNotesRoot: true },
             );
 
             expect(trail).toEqual([
-                { title: "Apuntes", href: "/notes/" },
+                { title: "Notes", href: "/notes/" },
                 ...defaultTrail,
             ]);
             expect(trail).toHaveLength(defaultTrail.length + 1);
         });
 
-        it("excludes the Apuntes root when includeApuntesRoot is false", async () => {
+        it("excludes the Notes root when includeNotesRoot is false", async () => {
             const testAdapter = adapterForDeepNesting();
             const trail = await testAdapter.findTrailByHref(
                 "/notes/unit-1/section-1a/lesson-1a1/",
-                { includeApuntesRoot: false },
+                { includeNotesRoot: false },
             );
 
             expect(trail).toEqual([
@@ -128,7 +136,7 @@ describe("LessonCatalogAdapter", () => {
 
         it("returns only the current lesson for a first-level lesson", async () => {
             const testAdapter = adapterForTopLevelLesson({
-                rootId: "apuntes",
+                rootId: "notes",
                 lessonId: "top-lesson",
             });
             const trail = await testAdapter.findTrailByHref("/notes/top-lesson/");
@@ -140,7 +148,27 @@ describe("LessonCatalogAdapter", () => {
     });
 });
 
-function lessonNode({
+/**
+ * Creates a lesson node for the test fixtures.
+ *
+ * This helper centralizes the small amount of shape variation needed by the test data:
+ *
+ * - `link` nodes always receive an `href`, defaulting to
+ *   `/notes/${id}/` when none is provided;
+ * - non-link nodes always receive a `children` array; and
+ * - group-like nodes include `href` only when it is explicitly authored.
+ *
+ * The helper keeps the fixtures compact while still making the final structure predictable in each test.
+ *
+ * @param params Raw lesson fields used by the fixtures.
+ * @param params.id Stable identifier for the lesson node.
+ * @param params.title Human-readable lesson title.
+ * @param params.kind Lesson kind taken from the domain model.
+ * @param params.href Optional authored href.
+ * @param params.children Optional child lessons.
+ * @returns A {@link DomainLesson} shaped for the adapter tests.
+ */
+const lessonNode = ({
     id,
     title,
     kind,
@@ -152,43 +180,60 @@ function lessonNode({
     kind: DomainLesson["kind"];
     href?: string;
     children?: readonly DomainLesson[];
-}): DomainLesson {
-    if (kind === "link") {
-        return {
+}): DomainLesson =>
+    kind === "link"
+        ? {
             id,
             title,
             kind,
             href: href ?? `/notes/${id}/`,
             ...(children ? { children } : {}),
+        }
+        : {
+            id,
+            title,
+            kind,
+            ...(href ? { href } : {}),
+            children: children ?? [],
         };
-    }
 
-    return {
-        id,
-        title,
-        kind,
-        ...(href ? { href } : {}),
-        children: children ?? [],
-    };
-}
-
-function wrapInApuntesRoot(
+/**
+ * Wraps a lesson list in the synthetic top-level `Notes` root used by the catalog.
+ *
+ * Most adapter scenarios begin below this root, and the adapter normally omits it from the returned trail unless
+ * explicitly requested through `includeNotesRoot`.
+ *
+ * @param children Lessons that should appear under the root.
+ * @param options Optional root overrides used by a few targeted tests.
+ * @param options.id Root identifier override.
+ * @param options.href Root href override.
+ * @returns A single-element lesson list containing the synthetic root.
+ */
+const wrapInNotesRoot = (
     children: readonly DomainLesson[],
     options: { id?: string; href?: string } = {},
-): readonly DomainLesson[] {
-    return [
-        lessonNode({
-            id: options.id ?? "apuntes-root",
-            title: "Apuntes",
-            kind: "group",
-            ...(options.href ? { href: options.href } : {}),
-            children,
-        }),
-    ];
-}
+): readonly DomainLesson[] => [
+    lessonNode({
+        id: options.id ?? "notes-root",
+        title: "Notes",
+        kind: "group",
+        ...(options.href ? { href: options.href } : {}),
+        children,
+    }),
+];
 
-function makeGroupedSectionsFixture(): readonly DomainLesson[] {
-    return wrapInApuntesRoot([
+/**
+ * Builds a catalog with two grouped sections.
+ *
+ * The fixture models two important ancestor behaviors:
+ *
+ * - `Section A` has no authored `href`, so it should appear in the trail as a plain, non-clickable ancestor;
+ * - `Section B` has an authored `href`, so it should remain clickable in the returned trail.
+ *
+ * @returns A grouped catalog rooted under `Notes`.
+ */
+const makeGroupedSectionsFixture = (): readonly DomainLesson[] =>
+    wrapInNotesRoot([
         lessonNode({
             id: "section-a",
             title: "Section A",
@@ -217,10 +262,20 @@ function makeGroupedSectionsFixture(): readonly DomainLesson[] {
             ],
         }),
     ]);
-}
 
-function makeDeepNestingFixture(): readonly DomainLesson[] {
-    return wrapInApuntesRoot([
+/**
+ * Builds a three-level hierarchy for trail traversal tests.
+ *
+ * This fixture is used to verify:
+ *
+ * - multi-level ancestor discovery;
+ * - root inclusion and omission behavior; and
+ * - href normalization against a deeply nested canonical lesson path.
+ *
+ * @returns A deeply nested catalog rooted under `Notes`.
+ */
+const makeDeepNestingFixture = (): readonly DomainLesson[] =>
+    wrapInNotesRoot([
         lessonNode({
             id: "unit-1",
             title: "Unit 1",
@@ -243,13 +298,22 @@ function makeDeepNestingFixture(): readonly DomainLesson[] {
             ],
         }),
     ]);
-}
 
-function makeTopLevelLessonFixture(options: {
+/**
+ * Builds a catalog containing a single top-level lesson below the root.
+ *
+ * This fixture isolates the case where no intermediate ancestors should appear in the returned trail.
+ *
+ * @param options Fixture options used to vary root and lesson ids.
+ * @param options.rootId Identifier assigned to the synthetic root.
+ * @param options.lessonId Identifier assigned to the top-level lesson.
+ * @returns A catalog with one top-level lesson under `Notes`.
+ */
+const makeTopLevelLessonFixture = (options: {
     rootId: string;
     lessonId: string;
-}): readonly DomainLesson[] {
-    return wrapInApuntesRoot(
+}): readonly DomainLesson[] =>
+    wrapInNotesRoot(
         [
             lessonNode({
                 id: options.lessonId,
@@ -260,28 +324,54 @@ function makeTopLevelLessonFixture(options: {
         ],
         { id: options.rootId, href: "/notes/" },
     );
-}
 
-function adapterForGroupedSections(): LessonCatalogAdapter {
-    return new LessonCatalogAdapter(makeGroupedSectionsFixture());
-}
+/**
+ * Creates an adapter backed by the grouped-sections fixture.
+ *
+ * @returns A {@link LessonCatalogAdapter} configured for grouped-section traversal scenarios.
+ */
+const adapterForGroupedSections = (): LessonCatalogAdapter =>
+    new LessonCatalogAdapter(makeGroupedSectionsFixture());
 
-function adapterForDeepNesting(): LessonCatalogAdapter {
-    return new LessonCatalogAdapter(makeDeepNestingFixture());
-}
+/**
+ * Creates an adapter backed by the deep-nesting fixture.
+ *
+ * @returns A {@link LessonCatalogAdapter} configured for nested traversal, root inclusion, and href-normalization
+ *   scenarios.
+ */
+const adapterForDeepNesting = (): LessonCatalogAdapter =>
+    new LessonCatalogAdapter(makeDeepNestingFixture());
 
-function adapterForTopLevelLesson(options: {
+/**
+ * Creates an adapter backed by the top-level-lesson fixture.
+ *
+ * @param options Fixture options forwarded to {@link makeTopLevelLessonFixture}.
+ * @returns A {@link LessonCatalogAdapter} configured for top-level lesson scenarios.
+ */
+const adapterForTopLevelLesson = (options: {
     rootId: string;
     lessonId: string;
-}): LessonCatalogAdapter {
-    return new LessonCatalogAdapter(makeTopLevelLessonFixture(options));
-}
+}): LessonCatalogAdapter => new LessonCatalogAdapter(makeTopLevelLessonFixture(options));
 
-function noisyHrefVariants(href: string): readonly string[] {
-    return [
-        `${href}?section=intro&lang=es`,
-        `${href}#section`,
-        href.replace(/\//g, "//"),
-        `  ${href}  `,
-    ];
-}
+/**
+ * Produces href variants that should remain semantically equivalent for lookup purposes.
+ *
+ * These variants model the normalization behavior expected from `findTrailByHref(...)`:
+ *
+ * - extra query parameters;
+ * - hash fragments;
+ * - repeated slashes; and
+ * - surrounding whitespace.
+ *
+ * The helper is intentionally small and explicit because the goal is to validate known normalization rules, not to
+ * fuzz arbitrary malformed input.
+ *
+ * @param href Canonical lesson href.
+ * @returns Equivalent href variants expected to resolve to the same trail.
+ */
+const noisyHrefVariants = (href: string): readonly string[] => [
+    `${href}?section=intro&lang=es`,
+    `${href}#section`,
+    href.replace(/\//g, "//"),
+    `  ${href}  `,
+];

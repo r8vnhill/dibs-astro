@@ -59,7 +59,7 @@ type TrailNode = {
 - Find the lesson by href
 - Extract its `parents` array (ancestors, already ordered root→leaf)
 - Build TrailNode array: `[...ancestors, current_lesson]`
-- **Important:** Do NOT include "Apuntes" root here—presenter will add it
+- **Important:** Do NOT include `Notes` root here—presenter will add it
 - Return `[]` if href not found
 
 ### **Test Cases (4 total)**
@@ -98,7 +98,7 @@ Add a new `describe("findTrailByHref")` block with 4 test cases:
 1. **Minimal fixture → trail extraction**
    - Create inline fixture tree structure with 3 levels
    - Test lesson at depth 2: `/notes/section/lesson/` → expects `[{ title: "Section" }, { title: "Lesson" }]`
-   - Validate order and no Apuntes root
+   - Validate order and no Notes root
 
 2. **Root (top-level) lesson**
    - Lesson with no parents: `/notes/` → expects `[{ title: "Notes" }]`
@@ -130,7 +130,7 @@ Add method to the class:
 ```typescript
 async findTrailByHref(
   href: string,
-  options: { includeApuntesRoot?: boolean } = { includeApuntesRoot: false }
+  options: { includeNotesRoot?: boolean } = { includeNotesRoot: false }
 ): Promise<readonly TrailNode[]>
 ```
 
@@ -140,7 +140,7 @@ async findTrailByHref(
 3. Find the lesson: `const lesson = flattened.find(l => this.normalizePath(l.href) === normalizedHref)`
 4. If not found, return `[]`
 5. Build trail:
-   - If `includeApuntesRoot === true`, prepend `{ title: "Apuntes", href: "/notes/" }`
+   - If `includeNotesRoot === true`, prepend `{ title: "Notes", href: "/notes/" }`
    - For each parent title, create `{ title, href?: undefined }` (groups)
    - Add current lesson: `{ title: lesson.title, href: lesson.href }`
 6. Return frozen array: `Object.freeze([...trail])`
@@ -175,14 +175,14 @@ async findTrailByHref(
 1. **Unit tests pass**: All 4 new tests + existing tests in LessonCatalogAdapter.test.ts
 2. **Type-check passes**: `pnpm exec tsc --noEmit`
 3. **No regressions**: Existing navigation (findAdjacentByHref, findByPath) unaffected
-4. **Boundary cases**: Empty parents, not found, configurable Apuntes root all handled
+4. **Boundary cases**: Empty parents, not found, configurable Notes root all handled
 
 ---
 
 ## Decisions & Scope
 
 ✅ **Decided:**
-- Adapter returns configurable Apuntes root (default: false) to stay flexible for Cycles 2–3
+- Adapter returns configurable Notes root (default: false) to stay flexible for Cycles 2–3
 - Tests use minimal fixture tree to isolate logic from real courseStructure
 - Port interface extension deferred (breadcrumbs are presentation concern; adapter can be internal implementation)
 
