@@ -1,19 +1,20 @@
 import type { INavigationService, NavigationResult } from "$application/ports";
-import type { ILessonCatalog } from "$application/ports";
+import type { LessonNavigationRepository } from "$domain/repositories";
+import { LessonHref } from "$domain/value-objects/LessonHref";
 
 /**
  * Navigation service implementation that resolves adjacent lessons (previous/next) for
  * auto-navigation.
  *
- * This service delegates all navigation logic to {@link ILessonCatalog.findAdjacentByHref}, which
- * handles pathname normalization, lesson lookup, and adjacent lesson resolution. The catalog is
- * the semantic home for navigation queries since it owns the lesson data structure.
+ * This service performs only boundary conversion and orchestration:
+ * it turns the incoming pathname into a canonical {@link LessonHref}, delegates the adjacency
+ * lookup to a domain-oriented repository, and maps the domain result into the application output.
  *
  * Instantiated in {@link src/presentation/adapters/navigation-bridge.ts} once per route render.
  * Used by layout components to populate breadcrumb and auto-navigation UI.
  */
 export class NavigationServiceImpl implements INavigationService {
-    constructor(private readonly lessonCatalog: ILessonCatalog) {}
+    constructor(private readonly lessonNavigationRepository: LessonNavigationRepository) {}
 
     /**
      * Resolves the previous and next lessons for a given pathname.
@@ -24,6 +25,27 @@ export class NavigationServiceImpl implements INavigationService {
      *   Promise resolving to NavigationResult with optional `previous` and `next` lesson nodes
      */
     async resolveAutoNav(pathname: string): Promise<NavigationResult> {
-        return this.lessonCatalog.findAdjacentByHref(pathname);
+        const adjacentLessons = await this.lessonNavigationRepository.findAdjacentTo(
+            LessonHref.create(pathname),
+        );
+
+        return {
+            ...(adjacentLessons.previous
+                ? {
+                    previous: {
+                        title: adjacentLessons.previous.title,
+                        href: adjacentLessons.previous.href,
+                    },
+                }
+                : {}),
+            ...(adjacentLessons.next
+                ? {
+                    next: {
+                        title: adjacentLessons.next.title,
+                        href: adjacentLessons.next.href,
+                    },
+                }
+                : {}),
+        };
     }
 }

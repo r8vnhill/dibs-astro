@@ -1,5 +1,7 @@
 # Phase 1: Layered Architecture Visualization
 
+> **Historical note:** This tree captures the repository at the end of Phase 1. It is not the current architecture snapshot. For the current boundaries after Phase 2 and Cycle 8, use `docs/architecture/layer-separation.md`.
+
 ## Current directory tree (after Phase 1)
 
 ```

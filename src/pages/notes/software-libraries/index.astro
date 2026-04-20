@@ -1,13 +1,102 @@
 ---
-import ToDo from "~/components/utils/ToDo";
+import * as icons from "~/assets/img/icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import B from "~/components/ui/font/B.astro";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
-<NotesLayout title="Unidad 1 - Introducción al desarrollo de bibliotecas de software">
-    <ToDo
-        client:only="react"
-        metadata={{
-            title: "Resumen de la unidad 1",
-        }}
-    />
+<NotesLayout
+    title="Unidad 1 - Introducción al desarrollo de bibliotecas de software"
+    description="Presenta la unidad 1 como una introducción breve a la biblioteca de software como artefacto reusable, interfaz pública y punto de partida para discutir diseño de APIs."
+>
+    <Fragment slot="abstract">
+        <P>
+            Esta unidad abre el curso instalando una pregunta simple, pero decisiva: <B>qué hace
+                propia a una biblioteca de software</B> y por qué no conviene pensarla igual que
+            otros artefactos del ecosistema. El punto de partida no es una herramienta ni un
+            lenguaje particular, sino la relación de uso que una biblioteca establece con otras
+            personas desarrolladoras: <B>una biblioteca debe ser pensada para ser incorporada,
+                interpretada y usada desde fuera</B>.
+        </P>
+
+        <P>
+            A lo largo de estas primeras lecciones, la biblioteca aparece primero dentro de una
+            taxonomía más amplia de artefactos, luego como un objeto de diseño que puede evaluarse
+            con criterios iniciales de claridad, coherencia y usabilidad.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-unit-map">
+        <Heading
+            headingLevel="h2" Icon={icons.Compass}
+            slot="heading"
+        >
+            Mapa breve de la unidad
+        </Heading>
+
+        <P>
+            La progresión de la unidad va desde distinguir tipos de artefacto hasta empezar a mirar
+            la biblioteca como una API que debe orientar bien su uso. Ese recorrido muestra por qué
+            la definición misma de biblioteca condiciona su diseño: entender qué clase de artefacto
+            estamos construyendo es el primer paso para que comunique con claridad y resulte difícil
+            de usar mal.
+        </P>
+
+        <List>
+            <ListItem icon={icons.Cube}>
+                <B>Distinguir tipos de artefacto y sus relaciones de uso</B>: entender que
+                biblioteca, aplicación, script, herramienta, plugin y paquete tienen exigencias
+                distintas y no deben pensarse de la misma forma.
+            </ListItem>
+
+            <ListItem icon={icons.Plugs}>
+                <B>Biblioteca como API y contrato público</B>: entender que una biblioteca no es
+                solo código reusable, sino también una interfaz pensada para integración
+                programática.
+            </ListItem>
+
+            <ListItem icon={icons.PuzzlePiece}>
+                <B>Principios iniciales de diseño de API</B>: introducir criterios básicos para
+                evaluar si una interfaz refleja bien el dominio, comunica con claridad y resulta
+                difícil de usar mal.
+            </ListItem>
+        </List>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                En esta unidad, la biblioteca queda instalada como un artefacto con exigencias
+                propias. No basta con que implemente una capacidad útil: también debe ofrecer una
+                interfaz comprensible, reutilizable y razonablemente estable para quienes la
+                consumen. Esa definición no es un rodeo previo al diseño, sino su fundamento.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Shapes}>
+                Distinguir artefactos de software ayuda a no confundir problemas de uso,
+                distribución y diseño de interfaz.
+            </ListItem>
+            <ListItem icon={icons.Scroll}>
+                Pensar la biblioteca como API permite evaluarla por su contrato público, no solo por
+                su implementación interna.
+            </ListItem>
+            <ListItem icon={icons.Lightbulb}>
+                Los primeros principios de diseño sirven como vocabulario inicial para juzgar la
+                calidad de una interfaz reusable.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            Con este marco, el curso ya puede avanzar desde la definición conceptual hacia
+            decisiones de diseño más concretas. La pregunta que sigue no es solo qué es una
+            biblioteca, sino cómo diseñarla para que represente bien su dominio y oriente un buen
+            uso desde su API.
+        </Fragment>
+    </ConclusionsLayout>
 </NotesLayout>

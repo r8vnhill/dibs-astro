@@ -1,7 +1,7 @@
 /**
  * @file lesson-metadata.ts
  *
- * Runtime-safe accessors and utilities for the generated lesson metadata dataset.
+ * Infrastructure-facing accessors and utilities for the generated lesson metadata dataset.
  *
  * This module wraps `lesson-metadata.generated.json` with:
  *
@@ -20,6 +20,12 @@
  *
  * Validation is performed once on first access and cached via {@link getLessonMetadataDataset}.
  *
+ * ## Architectural role
+ *
+ * After Cycle 6, production callers in Presentation and Application should no longer depend on
+ * this module directly. It remains the infrastructure support layer behind
+ * `LessonMetadataAdapter`, plus a compatibility/testing surface for transitional callers.
+ *
  * ## Normalized route contract
  *
  * Routes in `entries` are expected to:
@@ -31,7 +37,14 @@
  *
  * {@link normalizeLessonPathname} enforces these invariants for lookup keys.
  */
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import {
+    DEFAULT_LESSON_METADATA_LOCALE,
+    formatDate as formatDomainDate,
+    formatLessonDate as formatDomainLessonDate,
+    normalizeLessonMetadataPathname,
+    parseIsoShortDate as parseDomainIsoShortDate,
+    UNKNOWN_LESSON_DATE_LABEL,
+} from "../domain";
 import { z } from "zod";
 import metadataRaw from "../data/lesson-metadata.generated.json";
 
@@ -41,12 +54,12 @@ import metadataRaw from "../data/lesson-metadata.generated.json";
  * The formatting helpers use `{ts} Intl.DateTimeFormat` under the hood, so callers may override
  * this per call.
  */
-export const DEFAULT_LOCALE = "es-CL";
+export const DEFAULT_LOCALE = DEFAULT_LESSON_METADATA_LOCALE;
 
 /**
  * Fallback label returned by {@link formatLessonDate} when no date is available.
  */
-export const UNKNOWN_DATE_LABEL = "sin fecha registrada";
+export const UNKNOWN_DATE_LABEL = UNKNOWN_LESSON_DATE_LABEL;
 
 /**
  * Zod schema for a lesson author.
@@ -203,11 +216,7 @@ let datasetCache: LessonMetadataDataset | undefined;
  * @returns Normalized route key suitable for `dataset.entries`.
  */
 export const normalizeLessonPathname = (pathname: string): string => {
-    const trimmed = pathname.trim();
-    if (trimmed.length === 0) return "/";
-
-    const withoutOrigin = trimmed.replace(/^https?:\/\/[^/]+/i, "");
-    return LessonHref.create(withoutOrigin).value;
+    return normalizeLessonMetadataPathname(pathname);
 };
 
 /**
@@ -222,11 +231,7 @@ export const normalizeLessonPathname = (pathname: string): string => {
  * @returns A valid `{ts} Date` in UTC, or `undefined` if invalid/absent.
  */
 export const parseIsoShortDate = (date?: string): Date | undefined => {
-    if (!date) return undefined;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return undefined;
-
-    const parsed = new Date(`${date}T00:00:00.000Z`);
-    return Number.isNaN(parsed.valueOf()) ? undefined : parsed;
+    return parseDomainIsoShortDate(date);
 };
 
 /**
@@ -252,7 +257,7 @@ export const formatDate = (
         timeZone: "UTC",
     },
 ): string => {
-    return date.toLocaleDateString(locale, options);
+    return formatDomainDate(date, locale, options);
 };
 
 /**
@@ -288,11 +293,7 @@ export const formatLessonDate = (
     locale = DEFAULT_LOCALE,
     options?: Intl.DateTimeFormatOptions,
 ): string => {
-    if (!date) return UNKNOWN_DATE_LABEL;
-
-    const parsed = parseIsoShortDate(date);
-    if (!parsed) return date;
-    return formatDate(parsed, locale, options);
+    return formatDomainLessonDate(date, locale, options);
 };
 
 /**

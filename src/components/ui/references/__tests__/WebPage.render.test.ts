@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, suite, test } from "vitest";
 import { type AstroRender, createAstroRenderer } from "../../../../test-utils/astro-render";
 import WebPage from "../WebPage.astro";
 

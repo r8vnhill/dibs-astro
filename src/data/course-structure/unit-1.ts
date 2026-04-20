@@ -6,12 +6,12 @@ const apiDesignLessons = new LessonTreeBuilder()
     .link(
         "fundamentals",
         "Diseñar la API desde el dominio",
-        `${coursePaths.apiDesignFundamentals}/`,
+        `${coursePaths.softwareLibraries.apiDesign.fundamentals}/`,
     )
     .link(
         "evolution",
         "Evolucionar una API sin romper compatibilidad",
-        `${coursePaths.apiDesignEvolution}/`,
+        `${coursePaths.softwareLibraries.apiDesign.evolution}/`,
     )
     .build();
 
@@ -19,12 +19,12 @@ export const unit1Lessons: readonly Lesson[] = new LessonTreeBuilder()
     .link(
         "software-artifacts-taxonomy",
         "Taxonomía básica de artefactos de software",
-        `${coursePaths.softwareArtifactsTaxonomy}/`,
+        `${coursePaths.softwareLibraries.artifactsTaxonomy}/`,
     )
     .link(
         "lib-what-is",
         "La biblioteca como artefacto de software",
-        `${coursePaths.whatIs}/`,
+        `${coursePaths.softwareLibraries.whatIs}/`,
     )
     .group(
         "api-design",

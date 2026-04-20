@@ -9,7 +9,7 @@
  * - composeDecorators(base, decorators): build a single executor by wrapping `base` with the provided decorators
  *   (right-to-left application).
  * - withAliasResolution: resolves language aliases (updates `state.resolvedLang`).
- * - withLanguageLoading: attempts to load a Shiki language on demand; falls back to `plaintext` when the language isn’t
+ * - withLanguageLoading: attempts to load a Shiki language on demand; falls back to `text` when the language isn’t
  *   available.
  * - withTrailingNewlineTrim: removes a single trailing newline to avoid
  *   rendering an extra blank line in highlighted output.
@@ -49,7 +49,7 @@ export function withAliasResolution(): HighlightDecorator {
 
 /**
  * Ensure the requested language is loaded by the Shiki highlighter. If the language cannot be loaded, log a warning and
- * fall back to `plaintext`.
+ * fall back to `text`.
  *
  * Note: `isSpecialLang` checks for Shiki virtual languages (e.g. "diff") which may not require loading.
  */
@@ -63,7 +63,7 @@ export function withLanguageLoading(): HighlightDecorator {
                 // Load language on demand; most highlights will find the language already loaded but this supports
                 // dynamic lists.
                 await runWithDevTransportRetry(
-                    () => highlighter.loadLanguage(resolvedLang as any),
+                    async ({ signal: _signal }) => await highlighter.loadLanguage(resolvedLang),
                     {
                         label: `patched markdown shiki language load (${resolvedLang})`,
                     },
@@ -73,10 +73,11 @@ export function withLanguageLoading(): HighlightDecorator {
                     ? `"${lang}"`
                     : `"${lang}" (aliased to "${resolvedLang}")`;
                 console.warn(
-                    `[Shiki] The language ${langStr} doesn't exist, falling back to "plaintext".`,
+                    `[Shiki] The language ${langStr} doesn't exist, falling back to "text".`,
                 );
-                // Mutate `state.lang` so downstream logic (e.g. default transformers) sees the fallback value.
-                state.lang = "plaintext";
+                // Mutate the state so downstream logic sees the canonical plain-text fallback.
+                state.lang = "text";
+                state.resolvedLang = "text";
             }
         }
 

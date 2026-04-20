@@ -6,16 +6,16 @@
  * It accepts optional metadata such as location (e.g. "Kotlin Docs"), author, and a description.
  */
 
+import { resolveInlineField, resolveLinkedInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
-    resolveInlineField,
-    resolveLinkedInlineField,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
-import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
+import { ReferenceContractError } from "./ReferenceContractError";
 
 // Define props and destructure them from Astro.props
 type Props = {
@@ -55,13 +55,9 @@ const externalLinkAttrs = {
     class: "hover:underline underline-offset-2",
 } as const;
 
-const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
 const resolvedLocation = resolveLinkedInlineField(locationSlot, location, locationUrl);
 const resolvedAuthor = resolveInlineField(authorSlot, author);
-
-if (resolvedTitle.kind === "missing") {
-    throw new MissingReferenceTitleError();
-}
 
 if (import.meta.env.DEV && locationUrl && !location) {
     throw new ReferenceContractError("WebPage `locationUrl` requires `location`.");

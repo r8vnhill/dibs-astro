@@ -40,9 +40,9 @@
 
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
+import type { LessonMetadataDto } from "$application/ports";
 import type { PartialRecord } from "~/types/records";
 import type { RepoPlatform, RepoRef } from "~/utils/git";
-import type { LessonMetadataEntry } from "~/utils/lesson-metadata";
 import { type AstroRender, createAstroRenderer } from "../../../test-utils/astro-render";
 import LessonMetaPanel from "../LessonMetaPanel.astro";
 
@@ -56,7 +56,7 @@ interface LessonMetaPanelProps {
     /**
      * The metadata entry for the current lesson.
      */
-    metadata: LessonMetadataEntry;
+    metadata: LessonMetadataDto;
 
     /**
      * Optional repository references for the website.
@@ -76,22 +76,14 @@ interface LessonMetaPanelProps {
 }
 
 /**
- * Stable source file path used across test cases.
- *
- * This avoids repeating path literals and keeps tests focused on behavior.
- */
-const SOURCE_FILE = "src/pages/notes/example/index.astro";
-
-/**
- * Factory for producing a valid {@link LessonMetadataEntry} with minimal defaults.
+ * Factory for producing valid lesson metadata with minimal defaults.
  *
  * @param overrides Partial overrides to customize a scenario.
  * @returns A fully-formed metadata entry suitable for rendering.
  */
 const createMetadata = (
-    overrides: Partial<LessonMetadataEntry> = {},
-): LessonMetadataEntry => ({
-    sourceFile: SOURCE_FILE,
+    overrides: Partial<LessonMetadataDto> = {},
+): LessonMetadataDto => ({
     authors: [{ name: "Proyecto DIBS" }],
     changes: [],
     ...overrides,

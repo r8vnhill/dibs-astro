@@ -1,131 +1,115 @@
-# Layered Architecture Plan for DIBS
+# Layer Separation
 
-This note captures the current analysis of the `astro-website` repo to separate business logic from UI/infra and prepare shareable libraries.
+This note is the current-state architecture reference for the `astro-website` repo after the Phase 2 domain-isolation cycles and the Cycle 8 integration lock-in.
 
-## 1. Domain map and dependency hotspots
+Older Phase 0 and Phase 1 notes remain useful as historical implementation records, but they should not be treated as the authoritative description of the current boundaries when they conflict with this document.
 
-### 1.1 Current state
+## Current structure
 
-- **Pages and layouts** mix orchestration and rendering (e.g., `NotesLayout.astro` resolves navigation while printing markup).
-- **React/Astro components** carry UI plus rules (`LessonSidebar` persists state in `localStorage`, `ToDo` fires custom events).
-- **`src/data`** stores domain data (`course-structure`, 404 messages, TODO assets) without repository boundaries.
-- **`src/utils` / `src/hooks`** act as a grab bag, even for DOM-heavy helpers (`navigation.ts`, `tabs/controller.ts`, `theme.ts`), which locks logic to the browser.
-- **`src/lib` and `config`** house infra (Shiki, Vite/Astro plugins) that could be split out later.
+The repo now uses a layered structure inside `src/` rather than the earlier package-split sketch:
 
-### 1.2 Key dependencies
+- `src/domain`
+  - Owns pure lesson-navigation rules, lesson route normalization, lesson trail and adjacency semantics, reference-content resolution rules, and lesson-metadata normalization/formatting rules.
+  - Contains no Astro slot I/O, generated JSON imports, zod schemas, or adapter wiring.
 
-```
-courseStructure data → resolveAutoNav utils → NotesLayout → lesson pages
-                      ↘ LessonSidebar/LessonTree components (UI state + persistence)
-```
+- `src/application`
+  - Owns orchestration through service and port contracts.
+  - Converts raw presentation inputs into domain-friendly values where the use-case boundary requires it.
+  - Returns small DTOs to presentation-facing callers instead of leaking infrastructure records.
 
-Other hotspots:
+- `src/infrastructure/adapters`
+  - Owns mapping from concrete data sources into domain-facing repository contracts.
+  - `LessonCatalogAdapter` maps `courseStructure` into the lesson-navigation repository shape.
+  - `LessonMetadataAdapter` maps the generated metadata dataset into the lesson-metadata repository shape.
 
-- **Reading Time**: `useReadingTime.ts` performs domain work but depends on DOM cloning; the widget has no adapter layer.
-- **Starwind widgets**: `src/utils/tabs` manipulates `HTMLElement`, `CustomEvent`, `localStorage`.
-- **404/TODO messaging**: data lives in `src/data`, logic + presentation live in components.
-- **Theme**: `src/utils/theme.ts` and `src/scripts/theme-toggle.ts` mix preference rules with direct DOM access.
+- `src/presentation/adapters`
+  - Owns local composition for UI consumers such as `NotesLayout`.
+  - Bridges presentation callers to application services and returns only UI-safe serializable payloads.
 
-## 2. Key use cases (prioritized)
+- `src/layouts`, `src/components`, `src/pages`
+  - Own the Astro and React rendering surface.
+  - Consume presentation adapters and small UI payloads rather than domain entities or infrastructure sources directly.
 
-| Use case                                    | Description                                                                           | Impact                                         | Priority             |
-| ------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------- | -------------------- |
-| **Render lesson with automatic navigation** | For a given path/lesson id, produce a `NavigationPlan` (prev/next, trail) for the UI. | Drives every lesson page; today mixes layers.  | **High** → **Pilot** |
-| Reading time estimate                       | Extract relevant text, apply policies, expose minutes without touching DOM.           | Shared by all lessons; depends on same layout. | Medium-high          |
-| Interactive widgets (tabs, tooltips, theme) | Controllers with persistence and event sync.                                          | Used across notes; needs infra-only package.   | Medium               |
-| Dynamic messages (404, TODO placeholders)   | Select random entries, emit optional telemetry.                                       | Smaller scope, good for later packages.        | Medium-low           |
+## Phase 2 status
 
-**Pilot**: refactor the lesson rendering flow. Validates contracts between domain (course outline), application (navigation service) and presentation (Astro layouts/components).
+Phase 2 is no longer a “domain stub” state. The main domain seams are now present in code:
 
-## 3. Target architecture
+- Navigation rules are centered in `src/domain` and consumed through repository/service boundaries.
+- Reference-content business rules live in `src/domain/reference-content.ts`.
+- Lesson-metadata normalization, parsing, and formatting rules live in `src/domain/lesson-metadata.ts`.
+- Presentation composition for lesson navigation and lesson metadata lives in:
+  - `src/presentation/adapters/navigation-bridge.ts`
+  - `src/presentation/adapters/lesson-metadata-bridge.ts`
 
-### 3.1 Layers
+At the UI boundary, `NotesLayout.astro` now resolves:
 
-1. **Domain (`packages/course-core/src/domain`)**: pure types + rules (`Lesson`, `CourseOutline`, `NavigationPlan`, `ReadingTimePolicy`, `PlaceholderMessage`). No UI/DOM/Astro deps.
-2. **Application (`packages/course-core/src/application`)**: use cases (`GetLessonNavigation`, `ComputeReadingTime`, `ToggleSidebarVisibility`, `TrackPlaceholderUsage`) orchestrate repositories and policies.
-3. **Infrastructure (`packages/course-core/src/infrastructure`)**: concrete adapters (e.g., `StaticCourseRepository` that reads JSON/MD, browser persistence via `localStorage`, import.meta.glob, Shiki plumbing). Split by platform when needed.
-4. **Presentation (`apps/astro-site/src/presentation`)**: pages, layouts and islands. Consume only application contracts. Layouts receive view models (`LessonViewModel`, `NavigationPlanDTO`), not raw `courseStructure`.
+- automatic previous/next navigation through `resolveAutoNav(pathname, courseStructure)`
+- lesson metadata through `resolveLessonMetadata(pathname)`
 
-### 3.2 Patterns and conventions
+Cycle 8 locked these paths with the existing high-value suites instead of introducing a separate integration harness:
 
-- **Lightweight CQRS**: queries (`GetNavigationPlan`, `ListCourseUnits`) separate from commands (`PersistSidebarPreference`).
-- **Repositories**: `CourseRepository`, `LessonRepository`, `PlaceholderRepository`. Astro app can host concrete adapters until a CMS or external source appears.
-- **Domain services**: `NavigationService`, `ReadingTimeService`, `MessagingService`. Export lean interfaces.
-- **Adapters**:
-  - `AstroLessonLayoutAdapter` → turns `NavigationPlan` into `previous/next/breadcrumb` props.
-  - `LessonSidebarAdapter` → serializes lesson trees for the React island without touching `window`.
-  - `ReadingTimeAdapter` → feeds `ReadingTimeEstimate` to the widget.
-- **Folder layout**
-  ```
-  apps/
-    astro-site/
-      src/presentation/...
-  packages/
-    course-core/        (domain + application + minimal infra)
-    course-ui/          (Astro/React wrappers built on course-core contracts)
-    tooling/shiki-kit/  (shared infra such as highlighters)
-  ```
-  Enforce `presentation → application → domain` with `eslint-plugin-boundaries` or `dependency-cruiser`.
+- `src/layouts/__tests__/NotesLayout.render.test.ts`
+- `src/presentation/adapters/__tests__/navigation-bridge.test.ts`
+- `src/presentation/adapters/__tests__/lesson-metadata-bridge.test.ts`
+- reference render suites under `src/components/ui/references/__tests__`
 
-### 3.3 Integration contract (sample)
+## Dependency flow
 
-```ts
-// @dibs/course-core
-type LessonId = string;
-interface LessonSummary {
-    id: LessonId;
-    title: string;
-    href: string;
-    unit: string;
-    order: number;
-}
+The intended dependency direction is:
 
-interface NavigationPlan {
-    trail: string[];
-    previous?: LessonSummary;
-    next?: LessonSummary;
-}
-
-interface NavigationService {
-    plan(path: string): NavigationPlan;
-}
-
-interface ReadingTimeEstimate {
-    minutes: number;
-    wpm: number;
-    multiplier: number;
-}
+```text
+Presentation -> Application -> Domain
+Infrastructure -> Domain/Application contracts
 ```
 
-Astro imports only these contracts; actual data (`courseStructure`) is provided by a `CourseRepository` adapter.
+In practical terms:
 
-## 4. Metrics and gates
+- presentation code should not reach into infrastructure adapters directly unless it is itself the local composition root
+- application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
+- domain code should remain framework-free and I/O-free
 
-| Category       | Metric / gate                                                                                            | Notes                                              |
-| -------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Architecture   | `dependency-cruiser` / `eslint-boundaries`: zero cross-layer violations.                                 | Run in CI via `pnpm depgraph`.                     |
-|                | Track edges between layers; snapshot diff per sprint.                                                    | Measures refactor progress.                        |
-| Quality        | `pnpm test --coverage`: Domain ≥ 85%, Application ≥ 75%.                                                 | Presentation can keep manual testing.              |
-|                | `pnpm check` + `pnpm fmt` as pre-commit / CI gate.                                                       | `lint-staged` already runs dprint.                 |
-| Linting        | ESLint (`import/no-restricted-paths`, TS project refs) enforcing layer access.                           | Blocks direct `src/data` imports from UI.          |
-| Critical flows | Contract tests for `NavigationService` and `ReadingTimeService`.                                         | Deterministic fixtures/text.                       |
-| Observability  | Commands (e.g., `PersistSidebarPreference`) emit events at application layer; UI only calls the command. | Removes direct `localStorage` usage in components. |
+## Presentation boundaries
 
-## 5. Architecture brief
+The main presentation-facing contracts locked in during this phase are:
 
-1. **Principles**: pure domain code, explicit dependencies, zero `window`/`document` outside infra.
-2. **Bounded contexts**:
-   - `CourseExperience` (navigation, reading time, outline).
-   - `InteractiveWidgets` (tabs, tooltips, theme).
-   - `ThemeAndBrand` (preferences, assets).
-   - `ContentInfra` (Shiki, Astro/Vite integrations).
-3. **Data flow**: repository → services → adapters → UI. Components never read `src/data` directly.
-4. **Observability**: instrument commands (e.g., placeholder tracking) via centralized events.
-5. **CI/CD**: `pnpm fmt && pnpm check && pnpm test --coverage && pnpm depgraph`. Merge blocked on any failure.
+- `resolveAutoNav(pathname, lessons)`
+  - returns only `{ previous?, next? }`
+  - each link is `{ title, href }`
+  - does not expose slugs, lesson entities, or infrastructure-specific records
 
-## 6. Next steps
+- `resolveLessonMetadata(pathname)`
+  - returns DTO-shaped serializable metadata only
+  - does not expose infrastructure-only fields such as `sourceFile`
 
-1. Spin up `packages/course-core` with `Lesson`, `CourseOutline`, `NavigationService`; move `course-structure` + `resolveAutoNav` behind a static repository adapter.
-2. Update `NotesLayout` + `LessonSidebar` to consume `NavigationPlan` and application commands instead of touching `courseStructure` or `localStorage` directly.
-3. Extract `ReadingTimeService`, add pure tests, and let the widget become a thin presenter.
-4. Plan migration of Starwind widgets and theme helpers into a `course-ui` (or `interactive-widgets`) package limited to infra/UI responsibilities.
+`NotesLayout.astro` currently renders previous/next navigation through this presentation boundary. It does not currently render breadcrumb or trail UI as part of this flow, so breadcrumb behavior is not a locked presentation contract at this time.
+
+## Intentional exceptions
+
+Some transitional or infrastructure-support files still exist by design:
+
+- `src/utils/lesson-metadata.ts`
+  - remains an infrastructure support module
+  - owns generated JSON loading, zod validation, dataset caching, and lookup support
+  - should not be treated as a general shared utility for business rules
+
+- `src/components/ui/references/reference-content.ts`
+  - is now an Astro/UI adapter module
+  - owns slot reading, slot preparation, and UI-facing error translation
+  - pure precedence and content-resolution rules belong in `src/domain/reference-content.ts`
+
+- `src/utils/navigation.ts`
+  - remains a small normalization helper surface for presentation payload shaping
+  - no longer owns automatic navigation resolution
+
+## Documentation status
+
+Use this file as the current architecture summary.
+
+Treat these files as historical implementation records unless explicitly updated for current-state accuracy:
+
+- `docs/architecture/PHASE-1-CHECKLIST.md`
+- `docs/architecture/PHASE-1-TREE.md`
+- `docs/architecture/PHASE-1-RESUMEN.md`
+- `docs/architecture/Phase-1-summary.md`
+
+Those notes document the Phase 1 rollout and still contain references to earlier transitional states such as “Domain stub” or “NotesLayout integration pending.” When that historical framing conflicts with the current codebase, the current code and this note take precedence.

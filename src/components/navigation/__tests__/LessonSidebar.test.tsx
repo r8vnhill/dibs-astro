@@ -24,9 +24,9 @@
  * - Capture props for contract verification.
  */
 
-import { render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import fc from "fast-check";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import type { Lesson } from "~/data/course-structure";
 import LessonSidebar from "../LessonSidebar";
 
@@ -51,6 +51,10 @@ vi.mock("../LessonTree", () => ({
         return <div data-testid="lesson-tree" />;
     },
 }));
+
+afterEach(() => {
+    cleanup();
+});
 
 describe("LessonSidebar", () => {
     /**
@@ -117,12 +121,12 @@ describe("LessonSidebar", () => {
             fc.property(
                 fc.array(lessonArbitrary, { maxLength: 20 }),
                 (lessons) => {
-                    const { unmount } = render(
+                    const { container, unmount } = render(
                         <LessonSidebar lessons={lessons} />,
                     );
 
                     expect(
-                        screen.getByRole("complementary", {
+                        within(container).getByRole("complementary", {
                             name: "Navegación del curso",
                         }),
                     ).toBeInTheDocument();

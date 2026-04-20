@@ -16,8 +16,9 @@
  * - Separation between abstract content and the main default slot.
  * - Backward compatibility for the historical `previous` single-link contract.
  * - Rendering order for `previous` arrays.
- * - Precedence rules: manual `previous` overrides auto navigation completely.
+ * - Precedence rules: manual `previous`/`next` overrides auto navigation completely.
  * - URL normalization in rendered anchors.
+ * - Metadata-panel rendering through the lesson-metadata presentation bridge.
  *
  * ## Why render tests instead of pure helper tests?
  *
@@ -34,7 +35,7 @@
  */
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { NavigationLinkInput } from "~/utils";
+import type { NavigationLinkInput } from "~/utils/navigation";
 import { type AstroRender, createAstroRenderer } from "../../test-utils/astro-render";
 import NotesLayout from "../NotesLayout.astro";
 
@@ -167,7 +168,7 @@ describe.concurrent("NotesLayout.astro render", () => {
         expect(nextLink?.textContent).toContain("Pipelines");
     });
 
-    test("uses auto navigation previous when there is no manual override", async () => {
+    test("uses auto navigation for both previous and next when there is no manual override", async () => {
         const html = await renderLayout(
             {
                 title: "Diseñar la API desde el dominio",
@@ -186,6 +187,7 @@ describe.concurrent("NotesLayout.astro render", () => {
         const doc = parseHtml(html);
         const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
         const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
+        const nextLink = nav?.querySelector("a[rel=\"next\"]");
 
         // This route is part of the real course structure, so the expected previous link comes
         // from production navigation data rather than from a test double.
@@ -194,9 +196,13 @@ describe.concurrent("NotesLayout.astro render", () => {
         expect(previousLinks[0]?.getAttribute("href")).toBe(
             "/notes/software-libraries/what-is/",
         );
+        expect(nextLink?.textContent).toContain("Evolucionar una API sin romper compatibilidad");
+        expect(nextLink?.getAttribute("href")).toBe(
+            "/notes/software-libraries/api-design/evolution/",
+        );
     });
 
-    test("manual previous array takes precedence over auto navigation", async () => {
+    test("manual previous array and next link take precedence over auto navigation", async () => {
         const html = await renderLayout(
             {
                 title: "Ensayo seguro (-WhatIf/-Confirm)",
@@ -210,6 +216,10 @@ describe.concurrent("NotesLayout.astro render", () => {
                         href: "/notes/scripting/structured-output/nushell",
                     },
                 ],
+                next: {
+                    title: "Siguiente manual",
+                    href: "/notes/custom-next",
+                },
             },
             {
                 request: new Request(
@@ -225,10 +235,37 @@ describe.concurrent("NotesLayout.astro render", () => {
         const doc = parseHtml(html);
         const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
         const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
+        const nextLink = nav?.querySelector("a[rel=\"next\"]");
 
         expect(previousLinks.map((link) => link.textContent?.replace(/\s+/g, " ").trim())).toEqual([
             "PowerShell",
             "Nushell",
         ]);
+        expect(nextLink?.textContent).toContain("Siguiente manual");
+        expect(nextLink?.getAttribute("href")).toBe("/notes/custom-next/");
+    });
+
+    test("renders lesson metadata through the presentation bridge without leaking infrastructure fields", async () => {
+        const html = await renderLayout(
+            {
+                title: "Introducción a PowerShell",
+            },
+            {
+                request: new Request("https://dibs.ravenhill.cl/notes/scripting/"),
+                slots: {
+                    abstract: "<p>Resumen breve</p>",
+                    default: "<p>Contenido</p>",
+                },
+            },
+        );
+
+        const doc = parseHtml(html);
+
+        expect(doc.querySelector("[data-testid=\"panel-title\"]")?.textContent).toContain(
+            "Metadatos de la lección",
+        );
+        expect(doc.querySelector("[data-testid=\"authors-value\"]")?.textContent?.trim()).toBeTruthy();
+        expect(doc.querySelector("[data-testid=\"last-updated-value\"]")?.textContent?.trim()).toBeTruthy();
+        expect(html).not.toContain("sourceFile");
     });
 });

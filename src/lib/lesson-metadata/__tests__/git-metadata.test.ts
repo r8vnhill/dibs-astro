@@ -36,6 +36,7 @@
  *   newline characters would violate the input contract.
  */
 import fc from "fast-check";
+import { describe, expect, test } from "vitest";
 import {
     buildLessonMetadataEntry,
     parseGitLogLine,

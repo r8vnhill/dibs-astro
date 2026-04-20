@@ -4,7 +4,7 @@
 
 Implement lesson breadcrumbs without `astro-breadcrumbs`. The repo already has the right source of truth in `courseStructure`, flattened ancestry metadata, and the presentation adapter layer. The plan should reuse that model, avoid the package's GPL-3.0 dependency, and render a Notes-rooted breadcrumb trail on lesson pages.
 
-Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the lesson `<h1>`, with clickable items when an `href` exists and the current page rendered as plain text with `aria-current="page"`.
+Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the lesson `<h1>`, with clickable items when an `href` exists and the current page rendered as plain text with `aria-current="page"`.
 
 ## API / Interface Changes
 
@@ -22,7 +22,7 @@ Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the
 1. **Catalog trail query**
    - Add failing unit tests in the catalog adapter for:
      - a middle lesson returning ordered ancestors plus current lesson
-     - a top-level lesson returning only `Apuntes` + current lesson after presentation mapping
+     - a top-level lesson returning only `Notes` + current lesson after presentation mapping
      - a route not found returning an empty trail
      - groups without `href` contributing non-clickable breadcrumb items
    - Implement `findTrailByHref()` in `LessonCatalogAdapter`.
@@ -31,7 +31,7 @@ Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the
 
 2. **Presentation adapter**
    - Add failing tests for a new breadcrumb presentation adapter.
-   - Map the catalog trail to UI-safe breadcrumb items and prepend a synthetic `Apuntes` root item with `/notes/`.
+   - Map the catalog trail to UI-safe breadcrumb items and prepend a synthetic `Notes` root item with `/notes/`.
    - Mark only the last item as `current: true`.
    - Preserve `href` only for non-current items that are actually navigable.
 
@@ -47,7 +47,7 @@ Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the
 
 4. **NotesLayout integration**
    - Add failing render tests in `NotesLayout.render.test.ts` for:
-     - a real lesson route showing `Apuntes > ... > current`
+     - a real lesson route showing `Notes > ... > current`
      - a lesson under a group with overview page producing clickable group crumb
      - a lesson under a structural group without overview page producing plain-text intermediate crumb
    - Integrate breadcrumb resolution into `NotesLayout.astro`.
@@ -65,7 +65,7 @@ Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the
 - Prefer a dedicated breadcrumb component over embedding markup directly in `NotesLayout`; the behavior is reusable and easier to test in isolation.
 - Do not derive breadcrumbs from URL segments. The course hierarchy already encodes better editorial structure and will stay coherent if routes move again.
 - Treat groups without `href` as breadcrumb text nodes, not links.
-- Do not include `Inicio` in this first version; the agreed root is `Apuntes`.
+- Do not include `Inicio` in this first version; the agreed root is `Notes`.
 - Keep the breadcrumb pipeline presentation-safe:
   - infrastructure/application can return raw trail nodes
   - presentation adapter converts them into UI items
@@ -88,6 +88,6 @@ Assumed UX: render `Apuntes > ...course hierarchy... > current lesson` above the
 ## Assumptions
 
 - Breadcrumbs are only for lesson pages using `NotesLayout`.
-- The trail starts at `Apuntes` and then follows `courseStructure`, not raw path segments.
+- The trail starts at `Notes` and then follows `courseStructure`, not raw path segments.
 - The current lesson is shown but not linked.
 - No new third-party dependency will be introduced for this feature.

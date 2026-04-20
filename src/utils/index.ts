@@ -1,58 +1,66 @@
 /**
- * Central export barrel for shared utility helpers and utility types.
+ * Stable public barrel for shared utility helpers, constants, and types.
  *
- * This file groups utilities by concern so callers can import from `~/utils` without needing to
- * know each module path. It also acts as the public utility surface for internal application code:
- * if a helper is exported here, other modules can usually depend on it without reaching into
- * subpaths.
+ * This module defines the approved cross-cutting utility surface exposed by `~/utils`. It exists to give layouts, 
+ * components, infrastructure adapters,
+ * and tests a single predictable import path for helpers that are intentionally
+ * shared across the project.
  *
- * Export policy:
- * - Keep broadly reusable helpers here, not feature-local implementation details.
- * - Prefer exporting stable helpers that are safe to reuse across layouts, content rendering, and
- *   infrastructure code.
- * - Development-only helpers may still be exported here when they support shared runtime behavior
- *   across subsystems, such as the transient transport retry used by Shiki-related dev flows.
+ * Re-exporting a symbol here signals that it is considered part of the
+ * project-wide utility API. Modules that are feature-local, transitional, or
+ * primarily implementation details should remain private to their own paths
+ * instead of being surfaced through this barrel.
  *
- * Example:
- * `import { resolveAutoNav, formatLessonDate, site } from "~/utils";`
+ * ## Export policy
+ *
+ * Prefer re-exporting a helper here only when it is:
+ *
+ * - broadly reusable across multiple features or layers;
+ * - stable enough to be treated as part of the shared utility surface;
+ * - safe to import from rendering code, infrastructure code, and tests.
+ *
+ * Do not re-export modules whose purpose is mainly:
+ *
+ * - supporting a single feature;
+ * - preserving an internal implementation detail;
+ * - exposing a transitional compatibility layer that does not belong in the
+ *   long-term public utility surface.
+ *
+ * Development-oriented helpers may still belong here when they support shared
+ * runtime behaviour or project-wide local development workflows.
+ *
+ * ## Export groups
+ *
+ * This barrel currently exposes:
+ *
+ * - heading and semantic typing helpers;
+ * - page-metadata helpers;
+ * - generic runtime and repository-link utilities;
+ * - theme detection and theme application helpers.
+ *
+ * ## Usage
+ *
+ * Prefer importing from `~/utils` when the symbol is intentionally part of the
+ * shared utility API.
+ *
+ * ```ts
+ * import { buildRepoUrl, site } from "~/utils";
+ * ```
  */
 
-// Heading/semantics helpers
+// Heading and semantic typing
 export type { HeadingLevel } from "./heading-level.ts";
 
-// Lesson metadata runtime helpers (generated JSON resolution + formatting)
-export {
-    DEFAULT_LOCALE,
-    formatDate,
-    formatLessonDate,
-    getLessonMetadataDataset,
-    normalizeLessonPathname,
-    parseIsoShortDate,
-    parseLessonMetadataDataset,
-    resolveLessonMetadata,
-    UNKNOWN_DATE_LABEL,
-} from "./lesson-metadata.ts";
-
-// Lesson navigation helpers
-//
-// `normalizeNavigationLink` and `normalizeNavigation` keep the historical singular contract used by
-// next/previous pairs, while `normalizePreviousNavigation` exposes the newer list-based shape that
-// `NotesLayout` uses for multi-link "previous" navigation.
-export {
-    type NavigationLinkInput,
-    normalizeNavigation,
-    normalizeNavigationLink,
-    normalizePreviousNavigation,
-    resolveAutoNav,
-} from "./navigation.ts";
+// Page metadata
 export { buildHeadPageMeta, type PageMeta } from "./page-meta.ts";
 
-// Generic and cross-cutting runtime utilities
+// Cross-cutting runtime utilities
 export {
     type DevTransportRetryOptions,
     isRetryableDevTransportError,
     runWithDevTransportRetry,
 } from "./dev-transport-retry.ts";
+
 export {
     buildCommitUrl,
     type BuildCommitUrlOptions,
@@ -68,11 +76,12 @@ export {
     type RepoPlatform,
     type RepoRef,
 } from "./git.ts";
+
 export { pickRandom } from "./random.ts";
 export { site } from "./site.ts";
 export type { default as StyledComponent } from "./styled-component.ts";
 
-// Theme utilities
+// Theme detection and application
 export {
     applyTheme,
     getColorSchemeMediaQuery,

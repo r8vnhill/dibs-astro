@@ -17,7 +17,7 @@ import {
     namedRefs,
     scalarInteger,
     scalarLiteral,
-    scalarUrl,
+    scalarUrlLiteral,
 } from "./bibliography-catalog-builder.records.mjs";
 import { ensureNodeCategory, fail } from "./bibliography-catalog-builder.validation.mjs";
 
@@ -73,12 +73,14 @@ export const buildCatalogArtifactFromTurtle = (
         record.primaryType = primaryType;
 
         if (primaryType === "Person") {
-            graph.push(buildPersonNode(record, scalarLiteral, scalarUrl, sourceLabel));
+            graph.push(buildPersonNode(record, scalarLiteral, scalarUrlLiteral, sourceLabel));
             continue;
         }
 
         if (primaryType === "Organization" || primaryType === "CollegeOrUniversity") {
-            graph.push(buildOrganizationNode(record, scalarLiteral, scalarUrl, fail, sourceLabel));
+            graph.push(
+                buildOrganizationNode(record, scalarLiteral, scalarUrlLiteral, fail, sourceLabel),
+            );
             continue;
         }
 
@@ -104,7 +106,7 @@ export const buildCatalogArtifactFromTurtle = (
                         record,
                         recordsById,
                         scalarLiteral,
-                        scalarUrl,
+                        scalarUrlLiteral,
                         scalarInteger,
                         namedRefs,
                         guardNodeCategory,
@@ -123,7 +125,9 @@ export const buildCatalogArtifactFromTurtle = (
         }
 
         if (primaryType === "LearningResource") {
-            graph.push(buildLearningResourceNode(record, scalarLiteral, scalarUrl, fail, sourceLabel));
+            graph.push(
+                buildLearningResourceNode(record, scalarLiteral, scalarUrlLiteral, fail, sourceLabel),
+            );
             continue;
         }
 

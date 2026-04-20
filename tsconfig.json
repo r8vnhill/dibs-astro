@@ -12,49 +12,51 @@
     "compilerOptions": {
         "jsx": "react-jsx",
         "jsxImportSource": "react",
-        "baseUrl": ".",
         "paths": {
             "~/*": [
-                "src/*"
+                "./src/*"
             ],
             "$components/*": [
-                "src/components/*"
+                "./src/components/*"
             ],
             "$layouts/*": [
-                "src/layouts/*"
+                "./src/layouts/*"
             ],
             "$styles/*": [
-                "src/styles/*"
+                "./src/styles/*"
             ],
             "$utils/*": [
-                "src/utils/*"
+                "./src/utils/*"
             ],
             "$hooks/*": [
-                "src/hooks/*"
+                "./src/hooks/*"
             ],
             "$assets/*": [
-                "src/assets/*"
+                "./src/assets/*"
             ],
             "$icons": [
-                "src/assets/img/icons/index.ts"
+                "./src/assets/img/icons/index.ts"
             ],
             "$semantics": [
-                "$components/semantics/index.ts"
+                "./src/components/semantics/index.ts"
             ],
             "$callouts": [
-                "~/components/ui/callouts/index.ts"
+                "./src/components/ui/callouts/index.ts"
             ],
             "$domain/*": [
-                "src/domain/*"
+                "./src/domain/*"
             ],
             "$application/*": [
-                "src/application/*"
+                "./src/application/*"
             ],
             "$infrastructure/*": [
-                "src/infrastructure/*"
+                "./src/infrastructure/*"
             ],
             "$presentation/*": [
-                "src/presentation/*"
+                "./src/presentation/*"
+            ],
+            "$test-utils/*": [
+                "./src/test-utils/*"
             ]
         },
         "types": [

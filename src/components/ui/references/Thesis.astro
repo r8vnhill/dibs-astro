@@ -36,16 +36,16 @@
  * - `author`
  * - `description`
  */
+import { resolveInlineField, resolveLinkedInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
-    resolveInlineField,
-    resolveLinkedInlineField,
     resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
-import { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
+import { ReferenceContractError } from "./ReferenceContractError";
 
 /**
  * Props for the Thesis reference component.
@@ -107,14 +107,9 @@ const externalLinkAttrs = {
 
 // ## Resolve slot/prop precedence before entering the template. ##
 // Precomputing these values keeps the markup focused on structure rather than fallback rules.
-const resolvedTitle = resolveInlineField(titleSlot, title);
+const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
 const resolvedInstitution = resolveLinkedInlineField(institutionSlot, institution, institutionUrl);
 const resolvedAuthor = resolveInlineField(authorSlot, author);
-
-// ## A thesis reference must always expose a visible title. ##
-if (resolvedTitle.kind === "missing") {
-    throw new MissingReferenceTitleError();
-}
 
 // ## `institutionUrl` only makes sense when there is prop-backed institution text to label the
 // link. ##

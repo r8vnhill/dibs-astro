@@ -26,7 +26,7 @@ const lessons = new LessonTreeBuilder()
         "unit-1",
         "Unidad 1 - Introducción al desarrollo de bibliotecas de software",
         unit1Lessons,
-        `${coursePaths.softwareLibraries}/`,
+        `${coursePaths.softwareLibraries.root}/`,
     )
     .build();
 

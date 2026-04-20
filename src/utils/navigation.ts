@@ -1,22 +1,17 @@
 /**
- * Utility functions for lesson navigation.
+ * Presentation-facing helpers for small lesson-navigation payloads.
  *
- * This module has two related responsibilities:
+ * This module intentionally owns only local UI normalization for manually supplied navigation
+ * links. Automatic previous/next resolution lives in the presentation adapter layer
+ * (`presentation/adapters/navigation-bridge.ts`).
  *
- * - normalize small navigation payloads passed manually by pages or layouts;
- * - resolve automatic previous/next links from the linearized course structure.
- *
- * The split matters because the site now supports two different navigation shapes:
+ * The site supports two navigation shapes:
  *
  * - singular links for `next` and the legacy `previous` contract;
  * - a list of `previous` links for comparative or branch-style lessons.
- *
- * Callers that only need route canonicalization should use the normalization helpers. Callers that
- * need course-aware navigation should use {@link resolveAutoNav}.
  */
 
 import { LessonHref } from "$domain/value-objects/LessonHref";
-import { type FlattenedLesson, flattenLessons, type Lesson } from "~/data/course-structure";
 
 /**
  * Public navigation payload consumed by lesson layouts and pages.
@@ -34,13 +29,6 @@ export type NavigationLinkInput = Readonly<{
      */
     href: string;
 }>;
-
-/**
- * Type representing a navigation link with additional lesson information.
- *
- * This stays internal because only auto navigation needs the extra `Lesson` fields.
- */
-type NavigationLink = NavigationLinkInput & Lesson;
 
 /**
  * Normalizes a URL path by ensuring it starts and ends with a single `/`.
@@ -106,50 +94,5 @@ export function normalizeNavigation(
     return {
         normalizedNext: normalizeNavigationLink(next),
         normalizedPrevious: normalizeNavigationLink(previous),
-    };
-}
-
-/**
- * Resolves the previous and next lessons for a given current path, based on a flattened version of
- * the course structure.
- *
- * This enables automatic navigation between lessons without manual links. The result is still
- * singular by design: course structure only defines one linear predecessor and one linear
- * successor for each lesson.
- *
- * @param pathname - The current page's pathname (e.g., "/unidad-1/contenido-2/")
- * @param lessons - The complete nested course structure
- * @return An object containing the `previous` and `next` lessons, if available
- */
-export function resolveAutoNav(
-    pathname: string,
-    lessons: Lesson[],
-): {
-    previous: NavigationLink | undefined;
-    next: NavigationLink | undefined;
-} {
-    // Flatten the nested course structure to a linear list of lessons
-    // and exclude container entries that don't have an href.
-    const flat = flattenLessons(lessons).filter(
-        (
-            l,
-        ): l is FlattenedLesson & { href: string } =>
-            typeof l.href === "string" && l.href.length > 0,
-    );
-
-    // Find the index of the current lesson in the flattened list
-    const currentIndex = flat.findIndex(
-        (l) => normalizeHref(l.href) === normalizeHref(pathname),
-    );
-
-    if (currentIndex === -1) {
-        return { previous: undefined, next: undefined };
-    }
-
-    return {
-        // Get the lesson before the current one, if any
-        previous: flat[currentIndex - 1],
-        // Get the lesson after the current one, if any
-        next: flat[currentIndex + 1],
     };
 }

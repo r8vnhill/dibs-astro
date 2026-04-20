@@ -1,4 +1,5 @@
 import { normalizePropAsString } from "./utils";
+import type { HighlightCallOptions } from "./types";
 
 /**
  * Default transformer used by the site. Mirrors the previous single-file
@@ -13,7 +14,7 @@ export function createDefaultTransformer({
 }: {
     inline: boolean;
     lang: string;
-    options?: Record<string, any>;
+    options?: HighlightCallOptions;
     resolvedLang: string;
 }) {
     return {

@@ -26,6 +26,8 @@
  * - Filters out unavailable platforms from {@link websiteRepoRefs}.
  */
 
+import type { LessonMetadataDto } from "$application/ports";
+import { formatLessonDate } from "$domain/lesson-metadata";
 import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "~/data/site";
 import type { PartialRecord } from "~/types/records";
 import {
@@ -35,7 +37,6 @@ import {
     type RepoPlatform,
     type RepoRef,
 } from "~/utils/git";
-import { formatLessonDate, type LessonMetadataEntry } from "~/utils/lesson-metadata";
 import { Mono } from "../ui/font";
 import { Link } from "../ui/links";
 
@@ -43,7 +44,7 @@ interface Props {
     /**
      * Parsed lesson metadata for the current page.
      */
-    metadata: LessonMetadataEntry;
+    metadata: LessonMetadataDto;
 
     /**
      * Optional override for repository references used to build commit links.

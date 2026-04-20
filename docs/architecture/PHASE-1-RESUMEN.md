@@ -1,5 +1,7 @@
 # ✅ Fase 1 · Esqueleto de capas — COMPLETADA
 
+> **Nota histórica:** este documento describe el cierre de la Fase 1. La descripción vigente de las fronteras actuales vive en `docs/architecture/layer-separation.md`. Algunas referencias aquí, como “Domain stub” o integración pendiente de `NotesLayout`, ya no reflejan el estado actual del repositorio.
+
 **Fecha:** 2026-02-28
 **Metodología:** TDD (Test-Driven Development)
 **Status:** ✅ LISTO PARA FASE 2

@@ -42,7 +42,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 
 ## Short TDD Cycles
 
-1. **Cycle 1: Canonical lesson route value object**
+1. ~~**Cycle 1: Canonical lesson route value object**~~
    - Write domain tests for canonical lesson path normalization:
      - trims whitespace
      - enforces leading/trailing slash
@@ -51,7 +51,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Implement a domain value object for lesson href/path.
    - Refactor `LessonCatalogAdapter`, navigation helpers, and lesson metadata lookup to consume this value object instead of reimplementing normalization.
 
-2. **Cycle 2: Domain lesson trail and adjacency rules**
+2. ~~**Cycle 2: Domain lesson trail and adjacency rules**~~
    - Add domain tests for:
      - adjacent lesson resolution
      - missing lesson lookup
@@ -60,12 +60,12 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move those pure rules out of `LessonCatalogAdapter` into domain services/entities.
    - Keep the adapter responsible only for mapping `courseStructure` into domain objects.
 
-3. **Cycle 3: Replace application dependence on adapter-shaped lesson data**
+3. ~~**Cycle 3: Replace application dependence on adapter-shaped lesson data**~~
    - Add application/service tests that assert behavior using domain repository interfaces rather than concrete flattened arrays.
    - Refactor `NavigationServiceImpl` so it depends only on a domain-oriented repository/service contract.
    - Eliminate application knowledge of slug extraction or path normalization details.
 
-4. **Cycle 4: Extract reference content classification to Domain**
+4. ~~**Cycle 4: Extract reference content classification to Domain**~~
    - Add domain tests for:
      - meaningful vs empty content
      - whitespace/entity normalization
@@ -75,7 +75,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move the pure decision logic from `reference-content.ts` into a domain module free of Astro references.
    - Leave a thin adapter in the references UI layer that converts Astro slot I/O into domain inputs and renders domain outputs.
 
-5. **Cycle 5: Isolate lesson metadata rules**
+5. ~~**Cycle 5: Isolate lesson metadata rules**~~
    - Add domain tests for:
      - normalized lesson lookup keys
      - ISO short date parsing
@@ -84,19 +84,19 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Move the pure rules from `lesson-metadata.ts` into domain types/services.
    - Keep generated JSON import and zod validation in an infrastructure-facing module.
 
-6. **Cycle 6: Introduce domain repositories and inversion points**
+6. ~~**Cycle 6: Introduce domain repositories and inversion points**~~
    - Define domain repository interfaces for:
      - lesson catalog access
      - lesson metadata access
    - Refactor infrastructure adapters to implement those interfaces explicitly.
    - Refactor presentation/application entrypoints to construct services via those interfaces rather than reaching into concrete modules directly.
 
-7. **Cycle 7: Remove or shrink legacy pure helpers**
+7. ~~**Cycle 7: Remove or shrink legacy pure helpers**~~
    - Add regression tests around affected public behavior before deleting wrappers.
    - Reduce `src/utils/navigation.ts` and similar files to compatibility wrappers or remove them if all callers have migrated.
    - Ensure no framework-free business rule remains in components, layouts, or infrastructure helpers.
 
-8. **Cycle 8: Integration and architecture lock-in**
+8. ~~**Cycle 8: Integration and architecture lock-in**~~
    - Add or update integration tests covering:
      - Notes layout navigation/breadcrumb behavior
      - reference rendering behavior after domain extraction
@@ -133,3 +133,32 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 - Zod schemas and JSON imports are treated as infrastructure/application concerns, not domain concerns.
 - UI labels that are purely editorial may stay outside Domain unless they affect business invariants.
 - Dependency injection remains explicit and manual; no DI framework is introduced.
+
+## Cycle 7 outcome
+
+- `src/components/ui/references/reference-content.ts` was narrowed to Astro/UI adapter responsibilities only.
+- Reference components now import pure resolution helpers directly from `src/domain`; UI-layer title error mapping remains local to the references adapter.
+- `src/utils/navigation.ts` now owns only navigation payload normalization.
+- `resolveAutoNav` remains exclusively at the presentation boundary in `presentation/adapters/navigation-bridge.ts` and is no longer exposed through `~/utils`.
+- `src/utils/index.ts` no longer re-exports navigation or lesson-metadata helpers as shared utilities.
+- `src/utils/lesson-metadata.ts` remains as infrastructure support for generated-dataset loading, validation, caching, and lookup.
+
+## Cycle 8 outcome
+
+- `NotesLayout.render.test.ts` now locks a real-route presentation flow with both auto-resolved `previous` and `next` links, plus a metadata-panel assertion through the layout boundary.
+- Manual `previous` and `next` overrides are now explicitly covered at the render boundary so auto navigation remains an implementation detail behind the presentation adapter.
+- `lesson-metadata-bridge.test.ts` now locks normalized path and full-URL inputs to the same DTO contract and asserts the bridge exposes only presentation-safe metadata fields.
+- `src/components/ui/references/__tests__/reference-content.test.ts` remains focused on Astro/UI adapter responsibilities rather than duplicating lower-level domain assertions.
+- `docs/architecture/layer-separation.md` is now the authoritative current-state architecture note for the post-Phase-2 boundaries; older Phase 0/1 notes are treated as historical records when they conflict with current code.
+- Breadcrumb rendering remains outside the locked `NotesLayout` contract because the layout currently exposes previous/next navigation only.
+
+## Phase 2 closeout
+
+- All eight cycles are complete.
+- The full phase verification block passed:
+  - `pnpm test:unit`
+  - `pnpm test:astro`
+  - `pnpm exec tsc --noEmit`
+  - `pnpm run check`
+- `docs/architecture/layer-separation.md` is the authoritative current-state architecture note for the resulting boundaries.
+- Breadcrumbs remain intentionally out of scope for `NotesLayout` locking because that layout currently locks previous/next navigation only.

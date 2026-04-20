@@ -109,6 +109,25 @@ describe("highlightToHtml", () => {
         expect(warn).toHaveBeenCalledTimes(1);
         expect(String(warn.mock.calls[0]?.[0] ?? "")).toContain("[dev-retry]");
     });
+
+    it("does not require dev-retry bootstrap for bundled language aliases under Vitest defaults", async () => {
+        delete process.env.DIBS_DEV_RETRY_ENABLED;
+        const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+        const html = await highlightToHtml({
+            code: "print('hi')",
+            lang: "py",
+            theme,
+        });
+
+        expect(html).toContain("<pre class=\"shiki");
+        expect(stripHtml(html)).toContain("print('hi')");
+        expect(
+            warn.mock.calls.some(([message]) =>
+                String(message ?? "").includes("shared shiki highlighter creation")
+            ),
+        ).toBe(false);
+    });
 });
 
 function stripHtml(value: string) {
