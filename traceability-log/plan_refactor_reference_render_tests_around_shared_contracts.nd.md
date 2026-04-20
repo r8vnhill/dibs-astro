@@ -155,9 +155,11 @@ Run the `Thesis` suite only.
 
 ---
 
-## Phase 3: Complete `Thesis` contract coverage
+## ~~Phase 3: Complete `Thesis` contract coverage~~
 
 Add the missing behavior contracts that define the component’s public render semantics.
+
+Status: complete
 
 ### Required coverage
 
