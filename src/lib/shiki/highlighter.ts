@@ -28,6 +28,15 @@ interface HighlightOptions {
     fallbackCodeClasses?: string[];
 }
 
+const warnOnDevRetryEvent = (event: { type: string; label: string; error: unknown }) => {
+    if (event.type !== "retry-scheduled") {
+        return;
+    }
+
+    const message = event.error instanceof Error ? event.error.message : String(event.error ?? "");
+    console.warn(`[dev-retry] ${event.label} retry scheduled after: ${message}`);
+};
+
 export async function highlightToHtml({
     code,
     lang,
@@ -59,6 +68,7 @@ export async function highlightToHtml({
                     async ({ signal: _signal }) => await highlighter.loadLanguage(resolvedLang),
                     {
                         label: `shiki language load (${resolvedLang})`,
+                        onRetryEvent: warnOnDevRetryEvent,
                     },
                 );
             }

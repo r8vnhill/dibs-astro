@@ -151,3 +151,14 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 - `src/components/ui/references/__tests__/reference-content.test.ts` remains focused on Astro/UI adapter responsibilities rather than duplicating lower-level domain assertions.
 - `docs/architecture/layer-separation.md` is now the authoritative current-state architecture note for the post-Phase-2 boundaries; older Phase 0/1 notes are treated as historical records when they conflict with current code.
 - Breadcrumb rendering remains outside the locked `NotesLayout` contract because the layout currently exposes previous/next navigation only.
+
+## Phase 2 closeout
+
+- All eight cycles are complete.
+- The full phase verification block passed:
+  - `pnpm test:unit`
+  - `pnpm test:astro`
+  - `pnpm exec tsc --noEmit`
+  - `pnpm run check`
+- `docs/architecture/layer-separation.md` is the authoritative current-state architecture note for the resulting boundaries.
+- Breadcrumbs remain intentionally out of scope for `NotesLayout` locking because that layout currently locks previous/next navigation only.

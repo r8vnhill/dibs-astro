@@ -95,6 +95,8 @@ const globalHighlighterCache = globalThis as typeof globalThis & {
     __dibsShikiHighlighterPromise?: HighlighterPromise;
 };
 
+const isRetryExplicitlyEnabled = () => process.env.DIBS_DEV_RETRY_ENABLED === "true";
+
 /**
  * Creates a small store that memoizes a promise-backed shared value.
  *
@@ -180,6 +182,11 @@ const createSharedHighlighter = (): HighlighterPromise =>
             }),
         {
             label: "shared shiki highlighter creation",
+            // Keep the shared bootstrap deterministic under Vitest unless a test opts into retry
+            // behavior explicitly through the supported environment flag.
+            ...(process.env.VITEST === "true"
+                ? { enabled: isRetryExplicitlyEnabled() }
+                : {}),
         },
     );
 
