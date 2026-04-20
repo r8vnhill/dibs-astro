@@ -24,7 +24,7 @@ API sobre una misma biblioteca o caso de estudio, para que el aprendizaje no se 
 ejemplos aislados.
 
 La intención es que el curso siga siendo transferible aunque cambien el lenguaje principal, las
-herramientas de automatización, el mecanismoz de publicación o el caso de estudio concreto.
+herramientas de automatización, el mecanismos de publicación o el caso de estudio concreto.
 
 ## Unidad 1. Introducción conceptual a las bibliotecas de software
 
