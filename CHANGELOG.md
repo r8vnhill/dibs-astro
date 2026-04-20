@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.17.0] - 2026-04-20
+
+### Changed
+
+- Refined Unit 1 landing page (`software-libraries/index.astro`) to improve editorial clarity and conceptual density:
+  - Condensed redundant descriptions of "interfaz pública" and "contrato de uso" to avoid overlap between abstract, map, and conclusions sections.
+  - Added explicit thesis: "the definition of library conditions its design" to strengthen the unit's pedagogical core.
+  - Emphasized "designed for use by third parties" as a central criterion shaping the entire unit's progression.
+  - Reorganized map section to eliminate conceptual solapement between blocks.
+  - Reframed first learning axis from "Taxonomía de artefactos" to "Distinguir tipos de artefacto y sus relaciones de uso" for clearer user-oriented framing.
+  - Focused conclusions and closing-reflection blocks on distinct functions: conclusions fix what is learned; reflection opens the next question.
+- Reorganized legacy lessons from `software-libraries/` to a new `notes/deprecated/` directory:
+  - Moved `build-systems`, `business-vs-app`, `design-principles`, `domain-models`, and `task-automation` lessons and their sub-lessons.
+  - This preserves historical content while clarifying current Unit 1 focus and course sequencing.
+- Updated course syllabus draft and generated lesson metadata to reflect reorganized course structure and refined Unit 1 introduction.
+- Added traceability log entry documenting the introductory summary lesson for Unit 1 as part of the editorial refinement workflow.
+
 ## [0.16.0] - 2026-04-08
 
 ### Added

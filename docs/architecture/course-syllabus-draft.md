@@ -12,8 +12,10 @@ La pregunta conductora del curso pasa a ser:
 Desde esa perspectiva, el curso ya no se organiza principalmente como una progresión del lifecycle
 de una biblioteca, sino como una exploración de decisiones de modelado, diseño del núcleo,
 composición, enriquecimiento del modelo, diseño de superficies expresivas y sus tradeoffs. La
-publicación, el versionado, la extensibilidad y la evolución siguen siendo importantes, pero
-aparecen como consecuencia del diseño de la interfaz pública y no como eje pedagógico inicial.
+publicación, el versionado, la extensibilidad y la evolución siguen siendo importantes, pero no
+aparecen solo al final del recorrido. El curso introduce tempranamente estos problemas cuando
+resultan necesarios para comprender qué implica diseñar una interfaz pública, y luego los retoma
+con mayor profundidad en unidades posteriores.
 
 Esta versión del temario asume explícitamente un semestre con prioridades pedagógicas. No todos los
 temas tendrán la misma profundidad: el núcleo del curso está en modelado del dominio, diseño del
@@ -28,25 +30,31 @@ herramientas de automatización, el mecanismos de publicación o el caso de estu
 
 ## Unidad 1. Introducción conceptual a las bibliotecas de software
 
-**Foco:** introducir qué es una biblioteca de software como artefacto reusable orientado a otras personas desarrolladoras, distinguiéndola de aplicaciones, herramientas, scripts y paquetes, e instalando el curso como un espacio de diseño de interfaces públicas.
+**Foco:** introducir qué distingue a una biblioteca de software de otros artefactos del
+ecosistema, situarla como interfaz pública y contrato de uso para otras personas desarrolladoras, e
+instalar un primer vocabulario para pensar tanto el diseño inicial de una API como sus compromisos
+tempranos de estabilidad y evolución.
 
 **Tópicos principales:**
 
-- qué es una biblioteca de software y qué problema resuelve;
-- diferencia entre biblioteca, aplicación, herramienta, script, paquete y framework;
-- bibliotecas como contratos de uso para otras personas desarrolladoras;
-- API pública, consumo, ergonomía y claridad;
-- reusabilidad, composición y estabilidad como propiedades deseables;
-- experiencia de uso de una interfaz pública;
-- criterios iniciales para juzgar la calidad de una biblioteca.
+- artefacto de software como unidad de uso, distribución y diseño;
+- distinción entre biblioteca, aplicación, script, herramienta, plugin y paquete;
+- biblioteca como API y contrato público para integración programática;
+- claridad, coherencia, encapsulación, minimalidad útil, usabilidad y perspectiva de quien consume;
+- publicación, compatibilidad, deprecación y evolución inicial de APIs.
 
 **Resultados pedagógicos esperados:**
 
-- el estudiantado distingue con claridad biblioteca, aplicación, herramienta, script, paquete y framework;
-- comprende que una biblioteca se diseña para ser consumida por otras personas desarrolladoras;
-- reconoce que una API pública no es solo un detalle técnico, sino una interfaz de uso que puede orientar o dificultar el trabajo;
-- identifica reusabilidad, composición, claridad y ergonomía como dimensiones centrales del diseño de bibliotecas;
-- puede explicar por qué el diseño de una biblioteca exige decisiones distintas a las de una aplicación de uso final.
+- el estudiantado distingue artefactos de software y reconoce sus distintas relaciones de uso,
+  extensión y distribución;
+- comprende que una biblioteca no es solo una implementación reusable, sino una interfaz pública
+  diseñada para ser integrada desde código;
+- puede usar un vocabulario inicial para evaluar la calidad de una API en términos de claridad,
+  coherencia, protección de invariantes y facilidad de uso;
+- reconoce que publicar una API introduce compromisos de compatibilidad, mantenimiento y evolución
+  responsable;
+- puede explicar por qué el diseño de una biblioteca exige decisiones distintas a las de una
+  aplicación de uso final o de otros artefactos técnicos.
 
 ----
 
@@ -343,6 +351,8 @@ tiempo disponible o la profundidad del proyecto los vuelven especialmente releva
 - Conviene que el recorrido del curso haga visibles decisiones de diseño, prototipos de API o
   tradeoffs sobre una misma biblioteca o caso de estudio, sin convertir esa continuidad en una
   estructura evaluativa rígida.
-- La progresión esperada del curso es: introducción a bibliotecas de software, scripting y
-  automatización, modelado del dominio, núcleo y contratos, composición, enriquecimiento de tipos y
-  capacidades, APIs expresivas y guiadas por uso, estabilidad pública y evolución del ecosistema.
+- La progresión esperada del curso es: introducción a bibliotecas de software y a sus primeras
+  implicancias de contrato público y evolución, scripting y automatización, modelado del dominio,
+  núcleo y contratos, composición, enriquecimiento de tipos y capacidades, APIs expresivas y
+  guiadas por uso, y luego profundización en estabilidad pública, distribución y evolución del
+  ecosistema.
