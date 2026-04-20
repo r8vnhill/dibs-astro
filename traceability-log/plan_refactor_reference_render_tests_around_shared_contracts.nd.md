@@ -128,7 +128,7 @@ Run the `Thesis` suite only.
 
 ---
 
-## Phase 2: Convert `Thesis` to structural SSR assertions
+## ~~Phase 2: Convert `Thesis` to structural SSR assertions~~
 
 Replace brittle `toContain(...)` and regex-based checks with DOM-level assertions.
 
