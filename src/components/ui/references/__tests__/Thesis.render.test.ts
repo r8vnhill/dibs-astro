@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { type AstroRender, createAstroRenderer } from "../../../../test-utils/astro-render";
 import Thesis from "../Thesis.astro";
 
@@ -10,13 +10,28 @@ type ThesisProps = {
     author?: string;
 };
 
-let renderThesis: AstroRender<ThesisProps>;
+type RenderOptions = Parameters<AstroRender<ThesisProps>>[1];
+type RenderOverrides = Omit<Partial<ThesisProps>, "title"> & { title?: string | undefined };
+
+const BASE_PROPS = {
+    title: "Base thesis title",
+    url: "https://example.com/thesis",
+} satisfies ThesisProps;
+
+async function renderThesis(
+    overrides: RenderOverrides = {},
+    options?: RenderOptions,
+): Promise<string> {
+    const render = await createAstroRenderer<ThesisProps>(Thesis);
+    const merged = { ...BASE_PROPS, ...overrides };
+    const props = merged.title === undefined
+        ? (({ title: _title, ...rest }) => rest)(merged)
+        : merged;
+
+    return render(props, options);
+}
 
 describe.concurrent("Thesis.astro render", () => {
-    beforeEach(async () => {
-        renderThesis = await createAstroRenderer<ThesisProps>(Thesis);
-    });
-
     test("renders a linked institution when institutionUrl is provided", async () => {
         const html = await renderThesis({
             title: "An Empirical Study on Bash Language Usage in Github",
@@ -96,6 +111,7 @@ describe.concurrent("Thesis.astro render", () => {
     test("throws when no meaningful title source exists", async () => {
         await expect(
             renderThesis({
+                title: undefined,
                 url: "https://example.com/thesis",
             }),
         ).rejects.toThrow(/title/i);

@@ -17,6 +17,7 @@
  * - `pages` is formatted through the shared bibliography utility.
  * - `description` is rendered only when the slot contains meaningful content.
  */
+import { resolveInlineField, resolveLinkedInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
@@ -28,8 +29,6 @@ import {
     parsePageReferenceInput,
 } from "~/lib/bibliography";
 import {
-    resolveInlineField,
-    resolveLinkedInlineField,
     resolveOptionalSlots,
     resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,

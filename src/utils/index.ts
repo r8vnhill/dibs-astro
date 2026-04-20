@@ -1,82 +1,66 @@
 /**
- * Public barrel for shared utility helpers, constants, and types.
+ * Stable public barrel for shared utility helpers, constants, and types.
  *
- * This module defines the stable import surface for cross-cutting utilities used across layouts, components, 
- * infrastructure adapters, and tests. It provides one predictable entry point for helpers that are intentionally 
- * reusable, while keeping feature-local and implementation-specific modules private to their own subpaths.
+ * This module defines the approved cross-cutting utility surface exposed by `~/utils`. It exists to give layouts, 
+ * components, infrastructure adapters,
+ * and tests a single predictable import path for helpers that are intentionally
+ * shared across the project.
+ *
+ * Re-exporting a symbol here signals that it is considered part of the
+ * project-wide utility API. Modules that are feature-local, transitional, or
+ * primarily implementation details should remain private to their own paths
+ * instead of being surfaced through this barrel.
  *
  * ## Export policy
  *
- * This barrel should only expose utilities that are:
+ * Prefer re-exporting a helper here only when it is:
  *
  * - broadly reusable across multiple features or layers;
- * - stable enough to be treated as part of the shared utility API;
+ * - stable enough to be treated as part of the shared utility surface;
  * - safe to import from rendering code, infrastructure code, and tests.
  *
- * Modules that are narrowly scoped to a single feature, or that mainly exist as internal implementation details, 
- * should not be re-exported here.
+ * Do not re-export modules whose purpose is mainly:
  *
- * Development-oriented helpers may still be exported when they support shared runtime behavior or local development 
- * workflows used across the project.
+ * - supporting a single feature;
+ * - preserving an internal implementation detail;
+ * - exposing a transitional compatibility layer that does not belong in the
+ *   long-term public utility surface.
+ *
+ * Development-oriented helpers may still belong here when they support shared
+ * runtime behaviour or project-wide local development workflows.
  *
  * ## Export groups
  *
- * This barrel currently exposes utilities for:
+ * This barrel currently exposes:
  *
- * - heading and semantic typing;
- * - lesson metadata parsing, dataset resolution, and date formatting;
- * - lesson navigation normalization and automatic adjacency resolution;
- * - page metadata construction;
- * - generic runtime and repository-link helpers;
- * - theme detection and theme application.
+ * - heading and semantic typing helpers;
+ * - page-metadata helpers;
+ * - generic runtime and repository-link utilities;
+ * - theme detection and theme application helpers.
  *
  * ## Usage
  *
- * Prefer importing shared utilities from this module when the re-exported symbol is part of the intended public 
- * utility surface.
+ * Prefer importing from `~/utils` when the symbol is intentionally part of the
+ * shared utility API.
  *
- * ```typescript
- * import { formatLessonDate, normalizeNavigation, site } from "~/utils";
+ * ```ts
+ * import { buildRepoUrl, site } from "~/utils";
  * ```
  */
 
-// Heading and semantic helpers
+// Heading and semantic typing
 export type { HeadingLevel } from "./heading-level.ts";
 
-// Lesson metadata runtime helpers (dataset parsing, JSON resolution, and formatting)
-export {
-    DEFAULT_LOCALE,
-    formatDate,
-    formatLessonDate,
-    getLessonMetadataDataset,
-    normalizeLessonPathname,
-    parseIsoShortDate,
-    parseLessonMetadataDataset,
-    UNKNOWN_DATE_LABEL,
-} from "./lesson-metadata.ts";
-
-// Lesson navigation helpers
-//
-// `normalizeNavigationLink` and `normalizeNavigation` preserve the historical single-link contract used by 
-// next/previous navigation pairs, while `normalizePreviousNavigation` exposes the newer list-based shape consumed by 
-// `NotesLayout` for multi-link "previous" navigation.
-export {
-    type NavigationLinkInput,
-    normalizeNavigation,
-    normalizeNavigationLink,
-    normalizePreviousNavigation,
-    resolveAutoNav,
-} from "./navigation.ts";
-
-// Page metadata helpers
+// Page metadata
 export { buildHeadPageMeta, type PageMeta } from "./page-meta.ts";
 
-// Generic cross-cutting runtime utilities
+// Cross-cutting runtime utilities
 export {
     type DevTransportRetryOptions,
     isRetryableDevTransportError,
     runWithDevTransportRetry,
 } from "./dev-transport-retry.ts";
+
 export {
     buildCommitUrl,
     type BuildCommitUrlOptions,
@@ -92,11 +76,12 @@ export {
     type RepoPlatform,
     type RepoRef,
 } from "./git.ts";
+
 export { pickRandom } from "./random.ts";
 export { site } from "./site.ts";
 export type { default as StyledComponent } from "./styled-component.ts";
 
-// Theme helpers
+// Theme detection and application
 export {
     applyTheme,
     getColorSchemeMediaQuery,

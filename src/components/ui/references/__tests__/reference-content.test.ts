@@ -1,6 +1,6 @@
+import { hasMeaningfulTextContent } from "$domain/reference-content";
 import { describe, expect, expectTypeOf, it, vi } from "vitest";
 import {
-    hasMeaningfulTextContent,
     prepareSlotsForReferences,
     resolveOptionalSlot,
     resolveOptionalSlots,
@@ -383,7 +383,9 @@ describe("prepareSlotsForReferences", () => {
         const widenedIds: string[] = ["ref-1", "ref-2"];
 
         expectTypeOf(prepareSlotsForReferences(slots, literalIds)).toEqualTypeOf<
-            Promise<Record<"ref-1" | "ref-2", import("../reference-content").PreparedReferenceSlots>>
+            Promise<
+                Record<"ref-1" | "ref-2", import("../reference-content").PreparedReferenceSlots>
+            >
         >();
         expectTypeOf(prepareSlotsForReferences(slots, widenedIds)).toEqualTypeOf<
             Promise<Record<string, import("../reference-content").PreparedReferenceSlots>>

@@ -41,11 +41,11 @@
  * sources, normalize JSON-LD, resolve ids, or decide which specialized component should be used for
  * typed reference families.
  */
+import { resolveInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
-    resolveInlineField,
     resolveOptionalSlots,
     resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,

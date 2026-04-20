@@ -1,13 +1,9 @@
 import {
     classifyRenderedReferenceContent,
     isMeaningfulSlotContent,
-    resolveInlineField as resolveDomainInlineField,
-    resolveLinkedInlineField as resolveDomainLinkedInlineField,
-    resolveRequiredInlineField,
-    type ResolvedInlineField,
-    type ResolvedLinkedInlineField,
     type ResolvedSlotContent,
-} from "../../../domain";
+    resolveRequiredInlineField,
+} from "$domain/reference-content";
 import { MissingReferenceTitleError } from "./ReferenceContractError";
 
 type SlotLike = {
@@ -15,28 +11,17 @@ type SlotLike = {
     render(name: string): Promise<string>;
 };
 
-export type { ResolvedInlineField, ResolvedLinkedInlineField, ResolvedSlotContent };
+export type { ResolvedSlotContent };
 
 export const SPANISH_REFERENCE_META_LABELS = {
     in: "en",
     by: "por",
 } as const;
 
-export function hasMeaningfulTextContent(html: string): boolean {
-    return isMeaningfulSlotContent(classifyRenderedReferenceContent(html));
-}
-
-export function resolveInlineField(
-    slotContent: ResolvedSlotContent,
-    fallbackText?: string,
-): ResolvedInlineField {
-    return resolveDomainInlineField(slotContent, fallbackText);
-}
-
 export function resolveRequiredTitleField(
     slotContent: ResolvedSlotContent,
     fallbackText?: string,
-): Extract<ResolvedInlineField, { kind: "slot" | "text" }> {
+): Extract<import("../../../domain").ResolvedInlineField, { kind: "slot" | "text" }> {
     const resolvedTitle = resolveRequiredInlineField(slotContent, fallbackText);
 
     if (resolvedTitle.kind === "invalid") {
@@ -44,14 +29,6 @@ export function resolveRequiredTitleField(
     }
 
     return resolvedTitle;
-}
-
-export function resolveLinkedInlineField(
-    slotContent: ResolvedSlotContent,
-    fallbackText?: string,
-    fallbackUrl?: string,
-): ResolvedLinkedInlineField {
-    return resolveDomainLinkedInlineField(slotContent, fallbackText, fallbackUrl);
 }
 
 export async function resolveOptionalSlot(

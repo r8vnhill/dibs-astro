@@ -91,7 +91,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Refactor infrastructure adapters to implement those interfaces explicitly.
    - Refactor presentation/application entrypoints to construct services via those interfaces rather than reaching into concrete modules directly.
 
-7. **Cycle 7: Remove or shrink legacy pure helpers**
+7. ~~**Cycle 7: Remove or shrink legacy pure helpers**~~
    - Add regression tests around affected public behavior before deleting wrappers.
    - Reduce `src/utils/navigation.ts` and similar files to compatibility wrappers or remove them if all callers have migrated.
    - Ensure no framework-free business rule remains in components, layouts, or infrastructure helpers.
@@ -133,3 +133,12 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 - Zod schemas and JSON imports are treated as infrastructure/application concerns, not domain concerns.
 - UI labels that are purely editorial may stay outside Domain unless they affect business invariants.
 - Dependency injection remains explicit and manual; no DI framework is introduced.
+
+## Cycle 7 outcome
+
+- `src/components/ui/references/reference-content.ts` was narrowed to Astro/UI adapter responsibilities only.
+- Reference components now import pure resolution helpers directly from `src/domain`; UI-layer title error mapping remains local to the references adapter.
+- `src/utils/navigation.ts` now owns only navigation payload normalization.
+- `resolveAutoNav` remains exclusively at the presentation boundary in `presentation/adapters/navigation-bridge.ts` and is no longer exposed through `~/utils`.
+- `src/utils/index.ts` no longer re-exports navigation or lesson-metadata helpers as shared utilities.
+- `src/utils/lesson-metadata.ts` remains as infrastructure support for generated-dataset loading, validation, caching, and lookup.
