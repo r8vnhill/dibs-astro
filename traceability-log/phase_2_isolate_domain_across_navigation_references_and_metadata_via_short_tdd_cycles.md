@@ -96,7 +96,7 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
    - Reduce `src/utils/navigation.ts` and similar files to compatibility wrappers or remove them if all callers have migrated.
    - Ensure no framework-free business rule remains in components, layouts, or infrastructure helpers.
 
-8. **Cycle 8: Integration and architecture lock-in**
+8. ~~**Cycle 8: Integration and architecture lock-in**~~
    - Add or update integration tests covering:
      - Notes layout navigation/breadcrumb behavior
      - reference rendering behavior after domain extraction
@@ -142,3 +142,12 @@ The repo is not starting from zero: `src/domain` already has `Lesson`-related en
 - `resolveAutoNav` remains exclusively at the presentation boundary in `presentation/adapters/navigation-bridge.ts` and is no longer exposed through `~/utils`.
 - `src/utils/index.ts` no longer re-exports navigation or lesson-metadata helpers as shared utilities.
 - `src/utils/lesson-metadata.ts` remains as infrastructure support for generated-dataset loading, validation, caching, and lookup.
+
+## Cycle 8 outcome
+
+- `NotesLayout.render.test.ts` now locks a real-route presentation flow with both auto-resolved `previous` and `next` links, plus a metadata-panel assertion through the layout boundary.
+- Manual `previous` and `next` overrides are now explicitly covered at the render boundary so auto navigation remains an implementation detail behind the presentation adapter.
+- `lesson-metadata-bridge.test.ts` now locks normalized path and full-URL inputs to the same DTO contract and asserts the bridge exposes only presentation-safe metadata fields.
+- `src/components/ui/references/__tests__/reference-content.test.ts` remains focused on Astro/UI adapter responsibilities rather than duplicating lower-level domain assertions.
+- `docs/architecture/layer-separation.md` is now the authoritative current-state architecture note for the post-Phase-2 boundaries; older Phase 0/1 notes are treated as historical records when they conflict with current code.
+- Breadcrumb rendering remains outside the locked `NotesLayout` contract because the layout currently exposes previous/next navigation only.

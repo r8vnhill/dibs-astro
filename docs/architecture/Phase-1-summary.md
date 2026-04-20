@@ -1,5 +1,7 @@
 # ✅ Phase 1 · Layered Architecture Skeleton — COMPLETED# Phase 1: Layered Architecture Skeleton — Deliverables Summary
 
+> **Historical note:** this document records the Phase 1 delivery state. It is not the authoritative current-state architecture note anymore. For the current boundaries after the Phase 2 domain-isolation work and Cycle 8 integration lock-in, use `docs/architecture/layer-separation.md`.
+
 
 
 

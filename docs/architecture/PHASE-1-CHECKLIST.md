@@ -1,6 +1,8 @@
 # Phase 1: Validation Checklist ✅
 
 > **Status:** Completed | **Date:** 2026-02-28 | **Methodology:** TDD
+>
+> **Historical note:** This file records the Phase 1 checkpoint only. Current architecture boundaries are documented in `docs/architecture/layer-separation.md`. Some items below intentionally reflect the pre-Phase-2 state and are no longer current.
 
 ---
 

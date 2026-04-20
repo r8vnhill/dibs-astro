@@ -1,4 +1,5 @@
 import type { ILessonMetadataService, LessonMetadataDto } from "$application/ports";
+import { normalizeLessonMetadataPathname } from "$domain/lesson-metadata";
 import type { LessonMetadataRepository } from "$domain/repositories";
 import { LessonHref } from "$domain/value-objects/LessonHref";
 
@@ -14,7 +15,7 @@ export class LessonMetadataServiceImpl implements ILessonMetadataService {
 
     async resolveLessonMetadata(pathname: string): Promise<LessonMetadataDto | undefined> {
         const metadata = await this.lessonMetadataRepository.findByHref(
-            LessonHref.create(pathname),
+            LessonHref.create(normalizeLessonMetadataPathname(pathname)),
         );
 
         return metadata

@@ -1,4 +1,3 @@
-import { hasMeaningfulTextContent } from "$domain/reference-content";
 import { describe, expect, expectTypeOf, it, vi } from "vitest";
 import {
     prepareSlotsForReferences,
@@ -46,7 +45,7 @@ describe("resolveOptionalSlot", () => {
         });
     });
 
-    it("classifies rendered html with the shared domain rules", async () => {
+    it("classifies rendered html through the shared domain-backed adapter path", async () => {
         const slots = {
             has: vi.fn().mockReturnValue(true),
             render: vi.fn().mockResolvedValue("<img src='x' alt='' />"),
@@ -56,7 +55,6 @@ describe("resolveOptionalSlot", () => {
             kind: "empty",
             html: "",
         });
-        expect(hasMeaningfulTextContent("<img src='x' alt='' />")).toBe(false);
     });
 
     it("propagates render failures unchanged", async () => {
