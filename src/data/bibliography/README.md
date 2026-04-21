@@ -72,11 +72,28 @@ Run `pnpm generate:bibliography-catalog` to:
 
 - assemble `sources/*.ttl` into `catalog.graph.generated.ttl`
 - parse the assembled TTL graph
-- validate relations and tags
+- validate required fields, relation categories, and usage tags
+- prune `pending-revision` usages only when they point to skipped, missing, or unsupported nodes
 - normalize the graph
 - write `catalog.graph.generated.jsonld`
 
 The generated file is deterministic and should be committed.
+
+## Builder contracts
+
+The bibliography builder implementation now lives under `scripts/lib/bibliography/`. Root-level
+files such as `scripts/lib/bibliography-catalog-builder.mjs` and
+`scripts/lib/bibliography-catalog-builder.graph.mjs` remain as stable facades for scripts and
+tests. Across that module family, the builder follows a small set of explicit internal contracts:
+
+- required fields abort the build immediately with a source-labeled validation error
+- optional fields are omitted from emitted JSON-LD instead of serialized as empty values
+- relation fields are validated against allowed target categories before node emission
+- graph sorting is deterministic and non-mutating
+- pending-revision pruning is isolated to the usage-node path and does not affect published usages
+
+These are internal implementation guarantees rather than editorial features, but they are useful
+when extending the catalog builder or adding tests around the generated graph.
 
 ## Rendering model
 

@@ -1,4 +1,4 @@
-import { DIBS } from "./bibliography-catalog-builder.constants.mjs";
+import { DIBS } from "./constants.mjs";
 
 export const collectPendingRevisionState = (
     recordsByIri,
