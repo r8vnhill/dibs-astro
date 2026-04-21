@@ -1,8 +1,17 @@
-import { load } from "cheerio";
 import { describe, expect, test } from "vitest";
-import { type AstroRender, createAstroRenderer } from "../../../../test-utils/astro-render";
+import { type AstroRender } from "../../../../test-utils/astro-render";
 import { MissingReferenceTitleError, ReferenceContractError } from "../ReferenceContractError";
 import Thesis from "../Thesis.astro";
+import {
+    expectDescriptionAbsent,
+    expectDescriptionPresence,
+    expectInlineMetaLink,
+    expectInlineMetaPlainText,
+    expectLinkedTitle,
+    expectMetaLabelAbsent,
+    expectSlotOverridesProp,
+    renderReference,
+} from "./reference-render-contracts";
 
 type ThesisProps = {
     title?: string;
@@ -23,44 +32,32 @@ const BASE_PROPS = {
 async function renderThesis(
     overrides: RenderOverrides = {},
     options?: RenderOptions,
-): Promise<string> {
-    const render = await createAstroRenderer<ThesisProps>(Thesis);
+) {
     const merged = { ...BASE_PROPS, ...overrides };
     const props = merged.title === undefined
         ? (({ title: _title, ...rest }) => rest)(merged)
         : merged;
 
-    return render(props, options);
-}
-
-async function renderAndParse(
-    overrides: RenderOverrides = {},
-    options?: RenderOptions,
-) {
-    const html = await renderThesis(overrides, options);
-
-    return {
-        html,
-        $: load(html),
-    };
+    return renderReference(Thesis, props, options);
 }
 
 describe.concurrent("Thesis.astro render", () => {
     describe("title contract", () => {
         test("renders a prop-backed title as exactly one link to url", async () => {
-            const { $ } = await renderAndParse({
+            const { $ } = await renderThesis({
                 title: "An Empirical Study on Bash Language Usage in Github",
                 url: "http://hdl.handle.net/10012/17036",
             });
-            const titleLink = $("a[href='http://hdl.handle.net/10012/17036']").first();
 
-            expect($("a[href='http://hdl.handle.net/10012/17036']")).toHaveLength(1);
-            expect(titleLink.attr("href")).toBe("http://hdl.handle.net/10012/17036");
-            expect(titleLink.text().trim()).toBe("An Empirical Study on Bash Language Usage in Github");
+            expectLinkedTitle(
+                $,
+                "http://hdl.handle.net/10012/17036",
+                "An Empirical Study on Bash Language Usage in Github",
+            );
         });
 
         test("renders a slot-backed title as exactly one link to url", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Fallback title",
                     url: "https://example.com/thesis",
@@ -71,42 +68,39 @@ describe.concurrent("Thesis.astro render", () => {
                     },
                 },
             );
-            const titleLink = $("a[href='https://example.com/thesis']").first();
-            const titleSlot = $("strong[data-slot='title']");
 
-            expect($("a[href='https://example.com/thesis']")).toHaveLength(1);
-            expect(titleLink.attr("href")).toBe("https://example.com/thesis");
-            expect(titleSlot).toHaveLength(1);
-            expect(titleSlot.text()).toBe("Título desde slot");
-            expect($("li").text()).not.toContain("Fallback title");
+            expectLinkedTitle($, "https://example.com/thesis", "Título desde slot");
+            expectSlotOverridesProp(
+                $,
+                "strong[data-slot='title']",
+                "Título desde slot",
+                "Fallback title",
+            );
         });
     });
 
     describe("institution contract", () => {
         test("renders a linked institution only when institution and institutionUrl are both meaningful", async () => {
-            const { $ } = await renderAndParse({
+            const { $ } = await renderThesis({
                 title: "Thesis",
                 url: "https://example.com/thesis",
                 institution: "University of Waterloo",
                 institutionUrl: "https://uwaterloo.ca/",
                 author: "Quien investiga",
             });
-            const institutionLink = $("a[href='https://uwaterloo.ca/']");
 
-            expect(institutionLink).toHaveLength(1);
-            expect(institutionLink.text().trim()).toBe("University of Waterloo");
+            expectInlineMetaLink($, "https://uwaterloo.ca/", "University of Waterloo");
             expect($("li").text()).toContain("Quien investiga");
         });
 
         test("renders plain institution text when institutionUrl is absent", async () => {
-            const { $ } = await renderAndParse({
+            const { $ } = await renderThesis({
                 title: "Thesis",
                 url: "https://example.com/thesis",
                 institution: "Institution base",
             });
 
-            expect($("li").text()).toContain("Institution base");
-            expect($("a").filter((_, node) => $(node).text().trim() === "Institution base")).toHaveLength(0);
+            expectInlineMetaPlainText($, "Institution base");
         });
 
         test("fails when institutionUrl is provided without institution", async () => {
@@ -120,7 +114,7 @@ describe.concurrent("Thesis.astro render", () => {
         });
 
         test("respects the institution slot without wrapping it automatically or leaking prop fallbacks", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Thesis",
                     url: "https://example.com/thesis",
@@ -135,40 +129,43 @@ describe.concurrent("Thesis.astro render", () => {
             );
             const slotInstitution = $("em[data-slot='institution']");
 
-            expect(slotInstitution).toHaveLength(1);
-            expect(slotInstitution.text()).toBe("Institución desde slot");
+            expectSlotOverridesProp(
+                $,
+                "em[data-slot='institution']",
+                "Institución desde slot",
+                "Institution base",
+            );
             expect(slotInstitution.closest("a")).toHaveLength(0);
             expect($("a[href='https://example.com/institution']")).toHaveLength(0);
-            expect($("li").text()).not.toContain("Institution base");
         });
     });
 
     describe("optional metadata omission", () => {
         test("omits the institution fragment when institution is absent", async () => {
-            const { $ } = await renderAndParse({
+            const { $ } = await renderThesis({
                 title: "Thesis",
                 url: "https://example.com/thesis",
             });
 
-            expect($("span.text-muted-foreground").filter((_, node) => $(node).text() === "en")).toHaveLength(0);
+            expectMetaLabelAbsent($, "en");
         });
 
         test("omits the author fragment when author is absent", async () => {
-            const { $ } = await renderAndParse({
+            const { $ } = await renderThesis({
                 title: "Thesis",
                 url: "https://example.com/thesis",
                 institution: "Institution base",
             });
 
-            expect($("span.text-muted-foreground").filter((_, node) => $(node).text() === "por")).toHaveLength(0);
+            expectMetaLabelAbsent($, "por");
         });
 
         test("omits the description block when description slot is absent or non-meaningful", async () => {
-            const withoutDescription = await renderAndParse({
+            const withoutDescription = await renderThesis({
                 title: "Thesis",
                 url: "https://example.com/thesis",
             });
-            const emptyDescription = await renderAndParse(
+            const emptyDescription = await renderThesis(
                 {
                     title: "Thesis",
                     url: "https://example.com/thesis",
@@ -180,12 +177,12 @@ describe.concurrent("Thesis.astro render", () => {
                 },
             );
 
-            expect(withoutDescription.$("div.text-muted-foreground")).toHaveLength(0);
-            expect(emptyDescription.$("div.text-muted-foreground")).toHaveLength(0);
+            expectDescriptionAbsent(withoutDescription.$);
+            expectDescriptionAbsent(emptyDescription.$);
         });
 
         test("renders author and description when meaningful", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Thesis",
                     url: "https://example.com/thesis",
@@ -201,15 +198,15 @@ describe.concurrent("Thesis.astro render", () => {
 
             expect($("li").text()).toContain("Institution base");
             expect($("li").text()).toContain("Autor base");
-            expect($("span.text-muted-foreground").filter((_, node) => $(node).text() === "por")).toHaveLength(1);
-            expect($("div.text-muted-foreground")).toHaveLength(1);
-            expect($("div.text-muted-foreground").text()).toContain("Descripción útil");
+            expect($("span.text-muted-foreground").filter((_, node) => $(node).text() === "por"))
+                .toHaveLength(1);
+            expectDescriptionPresence($, "Descripción útil");
         });
     });
 
     describe("slot precedence and non-duplication", () => {
         test("prefers the title slot over the prop fallback without duplicating the fallback text", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Título base",
                     url: "https://example.com/thesis",
@@ -221,14 +218,17 @@ describe.concurrent("Thesis.astro render", () => {
                 },
             );
 
-            expect($("strong[data-slot='title']")).toHaveLength(1);
-            expect($("a[href='https://example.com/thesis']")).toHaveLength(1);
-            expect($("li").text()).toContain("Título desde slot");
-            expect($("li").text()).not.toContain("Título base");
+            expectLinkedTitle($, "https://example.com/thesis", "Título desde slot");
+            expectSlotOverridesProp(
+                $,
+                "strong[data-slot='title']",
+                "Título desde slot",
+                "Título base",
+            );
         });
 
         test("prefers the author slot over the prop fallback without duplicating the fallback text", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Thesis",
                     url: "https://example.com/thesis",
@@ -241,13 +241,16 @@ describe.concurrent("Thesis.astro render", () => {
                 },
             );
 
-            expect($("em[data-slot='author']")).toHaveLength(1);
-            expect($("li").text()).toContain("Autoría desde slot");
-            expect($("li").text()).not.toContain("Autor base");
+            expectSlotOverridesProp(
+                $,
+                "em[data-slot='author']",
+                "Autoría desde slot",
+                "Autor base",
+            );
         });
 
         test("allows combined slot overrides without leaking fallback metadata or breaking the single title link contract", async () => {
-            const { $ } = await renderAndParse(
+            const { $ } = await renderThesis(
                 {
                     title: "Título base",
                     url: "https://example.com/thesis",
@@ -264,15 +267,26 @@ describe.concurrent("Thesis.astro render", () => {
                 },
             );
 
-            expect($("a[href='https://example.com/thesis']")).toHaveLength(1);
-            expect($("a[href='https://example.com/thesis']").attr("href")).toBe("https://example.com/thesis");
-            expect($("strong[data-slot='title']")).toHaveLength(1);
-            expect($("em[data-slot='institution']")).toHaveLength(1);
-            expect($("span[data-slot='author']")).toHaveLength(1);
+            expectLinkedTitle($, "https://example.com/thesis", "Título desde slot");
+            expectSlotOverridesProp(
+                $,
+                "strong[data-slot='title']",
+                "Título desde slot",
+                "Título base",
+            );
+            expectSlotOverridesProp(
+                $,
+                "em[data-slot='institution']",
+                "Institución desde slot",
+                "Institution base",
+            );
+            expectSlotOverridesProp(
+                $,
+                "span[data-slot='author']",
+                "Autoría desde slot",
+                "Autor base",
+            );
             expect($("a[href='https://example.com/institution']")).toHaveLength(0);
-            expect($("li").text()).not.toContain("Título base");
-            expect($("li").text()).not.toContain("Institution base");
-            expect($("li").text()).not.toContain("Autor base");
         });
     });
 
