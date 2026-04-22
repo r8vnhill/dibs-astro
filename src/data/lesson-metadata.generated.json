@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-20T20:32:09.152Z",
+  "generatedAt": "2026-04-22T21:44:57.637Z",
   "totalLessons": 47,
   "changesLimit": 5,
   "entries": {
@@ -41,6 +41,246 @@
           "date": "2025-08-11",
           "author": "r8vnhill",
           "subject": "✨ **feat:** add `Danger` callout, new icons, and functions lesson"
+        }
+      ]
+    },
+    "/notes/deprecated/build-systems/": {
+      "sourceFile": "src/pages/notes/deprecated/build-systems/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        }
+      ]
+    },
+    "/notes/deprecated/build-systems/veritas-1/": {
+      "sourceFile": "src/pages/notes/deprecated/build-systems/veritas-1/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        },
+        {
+          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
+          "date": "2025-09-21",
+          "author": "r8vnhill",
+          "subject": "feat: add new scripting notes and footnotes styling"
+        }
+      ]
+    },
+    "/notes/deprecated/business-vs-app/": {
+      "sourceFile": "src/pages/notes/deprecated/business-vs-app/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
+    },
+    "/notes/deprecated/design-principles/": {
+      "sourceFile": "src/pages/notes/deprecated/design-principles/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
+        },
+        {
+          "hash": "41d7d291cee5054bc6666815a667cdd47a1ef9fc",
+          "date": "2026-04-05",
+          "author": "R8V",
+          "subject": "feat: add design principles section and update lesson metadata"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
+        }
+      ]
+    },
+    "/notes/deprecated/domain-models/": {
+      "sourceFile": "src/pages/notes/deprecated/domain-models/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
+        },
+        {
+          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        }
+      ]
+    },
+    "/notes/deprecated/task-automation/": {
+      "sourceFile": "src/pages/notes/deprecated/task-automation/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-04-20",
+      "changes": [
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
+        {
+          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
+          "date": "2026-04-07",
+          "author": "r8vnhill",
+          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
+        },
+        {
+          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
+          "date": "2026-04-02",
+          "author": "r8vnhill",
+          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
+        },
+        {
+          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
+          "date": "2026-03-27",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
+        },
+        {
+          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
+          "date": "2026-01-01",
+          "author": "r8vnhill",
+          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -1197,8 +1437,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-04-20",
       "changes": [
+        {
+          "hash": "2b8f3a4c5c9f7aba701c4919e9d02f36045f61a4",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine landing page editorial clarity and bump to 0.17.0"
+        },
+        {
+          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
+          "date": "2026-04-20",
+          "author": "r8vnhill",
+          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -1285,234 +1537,6 @@
           "date": "2026-03-31",
           "author": "r8vnhill",
           "subject": "📝✨ feat(unit-1): add software artifacts taxonomy lesson"
-        }
-      ]
-    },
-    "/notes/software-libraries/build-systems/": {
-      "sourceFile": "src/pages/notes/software-libraries/build-systems/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-04-02",
-      "changes": [
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-          "date": "2025-09-21",
-          "author": "r8vnhill",
-          "subject": "feat: add new scripting notes and footnotes styling"
-        }
-      ]
-    },
-    "/notes/software-libraries/build-systems/veritas-1/": {
-      "sourceFile": "src/pages/notes/software-libraries/build-systems/veritas-1/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-03-27",
-      "changes": [
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-          "date": "2025-09-21",
-          "author": "r8vnhill",
-          "subject": "feat: add new scripting notes and footnotes styling"
-        }
-      ]
-    },
-    "/notes/software-libraries/business-vs-app/": {
-      "sourceFile": "src/pages/notes/software-libraries/business-vs-app/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-04-07",
-      "changes": [
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-          "date": "2025-09-21",
-          "author": "r8vnhill",
-          "subject": "feat: add new scripting notes and footnotes styling"
-        }
-      ]
-    },
-    "/notes/software-libraries/design-principles/": {
-      "sourceFile": "src/pages/notes/software-libraries/design-principles/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-04-07",
-      "changes": [
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "41d7d291cee5054bc6666815a667cdd47a1ef9fc",
-          "date": "2026-04-05",
-          "author": "R8V",
-          "subject": "feat: add design principles section and update lesson metadata"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "79675c097d0a2ad29e5b6715b0537cd355e97913",
-          "date": "2025-09-16",
-          "author": "r8vnhill",
-          "subject": "✨📝🖼️ Add “Modelos de dominio” lesson, C code components, and new icon set"
-        }
-      ]
-    },
-    "/notes/software-libraries/domain-models/": {
-      "sourceFile": "src/pages/notes/software-libraries/domain-models/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-04-07",
-      "changes": [
-        {
-          "hash": "75f6b248b3e33d759eed5cf28380d1cdf17aec0a",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "c2972b015549e6a8c5f9dee55306460439d795fa",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "🐛✅ fix(types): unblock astro check in CI"
-        }
-      ]
-    },
-    "/notes/software-libraries/task-automation/": {
-      "sourceFile": "src/pages/notes/software-libraries/task-automation/index.astro",
-      "authors": [
-        {
-          "name": "Ignacio Slater-Muñoz"
-        }
-      ],
-      "lastModified": "2026-04-07",
-      "changes": [
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "b4b73211be9c02d0cd2c1ac34964d71b44f9d6bf",
-          "date": "2025-10-09",
-          "author": "r8vnhill",
-          "subject": "✨📝♻️🎨🔧🔥 Scripting lessons, Bash help, heading sizes & snippets tidy"
         }
       ]
     },

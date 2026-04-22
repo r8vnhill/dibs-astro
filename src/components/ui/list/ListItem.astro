@@ -1,81 +1,107 @@
 ---
+/**
+ * @fileoverview Renders a semantic list item with an optional decorative icon.
+ *
+ * `ListItem` is a small layout primitive for content that should appear inside a parent `<ul>` or `<ol>`. It renders a 
+ * root `<li>` with a horizontal flex layout, an optional left-aligned icon, and a content wrapper that can shrink
+ * safely when the slotted content is long.
+ *
+ * The icon is decorative by default and is marked `aria-hidden="true"`. The slotted content remains the only 
+ * meaningful content exposed by the component.
+ *
+ * Native `<li>` attributes are forwarded to the root element, while `class` is reintroduced as an explicit prop so 
+ * callers can extend the root styling without changing the component contract.
+ */
+import type { HTMLAttributes } from "astro/types";
 import type { AstroComponentFactory } from "~/types/astro-component";
 
 /**
- * Props for the ListItem component.
+ * Props accepted by {@link ListItem}.
+ *
+ * This type composes native `<li>` attributes with a small set of custom props for icon rendering. The slot content is 
+ * the primary payload of the list item; the icon is optional and decorative.
+ *
+ * ## Notes:
+ *
+ * - Native `<li>` attributes such as `id`, `role`, `aria-*`, `data-*`, and `style` are forwarded to the root element.
+ * - `class` is omitted from {@link HTMLAttributes} and reintroduced here as a dedicated prop so the component can 
+ *   merge caller-supplied classes with its own layout classes.
  */
-type ListItemProps = {
+type ListItemProps = Omit<HTMLAttributes<"li">, "class"> & {
     /**
-     * Optional icon component to render (e.g., an imported SVG as Astro island).
+     * Optional decorative icon rendered before the slotted content.
+     *
+     * The component currently invokes the icon with `width="1em"` and `height="1em"`, so the supplied
+     * {@link AstroComponentFactory} should tolerate those props.
      */
     icon?: AstroComponentFactory;
 
     /**
-     * CSS size for the icon (e.g., "1.25em"). Defaults to "1.25em".
+     * Visual size applied to the icon wrapper through CSS `font-size`.
+     *
+     * Relative units such as `em` and `rem` are recommended so the icon scales predictably with nearby text.
+     *
+     * @defaultValue `"1.25em"`
      */
     iconSize?: string;
 
     /**
-     * Icon color (defaults to "currentColor" so it inherits text color).
+     * Text color applied to the icon wrapper.
+     *
+     * The default value is the literal CSS keyword `currentColor`, so the icon inherits the computed text color of the 
+     * surrounding list item unless a different color is supplied explicitly.
+     *
+     * @defaultValue `"currentColor"`
      */
     iconColor?: string;
 
     /**
-     * Additional classes for the <li> wrapper.
+     * Additional classes merged into the root `<li>`.
      */
     class?: string;
 };
 
-// Extract and assign default values for props
 const {
     icon: Icon = null,
     iconSize = "1.25em",
     iconColor = "currentColor",
     class: className = "",
-    ...rest
+    ...liProps
 } = Astro.props as ListItemProps;
+
+/**
+ * Inline styles owned by the icon wrapper.
+ *
+ * `lineHeight: 1` keeps the icon box compact and avoids introducing extra vertical space through inherited line-height 
+ * values.
+ */
+const iconStyle = {
+    fontSize: iconSize,
+    color: iconColor,
+    lineHeight: 1,
+} as const;
 ---
 
 <!--
-    List item container with vertical spacing.
-    Uses Tailwind classes and supports additional custom classes.
+    Root contract:
+    - the `<li>` owns the horizontal layout;
+    - the icon, when present, is decorative and does not participate in semantics;
+    - the content wrapper uses `min-w-0 flex-1` so long slotted content can wrap instead of forcing overflow in flex 
+      layouts.
 -->
-<li class:list={["flex", "flex-col", "items-start", "gap-1", className]} {...rest}>
-    <!-- Row for icon + content -->
-    <div class:list={["flex", "items-start", "gap-2"]}>
-        {
-            Icon && (
-                /**
-                 * Icon wrapper:
-                 * - Shrinks to fit content
-                 * - Uses inline styles for dynamic font size/color
-                 * - Adds top margin to align visually with multiline content
-                 * - .listitem__icon class enables automatic color inheritance from parent callout
-                 */
-                (
-        (
-                <span
-                    class:list={["flex-shrink-0", "listitem__icon"]}
-                    style={{
-                        fontSize: iconSize,
-                        color: iconColor === "currentColor"
-                            ? "var(--callout-title-color, var(--color-primary, currentColor))"
-                            : iconColor,
-                        lineHeight: 1,
-                        marginTop: "3px",
-                    }}
-                    aria-hidden="true"
-                >
-                    <Icon width="1em" height="1em" />
-                </span>
-            )
-                )
-            )
-        }
+<li class:list={["flex", "items-start", "gap-2", className]} {...liProps}>
+    {
+        Icon && (
+            <span
+                class:list={["shrink-0", "listitem__icon"]} style={iconStyle}
+                aria-hidden="true"
+            >
+                <Icon width="1em" height="1em" />
+            </span>
+        )
+    }
 
-        <!-- Main slot content -->
-        <div class="flex-1">
-            <slot />
-        </div>
+    <div class="min-w-0 flex-1">
+        <slot />
     </div>
 </li>
