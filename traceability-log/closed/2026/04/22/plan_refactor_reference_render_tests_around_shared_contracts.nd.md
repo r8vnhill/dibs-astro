@@ -222,7 +222,9 @@ Run the touched render suites:
 
 ---
 
-## Phase 5: Apply DDT selectively
+## ~~Phase 5: Apply DDT selectively~~
+
+Status: complete
 
 Use `test.each(...)` only where there is a genuine case matrix and parameterization improves readability.
 

@@ -67,42 +67,65 @@ suite.concurrent("ScholarlyArticle.astro", () => {
                 .toHaveLength(1);
         });
 
-        test("prefers meaningful title, publication, and author slot content over props", async () => {
-            const { $ } = await renderArticle(
-                {
+        test.each([
+            {
+                name: "prefers the title slot over the prop fallback",
+                overrides: {
+                    title: "Base Chronicle",
+                    url: "https://example.com/fated-article",
+                },
+                slots: {
+                    title:
+                        "<strong data-slot=\"title\">The Crimson Thread of Our Last Promise</strong>",
+                },
+                slotSelector: "strong[data-slot='title']",
+                slotText: "The Crimson Thread of Our Last Promise",
+                fallbackText: "Base Chronicle",
+                expectedHref: "https://example.com/fated-article",
+            },
+            {
+                name: "prefers the publication slot over the prop fallback",
+                overrides: {
                     title: "Base Chronicle",
                     url: "https://example.com/fated-article",
                     publication: "Base Record",
+                },
+                slots: {
+                    publication: "<em data-slot=\"publication\">Archive of Broken Names</em>",
+                },
+                slotSelector: "em[data-slot='publication']",
+                slotText: "Archive of Broken Names",
+                fallbackText: "Base Record",
+            },
+            {
+                name: "prefers the author slot over the prop fallback",
+                overrides: {
+                    title: "Base Chronicle",
+                    url: "https://example.com/fated-article",
                     author: "Base Author",
                 },
-                {
-                    slots: {
-                        title:
-                            "<strong data-slot=\"title\">The Crimson Thread of Our Last Promise</strong>",
-                        publication: "<em data-slot=\"publication\">Archive of Broken Names</em>",
-                        author: "<span data-slot=\"author\">Itsuki Amaya</span>",
-                    },
+                slots: {
+                    author: "<span data-slot=\"author\">Itsuki Amaya</span>",
                 },
-            );
+                slotSelector: "span[data-slot='author']",
+                slotText: "Itsuki Amaya",
+                fallbackText: "Base Author",
+            },
+        ])("$name", async ({
+            overrides,
+            slots,
+            slotSelector,
+            slotText,
+            fallbackText,
+            expectedHref,
+        }) => {
+            const { $ } = await renderArticle(overrides, { slots });
 
-            expectLinkedTitle(
-                $,
-                "https://example.com/fated-article",
-                "The Crimson Thread of Our Last Promise",
-            );
-            expectSlotOverridesProp(
-                $,
-                "strong[data-slot='title']",
-                "The Crimson Thread of Our Last Promise",
-                "Base Chronicle",
-            );
-            expectSlotOverridesProp(
-                $,
-                "em[data-slot='publication']",
-                "Archive of Broken Names",
-                "Base Record",
-            );
-            expectSlotOverridesProp($, "span[data-slot='author']", "Itsuki Amaya", "Base Author");
+            if (expectedHref !== undefined) {
+                expectLinkedTitle($, expectedHref, slotText);
+            }
+
+            expectSlotOverridesProp($, slotSelector, slotText, fallbackText);
         });
 
         test("falls back to props when title, publication, or author slots are empty", async () => {

@@ -181,15 +181,22 @@ suite.concurrent("WebPage.astro", () => {
     });
 
     describe("given no meaningful title source", () => {
-        test.each(["", "   "])("throws when title is %s", async (title) => {
+        test.each([
+            {
+                name: "throws when title prop is an empty string",
+                title: "",
+            },
+            {
+                name: "throws when title prop is whitespace-only",
+                title: "   ",
+            },
+            {
+                name: "throws when title prop is undefined and no title slot is provided",
+                title: undefined,
+            },
+        ])("$name", async ({ title }) => {
             await expect(
                 renderWebPage({ title, url: "https://example.com/page" }),
-            ).rejects.toThrow(MissingReferenceTitleError);
-        });
-
-        test("throws when title is undefined and no title slot provided", async () => {
-            await expect(
-                renderWebPage({ title: undefined, url: "https://example.com/page" }),
             ).rejects.toThrow(MissingReferenceTitleError);
         });
     });

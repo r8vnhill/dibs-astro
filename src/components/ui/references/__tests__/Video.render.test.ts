@@ -65,42 +65,82 @@ describe.concurrent("Video.astro render", () => {
             .toHaveLength(1);
     });
 
-    test("prefers meaningful slot content over props", async () => {
-        const { $ } = await renderVideo(
-            {
+    test.each([
+        {
+            name: "prefers the title slot over the prop fallback",
+            overrides: {
+                title: "Título base",
+                url: "https://example.com/video",
+            },
+            slots: {
+                title: "<strong data-slot=\"title\">Título desde slot</strong>",
+            },
+            slotSelector: "strong[data-slot='title']",
+            slotText: "Título desde slot",
+            fallbackText: "Título base",
+            expectedHref: "https://example.com/video",
+        },
+        {
+            name: "prefers the platform slot over the prop fallback",
+            overrides: {
                 title: "Título base",
                 url: "https://example.com/video",
                 platform: "Plataforma base",
+            },
+            slots: {
+                platform: "<em data-slot=\"platform\">Plataforma desde slot</em>",
+            },
+            slotSelector: "em[data-slot='platform']",
+            slotText: "Plataforma desde slot",
+            fallbackText: "Plataforma base",
+        },
+        {
+            name: "prefers the author slot over the prop fallback",
+            overrides: {
+                title: "Título base",
+                url: "https://example.com/video",
                 author: "Autor base",
             },
-            {
-                slots: {
-                    title: "<strong data-slot=\"title\">Título desde slot</strong>",
-                    platform: "<em data-slot=\"platform\">Plataforma desde slot</em>",
-                    author: "<span data-slot=\"author\">Autoría desde slot</span>",
-                },
+            slots: {
+                author: "<span data-slot=\"author\">Autoría desde slot</span>",
             },
-        );
+            slotSelector: "span[data-slot='author']",
+            slotText: "Autoría desde slot",
+            fallbackText: "Autor base",
+        },
+    ])("$name", async ({
+        overrides,
+        slots,
+        slotSelector,
+        slotText,
+        fallbackText,
+        expectedHref,
+    }) => {
+        const { $ } = await renderVideo(overrides, { slots });
 
-        expectLinkedTitle($, "https://example.com/video", "Título desde slot");
-        expectSlotOverridesProp($, "strong[data-slot='title']", "Título desde slot", "Título base");
-        expectSlotOverridesProp(
-            $,
-            "em[data-slot='platform']",
-            "Plataforma desde slot",
-            "Plataforma base",
-        );
-        expectSlotOverridesProp($, "span[data-slot='author']", "Autoría desde slot", "Autor base");
+        if (expectedHref !== undefined) {
+            expectLinkedTitle($, expectedHref, slotText);
+        }
+
+        expectSlotOverridesProp($, slotSelector, slotText, fallbackText);
     });
 
-    test("omits author and platform labels when their fields are absent", async () => {
+    test.each([
+        {
+            name: "omits the author label when author is absent",
+            missingLabel: "por",
+        },
+        {
+            name: "omits the platform label when platform is absent",
+            missingLabel: "en",
+        },
+    ])("$name", async ({ missingLabel }) => {
         const { $ } = await renderVideo({
             title: "Video",
             url: "https://example.com/video",
         });
 
-        expectMetaLabelAbsent($, "por");
-        expectMetaLabelAbsent($, "en");
+        expectMetaLabelAbsent($, missingLabel);
     });
 
     test("renders description when present", async () => {
