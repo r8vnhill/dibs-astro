@@ -40,6 +40,11 @@
  * pending-revision filtering additionally depends on `getNodeTypes` and
  * `skippedPendingNodeIds`.
  *
+ * The source-bound `reader` facade is the stable record-reading boundary for
+ * migrated builders. The flat reader helpers remain temporarily available for
+ * non-pilot builders and should be removed after Phase 4 migrates the rest of
+ * the builder surface.
+ *
  * The `abort` function is expected to throw. Builders rely on that
  * control-flow contract when a required field or invalid relation is
  * encountered.
@@ -47,6 +52,24 @@
  * @typedef {object} GraphBuilderContext
  * @property {Map<string, BibliographyRecord>} [recordsById]
  *   Record lookup table used by relation validation and pending-revision checks.
+ * @property {object} [reader]
+ *   Source-bound record reader facade used by migrated builders.
+ * @property {(record: BibliographyRecord, predicate: string) => string | undefined} [reader.scalarLiteral]
+ *   Extracts a single literal string value using the bound source label.
+ * @property {(record: BibliographyRecord, predicate: string) => string | undefined} [reader.scalarUrlLiteral]
+ *   Extracts a single URL literal value using the bound source label.
+ * @property {(record: BibliographyRecord, predicate: string) => number | undefined} [reader.scalarInteger]
+ *   Extracts a single integer literal value using the bound source label.
+ * @property {(record: BibliographyRecord, predicate: string) => string[]} [reader.namedRefs]
+ *   Extracts referenced node IDs using the bound source label.
+ * @property {(record: BibliographyRecord) => string[]} [reader.getUsageTagLiterals]
+ *   Extracts usage-tag literals using the bound source label.
+ * @property {(record: BibliographyRecord) => string[]} [reader.getNodeTypes]
+ *   Returns node types using the bound source label.
+ *
+ * Temporary compatibility accessors used by non-pilot builders. Phase 4 should
+ * migrate remaining builders to `reader` and remove these fields.
+ *
  * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => string | undefined} scalarLiteral
  *   Extracts a single literal string value.
  * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => string | undefined} scalarUrlLiteral
@@ -95,10 +118,15 @@ export const requireField = (record, value, message, abort, sourceLabel) => {
     return value;
 };
 
+const readScalarLiteral = (record, predicate, context) => {
+    if (context.reader) return context.reader.scalarLiteral(record, predicate);
+    return context.scalarLiteral(record, predicate, context.sourceLabel);
+};
+
 export const getRequiredScalar = (record, predicate, message, context) =>
     requireField(
         record,
-        context.scalarLiteral(record, predicate, context.sourceLabel),
+        readScalarLiteral(record, predicate, context),
         message,
         context.abort,
         context.sourceLabel,

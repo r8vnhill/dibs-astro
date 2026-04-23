@@ -69,11 +69,13 @@ ${personAda}
 ${workBook1}
 ${referenceChapter1}
 ${lessonNode("/notes/lesson-a/", "Lesson A")}
-${usageNode("lesson-a-chapter-1", "/notes/lesson-a/", "ref:chapter-1", [
-            "recommended",
-            "recommended",
-            "additional",
-        ])}
+${
+            usageNode("lesson-a-chapter-1", "/notes/lesson-a/", "ref:chapter-1", [
+                "recommended",
+                "recommended",
+                "additional",
+            ])
+        }
 `;
 
         expect(findNode(graphOf(ttl), "usage:lesson-a-chapter-1")).toEqual({
@@ -129,5 +131,35 @@ ${usageNode("lesson-a-chapter-1-additional", "/notes/lesson-a/", "ref:chapter-1"
         expect(findNode(graph, "usage:lesson-a-chapter-1-recommended")).toBeDefined();
         expect(findNode(graph, "usage:lesson-a-chapter-1-additional")).toBeDefined();
         expect(findNode(graph, "ref:chapter-1")).toBeDefined();
+    });
+
+    it("builds a reference through the bound-source reader facade", () => {
+        const ttl = `
+${prefixBlock}
+${personAda}
+work:reader-facade a schema:CreativeWork ;
+  schema:name "Reader Facade Source" .
+
+ref:reader-facade a schema:ScholarlyArticle ;
+  schema:name "Reader Facade Pilot" ;
+  schema:url "https://example.test/reader-facade" ;
+  schema:datePublished "2026" ;
+  schema:pageStart 7 ;
+  schema:pageEnd 13 ;
+  schema:author person:ada ;
+  schema:isPartOf work:reader-facade .
+`;
+
+        expect(findNode(graphOf(ttl), "ref:reader-facade")).toEqual({
+            "@id": "ref:reader-facade",
+            "@type": "ScholarlyArticle",
+            name: "Reader Facade Pilot",
+            url: "https://example.test/reader-facade",
+            datePublished: "2026",
+            pageStart: 7,
+            pageEnd: 13,
+            author: [{ "@id": "person:ada" }],
+            isPartOf: { "@id": "work:reader-facade" },
+        });
     });
 });

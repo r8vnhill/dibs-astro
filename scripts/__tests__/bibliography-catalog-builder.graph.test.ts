@@ -22,6 +22,7 @@ import {
     abortValidation,
     ensureNodeCategory,
 } from "../lib/bibliography-catalog-builder.validation.mjs";
+import { createCatalogReader } from "../lib/bibliography/catalog-reader.mjs";
 
 const { literal, namedNode } = DataFactory;
 
@@ -52,6 +53,7 @@ const recordWith = (
 
 const createContext = (recordsById = new Map()) => ({
     recordsById,
+    reader: createCatalogReader({ sourceLabel }),
     scalarLiteral,
     scalarUrlLiteral,
     scalarInteger,

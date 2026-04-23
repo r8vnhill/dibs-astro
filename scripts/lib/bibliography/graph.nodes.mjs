@@ -122,10 +122,9 @@ export const buildReferenceNode = (record, context) => {
         (currentRecord) => `reference "${currentRecord.id}" is missing schema:name.`,
         context,
     );
-    const authors = context.namedRefs(
+    const authors = context.reader.namedRefs(
         record,
         `${SCHEMA}author`,
-        context.sourceLabel,
     );
     validateRelationRefs(
         authors,
@@ -134,10 +133,9 @@ export const buildReferenceNode = (record, context) => {
         context,
     );
 
-    const publisherId = context.namedRefs(
+    const publisherId = context.reader.namedRefs(
         record,
         `${SCHEMA}publisher`,
-        context.sourceLabel,
     )[0];
     validateRelationRef(
         publisherId,
@@ -146,10 +144,9 @@ export const buildReferenceNode = (record, context) => {
         context,
     );
 
-    const isPartOfId = context.namedRefs(
+    const isPartOfId = context.reader.namedRefs(
         record,
         `${SCHEMA}isPartOf`,
-        context.sourceLabel,
     )[0];
     validateRelationRef(
         isPartOfId,
@@ -158,25 +155,21 @@ export const buildReferenceNode = (record, context) => {
         context,
     );
 
-    const url = context.scalarUrlLiteral(
+    const url = context.reader.scalarUrlLiteral(
         record,
         `${SCHEMA}url`,
-        context.sourceLabel,
     );
-    const datePublished = context.scalarLiteral(
+    const datePublished = context.reader.scalarLiteral(
         record,
         `${SCHEMA}datePublished`,
-        context.sourceLabel,
     );
-    const pageStart = context.scalarInteger(
+    const pageStart = context.reader.scalarInteger(
         record,
         `${SCHEMA}pageStart`,
-        context.sourceLabel,
     );
-    const pageEnd = context.scalarInteger(
+    const pageEnd = context.reader.scalarInteger(
         record,
         `${SCHEMA}pageEnd`,
-        context.sourceLabel,
     );
 
     return {

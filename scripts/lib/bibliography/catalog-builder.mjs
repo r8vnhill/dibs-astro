@@ -1,4 +1,5 @@
 import { Parser } from "n3";
+import { createCatalogReader } from "./catalog-reader.mjs";
 import { REFERENCE_TYPES, SITE_ORIGIN } from "./constants.mjs";
 import {
     buildCreativeWorkNode,
@@ -59,6 +60,7 @@ export const buildCatalogArtifactFromTurtle = (
     const recordsById = new Map(
         Array.from(recordsByIri.values(), (record) => [record.id, record]),
     );
+    const reader = createCatalogReader({ sourceLabel });
     const { pendingOnlyLessonIds, pendingOnlyReferenceIds } = collectPendingRevisionState(
         recordsByIri,
         getNodeTypes,
@@ -127,6 +129,7 @@ export const buildCatalogArtifactFromTurtle = (
                         record,
                         {
                             recordsById,
+                            reader,
                             scalarLiteral,
                             scalarUrlLiteral,
                             scalarInteger,

@@ -9,46 +9,46 @@ This change should preserve the current fail-fast normalization model and keep t
 1. unify the accessor internals behind generic reader primitives without changing observable behavior;
 2. introduce a builder-facing facade and migrate callers incrementally.
 
-Behavioral policy changes such as URL validation, duplicate handling, or canonical integer formatting should not be bundled into the core structural refactor unless they are explicitly chosen and locked by tests first. 
+Behavioral policy changes such as URL validation, duplicate handling, or canonical integer formatting should not be bundled into the core structural refactor unless they are explicitly chosen and locked by tests first.
 
 ## Goals
 
-* Reduce duplication in `records.mjs`.
-* Preserve the existing fail-fast normalization seam.
-* Replace builder dependence on many individual reader helpers with one coherent reader surface.
-* Keep the resulting design ready for a later schema-driven extractor.
-* Strengthen behavior coverage with BDD, DDT, and targeted PBT.
+- Reduce duplication in `records.mjs`.
+- Preserve the existing fail-fast normalization seam.
+- Replace builder dependence on many individual reader helpers with one coherent reader surface.
+- Keep the resulting design ready for a later schema-driven extractor.
+- Strengthen behavior coverage with BDD, DDT, and targeted PBT.
 
 ## Non-Goals
 
 This change should not:
 
-* introduce a full declarative field-schema system;
-* merge record reading with relation validation or pending-revision policy;
-* change public normalization behavior accidentally;
-* expand RDF validation into SHACL or a broader schema-validation system;
-* redesign graph builders beyond what is required to consume the new facade.
+- introduce a full declarative field-schema system;
+- merge record reading with relation validation or pending-revision policy;
+- change public normalization behavior accidentally;
+- expand RDF validation into SHACL or a broader schema-validation system;
+- redesign graph builders beyond what is required to consume the new facade.
 
 ## Success Criteria
 
 This phase is complete when all of the following are true:
 
-* `records.mjs` uses shared generic reader primitives internally;
-* builders consume a record-reader facade instead of a flat set of injected reader functions;
-* the compatibility layer has been removed;
-* the full bibliography suite passes;
-* behavior changes, if any, are deliberate, test-locked, and called out explicitly.
+- `records.mjs` uses shared generic reader primitives internally;
+- builders consume a record-reader facade instead of a flat set of injected reader functions;
+- the compatibility layer has been removed;
+- the full bibliography suite passes;
+- behavior changes, if any, are deliberate, test-locked, and called out explicitly.
 
 ## Design Constraints
 
-* Preserve current semantics by default.
-* Prefer small reversible steps.
-* Keep builders focused on domain composition rather than RDF extraction mechanics.
-* Keep context boundaries explicit:
+- Preserve current semantics by default.
+- Prefer small reversible steps.
+- Keep builders focused on domain composition rather than RDF extraction mechanics.
+- Keep context boundaries explicit:
 
-  * record reading
-  * relation validation
-  * run metadata such as `sourceLabel` and abort state
+  - record reading
+  - relation validation
+  - run metadata such as `sourceLabel` and abort state
 
 ## Implementation Plan
 
@@ -58,13 +58,13 @@ Before changing production code, expand tests so the current behavior is explici
 
 Focus on the normalization boundary in `records.mjs`, especially:
 
-* optional scalar reads;
-* many-value reads;
-* scalar cardinality failures;
-* term-type mismatches;
-* integer parsing behavior;
-* type extraction and required `rdf:type`;
-* usage-tag extraction.
+- optional scalar reads;
+- many-value reads;
+- scalar cardinality failures;
+- term-type mismatches;
+- integer parsing behavior;
+- type extraction and required `rdf:type`;
+- usage-tag extraction.
 
 At this stage, do not change implementation. The point is to turn the current module behavior into an executable contract.
 
@@ -72,26 +72,26 @@ At this stage, do not change implementation. The point is to turn the current mo
 
 Refactor `records.mjs` so all specialized readers are built on top of two internal primitives:
 
-* `optionalOne(record, predicate, { termType, map })`
-* `many(record, predicate, { termType, map })`
+- `optionalOne(record, predicate, { termType, map })`
+- `many(record, predicate, { termType, map })`
 
 These primitives should handle:
 
-* predicate lookup;
-* scalar cardinality enforcement where applicable;
-* term-type validation;
-* optional value behavior;
-* value mapping.
+- predicate lookup;
+- scalar cardinality enforcement where applicable;
+- term-type validation;
+- optional value behavior;
+- value mapping.
 
 Rebuild the existing exported helpers on top of those primitives, including:
 
-* `scalarLiteral`
-* `scalarUrlLiteral` or its eventual replacement
-* `scalarUrlRef`
-* `scalarInteger`
-* `namedRefs`
-* `getNodeTypes`
-* `getUsageTagLiterals`
+- `scalarLiteral`
+- `scalarUrlLiteral` or its eventual replacement
+- `scalarUrlRef`
+- `scalarInteger`
+- `namedRefs`
+- `getNodeTypes`
+- `getUsageTagLiterals`
 
 Also add a shared “many literals” path so `getUsageTagLiterals` no longer performs its own one-off validation flow.
 
@@ -111,12 +111,12 @@ The facade should be created in `catalog-builder.mjs` and passed to builders thr
 
 Target shape:
 
-* `reader.scalarLiteral(...)`
-* `reader.scalarInteger(...)`
-* `reader.scalarUrlRef(...)`
-* `reader.namedRefs(...)`
-* `reader.getNodeTypes(...)`
-* and similar reader operations
+- `reader.scalarLiteral(...)`
+- `reader.scalarInteger(...)`
+- `reader.scalarUrlRef(...)`
+- `reader.namedRefs(...)`
+- `reader.getNodeTypes(...)`
+- and similar reader operations
 
 Do not overdesign the facade. It should mostly be a cohesive boundary, not a new policy layer.
 
@@ -128,9 +128,9 @@ Choose a builder that is representative enough to exercise both scalar and many-
 
 During this step:
 
-* keep existing helper injection temporarily available;
-* migrate only one builder to the new reader facade;
-* confirm that test readability and builder ergonomics improve rather than degrade.
+- keep existing helper injection temporarily available;
+- migrate only one builder to the new reader facade;
+- confirm that test readability and builder ergonomics improve rather than degrade.
 
 If the pilot reveals a flaw in the facade shape, fix the facade before migrating anything else.
 
@@ -140,9 +140,9 @@ Once the pilot builder proves the seam, migrate the remaining graph builders to 
 
 Keep each migration narrow:
 
-* replace flat reader helper usage with facade calls;
-* leave unrelated builder logic untouched;
-* rely on existing builder tests plus one or two focused integration checks where needed.
+- replace flat reader helper usage with facade calls;
+- leave unrelated builder logic untouched;
+- rely on existing builder tests plus one or two focused integration checks where needed.
 
 After all builders have migrated, remove the legacy function-by-function reader injection from context.
 
@@ -150,17 +150,17 @@ After all builders have migrated, remove the legacy function-by-function reader 
 
 The final state of this phase should be:
 
-* generic primitives inside `records.mjs`;
-* stable exported accessors;
-* a builder-facing reader facade;
-* no temporary compatibility path;
-* builders insulated from low-level reader implementation details.
+- generic primitives inside `records.mjs`;
+- stable exported accessors;
+- a builder-facing reader facade;
+- no temporary compatibility path;
+- builders insulated from low-level reader implementation details.
 
 The code should be positioned so a later schema-driven field extractor can be introduced without having to rework builder context again.
 
 ## Deferred or Explicitly-Gated Policy Decisions
 
-The original plan mixed architectural refactoring with several semantic decisions. Those should be handled more carefully. 
+The original plan mixed architectural refactoring with several semantic decisions. Those should be handled more carefully.
 
 Treat the following as explicit decision points rather than casual refactor details:
 
@@ -168,8 +168,8 @@ Treat the following as explicit decision points rather than casual refactor deta
 
 Decide whether `scalarUrlLiteral` means:
 
-* “just a literal string that some caller interprets as a URL later”, or
-* “a URL-valued literal validated or normalized at the accessor boundary”.
+- “just a literal string that some caller interprets as a URL later”, or
+- “a URL-valued literal validated or normalized at the accessor boundary”.
 
 Do not change this accidentally during the facade refactor. Either preserve the existing behavior for this phase, or lock a new behavior with dedicated tests and perform the rename or validation intentionally.
 
@@ -177,8 +177,8 @@ Do not change this accidentally during the facade refactor. Either preserve the 
 
 Decide whether duplicates in grouped RDF input are:
 
-* meaningful and must be preserved; or
-* noise and should be de-duplicated while preserving insertion order.
+- meaningful and must be preserved; or
+- noise and should be de-duplicated while preserving insertion order.
 
 Do not silently add de-duplication during internal reader unification. That is a contract decision, not a mechanical cleanup.
 
@@ -198,23 +198,23 @@ Replace inline sentinels such as `Number.MAX_SAFE_INTEGER` with named constants 
 
 Add behavior-first suites that read like contracts, especially for:
 
-* `scalarInteger`
-* `getNodeTypes`
-* `getUsageTagLiterals`
-* URL-related accessor behavior
-* generic optional-one and many-reader behavior, if those helpers become unit-testable
+- `scalarInteger`
+- `getNodeTypes`
+- `getUsageTagLiterals`
+- URL-related accessor behavior
+- generic optional-one and many-reader behavior, if those helpers become unit-testable
 
 Cover at least:
 
-* missing value
-* one valid value
-* multiple values for scalar readers
-* wrong RDF term type
-* malformed integer lexical form
-* unsafe integer
-* required-type absence for `getNodeTypes`
-* duplicate handling, if policy changes
-* URL behavior, once policy is chosen
+- missing value
+- one valid value
+- multiple values for scalar readers
+- wrong RDF term type
+- malformed integer lexical form
+- unsafe integer
+- required-type absence for `getNodeTypes`
+- duplicate handling, if policy changes
+- URL behavior, once policy is chosen
 
 ### DDT coverage
 
@@ -222,9 +222,9 @@ Use DDT where the assertion shape is identical and repetition would otherwise do
 
 Good DDT candidates:
 
-* optional scalar readers across term type and multiplicity
-* many-value readers across homogeneous valid values and mixed invalid inputs
-* duplicate-handling matrices, if duplicate policy changes
+- optional scalar readers across term type and multiplicity
+- many-value readers across homogeneous valid values and mixed invalid inputs
+- duplicate-handling matrices, if duplicate policy changes
 
 Keep names explicit so failure output stays readable.
 
@@ -234,9 +234,9 @@ Add targeted `fast-check` coverage only for stable normalization invariants.
 
 Good candidates:
 
-* safe integer strings round-trip through `scalarInteger`
-* `namedRefs` preserves input order while mapping through `compactId`
-* mixed invalid term arrays fail when a non-conforming term appears
+- safe integer strings round-trip through `scalarInteger`
+- `namedRefs` preserves input order while mapping through `compactId`
+- mixed invalid term arrays fail when a non-conforming term appears
 
 Keep PBT out of builder rendering and orchestration logic.
 
@@ -250,44 +250,48 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
 
 ### ~~Phase 1: Lock current behavior~~
 
-* Add missing BDD and DDT coverage.
-* No production refactor yet.
-* Encode duplicate-policy gaps as explicit red-by-design cases in the reader suite so the contract is visible before Phase 2 implementation.
-* Exit criterion: current behavior is encoded in tests.
+- Add missing BDD and DDT coverage.
+- No production refactor yet.
+- Encode duplicate-policy gaps as explicit red-by-design cases in the reader suite so the contract is visible before Phase 2 implementation.
+- Exit criterion: current behavior is encoded in tests.
 
 ### ~~Phase 2: Internal reader unification~~
 
-* Implement `optionalOne` and `many`.
-* Route existing exports through them.
-* Fix reader-layer typing issues.
-* Centralize mapped-value dedupe in the shared many-reader path and convert the Phase 1 duplicate cases into normal passing tests.
-* Exit criterion: all tests remain green with no intended behavior change.
+- Implement `optionalOne` and `many`.
+- Route existing exports through them.
+- Fix reader-layer typing issues.
+- Centralize mapped-value dedupe in the shared many-reader path and convert the Phase 1 duplicate cases into normal passing tests.
+- Exit criterion: all tests remain green with no intended behavior change.
 
-### Phase 3: Reader facade pilot
+### ~~Phase 3: Reader facade pilot~~
 
-* Introduce the facade in builder context.
-* Migrate one builder.
-* Add one focused integration test.
-* Exit criterion: the pilot proves the context shape is sound.
+- Introduce the facade in builder context.
+- Migrate one builder.
+- Add one focused integration test.
+- Implemented with `Reference` as the pilot builder and a bound-source `createCatalogReader(...)`
+  facade.
+- Optional PBT coverage was included for source-label preservation because `fast-check` is already
+  part of the project.
+- Exit criterion: the pilot proves the context shape is sound.
 
 ### Phase 4: Full migration
 
-* Migrate remaining builders.
-* Remove flat helper injection.
-* Exit criterion: all builders use the facade.
+- Migrate remaining builders.
+- Remove flat helper injection.
+- Exit criterion: all builders use the facade.
 
 ### Phase 5: Optional policy follow-up
 
 Only if desired and explicitly scoped:
 
-* rename or validate URL literal accessors;
-* define duplicate policy;
-* define integer lexical policy.
+- rename or validate URL literal accessors;
+- define duplicate policy;
+- define integer lexical policy.
 
 This should be a follow-up change unless the team wants those semantics decided now.
 
 ## Public Interface Notes
 
-* Preserve the current exported accessor API throughout the structural migration.
-* Do not make public-facing naming changes during the facade introduction unless that rename is the explicit purpose of the change.
-* The new builder-facing contract is the record-reader facade, not a larger builder super-context.
+- Preserve the current exported accessor API throughout the structural migration.
+- Do not make public-facing naming changes during the facade introduction unless that rename is the explicit purpose of the change.
+- The new builder-facing contract is the record-reader facade, not a larger builder super-context.
