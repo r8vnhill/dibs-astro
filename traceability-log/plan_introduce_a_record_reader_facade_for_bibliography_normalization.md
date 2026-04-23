@@ -255,11 +255,12 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
 * Encode duplicate-policy gaps as explicit red-by-design cases in the reader suite so the contract is visible before Phase 2 implementation.
 * Exit criterion: current behavior is encoded in tests.
 
-### Phase 2: Internal reader unification
+### ~~Phase 2: Internal reader unification~~
 
 * Implement `optionalOne` and `many`.
 * Route existing exports through them.
 * Fix reader-layer typing issues.
+* Centralize mapped-value dedupe in the shared many-reader path and convert the Phase 1 duplicate cases into normal passing tests.
 * Exit criterion: all tests remain green with no intended behavior change.
 
 ### Phase 3: Reader facade pilot

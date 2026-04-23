@@ -254,23 +254,20 @@ describe("bibliography-catalog-builder.records", () => {
             ]);
         });
 
-        it.fails(
-            "deduplicates repeated named references while preserving first-seen order",
-            () => {
-                const record = recordWith(
-                    `${SCHEMA}author`,
-                    namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
-                    namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
-                    namedNodeTerm("https://dibs.ravenhill.cl/bibliography/org/acme"),
-                    namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
-                );
+        it("deduplicates repeated named references while preserving first-seen order", () => {
+            const record = recordWith(
+                `${SCHEMA}author`,
+                namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
+                namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
+                namedNodeTerm("https://dibs.ravenhill.cl/bibliography/org/acme"),
+                namedNodeTerm("https://dibs.ravenhill.cl/bibliography/person/ada"),
+            );
 
-                expect(namedRefs(record, `${SCHEMA}author`, sourceLabel)).toEqual([
-                    "person:ada",
-                    "org:acme",
-                ]);
-            },
-        );
+            expect(namedRefs(record, `${SCHEMA}author`, sourceLabel)).toEqual([
+                "person:ada",
+                "org:acme",
+            ]);
+        });
 
         it("fails when any value is not a named node", () => {
             const record = recordWith(
@@ -284,28 +281,25 @@ describe("bibliography-catalog-builder.records", () => {
             );
         });
 
-        it.fails(
-            "preserves first-seen order after deduplication when mapping compact IDs",
-            () => {
-                fc.assert(
-                    fc.property(namedRefIriArbitrary, (iris) => {
-                        const record = recordWith(
-                            `${SCHEMA}author`,
-                            ...iris.map((iri) => namedNodeTerm(iri)),
-                        );
+        it("preserves first-seen order after deduplication when mapping compact IDs", () => {
+            fc.assert(
+                fc.property(namedRefIriArbitrary, (iris) => {
+                    const record = recordWith(
+                        `${SCHEMA}author`,
+                        ...iris.map((iri) => namedNodeTerm(iri)),
+                    );
 
-                        expect(namedRefs(record, `${SCHEMA}author`, sourceLabel)).toEqual(
-                            firstSeen(iris).map((iri) => compactId(iri)),
-                        );
-                    }),
-                    { examples: [[[
-                        "https://dibs.ravenhill.cl/bibliography/person/ada",
-                        "https://dibs.ravenhill.cl/bibliography/person/ada",
-                        "https://dibs.ravenhill.cl/bibliography/org/acme",
-                    ]]] },
-                );
-            },
-        );
+                    expect(namedRefs(record, `${SCHEMA}author`, sourceLabel)).toEqual(
+                        firstSeen(iris).map((iri) => compactId(iri)),
+                    );
+                }),
+                { examples: [[[
+                    "https://dibs.ravenhill.cl/bibliography/person/ada",
+                    "https://dibs.ravenhill.cl/bibliography/person/ada",
+                    "https://dibs.ravenhill.cl/bibliography/org/acme",
+                ]]] },
+            );
+        });
 
         it("fails when a generated sequence includes a non-named-node value", () => {
             fc.assert(
@@ -358,23 +352,20 @@ describe("bibliography-catalog-builder.records", () => {
             ]);
         });
 
-        it.fails(
-            "deduplicates repeated rdf:type values while preserving first-seen order",
-            () => {
-                const record = recordWith(
-                    RDF_TYPE,
-                    namedNodeTerm(`${SCHEMA}Book`),
-                    namedNodeTerm(`${SCHEMA}Book`),
-                    namedNodeTerm("https://dibs.ravenhill.cl/vocab#ReferenceUsage"),
-                    namedNodeTerm(`${SCHEMA}Book`),
-                );
+        it("deduplicates repeated rdf:type values while preserving first-seen order", () => {
+            const record = recordWith(
+                RDF_TYPE,
+                namedNodeTerm(`${SCHEMA}Book`),
+                namedNodeTerm(`${SCHEMA}Book`),
+                namedNodeTerm("https://dibs.ravenhill.cl/vocab#ReferenceUsage"),
+                namedNodeTerm(`${SCHEMA}Book`),
+            );
 
-                expect(getNodeTypes(record, sourceLabel)).toEqual([
-                    "Book",
-                    "dibs:ReferenceUsage",
-                ]);
-            },
-        );
+            expect(getNodeTypes(record, sourceLabel)).toEqual([
+                "Book",
+                "dibs:ReferenceUsage",
+            ]);
+        });
 
         it("fails when any rdf:type value is not a named node", () => {
             const record = recordWith(RDF_TYPE, literalTerm("Book"));
@@ -384,28 +375,25 @@ describe("bibliography-catalog-builder.records", () => {
             );
         });
 
-        it.fails(
-            "preserves first-seen order after deduplication when mapping compact types",
-            () => {
-                fc.assert(
-                    fc.property(nodeTypeIriArbitrary, (iris) => {
-                        const record = recordWith(
-                            RDF_TYPE,
-                            ...iris.map((iri) => namedNodeTerm(iri)),
-                        );
+        it("preserves first-seen order after deduplication when mapping compact types", () => {
+            fc.assert(
+                fc.property(nodeTypeIriArbitrary, (iris) => {
+                    const record = recordWith(
+                        RDF_TYPE,
+                        ...iris.map((iri) => namedNodeTerm(iri)),
+                    );
 
-                        expect(getNodeTypes(record, sourceLabel)).toEqual(
-                            firstSeen(iris).map((iri) => compactType(iri)),
-                        );
-                    }),
-                    { examples: [[[
-                        `${SCHEMA}Book`,
-                        `${SCHEMA}Book`,
-                        "https://dibs.ravenhill.cl/vocab#ReferenceUsage",
-                    ]]] },
-                );
-            },
-        );
+                    expect(getNodeTypes(record, sourceLabel)).toEqual(
+                        firstSeen(iris).map((iri) => compactType(iri)),
+                    );
+                }),
+                { examples: [[[
+                    `${SCHEMA}Book`,
+                    `${SCHEMA}Book`,
+                    "https://dibs.ravenhill.cl/vocab#ReferenceUsage",
+                ]]] },
+            );
+        });
     });
 
     describe("getUsageTagLiterals", () => {
@@ -428,23 +416,20 @@ describe("bibliography-catalog-builder.records", () => {
             ]);
         });
 
-        it.fails(
-            "deduplicates repeated dibs:tag values while preserving first-seen order",
-            () => {
-                const record = recordWith(
-                    usageTagPredicate,
-                    literalTerm("recommended"),
-                    literalTerm("recommended"),
-                    literalTerm("additional"),
-                    literalTerm("recommended"),
-                );
+        it("deduplicates repeated dibs:tag values while preserving first-seen order", () => {
+            const record = recordWith(
+                usageTagPredicate,
+                literalTerm("recommended"),
+                literalTerm("recommended"),
+                literalTerm("additional"),
+                literalTerm("recommended"),
+            );
 
-                expect(getUsageTagLiterals(record, sourceLabel)).toEqual([
-                    "recommended",
-                    "additional",
-                ]);
-            },
-        );
+            expect(getUsageTagLiterals(record, sourceLabel)).toEqual([
+                "recommended",
+                "additional",
+            ]);
+        });
 
         it("fails when any usage tag is not a literal", () => {
             const record = recordWith(
