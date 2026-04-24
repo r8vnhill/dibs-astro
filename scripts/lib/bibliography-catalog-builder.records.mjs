@@ -1,1 +1,1 @@
-export * from "./bibliography/records.mjs";
+export * from "./bibliography/reader/records.mjs";

@@ -24,6 +24,27 @@
  */
 
 /**
+ * Source-bound reader facade for RDF-derived bibliography records.
+ *
+ * The reader is intentionally policy-free. It delegates to low-level record
+ * accessors while binding the current source label.
+ *
+ * @typedef {object} CatalogReader
+ * @property {(record: BibliographyRecord, predicate: string) => string | undefined} scalarLiteral
+ *   Extracts a single literal string value.
+ * @property {(record: BibliographyRecord, predicate: string) => string | undefined} scalarUrlLiteral
+ *   Extracts a single URL literal value.
+ * @property {(record: BibliographyRecord, predicate: string) => number | undefined} scalarInteger
+ *   Extracts a single integer literal value.
+ * @property {(record: BibliographyRecord, predicate: string) => string[]} namedRefs
+ *   Extracts referenced node IDs.
+ * @property {(record: BibliographyRecord) => string[]} getUsageTagLiterals
+ *   Extracts dibs usage-tag literals.
+ * @property {(record: BibliographyRecord) => string[]} getNodeTypes
+ *   Returns RDF or logical node types.
+ */
+
+/**
  * Strategy object used by graph builders to read and validate bibliography
  * records without depending on their concrete in-memory representation.
  *
@@ -37,13 +58,12 @@
  *
  * Some capabilities are required only by specific builders. For example,
  * relation validation depends on `recordsById` and `ensureNodeCategory`, while
- * pending-revision filtering additionally depends on `getNodeTypes` and
- * `skippedPendingNodeIds`.
+ * pending-revision filtering additionally depends on reader-backed type reads
+ * and `skippedPendingNodeIds`.
  *
  * The source-bound `reader` facade is the stable record-reading boundary for
- * migrated builders. The flat reader helpers remain temporarily available for
- * non-pilot builders and should be removed after Phase 4 migrates the rest of
- * the builder surface.
+ * builders. Relation validation, pending-revision state, and diagnostics stay
+ * as explicit context concerns outside the reader.
  *
  * The `abort` function is expected to throw. Builders rely on that
  * control-flow contract when a required field or invalid relation is
@@ -52,36 +72,8 @@
  * @typedef {object} GraphBuilderContext
  * @property {Map<string, BibliographyRecord>} [recordsById]
  *   Record lookup table used by relation validation and pending-revision checks.
- * @property {object} [reader]
- *   Source-bound record reader facade used by migrated builders.
- * @property {(record: BibliographyRecord, predicate: string) => string | undefined} [reader.scalarLiteral]
- *   Extracts a single literal string value using the bound source label.
- * @property {(record: BibliographyRecord, predicate: string) => string | undefined} [reader.scalarUrlLiteral]
- *   Extracts a single URL literal value using the bound source label.
- * @property {(record: BibliographyRecord, predicate: string) => number | undefined} [reader.scalarInteger]
- *   Extracts a single integer literal value using the bound source label.
- * @property {(record: BibliographyRecord, predicate: string) => string[]} [reader.namedRefs]
- *   Extracts referenced node IDs using the bound source label.
- * @property {(record: BibliographyRecord) => string[]} [reader.getUsageTagLiterals]
- *   Extracts usage-tag literals using the bound source label.
- * @property {(record: BibliographyRecord) => string[]} [reader.getNodeTypes]
- *   Returns node types using the bound source label.
- *
- * Temporary compatibility accessors used by non-pilot builders. Phase 4 should
- * migrate remaining builders to `reader` and remove these fields.
- *
- * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => string | undefined} scalarLiteral
- *   Extracts a single literal string value.
- * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => string | undefined} scalarUrlLiteral
- *   Extracts a single URL literal value.
- * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => number | undefined} [scalarInteger]
- *   Extracts a single integer literal value.
- * @property {(record: BibliographyRecord, predicate: string, sourceLabel: string) => string[]} namedRefs
- *   Extracts the referenced node IDs for a predicate.
- * @property {(record: BibliographyRecord, sourceLabel: string) => string[]} [getUsageTagLiterals]
- *   Extracts dibs usage-tag literals from a usage record.
- * @property {(record: BibliographyRecord, sourceLabel: string) => string[]} [getNodeTypes]
- *   Returns the RDF or logical node types associated with a record.
+ * @property {CatalogReader} reader
+ *   Source-bound record reader facade used by builders.
  * @property {(recordsById: Map<string, BibliographyRecord>, id: string, allowedTypes: Set<string>, sourceLabel: string, relationLabel: string) => void} [ensureNodeCategory]
  *   Validates that a referenced record belongs to an allowed category.
  * @property {(sourceLabel: string, message: string) => never} abort
@@ -118,15 +110,10 @@ export const requireField = (record, value, message, abort, sourceLabel) => {
     return value;
 };
 
-const readScalarLiteral = (record, predicate, context) => {
-    if (context.reader) return context.reader.scalarLiteral(record, predicate);
-    return context.scalarLiteral(record, predicate, context.sourceLabel);
-};
-
 export const getRequiredScalar = (record, predicate, message, context) =>
     requireField(
         record,
-        readScalarLiteral(record, predicate, context),
+        context.reader.scalarLiteral(record, predicate),
         message,
         context.abort,
         context.sourceLabel,
@@ -135,14 +122,14 @@ export const getRequiredScalar = (record, predicate, message, context) =>
 export const getRequiredFirstRef = (record, predicate, message, context) =>
     requireField(
         record,
-        context.namedRefs(record, predicate, context.sourceLabel)[0],
+        context.reader.namedRefs(record, predicate)[0],
         message,
         context.abort,
         context.sourceLabel,
     );
 
 export const getRequiredTags = (record, context) => {
-    const tags = context.getUsageTagLiterals(record, context.sourceLabel);
+    const tags = context.reader.getUsageTagLiterals(record);
     if (tags.length === 0) {
         context.abort(
             context.sourceLabel,

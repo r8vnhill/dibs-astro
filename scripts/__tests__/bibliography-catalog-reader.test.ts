@@ -1,8 +1,8 @@
 import fc from "fast-check";
 import { DataFactory } from "n3";
 import { describe, expect, it } from "vitest";
-import { createCatalogReader } from "../lib/bibliography/catalog-reader.mjs";
-import { SCHEMA } from "../lib/bibliography/constants.mjs";
+import { createCatalogReader } from "../lib/bibliography/reader/catalog-reader.mjs";
+import { SCHEMA } from "../lib/bibliography/shared/constants.mjs";
 import {
     createRecord,
     getNodeTypes,
@@ -11,7 +11,7 @@ import {
     scalarInteger,
     scalarLiteral,
     scalarUrlLiteral,
-} from "../lib/bibliography/records.mjs";
+} from "../lib/bibliography/reader/records.mjs";
 
 const { literal, namedNode } = DataFactory;
 

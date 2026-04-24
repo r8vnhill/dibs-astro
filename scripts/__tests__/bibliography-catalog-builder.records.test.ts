@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { DataFactory } from "n3";
 import { describe, expect, it } from "vitest";
-import { compactId, compactType } from "../lib/bibliography/compact.mjs";
+import { compactId, compactType } from "../lib/bibliography/reader/compact.mjs";
 import { DIBS, RDF_TYPE, SCHEMA } from "../lib/bibliography-catalog-builder.constants.mjs";
 import {
     createRecord,

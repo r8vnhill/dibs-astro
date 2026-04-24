@@ -274,21 +274,14 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
   part of the project.
 - Exit criterion: the pilot proves the context shape is sound.
 
-### Phase 4: Full migration
+### ~~Phase 4: Full migration~~
 
 - Migrate remaining builders.
 - Remove flat helper injection.
+- Implemented across `Person`, `Organization`, `CreativeWork`, `LearningResource`, `Reference`,
+  `Usage`, pending-revision collection, top-level type dispatch, and relation-category validation.
+- Removed temporary flat reader fields from builder context and tests.
 - Exit criterion: all builders use the facade.
-
-### Phase 5: Optional policy follow-up
-
-Only if desired and explicitly scoped:
-
-- rename or validate URL literal accessors;
-- define duplicate policy;
-- define integer lexical policy.
-
-This should be a follow-up change unless the team wants those semantics decided now.
 
 ## Public Interface Notes
 

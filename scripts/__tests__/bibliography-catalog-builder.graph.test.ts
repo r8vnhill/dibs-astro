@@ -11,18 +11,12 @@ import {
 } from "../lib/bibliography-catalog-builder.graph.mjs";
 import {
     createRecord,
-    getNodeTypes,
-    getUsageTagLiterals,
-    namedRefs,
-    scalarInteger,
-    scalarLiteral,
-    scalarUrlLiteral,
 } from "../lib/bibliography-catalog-builder.records.mjs";
 import {
     abortValidation,
     ensureNodeCategory,
 } from "../lib/bibliography-catalog-builder.validation.mjs";
-import { createCatalogReader } from "../lib/bibliography/catalog-reader.mjs";
+import { createCatalogReader } from "../lib/bibliography/reader/catalog-reader.mjs";
 
 const { literal, namedNode } = DataFactory;
 
@@ -54,14 +48,15 @@ const recordWith = (
 const createContext = (recordsById = new Map()) => ({
     recordsById,
     reader: createCatalogReader({ sourceLabel }),
-    scalarLiteral,
-    scalarUrlLiteral,
-    scalarInteger,
-    namedRefs,
-    getUsageTagLiterals,
-    getNodeTypes,
     ensureNodeCategory: (records, id, allowedTypes, label, relationLabel) =>
-        ensureNodeCategory(records, getNodeTypes, id, allowedTypes, label, relationLabel),
+        ensureNodeCategory(
+            records,
+            createCatalogReader({ sourceLabel: label }),
+            id,
+            allowedTypes,
+            label,
+            relationLabel,
+        ),
     abort: abortValidation,
     skippedPendingNodeIds: new Set<string>(),
     sourceLabel,

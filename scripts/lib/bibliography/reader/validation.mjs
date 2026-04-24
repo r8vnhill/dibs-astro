@@ -6,7 +6,7 @@ export const fail = abortValidation;
 
 export const ensureNodeCategory = (
     recordsById,
-    getNodeTypes,
+    reader,
     id,
     allowedTypes,
     sourceLabel,
@@ -14,7 +14,7 @@ export const ensureNodeCategory = (
 ) => {
     const record = recordsById.get(id);
     if (!record) abortValidation(sourceLabel, `${relationLabel} points to missing node "${id}".`);
-    const types = getNodeTypes(record, sourceLabel);
+    const types = reader.getNodeTypes(record);
     if (!types.some((type) => allowedTypes.has(type))) {
         abortValidation(
             sourceLabel,

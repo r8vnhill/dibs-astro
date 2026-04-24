@@ -1,1 +1,1 @@
-export * from "./bibliography/constants.mjs";
+export * from "./bibliography/shared/constants.mjs";

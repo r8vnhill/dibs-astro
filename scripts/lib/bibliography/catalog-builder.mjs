@@ -1,6 +1,5 @@
 import { Parser } from "n3";
-import { createCatalogReader } from "./catalog-reader.mjs";
-import { REFERENCE_TYPES, SITE_ORIGIN } from "./constants.mjs";
+import { collectPendingRevisionState } from "./graph/pending-revision.mjs";
 import {
     buildCreativeWorkNode,
     buildLearningResourceNode,
@@ -9,18 +8,11 @@ import {
     buildReferenceNode,
     buildUsageNode,
     sortGraphNodes,
-} from "./graph.mjs";
-import { collectPendingRevisionState } from "./pending-revision.mjs";
-import {
-    createRecord,
-    getNodeTypes,
-    getUsageTagLiterals,
-    namedRefs,
-    scalarInteger,
-    scalarLiteral,
-    scalarUrlLiteral,
-} from "./records.mjs";
-import { abortValidation, ensureNodeCategory } from "./validation.mjs";
+} from "./graph/index.mjs";
+import { createCatalogReader } from "./reader/catalog-reader.mjs";
+import { createRecord } from "./reader/records.mjs";
+import { abortValidation, ensureNodeCategory } from "./reader/validation.mjs";
+import { REFERENCE_TYPES, SITE_ORIGIN } from "./shared/constants.mjs";
 
 export const buildCatalogArtifactFromTurtle = (
     ttl,
@@ -61,30 +53,25 @@ export const buildCatalogArtifactFromTurtle = (
         Array.from(recordsByIri.values(), (record) => [record.id, record]),
     );
     const reader = createCatalogReader({ sourceLabel });
-    const { pendingOnlyLessonIds, pendingOnlyReferenceIds } = collectPendingRevisionState(
+    const { pendingOnlyLessonIds, pendingOnlyReferenceIds } = collectPendingRevisionState({
         recordsByIri,
-        getNodeTypes,
-        getUsageTagLiterals,
-        namedRefs,
-        sourceLabel,
-    );
+        reader,
+    });
     const skippedPendingNodeIds = new Set();
 
     const guardNodeCategory = (records, id, allowedTypes, label, relationLabel) =>
-        ensureNodeCategory(records, getNodeTypes, id, allowedTypes, label, relationLabel);
+        ensureNodeCategory(records, reader, id, allowedTypes, label, relationLabel);
 
     const graph = [];
 
     for (const record of Array.from(recordsByIri.values()).sort((a, b) => a.order - b.order)) {
-        const types = getNodeTypes(record, sourceLabel);
+        const types = reader.getNodeTypes(record);
         const primaryType = types[0];
         record.primaryType = primaryType;
 
         if (primaryType === "Person") {
             graph.push(buildPersonNode(record, {
-                scalarLiteral,
-                scalarUrlLiteral,
-                namedRefs,
+                reader,
                 abort: abortValidation,
                 sourceLabel,
             }));
@@ -94,9 +81,7 @@ export const buildCatalogArtifactFromTurtle = (
         if (primaryType === "Organization" || primaryType === "CollegeOrUniversity") {
             graph.push(
                 buildOrganizationNode(record, {
-                    scalarLiteral,
-                    scalarUrlLiteral,
-                    namedRefs,
+                    reader,
                     abort: abortValidation,
                     sourceLabel,
                 }),
@@ -110,9 +95,7 @@ export const buildCatalogArtifactFromTurtle = (
                     record,
                     {
                         recordsById,
-                        scalarLiteral,
-                        scalarUrlLiteral,
-                        namedRefs,
+                        reader,
                         ensureNodeCategory: guardNodeCategory,
                         abort: abortValidation,
                         sourceLabel,
@@ -130,10 +113,6 @@ export const buildCatalogArtifactFromTurtle = (
                         {
                             recordsById,
                             reader,
-                            scalarLiteral,
-                            scalarUrlLiteral,
-                            scalarInteger,
-                            namedRefs,
                             ensureNodeCategory: guardNodeCategory,
                             abort: abortValidation,
                             sourceLabel,
@@ -153,9 +132,7 @@ export const buildCatalogArtifactFromTurtle = (
         if (primaryType === "LearningResource") {
             graph.push(
                 buildLearningResourceNode(record, {
-                    scalarLiteral,
-                    scalarUrlLiteral,
-                    namedRefs,
+                    reader,
                     abort: abortValidation,
                     sourceLabel,
                 }),
@@ -168,11 +145,7 @@ export const buildCatalogArtifactFromTurtle = (
                 record,
                 {
                     recordsById,
-                    scalarLiteral,
-                    scalarUrlLiteral,
-                    namedRefs,
-                    getUsageTagLiterals,
-                    getNodeTypes,
+                    reader,
                     ensureNodeCategory: guardNodeCategory,
                     abort: abortValidation,
                     skippedPendingNodeIds,

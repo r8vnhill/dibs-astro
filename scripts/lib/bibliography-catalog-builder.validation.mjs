@@ -1,1 +1,1 @@
-export * from "./bibliography/validation.mjs";
+export * from "./bibliography/reader/validation.mjs";

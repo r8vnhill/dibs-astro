@@ -7,7 +7,7 @@
  * policy.
  */
 
-import { ALLOWED_USAGE_TAGS, DIBS, REFERENCE_TYPES } from "./constants.mjs";
+import { ALLOWED_USAGE_TAGS, DIBS, REFERENCE_TYPES } from "../shared/constants.mjs";
 import {
     asIdRef,
     dedupePreservingOrder,
@@ -15,7 +15,7 @@ import {
     getRequiredTags,
     LESSON_TYPES,
     validateRelationRef,
-} from "./graph.support.mjs";
+} from "./support.mjs";
 
 export const shouldSkipPendingRevisionUsage = (
     lessonId,
@@ -26,7 +26,6 @@ export const shouldSkipPendingRevisionUsage = (
     if (!isPendingRevision) return false;
     if (
         !context.recordsById
-        || !context.getNodeTypes
         || !context.skippedPendingNodeIds
     ) {
         throw new Error(
@@ -43,13 +42,11 @@ export const shouldSkipPendingRevisionUsage = (
         return true;
     }
 
-    const lessonTypes = context.getNodeTypes(
+    const lessonTypes = context.reader.getNodeTypes(
         context.recordsById.get(lessonId),
-        context.sourceLabel,
     );
-    const referenceTypes = context.getNodeTypes(
+    const referenceTypes = context.reader.getNodeTypes(
         context.recordsById.get(referenceId),
-        context.sourceLabel,
     );
 
     return (

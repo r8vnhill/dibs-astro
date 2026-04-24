@@ -15,7 +15,7 @@
  * JSON-LD shape assembly.
  */
 
-import { SCHEMA } from "./constants.mjs";
+import { SCHEMA } from "../shared/constants.mjs";
 import {
     asIdRef,
     asIdRefs,
@@ -26,23 +26,20 @@ import {
     validateRelationRef,
     validateRelationRefs,
     withOptional,
-} from "./graph.support.mjs";
+} from "./support.mjs";
 
 export const buildPersonNode = (record, context) => {
-    const givenName = context.scalarLiteral(
+    const givenName = context.reader.scalarLiteral(
         record,
         `${SCHEMA}givenName`,
-        context.sourceLabel,
     );
-    const familyName = context.scalarLiteral(
+    const familyName = context.reader.scalarLiteral(
         record,
         `${SCHEMA}familyName`,
-        context.sourceLabel,
     );
-    const url = context.scalarUrlLiteral(
+    const url = context.reader.scalarUrlLiteral(
         record,
         `${SCHEMA}url`,
-        context.sourceLabel,
     );
 
     return {
@@ -61,10 +58,9 @@ export const buildOrganizationNode = (record, context) => {
         (currentRecord) => `organization "${currentRecord.id}" is missing schema:name.`,
         context,
     );
-    const url = context.scalarUrlLiteral(
+    const url = context.reader.scalarUrlLiteral(
         record,
         `${SCHEMA}url`,
-        context.sourceLabel,
     );
 
     return {
@@ -82,10 +78,9 @@ export const buildCreativeWorkNode = (record, context) => {
         (currentRecord) => `work "${currentRecord.id}" is missing schema:name.`,
         context,
     );
-    const authors = context.namedRefs(
+    const authors = context.reader.namedRefs(
         record,
         `${SCHEMA}author`,
-        context.sourceLabel,
     );
     validateRelationRefs(
         authors,
@@ -94,10 +89,9 @@ export const buildCreativeWorkNode = (record, context) => {
         context,
     );
 
-    const publisherId = context.namedRefs(
+    const publisherId = context.reader.namedRefs(
         record,
         `${SCHEMA}publisher`,
-        context.sourceLabel,
     )[0];
     validateRelationRef(
         publisherId,
@@ -193,10 +187,9 @@ export const buildLearningResourceNode = (record, context) => {
         (currentRecord) => `lesson "${currentRecord.id}" is missing schema:name.`,
         context,
     );
-    const url = context.scalarUrlLiteral(
+    const url = context.reader.scalarUrlLiteral(
         record,
         `${SCHEMA}url`,
-        context.sourceLabel,
     );
 
     return {
