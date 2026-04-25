@@ -68,6 +68,25 @@ In practical terms:
 - application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
 - domain code should remain framework-free and I/O-free
 
+## Boundary checker
+
+Cycle 1 of the layer-separation hardening work added an executable boundary checker:
+
+```bash
+node scripts/check-layer-boundaries.mjs
+```
+
+The checker currently scans `.ts`, `.tsx`, and `.astro` files under `src/`. Astro support is intentionally narrow: only frontmatter imports are inspected, which covers the architectural imports used by layouts and components without treating the checker as an Astro compiler.
+
+The Cycle 1 checker enforces two initial rules:
+
+- `src/domain/**` must not import outward into `src/application/**`, `src/infrastructure/**`, or `src/presentation/**`, and must not import `astro`, `react`, or `zod`.
+- UI surfaces under `src/components/**`, `src/layouts/**`, and `src/pages/**` must not import `src/infrastructure/**` directly.
+
+The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`, normalizes relative paths, extracts imports and re-exports through `es-module-lexer` with a TSX fallback, and matches rules through `picomatch`.
+
+This command is not yet wired into `pnpm check`; that integration belongs to a later hardening cycle after the full layer rule matrix and exception policy are in place.
+
 ## Presentation boundaries
 
 The main presentation-facing contracts locked in during this phase are:
