@@ -1,14 +1,17 @@
 export { discoverSourceFiles } from "./layer-boundary-files.mjs";
 export { extractImports } from "./layer-boundary-imports.mjs";
+export { evaluateBoundaryRules } from "./layer-boundary-rule-evaluation.mjs";
 export { resolveImportTarget } from "./layer-boundary-paths.mjs";
 
 import { discoverSourceFiles } from "./layer-boundary-files.mjs";
 import { extractImports } from "./layer-boundary-imports.mjs";
+import { evaluateBoundaryRules } from "./layer-boundary-rule-evaluation.mjs";
 import { resolveImportTarget } from "./layer-boundary-paths.mjs";
-import { evaluateBoundaryRules, initialBoundaryRules } from "./layer-boundary-rules.mjs";
+import { initialBoundaryRules } from "./layer-boundary-rules.mjs";
 
 export async function checkLayerBoundaries(files, options = {}) {
     const rules = options.rules ?? initialBoundaryRules;
+    const exceptions = options.exceptions;
     const violations = [];
 
     for (const file of files) {
@@ -16,9 +19,17 @@ export async function checkLayerBoundaries(files, options = {}) {
 
         for (const importRecord of imports) {
             const resolvedTarget = resolveImportTarget(importRecord.target, file.path, options);
-            violations.push(
-                ...evaluateBoundaryRules(file.path, importRecord, resolvedTarget, rules),
+            const result = evaluateBoundaryRules(
+                file.path,
+                importRecord,
+                resolvedTarget,
+                rules,
+                exceptions,
             );
+
+            if (result.status === "violation") {
+                violations.push(result.violation);
+            }
         }
     }
 

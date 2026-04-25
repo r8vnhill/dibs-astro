@@ -83,7 +83,7 @@ The Cycle 1 checker enforces two initial rules:
 - `src/domain/**` must not import outward into `src/application/**`, `src/infrastructure/**`, or `src/presentation/**`, and must not import `astro`, `react`, or `zod`.
 - UI surfaces under `src/components/**`, `src/layouts/**`, and `src/pages/**` must not import `src/infrastructure/**` directly.
 
-The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`, normalizes relative paths, extracts imports and re-exports through `es-module-lexer` with a TSX fallback, and matches rules through `picomatch`.
+The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`, normalizes relative paths, extracts imports and re-exports through `es-module-lexer` with a TSX fallback, and evaluates imports against the classification-driven Cycle 2 rule matrix.
 
 This command is not yet wired into `pnpm check`; that integration belongs to a later hardening cycle after the full layer rule matrix and exception policy are in place.
 
@@ -107,6 +107,36 @@ node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-class
 ```
 
 As of 2026-04-25, that gate passes with 4 checker-specific test files and 75 tests.
+
+Cycle 2 Step 3 added the classification-shaped rule matrix in `scripts/lib/layer-boundary-rules.mjs`.
+The canonical `boundaryRules` export now declares the five planned source-layer groups: domain, application,
+infrastructure, presentation adapter, and UI. `allowedExceptions` exists but starts empty.
+
+The Step 3 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-classification.test.ts
+```
+
+As of 2026-04-25, that gate passes with 2 checker-specific test files and 65 tests. The checker compatibility safety
+gate also passes:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+Cycle 2 Step 4 moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and switched
+`initialBoundaryRules` to the Cycle 2 `boundaryRules` matrix. Evaluation now classifies source paths and imports before
+checking exact exceptions, forbidden packages, forbidden targets, and allowed-target lists. `checkLayerBoundaries(...)`
+still returns only violations, and `formatViolations(...)` remains a formatter for public violation payloads only.
+
+The Step 4 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-rule-evaluation.test.ts scripts/__tests__/layer-boundary-classification.test.ts scripts/__tests__/layer-boundary-checker.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
+```
+
+As of 2026-04-25, that gate passes with 6 checker-specific test files and 110 tests.
 
 ## Presentation boundaries
 

@@ -78,10 +78,34 @@ describe("checkLayerBoundaries", () => {
             sourceFile: "src/components/navigation/Nav.astro",
             importTarget: "$infrastructure/adapters/LessonCatalogAdapter",
             resolvedTarget: "src/infrastructure/adapters/LessonCatalogAdapter",
-            ruleId: "ui-must-not-import-infrastructure",
+            ruleId: "ui-boundary",
             message: "UI surfaces must not import infrastructure directly.",
-            suggestion: "Expose this use case through src/presentation/adapters.",
+            suggestion:
+                "Route infrastructure access through presentation adapters or application-facing services.",
+            importKind: "value",
+            sourceLayer: "ui",
+            target: "infrastructure",
+            reason: "forbidden-target",
         });
+    });
+
+    test("omits imports skipped by exact exceptions", async () => {
+        const violations = await checkLayerBoundaries(
+            [{
+                path: "src/domain/entity.ts",
+                text: "import { z } from \"zod\";",
+            }],
+            {
+                ...cleanOptions,
+                exceptions: [{
+                    sourcePath: "src/domain/entity.ts",
+                    importTarget: "zod",
+                    reason: "Temporary migration exception",
+                }],
+            },
+        );
+
+        expect(violations).toEqual([]);
     });
 });
 
@@ -97,7 +121,7 @@ describe("formatViolations", () => {
         );
 
         expect(formatViolations(violations)).toContain(
-            "Layer boundary violation: ui-must-not-import-infrastructure",
+            "Layer boundary violation: ui-boundary",
         );
         expect(formatViolations(violations)).toContain("src/components/navigation/Nav.astro");
         expect(formatViolations(violations)).toContain(

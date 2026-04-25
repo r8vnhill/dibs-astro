@@ -707,7 +707,40 @@ classifyImport(importRecord): ImportClassification
 
 Keep each helper small and deterministic. These should be easy to test without filesystem access.
 
-### Step 3: Replace Starter Rules with Rule Groups
+### ~~Step 3: Replace Starter Rules with Rule Groups~~
+
+Status: completed on 2026-04-25.
+
+Implemented the classification-shaped Cycle 2 rule matrix as canonical rule data:
+
+```text
+scripts/lib/layer-boundary-rules.mjs
+scripts/__tests__/layer-boundary-rules.test.ts
+```
+
+The module now exports named source-layer rules, the ordered `boundaryRules` list, and an empty `allowedExceptions`
+list. Runtime checker behaviour remains on the legacy glob-shaped starter rules through `initialBoundaryRules =
+legacyInitialBoundaryRules`; Step 4 is the explicit migration point that should switch `initialBoundaryRules` to
+`boundaryRules` after generic evaluation understands source-layer and target-category vocabulary.
+
+Observed focused gate:
+
+```text
+scripts/__tests__/layer-boundary-rules.test.ts: 20 tests passing
+scripts/__tests__/layer-boundary-classification.test.ts: 45 tests passing
+
+Test files: 2 passed
+Tests: 65 passed
+```
+
+Observed checker compatibility safety gate:
+
+```text
+scripts/__tests__/layer-boundary-checker.test.ts: 12 tests passing
+
+Test files: 1 passed
+Tests: 12 passed
+```
 
 Replace `initialBoundaryRules` with a declarative matrix.
 
@@ -737,7 +770,36 @@ Use stable rule ids, for example:
 
 Stable ids make tests and future reports easier to maintain.
 
-### Step 4: Make Rule Evaluation Generic
+### ~~Step 4: Make Rule Evaluation Generic~~
+
+Status: completed on 2026-04-25.
+
+Implemented classification-driven evaluation in:
+
+```text
+scripts/lib/layer-boundary-rule-evaluation.mjs
+scripts/lib/layer-boundary-rules.mjs
+scripts/lib/layer-boundary-checker.mjs
+scripts/__tests__/layer-boundary-rule-evaluation.test.ts
+```
+
+`initialBoundaryRules` now points to `boundaryRules`. `evaluateBoundaryRules(...)` returns an internal status object
+for allowed, skipped-by-exception, or violation results. `checkLayerBoundaries(...)` still returns only public
+violations, and `formatViolations(...)` remains unchanged.
+
+Observed focused gate:
+
+```text
+scripts/__tests__/layer-boundary-rules.test.ts: 20 tests passing
+scripts/__tests__/layer-boundary-rule-evaluation.test.ts: 14 tests passing
+scripts/__tests__/layer-boundary-classification.test.ts: 45 tests passing
+scripts/__tests__/layer-boundary-checker.test.ts: 13 tests passing
+scripts/__tests__/layer-boundary-paths.test.ts: 8 tests passing
+scripts/__tests__/layer-boundary-imports.test.ts: 10 tests passing
+
+Test files: 6 passed
+Tests: 110 passed
+```
 
 Refactor `evaluateBoundaryRules(...)` so it does not contain layer-specific branching.
 
