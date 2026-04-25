@@ -87,6 +87,14 @@ The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`
 
 This command is not yet wired into `pnpm check`; that integration belongs to a later hardening cycle after the full layer rule matrix and exception policy are in place.
 
+Cycle 2 Step 1 locked the existing checker behaviour with this focused gate:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+As of 2026-04-25, that baseline passes with 3 checker-specific test files and 30 tests. Use this direct Vitest invocation for Cycle 2 checker work until later workflow integration adds a package script.
+
 ## Presentation boundaries
 
 The main presentation-facing contracts locked in during this phase are:
