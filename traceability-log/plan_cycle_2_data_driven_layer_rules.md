@@ -8,20 +8,20 @@ This cycle should make the checker capable of representing the intended layered 
 
 ## Goals
 
-* Encode the current architecture policy as data, not branching logic.
-* Classify both project imports and package imports before rule evaluation.
-* Support explicit, centrally declared exceptions.
-* Preserve existing CLI/reporting contracts.
-* Keep tests fixture-based and independent from the real repository state.
+- Encode the current architecture policy as data, not branching logic.
+- Classify both project imports and package imports before rule evaluation.
+- Support explicit, centrally declared exceptions.
+- Preserve existing CLI/reporting contracts.
+- Keep tests fixture-based and independent from the real repository state.
 
 ## Non-Goals
 
-* No real repository architecture audit.
-* No import refactors.
-* No package script wiring.
-* No Cycle 4 UI hardening.
-* No broad UI-to-domain/application restrictions yet.
-* No production runtime dependency.
+- No real repository architecture audit.
+- No import refactors.
+- No package script wiring.
+- No Cycle 4 UI hardening.
+- No broad UI-to-domain/application restrictions yet.
+- No production runtime dependency.
 
 ---
 
@@ -40,11 +40,11 @@ scripts/lib/
 
 If Cycle 1 already has fewer files, keep the existing structure but preserve these conceptual seams:
 
-* **path/import extraction**: resolves raw imports to project paths or package names.
-* **classification**: maps resolved imports to architecture targets.
-* **rule matrix**: declares source policies and explicit exceptions.
-* **evaluation**: applies generic rules to classified imports.
-* **formatting**: renders violations without owning rule logic.
+- **path/import extraction**: resolves raw imports to project paths or package names.
+- **classification**: maps resolved imports to architecture targets.
+- **rule matrix**: declares source policies and explicit exceptions.
+- **evaluation**: applies generic rules to classified imports.
+- **formatting**: renders violations without owning rule logic.
 
 ---
 
@@ -54,30 +54,30 @@ Introduce a small normalized target vocabulary.
 
 ```ts
 type ArchitectureTarget =
-  | "domain"
-  | "application"
-  | "infrastructure"
-  | "presentation-adapter"
-  | "presentation"
-  | "ui"
-  | "generated-data"
-  | "data"
-  | "utils"
-  | "assets"
-  | "styles"
-  | "external-package"
-  | "unknown";
+    | "domain"
+    | "application"
+    | "infrastructure"
+    | "presentation-adapter"
+    | "presentation"
+    | "ui"
+    | "generated-data"
+    | "data"
+    | "utils"
+    | "assets"
+    | "styles"
+    | "external-package"
+    | "unknown";
 ```
 
 Classifications should distinguish **what was imported** from **how it was imported**.
 
 ```ts
 type ImportClassification = {
-  importPath: string;
-  importKind: "value" | "type";
-  resolvedPath?: string;
-  packageName?: string;
-  target: ArchitectureTarget;
+    importPath: string;
+    importKind: "value" | "type";
+    resolvedPath?: string;
+    packageName?: string;
+    target: ArchitectureTarget;
 };
 ```
 
@@ -91,14 +91,14 @@ Add source classification before rule evaluation.
 
 ```ts
 type SourceClassification = {
-  path: string;
-  layer:
-    | "domain"
-    | "application"
-    | "infrastructure"
-    | "presentation-adapter"
-    | "ui"
-    | "unknown";
+    path: string;
+    layer:
+        | "domain"
+        | "application"
+        | "infrastructure"
+        | "presentation-adapter"
+        | "ui"
+        | "unknown";
 };
 ```
 
@@ -143,8 +143,8 @@ Package imports should be classified separately:
 
 ```ts
 type PackageClassification = {
-  target: "external-package";
-  packageName: string;
+    target: "external-package";
+    packageName: string;
 };
 ```
 
@@ -168,13 +168,13 @@ Replace `initialBoundaryRules` with stable rule groups.
 
 ```ts
 type BoundaryRule = {
-  id: string;
-  source: SourceLayer;
-  allowedTargets?: ArchitectureTarget[];
-  forbiddenTargets?: ArchitectureTarget[];
-  forbiddenPackages?: string[];
-  message: string;
-  suggestion: string;
+    id: string;
+    source: SourceLayer;
+    allowedTargets?: ArchitectureTarget[];
+    forbiddenTargets?: ArchitectureTarget[];
+    forbiddenPackages?: string[];
+    message: string;
+    suggestion: string;
 };
 ```
 
@@ -201,27 +201,27 @@ Source: `src/domain/**`
 Allowed targets:
 
 ```ts
-["domain"]
+["domain"];
 ```
 
 Forbidden targets:
 
 ```ts
 [
-  "application",
-  "infrastructure",
-  "presentation-adapter",
-  "presentation",
-  "ui",
-  "generated-data",
-  "data",
-]
+    "application",
+    "infrastructure",
+    "presentation-adapter",
+    "presentation",
+    "ui",
+    "generated-data",
+    "data",
+];
 ```
 
 Forbidden packages:
 
 ```ts
-["astro", "react", "zod"]
+["astro", "react", "zod"];
 ```
 
 Message:
@@ -241,26 +241,26 @@ Source: `src/application/**`
 Allowed targets:
 
 ```ts
-["domain", "application"]
+["domain", "application"];
 ```
 
 Forbidden targets:
 
 ```ts
 [
-  "infrastructure",
-  "presentation-adapter",
-  "presentation",
-  "ui",
-  "generated-data",
-  "data",
-]
+    "infrastructure",
+    "presentation-adapter",
+    "presentation",
+    "ui",
+    "generated-data",
+    "data",
+];
 ```
 
 Forbidden packages:
 
 ```ts
-["astro", "react", "zod"]
+["astro", "react", "zod"];
 ```
 
 Message:
@@ -281,29 +281,29 @@ Allowed targets:
 
 ```ts
 [
-  "domain",
-  "application",
-  "infrastructure",
-  "data",
-  "generated-data",
-  "utils",
-]
+    "domain",
+    "application",
+    "infrastructure",
+    "data",
+    "generated-data",
+    "utils",
+];
 ```
 
 Forbidden targets:
 
 ```ts
 [
-  "presentation-adapter",
-  "presentation",
-  "ui",
-]
+    "presentation-adapter",
+    "presentation",
+    "ui",
+];
 ```
 
 Forbidden packages:
 
 ```ts
-[]
+[];
 ```
 
 Message:
@@ -324,27 +324,27 @@ Allowed targets:
 
 ```ts
 [
-  "domain",
-  "application",
-  "infrastructure",
-  "presentation-adapter",
-  "presentation",
-  "utils",
-]
+    "domain",
+    "application",
+    "infrastructure",
+    "presentation-adapter",
+    "presentation",
+    "utils",
+];
 ```
 
 Forbidden targets:
 
 ```ts
 [
-  "ui",
-]
+    "ui",
+];
 ```
 
 Forbidden packages:
 
 ```ts
-[]
+[];
 ```
 
 Message:
@@ -363,39 +363,39 @@ Sources:
 
 ```ts
 [
-  "src/components/**",
-  "src/layouts/**",
-  "src/pages/**",
-]
+    "src/components/**",
+    "src/layouts/**",
+    "src/pages/**",
+];
 ```
 
 Allowed targets:
 
 ```ts
 [
-  "presentation-adapter",
-  "presentation",
-  "ui",
-  "assets",
-  "styles",
-  "utils",
-  "domain",
-  "application",
-]
+    "presentation-adapter",
+    "presentation",
+    "ui",
+    "assets",
+    "styles",
+    "utils",
+    "domain",
+    "application",
+];
 ```
 
 Forbidden targets:
 
 ```ts
 [
-  "infrastructure",
-]
+    "infrastructure",
+];
 ```
 
 Forbidden packages:
 
 ```ts
-[]
+[];
 ```
 
 Message:
@@ -416,11 +416,11 @@ Add a central exception list near the rule matrix.
 
 ```ts
 type BoundaryException = {
-  id: string;
-  source: string;
-  target: string;
-  reason: string;
-  note?: string;
+    id: string;
+    source: string;
+    target: string;
+    reason: string;
+    note?: string;
 };
 ```
 
@@ -428,39 +428,40 @@ Recommended shape:
 
 ```ts
 const allowedExceptions = [
-  {
-    id: "example-explicit-transition-only",
-    source: "src/application/example.ts",
-    target: "src/data/example.generated.jsonld",
-    reason: "Temporary transition while bibliography data access is moved behind an application port.",
-    note: "Remove once the infrastructure adapter owns this import.",
-  },
+    {
+        id: "example-explicit-transition-only",
+        source: "src/application/example.ts",
+        target: "src/data/example.generated.jsonld",
+        reason:
+            "Temporary transition while bibliography data access is moved behind an application port.",
+        note: "Remove once the infrastructure adapter owns this import.",
+    },
 ];
 ```
 
 Exception rules:
 
-* Exceptions must be exact by default.
-* Do not support broad globs in Cycle 2 unless there is already a real need.
-* Every exception must include a human-readable `reason`.
-* Skipped violations should carry exception metadata internally.
-* `formatViolations(...)` should not print skipped violations.
-* Tests should assert that exceptions suppress only the declared source/target pair.
+- Exceptions must be exact by default.
+- Do not support broad globs in Cycle 2 unless there is already a real need.
+- Every exception must include a human-readable `reason`.
+- Skipped violations should carry exception metadata internally.
+- `formatViolations(...)` should not print skipped violations.
+- Tests should assert that exceptions suppress only the declared source/target pair.
 
 Suggested internal evaluation result:
 
 ```ts
 type BoundaryEvaluationResult =
-  | {
-      status: "allowed";
+    | {
+        status: "allowed";
     }
-  | {
-      status: "skipped-by-exception";
-      exception: BoundaryException;
+    | {
+        status: "skipped-by-exception";
+        exception: BoundaryException;
     }
-  | {
-      status: "violation";
-      violation: BoundaryViolation;
+    | {
+        status: "violation";
+        violation: BoundaryViolation;
     };
 ```
 
@@ -474,27 +475,27 @@ Keep the current report fields, but make the internal violation explicit enough 
 
 ```ts
 type BoundaryViolation = {
-  sourcePath: string;
-  importPath: string;
-  importKind: "value" | "type";
-  resolvedTarget?: string;
-  packageName?: string;
-  sourceLayer: SourceLayer;
-  target: ArchitectureTarget;
-  ruleId: string;
-  message: string;
-  suggestion: string;
+    sourcePath: string;
+    importPath: string;
+    importKind: "value" | "type";
+    resolvedTarget?: string;
+    packageName?: string;
+    sourceLayer: SourceLayer;
+    target: ArchitectureTarget;
+    ruleId: string;
+    message: string;
+    suggestion: string;
 };
 ```
 
 `formatViolations(...)` should continue reporting:
 
-* source file
-* raw import target
-* resolved target, when available
-* rule id
-* message
-* suggested fix
+- source file
+- raw import target
+- resolved target, when available
+- rule id
+- message
+- suggested fix
 
 ---
 
@@ -516,49 +517,49 @@ Create one table per source layer:
 
 ```ts
 const ruleCases = [
-  {
-    name: "domain may import domain",
-    sourcePath: "src/domain/model/Lesson.ts",
-    importPath: "$domain/value/LessonId",
-    resolvedPath: "src/domain/value/LessonId.ts",
-    expected: "allowed",
-  },
-  {
-    name: "domain must not import application",
-    sourcePath: "src/domain/model/Lesson.ts",
-    importPath: "$application/ports",
-    resolvedPath: "src/application/ports/index.ts",
-    expected: "violation",
-    ruleId: "domain-boundary",
-  },
+    {
+        name: "domain may import domain",
+        sourcePath: "src/domain/model/Lesson.ts",
+        importPath: "$domain/value/LessonId",
+        resolvedPath: "src/domain/value/LessonId.ts",
+        expected: "allowed",
+    },
+    {
+        name: "domain must not import application",
+        sourcePath: "src/domain/model/Lesson.ts",
+        importPath: "$application/ports",
+        resolvedPath: "src/application/ports/index.ts",
+        expected: "violation",
+        ruleId: "domain-boundary",
+    },
 ];
 ```
 
 Cover at minimum:
 
-* one passing fixture per source layer
-* one failing fixture per source layer
-* every forbidden direction in the Cycle 2 matrix
-* every allowed direction in the Cycle 2 matrix
+- one passing fixture per source layer
+- one failing fixture per source layer
+- every forbidden direction in the Cycle 2 matrix
+- every allowed direction in the Cycle 2 matrix
 
 ### Package-Level Tests
 
 Cover forbidden package imports from domain and application:
 
-* `astro`
-* `react`
-* `react/jsx-runtime`
-* `zod`
-* `zod/v4`
+- `astro`
+- `react`
+- `react/jsx-runtime`
+- `zod`
+- `zod/v4`
 
 Assert that:
 
-* domain → `astro` fails
-* domain → `react` fails
-* domain → `zod` fails
-* application → `astro` fails
-* application → `react` fails
-* application → `zod` fails
+- domain → `astro` fails
+- domain → `react` fails
+- domain → `zod` fails
+- application → `astro` fails
+- application → `react` fails
+- application → `zod` fails
 
 Do not forbid these packages globally unless a rule says so.
 
@@ -566,54 +567,54 @@ Do not forbid these packages globally unless a rule says so.
 
 Cover:
 
-* domain → generated JSON fails
-* domain → generated JSON-LD fails
-* application → generated JSON fails
-* application → generated JSON-LD fails
-* infrastructure → generated JSON passes
-* infrastructure → generated JSON-LD passes
+- domain → generated JSON fails
+- domain → generated JSON-LD fails
+- application → generated JSON fails
+- application → generated JSON-LD fails
+- infrastructure → generated JSON passes
+- infrastructure → generated JSON-LD passes
 
 ### Infrastructure Tests
 
 Cover:
 
-* infrastructure → domain passes
-* infrastructure → application passes
-* infrastructure → generated data passes
-* infrastructure → UI fails
-* infrastructure → presentation adapter fails
+- infrastructure → domain passes
+- infrastructure → application passes
+- infrastructure → generated data passes
+- infrastructure → UI fails
+- infrastructure → presentation adapter fails
 
 ### Presentation Adapter Tests
 
 Cover:
 
-* presentation adapter → application passes
-* presentation adapter → infrastructure passes
-* presentation adapter → domain passes
-* presentation adapter → presentation-local helper passes
-* presentation adapter → component fails
-* presentation adapter → layout fails
-* presentation adapter → page fails
+- presentation adapter → application passes
+- presentation adapter → infrastructure passes
+- presentation adapter → domain passes
+- presentation adapter → presentation-local helper passes
+- presentation adapter → component fails
+- presentation adapter → layout fails
+- presentation adapter → page fails
 
 ### UI Tests
 
 Cover:
 
-* UI → presentation adapter passes
-* UI → UI helper/component passes
-* UI → styles passes
-* UI → assets passes
-* UI → domain passes in Cycle 2
-* UI → application passes in Cycle 2
-* UI → infrastructure fails
+- UI → presentation adapter passes
+- UI → UI helper/component passes
+- UI → styles passes
+- UI → assets passes
+- UI → domain passes in Cycle 2
+- UI → application passes in Cycle 2
+- UI → infrastructure fails
 
 ### Type-Only Import Tests
 
 Add explicit cases proving type-only imports are still checked:
 
-* domain type-only import from application fails
-* application type-only import from infrastructure fails
-* UI type-only import from infrastructure fails
+- domain type-only import from application fails
+- application type-only import from infrastructure fails
+- UI type-only import from infrastructure fails
 
 This prevents a common loophole where architectural dependency checks accidentally ignore type imports.
 
@@ -621,23 +622,23 @@ This prevents a common loophole where architectural dependency checks accidental
 
 Cover:
 
-* exact declared exception suppresses a violation
-* same source with different target still fails
-* different source with same target still fails
-* exception metadata is returned by lower-level evaluation
-* `checkLayerBoundaries(...)` omits skipped violations from the public violation list
+- exact declared exception suppresses a violation
+- same source with different target still fails
+- different source with same target still fails
+- exception metadata is returned by lower-level evaluation
+- `checkLayerBoundaries(...)` omits skipped violations from the public violation list
 
 ### Classification Tests
 
 Either extend `layer-boundary-paths.test.ts` or add focused tests in the new suite for:
 
-* alias imports
-* relative imports
-* package imports
-* package subpath normalization
-* generated JSON/JSON-LD target classification
-* unknown external packages
-* unknown project paths
+- alias imports
+- relative imports
+- package imports
+- package subpath normalization
+- generated JSON/JSON-LD target classification
+- unknown external packages
+- unknown project paths
 
 ---
 
@@ -666,7 +667,32 @@ Tests: 30 passed
 
 No rule-matrix work should start from a failing checker-specific baseline.
 
-### Step 2: Add Classification Helpers
+### ~~Step 2: Add Classification Helpers~~
+
+Status: completed on 2026-04-25.
+
+Implemented a pure additive classification module:
+
+```text
+scripts/lib/layer-boundary-classification.mjs
+scripts/__tests__/layer-boundary-classification.test.ts
+```
+
+The helper layer classifies source paths, resolved targets, package imports, and import records without changing
+`checkLayerBoundaries(...)`, `evaluateBoundaryRules(...)`, `formatViolations(...)`, `initialBoundaryRules`, CLI output,
+or exit-code behaviour.
+
+Observed focused gate:
+
+```text
+scripts/__tests__/layer-boundary-classification.test.ts: 45 tests passing
+scripts/__tests__/layer-boundary-paths.test.ts: 8 tests passing
+scripts/__tests__/layer-boundary-imports.test.ts: 10 tests passing
+scripts/__tests__/layer-boundary-checker.test.ts: 12 tests passing
+
+Test files: 4 passed
+Tests: 75 passed
+```
 
 Add pure helpers for source and target classification.
 
@@ -689,11 +715,11 @@ Suggested exports:
 
 ```ts
 export const boundaryRules = [
-  domainBoundaryRule,
-  applicationBoundaryRule,
-  infrastructureBoundaryRule,
-  presentationAdapterBoundaryRule,
-  uiBoundaryRule,
+    domainBoundaryRule,
+    applicationBoundaryRule,
+    infrastructureBoundaryRule,
+    presentationAdapterBoundaryRule,
+    uiBoundaryRule,
 ];
 
 export const allowedExceptions = [];
@@ -702,11 +728,11 @@ export const allowedExceptions = [];
 Use stable rule ids, for example:
 
 ```ts
-"domain-boundary"
-"application-boundary"
-"infrastructure-boundary"
-"presentation-adapter-boundary"
-"ui-boundary"
+"domain-boundary";
+"application-boundary";
+"infrastructure-boundary";
+"presentation-adapter-boundary";
+"ui-boundary";
 ```
 
 Stable ids make tests and future reports easier to maintain.
@@ -764,27 +790,27 @@ pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests
 
 ## Acceptance Criteria
 
-* The Cycle 2 layer matrix is encoded in one readable rules/exception module.
-* Rule evaluation is data-driven and does not contain layer-specific branching.
-* Source classification and target/package classification are independently testable.
-* Each forbidden direction in the Cycle 2 matrix has a failing test.
-* Each allowed direction in the Cycle 2 matrix has a passing test.
-* Package restrictions for `astro`, `react`, and `zod` are enforced for domain/application.
-* Generated JSON and JSON-LD imports are forbidden from domain/application.
-* Infrastructure can import application contracts and generated data.
-* Presentation adapters cannot import UI surfaces.
-* UI surfaces cannot import infrastructure directly.
-* Type-only imports are still evaluated as architecture dependencies.
-* Explicit exceptions suppress only their exact declared source/target pair.
-* Existing Cycle 1 path and import extraction tests still pass.
-* The focused test command passes:
+- The Cycle 2 layer matrix is encoded in one readable rules/exception module.
+- Rule evaluation is data-driven and does not contain layer-specific branching.
+- Source classification and target/package classification are independently testable.
+- Each forbidden direction in the Cycle 2 matrix has a failing test.
+- Each allowed direction in the Cycle 2 matrix has a passing test.
+- Package restrictions for `astro`, `react`, and `zod` are enforced for domain/application.
+- Generated JSON and JSON-LD imports are forbidden from domain/application.
+- Infrastructure can import application contracts and generated data.
+- Presentation adapters cannot import UI surfaces.
+- UI surfaces cannot import infrastructure directly.
+- Type-only imports are still evaluated as architecture dependencies.
+- Explicit exceptions suppress only their exact declared source/target pair.
+- Existing Cycle 1 path and import extraction tests still pass.
+- The focused test command passes:
 
 ```sh
 pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
 ```
 
-* No production runtime dependency is added.
-* No real repository audit, allowlist expansion, package script wiring, or import refactor is performed.
+- No production runtime dependency is added.
+- No real repository audit, allowlist expansion, package script wiring, or import refactor is performed.
 
 ---
 
@@ -826,8 +852,8 @@ Guardrail: unknown external packages should not fail unless explicitly listed in
 
 ## Final Assumptions
 
-* Cycle 1 import extraction and path resolution already exist.
-* `docs/architecture/layer-separation.md` remains the source of truth for architecture intent.
-* Generated JSON/JSON-LD imports count as infrastructure/data-source access.
-* UI-to-domain/application coupling is intentionally left mostly observational until Cycle 4.
-* Tests can use fixture import records directly and should not need real repository files.
+- Cycle 1 import extraction and path resolution already exist.
+- `docs/architecture/layer-separation.md` remains the source of truth for architecture intent.
+- Generated JSON/JSON-LD imports count as infrastructure/data-source access.
+- UI-to-domain/application coupling is intentionally left mostly observational until Cycle 4.
+- Tests can use fixture import records directly and should not need real repository files.

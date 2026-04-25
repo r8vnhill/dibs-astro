@@ -95,6 +95,19 @@ node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-paths
 
 As of 2026-04-25, that baseline passes with 3 checker-specific test files and 30 tests. Use this direct Vitest invocation for Cycle 2 checker work until later workflow integration adds a package script.
 
+Cycle 2 Step 2 added pure classification helpers in `scripts/lib/layer-boundary-classification.mjs`.
+They classify source paths, resolved project targets, bare package imports, and import records into the normalized layer
+vocabulary needed by the future rule matrix. This step is intentionally additive: the checker still enforces only the
+Cycle 1 starter rules until the later rule-matrix and evaluator steps wire the classifiers into rule evaluation.
+
+The Step 2 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-classification.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+As of 2026-04-25, that gate passes with 4 checker-specific test files and 75 tests.
+
 ## Presentation boundaries
 
 The main presentation-facing contracts locked in during this phase are:
