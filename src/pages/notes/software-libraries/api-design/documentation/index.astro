@@ -2,10 +2,9 @@
 import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
 import { Danger, Definition, Info, More, Tip, Warning } from "~/components/ui/callouts";
-import { KotlinBlock, KotlinInline } from "~/components/ui/code";
+import { CodeBlock, KotlinBlock, KotlinInline } from "~/components/ui/code";
 import { B, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -304,71 +303,94 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Tip>
     </NotesSection>
 
-    <NotesSection id="h2-examples-tests">
+    <NotesSection id="h2-executable-examples">
         <Heading
             headingLevel="h2" Icon={icons.TestTube}
             slot="heading"
         >
-            Ejemplos, tests y documentación ejecutable
+            Ejemplos ejecutables
         </Heading>
 
         <Definition headingLevel="h3" icon={icons.NumberFour}>
-            <span slot="title">Los ejemplos enseñan intención</span>
+            <span slot="title">Una biblioteca debería incluir ejemplos que se puedan ejecutar</span>
 
             <P>
-                Un test puede probar que un comportamiento existe; un ejemplo explica por qué alguien lo usaría y qué
-                forma debería tener un uso normal de la API.
+                Un ejemplo no debería ser solo un fragmento decorativo en la documentación. Cuando el ejemplo puede
+                compilarse, ejecutarse o verificarse automáticamente, también protege la promesa pública de la API.
             </P>
         </Definition>
 
         <P>
-            Muchas personas leen ejemplos antes que referencia. Copian un fragmento, lo adaptan y luego vuelven a la
-            explicación cuando algo no calza. Por eso los ejemplos no son decoración: forman parte de la experiencia de
-            consumo de la biblioteca.
+            Muchas personas aprenden una biblioteca copiando un ejemplo mínimo, adaptándolo a su caso y luego revisando
+            la referencia cuando necesitan más detalle. Por eso los ejemplos forman parte de la experiencia de consumo
+            de la biblioteca: muestran el camino esperado antes de explicar todas las reglas.
         </P>
 
-        <KotlinBlock
-            code={`
-                val version = parseVersion("1.4.2")
+        <P>
+            Una biblioteca puede ofrecer ejemplos ejecutables de distintas formas. No todas sirven para lo mismo, pero
+            todas reducen la distancia entre lo que la documentación dice y lo que el código realmente permite.
+        </P>
 
-                println(version.major) // 1
-                println(version.minor) // 4
-                println(version.patch) // 2
+        <Info headingLevel="h3">
+            <span slot="title">Formas comunes de incluir ejemplos ejecutables</span>
+
+            <List>
+                <ListItem icon={icons.Package}>
+                    <B>Un módulo o proyecto de ejemplos</B>, separado del código de producción, que muestre
+                    casos de uso completos de la API.
+                </ListItem>
+                <ListItem icon={icons.CodeBlock}>
+                    <B>Documentación ejecutable</B>, donde los fragmentos publicados se compilan o se ejecutan
+                    como parte de la verificación del proyecto.
+                </ListItem>
+                <ListItem icon={icons.Notebook}>
+                    <B>Notebooks</B>, útiles cuando el ejemplo necesita exploración interactiva, visualización
+                    o una explicación paso a paso.
+                </ListItem>
+            </List>
+        </Info>
+
+        <CodeBlock
+            icon={icons.Package}
+            code={`
+                root
+                ├── library
+                │   └── src
+                │       └── main
+                │           └── kotlin
+                ├── examples
+                │   └── basic-usage
+                │       └── src
+                │           └── main
+                │               └── kotlin
+                └── docs
+                    └── notebooks
             `}
         >
-            <span slot="title">Un ejemplo muestra la forma esperada de uso</span>
+            <span slot="title">Los ejemplos deberían vivir fuera del código de producción</span>
             <span slot="footer">
-                El fragmento comunica formato de entrada, objeto resultante y propiedades relevantes sin explicar
-                todavía toda la implementación.
+                Separar los ejemplos evita mezclar responsabilidades: la biblioteca define la API; los ejemplos muestran
+                cómo consumirla desde fuera.
             </span>
-        </KotlinBlock>
+        </CodeBlock>
 
         <KotlinBlock
             code={`
-                test("parses a complete semantic version") {
+                fun main() {
                     val version = parseVersion("1.4.2")
 
-                    version.major shouldBe 1
-                    version.minor shouldBe 4
-                    version.patch shouldBe 2
+                    println(version.major) // 1
+                    println(version.minor) // 4
+                    println(version.patch) // 2
                 }
             `}
         >
-            <span slot="title">El test protege el ejemplo contra deriva</span>
+            <span slot="title">Un ejemplo ejecutable muestra un uso completo</span>
             <span slot="footer">
-                Si la API cambia, el test detecta que el ejemplo ya no representa el contrato publicado.
+                El fragmento no solo presenta la función: muestra una entrada válida, el objeto resultante y una forma
+                observable de usar el resultado.
             </span>
         </KotlinBlock>
-
-        <Warning headingLevel="h3">
-            <span slot="title">Más ejemplos no siempre significan mejor documentación</span>
-
-            <P>
-                Los ejemplos deben cubrir casos comunes y representativos. Demasiadas variaciones pueden ocultar el
-                camino principal, hacer más difícil escanear la página y aumentar el costo de mantenimiento. La
-                documentación útil elige ejemplos con intención.
-            </P>
-        </Warning>
     </NotesSection>
 
     <NotesSection id="h2-maintainable-documentation">

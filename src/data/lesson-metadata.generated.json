@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-26T13:24:00.092Z",
+  "generatedAt": "2026-04-26T17:52:08.071Z",
   "totalLessons": 48,
   "changesLimit": 5,
   "entries": {
@@ -1478,7 +1478,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-04-26",
+      "changes": [
+        {
+          "hash": "d579abd39a37a365cc4d45394bd9a069d37cd426",
+          "date": "2026-04-26",
+          "author": "r8vnhill",
+          "subject": "📘 docs: Add API documentation lesson on design, behavior, and guidelines"
+        }
+      ]
     },
     "/notes/software-libraries/api-design/evolution/": {
       "sourceFile": "src/pages/notes/software-libraries/api-design/evolution/index.astro",
