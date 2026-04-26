@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-26T17:52:08.071Z",
+  "generatedAt": "2026-04-26T22:23:59.950Z",
   "totalLessons": 48,
   "changesLimit": 5,
   "entries": {
@@ -1480,6 +1480,12 @@
       ],
       "lastModified": "2026-04-26",
       "changes": [
+        {
+          "hash": "80c795afbe74f07973f6fea6b9aaf08284ff7c90",
+          "date": "2026-04-26",
+          "author": "r8vnhill",
+          "subject": "📘 lesson(api-design/docs): Enhance examples section with executable guidance"
+        },
         {
           "hash": "d579abd39a37a365cc4d45394bd9a069d37cd426",
           "date": "2026-04-26",

@@ -3,7 +3,7 @@ import * as icons from "~/assets/img/icons";
 import { Enquote, Heading, P } from "~/components/semantics";
 import { Danger, Definition, Info, More, Tip, Warning } from "~/components/ui/callouts";
 import { CodeBlock, KotlinBlock, KotlinInline } from "~/components/ui/code";
-import { B, Mono } from "~/components/ui/font";
+import { B, Dash, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -336,16 +336,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.Package}>
-                    <B>Un módulo o proyecto de ejemplos</B>, separado del código de producción, que muestre
-                    casos de uso completos de la API.
+                    <B>Un módulo o proyecto de ejemplos</B>, separado del código de producción, que muestre casos de uso
+                    completos de la API.
                 </ListItem>
                 <ListItem icon={icons.CodeBlock}>
-                    <B>Documentación ejecutable</B>, donde los fragmentos publicados se compilan o se ejecutan
-                    como parte de la verificación del proyecto.
+                    <B>Documentación ejecutable</B>, donde los fragmentos publicados se compilan o se ejecutan como
+                    parte de la verificación del proyecto.
                 </ListItem>
                 <ListItem icon={icons.Notebook}>
-                    <B>Notebooks</B>, útiles cuando el ejemplo necesita exploración interactiva, visualización
-                    o una explicación paso a paso.
+                    <B>Notebooks</B>, útiles cuando el ejemplo necesita exploración interactiva, visualización o una
+                    explicación paso a paso.
                 </ListItem>
             </List>
         </Info>
@@ -416,35 +416,60 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 que un cambio invite a actualizar ambos.
             </ListItem>
             <ListItem icon={icons.BookmarkSimple}>
-                <B>Única</B>: las reglas canónicas no deberían mantenerse copiadas en muchas partes que puedan divergir.
+                <B>Única</B>: los datos canónicos <Dash kind="em" /> valores aceptados, políticas de compatibilidad,
+                garantías y restricciones <Dash kind="em" /> no deberían mantenerse copiados en lugares que puedan
+                divergir.
             </ListItem>
             <ListItem icon={icons.CheckCircle}>
                 <B>Actual</B>: una explicación obsoleta crea falsa confianza y puede ser peor que una ausencia visible.
             </ListItem>
         </List>
 
+        <P>
+            Cuando sea posible, la documentación debería verificarse automáticamente: ejemplos que compilan, enlaces
+            revisados, referencias generadas desde la API pública o pruebas que alerten cuando una promesa documentada
+            deja de cumplirse.
+        </P>
+
         <More headingLevel="h3" icon={icons.Files}>
-            <span slot="title">ARID no significa repetir sin control</span>
+            <span slot="title">ARID: aceptar repetición en documentación</span>
 
             <P>
-                En código solemos desconfiar de la duplicación. En documentación, cierta repetición puede ser útil
-                porque ayuda a leer una página sin saltar constantemente entre enlaces. El problema no es repetir una
-                idea cuando mejora la comprensión local, sino mantener datos canónicos contradictorios en lugares
-                distintos.
+                En código solemos aplicar el principio DRY: evitar duplicar conocimiento para que una misma regla no
+                deba mantenerse en varios lugares. Si la validación de una opción está repetida en tres funciones,
+                cualquier cambio puede dejar una copia obsoleta.
             </P>
 
             <P>
+                En documentación aparece una tensión distinta. Quien lee una página no siempre sigue el recorrido
+                completo del curso ni conoce todas las páginas relacionadas. Por eso, el principio ARID (<I>Accept
+                    Repetition In Documentation</I>) propone aceptar cierta repetición cuando ayuda a que una
+                explicación sea comprensible por sí misma.
+            </P>
+
+            <P>
+                ARID no significa repetir sin control. El punto es repetir contexto útil, no duplicar datos canónicos.
                 Un tutorial puede repetir brevemente qué hace una opción para que el ejemplo sea legible. Pero la lista
                 completa de valores aceptados, la política de soporte o una garantía de compatibilidad deberían tener
                 una fuente principal que se actualice con cuidado.
             </P>
         </More>
 
+        <Tip headingLevel="h3">
+            <span slot="title">Regla práctica</span>
+
+            <P>
+                Repite contexto cuando ayude a leer una página localmente, pero enlaza o genera los datos que deben
+                permanecer exactos: firmas, valores aceptados, versiones soportadas, garantías de compatibilidad y
+                políticas de deprecación.
+            </P>
+        </Tip>
+
         <Danger headingLevel="h3">
             <span slot="title">Documentación incorrecta daña confianza</span>
 
             <P>
-                Si la documentación dice que una función acepta <KotlinInline code='"v1.4.2"' /> y la versión actual lo
+                Si la documentación dice que una opción acepta <KotlinInline code='"strict"' /> y la versión actual lo
                 rechaza, quien consume la biblioteca pierde tiempo intentando encontrar su error. En realidad, el
                 problema era del producto: prometió algo que ya no cumplía.
             </P>
@@ -463,9 +488,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Las palabras también diseñan la experiencia de uso</span>
 
             <P>
-                La documentación de una biblioteca no solo transmite información técnica. También comunica quiénes son
-                bienvenidxs a usar, reportar problemas, contribuir y aprender desde el proyecto. Por eso, la
-                terminología debería ser precisa, clara y respetuosa con distintas experiencias, culturas y comunidades.
+                La documentación de una biblioteca no solo transmite información técnica. También comunica si distintas
+                personas son bienvenidas a usar el proyecto, reportar problemas, contribuir y aprender desde él. Por
+                eso, la terminología debería ser precisa, clara y respetuosa con distintas experiencias, culturas y
+                comunidades.
             </P>
         </Definition>
 
@@ -476,30 +502,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
 
         <Info headingLevel="h3">
-            <span slot="title">Preferir términos descriptivos sobre metáforas cargadas</span>
+            <span slot="title">Preferir precisión antes que metáforas cargadas</span>
 
-            <P class="mb-3">
+            <P>
                 Una buena regla práctica es elegir palabras que describan la función real del concepto. En vez de
-                depender de pares metafóricos como bueno/malo, dominante/subordinado o normal/anormal, conviene nombrar
-                el comportamiento observable.
+                depender de metáforas heredadas, conviene nombrar el comportamiento observable: qué elemento controla,
+                cuál replica, qué se acepta, qué se rechaza o qué condición se está verificando.
             </P>
 
             <List>
                 <ListItem icon={icons.CheckCircle}>
-                    <B>allow list / deny list</B>: describe qué elementos se aceptan o rechazan.
+                    <B>allow list / block list</B> en vez de <B>whitelist / blacklist</B>: describe qué elementos se
+                    aceptan o bloquean.
                 </ListItem>
                 <ListItem icon={icons.CheckCircle}>
-                    <B>primary / replica</B>: describe roles dentro de una arquitectura distribuida.
+                    <B>primary / replica</B> en vez de <B>master / slave</B>: describe roles dentro de una arquitectura
+                    distribuida.
                 </ListItem>
                 <ListItem icon={icons.CheckCircle}>
-                    <B>main branch</B>: nombra la rama principal sin depender de jerarquías innecesarias.
+                    <B>main branch</B> en vez de <B>master branch</B>: nombra la rama principal sin depender de
+                    jerarquías innecesarias.
                 </ListItem>
                 <ListItem icon={icons.CheckCircle}>
-                    <B>placeholder, sample o test value</B>: describe el propósito de un valor de ejemplo.
+                    <B>placeholder, sample o test value</B> en vez de <B>dummy value</B>: describe el propósito de un
+                    valor de ejemplo.
                 </ListItem>
                 <ListItem icon={icons.CheckCircle}>
-                    <B>consistency check</B>: describe mejor la operación que expresiones coloquiales como
-                    <Enquote>sanity check</Enquote>.
+                    <B>consistency check</B> en vez de <B>sanity check</B>: describe mejor la operación que expresiones
+                    coloquiales.
                 </ListItem>
             </List>
         </Info>
@@ -509,9 +539,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <P>
                 El lenguaje inclusivo no consiste en aplicar una tabla de sustituciones sin pensar. El reemplazo debe
-                conservar precisión técnica, compatibilidad con el ecosistema y claridad para quien lee. Si un término
-                ya forma parte de una API pública, una migración responsable puede requerir alias, deprecación, notas de
-                versión y una guía breve de transición.
+                conservar precisión técnica, compatibilidad con el ecosistema y claridad para quien lee. La pregunta no
+                es solo <Enquote>¿esta palabra aparece en una lista?</Enquote>, sino <Enquote>¿existe una alternativa
+                    más precisa, clara y respetuosa para este contexto?</Enquote>.
+            </P>
+
+            <P>
+                Si un término ya forma parte de una API pública, una migración responsable puede requerir alias,
+                deprecación, notas de versión y una guía breve de transición. Cambiar nombres públicos sin una
+                estrategia de compatibilidad puede romper código existente, aunque el nuevo nombre sea mejor.
             </P>
         </Warning>
 
@@ -520,11 +556,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <P>
                 Antes de publicar una API o una página de documentación, conviene revisar si los nombres, ejemplos y
-                mensajes de error son comprensibles desde distintas perspectivas. Esto incluye evitar metáforas
-                innecesarias, usar pronombres o formulaciones neutras cuando el género no importa, escoger nombres de
-                ejemplo diversos y no asociar colores, edad, capacidad o procedencia con cualidades positivas o
-                negativas.
+                mensajes de error son comprensibles desde distintas perspectivas.
             </P>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    Evita metáforas innecesarias cuando exista una descripción más directa.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Usa formulaciones neutras cuando el género no sea relevante.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Escoge nombres de ejemplo diversos y culturalmente variados.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Evita asociar colores, edad, capacidad, procedencia o identidad con cualidades positivas o
+                    negativas.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Revisa mensajes de error, nombres de tests y datos ficticios: también forman parte de la experiencia
+                    de uso.
+                </ListItem>
+            </List>
         </Tip>
     </NotesSection>
 
