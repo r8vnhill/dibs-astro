@@ -192,6 +192,11 @@ Some transitional or infrastructure-support files still exist by design:
   - owns slot reading, slot preparation, and UI-facing error translation
   - pure precedence and content-resolution rules belong in `src/domain/reference-content.ts`
 
+- `src/components/ui/references/thesis-reference.ts`
+  - is a UI-facing view-model resolver for `Thesis.astro`
+  - owns component runtime contracts such as required href validation and linked metadata label validation
+  - keeps Astro rendering thin without moving slot HTML or component-specific metadata policy into the domain layer
+
 - `src/utils/navigation.ts`
   - remains a small normalization helper surface for presentation payload shaping
   - no longer owns automatic navigation resolution

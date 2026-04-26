@@ -1,28 +1,29 @@
 /**
  * @fileoverview Render-contract tests for {@link Thesis}.
  *
- * This suite treats `Thesis.astro` as a public rendering contract rather than a set of isolated happy-path examples. 
- * The tests verify how the component resolves required and optional metadata from props and slots, how linked metadata 
+ * This suite treats `Thesis.astro` as a public rendering contract rather than a set of isolated happy-path examples.
+ * The tests verify how the component resolves required and optional metadata from props and slots, how linked metadata
  * is exposed, and which invalid input combinations must fail fast.
  *
  * ## Contract covered
  *
  * - a meaningful title is required from either props or the `title` slot;
- * - the resolved title always renders as exactly one link to `url`;
+ * - the resolved title always renders as exactly one external link to normalized `url`;
  * - meaningful slot content overrides prop fallbacks without duplicating them;
- * - institution metadata may render as a link only when both `institution` and `institutionUrl` are meaningful;
+ * - institution metadata may render as a link only when prop-backed `institution` and `institutionUrl` are meaningful;
  * - slot-backed institution content is rendered as provided and is never auto-wrapped as a link;
  * - optional metadata is omitted when absent or non-meaningful;
  * - invalid metadata combinations throw the appropriate contract error.
  *
  * ## Scope notes
  *
- * These tests focus on the observable render behavior of `Thesis.astro`. Shared DOM assertions and rendering helpers 
+ * These tests focus on the observable render behavior of `Thesis.astro`. Shared DOM assertions and rendering helpers
  * live in `reference-render-contracts.ts`.
  *
  * @see {@link MissingReferenceTitleError}
  * @see {@link ReferenceContractError}
  */
+import type { CheerioAPI } from "cheerio";
 import { describe, expect, suite, test } from "vitest";
 import { type AstroRender } from "../../../../test-utils/astro-render";
 import { MissingReferenceTitleError, ReferenceContractError } from "../ReferenceContractError";
@@ -41,7 +42,7 @@ import {
 /**
  * Props consumed by {@link Thesis} in the scenarios exercised by this suite.
  *
- * The component requires a `url` and a meaningful resolved title. Optional metadata may be provided directly as props 
+ * The component requires a `url` and a meaningful resolved title. Optional metadata may be provided directly as props
  * or indirectly through slots, depending on the contract under test.
  *
  * @property title  Optional prop-backed title fallback.
@@ -78,7 +79,7 @@ type RenderOverrides = Omit<Partial<ThesisProps>, "title"> & { title?: string | 
 /**
  * Stable default props used as the baseline for most test scenarios.
  *
- * Tests override only the fields relevant to the contract they are proving, which keeps each example focused and 
+ * Tests override only the fields relevant to the contract they are proving, which keeps each example focused and
  * reduces fixture noise.
  */
 const BASE_PROPS = {
@@ -96,7 +97,7 @@ const BASE_PROPS = {
  * - if `title` is explicitly `undefined`, omit the property entirely rather than passing `title: undefined`;
  * - delegate actual rendering and DOM loading to {@link renderReference}.
  *
- * The explicit title omission step is important because several tests verify the component's behavior when no 
+ * The explicit title omission step is important because several tests verify the component's behavior when no
  * prop-backed title source exists at all.
  *
  * @param overrides Prop values merged over {@link BASE_PROPS}.
@@ -115,6 +116,17 @@ async function renderThesis(
     return renderReference(Thesis, props, options);
 }
 
+function expectExternalReferenceLinkAttrs(
+    $: CheerioAPI,
+    href: string,
+): void {
+    const link = $(`a[href='${href}']`);
+
+    expect(link).toHaveLength(1);
+    expect(link.attr("target")).toBe("_blank");
+    expect(link.attr("rel")).toBe("noopener noreferrer");
+}
+
 suite.concurrent("Thesis.astro render", () => {
     describe("title contract", () => {
         test("renders a prop-backed title as exactly one link to url", async () => {
@@ -128,6 +140,10 @@ suite.concurrent("Thesis.astro render", () => {
                 "https://archives.example.jp/theses/yugi-mutou-deck-construction",
                 "Strategic Deck Construction by Yugi Mutou",
             );
+            expectExternalReferenceLinkAttrs(
+                $,
+                "https://archives.example.jp/theses/yugi-mutou-deck-construction",
+            );
         });
 
         test("renders a slot-backed title as exactly one link to url", async () => {
@@ -138,8 +154,7 @@ suite.concurrent("Thesis.astro render", () => {
                 },
                 {
                     slots: {
-                        title:
-                            `<strong data-slot="title">Yugi Mutou and the Millennium Puzzle</strong>`,
+                        title: `<strong data-slot="title">Yugi Mutou and the Millennium Puzzle</strong>`,
                     },
                 },
             );
@@ -156,6 +171,19 @@ suite.concurrent("Thesis.astro render", () => {
                 "Legacy Study of Sugoroku Mutou",
             );
         });
+
+        test("uses the normalized URL for the title link", async () => {
+            const { $ } = await renderThesis({
+                title: "Normalized Thesis URL",
+                url: " https://archives.example.jp/theses/normalized-url ",
+            });
+
+            expectLinkedTitle(
+                $,
+                "https://archives.example.jp/theses/normalized-url",
+                "Normalized Thesis URL",
+            );
+        });
     });
 
     describe("institution contract", () => {
@@ -169,6 +197,7 @@ suite.concurrent("Thesis.astro render", () => {
             });
 
             expectInlineMetaLink($, "https://kaibacorp.example.jp/", "Kaiba Corporation");
+            expectExternalReferenceLinkAttrs($, "https://kaibacorp.example.jp/");
             expect($("li").text()).toContain("Anzu Mazaki");
         });
 
@@ -190,6 +219,39 @@ suite.concurrent("Thesis.astro render", () => {
                     institutionUrl: "https://industrialillusions.example.jp/",
                 }),
             ).rejects.toThrow(ReferenceContractError);
+        });
+
+        test("fails when institutionUrl is provided with a blank institution and no meaningful slot", async () => {
+            await expect(
+                renderThesis({
+                    title: "Pegasus J. Crawford and Holographic Duel Arenas",
+                    url: "https://archives.example.jp/theses/holographic-duel-arenas",
+                    institution: "   ",
+                    institutionUrl: "https://industrialillusions.example.jp/",
+                }),
+            ).rejects.toThrow(ReferenceContractError);
+        });
+
+        test("accepts institutionUrl when institution is provided by a meaningful slot", async () => {
+            const { $ } = await renderThesis(
+                {
+                    title: "Battle City Infrastructure Report",
+                    url: "https://archives.example.jp/theses/battle-city-infrastructure",
+                    institutionUrl: "https://kaibacorp.example.jp/",
+                },
+                {
+                    slots: {
+                        institution:
+                            `<a slot="institution" data-slot="institution" href="https://setokaiba.example.jp/lab">Seto Kaiba Duel Systems Lab</a>`,
+                    },
+                },
+            );
+            const slotInstitution = $("a[data-slot='institution']");
+
+            expect(slotInstitution).toHaveLength(1);
+            expect(slotInstitution.text().trim()).toBe("Seto Kaiba Duel Systems Lab");
+            expect(slotInstitution.attr("href")).toBe("https://setokaiba.example.jp/lab");
+            expect($("a[href='https://kaibacorp.example.jp/']")).toHaveLength(0);
         });
 
         test("respects the institution slot without wrapping it automatically or leaking prop fallbacks", async () => {
@@ -295,8 +357,7 @@ suite.concurrent("Thesis.astro render", () => {
     describe("slot precedence and non-duplication", () => {
         test.each([
             {
-                name:
-                    "prefers the title slot over the prop fallback without duplicating the fallback text",
+                name: "prefers the title slot over the prop fallback without duplicating the fallback text",
                 overrides: {
                     title: "Katsuya Jonouchi and Duelist Resilience",
                     url: "https://archives.example.jp/theses/duelist-resilience",
@@ -310,8 +371,7 @@ suite.concurrent("Thesis.astro render", () => {
                 expectedHref: "https://archives.example.jp/theses/duelist-resilience",
             },
             {
-                name:
-                    "prefers the author slot over the prop fallback without duplicating the fallback text",
+                name: "prefers the author slot over the prop fallback without duplicating the fallback text",
                 overrides: {
                     title: "Domino City Friendship Networks",
                     url: "https://archives.example.jp/theses/friendship-networks",
@@ -355,8 +415,7 @@ suite.concurrent("Thesis.astro render", () => {
                     {
                         slots: {
                             title: `<strong data-slot="title">Seto Kaiba and Battle City</strong>`,
-                            institution:
-                                `<em data-slot="institution">Industrial Illusions Research Archive</em>`,
+                            institution: `<em data-slot="institution">Industrial Illusions Research Archive</em>`,
                             author: `<span data-slot="author">Pegasus J. Crawford</span>`,
                         },
                     },
@@ -418,8 +477,7 @@ suite.concurrent("Thesis.astro render", () => {
                 },
             },
             {
-                name:
-                    "throws MissingReferenceTitleError when both prop and slot title sources are non-meaningful",
+                name: "throws MissingReferenceTitleError when both prop and slot title sources are non-meaningful",
                 overrides: {
                     title: "   ",
                     url: "https://archives.example.jp/theses/meaningless-title-sources",
@@ -432,6 +490,19 @@ suite.concurrent("Thesis.astro render", () => {
             await expect(
                 renderThesis(overrides, slots === undefined ? undefined : { slots }),
             ).rejects.toThrow(MissingReferenceTitleError);
+        });
+
+        test.each([
+            {
+                name: "throws ReferenceContractError for an empty URL",
+                url: "",
+            },
+            {
+                name: "throws ReferenceContractError for a whitespace-only URL",
+                url: "   ",
+            },
+        ])("$name", async ({ url }) => {
+            await expect(renderThesis({ url })).rejects.toThrow(ReferenceContractError);
         });
     });
 });

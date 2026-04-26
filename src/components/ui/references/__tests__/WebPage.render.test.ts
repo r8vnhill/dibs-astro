@@ -22,7 +22,13 @@ type WebPageProps = {
 };
 
 type RenderOptions = Parameters<AstroRender<WebPageProps>>[1];
-type RenderOverrides = Omit<Partial<WebPageProps>, "title"> & { title?: string | undefined };
+type RenderOverrides = {
+    title?: string | undefined;
+    url?: string | undefined;
+    location?: string | undefined;
+    locationUrl?: string | undefined;
+    author?: string | undefined;
+};
 
 const BASE_PROPS = {
     title: "Lateralus",

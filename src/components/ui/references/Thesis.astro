@@ -1,168 +1,130 @@
 ---
 /**
- * Renders a thesis reference inside the shared bibliography list.
+ * @file Renders a thesis reference in the shared bibliography list.
  *
- * This component follows the same slot-first resolution model used across the reference family,
- * but specializes the inline metadata for academic theses: the primary title links to the thesis
- * itself, while the secondary metadata emphasizes institution and author instead of publication
- * venue or platform.
+ * `Thesis` is a thin rendering component. It delegates slot/prop precedence, runtime validation, and link resolution 
+ * to `resolveThesisReference(...)`, then renders the resulting view model.
  *
- * The component resolves optional content before rendering so the template can stay mostly
- * declarative:
+ * Content resolution follows the reference-family contract:
  *
- * - `title` is required at render time, either through a meaningful `title` slot or through the
- *   `title` prop fallback
- * - `institution` and `author` are optional inline metadata fields
- * - `description` is optional block content rendered only when the slot is meaningful
+ * - meaningful named slots take precedence over prop fallbacks;
+ * - prop fallbacks are used only when the corresponding slot is absent or empty;
+ * - slot-backed content is rendered as caller-authored markup;
+ * - prop-backed institution text may be linked through `institutionUrl`;
+ * - slot-backed institution content is never wrapped automatically.
  *
- * ## Slot/prop precedence:
+ * The resolver validates the public reference contract before rendering:
  *
- * - meaningful slot content always wins over the corresponding prop fallback
- * - prop-backed institution text may be wrapped in a link via `institutionUrl`
- * - slot-backed institution content is treated as caller-authored markup and is never wrapped
- *   automatically
- *
- * ## Contract checks:
- *
- * - the component throws when no title can be resolved, avoiding empty quoted links in the
- *   bibliography
- * - in development, `institutionUrl` without `institution` is treated as a contract error because
- *   the URL would have no visible label
- *
- * ## Supported named slots:
- *
- * - `title`
- * - `institution`
- * - `author`
- * - `description`
+ * - the thesis title must resolve to meaningful content;
+ * - `url` must resolve to a non-empty external link target;
+ * - `institutionUrl` requires a meaningful institution label.
  */
-import { resolveInlineField, resolveLinkedInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
-import {
-    resolveOptionalSlots,
-    resolveRequiredTitleField,
-    SPANISH_REFERENCE_META_LABELS,
-} from "./reference-content";
-import { ReferenceContractError } from "./ReferenceContractError";
+import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import { EXTERNAL_REFERENCE_LINK_ATTRS } from "./reference-links";
+import { resolveThesisReference, THESIS_REFERENCE_SLOTS } from "./thesis-reference";
 
 /**
- * Props for the Thesis reference component.
+ * Props for rendering a thesis reference.
+ *
+ * Named slots can override the textual fallbacks for `title`, `institution`, `author`, and `description`. Prefer 
+ * slots when the rendered content needs custom markup; prefer props for plain text metadata.
  */
 type Props = {
     /**
-     * Fallback thesis title used when the `title` slot is absent or does not contain meaningful
-     * content.
+     * Plain-text fallback thesis title.
+     *
+     * Used only when the `title` slot is absent or does not contain meaningful content. The resolved title is always 
+     * rendered as the primary thesis link.
      */
     title?: string;
 
     /**
      * Canonical external URL for the thesis.
      *
-     * The resolved title is always rendered as a link to this URL.
+     * The value is validated before rendering and used as the `href` of the primary title link.
      */
     url: string;
 
     /**
-     * Fallback institution name rendered inline after the title when the `institution` slot is
-     * absent or empty.
+     * Plain-text fallback institution name.
+     *
+     * Used only when the `institution` slot is absent or empty. When `institutionUrl` is also provided, this 
+     * prop-backed text is rendered as a link.
      */
     institution?: string;
 
     /**
-     * Optional URL used only for prop-backed institution text.
+     * Optional external URL for prop-backed institution text.
      *
-     * This value is ignored when the institution comes from a meaningful slot, because slot
-     * content is treated as already-authored markup.
+     * This value is ignored when the institution is provided through a slot, because slot content is treated as 
+     * already-authored markup.
      */
     institutionUrl?: string;
 
     /**
-     * Fallback author text rendered inline after the institution when the `author` slot is absent
-     * or empty.
+     * Plain-text fallback author label.
+     *
+     * Used only when the `author` slot is absent or does not contain meaningful content.
      */
     author?: string;
 };
 
-const { title, url, institution, institutionUrl, author }: Props = Astro.props;
-const {
-    title: titleSlot,
-    institution: institutionSlot,
-    author: authorSlot,
-    description: descriptionSlot,
-} = await resolveOptionalSlots(Astro.slots, ["title", "institution", "author", "description"]);
-
-/**
- * Shared external-link attributes used across bibliography references.
- *
- * Keeping these attributes centralized avoids drift in target, rel, and underline styling across
- * title and metadata links.
- */
-const externalLinkAttrs = {
-    target: "_blank",
-    rel: "noopener noreferrer",
-    class: "hover:underline underline-offset-2",
-} as const;
-
-// ## Resolve slot/prop precedence before entering the template. ##
-// Precomputing these values keeps the markup focused on structure rather than fallback rules.
-const resolvedTitle = resolveRequiredTitleField(titleSlot, title);
-const resolvedInstitution = resolveLinkedInlineField(institutionSlot, institution, institutionUrl);
-const resolvedAuthor = resolveInlineField(authorSlot, author);
-
-// ## `institutionUrl` only makes sense when there is prop-backed institution text to label the
-// link. ##
-if (import.meta.env.DEV && institutionUrl && !institution) {
-    throw new ReferenceContractError("Thesis `institutionUrl` requires `institution`.");
-}
+const slots = await resolveOptionalSlots(Astro.slots, THESIS_REFERENCE_SLOTS);
+const reference = resolveThesisReference(Astro.props, slots);
 ---
 
 <ListItem icon={icons.Student}>
     <Enquote type="english-double">
-        <a href={url} {...externalLinkAttrs}>
+        <a href={reference.url} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
             {
-                resolvedTitle.kind === "slot"
-                    ? <span set:html={resolvedTitle.html} />
-                : resolvedTitle.text
+                /*
+                 * Slot-backed fields contain rendered Astro slot HTML. They are treated as trusted caller-authored 
+                 * markup by the reference content resolver.
+                 */
+                reference.title.kind === "slot"
+                    ? <span set:html={reference.title.html} />
+                : reference.title.text
             }
         </a>
     </Enquote>
 
     {
-        resolvedInstitution.kind !== "missing" ? (
+        reference.institution.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
-                    resolvedInstitution.kind === "slot"
-                        ? <span set:html={resolvedInstitution.html} />
-                    : resolvedInstitution.kind === "link"
+                    reference.institution.kind === "slot"
+                        ? <span set:html={reference.institution.html} />
+                    : reference.institution.kind === "link"
                     ? (
-                        <a href={resolvedInstitution.href} {...externalLinkAttrs}>
-                            {resolvedInstitution.text}
+                        <a href={reference.institution.href} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
+                            {reference.institution.text}
                         </a>
                     )
-                    : resolvedInstitution.text
+                    : reference.institution.text
                 }
             </span>
         ) : null
     }
 
     {
-        resolvedAuthor.kind !== "missing" ? (
+        reference.author.kind !== "missing" ? (
             <span>
                 {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
-                    resolvedAuthor.kind === "slot"
-                        ? <span set:html={resolvedAuthor.html} />
-                    : resolvedAuthor.text
+                    reference.author.kind === "slot"
+                        ? <span set:html={reference.author.html} />
+                    : reference.author.text
                 }
             </span>
         ) : null
     }
 
     {
-        descriptionSlot.kind === "meaningful" ? (
+        reference.description.kind === "meaningful" ? (
             <div class="text-muted-foreground">
-                <span set:html={descriptionSlot.html} />
+                <span set:html={reference.description.html} />
             </div>
         ) : null
     }
