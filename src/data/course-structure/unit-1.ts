@@ -13,6 +13,11 @@ const apiDesignLessons = new LessonTreeBuilder()
         "Evolucionar una API sin romper compatibilidad",
         `${coursePaths.softwareLibraries.apiDesign.evolution}/`,
     )
+    .link(
+        "documentation",
+        "Documentar una API como parte del producto",
+        `${coursePaths.softwareLibraries.apiDesign.documentation}/`,
+    )
     .build();
 
 export const unit1Lessons: readonly Lesson[] = new LessonTreeBuilder()

@@ -8,7 +8,7 @@
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",
         "generate:lesson-metadata": "node scripts/generate-lesson-metadata.mjs",
         "predev": "pnpm run generate:bibliography-catalog && pnpm run generate:lesson-metadata",
-        "dev": "node ./node_modules/astro/astro.js dev",
+        "dev": "node scripts/dev.mjs",
         "prebuild": "pnpm run generate:bibliography-catalog && pnpm run generate:lesson-metadata",
         "build": "node ./node_modules/astro/astro.js build",
         "preview": "node scripts/preview-dev.mjs",

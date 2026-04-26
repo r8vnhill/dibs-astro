@@ -5,29 +5,94 @@
 [![Platform](https://img.shields.io/badge/platform-Cloudflare%20Workers-orange)](https://workers.cloudflare.com)
 [![License](https://img.shields.io/badge/license-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
 [![Purpose](https://img.shields.io/badge/purpose-educational-yellow)](https://dibs.ravenhill.cl)
-[![Status](https://img.shields.io/badge/status-stable-brightgreen)]()
+![Status](https://img.shields.io/badge/status-active-brightgreen)
 [![DIBS Site](https://img.shields.io/badge/site-dibs.ravenhill.cl-purple)](https://dibs.ravenhill.cl)
 
 This repository contains the public site for DIBS, a course on software library design and implementation.
-The site is built with Astro, Tailwind CSS v4, Markdoc, and React islands, and it is deployed as a static site
-for Cloudflare Workers.
+The site is built with Astro, Tailwind CSS v4, and React islands, and it is deployed as a static site to Cloudflare
+Workers Static Assets.
 
 The course content itself is in Spanish. This README is in English to keep the repository reusable and easier to adapt
 as a foundation for courses in other languages.
 
-## Getting Started
+## Quick Start
 
-1. Install dependencies with `pnpm install`.
-2. Start the local development server with `pnpm dev`.
-3. Build the production site with `pnpm build`.
-4. Preview the built site locally with `pnpm preview`.
-5. Run the test suite with `pnpm test`.
+```sh
+pnpm install
+pnpm dev
+```
 
-Useful commands:
+## Prerequisites
 
-- `pnpm generate-icons` regenerates the SVG export index under `src/assets/img/icons/`.
-- `pnpm check` runs the static checks used by the project.
-- `pnpm deploy` runs the full pipeline for release.
+- Node.js `20` and pnpm `9` match the current GitLab CI configuration in `.gitlab-ci.yml`.
+- Corepack is recommended so pnpm can be activated consistently.
+- Cloudflare deployment requires Wrangler access to the configured Cloudflare account and route.
+
+## Command Reference
+
+| Command                              | Purpose                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------ |
+| `pnpm dev`                           | Starts the local Astro development server after regenerating data.       |
+| `pnpm build`                         | Regenerates data and builds the static production site into `dist/`.     |
+| `pnpm preview`                       | Runs the local Astro/Wrangler preview proxy for the built site.          |
+| `pnpm check`                         | Runs generated bibliography, Astro check, and lesson metadata dry-run.   |
+| `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
+| `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
+| `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
+| `pnpm fmt`                           | Formats the repository with dprint.                                      |
+| `pnpm generate-icons`                | Regenerates the SVG export index under `src/assets/img/icons/`.          |
+| `pnpm generate:bibliography-catalog` | Builds generated bibliography catalog artifacts.                         |
+| `pnpm generate:lesson-metadata`      | Regenerates lesson metadata.                                             |
+| `pnpm bibliography:report`           | Regenerates the bibliography catalog and prints the bibliography report. |
+| `pnpm deploy`                        | Builds and deploys the site with Wrangler.                               |
+
+## Course Content
+
+DIBS content is written in Spanish and organized as structured course material.
+
+- Lessons and course pages live under `src/pages/`.
+- Shared course metadata, navigation structure, and generated lesson data live under `src/data/`.
+- Bibliographic data and attribution live under `src/data/` and `docs/`.
+- Slides, exercises, and supplementary resources are linked from the public site when available.
+
+## Project Structure
+
+- `src/pages/` contains the site pages, including the course notes.
+- `src/layouts/` contains the shared page layouts.
+- `src/components/` contains reusable UI, semantic, and navigation components.
+- `src/assets/img/icons/` stores the local SVG icon set used by the project.
+- `src/data/` contains structured content and course metadata.
+- `docs/` contains repository documentation, architecture notes, and third-party attribution.
+
+## Architecture Overview
+
+The site separates course content, presentation layouts, reusable UI primitives, and structured metadata. Course pages
+compose semantic components and shared layouts, while navigation, bibliography, generated metadata, and other structured
+data stay under `src/data/`. This keeps lesson authoring mostly independent from lower-level rendering details and makes
+future course iterations easier to extend.
+
+For the current architecture boundary notes, see
+[`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md).
+
+## Quality Gates
+
+Before deployment or a larger pull request, run:
+
+```sh
+pnpm check
+pnpm test
+pnpm build
+```
+
+During focused development, prefer the narrowest relevant test command first, then run the full gate before release.
+
+## Deployment
+
+The project is generated as a static Astro build and deployed to Cloudflare Workers Static Assets.
+
+- `pnpm build` creates the production output in `dist/`.
+- `wrangler.toml` serves `./dist` through the `[assets]` configuration.
+- `pnpm deploy` runs the release build and deploys with Wrangler.
 
 ## Troubleshooting
 
@@ -40,25 +105,37 @@ Error: transport invoke timed out after 60000ms
 ... "name":"fetchModule" ... "/src/styles/global.css"
 ```
 
-check whether `src/styles/global.css` contains any remote `@import url(...)` statements, especially
-Google Fonts. In this project, loading fonts from CSS caused the Vite module runner to stall while
-resolving the global stylesheet imported by `src/layouts/BaseLayout.astro`.
+Recommended recovery:
 
-The fix is to keep `global.css` local-only and move remote font loading into `<head>` link tags.
-The current implementation does that in `src/components/meta/Head.astro`.
+```sh
+rm -rf .astro node_modules/.vite
+pnpm dev
+```
 
-For the broader repository-specific findings around this error, including the Shiki runtime patch
-interaction during development, see
+For the broader repository-specific findings around this error, including PowerShell recovery commands and the
+evidence-vs-inference boundary for this failure mode, see
 [`docs/troubleshooting-vite-fetchmodule-timeout.md`](./docs/troubleshooting-vite-fetchmodule-timeout.md).
 
-## Project Structure
+## Contributing
 
-- `src/pages/` contains the site pages, including the course notes.
-- `src/layouts/` contains the shared page layouts.
-- `src/components/` contains reusable UI, semantic, and navigation components.
-- `src/assets/img/icons/` stores the local SVG icon set used by the project.
-- `src/data/` contains structured content and course metadata.
-- `docs/` contains repository documentation, architecture notes, and third-party attribution.
+This repository is primarily maintained as the official DIBS course site. Contributions should preserve:
+
+- Spanish course content.
+- English repository-level documentation.
+- Local-first assets where possible.
+- Existing formatting, test, and attribution requirements.
+
+For larger changes, open an issue first to discuss scope and expected impact. See
+[`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for the project conventions.
+
+## Related Documentation
+
+- [Vite fetchModule timeout troubleshooting](./docs/troubleshooting-vite-fetchmodule-timeout.md)
+- [Layer separation architecture note](./docs/architecture/layer-separation.md)
+- [Third-party assets](./docs/third-party-assets.md)
+- [Contributing guide](./CONTRIBUTING.md)
+- [Code of conduct](./CODE_OF_CONDUCT.md)
+- [Phosphor Icons license](./docs/licenses/phosphor-icons-MIT.txt)
 
 ## License
 

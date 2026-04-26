@@ -1,0 +1,569 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, Heading, P } from "~/components/semantics";
+import { Danger, Definition, Info, More, Tip, Warning } from "~/components/ui/callouts";
+import { KotlinBlock, KotlinInline } from "~/components/ui/code";
+import { B, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Documentar una API como parte del producto"
+    description="Aprende por qué la documentación forma parte del contrato público de una biblioteca: comportamiento, ejemplos, referencia, migración, mantenimiento y experiencia de uso."
+    timeMultiplier={1.15}
+>
+    <NotesSection id="h2-api-contract">
+        <Heading
+            headingLevel="h2" Icon={icons.FileText}
+            slot="heading"
+        >
+            La documentación completa el contrato de la API
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberOne}>
+            <span slot="title">Documentar es especificar comportamiento</span>
+
+            <P>
+                Una firma pública muestra cómo llamar una operación, pero no siempre explica qué promete. La
+                documentación completa el contrato de una API al declarar significado, restricciones, errores y
+                garantías observables.
+            </P>
+        </Definition>
+
+        <P>
+            Una API bien nombrada reduce ambigüedad, pero no responde todas las preguntas. Por ejemplo, una función como
+            <KotlinInline code="parseVersion(input: String): Version" />
+            parece clara hasta que necesitamos saber qué formatos acepta, si ignora espacios, qué ocurre con una versión
+            inválida o si el formato aceptado cambió entre versiones.
+        </P>
+
+        <KotlinBlock code={`
+            fun parseVersion(input: String): Version
+        `}>
+            <span slot="title">Una firma legible todavía puede estar incompleta</span>
+            <span slot="footer">
+                La declaración dice cómo invocar la función, pero no define por sí sola las reglas de validez, error ni
+                compatibilidad.
+            </span>
+        </KotlinBlock>
+
+        <KotlinBlock
+            code={`
+                /**
+                 * Parses a semantic version string.
+                 *
+                 * Accepts versions in the form "major.minor.patch", where each component
+                 * is a non-negative integer without surrounding whitespace.
+                 *
+                 * ## Usage:
+                 * \`\`\`kotlin
+                 * val version = parseVersion("1.4.2")
+                 *
+                 * println(version.major) // 1
+                 * println(version.minor) // 4
+                 * println(version.patch) // 2
+                 * \`\`\`
+                 *
+                 * @param input Version string to parse.
+                 * @return The parsed [Version].
+                 * @throws IllegalArgumentException when input does not follow the expected format.
+                 */
+                fun parseVersion(input: String): Version
+            `}
+        >
+            <span slot="title">Documentar vuelve explícito el contrato observable</span>
+            <span slot="footer">
+                La documentación distingue cómo llamar la API de qué comportamiento puede esperar quien la consume.
+            </span>
+        </KotlinBlock>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Un cambio de comportamiento también es un cambio de API</span>
+
+            <P>
+                Si una operación conserva la misma firma pero cambia su política de errores, su orden de resultados, el
+                formato que acepta o el significado de un valor por defecto, la API cambió para quienes dependían de ese
+                comportamiento. La documentación es el lugar donde esas promesas se hacen visibles.
+            </P>
+        </Warning>
+    </NotesSection>
+
+    <NotesSection id="h2-public-api-rubric">
+        <Heading
+            headingLevel="h2" Icon={icons.ListChecks}
+            slot="heading"
+        >
+            Qué debe documentar una API pública
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberTwo}>
+            <span slot="title">La referencia debe responder preguntas de uso</span>
+
+            <P>
+                Documentar una API pública no consiste en repetir la firma con otras palabras. La referencia debe
+                explicar qué representa cada elemento público, qué promete y qué necesita saber una persona externa para
+                usarlo correctamente.
+            </P>
+        </Definition>
+
+        <P>
+            No todas las operaciones necesitan el mismo nivel de detalle. Una función pura y pequeña puede requerir solo
+            una explicación breve, mientras que una operación con errores, efectos secundarios, reglas de compatibilidad
+            o decisiones de formato necesita un contrato más explícito. La pregunta central no es <Enquote>¿qué puedo
+                copiar desde el código?</Enquote>, sino <Enquote>¿qué necesita saber una persona externa para depender
+                de esto sin leer la implementación?</Enquote>.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Rúbrica práctica para documentar elementos públicos</span>
+
+            <P class="mb-3">
+                Documenta estos aspectos según lo que resulte relevante para el uso correcto:
+            </P>
+
+            <List>
+                <ListItem icon={icons.Target}>
+                    <B>Propósito</B>: qué problema resuelve el tipo, función o configuración.
+                </ListItem>
+                <ListItem icon={icons.ShieldCheck}>
+                    <B>Contrato</B>: entradas válidas, precondiciones, postcondiciones e invariantes.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <B>Fallas</B>: errores, excepciones, resultados inválidos y casos límite.
+                </ListItem>
+                <ListItem icon={icons.Gauge}>
+                    <B>Costos y efectos</B>: complejidad, efectos, I/O, mutación o bloqueo, cuando afecten el
+                    comportamiento observable.
+                </ListItem>
+                <ListItem icon={icons.GitBranch}>
+                    <B>Evolución</B>: versión de incorporación, deprecación, reemplazo y notas de migración.
+                </ListItem>
+                <ListItem icon={icons.Code}>
+                    <B>Uso</B>: ejemplos mínimos que muestren la operación en contexto.
+                </ListItem>
+            </List>
+        </Info>
+
+        <P>
+            La diferencia se entiende mejor al contrastar dos casos. Una función pública pequeña puede necesitar
+            documentación breve; una operación de parsing con reglas de formato y errores exige un contrato mucho más
+            explícito.
+        </P>
+
+        <KotlinBlock
+            code={`
+                /**
+                 * Checks if a version is stable.
+                 *
+                 * A version is stable if it contains only major, minor and patch components
+                 * with no pre-release or build metadata.
+                 *
+                 * @param version The version to check.
+                 * @return true if the version is stable, false otherwise.
+                 */
+                fun isStable(version: Version): Boolean
+            `}
+        >
+            <span slot="title">Un elemento público simple puede requerir menos detalle</span>
+            <span slot="footer">
+                Aquí basta documentar propósito, criterio general y un ejemplo breve. Probablemente no hagan falta
+                secciones de errores, I/O, compatibilidad o migración.
+            </span>
+        </KotlinBlock>
+
+        <KotlinBlock
+            code={`
+                /**
+                 * Parses a stable version in the form MAJOR.MINOR.PATCH.
+                 *
+                 * The parser accepts only three non-negative integer components separated by dots.
+                 * It does not trim surrounding whitespace and does not accept prefixes,
+                 * pre-release labels or build metadata.
+                 *
+                 * @param input Version string to parse.
+                 * @return The parsed [Version].
+                 * @throws VersionFormatException when [input] does not match the public format.
+                 */
+                fun parseVersion(input: String): Version
+            `}
+        >
+            <span slot="title">Una operación de parsing necesita un contrato más explícito</span>
+            <span slot="footer">
+                En este caso sí se vuelven relevantes el formato aceptado, los errores, los límites del parser y lo que
+                quien consume no debería asumir.
+            </span>
+        </KotlinBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-documentation-types">
+        <Heading
+            headingLevel="h2" Icon={icons.BookOpen}
+            slot="heading"
+        >
+            No toda documentación cumple la misma función
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberThree}>
+            <span slot="title">La documentación no es un solo artefacto</span>
+
+            <P>
+                Una biblioteca necesita varias formas de documentación porque las personas llegan con preguntas
+                distintas: aprender, resolver una tarea, consultar un contrato, entender una decisión de diseño, migrar,
+                contribuir o evaluar si pueden usar el proyecto.
+            </P>
+        </Definition>
+
+        <P>
+            Una referencia de API es necesaria, pero rara vez basta. Su función principal es precisar contratos: qué
+            elementos públicos existen, qué reciben, qué devuelven, qué errores pueden producir y qué garantías ofrecen.
+            Para usar una biblioteca en problemas reales, también se necesitan documentos que expliquen cómo combinar
+            esas piezas en flujos completos.
+        </P>
+
+        <P class="mb-4">
+            Una forma práctica de distinguir estos documentos es preguntar qué duda resuelven: <Enquote>¿cómo
+                empiezo?</Enquote>, <Enquote>¿cómo hago esta tarea?</Enquote>, <Enquote>¿qué garantiza esta
+                API?</Enquote>, <Enquote>¿por qué está diseñado así?</Enquote> o <Enquote>¿qué cambió entre
+                versiones?</Enquote>.
+        </P>
+
+        <List>
+            <ListItem icon={icons.Signpost}>
+                <B>README o getting started</B>: explica qué problema resuelve la biblioteca y cómo lograr el primer uso
+                exitoso.
+            </ListItem>
+            <ListItem icon={icons.Path}>
+                <B>Tutoriales</B>: acompañan el primer aprendizaje mediante un recorrido guiado y progresivo.
+            </ListItem>
+            <ListItem icon={icons.MapTrifold}>
+                <B>Guías prácticas</B>: explican cómo completar una tarea concreta, como configurar una integración,
+                publicar un paquete o migrar desde una versión anterior.
+            </ListItem>
+            <ListItem icon={icons.Article}>
+                <B>Referencia de API</B>: documenta con precisión los elementos públicos, sus contratos, sus invariantes
+                y sus límites de uso.
+            </ListItem>
+            <ListItem icon={icons.BookOpen}>
+                <B>Explicaciones conceptuales</B>: desarrollan el modelo mental de la biblioteca: sus abstracciones,
+                decisiones de diseño, límites, trade-offs y relación entre sus componentes.
+            </ListItem>
+            <ListItem icon={icons.ArrowsClockwise}>
+                <B>Changelog, notas de versión y guías de migración</B>: registran cambios relevantes, explican su
+                impacto y muestran cómo adaptar código existente entre versiones.
+            </ListItem>
+            <ListItem icon={icons.Wrench}>
+                <B>Troubleshooting</B>: ayuda a reconocer fallas frecuentes y decisiones de diagnóstico.
+            </ListItem>
+        </List>
+
+        <Info headingLevel="h3">
+            <span slot="title">Los documentos de proyecto también son documentación</span>
+
+            <P>
+                Algunos documentos no describen directamente una función, pero sí afectan la decisión de adoptar,
+                distribuir, auditar o colaborar en una biblioteca. Por eso conviene tratarlos como parte de la
+                documentación pública del proyecto, no como archivos administrativos secundarios.
+            </P>
+
+            <List>
+                <ListItem icon={icons.ShieldCheck}>
+                    <B><Mono>LICENSE</Mono></B>: declara bajo qué condiciones se puede usar, copiar, modificar y
+                    redistribuir el código. Usar identificadores conocidos, como los de <Mono>SPDX</Mono>, reduce
+                    ambigüedad y facilita que herramientas y organizaciones reconozcan la licencia.
+                </ListItem>
+                <ListItem icon={icons.GitBranch}>
+                    <B><Mono>CONTRIBUTING.md</Mono></B>: explica cómo proponer cambios, ejecutar verificaciones,
+                    reportar problemas y respetar las convenciones del proyecto. Su valor está en convertir la
+                    colaboración en un flujo predecible, no en dejar que cada persona adivine el proceso.
+                </ListItem>
+                <ListItem icon={icons.SealCheck}>
+                    <B><Mono>CODE_OF_CONDUCT.md</Mono></B>: define expectativas de participación y criterios para cuidar
+                    la interacción dentro del proyecto. En bibliotecas públicas, esto también comunica qué tipo de
+                    comunidad se está construyendo alrededor de la API.
+                </ListItem>
+                <ListItem icon={icons.WarningCircle}>
+                    <B><Mono>SECURITY.md</Mono></B>: indica cómo reportar vulnerabilidades o problemas sensibles sin
+                    exponer detalles prematuramente. Esto ayuda a coordinar respuestas responsables cuando una falla
+                    afecta a quienes dependen de la biblioteca.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Ingredientes y recetas</span>
+
+            <P>
+                Piensa la referencia como una lista de ingredientes: es precisa y necesaria, pero no siempre enseña a
+                cocinar. Las guías, ejemplos y tutoriales muestran recetas: cómo combinar la API para resolver problemas
+                concretos sin obligar a deducirlo todo desde declaraciones aisladas.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-examples-tests">
+        <Heading
+            headingLevel="h2" Icon={icons.TestTube}
+            slot="heading"
+        >
+            Ejemplos, tests y documentación ejecutable
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFour}>
+            <span slot="title">Los ejemplos enseñan intención</span>
+
+            <P>
+                Un test puede probar que un comportamiento existe; un ejemplo explica por qué alguien lo usaría y qué
+                forma debería tener un uso normal de la API.
+            </P>
+        </Definition>
+
+        <P>
+            Muchas personas leen ejemplos antes que referencia. Copian un fragmento, lo adaptan y luego vuelven a la
+            explicación cuando algo no calza. Por eso los ejemplos no son decoración: forman parte de la experiencia de
+            consumo de la biblioteca.
+        </P>
+
+        <KotlinBlock
+            code={`
+                val version = parseVersion("1.4.2")
+
+                println(version.major) // 1
+                println(version.minor) // 4
+                println(version.patch) // 2
+            `}
+        >
+            <span slot="title">Un ejemplo muestra la forma esperada de uso</span>
+            <span slot="footer">
+                El fragmento comunica formato de entrada, objeto resultante y propiedades relevantes sin explicar
+                todavía toda la implementación.
+            </span>
+        </KotlinBlock>
+
+        <KotlinBlock
+            code={`
+                test("parses a complete semantic version") {
+                    val version = parseVersion("1.4.2")
+
+                    version.major shouldBe 1
+                    version.minor shouldBe 4
+                    version.patch shouldBe 2
+                }
+            `}
+        >
+            <span slot="title">El test protege el ejemplo contra deriva</span>
+            <span slot="footer">
+                Si la API cambia, el test detecta que el ejemplo ya no representa el contrato publicado.
+            </span>
+        </KotlinBlock>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Más ejemplos no siempre significan mejor documentación</span>
+
+            <P>
+                Los ejemplos deben cubrir casos comunes y representativos. Demasiadas variaciones pueden ocultar el
+                camino principal, hacer más difícil escanear la página y aumentar el costo de mantenimiento. La
+                documentación útil elige ejemplos con intención.
+            </P>
+        </Warning>
+    </NotesSection>
+
+    <NotesSection id="h2-maintainable-documentation">
+        <Heading
+            headingLevel="h2" Icon={icons.Files}
+            slot="heading"
+        >
+            Documentación mantenible: cerca, única y actual
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberFive}>
+            <span slot="title">La documentación también tiene arquitectura</span>
+
+            <P>
+                Si la documentación es parte del producto, debe poder mantenerse. Eso exige decidir dónde vive, cuál es
+                la fuente canónica de cada dato y cómo se mantiene sincronizada con el código.
+            </P>
+        </Definition>
+
+        <List>
+            <ListItem icon={icons.Path}>
+                <B>Cerca</B>: la documentación relacionada con una API debería vivir lo bastante cerca del código para
+                que un cambio invite a actualizar ambos.
+            </ListItem>
+            <ListItem icon={icons.BookmarkSimple}>
+                <B>Única</B>: las reglas canónicas no deberían mantenerse copiadas en muchas partes que puedan divergir.
+            </ListItem>
+            <ListItem icon={icons.CheckCircle}>
+                <B>Actual</B>: una explicación obsoleta crea falsa confianza y puede ser peor que una ausencia visible.
+            </ListItem>
+        </List>
+
+        <More headingLevel="h3" icon={icons.Files}>
+            <span slot="title">ARID no significa repetir sin control</span>
+
+            <P>
+                En código solemos desconfiar de la duplicación. En documentación, cierta repetición puede ser útil
+                porque ayuda a leer una página sin saltar constantemente entre enlaces. El problema no es repetir una
+                idea cuando mejora la comprensión local, sino mantener datos canónicos contradictorios en lugares
+                distintos.
+            </P>
+
+            <P>
+                Un tutorial puede repetir brevemente qué hace una opción para que el ejemplo sea legible. Pero la lista
+                completa de valores aceptados, la política de soporte o una garantía de compatibilidad deberían tener
+                una fuente principal que se actualice con cuidado.
+            </P>
+        </More>
+
+        <Danger headingLevel="h3">
+            <span slot="title">Documentación incorrecta daña confianza</span>
+
+            <P>
+                Si la documentación dice que una función acepta <KotlinInline code='"v1.4.2"' /> y la versión actual lo
+                rechaza, quien consume la biblioteca pierde tiempo intentando encontrar su error. En realidad, el
+                problema era del producto: prometió algo que ya no cumplía.
+            </P>
+        </Danger>
+    </NotesSection>
+
+    <NotesSection id="h2-inclusive-language">
+        <Heading
+            headingLevel="h2" Icon={icons.SealCheck}
+            slot="heading"
+        >
+            Lenguaje inclusivo en la documentación
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberSix}>
+            <span slot="title">Las palabras también diseñan la experiencia de uso</span>
+
+            <P>
+                La documentación de una biblioteca no solo transmite información técnica. También comunica quiénes son
+                bienvenidxs a usar, reportar problemas, contribuir y aprender desde el proyecto. Por eso, la
+                terminología debería ser precisa, clara y respetuosa con distintas experiencias, culturas y comunidades.
+            </P>
+        </Definition>
+
+        <P>
+            En documentación técnica, el problema no siempre está en la intención de quien escribe, sino en el efecto
+            que ciertos términos pueden tener sobre quienes leen. Si una palabra arrastra asociaciones innecesarias,
+            excluyentes o ambiguas, suele ser mejor reemplazarla por una alternativa más descriptiva.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Preferir términos descriptivos sobre metáforas cargadas</span>
+
+            <P class="mb-3">
+                Una buena regla práctica es elegir palabras que describan la función real del concepto. En vez de
+                depender de pares metafóricos como bueno/malo, dominante/subordinado o normal/anormal, conviene nombrar
+                el comportamiento observable.
+            </P>
+
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>allow list / deny list</B>: describe qué elementos se aceptan o rechazan.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>primary / replica</B>: describe roles dentro de una arquitectura distribuida.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>main branch</B>: nombra la rama principal sin depender de jerarquías innecesarias.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>placeholder, sample o test value</B>: describe el propósito de un valor de ejemplo.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <B>consistency check</B>: describe mejor la operación que expresiones coloquiales como
+                    <Enquote>sanity check</Enquote>.
+                </ListItem>
+            </List>
+        </Info>
+
+        <Warning headingLevel="h3">
+            <span slot="title">No reemplazar términos de forma mecánica</span>
+
+            <P>
+                El lenguaje inclusivo no consiste en aplicar una tabla de sustituciones sin pensar. El reemplazo debe
+                conservar precisión técnica, compatibilidad con el ecosistema y claridad para quien lee. Si un término
+                ya forma parte de una API pública, una migración responsable puede requerir alias, deprecación, notas de
+                versión y una guía breve de transición.
+            </P>
+        </Warning>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Criterio para revisar nombres y documentación</span>
+
+            <P>
+                Antes de publicar una API o una página de documentación, conviene revisar si los nombres, ejemplos y
+                mensajes de error son comprensibles desde distintas perspectivas. Esto incluye evitar metáforas
+                innecesarias, usar pronombres o formulaciones neutras cuando el género no importa, escoger nombres de
+                ejemplo diversos y no asociar colores, edad, capacidad o procedencia con cualidades positivas o
+                negativas.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-reading-experience">
+        <Heading
+            headingLevel="h2" Icon={icons.MagnifyingGlass}
+            slot="heading"
+        >
+            Diseñar para lectura real
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.NumberSeven}>
+            <span slot="title">La documentación también es experiencia de uso</span>
+
+            <P>
+                Quien lee documentación no siempre sigue un camino lineal. Busca, escanea, copia ejemplos, llega desde
+                errores, revisa cambios y comparte enlaces específicos.
+            </P>
+        </Definition>
+
+        <P>
+            Documentar bien implica escribir para esa lectura real. La información importante debe aparecer donde se
+            necesita, con títulos descriptivos, anclas estables, ejemplos visibles y secciones que permitan encontrar
+            respuestas sin leer todo desde el comienzo.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Principios de lectura práctica</span>
+
+            <List>
+                <ListItem icon={icons.ListMagnifyingGlass}>
+                    <B>Escaneable</B>: encabezados claros, listas breves y conceptos importantes al principio.
+                </ListItem>
+                <ListItem icon={icons.Signpost}>
+                    <B>Descubrible</B>: enlaces desde README, errores, paquete, changelog y páginas relevantes.
+                </ListItem>
+                <ListItem icon={icons.Link}>
+                    <B>Direccionable</B>: secciones con anclas que puedan compartirse en issues, revisiones y soporte.
+                </ListItem>
+                <ListItem icon={icons.Stairs}>
+                    <B>Acumulativa</B>: los prerequisitos aparecen antes que los temas avanzados.
+                </ListItem>
+                <ListItem icon={icons.SealCheck}>
+                    <B>Completa dentro de su alcance</B>: cada página debe cubrir lo que promete, sin fingir que cubre
+                    todo.
+                </ListItem>
+            </List>
+        </Info>
+
+        <P>
+            Esta experiencia también depende del lenguaje. Una página fácil de leer no solo organiza bien la
+            información: también usa términos precisos, consistentes e inclusivos para reducir fricción y evitar
+            barreras innecesarias.
+        </P>
+
+        <P>
+            Cuando una API evoluciona, esta experiencia se vuelve aún más importante. La documentación versionada, las
+            notas de deprecación y las guías de migración ayudan a que actualizar no sea una sorpresa, sino una
+            transición comprensible.
+        </P>
+    </NotesSection>
+
+    <ConclusionsLayout> </ConclusionsLayout>
+</NotesLayout>

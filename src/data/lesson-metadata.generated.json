@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-04-22T21:44:57.637Z",
-  "totalLessons": 47,
+  "generatedAt": "2026-04-26T13:24:00.092Z",
+  "totalLessons": 48,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -1470,6 +1470,15 @@
           "subject": "feat: add RepoLink component for GitHub and GitLab links"
         }
       ]
+    },
+    "/notes/software-libraries/api-design/documentation/": {
+      "sourceFile": "src/pages/notes/software-libraries/api-design/documentation/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/api-design/evolution/": {
       "sourceFile": "src/pages/notes/software-libraries/api-design/evolution/index.astro",

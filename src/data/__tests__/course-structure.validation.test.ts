@@ -24,7 +24,7 @@ describe("course-structure validation", () => {
         );
     });
 
-    it("keeps api-design lessons in fundamentals then evolution order", () => {
+    it("orders the API design lessons from contract design to evolution to documentation", () => {
         const flattened = flattenLessons(courseStructure);
         const apiDesignLessonIds = flattened
             .filter((lesson) =>
@@ -36,6 +36,7 @@ describe("course-structure validation", () => {
         expect(apiDesignLessonIds).toEqual([
             "fundamentals",
             "evolution",
+            "documentation",
         ]);
     });
 

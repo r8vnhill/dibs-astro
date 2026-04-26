@@ -30,8 +30,8 @@ const pipelines = joinPath(scripting, "pipelines");
 /**
  * Canonical registry of lesson and section paths used by the internal course-structure modules.
  *
- * This tree is the single source of truth for URL strings referenced by modules such as `index.ts` and the 
- * unit-specific lesson builders. Its shape mirrors the course hierarchy so that section locality in code matches 
+ * This tree is the single source of truth for URL strings referenced by modules such as `index.ts` and the
+ * unit-specific lesson builders. Its shape mirrors the course hierarchy so that section locality in code matches
  * section locality in the generated lesson structure.
  *
  * Top-level entries represent either:
@@ -39,15 +39,15 @@ const pipelines = joinPath(scripting, "pipelines");
  * - standalone canonical paths, such as `notes` or `installation`
  * - nested section objects that expose a `root` path plus their known child routes
  *
- * Nested sections follow the same convention recursively. For example, `softwareLibraries` exposes its own `root` and 
- * also contains subsection registries such as `apiDesign` and `buildSystems`, each with their own `root` and leaf 
+ * Nested sections follow the same convention recursively. For example, `softwareLibraries` exposes its own `root` and
+ * also contains subsection registries such as `apiDesign` and `buildSystems`, each with their own `root` and leaf
  * lesson paths.
  *
- * The object is declared with `as const` so consumers can rely on literal path values instead of widened `string` 
- * types. This improves type safety when other internal modules depend on concrete route values or on the structural 
+ * The object is declared with `as const` so consumers can rely on literal path values instead of widened `string`
+ * types. This improves type safety when other internal modules depend on concrete route values or on the structural
  * shape of the registry.
  *
- * This module intentionally stores only canonical paths. It does not encode lesson titles, ordering, breadcrumbs, 
+ * This module intentionally stores only canonical paths. It does not encode lesson titles, ordering, breadcrumbs,
  * redirects, or other metadata that belong to higher-level course descriptors.
  */
 export const coursePaths = {
@@ -64,6 +64,7 @@ export const coursePaths = {
             root: apiDesign,
             fundamentals: joinPath(apiDesign, "fundamentals"),
             evolution: joinPath(apiDesign, "evolution"),
+            documentation: joinPath(apiDesign, "documentation"),
         },
         buildSystems: {
             root: buildSystems,
@@ -90,8 +91,8 @@ export const coursePaths = {
 /**
  * Literal type of the canonical course path registry.
  *
- * This type preserves both the nested structure and the exact string literal values of {@link coursePaths}. Internal 
- * callers can use it when they need to accept, constrain, or derive values from the path tree without duplicating its 
+ * This type preserves both the nested structure and the exact string literal values of {@link coursePaths}. Internal
+ * callers can use it when they need to accept, constrain, or derive values from the path tree without duplicating its
  * shape manually.
  */
 export type CoursePaths = typeof coursePaths;

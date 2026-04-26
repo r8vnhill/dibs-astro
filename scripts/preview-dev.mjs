@@ -19,7 +19,10 @@ function run(command, args) {
     const child = spawn(command, args, {
         stdio: "inherit",
         shell: false,
-        env: process.env,
+        env: {
+            ...process.env,
+            DIBS_SHIKI_RUNTIME_PATCH_ENABLED: "false",
+        },
     });
 
     processes.push(child);
