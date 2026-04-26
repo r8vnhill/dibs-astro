@@ -329,7 +329,7 @@ Acceptance criteria:
 
 ---
 
-### Cycle 2: Data-driven layer rules
+### ~~Cycle 2: Data-driven layer rules~~
 
 Goal: encode the architecture as a readable rule matrix.
 

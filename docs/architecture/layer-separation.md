@@ -78,10 +78,18 @@ node scripts/check-layer-boundaries.mjs
 
 The checker currently scans `.ts`, `.tsx`, and `.astro` files under `src/`. Astro support is intentionally narrow: only frontmatter imports are inspected, which covers the architectural imports used by layouts and components without treating the checker as an Astro compiler.
 
-The Cycle 1 checker enforces two initial rules:
+The Cycle 2 checker evaluates imports against a classification-driven rule matrix:
 
-- `src/domain/**` must not import outward into `src/application/**`, `src/infrastructure/**`, or `src/presentation/**`, and must not import `astro`, `react`, or `zod`.
-- UI surfaces under `src/components/**`, `src/layouts/**`, and `src/pages/**` must not import `src/infrastructure/**` directly.
+- `src/domain/**` may import only domain targets, and must not import `astro`, `react`, or `zod`.
+- `src/application/**` may import domain and application targets, and must not import infrastructure, presentation, UI, generated data, plain data, `astro`, `react`, or `zod`.
+- `src/infrastructure/**` may import domain, application, infrastructure, data, generated data, and utilities, but must not import presentation or UI targets.
+- `src/presentation/adapters/**` may compose domain, application, infrastructure, presentation, and utility targets, but must not import UI components, layouts, or pages.
+- UI surfaces under `src/components/**`, `src/layouts/**`, and `src/pages/**` may import presentation adapters, presentation helpers, UI, assets, styles, utilities, domain, and application targets, but must not import infrastructure directly.
+
+Type-only imports are checked as architectural dependencies. Package subpaths are normalized before package rules are
+applied, so `react/jsx-runtime` is treated as `react` and `zod/v4` is treated as `zod`. Generated data is classified by
+filename before generic data paths: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are
+`generated-data`.
 
 The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`, normalizes relative paths, extracts imports and re-exports through `es-module-lexer` with a TSX fallback, and evaluates imports against the classification-driven Cycle 2 rule matrix.
 
@@ -137,6 +145,23 @@ node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules
 ```
 
 As of 2026-04-25, that gate passes with 6 checker-specific test files and 110 tests.
+
+Cycle 2 Steps 5 and 6 preserved the public CLI/reporting contract and expanded the rule matrix tests in
+`scripts/__tests__/layer-boundary-rules.test.ts`. The suite now covers each Cycle 2 allowed and forbidden direction,
+domain/application package restrictions, package subpath normalization, generated JSON and JSON-LD classification,
+type-only import enforcement, and exact exception behavior. Skipped exceptions are still available only through the
+lower-level evaluation result; `checkLayerBoundaries(...)` returns violations only and `formatViolations(...)` does not
+render skipped imports.
+
+The Step 7 focused gate is:
+
+```bash
+pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
+```
+
+As of 2026-04-25, that gate passes. In the current Vitest configuration this command also collected the broader unit
+suite, and the run completed with 55 passing test files and 861 passing tests; the layer-boundary rule suite itself
+contains 90 passing tests.
 
 ## Presentation boundaries
 

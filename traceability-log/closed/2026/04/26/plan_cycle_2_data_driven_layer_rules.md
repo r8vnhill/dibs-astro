@@ -821,7 +821,19 @@ return allowed();
 
 Prefer helper functions over a long evaluator body.
 
-### Step 5: Preserve Public CLI Contracts
+### ~~Step 5: Preserve Public CLI Contracts~~
+
+Status: completed on 2026-04-25.
+
+Confirmed the public checker/reporting contract remains stable:
+
+```text
+checkLayerBoundaries(...)
+formatViolations(...)
+```
+
+`checkLayerBoundaries(...)` still returns only public violations. Lower-level skipped-exception results remain internal
+to `evaluateBoundaryRules(...)`, and `formatViolations(...)` still renders only violation payloads.
 
 Do not change the public behaviour of:
 
@@ -834,13 +846,49 @@ formatViolations(...)
 
 Skipped exception metadata may exist in lower-level evaluation results, but it should not appear in the formatted report unless a future cycle adds diagnostic reporting.
 
-### Step 6: Add Rule Matrix Tests
+### ~~Step 6: Add Rule Matrix Tests~~
+
+Status: completed on 2026-04-25.
+
+Expanded the BDD/DDT-style suite in:
+
+```text
+scripts/__tests__/layer-boundary-rules.test.ts
+```
+
+The suite now covers:
+
+- every allowed direction in the Cycle 2 matrix
+- every forbidden direction in the Cycle 2 matrix
+- forbidden `astro`, `react`, `react/jsx-runtime`, `zod`, and `zod/v4` package imports from domain/application
+- generated JSON and JSON-LD rules for domain, application, and infrastructure
+- infrastructure, presentation-adapter, and UI edge cases
+- type-only imports as architectural dependencies
+- exact exception matching and skipped-exception omission from `checkLayerBoundaries(...)`
 
 Add the new DDT-style suite and make each rule explicit.
 
 Use `describe.each(...)` or `test.each(...)` where the contract is identical, but keep named tests for exceptions and classification edge cases.
 
-### Step 7: Run the Focused Gate
+### ~~Step 7: Run the Focused Gate~~
+
+Status: completed on 2026-04-25.
+
+Observed focused gate:
+
+```text
+pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
+
+scripts/__tests__/layer-boundary-rules.test.ts: 90 tests passing
+scripts/__tests__/layer-boundary-paths.test.ts: 8 tests passing
+scripts/__tests__/layer-boundary-imports.test.ts: 10 tests passing
+
+Test files: 55 passed
+Tests: 861 passed
+```
+
+Note: the current Vitest argument handling still collected the broader unit suite during this command. The required
+command completed successfully, and the target layer-boundary files passed.
 
 Required command:
 
