@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T00:49:32.403Z",
+  "generatedAt": "2026-04-27T18:45:20.450Z",
   "totalLessons": 48,
   "changesLimit": 5,
   "entries": {
@@ -1437,8 +1437,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-04-20",
+      "lastModified": "2026-04-26",
       "changes": [
+        {
+          "hash": "c667fc0b7393eaa49464ada104f65a483656ee8a",
+          "date": "2026-04-26",
+          "author": "R8V",
+          "subject": "📘 docs: Update lesson metadata and enhance API documentation with key points on design and usage"
+        },
         {
           "hash": "2b8f3a4c5c9f7aba701c4919e9d02f36045f61a4",
           "date": "2026-04-20",
@@ -1462,12 +1468,6 @@
           "date": "2025-09-14",
           "author": "r8vnhill",
           "subject": "✨🖼️📝🐛🎨♻️ Add “Hints” callout, new icons, and Unit 1 (software libraries); fix dark theme & reorganize units"
-        },
-        {
-          "hash": "acf75a4e5ac209fcf018f1c89809b40fcd4d192a",
-          "date": "2025-08-03",
-          "author": "R8V",
-          "subject": "feat: add RepoLink component for GitHub and GitLab links"
         }
       ]
     },
@@ -1480,6 +1480,18 @@
       ],
       "lastModified": "2026-04-26",
       "changes": [
+        {
+          "hash": "c667fc0b7393eaa49464ada104f65a483656ee8a",
+          "date": "2026-04-26",
+          "author": "R8V",
+          "subject": "📘 docs: Update lesson metadata and enhance API documentation with key points on design and usage"
+        },
+        {
+          "hash": "75ce443b9374cb3e99b51a2d383717c993ca7da6",
+          "date": "2026-04-26",
+          "author": "r8vnhill",
+          "subject": "sync"
+        },
         {
           "hash": "80c795afbe74f07973f6fea6b9aaf08284ff7c90",
           "date": "2026-04-26",

@@ -73,6 +73,11 @@
   schema:name "Evolucionar una API sin romper compatibilidad" ;
   schema:url "/notes/software-libraries/api-design/evolution/" .
 
+<https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/>
+  a schema:LearningResource ;
+  schema:name "Documentar una API como parte del producto" ;
+  schema:url "/notes/software-libraries/api-design/documentation/" .
+
 <https://dibs.ravenhill.cl/notes/scripting/node/>
   a schema:LearningResource ;
   schema:name "Introducción a scripting con Node.js" ;
@@ -712,6 +717,54 @@ usage:api-design-evolution-lauret-growing-apis-2019-additional
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/evolution/> ;
   dibs:reference ref:lauret-growing-apis-2019 ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-reddy-documentation-2024-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:reddy-documentation-2024 ;
+  dibs:tag "recommended" .
+
+usage:api-design-documentation-documentation-principles-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:documentation-principles ;
+  dibs:tag "recommended" .
+
+usage:api-design-documentation-how-to-write-software-documentation-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:how-to-write-software-documentation ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-make-a-readme-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:make-a-readme ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-keep-a-changelog-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:keep-a-changelog ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-spdx-license-list-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:spdx-license-list ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-contributor-covenant-code-of-conduct-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:contributor-covenant-code-of-conduct ;
+  dibs:tag "additional" .
+
+usage:api-design-documentation-inclusive-naming-initiative-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/api-design/documentation/> ;
+  dibs:reference ref:inclusive-naming-initiative ;
   dibs:tag "additional" .
 
 usage:scripting-node-casciaro-nodejs-design-patterns-4e-pending

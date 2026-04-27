@@ -562,6 +562,62 @@ ref:reddy-testing-2024
   schema:author person:martin-reddy ;
   schema:isPartOf work:api-design-for-cpp .
 
+ref:reddy-documentation-2024
+  a schema:Book ;
+  schema:name "Documentation" ;
+  schema:url "https://www.sciencedirect.com/book/9780443222191/api-design-for-c-and-and" ;
+  schema:datePublished "2024-05-23" ;
+  schema:pageStart 415 ;
+  schema:pageEnd 442 ;
+  schema:author person:martin-reddy ;
+  schema:isPartOf work:api-design-for-cpp .
+
+ref:documentation-principles
+  a schema:WebPage ;
+  schema:name "Documentation principles" ;
+  schema:url "https://www.writethedocs.org/guide/writing/docs-principles/" ;
+  schema:publisher org:write-the-docs .
+
+ref:how-to-write-software-documentation
+  a schema:WebPage ;
+  schema:name "How to write software documentation" ;
+  schema:url "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/" ;
+  schema:publisher org:write-the-docs .
+
+ref:make-a-readme
+  a schema:WebPage ;
+  schema:name "Make a README" ;
+  schema:url "https://www.makeareadme.com" ;
+  schema:author person:danny-guo .
+
+ref:keep-a-changelog
+  a schema:WebPage ;
+  schema:name "Keep a Changelog" ;
+  schema:url "https://keepachangelog.com/en/1.1.0/" ;
+  schema:datePublished "2018-11-11" ;
+  schema:author person:olivier-lacan .
+
+ref:spdx-license-list
+  a schema:WebPage ;
+  schema:name "SPDX License List" ;
+  schema:url "https://spdx.org/licenses/" ;
+  schema:datePublished "2026-02-20" ;
+  schema:author org:spdx-project ;
+  schema:publisher org:linux-foundation-collaborative-projects .
+
+ref:contributor-covenant-code-of-conduct
+  a schema:WebPage ;
+  schema:name "Contributor Covenant: A Code of Conduct for Digital Communities" ;
+  schema:url "https://www.contributor-covenant.org/" ;
+  schema:author person:coraline-ada-ehmke ;
+  schema:publisher org:organization-for-ethical-source .
+
+ref:inclusive-naming-initiative
+  a schema:WebPage ;
+  schema:name "Inclusive Naming Initiative" ;
+  schema:url "https://inclusivenaming.org/" ;
+  schema:publisher org:inclusive-naming-initiative .
+
 ref:lauret-designing-api-for-users-2019
   a schema:Book ;
   schema:name "Designing an API for its users" ;

@@ -267,3 +267,19 @@ person:walter-binder
   a schema:Person ;
   schema:givenName "Walter" ;
   schema:familyName "Binder" .
+
+person:coraline-ada-ehmke
+  a schema:Person ;
+  schema:givenName "Coraline Ada" ;
+  schema:familyName "Ehmke" ;
+  schema:url "https://en.wikipedia.org/wiki/Coraline_Ada_Ehmke" .
+
+person:olivier-lacan
+  a schema:Person ;
+  schema:givenName "Olivier" ;
+  schema:familyName "Lacan" .
+
+person:danny-guo
+  a schema:Person ;
+  schema:givenName "Danny" ;
+  schema:familyName "Guo" .

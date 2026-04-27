@@ -13,8 +13,10 @@ that manifest as `vite:invoke fetchModule` timeouts while importing this file fr
 /* == Tailwind CSS Base Layer
 Imports Tailwind's base styles (including preflight, utilities, and components).
 This must appear before any custom layers to ensure proper layering order.
+Source detection is scoped to `src` to keep Vite's dev-time CSS transform fast and predictable.
 */
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "..";
 
 /* == Starwind CSS
 Imports Starwind's base styles.

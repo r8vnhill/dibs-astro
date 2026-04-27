@@ -76,10 +76,23 @@
       "familyName": "Sun"
     },
     {
+      "@id": "person:coraline-ada-ehmke",
+      "@type": "Person",
+      "givenName": "Coraline Ada",
+      "familyName": "Ehmke",
+      "url": "https://en.wikipedia.org/wiki/Coraline_Ada_Ehmke"
+    },
+    {
       "@id": "person:daniele-bonetta",
       "@type": "Person",
       "givenName": "Daniele",
       "familyName": "Bonetta"
+    },
+    {
+      "@id": "person:danny-guo",
+      "@type": "Person",
+      "givenName": "Danny",
+      "familyName": "Guo"
     },
     {
       "@id": "person:david-flanagan",
@@ -227,6 +240,12 @@
       "@type": "Person",
       "givenName": "Nikos",
       "familyName": "Vasilakis"
+    },
+    {
+      "@id": "person:olivier-lacan",
+      "@type": "Person",
+      "givenName": "Olivier",
+      "familyName": "Lacan"
     },
     {
       "@id": "person:richard-siddaway",
@@ -385,6 +404,12 @@
       "url": "https://www.ietf.org/"
     },
     {
+      "@id": "org:inclusive-naming-initiative",
+      "@type": "Organization",
+      "name": "The Inclusive Naming Initiative",
+      "url": "https://inclusivenaming.org/"
+    },
+    {
       "@id": "org:intellij-platform-plugin-sdk-help",
       "@type": "Organization",
       "name": "IntelliJ Platform Plugin SDK Help",
@@ -407,6 +432,12 @@
       "@type": "Organization",
       "name": "Kotlin Help",
       "url": "https://kotlinlang.org/docs/"
+    },
+    {
+      "@id": "org:linux-foundation-collaborative-projects",
+      "@type": "Organization",
+      "name": "Linux Foundation Collaborative Projects",
+      "url": "https://www.linuxfoundation.org/"
     },
     {
       "@id": "org:manning",
@@ -473,6 +504,12 @@
       "url": "https://www.oreilly.com/"
     },
     {
+      "@id": "org:organization-for-ethical-source",
+      "@type": "Organization",
+      "name": "Organization for Ethical Source",
+      "url": "https://ethicalsource.dev/"
+    },
+    {
       "@id": "org:pearson-education",
       "@type": "Organization",
       "name": "Pearson Education, Limited"
@@ -532,6 +569,12 @@
       "url": "https://doc.rust-lang.org/book/"
     },
     {
+      "@id": "org:spdx-project",
+      "@type": "Organization",
+      "name": "SPDX Project",
+      "url": "https://spdx.dev/"
+    },
+    {
       "@id": "org:springer",
       "@type": "Organization",
       "name": "Springer"
@@ -547,6 +590,12 @@
       "@type": "Organization",
       "name": "Wikipedia",
       "url": "https://www.wikipedia.org/"
+    },
+    {
+      "@id": "org:write-the-docs",
+      "@type": "Organization",
+      "name": "Write the Docs",
+      "url": "https://www.writethedocs.org/"
     },
     {
       "@id": "org:yaknyam-press",
@@ -870,6 +919,20 @@
       }
     },
     {
+      "@id": "ref:contributor-covenant-code-of-conduct",
+      "@type": "WebPage",
+      "name": "Contributor Covenant: A Code of Conduct for Digital Communities",
+      "url": "https://www.contributor-covenant.org/",
+      "author": [
+        {
+          "@id": "person:coraline-ada-ehmke"
+        }
+      ],
+      "publisher": {
+        "@id": "org:organization-for-ethical-source"
+      }
+    },
+    {
       "@id": "ref:dataclasses-are-here-2018-video",
       "@type": "VideoObject",
       "name": "Dataclasses are here. Now what?",
@@ -882,6 +945,15 @@
       ],
       "publisher": {
         "@id": "org:pygotham"
+      }
+    },
+    {
+      "@id": "ref:documentation-principles",
+      "@type": "WebPage",
+      "name": "Documentation principles",
+      "url": "https://www.writethedocs.org/guide/writing/docs-principles/",
+      "publisher": {
+        "@id": "org:write-the-docs"
       }
     },
     {
@@ -1123,6 +1195,15 @@
       }
     },
     {
+      "@id": "ref:how-to-write-software-documentation",
+      "@type": "WebPage",
+      "name": "How to write software documentation",
+      "url": "https://www.writethedocs.org/guide/writing/beginners-guide-to-docs/",
+      "publisher": {
+        "@id": "org:write-the-docs"
+      }
+    },
+    {
       "@id": "ref:improving-your-parameterized-script",
       "@type": "Book",
       "name": "Improving your parameterized script",
@@ -1135,6 +1216,15 @@
       ],
       "isPartOf": {
         "@id": "work:learn-powershell-month-lunches-4e"
+      }
+    },
+    {
+      "@id": "ref:inclusive-naming-initiative",
+      "@type": "WebPage",
+      "name": "Inclusive Naming Initiative",
+      "url": "https://inclusivenaming.org/",
+      "publisher": {
+        "@id": "org:inclusive-naming-initiative"
       }
     },
     {
@@ -1184,6 +1274,18 @@
       "publisher": {
         "@id": "org:jfrog"
       }
+    },
+    {
+      "@id": "ref:keep-a-changelog",
+      "@type": "WebPage",
+      "name": "Keep a Changelog",
+      "url": "https://keepachangelog.com/en/1.1.0/",
+      "datePublished": "2018-11-11",
+      "author": [
+        {
+          "@id": "person:olivier-lacan"
+        }
+      ]
     },
     {
       "@id": "ref:kernighan-pike-unix-programming-environment-1984",
@@ -1325,6 +1427,17 @@
       "publisher": {
         "@id": "org:pycon-us"
       }
+    },
+    {
+      "@id": "ref:make-a-readme",
+      "@type": "WebPage",
+      "name": "Make a README",
+      "url": "https://www.makeareadme.com",
+      "author": [
+        {
+          "@id": "person:danny-guo"
+        }
+      ]
     },
     {
       "@id": "ref:martin-functions-2011",
@@ -1955,6 +2068,23 @@
       }
     },
     {
+      "@id": "ref:reddy-documentation-2024",
+      "@type": "Book",
+      "name": "Documentation",
+      "url": "https://www.sciencedirect.com/book/9780443222191/api-design-for-c-and-and",
+      "datePublished": "2024-05-23",
+      "pageStart": 415,
+      "pageEnd": 442,
+      "author": [
+        {
+          "@id": "person:martin-reddy"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:api-design-for-cpp"
+      }
+    },
+    {
       "@id": "ref:reddy-qualities-2024",
       "@type": "Book",
       "name": "Qualities",
@@ -2062,6 +2192,21 @@
       ],
       "publisher": {
         "@id": "org:microsoft-learn"
+      }
+    },
+    {
+      "@id": "ref:spdx-license-list",
+      "@type": "WebPage",
+      "name": "SPDX License List",
+      "url": "https://spdx.org/licenses/",
+      "datePublished": "2026-02-20",
+      "author": [
+        {
+          "@id": "org:spdx-project"
+        }
+      ],
+      "publisher": {
+        "@id": "org:linux-foundation-collaborative-projects"
       }
     },
     {
@@ -2176,6 +2321,12 @@
       "url": "/notes/scripting/structured-output/py/"
     },
     {
+      "@id": "/notes/software-libraries/api-design/documentation/",
+      "@type": "LearningResource",
+      "name": "Documentar una API como parte del producto",
+      "url": "/notes/software-libraries/api-design/documentation/"
+    },
+    {
       "@id": "/notes/software-libraries/api-design/evolution/",
       "@type": "LearningResource",
       "name": "Evolucionar una API sin romper compatibilidad",
@@ -2198,6 +2349,110 @@
       "@type": "LearningResource",
       "name": "La biblioteca como artefacto de software",
       "url": "/notes/software-libraries/what-is/"
+    },
+    {
+      "@id": "usage:api-design-documentation-contributor-covenant-code-of-conduct-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:contributor-covenant-code-of-conduct"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-documentation-principles-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:documentation-principles"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-how-to-write-software-documentation-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:how-to-write-software-documentation"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-inclusive-naming-initiative-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:inclusive-naming-initiative"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-keep-a-changelog-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:keep-a-changelog"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-make-a-readme-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:make-a-readme"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-reddy-documentation-2024-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:reddy-documentation-2024"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:api-design-documentation-spdx-license-list-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/api-design/documentation/"
+      },
+      "dibs:reference": {
+        "@id": "ref:spdx-license-list"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
     },
     {
       "@id": "usage:api-design-evolution-lauret-evolving-an-api-design-2019-additional",

@@ -5,6 +5,7 @@ import { Danger, Definition, Info, More, Tip, Warning } from "~/components/ui/ca
 import { CodeBlock, KotlinBlock, KotlinInline } from "~/components/ui/code";
 import { B, Dash, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -13,21 +14,27 @@ import NotesSection from "~/layouts/NotesSection.astro";
 <NotesLayout
     title="Documentar una API como parte del producto"
     description="Aprende por qué la documentación forma parte del contrato público de una biblioteca: comportamiento, ejemplos, referencia, migración, mantenimiento y experiencia de uso."
-    timeMultiplier={1.15}
+    timeMultiplier={1}
 >
     <Fragment slot="abstract">
         <P>
-            En una biblioteca, la documentación no es un complemento posterior al código: forma parte del contrato
-            público del producto. Una firma puede indicar cómo invocar una función, pero la documentación explica qué
-            promete, qué entradas acepta, qué errores puede producir, qué garantías ofrece y cómo debería usarse en
-            contexto.
+            En la lección anterior vimos que una API publicada crea compromisos y que evolucionarla exige pensar en
+            compatibilidad. Esta lección cierra esa secuencia mostrando que la documentación es el lugar donde esos
+            compromisos se vuelven legibles para quienes usan la biblioteca.
         </P>
 
         <P>
-            En esta lección estudiaremos cómo documentar APIs públicas con precisión, cómo distinguir referencia,
-            tutoriales, guías y explicaciones, y por qué los ejemplos ejecutables ayudan a proteger las promesas de la
-            API. También revisaremos criterios para mantener la documentación cerca, única y actual, usar lenguaje
-            inclusivo y diseñar páginas que respondan a la forma real en que las personas leen documentación técnica.
+            Una API publicada no solo expone funciones, tipos o rutas: también crea expectativas y restricciones.
+            Documentarla bien significa describir el contrato observable, escribir ejemplos útiles y verificables,
+            explicar cambios y migraciones, mantener la documentación junto con la API y diseñar páginas que respondan a
+            la forma real en que las personas leen documentación técnica.
+        </P>
+
+        <P>
+            Esta lección no está pensada como una lista para memorizar ni como una lectura que se deja atrás al terminar
+            la unidad. Su objetivo es ofrecer criterios para tomar mejores decisiones al escribir documentación,
+            reconocer cuándo una página cumple una función y saber dónde profundizar. Puedes volver a ella como pauta de
+            revisión cuando documentes APIs en el curso o en proyectos reales.
         </P>
     </Fragment>
 
@@ -212,6 +219,23 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 quien consume no debería asumir.
             </span>
         </KotlinBlock>
+
+        <P>
+            No todo lo que una persona quiere saber cabe en la referencia de la API. Cuando la pregunta es cómo empezar,
+            cómo resolver una tarea concreta o por qué una decisión de diseño existe, otras clases de documentación
+            reparten mejor la carga explicativa.
+        </P>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Para profundizar este bloque</span>
+
+            <P>
+                Si quieres estudiar con más detalle cómo escribir contratos y documentación de API, revisa la referencia
+                de Reddy sobre documentación de APIs y, como complemento metodológico, los principios de Write the Docs.
+                Las dos aparecen al final de la página en <a href="#references" class="underline underline-offset-2"
+                >Referencias</a>.
+            </P>
+        </Tip>
     </NotesSection>
 
     <NotesSection id="h2-documentation-types">
@@ -275,38 +299,34 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </ListItem>
         </List>
 
-        <Info headingLevel="h3">
+        <More headingLevel="h3" icon={icons.Files}>
             <span slot="title">Los documentos de proyecto también son documentación</span>
 
             <P>
                 Algunos documentos no describen directamente una función, pero sí afectan la decisión de adoptar,
-                distribuir, auditar o colaborar en una biblioteca. Por eso conviene tratarlos como parte de la
-                documentación pública del proyecto, no como archivos administrativos secundarios.
+                distribuir, auditar o colaborar en una biblioteca. Conviene tratarlos como documentación pública del
+                proyecto, aunque no sean el centro de la referencia de API.
             </P>
 
             <List>
                 <ListItem icon={icons.ShieldCheck}>
                     <B><Mono>LICENSE</Mono></B>: declara bajo qué condiciones se puede usar, copiar, modificar y
-                    redistribuir el código. Usar identificadores conocidos, como los de <Mono>SPDX</Mono>, reduce
-                    ambigüedad y facilita que herramientas y organizaciones reconozcan la licencia.
+                    redistribuir el código.
                 </ListItem>
                 <ListItem icon={icons.GitBranch}>
-                    <B><Mono>CONTRIBUTING.md</Mono></B>: explica cómo proponer cambios, ejecutar verificaciones,
-                    reportar problemas y respetar las convenciones del proyecto. Su valor está en convertir la
-                    colaboración en un flujo predecible, no en dejar que cada persona adivine el proceso.
+                    <B><Mono>CONTRIBUTING.md</Mono></B>: explica cómo proponer cambios, ejecutar verificaciones y
+                    respetar las convenciones del proyecto.
                 </ListItem>
                 <ListItem icon={icons.SealCheck}>
                     <B><Mono>CODE_OF_CONDUCT.md</Mono></B>: define expectativas de participación y criterios para cuidar
-                    la interacción dentro del proyecto. En bibliotecas públicas, esto también comunica qué tipo de
-                    comunidad se está construyendo alrededor de la API.
+                    la interacción dentro del proyecto.
                 </ListItem>
                 <ListItem icon={icons.WarningCircle}>
                     <B><Mono>SECURITY.md</Mono></B>: indica cómo reportar vulnerabilidades o problemas sensibles sin
-                    exponer detalles prematuramente. Esto ayuda a coordinar respuestas responsables cuando una falla
-                    afecta a quienes dependen de la biblioteca.
+                    exponer detalles prematuramente.
                 </ListItem>
             </List>
-        </Info>
+        </More>
 
         <Tip headingLevel="h3">
             <span slot="title">Ingredientes y recetas</span>
@@ -315,6 +335,24 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Piensa la referencia como una lista de ingredientes: es precisa y necesaria, pero no siempre enseña a
                 cocinar. Las guías, ejemplos y tutoriales muestran recetas: cómo combinar la API para resolver problemas
                 concretos sin obligar a deducirlo todo desde declaraciones aisladas.
+            </P>
+        </Tip>
+
+        <P>
+            Cuando la referencia ya no puede cargar sola con todas las dudas del lector, el tipo de documento importa:
+            cada página debe asumir una parte distinta de la explicación para que el conjunto siga siendo legible.
+        </P>
+
+        <Tip headingLevel="h3" icon={icons.Path}>
+            <span slot="title">Usa esta página como punto de partida</span>
+
+            <P>
+                Esta sección no busca cerrar el tema, sino darte un mapa para seguir aprendiendo. Para profundizar,
+                revisa primero <Enquote type="english-double">How to Write Software Documentation</Enquote> y
+                <Enquote type="english-double">Make a README</Enquote>, que ayudan a distinguir entre referencia, guías
+                y material introductorio. Luego, cuando trabajes evolución de APIs, vuelve sobre <Enquote
+                    type="english-double"
+                >Keep a Changelog</Enquote> para conectar documentación, versiones y migración.
             </P>
         </Tip>
     </NotesSection>
@@ -407,6 +445,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 observable de usar el resultado.
             </span>
         </KotlinBlock>
+
+        <P>
+            Los ejemplos solo ayudan mientras siguen siendo ciertos. Por eso conviene tratarlos como parte de la
+            verificación del producto y no como texto decorativo que se copia una vez y luego se olvida.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-maintainable-documentation">
@@ -490,6 +533,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 problema era del producto: prometió algo que ya no cumplía.
             </P>
         </Danger>
+
+        <P>
+            Incluso una documentación exacta puede fallar si nadie la puede encontrar a tiempo. Por eso el contenido
+            correcto necesita una estructura que permita llegar a la respuesta desde un error, una búsqueda, un enlace
+            compartido o una guía de migración.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Para continuar practicando</span>
+
+            <P>
+                Si quieres practicar mantenimiento documental como parte del producto, revisa <Mono>Keep a
+                    Changelog</Mono> para comunicar cambios y <Mono>SPDX License List</Mono> para estandarizar
+                información de licencia. Puedes usarlas como checklist en tu próximo proyecto.
+            </P>
+        </Info>
     </NotesSection>
 
     <NotesSection id="h2-inclusive-language">
@@ -539,6 +598,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>main branch</B> en vez de <B>master branch</B>: nombra la rama principal sin depender de
                     jerarquías innecesarias.
                 </ListItem>
+            </List>
+        </Info>
+
+        <More headingLevel="h3" icon={icons.SealCheck}>
+            <span slot="title">Más ejemplos de lenguaje preciso</span>
+
+            <List>
                 <ListItem icon={icons.CheckCircle}>
                     <B>placeholder, sample o test value</B> en vez de <B>dummy value</B>: describe el propósito de un
                     valor de ejemplo.
@@ -548,7 +614,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     coloquiales.
                 </ListItem>
             </List>
-        </Info>
+        </More>
 
         <Warning headingLevel="h3">
             <span slot="title">No reemplazar términos de forma mecánica</span>
@@ -594,6 +660,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     de uso.
                 </ListItem>
             </List>
+        </Tip>
+
+        <P>
+            Revisar el lenguaje no es un gesto aislado: también forma parte de la experiencia de lectura. Si una página
+            no está escrita para poder buscarse, escanearse y citarse, la precisión pierde parte de su valor práctico.
+        </P>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Para profundizar en naming inclusivo</span>
+
+            <P>
+                Inclusive Naming Initiative puede servirte como referencia de revisión cuando quieras proponer renombres
+                públicos con estrategia de migración en vez de cambios abruptos. Lo encontrarás en <a
+                    href="#references" class="underline underline-offset-2"
+                >Referencias</a>.
+            </P>
         </Tip>
     </NotesSection>
 
@@ -662,10 +744,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Documentar una API pública es diseñar una parte visible del producto. La documentación completa lo que
-                el código no puede expresar por sí solo: significado, restricciones, errores, garantías, ejemplos de uso
-                y criterios de evolución. Por eso, una biblioteca bien documentada no solo expone funciones o tipos;
-                también reduce incertidumbre para quienes dependen de ella.
+                El recorrido de esta unidad fue acumulativo: partimos de los artefactos de software, pasamos a ver las
+                bibliotecas como productos reutilizables, después tratamos sus APIs como contratos públicos y, más
+                tarde, analizamos cómo evolucionan sin romper compatibilidad. Esta lección cierra ese bloque al mostrar
+                que la documentación es la forma legible de esos compromisos.
             </P>
 
             <P>
@@ -710,11 +792,89 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="closing-reflection">
             <P>
-                Una buena pregunta para cerrar es: <Enquote>si alguien usara esta biblioteca sin leer su implementación,
-                    ¿qué promesas necesitaría encontrar en la documentación para confiar en ella?</Enquote>. La
-                respuesta a esa pregunta ayuda a decidir qué debe estar en la referencia, qué debe explicarse con
-                ejemplos, qué debe verificarse automáticamente y qué debe comunicarse cuando la API cambia.
+                No necesitas memorizar cada criterio de esta lección. Lo importante es aprender a volver a estas
+                preguntas cuando estés escribiendo documentación: <Enquote>¿qué promesas necesita encontrar una persona
+                    que usa la biblioteca para depender de ella sin leer la implementación?</Enquote>, <Enquote>¿esta
+                    página resuelve la duda correcta?</Enquote> y <Enquote>¿qué debería enlazar, verificar o explicar
+                    mejor?</Enquote>.
+            </P>
+
+            <P>
+                Usa esta página como una pauta de revisión: para las APIs que diseñes en el curso, para bibliotecas que
+                publiques y para proyectos reales donde la documentación también sea parte del producto.
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <ReferencesFromCatalog>
+        <Fragment slot="description-ref:reddy-documentation-2024">
+            Reddy permite profundizar la tesis central de la lección: la documentación no solo acompaña a una API, sino
+            que completa su especificación. El texto desarrolla qué comportamientos conviene documentar, cómo expresar
+            contratos, precondiciones, postcondiciones, cambios de comportamiento y garantías de uso, y qué tipos de
+            documentación ayudan a encontrar respuestas sin leer la implementación. También muestra cómo estas
+            decisiones se traducen en herramientas concretas como Doxygen y en criterios prácticos de escritura,
+            navegación, ejemplos, versionado e inclusión.
+        </Fragment>
+
+        <Fragment slot="description-ref:documentation-principles">
+            Como criterio de revisión, los principios de Write the Docs ayudan a convertir las ideas de la lección en
+            decisiones más operativas. La guía organiza la calidad documental en torno al contenido, las fuentes, las
+            publicaciones y el conjunto completo de documentos: documentar temprano, aceptar cierta repetición útil,
+            escribir para escaneo, mantener ejemplos y consistencia, ubicar las fuentes cerca del código, evitar
+            solapamientos, hacer las páginas descubribles y enlazables, y asegurar que el conjunto responda las
+            preguntas probables de quien usa el software.
+        </Fragment>
+
+        <Fragment slot="description-ref:how-to-write-software-documentation">
+            Para llevar la discusión a una primera documentación publicable, esta guía de Write the Docs ofrece un punto
+            de partida práctico. Explica por qué documentar ayuda a recordar decisiones, conseguir usuarios, facilitar
+            contribuciones y mejorar el diseño; luego propone qué incluir para que una biblioteca sea adoptable:
+            problema que resuelve, ejemplo mínimo, instalación, enlaces al código y al seguimiento de issues, formas de
+            soporte, guía de contribución y licencia. También incluye una plantilla de README reutilizable.
+        </Fragment>
+
+        <Fragment slot="description-ref:make-a-readme">
+            El README funciona como la primera experiencia de muchas personas con una biblioteca, y esta referencia
+            ayuda a evaluarlo desde esa función. La página explica qué es, por qué conviene escribirlo antes de publicar
+            el proyecto y qué preguntas debería responder: qué hace el software, cómo instalarlo, cómo usarlo, dónde
+            pedir soporte, cómo contribuir y bajo qué licencia se distribuye. Además, ofrece una plantilla editable y
+            una lista de secciones posibles para decidir qué debe quedar en el README y qué conviene mover a una
+            documentación más completa.
+        </Fragment>
+
+        <Fragment slot="description-ref:keep-a-changelog">
+            Para comunicar la evolución de una biblioteca, Keep a Changelog trata el historial de cambios como
+            documentación pública orientada a personas. Propone versiones en orden cronológico inverso, fechas claras,
+            enlaces por versión, una sección <Mono>Unreleased</Mono> y categorías como <Mono>Added</Mono>, <Mono
+            >Changed</Mono>, <Mono>Deprecated</Mono>, <Mono>Removed</Mono>, <Mono>Fixed</Mono> y <Mono>Security</Mono>.
+            Después de esta lección, resulta especialmente útil para comunicar cambios de comportamiento, deprecaciones
+            y rupturas sin obligar a quienes usan la API a interpretar un log de commits.
+        </Fragment>
+
+        <Fragment slot="description-ref:spdx-license-list">
+            La licencia también forma parte de la documentación que hace adoptable una biblioteca. La lista SPDX reúne
+            licencias y excepciones comunes con un identificador corto estandarizado, nombre completo, texto de licencia
+            y URL canónica permanente. Después de la lección, sirve para entender por qué un archivo <Mono
+            >LICENSE</Mono>, un campo de metadatos o un comentario de cabecera deberían usar nombres reconocibles y
+            verificables, en vez de descripciones informales que vuelven ambigua la adopción, redistribución o auditoría
+            del proyecto.
+        </Fragment>
+
+        <Fragment slot="description-ref:contributor-covenant-code-of-conduct">
+            En proyectos colaborativos, el <Mono>CODE_OF_CONDUCT.md</Mono> documenta condiciones de participación
+            alrededor de la biblioteca. Contributor Covenant ofrece un modelo ampliamente usado para explicitar valores,
+            expectativas de trato, mecanismos de reporte y políticas de aplicación. Después de la lección, ayuda a ver
+            que documentar una biblioteca no solo significa explicar su API: también implica comunicar cómo se participa
+            en torno a ella y qué acuerdos sostienen una comunidad segura, clara e inclusiva.
+        </Fragment>
+
+        <Fragment slot="description-ref:inclusive-naming-initiative">
+            Para revisar nombres públicos con más criterio, Inclusive Naming Initiative complementa la parte de la
+            lección dedicada al lenguaje inclusivo. El recurso reúne términos problemáticos, alternativas recomendadas,
+            niveles de prioridad y materiales para implementar cambios de nombre en proyectos y organizaciones. Después
+            de estudiar documentación de APIs, sirve para revisar nombres públicos, ejemplos, guías y textos de proyecto
+            sin hacer reemplazos improvisados: ayuda a decidir qué cambiar, por qué hacerlo y cómo mantener consistencia
+            durante la migración.
+        </Fragment>
+    </ReferencesFromCatalog>
 </NotesLayout>

@@ -217,3 +217,28 @@ org:nodejs-design-patterns
   a schema:Organization ;
   schema:name "Node.js Design Patterns" ;
   schema:url "https://nodejsdesignpatterns.com/" .
+
+org:organization-for-ethical-source
+  a schema:Organization ;
+  schema:name "Organization for Ethical Source" ;
+  schema:url "https://ethicalsource.dev/" .
+
+org:write-the-docs
+  a schema:Organization ;
+  schema:name "Write the Docs" ;
+  schema:url "https://www.writethedocs.org/" .
+
+org:inclusive-naming-initiative
+  a schema:Organization ;
+  schema:name "The Inclusive Naming Initiative" ;
+  schema:url "https://inclusivenaming.org/" .
+
+org:linux-foundation-collaborative-projects
+  a schema:Organization ;
+  schema:name "Linux Foundation Collaborative Projects" ;
+  schema:url "https://www.linuxfoundation.org/" .
+
+org:spdx-project
+  a schema:Organization ;
+  schema:name "SPDX Project" ;
+  schema:url "https://spdx.dev/" .
