@@ -15,6 +15,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
     description="Aprende por qué la documentación forma parte del contrato público de una biblioteca: comportamiento, ejemplos, referencia, migración, mantenimiento y experiencia de uso."
     timeMultiplier={1.15}
 >
+    <Fragment slot="abstract">
+        <P>
+            En una biblioteca, la documentación no es un complemento posterior al código: forma parte del contrato
+            público del producto. Una firma puede indicar cómo invocar una función, pero la documentación explica qué
+            promete, qué entradas acepta, qué errores puede producir, qué garantías ofrece y cómo debería usarse en
+            contexto.
+        </P>
+
+        <P>
+            En esta lección estudiaremos cómo documentar APIs públicas con precisión, cómo distinguir referencia,
+            tutoriales, guías y explicaciones, y por qué los ejemplos ejecutables ayudan a proteger las promesas de la
+            API. También revisaremos criterios para mantener la documentación cerca, única y actual, usar lenguaje
+            inclusivo y diseñar páginas que respondan a la forma real en que las personas leen documentación técnica.
+        </P>
+    </Fragment>
+
     <NotesSection id="h2-api-contract">
         <Heading
             headingLevel="h2" Icon={icons.FileText}
@@ -336,16 +352,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.Package}>
-                    <B>Un módulo o proyecto de ejemplos</B>, separado del código de producción, que muestre
-                    casos de uso completos de la API.
+                    <B>Un módulo o proyecto de ejemplos</B>, separado del código de producción, que muestre casos de uso
+                    completos de la API.
                 </ListItem>
                 <ListItem icon={icons.CodeBlock}>
-                    <B>Documentación ejecutable</B>, donde los fragmentos publicados se compilan o se ejecutan
-                    como parte de la verificación del proyecto.
+                    <B>Documentación ejecutable</B>, donde los fragmentos publicados se compilan o se ejecutan como
+                    parte de la verificación del proyecto.
                 </ListItem>
                 <ListItem icon={icons.Notebook}>
-                    <B>Notebooks</B>, útiles cuando el ejemplo necesita exploración interactiva, visualización
-                    o una explicación paso a paso.
+                    <B>Notebooks</B>, útiles cuando el ejemplo necesita exploración interactiva, visualización o una
+                    explicación paso a paso.
                 </ListItem>
             </List>
         </Info>
@@ -551,6 +567,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
             respuestas sin leer todo desde el comienzo.
         </P>
 
+        <P>
+            Para una biblioteca, muchos recorridos empiezan fuera del sitio de documentación: un mensaje de error, una
+            advertencia de deprecación, una búsqueda web, un README, una issue o una revisión de código. Diseñar para
+            lectura real significa conectar esos puntos de entrada con la explicación adecuada.
+        </P>
+
         <Info headingLevel="h3">
             <span slot="title">Principios de lectura práctica</span>
 
@@ -564,21 +586,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.Link}>
                     <B>Direccionable</B>: secciones con anclas que puedan compartirse en issues, revisiones y soporte.
                 </ListItem>
+                <ListItem icon={icons.Crosshair}>
+                    <B>Con contexto mínimo</B>: una sección enlazada debería poder entenderse sin leer toda la página
+                    anterior.
+                </ListItem>
                 <ListItem icon={icons.Stairs}>
-                    <B>Acumulativa</B>: los prerequisitos aparecen antes que los temas avanzados.
+                    <B>Orientada</B>: cada página explicita qué presupone, qué resuelve y hacia dónde continuar.
                 </ListItem>
                 <ListItem icon={icons.SealCheck}>
-                    <B>Completa dentro de su alcance</B>: cada página debe cubrir lo que promete, sin fingir que cubre
-                    todo.
+                    <B>Honesta en su alcance</B>: cada página debe decir qué cubre, qué no cubre y dónde seguir.
                 </ListItem>
             </List>
         </Info>
-
-        <P>
-            Esta experiencia también depende del lenguaje. Una página fácil de leer no solo organiza bien la
-            información: también usa términos precisos, consistentes e inclusivos para reducir fricción y evitar
-            barreras innecesarias.
-        </P>
 
         <P>
             Cuando una API evoluciona, esta experiencia se vuelve aún más importante. La documentación versionada, las
@@ -587,5 +606,62 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </NotesSection>
 
-    <ConclusionsLayout> </ConclusionsLayout>
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Documentar una API pública es diseñar una parte visible del producto. La documentación completa lo que
+                el código no puede expresar por sí solo: significado, restricciones, errores, garantías, ejemplos de uso
+                y criterios de evolución. Por eso, una biblioteca bien documentada no solo expone funciones o tipos;
+                también reduce incertidumbre para quienes dependen de ella.
+            </P>
+
+            <P>
+                La documentación útil combina distintos artefactos. La referencia precisa contratos; los tutoriales
+                guían el primer aprendizaje; las guías prácticas resuelven tareas concretas; las explicaciones
+                construyen modelo mental; y las notas de versión o migración hacen visible el cambio. Cuando estos
+                documentos se mantienen cerca del código, se verifican con ejemplos ejecutables y usan lenguaje claro e
+                inclusivo, la API se vuelve más confiable y más fácil de adoptar.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.FileText}>
+                La documentación completa el contrato de una API al declarar comportamiento observable, restricciones,
+                errores, garantías y supuestos de compatibilidad.
+            </ListItem>
+            <ListItem icon={icons.ListChecks}>
+                No todos los elementos públicos requieren el mismo nivel de detalle: la documentación debe responder las
+                preguntas necesarias para usar cada API correctamente.
+            </ListItem>
+            <ListItem icon={icons.BookOpen}>
+                Una biblioteca necesita varios tipos de documentación: referencia, tutoriales, guías prácticas,
+                explicaciones, troubleshooting, changelog y guías de migración.
+            </ListItem>
+            <ListItem icon={icons.TestTube}>
+                Los ejemplos ejecutables reducen la distancia entre lo que la documentación promete y lo que el código
+                realmente permite.
+            </ListItem>
+            <ListItem icon={icons.Files}>
+                La documentación mantenible debe tener fuentes canónicas claras, vivir cerca del código relacionado y
+                actualizarse cuando cambia el comportamiento público.
+            </ListItem>
+            <ListItem icon={icons.SealCheck}>
+                El lenguaje de la documentación debe ser preciso, claro e inclusivo, sin aplicar reemplazos mecánicos
+                que dañen la comprensión o la compatibilidad.
+            </ListItem>
+            <ListItem icon={icons.MagnifyingGlass}>
+                Diseñar para lectura real significa escribir páginas escaneables, descubribles, direccionables y útiles
+                aun cuando alguien llegue desde un error, una búsqueda, una issue o una guía de migración.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Una buena pregunta para cerrar es: <Enquote>si alguien usara esta biblioteca sin leer su implementación,
+                    ¿qué promesas necesitaría encontrar en la documentación para confiar en ella?</Enquote>. La
+                respuesta a esa pregunta ayuda a decidir qué debe estar en la referencia, qué debe explicarse con
+                ejemplos, qué debe verificarse automáticamente y qué debe comunicarse cuando la API cambia.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
 </NotesLayout>
