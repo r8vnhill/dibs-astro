@@ -57,9 +57,7 @@ function buildLegacyScriptingRedirects(): Record<string, string> {
  * Notes:
  * - Code highlighting is implemented by local Shiki helpers; Astro's Markdown highlighting is set
  *   to Prism to avoid the built-in Shiki instantiation during markdown processing.
- * - `./config/shiki-warn-tracker` suppresses redundant Shiki warnings and keeps Astro's internal
- *   markdown-Shiki runtime patch enabled for builds. The runtime patch stays off by default in
- *   local development to avoid `vite:invoke fetchModule` transport stalls during cold starts.
+ * - `./config/shiki-warn-tracker` suppresses redundant Shiki warnings only.
  */
 export default defineConfig({
     // Used to generate correct absolute URLs during build

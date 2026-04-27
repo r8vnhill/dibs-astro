@@ -5,6 +5,21 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.18.0] - 2026-04-27
+
+### Added
+
+- Added the new `Documentar una API como parte del producto` lesson under `software-libraries/api-design`, covering documentation as part of the public contract: observable behavior, examples, migration, maintainability, inclusive language, and real reading workflows.
+
+### Changed
+
+- Completed the Unit 1 API design sequence so it now progresses through API fundamentals, compatible evolution, and documentation as a dedicated third lesson.
+- Updated course structure, generated lesson metadata, bibliography references/usages, and traceability notes so navigation and reference data include the new documentation lesson.
+
+### Fixed
+
+- Added render coverage for the API documentation lesson to guard the page title, canonical route, and core thesis.
+
 ## [0.17.0] - 2026-04-20
 
 ### Changed

@@ -68,6 +68,101 @@ In practical terms:
 - application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
 - domain code should remain framework-free and I/O-free
 
+## Boundary checker
+
+Cycle 1 of the layer-separation hardening work added an executable boundary checker:
+
+```bash
+node scripts/check-layer-boundaries.mjs
+```
+
+The checker currently scans `.ts`, `.tsx`, and `.astro` files under `src/`. Astro support is intentionally narrow: only frontmatter imports are inspected, which covers the architectural imports used by layouts and components without treating the checker as an Astro compiler.
+
+The Cycle 2 checker evaluates imports against a classification-driven rule matrix:
+
+- `src/domain/**` may import only domain targets, and must not import `astro`, `react`, or `zod`.
+- `src/application/**` may import domain and application targets, and must not import infrastructure, presentation, UI, generated data, plain data, `astro`, `react`, or `zod`.
+- `src/infrastructure/**` may import domain, application, infrastructure, data, generated data, and utilities, but must not import presentation or UI targets.
+- `src/presentation/adapters/**` may compose domain, application, infrastructure, presentation, and utility targets, but must not import UI components, layouts, or pages.
+- UI surfaces under `src/components/**`, `src/layouts/**`, and `src/pages/**` may import presentation adapters, presentation helpers, UI, assets, styles, utilities, domain, and application targets, but must not import infrastructure directly.
+
+Type-only imports are checked as architectural dependencies. Package subpaths are normalized before package rules are
+applied, so `react/jsx-runtime` is treated as `react` and `zod/v4` is treated as `zod`. Generated data is classified by
+filename before generic data paths: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are
+`generated-data`.
+
+The checker resolves project aliases from `tsconfig.json` through `get-tsconfig`, normalizes relative paths, extracts imports and re-exports through `es-module-lexer` with a TSX fallback, and evaluates imports against the classification-driven Cycle 2 rule matrix.
+
+This command is not yet wired into `pnpm check`; that integration belongs to a later hardening cycle after the full layer rule matrix and exception policy are in place.
+
+Cycle 2 Step 1 locked the existing checker behaviour with this focused gate:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+As of 2026-04-25, that baseline passes with 3 checker-specific test files and 30 tests. Use this direct Vitest invocation for Cycle 2 checker work until later workflow integration adds a package script.
+
+Cycle 2 Step 2 added pure classification helpers in `scripts/lib/layer-boundary-classification.mjs`.
+They classify source paths, resolved project targets, bare package imports, and import records into the normalized layer
+vocabulary needed by the future rule matrix. This step is intentionally additive: the checker still enforces only the
+Cycle 1 starter rules until the later rule-matrix and evaluator steps wire the classifiers into rule evaluation.
+
+The Step 2 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-classification.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+As of 2026-04-25, that gate passes with 4 checker-specific test files and 75 tests.
+
+Cycle 2 Step 3 added the classification-shaped rule matrix in `scripts/lib/layer-boundary-rules.mjs`.
+The canonical `boundaryRules` export now declares the five planned source-layer groups: domain, application,
+infrastructure, presentation adapter, and UI. `allowedExceptions` exists but starts empty.
+
+The Step 3 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-classification.test.ts
+```
+
+As of 2026-04-25, that gate passes with 2 checker-specific test files and 65 tests. The checker compatibility safety
+gate also passes:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-checker.test.ts
+```
+
+Cycle 2 Step 4 moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and switched
+`initialBoundaryRules` to the Cycle 2 `boundaryRules` matrix. Evaluation now classifies source paths and imports before
+checking exact exceptions, forbidden packages, forbidden targets, and allowed-target lists. `checkLayerBoundaries(...)`
+still returns only violations, and `formatViolations(...)` remains a formatter for public violation payloads only.
+
+The Step 4 focused gate is:
+
+```bash
+node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-rule-evaluation.test.ts scripts/__tests__/layer-boundary-classification.test.ts scripts/__tests__/layer-boundary-checker.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
+```
+
+As of 2026-04-25, that gate passes with 6 checker-specific test files and 110 tests.
+
+Cycle 2 Steps 5 and 6 preserved the public CLI/reporting contract and expanded the rule matrix tests in
+`scripts/__tests__/layer-boundary-rules.test.ts`. The suite now covers each Cycle 2 allowed and forbidden direction,
+domain/application package restrictions, package subpath normalization, generated JSON and JSON-LD classification,
+type-only import enforcement, and exact exception behavior. Skipped exceptions are still available only through the
+lower-level evaluation result; `checkLayerBoundaries(...)` returns violations only and `formatViolations(...)` does not
+render skipped imports.
+
+The Step 7 focused gate is:
+
+```bash
+pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
+```
+
+As of 2026-04-25, that gate passes. In the current Vitest configuration this command also collected the broader unit
+suite, and the run completed with 55 passing test files and 861 passing tests; the layer-boundary rule suite itself
+contains 90 passing tests.
+
 ## Presentation boundaries
 
 The main presentation-facing contracts locked in during this phase are:
@@ -96,6 +191,11 @@ Some transitional or infrastructure-support files still exist by design:
   - is now an Astro/UI adapter module
   - owns slot reading, slot preparation, and UI-facing error translation
   - pure precedence and content-resolution rules belong in `src/domain/reference-content.ts`
+
+- `src/components/ui/references/thesis-reference.ts`
+  - is a UI-facing view-model resolver for `Thesis.astro`
+  - owns component runtime contracts such as required href validation and linked metadata label validation
+  - keeps Astro rendering thin without moving slot HTML or component-specific metadata policy into the domain layer
 
 - `src/utils/navigation.ts`
   - remains a small normalization helper surface for presentation payload shaping

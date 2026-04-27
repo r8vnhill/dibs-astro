@@ -1,4 +1,4 @@
-import { DIBS, ID_PREFIXES, SCHEMA, SITE_ORIGIN } from "./bibliography-catalog-builder.constants.mjs";
+import { DIBS, ID_PREFIXES, SCHEMA, SITE_ORIGIN } from "../shared/constants.mjs";
 
 export const compactId = (iri) => {
     if (iri.startsWith(`${SITE_ORIGIN}/notes/`)) {
