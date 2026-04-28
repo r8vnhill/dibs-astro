@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.18.1] - 2026-04-28
+
+### Changed
+
+- Hardened lesson metadata normalization and date display so URL-like lookup inputs discard query strings/fragments, impossible calendar dates are rejected, blank dates use the missing-date fallback, and formatted dates remain UTC-stable.
+- Adjusted CI for the local Docker runner so each Linux container performs a frozen pnpm install instead of reusing `node_modules` artifacts, avoiding missing optional native packages such as Rollup's Alpine musl build.
+- Tuned resource-heavy tests for CI by skipping selected property/highlighter cases under `CI` while preserving local coverage and increasing Astro render test timeout.
+
+### Fixed
+
+- Avoided unnecessary Shiki highlighter initialization for unknow-+
+- n languages so fallback rendering stays fast and resilient.
+- Documented the Windows + Scoop + Docker Desktop WSL2 GitLab Runner workflow, including service setup, config-path verification, token redaction, log interpretation, and pnpm cache pitfalls.
+
 ## [0.18.0] - 2026-04-27
 
 ### Added

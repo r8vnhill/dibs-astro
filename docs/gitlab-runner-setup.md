@@ -406,13 +406,20 @@ Jobs can use Linux Docker images:
 .node-job:
   image: node:${NODE_VERSION}-alpine
   before_script:
+    - npm config set fetch-retries 5
+    - npm config set fetch-retry-mintimeout 20000
+    - npm config set fetch-retry-maxtimeout 120000
     - corepack enable
-    - corepack prepare pnpm@${PNPM_VERSION} --activate
+    - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
     - pnpm config set store-dir ${PNPM_STORE_DIR}
     - pnpm install --frozen-lockfile
 ```
 
 Linux container commands are valid in job scripts because they run inside the container, not in Windows PowerShell.
+
+Pin `PNPM_VERSION` to an exact version such as `9.15.9`, not a floating major such as `9`. Floating versions force
+Corepack to query npm package metadata before it can activate pnpm, which can fail before the project install starts.
+The fallback `npm install --global pnpm@${PNPM_VERSION}` keeps setup resilient when Corepack activation fails.
 
 Do not pass `node_modules/` between jobs as an artifact. Packages such as Rollup use platform-specific optional native
 dependencies, and carrying `node_modules` between jobs can leave the next container without the required native package,
