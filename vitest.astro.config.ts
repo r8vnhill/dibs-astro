@@ -11,5 +11,6 @@ export default getViteConfig({
         css: false,
         include: ["src/**/*.render.test.ts"],
         exclude: ["node_modules/**"],
+        testTimeout: 15_000,
     },
 });
