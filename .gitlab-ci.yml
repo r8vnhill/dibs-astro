@@ -12,6 +12,7 @@ stages:
 variables:
     NODE_VERSION: "20"
     PNPM_VERSION: "9"
+    PNPM_STORE_DIR: .pnpm-store
     GIT_DEPTH: "20"
     GIT_STRATEGY: fetch
     GIT_CLEAN_FLAGS: -ffdx
@@ -21,9 +22,17 @@ variables:
 
 .node-job:
     image: node:${NODE_VERSION}-alpine
+    cache:
+        key:
+            files:
+                - pnpm-lock.yaml
+        paths:
+            - .pnpm-store/
     before_script:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate
+        - pnpm config set store-dir ${PNPM_STORE_DIR}
+        - pnpm install --frozen-lockfile
 
 deps:
     stage: prepare
@@ -32,12 +41,7 @@ deps:
         - local
         - docker
     script:
-        - pnpm fetch --frozen-lockfile
-        - pnpm install --offline --frozen-lockfile
-    artifacts:
-        paths:
-            - node_modules/
-        expire_in: 1 day
+        - pnpm store status
 
 test:astro-check:
     stage: test
@@ -47,7 +51,6 @@ test:astro-check:
         - docker
     needs:
         - job: deps
-          artifacts: true
     script:
         - pnpm astro check
 
@@ -59,7 +62,6 @@ test:unit:
         - docker
     needs:
         - job: deps
-          artifacts: true
     script:
         - pnpm exec vitest run --config vitest.config.ts
 
@@ -71,7 +73,6 @@ test:astro-render:
         - docker
     needs:
         - job: deps
-          artifacts: true
     script:
         - pnpm exec vitest run --config vitest.astro.config.ts
 
@@ -88,7 +89,6 @@ build:
         UV_THREADPOOL_SIZE: "2"
     needs:
         - job: deps
-          artifacts: true
         - job: test:astro-check
         - job: test:unit
         - job: test:astro-render
@@ -111,7 +111,6 @@ deploy:
         ASTRO_TELEMETRY_DISABLED: "1"
     needs:
         - job: deps
-          artifacts: true
         - job: test:astro-check
         - job: test:unit
         - job: test:astro-render
