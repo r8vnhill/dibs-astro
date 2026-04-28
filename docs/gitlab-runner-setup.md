@@ -405,12 +405,6 @@ Jobs can use Linux Docker images:
 ```yaml
 .node-job:
   image: node:${NODE_VERSION}-alpine
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store/
   before_script:
     - corepack enable
     - corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -422,8 +416,12 @@ Linux container commands are valid in job scripts because they run inside the co
 
 Do not pass `node_modules/` between jobs as an artifact. Packages such as Rollup use platform-specific optional native
 dependencies, and carrying `node_modules` between jobs can leave the next container without the required native package,
-such as `@rollup/rollup-linux-x64-musl`. Cache the pnpm store instead and run `pnpm install --frozen-lockfile` inside
-each job container.
+such as `@rollup/rollup-linux-x64-musl`. Run `pnpm install --frozen-lockfile` inside each job container instead.
+
+Avoid caching `.pnpm-store/` unless the cache is proven to be faster on this runner. The store can contain tens of
+thousands of files, and GitLab may spend more time archiving and uploading the cache than the install would have taken.
+If a job appears stuck after successful output such as `Result (401 files): 0 errors`, check whether it is actually
+saving cache.
 
 Do not use `pnpm store status` as a normal CI gate when the pnpm store is restored from GitLab cache. It can fail with
 `ERR_PNPM_MODIFIED_DEPENDENCY` for cached package contents even after a successful install. Use it only as a local or
