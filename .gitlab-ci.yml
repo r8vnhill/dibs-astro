@@ -41,7 +41,7 @@ deps:
         - local
         - docker
     script:
-        - pnpm store status
+        - pnpm --version
 
 test:astro-check:
     stage: test

@@ -425,6 +425,10 @@ dependencies, and carrying `node_modules` between jobs can leave the next contai
 such as `@rollup/rollup-linux-x64-musl`. Cache the pnpm store instead and run `pnpm install --frozen-lockfile` inside
 each job container.
 
+Do not use `pnpm store status` as a normal CI gate when the pnpm store is restored from GitLab cache. It can fail with
+`ERR_PNPM_MODIFIED_DEPENDENCY` for cached package contents even after a successful install. Use it only as a local or
+temporary diagnostic command.
+
 For example:
 
 ```yaml
