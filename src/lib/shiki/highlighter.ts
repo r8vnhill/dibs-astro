@@ -45,11 +45,10 @@ export async function highlightToHtml({
     fallbackPreClasses = [],
     fallbackCodeClasses = [],
 }: HighlightOptions) {
-    // Get (or create) the shared highlighter instance preloaded with the project's default themes.
-    const highlighter = await getHighlighter();
-
     // `text` is a special Shiki language that does not require grammar loading, but still supports transformers.
     if (lang.toLowerCase() === "text") {
+        // Get (or create) the shared highlighter instance preloaded with the project's default themes.
+        const highlighter = await getHighlighter();
         return highlighter.codeToHtml(code, {
             lang: "text",
             theme,
@@ -61,42 +60,47 @@ export async function highlightToHtml({
     // `resolvedLang` is a BundledLanguage when we know how to highlight it, otherwise null.
     const { resolvedLang, shouldWarn } = resolveLanguage(lang);
 
-    if (resolvedLang) {
-        try {
-            if (!highlighter.getLoadedLanguages().includes(resolvedLang)) {
-                await runWithDevTransportRetry(
-                    async ({ signal: _signal }) => await highlighter.loadLanguage(resolvedLang),
-                    {
-                        label: `shiki language load (${resolvedLang})`,
-                        onRetryEvent: warnOnDevRetryEvent,
-                    },
-                );
-            }
-
-            return highlighter.codeToHtml(code, {
-                lang: resolvedLang,
-                theme,
-                transformers,
-            });
-        } catch (error) {
-            // If language loading fails (for example, a missing dependency or network error during dynamic load), warn
-            // once and fall back to rendering un-highlighted, escaped HTML. We track failures so we don't flood the
-            // console.
-            if (!failedLanguageWarnings.has(resolvedLang)) {
-                failedLanguageWarnings.add(resolvedLang);
-                console.warn(
-                    `[shiki] language "${lang}" could not be loaded. Rendering as plain text.`,
-                    error,
-                );
-            }
+    if (!resolvedLang) {
+        // If the language wasn't recognized at all (not in our alias map or in the Shiki bundle), issue a single
+        // warning for that language and return a plain, escaped code block so content remains safe.
+        if (shouldWarn && !missingLanguageWarnings.has(lang)) {
+            missingLanguageWarnings.add(lang);
+            console.warn(`[shiki] language "${lang}" not recognized. Rendering as plain text.`);
         }
+
+        return buildPlainHtml(code, fallbackPreClasses, fallbackCodeClasses);
     }
 
-    // If the language wasn't recognized at all (not in our alias map or in the Shiki bundle), issue a single warning
-    // for that language and return a plain, escaped code block so content remains safe.
-    if (shouldWarn && !missingLanguageWarnings.has(lang)) {
-        missingLanguageWarnings.add(lang);
-        console.warn(`[shiki] language "${lang}" not recognized. Rendering as plain text.`);
+    // Get (or create) the shared highlighter instance preloaded with the project's default themes.
+    const highlighter = await getHighlighter();
+
+    try {
+        if (!highlighter.getLoadedLanguages().includes(resolvedLang)) {
+            await runWithDevTransportRetry(
+                async ({ signal: _signal }) => await highlighter.loadLanguage(resolvedLang),
+                {
+                    label: `shiki language load (${resolvedLang})`,
+                    onRetryEvent: warnOnDevRetryEvent,
+                },
+            );
+        }
+
+        return highlighter.codeToHtml(code, {
+            lang: resolvedLang,
+            theme,
+            transformers,
+        });
+    } catch (error) {
+        // If language loading fails (for example, a missing dependency or network error during dynamic load), warn
+        // once and fall back to rendering un-highlighted, escaped HTML. We track failures so we don't flood the
+        // console.
+        if (!failedLanguageWarnings.has(resolvedLang)) {
+            failedLanguageWarnings.add(resolvedLang);
+            console.warn(
+                `[shiki] language "${lang}" could not be loaded. Rendering as plain text.`,
+                error,
+            );
+        }
     }
 
     return buildPlainHtml(code, fallbackPreClasses, fallbackCodeClasses);

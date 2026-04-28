@@ -30,6 +30,9 @@ describe("highlightToHtml", () => {
 
     it("falls back to plain html and warns once for unknown languages", async () => {
         const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+        const rejectedHighlighter = Promise.reject(new Error("highlighter should not be needed"));
+        rejectedHighlighter.catch(() => {});
+        __setHighlighterForTests(rejectedHighlighter as never);
 
         const options = {
             code: "echo hello",
@@ -126,9 +129,7 @@ describe("highlightToHtml", () => {
         expect(html).toContain("<pre class=\"shiki");
         expect(stripHtml(html)).toContain("print('hi')");
         expect(
-            warn.mock.calls.some(([message]) =>
-                String(message ?? "").includes("shared shiki highlighter creation")
-            ),
+            warn.mock.calls.some(([message]) => String(message ?? "").includes("shared shiki highlighter creation")),
         ).toBe(false);
     });
 });
