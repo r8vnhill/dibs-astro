@@ -6,8 +6,8 @@
  * This module wraps `lesson-metadata.generated.json` with:
  *
  * - **Runtime validation** via `{ts} zod` (protects against shape drift).
- * - **Convenient lookup** by URL pathname (normalized routes).
- * - **Date parsing/formatting** helpers for presenting lesson timestamps.
+ * - **Convenient lookup** by URL-like input (canonical lesson routes).
+ * - **Strict UTC date parsing/formatting** helpers for presenting lesson timestamps.
  *
  * ## Dataset model
  *
@@ -28,15 +28,19 @@
  *
  * ## Normalized route contract
  *
- * Routes in `entries` are expected to:
+ * Routes in `entries` are canonical lesson paths. They are expected to:
  *
  * - start with `/`
  * - end with `/`
  * - contain no repeated slashes (`//`)
  * - collapse index routes at generation time (e.g. `/foo/index.astro` → `/foo/`)
  *
- * {@link normalizeLessonPathname} enforces these invariants for lookup keys.
+ * {@link normalizeLessonPathname} accepts relative paths or absolute URLs, discards query strings
+ * and fragments, and delegates final route canonicalization to the domain `LessonHref` value
+ * object.
  */
+import { z } from "zod";
+import metadataRaw from "../data/lesson-metadata.generated.json";
 import {
     DEFAULT_LESSON_METADATA_LOCALE,
     formatDate as formatDomainDate,
@@ -45,8 +49,6 @@ import {
     parseIsoShortDate as parseDomainIsoShortDate,
     UNKNOWN_LESSON_DATE_LABEL,
 } from "../domain";
-import { z } from "zod";
-import metadataRaw from "../data/lesson-metadata.generated.json";
 
 /**
  * Default locale used when formatting dates for display.
@@ -192,7 +194,8 @@ let datasetCache: LessonMetadataDataset | undefined;
  *
  * - Trims surrounding whitespace.
  * - Treats empty input as `/`.
- * - Strips a leading origin if a full URL is provided (e.g. `https://site/...`).
+ * - Accepts relative paths and absolute URL-like inputs.
+ * - Discards query strings and hash fragments because metadata keys are lesson routes.
  * - Ensures a leading slash.
  * - Collapses repeated slashes (`//` → `/`).
  * - Ensures a trailing slash.
@@ -220,11 +223,12 @@ export const normalizeLessonPathname = (pathname: string): string => {
 };
 
 /**
- * Parses an ISO short date (`YYYY-MM-DD`) into a UTC `{ts} Date`.
+ * Parses a real ISO short calendar date (`YYYY-MM-DD`) into a UTC `{ts} Date`.
  *
  * ## This helper is intentionally strict:
  *
  * - Accepts only `YYYY-MM-DD`.
+ * - Rejects impossible calendar dates such as `2024-02-31` or `2024-13-01`.
  * - Interprets the date in UTC (`T00:00:00.000Z`) to avoid local timezone shifts.
  *
  * @param date ISO short date string.
@@ -241,6 +245,9 @@ export const parseIsoShortDate = (date?: string): Date | undefined => {
  *
  * - year/month/day
  * - `timeZone: "UTC"` to avoid local offsets
+ *
+ * Partial option overrides are merged with the defaults so callers can customize display without
+ * accidentally dropping UTC stability. Callers may still override `timeZone` explicitly.
  *
  * @param date A valid `{ts} Date`.
  * @param locale BCP 47 locale tag (defaults to {@link DEFAULT_LOCALE}).
@@ -266,7 +273,8 @@ export const formatDate = (
  * ## Behavior:
  *
  * - If `date` is missing: returns {@link UNKNOWN_DATE_LABEL}.
- * - If `date` is not a valid ISO short date: returns the original string unchanged.
+ * - If `date` is blank or whitespace-only: returns {@link UNKNOWN_DATE_LABEL}.
+ * - If `date` is not a valid ISO short date: returns the trimmed string unchanged.
  * - Otherwise: parses the ISO short date in UTC and formats it via {@link formatDate}.
  *
  * ## Usage:

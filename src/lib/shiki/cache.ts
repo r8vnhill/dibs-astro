@@ -96,6 +96,7 @@ const globalHighlighterCache = globalThis as typeof globalThis & {
 };
 
 const isRetryExplicitlyEnabled = () => process.env.DIBS_DEV_RETRY_ENABLED === "true";
+const isRunningUnderVitest = () => process.env.VITEST === "true" || process.env.VITEST_WORKER_ID !== undefined;
 
 /**
  * Creates a small store that memoizes a promise-backed shared value.
@@ -174,21 +175,21 @@ function syncGlobalHighlighterPromise(value: HighlighterPromise | null) {
  * transport failures do not immediately break highlighting.
  */
 const createSharedHighlighter = (): HighlighterPromise =>
-    runWithDevTransportRetry(
-        async ({ signal: _signal }) =>
-            createHighlighter({
-                themes: [...SHIKI_DEFAULT_THEMES],
-                langs: availableLanguages,
-            }),
-        {
-            label: "shared shiki highlighter creation",
-            // Keep the shared bootstrap deterministic under Vitest unless a test opts into retry
-            // behavior explicitly through the supported environment flag.
-            ...(process.env.VITEST === "true"
-                ? { enabled: isRetryExplicitlyEnabled() }
-                : {}),
-        },
-    );
+    isRunningUnderVitest() && !isRetryExplicitlyEnabled()
+        ? createHighlighter({
+            themes: [...SHIKI_DEFAULT_THEMES],
+            langs: availableLanguages,
+        })
+        : runWithDevTransportRetry(
+            async ({ signal: _signal }) =>
+                createHighlighter({
+                    themes: [...SHIKI_DEFAULT_THEMES],
+                    langs: availableLanguages,
+                }),
+            {
+                label: "shared shiki highlighter creation",
+            },
+        );
 
 /**
  * Process-level store used by production code and most tests.

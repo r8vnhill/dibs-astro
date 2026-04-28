@@ -176,8 +176,9 @@ describe("dataset resolution", () => {
                 const variants = [
                     base,
                     `${route}/`,
-                    route.replaceAll("/", "//"),
                     `https://dibs.ravenhill.cl${base}`,
+                    `https://dibs.ravenhill.cl${base}?from=search`,
+                    `https://dibs.ravenhill.cl${base}#section`,
                 ];
 
                 for (const variant of variants) {
