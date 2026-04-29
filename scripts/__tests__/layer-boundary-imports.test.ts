@@ -33,6 +33,18 @@ describe("extractImports", () => {
             "dynamic-import",
             { line: 1, column: 22 },
         ],
+        [
+            "inline type-only import",
+            "import { type x } from \"$domain/x\";",
+            "$domain/x",
+            "type-import",
+        ],
+        [
+            "mixed inline type and value import",
+            "import { type X, y } from \"$domain/x\";",
+            "$domain/x",
+            "static-import",
+        ],
     ])(
         "extracts a %s as an architectural dependency",
         async (_label, source, target, kind, location = { line: 1, column: 1 }) => {
@@ -62,6 +74,15 @@ import type { Lesson } from "$domain/lesson";
             ["$presentation/adapters/layout", "static-import"],
             ["$domain/lesson", "type-import"],
         ]);
+    });
+
+    it("ignores Astro template content when frontmatter is absent", async () => {
+        const records = await extractImports(
+            '<p>import { Adapter } from "$infrastructure/adapters/Adapter";</p>',
+            "src/components/Card.astro",
+        );
+
+        expect(records).toEqual([]);
     });
 
     it("falls back to import extraction when TSX syntax cannot be parsed as plain ESM", async () => {

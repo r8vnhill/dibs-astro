@@ -22,7 +22,7 @@ src/data/bibliography/catalog.graph.generated.jsonld
 
 Do not edit generated files manually. Update the Turtle files in `sources/` and regenerate the catalog instead.
 
-The project still keeps legacy `*.bibliography.jsonld` `ItemList` files during migration, but new work should target the 
+The project still keeps legacy `*.bibliography.jsonld` `ItemList` files during migration, but new work should target the
 Turtle catalog.
 
 ## Canonical model
@@ -41,7 +41,7 @@ Core node categories:
 - lessons: `LearningResource`
 - usage edges: `dibs:ReferenceUsage`
 
-References are the citeable entries rendered in lessons. Works are reusable source entities that can be referenced by 
+References are the citeable entries rendered in lessons. Works are reusable source entities that can be referenced by
 more specific citeable entries, such as chapters, articles, or web pages.
 
 ## IDs
@@ -79,7 +79,7 @@ Supported tags:
 - `additional`
 - `pending-revision`
 
-`pending-revision` is used for references that should not be rendered as normal published recommendations yet. UI 
+`pending-revision` is used for references that should not be rendered as normal published recommendations yet. UI
 rendering hides `pending-revision` entries by default.
 
 ## Editing the catalog
@@ -156,7 +156,7 @@ scripts/lib/bibliography-catalog-builder.constants.mjs
 scripts/lib/bibliography-catalog-builder.validation.mjs
 ```
 
-Prefer those facades for script consumers and behavior-oriented tests. Import implementation subdirectories only when 
+Prefer those facades for script consumers and behavior-oriented tests. Import implementation subdirectories only when
 testing a specific internal contract.
 
 ## Builder contracts
@@ -169,7 +169,7 @@ The builder follows a small set of internal contracts:
 - graph sorting is deterministic and non-mutating;
 - pending-revision pruning is isolated to the usage-node path and does not affect published usages.
 
-These are implementation guarantees rather than editorial features, but they are useful when extending the catalog 
+These are implementation guarantees rather than editorial features, but they are useful when extending the catalog
 builder or adding tests around the generated graph.
 
 ## Rendering model
@@ -198,6 +198,9 @@ The report regenerates the catalog, reads the generated artifact, and produces:
 - top cited references;
 - top cited books;
 - counts by lesson and tag.
+
+Report analytics use the same normalized catalog core as site rendering. This keeps the script aligned with runtime tag
+filtering and supported rendered reference types, including `VideoObject`.
 
 ## Review checklist
 

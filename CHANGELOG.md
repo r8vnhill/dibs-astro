@@ -15,8 +15,7 @@ and this project follows [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
-- Avoided unnecessary Shiki highlighter initialization for unknow-+
-- n languages so fallback rendering stays fast and resilient.
+- Avoided unnecessary Shiki highlighter initialization for unknown languages so fallback rendering stays fast and resilient.
 - Documented the Windows + Scoop + Docker Desktop WSL2 GitLab Runner workflow, including service setup, config-path verification, token redaction, log interpretation, and pnpm cache pitfalls.
 
 ## [0.18.0] - 2026-04-27

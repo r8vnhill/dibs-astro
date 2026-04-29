@@ -1,17 +1,27 @@
 {
-  "generatedAt": "2026-04-01T15:06:00.350Z",
+  "generatedAt": "2026-04-29T16:33:00.102Z",
   "catalogPath": "src/data/bibliography/catalog.graph.generated.jsonld",
   "totals": {
-    "references": 80,
-    "lessons": 10,
-    "usages": 97,
-    "visibleUsages": 11
+    "references": 113,
+    "lessons": 14,
+    "usages": 124,
+    "visibleUsages": 28
   },
   "topReferences": [
     {
       "referenceId": "ref:collection-pipeline-fowler",
       "type": "WebPage",
       "title": "Collection Pipeline",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:contributor-covenant-code-of-conduct",
+      "type": "WebPage",
+      "title": "Contributor Covenant: A Code of Conduct for Digital Communities",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -29,9 +39,79 @@
       ]
     },
     {
+      "referenceId": "ref:lauret-designing-api-for-users-2019",
+      "type": "Book",
+      "title": "Designing an API for its users",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:reddy-documentation-2024",
+      "type": "Book",
+      "title": "Documentation",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:documentation-principles",
+      "type": "WebPage",
+      "title": "Documentation principles",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
       "referenceId": "ref:errors-and-exceptions",
       "type": "Book",
       "title": "Errors and exceptions",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:lauret-evolving-an-api-design-2019",
+      "type": "Book",
+      "title": "Evolving an API design",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:martin-functions-2011",
+      "type": "Book",
+      "title": "Functions",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:rauschmayer-getting-started-with-nodejs",
+      "type": "WebPage",
+      "title": "Getting started with Node.js",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:lauret-growing-apis-2019",
+      "type": "Book",
+      "title": "Growing APIs",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -49,6 +129,16 @@
       ]
     },
     {
+      "referenceId": "ref:how-to-write-software-documentation",
+      "type": "WebPage",
+      "title": "How to write software documentation",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
       "referenceId": "ref:improving-your-parameterized-script",
       "type": "Book",
       "title": "Improving your parameterized script",
@@ -56,6 +146,16 @@
       "lessonCount": 1,
       "tags": [
         "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:inclusive-naming-initiative",
+      "type": "WebPage",
+      "title": "Inclusive Naming Initiative",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
       ]
     },
     {
@@ -69,6 +169,16 @@
       ]
     },
     {
+      "referenceId": "ref:keep-a-changelog",
+      "type": "WebPage",
+      "title": "Keep a Changelog",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
       "referenceId": "ref:library-computing-wikipedia-2025",
       "type": "WebPage",
       "title": "Library (computing)",
@@ -76,6 +186,26 @@
       "lessonCount": 1,
       "tags": [
         "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:make-a-readme",
+      "type": "WebPage",
+      "title": "Make a README",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:martin-meaningful-names-2011",
+      "type": "Book",
+      "title": "Meaningful Names",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
       ]
     },
     {
@@ -89,9 +219,49 @@
       ]
     },
     {
+      "referenceId": "ref:reddy-qualities-2024",
+      "type": "Book",
+      "title": "Qualities",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:spdx-license-list",
+      "type": "WebPage",
+      "title": "SPDX License List",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
+      "referenceId": "ref:reddy-testing-2024",
+      "type": "Book",
+      "title": "Testing",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "additional"
+      ]
+    },
+    {
       "referenceId": "ref:pipeline-connecting-commands",
       "type": "Book",
       "title": "The pipeline: Connecting commands",
+      "citationCount": 1,
+      "lessonCount": 1,
+      "tags": [
+        "recommended"
+      ]
+    },
+    {
+      "referenceId": "ref:reddy-versioning-2024",
+      "type": "Book",
+      "title": "Versioning",
       "citationCount": 1,
       "lessonCount": 1,
       "tags": [
@@ -121,6 +291,19 @@
   ],
   "topBooks": [
     {
+      "bookKey": "work:api-design-for-cpp",
+      "bookId": "work:api-design-for-cpp",
+      "bookTitle": "API design for C++",
+      "citationCount": 4,
+      "lessonCount": 3,
+      "chapterIds": [
+        "ref:reddy-documentation-2024",
+        "ref:reddy-qualities-2024",
+        "ref:reddy-testing-2024",
+        "ref:reddy-versioning-2024"
+      ]
+    },
+    {
       "bookKey": "work:learn-powershell-month-lunches-4e",
       "bookId": "work:learn-powershell-month-lunches-4e",
       "bookTitle": "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS",
@@ -130,6 +313,29 @@
         "ref:handling-errors",
         "ref:improving-your-parameterized-script",
         "ref:pipeline-connecting-commands"
+      ]
+    },
+    {
+      "bookKey": "work:design-web-apis",
+      "bookId": "work:design-web-apis",
+      "bookTitle": "The design of web APIs",
+      "citationCount": 3,
+      "lessonCount": 2,
+      "chapterIds": [
+        "ref:lauret-designing-api-for-users-2019",
+        "ref:lauret-evolving-an-api-design-2019",
+        "ref:lauret-growing-apis-2019"
+      ]
+    },
+    {
+      "bookKey": "work:clean-code-collection",
+      "bookId": "work:clean-code-collection",
+      "bookTitle": "Clean code collection",
+      "citationCount": 2,
+      "lessonCount": 1,
+      "chapterIds": [
+        "ref:martin-functions-2011",
+        "ref:martin-meaningful-names-2011"
       ]
     },
     {
@@ -155,20 +361,8 @@
   ],
   "referencesByTagAndLesson": [
     {
-      "lessonId": "/notes/software-libraries/artifacts-taxonomy/",
-      "lessonTitle": "Taxonomía básica de artefactos de software",
-      "tag": "recommended",
-      "count": 1
-    },
-    {
-      "lessonId": "/notes/scripting/errors/",
-      "lessonTitle": "Errores y manejo de fallos en scripts",
-      "tag": "additional",
-      "count": 1
-    },
-    {
-      "lessonId": "/notes/scripting/errors/",
-      "lessonTitle": "Errores y manejo de fallos en scripts",
+      "lessonId": "/notes/scripting/first-script/nushell/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
       "tag": "recommended",
       "count": 1
     },
@@ -179,14 +373,74 @@
       "count": 1
     },
     {
-      "lessonId": "/notes/scripting/first-script/nushell/",
-      "lessonTitle": "Comandos reutilizables y validación de parámetros en Nushell",
+      "lessonId": "/notes/scripting/first-script/py/",
+      "lessonTitle": "Comandos reutilizables y validación de parámetros en Python",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/scripting/first-script/py/",
-      "lessonTitle": "Comandos reutilizables y validación de parámetros en Python",
+      "lessonId": "/notes/software-libraries/api-design/fundamentals/",
+      "lessonTitle": "Diseñar la API de una biblioteca desde el dominio",
+      "tag": "additional",
+      "count": 3
+    },
+    {
+      "lessonId": "/notes/software-libraries/api-design/fundamentals/",
+      "lessonTitle": "Diseñar la API de una biblioteca desde el dominio",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/api-design/documentation/",
+      "lessonTitle": "Documentar una API como parte del producto",
+      "tag": "additional",
+      "count": 6
+    },
+    {
+      "lessonId": "/notes/software-libraries/api-design/documentation/",
+      "lessonTitle": "Documentar una API como parte del producto",
+      "tag": "recommended",
+      "count": 2
+    },
+    {
+      "lessonId": "/notes/scripting/errors/",
+      "lessonTitle": "Errores y manejo de fallos en scripts",
+      "tag": "additional",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/scripting/errors/",
+      "lessonTitle": "Errores y manejo de fallos en scripts",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/api-design/evolution/",
+      "lessonTitle": "Evolucionar una API sin romper compatibilidad",
+      "tag": "additional",
+      "count": 3
+    },
+    {
+      "lessonId": "/notes/software-libraries/api-design/evolution/",
+      "lessonTitle": "Evolucionar una API sin romper compatibilidad",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/scripting/node/",
+      "lessonTitle": "Introducción a scripting con Node.js",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/software-libraries/what-is/",
+      "lessonTitle": "La biblioteca como artefacto de software",
+      "tag": "recommended",
+      "count": 1
+    },
+    {
+      "lessonId": "/notes/scripting/pipelines/nushell/",
+      "lessonTitle": "Pipelines declarativos en Nushell",
       "tag": "recommended",
       "count": 1
     },
@@ -203,20 +457,14 @@
       "count": 1
     },
     {
-      "lessonId": "/notes/scripting/pipelines/nushell/",
-      "lessonTitle": "Pipelines declarativos en Nushell",
-      "tag": "recommended",
-      "count": 1
-    },
-    {
       "lessonId": "/notes/scripting/structured-output/nushell/",
       "lessonTitle": "Salida estructurada en Nushell",
       "tag": "recommended",
       "count": 1
     },
     {
-      "lessonId": "/notes/software-libraries/what-is/",
-      "lessonTitle": "La biblioteca como artefacto de software",
+      "lessonId": "/notes/software-libraries/artifacts-taxonomy/",
+      "lessonTitle": "Taxonomía básica de artefactos de software",
       "tag": "recommended",
       "count": 1
     }

@@ -12,7 +12,7 @@ import { initialBoundaryRules } from "./layer-boundary-rules.mjs";
 export async function checkLayerBoundaries(files, options = {}) {
     const rules = options.rules ?? initialBoundaryRules;
     const exceptions = options.exceptions;
-    const violations = [];
+    const findings = [];
 
     for (const file of files) {
         const imports = await extractImports(file.text, file.path);
@@ -28,51 +28,60 @@ export async function checkLayerBoundaries(files, options = {}) {
             );
 
             if (result.status === "violation") {
-                violations.push(result.violation);
+                findings.push(result.violation);
             }
         }
     }
 
-    return violations;
+    return findings.sort(compareBoundaryFindings);
 }
 
-export function formatViolations(violations) {
-    if (violations.length === 0) {
-        return "No layer boundary violations found.";
+function compareBoundaryFindings(left, right) {
+    return left.sourceFile.localeCompare(right.sourceFile)
+        || left.importTarget.localeCompare(right.importTarget)
+        || left.ruleId.localeCompare(right.ruleId);
+}
+
+export function formatBoundaryFindings(findings) {
+    if (findings.length === 0) {
+        return "No layer boundary findings found.";
     }
 
-    return violations
-        .map((violation) =>
+    return findings
+        .map((finding) =>
             [
-                `Layer boundary violation: ${violation.ruleId}`,
+                `Layer boundary finding: ${finding.ruleId}`,
                 "",
                 "Source:",
-                `  ${violation.sourceFile}`,
+                `  ${finding.sourceFile}`,
                 "",
                 "Import:",
-                `  ${violation.importTarget}`,
-                ...(violation.resolvedTarget
-                    ? ["", "Resolved target:", `  ${violation.resolvedTarget}`]
+                `  ${finding.importTarget}`,
+                ...(finding.resolvedTarget
+                    ? ["", "Resolved target:", `  ${finding.resolvedTarget}`]
                     : []),
                 "",
                 "Rule:",
-                `  ${violation.message}`,
+                `  ${finding.message}`,
                 "",
                 "Suggested fix:",
-                `  ${violation.suggestion}`,
+                `  ${finding.suggestion}`,
             ].join("\n")
         )
         .join("\n\n");
 }
 
+export const formatViolations = formatBoundaryFindings;
+
 export async function runBoundaryCheck(options = {}) {
     const files = options.files ?? await discoverSourceFiles(options);
-    const violations = await checkLayerBoundaries(files, options);
+    const findings = await checkLayerBoundaries(files, options);
 
     return {
         files,
-        violations,
-        output: formatViolations(violations),
-        exitCode: violations.length > 0 ? 1 : 0,
+        findings,
+        violations: findings,
+        output: formatBoundaryFindings(findings),
+        exitCode: findings.length > 0 ? 1 : 0,
     };
 }

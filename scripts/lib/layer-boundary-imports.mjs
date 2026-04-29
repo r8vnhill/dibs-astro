@@ -2,7 +2,7 @@ import { init, parse } from "es-module-lexer";
 
 function extractAstroFrontmatter(sourceText) {
     if (!sourceText.startsWith("---")) {
-        return sourceText;
+        return "";
     }
 
     const end = sourceText.indexOf("\n---", 3);
@@ -33,6 +33,10 @@ function classifyImport(statement) {
         return "type-import";
     }
 
+    if (isInlineTypeOnlyImport(trimmed)) {
+        return "type-import";
+    }
+
     if (/^import\s*["']/.test(trimmed)) {
         return "side-effect-import";
     }
@@ -46,6 +50,21 @@ function classifyImport(statement) {
     }
 
     return "static-import";
+}
+
+function isInlineTypeOnlyImport(statement) {
+    const specifiers = statement.match(/^import\s*\{(?<specifiers>[\s\S]*?)\}\s*from\s*["']/)
+        ?.groups?.specifiers;
+
+    if (!specifiers) {
+        return false;
+    }
+
+    return specifiers
+        .split(",")
+        .map((specifier) => specifier.trim())
+        .filter(Boolean)
+        .every((specifier) => specifier.startsWith("type "));
 }
 
 function extractTypeReExports(moduleText, filePath, existingRecords) {

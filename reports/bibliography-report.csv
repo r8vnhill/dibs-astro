@@ -1,12 +1,29 @@
 referenceId,type,title,citationCount,lessonCount,tags
 ref:collection-pipeline-fowler,WebPage,Collection Pipeline,1,1,additional
+ref:contributor-covenant-code-of-conduct,WebPage,Contributor Covenant: A Code of Conduct for Digital Communities,1,1,additional
 ref:nushell-creating-modules,WebPage,Creating Modules,1,1,recommended
+ref:lauret-designing-api-for-users-2019,Book,Designing an API for its users,1,1,additional
+ref:reddy-documentation-2024,Book,Documentation,1,1,recommended
+ref:documentation-principles,WebPage,Documentation principles,1,1,recommended
 ref:errors-and-exceptions,Book,Errors and exceptions,1,1,additional
+ref:lauret-evolving-an-api-design-2019,Book,Evolving an API design,1,1,additional
+ref:martin-functions-2011,Book,Functions,1,1,additional
+ref:rauschmayer-getting-started-with-nodejs,WebPage,Getting started with Node.js,1,1,recommended
+ref:lauret-growing-apis-2019,Book,Growing APIs,1,1,additional
 ref:handling-errors,Book,Handling errors,1,1,recommended
+ref:how-to-write-software-documentation,WebPage,How to write software documentation,1,1,additional
 ref:improving-your-parameterized-script,Book,Improving your parameterized script,1,1,recommended
+ref:inclusive-naming-initiative,WebPage,Inclusive Naming Initiative,1,1,additional
 ref:input-and-output-python-distilled,Book,Input and Output,1,1,recommended
+ref:keep-a-changelog,WebPage,Keep a Changelog,1,1,additional
 ref:library-computing-wikipedia-2025,WebPage,Library (computing),1,1,recommended
+ref:make-a-readme,WebPage,Make a README,1,1,additional
+ref:martin-meaningful-names-2011,Book,Meaningful Names,1,1,additional
 ref:nushell-pipelines,WebPage,Pipelines,1,1,recommended
+ref:reddy-qualities-2024,Book,Qualities,1,1,recommended
+ref:spdx-license-list,WebPage,SPDX License List,1,1,additional
+ref:reddy-testing-2024,Book,Testing,1,1,additional
 ref:pipeline-connecting-commands,Book,The pipeline: Connecting commands,1,1,recommended
+ref:reddy-versioning-2024,Book,Versioning,1,1,recommended
 ref:jfrog-what-are-software-artifacts,WebPage,What are Software Artifacts?,1,1,recommended
 ref:nushell-working-with-records,WebPage,Working with Records,1,1,recommended
