@@ -96,7 +96,12 @@ const globalHighlighterCache = globalThis as typeof globalThis & {
 };
 
 const isRetryExplicitlyEnabled = () => process.env.DIBS_DEV_RETRY_ENABLED === "true";
+const isRetryExplicitlyDisabled = () => process.env.DIBS_DEV_RETRY_ENABLED === "false";
+const isDevelopmentRuntime = () => process.env.NODE_ENV === "development";
 const isRunningUnderVitest = () => process.env.VITEST === "true" || process.env.VITEST_WORKER_ID !== undefined;
+const shouldUseDevTransportRetry = () =>
+    isRetryExplicitlyEnabled()
+    || (isDevelopmentRuntime() && !isRunningUnderVitest() && !isRetryExplicitlyDisabled());
 
 /**
  * Creates a small store that memoizes a promise-backed shared value.
@@ -171,16 +176,13 @@ function syncGlobalHighlighterPromise(value: HighlighterPromise | null) {
 /**
  * Creates the process-wide Shiki highlighter promise using the project's fixed defaults.
  *
- * The creation path is wrapped with {@link runWithDevTransportRetry} so transient development
- * transport failures do not immediately break highlighting.
+ * The creation path is wrapped with {@link runWithDevTransportRetry} only when the development
+ * retry policy is active. In production and CI builds, Shiki startup can legitimately exceed the
+ * short development transport timeout, so the highlighter is created directly.
  */
 const createSharedHighlighter = (): HighlighterPromise =>
-    isRunningUnderVitest() && !isRetryExplicitlyEnabled()
-        ? createHighlighter({
-            themes: [...SHIKI_DEFAULT_THEMES],
-            langs: availableLanguages,
-        })
-        : runWithDevTransportRetry(
+    shouldUseDevTransportRetry()
+        ? runWithDevTransportRetry(
             async ({ signal: _signal }) =>
                 createHighlighter({
                     themes: [...SHIKI_DEFAULT_THEMES],
@@ -189,7 +191,11 @@ const createSharedHighlighter = (): HighlighterPromise =>
             {
                 label: "shared shiki highlighter creation",
             },
-        );
+        )
+        : createHighlighter({
+            themes: [...SHIKI_DEFAULT_THEMES],
+            langs: availableLanguages,
+        });
 
 /**
  * Process-level store used by production code and most tests.
