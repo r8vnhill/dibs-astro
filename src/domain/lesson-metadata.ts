@@ -127,12 +127,13 @@ export const UNKNOWN_LESSON_DATE_LABEL = "sin fecha registrada";
 const ISO_SHORT_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 /**
- * Synthetic base URL used to parse relative metadata locations.
+ * Pattern used to detect absolute HTTP(S) metadata locations.
  *
- * Metadata keys are route pathnames, not external URLs. The host is therefore intentionally meaningless: it only gives 
- * `URL` a stable base for relative inputs such as `lessons/api-design/`.
+ * Metadata keys are route pathnames, not external URLs. Only explicit absolute HTTP(S) URLs need URL parsing so their
+ * origins can be discarded. Route-like strings are left as text for {@link LessonHref} to canonicalize, which keeps
+ * normalization idempotent for path characters that `URL` would percent-encode.
  */
-const METADATA_URL_BASE = "https://dibs.local";
+const ABSOLUTE_HTTP_URL_PATTERN = /^https?:\/\//iu;
 
 /**
  * Default formatting options for lesson metadata dates.
@@ -178,11 +179,15 @@ function toMetadataPathnameCandidate(pathname: string): string {
         return "/";
     }
 
-    try {
-        return new URL(trimmed, METADATA_URL_BASE).pathname;
-    } catch {
-        return trimmed;
+    if (ABSOLUTE_HTTP_URL_PATTERN.test(trimmed)) {
+        try {
+            return new URL(trimmed).pathname;
+        } catch {
+            return trimmed;
+        }
     }
+
+    return trimmed;
 }
 
 /**

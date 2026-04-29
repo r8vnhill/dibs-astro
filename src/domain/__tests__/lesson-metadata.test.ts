@@ -27,6 +27,7 @@ describe("lesson-metadata domain", () => {
             ["/notes/a#section", "/notes/a/"],
             ["/", "/"],
             ["////", "/"],
+            ["A:", "/A:/"],
         ])("normalizes %s to %s", (input, expected) => {
             expect(normalizeLessonMetadataPathname(input)).toBe(expected);
         });
