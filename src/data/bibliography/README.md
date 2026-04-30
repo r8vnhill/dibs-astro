@@ -178,6 +178,10 @@ For normal graph-backed lesson pages, prefer `LessonReferencesFromCatalog`.
 
 Use `ReferencesFromCatalog` when a caller needs explicit `source`, `lessonId`, or tag-filter configuration.
 
+Catalog-backed and legacy ItemList-backed references are being migrated toward a shared normalization core. `Book`
+references already share final render-facing object construction; source-specific parsing and policy still remain in
+their existing callers.
+
 Editorial descriptions remain in `.astro` files using slots keyed by reference ID:
 
 - `description-{referenceId}`

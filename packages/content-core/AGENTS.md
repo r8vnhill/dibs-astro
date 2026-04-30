@@ -21,6 +21,7 @@ Context and essential rules for agents working in this package.
 - Validate this package with `pnpm check:content-core` from `astro-website`.
 - The package exports TypeScript source directly from `src/index.ts`.
 - Keep `package.json` publication-ready in shape, but preserve `private: true` unless the user asks to change release policy.
+- Do not modify changelogs unless the user explicitly asks for changelog updates.
 
 ## Code Conventions
 

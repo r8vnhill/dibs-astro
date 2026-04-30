@@ -99,7 +99,9 @@ The current tests cover important parts of the workflow:
 - Usage tag validation and missing relation checks.
 - Pending-revision pruning for malformed draft references.
 - JSON-LD ItemList normalization for the supported reference types.
+- Characterization coverage comparing equivalent catalog and ItemList normalization output before the shared-normalizer refactor.
 - Catalog loading, lesson lookup, tag filtering, and citation stats.
+- Initial shared `Book` normalization coverage for the catalog-backed and ItemList-backed paths.
 - Render coverage for both `ReferencesFromJsonLd` and `ReferencesFromCatalog`.
 - Real generated-catalog smoke coverage for the Nushell pipelines lesson.
 

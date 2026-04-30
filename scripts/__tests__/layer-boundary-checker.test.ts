@@ -1,7 +1,7 @@
 /**
  * Integration contract for the layer-boundary checker.
  *
- * These tests exercise the public checker API over realistic source snippets  rather than testing each parser,
+ * These tests exercise the public checker API over realistic source snippets rather than testing each parser,
  * resolver, classifier, or rule helper in isolation. The suite verifies that source files are classified into the
  * expected architectural layer, imports are extracted from TypeScript and Astro frontmatter, and forbidden
  * dependencies are reported as structured boundary findings.
@@ -40,7 +40,7 @@ type BoundaryCheckerOptions = NonNullable<
 /**
  * Options accepted by the command-facing boundary-check runner.
  *
- * This is intentionally separate from {@link BoundaryCheckerOptions} because {@link runBoundaryCheck} also accepts
+ * This is intentionally separated from {@link BoundaryCheckerOptions} because {@link runBoundaryCheck} also accepts
  * runner-specific fields, such as an explicit in-memory file list for tests.
  */
 type BoundaryRunnerOptions = NonNullable<
@@ -73,7 +73,7 @@ type BoundaryCase = {
 };
 
 /**
- * Uses an empty tsconfig shape so tests exercise explicit snippets without depending on the repository's real 
+ * Uses an empty tsconfig shape so tests exercise explicit snippets without depending on the repository's real
  * path-alias configuration.
  */
 const cleanOptions = {
@@ -92,7 +92,7 @@ const sourceFile = (path: string, text: string) => ({ path, text });
 /**
  * Runs the public checker API against a single in-memory source file.
  *
- * This keeps one-file cases concise while still exercising the same public boundary checker used by multi-file and 
+ * This keeps one-file cases concise while still exercising the same public boundary checker used by multi-file and
  * command-facing tests.
  *
  * @param path Source path used to infer the importing layer.

@@ -1,3 +1,5 @@
+import { normalizeBookReference } from "./normalize/normalize-reference.mjs";
+import { parsePageReference } from "./pages";
 import type {
     AuthorRef,
     BibliographyJsonLd,
@@ -7,7 +9,6 @@ import type {
     ResolvedReferenceGroups,
     ResolveGroupsOptions,
 } from "./types";
-import { parsePageReference } from "./pages";
 
 /**
  * JSON-LD normalization helpers for bibliography sources that use the simpler `ItemList` shape.
@@ -22,8 +23,7 @@ import { parsePageReference } from "./pages";
  */
 const SUPPORTED_TYPES = new Set(["Book", "WebPage", "VideoObject", "ScholarlyArticle", "Thesis"]);
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-    typeof value === "object" && value !== null;
+const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 
 const asString = (value: unknown): string | undefined => {
     if (typeof value !== "string") return undefined;
@@ -198,14 +198,12 @@ const normalizeItem = (
         const pageEnd = asNumber(rawItem.pageEnd);
         const pages = parsePageReference(pageStart, pageEnd);
 
-        return {
+        return normalizeBookReference({
+            kind: "Book",
             id,
-            type: "Book",
             rawType,
             title,
-            chapter: title,
             bookTitle,
-            ...(pages ? { pages } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -213,7 +211,8 @@ const normalizeItem = (
             ...(publisherName ? { publisherName } : {}),
             ...(publisherUrl ? { publisherUrl } : {}),
             ...(sourceLabel ? { sourceLabel } : {}),
-        };
+            ...(pages ? { pages } : {}),
+        });
     }
 
     if (rawType === "ScholarlyArticle") {
@@ -238,8 +237,7 @@ const normalizeItem = (
             ...(publication ? { publication } : {}),
             ...(asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url) || url
                 ? {
-                    publicationUrl:
-                        asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url)
+                    publicationUrl: asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url)
                         ?? url,
                 }
                 : {}),
@@ -277,8 +275,7 @@ const normalizeItem = (
                     )
                     || url
                 ? {
-                    institutionUrl:
-                        asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
+                    institutionUrl: asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
                         ?? asString(
                             (rawItem.sourceOrganization as Record<string, unknown> | undefined)
                                 ?.url,
@@ -372,9 +369,7 @@ export const parseBibliography = (
         addError(
             errors,
             strict,
-            `[${sourceLabel}] root "@type" must be "ItemList" but received "${
-                rootType || "<empty>"
-            }".`,
+            `[${sourceLabel}] root "@type" must be "ItemList" but received "${rootType || "<empty>"}".`,
         );
     }
 
@@ -442,9 +437,7 @@ export const resolveReferenceGroups = (
 
     if (duplicates.size > 0 && strict) {
         fail(
-            `[${sourceLabel}] duplicate IDs across reference groups: ${
-                Array.from(duplicates).join(", ")
-            }.`,
+            `[${sourceLabel}] duplicate IDs across reference groups: ${Array.from(duplicates).join(", ")}.`,
         );
     }
 

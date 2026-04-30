@@ -1,3 +1,4 @@
+import { normalizeBookReference as normalizeSharedBookReference } from "./normalize/normalize-reference.mjs";
 import { parsePageReference } from "./pages-core.mjs";
 
 const SUPPORTED_REFERENCE_TYPES = new Set([
@@ -182,14 +183,13 @@ const normalizeBookReference = (node, context, base) => {
 
     const pages = parsePageReference(asNumber(node.pageStart), asNumber(node.pageEnd));
 
-    return {
+    return normalizeSharedBookReference({
         ...base,
-        type: "Book",
-        chapter: base.title,
+        kind: "Book",
         bookTitle,
         ...(container.id ? { bookId: container.id } : {}),
         ...(pages ? { pages } : {}),
-    };
+    });
 };
 
 const normalizeLinkedReference = (node, context, base) => {

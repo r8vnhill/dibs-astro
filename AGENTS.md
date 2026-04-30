@@ -39,6 +39,7 @@ Context and essential rules for agents collaborating in this repository.
 - Run tests with `pnpm test`, or use `pnpm test:unit` and `pnpm test:astro` for focused suites.
 - Format with `pnpm fmt`; pre-commit formatting uses `dprint`.
 - Use `pnpm preview` to review the local Cloudflare Workers preview flow.
+- Do not modify changelogs unless the user explicitly asks for changelog updates.
 
 ## Data and Generated Files
 
@@ -62,6 +63,39 @@ Context and essential rules for agents collaborating in this repository.
 - Use `*.render.test.ts` for `.astro` component rendering with `pnpm test:astro`.
 - Use `*.test.ts` or `*.test.tsx` for unit or integration tests in jsdom with `pnpm test:unit`.
 - For Astro rendering, reuse helpers from `src/test-utils/astro-render.ts`.
+- Structure tests with BDD-oriented grouping. Prefer `suite` for the Given context, `describe` for the When context, and `test` for Then expectations:
+
+```ts
+suite("given a normalized bibliography source", () => {
+    describe("when references are grouped by lesson", () => {
+        test("then recommended references keep source order", () => {
+            // ...
+        });
+
+        test("then pending entries stay hidden by default", () => {
+            // ...
+        });
+    });
+
+    describe("when pending entries are explicitly included", () => {
+        test("then pending references are returned", () => {
+            // ...
+        });
+    });
+});
+```
+
+- For simpler behavior, use one `describe` as the Given context and `test` as Then expectations:
+
+```ts
+describe("given a page reference range", () => {
+    test("then reversed bounds are normalized", () => {
+        // ...
+    });
+});
+```
+
+- Avoid deeply nested `describe` blocks. Prefer the `suite` / `describe` / `test` shape, or `describe` / `test` for small suites.
 
 ## Content and Components
 
