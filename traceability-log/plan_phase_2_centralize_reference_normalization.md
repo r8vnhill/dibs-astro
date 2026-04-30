@@ -2,15 +2,18 @@
 
 ## Summary
 
-Centralize bibliography reference normalization so both supported workflows produce `NormalizedReference` through the same final normalization core:
+Centralize bibliography reference normalization so both supported workflows produce `NormalizedReference` through the
+same final normalization core:
 
 - Catalog graph workflow: `catalog-core.mjs`
 - Legacy ItemList workflow: `normalize-jsonld.ts`
 - Shared render-facing output: existing `NormalizedReference` union from `types.ts`
 
-This phase should reduce duplicated reference construction logic without changing rendering behavior, generated bibliography artifacts, or public component APIs.
+This phase should reduce duplicated reference construction logic without changing rendering behavior, generated
+bibliography artifacts, or public component APIs.
 
-The shared normalizer should be responsible for constructing final render-facing reference objects. Source-specific modules should remain responsible for extracting raw data from their own input formats.
+The shared normalizer should be responsible for constructing final render-facing reference objects. Source-specific
+modules should remain responsible for extracting raw data from their own input formats.
 
 ## Goals
 
@@ -122,7 +125,8 @@ Then split once functions grow or responsibilities become unclear.
 
 ## Shared Input Shape
 
-Avoid a single large bag of optional fields. Prefer a discriminated input union so each reference type has an explicit contract.
+Avoid a single large bag of optional fields. Prefer a discriminated input union so each reference type has an explicit
+contract.
 
 ```ts
 type ReferenceNormalizationInput =
@@ -189,7 +193,8 @@ type ThesisNormalizationInput = BaseReferenceNormalizationInput & {
 };
 ```
 
-For `.mjs`, express the contract with JSDoc typedefs or a colocated `.d.ts` file. The TypeScript-facing facade should import these types where possible.
+For `.mjs`, express the contract with JSDoc typedefs or a colocated `.d.ts` file. The TypeScript-facing facade should
+import these types where possible.
 
 ---
 
@@ -260,7 +265,9 @@ export function normalizeReference(input: ReferenceNormalizationInput): Normaliz
 This keeps the table as the source of registration coverage while the `switch` provides precise discriminated-union
 narrowing. In `.mjs`, mirror this contract with JSDoc or the colocated declaration file.
 
-If existing callers need strict/non-strict behavior, keep that behavior in the source-specific caller. The normalizer can throw structured errors internally if needed, but the caller should decide whether those errors are fatal, collected, or tolerated.
+If existing callers need strict/non-strict behavior, keep that behavior in the source-specific caller. The normalizer
+can throw structured errors internally if needed, but the caller should decide whether those errors are fatal,
+collected, or tolerated.
 
 Preferred error shape:
 
@@ -430,7 +437,8 @@ After both paths use the shared normalizer:
 
 Red:
 
-- Add equivalence tests for one reference type, preferably `WebPage` because it exercises title, URL, publisher/platform, and fallback behavior.
+- Add equivalence tests for one reference type, preferably `WebPage` because it exercises title, URL,
+  publisher/platform, and fallback behavior.
 
 Green:
 
@@ -456,10 +464,12 @@ Refactor:
 
 Status:
 
-- Completed by `src/lib/bibliography/normalize/normalize-reference.mjs` and `src/lib/bibliography/__tests__/normalize-reference.test.ts`.
-- Only final `Book` construction was moved into the shared normalizer; source-specific extraction remains in the existing callers.
+- Completed by `src/lib/bibliography/normalize/normalize-reference.mjs` and
+  `src/lib/bibliography/__tests__/normalize-reference.test.ts`.
+- Only final `Book` construction was moved into the shared normalizer; source-specific extraction remains in the
+  existing callers.
 
-### Cycle 3: Add `VideoObject`
+### ~~Cycle 3: Add `VideoObject`~~
 
 Red:
 
@@ -474,7 +484,13 @@ Refactor:
 
 - Consolidate URL/platform fallback.
 
-### Cycle 4: Add `ScholarlyArticle`
+Status:
+
+- Completed by `src/lib/bibliography/normalize/normalize-reference.mjs` and
+  `src/lib/bibliography/__tests__/normalize-reference.test.ts`.
+- Added the shared `VideoObject` normalizer and dispatcher coverage without rewiring the ItemList or catalog callers.
+
+### ~~Cycle 4: Add `ScholarlyArticle`~~
 
 Red:
 
@@ -489,7 +505,14 @@ Refactor:
 
 - Consolidate page parsing and publication normalization.
 
-### Cycle 5: Add `Thesis`
+Status:
+
+- Completed by `src/lib/bibliography/normalize/normalize-reference.mjs` and
+  `src/lib/bibliography/__tests__/normalize-reference.test.ts`.
+- Added the shared `ScholarlyArticle` normalizer, publication fallback handling, and page passthrough without changing
+  caller extraction boundaries.
+
+### ~~Cycle 5: Add `Thesis`~~
 
 Red:
 
@@ -504,12 +527,20 @@ Refactor:
 
 - Consolidate organization/institution normalization if it is truly shared.
 
+Status:
+
+- Completed by `src/lib/bibliography/normalize/normalize-reference.mjs` and
+  `src/lib/bibliography/__tests__/normalize-reference.test.ts`.
+- Added the shared `Thesis` normalizer and institution URL fallback while keeping source-specific institution resolution
+  in the callers.
+
 ### Cycle 6: Refactor ItemList Caller
 
 Red:
 
 - Existing ItemList tests should continue to pass.
-- Add one test proving ItemList output goes through the shared normalizer if this can be observed cleanly without over-mocking.
+- Add one test proving ItemList output goes through the shared normalizer if this can be observed cleanly without
+  over-mocking.
 
 Green:
 
@@ -866,7 +897,8 @@ Mitigation:
 
 ## Suggested Implementation Order
 
-1. Add characterization tests for equivalent catalog and ItemList output. Completed by `src/lib/bibliography/__tests__/reference-normalization-equivalence.test.ts`.
+1. Add characterization tests for equivalent catalog and ItemList output. Completed by
+   `src/lib/bibliography/__tests__/reference-normalization-equivalence.test.ts`.
 2. Add shared input types and `normalizeReference`. Started with `Book` in Cycle 2.
 3. Migrate `WebPage`.
 4. Migrate `Book`. Completed by `src/lib/bibliography/normalize/normalize-reference.mjs`.

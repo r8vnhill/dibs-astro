@@ -66,8 +66,7 @@ Lesson nodes are written as full site URLs in Turtle, for example:
 ```
 
 Usage IDs should follow nearby existing slug-style entries, such as
-`usage:pipelines-nushell-nushell-pipelines-recommended`, instead of inventing a new route-encoded
-spelling.
+`usage:pipelines-nushell-nushell-pipelines-recommended`, instead of inventing a new route-encoded spelling.
 
 ## Usage tags
 
@@ -178,9 +177,10 @@ For normal graph-backed lesson pages, prefer `LessonReferencesFromCatalog`.
 
 Use `ReferencesFromCatalog` when a caller needs explicit `source`, `lessonId`, or tag-filter configuration.
 
-Catalog-backed and legacy ItemList-backed references are being migrated toward a shared normalization core. `Book`
-references already share final render-facing object construction; source-specific parsing and policy still remain in
-their existing callers.
+Catalog-backed and legacy ItemList-backed references are being migrated toward a shared normalization core. `Book`,
+`VideoObject`, `ScholarlyArticle`, and `Thesis` already share final render-facing object construction through
+`src/lib/bibliography/normalize/normalize-reference.mjs`. `WebPage` and the caller rewiring in `normalize-jsonld.ts` and
+`catalog-core.mjs` remain deferred, so source-specific parsing and policy still stay in the existing callers.
 
 Editorial descriptions remain in `.astro` files using slots keyed by reference ID:
 

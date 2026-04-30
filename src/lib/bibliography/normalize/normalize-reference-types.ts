@@ -1,27 +1,78 @@
-import type { NormalizedBookReference, NormalizedReference, PageReference } from "../types";
+import type {
+    AuthorRef,
+    NormalizedArticleReference,
+    NormalizedBookReference,
+    NormalizedReference,
+    NormalizedThesisReference,
+    NormalizedVideoReference,
+    PageReference,
+} from "../types";
 
-export type BookNormalizationInput = {
-    readonly kind: "Book";
+type BaseReferenceNormalizationInput = {
     readonly id: string;
     readonly rawType: string;
     readonly title: string;
     readonly description?: string;
-    readonly authors?: NormalizedBookReference["authors"];
+    readonly authors?: AuthorRef[];
     readonly datePublished?: string;
-    readonly keywords?: NormalizedBookReference["keywords"];
+    readonly keywords?: string[];
     readonly publisherName?: string;
     readonly publisherUrl?: string;
     readonly sourceLabel?: string;
+};
+
+export type BookNormalizationInput = BaseReferenceNormalizationInput & {
+    readonly kind: "Book";
     readonly bookTitle: string;
     readonly bookId?: string;
     readonly pages?: PageReference;
 };
 
-export type ReferenceNormalizationInput = BookNormalizationInput;
+export type VideoNormalizationInput = BaseReferenceNormalizationInput & {
+    readonly kind: "VideoObject";
+    readonly url: string;
+    readonly platform?: string;
+    readonly platformUrl?: string;
+};
+
+export type ScholarlyArticleNormalizationInput = BaseReferenceNormalizationInput & {
+    readonly kind: "ScholarlyArticle";
+    readonly url: string;
+    readonly publication?: string;
+    readonly publicationId?: string;
+    readonly publicationUrl?: string;
+    readonly pages?: PageReference;
+};
+
+export type ThesisNormalizationInput = BaseReferenceNormalizationInput & {
+    readonly kind: "Thesis";
+    readonly url: string;
+    readonly institution?: string;
+    readonly institutionId?: string;
+    readonly institutionUrl?: string;
+};
+
+export type ReferenceNormalizationInput =
+    | BookNormalizationInput
+    | VideoNormalizationInput
+    | ScholarlyArticleNormalizationInput
+    | ThesisNormalizationInput;
 
 export type NormalizeBookReference = (
     input: BookNormalizationInput,
 ) => NormalizedBookReference;
+
+export type NormalizeVideoReference = (
+    input: VideoNormalizationInput,
+) => NormalizedVideoReference;
+
+export type NormalizeScholarlyArticleReference = (
+    input: ScholarlyArticleNormalizationInput,
+) => NormalizedArticleReference;
+
+export type NormalizeThesisReference = (
+    input: ThesisNormalizationInput,
+) => NormalizedThesisReference;
 
 export type NormalizeReference = (
     input: ReferenceNormalizationInput,
