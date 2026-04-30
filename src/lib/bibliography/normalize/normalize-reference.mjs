@@ -4,11 +4,13 @@
  * @typedef {import("../types").NormalizedReference} NormalizedReference
  * @typedef {import("../types").NormalizedThesisReference} NormalizedThesisReference
  * @typedef {import("../types").NormalizedVideoReference} NormalizedVideoReference
+ * @typedef {import("../types").NormalizedWebReference} NormalizedWebReference
  * @typedef {import("./normalize-reference-types").BookNormalizationInput} BookNormalizationInput
  * @typedef {import("./normalize-reference-types").ReferenceNormalizationInput} ReferenceNormalizationInput
  * @typedef {import("./normalize-reference-types").ScholarlyArticleNormalizationInput} ScholarlyArticleNormalizationInput
  * @typedef {import("./normalize-reference-types").ThesisNormalizationInput} ThesisNormalizationInput
  * @typedef {import("./normalize-reference-types").VideoNormalizationInput} VideoNormalizationInput
+ * @typedef {import("./normalize-reference-types").WebPageNormalizationInput} WebPageNormalizationInput
  */
 
 const defineOptional = (target, key, value) => {
@@ -65,8 +67,34 @@ export const normalizeVideoReference = (input) => {
         rawType: input.rawType,
         title: input.title,
         url: input.url,
-        platform: input.platform ?? getLocationFromUrl(input.url),
-        platformUrl: fallbackToReferenceUrl(input.platformUrl, input.url),
+        platform: input.platform ?? input.publisherName ?? getLocationFromUrl(input.url),
+        platformUrl: fallbackToReferenceUrl(input.platformUrl ?? input.publisherUrl, input.url),
+        authors: input.authors ?? [],
+        keywords: input.keywords ?? [],
+    };
+
+    defineOptional(reference, "description", input.description);
+    defineOptional(reference, "datePublished", input.datePublished);
+    defineOptional(reference, "publisherName", input.publisherName);
+    defineOptional(reference, "publisherUrl", input.publisherUrl);
+    defineOptional(reference, "sourceLabel", input.sourceLabel);
+
+    return reference;
+};
+
+/**
+ * @param {WebPageNormalizationInput} input
+ * @returns {NormalizedWebReference}
+ */
+export const normalizeWebPageReference = (input) => {
+    const reference = {
+        id: input.id,
+        type: "WebPage",
+        rawType: input.rawType,
+        title: input.title,
+        url: input.url,
+        location: input.location ?? input.publisherName ?? getLocationFromUrl(input.url),
+        locationUrl: fallbackToReferenceUrl(input.locationUrl ?? input.publisherUrl, input.url),
         authors: input.authors ?? [],
         keywords: input.keywords ?? [],
     };
@@ -143,6 +171,8 @@ export const normalizeReference = (input) => {
     switch (input.kind) {
         case "Book":
             return normalizeBookReference(input);
+        case "WebPage":
+            return normalizeWebPageReference(input);
         case "VideoObject":
             return normalizeVideoReference(input);
         case "ScholarlyArticle":

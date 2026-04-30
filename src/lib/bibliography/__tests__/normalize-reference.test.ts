@@ -6,6 +6,7 @@ import type {
     ScholarlyArticleNormalizationInput,
     ThesisNormalizationInput,
     VideoNormalizationInput,
+    WebPageNormalizationInput,
 } from "../normalize/normalize-reference-types";
 import {
     normalizeBookReference,
@@ -13,6 +14,7 @@ import {
     normalizeScholarlyArticleReference,
     normalizeThesisReference,
     normalizeVideoReference,
+    normalizeWebPageReference,
 } from "../normalize/normalize-reference.mjs";
 import { parsePageReference } from "../pages";
 
@@ -61,6 +63,26 @@ const completeVideoInput = {
     platformUrl: "https://video.example/",
 } satisfies VideoNormalizationInput;
 
+const completeWebPageInput = {
+    kind: "WebPage",
+    id: "ref:web",
+    rawType: "WebPage",
+    title: "API Guidelines",
+    url: "https://docs.example/guidelines",
+    description: "Guidelines for readable API design.",
+    authors: [{
+        firstName: "Edsger",
+        lastName: "Dijkstra",
+    }],
+    datePublished: "2024-02-01",
+    keywords: ["web", "guidelines"],
+    publisherName: "Example Docs",
+    publisherUrl: "https://docs.example/",
+    sourceLabel: "normalizer test",
+    location: "Example Docs",
+    locationUrl: "https://docs.example/",
+} satisfies WebPageNormalizationInput;
+
 const completeArticleInput = {
     kind: "ScholarlyArticle",
     id: "ref:article",
@@ -106,6 +128,7 @@ const completeThesisInput = {
 
 const supportedDispatcherCases: readonly [string, ReferenceNormalizationInput, string][] = [
     ["Book", completeBookInput, "Book"],
+    ["WebPage", completeWebPageInput, "WebPage"],
     ["VideoObject", completeVideoInput, "VideoObject"],
     ["ScholarlyArticle", completeArticleInput, "ScholarlyArticle"],
     ["Thesis", completeThesisInput, "Thesis"],
@@ -128,6 +151,25 @@ const commonFieldCases = [
             keywords: ["api", "design"],
             publisherName: "Example Press",
             publisherUrl: "https://press.example/",
+            sourceLabel: "normalizer test",
+        },
+    },
+    {
+        label: "WebPage",
+        normalize: () => normalizeWebPageReference(completeWebPageInput),
+        expected: {
+            id: "ref:web",
+            rawType: "WebPage",
+            title: "API Guidelines",
+            description: "Guidelines for readable API design.",
+            authors: [{
+                firstName: "Edsger",
+                lastName: "Dijkstra",
+            }],
+            datePublished: "2024-02-01",
+            keywords: ["web", "guidelines"],
+            publisherName: "Example Docs",
+            publisherUrl: "https://docs.example/",
             sourceLabel: "normalizer test",
         },
     },
@@ -277,18 +319,40 @@ suite("given Book normalization input", () => {
         test("then it fails with a stable message", () => {
             expect(() =>
                 normalizeReference({
-                    kind: "WebPage",
-                    id: "ref:web",
-                    rawType: "WebPage",
+                    kind: "Unsupported",
+                    id: "ref:unsupported",
+                    rawType: "Unsupported",
                     title: "Unsupported",
                 } as never)
-            ).toThrow("Unsupported reference normalization kind: WebPage");
+            ).toThrow("Unsupported reference normalization kind: Unsupported");
         });
     });
 });
 
 suite("given remaining shared normalization inputs", () => {
     describe("when normalizing through the shared type-specific normalizers", () => {
+        test("then WebPage preserves the current render-facing shape", () => {
+            expect(normalizeWebPageReference(completeWebPageInput)).toEqual({
+                id: "ref:web",
+                type: "WebPage",
+                rawType: "WebPage",
+                title: "API Guidelines",
+                url: "https://docs.example/guidelines",
+                location: "Example Docs",
+                locationUrl: "https://docs.example/",
+                description: "Guidelines for readable API design.",
+                authors: [{
+                    firstName: "Edsger",
+                    lastName: "Dijkstra",
+                }],
+                datePublished: "2024-02-01",
+                keywords: ["web", "guidelines"],
+                publisherName: "Example Docs",
+                publisherUrl: "https://docs.example/",
+                sourceLabel: "normalizer test",
+            });
+        });
+
         test("then VideoObject preserves the current render-facing shape", () => {
             expect(normalizeVideoReference(completeVideoInput)).toEqual({
                 id: "ref:video",
@@ -363,6 +427,48 @@ suite("given remaining shared normalization inputs", () => {
     });
 
     describe("when normalizing shared reference metadata with fallbacks", () => {
+        test("then WebPage prefers explicit publisher metadata over hostname fallback", () => {
+            expect(normalizeWebPageReference({
+                kind: "WebPage",
+                id: "ref:web-fallback",
+                rawType: "WebPage",
+                title: "Fallback Web",
+                url: "https://docs.example/fallback",
+                publisherName: "Example Docs",
+            })).toEqual({
+                id: "ref:web-fallback",
+                type: "WebPage",
+                rawType: "WebPage",
+                title: "Fallback Web",
+                url: "https://docs.example/fallback",
+                location: "Example Docs",
+                locationUrl: "https://docs.example/fallback",
+                authors: [],
+                keywords: [],
+                publisherName: "Example Docs",
+            });
+        });
+
+        test("then WebPage falls back to the hostname and reference URL", () => {
+            expect(normalizeWebPageReference({
+                kind: "WebPage",
+                id: "ref:web-hostname",
+                rawType: "WebPage",
+                title: "Hostname Fallback",
+                url: "https://guides.example/path",
+            })).toEqual({
+                id: "ref:web-hostname",
+                type: "WebPage",
+                rawType: "WebPage",
+                title: "Hostname Fallback",
+                url: "https://guides.example/path",
+                location: "guides.example",
+                locationUrl: "https://guides.example/path",
+                authors: [],
+                keywords: [],
+            });
+        });
+
         test("then VideoObject falls back to the hostname and reference URL", () => {
             expect(normalizeVideoReference({
                 kind: "VideoObject",
@@ -420,6 +526,26 @@ suite("given remaining shared normalization inputs", () => {
                 url: "https://repository.example/fallback",
                 institution: "Example University",
                 institutionUrl: "https://repository.example/fallback",
+                authors: [],
+                keywords: [],
+            });
+        });
+
+        test("then WebPage omits optional fields without changing required arrays", () => {
+            expect(normalizeWebPageReference({
+                kind: "WebPage",
+                id: "ref:web-minimal",
+                rawType: "WebPage",
+                title: "Minimal Web",
+                url: "https://minimal.example/",
+            })).toEqual({
+                id: "ref:web-minimal",
+                type: "WebPage",
+                rawType: "WebPage",
+                title: "Minimal Web",
+                url: "https://minimal.example/",
+                location: "minimal.example",
+                locationUrl: "https://minimal.example/",
                 authors: [],
                 keywords: [],
             });

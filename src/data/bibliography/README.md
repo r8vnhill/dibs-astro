@@ -177,10 +177,16 @@ For normal graph-backed lesson pages, prefer `LessonReferencesFromCatalog`.
 
 Use `ReferencesFromCatalog` when a caller needs explicit `source`, `lessonId`, or tag-filter configuration.
 
-Catalog-backed and legacy ItemList-backed references are being migrated toward a shared normalization core. `Book`,
-`VideoObject`, `ScholarlyArticle`, and `Thesis` already share final render-facing object construction through
-`src/lib/bibliography/normalize/normalize-reference.mjs`. `WebPage` and the caller rewiring in `normalize-jsonld.ts` and
-`catalog-core.mjs` remain deferred, so source-specific parsing and policy still stay in the existing callers.
+Catalog-backed and legacy ItemList-backed references now share the same final normalization core in
+`src/lib/bibliography/normalize/normalize-reference.mjs` for `Book`, `WebPage`, `VideoObject`,
+`ScholarlyArticle`, and `Thesis`.
+
+The callers still keep their own source-specific responsibilities:
+
+- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling,
+  and strict/non-strict policy.
+- `src/lib/bibliography/catalog-core.mjs` owns graph resolution, linked-node lookup, pending-only tolerance, and
+  strict/non-strict policy.
 
 Editorial descriptions remain in `.astro` files using slots keyed by reference ID:
 

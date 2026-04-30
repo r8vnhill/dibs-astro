@@ -1,4 +1,4 @@
-import { normalizeBookReference as normalizeSharedBookReference } from "./normalize/normalize-reference.mjs";
+import { normalizeReference } from "./normalize/normalize-reference.mjs";
 import { parsePageReference } from "./pages-core.mjs";
 
 const SUPPORTED_REFERENCE_TYPES = new Set([
@@ -106,14 +106,6 @@ const getPublisherFromNode = (value) => {
     return publisherName ? { publisherName } : {};
 };
 
-const getLocationFromUrl = (url) => {
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return url;
-    }
-};
-
 const resolveAuthors = (
     value,
     nodesById,
@@ -169,7 +161,20 @@ const resolveLinkedTitle = (value, nodesById) => {
     };
 };
 
-const normalizeBookReference = (node, context, base) => {
+const buildBaseReferenceInput = (base) => ({
+    id: base.id,
+    rawType: base.rawType,
+    title: base.title,
+    ...(base.description ? { description: base.description } : {}),
+    authors: base.authors,
+    ...(base.datePublished ? { datePublished: base.datePublished } : {}),
+    keywords: base.keywords,
+    ...(base.publisherName ? { publisherName: base.publisherName } : {}),
+    ...(base.publisherUrl ? { publisherUrl: base.publisherUrl } : {}),
+    ...(base.sourceLabel ? { sourceLabel: base.sourceLabel } : {}),
+});
+
+const buildBookReferenceInput = (node, context, base) => {
     const container = resolveLinkedTitle(node.isPartOf, context.nodesById);
     const bookTitle = container.title;
     if (!bookTitle) {
@@ -183,16 +188,60 @@ const normalizeBookReference = (node, context, base) => {
 
     const pages = parsePageReference(asNumber(node.pageStart), asNumber(node.pageEnd));
 
-    return normalizeSharedBookReference({
-        ...base,
+    return {
+        ...buildBaseReferenceInput(base),
         kind: "Book",
         bookTitle,
         ...(container.id ? { bookId: container.id } : {}),
         ...(pages ? { pages } : {}),
-    });
+    };
 };
 
-const normalizeLinkedReference = (node, context, base) => {
+const buildWebPageReferenceInput = (node, context, base, url) => ({
+    ...buildBaseReferenceInput(base),
+    kind: "WebPage",
+    url,
+});
+
+const buildVideoReferenceInput = (node, context, base, url) => ({
+    ...buildBaseReferenceInput(base),
+    kind: "VideoObject",
+    url,
+});
+
+const buildScholarlyArticleReferenceInput = (node, context, base, url) => {
+    const container = resolveLinkedTitle(node.isPartOf, context.nodesById);
+    const pages = parsePageReference(asNumber(node.pageStart), asNumber(node.pageEnd));
+
+    return {
+        ...buildBaseReferenceInput(base),
+        kind: "ScholarlyArticle",
+        url,
+        ...(container.title ? { publication: container.title } : {}),
+        ...(container.id ? { publicationId: container.id } : {}),
+        ...(container.url ? { publicationUrl: container.url } : {}),
+        ...(pages ? { pages } : {}),
+    };
+};
+
+const buildThesisReferenceInput = (node, context, base, url) => {
+    const institutionRef = resolveLinkedTitle(node.publisher ?? node.sourceOrganization, context.nodesById);
+
+    return {
+        ...buildBaseReferenceInput(base),
+        kind: "Thesis",
+        url,
+        ...(institutionRef.title ? { institution: institutionRef.title } : {}),
+        ...(institutionRef.id ? { institutionId: institutionRef.id } : {}),
+        ...(institutionRef.url ? { institutionUrl: institutionRef.url } : {}),
+    };
+};
+
+const buildReferenceInput = (node, context, base) => {
+    if (base.rawType === "Book") {
+        return buildBookReferenceInput(node, context, base);
+    }
+
     const url = asString(node.url);
     if (!url) {
         addError(
@@ -204,55 +253,18 @@ const normalizeLinkedReference = (node, context, base) => {
     }
 
     if (base.rawType === "WebPage") {
-        const location = base.publisherName ?? getLocationFromUrl(url);
-        return {
-            ...base,
-            type: "WebPage",
-            url,
-            ...(location ? { location } : {}),
-            ...(base.publisherUrl || url ? { locationUrl: base.publisherUrl ?? url } : {}),
-        };
+        return buildWebPageReferenceInput(node, context, base, url);
     }
 
     if (base.rawType === "VideoObject") {
-        const platform = base.publisherName ?? getLocationFromUrl(url);
-        return {
-            ...base,
-            type: "VideoObject",
-            url,
-            ...(platform ? { platform } : {}),
-            ...(base.publisherUrl || url ? { platformUrl: base.publisherUrl ?? url } : {}),
-        };
+        return buildVideoReferenceInput(node, context, base, url);
     }
 
-    return normalizePublicationReference(node, context, base, url);
-};
-
-const normalizePublicationReference = (node, context, base, url) => {
     if (base.rawType === "ScholarlyArticle") {
-        const container = resolveLinkedTitle(node.isPartOf, context.nodesById);
-        const pages = parsePageReference(asNumber(node.pageStart), asNumber(node.pageEnd));
-
-        return {
-            ...base,
-            type: "ScholarlyArticle",
-            url,
-            ...(container.title ? { publication: container.title } : {}),
-            ...(container.id ? { publicationId: container.id } : {}),
-            ...(container.url || url ? { publicationUrl: container.url ?? url } : {}),
-            ...(pages ? { pages } : {}),
-        };
+        return buildScholarlyArticleReferenceInput(node, context, base, url);
     }
 
-    const institutionRef = resolveLinkedTitle(node.publisher ?? node.sourceOrganization, context.nodesById);
-    return {
-        ...base,
-        type: "Thesis",
-        url,
-        ...(institutionRef.title ? { institution: institutionRef.title } : {}),
-        ...(institutionRef.id ? { institutionId: institutionRef.id } : {}),
-        ...(institutionRef.url || url ? { institutionUrl: institutionRef.url ?? url } : {}),
-    };
+    return buildThesisReferenceInput(node, context, base, url);
 };
 
 const normalizeReferenceNode = (
@@ -306,9 +318,8 @@ const normalizeReferenceNode = (
     };
     const context = { nodesById, errors, effectiveStrict, sourceLabel };
 
-    return rawType === "Book"
-        ? normalizeBookReference(node, context, base)
-        : normalizeLinkedReference(node, context, base);
+    const input = buildReferenceInput(node, context, base);
+    return input ? normalizeReference(input) : null;
 };
 
 const isLessonNode = (node) => {

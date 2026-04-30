@@ -5,6 +5,7 @@ import type {
     NormalizedReference,
     NormalizedThesisReference,
     NormalizedVideoReference,
+    NormalizedWebReference,
     PageReference,
 } from "../types";
 
@@ -35,6 +36,13 @@ export type VideoNormalizationInput = BaseReferenceNormalizationInput & {
     readonly platformUrl?: string;
 };
 
+export type WebPageNormalizationInput = BaseReferenceNormalizationInput & {
+    readonly kind: "WebPage";
+    readonly url: string;
+    readonly location?: string;
+    readonly locationUrl?: string;
+};
+
 export type ScholarlyArticleNormalizationInput = BaseReferenceNormalizationInput & {
     readonly kind: "ScholarlyArticle";
     readonly url: string;
@@ -54,6 +62,7 @@ export type ThesisNormalizationInput = BaseReferenceNormalizationInput & {
 
 export type ReferenceNormalizationInput =
     | BookNormalizationInput
+    | WebPageNormalizationInput
     | VideoNormalizationInput
     | ScholarlyArticleNormalizationInput
     | ThesisNormalizationInput;
@@ -65,6 +74,10 @@ export type NormalizeBookReference = (
 export type NormalizeVideoReference = (
     input: VideoNormalizationInput,
 ) => NormalizedVideoReference;
+
+export type NormalizeWebPageReference = (
+    input: WebPageNormalizationInput,
+) => NormalizedWebReference;
 
 export type NormalizeScholarlyArticleReference = (
     input: ScholarlyArticleNormalizationInput,

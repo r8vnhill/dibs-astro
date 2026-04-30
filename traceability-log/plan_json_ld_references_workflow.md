@@ -4,7 +4,7 @@
 
 Improve the JSON-LD references workflow by consolidating duplicated normalization paths, centralizing pending-revision policy, improving diagnostics for Turtle-authored data, and making editorial/reporting workflows more trustworthy.
 
-The current preferred workflow is graph-backed: Turtle fragments are assembled, parsed with `n3`, validated, emitted as deterministic JSON-LD, loaded into a normalized runtime catalog, and rendered through `LessonReferencesFromCatalog` / `ReferencesFromCatalog`. The older `ReferencesFromJsonLd` ItemList path still exists and bypasses the generated graph while sharing the final `ReferenceEntry` rendering pipeline. 
+The current preferred workflow is graph-backed: Turtle fragments are assembled, parsed with `n3`, validated, emitted as deterministic JSON-LD, loaded into a normalized runtime catalog, and rendered through `LessonReferencesFromCatalog` / `ReferencesFromCatalog`. The older `ReferencesFromJsonLd` ItemList path still exists and bypasses the generated graph, but both callers now share the same final render-facing reference normalization core before reaching `ReferenceEntry`. 
 
 The plan should preserve the existing strengths: deterministic generated artifacts, normalized runtime maps, shared `NormalizedReference` rendering, and the current protected behavioural baseline across build, load, grouping, and rendering. 
 
@@ -167,13 +167,13 @@ test.each([
 
 ---
 
-# Phase 2: Centralize Reference Normalization
+# ~~Phase 2: Centralize Reference Normalization~~
 
 ## Objective
 
 Create one normalization path for all supported reference shapes.
 
-The current report says the legacy ItemList path and the graph-backed catalog path overlap in normalization logic for reference types, authors, publishers, URLs, pages, and fallback fields. 
+Status: completed for the current supported runtime reference kinds. The legacy ItemList path and the graph-backed catalog path now keep source-specific extraction local, then delegate final render-facing construction for `Book`, `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis` to the shared normalizer in `src/lib/bibliography/normalize/normalize-reference.mjs`. 
 
 ## Changes
 
@@ -216,6 +216,12 @@ ReferenceInput -> NormalizedReference
 ```
 
 This prevents the generic normalizer from knowing too much about either raw format.
+
+Current implementation note:
+
+- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling, and strict/non-strict behavior.
+- `src/lib/bibliography/catalog-core.mjs` owns graph resolution, linked-node lookup, pending-only tolerance, and strict/non-strict behavior.
+- Both callers now converge on the same final normalization core.
 
 ## TypeScript Design Suggestions
 
@@ -290,7 +296,8 @@ Example property:
 
 ## Acceptance Criteria
 
-- Both catalog and ItemList paths produce `NormalizedReference` through the same final normalizer.
+- The ItemList path produces `NormalizedReference` through the shared final normalizer, while catalog rewiring remains
+  an explicit follow-up.
 - Reference leaf components remain unchanged or become simpler.
 - Duplicate normalization logic is removed.
 - Existing render tests for both `ReferencesFromCatalog` and `ReferencesFromJsonLd` continue to pass.

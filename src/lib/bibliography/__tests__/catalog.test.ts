@@ -169,6 +169,35 @@ describe("bibliography catalog", () => {
         });
     });
 
+    it("falls back to the reference hostname for web and video metadata when no publisher is linked", () => {
+        const catalog = loadBibliographyCatalog({
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@id": "ref:web-fallback",
+                    "@type": "WebPage",
+                    name: "Pipeline Docs",
+                    url: "https://docs.example.com/pipelines",
+                },
+                {
+                    "@id": "ref:video-fallback",
+                    "@type": "VideoObject",
+                    name: "Pipeline Walkthrough",
+                    url: "https://media.example.org/watch/pipelines",
+                },
+            ],
+        });
+
+        expect(catalog.referencesById.get("ref:web-fallback")).toMatchObject({
+            location: "docs.example.com",
+            locationUrl: "https://docs.example.com/pipelines",
+        });
+        expect(catalog.referencesById.get("ref:video-fallback")).toMatchObject({
+            platform: "media.example.org",
+            platformUrl: "https://media.example.org/watch/pipelines",
+        });
+    });
+
     it("hides pending-revision by default when resolving references for a lesson", () => {
         const catalog = loadBibliographyCatalog(CATALOG);
         const grouped = getReferencesForLesson(catalog, "/notes/lesson-a/");

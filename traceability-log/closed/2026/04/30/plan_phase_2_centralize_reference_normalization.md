@@ -1,4 +1,4 @@
-# [PLAN] Phase 2: Centralize Reference Normalization
+# [DONE] Phase 2: Centralize Reference Normalization
 
 ## Summary
 
@@ -534,7 +534,7 @@ Status:
 - Added the shared `Thesis` normalizer and institution URL fallback while keeping source-specific institution resolution
   in the callers.
 
-### Cycle 6: Refactor ItemList Caller
+### ~~Cycle 6: Refactor ItemList Caller~~
 
 Red:
 
@@ -550,7 +550,17 @@ Refactor:
 
 - Remove dead duplicated helpers.
 
-### Cycle 7: Refactor Catalog Caller
+Status:
+
+- Completed in `src/lib/bibliography/normalize-jsonld.ts`.
+- `ItemList` extraction still owns validation, duplicate detection, fallback-title handling, and strict/non-strict
+  policy, but final render-facing construction for `Book`, `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis`
+  now delegates to `src/lib/bibliography/normalize/normalize-reference.mjs`.
+- `src/lib/bibliography/__tests__/normalize-jsonld.test.ts` and
+  `src/lib/bibliography/__tests__/reference-normalization-equivalence.test.ts` lock the caller behavior and the
+  ItemList-to-catalog equivalence baseline.
+
+### ~~Cycle 7: Refactor Catalog Caller~~
 
 Red:
 
@@ -565,11 +575,32 @@ Refactor:
 
 - Remove dead duplicated helpers.
 
-### Cycle 8: Regression Sweep
+Status:
+
+- Completed in `src/lib/bibliography/catalog-core.mjs`.
+- The catalog caller still owns graph indexing, linked-node lookup, author and publisher resolution, pending-only
+  tolerance, and strict vs. non-strict behavior, but final render-facing construction for `Book`, `WebPage`,
+  `VideoObject`, `ScholarlyArticle`, and `Thesis` now delegates to
+  `src/lib/bibliography/normalize/normalize-reference.mjs` through source-local normalization-input builders.
+- `src/lib/bibliography/__tests__/catalog.test.ts` adds a fallback-sensitive catalog regression for `WebPage` and
+  `VideoObject`, and `src/lib/bibliography/__tests__/reference-normalization-equivalence.test.ts` remains the parity
+  lock between the catalog and ItemList callers.
+
+### ~~Cycle 8: Regression Sweep~~
 
 Run all bibliography and reference render suites.
 
 Fix only behavior that clearly contradicts existing contracts or the new shared-normalization contract.
+
+Status:
+
+- Completed with no additional code changes required after the Cycle 7 catalog-caller refactor.
+- `pnpm vitest run src/lib/bibliography` passed with 6 test files and 107 tests green.
+- `pnpm test:astro -- src/components/ui/references/__tests__` passed with the reference render suites green,
+  including `ReferencesFromCatalog`, `ReferencesFromJsonLd`, `GenericReference`, `LessonReferencesFromCatalog`, and
+  the leaf renderers for `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis`.
+- The non-strict warning output already characterized by `ReferencesFromJsonLd.render.test.ts` remained unchanged,
+  so the regression sweep found no contract-breaking drift to repair.
 
 ---
 
@@ -906,7 +937,7 @@ Mitigation:
 6. Migrate `ScholarlyArticle`.
 7. Migrate `Thesis`.
 8. Refactor ItemList final construction.
-9. Refactor catalog final construction.
+9. Refactor catalog final construction. Completed by `src/lib/bibliography/catalog-core.mjs`.
 10. Remove duplicated helpers.
 11. Update docs and traceability.
-12. Run the full verification gate.
+12. Run the full verification gate. Bibliography and reference render sweeps completed by `pnpm vitest run src/lib/bibliography` and `pnpm test:astro -- src/components/ui/references/__tests__`.

@@ -1,4 +1,10 @@
-import { normalizeBookReference } from "./normalize/normalize-reference.mjs";
+import {
+    normalizeBookReference,
+    normalizeScholarlyArticleReference,
+    normalizeThesisReference,
+    normalizeVideoReference,
+    normalizeWebPageReference,
+} from "./normalize/normalize-reference.mjs";
 import { parsePageReference } from "./pages";
 import type {
     AuthorRef,
@@ -131,14 +137,6 @@ const getPublisher = (
     };
 };
 
-const getLocationFromUrl = (url: string): string => {
-    try {
-        return new URL(url).hostname;
-    } catch {
-        return url;
-    }
-};
-
 const normalizeItem = (
     rawItem: unknown,
     index: number,
@@ -227,21 +225,16 @@ const normalizeItem = (
         const pages = parsePageReference(pageStart, pageEnd);
 
         const publication = getContainerTitle(rawItem.isPartOf) ?? publisherName;
+        const publicationUrl = asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url);
 
-        return {
+        return normalizeScholarlyArticleReference({
+            kind: "ScholarlyArticle",
             id,
-            type: "ScholarlyArticle",
             rawType,
             title,
             url,
             ...(publication ? { publication } : {}),
-            ...(asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url) || url
-                ? {
-                    publicationUrl: asString((rawItem.isPartOf as Record<string, unknown> | undefined)?.url)
-                        ?? url,
-                }
-                : {}),
-            ...(pages ? { pages } : {}),
+            ...(publicationUrl ? { publicationUrl } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -249,7 +242,8 @@ const normalizeItem = (
             ...(publisherName ? { publisherName } : {}),
             ...(publisherUrl ? { publisherUrl } : {}),
             ...(sourceLabel ? { sourceLabel } : {}),
-        };
+            ...(pages ? { pages } : {}),
+        });
     }
 
     if (rawType === "Thesis") {
@@ -261,28 +255,17 @@ const normalizeItem = (
 
         const institution = getContainerTitle(rawItem.publisher)
             ?? getContainerTitle(rawItem.sourceOrganization);
+        const institutionUrl = asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
+            ?? asString((rawItem.sourceOrganization as Record<string, unknown> | undefined)?.url);
 
-        return {
+        return normalizeThesisReference({
+            kind: "Thesis",
             id,
-            type: "Thesis",
             rawType,
             title,
             url,
             ...(institution ? { institution } : {}),
-            ...(asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
-                    || asString(
-                        (rawItem.sourceOrganization as Record<string, unknown> | undefined)?.url,
-                    )
-                    || url
-                ? {
-                    institutionUrl: asString((rawItem.publisher as Record<string, unknown> | undefined)?.url)
-                        ?? asString(
-                            (rawItem.sourceOrganization as Record<string, unknown> | undefined)
-                                ?.url,
-                        )
-                        ?? url,
-                }
-                : {}),
+            ...(institutionUrl ? { institutionUrl } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
@@ -290,7 +273,7 @@ const normalizeItem = (
             ...(publisherName ? { publisherName } : {}),
             ...(publisherUrl ? { publisherUrl } : {}),
             ...(sourceLabel ? { sourceLabel } : {}),
-        };
+        });
     }
 
     if (rawType === "VideoObject") {
@@ -300,24 +283,22 @@ const normalizeItem = (
             return null;
         }
 
-        const platform = publisherName ?? getLocationFromUrl(url);
-
-        return {
+        return normalizeVideoReference({
+            kind: "VideoObject",
             id,
-            type: "VideoObject",
             rawType,
             title,
             url,
-            ...(platform ? { platform } : {}),
-            ...(publisherUrl || url ? { platformUrl: publisherUrl ?? url } : {}),
             ...(description ? { description } : {}),
             authors,
             ...(datePublished ? { datePublished } : {}),
             keywords,
+            ...(publisherName ? { platform: publisherName } : {}),
+            ...(publisherUrl ? { platformUrl: publisherUrl } : {}),
             ...(publisherName ? { publisherName } : {}),
             ...(publisherUrl ? { publisherUrl } : {}),
             ...(sourceLabel ? { sourceLabel } : {}),
-        };
+        });
     }
 
     const url = asString(rawItem.url);
@@ -326,16 +307,12 @@ const normalizeItem = (
         return null;
     }
 
-    const location = publisherName ?? getLocationFromUrl(url);
-
-    return {
+    return normalizeWebPageReference({
+        kind: "WebPage",
         id,
-        type: "WebPage",
         rawType,
         title,
         url,
-        ...(location ? { location } : {}),
-        ...(publisherUrl || url ? { locationUrl: publisherUrl ?? url } : {}),
         ...(description ? { description } : {}),
         authors,
         ...(datePublished ? { datePublished } : {}),
@@ -343,7 +320,7 @@ const normalizeItem = (
         ...(publisherName ? { publisherName } : {}),
         ...(publisherUrl ? { publisherUrl } : {}),
         ...(sourceLabel ? { sourceLabel } : {}),
-    };
+    });
 };
 
 /**

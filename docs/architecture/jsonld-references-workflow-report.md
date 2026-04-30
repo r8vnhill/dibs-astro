@@ -30,7 +30,7 @@ The legacy `ReferencesFromJsonLd` path bypasses the generated graph and uses:
 - `parseBibliography` for ItemList normalization;
 - `resolveReferenceGroups` for explicit recommended/additional ID lists;
 - `extractFallbackTitles` for title fallback from raw JSON-LD;
-- the same `ReferenceEntry` rendering pipeline as the catalog path.
+- the same shared final reference normalizer and `ReferenceEntry` rendering pipeline as the catalog path.
 
 ## Current Catalog Snapshot
 
@@ -99,9 +99,8 @@ The current tests cover important parts of the workflow:
 - Usage tag validation and missing relation checks.
 - Pending-revision pruning for malformed draft references.
 - JSON-LD ItemList normalization for the supported reference types.
-- Characterization coverage comparing equivalent catalog and ItemList normalization output before the shared-normalizer refactor.
+- Shared final normalization coverage for both the catalog and ItemList callers, plus equivalence coverage for matching render-facing output.
 - Catalog loading, lesson lookup, tag filtering, and citation stats.
-- Initial shared `Book` normalization coverage for the catalog-backed and ItemList-backed paths.
 - Render coverage for both `ReferencesFromJsonLd` and `ReferencesFromCatalog`.
 - Real generated-catalog smoke coverage for the Nushell pipelines lesson.
 
@@ -113,13 +112,13 @@ This gives the implementation a solid behavioral baseline across generation, loa
 - The generated JSON-LD artifact is deterministic and committed, which helps review generated changes.
 - The runtime catalog path has a normalized in-memory model instead of making UI components inspect raw JSON-LD directly.
 - `pending-revision` lets the project keep draft bibliography data in the graph without rendering it by default.
-- Both legacy JSON-LD and current catalog paths share the final `NormalizedReference` rendering model.
+- Both legacy JSON-LD and current catalog paths now share the same final reference normalizer and the final `NormalizedReference` rendering model.
 - The leaf reference components remain simple because type-specific normalization happens before rendering.
 
 ## Improvement Findings
 
-1. **Two JSON-LD shapes remain active.**
-   The legacy `ItemList` path and the graph-backed catalog path both normalize bibliography data, but they do so in separate modules with overlapping logic for reference types, authors, publishers, URLs, pages, and fallback fields.
+1. **Two source-specific extraction paths remain active.**
+   The legacy `ItemList` path and the graph-backed catalog path now share final render-facing normalization, but they still keep separate validation and extraction layers. That is the right boundary today, although it means changes to raw-source parsing rules still need coverage in both callers.
 
 2. **The report script now shares read-side catalog analytics.**
    `scripts/bibliography-report.mjs` delegates report construction to `scripts/lib/bibliography-report-read-model.mjs`, which loads the same normalized catalog core used by site rendering and reuses shared reference and book citation helpers.
