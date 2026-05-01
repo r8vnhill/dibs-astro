@@ -359,7 +359,7 @@ Acceptance criteria:
 
 ---
 
-### Cycle 3: Repository audit
+### ~~Cycle 3: Repository audit~~
 
 Goal: run the checker on the real `src` tree and turn findings into decisions.
 

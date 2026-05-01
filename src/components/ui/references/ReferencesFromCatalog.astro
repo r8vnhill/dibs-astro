@@ -17,7 +17,7 @@ import {
     type LoadBibliographyCatalogOptions,
     type ReferenceTag,
 } from "~/lib/bibliography";
-import { bibliographyCatalog as defaultBibliographyCatalog } from "~/data/bibliography/catalog";
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { prepareSlotsForReferences } from "./reference-content";
 import ReferenceEntry from "./ReferenceEntry.astro";
 import References from "./References.astro";
@@ -35,7 +35,7 @@ type Props = {
 };
 
 const {
-    source = defaultBibliographyCatalog,
+    source = getDefaultBibliographyCatalog(),
     lessonId,
     includeTags,
     excludeTags,

@@ -12,6 +12,7 @@ import {
 
 // Re-export TrailNode for callers of the adapter
 export type { TrailNode };
+export type CourseLesson = DomainLesson;
 
 /**
  * Adaptador de infraestructura para el catálogo de lecciones.

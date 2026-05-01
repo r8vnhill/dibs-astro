@@ -3,6 +3,7 @@
     "type": "module",
     "version": "0.18.1",
     "scripts": {
+        "check:architecture": "node scripts/check-layer-boundaries.mjs",
         "check:content-core": "tsc -p packages/content-core/tsconfig.json --noEmit",
         "generate-icons": "node generate-icons-index.js",
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",

@@ -1,6 +1,9 @@
 import clsx from "clsx";
 import { type JSX, useLayoutEffect, useState } from "react";
-import { notFoundMessages, ultraRareMessage } from "~/data/not-found-messages";
+import {
+    getNotFoundMessagePool,
+    getRareNotFoundMessage,
+} from "$presentation/adapters/static-ui-data";
 import { pickRandom, type StyledComponent } from "~/utils";
 
 /**
@@ -27,8 +30,8 @@ export default function NotFound({ className }: NotFoundProps): JSX.Element {
     useLayoutEffect(() => {
         // Select a random message (ultra-rare easter egg included)
         const notFoundMessage = Math.random() < 1e-6
-            ? ultraRareMessage
-            : pickRandom(notFoundMessages);
+            ? getRareNotFoundMessage()
+            : pickRandom([...getNotFoundMessagePool()]);
 
         console.log("📄 NotFound title:", notFoundMessage);
         setTitle(notFoundMessage ?? null);

@@ -49,6 +49,7 @@
  *   preserve alignment without adding noise to assistive technologies.
  */
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
+import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { resolveLessonMetadata } from "$presentation/adapters/lesson-metadata-bridge";
 import * as icons from "~/assets/img/icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
@@ -58,7 +59,6 @@ import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
-import { courseStructure } from "~/data/course-structure";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import {
     type NavigationLinkInput,
@@ -125,6 +125,7 @@ interface Props {
 // Extract current page data and resolve metadata/navigation.
 const { title, next, previous, timeMultiplier, git, description } = Astro.props as Props;
 const pathname = Astro.url.pathname;
+const courseNavigationTree = await getCourseNavigationTree();
 
 // Metadata may be absent if the route is not present in the generated dataset.
 const lessonMetadata = await resolveLessonMetadata(pathname);
@@ -149,7 +150,7 @@ const pageMeta: PageMeta = {
 };
 
 // Attempt to auto-resolve previous/next from course structure.
-const autoNav = await resolveAutoNav(pathname, courseStructure);
+const autoNav = await resolveAutoNav(pathname, courseNavigationTree);
 
 // Allow manual override from frontmatter (if provided). Manual previous arrays intentionally
 // replace the auto-resolved previous lesson instead of merging with it.
@@ -171,7 +172,7 @@ const { normalizedNext } = normalizeNavigation(
 >
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
-        <LessonSidebar client:load lessons={courseStructure} />
+        <LessonSidebar client:load lessons={courseNavigationTree} />
 
         <!-- Main content area -->
         <div

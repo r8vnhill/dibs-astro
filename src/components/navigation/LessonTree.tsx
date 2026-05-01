@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { CaretDown, CaretRight } from "phosphor-react";
 import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
-import type { Lesson } from "~/data/course-structure";
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 
 /**
  * Props:
@@ -9,7 +9,7 @@ import type { Lesson } from "~/data/course-structure";
  *  - depth: recursion depth (used for indentation)
  */
 interface Props {
-    lessons: readonly Lesson[];
+    lessons: readonly CourseNavigationLesson[];
     depth?: number;
     /**
      * Optional key to persist expand/collapse state in localStorage.
@@ -46,7 +46,7 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
     // Auto-expand parents of active path once per render tree
     useEffect(() => {
         const expanded: Record<string, boolean> = {};
-        const walk = (nodes: readonly Lesson[]): boolean => {
+        const walk = (nodes: readonly CourseNavigationLesson[]): boolean => {
             let matchedSubtree = false;
             for (const node of nodes) {
                 const key = node.href ?? node.title;
@@ -109,7 +109,10 @@ export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persist
         );
     }
 
-    const renderLessons = useCallback((nodes: readonly Lesson[], level: number): ReactNode[] => {
+    const renderLessons = useCallback((
+        nodes: readonly CourseNavigationLesson[],
+        level: number,
+    ): ReactNode[] => {
         return nodes.map((lesson, index) => {
             const key = lesson.href ?? `${lesson.title}-${level}-${index}`;
             const isActive = lesson.href ? currentPath === lesson.href : false;

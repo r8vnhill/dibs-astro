@@ -1,5 +1,5 @@
 import { type JSX, useEffect, useId, useMemo } from "react";
-import { todoImages } from "~/data/todo-images";
+import { getPlaceholderImagePool } from "$presentation/adapters/static-ui-data";
 import { pickRandom } from "~/utils";
 
 /**
@@ -64,7 +64,7 @@ export default function ToDo({
     const messageId = useId();
 
     // Pick the image synchronously so the first paint already shows the meme (no layout shift)
-    const imageSrc = useMemo(() => pickRandom(todoImages) ?? null, []);
+    const imageSrc = useMemo(() => pickRandom([...getPlaceholderImagePool()]) ?? null, []);
 
     // Warn once content mounts so placeholder usage is easy to spot during dev, and notify hooks
     useEffect(() => {

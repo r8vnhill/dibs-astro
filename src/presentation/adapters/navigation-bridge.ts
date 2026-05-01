@@ -36,8 +36,11 @@
 
 import type { INavigationService, NavigationNode } from "$application/ports";
 import { NavigationServiceImpl } from "$application/services/NavigationServiceImpl";
-import { LessonCatalogAdapter } from "$infrastructure/adapters/LessonCatalogAdapter";
-import type { Lesson } from "~/data/course-structure";
+import {
+    type CourseLesson,
+    LessonCatalogAdapter,
+} from "$infrastructure/adapters/LessonCatalogAdapter";
+import { getCourseNavigationTree } from "./course-navigation";
 
 /**
  * Navigation link consumed by the presentation layer.
@@ -80,7 +83,7 @@ const toAutoNavLink = (
  * Constructs the navigation service together with its infrastructure dependencies. Keeping this
  * wiring local avoids exposing catalog implementation details to the presentation layer.
  */
-function createNavigationService(lessons: readonly Lesson[]): INavigationService {
+function createNavigationService(lessons: readonly CourseLesson[]): INavigationService {
     const catalog = new LessonCatalogAdapter(lessons);
     return new NavigationServiceImpl(catalog);
 }
@@ -114,9 +117,9 @@ function createNavigationService(lessons: readonly Lesson[]): INavigationService
  */
 export async function resolveAutoNav(
     pathname: string,
-    lessons: readonly Lesson[],
+    lessons?: readonly CourseLesson[],
 ): Promise<AutoNavResult> {
-    const navigationService = createNavigationService(lessons);
+    const navigationService = createNavigationService(lessons ?? await getCourseNavigationTree());
     const result = await navigationService.resolveAutoNav(pathname);
 
     const previous = toAutoNavLink(result.previous);

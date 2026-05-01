@@ -27,7 +27,7 @@
 
 import { beforeEach, describe, expect, test } from "vitest";
 import { createAstroRenderer, type AstroRender } from "../../../test-utils/astro-render";
-import { WEBSITE_PRIMARY_AUTHOR } from "../../../data/site";
+import { WEBSITE_PRIMARY_AUTHOR } from "$presentation/adapters/site-data";
 import Head from "../Head.astro";
 
 const ARTICLE_URL = "https://dibs.ravenhill.cl/notes/example/";

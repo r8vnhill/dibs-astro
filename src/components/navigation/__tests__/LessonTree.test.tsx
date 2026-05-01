@@ -27,7 +27,7 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { courseStructure } from "../../../data/course-structure";
+import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { LessonTree } from "../LessonTree";
 
 /**
@@ -135,13 +135,15 @@ describe("LessonTree", () => {
      * which storage entry the component reads and writes.
      */
     const persistKey = "test-lesson-tree";
+    let courseStructure = [] as Awaited<ReturnType<typeof getCourseNavigationTree>>;
 
     /**
      * Original `localStorage` reference captured so the test can restore it after each run.
      */
     let originalLocalStorage: Storage;
 
-    beforeEach(() => {
+    beforeEach(async () => {
+        courseStructure = await getCourseNavigationTree();
         // Replace localStorage with a deterministic in-memory implementation.
         originalLocalStorage = globalThis.localStorage;
         Object.defineProperty(globalThis, "localStorage", {

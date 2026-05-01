@@ -28,7 +28,7 @@
 
 import clsx from "clsx";
 import { memo } from "react";
-import type { Lesson } from "../../data/course-structure";
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { LessonTree } from "./LessonTree";
 
 /**
@@ -46,7 +46,7 @@ interface Props {
      * - Stable across renders when possible (to maximize the benefit of memoization).
      * - Already normalized/validated by the caller (this component treats it as trusted input).
      */
-    lessons: readonly Lesson[];
+    lessons: readonly CourseNavigationLesson[];
 }
 
 /**

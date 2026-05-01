@@ -27,7 +27,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import fc from "fast-check";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import type { Lesson } from "~/data/course-structure";
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import LessonSidebar from "../LessonSidebar";
 
 /**
@@ -98,21 +98,21 @@ describe("LessonSidebar", () => {
     test("property: render stays stable for arbitrary lesson arrays", () => {
         const numRuns = process.env.CI ? 40 : 100;
 
-        const linkLessonArbitrary: fc.Arbitrary<Lesson> = fc.record({
+        const linkLessonArbitrary: fc.Arbitrary<CourseNavigationLesson> = fc.record({
             kind: fc.constant<"link">("link"),
             id: fc.string({ minLength: 1 }),
             title: fc.string({ minLength: 1 }),
             href: fc.string({ minLength: 1 }),
         });
 
-        const groupLessonArbitrary: fc.Arbitrary<Lesson> = fc.record({
+        const groupLessonArbitrary: fc.Arbitrary<CourseNavigationLesson> = fc.record({
             kind: fc.constant<"group">("group"),
             id: fc.string({ minLength: 1 }),
             title: fc.string({ minLength: 1 }),
             children: fc.array(linkLessonArbitrary, { maxLength: 5 }),
         });
 
-        const lessonArbitrary: fc.Arbitrary<Lesson> = fc.oneof(
+        const lessonArbitrary: fc.Arbitrary<CourseNavigationLesson> = fc.oneof(
             linkLessonArbitrary,
             groupLessonArbitrary,
         );

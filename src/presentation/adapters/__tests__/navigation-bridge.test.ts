@@ -11,13 +11,13 @@
 
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
 import { describe, expect, it } from "vitest";
-import type { Lesson } from "~/data/course-structure";
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 
 /**
  * Estructura de curso simplificada para testing.
  * Usa el mismo formato que courseStructure real (kind, id, children).
  */
-const mockCourseStructure: Lesson[] = [
+const mockCourseStructure: CourseNavigationLesson[] = [
     {
         kind: "group",
         id: "introduccion",

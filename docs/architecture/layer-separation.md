@@ -47,10 +47,13 @@ The main domain seams are now present in code:
 - Lesson-metadata normalization, parsing, and formatting rules live in `src/domain/lesson-metadata.ts`.
 - Presentation composition for lesson navigation and lesson metadata lives in:
   - `src/presentation/adapters/navigation-bridge.ts`
+  - `src/presentation/adapters/course-navigation.ts`
   - `src/presentation/adapters/lesson-metadata-bridge.ts`
+- Presentation-facing adapters also expose site metadata, static UI data, and the default bibliography catalog without requiring UI files to import from `src/data/*`.
 
 At the UI boundary, `NotesLayout.astro` resolves:
-- automatic previous/next navigation through `resolveAutoNav(pathname, courseStructure)`
+- sidebar data through `getCourseNavigationTree()`
+- automatic previous/next navigation through `resolveAutoNav(pathname, courseNavigationTree)`
 - lesson metadata through `resolveLessonMetadata(pathname)`
 
 These paths are locked with high-value test suites:
@@ -102,6 +105,7 @@ graph TD
 In practical terms:
 
 - UI code should not reach into infrastructure adapters directly
+- UI code should not import raw modules from `src/data/*`; route data access through presentation-facing adapters
 - application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
 - domain code should remain framework-free and I/O-free
 
@@ -120,6 +124,18 @@ The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/` and ev
 Run the boundary gate:
 
 ```bash
+pnpm check:architecture
+```
+
+The command runs `node scripts/check-layer-boundaries.mjs` and should finish with:
+
+```txt
+No layer boundary findings found.
+```
+
+Run the checker test suites when changing the checker itself:
+
+```bash
 pnpm vitest run \
   scripts/__tests__/layer-boundary-checker.test.ts \
   scripts/__tests__/layer-boundary-imports.test.ts \
@@ -129,7 +145,7 @@ pnpm vitest run \
   scripts/__tests__/layer-boundary-rules.test.ts
 ```
 
-**Test file responsibilities:**
+**Checker test file responsibilities:**
 - `layer-boundary-checker.test.ts`: Core rule enforcement, import parsing, path resolution, exceptions, output formatting, and CLI exit codes
 - `layer-boundary-imports.test.ts`: Import extraction from TypeScript, TSX, and Astro files (static and dynamic imports, re-exports)
 - `layer-boundary-paths.test.ts`: Path normalization, alias resolution, and layer classification
@@ -137,13 +153,13 @@ pnpm vitest run \
 - `layer-boundary-rule-evaluation.test.ts`: Rule matrix evaluation, exception matching, and finding generation
 - `layer-boundary-rules.test.ts`: Rule matrix structure, allowed/forbidden directions, and package restrictions
 
-Or run the CLI checker directly:
+The CLI can also be run directly:
 
 ```bash
 node scripts/check-layer-boundaries.mjs
 ```
 
-**Next step:** Wire `scripts/check-layer-boundaries.mjs` into `pnpm check` once the team decides that architectural boundary findings should block the default verification pipeline.
+`pnpm check:architecture` is intentionally separate from `pnpm check` until the team decides that architecture findings should block the default verification pipeline.
 
 **API note:** `runBoundaryCheck(...)` exposes `findings` as the preferred result field. The older result shape remains as a compatibility alias. New code should read `findings`; the alias will be removed after all internal callers migrate.
 
@@ -159,6 +175,13 @@ When adding new source files:
 
 If a UI file needs data from a service or external source, add or extend a presentation adapter instead of importing infrastructure directly. This keeps architectural boundaries clear and makes the data flow testable.
 
+Examples:
+
+- Valid: UI imports `getCourseNavigationTree` from `$presentation/adapters/course-navigation`.
+- Valid: a presentation adapter imports an infrastructure adapter to retrieve static site data.
+- Not allowed: UI imports `~/data/course-structure`, `~/data/site`, or `~/data/bibliography/catalog` directly.
+- Not allowed: application code imports `astro`, `react`, `zod`, generated data, or UI components.
+
 ## Presentation Adapter Contracts
 
 The main presentation-facing contracts locked in during this phase are:
@@ -168,13 +191,23 @@ The main presentation-facing contracts locked in during this phase are:
   - each link is `{ title, href }`
   - does not expose slugs, lesson entities, or infrastructure-specific records
 
+- `getCourseNavigationTree()`
+  - returns the sidebar tree through the presentation boundary
+  - keeps the raw course-structure module owned by infrastructure/data access
+
 - `resolveLessonMetadata(pathname)`
   - returns DTO-shaped serializable metadata only
   - does not expose infrastructure-only fields such as `sourceFile`
 
+- `getWebsiteRepoRef(platform)`, `getDefaultBibliographyCatalog()`, and the static UI data helpers
+  - expose existing static data through explicit presentation-facing modules
+  - keep UI components free from direct `src/data/*` imports
+
 `NotesLayout.astro` currently renders previous/next navigation through these contracts. Breadcrumb behavior is not yet a locked contract.
 
 ## Intentional Exceptions
+
+The executable allowlist is currently empty. New exact exceptions must be added in `scripts/lib/layer-boundary-rules.mjs`, include a reason, and be mirrored in this section. Do not add broad wildcard exceptions.
 
 Some transitional or infrastructure-support files exist by design:
 
