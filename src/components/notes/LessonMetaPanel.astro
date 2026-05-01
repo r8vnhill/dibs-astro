@@ -26,14 +26,13 @@
  * - Filters out unavailable platforms from {@link websiteRepoRefs}.
  */
 
-import type { LessonMetadataDto } from "$application/ports";
-import { formatLessonDate } from "$domain/lesson-metadata";
-import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "$presentation/adapters/site-data";
+import {
+    buildLessonMetaPanelViewModel,
+    type LessonMetaPanelMetadata,
+} from "$presentation/adapters/lesson-metadata-panel";
+import { WEBSITE_REPO_REFS } from "$presentation/adapters/site-data";
 import type { PartialRecord } from "~/types/records";
 import {
-    buildCommitUrl,
-    normalizePlatforms,
-    REPO_PLATFORM_LABEL,
     type RepoPlatform,
     type RepoRef,
 } from "~/utils/git";
@@ -44,7 +43,7 @@ interface Props {
     /**
      * Parsed lesson metadata for the current page.
      */
-    metadata: LessonMetadataDto;
+    metadata: LessonMetaPanelMetadata;
 
     /**
      * Optional override for repository references used to build commit links.
@@ -75,38 +74,11 @@ const {
     platforms,
 } = Astro.props as Props;
 
-// ## Derived presentation values ##
-
-// Join non-empty author names.
-const authorsText = metadata.authors
-    .map((author) => author.name.trim())
-    .filter(Boolean)
-    .join(", ");
-
-// Format last modified date.
-const lastModified = formatLessonDate(metadata.lastModified);
-
-// Normalize and filter platforms.
-const selectedPlatforms = normalizePlatforms(platforms);
-const availablePlatforms = selectedPlatforms.filter(
-    (platform) => Boolean(websiteRepoRefs[platform] ?? getWebsiteRepoRef(platform)),
-);
-
-// Precompute recent change entries for simpler markup.
-const recentChanges = metadata.changes.slice(0, 3).map((change) => ({
-    ...change,
-    shortHash: change.hash.slice(0, 7),
-    formattedDate: formatLessonDate(change.date),
-    links: availablePlatforms.map((platform) => ({
-        repoRef: websiteRepoRefs[platform] ?? getWebsiteRepoRef(platform),
-        platform,
-        label: REPO_PLATFORM_LABEL[platform],
-    })).filter((link) => Boolean(link.repoRef)).map((link) => ({
-        platform: link.platform,
-        label: link.label,
-        href: buildCommitUrl(link.repoRef!, link.platform, change.hash),
-    })),
-}));
+const { authorsText, lastModified, recentChanges } = buildLessonMetaPanelViewModel({
+    metadata,
+    websiteRepoRefs,
+    platforms,
+});
 
 const sectionHeadingId = "lesson-meta-heading";
 const recentChangesHeadingId = "lesson-meta-recent-changes-heading";

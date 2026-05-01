@@ -40,7 +40,7 @@
 
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { LessonMetadataDto } from "$application/ports";
+import type { LessonMetaPanelMetadata } from "$presentation/adapters/lesson-metadata-panel";
 import type { PartialRecord } from "~/types/records";
 import type { RepoPlatform, RepoRef } from "~/utils/git";
 import { type AstroRender, createAstroRenderer } from "../../../test-utils/astro-render";
@@ -56,7 +56,7 @@ interface LessonMetaPanelProps {
     /**
      * The metadata entry for the current lesson.
      */
-    metadata: LessonMetadataDto;
+    metadata: LessonMetaPanelMetadata;
 
     /**
      * Optional repository references for the website.
@@ -82,8 +82,8 @@ interface LessonMetaPanelProps {
  * @returns A fully-formed metadata entry suitable for rendering.
  */
 const createMetadata = (
-    overrides: Partial<LessonMetadataDto> = {},
-): LessonMetadataDto => ({
+    overrides: Partial<LessonMetaPanelMetadata> = {},
+): LessonMetaPanelMetadata => ({
     authors: [{ name: "Proyecto DIBS" }],
     changes: [],
     ...overrides,

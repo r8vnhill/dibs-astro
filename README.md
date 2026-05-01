@@ -35,7 +35,8 @@ pnpm dev
 | `pnpm dev`                           | Starts the local Astro development server after regenerating data.       |
 | `pnpm build`                         | Regenerates data and builds the static production site into `dist/`.     |
 | `pnpm preview`                       | Runs the local Astro/Wrangler preview proxy for the built site.          |
-| `pnpm check`                         | Runs generated bibliography, Astro check, and lesson metadata dry-run.   |
+| `pnpm check`                         | Runs generated-data checks, Astro checks, and architecture boundaries.   |
+| `pnpm check:architecture`            | Runs the focused layer-boundary architecture checker.                    |
 | `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
 | `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
 | `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
@@ -84,7 +85,8 @@ pnpm test
 pnpm build
 ```
 
-During focused development, prefer the narrowest relevant test command first, then run the full gate before release.
+Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
+the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings.
 
 ## Deployment
 

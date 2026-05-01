@@ -35,7 +35,7 @@
  */
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { NavigationLinkInput } from "~/utils/navigation";
+import type { NavigationLinkInput } from "$presentation/adapters/navigation-normalization";
 import { type AstroRender, createAstroRenderer } from "../../test-utils/astro-render";
 import NotesLayout from "../NotesLayout.astro";
 

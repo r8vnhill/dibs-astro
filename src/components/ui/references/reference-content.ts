@@ -1,9 +1,13 @@
 import {
     classifyRenderedReferenceContent,
     isMeaningfulSlotContent,
+    type ResolvedInlineField,
     type ResolvedSlotContent,
+    resolveInlineField,
+    resolveLinkedInlineField,
     resolveRequiredInlineField,
-} from "$domain/reference-content";
+    type ResolvedLinkedInlineField,
+} from "$presentation/adapters/reference-content";
 import { MissingReferenceTitleError } from "./ReferenceContractError";
 
 type SlotLike = {
@@ -12,6 +16,8 @@ type SlotLike = {
 };
 
 export type { ResolvedSlotContent };
+export type { ResolvedInlineField, ResolvedLinkedInlineField };
+export { resolveInlineField, resolveLinkedInlineField };
 
 export const SPANISH_REFERENCE_META_LABELS = {
     in: "en",
@@ -21,7 +27,7 @@ export const SPANISH_REFERENCE_META_LABELS = {
 export function resolveRequiredTitleField(
     slotContent: ResolvedSlotContent,
     fallbackText?: string,
-): Extract<import("../../../domain").ResolvedInlineField, { kind: "slot" | "text" }> {
+): Extract<ResolvedInlineField, { kind: "slot" | "text" }> {
     const resolvedTitle = resolveRequiredInlineField(slotContent, fallbackText);
 
     if (resolvedTitle.kind === "invalid") {

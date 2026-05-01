@@ -88,13 +88,11 @@ export const uiBoundaryRule = {
         "assets",
         "styles",
         "utils",
-        "domain",
-        "application",
     ],
-    forbiddenTargets: ["infrastructure"],
+    forbiddenTargets: ["domain", "application", "infrastructure"],
     forbiddenPackages: [],
-    message: "UI surfaces must not import infrastructure directly.",
-    suggestion: "Route infrastructure access through presentation adapters or application-facing services.",
+    message: "UI code must depend on presentation contracts, not domain/application internals.",
+    suggestion: "Move shaping logic behind a presentation adapter, helper, or view model.",
 };
 
 export const boundaryRules = [

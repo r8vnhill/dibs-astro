@@ -4,8 +4,9 @@ import {
     type ResolvedSlotContent,
     resolveInlineField,
     resolveLinkedInlineField,
-} from "$domain/reference-content";
-import { type ResolvedSlotContent as UiResolvedSlotContent, resolveRequiredTitleField } from "./reference-content";
+    type ResolvedSlotContent as UiResolvedSlotContent,
+    resolveRequiredTitleField,
+} from "./reference-content";
 import { resolveRequiredHref } from "./reference-links";
 import { ReferenceContractError } from "./ReferenceContractError";
 

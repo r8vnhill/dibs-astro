@@ -6,13 +6,14 @@
  * It accepts optional metadata such as location (e.g. "Kotlin Docs"), author, and a description.
  */
 
-import { resolveInlineField, resolveLinkedInlineField } from "$domain/reference-content";
 import * as icons from "~/assets/img/icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
     resolveOptionalSlots,
     resolveRequiredTitleField,
+    resolveInlineField,
+    resolveLinkedInlineField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 import { ReferenceContractError } from "./ReferenceContractError";

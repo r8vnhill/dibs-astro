@@ -35,7 +35,7 @@ Context and essential rules for agents collaborating in this repository.
 - Install dependencies with `pnpm install`.
 - Run local development with `pnpm dev`; it regenerates bibliography and lesson metadata first.
 - Build production with `pnpm build`; it also regenerates required data.
-- Run checks with `pnpm check`.
+- Run checks with `pnpm check`; it includes generated-data validation, Astro checks, and architecture-boundary enforcement.
 - Run tests with `pnpm test`, or use `pnpm test:unit` and `pnpm test:astro` for focused suites.
 - Format with `pnpm fmt`; pre-commit formatting uses `dprint`.
 - Use `pnpm preview` to review the local Cloudflare Workers preview flow.
@@ -52,7 +52,7 @@ Context and essential rules for agents collaborating in this repository.
 ## Code Conventions
 
 - Use the aliases in `tsconfig.json`: `~/*`, `$components/*`, `$layouts/*`, `$styles/*`, `$utils/*`, `$hooks/*`, `$assets/*`, `$icons`, `$semantics`, `$callouts`, `$domain/*`, `$application/*`, `$infrastructure/*`, `$presentation/*`, and `$test-utils/*`.
-- Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation adapters.
+- Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
 - Internal routes use trailing slashes, for example `/notes/foo/`.
 - Local icons live in `src/assets/img/icons/`; after changing them, run `pnpm generate-icons` and do not edit the generated index manually.
 - Preserve the custom Shiki setup in `src/lib/shiki` and `config/shiki-warn-tracker`; the project avoids Astro's integrated Shiki highlighting.

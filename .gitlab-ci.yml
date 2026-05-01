@@ -40,7 +40,7 @@ deps:
     script:
         - pnpm --version
 
-test:astro-check:
+test:check:
     stage: test
     extends: .node-job
     tags:
@@ -49,7 +49,7 @@ test:astro-check:
     needs:
         - job: deps
     script:
-        - pnpm astro check
+        - pnpm check
 
 test:unit:
     stage: test
@@ -86,7 +86,7 @@ build:
         UV_THREADPOOL_SIZE: "2"
     needs:
         - job: deps
-        - job: test:astro-check
+        - job: test:check
         - job: test:unit
         - job: test:astro-render
     script:
@@ -108,7 +108,7 @@ deploy:
         ASTRO_TELEMETRY_DISABLED: "1"
     needs:
         - job: deps
-        - job: test:astro-check
+        - job: test:check
         - job: test:unit
         - job: test:astro-render
         - job: build

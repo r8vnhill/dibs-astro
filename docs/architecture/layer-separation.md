@@ -33,10 +33,11 @@ The repo uses a layered structure inside `src/`:
 - `src/presentation/adapters`
   - Owns local composition for UI consumers such as `NotesLayout`.
   - Bridges presentation callers to application services and returns only UI-safe serializable payloads.
+  - Owns view-model shaping and normalization when UI rendering needs domain or application behavior.
 
 - `src/layouts`, `src/components`, `src/pages`
   - Own the Astro and React rendering surface.
-  - Consume presentation adapters and small UI payloads rather than domain entities or infrastructure sources directly.
+  - Consume presentation adapters and small UI payloads rather than domain entities, application DTOs, or infrastructure sources directly.
 
 ## Current Implementation Status
 
@@ -48,7 +49,10 @@ The main domain seams are now present in code:
 - Presentation composition for lesson navigation and lesson metadata lives in:
   - `src/presentation/adapters/navigation-bridge.ts`
   - `src/presentation/adapters/course-navigation.ts`
+  - `src/presentation/adapters/navigation-normalization.ts`
   - `src/presentation/adapters/lesson-metadata-bridge.ts`
+  - `src/presentation/adapters/lesson-metadata-panel.ts`
+- Reference slot/content resolution is exposed to UI components through presentation-owned helpers.
 - Presentation-facing adapters also expose site metadata, static UI data, and the default bibliography catalog without requiring UI files to import from `src/data/*`.
 
 At the UI boundary, `NotesLayout.astro` resolves:
@@ -70,7 +74,7 @@ These paths are locked with high-value test suites:
 | `src/application/**` | `domain`, `application` | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod` | Orchestration and ports only. |
 | `src/infrastructure/**` | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities` | `presentation`, `ui` | Concrete data-source implementations. |
 | `src/presentation/adapters/**` | `domain`, `application`, `infrastructure`, `presentation`, `utilities` | `ui`, `components`, `layouts`, `pages` | Local composition root. |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `ui`, `assets`, `styles`, `utilities`, `domain`, `application` | `infrastructure` | Rendering surface. |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities` | `domain`, `application`, `infrastructure` | Rendering surface. |
 
 **Implementation notes:**
 - Type-only imports are checked as architectural dependencies.
@@ -105,6 +109,7 @@ graph TD
 In practical terms:
 
 - UI code should not reach into infrastructure adapters directly
+- UI code should not import domain or application internals directly; use presentation adapters, helpers, or view models
 - UI code should not import raw modules from `src/data/*`; route data access through presentation-facing adapters
 - application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
 - domain code should remain framework-free and I/O-free
@@ -121,13 +126,19 @@ The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/` and ev
 
 ## Verification
 
-Run the boundary gate:
+Architecture boundary checks are part of the standard local gate:
+
+```bash
+pnpm check
+```
+
+Use the focused boundary gate when debugging architecture findings:
 
 ```bash
 pnpm check:architecture
 ```
 
-The command runs `node scripts/check-layer-boundaries.mjs` and should finish with:
+The focused command runs `node scripts/check-layer-boundaries.mjs` and should finish with:
 
 ```txt
 No layer boundary findings found.
@@ -159,7 +170,7 @@ The CLI can also be run directly:
 node scripts/check-layer-boundaries.mjs
 ```
 
-`pnpm check:architecture` is intentionally separate from `pnpm check` until the team decides that architecture findings should block the default verification pipeline.
+GitLab CI runs `pnpm check`, so architecture boundary findings block the standard CI verification path.
 
 **API note:** `runBoundaryCheck(...)` exposes `findings` as the preferred result field. The older result shape remains as a compatibility alias. New code should read `findings`; the alias will be removed after all internal callers migrate.
 
@@ -178,8 +189,10 @@ If a UI file needs data from a service or external source, add or extend a prese
 Examples:
 
 - Valid: UI imports `getCourseNavigationTree` from `$presentation/adapters/course-navigation`.
+- Valid: UI imports view-model or normalization helpers from `$presentation/adapters/*`.
 - Valid: a presentation adapter imports an infrastructure adapter to retrieve static site data.
 - Not allowed: UI imports `~/data/course-structure`, `~/data/site`, or `~/data/bibliography/catalog` directly.
+- Not allowed: UI imports `$domain/reference-content` or `$application/ports` directly.
 - Not allowed: application code imports `astro`, `react`, `zod`, generated data, or UI components.
 
 ## Presentation Adapter Contracts
@@ -198,6 +211,14 @@ The main presentation-facing contracts locked in during this phase are:
 - `resolveLessonMetadata(pathname)`
   - returns DTO-shaped serializable metadata only
   - does not expose infrastructure-only fields such as `sourceFile`
+
+- `buildLessonMetaPanelViewModel(...)`
+  - formats metadata-panel display values and commit links for UI rendering
+  - keeps date formatting and application DTO coupling out of the Astro component
+
+- reference-content presentation helpers
+  - adapt domain reference-content rules into rendering-oriented helpers
+  - keep slot precedence and missing-title behavior stable without UI importing domain modules
 
 - `getWebsiteRepoRef(platform)`, `getDefaultBibliographyCatalog()`, and the static UI data helpers
   - expose existing static data through explicit presentation-facing modules
@@ -227,9 +248,9 @@ Some transitional or infrastructure-support files exist by design:
   - **Exit condition**: Once all Thesis-specific policy is component-localized, remove domain-layer duplication.
 
 - `src/utils/navigation.ts`
-  - **Status**: Small normalization helper surface.
-  - **Allowed because**: Provides presentation payload shaping utilities.
-  - **Exit condition**: Move reusable helpers to presentation adapters as they grow; remove if no longer referenced.
+  - **Status**: Compatibility wrapper.
+  - **Allowed because**: Re-exports presentation-owned navigation normalization for older imports.
+  - **Exit condition**: Remove once all callers use `$presentation/adapters/navigation-normalization` directly.
 
 ## Historical Implementation Notes
 

@@ -207,6 +207,30 @@ describe("checkLayerBoundaries", () => {
             expectedFindings: [],
         },
         {
+            name: "reports UI imports of domain code",
+            path: "src/components/notes/Panel.astro",
+            text: "---\nimport { formatLessonDate } from \"$domain/lesson-metadata\";\n---",
+            expectedFindings: [{
+                ruleId: "ui-boundary",
+                sourceLayer: "ui",
+                target: "domain",
+                importKind: "value",
+                reason: "forbidden-target",
+            }],
+        },
+        {
+            name: "reports UI imports of application code",
+            path: "src/components/notes/Panel.astro",
+            text: "---\nimport type { LessonMetadataDto } from \"$application/ports\";\n---",
+            expectedFindings: [{
+                ruleId: "ui-boundary",
+                sourceLayer: "ui",
+                target: "application",
+                importKind: "type",
+                reason: "forbidden-target",
+            }],
+        },
+        {
             name: "reports UI imports of infrastructure code",
             path: "src/components/notes/Panel.astro",
             text: uiInfrastructureImport,
@@ -250,8 +274,8 @@ describe("checkLayerBoundaries", () => {
             importTarget: "$infrastructure/adapters/LessonCatalogAdapter",
             resolvedTarget: "src/infrastructure/adapters/LessonCatalogAdapter",
             ruleId: "ui-boundary",
-            message: "UI surfaces must not import infrastructure directly.",
-            suggestion: "Route infrastructure access through presentation adapters or application-facing services.",
+            message: "UI code must depend on presentation contracts, not domain/application internals.",
+            suggestion: "Move shaping logic behind a presentation adapter, helper, or view model.",
             importKind: "value",
             sourceLayer: "ui",
             target: "infrastructure",
@@ -482,7 +506,7 @@ describe("formatBoundaryFindings", () => {
         expect(output).toContain("src/components/navigation/Nav.astro");
         expect(output).toContain("$infrastructure/adapters/LessonCatalogAdapter");
         expect(output).toContain("src/infrastructure/adapters/LessonCatalogAdapter");
-        expect(output).toContain("UI surfaces must not import infrastructure directly.");
+        expect(output).toContain("UI code must depend on presentation contracts");
     });
 
     test("formats package findings without a resolved target section", async () => {

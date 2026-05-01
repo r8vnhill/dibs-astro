@@ -197,18 +197,6 @@ const allowedMatrixCases = [
         importPath: "$utils/navigation",
         resolvedPath: "src/utils/navigation.ts",
     },
-    {
-        name: "UI may import domain in Cycle 2",
-        sourcePath: "src/components/notes/LessonMetaPanel.astro",
-        importPath: "$domain/value-objects/LessonHref",
-        resolvedPath: "src/domain/value-objects/LessonHref.ts",
-    },
-    {
-        name: "UI may import application in Cycle 2",
-        sourcePath: "src/pages/notes/index.astro",
-        importPath: "$application/services/LessonNavigationService",
-        resolvedPath: "src/application/services/LessonNavigationService.ts",
-    },
 ];
 
 const forbiddenMatrixCases = [
@@ -384,6 +372,24 @@ const forbiddenMatrixCases = [
         target: "ui",
     },
     {
+        name: "UI must not import domain",
+        sourcePath: "src/components/notes/LessonMetaPanel.astro",
+        importPath: "$domain/value-objects/LessonHref",
+        resolvedPath: "src/domain/value-objects/LessonHref.ts",
+        ruleId: "ui-boundary",
+        sourceLayer: "ui",
+        target: "domain",
+    },
+    {
+        name: "UI must not import application",
+        sourcePath: "src/pages/notes/index.astro",
+        importPath: "$application/services/LessonNavigationService",
+        resolvedPath: "src/application/services/LessonNavigationService.ts",
+        ruleId: "ui-boundary",
+        sourceLayer: "ui",
+        target: "application",
+    },
+    {
         name: "UI must not import infrastructure",
         sourcePath: "src/components/notes/LessonMetaPanel.astro",
         importPath: "$infrastructure/adapters/LessonMetadataAdapter",
@@ -456,11 +462,12 @@ describe("Cycle 2 rule matrix", () => {
         expect(ruleById(id).forbiddenPackages).toEqual([]);
     });
 
-    test("UI allows domain and application but forbids only infrastructure", () => {
+    test("UI depends on presentation-facing targets and forbids inner implementation layers", () => {
         const uiRule = ruleById("ui-boundary");
 
-        expect(uiRule.allowedTargets).toEqual(expect.arrayContaining(["domain", "application"]));
-        expect(uiRule.forbiddenTargets).toEqual(["infrastructure"]);
+        expect(uiRule.allowedTargets).not.toEqual(expect.arrayContaining(["domain", "application"]));
+        expect(uiRule.allowedTargets).toEqual(expect.arrayContaining(["presentation-adapter", "presentation", "utils"]));
+        expect(uiRule.forbiddenTargets).toEqual(["domain", "application", "infrastructure"]);
     });
 
     test("generated data is blocked from inner layers and allowed from infrastructure", () => {
@@ -659,6 +666,13 @@ describe("Cycle 2 type-only imports", () => {
             "src/components/notes/LessonMetaPanel.astro",
             "$infrastructure/adapters/LessonMetadataAdapter",
             "src/infrastructure/adapters/LessonMetadataAdapter.ts",
+            "ui-boundary",
+        ],
+        [
+            "UI type-only import from application fails",
+            "src/components/notes/LessonMetaPanel.astro",
+            "$application/ports",
+            "src/application/ports/index.ts",
             "ui-boundary",
         ],
     ])("%s", (_name, sourcePath, importPath, targetPath, ruleId) => {

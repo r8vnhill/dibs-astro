@@ -1,5 +1,15 @@
 # [PLAN] Layer Separation Hardening
 
+> **Closed on 2026-05-01.** Cycles 1-5 are complete. This file is now a historical implementation plan and includes some intermediate assumptions that were superseded during the work. The current source of truth for enforced boundaries is [`docs/architecture/layer-separation.md`](../docs/architecture/layer-separation.md).
+
+Final closure verification:
+
+```bash
+pnpm check
+```
+
+Result: passed, including `pnpm check:architecture` with no layer boundary findings.
+
 ## Summary
 
 Harden the existing `astro-website` layered architecture by making dependency boundaries executable, documented, and regression-tested.
@@ -174,7 +184,7 @@ The checker should:
 * optionally detect dynamic imports when the target is a string literal;
 * resolve project aliases such as `~`, `$domain`, `$application`, `$utils`, if used;
 * normalize relative paths before rule evaluation;
-* report violations with:
+* report infringements with:
 
   * source file;
   * imported target;
@@ -301,7 +311,7 @@ Adjust the exact script names to match the current repository conventions.
 
 ### ~~Cycle 1: Boundary checker foundation~~
 
-Goal: prove the checker can scan imports and report violations accurately.
+Goal: prove the checker can scan imports and report infringements accurately.
 
 Add fixture-based tests covering:
 
@@ -324,8 +334,8 @@ Implement:
 Acceptance criteria:
 
 * the checker reports source file, import target, resolved target, and violated rule;
-* the checker exits with non-zero status when violations exist;
-* the checker exits with zero status when no violations exist.
+* the checker exits with non-zero status when infringements exist;
+* the checker exits with zero status when no infringements exist.
 
 ---
 
@@ -373,7 +383,7 @@ Steps:
 
 2. Classify every finding.
 
-3. Fix clear violations.
+3. Fix clear infringements.
 
 4. Add allowlist entries only for intentional exceptions.
 
@@ -401,7 +411,7 @@ Acceptance criteria:
 
 ---
 
-### Cycle 4: Close small coupling gaps
+### ~~Cycle 4: Close small coupling gaps~~
 
 Goal: remove accidental UI-to-domain/application/infrastructure coupling revealed by the checker.
 
@@ -429,9 +439,9 @@ Acceptance criteria:
 
 ---
 
-### Cycle 5: CI and developer workflow integration
+### ~~Cycle 5: CI and developer workflow integration~~
 
-Goal: make boundary violations hard to miss.
+Goal: make boundary infringements hard to miss.
 
 Add:
 
@@ -455,8 +465,8 @@ pnpm check:architecture
 
 Acceptance criteria:
 
-* local checks fail on boundary violations;
-* CI fails on boundary violations;
+* local checks fail on boundary infringements;
+* CI fails on boundary infringements;
 * error messages are actionable enough to fix the import without reading the checker source.
 
 ---
@@ -504,7 +514,7 @@ Checker-specific tests should cover:
 * re-export detection;
 * allowlisted exceptions;
 * violation reporting format;
-* non-zero exit on violations.
+* non-zero exit on infringements.
 
 Use DDT for the layer matrix.
 
