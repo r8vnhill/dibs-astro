@@ -9,6 +9,7 @@ import {
     parsePageReference,
     parsePageReferenceInput,
 } from "../pages";
+import * as pageCore from "../pages-core.mjs";
 
 /**
  * Contract tests for the page-reference helpers in `pages.ts`.
@@ -70,6 +71,18 @@ describe("pages utilities", () => {
         test("parses a raw input object", () => {
             const input: PageReferenceInput = { start: 12, end: 7 };
             expect(parsePageReferenceInput(input)).toEqual({ start: 7, end: 12 });
+        });
+
+        test.each([
+            undefined,
+            null,
+            1,
+            "1",
+            [],
+            { end: 2 },
+            { start: 1, end: "2" },
+        ])("rejects untrusted input: %p", (input) => {
+            expect(parsePageReferenceInput(input)).toBeUndefined();
         });
 
         test("keeps explicit equal bounds", () => {
@@ -175,13 +188,17 @@ describe("pages utilities", () => {
             expect(formatPageReference(undefined)).toBeUndefined();
         });
 
-        test("supports custom labels and separators", () => {
+        test("supports partial custom labels and separators", () => {
             expect(
                 formatPageReference(
                     parsePageReference(7, 12),
-                    { singleLabel: "p.", rangeLabel: "pp.", separator: "–" },
+                    { singleLabel: "page" },
                 ),
             ).toBe("pp. 7–12");
+
+            expect(formatPageReference(parsePageReference(7), { rangeLabel: "pages" })).toBe(
+                "p. 7",
+            );
         });
 
         // Formatting is now presentation-only, so invalid domain repair is out of scope here.
@@ -230,6 +247,48 @@ describe("pages utilities", () => {
                         expect(formatted?.length).toBeGreaterThan(0);
                     },
                 ),
+            );
+        });
+    });
+
+    describe("pages TypeScript facade", () => {
+        test.each([
+            1,
+            0,
+            "1",
+            { start: 1 },
+            { start: 3, end: 1 },
+            undefined,
+        ])("matches the core page-number and guard behavior for %p", (value) => {
+            expect(isValidPageNumber(value)).toBe(pageCore.isValidPageNumber(value));
+            expect(isPageReference(value)).toBe(pageCore.isPageReference(value));
+        });
+
+        test.each([
+            { start: 1, end: undefined },
+            { start: 1, end: 3 },
+            { start: 3, end: 1 },
+            { start: "1", end: 3 },
+        ])("matches the core parser behavior for %#", ({ start, end }) => {
+            expect(parsePageReference(start, end)).toEqual(pageCore.parsePageReference(start, end));
+        });
+
+        test.each([
+            undefined,
+            { start: 1 },
+            { start: 3, end: 1 },
+            { start: 1, end: "3" },
+            [],
+        ])("matches the core object parser behavior for %p", (input) => {
+            expect(parsePageReferenceInput(input)).toEqual(pageCore.parsePageReferenceInput(input));
+        });
+
+        test("matches the core formatter behavior", () => {
+            const pages = parsePageReference(3, 1);
+            const options = { singleLabel: "page" };
+
+            expect(formatPageReference(pages, options)).toBe(
+                pageCore.formatPageReference(pages, options),
             );
         });
     });

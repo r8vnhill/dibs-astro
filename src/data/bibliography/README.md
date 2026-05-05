@@ -178,13 +178,18 @@ For normal graph-backed lesson pages, prefer `LessonReferencesFromCatalog`.
 Use `ReferencesFromCatalog` when a caller needs explicit `source`, `lessonId`, or tag-filter configuration.
 
 Catalog-backed and legacy ItemList-backed references now share the same final normalization core in
-`src/lib/bibliography/normalize/normalize-reference.mjs` for `Book`, `WebPage`, `VideoObject`,
-`ScholarlyArticle`, and `Thesis`.
+`src/lib/bibliography/normalize/normalize-reference.mjs` for `Book`, `WebPage`, `VideoObject`, `ScholarlyArticle`, and
+`Thesis`.
+
+Page references stay numeric-only. Shared page-reference helpers validate positive safe integers, normalize reversed
+numeric bounds at parsing boundaries, reject non-object page-reference inputs, and format only trusted page-reference
+values. Callers may pass partial page-format options; omitted labels and separators use the default `p.`, `pp.`, and `–`
+convention.
 
 The callers still keep their own source-specific responsibilities:
 
-- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling,
-  and strict/non-strict policy.
+- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling, and
+  strict/non-strict policy.
 - `src/lib/bibliography/catalog-core.mjs` owns graph resolution, linked-node lookup, pending-only tolerance, and
   strict/non-strict policy.
 
