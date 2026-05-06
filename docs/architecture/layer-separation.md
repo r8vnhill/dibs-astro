@@ -1,8 +1,10 @@
 # Layer Separation
 
-This note is the current-state architecture reference for the `astro-website` repo after the Phase 2 domain-isolation cycles and the Cycle 8 integration lock-in.
+This note is the current-state architecture reference for the `astro-website` repo after the Phase 2 domain-isolation
+cycles and the Cycle 8 integration lock-in.
 
-Older Phase 0 and Phase 1 notes remain useful as historical implementation records, but they should not be treated as the authoritative description of the current boundaries when they conflict with this document.
+Older Phase 0 and Phase 1 notes remain useful as historical implementation records, but they should not be treated as
+the authoritative description of the current boundaries when they conflict with this document.
 
 ## Terminology
 
@@ -18,8 +20,10 @@ Older Phase 0 and Phase 1 notes remain useful as historical implementation recor
 The repo uses a layered structure inside `src/`:
 
 - `packages/content-core`
-  - Owns extracted pure lesson-navigation and lesson-metadata contracts, value helpers, DTOs, repository interfaces, and application services.
-  - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local aliases.
+  - Owns extracted pure lesson-navigation and lesson-metadata contracts, branded value helpers, DTOs, explicit result
+    contracts, repository interfaces, and application services.
+  - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local
+    aliases.
 
 - `src/domain`
   - Owns app-local domain models and reference-content resolution rules that have not been extracted.
@@ -32,7 +36,8 @@ The repo uses a layered structure inside `src/`:
 - `src/infrastructure/adapters`
   - Owns mapping from concrete data sources into domain-facing repository contracts.
   - `LessonCatalogAdapter` maps `courseStructure` into the lesson-navigation repository shape.
-  - `LessonMetadataAdapter` maps the generated metadata dataset into the lesson-metadata repository shape.
+  - `LessonMetadataAdapter` maps the generated metadata dataset into branded lesson-metadata records and returns
+    explicit found/missing/invalid lookup results.
 
 - `src/presentation/adapters`
   - Owns local composition for UI consumers such as `NotesLayout`.
@@ -41,13 +46,15 @@ The repo uses a layered structure inside `src/`:
 
 - `src/layouts`, `src/components`, `src/pages`
   - Own the Astro and React rendering surface.
-  - Consume presentation adapters and small UI payloads rather than domain entities, application DTOs, or infrastructure sources directly.
+  - Consume presentation adapters and small UI payloads rather than domain entities, application DTOs, or infrastructure
+    sources directly.
 
 ## Current Implementation Status
 
 The main content seams are now present in code:
 
-- Navigation rules and lesson metadata helpers are centered in `packages/content-core` and consumed through repository/service boundaries.
+- Navigation rules and lesson metadata helpers are centered in `packages/content-core` and consumed through
+  repository/service boundaries.
 - Reference-content business rules live in `src/domain/reference-content.ts`.
 - The generated lesson metadata dataset boundary remains app-local in `src/utils/lesson-metadata.ts`.
 - Presentation composition for lesson navigation and lesson metadata lives in:
@@ -57,14 +64,17 @@ The main content seams are now present in code:
   - `src/presentation/adapters/lesson-metadata-bridge.ts`
   - `src/presentation/adapters/lesson-metadata-panel.ts`
 - Reference slot/content resolution is exposed to UI components through presentation-owned helpers.
-- Presentation-facing adapters also expose site metadata, static UI data, and the default bibliography catalog without requiring UI files to import from `src/data/*`.
+- Presentation-facing adapters also expose site metadata, static UI data, and the default bibliography catalog without
+  requiring UI files to import from `src/data/*`.
 
 At the UI boundary, `NotesLayout.astro` resolves:
+
 - sidebar data through `getCourseNavigationTree()`
 - automatic previous/next navigation through `resolveAutoNav(pathname, courseNavigationTree)`
 - lesson metadata through `resolveLessonMetadata(pathname)`
 
 These paths are locked with high-value test suites:
+
 - `src/layouts/__tests__/NotesLayout.render.test.ts`
 - `src/presentation/adapters/__tests__/navigation-bridge.test.ts`
 - `src/presentation/adapters/__tests__/lesson-metadata-bridge.test.ts`
@@ -72,20 +82,22 @@ These paths are locked with high-value test suites:
 
 ## Layer Rules
 
-| Source layer | Allowed targets | Forbidden targets/packages | Notes |
-|---|---|---|---|
-| `packages/content-core/src/**` | `content-core` | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic shared core. |
-| `src/domain/**` | `domain`, `content-core` | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod` | Pure app-local business rules only. |
-| `src/application/**` | `domain`, `application`, `content-core` | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod` | App-local orchestration and ports only. |
-| `src/infrastructure/**` | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core` | `presentation`, `ui` | Concrete data-source implementations. |
-| `src/presentation/adapters/**` | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core` | `ui`, `components`, `layouts`, `pages` | Local composition root. |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core` | `domain`, `application`, `infrastructure` | Rendering surface. |
+| Source layer                                          | Allowed targets                                                                                  | Forbidden targets/packages                                                                              | Notes                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `packages/content-core/src/**`                        | `content-core`                                                                                   | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic shared core.              |
+| `src/domain/**`                                       | `domain`, `content-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
+| `src/application/**`                                  | `domain`, `application`, `content-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
+| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core` | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
+| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`           | `ui`, `components`, `layouts`, `pages`                                                                  | Local composition root.                 |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`   | `domain`, `application`, `infrastructure`                                                               | Rendering surface.                      |
 
 **Implementation notes:**
+
 - Type-only imports are checked as architectural dependencies.
 - Package subpaths are normalized: `react/jsx-runtime` → `react`, `zod/v4` → `zod`.
 - `@ravenhill/content-core` must be consumed through the package root; package subpath imports are not allowed.
-- Generated data: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are classified as `generated-data`.
+- Generated data: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are classified as
+  `generated-data`.
 - Astro support scans only frontmatter imports, not template text.
 
 ## Dependency flow
@@ -114,19 +126,22 @@ graph TD
     CONTRACTS -.->|defines| APP
 ```
 
-`src/presentation/adapters/**` is the local composition root for UI-facing use cases. Other presentation and UI code should not import infrastructure directly.
+`src/presentation/adapters/**` is the local composition root for UI-facing use cases. Other presentation and UI code
+should not import infrastructure directly.
 
 In practical terms:
 
 - UI code should not reach into infrastructure adapters directly
 - UI code should not import domain or application internals directly; use presentation adapters, helpers, or view models
 - UI code should not import raw modules from `src/data/*`; route data access through presentation-facing adapters
-- application and content-core code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
+- application and content-core code should not depend on Astro, React, slots, generated JSON modules, or zod validation
+  concerns
 - domain code should remain framework-free and I/O-free
 
 ## Boundary Checker
 
-The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/`, plus TypeScript files under `packages/content-core/src/`, and evaluates imports against the layer rules above. The checker:
+The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/`, plus TypeScript files under
+`packages/content-core/src/`, and evaluates imports against the layer rules above. The checker:
 
 - Resolves project aliases from `tsconfig.json`
 - Normalizes relative paths
@@ -167,8 +182,11 @@ pnpm vitest run \
 ```
 
 **Checker test file responsibilities:**
-- `layer-boundary-checker.test.ts`: Core rule enforcement, import parsing, path resolution, exceptions, output formatting, and CLI exit codes
-- `layer-boundary-imports.test.ts`: Import extraction from TypeScript, TSX, and Astro files (static and dynamic imports, re-exports)
+
+- `layer-boundary-checker.test.ts`: Core rule enforcement, import parsing, path resolution, exceptions, output
+  formatting, and CLI exit codes
+- `layer-boundary-imports.test.ts`: Import extraction from TypeScript, TSX, and Astro files (static and dynamic imports,
+  re-exports)
 - `layer-boundary-paths.test.ts`: Path normalization, alias resolution, and layer classification
 - `layer-boundary-classification.test.ts`: Source layer, target layer, and package classification helpers
 - `layer-boundary-rule-evaluation.test.ts`: Rule matrix evaluation, exception matching, and finding generation
@@ -182,7 +200,8 @@ node scripts/check-layer-boundaries.mjs
 
 GitLab CI runs `pnpm check`, so architecture boundary findings block the standard CI verification path.
 
-**API note:** `runBoundaryCheck(...)` exposes `findings` as the preferred result field. The older result shape remains as a compatibility alias. New code should read `findings`; the alias will be removed after all internal callers migrate.
+**API note:** `runBoundaryCheck(...)` exposes `findings` as the preferred result field. The older result shape remains
+as a compatibility alias. New code should read `findings`; the alias will be removed after all internal callers migrate.
 
 ## Adding New Code
 
@@ -195,7 +214,8 @@ When adding new source files:
 - Put UI composition bridges in `src/presentation/adapters/`.
 - Put Astro/React rendering code in `src/layouts/`, `src/components/`, or `src/pages/`.
 
-If a UI file needs data from a service or external source, add or extend a presentation adapter instead of importing infrastructure directly. This keeps architectural boundaries clear and makes the data flow testable.
+If a UI file needs data from a service or external source, add or extend a presentation adapter instead of importing
+infrastructure directly. This keeps architectural boundaries clear and makes the data flow testable.
 
 Examples:
 
@@ -223,7 +243,9 @@ The main presentation-facing contracts locked in during this phase are:
   - keeps the raw course-structure module owned by infrastructure/data access
 
 - `resolveLessonMetadata(pathname)`
-  - returns DTO-shaped serializable metadata only
+  - returns an explicit result object
+  - exposes DTO-shaped serializable metadata only when `kind === "found"`
+  - preserves missing and invalid metadata states without rendering infrastructure records
   - is implemented through `LessonMetadataService` from `@ravenhill/content-core`
   - does not expose infrastructure-only fields such as `sourceFile`
 
@@ -239,11 +261,14 @@ The main presentation-facing contracts locked in during this phase are:
   - expose existing static data through explicit presentation-facing modules
   - keep UI components free from direct `src/data/*` imports
 
-`NotesLayout.astro` currently renders previous/next navigation through these contracts. Breadcrumb behavior is not yet a locked contract.
+`NotesLayout.astro` currently renders previous/next navigation through these contracts. Breadcrumb behavior is not yet a
+locked contract.
 
 ## Intentional Exceptions
 
-The executable allowlist is currently empty. New exact exceptions must be added in `scripts/lib/layer-boundary-rules.mjs`, include a reason, and be mirrored in this section. Do not add broad wildcard exceptions.
+The executable allowlist is currently empty. New exact exceptions must be added in
+`scripts/lib/layer-boundary-rules.mjs`, include a reason, and be mirrored in this section. Do not add broad wildcard
+exceptions.
 
 Some transitional or infrastructure-support files exist by design:
 
@@ -255,11 +280,13 @@ Some transitional or infrastructure-support files exist by design:
 - `src/components/ui/references/reference-content.ts`
   - **Status**: Astro/UI adapter module.
   - **Allowed because**: Owns slot reading, slot preparation, and UI-facing error translation.
-  - **Exit condition**: Pure precedence and content-resolution rules should live in `src/domain/reference-content.ts` only.
+  - **Exit condition**: Pure precedence and content-resolution rules should live in `src/domain/reference-content.ts`
+    only.
 
 - `src/components/ui/references/thesis-reference.ts`
   - **Status**: UI-facing view-model resolver for `Thesis.astro`.
-  - **Allowed because**: Owns component runtime contracts such as required href validation and linked metadata label validation.
+  - **Allowed because**: Owns component runtime contracts such as required href validation and linked metadata label
+    validation.
   - **Exit condition**: Once all Thesis-specific policy is component-localized, remove domain-layer duplication.
 
 - `src/utils/navigation.ts`
@@ -273,17 +300,28 @@ The checker was developed through the Cycle 2 hardening work, with major milesto
 
 **Cycle 2 Step 1** locked the baseline checker behavior with tests for imports, paths, and basic functionality.
 
-**Cycle 2 Step 2** added classification helpers that normalize source paths, resolved project targets, bare package imports, and import records into the layer vocabulary used by the rule matrix.
+**Cycle 2 Step 2** added classification helpers that normalize source paths, resolved project targets, bare package
+imports, and import records into the layer vocabulary used by the rule matrix.
 
-**Phase 1 content-core extraction** added `packages/content-core/src/**` as a checked source layer and allowed app layers to consume `@ravenhill/content-core` through the package root.
+**Phase 1 content-core extraction** added `packages/content-core/src/**` as a checked source layer and allowed app
+layers to consume `@ravenhill/content-core` through the package root.
 
-**Cycle 2 Step 4** moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and wired classifiers into the rule matrix. Evaluation now checks exact exceptions, forbidden packages, forbidden targets, and allowed-target lists, returning public boundary findings and formatted CLI output.
+**Cycle 2 Step 4** moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and wired classifiers
+into the rule matrix. Evaluation now checks exact exceptions, forbidden packages, forbidden targets, and allowed-target
+lists, returning public boundary findings and formatted CLI output.
 
-**Cycle 2 Steps 5 and 6** preserved the public CLI/reporting contract and expanded rule matrix tests to cover each allowed and forbidden direction, package restrictions, package subpath normalization, generated JSON classification, type-only import enforcement, and exact exception behavior.
+**Cycle 2 Steps 5 and 6** preserved the public CLI/reporting contract and expanded rule matrix tests to cover each
+allowed and forbidden direction, package restrictions, package subpath normalization, generated JSON classification,
+type-only import enforcement, and exact exception behavior.
 
-**Cycle 2 Step 7** consolidated the test suite under `pnpm test:unit` and confirmed high-value integration coverage with existing suites.
+**Cycle 2 Step 7** consolidated the test suite under `pnpm test:unit` and confirmed high-value integration coverage with
+existing suites.
 
-**Cycle 2 Step 8** strengthened the integration suite around structured boundary findings, deterministic ordering by `sourceFile`, `importTarget`, and `ruleId`, and standardized "Layer boundary finding" terminology. The API now exposes `findings` as the preferred result field with a compatibility alias for the older shape. Astro file scanning was narrowed to frontmatter imports, and type-only import detection was refined to correctly classify mixed value/type imports.
+**Cycle 2 Step 8** strengthened the integration suite around structured boundary findings, deterministic ordering by
+`sourceFile`, `importTarget`, and `ruleId`, and standardized "Layer boundary finding" terminology. The API now exposes
+`findings` as the preferred result field with a compatibility alias for the older shape. Astro file scanning was
+narrowed to frontmatter imports, and type-only import detection was refined to correctly classify mixed value/type
+imports.
 
 ## Documentation Status
 
@@ -296,4 +334,6 @@ Treat these files as historical implementation records unless explicitly updated
 - `docs/architecture/PHASE-1-RESUMEN.md`
 - `docs/architecture/Phase-1-summary.md`
 
-Those notes document the Phase 1 rollout and still contain references to earlier transitional states such as "Domain stub" or "NotesLayout integration pending." When that historical framing conflicts with the current codebase, the current code and this note take precedence.
+Those notes document the Phase 1 rollout and still contain references to earlier transitional states such as "Domain
+stub" or "NotesLayout integration pending." When that historical framing conflicts with the current codebase, the
+current code and this note take precedence.

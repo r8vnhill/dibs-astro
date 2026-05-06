@@ -3,24 +3,27 @@
  *
  * Internal barrel for the `lesson-metadata` submodule.
  *
- * This module gathers the lesson-metadata implementation behind a single local boundary. It exists to keep the 
- * submodule easy to consume from the package entry point while preserving freedom to reorganize the internal file 
- * layout.
+ * This module defines the local aggregation boundary for lesson-metadata concerns. It keeps the package entry point 
+ * easy to maintain while allowing the internal file layout to evolve without leaking implementation details to
+ * application code.
  *
- * It re-exports:
+ * The submodule is organized around these concerns:
  *
- * - metadata records for normalized domain-facing lesson metadata;
- * - DTO contracts for data received from host applications or generated files;
- * - repository contracts that isolate core services from host-side storage;
- * - service contracts and the default metadata service implementation;
- * - date helpers for parsing, formatting, and display fallback logic;
- * - path helpers for canonical lesson-metadata lookup keys.
+ * - date helpers for parsing, formatting, and display fallback behavior;
+ * - branded values for trusted semantic fields such as URLs, commit hashes, ISO short dates, source files, and 
+ *   non-empty text;
+ * - path normalization for stable lesson-metadata lookup keys;
+ * - domain records for validated lesson metadata;
+ * - lookup and resolution results that distinguish `found`, `missing`, and `invalid` metadata states;
+ * - repository contracts that isolate core logic from host-side storage;
+ * - service and DTO contracts for resolving external metadata into trusted records;
+ * - the default metadata service implementation.
  *
- * Date and path helpers are intentionally part of this submodule boundary because adapters, tests, and generated-data 
- * loaders must apply the same normalization rules as the service layer.
+ * Date, path, and branded-value helpers are intentionally re-exported here because adapters, tests, and generated-data 
+ * loaders must use the same normalization and validation rules as the service layer.
  *
- * Prefer importing from `@ravenhill/content-core` in application code. Importing from this internal path couples 
- * consumers to the current package layout and makes future refactors harder.
+ * Prefer importing from `@ravenhill/content-core` in application code. Imports from this internal path couple 
+ * consumers to the current package layout and make future refactors more disruptive.
  *
  * @example
  * ```typescript
@@ -42,19 +45,36 @@ export {
     UNKNOWN_LESSON_DATE_LABEL,
 } from "./date";
 
-// Default service for lesson-metadata lookup.
+// Branded semantic values and parsers for trusted metadata fields.
+export {
+    type AbsoluteUrl,
+    type GitCommitHash,
+    type IsoShortDate,
+    type LessonSourceFile,
+    type NonEmptyText,
+    parseAbsoluteUrl,
+    parseGitCommitHash,
+    parseIsoShortDateValue,
+    parseLessonSourceFile,
+    parseNonEmptyText,
+} from "./branded-values";
+
+// Default service implementation for lesson-metadata resolution.
 export { LessonMetadataService } from "./lesson-metadata-service";
 
 // Path normalization helper used to match lessons with metadata records.
 export { normalizeLessonMetadataPathname } from "./pathname";
 
-// Normalized domain records returned by the metadata service.
+// Validated domain records returned through metadata lookup and resolution.
 export type { LessonMetadataAuthor, LessonMetadataChange, LessonMetadataRecord } from "./records";
 
-// Repository boundary implemented by host-side adapters.
+// Explicit boundary results for metadata lookup and service resolution.
+export type { LessonMetadataIssue, LessonMetadataLookupResult, LessonMetadataResolutionResult } from "./results";
+
+// Repository boundary implemented by host-side metadata adapters.
 export type { LessonMetadataRepository } from "./repositories";
 
-// Service and external DTO contracts.
+// External DTO contracts and service contract.
 export type {
     LessonMetadataAuthorDto,
     LessonMetadataChangeDto,

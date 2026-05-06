@@ -1,3 +1,5 @@
+import type { LessonMetadataResolutionResult } from "./results";
+
 export type LessonMetadataAuthorDto = Readonly<{
     name: string;
     url?: string;
@@ -17,5 +19,5 @@ export type LessonMetadataDto = Readonly<{
 }>;
 
 export interface LessonMetadataServiceContract {
-    resolveLessonMetadata(pathname: string): Promise<LessonMetadataDto | undefined>;
+    resolveLessonMetadata(pathname: string): Promise<LessonMetadataResolutionResult>;
 }

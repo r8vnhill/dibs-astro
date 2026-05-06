@@ -8,7 +8,7 @@
  */
 import {
     LessonMetadataService,
-    type LessonMetadataDto,
+    type LessonMetadataResolutionResult,
     type LessonMetadataServiceContract,
 } from "@ravenhill/content-core";
 import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAdapter";
@@ -16,7 +16,7 @@ import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAd
 /**
  * Minimal metadata result consumed by lesson layouts and metadata panels.
  */
-export type ResolvedLessonMetadata = LessonMetadataDto;
+export type ResolvedLessonMetadata = LessonMetadataResolutionResult;
 
 function createLessonMetadataService(): LessonMetadataServiceContract {
     return new LessonMetadataService(new LessonMetadataAdapter());
@@ -30,6 +30,6 @@ function createLessonMetadataService(): LessonMetadataServiceContract {
  */
 export async function resolveLessonMetadata(
     pathname: string,
-): Promise<ResolvedLessonMetadata | undefined> {
+): Promise<ResolvedLessonMetadata> {
     return createLessonMetadataService().resolveLessonMetadata(pathname);
 }

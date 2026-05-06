@@ -48,9 +48,14 @@
  * - When there is no “previous” button, a hidden placeholder is used on wide screens to
  *   preserve alignment without adding noise to assistive technologies.
  */
-import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
 import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { resolveLessonMetadata } from "$presentation/adapters/lesson-metadata-bridge";
+import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
+import {
+    type NavigationLinkInput,
+    normalizeNavigation,
+    normalizePreviousNavigation,
+} from "$presentation/adapters/navigation-normalization";
 import * as icons from "~/assets/img/icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
@@ -60,11 +65,6 @@ import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import {
-    type NavigationLinkInput,
-    normalizeNavigation,
-    normalizePreviousNavigation,
-} from "$presentation/adapters/navigation-normalization";
 import type { RepoRef } from "~/utils/git";
 import type { PageMeta } from "~/utils/page-meta";
 
@@ -127,8 +127,10 @@ const { title, next, previous, timeMultiplier, git, description } = Astro.props 
 const pathname = Astro.url.pathname;
 const courseNavigationTree = await getCourseNavigationTree();
 
-// Metadata may be absent if the route is not present in the generated dataset.
-const lessonMetadata = await resolveLessonMetadata(pathname);
+// Metadata may be missing or invalid if the route is absent from the generated dataset or its
+// trusted record conversion fails.
+const lessonMetadataResult = await resolveLessonMetadata(pathname);
+const lessonMetadata = lessonMetadataResult.kind === "found" ? lessonMetadataResult.metadata : undefined;
 const lessonPageMeta = lessonMetadata
     ? {
         authors: lessonMetadata.authors.map((author) => ({
@@ -175,10 +177,7 @@ const { normalizedNext } = normalizeNavigation(
         <LessonSidebar client:load lessons={courseNavigationTree} />
 
         <!-- Main content area -->
-        <div
-            id="lesson-content"
-            class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}
-        >
+        <div id="lesson-content" class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}>
             <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
 
             <ReadingTime multiplier={timeMultiplier ?? 1.5} />

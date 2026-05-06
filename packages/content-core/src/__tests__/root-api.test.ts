@@ -9,6 +9,11 @@ import {
     NavigationService,
     formatLessonDate,
     normalizeLessonMetadataPathname,
+    parseAbsoluteUrl,
+    parseGitCommitHash,
+    parseIsoShortDateValue,
+    parseLessonSourceFile,
+    parseNonEmptyText,
 } from "@ravenhill/content-core";
 
 describe("content-core root API", () => {
@@ -21,6 +26,11 @@ describe("content-core root API", () => {
         expect(NavigationService).toBe(contentCore.NavigationService);
         expect(formatLessonDate).toBe(contentCore.formatLessonDate);
         expect(normalizeLessonMetadataPathname).toBe(contentCore.normalizeLessonMetadataPathname);
+        expect(parseAbsoluteUrl).toBe(contentCore.parseAbsoluteUrl);
+        expect(parseGitCommitHash).toBe(contentCore.parseGitCommitHash);
+        expect(parseIsoShortDateValue).toBe(contentCore.parseIsoShortDateValue);
+        expect(parseLessonSourceFile).toBe(contentCore.parseLessonSourceFile);
+        expect(parseNonEmptyText).toBe(contentCore.parseNonEmptyText);
     });
 
     test("does not expose temporary Phase 1 service names at runtime", () => {

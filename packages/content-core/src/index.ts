@@ -80,6 +80,8 @@ export type {
  *
  * - {@link LessonMetadataRecord} is the normalized domain-facing metadata shape;
  * - {@link LessonMetadataDto} and related DTOs describe external input records;
+ * - branded value parsers validate metadata primitives at repository boundaries;
+ * - lookup and resolution results distinguish found, missing, and invalid metadata;
  * - {@link LessonMetadataRepository} defines the host-side metadata boundary;
  * - {@link LessonMetadataService} provides the default metadata service;
  * - {@link formatLessonDate}, {@link parseIsoShortDate}, and
@@ -92,19 +94,32 @@ export {
     formatLessonDate,
     LessonMetadataService,
     normalizeLessonMetadataPathname,
+    parseAbsoluteUrl,
+    parseGitCommitHash,
     parseIsoShortDate,
+    parseIsoShortDateValue,
+    parseLessonSourceFile,
+    parseNonEmptyText,
     resolveLessonDateDisplay,
     UNKNOWN_LESSON_DATE_LABEL,
 } from "./lesson-metadata";
 
 export type {
+    AbsoluteUrl,
+    GitCommitHash,
+    IsoShortDate,
     LessonDateDisplayResult,
     LessonMetadataAuthor,
     LessonMetadataAuthorDto,
     LessonMetadataChange,
     LessonMetadataChangeDto,
     LessonMetadataDto,
+    LessonMetadataIssue,
+    LessonMetadataLookupResult,
     LessonMetadataRecord,
     LessonMetadataRepository,
+    LessonMetadataResolutionResult,
     LessonMetadataServiceContract,
+    LessonSourceFile,
+    NonEmptyText,
 } from "./lesson-metadata";
