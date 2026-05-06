@@ -2,15 +2,18 @@
 
 Content abstraction layer for reusable documentation and learning systems.
 
-## Phase 1 (Current)
+## Phase 2 (Current)
 
-This package now contains the first extracted pure content core from the Astro site. It establishes:
+This package contains the first extracted pure content core from the Astro site and now exposes a stabilized root API.
+It establishes:
 
 - Workspace topology (`packages/*` alongside root Astro app)
 - Package identity (`@ravenhill/content-core` as a reusable, publication-ready scoped package)
 - Consumption pattern (workspace dependency from root app)
 - Build validation (TypeScript type checking)
 - Host-agnostic navigation and lesson metadata contracts
+- Stabilized service names: `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
+  `LessonMetadataServiceContract`
 
 The package remains `private: true` during this phase to avoid accidental publication.
 
@@ -26,6 +29,20 @@ The package remains `private: true` during this phase to avoid accidental public
 - Lesson navigation: canonical href normalization, adjacency, trails, navigation repositories, and the navigation service.
 - Lesson metadata: metadata records, date/path helpers, metadata repository contracts, DTOs, and the metadata service.
 - Package identity constants for workspace consumption checks.
+
+Consumers should use service-oriented names from the package root:
+
+```ts
+import {
+    LessonMetadataService,
+    NavigationService,
+    type LessonMetadataServiceContract,
+    type NavigationServiceContract,
+} from "@ravenhill/content-core";
+```
+
+Temporary Phase 1 names such as `NavigationServiceImpl`, `LessonMetadataServiceImpl`, `INavigationService`, and
+`ILessonMetadataService` are no longer exported.
 
 ## Future Evolution
 

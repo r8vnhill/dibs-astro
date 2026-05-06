@@ -25,7 +25,7 @@
  * @example
  * ```typescript
  * import {
- *   NavigationServiceImpl,
+ *   NavigationService,
  *   type LessonNavigationRepository,
  * } from "@ravenhill/content-core";
  * ```
@@ -43,11 +43,17 @@ export { LessonTrail } from "./lesson-trail";
 // Pure service for deriving lesson sequences from navigation structures.
 export { LessonSequenceService } from "./lesson-sequence-service";
 
-// Default navigation service implementation backed by a repository boundary.
-export { NavigationServiceImpl } from "./navigation-service";
+// Default navigation service backed by a repository boundary.
+export { NavigationService } from "./navigation-service";
 
 // Repository boundary implemented by host-side navigation adapters.
 export type { LessonNavigationRepository } from "./repositories";
 
 // Navigation tree, trail, result, and service contracts.
-export type { AutoNavigationNode, INavigationService, NavigationNode, NavigationResult, TrailNode } from "./types";
+export type {
+    AutoNavigationNode,
+    NavigationNode,
+    NavigationResult,
+    NavigationServiceContract,
+    TrailNode,
+} from "./types";

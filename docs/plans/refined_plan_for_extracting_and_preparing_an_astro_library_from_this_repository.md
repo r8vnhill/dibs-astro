@@ -138,7 +138,7 @@ Prepare the ground without moving logic yet.
 
 ---
 
-## Phase 1 — Extraction of the pure core
+## ~~Phase 1 — Extraction of the pure core~~
 
 ### Objective
 
@@ -165,7 +165,7 @@ Move the smallest set of logic that already justifies the package.
 
 ---
 
-## Phase 2 — Stabilization of the internal API
+## ~~Phase 2 — Stabilization of the internal API~~
 
 ### Objective
 
@@ -177,6 +177,9 @@ Stop thinking in terms of folders and start thinking in terms of contract.
 * Consolidate `src/index.ts` as the single entry point.
 * Rename public symbols if they still reflect internal structure rather than intent.
 * Review which types truly need to be public.
+* Rename temporary Phase 1 service names to the stabilized root API:
+  `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
+  `LessonMetadataServiceContract`.
 
 ### Deliverables
 
@@ -189,6 +192,7 @@ Stop thinking in terms of folders and start thinking in terms of contract.
 * the app uses imports only from the package entry point;
 * there is no dependency on internal `content-core` paths;
 * the public API is understandable without knowing the repository layout.
+* the old `*Impl` and `I*` service names are no longer exported from the package root.
 
 ---
 

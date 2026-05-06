@@ -12,7 +12,7 @@
  * In particular:
  *
  * - `LessonCatalogAdapter` remains internal to this module.
- * - `NavigationServiceImpl` is constructed locally.
+ * - `NavigationService` is constructed locally.
  * - UI consumers receive only `{ title, href }` pairs.
  *
  * This keeps the layout components independent of domain concepts such as `NavigationNode`,
@@ -21,8 +21,8 @@
  * ## Data Flow
  *
  * - `NotesLayout` calls `resolveAutoNav(pathname, lessons)`.
- * - `resolveAutoNav(...)` creates `NavigationServiceImpl`.
- * - `NavigationServiceImpl` reads lessons through `LessonCatalogAdapter`.
+ * - `resolveAutoNav(...)` creates `NavigationService`.
+ * - `NavigationService` reads lessons through `LessonCatalogAdapter`.
  * - `LessonCatalogAdapter` derives navigable entries from the course structure.
  *
  * ## Design Goals
@@ -35,9 +35,9 @@
  */
 
 import {
-    NavigationServiceImpl,
-    type INavigationService,
+    NavigationService,
     type AutoNavigationNode,
+    type NavigationServiceContract,
 } from "@ravenhill/content-core";
 import {
     type CourseLesson,
@@ -86,9 +86,9 @@ const toAutoNavLink = (
  * Constructs the navigation service together with its infrastructure dependencies. Keeping this
  * wiring local avoids exposing catalog implementation details to the presentation layer.
  */
-function createNavigationService(lessons: readonly CourseLesson[]): INavigationService {
+function createNavigationService(lessons: readonly CourseLesson[]): NavigationServiceContract {
     const catalog = new LessonCatalogAdapter(lessons);
-    return new NavigationServiceImpl(catalog);
+    return new NavigationService(catalog);
 }
 
 /**

@@ -7,9 +7,9 @@
  * serializable values the UI needs.
  */
 import {
-    LessonMetadataServiceImpl,
-    type ILessonMetadataService,
+    LessonMetadataService,
     type LessonMetadataDto,
+    type LessonMetadataServiceContract,
 } from "@ravenhill/content-core";
 import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAdapter";
 
@@ -18,8 +18,8 @@ import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAd
  */
 export type ResolvedLessonMetadata = LessonMetadataDto;
 
-function createLessonMetadataService(): ILessonMetadataService {
-    return new LessonMetadataServiceImpl(new LessonMetadataAdapter());
+function createLessonMetadataService(): LessonMetadataServiceContract {
+    return new LessonMetadataService(new LessonMetadataAdapter());
 }
 
 /**

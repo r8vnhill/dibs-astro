@@ -25,7 +25,7 @@
  * @example
  * ```typescript
  * import {
- *   LessonMetadataServiceImpl,
+ *   LessonMetadataService,
  *   type LessonMetadataRepository,
  * } from "@ravenhill/content-core";
  * ```
@@ -42,8 +42,8 @@ export {
     UNKNOWN_LESSON_DATE_LABEL,
 } from "./date";
 
-// Default service implementation for lesson-metadata lookup.
-export { LessonMetadataServiceImpl } from "./lesson-metadata-service";
+// Default service for lesson-metadata lookup.
+export { LessonMetadataService } from "./lesson-metadata-service";
 
 // Path normalization helper used to match lessons with metadata records.
 export { normalizeLessonMetadataPathname } from "./pathname";
@@ -56,8 +56,8 @@ export type { LessonMetadataRepository } from "./repositories";
 
 // Service and external DTO contracts.
 export type {
-    ILessonMetadataService,
     LessonMetadataAuthorDto,
     LessonMetadataChangeDto,
     LessonMetadataDto,
+    LessonMetadataServiceContract,
 } from "./types";

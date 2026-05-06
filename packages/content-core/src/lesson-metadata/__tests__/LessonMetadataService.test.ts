@@ -1,10 +1,10 @@
 import { LessonHref } from "../../navigation/lesson-href";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LessonMetadataServiceImpl } from "../lesson-metadata-service";
+import { LessonMetadataService } from "../lesson-metadata-service";
 import type { LessonMetadataRepository } from "../repositories";
 
-describe("LessonMetadataServiceImpl", () => {
-    let lessonMetadataService: LessonMetadataServiceImpl;
+describe("LessonMetadataService", () => {
+    let lessonMetadataService: LessonMetadataService;
     let lessonMetadataRepository: LessonMetadataRepository;
     let receivedHref: LessonHref | undefined;
 
@@ -33,7 +33,7 @@ describe("LessonMetadataServiceImpl", () => {
             },
         };
 
-        lessonMetadataService = new LessonMetadataServiceImpl(lessonMetadataRepository);
+        lessonMetadataService = new LessonMetadataService(lessonMetadataRepository);
         receivedHref = undefined;
     });
 

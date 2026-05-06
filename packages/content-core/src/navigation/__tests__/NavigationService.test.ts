@@ -1,11 +1,11 @@
 import { AdjacentLessons } from "../adjacent-lessons";
 import { LessonHref } from "../lesson-href";
-import { NavigationServiceImpl } from "../navigation-service";
+import { NavigationService } from "../navigation-service";
 import type { LessonNavigationRepository } from "../repositories";
 import { beforeEach, describe, expect, it } from "vitest";
 
 /**
- * Tests para NavigationServiceImpl.
+ * Tests para NavigationService.
  *
  * Ahora que el servicio delega a un repositorio de navegación de dominio,
  * verificamos que:
@@ -17,8 +17,8 @@ import { beforeEach, describe, expect, it } from "vitest";
  * en LessonCatalogAdapter.test.ts con PBT + DDT.
  */
 
-describe("NavigationServiceImpl", () => {
-    let navigationService: NavigationServiceImpl;
+describe("NavigationService", () => {
+    let navigationService: NavigationService;
     let lessonNavigationRepository: LessonNavigationRepository;
     let receivedHref: LessonHref | undefined;
 
@@ -43,7 +43,7 @@ describe("NavigationServiceImpl", () => {
             },
         };
 
-        navigationService = new NavigationServiceImpl(lessonNavigationRepository);
+        navigationService = new NavigationService(lessonNavigationRepository);
         receivedHref = undefined;
     });
 

@@ -16,6 +16,6 @@ export type LessonMetadataDto = Readonly<{
     changes: readonly LessonMetadataChangeDto[];
 }>;
 
-export interface ILessonMetadataService {
+export interface LessonMetadataServiceContract {
     resolveLessonMetadata(pathname: string): Promise<LessonMetadataDto | undefined>;
 }

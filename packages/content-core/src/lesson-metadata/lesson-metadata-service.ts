@@ -1,9 +1,9 @@
 import { LessonHref } from "../navigation/lesson-href";
 import { normalizeLessonMetadataPathname } from "./pathname";
 import type { LessonMetadataRepository } from "./repositories";
-import type { ILessonMetadataService, LessonMetadataDto } from "./types";
+import type { LessonMetadataDto, LessonMetadataServiceContract } from "./types";
 
-export class LessonMetadataServiceImpl implements ILessonMetadataService {
+export class LessonMetadataService implements LessonMetadataServiceContract {
     constructor(private readonly lessonMetadataRepository: LessonMetadataRepository) {}
 
     async resolveLessonMetadata(pathname: string): Promise<LessonMetadataDto | undefined> {

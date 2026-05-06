@@ -13,6 +13,8 @@ Context and essential rules for agents working in this package.
 
 - `@ravenhill/content-core` is a private workspace package under the Astro site.
 - It contains extracted host-agnostic navigation and lesson metadata core logic.
+- The stabilized root API uses `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
+  `LessonMetadataServiceContract`.
 - Keep the package host-agnostic: do not import Astro, UI components, Cloudflare APIs, or site-specific infrastructure.
 - Public vocabulary should stay content-neutral rather than DIBS-specific unless the user explicitly chooses otherwise.
 

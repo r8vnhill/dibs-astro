@@ -14,7 +14,7 @@ export type NavigationResult = Readonly<{
     next?: AutoNavigationNode;
 }>;
 
-export interface INavigationService {
+export interface NavigationServiceContract {
     resolveAutoNav(pathname: string): Promise<NavigationResult>;
 }
 

@@ -1,8 +1,8 @@
 import { LessonHref } from "./lesson-href";
 import type { LessonNavigationRepository } from "./repositories";
-import type { INavigationService, NavigationResult } from "./types";
+import type { NavigationResult, NavigationServiceContract } from "./types";
 
-export class NavigationServiceImpl implements INavigationService {
+export class NavigationService implements NavigationServiceContract {
     constructor(private readonly lessonNavigationRepository: LessonNavigationRepository) {}
 
     async resolveAutoNav(pathname: string): Promise<NavigationResult> {

@@ -20,8 +20,8 @@
  * @example
  * ```typescript
  * import {
- *   LessonMetadataServiceImpl,
- *   NavigationServiceImpl,
+ *   LessonMetadataService,
+ *   NavigationService,
  *   type LessonMetadataRepository,
  *   type LessonNavigationRepository,
  * } from "@ravenhill/content-core";
@@ -55,17 +55,17 @@ export const CONTENT_CORE_VERSION = version;
  * - {@link AdjacentLessons} models previous/next lesson relationships;
  * - {@link LessonTrail} and {@link TrailNode} model breadcrumb-like trails;
  * - {@link NavigationNode} and {@link AutoNavigationNode} describe navigation trees;
- * - {@link LessonSequenceService} and {@link NavigationServiceImpl} provide the default service implementations;
+ * - {@link LessonSequenceService} and {@link NavigationService} provide the default service implementation;
  * - {@link LessonNavigationRepository} defines the host-side data boundary.
  */
-export { AdjacentLessons, LessonHref, LessonSequenceService, LessonTrail, NavigationServiceImpl } from "./navigation";
+export { AdjacentLessons, LessonHref, LessonSequenceService, LessonTrail, NavigationService } from "./navigation";
 
 export type {
     AutoNavigationNode,
-    INavigationService,
     LessonNavigationRepository,
     NavigationNode,
     NavigationResult,
+    NavigationServiceContract,
     TrailNode,
 } from "./navigation";
 
@@ -81,7 +81,7 @@ export type {
  * - {@link LessonMetadataRecord} is the normalized domain-facing metadata shape;
  * - {@link LessonMetadataDto} and related DTOs describe external input records;
  * - {@link LessonMetadataRepository} defines the host-side metadata boundary;
- * - {@link LessonMetadataServiceImpl} provides the default metadata service;
+ * - {@link LessonMetadataService} provides the default metadata service;
  * - {@link formatLessonDate}, {@link parseIsoShortDate}, and
  *   {@link resolveLessonDateDisplay} centralize date-display behavior;
  * - {@link normalizeLessonMetadataPathname} centralizes metadata path matching.
@@ -90,7 +90,7 @@ export {
     DEFAULT_LESSON_METADATA_LOCALE,
     formatDate,
     formatLessonDate,
-    LessonMetadataServiceImpl,
+    LessonMetadataService,
     normalizeLessonMetadataPathname,
     parseIsoShortDate,
     resolveLessonDateDisplay,
@@ -98,7 +98,6 @@ export {
 } from "./lesson-metadata";
 
 export type {
-    ILessonMetadataService,
     LessonDateDisplayResult,
     LessonMetadataAuthor,
     LessonMetadataAuthorDto,
@@ -107,4 +106,5 @@ export type {
     LessonMetadataDto,
     LessonMetadataRecord,
     LessonMetadataRepository,
+    LessonMetadataServiceContract,
 } from "./lesson-metadata";

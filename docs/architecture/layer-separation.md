@@ -215,7 +215,7 @@ The main presentation-facing contracts locked in during this phase are:
 - `resolveAutoNav(pathname, lessons)`
   - returns only `{ previous?, next? }`
   - each link is `{ title, href }`
-  - is implemented through `@ravenhill/content-core`
+  - is implemented through `NavigationService` from `@ravenhill/content-core`
   - does not expose slugs, lesson entities, or infrastructure-specific records
 
 - `getCourseNavigationTree()`
@@ -224,7 +224,7 @@ The main presentation-facing contracts locked in during this phase are:
 
 - `resolveLessonMetadata(pathname)`
   - returns DTO-shaped serializable metadata only
-  - is implemented through `@ravenhill/content-core`
+  - is implemented through `LessonMetadataService` from `@ravenhill/content-core`
   - does not expose infrastructure-only fields such as `sourceFile`
 
 - `buildLessonMetaPanelViewModel(...)`
