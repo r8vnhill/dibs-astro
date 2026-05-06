@@ -1,10 +1,12 @@
-import type { LessonMetadataRecord } from "$domain/lesson-metadata";
-import type { LessonMetadataRepository } from "$domain/repositories";
-import type { LessonHref } from "$domain/value-objects/LessonHref";
+import type {
+    LessonHref,
+    LessonMetadataRecord,
+    LessonMetadataRepository,
+} from "@ravenhill/content-core";
 import {
     getLessonMetadataDataset,
-    type LessonMetadataDataset,
-    type LessonMetadataEntry,
+    type ReadonlyLessonMetadataDataset,
+    type ReadonlyLessonMetadataEntry,
 } from "~/utils/lesson-metadata";
 
 /**
@@ -14,7 +16,7 @@ import {
  * the domain repository contract.
  */
 export class LessonMetadataAdapter implements LessonMetadataRepository {
-    constructor(private readonly source: LessonMetadataDataset = getLessonMetadataDataset()) {}
+    constructor(private readonly source: ReadonlyLessonMetadataDataset = getLessonMetadataDataset()) {}
 
     async findByHref(href: LessonHref): Promise<LessonMetadataRecord | undefined> {
         const entry = this.source.entries[href.value];
@@ -22,7 +24,7 @@ export class LessonMetadataAdapter implements LessonMetadataRepository {
     }
 }
 
-const mapLessonMetadataEntry = (entry: LessonMetadataEntry): LessonMetadataRecord => ({
+const mapLessonMetadataEntry = (entry: ReadonlyLessonMetadataEntry): LessonMetadataRecord => ({
     sourceFile: entry.sourceFile,
     authors: entry.authors.map((author) => ({
         name: author.name,

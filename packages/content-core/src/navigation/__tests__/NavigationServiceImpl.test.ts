@@ -1,8 +1,8 @@
-import type { LessonNavigationRepository } from "$domain/repositories";
-import { AdjacentLessons } from "$domain/value-objects/AdjacentLessons";
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { AdjacentLessons } from "../adjacent-lessons";
+import { LessonHref } from "../lesson-href";
+import { NavigationServiceImpl } from "../navigation-service";
+import type { LessonNavigationRepository } from "../repositories";
 import { beforeEach, describe, expect, it } from "vitest";
-import { NavigationServiceImpl } from "../NavigationServiceImpl";
 
 /**
  * Tests para NavigationServiceImpl.

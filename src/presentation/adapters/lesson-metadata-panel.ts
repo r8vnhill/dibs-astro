@@ -1,5 +1,4 @@
-import type { LessonMetadataDto } from "$application/ports";
-import { formatLessonDate } from "$domain/lesson-metadata";
+import { formatLessonDate, type LessonMetadataDto } from "@ravenhill/content-core";
 import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "$presentation/adapters/site-data";
 import type { PartialRecord } from "~/types/records";
 import {

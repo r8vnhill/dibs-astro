@@ -1,15 +1,8 @@
-import type { ILessonMetadataService, LessonMetadataDto } from "$application/ports";
-import { normalizeLessonMetadataPathname } from "$domain/lesson-metadata";
-import type { LessonMetadataRepository } from "$domain/repositories";
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "../navigation/lesson-href";
+import { normalizeLessonMetadataPathname } from "./pathname";
+import type { LessonMetadataRepository } from "./repositories";
+import type { ILessonMetadataService, LessonMetadataDto } from "./types";
 
-/**
- * Application service that resolves lesson metadata for presentation callers.
- *
- * This service owns the boundary conversion from raw route strings to canonical lesson hrefs,
- * delegates lookup to a domain repository, and exposes only the small DTO shape the presentation
- * layer needs.
- */
 export class LessonMetadataServiceImpl implements ILessonMetadataService {
     constructor(private readonly lessonMetadataRepository: LessonMetadataRepository) {}
 

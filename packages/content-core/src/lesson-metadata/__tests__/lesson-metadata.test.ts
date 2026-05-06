@@ -8,7 +8,7 @@ import {
     parseIsoShortDate,
     resolveLessonDateDisplay,
     UNKNOWN_LESSON_DATE_LABEL,
-} from "../lesson-metadata";
+} from "../index";
 
 describe("lesson-metadata domain", () => {
     describe("normalizeLessonMetadataPathname", () => {

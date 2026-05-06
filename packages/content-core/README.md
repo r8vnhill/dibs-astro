@@ -2,14 +2,15 @@
 
 Content abstraction layer for reusable documentation and learning systems.
 
-## Phase 0 (Current)
+## Phase 1 (Current)
 
-This package serves as a structural proof-of-concept for workspace modularization. It establishes:
+This package now contains the first extracted pure content core from the Astro site. It establishes:
 
 - Workspace topology (`packages/*` alongside root Astro app)
 - Package identity (`@ravenhill/content-core` as a reusable, publication-ready scoped package)
 - Consumption pattern (workspace dependency from root app)
 - Build validation (TypeScript type checking)
+- Host-agnostic navigation and lesson metadata contracts
 
 The package remains `private: true` during this phase to avoid accidental publication.
 
@@ -18,9 +19,16 @@ The package remains `private: true` during this phase to avoid accidental public
 - **Neutral identity**: `content-core` (not `course-core`) to enable reuse beyond DIBS
 - **Host-agnostic**: Pure content abstractions without Astro or platform-specific coupling
 - **Publication-ready**: Named as if publication to npm/GitLab were real, even though not done yet
+- **Root-only API**: Consumers import from `@ravenhill/content-core`, not package subpaths
+
+## Exported Core
+
+- Lesson navigation: canonical href normalization, adjacency, trails, navigation repositories, and the navigation service.
+- Lesson metadata: metadata records, date/path helpers, metadata repository contracts, DTOs, and the metadata service.
+- Package identity constants for workspace consumption checks.
 
 ## Future Evolution
 
-Phase 1+ will extract real domain logic (lessons, course structure, reference taxonomy) and other domain models into this package, with careful vocabulary work to expose content-neutral public APIs while keeping DIBS-specific implementation details internal.
+Later phases may extract more content-neutral domain logic, such as reference taxonomy, after the public vocabulary and app boundaries are clear. DIBS-specific implementation details, generated data, Astro adapters, and UI remain in the app.
 
 See `docs/plans/` for the extraction roadmap.

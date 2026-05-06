@@ -4,7 +4,8 @@
  * Validates immutability, trail building, and properties.
  */
 
-import { LessonTrail, type TrailNode } from "$domain/entities/LessonTrail";
+import { LessonTrail } from "../lesson-trail";
+import type { TrailNode } from "../types";
 import { describe, expect, it } from "vitest";
 
 describe("LessonTrail entity", () => {

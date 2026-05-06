@@ -1,4 +1,4 @@
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "@ravenhill/content-core";
 import type { LessonId } from "$domain/value-objects/LessonId";
 import type { LessonSlug } from "$domain/value-objects/LessonSlug";
 import type { LessonTitle } from "$domain/value-objects/LessonTitle";

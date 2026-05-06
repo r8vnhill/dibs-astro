@@ -6,8 +6,11 @@
  * the bridge wires the application service to the infrastructure adapter and returns only the
  * serializable values the UI needs.
  */
-import type { ILessonMetadataService, LessonMetadataDto } from "$application/ports";
-import { LessonMetadataServiceImpl } from "$application/services/LessonMetadataServiceImpl";
+import {
+    LessonMetadataServiceImpl,
+    type ILessonMetadataService,
+    type LessonMetadataDto,
+} from "@ravenhill/content-core";
 import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAdapter";
 
 /**

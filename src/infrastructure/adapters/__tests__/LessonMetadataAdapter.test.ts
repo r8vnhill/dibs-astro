@@ -1,9 +1,9 @@
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "@ravenhill/content-core";
 import { describe, expect, it } from "vitest";
-import type { LessonMetadataDataset } from "~/utils/lesson-metadata";
+import type { ReadonlyLessonMetadataDataset } from "~/utils/lesson-metadata";
 import { LessonMetadataAdapter } from "../LessonMetadataAdapter";
 
-const makeDataset = (): LessonMetadataDataset => ({
+const makeDataset = (): ReadonlyLessonMetadataDataset => ({
     generatedAt: "2026-04-19T00:00:00.000Z",
     totalLessons: 1,
     changesLimit: 5,

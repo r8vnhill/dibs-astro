@@ -34,8 +34,11 @@
  *   reading from global state.
  */
 
-import type { INavigationService, NavigationNode } from "$application/ports";
-import { NavigationServiceImpl } from "$application/services/NavigationServiceImpl";
+import {
+    NavigationServiceImpl,
+    type INavigationService,
+    type AutoNavigationNode,
+} from "@ravenhill/content-core";
 import {
     type CourseLesson,
     LessonCatalogAdapter,
@@ -74,7 +77,7 @@ export type AutoNavResult = {
  * This prevents presentation components from depending on domain types such as `NavigationNode`.
  */
 const toAutoNavLink = (
-    node: NavigationNode | undefined,
+    node: AutoNavigationNode | undefined,
 ): AutoNavLink | undefined => node ? { title: node.title, href: node.href } : undefined;
 
 /**

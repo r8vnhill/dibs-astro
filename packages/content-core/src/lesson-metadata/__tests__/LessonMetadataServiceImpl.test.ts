@@ -1,7 +1,7 @@
-import type { LessonMetadataRepository } from "$domain/repositories";
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "../../navigation/lesson-href";
 import { beforeEach, describe, expect, it } from "vitest";
-import { LessonMetadataServiceImpl } from "../LessonMetadataServiceImpl";
+import { LessonMetadataServiceImpl } from "../lesson-metadata-service";
+import type { LessonMetadataRepository } from "../repositories";
 
 describe("LessonMetadataServiceImpl", () => {
     let lessonMetadataService: LessonMetadataServiceImpl;

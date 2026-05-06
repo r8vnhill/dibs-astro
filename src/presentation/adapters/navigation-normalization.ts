@@ -1,4 +1,4 @@
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "@ravenhill/content-core";
 
 export type NavigationLinkInput = Readonly<{
     title: string;

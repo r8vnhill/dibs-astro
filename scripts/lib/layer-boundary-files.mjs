@@ -3,7 +3,9 @@ import { readFile } from "node:fs/promises";
 
 export const defaultSourcePatterns = [
     "src/**/*.{ts,tsx,astro}",
+    "packages/content-core/src/**/*.ts",
     "!src/**/*.d.ts",
+    "!packages/content-core/src/**/*.d.ts",
 ];
 
 export async function discoverSourceFiles(options = {}) {

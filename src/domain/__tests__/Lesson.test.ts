@@ -1,5 +1,5 @@
 import { Lesson } from "$domain/entities/Lesson";
-import { LessonHref } from "$domain/value-objects/LessonHref";
+import { LessonHref } from "@ravenhill/content-core";
 import { LessonId } from "$domain/value-objects/LessonId";
 import { LessonSlug } from "$domain/value-objects/LessonSlug";
 import { LessonTitle } from "$domain/value-objects/LessonTitle";

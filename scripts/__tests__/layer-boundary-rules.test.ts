@@ -14,6 +14,7 @@ const expectedRuleOrder = [
     "infrastructure-boundary",
     "presentation-adapter-boundary",
     "ui-boundary",
+    "content-core-boundary",
 ];
 
 const expectedSources = [
@@ -22,6 +23,7 @@ const expectedSources = [
     ["infrastructure-boundary", "infrastructure"],
     ["presentation-adapter-boundary", "presentation-adapter"],
     ["ui-boundary", "ui"],
+    ["content-core-boundary", "content-core"],
 ];
 
 function ruleById(id) {
@@ -82,6 +84,13 @@ const allowedMatrixCases = [
         sourcePath: "src/application/services/LessonUseCase.ts",
         importPath: "$application/ports/LessonRepository",
         resolvedPath: "src/application/ports/LessonRepository.ts",
+    },
+    {
+        name: "application may import content core",
+        sourcePath: "src/presentation/adapters/navigation-bridge.ts",
+        importPath: "@ravenhill/content-core",
+        sourceLayer: "presentation-adapter",
+        target: "external-package",
     },
     {
         name: "infrastructure may import domain",
@@ -398,6 +407,24 @@ const forbiddenMatrixCases = [
         sourceLayer: "ui",
         target: "infrastructure",
     },
+    {
+        name: "content core must not import app utils",
+        sourcePath: "packages/content-core/src/lesson-metadata/index.ts",
+        importPath: "~/utils/lesson-metadata",
+        resolvedPath: "src/utils/lesson-metadata.ts",
+        ruleId: "content-core-boundary",
+        sourceLayer: "content-core",
+        target: "utils",
+    },
+    {
+        name: "content core must not import generated data",
+        sourcePath: "packages/content-core/src/lesson-metadata/index.ts",
+        importPath: "~/data/lesson-metadata.generated.json",
+        resolvedPath: "src/data/lesson-metadata.generated.json",
+        ruleId: "content-core-boundary",
+        sourceLayer: "content-core",
+        target: "generated-data",
+    },
 ];
 
 describe("boundaryRules", () => {
@@ -431,13 +458,14 @@ describe("boundaryRules", () => {
 
 describe("Cycle 2 rule matrix", () => {
     test("domain allows only domain targets", () => {
-        expect(ruleById("domain-boundary").allowedTargets).toEqual(["domain"]);
+        expect(ruleById("domain-boundary").allowedTargets).toEqual(["domain", "content-core"]);
     });
 
     test("application allows only domain and application targets", () => {
         expect(ruleById("application-boundary").allowedTargets).toEqual([
             "domain",
             "application",
+            "content-core",
         ]);
     });
 
@@ -460,6 +488,23 @@ describe("Cycle 2 rule matrix", () => {
         "ui-boundary",
     ])("%s does not forbid packages", (id) => {
         expect(ruleById(id).forbiddenPackages).toEqual([]);
+    });
+
+    test("content-core forbids app-local targets and framework packages", () => {
+        const rule = ruleById("content-core-boundary");
+
+        expect(rule.allowedTargets).toEqual(["content-core"]);
+        expect(rule.forbiddenTargets).toEqual(expect.arrayContaining([
+            "domain",
+            "application",
+            "infrastructure",
+            "presentation",
+            "ui",
+            "generated-data",
+            "data",
+            "utils",
+        ]));
+        expect(rule.forbiddenPackages).toEqual(["astro", "react", "react-dom", "zod"]);
     });
 
     test("UI depends on presentation-facing targets and forbids inner implementation layers", () => {

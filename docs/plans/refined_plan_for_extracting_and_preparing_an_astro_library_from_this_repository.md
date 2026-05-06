@@ -13,7 +13,7 @@ Extract a first reusable library from the current Astro site without disrupting 
 ### Active decisions
 
 * **The Astro app remains at the repository root** in this first stage.
-* **The first package will be `packages/course-core`.**
+* **The first package is `packages/content-core`.**
 * **The first extraction targets domain and application logic**, not UI.
 * **Consumption will use `workspace:*`.**
 * **Nx, Turborepo, Changesets, and semantic-release are not introduced yet.**
@@ -42,9 +42,9 @@ That order matters. Trying to solve extraction, public API design, versioning, a
 
 ## Scope of the first extraction
 
-## Initial package: `course-core`
+## Initial package: `content-core`
 
-`course-core` should contain only reusable logic with low coupling to Astro, the DOM, and rendering.
+`content-core` should contain only reusable logic with low coupling to Astro, the DOM, and rendering.
 
 ### It should include
 
@@ -67,14 +67,14 @@ That order matters. Trying to solve extraction, public API design, versioning, a
 
 ### Dependency rule
 
-`course-core` may depend on:
+`content-core` may depend on:
 
 * TypeScript;
 * serializable data;
 * pure utilities;
 * small, explicit contracts.
 
-`course-core` must not depend on:
+`content-core` must not depend on:
 
 * `astro`;
 * `react`;
@@ -97,20 +97,20 @@ repo/
   pnpm-workspace.yaml
   src/                    # current Astro app
   packages/
-    course-core/
+    content-core/
       package.json
       tsconfig.json
       src/
         index.ts
 ```
 
-The root app remains the integration host and consumes `course-core` as a workspace dependency.
+The root app remains the integration host and consumes `content-core` as a workspace dependency.
 
 ---
 
 ## Refined roadmap
 
-## Phase 0 — Preparation and baseline
+## ~~Phase 0 — Preparation and baseline~~
 
 ### Objective
 
@@ -119,7 +119,7 @@ Prepare the ground without moving logic yet.
 ### Work
 
 * Update `pnpm-workspace.yaml` to include `packages/*`.
-* Create `packages/course-core/`.
+* Create `packages/content-core/`.
 * Create `package.json`, `tsconfig.json`, and `src/index.ts`.
 * Add a minimal validation script for the package.
 * Define consistent import paths or consumption rules from the app.
@@ -127,14 +127,14 @@ Prepare the ground without moving logic yet.
 ### Deliverables
 
 * the workspace recognizes the package;
-* the site installs and resolves `course-core`;
-* `course-core` can compile even if it exports very little initially.
+* the site installs and resolves `content-core`;
+* `content-core` can compile even if it exports very little initially.
 
 ### Exit criteria
 
 * `pnpm install` works;
 * `pnpm check` still passes;
-* the site can import something trivial from `course-core`.
+* the site can import something trivial from `content-core`.
 
 ---
 
@@ -153,14 +153,14 @@ Move the smallest set of logic that already justifies the package.
 
 ### Deliverables
 
-* a first usable API for `course-core`;
+* a first usable API for `content-core`;
 * the site consuming extracted logic through the workspace;
 * a clear boundary between package and app.
 
 ### Exit criteria
 
 * navigation and sequencing still work;
-* `NotesLayout` and course services consume `course-core`;
+* `NotesLayout` and course services consume `content-core`;
 * there are no remaining imports from the site to “equivalent” files that have already been moved.
 
 ---
@@ -187,7 +187,7 @@ Stop thinking in terms of folders and start thinking in terms of contract.
 ### Exit criteria
 
 * the app uses imports only from the package entry point;
-* there is no dependency on internal `course-core` paths;
+* there is no dependency on internal `content-core` paths;
 * the public API is understandable without knowing the repository layout.
 
 ---
@@ -196,7 +196,7 @@ Stop thinking in terms of folders and start thinking in terms of contract.
 
 ### Objective
 
-Prepare `course-core` for real packaging without publishing yet.
+Prepare `content-core` for real packaging without publishing yet.
 
 ### Work
 
@@ -219,7 +219,7 @@ Prepare `course-core` for real packaging without publishing yet.
 
 ### Exit criteria
 
-* `pnpm pack --filter course-core` produces a sensible artifact;
+* `pnpm pack --filter @ravenhill/content-core` produces a sensible artifact;
 * the tarball does not include repository noise;
 * the package declares only what it truly exposes.
 
@@ -376,7 +376,7 @@ The validation strategy should become more explicit.
 ### Definition of done for phase 1
 
 * the site still works;
-* `course-core` is consumed through the workspace;
+* `content-core` is consumed through the workspace;
 * navigation depends on the package, not on local duplicates;
 * the package does not know about Astro or UI;
 * there is a small, explicit public API.
@@ -397,7 +397,7 @@ The main improvements worth making were these:
 
 ## Short version of the strategy
 
-* **Step 1:** create `packages/course-core`.
+* **Step 1:** create `packages/content-core`.
 * **Step 2:** move pure course and navigation logic.
 * **Step 3:** make the app consume it via `workspace:*`.
 * **Step 4:** stabilize the API.

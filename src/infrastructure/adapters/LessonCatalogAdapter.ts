@@ -1,8 +1,11 @@
-import { LessonTrail, type TrailNode } from "$domain/entities/LessonTrail";
-import type { LessonNavigationRepository } from "$domain/repositories";
-import { LessonSequenceService } from "$domain/services/LessonSequenceService";
-import { LessonHref } from "$domain/value-objects/LessonHref";
-import type { AdjacentLessons } from "$domain/value-objects/AdjacentLessons";
+import {
+    LessonHref,
+    LessonSequenceService,
+    LessonTrail,
+    type AdjacentLessons,
+    type LessonNavigationRepository,
+    type TrailNode,
+} from "@ravenhill/content-core";
 import {
     courseStructure,
     type FlattenedLesson,

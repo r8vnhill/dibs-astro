@@ -4,7 +4,8 @@
  * Validates immutability, empty state, and proper construction.
  */
 
-import { AdjacentLessons, type NavigationNode } from "$domain/value-objects/AdjacentLessons";
+import { AdjacentLessons } from "../adjacent-lessons";
+import type { NavigationNode } from "../types";
 import { describe, expect, it } from "vitest";
 
 describe("AdjacentLessons value object", () => {

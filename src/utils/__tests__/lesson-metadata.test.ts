@@ -1,55 +1,28 @@
 /**
  * @file lesson-metadata.test.ts
  *
- * Tests for the lesson metadata access layer.
+ * Tests for the generated lesson metadata infrastructure boundary.
  *
- * This suite validates the public API exported by `{ts} lesson-metadata.ts`:
- *
- * - {@link resolveLessonMetadata}: resolves a metadata entry by pathname/URL.
- * - {@link parseLessonMetadataDataset}: runtime-validates dataset shapes (Zod boundary).
- * - {@link getLessonMetadataDataset}: loads and caches the validated generated dataset.
- *
- * ## The tests combine:
- *
- * - **DDT** via `{ts} test.each` for dataset lookup and validation edge cases.
- * - **PBT** via `{ts} fast-check` for lookup invariants over known normalized keys.
- *
- * ## Notes on caching
- *
- * `getLessonMetadataDataset()` caches the parsed dataset for performance. This means tests must
- * reset the cache to avoid order dependence. The module provides
- * {@link __resetLessonMetadataCache} as a test-only helper to ensure repeatable behavior.
+ * This suite validates strict dataset parsing, immutable cached data, repository-scoped caching,
+ * and the compatibility lookup/date/path helpers exported by `lesson-metadata.ts`.
  */
 import fc from "fast-check";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
-    __resetLessonMetadataCache,
+    createLessonMetadataRepository,
+    formatLessonDate,
     getLessonMetadataDataset,
     type LessonMetadataDataset,
+    LessonMetadataDatasetError,
+    normalizeLessonPathname,
+    parseIsoShortDate,
     parseLessonMetadataDataset,
     resolveLessonMetadata,
+    UNKNOWN_DATE_LABEL,
 } from "../lesson-metadata";
 
-/**
- * A representative lesson route used across resolution tests.
- *
- * Routes stored in the dataset are normalized to:
- *
- * - start with `/`
- * - end with `/`
- */
 const SAMPLE_ROUTE = "/notes/scripting/first-script/";
 
-/**
- * Creates a small in-memory dataset fixture.
- *
- * The fixture intentionally includes:
- *
- * - A root section entry (`/notes/`) with no changes.
- * - A sample lesson entry with one git change and `lastModified`.
- *
- * Keeping this local fixture avoids coupling most tests to the real generated JSON artifact.
- */
 const makeDataset = (): LessonMetadataDataset => ({
     generatedAt: "2026-02-16T00:00:00.000Z",
     totalLessons: 2,
@@ -63,7 +36,7 @@ const makeDataset = (): LessonMetadataDataset => ({
         },
         [SAMPLE_ROUTE]: {
             sourceFile: "src/pages/notes/scripting/first-script/index.astro",
-            authors: [{ name: "Proyecto DIBS" }],
+            authors: [{ name: "Proyecto DIBS", url: "https://dibs.ravenhill.cl" }],
             lastModified: "2026-02-11",
             changes: [
                 {
@@ -77,102 +50,234 @@ const makeDataset = (): LessonMetadataDataset => ({
     },
 });
 
-const dataset = makeDataset();
+const expectDatasetError = (source: unknown): void => {
+    try {
+        parseLessonMetadataDataset(source);
+        throw new Error("Expected parseLessonMetadataDataset to fail.");
+    } catch (error) {
+        expect(error).toBeInstanceOf(LessonMetadataDatasetError);
+        expect((error as Error).cause).toBeDefined();
+    }
+};
 
-describe("dataset resolution", () => {
-    /**
-     * Resolution should succeed across common pathname variants:
-     *
-     * - missing trailing slash
-     * - repeated slashes
-     * - full URL input
-     */
-    test.each([
-        "/notes/scripting/first-script",
-        "/notes//scripting///first-script/",
-        "https://dibs.ravenhill.cl/notes/scripting/first-script",
-    ])("resolves metadata for matching path variants: %s", (input) => {
-        const resolved = resolveLessonMetadata(input, dataset);
-        expect(resolved?.lastModified).toBe("2026-02-11");
-    });
+describe("parseLessonMetadataDataset", () => {
+    it("accepts a valid generated dataset and returns equivalent data", () => {
+        const dataset = makeDataset();
 
-    /**
-     * Unknown routes should resolve to `undefined`.
-     */
-    test("returns undefined for unknown paths", () => {
-        const resolved = resolveLessonMetadata("/notes/unknown/", dataset);
-        expect(resolved).toBeUndefined();
-    });
-
-    /**
-     * Runtime validation should accept a valid dataset fixture unchanged.
-     *
-     * This verifies the Zod boundary aligns with the TypeScript type.
-     */
-    test("parses valid dataset at runtime", () => {
         expect(parseLessonMetadataDataset(dataset)).toEqual(dataset);
     });
 
-    /**
-     * Runtime validation should fail for common schema violations.
-     *
-     * These tests ensure:
-     *
-     * - callers get actionable errors when the generated artifact shape drifts
-     * - the Zod boundary is actually enforcing constraints (not just pass-through)
-     */
-    test.each([
-        [{ ...dataset, entries: [] }, /Invalid input: expected record, received array/i],
+    it.each([
         [
-            {
-                ...dataset,
-                entries: {
-                    "/notes/": { ...dataset.entries["/notes/"], sourceFile: undefined },
-                },
-            },
-            /Invalid input: expected string, received undefined/i,
+            "extra dataset key",
+            () => ({ ...makeDataset(), unexpected: true }),
         ],
         [
-            {
-                ...dataset,
-                entries: {
-                    "/notes/": { ...dataset.entries["/notes/"], authors: "bad" },
-                },
-            },
-            /Invalid input: expected array, received string/i,
+            "entries is not a record",
+            () => ({ ...makeDataset(), entries: [] }),
         ],
-    ])("fails for invalid dataset shape", (invalidDataset, expectedError) => {
-        expect(() => parseLessonMetadataDataset(invalidDataset)).toThrow(expectedError);
+        [
+            "extra entry key",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        "/notes/": { ...dataset.entries["/notes/"], unexpected: true },
+                    },
+                };
+            },
+        ],
+        [
+            "extra author key",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        "/notes/": {
+                            ...dataset.entries["/notes/"],
+                            authors: [{ name: "Proyecto DIBS", unexpected: true }],
+                        },
+                    },
+                };
+            },
+        ],
+        [
+            "extra change key",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        [SAMPLE_ROUTE]: {
+                            ...dataset.entries[SAMPLE_ROUTE],
+                            changes: [
+                                {
+                                    ...dataset.entries[SAMPLE_ROUTE]!.changes[0]!,
+                                    unexpected: true,
+                                },
+                            ],
+                        },
+                    },
+                };
+            },
+        ],
+        [
+            "route key is not normalized",
+            () => {
+                const dataset = makeDataset();
+                const { [SAMPLE_ROUTE]: sample, ...entries } = dataset.entries;
+                return {
+                    ...dataset,
+                    entries: {
+                        ...entries,
+                        "notes/scripting/first-script": sample,
+                    },
+                };
+            },
+        ],
+        ["generatedAt is not an ISO timestamp", () => ({ ...makeDataset(), generatedAt: "today" })],
+        [
+            "lastModified is not a real ISO short date",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        "/notes/": { ...dataset.entries["/notes/"], lastModified: "2026-02-31" },
+                    },
+                };
+            },
+        ],
+        [
+            "change date is not a real ISO short date",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        [SAMPLE_ROUTE]: {
+                            ...dataset.entries[SAMPLE_ROUTE],
+                            changes: [
+                                { ...dataset.entries[SAMPLE_ROUTE]!.changes[0]!, date: "2026-13-01" },
+                            ],
+                        },
+                    },
+                };
+            },
+        ],
+        ["totalLessons is negative", () => ({ ...makeDataset(), totalLessons: -1 })],
+        ["totalLessons is not an integer", () => ({ ...makeDataset(), totalLessons: 1.5 })],
+        ["changesLimit is negative", () => ({ ...makeDataset(), changesLimit: -1 })],
+        ["changesLimit is not an integer", () => ({ ...makeDataset(), changesLimit: 1.5 })],
+        [
+            "author URL is invalid",
+            () => {
+                const dataset = makeDataset();
+                return {
+                    ...dataset,
+                    entries: {
+                        ...dataset.entries,
+                        "/notes/": {
+                            ...dataset.entries["/notes/"],
+                            authors: [{ name: "Proyecto DIBS", url: "not a url" }],
+                        },
+                    },
+                };
+            },
+        ],
+        ["totalLessons does not match entry count", () => ({ ...makeDataset(), totalLessons: 99 })],
+        ["changes exceed changesLimit", () => ({ ...makeDataset(), changesLimit: 0 })],
+    ])("rejects generated datasets when %s", (_caseName, buildSource) => {
+        expectDatasetError(buildSource());
     });
 
-    /**
-     * The dataset loader caches the validated dataset instance for performance.
-     *
-     * This test resets the module cache, then asserts that repeated calls return the exact same
-     * object reference.
-     */
-    test("provides cached runtime dataset", () => {
-        __resetLessonMetadataCache();
+    it("returns deeply frozen metadata", () => {
+        const dataset = parseLessonMetadataDataset(makeDataset());
+        const sampleEntry = dataset.entries[SAMPLE_ROUTE]!;
 
-        const first = getLessonMetadataDataset();
-        const second = getLessonMetadataDataset();
+        expect(Object.isFrozen(dataset)).toBe(true);
+        expect(Object.isFrozen(dataset.entries)).toBe(true);
+        expect(Object.isFrozen(sampleEntry)).toBe(true);
+        expect(Object.isFrozen(sampleEntry.authors)).toBe(true);
+        expect(Object.isFrozen(sampleEntry.authors[0])).toBe(true);
+        expect(Object.isFrozen(sampleEntry.changes)).toBe(true);
+        expect(Object.isFrozen(sampleEntry.changes[0])).toBe(true);
+        expect(() => Object.assign(dataset.entries, { "/fake/": sampleEntry })).toThrow(TypeError);
+    });
+});
+
+describe("createLessonMetadataRepository", () => {
+    it("caches parsed metadata per repository instance", () => {
+        const repository = createLessonMetadataRepository(makeDataset());
+
+        const first = repository.dataset();
+        const second = repository.dataset();
 
         expect(first).toBe(second);
     });
 
-    /**
-     * Property: known dataset keys resolve to the same entry across path variants.
-     *
-     * For each known route key in the fixture, we build a small set of equivalent path
-     * representations and assert that all of them resolve to the same entry object reference.
-     */
-    test("lookup invariant: known keys resolve to same entry across path variants", () => {
+    it("keeps cache instances separate between repositories", () => {
+        const firstRepository = createLessonMetadataRepository(makeDataset());
+        const secondRepository = createLessonMetadataRepository(makeDataset());
+
+        expect(firstRepository.dataset()).not.toBe(secondRepository.dataset());
+    });
+
+    it("resolves metadata by normalized pathname", () => {
+        const repository = createLessonMetadataRepository(makeDataset());
+
+        const resolved = repository.resolve("https://dibs.ravenhill.cl/notes/scripting/first-script");
+
+        expect(resolved?.lastModified).toBe("2026-02-11");
+    });
+
+    it("defers validation until metadata is requested", () => {
+        const repository = createLessonMetadataRepository({ invalid: true });
+
+        expect(() => repository.dataset()).toThrow(LessonMetadataDatasetError);
+    });
+});
+
+describe("resolveLessonMetadata", () => {
+    it.each([
+        "/notes/scripting/first-script",
+        "/notes//scripting///first-script/",
+        "https://dibs.ravenhill.cl/notes/scripting/first-script?from=search#intro",
+    ])("resolves metadata for matching path variants: %s", (input) => {
+        const dataset = parseLessonMetadataDataset(makeDataset());
+
+        const resolved = resolveLessonMetadata(input, dataset);
+
+        expect(resolved?.lastModified).toBe("2026-02-11");
+    });
+
+    it("returns undefined for unknown paths", () => {
+        const dataset = parseLessonMetadataDataset(makeDataset());
+
+        expect(resolveLessonMetadata("/notes/unknown/", dataset)).toBeUndefined();
+    });
+
+    it("uses the default generated dataset when no source is provided", () => {
+        const dataset = getLessonMetadataDataset();
+
+        expect(dataset.totalLessons).toBe(Object.keys(dataset.entries).length);
+        expect(resolveLessonMetadata("/notes/")).toBe(dataset.entries["/notes/"]);
+    });
+
+    it("lookup agrees with direct dataset access after normalization", () => {
+        const dataset = parseLessonMetadataDataset(makeDataset());
         const knownRoutes = Object.keys(dataset.entries);
 
         fc.assert(
             fc.property(fc.constantFrom(...knownRoutes), (route) => {
                 const base = route.endsWith("/") ? route.slice(0, -1) : route;
-
                 const variants = [
                     base,
                     `${route}/`,
@@ -182,10 +287,38 @@ describe("dataset resolution", () => {
                 ];
 
                 for (const variant of variants) {
-                    const resolved = resolveLessonMetadata(variant, dataset);
-                    expect(resolved).toBe(dataset.entries[route]);
+                    const normalized = normalizeLessonPathname(variant);
+                    expect(resolveLessonMetadata(variant, dataset)).toBe(dataset.entries[normalized]);
                 }
             }),
         );
+    });
+});
+
+describe("compatibility helpers", () => {
+    it.each([
+        ["notes/foo", "/notes/foo/"],
+        ["/notes/foo?x=1", "/notes/foo/"],
+        ["/notes/foo#section", "/notes/foo/"],
+        ["https://example.com/notes/foo?x=1#section", "/notes/foo/"],
+    ])("normalizes %s to %s", (input, expected) => {
+        expect(normalizeLessonPathname(input)).toBe(expected);
+    });
+
+    it("keeps path normalization idempotent", () => {
+        fc.assert(
+            fc.property(fc.constantFrom("notes/foo", "/notes//foo/", "/notes/foo?x=1#section"), (input) => {
+                const normalized = normalizeLessonPathname(input);
+                expect(normalizeLessonPathname(normalized)).toBe(normalized);
+            }),
+        );
+    });
+
+    it("preserves domain date formatting behaviour", () => {
+        expect(formatLessonDate(undefined)).toBe(UNKNOWN_DATE_LABEL);
+        expect(formatLessonDate("invalid")).toBe("invalid");
+        expect(formatLessonDate("2026-02-16", "en-GB")).toBe("16 February 2026");
+        expect(parseIsoShortDate("2026-02-16")?.toISOString()).toBe("2026-02-16T00:00:00.000Z");
+        expect(parseIsoShortDate("2026-02-31")).toBeUndefined();
     });
 });

@@ -12,7 +12,7 @@ Context and essential rules for agents working in this package.
 ## Package Shape
 
 - `@ravenhill/content-core` is a private workspace package under the Astro site.
-- It is currently a structural proof-of-concept for modularization, not a full extracted domain package.
+- It contains extracted host-agnostic navigation and lesson metadata core logic.
 - Keep the package host-agnostic: do not import Astro, UI components, Cloudflare APIs, or site-specific infrastructure.
 - Public vocabulary should stay content-neutral rather than DIBS-specific unless the user explicitly chooses otherwise.
 
@@ -27,7 +27,8 @@ Context and essential rules for agents working in this package.
 
 - Prefer pure TypeScript types, constants, and content-domain abstractions.
 - Avoid adding runtime dependencies unless the package actually needs them.
-- Treat future extraction from the site as an architecture decision; ask before moving domain models into this package.
+- Treat any further extraction from the site as an architecture decision; ask before moving additional domain models into this package.
+- Consumers must import from the package root (`@ravenhill/content-core`), not package subpaths.
 - Follow the inclusive documentation guidance from `../../src/pages/notes/software-libraries/api-design/documentation/index.astro`: prefer precise, clear, respectful terminology over loaded metaphors or unnecessarily punitive wording.
 - Avoid terms such as `violation` or `violations` in new public types, docs, diagnostics, and tests when a more descriptive alternative works. Prefer `finding`, `issue`, `not allowed`, `policy mismatch`, or a domain-specific name.
 - Do not rename exported API terms mechanically. If compatibility is involved, propose aliases, deprecation, release notes, or a migration path first.

@@ -1,42 +1,32 @@
 /**
+ * @packageDocumentation
+ *
  * Domain-layer public barrel.
  *
- * This module defines the stable import surface for the domain layer. It re-exports the domain concepts that 
- * application, infrastructure, and presentation code are expected to consume directly, while keeping the internal 
- * folder structure private.
+ * This module defines the stable import boundary for domain concepts. Application, infrastructure, and presentation 
+ * code should import domain exports from this file instead of reaching into internal folders such as `entities/`,
+ * `value-objects/`, or `reference-content/`.
  *
- * Routing external imports through this entry point provides a few practical benefits:
+ * Keeping this boundary explicit has three benefits:
  *
- * - it gives other layers one predictable import path
- * - it reduces coupling to the internal organization of the domain layer
- * - it makes internal refactors less disruptive
- * - it clarifies which domain types and utilities are part of the intended public surface
+ * - consumers depend on a stable domain API rather than the current file layout;
+ * - refactors can move internal modules without changing external imports;
+ * - architectural checks can treat this file as the approved domain entry point.
  *
- * The exports are grouped around a few domain concerns:
+ * The exported surface is grouped around three concerns:
  *
- * - lesson entities and trail models
- * - lesson metadata value types and formatting helpers
- * - lesson navigation value objects and repository contracts
- * - reference-content normalization and resolution utilities
+ * - lesson entities, represented by {@link Lesson};
+ * - lesson value objects, represented by {@link LessonId}, {@link LessonSlug}, and {@link LessonTitle};
+ * - reference-content utilities for classifying, normalizing, and resolving inline content used by reference-rendering 
+ *   workflows.
  *
- * External layers should prefer importing from this barrel. Internal domain modules may still use deeper imports when 
- * that keeps implementation details private or avoids unnecessary coupling between sibling modules.
+ * Reference-content helpers live in the domain layer because they encode pure content semantics: meaningful text 
+ * detection, HTML comment/tag stripping, whitespace normalization, fallback resolution, and link normalization. They do
+ * not depend on Astro, DOM APIs, UI components, generated data, or host-specific infrastructure.
  */
+
 export { Lesson, type LessonProps } from "./entities/Lesson";
-export { LessonTrail, type TrailNode } from "./entities/LessonTrail";
-export {
-    DEFAULT_LESSON_METADATA_LOCALE,
-    formatDate,
-    formatLessonDate,
-    normalizeLessonMetadataPathname,
-    parseIsoShortDate,
-    resolveLessonDateDisplay,
-    UNKNOWN_LESSON_DATE_LABEL,
-    type LessonDateDisplayResult,
-    type LessonMetadataAuthor,
-    type LessonMetadataChange,
-    type LessonMetadataRecord
-} from "./lesson-metadata";
+
 export {
     classifyRenderedReferenceContent,
     decodeHtmlWhitespaceEntities,
@@ -45,20 +35,17 @@ export {
     normalizeFallbackText,
     normalizeHref,
     normalizeInlineWhitespace,
+    type ResolvedInlineField,
+    type ResolvedLinkedInlineField,
+    type ResolvedRequiredInlineField,
+    type ResolvedSlotContent,
     resolveInlineField,
     resolveLinkedInlineField,
     resolveRequiredInlineField,
     stripHtmlComments,
     stripHtmlTags,
-    type ResolvedInlineField,
-    type ResolvedLinkedInlineField,
-    type ResolvedRequiredInlineField,
-    type ResolvedSlotContent
 } from "./reference-content";
-export type { LessonMetadataRepository, LessonNavigationRepository } from "./repositories";
-export { LessonSequenceService } from "./services/LessonSequenceService";
-export { AdjacentLessons, type NavigationNode } from "./value-objects/AdjacentLessons";
-export { LessonHref } from "./value-objects/LessonHref";
+
 export { LessonId } from "./value-objects/LessonId";
 export { LessonSlug } from "./value-objects/LessonSlug";
 export { LessonTitle } from "./value-objects/LessonTitle";

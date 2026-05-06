@@ -1,7 +1,7 @@
 export const domainBoundaryRule = {
     id: "domain-boundary",
     source: "domain",
-    allowedTargets: ["domain"],
+    allowedTargets: ["domain", "content-core"],
     forbiddenTargets: [
         "application",
         "infrastructure",
@@ -20,7 +20,7 @@ export const domainBoundaryRule = {
 export const applicationBoundaryRule = {
     id: "application-boundary",
     source: "application",
-    allowedTargets: ["domain", "application"],
+    allowedTargets: ["domain", "application", "content-core"],
     forbiddenTargets: [
         "infrastructure",
         "presentation-adapter",
@@ -46,6 +46,7 @@ export const infrastructureBoundaryRule = {
         "data",
         "generated-data",
         "utils",
+        "content-core",
     ],
     forbiddenTargets: [
         "presentation-adapter",
@@ -69,6 +70,7 @@ export const presentationAdapterBoundaryRule = {
         "presentation-adapter",
         "presentation",
         "utils",
+        "content-core",
     ],
     forbiddenTargets: ["ui"],
     forbiddenPackages: [],
@@ -88,11 +90,36 @@ export const uiBoundaryRule = {
         "assets",
         "styles",
         "utils",
+        "content-core",
     ],
     forbiddenTargets: ["domain", "application", "infrastructure"],
     forbiddenPackages: [],
     message: "UI code must depend on presentation contracts, not domain/application internals.",
     suggestion: "Move shaping logic behind a presentation adapter, helper, or view model.",
+};
+
+export const contentCoreBoundaryRule = {
+    id: "content-core-boundary",
+    source: "content-core",
+    allowedTargets: ["content-core"],
+    forbiddenTargets: [
+        "domain",
+        "application",
+        "infrastructure",
+        "presentation-adapter",
+        "presentation",
+        "ui",
+        "generated-data",
+        "data",
+        "utils",
+        "assets",
+        "styles",
+    ],
+    forbiddenPackages: ["astro", "react", "react-dom", "zod"],
+    message:
+        "@ravenhill/content-core must remain host-agnostic and independent from app-local layers.",
+    suggestion:
+        "Keep generated data, validation, Astro, UI, and app adapters in src, and expose only pure content contracts from the package.",
 };
 
 export const boundaryRules = [
@@ -101,6 +128,7 @@ export const boundaryRules = [
     infrastructureBoundaryRule,
     presentationAdapterBoundaryRule,
     uiBoundaryRule,
+    contentCoreBoundaryRule,
 ];
 
 /**
