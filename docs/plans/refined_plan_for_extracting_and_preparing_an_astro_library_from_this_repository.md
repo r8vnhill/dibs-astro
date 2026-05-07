@@ -205,7 +205,7 @@ trusted record.
 
 ---
 
-## Phase 3 — Hardening as a publishable package
+## ~~Phase 3 — Hardening as a publishable package~~
 
 ### Objective
 
@@ -213,11 +213,14 @@ Prepare `content-core` for real packaging without publishing yet.
 
 ### Work
 
-- Add `type: "module"`.
-- Add `exports`.
+- Keep `type: "module"`.
+- Point `main`, `types`, and root-only `exports` at built `dist` files.
 - Add `files`.
 - Add `publishConfig`.
-- Define `main` and `types` only if they are actually needed by the chosen build strategy.
+- Build ESM and declarations from the root source entry.
+- Validate package shape with `publint` and a dry-run pack-file assertion.
+- Keep `dist` as generated output.
+- Define `main` and `types` for the built package artifact.
 - Classify dependencies correctly:
 
   - `dependencies` for actual runtime needs of the package;
@@ -232,7 +235,7 @@ Prepare `content-core` for real packaging without publishing yet.
 
 ### Exit criteria
 
-- `pnpm pack --filter @ravenhill/content-core` produces a sensible artifact;
+- `pnpm --dir packages/content-core pack --dry-run --json` produces a sensible artifact;
 - the tarball does not include repository noise;
 - the package declares only what it truly exposes.
 

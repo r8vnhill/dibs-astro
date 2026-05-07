@@ -14,6 +14,7 @@ Context and essential rules for agents working in this package.
 
 - `@ravenhill/content-core` is a private workspace package under the Astro site.
 - It contains extracted host-agnostic navigation and lesson metadata core logic.
+- It builds from `src/index.ts` to `dist/index.js` and `dist/index.d.ts` through `tsup`.
 - The stabilized root API uses `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`.
 - Lesson metadata records use branded semantic value types and explicit `found`/`missing`/`invalid` result unions.
@@ -23,7 +24,8 @@ Context and essential rules for agents working in this package.
 ## Workflow
 
 - Validate this package with `pnpm check:content-core` from `astro-website`.
-- The package exports TypeScript source directly from `src/index.ts`.
+- The package exports built files from `dist`; keep `src/index.ts` as the only public source entry.
+- Treat `dist/` as generated output. Do not edit it manually or rely on it for source changes.
 - Keep `package.json` publication-ready in shape, but preserve `private: true` unless the user asks to change release
   policy.
 - Do not modify changelogs unless the user explicitly asks for changelog updates.
@@ -37,6 +39,7 @@ Context and essential rules for agents working in this package.
 - Treat any further extraction from the site as an architecture decision; ask before moving additional domain models
   into this package.
 - Consumers must import from the package root (`@ravenhill/content-core`), not package subpaths.
+- Do not add package subpath exports. If consumers need more API, add it to the root contract intentionally.
 - Follow the inclusive documentation guidance from
   `../../src/pages/notes/software-libraries/api-design/documentation/index.astro`: prefer precise, clear, respectful
   terminology over loaded metaphors or unnecessarily punitive wording.

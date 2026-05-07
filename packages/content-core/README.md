@@ -2,15 +2,15 @@
 
 Content abstraction layer for reusable documentation and learning systems.
 
-## Phase 2 + API Hardening (Current)
+## Phase 3 (Current)
 
-This package contains the first extracted pure content core from the Astro site and now exposes a stabilized root API.
-It establishes:
+This package contains the first extracted pure content core from the Astro site and now builds to a root-only ESM
+package artifact. It establishes:
 
 - Workspace topology (`packages/*` alongside root Astro app)
 - Package identity (`@ravenhill/content-core` as a reusable, publication-ready scoped package)
 - Consumption pattern (workspace dependency from root app)
-- Build validation (TypeScript type checking)
+- Build validation (`tsup`, TypeScript declarations, `publint`, and pack-file checks)
 - Host-agnostic navigation and lesson metadata contracts
 - Stabilized service names: `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`
@@ -19,12 +19,43 @@ It establishes:
 
 The package remains `private: true` during this phase to avoid accidental publication.
 
+## Build and Package Checks
+
+Run package validation from the repository root:
+
+```sh
+pnpm check:content-core
+```
+
+That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, and verifies
+the dry-run pack file list, then runs the focused Vitest type contract tests for the package root. `dist/` is generated
+output and should not be edited by hand.
+
+To run only the root API type contract fixtures from the repository root:
+
+```sh
+pnpm test:typecheck:content-core
+```
+
+That command uses `vitest.content-core.types.config.ts` to list the type-only fixtures without the site-wide Astro/jsdom
+runtime test configuration, then runs the package TypeScript check that statically validates those `.test-d.ts` files.
+
+Runtime value exports remain covered by the unit suite:
+
+```sh
+pnpm test:unit -- packages/content-core/src
+```
+
+The package artifact is intentionally small: `package.json`, `README.md`, and the built `dist` entry files. Source
+files, tests, local build config, and agent guidance are excluded from the packed artifact.
+
 ## Design Goals
 
 - **Neutral identity**: `content-core` (not `course-core`) to enable reuse beyond DIBS
 - **Host-agnostic**: Pure content abstractions without Astro or platform-specific coupling
 - **Publication-ready**: Named as if publication to npm/GitLab were real, even though not done yet
-- **Root-only API**: Consumers import from `@ravenhill/content-core`, not package subpaths
+- **Root-only API**: Consumers import from `@ravenhill/content-core`, not package subpaths; type fixtures check this
+  boundary alongside removed-name compatibility guards
 
 ## Exported Core
 

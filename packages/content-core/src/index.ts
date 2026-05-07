@@ -3,19 +3,22 @@
  *
  * Public API for `@ravenhill/content-core`.
  *
- * This package contains host-agnostic content services for learning platforms, documentation sites, and course
- * websites. It focuses on pure lesson-navigation and lesson-metadata concerns, without depending on Astro, generated
- * JSON files, UI components, validation adapters, or a specific CMS.
+ * This package provides host-agnostic content services for learning platforms, documentation sites, and course 
+ * websites. It focuses on two reusable content concerns:
  *
- * The package is intentionally small and boundary-oriented:
+ * - lesson navigation: canonical hrefs, adjacency, trails, sequencing, and navigation lookup;
+ * - lesson metadata: authorship, provenance, dates, history, and validated metadata records.
  *
- * - navigation contracts model lesson hrefs, adjacency, trails, and sequencing;
- * - metadata contracts model authorship, publication dates, updates, and paths;
- * - service implementations depend on repository interfaces rather than host infrastructure;
- * - date and path helpers keep normalization rules reusable and testable.
+ * The package does not depend on Astro, generated JSON files, CMS APIs, UI frameworks, or host-specific routing. Host 
+ * applications provide data through repository contracts, while this package provides pure value objects, service
+ * implementations, result types, and normalization helpers.
  *
- * Consumers should import from this entry point instead of reaching into internal modules. That keeps the package free
- * to reorganize its implementation while preserving a stable public surface.
+ * Public records use branded values to represent fields that have crossed a validation boundary. Date, path, and 
+ * branded-value parsers are exported so adapters, tests, and generated-data loaders can apply the same rules as the
+ * service layer.
+ *
+ * Import from this entry point only. Submodule imports couple consumers to the current internal layout and are not 
+ * part of the supported package contract.
  *
  * @example
  * ```typescript
@@ -28,35 +31,36 @@
  * ```
  */
 
-import { version } from "../package.json" with { type: "json" };
+import packageJson from "../package.json" with { type: "json" };
 
 /**
  * Canonical package name.
  *
- * Use this constant in workspace tests, dependency-boundary checks, and package identity assertions instead of
- * duplicating the literal package name.
+ * Use this constant in workspace tests, dependency-boundary checks, diagnostics, and package identity assertions 
+ * instead of duplicating the literal package name.
  */
 export const CONTENT_CORE_PACKAGE_NAME = "@ravenhill/content-core";
 
 /**
  * Current package version.
  *
- * This value is useful for lightweight runtime diagnostics and workspace consumption checks. The authoritative
- * published version remains the package manager metadata.
+ * This value is read from package metadata so runtime diagnostics and workspace consumption checks report the same 
+ * version as the package manager.
  */
-export const CONTENT_CORE_VERSION = version;
+export const CONTENT_CORE_VERSION = packageJson.version;
 
 /**
  * Lesson-navigation public API.
  *
- * This group exposes the canonical lesson-navigation model:
+ * This group exposes the navigation model and services used to resolve lesson order, links, and ancestry:
  *
- * - {@link LessonHref} identifies normalized lesson locations;
- * - {@link AdjacentLessons} models previous/next lesson relationships;
- * - {@link LessonTrail} and {@link TrailNode} model breadcrumb-like trails;
- * - {@link NavigationNode} and {@link AutoNavigationNode} describe navigation trees;
- * - {@link LessonSequenceService} and {@link NavigationService} provide the default service implementation;
- * - {@link LessonNavigationRepository} defines the host-side data boundary.
+ * - {@link LessonHref} normalizes and compares lesson hrefs;
+ * - {@link AdjacentLessons} models previous and next lesson relationships;
+ * - {@link LessonTrail} and {@link TrailNode} model breadcrumb-like ancestry;
+ * - {@link LessonSequenceService} derives ordered lesson sequences;
+ * - {@link NavigationService} resolves navigation data through a repository;
+ * - {@link LessonNavigationRepository} isolates host-side navigation storage;
+ * - {@link NavigationServiceContract} defines the service boundary.
  */
 export { AdjacentLessons, LessonHref, LessonSequenceService, LessonTrail, NavigationService } from "./navigation";
 
@@ -72,21 +76,17 @@ export type {
 /**
  * Lesson-metadata public API.
  *
- * This group exposes metadata records, DTOs, repositories, services, and pure helpers for normalizing lesson dates and
- * paths.
+ * This group exposes validated metadata records, semantic branded values, parser helpers, explicit lookup/resolution 
+ * results, repository contracts, and the default metadata service.
  *
- * The helpers are deliberately exported from the core package because consumers often need the same normalization
- * rules in tests, generated-data adapters, and presentation-facing boundaries.
+ * Metadata lookup distinguishes three states:
  *
- * - {@link LessonMetadataRecord} is the normalized domain-facing metadata shape;
- * - {@link LessonMetadataDto} and related DTOs describe external input records;
- * - branded value parsers validate metadata primitives at repository boundaries;
- * - lookup and resolution results distinguish found, missing, and invalid metadata;
- * - {@link LessonMetadataRepository} defines the host-side metadata boundary;
- * - {@link LessonMetadataService} provides the default metadata service;
- * - {@link formatLessonDate}, {@link parseIsoShortDate}, and
- *   {@link resolveLessonDateDisplay} centralize date-display behavior;
- * - {@link normalizeLessonMetadataPathname} centralizes metadata path matching.
+ * - `found`: metadata exists and has been validated;
+ * - `missing`: no metadata record matched the lesson;
+ * - `invalid`: a matching record exists but failed validation.
+ *
+ * This distinction lets host adapters and presentation layers avoid treating broken generated metadata as ordinary 
+ * absence.
  */
 export {
     DEFAULT_LESSON_METADATA_LOCALE,

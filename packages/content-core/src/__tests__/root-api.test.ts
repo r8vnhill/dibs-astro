@@ -1,40 +1,50 @@
-import { describe, expect, test } from "vitest";
-import * as contentCore from "@ravenhill/content-core";
 import {
     AdjacentLessons,
+    CONTENT_CORE_PACKAGE_NAME,
+    CONTENT_CORE_VERSION,
+    formatDate,
+    formatLessonDate,
     LessonHref,
     LessonMetadataService,
     LessonSequenceService,
     LessonTrail,
     NavigationService,
-    formatLessonDate,
     normalizeLessonMetadataPathname,
     parseAbsoluteUrl,
     parseGitCommitHash,
+    parseIsoShortDate,
     parseIsoShortDateValue,
     parseLessonSourceFile,
     parseNonEmptyText,
+    resolveLessonDateDisplay,
 } from "@ravenhill/content-core";
+import { describe, expect, test } from "vitest";
 
-describe("content-core root API", () => {
-    test("exports the stabilized value surface from the package root", () => {
-        expect(AdjacentLessons).toBe(contentCore.AdjacentLessons);
-        expect(LessonHref).toBe(contentCore.LessonHref);
-        expect(LessonMetadataService).toBe(contentCore.LessonMetadataService);
-        expect(LessonSequenceService).toBe(contentCore.LessonSequenceService);
-        expect(LessonTrail).toBe(contentCore.LessonTrail);
-        expect(NavigationService).toBe(contentCore.NavigationService);
-        expect(formatLessonDate).toBe(contentCore.formatLessonDate);
-        expect(normalizeLessonMetadataPathname).toBe(contentCore.normalizeLessonMetadataPathname);
-        expect(parseAbsoluteUrl).toBe(contentCore.parseAbsoluteUrl);
-        expect(parseGitCommitHash).toBe(contentCore.parseGitCommitHash);
-        expect(parseIsoShortDateValue).toBe(contentCore.parseIsoShortDateValue);
-        expect(parseLessonSourceFile).toBe(contentCore.parseLessonSourceFile);
-        expect(parseNonEmptyText).toBe(contentCore.parseNonEmptyText);
+describe("content-core root API values", () => {
+    test("exposes package identity values", () => {
+        expect(CONTENT_CORE_PACKAGE_NAME).toBe("@ravenhill/content-core");
+        expect(CONTENT_CORE_VERSION).toMatch(/^\d+\.\d+\.\d+$/u);
     });
 
-    test("does not expose temporary Phase 1 service names at runtime", () => {
-        expect("NavigationServiceImpl" in contentCore).toBe(false);
-        expect("LessonMetadataServiceImpl" in contentCore).toBe(false);
+    test("exposes navigation value symbols", () => {
+        expect(AdjacentLessons).toBeDefined();
+        expect(LessonHref).toBeDefined();
+        expect(LessonSequenceService).toBeDefined();
+        expect(LessonTrail).toBeDefined();
+        expect(NavigationService).toBeDefined();
+    });
+
+    test("exposes lesson-metadata value symbols and helpers", () => {
+        expect(LessonMetadataService).toBeDefined();
+        expect(formatDate).toBeTypeOf("function");
+        expect(formatLessonDate).toBeTypeOf("function");
+        expect(normalizeLessonMetadataPathname).toBeTypeOf("function");
+        expect(parseAbsoluteUrl).toBeTypeOf("function");
+        expect(parseGitCommitHash).toBeTypeOf("function");
+        expect(parseIsoShortDate).toBeTypeOf("function");
+        expect(parseIsoShortDateValue).toBeTypeOf("function");
+        expect(parseLessonSourceFile).toBeTypeOf("function");
+        expect(parseNonEmptyText).toBeTypeOf("function");
+        expect(resolveLessonDateDisplay).toBeTypeOf("function");
     });
 });

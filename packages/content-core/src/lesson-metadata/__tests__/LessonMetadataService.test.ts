@@ -1,5 +1,5 @@
-import { LessonHref } from "../../navigation/lesson-href";
 import { beforeEach, describe, expect, it } from "vitest";
+import { LessonHref } from "../../navigation/lesson-href";
 import {
     parseGitCommitHash,
     parseIsoShortDateValue,
@@ -7,8 +7,8 @@ import {
     parseNonEmptyText,
 } from "../branded-values";
 import { LessonMetadataService } from "../lesson-metadata-service";
-import type { LessonMetadataRepository } from "../repositories";
 import type { LessonMetadataRecord } from "../records";
+import type { LessonMetadataRepository } from "../repositories";
 
 const createMetadataRecord = (): LessonMetadataRecord => ({
     sourceFile: parseLessonSourceFile("src/pages/notes/unit1/lesson1/index.astro")!,
@@ -16,7 +16,7 @@ const createMetadataRecord = (): LessonMetadataRecord => ({
         { name: parseNonEmptyText("Ada Lovelace")! },
         { name: parseNonEmptyText("Grace Hopper")! },
     ],
-    lastModified: parseIsoShortDateValue("2026-04-10"),
+    lastModified: parseIsoShortDateValue("2026-04-10")!,
     changes: [
         {
             hash: parseGitCommitHash("abc1234")!,

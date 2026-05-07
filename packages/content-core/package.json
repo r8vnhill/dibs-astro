@@ -4,18 +4,27 @@
     "type": "module",
     "private": true,
     "description": "Content abstraction layer for reusable documentation and learning systems.",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./src/index.ts",
-            "default": "./src/index.ts"
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
         }
     },
-    "types": "./src/index.ts",
-    "typesVersions": {
-        "*": {
-            ".": [
-                "./src/index.ts"
-            ]
-        }
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsup",
+        "check": "pnpm run build && tsc --noEmit && publint --strict && pnpm run pack:check",
+        "pack:check": "pnpm pack --dry-run --json | node scripts/assert-pack-files.mjs",
+        "pack:dry-run": "pnpm pack --dry-run --json"
+    },
+    "publishConfig": {
+        "registry": "https://gitlab.com/api/v4/projects/<project-id>/packages/npm/"
     }
 }
