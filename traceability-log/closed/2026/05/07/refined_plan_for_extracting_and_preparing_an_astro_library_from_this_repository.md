@@ -273,7 +273,7 @@ declarations with `NodeNext` resolution, and confirms unsupported subpaths remai
 
 ---
 
-## Phase 5 — Pilot publication
+## ~~Phase 5 — Pilot publication~~
 
 ### Objective
 

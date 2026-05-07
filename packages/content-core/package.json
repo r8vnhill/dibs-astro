@@ -1,8 +1,8 @@
 {
     "name": "@ravenhill/content-core",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "type": "module",
-    "private": true,
+    "private": false,
     "description": "Content abstraction layer for reusable documentation and learning systems.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
@@ -26,6 +26,7 @@
         "pack:dry-run": "pnpm pack --dry-run --json"
     },
     "publishConfig": {
-        "registry": "https://gitlab.com/api/v4/projects/<project-id>/packages/npm/"
+        "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
+        "access": "restricted"
     }
 }

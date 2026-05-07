@@ -2,23 +2,90 @@
 
 Content abstraction layer for reusable documentation and learning systems.
 
-## Phase 4 (Current)
+## Status
 
-This package contains the first extracted pure content core from the Astro site and now builds to a root-only ESM
-package artifact with external consumer validation. It establishes:
+`@ravenhill/content-core` is a pilot internal package. It is published manually to the GitLab Package Registry and
+consumed through the GitLab group registry endpoint. Release automation remains out of scope.
 
-- Workspace topology (`packages/*` alongside root Astro app)
-- Package identity (`@ravenhill/content-core` as a reusable, publication-ready scoped package)
-- Consumption pattern (workspace dependency from root app)
-- Build validation (`tsup`, TypeScript declarations, `publint`, and pack-file checks)
-- Packaged-consumer validation from an isolated temporary project
+Current publish target:
+
+- package: `@ravenhill/content-core`
+- version: `0.1.0`
+- publish registry: `https://gitlab.com/api/v4/projects/71752456/packages/npm/`
+- consumer registry: `https://gitlab.com/api/v4/groups/110542663/-/packages/npm/`
+
+## What It Provides
+
+- Workspace topology support for the extracted package under `packages/*`
 - Host-agnostic navigation and lesson metadata contracts
 - Stabilized service names: `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`
 - Branded lesson metadata record values for trusted repository data
-- Explicit metadata lookup/resolution results that distinguish `found`, `missing`, and `invalid`
+- Explicit metadata lookup results that distinguish `found`, `missing`, and `invalid`
+- Root-only ESM package output with external consumer validation
 
-The package remains `private: true` during this phase to avoid accidental publication.
+## Installation
+
+Configure the `@ravenhill` scope to read from the GitLab group registry:
+
+```ini
+@ravenhill:registry=https://gitlab.com/api/v4/groups/110542663/-/packages/npm/
+```
+
+Install the pilot package:
+
+```sh
+npm install @ravenhill/content-core@0.1.0
+```
+
+If your token is not already configured locally, set it without committing secrets:
+
+```sh
+npm config set -- //gitlab.com/api/v4/groups/110542663/-/packages/npm/:_authToken="${NPM_TOKEN}"
+npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
+```
+
+## Usage
+
+Import from the package root only:
+
+```ts
+import { LessonSequenceService } from "@ravenhill/content-core";
+```
+
+Subpath imports are intentionally unsupported:
+
+```ts
+import { LessonSequenceService } from "@ravenhill/content-core/navigation";
+```
+
+## Manual Publish Checklist
+
+Run the local preflight checks before publishing:
+
+```sh
+pnpm install
+pnpm check:content-core
+pnpm check
+pnpm --dir packages/content-core run consumer:check
+pnpm --dir packages/content-core pack --dry-run --json
+pnpm --dir packages/content-core exec npm pkg get name version private publishConfig exports files types main
+```
+
+Check whether the release version already exists before publishing:
+
+```sh
+npm view @ravenhill/content-core@0.1.0 version \
+  --registry=https://gitlab.com/api/v4/groups/110542663/-/packages/npm/
+```
+
+Publish manually from the package directory after configuring `NPM_TOKEN` locally:
+
+```sh
+export NPM_TOKEN="<token-with-package-publish-permission>"
+npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
+pnpm --dir packages/content-core publish --no-git-checks
+```
 
 ## Build and Package Checks
 
@@ -28,8 +95,8 @@ Run package validation from the repository root:
 pnpm check:content-core
 ```
 
-That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, and verifies
-the dry-run pack file list, validates the packed tarball from a temporary external consumer, then runs the focused
+That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, verifies
+the dry-run pack file list, validates the packed tarball from a temporary external consumer, and then runs the focused
 Vitest type contract tests for the package root. `dist/` is generated output and should not be edited by hand.
 
 To run only the packaged-consumer validation:
@@ -64,7 +131,7 @@ files, tests, local build config, and agent guidance are excluded from the packe
 
 - **Neutral identity**: `content-core` (not `course-core`) to enable reuse beyond DIBS
 - **Host-agnostic**: Pure content abstractions without Astro or platform-specific coupling
-- **Publication-ready**: Named as if publication to npm/GitLab were real, even though not done yet
+- **Pilot publication**: The package is ready for manual GitLab registry publication at `0.1.0`
 - **Root-only API**: Consumers import from `@ravenhill/content-core`, not package subpaths; type fixtures check this
   boundary alongside removed-name compatibility guards
 
@@ -94,6 +161,16 @@ Metadata repositories now return explicit lookup results instead of `Record | un
 with fields that cannot be branded returns `kind: "invalid"` with stable issue paths; only absent metadata returns
 `kind: "missing"`. The presentation bridge exposes the result object and Astro layouts render metadata panels only for
 `kind: "found"`.
+
+## Troubleshooting
+
+- Missing auth token: configure the project and group registry tokens locally before publishing or installing.
+- Wrong registry endpoint: use the project endpoint for publish and the group endpoint for consumer installs.
+- Duplicate version: stop and choose a new version if `0.1.0` already exists in the registry.
+- Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint
+  mapping.
+- Accidental subpath import attempt: import from `@ravenhill/content-core` only; subpaths are not part of the
+  supported contract.
 
 ## Future Evolution
 
