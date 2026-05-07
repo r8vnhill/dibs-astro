@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.19.0] - 2026-05-07
+
+### Added
+
+- Added `@ravenhill/content-core` as a publishable workspace package for host-agnostic navigation and lesson metadata contracts, with a root-only public API and first pilot package version `0.1.0`.
+- Added package build, declaration, pack-file, `publint`, and isolated packaged-consumer validation so the package is checked as an installable dependency rather than only through workspace resolution.
+- Added GitLab Package Registry configuration and consumer-facing package documentation for the controlled pilot publication flow.
+
+### Changed
+
+- Updated the Astro site to consume extracted navigation and lesson metadata behavior from `@ravenhill/content-core`, keeping app-local adapters responsible for generated data, Astro integration, and presentation concerns.
+- Expanded the standard `pnpm check` and CI quality gate to include content-core validation and architecture boundary checks.
+- Strengthened architecture documentation, agent guidance, and traceability logs around package boundaries, root-only imports, and release preparation.
+
+### Fixed
+
+- Hardened lesson metadata handling with branded trusted values and explicit `found`, `missing`, and `invalid` result contracts at the generated-data boundary.
+- Consolidated bibliography page-reference behavior around shared runtime semantics so reference rendering and validation use the same normalization rules.
+
 ## [0.18.1] - 2026-04-28
 
 ### Changed
