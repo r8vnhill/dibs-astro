@@ -60,6 +60,7 @@ test:unit:
     needs:
         - job: deps
     script:
+        - pnpm run build:content-core
         - pnpm exec vitest run --config vitest.config.ts
 
 test:astro-render:
@@ -71,6 +72,7 @@ test:astro-render:
     needs:
         - job: deps
     script:
+        - pnpm run build:content-core
         - pnpm exec vitest run --config vitest.astro.config.ts
 
 build:
