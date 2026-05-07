@@ -241,7 +241,7 @@ Prepare `content-core` for real packaging without publishing yet.
 
 ---
 
-## Phase 4 — Validation as a package consumer
+## ~~Phase 4 — Validation as a package consumer~~
 
 ### Objective
 
@@ -263,6 +263,13 @@ Verify that the package works not only “inside the repo” but as an actual de
 
 - a consumer can import the package without relying on internal details;
 - no packaging issues appear that the workspace had previously hidden.
+
+### Completed implementation
+
+`packages/content-core` now validates the packed tarball from a temporary external ESM consumer. The consumer check
+installs the generated `.tgz` outside the workspace with npm, verifies runtime root imports, checks TypeScript
+declarations with `NodeNext` resolution, and confirms unsupported subpaths remain blocked. The check is exposed as
+`pnpm --dir packages/content-core run consumer:check` and is included in `pnpm check:content-core`.
 
 ---
 

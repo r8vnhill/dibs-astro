@@ -2,15 +2,16 @@
 
 Content abstraction layer for reusable documentation and learning systems.
 
-## Phase 3 (Current)
+## Phase 4 (Current)
 
 This package contains the first extracted pure content core from the Astro site and now builds to a root-only ESM
-package artifact. It establishes:
+package artifact with external consumer validation. It establishes:
 
 - Workspace topology (`packages/*` alongside root Astro app)
 - Package identity (`@ravenhill/content-core` as a reusable, publication-ready scoped package)
 - Consumption pattern (workspace dependency from root app)
 - Build validation (`tsup`, TypeScript declarations, `publint`, and pack-file checks)
+- Packaged-consumer validation from an isolated temporary project
 - Host-agnostic navigation and lesson metadata contracts
 - Stabilized service names: `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`
@@ -28,8 +29,18 @@ pnpm check:content-core
 ```
 
 That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, and verifies
-the dry-run pack file list, then runs the focused Vitest type contract tests for the package root. `dist/` is generated
-output and should not be edited by hand.
+the dry-run pack file list, validates the packed tarball from a temporary external consumer, then runs the focused
+Vitest type contract tests for the package root. `dist/` is generated output and should not be edited by hand.
+
+To run only the packaged-consumer validation:
+
+```sh
+pnpm --dir packages/content-core run consumer:check
+```
+
+That command builds the package, creates a local tarball, installs it into a temporary project outside the workspace,
+and verifies runtime imports, TypeScript declarations, and unsupported subpath imports. Add `-- --keep-temp --verbose`
+when debugging the temporary consumer.
 
 To run only the root API type contract fixtures from the repository root:
 

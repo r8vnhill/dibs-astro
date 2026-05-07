@@ -20,7 +20,8 @@
     "sideEffects": false,
     "scripts": {
         "build": "tsup",
-        "check": "pnpm run build && tsc --noEmit && publint --strict && pnpm run pack:check",
+        "check": "pnpm run build && tsc --noEmit && publint --strict && pnpm run pack:check && pnpm run consumer:check",
+        "consumer:check": "node scripts/validate-packed-consumer.mjs",
         "pack:check": "pnpm pack --dry-run --json | node scripts/assert-pack-files.mjs",
         "pack:dry-run": "pnpm pack --dry-run --json"
     },
