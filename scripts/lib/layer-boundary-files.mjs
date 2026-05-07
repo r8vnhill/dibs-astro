@@ -6,6 +6,7 @@ export const defaultSourcePatterns = [
     "packages/content-core/src/**/*.ts",
     "!src/**/*.d.ts",
     "!packages/content-core/src/**/*.d.ts",
+    "!packages/content-core/src/**/*.test-d.ts",
 ];
 
 export async function discoverSourceFiles(options = {}) {
