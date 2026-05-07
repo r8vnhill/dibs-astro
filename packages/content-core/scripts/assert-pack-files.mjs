@@ -1,4 +1,10 @@
+import { execFile } from "node:child_process";
+import { unlink } from "node:fs/promises";
+import { resolve } from "node:path";
 import { stdin } from "node:process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 const expectedFiles = new Set([
     "package/README.md",
@@ -17,7 +23,9 @@ const blockedPatterns = [
     /^package\/vitest\.config\./u,
 ];
 
-const input = await stdinToString();
+const input = process.argv.includes("--pack")
+    ? await packPackage()
+    : await stdinToString();
 const packOutput = JSON.parse(input);
 const packEntries = Array.isArray(packOutput) ? packOutput : [packOutput];
 const files = new Set(
@@ -33,6 +41,33 @@ if (missingFiles.length > 0 || extraFiles.length > 0 || blockedFiles.length > 0)
     console.error(formatPackIssue("Unexpected package files", extraFiles));
     console.error(formatPackIssue("Blocked package files", blockedFiles));
     process.exit(1);
+}
+
+async function packPackage() {
+    const executable = process.platform === "win32" ? "cmd.exe" : "npm";
+    const args = process.platform === "win32"
+        ? ["/d", "/c", "npm.cmd", "pack", "--json"]
+        : ["pack", "--json"];
+    const { stdout } = await execFileAsync(executable, args, {
+        cwd: resolve(import.meta.dirname, ".."),
+    });
+    return stdout;
+}
+
+await removePackedTarballs(packEntries);
+
+async function removePackedTarballs(entries) {
+    await Promise.all(entries.map(async (entry) => {
+        if (typeof entry.filename !== "string" || entry.filename.length === 0) {
+            return;
+        }
+
+        await unlink(resolve(import.meta.dirname, "..", entry.filename)).catch((error) => {
+            if (error?.code !== "ENOENT") {
+                throw error;
+            }
+        });
+    }));
 }
 
 function stdinToString() {

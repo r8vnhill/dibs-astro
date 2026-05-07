@@ -68,7 +68,7 @@ pnpm install
 pnpm check:content-core
 pnpm check
 pnpm --dir packages/content-core run consumer:check
-pnpm --dir packages/content-core pack --dry-run --json
+pnpm --dir packages/content-core run pack:dry-run
 pnpm --dir packages/content-core exec npm pkg get name version private publishConfig exports files types main
 ```
 

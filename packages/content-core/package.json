@@ -22,8 +22,8 @@
         "build": "tsup",
         "check": "pnpm run build && tsc --noEmit && publint --strict && pnpm run pack:check && pnpm run consumer:check",
         "consumer:check": "node scripts/validate-packed-consumer.mjs",
-        "pack:check": "pnpm pack --dry-run --json | node scripts/assert-pack-files.mjs",
-        "pack:dry-run": "pnpm pack --dry-run --json"
+        "pack:check": "node scripts/assert-pack-files.mjs --pack",
+        "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"
     },
     "publishConfig": {
         "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
