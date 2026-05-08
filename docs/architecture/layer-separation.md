@@ -11,6 +11,7 @@ the authoritative description of the current boundaries when they conflict with 
 - **Domain**: Pure business rules and use-case logic, free of frameworks and I/O.
 - **Application**: Orchestration layer that composes domain entities and ports, returning DTOs to callers.
 - **Content core**: Workspace package with host-agnostic navigation and lesson metadata contracts shared by the app.
+- **Site core**: Workspace package with host-agnostic repository and site-link primitives shared by the app.
 - **Infrastructure**: Concrete data-source implementations and external service adapters.
 - **Presentation adapters**: Local composition root for UI use cases; bridges application services to UI-safe payloads.
 - **UI surfaces**: Astro layouts, React components, and pages that render presentation DTOs.
@@ -24,6 +25,11 @@ The repo uses a layered structure inside `src/`:
     contracts, repository interfaces, and application services.
   - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local
     aliases.
+
+- `packages/site-core`
+  - Owns extracted pure repository references, supported hosting platforms, platform normalization, and repository/commit
+    URL builders.
+  - Contains no Astro imports, generated data, DIBS-specific site configuration, UI components, or content-core imports.
 
 - `src/domain`
   - Owns app-local domain models and reference-content resolution rules that have not been extracted.
@@ -55,6 +61,7 @@ The main content seams are now present in code:
 
 - Navigation rules and lesson metadata helpers are centered in `packages/content-core` and consumed through
   repository/service boundaries.
+- Repository hosting primitives are centered in `packages/site-core` and consumed through the package root.
 - Reference-content business rules live in `src/domain/reference-content.ts`.
 - The generated lesson metadata dataset boundary remains app-local in `src/utils/lesson-metadata.ts`.
 - Presentation composition for lesson navigation and lesson metadata lives in:
@@ -82,20 +89,22 @@ These paths are locked with high-value test suites:
 
 ## Layer Rules
 
-| Source layer                                          | Allowed targets                                                                                  | Forbidden targets/packages                                                                              | Notes                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/content-core/src/**`                        | `content-core`                                                                                   | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic shared core.              |
-| `src/domain/**`                                       | `domain`, `content-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
-| `src/application/**`                                  | `domain`, `application`, `content-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
-| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core` | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
-| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`           | `ui`, `components`, `layouts`, `pages`                                                                  | Local composition root.                 |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`   | `domain`, `application`, `infrastructure`                                                               | Rendering surface.                      |
+| Source layer                                          | Allowed targets                                                                                                 | Forbidden targets/packages                                                                                | Notes                                   |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `packages/content-core/src/**`                        | `content-core`                                                                                                  | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`   | Host-agnostic content core.             |
+| `packages/site-core/src/**`                           | `site-core`                                                                                                     | app-local layers, data, generated data, utilities, assets, styles, `content-core`, `astro`, `react`, `zod` | Host-agnostic repository primitives.    |
+| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                           | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                            | Pure app-local business rules only.     |
+| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                            | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`                 | App-local orchestration and ports only. |
+| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core`   | `presentation`, `ui`                                                                                      | Concrete data-source implementations.   |
+| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`             | `ui`, `components`, `layouts`, `pages`                                                                    | Local composition root.                 |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`     | `domain`, `application`, `infrastructure`                                                                 | Rendering surface.                      |
 
 **Implementation notes:**
 
 - Type-only imports are checked as architectural dependencies.
 - Package subpaths are normalized: `react/jsx-runtime` → `react`, `zod/v4` → `zod`.
 - `@ravenhill/content-core` must be consumed through the package root; package subpath imports are not allowed.
+- `@ravenhill/site-core` must be consumed through the package root; package subpath imports are not allowed.
 - Generated data: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are classified as
   `generated-data`.
 - Astro support scans only frontmatter imports, not template text.
@@ -208,6 +217,7 @@ as a compatibility alias. New code should read `findings`; the alias will be rem
 When adding new source files:
 
 - Put reusable host-agnostic navigation and lesson metadata core in `packages/content-core/src/`.
+- Put reusable host-agnostic repository primitives in `packages/site-core/src/`.
 - Put app-local pure business rules and domain logic in `src/domain/`.
 - Put app-local use-case orchestration and port contracts in `src/application/`.
 - Put data-source mapping and external adapters in `src/infrastructure/adapters/`.
@@ -223,10 +233,12 @@ Examples:
 - Valid: UI imports view-model or normalization helpers from `$presentation/adapters/*`.
 - Valid: a presentation adapter imports an infrastructure adapter to retrieve static site data.
 - Valid: app code imports extracted navigation or metadata contracts from `@ravenhill/content-core`.
+- Valid: app code imports repository primitives from `@ravenhill/site-core`.
 - Not allowed: UI imports `~/data/course-structure`, `~/data/site`, or `~/data/bibliography/catalog` directly.
 - Not allowed: UI imports `$domain/reference-content` or `$application/ports` directly.
 - Not allowed: application code imports `astro`, `react`, `zod`, generated data, or UI components.
 - Not allowed: any code imports from `@ravenhill/content-core/*` package subpaths.
+- Not allowed: any code imports from `@ravenhill/site-core/*` package subpaths.
 
 ## Presentation Adapter Contracts
 
@@ -257,9 +269,10 @@ The main presentation-facing contracts locked in during this phase are:
   - adapt domain reference-content rules into rendering-oriented helpers
   - keep slot precedence and missing-title behavior stable without UI importing domain modules
 
-- `getWebsiteRepoRef(platform)`, `getDefaultBibliographyCatalog()`, and the static UI data helpers
+- `getWebsiteRepoRef(platform)`, `getWebsiteRepoRefs()`, `getDefaultBibliographyCatalog()`, and the static UI data helpers
   - expose existing static data through explicit presentation-facing modules
   - keep UI components free from direct `src/data/*` imports
+  - use `@ravenhill/site-core` for generic repository primitives while keeping concrete site values app-local
 
 `NotesLayout.astro` currently renders previous/next navigation through these contracts. Breadcrumb behavior is not yet a
 locked contract.
@@ -305,6 +318,9 @@ imports, and import records into the layer vocabulary used by the rule matrix.
 
 **Phase 1 content-core extraction** added `packages/content-core/src/**` as a checked source layer and allowed app
 layers to consume `@ravenhill/content-core` through the package root.
+
+**Site-core extraction** added `packages/site-core/src/**` as a checked source layer and allowed app layers to consume
+`@ravenhill/site-core` through the package root for repository primitives.
 
 **Cycle 2 Step 4** moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and wired classifiers
 into the rule matrix. Evaluation now checks exact exceptions, forbidden packages, forbidden targets, and allowed-target

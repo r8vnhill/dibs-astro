@@ -8,6 +8,7 @@ import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
  *   | "presentation-adapter"
  *   | "ui"
  *   | "content-core"
+ *   | "site-core"
  *   | "unknown"
  * } SourceLayer
  */
@@ -26,6 +27,7 @@ import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
  *   | "assets"
  *   | "styles"
  *   | "content-core"
+ *   | "site-core"
  *   | "external-package"
  *   | "unknown"
  * } ImportTarget
@@ -65,6 +67,10 @@ function isUiSource(pathValue) {
 
 function isContentCoreSource(pathValue) {
     return isUnder(pathValue, "packages/content-core/src");
+}
+
+function isSiteCoreSource(pathValue) {
+    return isUnder(pathValue, "packages/site-core/src");
 }
 
 function isDomainTarget(pathValue) {
@@ -118,6 +124,10 @@ function isContentCoreTarget(pathValue) {
     return isUnder(pathValue, "packages/content-core/src");
 }
 
+function isSiteCoreTarget(pathValue) {
+    return isUnder(pathValue, "packages/site-core/src");
+}
+
 const SOURCE_LAYERS = Object.freeze([
     ["domain", isDomainSource],
     ["application", isApplicationSource],
@@ -125,6 +135,7 @@ const SOURCE_LAYERS = Object.freeze([
     ["presentation-adapter", isPresentationAdapterSource],
     ["ui", isUiSource],
     ["content-core", isContentCoreSource],
+    ["site-core", isSiteCoreSource],
 ]);
 
 const TARGETS = Object.freeze([
@@ -140,6 +151,7 @@ const TARGETS = Object.freeze([
     ["assets", isAssetsTarget],
     ["styles", isStylesTarget],
     ["content-core", isContentCoreTarget],
+    ["site-core", isSiteCoreTarget],
 ]);
 
 function isRelativeImport(importPath) {

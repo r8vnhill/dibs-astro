@@ -54,6 +54,11 @@ function isForbiddenContentCoreSubpath(classifiedImport) {
         && classifiedImport.importPath !== "@ravenhill/content-core";
 }
 
+function isForbiddenSiteCoreSubpath(classifiedImport) {
+    return classifiedImport.packageName === "@ravenhill/site-core"
+        && classifiedImport.importPath !== "@ravenhill/site-core";
+}
+
 function toViolation(importRecord, classifiedSource, classifiedImport, rule, reason) {
     return {
         status: "violation",
@@ -121,6 +126,20 @@ export function evaluateBoundaryRules(
                 id: "content-core-root-import",
                 message: "@ravenhill/content-core must be consumed through its root entry point.",
                 suggestion: "Import from @ravenhill/content-core instead of a package subpath.",
+            },
+            "forbidden-package-subpath",
+        );
+    }
+
+    if (isForbiddenSiteCoreSubpath(classifiedImport)) {
+        return toViolation(
+            importRecord,
+            classifiedSource,
+            classifiedImport,
+            {
+                id: "site-core-root-import",
+                message: "@ravenhill/site-core must be consumed through its root entry point.",
+                suggestion: "Import from @ravenhill/site-core instead of a package subpath.",
             },
             "forbidden-package-subpath",
         );

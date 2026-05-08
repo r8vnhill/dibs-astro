@@ -5,13 +5,13 @@
  * through a stable presentation boundary. This keeps UI components free from direct
  * imports of infrastructure static-data modules.
  *
- * @see {@link SiteDataAdapter} for the infrastructure implementation
+ * @see {@link "$infrastructure/adapters/site-data-adapter"} for the infrastructure implementation
  */
 
 import {
     getWebsiteRepoRef,
+    getWebsiteRepoRefs,
     WEBSITE_PRIMARY_AUTHOR,
-    WEBSITE_REPO_REFS,
-} from "$infrastructure/adapters/SiteDataAdapter";
+} from "$infrastructure/adapters/site-data-adapter";
 
-export { getWebsiteRepoRef, WEBSITE_PRIMARY_AUTHOR, WEBSITE_REPO_REFS };
+export { getWebsiteRepoRef, getWebsiteRepoRefs, WEBSITE_PRIMARY_AUTHOR };

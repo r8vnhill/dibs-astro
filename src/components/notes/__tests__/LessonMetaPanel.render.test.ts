@@ -42,7 +42,7 @@ import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
 import type { LessonMetaPanelMetadata } from "$presentation/adapters/lesson-metadata-panel";
 import type { PartialRecord } from "~/types/records";
-import type { RepoPlatform, RepoRef } from "~/utils/git";
+import type { RepoPlatform, RepoRef } from "@ravenhill/site-core";
 import { type AstroRender, createAstroRenderer } from "../../../test-utils/astro-render";
 import LessonMetaPanel from "../LessonMetaPanel.astro";
 

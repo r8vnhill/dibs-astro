@@ -30,12 +30,12 @@ import {
     buildLessonMetaPanelViewModel,
     type LessonMetaPanelMetadata,
 } from "$presentation/adapters/lesson-metadata-panel";
-import { WEBSITE_REPO_REFS } from "$presentation/adapters/site-data";
+import { getWebsiteRepoRefs } from "$presentation/adapters/site-data";
 import type { PartialRecord } from "~/types/records";
 import {
     type RepoPlatform,
     type RepoRef,
-} from "~/utils/git";
+} from "@ravenhill/site-core";
 import { Mono } from "../ui/font";
 import { Link } from "../ui/links";
 
@@ -70,7 +70,7 @@ interface Props {
 
 const {
     metadata,
-    websiteRepoRefs = WEBSITE_REPO_REFS,
+    websiteRepoRefs = getWebsiteRepoRefs(),
     platforms,
 } = Astro.props as Props;
 

@@ -1,7 +1,7 @@
 export const domainBoundaryRule = {
     id: "domain-boundary",
     source: "domain",
-    allowedTargets: ["domain", "content-core"],
+    allowedTargets: ["domain", "content-core", "site-core"],
     forbiddenTargets: [
         "application",
         "infrastructure",
@@ -20,7 +20,7 @@ export const domainBoundaryRule = {
 export const applicationBoundaryRule = {
     id: "application-boundary",
     source: "application",
-    allowedTargets: ["domain", "application", "content-core"],
+    allowedTargets: ["domain", "application", "content-core", "site-core"],
     forbiddenTargets: [
         "infrastructure",
         "presentation-adapter",
@@ -47,6 +47,7 @@ export const infrastructureBoundaryRule = {
         "generated-data",
         "utils",
         "content-core",
+        "site-core",
     ],
     forbiddenTargets: [
         "presentation-adapter",
@@ -71,6 +72,7 @@ export const presentationAdapterBoundaryRule = {
         "presentation",
         "utils",
         "content-core",
+        "site-core",
     ],
     forbiddenTargets: ["ui"],
     forbiddenPackages: [],
@@ -91,6 +93,7 @@ export const uiBoundaryRule = {
         "styles",
         "utils",
         "content-core",
+        "site-core",
     ],
     forbiddenTargets: ["domain", "application", "infrastructure"],
     forbiddenPackages: [],
@@ -122,6 +125,31 @@ export const contentCoreBoundaryRule = {
         "Keep generated data, validation, Astro, UI, and app adapters in src, and expose only pure content contracts from the package.",
 };
 
+export const siteCoreBoundaryRule = {
+    id: "site-core-boundary",
+    source: "site-core",
+    allowedTargets: ["site-core"],
+    forbiddenTargets: [
+        "domain",
+        "application",
+        "infrastructure",
+        "presentation-adapter",
+        "presentation",
+        "ui",
+        "generated-data",
+        "data",
+        "utils",
+        "assets",
+        "styles",
+        "content-core",
+    ],
+    forbiddenPackages: ["astro", "react", "react-dom", "zod", "@ravenhill/content-core"],
+    message:
+        "@ravenhill/site-core must remain framework-free and independent from app-local layers.",
+    suggestion:
+        "Keep concrete site configuration, generated data, Astro, UI, and app adapters in src, and expose only pure site/repository primitives from the package.",
+};
+
 export const boundaryRules = [
     domainBoundaryRule,
     applicationBoundaryRule,
@@ -129,6 +157,7 @@ export const boundaryRules = [
     presentationAdapterBoundaryRule,
     uiBoundaryRule,
     contentCoreBoundaryRule,
+    siteCoreBoundaryRule,
 ];
 
 /**

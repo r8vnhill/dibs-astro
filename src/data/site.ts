@@ -18,7 +18,7 @@
  * - Platform availability becomes explicit and type-safe.
  */
 
-import type { RepoPlatform, RepoRef } from "~/utils/git";
+import type { RepoPlatform, RepoRef } from "@ravenhill/site-core";
 import type { PartialRecord } from "~/types/records";
 
 /**
@@ -37,7 +37,7 @@ export const WEBSITE_PRIMARY_AUTHOR = {
  * ## Design notes
  *
  * - Declared as `Partial<Record<RepoPlatform, RepoRef>>`:
- *   - If a new {@link RepoPlatform} is added in `utils/git.ts`,
+ *   - If a new {@link RepoPlatform} is added in `@ravenhill/site-core`,
  *     this file is *not* forced to define it.
  *   - Missing platforms are treated as “not available”.
  * - Declared `as const` to:
@@ -52,9 +52,9 @@ export const WEBSITE_PRIMARY_AUTHOR = {
  * ## Example
  *
  * ```ts
- * import { WEBSITE_REPO_REFS } from "~/data/site";
+ * import { getWebsiteRepoRefs } from "$presentation/adapters/site-data";
  *
- * const githubRef = WEBSITE_REPO_REFS.github;
+ * const githubRef = getWebsiteRepoRefs().github;
  * if (githubRef) {
  *   // Safe to build URLs
  * }

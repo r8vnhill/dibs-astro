@@ -1,0 +1,39 @@
+{
+    "name": "@ravenhill/site-core",
+    "version": "0.1.0",
+    "type": "module",
+    "private": false,
+    "description": "Reusable site and repository primitives for Ravenhill projects.",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsup",
+        "check": "pnpm run build && tsc --noEmit && pnpm exec vitest run --config vitest.config.ts && publint --strict && pnpm run pack:check && pnpm run consumer:check",
+        "consumer:check": "node scripts/validate-packed-consumer.mjs",
+        "pack:check": "node scripts/assert-pack-files.mjs --pack",
+        "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"
+    },
+    "devDependencies": {
+        "fast-check": "^4.5.3",
+        "publint": "^0.3.19",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.2",
+        "vitest": "^3.2.4"
+    },
+    "publishConfig": {
+        "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
+        "access": "restricted"
+    }
+}

@@ -1,13 +1,13 @@
 import { formatLessonDate, type LessonMetadataDto } from "@ravenhill/content-core";
-import { getWebsiteRepoRef, WEBSITE_REPO_REFS } from "$presentation/adapters/site-data";
-import type { PartialRecord } from "~/types/records";
 import {
     buildCommitUrl,
     normalizePlatforms,
     REPO_PLATFORM_LABEL,
     type RepoPlatform,
     type RepoRef,
-} from "~/utils/git";
+} from "@ravenhill/site-core";
+import { getWebsiteRepoRef, getWebsiteRepoRefs } from "$presentation/adapters/site-data";
+import type { PartialRecord } from "~/types/records";
 
 export type LessonMetaPanelMetadata = LessonMetadataDto;
 
@@ -37,7 +37,7 @@ export type LessonMetaPanelViewModel = {
 
 export function buildLessonMetaPanelViewModel({
     metadata,
-    websiteRepoRefs = WEBSITE_REPO_REFS,
+    websiteRepoRefs = getWebsiteRepoRefs(),
     platforms,
 }: LessonMetaPanelInput): LessonMetaPanelViewModel {
     const selectedPlatforms = normalizePlatforms(platforms);
