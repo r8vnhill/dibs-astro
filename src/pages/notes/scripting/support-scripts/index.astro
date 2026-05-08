@@ -326,161 +326,126 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Tip>
     </NotesSection>
 
-    <ToDo
-        client:only="react"
-        metadata={{
-            tasks: [
-                "...",
-            ],
-        }}
-    />
-
-    <NotesSection id="h2-functions">
+    <NotesSection id="h2-check-expected-paths">
         <Heading
             headingLevel="h2" Icon={icons.Path}
             slot="heading"
         >
-            Introducir rutas
+            Comprobar rutas esperadas dentro del proyecto
         </Heading>
 
         <P>
-            El siguiente paso es convertir el texto recibido en una ruta real. <KotlinInline code="Path.of(...)" />
-            permite representar el directorio del proyecto, y <KotlinInline code="Files.exists(...)" /> comprueba si esa
-            ruta existe antes de seguir.
+            Una vez que el script conoce la ruta del proyecto y tiene una lista de archivos esperados, puede comenzar a
+            revisar el sistema de archivos. Para eso necesita convertir la ruta recibida como texto en una ruta que
+            Kotlin pueda manipular y repetir la misma comprobación para cada archivo esperado.
+        </P>
+
+        <P>
+            Este fragmento introduce una primera función del script. La función no representa todavía una abstracción
+            compleja: solo le da nombre a una operación que se repite, revisar si una ruta existe dentro del proyecto.
         </P>
 
         <KotlinBlock
-            code={`import java.nio.file.Files
-import java.nio.file.Path
+            code={`
+                import java.nio.file.Files
+                import java.nio.file.Path
+                // ...
+                fun checkPath(projectDirectory: Path, relativePath: String) {
+                    val path = projectDirectory.resolve(relativePath)
+                    if (Files.exists(path)) {
+                        println("Found: $relativePath")
+                    } else {
+                        println("Missing: $relativePath")
+                    }
+                }
 
-val projectDirectory = Path.of(args[0])
-
-if (Files.exists(projectDirectory)) {
-    println("Project directory found: $projectDirectory")
-} else {
-    println("Project directory does not exist: $projectDirectory")
-}`}
+                val projectDirectory: Path = Path.of(projectPath)
+                for (expectedFile in expectedFiles) {
+                    checkPath(projectDirectory, expectedFile)
+                }
+            `}
         >
-            <span slot="title">Fragmento 5: rutas y existencia</span>
-            <span slot="footer">
-                El script ya no asume que el proyecto existe: primero revisa una precondición.
-            </span>
+            <span slot="title">Fragmento 3: revisar cada ruta esperada</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="scripts/check-library-layout.main.kts"
+            >
+                scripts/check-library-layout.main.kts
+            </DibsSourceLink>
         </KotlinBlock>
 
-        <KotlinBlock
-            code={`import java.nio.file.Files
-import java.nio.file.Path
-
-val projectDirectory = Path.of(args[0])
-val readme = projectDirectory.resolve("README.md")
-
-if (Files.exists(readme)) {
-    println("OK: README.md")
-} else {
-    println("Missing: README.md")
-}`}
-        >
-            <span slot="title">Fragmento 6: un archivo esperado</span>
-            <span slot="footer">
-                <KotlinInline code="README.md" /> no es decorativo: para una biblioteca, forma parte de su primera
-                interfaz con otras personas.
-            </span>
-        </KotlinBlock>
-
-        <Info headingLevel="h3">
-            <span slot="title">Una ruta clara ayuda a observar el proyecto</span>
-
+        <Explanation headingLevel="h3">
             <P>
-                El script no publica nada ni modifica el proyecto. Solo señala una expectativa mínima que las personas y
-                los procesos pueden revisar.
+                Este fragmento combina tres ideas: declarar una función, representar rutas del sistema de archivos y
+                repetir una acción para cada elemento de una lista.
             </P>
-        </Info>
-    </NotesSection>
 
-    <NotesSection id="h2-output">
-        <Heading
-            headingLevel="h2" Icon={icons.SignOut}
-            slot="heading"
-        >
-            Extraer una función pequeña
-        </Heading>
+            <List>
+                <ListItem icon={icons.BracketsCurly}>
+                    <KotlinInline code="fun" /> declara una función. En este caso, <KotlinInline code="checkPath()" />
+                    recibe dos parámetros: la ruta base del proyecto y una ruta relativa que queremos revisar.
+                </ListItem>
 
-        <P>
-            Cuando la misma comprobación se repite, ya merece un nombre propio. <KotlinInline code="fun checkPath" />
-            no añade una idea nueva al problema; solo le pone nombre a una operación que volveremos a usar.
-        </P>
+                <ListItem icon={icons.Code}>
+                    Los parámetros se escriben con la forma <KotlinInline code="nombre: Tipo" />. Por eso <KotlinInline
+                        code="projectDirectory: Path"
+                    /> indica que <KotlinInline code="projectDirectory" /> debe ser una ruta, mientras que <KotlinInline
+                        code="relativePath: String"
+                    /> indica que <KotlinInline code="relativePath" /> es texto.
+                </ListItem>
 
-        <KotlinBlock
-            code={`import java.nio.file.Files
-import java.nio.file.Path
+                <ListItem icon={icons.Path}>
+                    <KotlinInline code="Path" /> representa una ruta del sistema de archivos. En el fragmento,
+                    <KotlinInline code="Path.of(projectPath)" /> convierte el texto recibido por argumento en una ruta
+                    que el script puede usar para construir otras rutas.
+                </ListItem>
 
-fun checkPath(projectDirectory: Path, relativePath: String) {
-    val path = projectDirectory.resolve(relativePath)
+                <ListItem icon={icons.Path}>
+                    <KotlinInline code="projectDirectory.resolve(relativePath)" /> construye una ruta dentro del
+                    directorio del proyecto. Por ejemplo, si el proyecto es <Mono>.</Mono> y la ruta relativa es <Mono
+                    >README.md</Mono>, el script revisará el archivo <Mono>./README.md</Mono>.
+                </ListItem>
 
-    if (Files.exists(path)) {
-        println("OK: $relativePath")
-    } else {
-        println("Missing: $relativePath")
-    }
-}
+                <ListItem icon={icons.ListChecks}>
+                    <KotlinInline code="Files.exists(path)" /> pregunta si esa ruta existe. El resultado se usa en un
+                    <KotlinInline code="if" /> para imprimir <Mono>Found</Mono> cuando la ruta está presente o
+                    <Mono>Missing</Mono> cuando no lo está.
+                </ListItem>
 
-val projectDirectory = Path.of(args[0])
+                <ListItem icon={icons.Repeat}>
+                    <KotlinInline code="for (expectedFile in expectedFiles)" /> repite una acción por cada elemento de
+                    la lista <KotlinInline code="expectedFiles" />. En cada vuelta, el valor actual queda disponible con
+                    el nombre <KotlinInline code="expectedFile" />.
+                </ListItem>
 
-checkPath(projectDirectory, "README.md")
-checkPath(projectDirectory, "LICENSE")`}
-        >
-            <span slot="title">Fragmento 7: una función para repetir la comprobación</span>
-            <span slot="footer">
-                La función <KotlinInline code="checkPath" /> hace visible una responsabilidad que antes estaba
-                duplicada.
-            </span>
-        </KotlinBlock>
-
-        <KotlinBlock
-            code={`#!/usr/bin/env kotlin
-
-import java.nio.file.Files
-import java.nio.file.Path
-
-fun checkPath(projectDirectory: Path, relativePath: String) {
-    val path = projectDirectory.resolve(relativePath)
-
-    if (Files.exists(path)) {
-        println("OK: $relativePath")
-    } else {
-        println("Missing: $relativePath")
-    }
-}
-
-if (args.size == 0) {
-    println("Usage: kotlin check-library-layout.main.kts <project-dir>")
-} else {
-    val projectDirectory = Path.of(args[0])
-
-    println("Checking library project: $projectDirectory")
-
-    checkPath(projectDirectory, "README.md")
-    checkPath(projectDirectory, "LICENSE")
-    checkPath(projectDirectory, "CODE_OF_CONDUCT.md")
-}`}
-        >
-            <span slot="title">Fragmento 8: script completo pero modesto</span>
-            <span slot="footer">
-                El script final revisa <KotlinInline code="README.md" />, <KotlinInline code="LICENSE" /> y
-                <KotlinInline code="CODE_OF_CONDUCT.md" />.
-            </span>
-        </KotlinBlock>
+                <ListItem icon={icons.TerminalWindow}>
+                    La llamada <KotlinInline code="checkPath(projectDirectory, expectedFile)" /> reutiliza la misma
+                    función para cada archivo esperado. Así evitamos escribir varias veces la misma estructura de
+                    <KotlinInline code="if" />.
+                </ListItem>
+            </List>
+        </Explanation>
 
         <Tip headingLevel="h3">
-            <span slot="title">La salida también forma parte del contrato</span>
+            <span slot="title">La función nombra una responsabilidad</span>
 
             <P>
-                Quien ejecuta el script debe saber qué se revisará y qué mensaje recibirá. Esa claridad hace que la
-                automatización sea más confiable y más fácil de reutilizar.
+                <KotlinInline code="checkPath()" /> no se extrae porque el script sea grande, sino porque la operación
+                tiene una responsabilidad clara: recibir una ruta base, combinarla con una ruta relativa y comunicar si
+                existe. Esa separación hace que el script sea más fácil de leer y cambiar.
             </P>
         </Tip>
     </NotesSection>
 
+    <ToDo
+      client:only="react"
+      metadata={{
+        tasks: [
+          "...",
+        ],
+      }}
+    />
+    
     <NotesSection id="h2-next-steps">
         <Heading
             headingLevel="h2" Icon={icons.Package}
