@@ -25,7 +25,6 @@ const softwareLibraries = joinPath(notes, "software-libraries");
 const apiDesign = joinPath(softwareLibraries, "api-design");
 const buildSystems = joinPath(softwareLibraries, "build-systems");
 const scripting = joinPath(notes, "scripting");
-const pipelines = joinPath(scripting, "pipelines");
 
 /**
  * Canonical registry of lesson and section paths used by the internal course-structure modules.
@@ -71,20 +70,9 @@ export const coursePaths = {
             veritas1: joinPath(buildSystems, "veritas-1"),
         },
     },
-    scripting: {
+    scriptingLibraries: {
         root: scripting,
-        help: joinPath(scripting, "help"),
-        firstScript: joinPath(scripting, "first-script"),
-        structuredOutput: joinPath(scripting, "structured-output"),
-        shouldProcess: joinPath(scripting, "should-process"),
-        errors: joinPath(scripting, "errors"),
-        labGitlab: joinPath(scripting, "gitlab"),
-        pipelines: {
-            root: pipelines,
-            pipelineAware: joinPath(pipelines, "pipeline-aware"),
-            errors: joinPath(pipelines, "errors"),
-            gitSubmodules: joinPath(pipelines, "git-submodules"),
-        },
+        supportScripts: joinPath(scripting, "support-scripts"),
     },
 } as const;
 

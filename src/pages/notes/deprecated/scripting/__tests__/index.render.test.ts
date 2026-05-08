@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { createAstroRenderer } from "../../../../test-utils/astro-render";
+import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import ScriptingPage from "../index.astro";
 import NodePage from "../node.astro";
 

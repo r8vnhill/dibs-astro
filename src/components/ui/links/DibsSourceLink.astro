@@ -1,5 +1,5 @@
 ---
-import Link from "./Link.astro";
+import { buildGitLabSourceUrl, resolveDibsProjectPath } from "./dibs-source-link-url";
 
 type Props = {
     /** Nombre corto del repositorio sin prefijo `dibs-`. */
@@ -14,50 +14,49 @@ type Props = {
     line?: number;
     /** Línea final opcional (usa un rango Lx-Ly). */
     endLine?: number;
+    /** Etiqueta accesible opcional para reemplazar la etiqueta generada. */
+    ariaLabel?: string;
+    /** Ruta explícita `grupo/proyecto` en GitLab para excepciones puntuales. */
+    projectPath?: string;
 };
 
-const { repo, file, title, ref, line, endLine }: Props = Astro.props;
+const { repo, file, title, ref, line, endLine, ariaLabel, projectPath }: Props = Astro.props;
 
-// Si no se especifica ref, apunta a la rama main
-const resolvedRef = ref ?? "main";
+const resolvedProjectPath = resolveDibsProjectPath({ repo, projectPath });
+const sourceUrl = buildGitLabSourceUrl({
+    projectPath: resolvedProjectPath,
+    file,
+    ref,
+    line,
+    endLine,
+});
+
+const resolvedRef = sourceUrl.ref;
 const isExplicitRef = resolvedRef !== "main";
 
 // Heurística simple: ¿parece hash de commit?
 const looksLikeCommit = /^[0-9a-f]{7,40}$/i.test(resolvedRef);
 const shortRef = looksLikeCommit ? resolvedRef.slice(0, 7) : resolvedRef;
 
-// GitLab usa `-/blob/<ref>/<file>` para cualquier referencia
-const startLine = typeof line === "number" && Number.isFinite(line)
-    ? Math.max(1, Math.floor(line))
-    : undefined;
-const rawEndLine = typeof endLine === "number" && Number.isFinite(endLine)
-    ? Math.max(1, Math.floor(endLine))
-    : undefined;
-const resolvedEndLine =
-    startLine !== undefined && rawEndLine !== undefined && rawEndLine >= startLine
-        ? rawEndLine
-        : undefined;
-const lineFragment = startLine !== undefined
-    ? `#L${startLine}${resolvedEndLine ? `-${resolvedEndLine}` : ""}`
+const lineLabel = sourceUrl.startLine !== undefined
+    ? sourceUrl.endLine
+        ? `, líneas ${sourceUrl.startLine}-${sourceUrl.endLine}`
+        : `, línea ${sourceUrl.startLine}`
     : "";
-
-const hrefBase = `https://gitlab.com/r8vnhill/dibs-${repo}/-/blob/${resolvedRef}/${file}`;
-const href = `${hrefBase}${lineFragment}`;
-
-const lineLabel = startLine !== undefined
-    ? resolvedEndLine
-        ? `, líneas ${startLine}-${resolvedEndLine}`
-        : `, línea ${startLine}`
-    : "";
-const ariaLabel = `Fuente (${isExplicitRef ? resolvedRef : "main"}${lineLabel})`;
+const resolvedAriaLabel = ariaLabel ?? `Fuente (${isExplicitRef ? resolvedRef : "main"}${lineLabel})`;
 ---
 
-<Link
-    {href} class:list={["dibs-source-link"]}
-    data-has-ref={isExplicitRef ? "true" : "false"} aria-label={ariaLabel}
-><slot>{title ?? `${repo}/${file}`}</slot></Link><a {href} class:list={["dibs-source-link"]}>{
-    isExplicitRef && <small class="ref-hint" aria-hidden="true">{shortRef}</small>
-}</a>
+<a
+    href={sourceUrl.href}
+    class:list={["dibs-source-link"]}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-has-ref={isExplicitRef ? "true" : "false"}
+    aria-label={resolvedAriaLabel}
+>
+    <slot>{title ?? `${repo}/${file}`}</slot>
+    {isExplicitRef && <small class="ref-hint" aria-hidden="true">{shortRef}</small>}
+</a>
 
 <style>
     .dibs-source-link {

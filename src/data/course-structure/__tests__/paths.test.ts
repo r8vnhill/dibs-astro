@@ -6,7 +6,7 @@ describe("coursePaths", () => {
         it("exposes canonical roots for major sections", () => {
             expect(coursePaths.notes).toBe("/notes");
             expect(coursePaths.softwareLibraries.root).toBe("/notes/software-libraries");
-            expect(coursePaths.scripting.root).toBe("/notes/scripting");
+            expect(coursePaths.scriptingLibraries.root).toBe("/notes/scripting");
         });
 
         it("exposes nested subsection roots where expected", () => {
@@ -16,7 +16,6 @@ describe("coursePaths", () => {
             expect(coursePaths.softwareLibraries.buildSystems.root).toBe(
                 "/notes/software-libraries/build-systems",
             );
-            expect(coursePaths.scripting.pipelines.root).toBe("/notes/scripting/pipelines");
         });
 
         it("resolves each lesson path to the expected URL string", () => {
@@ -56,27 +55,9 @@ describe("coursePaths", () => {
                 "/notes/software-libraries/build-systems/veritas-1",
             );
 
-            // Scripting leaves
-            expect(coursePaths.scripting.help).toBe("/notes/scripting/help");
-            expect(coursePaths.scripting.firstScript).toBe("/notes/scripting/first-script");
-            expect(coursePaths.scripting.structuredOutput).toBe(
-                "/notes/scripting/structured-output",
-            );
-            expect(coursePaths.scripting.shouldProcess).toBe(
-                "/notes/scripting/should-process",
-            );
-            expect(coursePaths.scripting.errors).toBe("/notes/scripting/errors");
-            expect(coursePaths.scripting.labGitlab).toBe("/notes/scripting/gitlab");
-
-            // Pipelines nested leaves
-            expect(coursePaths.scripting.pipelines.pipelineAware).toBe(
-                "/notes/scripting/pipelines/pipeline-aware",
-            );
-            expect(coursePaths.scripting.pipelines.errors).toBe(
-                "/notes/scripting/pipelines/errors",
-            );
-            expect(coursePaths.scripting.pipelines.gitSubmodules).toBe(
-                "/notes/scripting/pipelines/git-submodules",
+            // Scripting libraries leaves
+            expect(coursePaths.scriptingLibraries.supportScripts).toBe(
+                "/notes/scripting/support-scripts",
             );
         });
 
@@ -85,13 +66,12 @@ describe("coursePaths", () => {
             const notesPath = `${coursePaths.notes}/`;
             const installationPath = `${coursePaths.installation}/`;
             const softwareLibrariesRootPath = `${coursePaths.softwareLibraries.root}/`;
-            const apiDesignFundamentalsPath =
-                `${coursePaths.softwareLibraries.apiDesign.fundamentals}/`;
+            const apiDesignFundamentalsPath = `${coursePaths.softwareLibraries.apiDesign.fundamentals}/`;
             const apiDesignEvolutionPath = `${coursePaths.softwareLibraries.apiDesign.evolution}/`;
-            const apiDesignDocumentationPath =
-                `${coursePaths.softwareLibraries.apiDesign.documentation}/`;
+            const apiDesignDocumentationPath = `${coursePaths.softwareLibraries.apiDesign.documentation}/`;
             const artifactsTaxonomyPath = `${coursePaths.softwareLibraries.artifactsTaxonomy}/`;
             const whatIsPath = `${coursePaths.softwareLibraries.whatIs}/`;
+            const supportScriptsPath = `${coursePaths.scriptingLibraries.supportScripts}/`;
 
             expect(notesPath).toBe("/notes/");
             expect(installationPath).toBe("/notes/installation/");
@@ -105,6 +85,7 @@ describe("coursePaths", () => {
             );
             expect(artifactsTaxonomyPath).toBe("/notes/software-libraries/artifacts-taxonomy/");
             expect(whatIsPath).toBe("/notes/software-libraries/what-is/");
+            expect(supportScriptsPath).toBe("/notes/scripting/support-scripts/");
         });
     });
 
@@ -144,20 +125,9 @@ describe("coursePaths", () => {
                 "/notes/software-libraries/build-systems/veritas-1",
             ],
 
-            // Scripting subsection
-            ["scripting.root", "/notes/scripting"],
-            ["scripting.help", "/notes/scripting/help"],
-            ["scripting.firstScript", "/notes/scripting/first-script"],
-            ["scripting.structuredOutput", "/notes/scripting/structured-output"],
-            ["scripting.shouldProcess", "/notes/scripting/should-process"],
-            ["scripting.errors", "/notes/scripting/errors"],
-            ["scripting.labGitlab", "/notes/scripting/gitlab"],
-
-            // Pipelines nested subsection
-            ["scripting.pipelines.root", "/notes/scripting/pipelines"],
-            ["scripting.pipelines.pipelineAware", "/notes/scripting/pipelines/pipeline-aware"],
-            ["scripting.pipelines.errors", "/notes/scripting/pipelines/errors"],
-            ["scripting.pipelines.gitSubmodules", "/notes/scripting/pipelines/git-submodules"],
+            // Scripting libraries subsection
+            ["scriptingLibraries.root", "/notes/scripting"],
+            ["scriptingLibraries.supportScripts", "/notes/scripting/support-scripts"],
         ] as const;
 
         it.each(mappingTests)("resolves %s to %s", (path, expectedUrl) => {
@@ -223,8 +193,7 @@ describe("coursePaths", () => {
                     name: "softwareLibraries.buildSystems",
                     obj: coursePaths.softwareLibraries.buildSystems,
                 },
-                { name: "scripting", obj: coursePaths.scripting },
-                { name: "scripting.pipelines", obj: coursePaths.scripting.pipelines },
+                { name: "scriptingLibraries", obj: coursePaths.scriptingLibraries },
             ];
 
             for (const { name, obj } of sections) {

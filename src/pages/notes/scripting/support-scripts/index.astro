@@ -1,0 +1,549 @@
+---
+import * as icons from "~/assets/img/icons";
+import { Enquote, P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Definition, Explanation, Info, Tip, Warning } from "~/components/ui/callouts";
+import { BashBlock, BashInline, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import ToDo from "~/components/utils/ToDo";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Scripts de apoyo como software reusable"
+    description="Introduce los scripts de apoyo como automatizaciones reutilizables y los hace crecer por fragmentos: val, args, if, funciones y comprobación de la estructura mínima de una biblioteca."
+>
+    <Fragment slot="abstract">
+        <P>
+            En la unidad anterior distinguimos bibliotecas, aplicaciones, herramientas y scripts como artefactos con
+            formas de uso distintas. Esta lección abre la Unidad 2 mirando el script desde una pregunta de diseño:
+            cuándo deja de ser una secuencia ocasional de comandos y empieza a funcionar como una herramienta de apoyo
+            reusable.
+        </P>
+
+        <P>
+            Un script reusable de apoyo no empieza como una biblioteca. Empieza como una pequeña automatización que
+            alguien puede ejecutar más de una vez, con entradas claras y una salida predecible. Durante la lección
+            construiremos, por fragmentos, un script que revisa si un proyecto de biblioteca tiene la estructura mínima
+            esperada.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-from-artifacts-to-support-tools">
+        <Heading
+            headingLevel="h2" Icon={icons.Compass}
+            slot="heading"
+        >
+            De artefactos de software a herramientas de apoyo
+        </Heading>
+
+        <P>
+            Una biblioteca se diseña para que otros programas la integren mediante una API. Una aplicación se diseña
+            para una experiencia de uso final. Un script, en cambio, suele nacer con una localidad muy concreta dentro
+            del proyecto: revisar archivos, preparar datos, generar reportes o repetir una secuencia de comandos.
+        </P>
+
+        <P>
+            <B>Ese carácter local no lo vuelve menos importante.</B> En un proyecto de biblioteca, un script puede
+            ayudar a revisar si existen archivos básicos como <Mono>README.md</Mono>, <Mono>LICENSE</Mono> o <Mono
+            >CODE_OF_CONDUCT.md</Mono>. También puede ejecutarse antes de publicar, dentro de una tarea de CI o como
+            parte de una revisión local.
+        </P>
+
+        <Info headingLevel="h3">
+            <span slot="title">Reusable no significa publicado como biblioteca</span>
+
+            <P>
+                Un script de apoyo puede aplicar criterios de diseño de bibliotecas sin ser una biblioteca. Puede tener
+                entradas explícitas, una salida predecible, mensajes claros y una estructura fácil de revisar, aunque su
+                forma de uso siga siendo <Enquote>ejecutar este archivo para completar una tarea</Enquote>.
+            </P>
+        </Info>
+
+        <P>
+            En esta lección construiremos un primer script de apoyo para una biblioteca pequeña. No intentará compilar,
+            publicar ni modificar el proyecto. Su tarea será más simple: observar si el proyecto tiene una estructura
+            mínima y comunicar qué encontró.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-not-disposable">
+        <Heading
+            headingLevel="h2" Icon={icons.Repeat}
+            slot="heading"
+        >
+            Script no significa desechable
+        </Heading>
+
+        <P>
+            No todos los scripts cumplen el mismo rol. Algunos sirven para explorar una idea y se descartan al terminar.
+            Otros guardan una secuencia puntual de pasos. Otros, en cambio, empiezan a sostener una práctica recurrente
+            del proyecto.
+        </P>
+
+        <List>
+            <ListItem icon={icons.MagnifyingGlass}>
+                <B>Script exploratorio</B>: ayuda a descubrir algo. Su valor está en aprender rápido, no en dejar una
+                forma de uso estable.
+            </ListItem>
+            <ListItem icon={icons.ClockCounterClockwise}>
+                <B>Script de una sola vez</B>: captura una operación puntual. Puede ser claro, pero no necesita prometer
+                mantenimiento.
+            </ListItem>
+            <ListItem icon={icons.Wrench}>
+                <B>Script de apoyo reusable</B>: automatiza una tarea que volverá a aparecer y que otras personas o
+                procesos podrían ejecutar.
+            </ListItem>
+        </List>
+
+        <Definition headingLevel="h3" icon={icons.Target}>
+            <span slot="title">Contrato operativo</span>
+
+            <P>
+                El <B>contrato operativo</B> de un script describe cómo se ejecuta, qué entradas acepta, qué salida
+                produce, cómo informa fallas y qué condiciones del entorno necesita.
+            </P>
+        </Definition>
+
+        <P>
+            En esta lección, ese contrato será pequeño: el script recibirá un directorio de proyecto, revisará si
+            contiene algunos archivos esperados para una biblioteca y mostrará un informe de comprobación.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-running-the-script">
+        <Heading
+            headingLevel="h2" Icon={icons.TerminalWindow}
+            slot="heading"
+        >
+            Cómo ejecutar el script
+        </Heading>
+
+        <P>
+            Antes de revisar la sintaxis de Kotlin, conviene ubicar el script en su contexto de uso. El archivo se
+            llamará <Mono>check-library-layout.main.kts</Mono> y estará pensado para ejecutarse desde la terminal.
+        </P>
+
+        <P>
+            En esta lección asumiremos que el comando <Mono>kotlin</Mono> está disponible en el entorno. Para ejecutar
+            el script sobre un proyecto, usaremos:
+        </P>
+
+        <BashBlock code="kotlin check-library-layout.main.kts $PROJECT_DIR">
+            <span slot="title">Ejecutar el script sobre <Mono>$PROJECT_DIR</Mono></span>
+            <span slot="footer">
+                Por ejemplo, <BashInline code="kotlin check-library-layout.main.kts ." /> ejecuta el script sobre la
+                ubicación actual.
+            </span>
+        </BashBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-group-expected-files">
+        <Heading
+            headingLevel="h2" Icon={icons.ListChecks}
+            slot="heading"
+        >
+            Agrupar archivos esperados en una lista
+        </Heading>
+
+        <P>
+            Si el script debe revisar varios archivos, conviene agrupar esos nombres en una sola colección. Así el
+            código expresa mejor la intención: no estamos trabajando con datos aislados, sino con el conjunto de
+            archivos que este proyecto espera encontrar en una biblioteca reusable.
+        </P>
+
+        <P>
+            En este fragmento todavía no revisaremos si los archivos existen. Primero construiremos una lista de
+            archivos esperados y la convertiremos en un mensaje legible para la terminal.
+        </P>
+
+        <KotlinBlock
+            code={`
+                val expectedFiles = listOf("README.md", "LICENSE", "CODE_OF_CONDUCT.md")
+                val separator = System.lineSeparator() + "- "
+
+                println(
+                    expectedFiles.joinToString(
+                        separator,
+                        prefix = "Expected files:$separator"
+                    )
+                )
+            `}
+        >
+            <span slot="title">Fragmento 1: lista de archivos esperados</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="scripts/check-library-layout.main.kts"
+            >
+                scripts/check-library-layout.main.kts
+            </DibsSourceLink>
+        </KotlinBlock>
+
+        <OutputBlock
+            code={`
+                Expected files:
+                - README.md
+                - LICENSE
+                - CODE_OF_CONDUCT.md
+            `}
+        >
+            <span slot="title">Salida del fragmento 1</span>
+        </OutputBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Este fragmento introduce una idea de diseño y varias piezas pequeñas de sintaxis. La idea de diseño es
+                simple: cuando varios valores representan una misma categoría, conviene agruparlos y darles un nombre.
+            </P>
+
+            <List>
+                <ListItem icon={icons.Lock}>
+                    <KotlinInline code="val" /> declara una referencia que no puede reasignarse. Después de definir
+                    <KotlinInline code="expectedFiles" />, ese nombre no puede apuntar a otra lista dentro del mismo
+                    alcance.
+                </ListItem>
+
+                <ListItem icon={icons.WarningCircle}>
+                    Esa inmutabilidad corresponde a la referencia, no necesariamente a una inmutabilidad profunda de
+                    todo lo que podría estar contenido en un objeto. En este caso, <KotlinInline code="listOf()" /> crea
+                    una lista de solo lectura, adecuada para expresar que el criterio del script no cambia durante esta
+                    ejecución.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowsClockwise}>
+                    Kotlin también ofrece <KotlinInline code="mutableListOf()" /> para crear listas modificables. No la
+                    usamos aquí porque no queremos agregar ni quitar archivos esperados mientras el script corre:
+                    queremos declarar el criterio inicial y mantenerlo estable.
+                </ListItem>
+
+                <ListItem icon={icons.TextAlignLeft}>
+                    <KotlinInline code="System.lineSeparator()" /> obtiene el salto de línea recomendado por el sistema
+                    operativo. Luego, el operador <KotlinInline code="+" /> concatena ese salto de línea con
+                    <KotlinInline code={`"- "`} /> para formar el separador que aparecerá antes de cada archivo.
+                </ListItem>
+
+                <ListItem icon={icons.Code}>
+                    El símbolo <KotlinInline code="$" /> permite interpolar valores dentro de un texto. Por eso
+                    <KotlinInline code={`"Expected files:$separator"`} /> inserta el contenido de
+                    <KotlinInline code="separator" /> después del título.
+                </ListItem>
+
+                <ListItem icon={icons.ListBullets}>
+                    <KotlinInline code="joinToString()" /> construye un texto a partir de los elementos de una
+                    colección. En este caso, usa <KotlinInline code="separator" /> entre cada archivo y
+                    <KotlinInline code="prefix" /> antes del primer elemento.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-read-project-path-from-args">
+        <Heading
+            headingLevel="h2" Icon={icons.TerminalWindow}
+            slot="heading"
+        >
+            Recibir la ruta del proyecto como argumento
+        </Heading>
+
+        <P>
+            Hasta ahora, el script podía mostrar información fija. El siguiente paso es hacerlo un poco más reusable: en
+            vez de asumir qué proyecto debe revisar, recibirá la ruta del proyecto desde la terminal.
+        </P>
+
+        <P>
+            Esa ruta pasa a formar parte del contrato operativo del script. Quien lo ejecuta debe indicar qué directorio
+            quiere revisar, y el script debe comprobar que recibió ese dato antes de continuar.
+        </P>
+
+        <KotlinBlock
+            code={`
+                require(args.isNotEmpty()) { "Missing required argument: <project-path>" }
+                val projectPath = args[0]
+                println("Project path: $projectPath")
+            `}
+        >
+            <span slot="title">Fragmento 2: leer un argumento obligatorio</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="scripts/check-library-layout.main.kts"
+            >
+                scripts/check-library-layout.main.kts
+            </DibsSourceLink>
+        </KotlinBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Este fragmento introduce dos ideas importantes para scripts de apoyo: leer argumentos de la terminal y
+                validar una precondición antes de usar esos argumentos.
+            </P>
+
+            <List>
+                <ListItem icon={icons.TerminalWindow}>
+                    <KotlinInline code="args" /> contiene los argumentos recibidos al ejecutar el script. Por ejemplo,
+                    si ejecutamos <Mono>kotlin check-library-layout.main.kts .</Mono>, el punto <Mono>.</Mono> queda
+                    disponible como el primer argumento.
+                </ListItem>
+
+                <ListItem icon={icons.NumberOne}>
+                    <KotlinInline code="args[0]" /> obtiene el primer argumento. En este caso lo guardamos en
+                    <KotlinInline code="projectPath" /> porque representa la ruta del proyecto que queremos revisar.
+                </ListItem>
+
+                <ListItem icon={icons.ShieldCheck}>
+                    <KotlinInline code="require(args.isNotEmpty())" /> valida que exista al menos un argumento. Si la
+                    condición es verdadera, el script continúa. Si es falsa, Kotlin detiene la ejecución con un error
+                    que incluye el mensaje indicado.
+                </ListItem>
+
+                <ListItem icon={icons.BracketsCurly}>
+                    El bloque <KotlinInline code={`{ "Missing required argument: <project-path>" }`} /> es una <I
+                    >lambda</I>: una función pequeña escrita directamente donde se necesita. Aquí se usa para producir
+                    el mensaje de error solo si la validación falla.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowRight}>
+                    Esta forma de escribir la lambda después de los paréntesis se llama <I>trailing lambda</I>. En
+                    Kotlin, cuando el último argumento de una función es otra función, esa lambda puede escribirse fuera
+                    de los paréntesis. Es la misma idea de pasar una función como argumento, pero con una sintaxis más
+                    legible.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Validar antes de usar</span>
+
+            <P>
+                La línea con <KotlinInline code="require()" /> evita que el script intente leer <KotlinInline
+                    code="args[0]"
+                /> cuando no se entregó ningún argumento. Esa es una regla pequeña, pero muy importante para scripts
+                reutilizables: primero se comprueba el contrato de entrada, después se trabaja con los datos.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <ToDo
+        client:only="react"
+        metadata={{
+            tasks: [
+                "...",
+            ],
+        }}
+    />
+
+    <NotesSection id="h2-functions">
+        <Heading
+            headingLevel="h2" Icon={icons.Path}
+            slot="heading"
+        >
+            Introducir rutas
+        </Heading>
+
+        <P>
+            El siguiente paso es convertir el texto recibido en una ruta real. <KotlinInline code="Path.of(...)" />
+            permite representar el directorio del proyecto, y <KotlinInline code="Files.exists(...)" /> comprueba si esa
+            ruta existe antes de seguir.
+        </P>
+
+        <KotlinBlock
+            code={`import java.nio.file.Files
+import java.nio.file.Path
+
+val projectDirectory = Path.of(args[0])
+
+if (Files.exists(projectDirectory)) {
+    println("Project directory found: $projectDirectory")
+} else {
+    println("Project directory does not exist: $projectDirectory")
+}`}
+        >
+            <span slot="title">Fragmento 5: rutas y existencia</span>
+            <span slot="footer">
+                El script ya no asume que el proyecto existe: primero revisa una precondición.
+            </span>
+        </KotlinBlock>
+
+        <KotlinBlock
+            code={`import java.nio.file.Files
+import java.nio.file.Path
+
+val projectDirectory = Path.of(args[0])
+val readme = projectDirectory.resolve("README.md")
+
+if (Files.exists(readme)) {
+    println("OK: README.md")
+} else {
+    println("Missing: README.md")
+}`}
+        >
+            <span slot="title">Fragmento 6: un archivo esperado</span>
+            <span slot="footer">
+                <KotlinInline code="README.md" /> no es decorativo: para una biblioteca, forma parte de su primera
+                interfaz con otras personas.
+            </span>
+        </KotlinBlock>
+
+        <Info headingLevel="h3">
+            <span slot="title">Una ruta clara ayuda a observar el proyecto</span>
+
+            <P>
+                El script no publica nada ni modifica el proyecto. Solo señala una expectativa mínima que las personas y
+                los procesos pueden revisar.
+            </P>
+        </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-output">
+        <Heading
+            headingLevel="h2" Icon={icons.SignOut}
+            slot="heading"
+        >
+            Extraer una función pequeña
+        </Heading>
+
+        <P>
+            Cuando la misma comprobación se repite, ya merece un nombre propio. <KotlinInline code="fun checkPath" />
+            no añade una idea nueva al problema; solo le pone nombre a una operación que volveremos a usar.
+        </P>
+
+        <KotlinBlock
+            code={`import java.nio.file.Files
+import java.nio.file.Path
+
+fun checkPath(projectDirectory: Path, relativePath: String) {
+    val path = projectDirectory.resolve(relativePath)
+
+    if (Files.exists(path)) {
+        println("OK: $relativePath")
+    } else {
+        println("Missing: $relativePath")
+    }
+}
+
+val projectDirectory = Path.of(args[0])
+
+checkPath(projectDirectory, "README.md")
+checkPath(projectDirectory, "LICENSE")`}
+        >
+            <span slot="title">Fragmento 7: una función para repetir la comprobación</span>
+            <span slot="footer">
+                La función <KotlinInline code="checkPath" /> hace visible una responsabilidad que antes estaba
+                duplicada.
+            </span>
+        </KotlinBlock>
+
+        <KotlinBlock
+            code={`#!/usr/bin/env kotlin
+
+import java.nio.file.Files
+import java.nio.file.Path
+
+fun checkPath(projectDirectory: Path, relativePath: String) {
+    val path = projectDirectory.resolve(relativePath)
+
+    if (Files.exists(path)) {
+        println("OK: $relativePath")
+    } else {
+        println("Missing: $relativePath")
+    }
+}
+
+if (args.size == 0) {
+    println("Usage: kotlin check-library-layout.main.kts <project-dir>")
+} else {
+    val projectDirectory = Path.of(args[0])
+
+    println("Checking library project: $projectDirectory")
+
+    checkPath(projectDirectory, "README.md")
+    checkPath(projectDirectory, "LICENSE")
+    checkPath(projectDirectory, "CODE_OF_CONDUCT.md")
+}`}
+        >
+            <span slot="title">Fragmento 8: script completo pero modesto</span>
+            <span slot="footer">
+                El script final revisa <KotlinInline code="README.md" />, <KotlinInline code="LICENSE" /> y
+                <KotlinInline code="CODE_OF_CONDUCT.md" />.
+            </span>
+        </KotlinBlock>
+
+        <Tip headingLevel="h3">
+            <span slot="title">La salida también forma parte del contrato</span>
+
+            <P>
+                Quien ejecuta el script debe saber qué se revisará y qué mensaje recibirá. Esa claridad hace que la
+                automatización sea más confiable y más fácil de reutilizar.
+            </P>
+        </Tip>
+    </NotesSection>
+
+    <NotesSection id="h2-next-steps">
+        <Heading
+            headingLevel="h2" Icon={icons.Package}
+            slot="heading"
+        >
+            Cuándo seguir creciendo
+        </Heading>
+
+        <P>
+            El ejemplo termina a propósito antes de entrar en herramientas de construcción o publicación. Si el mismo
+            patrón aparece en otros scripts, entonces sí conviene pensar en un módulo reusable, más validación o una
+            prueba automatizada.
+        </P>
+
+        <List>
+            <ListItem icon={icons.Wrench}>
+                Más validación si el script debe aceptar formatos distintos o mensajes de error más precisos.
+            </ListItem>
+            <ListItem icon={icons.ArrowsClockwise}>
+                Un módulo reusable si la misma lógica empieza a repetirse en otros scripts de apoyo.
+            </ListItem>
+            <ListItem icon={icons.MagnifyingGlass}>
+                Pruebas si la salida debe mantenerse estable o si el texto generado se vuelve parte del flujo.
+            </ListItem>
+            <ListItem icon={icons.Path}>
+                Una biblioteca si el contrato deja de ser local y pasa a interesar a varios consumidores.
+            </ListItem>
+        </List>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Esta lección abrió la Unidad 2 con una idea base: scripting también es diseño de software cuando el
+                resultado sostiene tareas repetibles. Un script de apoyo reusable no necesita parecerse a una biblioteca
+                publicada, pero sí necesita hacer visible su forma de uso.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Wrench}>
+                Un script de apoyo reusable captura una tarea repetible y reduce la dependencia de pasos manuales.
+            </ListItem>
+            <ListItem icon={icons.ListChecks}>
+                <KotlinInline code="val" />, <KotlinInline code="args" /> e <KotlinInline code="if" /> permiten crecer
+                sin introducir demasiada sintaxis a la vez.
+            </ListItem>
+            <ListItem icon={icons.BracketsCurly}>
+                <KotlinInline code="fun checkPath(...)" /> nombra una responsabilidad pequeña y visible.
+            </ListItem>
+            <ListItem icon={icons.Package}>
+                <KotlinInline code="Path.of(...)" /> y <KotlinInline code="Files.exists(...)" /> hacen explícito qué se
+                revisa.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                La pregunta útil no es si un script es <Enquote>serio</Enquote> o <Enquote>pequeño</Enquote>. La
+                pregunta es si alguien va a depender de él. Cuando la respuesta es sí, conviene diseñarlo como un
+                artefacto de apoyo: simple de ejecutar, claro en sus promesas y preparado para cambiar sin perder
+                confiabilidad.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+</NotesLayout>

@@ -25,6 +25,11 @@
         "pack:check": "node scripts/assert-pack-files.mjs --pack",
         "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"
     },
+    "devDependencies": {
+        "publint": "^0.3.19",
+        "tsup": "^8.5.1",
+        "typescript": "^5.9.2"
+    },
     "publishConfig": {
         "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
         "access": "restricted"

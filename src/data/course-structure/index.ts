@@ -2,6 +2,7 @@ import type { Lesson } from "../course-structure";
 import { LessonTreeBuilder } from "./lesson-tree-builder";
 import { coursePaths } from "./paths";
 import { unit1Lessons } from "./unit-1";
+import { unit2Lessons } from "./unit-2";
 
 /**
  * Root lesson entries that live outside any specific unit.
@@ -27,6 +28,12 @@ const lessons = new LessonTreeBuilder()
         "Unidad 1 - Introducción al desarrollo de bibliotecas de software",
         unit1Lessons,
         `${coursePaths.softwareLibraries.root}/`,
+    )
+    .group(
+        "unit-2",
+        "Unidad 2 - Bibliotecas de scripting y automatización de tareas",
+        unit2Lessons,
+        `${coursePaths.scriptingLibraries.root}/`,
     )
     .build();
 
