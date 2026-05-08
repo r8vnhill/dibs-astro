@@ -5,6 +5,25 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.20.0] - 2026-05-08
+
+### Added
+
+- Added `@ravenhill/site-core` as a publishable workspace package for repository and platform primitives.
+- Added the Unit 2 course structure and the `Scripts de apoyo como software reusable` lesson.
+- Added Kotlin support-script bibliography coverage and render tests.
+
+### Changed
+
+- Split bibliography Turtle sources so `schema:WebSite` site containers are separate from real organizations and can represent documentation locations.
+- Routed presentation and infrastructure access through explicit adapters for bibliography, navigation, site data, static UI data, and reference content.
+- Updated repository and source links to use shared site-core URL construction with normalized platform handling.
+
+### Fixed
+
+- Resolved web page `location` and `locationUrl` from `schema:isPartOf` `WebSite` nodes instead of modeling documentation sites as publishers.
+- Preserved validated content-core lesson metadata and navigation result contracts through presentation adapters.
+
 ## [0.19.0] - 2026-05-07
 
 ### Added

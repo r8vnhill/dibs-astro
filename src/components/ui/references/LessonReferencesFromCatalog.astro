@@ -6,10 +6,11 @@
  * the shared catalog source and the current page pathname as lesson ID. Keep using the base
  * component when a page needs a custom source or named slots such as `description-ref:*`.
  */
-import type { ReferenceTag } from "~/lib/bibliography";
+import type { BibliographyCatalog, ReferenceTag } from "~/lib/bibliography";
 import ReferencesFromCatalog from "./ReferencesFromCatalog.astro";
 
 type Props = {
+    source?: BibliographyCatalog | Record<string, unknown>;
     lessonId?: string;
     includeTags?: ReferenceTag[];
     excludeTags?: ReferenceTag[];
