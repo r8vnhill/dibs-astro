@@ -161,6 +161,32 @@ const resolveLinkedTitle = (value, nodesById) => {
     };
 };
 
+const resolveWebSiteSource = (value, nodesById) => {
+    const id = resolveNodeId(value);
+    if (id) {
+        const node = nodesById.get(id);
+        if (!node || getType(node["@type"]) !== "WebSite") return null;
+        return resolveLinkedTitle(value, nodesById);
+    }
+
+    if (!isObject(value) || getType(value["@type"]) !== "WebSite") return null;
+
+    const title = getNodeTitle(value);
+    const url = asString(value.url);
+    return {
+        ...(title ? { title } : {}),
+        ...(url ? { url } : {}),
+    };
+};
+
+const getLocationFromUrl = (url) => {
+    try {
+        return new URL(url).hostname;
+    } catch {
+        return url;
+    }
+};
+
 const buildBaseReferenceInput = (base) => ({
     id: base.id,
     rawType: base.rawType,
@@ -197,11 +223,19 @@ const buildBookReferenceInput = (node, context, base) => {
     };
 };
 
-const buildWebPageReferenceInput = (node, context, base, url) => ({
-    ...buildBaseReferenceInput(base),
-    kind: "WebPage",
-    url,
-});
+const buildWebPageReferenceInput = (node, context, base, url) => {
+    const siteSource = resolveWebSiteSource(node.isPartOf, context.nodesById);
+    const location = siteSource?.title ?? base.publisherName ?? getLocationFromUrl(url);
+    const locationUrl = siteSource?.url ?? base.publisherUrl ?? url;
+
+    return {
+        ...buildBaseReferenceInput(base),
+        kind: "WebPage",
+        url,
+        ...(location ? { location } : {}),
+        ...(locationUrl ? { locationUrl } : {}),
+    };
+};
 
 const buildVideoReferenceInput = (node, context, base, url) => ({
     ...buildBaseReferenceInput(base),

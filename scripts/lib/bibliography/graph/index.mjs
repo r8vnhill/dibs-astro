@@ -11,7 +11,7 @@
  * The graph package is organized as follows:
  *
  * - `support.mjs` defines shared helper logic and builder-context contracts.
- * - `nodes.mjs` builds person, organization, creative-work, learning-resource, and reference nodes.
+ * - `nodes.mjs` builds person, organization, website, creative-work, learning-resource, and reference nodes.
  * - `usage.mjs` builds usage nodes.
  * - `pending-revision.mjs` handles pending-revision state and pruning.
  *

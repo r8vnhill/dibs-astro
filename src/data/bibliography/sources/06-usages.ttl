@@ -1,0 +1,46 @@
+# Lesson nodes and lesson-to-reference usage edges for the bibliography catalog.
+#
+# Keep each lesson as a canonical `schema:LearningResource` identified by its full site URL, then
+# connect it to concrete `ref:*` nodes through `dibs:ReferenceUsage`. This is the only fragment
+# where editorial relevance is encoded: `recommended`, `additional`, and `pending-revision` decide
+# how references surface in the UI and reports. Reuse existing lesson and reference IDs instead of
+# creating near-duplicates.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+<https://dibs.ravenhill.cl/notes/scripting/pipelines/>
+  a schema:LearningResource ;
+  schema:name "Pipelines I: PowerShell declarativo" ;
+  schema:url "/notes/scripting/pipelines/" .
+
+<https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/>
+  a schema:LearningResource ;
+  schema:name "Pipelines declarativos en Nushell" ;
+  schema:url "/notes/scripting/pipelines/nushell/" .
+
+usage:pipelines-nushell-nushell-pipelines-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/pipelines/nushell/> ;
+  dibs:reference ref:nushell-pipelines ;
+  dibs:tag "recommended" .
+
+<https://dibs.ravenhill.cl/notes/scripting/first-script/>
+  a schema:LearningResource ;
+  schema:name "Comandos reutilizables y validación de parámetros en PowerShell" ;
+  schema:url "/notes/scripting/first-script/" .
+
+<https://dibs.ravenhill.cl/notes/scripting/support-scripts/>
+  a schema:LearningResource ;
+  schema:name "Scripts de apoyo como software reusable" ;
+  schema:url "/notes/scripting/support-scripts/" .
+
+usage:support-scripts-kotlin-custom-scripting-tutorial-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/> ;
+  dibs:reference ref:kotlin-custom-scripting-tutorial ;
+  dibs:tag "recommended" .

@@ -137,6 +137,19 @@ const getPublisher = (
     };
 };
 
+const getWebSiteSource = (
+    value: unknown,
+): { location?: string; locationUrl?: string } => {
+    if (!isObject(value) || getType(value["@type"]) !== "WebSite") return {};
+
+    const location = asString(value.name) ?? asString(value.headline);
+    const locationUrl = asString(value.url);
+    return {
+        ...(location ? { location } : {}),
+        ...(locationUrl ? { locationUrl } : {}),
+    };
+};
+
 const normalizeItem = (
     rawItem: unknown,
     index: number,
@@ -307,12 +320,16 @@ const normalizeItem = (
         return null;
     }
 
+    const webSiteSource = getWebSiteSource(rawItem.isPartOf);
+
     return normalizeWebPageReference({
         kind: "WebPage",
         id,
         rawType,
         title,
         url,
+        ...(webSiteSource.location ? { location: webSiteSource.location } : {}),
+        ...(webSiteSource.locationUrl ? { locationUrl: webSiteSource.locationUrl } : {}),
         ...(description ? { description } : {}),
         authors,
         ...(datePublished ? { datePublished } : {}),

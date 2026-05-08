@@ -283,3 +283,33 @@ person:danny-guo
   a schema:Person ;
   schema:givenName "Danny" ;
   schema:familyName "Guo" .
+
+person:p-j-plauger
+  a schema:Person ;
+  schema:givenName "P. J." ;
+  schema:familyName "Plauger" .
+
+person:sebastian-aigner
+  a schema:Person ;
+  schema:givenName "Sebastian" ;
+  schema:familyName "Aigner" .
+
+person:roman-elizarov
+  a schema:Person ;
+  schema:givenName "Roman" ;
+  schema:familyName "Elizarov" .
+
+person:svetlana-isakova
+  a schema:Person ;
+  schema:givenName "Svetlana" ;
+  schema:familyName "Isakova" .
+
+person:dmitry-jemerov
+  a schema:Person ;
+  schema:givenName "Dmitry" ;
+  schema:familyName "Jemerov" .
+
+person:d-l-parnas
+  a schema:Person ;
+  schema:givenName "D. L." ;
+  schema:familyName "Parnas" .

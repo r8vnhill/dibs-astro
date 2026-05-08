@@ -1,13 +1,13 @@
 ---
 import * as icons from "~/assets/img/icons";
-import { Enquote, P } from "~/components/semantics";
+import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Info, Tip } from "~/components/ui/callouts";
+import { Definition, Explanation, Tip } from "~/components/ui/callouts";
 import { BashBlock, BashInline, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
-import { B, I, Mono } from "~/components/ui/font";
+import { B, Dash, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -15,61 +15,31 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="Scripts de apoyo como software reusable"
-    description="Introduce los scripts de apoyo como automatizaciones reutilizables y los hace crecer por fragmentos: val, args, if, funciones y comprobación de la estructura mínima de una biblioteca."
+    description="Aprende a diseñar un script de apoyo en Kotlin como una herramienta reusable, con entradas explícitas, validación básica y comprobaciones sobre la estructura de una biblioteca."
 >
     <Fragment slot="abstract">
         <P>
-            En la unidad anterior distinguimos bibliotecas, aplicaciones, herramientas y scripts como artefactos con
-            formas de uso distintas. Esta lección abre la Unidad 2 mirando el script desde una pregunta de diseño:
-            cuándo deja de ser una secuencia ocasional de comandos y empieza a funcionar como una herramienta de apoyo
-            reusable.
+            En el desarrollo de bibliotecas, no todo el software reusable aparece como una API publicada. También
+            existen herramientas pequeñas que ayudan a sostener el trabajo del proyecto: scripts que revisan archivos,
+            preparan datos, ejecutan comprobaciones o automatizan pasos repetidos. Esta lección abre una unidad
+            orientada a ese plano operativo: el trabajo de scripting que sostiene el proyecto desde adentro.
         </P>
 
         <P>
-            Un script reusable de apoyo no empieza como una biblioteca. Empieza como una pequeña automatización que
-            alguien puede ejecutar más de una vez, con entradas claras y una salida predecible. Durante la lección
-            construiremos, por fragmentos, un script que revisa si un proyecto de biblioteca tiene la estructura mínima
-            esperada.
+            En esta lección construiremos un primer script de apoyo en Kotlin. El objetivo será revisar si un proyecto
+            contiene archivos esperados para una biblioteca <Dash kind="em" /><Mono>README.md</Mono>, <Mono
+            >LICENSE</Mono> y <Mono>CODE_OF_CONDUCT.md</Mono>, los mismos que identificamos como condición mínima para
+            que una biblioteca sea adoptable<Dash kind="em" />. A partir de ese ejemplo, estudiaremos cómo agrupar datos
+            en una lista, leer argumentos de la terminal, validar precondiciones, representar rutas del sistema de
+            archivos y extraer una función pequeña para evitar repetir lógica.
+        </P>
+
+        <P>
+            Más que producir un script complejo, la lección busca mostrar una idea de diseño: incluso una herramienta
+            local puede tener un contrato operativo claro. Ese contrato indica cómo se ejecuta, qué entradas espera, qué
+            salida produce y cómo comunica sus resultados.
         </P>
     </Fragment>
-
-    <NotesSection id="h2-from-artifacts-to-support-tools">
-        <Heading
-            headingLevel="h2" Icon={icons.Compass}
-            slot="heading"
-        >
-            De artefactos de software a herramientas de apoyo
-        </Heading>
-
-        <P>
-            Una biblioteca se diseña para que otros programas la integren mediante una API. Una aplicación se diseña
-            para una experiencia de uso final. Un script, en cambio, suele nacer con una localidad muy concreta dentro
-            del proyecto: revisar archivos, preparar datos, generar reportes o repetir una secuencia de comandos.
-        </P>
-
-        <P>
-            <B>Ese carácter local no lo vuelve menos importante.</B> En un proyecto de biblioteca, un script puede
-            ayudar a revisar si existen archivos básicos como <Mono>README.md</Mono>, <Mono>LICENSE</Mono> o <Mono
-            >CODE_OF_CONDUCT.md</Mono>. También puede ejecutarse antes de publicar, dentro de una tarea de CI o como
-            parte de una revisión local.
-        </P>
-
-        <Info headingLevel="h3">
-            <span slot="title">Reusable no significa publicado como biblioteca</span>
-
-            <P>
-                Un script de apoyo puede aplicar criterios de diseño de bibliotecas sin ser una biblioteca. Puede tener
-                entradas explícitas, una salida predecible, mensajes claros y una estructura fácil de revisar, aunque su
-                forma de uso siga siendo <Enquote>ejecutar este archivo para completar una tarea</Enquote>.
-            </P>
-        </Info>
-
-        <P>
-            En esta lección construiremos un primer script de apoyo para una biblioteca pequeña. No intentará compilar,
-            publicar ni modificar el proyecto. Su tarea será más simple: observar si el proyecto tiene una estructura
-            mínima y comunicar qué encontró.
-        </P>
-    </NotesSection>
 
     <NotesSection id="h2-not-disposable">
         <Heading
@@ -78,6 +48,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             Script no significa desechable
         </Heading>
+
+        <P>
+            Una biblioteca se diseña para que otros programas la integren mediante una API. Una aplicación se diseña
+            para una experiencia de uso final. Un script, en cambio, suele nacer con una localidad muy concreta dentro
+            del proyecto: revisar archivos, preparar datos, generar reportes o repetir una secuencia de comandos. Ese
+            carácter local no lo vuelve menos importante ni lo convierte automáticamente en algo desechable.
+        </P>
 
         <P>
             No todos los scripts cumplen el mismo rol. Algunos sirven para explorar una idea y se descartan al terminar.
@@ -400,7 +377,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     que el script puede usar para construir otras rutas.
                 </ListItem>
 
-                <ListItem icon={icons.Path}>
+                <ListItem icon={icons.FolderOpen}>
                     <KotlinInline code="projectDirectory.resolve(relativePath)" /> construye una ruta dentro del
                     directorio del proyecto. Por ejemplo, si el proyecto es <Mono>.</Mono> y la ruta relativa es <Mono
                     >README.md</Mono>, el script revisará el archivo <Mono>./README.md</Mono>.
@@ -437,78 +414,79 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Tip>
     </NotesSection>
 
-    <ToDo
-      client:only="react"
-      metadata={{
-        tasks: [
-          "...",
-        ],
-      }}
-    />
-    
-    <NotesSection id="h2-next-steps">
-        <Heading
-            headingLevel="h2" Icon={icons.Package}
-            slot="heading"
-        >
-            Cuándo seguir creciendo
-        </Heading>
-
-        <P>
-            El ejemplo termina a propósito antes de entrar en herramientas de construcción o publicación. Si el mismo
-            patrón aparece en otros scripts, entonces sí conviene pensar en un módulo reusable, más validación o una
-            prueba automatizada.
-        </P>
-
-        <List>
-            <ListItem icon={icons.Wrench}>
-                Más validación si el script debe aceptar formatos distintos o mensajes de error más precisos.
-            </ListItem>
-            <ListItem icon={icons.ArrowsClockwise}>
-                Un módulo reusable si la misma lógica empieza a repetirse en otros scripts de apoyo.
-            </ListItem>
-            <ListItem icon={icons.MagnifyingGlass}>
-                Pruebas si la salida debe mantenerse estable o si el texto generado se vuelve parte del flujo.
-            </ListItem>
-            <ListItem icon={icons.Path}>
-                Una biblioteca si el contrato deja de ser local y pasa a interesar a varios consumidores.
-            </ListItem>
-        </List>
-    </NotesSection>
-
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Esta lección abrió la Unidad 2 con una idea base: scripting también es diseño de software cuando el
-                resultado sostiene tareas repetibles. Un script de apoyo reusable no necesita parecerse a una biblioteca
-                publicada, pero sí necesita hacer visible su forma de uso.
+                Un script de apoyo puede parecer una pieza menor dentro de un proyecto, pero cuando automatiza una tarea
+                recurrente empieza a formar parte de la infraestructura cotidiana de la biblioteca. Por eso conviene
+                diseñarlo con los mismos criterios básicos que aplicaríamos a otros artefactos reusables: entradas
+                explícitas, responsabilidades claras y una salida comprensible.
+            </P>
+
+            <P>
+                En el ejemplo de esta lección, el script no modifica el proyecto ni intenta resolver todo el proceso de
+                publicación de una biblioteca. Su responsabilidad es más acotada: recibir una ruta, revisar algunos
+                archivos esperados y comunicar qué encontró. Esa simplicidad es una ventaja, porque permite reconocer
+                con claridad el contrato operativo del script.
+            </P>
+
+            <P>
+                También vimos que las decisiones pequeñas de implementación tienen impacto en la legibilidad. Agrupar
+                los archivos esperados en una lista expresa que forman parte de un mismo criterio; validar
+                <KotlinInline code="args" /> antes de usarlo evita errores confusos; y extraer
+                <KotlinInline code="checkPath()" /> permite nombrar una responsabilidad repetida sin convertir el script
+                en una abstracción innecesariamente grande.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Wrench}>
-                Un script de apoyo reusable captura una tarea repetible y reduce la dependencia de pasos manuales.
+                Un script de apoyo reusable automatiza una tarea que puede repetirse durante el desarrollo, la revisión
+                local o la integración continua.
             </ListItem>
+
+            <ListItem icon={icons.Target}>
+                El contrato operativo de un script describe cómo se ejecuta, qué entradas acepta, qué salida produce y
+                cómo comunica sus fallas.
+            </ListItem>
+
             <ListItem icon={icons.ListChecks}>
-                <KotlinInline code="val" />, <KotlinInline code="args" /> e <KotlinInline code="if" /> permiten crecer
-                sin introducir demasiada sintaxis a la vez.
+                Agrupar valores relacionados en una colección ayuda a expresar la intención del código y evita tratar
+                datos de una misma categoría como elementos aislados.
             </ListItem>
+
+            <ListItem icon={icons.ShieldCheck}>
+                Validar las entradas antes de usarlas hace que los errores aparezcan cerca de su causa y con mensajes
+                más comprensibles.
+            </ListItem>
+
+            <ListItem icon={icons.Path}>
+                Las rutas del sistema de archivos deben tratarse como rutas, no solo como texto, para construir
+                comprobaciones más claras y portables.
+            </ListItem>
+
             <ListItem icon={icons.BracketsCurly}>
-                <KotlinInline code="fun checkPath(...)" /> nombra una responsabilidad pequeña y visible.
-            </ListItem>
-            <ListItem icon={icons.Package}>
-                <KotlinInline code="Path.of(...)" /> y <KotlinInline code="Files.exists(...)" /> hacen explícito qué se
-                revisa.
+                Una función pequeña puede mejorar la lectura del script cuando nombra una responsabilidad concreta y
+                evita duplicar una misma operación.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                La pregunta útil no es si un script es <Enquote>serio</Enquote> o <Enquote>pequeño</Enquote>. La
-                pregunta es si alguien va a depender de él. Cuando la respuesta es sí, conviene diseñarlo como un
-                artefacto de apoyo: simple de ejecutar, claro en sus promesas y preparado para cambiar sin perder
-                confiabilidad.
+                Antes de agregar más comportamiento a un script, conviene preguntarse qué parte de su contrato ya está
+                clara y cuál todavía depende de supuestos implícitos. Pero también conviene preguntarse qué ocurre
+                cuando ese script empieza a ejecutarse en más contextos, por más personas o en procesos automáticos. En
+                ese punto, las preguntas cambian: ya no se trata solo de cómo ejecutarlo, sino de cómo mantenerlo, cómo
+                asegurarse de que sigue cumpliendo su contrato y cómo hacer ese contrato reconocible desde afuera.
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <ReferencesFromCatalog lessonId="/notes/scripting/support-scripts/">
+        <Fragment slot="description-ref:kotlin-custom-scripting-tutorial">
+            Tutorial oficial de JetBrains que enseña a construir scripts de Kotlin ejecutables con punto de entrada
+            explícito y manejo de dependencias Maven. Cubre la definición del tipo de script, la validación de
+            argumentos, y la creación de un host que compila y ejecuta scripts con un contrato operativo claro.
+        </Fragment>
+    </ReferencesFromCatalog>
 </NotesLayout>

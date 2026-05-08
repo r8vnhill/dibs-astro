@@ -36,6 +36,7 @@ Core node categories:
 
 - references: `Book | WebPage | VideoObject | ScholarlyArticle | Thesis`
 - works: reusable `CreativeWork` parents referenced by citeable entries through `schema:isPartOf`
+- sites: reusable `WebSite` containers for documentation and other multi-page web properties
 - people: `Person`
 - organizations/institutions: `Organization | CollegeOrUniversity`
 - lessons: `LearningResource`
@@ -52,6 +53,7 @@ Recommended ID patterns:
 
 - references: `ref:<slug>`
 - people: `person:<slug>`
+- sites: `site:<slug>`
 - organizations: `org:<slug>`
 - works: `work:<slug>`
 - lessons: full site URL subjects with canonical route values in `schema:url`
@@ -89,9 +91,10 @@ To add or modify bibliography data:
    - `00-prefixes.ttl` is the shared prefix reference.
    - `01-persons.ttl` is for `Person` entities.
    - `02-organizations.ttl` is for organizations and institutions.
-   - `03-works.ttl` is for reusable parent works, such as books or larger published works.
-   - `04-references.ttl` is for citeable entries, such as chapters, articles, videos, theses, and web pages.
-   - `05-usages.ttl` is for lesson-to-reference usage relationships.
+   - `03-sites.ttl` is for `WebSite` containers such as documentation sites.
+   - `04-works.ttl` is for reusable parent works, such as books or larger published works.
+   - `05-references.ttl` is for citeable entries, such as chapters, articles, videos, theses, and web pages.
+   - `06-usages.ttl` is for lesson-to-reference usage relationships.
 2. Edit the themed Turtle file directly.
 3. Keep the file-local `@prefix` declarations intact. Each source file is intentionally independent.
 4. Run the bibliography generator:

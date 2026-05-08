@@ -114,6 +114,12 @@ describe("bibliography catalog", () => {
             "@context": "https://schema.org",
             "@graph": [
                 {
+                    "@id": "site:example-docs",
+                    "@type": "WebSite",
+                    name: "Example Docs",
+                    url: "https://docs.example/",
+                },
+                {
                     "@id": "org:nushell",
                     "@type": "Organization",
                     name: "Nushell",
@@ -139,6 +145,14 @@ describe("bibliography catalog", () => {
                     publisher: { "@id": "org:nushell" },
                 },
                 {
+                    "@id": "ref:web-site-1",
+                    "@type": "WebPage",
+                    name: "Guidelines",
+                    url: "https://docs.example/guidelines",
+                    isPartOf: { "@id": "site:example-docs" },
+                    publisher: { "@id": "org:nushell" },
+                },
+                {
                     "@id": "ref:article-1",
                     "@type": "ScholarlyArticle",
                     name: "Bash in the Wild",
@@ -158,6 +172,12 @@ describe("bibliography catalog", () => {
         expect(catalog.referencesById.get("ref:web-1")).toMatchObject({
             location: "Nushell",
             locationUrl: "https://www.nushell.sh/",
+        });
+        expect(catalog.referencesById.get("ref:web-site-1")).toMatchObject({
+            location: "Example Docs",
+            locationUrl: "https://docs.example/",
+            publisherName: "Nushell",
+            publisherUrl: "https://www.nushell.sh/",
         });
         expect(catalog.referencesById.get("ref:article-1")).toMatchObject({
             publication: "TOSEM",
@@ -311,5 +331,27 @@ describe("bibliography catalog", () => {
         expect(catalog.lessonsById.has("/notes/scripting/pipelines/nushell/"))
             .toBe(true);
         expect(catalog.referencesById.has("ref:nushell-pipelines")).toBe(true);
+    });
+
+    it("keeps the support-scripts lesson wired to its recommended Kotlin reference", () => {
+        const generatedCatalog = JSON.parse(
+            fs.readFileSync("src/data/bibliography/catalog.graph.generated.jsonld", "utf8"),
+        );
+        const catalog = loadBibliographyCatalog(generatedCatalog, {
+            sourceLabel: "generated bibliography catalog",
+        });
+
+        const grouped = getReferencesForLesson(
+            catalog,
+            "/notes/scripting/support-scripts/",
+        );
+
+        expect(grouped.recommended).not.toHaveLength(0);
+        expect(grouped.recommended.map((entry) => entry.reference.id)).toContain(
+            "ref:kotlin-custom-scripting-tutorial",
+        );
+        expect(catalog.lessonsById.has("/notes/scripting/support-scripts/"))
+            .toBe(true);
+        expect(catalog.referencesById.has("ref:kotlin-custom-scripting-tutorial")).toBe(true);
     });
 });

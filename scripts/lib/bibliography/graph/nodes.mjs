@@ -5,7 +5,7 @@
  * categories:
  *
  * - `Person`
- * - `Organization` and `CollegeOrUniversity`
+ * - `Organization`, `CollegeOrUniversity`, and `WebSite`
  * - `CreativeWork`
  * - concrete reference nodes such as `Book` and `Thesis`
  * - `LearningResource`

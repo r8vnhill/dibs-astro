@@ -3,7 +3,7 @@
 # Keep whole books, proceedings, journals, and other container-level creative works here when
 # chapters, papers, or sections cite them via `schema:isPartOf`. This file is for reusable
 # publication metadata, not for lesson-facing citations with page ranges or URLs; those concrete
-# references belong in `04-references.ttl`.
+# references belong in `05-references.ttl`.
 @prefix schema: <https://schema.org/> .
 @prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
 @prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .

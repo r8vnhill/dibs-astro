@@ -1,0 +1,237 @@
+# Concrete bibliography references rendered in lessons and connected to usages.
+#
+# Add lesson-facing citations here: chapters, whole books cited directly, web pages, videos,
+# articles, and theses. Reuse `person:*`, `org:*`, and `work:*` nodes from the other fragments
+# instead of duplicating metadata. When a reference belongs to a larger container (chapter in a
+# book, article in proceedings, paper in a journal), point to that parent with `schema:isPartOf`;
+# use direct `schema:publisher` links only when the reference does not depend on a reusable
+# container node in `04-works.ttl`.
+@prefix schema: <https://schema.org/> .
+@prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
+@prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
+@prefix person: <https://dibs.ravenhill.cl/bibliography/person/> .
+@prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
+@prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
+@prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+ref:pipeline-connecting-commands
+  a schema:Book ;
+  schema:name "The pipeline: Connecting commands" ;
+  schema:pageStart 69 ;
+  schema:pageEnd 83 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:collection-pipeline-fowler
+  a schema:WebPage ;
+  schema:name "Collection Pipeline" ;
+  schema:url "https://martinfowler.com/articles/collection-pipeline/" ;
+  schema:author person:martin-fowler ;
+  schema:publisher org:martin-fowler-site .
+
+ref:improving-your-parameterized-script
+  a schema:Book ;
+  schema:name "Improving your parameterized script" ;
+  schema:pageStart 249 ;
+  schema:pageEnd 258 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:input-and-output-python-distilled
+  a schema:Book ;
+  schema:name "Input and Output" ;
+  schema:pageStart 262 ;
+  schema:pageEnd 311 ;
+  schema:author person:david-m-beazley ;
+  schema:isPartOf work:python-distilled .
+
+ref:handling-errors
+  a schema:Book ;
+  schema:name "Handling errors" ;
+  schema:pageStart 279 ;
+  schema:pageEnd 286 ;
+  schema:author person:travis-plunk ;
+  schema:isPartOf work:learn-powershell-month-lunches-4e .
+
+ref:errors-and-exceptions
+  a schema:Book ;
+  schema:name "Errors and exceptions" ;
+  schema:pageStart 531 ;
+  schema:pageEnd 562 ;
+  schema:author person:bruce-payette, person:richard-siddaway ;
+  schema:isPartOf work:windows-powershell-in-action-3e .
+
+ref:python-distilled-book
+  a schema:Book ;
+  schema:name "Python Distilled" ;
+  schema:datePublished "2022" ;
+  schema:author person:david-m-beazley ;
+  schema:isPartOf work:python-distilled .
+
+ref:rfc-8259-json-data-interchange-format
+  a schema:WebPage ;
+  schema:name "The JavaScript Object Notation (JSON) Data Interchange Format" ;
+  schema:url "https://datatracker.ietf.org/doc/rfc8259" ;
+  schema:datePublished "2017-12" ;
+  schema:author person:tim-bray ;
+  schema:publisher org:ietf .
+
+ref:cattrs-documentation
+  a schema:WebPage ;
+  schema:name "cattrs 26.1.0 documentation" ;
+  schema:url "https://catt.rs/en/stable/#" ;
+  schema:publisher org:cattrs-project .
+
+ref:python-dataclasses-docs
+  a schema:WebPage ;
+  schema:name "dataclasses — Data Classes" ;
+  schema:url "https://docs.python.org/3/library/dataclasses.html" ;
+  schema:publisher org:python-docs .
+
+ref:python-json-docs
+  a schema:WebPage ;
+  schema:name "json — JSON encoder and decoder" ;
+  schema:url "https://docs.python.org/3/library/json.html" ;
+  schema:publisher org:python-docs .
+
+ref:fluent-python-2e-book
+  a schema:Book ;
+  schema:name "Fluent python: clear, concise, and effective programming" ;
+  schema:datePublished "2022" ;
+  schema:author person:luciano-ramalho ;
+  schema:isPartOf work:fluent-python-2e .
+
+ref:pydantic-models-docs
+  a schema:WebPage ;
+  schema:name "Models - Pydantic Validation" ;
+  schema:url "https://docs.pydantic.dev/latest/concepts/models/" ;
+  schema:publisher org:pydantic .
+
+ref:pep-557-data-classes
+  a schema:WebPage ;
+  schema:name "PEP 557 – Data Classes | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0557/" ;
+  schema:publisher org:python-peps .
+
+ref:pep-613-explicit-type-aliases
+  a schema:WebPage ;
+  schema:name "PEP 613 – Explicit Type Aliases | peps.python.org" ;
+  schema:url "https://peps.python.org/pep-0613/" ;
+  schema:publisher org:python-peps .
+
+ref:hettinger-dataclasses-pycon-2018-video
+  a schema:VideoObject ;
+  schema:name "(2) Raymond Hettinger - Dataclasses: The code generator to end all code generators - PyCon 2018 - YouTube" ;
+  schema:url "https://www.youtube.com/watch?v=T-TwcmT6Rcw" ;
+  schema:publisher org:youtube .
+
+ref:lucas-serialization-more-than-pickling-2022
+  a schema:VideoObject ;
+  schema:name "Talk - Joseph Lucas: Serialization  More than pickling" ;
+  schema:url "https://www.youtube.com/watch?v=ygrjAGDU1J8" ;
+  schema:datePublished "2022-05-23" ;
+  schema:author org:pycon-us ;
+  schema:publisher org:pycon-us .
+
+ref:dataclasses-are-here-2018-video
+  a schema:VideoObject ;
+  schema:name "Dataclasses are here. Now what?" ;
+  schema:url "https://www.youtube.com/watch?v=zHY1oaYxxjA" ;
+  schema:datePublished "2018-11-14" ;
+  schema:author org:pygotham ;
+  schema:publisher org:pygotham .
+
+ref:effective-python-3e-book
+  a schema:Book ;
+  schema:name "Effective Python: 125 specific ways to write better Python" ;
+  schema:datePublished "2025" ;
+  schema:author person:brett-slatkin ;
+  schema:isPartOf work:effective-python-3e .
+
+ref:python-typing-docs
+  a schema:WebPage ;
+  schema:name "typing — Support for type hints" ;
+  schema:url "https://docs.python.org/3/library/typing.html" ;
+  schema:publisher org:python-docs .
+
+ref:attrs-why-not
+  a schema:WebPage ;
+  schema:name "Why not… - attrs 26.1.0 documentation" ;
+  schema:url "https://www.attrs.org/en/stable/why.html" ;
+  schema:publisher org:attrs-project .
+
+ref:clig-the-basics
+  a schema:WebPage ;
+  schema:name "Command Line Interface Guidelines" ;
+  schema:url "https://clig.dev/" ;
+  schema:publisher org:clig .
+
+ref:nushell-creating-modules
+  a schema:WebPage ;
+  schema:name "Creating Modules" ;
+  schema:url "https://www.nushell.sh/book/modules/creating_modules.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-pipelines
+  a schema:WebPage ;
+  schema:name "Pipelines" ;
+  schema:url "https://www.nushell.sh/book/pipelines.html" ;
+  schema:datePublished "2026-01-27" ;
+  schema:publisher org:nushell .
+
+ref:nushell-custom-commands
+  a schema:WebPage ;
+  schema:name "Custom Commands" ;
+  schema:url "https://www.nushell.sh/book/custom_commands.html" ;
+  schema:publisher org:nushell .
+
+ref:dong-bash-in-the-wild-2023
+  a schema:ScholarlyArticle ;
+  schema:name "Bash in the Wild: Language Usage, Code Smells, and Bugs" ;
+  schema:url "https://doi.org/10.1145/3517193" ;
+  schema:datePublished "2023" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 22 ;
+  schema:author person:yue-dong, person:zimin-li, person:ying-tian, person:chengnian-sun, person:michael-w-godfrey, person:meiyappan-nagappan ;
+  schema:isPartOf work:acm-tosem ;
+  schema:publisher org:acm .
+
+ref:nushell-export-def
+  a schema:WebPage ;
+  schema:name "Export def" ;
+  schema:url "https://www.nushell.sh/commands/docs/export_def.html" ;
+  schema:publisher org:nushell .
+
+ref:li-bash-language-usage-2021
+  a schema:Thesis ;
+  schema:name "An Empirical Study on Bash Language Usage in Github" ;
+  schema:url "http://hdl.handle.net/10012/17036" ;
+  schema:datePublished "2021" ;
+  schema:author person:zimin-li ;
+  schema:publisher org:university-of-waterloo .
+
+ref:mazurak-a-bash-2007
+  a schema:ScholarlyArticle ;
+  schema:name "A BASH: Finding bugs in bash scripts" ;
+  schema:url "https://doi.org/10.1145/1255329.1255347" ;
+  schema:datePublished "2007" ;
+  schema:pageStart 105 ;
+  schema:pageEnd 114 ;
+  schema:author person:karl-mazurak, person:steve-zdancewic ;
+  schema:isPartOf work:plas-2007 ;
+  schema:publisher org:acm .
+
+ref:nushell-path-type
+  a schema:WebPage ;
+  schema:name "Path" ;
+  schema:url "https://www.nushell.sh/lang-guide/chapters/types/other_types/path.html" ;
+  schema:publisher org:nushell .
+
+ref:kotlin-custom-scripting-tutorial
+  a schema:WebPage ;
+  schema:name "Get started with Kotlin custom scripting – tutorial" ;
+  schema:url "https://kotlinlang.org/docs/custom-script-deps-tutorial.html" ;
+  schema:datePublished "2026-03-16" ;
+  schema:author org:jetbrains ;
+  schema:isPartOf site:kotlin-docs ;
+  schema:publisher org:jetbrains .

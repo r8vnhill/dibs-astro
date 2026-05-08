@@ -1,9 +1,7 @@
-# Prefix declarations shared by every bibliography source fragment.
+# Canonical website and documentation-site nodes reused across the bibliography graph.
 #
-# This file must stay first in the numbered `sources/` sequence because the assembly
-# step copies it verbatim and strips `@prefix` lines from the remaining TTL files.
-# Keep only namespace declarations here; lesson, usage, reference, person, org, and
-# work triples belong in their dedicated numbered fragments.
+# Use this file for stable website containers that group related web pages. Keep real publishers
+# in `02-organizations.ttl` and link documentation pages to these sites with `schema:isPartOf`.
 @prefix schema: <https://schema.org/> .
 @prefix dibs: <https://dibs.ravenhill.cl/vocab#> .
 @prefix ref: <https://dibs.ravenhill.cl/bibliography/ref/> .
@@ -12,3 +10,8 @@
 @prefix org: <https://dibs.ravenhill.cl/bibliography/org/> .
 @prefix work: <https://dibs.ravenhill.cl/bibliography/work/> .
 @prefix usage: <https://dibs.ravenhill.cl/bibliography/usage/> .
+
+site:kotlin-docs
+  a schema:WebSite ;
+  schema:name "Kotlin docs" ;
+  schema:url "https://kotlinlang.org/docs/" .

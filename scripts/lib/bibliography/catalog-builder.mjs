@@ -78,7 +78,7 @@ export const buildCatalogArtifactFromTurtle = (
             continue;
         }
 
-        if (primaryType === "Organization" || primaryType === "CollegeOrUniversity") {
+        if (primaryType === "Organization" || primaryType === "CollegeOrUniversity" || primaryType === "WebSite") {
             graph.push(
                 buildOrganizationNode(record, {
                     reader,

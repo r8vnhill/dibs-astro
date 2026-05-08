@@ -86,7 +86,7 @@
 
 export const AUTHOR_TYPES = new Set(["Person", "Organization", "CollegeOrUniversity"]);
 export const PUBLISHER_TYPES = new Set(["Organization", "CollegeOrUniversity"]);
-export const CREATIVE_WORK_TYPES = new Set(["CreativeWork"]);
+export const CREATIVE_WORK_TYPES = new Set(["CreativeWork", "WebSite"]);
 export const LESSON_TYPES = new Set(["LearningResource"]);
 
 export function withOptional(key, value) {

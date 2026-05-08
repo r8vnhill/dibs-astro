@@ -171,6 +171,11 @@ const equivalentReferenceCases: readonly EquivalentReferenceCase[] = [
             "@type": "WebPage",
             name: "API Guidelines",
             url: "https://docs.example/guidelines",
+            isPartOf: {
+                "@type": "WebSite",
+                name: "Example Docs",
+                url: "https://docs.example/",
+            },
             publisher: {
                 "@type": "Organization",
                 name: "Example Docs",
@@ -182,12 +187,53 @@ const equivalentReferenceCases: readonly EquivalentReferenceCase[] = [
             "@type": "WebPage",
             name: "API Guidelines",
             url: "https://docs.example/guidelines",
+            isPartOf: { "@id": "site:example-docs" },
             publisher: {
                 "@type": "Organization",
                 name: "Example Docs",
                 url: "https://docs.example/",
             },
         }),
+    },
+    {
+        label: "WebPage hosted on site",
+        referenceId: "ref:web-site",
+        itemListSource: itemList({
+            identifier: "ref:web-site",
+            "@type": "WebPage",
+            name: "Kotlin custom scripting",
+            url: "https://kotlinlang.org/docs/custom-script-deps-tutorial.html",
+            isPartOf: {
+                "@type": "WebSite",
+                name: "Kotlin docs",
+                url: "https://kotlinlang.org/docs/",
+            },
+            publisher: {
+                "@type": "Organization",
+                name: "JetBrains",
+                url: "https://www.jetbrains.com/",
+            },
+        }),
+        catalogSource: catalog(
+            {
+                "@id": "site:kotlin-docs",
+                "@type": "WebSite",
+                name: "Kotlin docs",
+                url: "https://kotlinlang.org/docs/",
+            },
+            {
+                "@id": "ref:web-site",
+                "@type": "WebPage",
+                name: "Kotlin custom scripting",
+                url: "https://kotlinlang.org/docs/custom-script-deps-tutorial.html",
+                isPartOf: { "@id": "site:kotlin-docs" },
+                publisher: {
+                    "@type": "Organization",
+                    name: "JetBrains",
+                    url: "https://www.jetbrains.com/",
+                },
+            },
+        ),
     },
     {
         label: "VideoObject",

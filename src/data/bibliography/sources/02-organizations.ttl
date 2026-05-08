@@ -138,6 +138,11 @@ org:intellij-platform-plugin-sdk-help
   schema:name "IntelliJ Platform Plugin SDK Help" ;
   schema:url "https://plugins.jetbrains.com/docs/intellij/" .
 
+org:jetbrains
+  a schema:Organization ;
+  schema:name "JetBrains" ;
+  schema:url "https://www.jetbrains.com/" .
+
 org:maven
   a schema:Organization ;
   schema:name "Apache Maven" ;
