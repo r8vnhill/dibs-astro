@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { resolveLessonMetadata } from "../lesson-metadata-bridge";
 
 describe("lesson-metadata-bridge", () => {
+    const knownLessonPath = "/notes/scripting/support-scripts/";
+
     it("expone metadata serializable para rutas conocidas", async () => {
-        const result = await resolveLessonMetadata("/notes/scripting/first-script/");
+        const result = await resolveLessonMetadata(knownLessonPath);
 
         expect(result.kind).toBe("found");
         expect(result.kind === "found" ? result.metadata.authors : undefined).toBeInstanceOf(Array);
@@ -12,16 +14,16 @@ describe("lesson-metadata-bridge", () => {
     });
 
     it("normaliza rutas crudas y URLs completas al mismo DTO canónico", async () => {
-        const canonical = await resolveLessonMetadata("/notes/scripting/first-script/");
-        const rawPath = await resolveLessonMetadata("notes/scripting/first-script");
-        const fullUrl = await resolveLessonMetadata("https://dibs.ravenhill.cl/notes/scripting/first-script");
+        const canonical = await resolveLessonMetadata(knownLessonPath);
+        const rawPath = await resolveLessonMetadata("notes/scripting/support-scripts");
+        const fullUrl = await resolveLessonMetadata("https://dibs.ravenhill.cl/notes/scripting/support-scripts");
 
         expect(rawPath).toEqual(canonical);
         expect(fullUrl).toEqual(canonical);
     });
 
     it("expone solo campos DTO para la capa de presentación", async () => {
-        const result = await resolveLessonMetadata("/notes/scripting/first-script/");
+        const result = await resolveLessonMetadata(knownLessonPath);
 
         expect(result.kind === "found" ? Object.keys(result.metadata).sort() : []).toEqual([
             "authors",

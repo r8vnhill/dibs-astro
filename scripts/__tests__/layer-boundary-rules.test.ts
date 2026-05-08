@@ -15,6 +15,7 @@ const expectedRuleOrder = [
     "presentation-adapter-boundary",
     "ui-boundary",
     "content-core-boundary",
+    "site-core-boundary",
 ];
 
 const expectedSources = [
@@ -24,6 +25,7 @@ const expectedSources = [
     ["presentation-adapter-boundary", "presentation-adapter"],
     ["ui-boundary", "ui"],
     ["content-core-boundary", "content-core"],
+    ["site-core-boundary", "site-core"],
 ];
 
 function ruleById(id) {
@@ -458,7 +460,11 @@ describe("boundaryRules", () => {
 
 describe("Cycle 2 rule matrix", () => {
     test("domain allows only domain targets", () => {
-        expect(ruleById("domain-boundary").allowedTargets).toEqual(["domain", "content-core"]);
+        expect(ruleById("domain-boundary").allowedTargets).toEqual([
+            "domain",
+            "content-core",
+            "site-core",
+        ]);
     });
 
     test("application allows only domain and application targets", () => {
@@ -466,6 +472,7 @@ describe("Cycle 2 rule matrix", () => {
             "domain",
             "application",
             "content-core",
+            "site-core",
         ]);
     });
 
