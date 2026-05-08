@@ -29,13 +29,13 @@ describe.concurrent("support scripts lesson render", () => {
             'a[href*="dibs-course/kotlin-companion"]',
         );
         expect(sourceLink?.href).toContain("scripts/check-library-layout.main.kts");
-        expect(sourceLink?.textContent).toContain("Ver el script completo");
+        expect(sourceLink?.textContent).toContain("scripts/check-library-layout.main.kts");
 
         const text = document.body.textContent ?? "";
         expect(text).toContain("kotlin check-library-layout.main.kts .");
-        expect(text).toContain("primero queremos comprobar que el archivo se puede ejecutar");
+        expect(text).toContain("contrato operativo del script");
         expect(text).toContain("fun checkPath");
-        expect(text).toContain("args.size");
+        expect(text).toContain("args.isNotEmpty()");
         expect(text).not.toContain("data class");
         expect(text).not.toContain("Files.walk");
     });
