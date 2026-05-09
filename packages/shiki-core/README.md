@@ -62,17 +62,69 @@ npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken
 
 ## Usage
 
+### Creating a Configured Service
+
+Most consumers should create a configured service for their application:
+
+```ts
+import { createShikiHighlighterService } from "@ravenhill/shiki-core";
+
+// Create a service with optional custom retry handler
+const shikiService = createShikiHighlighterService({
+    retry: myRetryHandler, // Optional
+    warn: customWarnFn,    // Optional
+    defaultTheme: "catppuccin-latte", // Optional
+    initialLanguages: ["javascript", "python"], // Optional
+});
+
+// Use it for rendering
+const html = await shikiService.highlightToHtml({
+    code: 'console.log("hello")',
+    language: "javascript",
+});
+```
+
+### Default Service (No Retry)
+
+For simpler use cases without custom retry policy:
+
+```ts
+const html = await shikiService.highlightToHtml({
+    code: "code",
+    language: "python",
+    theme: "nord",
+    meta: "highlight={1,3}",
+    transformers: [myTransformer],
+});
+```
+
+### Accessing the Cached Highlighter
+
+If you need direct access to the Shiki highlighter instance:
+
+```ts
+import { getShikiHighlighter } from "@ravenhill/shiki-core";
+
+const highlighter = await getShikiHighlighter();
+const html = await highlighter.codeToHtml("code", { lang: "js", theme: "nord" });
+```
+
+### Root-Only Imports
+
 Import from the package root only:
 
 ```ts
 import {
+    createShikiHighlighterService,
     getShikiHighlighter,
     normalizeShikiLanguage,
     renderFallbackCodeHtml,
     DEFAULT_DARK_THEME,
     DEFAULT_LIGHT_THEME,
-    type HighlightCodeOptions,
-    type RetryHighlightOperation,
+    type ShikiHighlighterService,
+    type HighlightToHtmlOptions,
+    type ShikiRetry,
+    type ShikiRetryContext,
 } from "@ravenhill/shiki-core";
 ```
 
@@ -160,6 +212,34 @@ The package artifact is intentionally small: `package.json`, `README.md`, and th
 - Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint mapping.
 - Accidental subpath import attempt: import from `@ravenhill/shiki-core` only; subpaths are not part of the supported contract.
 
-## Future Evolution
+## Implementation Status
 
-Phase 2 will extract the actual Shiki orchestration and cache lifecycle logic from the Astro app. Phase 3 will integrate the app to consume the extracted package while maintaining backward compatibility through a bridge layer.
+### Phase 2 (Complete)
+
+Extracted pure highlighting utilities:
+
+- Language alias and resolution contracts
+- Theme configuration constants
+- Fallback HTML rendering
+- Class token utilities
+- Reusable transformers (Tailwind classes, line text color)
+
+### Phase 3 (Complete)
+
+Extracted highlighter orchestration and cache lifecycle:
+
+- **Highlighter management**: `createShikiHighlighterService` for configurable services
+- **Direct access**: `getShikiHighlighter` for the cached singleton
+- **Promise-backed cache**: Concurrent caller support with rejection recovery
+- **Global singleton synchronization**: Process-level cache with ESM context reuse
+- **Language lifecycle**: Alias normalization, loaded-language tracking, safe fallback
+- **Warning deduplication**: One warning per language + kind to avoid console spam
+- **Configurable retry**: Injected retry handler for host-specific concerns (e.g., dev transport retry)
+
+Consumers can import from the root API and create configured services matching their runtime requirements.
+
+### Future Phases
+
+- Fine-grained Shiki bundle control (themes/languages as tree-shakeable imports)
+- Additional transformer contracts
+- Performance monitoring and metrics

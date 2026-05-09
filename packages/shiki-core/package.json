@@ -34,6 +34,9 @@
         "typescript": "^5.9.2",
         "vitest": "^3.2.4"
     },
+    "dependencies": {
+        "shiki": "^3.9.1"
+    },
     "publishConfig": {
         "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
         "access": "restricted"

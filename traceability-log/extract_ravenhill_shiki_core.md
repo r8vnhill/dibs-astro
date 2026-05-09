@@ -204,7 +204,7 @@ export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME };
 
 ---
 
-## Phase 3: Extract Highlighter Orchestration and Cache Lifecycle
+## ~~Phase 3: Extract Highlighter Orchestration and Cache Lifecycle~~
 
 **Goal:** move the stateful Shiki orchestration without changing singleton semantics.
 

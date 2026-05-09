@@ -1,0 +1,154 @@
+/**
+ * Shiki highlighter service orchestration.
+ *
+ * Coordinates highlighter creation, language loading, caching, and fallback rendering.
+ */
+
+import { createHighlighter } from "shiki";
+import type { Highlighter } from "shiki";
+import { createStore } from "./store";
+import { syncToGlobal, readFromGlobalCache } from "./global-singleton";
+import { ensureLanguageLoaded } from "./language-loader";
+import { shouldWarn, resetWarnings } from "./warnings";
+import { buildPlainHtml } from "../fallback/html";
+import { resolveShikiLanguage } from "../languages/resolution";
+import type {
+    ShikiHighlighterService,
+    ShikiHighlighterServiceOptions,
+    ShikiRetry,
+    HighlightToHtmlOptions,
+} from "./types";
+import { defaultLanguages, DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME } from "./defaults";
+
+/**
+ * Default no-retry function.
+ */
+const directExecution: ShikiRetry = (operation) => operation();
+
+/**
+ * Creates a Shiki highlighter service with optional custom retry behavior.
+ *
+ * @param options - Configuration including retry handler and custom theme/language defaults
+ * @returns A service providing highlighter access and highlighting operations
+ */
+export function createShikiHighlighterService(
+    options?: ShikiHighlighterServiceOptions
+): ShikiHighlighterService {
+    const optionsOrDefault = options || {};
+    const retry = optionsOrDefault.retry || directExecution;
+    const customWarn = optionsOrDefault.warn;
+    const defaultTheme = optionsOrDefault.defaultTheme || DEFAULT_DARK_THEME;
+    const initialLanguages = optionsOrDefault.initialLanguages || defaultLanguages;
+
+    // Wrap the warn function to ensure proper type
+    const warnMessage = ((msg: string): void => {
+        (customWarn as any)?.(msg) || console.warn(msg);
+    }) as (msg: string) => void;
+
+    // Create the promise-backed store with global cache synchronization
+    const highlighterStore = createStore({
+        create: async () => {
+            return retry(
+                async () =>
+                    createHighlighter({
+                        themes: [DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME],
+                        langs: initialLanguages.slice(),
+                    }),
+                { operation: "create-highlighter" },
+            );
+        },
+        onSet: syncToGlobal,
+    });
+
+    // Rehydrate from global cache if available
+    const cachedGlobalPromise = readFromGlobalCache();
+    if (cachedGlobalPromise) {
+        highlighterStore.setForTests(cachedGlobalPromise);
+    }
+
+    return {
+        getHighlighter: () => highlighterStore.get(),
+
+        async highlightToHtml(options: HighlightToHtmlOptions): Promise<string> {
+            const { code, language, theme = defaultTheme, meta, transformers = [] } = options;
+
+            // "text" can be rendered directly without loading
+            const lower = language.toLowerCase();
+            if (lower === "text") {
+                const highlighter = await highlighterStore.get();
+                return highlighter.codeToHtml(code, {
+                    lang: "text",
+                    theme,
+                    ...(meta && { meta }),
+                    ...(transformers && transformers.length > 0 && { transformers: [...transformers] }),
+                } as any);
+            }
+
+            // Get or create the highlighter
+            const highlighter = await highlighterStore.get();
+
+            // Ensure the language is loaded
+            const loadResult = await ensureLanguageLoaded(
+                highlighter,
+                language,
+                async (lang) =>
+                    retry(async () => highlighter.loadLanguage(lang), {
+                        operation: "load-language",
+                        language: lang,
+                    }),
+            );
+
+            // Handle load outcomes
+            if (loadResult.kind === "loaded") {
+                // Language is ready, render highlighted HTML
+                const { resolvedLang } = resolveShikiLanguage(language);
+                return highlighter.codeToHtml(code, {
+                    lang: resolvedLang!,
+                    theme,
+                    ...(meta && { meta }),
+                    ...(transformers && transformers.length > 0 && { transformers: [...transformers] }),
+                } as any);
+            }
+
+            // Unknown or failed language - warn once and render fallback
+            if (loadResult.kind === "unknown-language" && shouldWarn("unknown-language", language)) {
+                warnMessage(`[shiki] language "${language}" not recognized. Rendering as plain text.`);
+            } else if (loadResult.kind === "load-failed" && shouldWarn("load-failed", language)) {
+                const errorMsg = loadResult.error instanceof Error 
+                    ? loadResult.error.message 
+                    : String(loadResult.error);
+                warnMessage(`[shiki] language "${language}" could not be loaded (${errorMsg}). Rendering as plain text.`);
+            }
+
+            return buildPlainHtml(code, [], []);
+        },
+    };
+}
+
+/**
+ * Returns the shared Shiki highlighter instance from the global cache.
+ *
+ * This is useful for direct highlighter access when needed, but most
+ * code should use a configured service instead.
+ *
+ * @throws Error - If the highlighter has not been created yet
+ */
+export async function getShikiHighlighter(): Promise<Highlighter> {
+    const cached = readFromGlobalCache();
+    if (!cached) {
+        throw new Error(
+            "No cached Shiki highlighter found. "
+                + "Create a service with createShikiHighlighterService() first.",
+        );
+    }
+    return cached;
+}
+
+/**
+ * Test control: Reset all warning tracking.
+ *
+ * @internal - Not part of the public API
+ */
+export function __resetShikiWarningsForTests(): void {
+    resetWarnings();
+}

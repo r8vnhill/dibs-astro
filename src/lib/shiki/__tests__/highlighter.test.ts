@@ -132,6 +132,73 @@ describe("highlightToHtml", () => {
             warn.mock.calls.some(([message]) => String(message ?? "").includes("shared shiki highlighter creation")),
         ).toBe(false);
     });
+
+    it("renders text language directly without language loading", async () => {
+        const mockHighlighter = {
+            getLoadedLanguages: vi.fn(() => [] as string[]),
+            loadLanguage: vi.fn(),
+            codeToHtml: vi.fn((code) => `<pre><code>${code}</code></pre>`),
+        };
+
+        __setHighlighterForTests(mockHighlighter as never);
+
+        const html = await highlightToHtml({
+            code: "plain text here",
+            lang: "text",
+            theme,
+        });
+
+        expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
+        expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+            "plain text here",
+            expect.objectContaining({ lang: "text" }),
+        );
+        expect(html).toContain("plain text here");
+    });
+
+    it("does not reload already-loaded languages", async () => {
+        const mockHighlighter = {
+            getLoadedLanguages: vi.fn(() => ["python"]),
+            loadLanguage: vi.fn(),
+            codeToHtml: vi.fn(() => "<pre class=\"shiki\"><code>loaded</code></pre>"),
+        };
+
+        __setHighlighterForTests(mockHighlighter as never);
+
+        await highlightToHtml({
+            code: "print('hi')",
+            lang: "py",
+            theme,
+        });
+
+        expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
+        expect(mockHighlighter.codeToHtml).toHaveBeenCalled();
+    });
+
+    it("passes transformers through to highlighter.codeToHtml", async () => {
+        const mockTransformer = { name: "test-transformer" };
+        const mockHighlighter = {
+            getLoadedLanguages: () => ["python"],
+            loadLanguage: vi.fn(),
+            codeToHtml: vi.fn(() => "<pre class=\"shiki\"><code>transformed</code></pre>"),
+        };
+
+        __setHighlighterForTests(mockHighlighter as never);
+
+        await highlightToHtml({
+            code: "code",
+            lang: "py",
+            theme,
+            transformers: [mockTransformer as any],
+        });
+
+        expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+            "code",
+            expect.objectContaining({
+                transformers: [mockTransformer],
+            }),
+        );
+    });
 });
 
 function stripHtml(value: string) {
