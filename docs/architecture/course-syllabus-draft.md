@@ -79,9 +79,51 @@ tempranos de estabilidad y evolución.
 - el estudiantado distingue un script puntual de una biblioteca reusable de scripting;
 - comprende que incluso en contextos de automatización existe diseño de interfaz pública;
 - puede analizar comandos, funciones o módulos como contratos de uso;
-- reconoce la importancia de validación, composición y predictibilidad en bibliotecas de scripting;
-- entiende que build, testing y automatización no son fines en sí mismos, sino soportes para diseñar y sostener una biblioteca usable;
-- dispone de un primer caso de estudio donde el problema de API aparece temprano y de forma concreta.
+- reconoce la importancia de validación, composición y predictibilidad en bibliotecas de scripting;## Unidad 2. De scripts de apoyo a build systems
+
+**Foco:** estudiar la automatización de tareas como un primer caso concreto de diseño reusable, comenzando con scripts básicos de apoyo y avanzando progresivamente hacia bibliotecas de scripting, tareas componibles y sistemas de build. La unidad muestra que incluso un script pequeño puede evolucionar hacia una superficie de API: recibe entradas, produce salidas, compone herramientas, valida condiciones, reporta errores y define contratos de uso. Desde esa perspectiva, los build systems aparecen como una forma más estructurada de automatización, y mecanismos como `build-logic`, `buildSrc` o los convention plugins pueden entenderse como bibliotecas de software orientadas a reutilizar convenciones de construcción, prueba, verificación y publicación.
+
+**Tópicos principales:**
+
+- scripts básicos como automatización local de tareas repetitivas;
+- diferencia entre comando puntual, script mantenible y biblioteca de scripting;
+- entradas, argumentos, variables de entorno, archivos y códigos de salida como contratos de uso;
+- funciones, módulos, comandos y tareas como superficies de API;
+- validación de entradas, manejo de errores, idempotencia y predictibilidad;
+- salida textual versus salida estructurada para integración con otras herramientas;
+- composición de comandos, pipelines y flujos técnicos;
+- pruebas mínimas para scripts y automatización reusable;
+- separación entre lógica de automatización, lógica de dominio y detalles de infraestructura;
+- evolución desde scripts ad hoc hacia módulos o paquetes reutilizables;
+- tareas como abstracción para modelar acciones repetibles;
+- propósito de un sistema de build como plataforma de automatización;
+- build, test, lint, documentación y publicación como tareas coordinadas;
+- Gradle como caso de estudio de automatización basada en scripts, tareas, plugins y DSLs;
+- convention plugins, `buildSrc` y `build-logic` como formas de encapsular convenciones reutilizables;
+- build logic como biblioteca de software: interfaz pública, composición, validación, versionamiento y mantenibilidad.
+
+**Resultados pedagógicos esperados:**
+
+- el estudiantado distingue un script puntual de una solución de automatización mantenible;
+- comprende que un script también puede tener una interfaz pública, aunque sea pequeña;
+- puede analizar argumentos, comandos, funciones, módulos y tareas como contratos de uso;
+- reconoce la importancia de validación, errores claros, composición e idempotencia en automatización;
+- entiende cuándo un script debe evolucionar hacia una biblioteca, módulo o paquete reusable;
+- comprende que un sistema de build no es solo una herramienta externa, sino una plataforma para organizar automatización;
+- identifica tareas de build, test, verificación, documentación y publicación como unidades componibles de trabajo;
+- entiende que Gradle se configura mediante scripts y DSLs, y que sus plugins encapsulan comportamiento reusable;
+- puede interpretar convention plugins y `build-logic` como bibliotecas internas para compartir políticas de construcción;
+- dispone de un puente conceptual entre diseño de API, scripting, automatización y sistemas de build.
+
+## Suggested progression
+
+1. **Script puntual:** resolver una tarea concreta con un script pequeño.
+2. **Script robusto:** agregar argumentos, validación, errores claros y códigos de salida.
+3. **Biblioteca de scripting:** extraer funciones reutilizables, separar lógica y mejorar testabilidad.
+4. **Automatización componible:** coordinar varias herramientas y producir salidas integrables.
+5. **Tareas:** modelar acciones repetibles con entradas, salidas, dependencias y nombres estables.
+6. **Build systems:** entender build, test, lint, docs y publish como tareas coordinadas.
+7. **Gradle y build logic:** estudiar `build.gradle.kts`, tareas, plugins y convention plugins como bibliotecas de automatización.
 
 ----
 

@@ -1,271 +1,360 @@
 /**
- * @file NotesLayout.render.test.ts
+ * @file Render-contract tests for {@link NotesLayout}.
  *
- * Render-level contract tests for {@link NotesLayout}.
+ * This suite verifies the observable HTML contract of {@link NotesLayout}. It focuses on layout composition and 
+ * integration boundaries rather than visual styling.
  *
- * This suite protects the layout's lesson-navigation behavior after the introduction of multi-link
- * `previous` support. The important boundary here is not visual styling, but how the layout
- * resolves and renders navigation data from two sources:
+ * The protected behaviors are:
  *
- * - manual props passed by a page frontmatter-like caller;
- * - automatic previous/next links derived from the real course structure through `Astro.url`.
+ * - Rendering the `abstract` slot before the default slot.
+ * - Rendering the abstract fallback when no `abstract` slot is provided.
+ * - Rendering manual previous/next navigation links.
+ * - Preserving support for both single-link and multi-link `previous` values.
+ * - Resolving automatic navigation from the current route when no manual navigation is provided.
+ * - Treating manual navigation as a complete override of automatic navigation.
+ * - Rendering lesson metadata through the presentation boundary without exposing infrastructure-only fields.
  *
- * ## What this suite protects
- *
- * - The named `abstract` slot and its fallback placeholder.
- * - Separation between abstract content and the main default slot.
- * - Backward compatibility for the historical `previous` single-link contract.
- * - Rendering order for `previous` arrays.
- * - Precedence rules: manual `previous`/`next` overrides auto navigation completely.
- * - URL normalization in rendered anchors.
- * - Metadata-panel rendering through the lesson-metadata presentation bridge.
- *
- * ## Why render tests instead of pure helper tests?
- *
- * `navigation.ts` already covers normalization in isolation. This suite verifies the integration
- * point where `NotesLayout`:
- *
- * - reads `Astro.url.pathname`,
- * - resolves auto navigation,
- * - folds manual overrides into the final UI,
- * - emits actual `<a rel="prev|next">` links.
- *
- * The tests intentionally use real course routes for the auto-navigation scenario so the layout is
- * exercised against the same source of truth that production uses.
+ * Exhaustive href-normalization behavior belongs in the pure navigation-normalization test suite. This render suite 
+ * only checks that normalized links reach the final rendered anchors.
  */
-import { JSDOM } from "jsdom";
-import { beforeEach, describe, expect, test } from "vitest";
-import type { NavigationLinkInput } from "$presentation/adapters/navigation-normalization";
-import { type AstroRender, createAstroRenderer } from "../../test-utils/astro-render";
-import NotesLayout from "../NotesLayout.astro";
 
-interface LayoutProps {
-    title: string;
-    description?: string;
-    previous?: NavigationLinkInput | readonly NavigationLinkInput[];
-    next?: NavigationLinkInput;
-}
+import {
+    maybeNavigationFrom,
+    navigationFrom,
+    nextLinkFrom,
+    previousLinksFrom,
+    queryRequired,
+    type RenderedNavigationLink,
+} from "$layouts/__tests__/fixtures/navigation-queries";
+import { createNotesLayoutHarness } from "$layouts/__tests__/fixtures/notes-layout-harness";
+import NotesLayout from "$layouts/NotesLayout.astro";
+import type { NotesLayoutProps } from "$layouts/NotesLayout.props";
+import { createAstroRenderer } from "$test-utils/astro-render";
+import { beforeAll, describe, expect, test } from "vitest";
 
-const parseHtml = (html: string): Document => new JSDOM(html).window.document;
+/**
+ * Data-driven case for manual navigation rendering.
+ *
+ * Each case provides the navigation props passed to {@link NotesLayout} and the exact previous/next links expected in 
+ * the rendered navigation region.
+ */
+type ManualNavigationCase = {
+    name: string;
+    props: Pick<NotesLayoutProps, "previous" | "next">;
+    expectedPrevious: readonly RenderedNavigationLink[];
+    expectedNext: RenderedNavigationLink | null;
+};
 
-let renderLayout: AstroRender<LayoutProps>;
+/**
+ * Manual-navigation rendering examples.
+ *
+ * These cases cover the stable shape of the manual navigation API:
+ *
+ * - A historical single `previous` link.
+ * - Multiple `previous` links rendered in order.
+ * - An optional manual `next` link rendered alongside manual previous links.
+ *
+ * Precedence edge cases, such as partial overrides and empty arrays, are tested separately because they exercise 
+ * resolution policy rather than link shape.
+ */
+const manualNavigationCases = [
+    {
+        name: "a single previous link",
+        props: {
+            previous: {
+                title: "Brian Cohen",
+                href: "/notes/life-of-brian/brian-cohen",
+            },
+        },
+        expectedPrevious: [
+            {
+                title: "Brian Cohen",
+                href: "/notes/life-of-brian/brian-cohen/",
+            },
+        ],
+        expectedNext: null,
+    },
+    {
+        name: "multiple previous links in order with a next link",
+        props: {
+            previous: [
+                {
+                    title: "Judith",
+                    href: "/notes/life-of-brian/judith",
+                },
+                {
+                    title: "Reg",
+                    href: "/notes/life-of-brian/reg",
+                },
+            ],
+            next: {
+                title: "People's Front of Judea",
+                href: "/notes/life-of-brian/peoples-front-of-judea",
+            },
+        },
+        expectedPrevious: [
+            {
+                title: "Judith",
+                href: "/notes/life-of-brian/judith/",
+            },
+            {
+                title: "Reg",
+                href: "/notes/life-of-brian/reg/",
+            },
+        ],
+        expectedNext: {
+            title: "People's Front of Judea",
+            href: "/notes/life-of-brian/peoples-front-of-judea/",
+        },
+    },
+] as const satisfies readonly ManualNavigationCase[];
 
-describe.concurrent("NotesLayout.astro render", () => {
+describe("NotesLayout.astro render", () => {
+    let renderNotes: ReturnType<typeof createNotesLayoutHarness>["renderNotes"];
+    let parseHtml: ReturnType<typeof createNotesLayoutHarness>["parseHtml"];
+
     /**
-     * The layout includes React-backed children, so tests reuse the shared Astro renderer helper
-     * that bootstraps the required container renderers.
+     * Builds the Astro renderer once for the suite.
+     *
+     * The renderer is immutable after creation, and the suite is intentionally not concurrent. Reusing it avoids 
+     * repeated setup while keeping shared state stable.
      */
-    beforeEach(async () => {
-        renderLayout = await createAstroRenderer<LayoutProps>(NotesLayout);
+    beforeAll(async () => {
+        const renderLayout = await createAstroRenderer<NotesLayoutProps>(NotesLayout);
+        const harness = createNotesLayoutHarness(renderLayout);
+
+        renderNotes = harness.renderNotes;
+        parseHtml = harness.parseHtml;
     });
 
-    test("renders named abstract slot content before the main body", async () => {
-        const html = await renderLayout(
-            {
-                title: "Leccion de prueba",
-            },
-            {
-                request: new Request("https://dibs.ravenhill.cl/notes/example/"),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido principal</p>",
-                },
-            },
-        );
-
-        expect(html).toContain("Resumen breve");
-        expect(html).toContain("Contenido principal");
-        expect(html.indexOf("Resumen breve")).toBeLessThan(html.indexOf("Contenido principal"));
-    });
-
-    test("renders the abstract fallback placeholder when the abstract slot is missing", async () => {
-        const html = await renderLayout(
-            {
-                title: "Leccion de prueba",
-            },
-            {
-                request: new Request("https://dibs.ravenhill.cl/notes/example/"),
-                slots: { default: "<p>Contenido principal</p>" },
-            },
-        );
-
-        expect(html).toContain("component-url=\"~/components/utils/ToDo\"");
-        expect(html).toContain("client=\"only\"");
-        expect(html).toContain("Contenido principal");
-    });
-
-    test("renders one previous button when previous is a single link", async () => {
-        const html = await renderLayout(
-            {
-                title: "Leccion de prueba",
-                previous: {
-                    title: "PowerShell",
-                    href: "/notes/scripting/structured-output",
-                },
-            },
-            {
-                request: new Request("https://dibs.ravenhill.cl/notes/example/"),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido</p>",
-                },
-            },
-        );
-
-        const doc = parseHtml(html);
-        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
-        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
-
-        expect(previousLinks).toHaveLength(1);
-        expect(previousLinks[0]?.textContent).toContain("PowerShell");
-        expect(previousLinks[0]?.getAttribute("href")).toBe(
-            "/notes/scripting/structured-output/",
-        );
-    });
-
-    test("renders multiple previous buttons in order when previous is an array", async () => {
-        const html = await renderLayout(
-            {
-                title: "Leccion de prueba",
-                previous: [
-                    {
-                        title: "PowerShell",
-                        href: "/notes/scripting/structured-output",
+    describe("abstract slot", () => {
+        test("renders abstract content before the default body", async () => {
+            const html = await renderNotes(
+                { title: "Brian's very confusing day" },
+                {
+                    slots: {
+                        abstract: "<p>A short summary about mistaken identity.</p>",
+                        default: "<p>The main lesson follows Brian through escalating confusion.</p>",
                     },
-                    {
-                        title: "Nushell",
-                        href: "/notes/scripting/structured-output/nushell",
-                    },
-                ],
-                next: {
-                    title: "Pipelines",
-                    href: "/notes/scripting/pipelines",
                 },
-            },
-            {
-                request: new Request("https://dibs.ravenhill.cl/notes/example/"),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido</p>",
-                },
-            },
-        );
+            );
 
-        const doc = parseHtml(html);
-        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
-        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
-        const nextLink = nav?.querySelector("a[rel=\"next\"]");
-
-        expect(previousLinks).toHaveLength(2);
-        expect(previousLinks.map((link) => link.textContent?.replace(/\s+/g, " ").trim())).toEqual([
-            "PowerShell",
-            "Nushell",
-        ]);
-        expect(previousLinks.map((link) => link.getAttribute("href"))).toEqual([
-            "/notes/scripting/structured-output/",
-            "/notes/scripting/structured-output/nushell/",
-        ]);
-        expect(nextLink?.textContent).toContain("Pipelines");
-    });
-
-    test("uses auto navigation for both previous and next when there is no manual override", async () => {
-        const html = await renderLayout(
-            {
-                title: "Diseñar la API desde el dominio",
-            },
-            {
-                request: new Request(
-                    "https://dibs.ravenhill.cl/notes/software-libraries/api-design/fundamentals/",
+            expect(html).toContain("A short summary about mistaken identity.");
+            expect(html).toContain(
+                "The main lesson follows Brian through escalating confusion.",
+            );
+            expect(
+                html.indexOf("A short summary about mistaken identity."),
+            ).toBeLessThan(
+                html.indexOf(
+                    "The main lesson follows Brian through escalating confusion.",
                 ),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido</p>",
+            );
+        });
+
+        test("renders the abstract fallback when the abstract slot is absent", async () => {
+            const html = await renderNotes(
+                { title: "Brian's very confusing day" },
+                {
+                    slots: {
+                        default: "<p>The main lesson follows Brian through escalating confusion.</p>",
+                    },
                 },
+            );
+
+            const doc = parseHtml(html);
+
+            expect(
+                doc.querySelector("[data-testid='abstract-fallback']"),
+            ).not.toBeNull();
+            expect(html).toContain(
+                "The main lesson follows Brian through escalating confusion.",
+            );
+        });
+    });
+
+    describe("manual navigation", () => {
+        test.each(manualNavigationCases)(
+            "renders $name",
+            async ({ props, expectedPrevious, expectedNext }) => {
+                const html = await renderNotes({
+                    title: "Brian's very confusing day",
+                    ...props,
+                });
+
+                const doc = parseHtml(html);
+                const nav = navigationFrom(doc);
+
+                expect(previousLinksFrom(nav)).toEqual(expectedPrevious);
+                expect(nextLinkFrom(nav)).toEqual(expectedNext);
             },
-        );
-
-        const doc = parseHtml(html);
-        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
-        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
-        const nextLink = nav?.querySelector("a[rel=\"next\"]");
-
-        // This route is part of the real course structure, so the expected previous link comes
-        // from production navigation data rather than from a test double.
-        expect(previousLinks).toHaveLength(1);
-        expect(previousLinks[0]?.textContent).toContain("La biblioteca como artefacto de software");
-        expect(previousLinks[0]?.getAttribute("href")).toBe(
-            "/notes/software-libraries/what-is/",
-        );
-        expect(nextLink?.textContent).toContain("Evolucionar una API sin romper compatibilidad");
-        expect(nextLink?.getAttribute("href")).toBe(
-            "/notes/software-libraries/api-design/evolution/",
         );
     });
 
-    test("manual previous array and next link take precedence over auto navigation", async () => {
-        const html = await renderLayout(
-            {
-                title: "Ensayo seguro (-WhatIf/-Confirm)",
-                previous: [
-                    {
-                        title: "PowerShell",
-                        href: "/notes/scripting/structured-output",
-                    },
-                    {
-                        title: "Nushell",
-                        href: "/notes/scripting/structured-output/nushell",
-                    },
-                ],
-                next: {
-                    title: "Siguiente manual",
-                    href: "/notes/custom-next",
-                },
-            },
-            {
-                request: new Request(
-                    "https://dibs.ravenhill.cl/notes/scripting/should-process/",
-                ),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido</p>",
-                },
-            },
-        );
+    describe("automatic navigation", () => {
+        test("resolves links from the current production route", async () => {
+            const html = await renderNotes(
+                { title: "Diseñar la API desde el dominio" },
+                { pathname: "/notes/software-libraries/api-design/fundamentals/" },
+            );
 
-        const doc = parseHtml(html);
-        const nav = doc.querySelector("nav[aria-label=\"Siguiente o anterior lección\"]");
-        const previousLinks = [...(nav?.querySelectorAll("a[rel=\"prev\"]") ?? [])];
-        const nextLink = nav?.querySelector("a[rel=\"next\"]");
+            const doc = parseHtml(html);
+            const nav = navigationFrom(doc);
 
-        expect(previousLinks.map((link) => link.textContent?.replace(/\s+/g, " ").trim())).toEqual([
-            "PowerShell",
-            "Nushell",
-        ]);
-        expect(nextLink?.textContent).toContain("Siguiente manual");
-        expect(nextLink?.getAttribute("href")).toBe("/notes/custom-next/");
+            // This route is part of the production course graph, so the expected links come
+            // from real navigation data rather than synthetic fixtures.
+            const previousLinks = previousLinksFrom(nav);
+            const nextLink = nextLinkFrom(nav);
+
+            expect(previousLinks).toHaveLength(1);
+            expect(previousLinks[0]?.title).toContain(
+                "La biblioteca como artefacto de software",
+            );
+            expect(previousLinks[0]?.href).toBe("/notes/software-libraries/what-is/");
+
+            expect(nextLink).not.toBeNull();
+            expect(nextLink?.title).toContain(
+                "Evolucionar una API sin romper compatibilidad",
+            );
+            expect(nextLink?.href).toBe(
+                "/notes/software-libraries/api-design/evolution/",
+            );
+        });
+
+        test("omits navigation for an unknown route without manual links", async () => {
+            const html = await renderNotes(
+                { title: "The unknown prophet" },
+                { pathname: "/notes/life-of-brian/unknown-prophet/" },
+            );
+
+            const doc = parseHtml(html);
+
+            expect(maybeNavigationFrom(doc)).toBeNull();
+        });
     });
 
-    test("renders lesson metadata through the presentation bridge without leaking infrastructure fields", async () => {
-        const html = await renderLayout(
-            {
-                title: "Introducción a PowerShell",
-            },
-            {
-                request: new Request("https://dibs.ravenhill.cl/notes/scripting/"),
-                slots: {
-                    abstract: "<p>Resumen breve</p>",
-                    default: "<p>Contenido</p>",
+    describe("manual override precedence", () => {
+        test("manual previous and next replace automatic navigation", async () => {
+            const html = await renderNotes(
+                {
+                    title: "The sandal and the gourd",
+                    previous: {
+                        title: "The sandal",
+                        href: "/notes/life-of-brian/the-sandal",
+                    },
+                    next: {
+                        title: "The gourd",
+                        href: "/notes/life-of-brian/the-gourd",
+                    },
                 },
-            },
-        );
+                {
+                    pathname: "/notes/software-libraries/api-design/fundamentals/",
+                },
+            );
 
-        const doc = parseHtml(html);
+            const doc = parseHtml(html);
+            const nav = navigationFrom(doc);
 
-        expect(doc.querySelector("[data-testid=\"panel-title\"]")?.textContent).toContain(
-            "Metadatos de la lección",
-        );
-        expect(doc.querySelector("[data-testid=\"authors-value\"]")?.textContent?.trim()).toBeTruthy();
-        expect(doc.querySelector("[data-testid=\"last-updated-value\"]")?.textContent?.trim()).toBeTruthy();
-        expect(html).not.toContain("sourceFile");
+            expect(previousLinksFrom(nav)).toEqual([
+                { title: "The sandal", href: "/notes/life-of-brian/the-sandal/" },
+            ]);
+            expect(nextLinkFrom(nav)).toEqual({
+                title: "The gourd",
+                href: "/notes/life-of-brian/the-gourd/",
+            });
+        });
+
+        test("manual previous alone disables automatic next navigation", async () => {
+            const html = await renderNotes(
+                {
+                    title: "The sandal and the gourd",
+                    previous: {
+                        title: "The sandal",
+                        href: "/notes/life-of-brian/the-sandal",
+                    },
+                },
+                {
+                    pathname: "/notes/software-libraries/api-design/fundamentals/",
+                },
+            );
+
+            const doc = parseHtml(html);
+            const nav = navigationFrom(doc);
+
+            // Any manual navigation prop disables automatic navigation for both directions.
+            expect(previousLinksFrom(nav)).toEqual([
+                { title: "The sandal", href: "/notes/life-of-brian/the-sandal/" },
+            ]);
+            expect(nextLinkFrom(nav)).toBeNull();
+        });
+
+        test("manual next alone disables automatic previous navigation", async () => {
+            const html = await renderNotes(
+                {
+                    title: "The sandal and the gourd",
+                    next: {
+                        title: "The gourd",
+                        href: "/notes/life-of-brian/the-gourd",
+                    },
+                },
+                {
+                    pathname: "/notes/software-libraries/api-design/fundamentals/",
+                },
+            );
+
+            const doc = parseHtml(html);
+            const nav = navigationFrom(doc);
+
+            expect(previousLinksFrom(nav)).toEqual([]);
+            expect(nextLinkFrom(nav)).toEqual({
+                title: "The gourd",
+                href: "/notes/life-of-brian/the-gourd/",
+            });
+        });
+
+        test("empty manual previous disables automatic previous navigation", async () => {
+            const html = await renderNotes(
+                {
+                    title: "The empty shoe rack",
+                    previous: [],
+                },
+                {
+                    pathname: "/notes/software-libraries/api-design/fundamentals/",
+                },
+            );
+
+            const doc = parseHtml(html);
+            const nav = navigationFrom(doc);
+
+            // An empty array is an explicit manual override, not an absent value.
+            expect(previousLinksFrom(nav)).toHaveLength(0);
+        });
+    });
+
+    describe("lesson metadata", () => {
+        test("renders presentation metadata without infrastructure fields", async () => {
+            const html = await renderNotes(
+                { title: "Introducción a PowerShell" },
+                { pathname: "/notes/scripting/" },
+            );
+
+            const doc = parseHtml(html);
+            const metadataPanel = queryRequired<HTMLElement>(
+                doc,
+                "[data-testid='lesson-metadata-panel']",
+            );
+
+            expect(
+                doc.querySelector("[data-testid='panel-title']")?.textContent,
+            ).toContain("Metadatos de la lección");
+            expect(
+                doc.querySelector("[data-testid='authors-value']")?.textContent?.trim(),
+            ).toBeTruthy();
+            expect(
+                doc.querySelector("[data-testid='last-updated-value']")?.textContent?.trim(),
+            ).toBeTruthy();
+
+            expect(metadataPanel.textContent).not.toContain("sourceFile");
+        });
     });
 });

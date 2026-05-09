@@ -188,14 +188,16 @@ const { normalizedNext } = normalizeNavigation(
 
             <Abstract headingLevel="h2">
                 <slot name="abstract">
-                    <ToDo
-                        client:only="react"
-                        metadata={{
-                            tasks: [
-                                "Agregar abstract",
-                            ],
-                        }}
-                    />
+                    <section data-testid="abstract-fallback">
+                        <ToDo
+                            client:only="react"
+                            metadata={{
+                                tasks: [
+                                    "Agregar abstract",
+                                ],
+                            }}
+                        />
+                    </section>
                 </slot>
             </Abstract>
 
