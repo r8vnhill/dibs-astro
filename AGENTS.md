@@ -28,6 +28,7 @@ Context and essential rules for agents collaborating in this repository.
 - Application code lives in `src/`; reusable workspace packages live in `packages/*`.
 - `packages/content-core` is a private, host-agnostic package consumed as `@ravenhill/content-core`.
 - `packages/site-core` is a private, host-agnostic package consumed as `@ravenhill/site-core`.
+- `packages/shiki-core` is a private, host-agnostic package consumed as `@ravenhill/shiki-core`.
 - TypeScript logic is layered under `src/domain`, `src/application`, `src/infrastructure`, and `src/presentation`.
 - Course pages live under `src/pages/notes`; shared lesson fragments live under `src/fragments`.
 
@@ -56,7 +57,7 @@ Context and essential rules for agents collaborating in this repository.
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
 - Internal routes use trailing slashes, for example `/notes/foo/`.
 - Local icons live in `src/assets/img/icons/`; after changing them, run `pnpm generate-icons` and do not edit the generated index manually.
-- Preserve the custom Shiki setup in `src/lib/shiki` and `config/shiki-warn-tracker`; the project avoids Astro's integrated Shiki highlighting.
+- The Shiki highlighting infrastructure is being extracted to `packages/shiki-core` for reuse. The Astro app currently uses a compatibility bridge in `src/lib/shiki` to consume the new package. Shiki-related configuration and non-UI logic belongs in `packages/shiki-core`; UI rendering and component decisions stay in `src/components/ui/code` and related modules.
 
 ## Tests
 

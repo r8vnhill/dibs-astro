@@ -1,10 +1,17 @@
 packages:
-    - .
-    - packages/*
+  - .
+  - packages/*
+
+allowBuilds:
+  '@tailwindcss/oxide': true
+  dprint: true
+  esbuild: true
+  sharp: true
+  workerd: true
 
 onlyBuiltDependencies:
-    - "@tailwindcss/oxide"
-    - dprint
-    - esbuild
-    - sharp
-    - workerd
+  - "@tailwindcss/oxide"
+  - dprint
+  - esbuild
+  - sharp
+  - workerd
