@@ -1,21 +1,11 @@
 /**
- * @file transformers.ts
+ * @deprecated Import directly from `@ravenhill/shiki-core` instead.
  *
- * Public barrel for the project's custom Shiki transformers.
+ * This module is part of the Phase 4 compatibility bridge. It will be removed in Phase 6.
  *
- * This module intentionally re-exports the concrete transformer implementations from their
- * dedicated modules:
- *
- * - `applyTailwindClasses` injects normalized Tailwind utility classes into Shiki-generated
- *   `<pre>` and `<code>` nodes, accepting either strings or string arrays as input.
- * - `transformerNotationLineTextColor` parses inline `[!code color:...]` directives and applies a
- *   per-line text color via CSS custom properties.
- *
- * Keeping this file as a stable entrypoint preserves existing imports while allowing each
- * transformer to evolve in its own module with focused tests and helpers.
+ * Preferred imports:
+ * - `import { applyTailwindClasses, transformerNotationLineTextColor } from "@ravenhill/shiki-core"`
  */
-export {
-    applyTailwindClasses,
-    type TailwindClassTransformerOptions,
-} from "./tailwind-class-transformer";
-export { transformerNotationLineTextColor } from "./line-text-color-transformer";
+
+export { applyTailwindClasses, type TailwindClassTransformerOptions } from "@ravenhill/shiki-core";
+export { transformerNotationLineTextColor } from "@ravenhill/shiki-core";

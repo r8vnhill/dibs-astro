@@ -1,18 +1,8 @@
-/*
- * Shiki highlighter service instance for the DIBS app.
- *
- * Wraps the @ravenhill/shiki-core service with app-specific configuration,
- * particularly the runWithDevTransportRetry for handling development timeouts.
- */
-import { createShikiHighlighterService } from "@ravenhill/shiki-core";
-import { runWithDevTransportRetry } from "~/utils";
-
 /**
- * App-configured Shiki service with dev-transport retry support.
+ * @deprecated Import from `~/lib/code-highlighting` instead.
+ *
+ * This module is part of the Phase 4 compatibility bridge. It will be removed in Phase 6.
+ * Prefer importing the configured service directly from `~/lib/code-highlighting`.
  */
-export const appShikiService = createShikiHighlighterService({
-    retry: (operation, context) =>
-        runWithDevTransportRetry(async ({ signal: _signal }) => operation(), {
-            label: `shiki ${context.operation}${context.language ? ` (${context.language})` : ""}`,
-        }),
-});
+
+export { appShikiService, createAppHighlighterService } from "~/lib/code-highlighting";

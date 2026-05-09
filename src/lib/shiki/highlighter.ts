@@ -1,41 +1,20 @@
-/*
- * Public wrapper for the project's Shiki-based syntax highlighting.
+/**
+ * @deprecated Import from `~/lib/code-highlighting` and `@ravenhill/shiki-core` instead.
  *
- * This module delegates to @ravenhill/shiki-core for the real implementation.
- * It maintains backward-compatible exports for existing components.
+ * This module is part of the Phase 4 compatibility bridge. It will be removed in Phase 6.
+ *
+ * - For `highlightToHtml()` and `availableLanguages`, use `~/lib/code-highlighting` and `@ravenhill/shiki-core`
+ * - For test helpers like `__resetHighlighterCacheForTests`, use `~/lib/code-highlighting`
  */
-import type { ShikiTransformer } from "shiki";
-import { SHIKI_DEFAULT_THEMES } from "./config";
-import { appShikiService } from "./service";
 
-export const supportedThemes = SHIKI_DEFAULT_THEMES;
-type HighlightTheme = (typeof SHIKI_DEFAULT_THEMES)[number] | string;
+// Re-export highlighting function from the app-local boundary
+export { highlightToHtml } from "~/lib/code-highlighting";
 
-interface HighlightOptions {
-    code: string;
-    lang: string;
-    theme: HighlightTheme;
-    transformers?: ShikiTransformer[];
-    fallbackPreClasses?: string[];
-    fallbackCodeClasses?: string[];
-}
+// Re-export cache helpers from the app-local boundary
+export { __resetHighlighterCacheForTests, __setHighlighterForTests } from "~/lib/code-highlighting";
 
-export async function highlightToHtml({
-    code,
-    lang,
-    theme,
-    transformers = [],
-    fallbackPreClasses: _fallbackPreClasses = [],
-    fallbackCodeClasses: _fallbackCodeClasses = [],
-}: HighlightOptions) {
-    return appShikiService.highlightToHtml({
-        code,
-        language: lang,
-        theme,
-        transformers,
-    });
-}
+// Re-export language aliases and themes from the package
+export { availableLanguages } from "@ravenhill/shiki-core";
 
-// Re-exports for compatibility with existing components and tests
-export { __resetHighlighterCacheForTests, __setHighlighterForTests } from "./cache";
-export { availableLanguages } from "./language-aliases";
+// Re-export theme constants
+export { SHIKI_DEFAULT_THEMES as supportedThemes } from "./config";

@@ -14,8 +14,8 @@
  */
 
 import type { ShikiTransformer } from "shiki";
-import { availableLanguages, highlightToHtml } from "~/lib/shiki/highlighter";
-import { applyTailwindClasses } from "~/lib/shiki/transformers";
+import { availableLanguages, applyTailwindClasses } from "@ravenhill/shiki-core";
+import { highlightToHtml } from "~/lib/code-highlighting";
 
 type Props = {
     code: string;

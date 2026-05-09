@@ -5,7 +5,6 @@
  */
 
 import type { Store } from "../highlighter/types";
-import type { Highlighter } from "shiki";
 
 /**
  * Creates a test-friendly store that can be manipulated.

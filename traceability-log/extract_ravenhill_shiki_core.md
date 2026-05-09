@@ -253,7 +253,7 @@ export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME };
 
 ---
 
-## Phase 4: App Integration and Compatibility Bridge
+## ~~Phase 4: App Integration and Compatibility Bridge~~
 
 **Goal:** migrate consumers while minimizing churn.
 

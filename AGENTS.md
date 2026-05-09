@@ -57,7 +57,11 @@ Context and essential rules for agents collaborating in this repository.
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
 - Internal routes use trailing slashes, for example `/notes/foo/`.
 - Local icons live in `src/assets/img/icons/`; after changing them, run `pnpm generate-icons` and do not edit the generated index manually.
-- The Shiki highlighting infrastructure is being extracted to `packages/shiki-core` for reuse. The Astro app currently uses a compatibility bridge in `src/lib/shiki` to consume the new package. Shiki-related configuration and non-UI logic belongs in `packages/shiki-core`; UI rendering and component decisions stay in `src/components/ui/code` and related modules.
+- The Shiki highlighting infrastructure is being extracted to `packages/shiki-core` for reuse. As of Phase 4:
+  - `packages/shiki-core` provides host-agnostic language resolution, transformers, and service orchestration; import only from the root entry point (no subpaths).
+  - `src/lib/code-highlighting` is the app-local boundary that wraps `@ravenhill/shiki-core` with dev-transport retry, cache management, and test helpers; components and Markdown patching depend on this boundary.
+  - `src/lib/shiki/*` is a one-release-cycle deprecated compatibility bridge; existing code still imports from here but new code should prefer the root package and app-local boundary.
+  - UI rendering and component decisions stay in `src/components/ui/code` and related modules.
 
 ## Tests
 

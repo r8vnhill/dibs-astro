@@ -46,6 +46,10 @@ export function createStore<T>({ create, onSet }: StoreDeps<T>): Store<T> {
                 setCache(nextPromise);
             }
 
+            if (!cachedPromise) {
+                throw new Error("Store cache was not initialized");
+            }
+
             return cachedPromise;
         },
 

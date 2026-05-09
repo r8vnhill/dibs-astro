@@ -1,16 +1,15 @@
 /**
- * Language alias and resolution utilities.
+ * @deprecated Import directly from `@ravenhill/shiki-core` instead.
  *
- * This is a thin compatibility wrapper for the canonical implementations in `@ravenhill/shiki-core`.
- * It preserves the existing app import path during the Phase 2 migration.
+ * This module is part of the Phase 4 compatibility bridge. It will be removed in Phase 6.
+ *
+ * Preferred imports:
+ * - `import { resolveShikiLanguage, availableLanguages } from "@ravenhill/shiki-core"`
  */
 
-// Canonical Phase 2 exports
 export { isKnownShikiAlias, normalizeShikiLanguage, resolveShikiLanguage, availableLanguages, languageAliases } from "@ravenhill/shiki-core";
 
 /**
- * Backwards compatibility alias for {@link resolveShikiLanguage}.
- *
  * @deprecated Use {@link resolveShikiLanguage} instead.
  */
 export { resolveLanguage } from "@ravenhill/shiki-core";

@@ -7,7 +7,6 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createShikiHighlighterService, getShikiHighlighter } from "../src/highlighter/service";
-import { DEFAULT_DARK_THEME } from "../src/themes/defaults";
 import type { Highlighter } from "shiki";
 
 function createMockHighlighter(): Highlighter {
@@ -45,7 +44,6 @@ describe("createShikiHighlighterService", () => {
 
     it("renders text language directly without loading", async () => {
         const mockHighlighter = createMockHighlighter();
-        const mockCreate = vi.fn(async () => mockHighlighter);
 
         const service = createShikiHighlighterService({
             retry: (op) => op(),
@@ -182,6 +180,7 @@ describe("createShikiHighlighterService", () => {
         const mockHighlighter = createMockHighlighter();
         mockHighlighter.getLoadedLanguages = vi.fn(() => ["javascript"]);
         mockHighlighter.codeToHtml = vi.fn(() => "<pre>html</pre>");
+        const codeToHtmlMock = mockHighlighter.codeToHtml as ReturnType<typeof vi.fn>;
 
         // Inject the mock
         const globalCache = globalThis as any;
@@ -198,19 +197,19 @@ describe("createShikiHighlighterService", () => {
             theme: "catppuccin-mocha",
         });
 
-        expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+        expect(codeToHtmlMock).toHaveBeenCalledWith(
             expect.anything(),
             expect.objectContaining({ theme: "catppuccin-mocha" }),
         );
 
         // With default theme
-        mockHighlighter.codeToHtml.mockClear();
+        codeToHtmlMock.mockClear();
         await service.highlightToHtml({
             code: "code",
             language: "javascript",
         });
 
-        expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+        expect(codeToHtmlMock).toHaveBeenCalledWith(
             expect.anything(),
             expect.objectContaining({ theme: "catppuccin-latte" }),
         );
