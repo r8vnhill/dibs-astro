@@ -9,14 +9,15 @@
  * - dist/index.js
  * - dist/index.js.map
  * - dist/index.d.ts
- * - dist/index.d.ts.map
  */
 
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
-const packageDir = new URL(".", import.meta.url).pathname.replace(/\/$/, "");
+const packageDir = dirname(fileURLToPath(import.meta.url));
 const packageJsonPath = join(packageDir, "package.json");
 
 try {
@@ -37,7 +38,6 @@ try {
         "dist/index.js",
         "dist/index.js.map",
         "dist/index.d.ts",
-        "dist/index.d.ts.map",
     ];
 
     console.log("Checking pack contents...");

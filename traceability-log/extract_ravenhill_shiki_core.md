@@ -161,7 +161,7 @@ export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME };
 
 ---
 
-## Phase 2: Extract Pure and Low-Risk Modules First
+## ~~Phase 2: Extract Pure and Low-Risk Modules First~~
 
 **Goal:** move deterministic helpers before stateful highlighter/cache logic.
 

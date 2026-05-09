@@ -1,9 +1,12 @@
 /**
- * Phase 1 contract placeholders for @ravenhill/shiki-core.
+ * Phase 3 contract placeholders for @ravenhill/shiki-core.
  *
- * These exports define the public API shape for the package. Runtime implementations
- * are scheduled for extraction in Phase 2 and Phase 3 and are intentionally marked
- * as unimplemented to prevent accidental reliance on placeholder behavior.
+ * These exports define the remaining placeholder contracts for highlighter management.
+ * Runtime implementations are scheduled for extraction in Phase 3 and are intentionally
+ * marked as unimplemented to prevent accidental reliance on placeholder behavior.
+ *
+ * Phase 2 implementations (fallback HTML, language resolution, theme defaults, transformers)
+ * are now available as real implementations elsewhere in the package.
  */
 
 export const DEFAULT_DARK_THEME = "catppuccin-mocha";
@@ -50,7 +53,7 @@ export interface HighlightCodeOptions {
 }
 
 /**
- * Internal helper for marking functions as intentionally unimplemented during Phase 1.
+ * Internal helper for marking functions as intentionally unimplemented during Phase 3.
  */
 const notImplemented = (name: string): never => {
     throw new Error(
@@ -62,82 +65,17 @@ const notImplemented = (name: string): never => {
 /**
  * Creates and returns the shared Shiki highlighter instance.
  *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
+ * Phase 3 scaffold: implementation is scheduled for extraction in Phase 3.
  *
- * @throws Error - Always throws in Phase 1.
+ * @throws Error - Always throws in Phase 2.
  */
 export const createShikiHighlighter = (): never => notImplemented("createShikiHighlighter");
 
 /**
  * Returns the cached Shiki highlighter promise.
  *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
+ * Phase 3 scaffold: implementation is scheduled for extraction in Phase 3.
  *
- * @throws Error - Always throws in Phase 1.
+ * @throws Error - Always throws in Phase 2.
  */
 export const getShikiHighlighter = (): never => notImplemented("getShikiHighlighter");
-
-/**
- * Checks if a given string is a recognized language alias.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const isKnownShikiAlias = (): never => notImplemented("isKnownShikiAlias");
-
-/**
- * Normalizes a language identifier to a canonical form.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const normalizeShikiLanguage = (): never => notImplemented("normalizeShikiLanguage");
-
-/**
- * Resolves a language identifier to a bundled Shiki language.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const resolveShikiLanguage = (): never => notImplemented("resolveShikiLanguage");
-
-/**
- * Escapes special HTML characters in code.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const escapeCodeHtml = (): never => notImplemented("escapeCodeHtml");
-
-/**
- * Renders a code block as plain HTML when syntax highlighting is not available.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const renderFallbackCodeHtml = (): never => notImplemented("renderFallbackCodeHtml");
-
-/**
- * Creates a Shiki transformer for applying Tailwind CSS class utilities.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const createTailwindClassTransformer = (): never =>
-    notImplemented("createTailwindClassTransformer");
-
-/**
- * Creates a Shiki transformer for applying per-line text colors.
- *
- * Phase 1 scaffold: implementation is scheduled for extraction in Phase 2.
- *
- * @throws Error - Always throws in Phase 1.
- */
-export const createLineTextColorTransformer = (): never =>
-    notImplemented("createLineTextColorTransformer");

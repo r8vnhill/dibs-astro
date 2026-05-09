@@ -16,8 +16,11 @@ import { execSync } from "child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
-const packageDir = new URL(".", import.meta.url).pathname.replace(/\/$/, "").replace(/scripts$/, "");
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const packageDir = dirname(scriptDir);
 
 const tempDir = mkdtempSync(join(tmpdir(), "shiki-core-consumer-"));
 

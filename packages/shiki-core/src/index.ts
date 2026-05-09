@@ -4,24 +4,24 @@
  * This is the **only** public entry point for the package. Root-only imports enforce encapsulation
  * and allow the internal implementation to evolve without breaking consumers.
  *
- * ## Phase 1 Contract
+ * ## Phase 2 Implementation
  *
- * **Type contracts** (stable now, usable in TypeScript):
- * - `HighlightLanguage`, `HighlightThemePair`, `HighlightCodeOptions`
- * - `HighlightRetryContext`, `RetryHighlightOperation`
- * - Constants: `DEFAULT_DARK_THEME`, `DEFAULT_LIGHT_THEME`
+ * **Extracted implementations:**
+ * - Language resolution: `resolveShikiLanguage`, `normalizeShikiLanguage`, `isKnownShikiAlias`
+ * - Theme defaults: `DEFAULT_DARK_THEME`, `DEFAULT_LIGHT_THEME`, `SHIKI_DEFAULT_THEMES`
+ * - Fallback HTML: `escapeCodeHtml`, `renderFallbackCodeHtml`, `buildPlainHtml`
+ * - Class token utilities: `splitClassTokens`, `toClassTokens`, `appendUniqueClasses`, `assignMergedClassName`
+ * - Transformers: `createTailwindClassTransformer`, `createLineTextColorTransformer`
  *
- * **Runtime scaffolds** (not implemented yet):
- * - Functions like `getShikiHighlighter()`, `normalizeShikiLanguage()`, etc.
- * - These intentionally throw errors to prevent accidental reliance on fake behavior
- * - Implementations will be extracted from `src/lib/shiki` in Phase 2
+ * **Phase 3 placeholders:**
+ * - `createShikiHighlighter`, `getShikiHighlighter`
  *
  * ## Usage
  *
  * ```ts
  * import {
- *     getShikiHighlighter,
- *     normalizeShikiLanguage,
+ *     resolveShikiLanguage,
+ *     createTailwindClassTransformer,
  *     type HighlightCodeOptions,
  *     DEFAULT_DARK_THEME,
  * } from '@ravenhill/shiki-core';
@@ -30,27 +30,55 @@
  * Subpath imports are **not supported**:
  * ```ts
  * // ❌ This will fail (inside and outside the workspace)
- * import { getShikiHighlighter } from '@ravenhill/shiki-core/src/index';
+ * import { resolveShikiLanguage } from '@ravenhill/shiki-core/src/languages/resolution';
  * ```
  *
  * This constraint is enforced by the `exports` field in `package.json`.
  */
 
-export {
-    createLineTextColorTransformer,
-    createShikiHighlighter,
-    createTailwindClassTransformer,
-    escapeCodeHtml,
-    getShikiHighlighter,
-    isKnownShikiAlias,
-    normalizeShikiLanguage,
-    renderFallbackCodeHtml,
-    resolveShikiLanguage,
-} from "./contract-placeholders";
-
+// Phase 2: Extracted pure helpers
 export {
     DEFAULT_DARK_THEME,
     DEFAULT_LIGHT_THEME,
+    SHIKI_DEFAULT_THEMES,
+} from "./themes/defaults";
+
+export { escapeCodeHtml, renderFallbackCodeHtml, buildPlainHtml } from "./fallback/html";
+
+export {
+    isKnownShikiAlias,
+    normalizeShikiLanguage,
+    resolveShikiLanguage,
+    resolveLanguage,
+    availableLanguages,
+    languageAliases,
+} from "./languages/resolution";
+
+export {
+    type ClassValue,
+    type ClassableNode,
+    splitClassTokens,
+    toClassTokens,
+    appendUniqueClasses,
+    assignMergedClassName,
+} from "./transformers/class-tokens";
+
+export { createTailwindClassTransformer, applyTailwindClasses, type TailwindClassTransformerOptions } from "./transformers/tailwind-classes";
+
+export {
+    createLineTextColorTransformer,
+    transformerNotationLineTextColor,
+    type ParsedLineColorDirective,
+    getMetaKey,
+    sanitizeCssColor,
+    parseInlineLineColorDirective,
+    appendInlineStyle,
+} from "./transformers/line-text-color";
+
+// Phase 3: Placeholder exports for highlighter management
+export {
+    createShikiHighlighter,
+    getShikiHighlighter,
 } from "./contract-placeholders";
 
 export type {

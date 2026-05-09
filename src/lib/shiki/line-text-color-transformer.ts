@@ -1,54 +1,11 @@
-import type { ShikiTransformer } from "shiki";
-import { assignMergedClassName } from "./class-tokens";
-import {
-    appendInlineStyle,
-    getMetaKey,
-    parseInlineLineColorDirective,
-} from "./line-text-color-helpers";
-
-const LINE_COLOR_CLASS = "line-colored";
-
 /**
- * Creates a Shiki transformer that accepts inline `[!code color:...]` directives.
+ * Shiki transformer for applying per-line text colors.
  *
- * `preprocess()` strips the directive from each source line and stores the sanitized color keyed
- * by the current Shiki metadata object plus its 1-based line number. Later, `line()` looks up that
- * stored color and annotates the rendered line node with a class and CSS custom property.
+ * This is a thin compatibility wrapper for the canonical implementations in `@ravenhill/shiki-core`.
+ * It preserves the existing app import path during the Phase 2 migration.
  */
-export function transformerNotationLineTextColor(): ShikiTransformer {
-    const lineColorsByMeta = new WeakMap<object, Map<number, string>>();
 
-    return {
-        name: "notation-line-text-color",
-        preprocess(code) {
-            const lines = code.split("\n");
-            const lineColors = new Map<number, string>();
-
-            for (const [index, line] of lines.entries()) {
-                const parsedDirective = parseInlineLineColorDirective(line);
-                if (!parsedDirective) continue;
-
-                lineColors.set(index + 1, parsedDirective.color);
-                lines[index] = parsedDirective.content;
-            }
-
-            if (lineColors.size > 0) {
-                lineColorsByMeta.set(getMetaKey(this.meta), lineColors);
-            }
-
-            return lines.join("\n");
-        },
-        line(node, lineNumber) {
-            const metaKey = getMetaKey(this.meta);
-            const lineColors = lineColorsByMeta.get(metaKey);
-            const color = lineColors?.get(lineNumber);
-            if (!color) return;
-
-            assignMergedClassName(node, [LINE_COLOR_CLASS]);
-            node.properties.style = appendInlineStyle(
-                node.properties.style,
-                `--code-line-text-color:${color}`,
-            );
-        },
-    } satisfies ShikiTransformer;
-}
+export {
+    createLineTextColorTransformer,
+    transformerNotationLineTextColor,
+} from "@ravenhill/shiki-core";
