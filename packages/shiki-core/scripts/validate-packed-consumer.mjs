@@ -6,51 +6,83 @@
  * This script:
  * 1. Builds the package
  * 2. Creates a temporary directory outside the workspace
- * 3. Installs the package from the tarball
- * 4. Validates that root imports work
- * 5. Validates that subpath imports are blocked
- * 6. Validates TypeScript types can be imported
+ * 3. Packs the package to a temp tarball directory
+ * 4. Creates a clean consumer project
+ * 5. Installs the package from the generated tarball
+ * 6. Validates that root imports work at runtime (ESM)
+ * 7. Validates that TypeScript declarations can be imported
+ * 8. Validates that internal subpaths are blocked
+ * 9. Cleans up temp directories
  */
 
 import { execSync } from "child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "fs";
-import { join } from "path";
+import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "fs";
+import { join, resolve } from "path";
 import { tmpdir } from "os";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const packageDir = dirname(scriptDir);
+const packageRoot = resolve(scriptDir, "..");
 
-const tempDir = mkdtempSync(join(tmpdir(), "shiki-core-consumer-"));
+const shouldKeepTemp = process.env.SHIKI_CORE_KEEP_CONSUMER_TEMP === "1";
+const tempRoot = mkdtempSync(join(tmpdir(), "shiki-core-consumer-"));
+const tarbalsDir = join(tempRoot, "tarballs");
+const consumerDir = join(tempRoot, "consumer");
 
-console.log(`Testing external consumer in ${tempDir}`);
+console.log(`🧪 Testing external consumer validation`);
+console.log(`   Temp root: ${tempRoot}`);
+if (shouldKeepTemp) {
+    console.log(`   ⚠️  Debug mode enabled: temp directory will be kept\n`);
+} else {
+    console.log();
+}
 
 try {
     // Step 1: Build the package
-    console.log("\n1. Building package...");
-    execSync("pnpm run build", { cwd: packageDir, stdio: "inherit" });
+    console.log("1️⃣  Building package...");
+    execSync("pnpm run build", { cwd: packageRoot, stdio: "inherit" });
 
-    // Step 2: Create tarball
-    console.log("\n2. Creating tarball...");
-    const tarballOutput = execSync("pnpm pack", {
-        cwd: packageDir,
-        encoding: "utf8",
-    });
+    // Step 2: Create tarball in temp directory with JSON output
+    console.log("\n2️⃣  Creating tarball in temp directory...");
+    mkdirSync(tarbalsDir, { recursive: true });
+    
+    const packOutput = execSync(
+        `pnpm pack --pack-destination "${tarbalsDir}" --json`,
+        {
+            cwd: packageRoot,
+            encoding: "utf8",
+        },
+    );
 
-    const tarballLine = tarballOutput
-        .split("\n")
-        .find(line => line.endsWith(".tgz"));
-    if (!tarballLine) {
-        throw new Error("Could not determine tarball path from pnpm pack output");
+    let tarballPath;
+    try {
+        const packResult = JSON.parse(packOutput);
+        let tarballFileName = packResult.filename || packResult[0]?.filename;
+        
+        if (!tarballFileName) {
+            throw new Error("Could not determine tarball filename from pack output");
+        }
+        
+        // pnpm may return the full path, so we just want the filename
+        if (tarballFileName.includes("\\") || tarballFileName.includes("/")) {
+            tarballFileName = tarballFileName.split(/[/\\]/).pop();
+        }
+        
+        tarballPath = join(tarbalsDir, tarballFileName);
+    } catch (parseError) {
+        throw new Error(
+            `Failed to parse pack output: ${parseError instanceof Error ? parseError.message : parseError}`,
+        );
     }
 
-    const tarballPath = join(packageDir, tarballLine.trim());
+    console.log(`   Tarball created: ${tarballPath}`);
 
     // Step 3: Initialize temporary consumer project
-    console.log("\n3. Initializing temporary consumer project...");
+    console.log("\n3️⃣  Initializing temporary consumer project...");
+    mkdirSync(consumerDir, { recursive: true });
     writeFileSync(
-        join(tempDir, "package.json"),
+        join(consumerDir, "package.json"),
         JSON.stringify(
             {
                 name: "shiki-core-test-consumer",
@@ -63,79 +95,114 @@ try {
     );
 
     // Step 4: Install package from tarball
-    console.log("4. Installing package from tarball...");
-    execSync(`pnpm install ${tarballPath}`, { cwd: tempDir, stdio: "inherit" });
+    console.log("4️⃣  Installing package from tarball...");
+    execSync(`pnpm install "${tarballPath}"`, {
+        cwd: consumerDir,
+        stdio: "inherit",
+    });
 
-    // Step 5: Test root import works
-    console.log("\n5. Testing root import...");
-    const rootImportTest = `
-import * as shikiCore from "@ravenhill/shiki-core";
-if (!("getShikiHighlighter" in shikiCore)) {
-    throw new Error("Missing public export: getShikiHighlighter");
+    // Step 5: Install TypeScript for type validation
+    console.log("\n5️⃣  Installing TypeScript for type validation...");
+    execSync("pnpm install -D typescript@latest", {
+        cwd: consumerDir,
+        stdio: "inherit",
+    });
+
+    // Step 6: Test runtime ESM import
+    console.log("\n6️⃣  Testing runtime ESM import...");
+    const runtimeProbe = `import { createShikiHighlighterService, resolveShikiLanguage } from "@ravenhill/shiki-core";
+
+const service = createShikiHighlighterService();
+
+if (typeof service !== "object") {
+    throw new Error("Expected createShikiHighlighterService() to return an object.");
 }
-console.log("✅ Root import works");
-console.log("Exported symbols:", Object.keys(shikiCore).length);
+
+const result = resolveShikiLanguage("typescript");
+if (!result.resolvedLang) {
+    throw new Error("Expected resolveShikiLanguage('typescript') to return a resolved language.");
+}
+
+console.log("✅ Runtime ESM import works");
+console.log("   Service type:", typeof service);
+console.log("   Language resolution: " + result.resolvedLang);
 `;
 
-    writeFileSync(join(tempDir, "test-root-import.mjs"), rootImportTest);
-    execSync("node test-root-import.mjs", { cwd: tempDir, stdio: "inherit" });
+    writeFileSync(join(consumerDir, "test-runtime.mjs"), runtimeProbe);
+    execSync("node test-runtime.mjs", { cwd: consumerDir, stdio: "inherit" });
 
-    // Step 6: Test TypeScript types import
-    console.log("\n6. Testing TypeScript types...");
-    const typeImportTest = `
-import type {
-    HighlightCodeOptions,
-    HighlightLanguage,
-    HighlightRetryContext,
-    HighlightThemePair,
-    RetryHighlightOperation,
+    // Step 7: Test TypeScript declaration import
+    console.log("\n7️⃣  Testing TypeScript declaration import...");
+    const typeProbe = `import {
+    createShikiHighlighterService,
+    resolveShikiLanguage,
+    type ShikiHighlighterService,
 } from "@ravenhill/shiki-core";
 
-// Create valid type instances to verify they're defined
-const lang: HighlightLanguage = "python";
-const themes: HighlightThemePair = {
-    light: "catppuccin-latte",
-    dark: "catppuccin-mocha",
-};
-const context: HighlightRetryContext = {
-    operation: "test",
-    language: "python",
-};
-const options: HighlightCodeOptions = {
-    code: "console.log('test')",
-    language: lang,
-    themes,
-};
+const service: ShikiHighlighterService = createShikiHighlighterService();
+const result = resolveShikiLanguage("ts");
+const language: string | null = result.resolvedLang;
 
-console.log("✅ TypeScript types import successfully");
+void service;
+void language;
+
+console.log("✅ TypeScript declarations import successfully");
 `;
 
-    writeFileSync(join(tempDir, "test-types.ts"), typeImportTest);
+    mkdirSync(join(consumerDir, "src"), { recursive: true });
+    writeFileSync(join(consumerDir, "src", "typecheck.ts"), typeProbe);
 
-    // Step 7: Test subpath imports fail
-    console.log("\n7. Testing subpath import blocking...");
+    const tsconfigContent = {
+        compilerOptions: {
+            target: "ES2022",
+            lib: ["ES2022", "DOM"],
+            module: "NodeNext",
+            moduleResolution: "NodeNext",
+            strict: true,
+            noEmit: true,
+            skipLibCheck: true,
+        },
+        include: ["src/**/*.ts"],
+    };
+
+    writeFileSync(
+        join(consumerDir, "tsconfig.json"),
+        JSON.stringify(tsconfigContent, null, 2),
+    );
+
+    execSync("pnpm exec tsc --noEmit", { cwd: consumerDir, stdio: "inherit" });
+
+    // Step 8: Test internal subpath blocking
+    console.log("\n8️⃣  Testing internal subpath blocking...");
     const blockedSubpaths = [
-        "@ravenhill/shiki-core/src/index.js",
-        "@ravenhill/shiki-core/dist/index.js",
-        "@ravenhill/shiki-core/cache",
         "@ravenhill/shiki-core/src",
+        "@ravenhill/shiki-core/src/index",
+        "@ravenhill/shiki-core/dist",
+        "@ravenhill/shiki-core/dist/index",
+        "@ravenhill/shiki-core/internal",
+        "@ravenhill/shiki-core/languages",
+        "@ravenhill/shiki-core/transformers",
     ];
 
-    let anySubpathFailed = false;
+    let anySubpathSucceeded = false;
     for (const subpath of blockedSubpaths) {
         try {
             const testCode = `import "${subpath}"; console.log("ERROR: subpath import succeeded");`;
-            writeFileSync(join(tempDir, "test-subpath.mjs"), testCode);
-            execSync("node test-subpath.mjs", { cwd: tempDir, stdio: "pipe" });
-            console.log(`❌ Subpath ${subpath} was NOT blocked (should have failed)`);
-            anySubpathFailed = true;
+            writeFileSync(join(consumerDir, "test-subpath.mjs"), testCode);
+            execSync("node test-subpath.mjs", {
+                cwd: consumerDir,
+                stdio: "pipe",
+                timeout: 5000,
+            });
+            console.log(`   ❌ Subpath ${subpath} was NOT blocked (should have failed)`);
+            anySubpathSucceeded = true;
         } catch {
             // Expected: subpath should fail
-            console.log(`✅ Subpath ${subpath} correctly blocked`);
+            console.log(`   ✅ Subpath ${subpath} correctly blocked`);
         }
     }
 
-    if (anySubpathFailed) {
+    if (anySubpathSucceeded) {
         throw new Error("Some subpath imports were not properly blocked");
     }
 
@@ -149,9 +216,13 @@ console.log("✅ TypeScript types import successfully");
     process.exit(1);
 } finally {
     // Cleanup
-    try {
-        rmSync(tempDir, { recursive: true, force: true });
-    } catch {
-        // Ignore cleanup errors
+    if (!shouldKeepTemp) {
+        try {
+            rmSync(tempRoot, { recursive: true, force: true });
+        } catch {
+            // Ignore cleanup errors
+        }
+    } else {
+        console.log(`\n💾 Debug mode: temp directory retained at ${tempRoot}`);
     }
 }

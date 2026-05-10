@@ -55,6 +55,49 @@ Internal subpath imports (e.g., `@ravenhill/shiki-core/src/index.js`) are not su
 - Keep `package.json` publication-ready. For the pilot release, `private` should be `false` and the registry metadata should match the GitLab project publish endpoint.
 - Do not modify changelogs unless the user explicitly asks for changelog updates.
 
+## Package Validation
+
+The package `check` script runs four validation gates in sequence:
+
+1. **`pnpm run build`** — Build the package using tsup.
+2. **`pnpm run typecheck`** — Type-check the source with tsc.
+3. **`pnpm run test`** — Run unit tests with vitest.
+4. **`pnpm run lint`** — Lint with publint for publication readiness.
+5. **`pnpm run pack:check`** — Validate tarball contents and package metadata.
+6. **`pnpm run consumer:check`** — Validate the package as an external installed dependency.
+
+### Pack Validation (`pack:check`)
+
+Runs `scripts/assert-pack-files.mjs`. This script validates that the tarball would contain only the intended files by:
+
+- Reading `package.json` and verifying metadata (name, version, type, exports, main, types, files).
+- Running `pnpm pack --dry-run --json` and parsing the file manifest.
+- Asserting required distributable files are present: `dist/index.js`, `dist/index.d.ts`, `README.md`, `package.json`.
+- Asserting implementation and test files are excluded: `src/`, `tests/`, `scripts/`, `vitest.config.*`, `tsup.config.*`.
+
+### Consumer Validation (`consumer:check`)
+
+Runs `scripts/validate-packed-consumer.mjs`. This script validates the package from an external consumer perspective by:
+
+1. Building the package.
+2. Creating a temporary root directory outside the workspace.
+3. Packing the package to a temp tarball directory using `pnpm pack --pack-destination`.
+4. Creating a clean temporary consumer project outside the workspace.
+5. Installing the generated `.tgz` from the temp tarball (not a workspace link).
+6. Installing TypeScript into the temp consumer for type checking.
+7. Running an ESM runtime probe that imports from the root package entry point and calls stable APIs.
+8. Running a TypeScript probe that imports types and API exports with full type checking.
+9. Validating that internal subpaths (`src/`, `dist/`, implementation paths) cannot be imported at all.
+10. Cleaning up the temp directory (unless `SHIKI_CORE_KEEP_CONSUMER_TEMP=1` is set for debugging).
+
+The consumer validation proves that:
+
+- The published tarball can be installed into a fresh project.
+- Root imports work at runtime (ESM).
+- Root imports work in TypeScript (declarations).
+- The package `exports` field properly encapsulates internal paths.
+- Internal implementation modules remain inaccessible to consumers.
+
 ## Code Conventions
 
 - Prefer pure TypeScript types and host-agnostic abstractions.

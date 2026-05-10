@@ -287,7 +287,7 @@ export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME };
 
 ---
 
-## Phase 5: Package Consumer Validation
+## ~~Phase 5: Package Consumer Validation~~
 
 **Goal:** prove the package works outside the workspace.
 
