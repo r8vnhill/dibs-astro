@@ -24,8 +24,8 @@ export const site = {
      * Shared paths and defaults for <head> metadata.
      */
     HEAD: {
-        FAVICON_PATH: "/online-library.ico",
+        FAVICON_PATH: "/DIBS.logo.ico",
         SITEMAP_PATH: "/sitemap-index.xml",
-        DEFAULT_SOCIAL_IMAGE: "/online-library.png",
+        DEFAULT_SOCIAL_IMAGE: "/DIBS.logo.png",
     } as const,
 } as const;

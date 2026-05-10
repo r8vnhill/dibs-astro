@@ -56,6 +56,7 @@ import {
     normalizeNavigation,
     normalizePreviousNavigation,
 } from "$presentation/adapters/navigation-normalization";
+import type { RepoRef } from "@ravenhill/site-core";
 import * as icons from "~/assets/img/icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
@@ -65,7 +66,6 @@ import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-import type { RepoRef } from "@ravenhill/site-core";
 import type { PageMeta } from "~/utils/page-meta";
 
 /**
@@ -174,39 +174,54 @@ const { normalizedNext } = normalizeNavigation(
 >
     <div class="flex">
         <!-- Sidebar with course structure navigation -->
-        <LessonSidebar client:load lessons={courseNavigationTree} />
+        <div class="contents" data-export-hidden="true">
+            <LessonSidebar client:load lessons={courseNavigationTree} />
+        </div>
 
         <!-- Main content area -->
-        <div id="lesson-content" class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}>
+        <article
+            id="lesson-content" data-export-role="document"
+            class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}
+        >
             <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
 
-            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+            <div class="contents" data-export-hidden="true">
+                <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+            </div>
 
-            {lessonMetadata && <LessonMetaPanel metadata={lessonMetadata} />}
+            {
+                lessonMetadata && (
+                    <section data-export-role="metadata">
+                        <LessonMetaPanel metadata={lessonMetadata} />
+                    </section>
+                )
+            }
 
             {git && <LessonRepoPanel {git} />}
 
-            <Abstract headingLevel="h2">
-                <slot name="abstract">
-                    <section data-testid="abstract-fallback">
-                        <ToDo
-                            client:only="react"
-                            metadata={{
-                                tasks: [
-                                    "Agregar abstract",
-                                ],
-                            }}
-                        />
-                    </section>
-                </slot>
-            </Abstract>
+            <div data-export-role="body">
+                <Abstract headingLevel="h2">
+                    <slot name="abstract">
+                        <section data-testid="abstract-fallback" data-export-finding="client-only">
+                            <ToDo
+                                client:only="react"
+                                metadata={{
+                                    tasks: [
+                                        "Agregar abstract",
+                                    ],
+                                }}
+                            />
+                        </section>
+                    </slot>
+                </Abstract>
 
-            <slot />
+                <slot />
+            </div>
 
             {
                 (normalizedNext || normalizedPreviousList.length > 0) && (
                     <nav
-                        aria-label="Siguiente o anterior lección"
+                        aria-label="Siguiente o anterior lección" data-export-hidden="true"
                         class:list={[
                             "mt-12",
                             "flex",
@@ -251,7 +266,7 @@ const { normalizedNext } = normalizeNavigation(
                     </nav>
                 )
             }
-        </div>
+        </article>
     </div>
 </BaseLayout>
 
