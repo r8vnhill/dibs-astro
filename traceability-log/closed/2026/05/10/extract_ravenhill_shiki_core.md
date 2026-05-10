@@ -1,4 +1,4 @@
-## [PLAN] Extract `@ravenhill/shiki-core`
+## [DONE] Extract `@ravenhill/shiki-core`
 
 ### Summary
 
@@ -327,7 +327,7 @@ export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME };
 
 ---
 
-## Phase 6: Remove Duplicate Logic After One Compatibility Window
+## ~~Phase 6: Remove Duplicate Logic After One Compatibility Window~~
 
 **Goal:** clean up app-local Shiki implementation after parity is proven.
 

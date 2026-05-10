@@ -1,59 +1,62 @@
 /**
- * @file cache.ts
+ * @file Read-only production facade for the app Shiki highlighter cache.
  *
- * Cache management utilities for the app's Shiki highlighter service.
+ * This module exposes production-safe access to the shared app highlighter. Cache ownership remains inside
+ * {@link appShikiService}; this file only delegates to that service and does not expose cache mutation operations.
  *
- * These exports provide test access to the shared highlighter cache for deterministic
- * test setup and isolation.
+ * Test-only cache controls live in `cache.testing.ts` and are intentionally not exported from this module. Production 
+ * code should never import the testing adapter.
+ *
+ * ## Design
+ *
+ * - **Read-only facade:** Exposes highlighter access without set/reset helpers.
+ * - **Lazy:** The underlying service creates the highlighter only when needed.
+ * - **Memoized:** Repeated calls reuse the service-managed highlighter promise.
+ * - **Shared:** App code uses the same configured {@link appShikiService}.
+ * - **Testable:** Tests can override or reset the cache through `cache.testing`.
  */
 
 import type { Highlighter } from "shiki";
 import { appShikiService } from "./service";
 
 /**
- * Resolved Shiki highlighter instance.
+ * Promise for the app's shared Shiki highlighter.
+ *
+ * The underlying service memoizes this promise so concurrent and repeated callers share the same highlighter 
+ * initialization path instead of creating duplicate Shiki instances.
+ *
+ * @example
+ * ```ts
+ * const firstPromise = getHighlighter();
+ * const secondPromise = getHighlighter();
+ *
+ * console.log(firstPromise === secondPromise); // true while cached
+ *
+ * const highlighter = await firstPromise;
+ * ```
  */
 export type HighlighterPromise = Promise<Highlighter>;
 
 /**
- * Returns the shared Shiki highlighter.
+ * Returns the shared app Shiki highlighter.
  *
- * The highlighter is created lazily with the project's fixed Shiki defaults. Repeated callers
- * receive the same promise until the cache is reset or the initialization promise rejects.
+ * Use this only when code needs direct access to the Shiki highlighter API. Most consumers should prefer 
+ * `highlightToHtml()` from `~/lib/code-highlighting`, which keeps rendering behavior behind the configured app service 
+ * boundary.
  *
- * @returns Promise resolving to the shared highlighter
+ * The highlighter is created lazily by {@link appShikiService} and reused through the service-managed cache.
+ *
+ * @returns The service-managed promise for the shared highlighter.
+ *
+ * @example
+ * ```ts
+ * import { getHighlighter } from "~/lib/code-highlighting";
+ *
+ * const highlighter = await getHighlighter();
+ * const tokens = highlighter.codeToTokens(code, {
+ *     lang: "ts",
+ *     theme: "catppuccin-mocha",
+ * });
+ * ```
  */
 export const getHighlighter = (): HighlighterPromise => appShikiService.getHighlighter();
-
-/**
- * Test helper that resets the cached shared highlighter.
- *
- * Use this when a test needs to start from a deterministic empty-cache state.
- *
- * @internal
- */
-export function __resetHighlighterCacheForTests() {
-    // The package service uses global cache, so we reset via globalThis
-    const globalCache = globalThis as any;
-    delete globalCache.__dibsShikiHighlighterPromise;
-}
-
-/**
- * Test helper that overrides the cached highlighter.
- *
- * This is useful when tests need to inject a fake highlighter, a promise that resolves later, or
- * `null` to restore the normal lazy-creation path.
- *
- * @param value - Fake highlighter, highlighter promise, or `null` to clear the override
- * @internal
- */
-export function __setHighlighterForTests(value: HighlighterPromise | Highlighter | null) {
-    const globalCache = globalThis as any;
-    if (value === null) {
-        delete globalCache.__dibsShikiHighlighterPromise;
-    } else if (value instanceof Promise) {
-        globalCache.__dibsShikiHighlighterPromise = value;
-    } else {
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(value);
-    }
-}

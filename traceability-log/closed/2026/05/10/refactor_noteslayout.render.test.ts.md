@@ -1,4 +1,4 @@
-# [PLAN] Refactor `NotesLayout.render.test.ts`
+# [DONE] Refactor `NotesLayout.render.test.ts`
 
 **Status: IMPLEMENTED ✓**
 

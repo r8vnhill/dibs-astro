@@ -1,12 +1,13 @@
 /**
  * @file shiki-import-boundary.test.ts
  *
- * Enforces Phase 6 final state: no deprecated shiki compatibility bridge imports.
+ * Enforces Phase 6 final state and test module boundaries.
  *
  * This suite verifies that:
  * - No source or config code imports from ~/lib/shiki (deprecated bridge)
  * - No source or config code imports from src/lib/shiki
  * - No imports use @ravenhill/shiki-core subpaths (only root)
+ * - Production code does not import test-only modules (*.testing.ts)
  * - App highlighting code uses only:
  *   - @ravenhill/shiki-core (reusable package APIs)
  *   - ~/lib/code-highlighting (app-local Shiki service boundary)
@@ -58,6 +59,15 @@ function scanFile(
                 type: "package-subpath",
             });
         }
+
+        // Production code importing test-only modules
+        if (/from\s+["'][^"']*\.testing["']/.test(line)) {
+            findings.push({
+                lineNum,
+                content: line.trim(),
+                type: "test-module-import",
+            });
+        }
     }
 
     return findings;
@@ -89,6 +99,13 @@ function walkDir(
         }
     }
     return results;
+}
+
+/**
+ * Check if a file is a test file (safe to import test-only modules).
+ */
+function isTestFile(filePath: string): boolean {
+    return /\.(test|spec)\.ts(x?)$/.test(filePath) || filePath.includes("/tests/");
 }
 
 describe("Phase 6: Shiki import boundaries", () => {
@@ -186,4 +203,40 @@ describe("Phase 6: Shiki import boundaries", () => {
             message: `Found deprecated src/lib/shiki directory. Phase 6 should have removed it.`,
         }).toBe(false);
     });
+
+    it("should not import test-only modules in production code", () => {
+        const dirs = ["src/application", "src/domain", "src/infrastructure", "src/presentation", "config"];
+        const findings: Array<{
+            file: string;
+            lineNum: number;
+            content: string;
+        }> = [];
+
+        for (const dirName of dirs) {
+            const dir = path.join(root, dirName);
+            if (!fs.existsSync(dir)) continue;
+            const files = walkDir(dir);
+
+            for (const file of files) {
+                // Skip test files; they are allowed to import .testing modules
+                if (isTestFile(file)) continue;
+
+                const issues = scanFile(file);
+                for (const issue of issues) {
+                    if (issue.type === "test-module-import") {
+                        findings.push({
+                            file: path.relative(root, file),
+                            lineNum: issue.lineNum,
+                            content: issue.content,
+                        });
+                    }
+                }
+            }
+        }
+
+        expect(findings, {
+            message: `Found production code importing test-only (.testing) modules:\n${findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")}`,
+        }).toHaveLength(0);
+    });
 });
+
