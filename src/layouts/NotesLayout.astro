@@ -60,12 +60,10 @@ import type { RepoRef } from "@ravenhill/site-core";
 import * as icons from "~/assets/img/icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
-import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
-import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
-import { Abstract } from "~/components/ui/callouts";
-import ToDo from "~/components/utils/ToDo";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import LessonDocumentLayout from "~/layouts/LessonDocumentLayout.astro";
+import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
 import type { PageMeta } from "~/utils/page-meta";
 
 /**
@@ -151,6 +149,12 @@ const pageMeta: PageMeta = {
     ...lessonPageMeta,
 };
 
+const documentProps: LessonDocumentLayoutProps = {
+    title,
+    metadata: lessonMetadata,
+    git,
+};
+
 // Attempt to auto-resolve previous/next from course structure.
 const autoNav = await resolveAutoNav(pathname, courseNavigationTree);
 
@@ -179,44 +183,23 @@ const { normalizedNext } = normalizeNavigation(
         </div>
 
         <!-- Main content area -->
-        <article
-            id="lesson-content" data-export-role="document"
-            class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}
-        >
-            <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
-
+        <div class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}>
             <div class="contents" data-export-hidden="true">
                 <ReadingTime multiplier={timeMultiplier ?? 1.5} />
             </div>
 
             {
-                lessonMetadata && (
-                    <section data-export-role="metadata">
-                        <LessonMetaPanel metadata={lessonMetadata} />
-                    </section>
+                Astro.slots.has("abstract") ? (
+                    <LessonDocumentLayout {...documentProps}>
+                        <slot name="abstract" slot="abstract" />
+                        <slot />
+                    </LessonDocumentLayout>
+                ) : (
+                    <LessonDocumentLayout {...documentProps}>
+                        <slot />
+                    </LessonDocumentLayout>
                 )
             }
-
-            {git && <LessonRepoPanel {git} />}
-
-            <div data-export-role="body">
-                <Abstract headingLevel="h2">
-                    <slot name="abstract">
-                        <section data-testid="abstract-fallback" data-export-finding="client-only">
-                            <ToDo
-                                client:only="react"
-                                metadata={{
-                                    tasks: [
-                                        "Agregar abstract",
-                                    ],
-                                }}
-                            />
-                        </section>
-                    </slot>
-                </Abstract>
-
-                <slot />
-            </div>
 
             {
                 (normalizedNext || normalizedPreviousList.length > 0) && (
@@ -266,7 +249,7 @@ const { normalizedNext } = normalizeNavigation(
                     </nav>
                 )
             }
-        </article>
+        </div>
     </div>
 </BaseLayout>
 

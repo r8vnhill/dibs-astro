@@ -1,4 +1,4 @@
-# [PLAN] Phase 2: Create `packages/lesson-export-core`
+# [DONE] Phase 2: Create `packages/lesson-export-core`
 
 ## Implementation Status
 

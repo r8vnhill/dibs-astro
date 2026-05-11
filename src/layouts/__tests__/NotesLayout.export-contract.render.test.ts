@@ -17,6 +17,7 @@ const EXPORT_METADATA_SELECTOR = "[data-export-role='metadata']";
 const EXPORT_BODY_SELECTOR = "[data-export-role='body']";
 const EXPORT_HIDDEN_SELECTOR = "[data-export-hidden='true']";
 const CLIENT_ONLY_FINDING_SELECTOR = "[data-export-finding='client-only']";
+const REPO_PANEL_SELECTOR = "section[aria-labelledby='lesson-repo-panel-heading']";
 
 describe("NotesLayout export contract", () => {
     let renderNotes: ReturnType<typeof createNotesLayoutHarness>["renderNotes"];
@@ -78,6 +79,19 @@ describe("NotesLayout export contract", () => {
         expect(metadata.textContent).toContain("Autoría:");
         expect(metadata.textContent).toContain("Última actualización:");
         expect(metadata.textContent).not.toContain("sourceFile");
+    });
+
+    test("keeps the lesson repo panel inside the exportable document when git data is provided", async () => {
+        const html = await renderNotes({
+            title: "Exportable lesson",
+            git: { user: "r8vnhill", repo: "dibs-scripts" },
+        });
+        const doc = parseHtml(html);
+        const documentRoot = queryRequired<HTMLElement>(doc, EXPORT_DOCUMENT_SELECTOR);
+        const repoPanel = queryRequired<HTMLElement>(doc, REPO_PANEL_SELECTOR);
+
+        expect(documentRoot.contains(repoPanel)).toBe(true);
+        expect(repoPanel.closest(EXPORT_HIDDEN_SELECTOR)).toBeNull();
     });
 
     test("preserves document and body markers when optional metadata is missing", async () => {

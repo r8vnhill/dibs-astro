@@ -86,7 +86,7 @@ hard failures. Convert selected findings into hard failures later when the conte
 
 ## Phased plan
 
-### Phase 1 — Lock the export contract with tests
+### ~~Phase 1 — Lock the export contract with tests~~
 
 Goal: define “exportable lesson document” before adding browser automation.
 
@@ -112,7 +112,7 @@ Exit criteria:
 - No PDF generation yet.
 ```
 
-### Phase 2 — Create `packages/lesson-export-core`
+### ~~Phase 2 — Create `packages/lesson-export-core`~~
 
 Goal: make target selection and output paths deterministic.
 
@@ -165,9 +165,11 @@ Exit criteria:
 - Manifest logic works without Astro, DOM, Playwright, filesystem side effects, or Tailwind.
 ```
 
-### Phase 3 — Extract `LessonDocumentLayout.astro`
+### ~~Phase 3 — Extract `LessonDocumentLayout.astro`~~
 
 Goal: stop forcing `NotesLayout.astro` to be both browser shell and document layout.
+
+Status: implemented in `traceability-log/phase_3_extract_lessondocumentlayout.astro.md`.
 
 Refactor shape:
 

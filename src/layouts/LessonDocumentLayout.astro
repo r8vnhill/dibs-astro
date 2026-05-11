@@ -1,0 +1,62 @@
+---
+/**
+ * @file LessonDocumentLayout.astro
+ *
+ * Reusable document-oriented lesson composition extracted from `NotesLayout.astro`.
+ *
+ * This layout owns the content that belongs to the lesson document itself:
+ *
+ * - Lesson title
+ * - Optional metadata panel
+ * - Optional repository links panel
+ * - Abstract slot and fallback
+ * - Main lesson body
+ *
+ * Browser-shell concerns such as sidebars, reading-time widgets, and previous/next navigation are
+ * intentionally left to `NotesLayout.astro`.
+ */
+
+import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
+import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
+import { Abstract } from "~/components/ui/callouts";
+import ToDo from "~/components/utils/ToDo";
+import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
+
+const { title, metadata, git } = Astro.props as LessonDocumentLayoutProps;
+---
+
+<article
+    id="lesson-content" data-export-role="document"
+    class:list={["flex-1", "w-full"]}
+>
+    <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
+
+    {
+        metadata && (
+            <section data-export-role="metadata">
+                <LessonMetaPanel {metadata} />
+            </section>
+        )
+    }
+
+    {git && <LessonRepoPanel {git} />}
+
+    <div data-export-role="body">
+        <Abstract headingLevel="h2">
+            <slot name="abstract">
+                <section data-testid="abstract-fallback" data-export-finding="client-only">
+                    <ToDo
+                        client:only="react"
+                        metadata={{
+                            tasks: [
+                                "Agregar abstract",
+                            ],
+                        }}
+                    />
+                </section>
+            </slot>
+        </Abstract>
+
+        <slot />
+    </div>
+</article>
