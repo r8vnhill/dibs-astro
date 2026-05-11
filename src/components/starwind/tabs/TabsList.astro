@@ -5,8 +5,15 @@
  * This component renders the tab trigger container (the clickable tabs).
  * It supports styling via Tailwind Variants and provides accessibility via `role="tablist"` and the
  * `data-tabs-list` attribute.
+ *
+ * ## Export Mode
+ *
+ * In PDF export mode, the TabsList is marked with `data-export-hidden="true"` to exclude it from
+ * deterministic PDF output. Interactive tab controls are not meaningful in static export mode.
  */
 
+import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
 
@@ -14,7 +21,13 @@ import { tv } from "tailwind-variants";
  * Props for the TabsList component.
  * `role` is omitted because it is hardcoded to "tablist".
  */
-type Props = Omit<HTMLAttributes<"div">, "role">;
+interface Props extends Omit<HTMLAttributes<"div">, "role"> {
+    /**
+     * Optional render mode for export/PDF output.
+     * Defaults to `"web"` if not provided.
+     */
+    renderMode?: LessonRenderMode;
+}
 
 /**
  * Tailwind Variants definition for the tabs list.
@@ -44,22 +57,30 @@ const tabsList = tv({
 const {
     class: className,
     "aria-orientation": ariaOrientation = "horizontal",
+    renderMode,
     ...rest
 } = Astro.props;
+
+// Resolve export context from props and request locals.
+const exportContext = resolveLessonExportContext({
+    renderMode,
+    locals: Astro.locals,
+} as ResolveLessonExportContextInput);
 ---
 
-<!--
-    Container for the tab triggers.
-    `data-tabs-list` allows the controller to register and manage the tab order.
--->
-<div
-    class={tabsList({
-        class: className,
-        orientation: ariaOrientation ?? undefined,
-    })}
-    data-tabs-list
-    role="tablist" aria-orientation={ariaOrientation}
-    {...rest}
->
-    <slot />
-</div>
+{
+    !exportContext.isPdfExport && (
+        <div
+            class={tabsList({
+                class: className,
+                orientation: ariaOrientation ?? undefined,
+            })}
+            data-tabs-list
+            role="tablist"
+            aria-orientation={ariaOrientation}
+            {...rest}
+        >
+            <slot />
+        </div>
+    )
+}

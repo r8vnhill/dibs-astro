@@ -103,4 +103,78 @@ describe("LessonDocumentLayout.astro render", () => {
         expect(documentRoot.contains(repoPanel)).toBe(true);
         expect(repoPanel.textContent).toContain("Encuentra el código de la lección:");
     });
+
+    describe("export mode", () => {
+        test("web mode does not add data-export-mode attribute", async () => {
+            const html = await (await renderDocument)({
+                title: "Web mode lesson",
+                renderMode: "web",
+            });
+            const doc = parseHtml(html);
+            const documentRoot = queryRequired<HTMLElement>(doc, EXPORT_DOCUMENT_SELECTOR);
+
+            expect(documentRoot.dataset.exportMode).toBeUndefined();
+            expect(documentRoot.dataset.exportRole).toBe("document");
+        });
+
+        test("pdf mode adds data-export-mode attribute to document root", async () => {
+            const html = await (await renderDocument)({
+                title: "PDF export lesson",
+                renderMode: "pdf",
+            });
+            const doc = parseHtml(html);
+            const documentRoot = queryRequired<HTMLElement>(doc, EXPORT_DOCUMENT_SELECTOR);
+
+            expect(documentRoot.dataset.exportMode).toBe("pdf");
+            expect(documentRoot.dataset.exportRole).toBe("document");
+        });
+
+        test("legacy exportMode: true maps to PDF mode markers", async () => {
+            const html = await (await renderDocument)({
+                title: "Legacy PDF lesson",
+                exportMode: true,
+            });
+            const doc = parseHtml(html);
+            const documentRoot = queryRequired<HTMLElement>(doc, EXPORT_DOCUMENT_SELECTOR);
+
+            expect(documentRoot.dataset.exportMode).toBe("pdf");
+        });
+
+        test("renderMode prop takes precedence over legacy exportMode", async () => {
+            const html = await (await renderDocument)({
+                title: "Priority test",
+                renderMode: "web",
+                exportMode: true,
+            });
+            const doc = parseHtml(html);
+            const documentRoot = queryRequired<HTMLElement>(doc, EXPORT_DOCUMENT_SELECTOR);
+
+            expect(documentRoot.dataset.exportMode).toBeUndefined();
+        });
+
+        test("renders static placeholder in PDF mode instead of reactive ToDo", async () => {
+            const html = await (await renderDocument)({
+                title: "PDF lesson without abstract",
+                renderMode: "pdf",
+            });
+            const doc = parseHtml(html);
+            const finding = queryRequired<HTMLElement>(doc, CLIENT_ONLY_FINDING_SELECTOR);
+            const placeholder = finding.querySelector("aside[data-export-hidden]");
+
+            expect(placeholder).toBeTruthy();
+            expect(placeholder?.textContent).toContain("Contenido pendiente de completar");
+            expect(html).not.toContain("initStarwindTabs");
+            expect(html).not.toContain("client:only");
+        });
+
+        test("omits reactive ToDo component in PDF mode", async () => {
+            const html = await (await renderDocument)({
+                title: "PDF export",
+                renderMode: "pdf",
+            });
+
+            // The reactive ToDo should not be rendered in PDF mode
+            expect(html).not.toContain("TODO: Estamos");
+        });
+    });
 });

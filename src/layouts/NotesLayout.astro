@@ -151,8 +151,8 @@ const pageMeta: PageMeta = {
 
 const documentProps: LessonDocumentLayoutProps = {
     title,
-    metadata: lessonMetadata,
-    git,
+    ...(lessonMetadata ? { metadata: lessonMetadata } : {}),
+    ...(git ? { git } : {}),
 };
 
 // Attempt to auto-resolve previous/next from course structure.

@@ -5,8 +5,16 @@
  * This component renders a tab container with support for local and cross-group tab state syncing,
  * keyboard navigation, and accessibility via ARIA attributes.
  * It also supports Tailwind-based styling variants via `tailwind-variants`.
+ *
+ * ## Export Mode
+ *
+ * In PDF export mode (`renderMode="pdf"`), the tabs component can render all panels visibly
+ * without the interactive tab script, making it suitable for deterministic PDF output.
+ * The TabsList and tab script are omitted in export mode; content is rendered as static sections.
  */
 
+import { resolveLessonExportContext } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
 
@@ -27,6 +35,13 @@ interface Props extends HTMLAttributes<"div"> {
      * Defaults to `horizontal`.
      */
     orientation?: "horizontal" | "vertical";
+    /**
+     * Optional render mode for export/PDF output.
+     *
+     * In `"pdf"` mode, the component renders all content statically without interactive controls.
+     * Defaults to `"web"` if not provided.
+     */
+    renderMode?: LessonRenderMode;
 }
 
 /**
@@ -59,8 +74,15 @@ const {
     syncKey,
     orientation = "horizontal",
     class: className,
+    renderMode,
     ...rest
 } = Astro.props;
+
+// Resolve export context from props and request locals.
+const exportContext = resolveLessonExportContext({
+    renderMode,
+    locals: Astro.locals,
+});
 ---
 
 <div
@@ -76,25 +98,32 @@ const {
     ]}
 >
     <div
-        class={tabs({ class: className })} data-default-value={defaultValue}
-        data-sync-key={syncKey} aria-orientation={orientation}
+        class={tabs({ class: className })}
+        data-default-value={defaultValue}
+        data-sync-key={syncKey}
+        aria-orientation={orientation}
+        data-export-role={exportContext.isPdfExport ? "tabs" : undefined}
         {...rest}
     >
         <slot />
     </div>
 </div>
 
-<script>
-    import { initStarwindTabs } from "~/utils/tabs";
+{
+    !exportContext.isPdfExport && (
+        <script>
+            import { initStarwindTabs } from "~/utils/tabs";
 
-    if (typeof window !== "undefined") {
-        // Initializes **all** instances (including nested ones),
-        // but each one scoped to its own root.
-        initStarwindTabs();
+            if (typeof window !== "undefined") {
+                // Initializes **all** instances (including nested ones),
+                // but each one scoped to its own root.
+                initStarwindTabs();
 
-        const controller = new AbortController();
-        document.addEventListener("astro:after-swap", initStarwindTabs, {
-            signal: controller.signal,
-        });
-    }
-</script>
+                const controller = new AbortController();
+                document.addEventListener("astro:after-swap", initStarwindTabs, {
+                    signal: controller.signal,
+                });
+            }
+        </script>
+    )
+}

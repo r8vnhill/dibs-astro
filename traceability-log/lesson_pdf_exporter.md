@@ -197,7 +197,7 @@ Exit criteria:
 - Export document rendering has no sidebar/header/footer dependency.
 ```
 
-### Phase 4 — Make components export-aware
+### ~~Phase 4 — Make components export-aware~~
 
 Goal: make interactive content deterministic before PDF generation.
 

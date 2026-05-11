@@ -1,0 +1,19 @@
+---
+import Tabs from "$components/starwind/tabs/Tabs.astro";
+import TabsContent from "$components/starwind/tabs/TabsContent.astro";
+import TabsList from "$components/starwind/tabs/TabsList.astro";
+import TabsTrigger from "$components/starwind/tabs/TabsTrigger.astro";
+---
+
+<Tabs defaultValue="first">
+    <TabsList>
+        <TabsTrigger value="first">First</TabsTrigger>
+        <TabsTrigger value="second">Second</TabsTrigger>
+    </TabsList>
+    <TabsContent value="first" label="First">
+        <p>First panel</p>
+    </TabsContent>
+    <TabsContent value="second" label="Second">
+        <p>Second panel</p>
+    </TabsContent>
+</Tabs>

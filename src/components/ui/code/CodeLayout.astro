@@ -3,7 +3,18 @@
  * CodeLayout.astro
  * ----------------
  * Block de código con header opcional (título/fuente) y footer por slot.
+ *
+ * ## Export Mode
+ *
+ * In PDF export mode (`renderMode="pdf"`), the code layout renders:
+ * - Only the light Shiki variant (no dark mode variant).
+ * - No CopyButton (not useful in static PDF).
+ * - All title, source, and footer metadata remain visible.
+ * - Export markers for PDF selectors and print styling.
  */
+
+import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import {
     transformerNotationDiff,
@@ -31,6 +42,17 @@ export interface CodeProps {
     transformers?: ShikiTransformer[];
     /** Extra clases para el pie si se usa el slot "footer" */
     footerClasses?: string;
+    /**
+     * Optional render mode for export/PDF output.
+     * Defaults to "web" if not provided.
+     */
+    renderMode?: LessonRenderMode;
+    /**
+     * @deprecated Use `renderMode: "pdf"` instead.
+     *
+     * Legacy compatibility prop. Maps to PDF export mode when true.
+     */
+    exportMode?: boolean;
 }
 
 export function normalizeIndentation(code: string): string {
@@ -98,7 +120,16 @@ const {
     lang,
     transformers = [],
     footerClasses = "",
+    renderMode,
+    exportMode,
 } = Astro.props as CodeProps;
+
+// Resolve export context from props and request locals.
+const exportContext = resolveLessonExportContext({
+    renderMode,
+    exportMode,
+    locals: Astro.locals,
+} as ResolveLessonExportContextInput);
 
 const normalizedCode = normalizeIndentation(code);
 
@@ -113,7 +144,7 @@ const commonTransformers = [
 ];
 ---
 
-<div class:list={[...baseClasses, className]}>
+<div class:list={[...baseClasses, className]} data-export-role={exportContext.isPdfExport ? "code-block" : undefined}>
     {
         (Astro.slots.title || Astro.slots.source || title || source) && (
             <div class:list={[...baseTitleClasses, titleClasses]}>
@@ -139,15 +170,23 @@ const commonTransformers = [
     }
 
     <div class="relative">
-        <CopyButton client:load code={normalizedCode} />
+        {
+            !exportContext.isPdfExport && (
+                <CopyButton client:load code={normalizedCode} />
+            )
+        }
         <LightCode
             transformers={[...commonTransformers, ...transformers]}
-            {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+            {...{ code: normalizedCode, lang, codeClasses: exportContext.isPdfExport ? "" : "pr-12" }}
         />
-        <DarkCode
-            transformers={[...commonTransformers, ...transformers]}
-            {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
-        />
+        {
+            !exportContext.isPdfExport && (
+                <DarkCode
+                    transformers={[...commonTransformers, ...transformers]}
+                    {...{ code: normalizedCode, lang, codeClasses: "pr-12" }}
+                />
+            )
+        }
     </div>
 
     {
@@ -158,3 +197,12 @@ const commonTransformers = [
         )
     }
 </div>
+
+<style is:global>
+    @media print {
+        [data-export-role="code-block"] {
+            break-inside: avoid;
+            print-color-adjust: exact;
+        }
+    }
+</style>

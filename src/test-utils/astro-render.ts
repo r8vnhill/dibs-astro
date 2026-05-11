@@ -103,6 +103,11 @@ export interface AstroRenderOptions {
      * Optional request used to populate `Astro.request` / `Astro.url` dependent code paths.
      */
     request?: Request;
+
+    /**
+     * Optional locals used to populate `Astro.locals` in component render tests.
+     */
+    locals?: App.Locals;
 }
 
 /**
@@ -146,5 +151,6 @@ export async function createAstroRenderer<Props extends object>(
             props: props as any,
             ...(options?.slots ? { slots: options.slots as any } : {}),
             ...(options?.request ? { request: options.request } : {}),
+            ...(options?.locals ? { locals: options.locals } : {}),
         });
 }

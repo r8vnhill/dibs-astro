@@ -5,8 +5,16 @@
  * Represents the content area corresponding to a tab trigger.
  * Controlled dynamically via JS by matching `data-value`.
  * Hidden when inactive using `data-state="inactive"` and `hidden`.
+ *
+ * ## Export Mode
+ *
+ * In PDF export mode (`renderMode="pdf"`), the content is rendered visibly without
+ * the `hidden` attribute. An optional `label` prop can be used to render a static heading
+ * before the content; if no label is provided, the tab `value` is used as a fallback.
  */
 
+import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
 
@@ -19,6 +27,20 @@ interface Props extends Omit<HTMLAttributes<"div">, "id" | "role" | "tabindex" |
      * The tab value this content is associated with.
      */
     value: string;
+
+    /**
+     * Optional label for export mode heading.
+     *
+     * If provided, a heading will be rendered before the content in PDF mode.
+     * Falls back to `value` if not provided.
+     */
+    label?: string;
+
+    /**
+     * Optional render mode for export/PDF output.
+     * Defaults to `"web"` if not provided.
+     */
+    renderMode?: LessonRenderMode;
 }
 
 /**
@@ -32,14 +54,35 @@ const tabsContent = tv({
     ],
 });
 
-const { value, class: className, ...rest } = Astro.props;
+const { value, class: className, label, renderMode, ...rest } = Astro.props;
+
+// Resolve export context from props and request locals.
+const exportContext = resolveLessonExportContext({
+    renderMode,
+    locals: Astro.locals,
+} as ResolveLessonExportContextInput);
 ---
 
-<div
-    class={tabsContent({ class: className })} data-tabs-content
-    data-value={value} data-state="inactive"
-    role="tabpanel" tabindex="0"
-    hidden {...rest}
->
-    <slot />
-</div>
+{
+    exportContext.isPdfExport ? (
+        <section data-export-role="tabs-panel" {...rest}>
+            <h3 data-export-role="tabs-panel-heading" class="text-lg font-semibold mb-4">
+                {label ?? value}
+            </h3>
+            <slot />
+        </section>
+    ) : (
+        <div
+            class={tabsContent({ class: className })}
+            data-tabs-content
+            data-value={value}
+            data-state="inactive"
+            role="tabpanel"
+            tabindex="0"
+            hidden
+            {...rest}
+        >
+            <slot />
+        </div>
+    )
+}
