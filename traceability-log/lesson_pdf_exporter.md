@@ -116,6 +116,8 @@ Exit criteria:
 
 Goal: make target selection and output paths deterministic.
 
+Status: implemented in `traceability-log/phase_2.md`.
+
 Package responsibilities:
 
 ```text

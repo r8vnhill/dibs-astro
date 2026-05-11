@@ -28,7 +28,7 @@
 
 import { JSDOM } from "jsdom";
 import type { AstroRender } from "../../../test-utils/astro-render";
-import type { NotesLayoutProps } from "../NotesLayout.props";
+import type { NotesLayoutProps } from "../../NotesLayout.props";
 
 export interface NotesLayoutRenderOptions {
     /**
@@ -75,8 +75,7 @@ const defaultSlots = (): Record<string, string> => ({
     default: "<p>Contenido</p>",
 });
 
-const requestFor = (pathname: string): Request =>
-    new Request(new URL(pathname, BASE_URL));
+const requestFor = (pathname: string): Request => new Request(new URL(pathname, BASE_URL));
 
 /**
  * Create a harness for NotesLayout render tests.
