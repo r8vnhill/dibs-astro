@@ -4,6 +4,10 @@
 
 Use **dedicated export routes + Playwright + a small host-agnostic export core package**.
 
+Implementation note: the PDF export now also excludes web chrome through the shared
+`data-export-hidden="true"` contract and a central print rule, so the generated PDFs contain the lesson document
+without the site header, footer, sidebar, or lesson navigation chrome.
+
 The uploaded analysis is already directionally right: the hard problem is not “how to print HTML”, but how to make
 lessons render as deterministic documents instead of interactive web pages. The current baseline includes Astro lesson
 pages under `src/pages/notes/**/*.astro`, course ordering from `src/data/course-structure.ts`, shared layouts through
@@ -268,7 +272,7 @@ Exit criteria:
 - Export routes can be previewed locally.
 ```
 
-### Phase 6 — Add the Playwright PDF CLI
+### ~~Phase 6 — Add the Playwright PDF CLI~~
 
 Goal: generate PDFs from the built export routes.
 
@@ -335,9 +339,12 @@ Exit criteria:
 - Generated PDF is readable and excludes web chrome.
 ```
 
-### Phase 7 — Integration tests and CI gating
+### ~~Phase 7 — Integration tests and CI gating~~
 
 Goal: keep the exporter reliable without making CI too heavy too early.
+
+Status: implemented in `traceability-log/phase_7_integration_tests_and_ci_gating.md` and wired through the new
+`pnpm test:pdf-smoke` / `pnpm export:pdf:smoke` commands.
 
 Tests:
 
@@ -355,6 +362,15 @@ CI policy:
 - Keep full PDF generation advisory/manual at first.
 - Gate only pure tests and Astro render tests.
 - Add the Playwright PDF smoke test to CI once browser install/runtime cost is acceptable.
+```
+
+Implementation note:
+
+```text
+- The smoke wrapper lives in `scripts/test-pdf-export-smoke.mjs`.
+- The smoke helpers live in `scripts/lib/pdf-export-smoke.mjs`.
+- CI exposes the advisory job as `pdf_export_smoke`.
+- Temporary smoke artifacts live under `tmp/pdf-export-smoke/`.
 ```
 
 Exit criteria:

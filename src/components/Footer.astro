@@ -17,9 +17,12 @@ const {
     author = site.COPYRIGHT_HOLDER,
     builtWith = { name: "Astro", url: "https://astro.build" },
 } = Astro.props as FooterProps;
+const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
+const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : {};
 ---
 
 <footer
+    {...exportHiddenAttributes}
     role="contentinfo"
     class:list={[
         "mt-12", // Add top margin for visual separation from content

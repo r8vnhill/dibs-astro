@@ -22,10 +22,13 @@ type Props = {
 };
 
 const { title, gitlab, github } = Astro.props as Props;
+const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
+const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : {};
 ---
 
 <!-- Header with themed background, border, and shadow -->
 <header
+    {...exportHiddenAttributes}
     class:list={[
         "fixed",
         "top-0",

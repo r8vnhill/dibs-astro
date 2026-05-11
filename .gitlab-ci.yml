@@ -77,6 +77,29 @@ test:astro-render:
         - pnpm run build:site-core
         - pnpm exec vitest run --config vitest.astro.config.ts
 
+pdf_export_smoke:
+    stage: test
+    extends: .node-job
+    tags:
+        - local
+        - docker
+    needs:
+        - job: deps
+    allow_failure: true
+    rules:
+        - if: '$EXPORT_PDF_SMOKE == "1"'
+          when: on_success
+        - when: manual
+          allow_failure: true
+    script:
+        - pnpm playwright:install
+        - EXPORT_PDF_SMOKE=1 pnpm test:pdf-smoke
+    artifacts:
+        when: always
+        paths:
+            - tmp/pdf-export-smoke/
+        expire_in: 7 days
+
 build:
     stage: build
     extends: .node-job

@@ -40,6 +40,12 @@ pnpm dev
 | `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
 | `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
 | `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
+| `pnpm export:pdf`                    | Exports selected lesson PDFs from the static export routes.              |
+| `pnpm export:pdf:all`                | Exports every lesson PDF-capable route.                                  |
+| `pnpm export:pdf:smoke`              | Exports one representative lesson PDF for a quick local smoke run.      |
+| `pnpm test:pdf-smoke`                | Runs the opt-in end-to-end PDF smoke check (`EXPORT_PDF_SMOKE=1`).      |
+| `pnpm export:pdf:dry-run`            | Resolves PDF export targets without launching Chromium.                  |
+| `pnpm playwright:install`            | Installs the Chromium browser binaries used by the PDF exporter.         |
 | `pnpm fmt`                           | Formats the repository with dprint.                                      |
 | `pnpm generate-icons`                | Regenerates the SVG export index under `src/assets/img/icons/`.          |
 | `pnpm generate:bibliography-catalog` | Builds generated bibliography catalog artifacts.                         |
@@ -86,7 +92,10 @@ pnpm build
 ```
 
 Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
-the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings.
+the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The
+PDF smoke check is intentionally separate from the default gate: run `pnpm test:pdf-smoke` only when you want the
+browser-backed exporter path. It removes its temporary workspace after a successful run unless
+`EXPORT_PDF_SMOKE_KEEP_OUTPUT=1` is set.
 
 ## Deployment
 

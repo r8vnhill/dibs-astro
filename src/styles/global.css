@@ -66,3 +66,9 @@ kbd {
 .dark kbd {
     @apply border-zinc-600 bg-zinc-800 text-zinc-100;
 }
+
+@media print {
+    [data-export-hidden="true"] {
+        display: none !important;
+    }
+}

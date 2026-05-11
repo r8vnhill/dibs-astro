@@ -211,7 +211,7 @@ const headerProps = {
             Main content container.
             Padding-top accounts for fixed header spacing.
         -->
-        <main id="main-content" class="w-full pt-16">
+        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-16"]}>
             <slot />
         </main>
 
