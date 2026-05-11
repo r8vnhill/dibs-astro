@@ -64,6 +64,7 @@ import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import LessonDocumentLayout from "~/layouts/LessonDocumentLayout.astro";
 import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { PageMeta } from "~/utils/page-meta";
 
 /**
@@ -113,6 +114,16 @@ interface Props {
     timeMultiplier?: number;
 
     /**
+     * Optional render mode forwarded to the document layout.
+     */
+    renderMode?: LessonRenderMode;
+
+    /**
+     * Legacy compatibility prop forwarded to the document layout.
+     */
+    exportMode?: boolean;
+
+    /**
      * Optional repository information for the lesson.
      *
      * When provided, the layout renders repository links via {@link LessonRepoPanel}.
@@ -121,8 +132,8 @@ interface Props {
 }
 
 // Extract current page data and resolve metadata/navigation.
-const { title, next, previous, timeMultiplier, git, description } = Astro.props as Props;
-const pathname = Astro.url.pathname;
+const { title, next, previous, timeMultiplier, git, description, renderMode, exportMode } = Astro.props as Props;
+const pathname = Astro.locals.lessonRoute ?? Astro.url.pathname;
 const courseNavigationTree = await getCourseNavigationTree();
 
 // Metadata may be missing or invalid if the route is absent from the generated dataset or its
@@ -153,6 +164,8 @@ const documentProps: LessonDocumentLayoutProps = {
     title,
     ...(lessonMetadata ? { metadata: lessonMetadata } : {}),
     ...(git ? { git } : {}),
+    ...(renderMode !== undefined ? { renderMode } : {}),
+    ...(exportMode !== undefined ? { exportMode } : {}),
 };
 
 // Attempt to auto-resolve previous/next from course structure.

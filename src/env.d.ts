@@ -29,6 +29,15 @@ declare global {
              * branch component output without prop drilling.
              */
             lessonRenderMode?: import("~/lib/presentation/export-mode").LessonRenderMode;
+
+            /**
+             * Canonical lesson pathname for export wrappers.
+             *
+             * Export routes use a different browser URL than the source lesson page. This
+             * property lets layout code resolve metadata and navigation against the lesson's
+             * canonical `/notes/**` route instead of the export wrapper URL.
+             */
+            lessonRoute?: string;
         }
     }
 }

@@ -6,6 +6,7 @@ export type LessonExportFindingKind =
     | "duplicate-output-path"
     | "missing-title"
     | "missing-source-file"
+    | "missing-generated-metadata"
     | "unsafe-output-path"
     | "unsupported-route"
     | "invalid-generated-at"

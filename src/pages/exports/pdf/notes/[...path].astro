@@ -1,0 +1,35 @@
+---
+import {
+    getPdfLessonExportManifest,
+    type LessonExportManifestEntry,
+} from "~/infrastructure/adapters/lesson-export-manifest";
+import { getLessonPageRegistry } from "~/infrastructure/adapters/lesson-page-registry";
+
+export const prerender = true;
+
+const lessonPageRegistry = getLessonPageRegistry();
+
+export function getStaticPaths() {
+    return getPdfLessonExportManifest().entries.map((entry: LessonExportManifestEntry) => ({
+        params: {
+            path: entry.route === "/notes/"
+                ? undefined
+                : entry.route.slice("/notes/".length, -1),
+        },
+        props: {
+            entry,
+        },
+    }));
+}
+
+const { entry } = Astro.props as {
+    readonly entry: LessonExportManifestEntry;
+};
+
+const lessonPage = lessonPageRegistry.resolve(entry.route);
+Astro.locals.lessonRenderMode = "pdf";
+Astro.locals.lessonRoute = entry.route;
+const LessonPage = lessonPage.component as any;
+---
+
+<LessonPage renderMode="pdf" />

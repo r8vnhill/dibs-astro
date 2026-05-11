@@ -235,7 +235,7 @@ Exit criteria:
 - Interactive controls are absent from export HTML.
 ```
 
-### Phase 5 — Add static export routes
+### ~~Phase 5 — Add static export routes~~
 
 Goal: render stable export HTML through Astro’s normal build pipeline.
 

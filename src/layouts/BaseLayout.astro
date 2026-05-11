@@ -119,6 +119,8 @@ const headProps = {
     ...(pageMeta !== undefined ? { pageMeta } : {}),
 };
 
+const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
+
 const headerProps = {
     title: site.SHORT_TITLE,
     ...(gitlabRepoInfo ? { gitlab: gitlabRepoInfo } : {}),
@@ -177,6 +179,8 @@ const headerProps = {
             - favicons
         -->
         <Head {...headProps} />
+
+        {isPdfExport && <meta name="robots" content="noindex, nofollow" />}
 
         <!--
             Informs the browser that both light and dark color schemes are supported.

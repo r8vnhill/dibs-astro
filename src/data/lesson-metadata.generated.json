@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-08T18:29:54.662Z",
+  "generatedAt": "2026-05-11T17:11:47.995Z",
   "totalLessons": 50,
   "changesLimit": 5,
   "entries": {
@@ -1528,6 +1528,12 @@
       ],
       "lastModified": "2026-05-08",
       "changes": [
+        {
+          "hash": "c8c458e85c793b67f24526188159aac9a8faa47d",
+          "date": "2026-05-08",
+          "author": "r8vnhill",
+          "subject": "💥 rm(bibliography): Remove unused bibliography source files"
+        },
         {
           "hash": "6e98bbc956dac4f70e0bd744707659175ffb4c58",
           "date": "2026-05-08",

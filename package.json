@@ -39,6 +39,7 @@
         "@astrojs/markdoc": "^0.15.8",
         "@lucide/astro": "^0.536.0",
         "@ravenhill/content-core": "workspace:*",
+        "@ravenhill/lesson-export-core": "workspace:*",
         "@ravenhill/shiki-core": "workspace:*",
         "@ravenhill/site-core": "workspace:*",
         "@tabler/icons": "^3.34.1",
