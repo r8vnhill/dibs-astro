@@ -16,9 +16,7 @@ export function derivePdfOutputPath(route: string, options: DerivePdfOutputPathO
 
     const rootDir = normalizeRootDir(options.rootDir);
     const routePath = normalizeLessonRoute(route).slice(1, -1);
-    const outputPath = routePath.endsWith("/index") || routePath === "notes"
-        ? `${routePath}.pdf`
-        : `${routePath}.pdf`;
+    const outputPath = `${routePath}.pdf`;
     const withIndexPolicy = routePath === "notes" || routePath.split("/").length === 2
         ? `${routePath}/index.pdf`
         : outputPath;

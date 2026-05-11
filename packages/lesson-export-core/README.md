@@ -12,6 +12,12 @@ The package provides pure helpers for:
 
 It does not render Astro components, launch browsers, read generated site data, or write PDFs.
 
+Route semantics:
+
+- `normalizeLessonRoute()` canonicalizes site-relative route-shaped input.
+- It rejects raw query strings, raw fragments, relative path segments, absolute URLs, and control characters.
+- It does not enforce that the route belongs to `/notes/**`; that remains a manifest-validation concern.
+
 ## Import Policy
 
 Import from the package root only:

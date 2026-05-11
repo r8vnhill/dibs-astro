@@ -260,6 +260,7 @@ for (const specifier of blockedSubpaths) {
 `;
 
 const typeConsumerSource = String.raw`import {
+    deriveExportRoute,
     derivePdfOutputPath,
     normalizeLessonRoute,
     type LessonExportEntry,
@@ -269,7 +270,7 @@ const typeConsumerSource = String.raw`import {
 const route = normalizeLessonRoute("notes/foo");
 const entry: LessonExportEntry = {
     route,
-    exportRoute: "/exports/pdf/notes/foo/",
+    exportRoute: deriveExportRoute(route),
     title: "Foo",
     sourceFile: "src/pages/notes/foo.astro",
     outputPath: derivePdfOutputPath(route),

@@ -1,29 +1,35 @@
 import { describe, expect, test } from "vitest";
-import { filterManifest, type LessonExportManifest } from "../src";
+import {
+    deriveExportRoute,
+    derivePdfOutputPath,
+    filterManifest,
+    type LessonExportManifest,
+    normalizeLessonRoute,
+} from "../src";
 
 const manifest: LessonExportManifest = {
     generatedAt: "2026-05-10T00:00:00.000Z",
     entries: [
         {
-            route: "/notes/a/",
-            exportRoute: "/exports/pdf/notes/a/",
+            route: normalizeLessonRoute("/notes/a/"),
+            exportRoute: deriveExportRoute("/notes/a/"),
             title: "A",
             sourceFile: "src/pages/notes/a.astro",
-            outputPath: "notes/a.pdf",
+            outputPath: derivePdfOutputPath("/notes/a/"),
         },
         {
-            route: "/notes/software-libraries/b/",
-            exportRoute: "/exports/pdf/notes/software-libraries/b/",
+            route: normalizeLessonRoute("/notes/software-libraries/b/"),
+            exportRoute: deriveExportRoute("/notes/software-libraries/b/"),
             title: "B",
             sourceFile: "src/pages/notes/software-libraries/b.astro",
-            outputPath: "notes/software-libraries/b.pdf",
+            outputPath: derivePdfOutputPath("/notes/software-libraries/b/"),
         },
         {
-            route: "/notes/software-libraries/c/",
-            exportRoute: "/exports/pdf/notes/software-libraries/c/",
+            route: normalizeLessonRoute("/notes/software-libraries/c/"),
+            exportRoute: deriveExportRoute("/notes/software-libraries/c/"),
             title: "C",
             sourceFile: "src/pages/notes/software-libraries/c.astro",
-            outputPath: "notes/software-libraries/c.pdf",
+            outputPath: derivePdfOutputPath("/notes/software-libraries/c/"),
         },
     ],
 };
