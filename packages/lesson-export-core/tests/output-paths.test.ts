@@ -5,7 +5,12 @@ import { derivePdfOutputPath, isSafePdfOutputPath } from "../src";
 describe("given PDF output-path derivation", () => {
     test.each([
         ["/notes/", "notes/index.pdf"],
+        ["/notes", "notes/index.pdf"],
         ["/notes/software-libraries/", "notes/software-libraries/index.pdf"],
+        ["/notes/software-libraries", "notes/software-libraries/index.pdf"],
+        ["/notes/software-libraries/api-design/", "notes/software-libraries/api-design.pdf"],
+        ["/notes/software-libraries/api-design", "notes/software-libraries/api-design.pdf"],
+        ["/notes/software-libraries/api-design/naming/", "notes/software-libraries/api-design/naming.pdf"],
         ["/notes/software-libraries/foo/", "notes/software-libraries/foo.pdf"],
         ["notes/software-libraries/foo", "notes/software-libraries/foo.pdf"],
     ])("then %s derives %s", (route, expected) => {
@@ -15,6 +20,9 @@ describe("given PDF output-path derivation", () => {
     test("then it can add a safe root directory", () => {
         expect(derivePdfOutputPath("/notes/software-libraries/foo/", { rootDir: "dist-pdf" })).toBe(
             "dist-pdf/notes/software-libraries/foo.pdf",
+        );
+        expect(derivePdfOutputPath("/notes/software-libraries/", { rootDir: "dist-pdf/" })).toBe(
+            "dist-pdf/notes/software-libraries/index.pdf",
         );
     });
 

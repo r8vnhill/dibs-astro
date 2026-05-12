@@ -1,5 +1,10 @@
+import {
+    deriveExportRoute,
+    derivePdfOutputPath,
+    type LessonExportManifest,
+    normalizeLessonRoute,
+} from "@ravenhill/lesson-export-core";
 import { describe, expect, test } from "vitest";
-import { deriveExportRoute, derivePdfOutputPath, normalizeLessonRoute, type LessonExportManifest } from "@ravenhill/lesson-export-core";
 import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../lib/pdf-export-cli.mjs";
 
 const manifest: LessonExportManifest = {
@@ -23,6 +28,23 @@ const manifest: LessonExportManifest = {
 };
 
 describe("given the PDF export CLI parser", () => {
+    test("then all selection uses current default options", () => {
+        const parsed = parseCliArgs(["--all"]);
+
+        expect(parsed).toMatchObject({
+            selection: { kind: "all" },
+            outDir: "dist/exports/pdf",
+            reportPath: "dist/exports/pdf/report.json",
+            port: 4321,
+            skipBuild: false,
+            keepServer: false,
+            failOnFinding: false,
+            timeoutMs: 30_000,
+            dryRun: false,
+        });
+        expect(parsed.baseUrl).toBeUndefined();
+    });
+
     test("then route selection is parsed and normalized", () => {
         const parsed = parseCliArgs(["--route", "notes/a", "--dry-run"]);
 
@@ -30,10 +52,55 @@ describe("given the PDF export CLI parser", () => {
         expect(parsed.dryRun).toBe(true);
     });
 
+    test("then subtree selection is parsed and normalized", () => {
+        const parsed = parseCliArgs(["--subtree=/notes/software-libraries"]);
+
+        expect(parsed.selection).toEqual({ kind: "subtree", value: "/notes/software-libraries/" });
+    });
+
+    test("then existing execution flags and path options are parsed", () => {
+        const parsed = parseCliArgs([
+            "--all",
+            "--outDir",
+            "tmp\\pdf",
+            "--report=tmp\\pdf\\report.json",
+            "--baseUrl",
+            "http://127.0.0.1:5000/site/",
+            "--port",
+            "5000",
+            "--skip-build",
+            "--keep-server",
+            "--fail-on-finding",
+            "--timeout=45000",
+        ]);
+
+        expect(parsed).toMatchObject({
+            selection: { kind: "all" },
+            outDir: "tmp/pdf",
+            reportPath: "tmp/pdf/report.json",
+            baseUrl: "http://127.0.0.1:5000/site/",
+            port: 5000,
+            skipBuild: true,
+            keepServer: true,
+            failOnFinding: true,
+            timeoutMs: 45_000,
+        });
+    });
+
     test("then invalid flag combinations fail fast", () => {
-        expect(() => parseCliArgs(["--route", "/notes/a/", "--all"])).toThrow(/Exactly one of --route, --subtree, or --all must be provided/u);
+        expect(() => parseCliArgs(["--route", "/notes/a/", "--all"])).toThrow(
+            /Exactly one of --route, --subtree, or --all must be provided/u,
+        );
         expect(() => parseCliArgs(["--all"])).not.toThrow();
         expect(() => parseCliArgs([])).toThrow(/Exactly one of --route, --subtree, or --all must be provided/u);
+    });
+
+    test("then current parser rejects missing values, unknown flags, invalid numbers, and unsafe relative paths", () => {
+        expect(() => parseCliArgs(["--route"])).toThrow(/Missing value for --route/u);
+        expect(() => parseCliArgs(["--all", "--unknown"])).toThrow(/Unknown flag: --unknown/u);
+        expect(() => parseCliArgs(["--all", "--timeout", "0"])).toThrow(/Invalid numeric value for --timeout/u);
+        expect(() => parseCliArgs(["--all", "--outDir", "../pdf"])).toThrow(/Path must be relative/u);
+        expect(() => parseCliArgs(["--all", "--report", "C:\\tmp\\report.json"])).toThrow(/Path must be relative/u);
     });
 });
 
@@ -51,9 +118,42 @@ describe("given a lesson export manifest", () => {
         expect(selected.map((entry) => entry.route)).toEqual(["/notes/software-libraries/b/"]);
     });
 
+    test("then all selection preserves current manifest order", () => {
+        const selected = selectExportEntries(manifest, { kind: "all" });
+
+        expect(selected.map((entry) => entry.route)).toEqual([
+            "/notes/a/",
+            "/notes/software-libraries/b/",
+        ]);
+    });
+
+    test("then missing route and subtree selections fail with current messages", () => {
+        expect(() => selectExportEntries(manifest, { kind: "route", value: "/notes/missing/" })).toThrow(
+            /No export entry found for \/notes\/missing\//u,
+        );
+        expect(() => selectExportEntries(manifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
+            /No export entries found under \/notes\/missing\//u,
+        );
+    });
+
     test("then output targets derive from the requested export root", () => {
         const targets = resolveExportTargets(manifest.entries, "dist/exports/pdf");
 
         expect(targets[0]?.outputPath).toBe("dist/exports/pdf/notes/a/index.pdf");
+        expect(targets[1]?.outputPath).toBe("dist/exports/pdf/notes/software-libraries/b.pdf");
+    });
+
+    test("then unit index routes keep the current index.pdf mapping", () => {
+        const targets = resolveExportTargets([
+            {
+                route: normalizeLessonRoute("/notes/software-libraries/"),
+                exportRoute: deriveExportRoute("/notes/software-libraries/"),
+                title: "Software Libraries",
+                sourceFile: "src/pages/notes/software-libraries/index.astro",
+                outputPath: derivePdfOutputPath("/notes/software-libraries/"),
+            },
+        ], "dist/exports/pdf");
+
+        expect(targets[0]?.outputPath).toBe("dist/exports/pdf/notes/software-libraries/index.pdf");
     });
 });

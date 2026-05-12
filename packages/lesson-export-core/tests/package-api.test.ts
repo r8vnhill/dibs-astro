@@ -11,6 +11,13 @@ describe("given the root package API", () => {
         expect(typeof api.derivePdfOutputPath).toBe("function");
         expect(typeof api.filterManifest).toBe("function");
         expect(typeof api.validateManifest).toBe("function");
+        expect(Array.isArray(api.exportFindingKinds)).toBe(true);
+        expect(typeof api.isExportFindingKind).toBe("function");
+        expect(typeof api.normalizeExportFindingKind).toBe("function");
+        expect(typeof api.countEntriesByStatus).toBe("function");
+        expect(typeof api.countFindingsByKind).toBe("function");
+        expect(typeof api.countFailuresByKind).toBe("function");
+        expect(typeof api.buildExportSummary).toBe("function");
     });
 
     test("then package metadata exposes only the root subpath", () => {
