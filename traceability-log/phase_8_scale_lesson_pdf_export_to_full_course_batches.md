@@ -152,22 +152,26 @@ In `@ravenhill/lesson-export-core`:
 
 Keep these helpers pure and free from Astro, Playwright, filesystem, and process APIs.
 
-### Step 3: Replace boolean finding policy with targeted policy
+### ~~Step 3: Replace boolean finding policy with targeted policy~~
+
+Status: complete in `traceability-log/step_3_replace_boolean_finding_policy_with_targeted_policy.md`.
 
 In the CLI parser:
 
-- Add repeatable `--fail-on <findingKind>`.
-- Keep `--fail-on-finding` as deprecated shorthand for “fail on any finding”.
-- Validate every supplied finding kind before build, preview, or Playwright startup.
-- Reject conflicting selection flags before build:
+- Added repeatable `--fail-on <findingKind>` and `--fail-on=<findingKind>`.
+- Replaced parsed `failOnFinding: boolean` with `findingPolicy: { failOn: "any" | LessonExportFindingKind[] }`.
+- Kept `--fail-on-finding` as deprecated shorthand for “fail on any finding” with a CLI-entrypoint deprecation
+  warning.
+- Validated every supplied finding kind before build, preview, or Playwright startup.
+- Rejected conflicting finding-policy flags and preserved existing selection conflict checks:
 
   - `--all`
   - explicit route selection
   - explicit lesson selection
   - any existing single-target flags
 
-Repeatable flags are a familiar CLI pattern; Vitest, for example, documents array-style options as values passed
-multiple times, which is a useful precedent for `--fail-on` rather than comma-parsing one string. ([Vitest][2])
+The policy matcher supports both current DOM report findings shaped as `{ code }` and core-style findings shaped as
+`{ kind }`, including legacy `client-only` normalization to `client-only-island`.
 
 ### Step 4: Stabilise selection semantics
 

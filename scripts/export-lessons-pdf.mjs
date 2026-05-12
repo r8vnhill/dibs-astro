@@ -8,7 +8,12 @@ import { chromium } from "playwright";
 import { buildSite } from "./lib/build-site.mjs";
 import { buildLessonPdfExportManifest } from "./lib/pdf-export-manifest.mjs";
 import { parseCliArgs, resolveExportTargets, selectExportEntries } from "./lib/pdf-export-cli.mjs";
-import { collectExportFindings, createExportReport, writeExportReport } from "./lib/pdf-export-report.mjs";
+import {
+    collectExportFindings,
+    createExportReport,
+    hasFatalExportFindings,
+    writeExportReport,
+} from "./lib/pdf-export-report.mjs";
 import { startPreviewServer, stopPreviewServer, waitForPreview } from "./lib/preview-server.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +22,17 @@ const projectRoot = path.resolve(__dirname, "..");
 
 const main = async () => {
     const options = parseCliArgs(process.argv.slice(2));
+
+    if (options.diagnostics.usedDeprecatedFailOnFinding) {
+        process.emitWarning(
+            "--fail-on-finding is deprecated. Use --fail-on <findingKind> instead.",
+            {
+                type: "DeprecationWarning",
+                code: "DIBS_PDF_EXPORT_FAIL_ON_FINDING_DEPRECATED",
+            },
+        );
+    }
+
     const { manifest, validation } = buildLessonPdfExportManifest({ outDir: options.outDir });
     const validationErrors = validation.findings.filter((finding) => finding.severity === "error");
 
@@ -156,12 +172,12 @@ const main = async () => {
 
     await writeExportReport(path.resolve(projectRoot, options.reportPath), report);
 
-    if (failureCount > 0) {
-        throw new Error(`PDF export failed for ${failureCount} lesson(s).`);
+    if (hasFatalExportFindings(report, options.findingPolicy)) {
+        throw new Error("PDF export findings matched the configured --fail-on policy.");
     }
 
-    if (options.failOnFinding && report.summary.findings > 0) {
-        throw new Error("PDF export findings were reported and --fail-on-finding is enabled.");
+    if (failureCount > 0) {
+        throw new Error(`PDF export failed for ${failureCount} lesson(s).`);
     }
 
     console.log(`[export-lessons-pdf] Exported ${report.summary.exported} lesson(s) to ${options.outDir}.`);

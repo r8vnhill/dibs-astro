@@ -1,5 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { collectExportFindings, createExportReport, summarizeExportEntries } from "../lib/pdf-export-report.mjs";
+import {
+    collectExportFindings,
+    createExportReport,
+    hasFatalExportFindings,
+    summarizeExportEntries,
+} from "../lib/pdf-export-report.mjs";
 
 describe("given PDF export report entries", () => {
     test("then summary counts exported, failed, and findings totals", () => {
@@ -129,4 +134,56 @@ describe("given PDF export report entries", () => {
             { code: "unknown", message: undefined, severity: undefined },
         ]);
     });
+
+    test("then empty finding policy never makes findings fatal", () => {
+        const report = reportWithFindings([{ code: "hidden-content" }]);
+
+        expect(hasFatalExportFindings(report, { failOn: [] })).toBe(false);
+    });
+
+    test("then any finding policy follows the report summary count", () => {
+        expect(hasFatalExportFindings(reportWithFindings([{ code: "unknown" }]), { failOn: "any" })).toBe(true);
+        expect(hasFatalExportFindings(reportWithFindings([]), { failOn: "any" })).toBe(false);
+    });
+
+    test("then targeted finding policy matches configured normalized kinds only", () => {
+        expect(hasFatalExportFindings(reportWithFindings([{ kind: "unresolved-todo" }]), {
+            failOn: ["unresolved-todo"],
+        })).toBe(true);
+        expect(hasFatalExportFindings(reportWithFindings([{ kind: "hidden-content" }]), {
+            failOn: ["unresolved-todo"],
+        })).toBe(false);
+    });
+
+    test("then targeted finding policy supports current code fields and legacy aliases", () => {
+        expect(hasFatalExportFindings(reportWithFindings([{ code: "client-only" }]), {
+            failOn: ["client-only-island"],
+        })).toBe(true);
+        expect(hasFatalExportFindings(reportWithFindings([{ code: "unknown" }, {}]), {
+            failOn: ["client-only-island"],
+        })).toBe(false);
+    });
+
+    test("then targeted finding policy does not mutate the report", () => {
+        const report = reportWithFindings([{ code: "client-only" }]);
+        const snapshot = JSON.stringify(report);
+
+        hasFatalExportFindings(report, { failOn: ["client-only-island"] });
+
+        expect(JSON.stringify(report)).toBe(snapshot);
+    });
 });
+
+function reportWithFindings(findings: readonly Record<string, unknown>[]) {
+    return {
+        summary: {
+            findings: findings.length,
+        },
+        entries: [
+            {
+                status: "exported",
+                findings,
+            },
+        ],
+    };
+}

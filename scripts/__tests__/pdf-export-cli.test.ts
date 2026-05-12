@@ -38,9 +38,12 @@ describe("given the PDF export CLI parser", () => {
             port: 4321,
             skipBuild: false,
             keepServer: false,
-            failOnFinding: false,
+            findingPolicy: { failOn: [] },
             timeoutMs: 30_000,
             dryRun: false,
+            diagnostics: {
+                usedDeprecatedFailOnFinding: false,
+            },
         });
         expect(parsed.baseUrl).toBeUndefined();
     });
@@ -82,9 +85,52 @@ describe("given the PDF export CLI parser", () => {
             port: 5000,
             skipBuild: true,
             keepServer: true,
-            failOnFinding: true,
+            findingPolicy: { failOn: "any" },
             timeoutMs: 45_000,
+            diagnostics: {
+                usedDeprecatedFailOnFinding: true,
+            },
         });
+    });
+
+    test("then targeted finding policy is parsed and normalized", () => {
+        expect(parseCliArgs(["--all", "--fail-on", "unresolved-todo"])).toMatchObject({
+            findingPolicy: { failOn: ["unresolved-todo"] },
+        });
+        expect(parseCliArgs(["--all", "--fail-on=hidden-content"])).toMatchObject({
+            findingPolicy: { failOn: ["hidden-content"] },
+        });
+        expect(parseCliArgs([
+            "--all",
+            "--fail-on",
+            "hidden-content",
+            "--fail-on",
+            "unresolved-todo",
+        ])).toMatchObject({
+            findingPolicy: { failOn: ["hidden-content", "unresolved-todo"] },
+        });
+    });
+
+    test("then targeted finding policy deduplicates normalized aliases", () => {
+        expect(parseCliArgs([
+            "--all",
+            "--fail-on",
+            "client-only",
+            "--fail-on",
+            "client-only-island",
+        ])).toMatchObject({
+            findingPolicy: { failOn: ["client-only-island"] },
+        });
+    });
+
+    test("then invalid targeted finding policy fails fast", () => {
+        expect(() => parseCliArgs(["--all", "--fail-on"])).toThrow(/Missing value for --fail-on/u);
+        expect(() => parseCliArgs(["--all", "--fail-on", "unknown"])).toThrow(
+            /Invalid finding kind for --fail-on: unknown/u,
+        );
+        expect(() => parseCliArgs(["--all", "--fail-on-finding", "--fail-on", "hidden-content"])).toThrow(
+            /--fail-on-finding cannot be combined with --fail-on/u,
+        );
     });
 
     test("then invalid flag combinations fail fast", () => {

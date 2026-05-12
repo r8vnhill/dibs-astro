@@ -396,7 +396,8 @@ Work:
   - hidden-content
   - unresolved-todo
   - pdf-generation-failed
-- Add `--fail-on findingKind` for stricter policies.
+- Add repeatable `--fail-on findingKind` for targeted stricter policies.
+- Keep deprecated `--fail-on-finding` as one-cycle shorthand for failing on any finding.
 - Add `--continue-on-error` for batch exports.
 - Add stable output naming for nested lesson paths.
 ```

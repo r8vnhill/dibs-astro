@@ -1,4 +1,9 @@
-import { filterManifest, derivePdfOutputPath, normalizeLessonRoute } from "@ravenhill/lesson-export-core";
+import {
+    filterManifest,
+    derivePdfOutputPath,
+    normalizeExportFindingKind,
+    normalizeLessonRoute,
+} from "@ravenhill/lesson-export-core";
 
 export function parseCliArgs(argv, defaults = {}) {
     const selection = {
@@ -14,10 +19,15 @@ export function parseCliArgs(argv, defaults = {}) {
         port: defaults.port ?? 4321,
         skipBuild: false,
         keepServer: false,
-        failOnFinding: false,
+        findingPolicy: { failOn: [] },
         timeoutMs: defaults.timeoutMs ?? 30_000,
         dryRun: false,
+        diagnostics: {
+            usedDeprecatedFailOnFinding: false,
+        },
     };
+    const failOnKinds = [];
+    let deprecatedFailOnFinding = false;
 
     for (let index = 0; index < argv.length; index += 1) {
         const argument = argv[index];
@@ -63,8 +73,13 @@ export function parseCliArgs(argv, defaults = {}) {
             case "--keep-server":
                 options.keepServer = true;
                 break;
+            case "--fail-on":
+                failOnKinds.push(parseFindingKind(requireValue(flag, value), flag));
+                if (inlineValue === undefined) index += 1;
+                break;
             case "--fail-on-finding":
-                options.failOnFinding = true;
+                deprecatedFailOnFinding = true;
+                options.diagnostics.usedDeprecatedFailOnFinding = true;
                 break;
             case "--timeout":
                 options.timeoutMs = parsePositiveInteger(requireValue(flag, value), flag);
@@ -82,6 +97,14 @@ export function parseCliArgs(argv, defaults = {}) {
     if (selectionKinds.length !== 1) {
         throw new Error("Exactly one of --route, --subtree, or --all must be provided.");
     }
+
+    if (deprecatedFailOnFinding && failOnKinds.length > 0) {
+        throw new Error("--fail-on-finding cannot be combined with --fail-on.");
+    }
+
+    options.findingPolicy = {
+        failOn: deprecatedFailOnFinding ? "any" : deduplicateKinds(failOnKinds),
+    };
 
     if (selection.route !== undefined) {
         return {
@@ -144,6 +167,19 @@ function parsePositiveInteger(value, flag) {
     }
 
     return parsed;
+}
+
+function parseFindingKind(value, flag) {
+    const findingKind = normalizeExportFindingKind(value);
+    if (findingKind === undefined) {
+        throw new Error(`Invalid finding kind for ${flag}: ${value}`);
+    }
+
+    return findingKind;
+}
+
+function deduplicateKinds(kinds) {
+    return [...new Set(kinds)];
 }
 
 function normalizeRelativePath(value) {
