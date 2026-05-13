@@ -451,7 +451,13 @@ pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts
 
 ---
 
-## Cycle 3: Freeze failure semantics
+## ~~Cycle 3: Freeze failure semantics~~
+
+Status: complete.
+
+Added failure-semantics coverage in `scripts/__tests__/pdf-export-cli.test.ts`. The focused file passes with direct
+Vitest execution. The broader `pnpm test:unit -- ...` wrapper currently fails because of the known red
+`layer-boundary-import-specifiers` helper test from Stage 3, not because of PDF export CLI failures.
 
 **Test first**
 

@@ -148,6 +148,12 @@ describe("given the PDF export CLI parser", () => {
         expect(() => parseCliArgs(["--route", "/notes/a/", "--all"])).toThrow(
             /Exactly one of --route, --subtree, or --all must be provided/u,
         );
+        expect(() => parseCliArgs(["--subtree", "/notes/a/", "--all"])).toThrow(
+            /Exactly one of --route, --subtree, or --all must be provided/u,
+        );
+        expect(() => parseCliArgs(["--route", "/notes/a/", "--subtree", "/notes/b/"])).toThrow(
+            /Exactly one of --route, --subtree, or --all must be provided/u,
+        );
         expect(() => parseCliArgs(["--all"])).not.toThrow();
         expect(() => parseCliArgs([])).toThrow(/Exactly one of --route, --subtree, or --all must be provided/u);
     });
@@ -234,6 +240,31 @@ describe("given a lesson export manifest", () => {
         expect(() => selectExportEntries(manifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
             /No export entries found under \/notes\/missing\//u,
         );
+    });
+
+    test("then similarly named siblings do not rescue missing subtree requests", () => {
+        const manifest = createSelectionManifestFixture();
+
+        expect(() =>
+            selectExportEntries(manifest, {
+                kind: "subtree",
+                value: "/notes/software-libraries-ex/",
+            })
+        ).toThrow(/\/notes\/software-libraries-ex\//u);
+    });
+
+    test("then failed selection does not mutate the manifest", () => {
+        const manifest = createSelectionManifestFixture();
+        const originalManifest = structuredClone(manifest);
+
+        expect(() =>
+            selectExportEntries(manifest, {
+                kind: "route",
+                value: "/notes/missing/",
+            })
+        ).toThrow(/\/notes\/missing\//u);
+
+        expect(manifest).toEqual(originalManifest);
     });
 
     test("then output targets derive from the requested export root", () => {
