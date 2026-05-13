@@ -7,23 +7,32 @@ import {
 import { describe, expect, test } from "vitest";
 import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../lib/pdf-export-cli.mjs";
 
-const manifest: LessonExportManifest = {
+function createEntry(route: string, title: string) {
+    return {
+        route: normalizeLessonRoute(route),
+        exportRoute: deriveExportRoute(route),
+        title,
+        sourceFile: `src/pages${route === "/notes/build-systems/" ? "/notes/build-systems/index.astro" : route.slice(0, -1)}.astro`,
+        outputPath: derivePdfOutputPath(route),
+    } satisfies LessonExportManifest["entries"][number];
+}
+
+const selectionManifest: LessonExportManifest = {
     generatedAt: "2026-05-11T00:00:00.000Z",
     entries: [
-        {
-            route: normalizeLessonRoute("/notes/a/"),
-            exportRoute: deriveExportRoute("/notes/a/"),
-            title: "A",
-            sourceFile: "src/pages/notes/a.astro",
-            outputPath: derivePdfOutputPath("/notes/a/"),
-        },
-        {
-            route: normalizeLessonRoute("/notes/software-libraries/b/"),
-            exportRoute: deriveExportRoute("/notes/software-libraries/b/"),
-            title: "B",
-            sourceFile: "src/pages/notes/software-libraries/b.astro",
-            outputPath: derivePdfOutputPath("/notes/software-libraries/b/"),
-        },
+        createEntry("/notes/build-systems/", "Build Systems"),
+        createEntry("/notes/software-libraries/", "Software Libraries"),
+        createEntry("/notes/software-libraries/api-design/", "API Design"),
+        createEntry("/notes/software-libraries/testing/", "Testing"),
+        createEntry("/notes/software-libraries-extra/", "Software Libraries Extra"),
+    ],
+};
+
+const parserManifest: LessonExportManifest = {
+    generatedAt: "2026-05-11T00:00:00.000Z",
+    entries: [
+        createEntry("/notes/a/", "A"),
+        createEntry("/notes/software-libraries/b/", "B"),
     ],
 };
 
@@ -151,21 +160,58 @@ describe("given the PDF export CLI parser", () => {
 });
 
 describe("given a lesson export manifest", () => {
+    test("then valid all selection returns every entry from an already exportable manifest in manifest order", () => {
+        const originalManifest = {
+            ...selectionManifest,
+            entries: selectionManifest.entries.map((entry) => ({ ...entry })),
+        };
+
+        const selected = selectExportEntries(selectionManifest, { kind: "all" });
+
+        expect(selected.map((entry) => entry.route)).toEqual([
+            "/notes/build-systems/",
+            "/notes/software-libraries/",
+            "/notes/software-libraries/api-design/",
+            "/notes/software-libraries/testing/",
+            "/notes/software-libraries-extra/",
+        ]);
+        expect(selected).not.toBe(selectionManifest.entries);
+        expect(selectionManifest).toEqual(originalManifest);
+    });
+
     test("then route selection returns one matching entry", () => {
-        const selected = selectExportEntries(manifest, { kind: "route", value: "/notes/a/" });
+        const selected = selectExportEntries(selectionManifest, {
+            kind: "route",
+            value: "/notes/software-libraries/api-design/",
+        });
 
         expect(selected).toHaveLength(1);
-        expect(selected[0]?.route).toBe("/notes/a/");
+        expect(selected[0]?.route).toBe("/notes/software-libraries/api-design/");
+        expect(selectionManifest.entries.map((entry) => entry.route)).toEqual([
+            "/notes/build-systems/",
+            "/notes/software-libraries/",
+            "/notes/software-libraries/api-design/",
+            "/notes/software-libraries/testing/",
+            "/notes/software-libraries-extra/",
+        ]);
     });
 
     test("then subtree selection preserves manifest order", () => {
-        const selected = selectExportEntries(manifest, { kind: "subtree", value: "/notes/software-libraries/" });
+        const selected = selectExportEntries(selectionManifest, {
+            kind: "subtree",
+            value: "/notes/software-libraries/",
+        });
 
-        expect(selected.map((entry) => entry.route)).toEqual(["/notes/software-libraries/b/"]);
+        expect(selected.map((entry) => entry.route)).toEqual([
+            "/notes/software-libraries/",
+            "/notes/software-libraries/api-design/",
+            "/notes/software-libraries/testing/",
+        ]);
+        expect(selected.map((entry) => entry.route)).not.toContain("/notes/software-libraries-extra/");
     });
 
     test("then all selection preserves current manifest order", () => {
-        const selected = selectExportEntries(manifest, { kind: "all" });
+        const selected = selectExportEntries(parserManifest, { kind: "all" });
 
         expect(selected.map((entry) => entry.route)).toEqual([
             "/notes/a/",
@@ -174,16 +220,16 @@ describe("given a lesson export manifest", () => {
     });
 
     test("then missing route and subtree selections fail with current messages", () => {
-        expect(() => selectExportEntries(manifest, { kind: "route", value: "/notes/missing/" })).toThrow(
+        expect(() => selectExportEntries(selectionManifest, { kind: "route", value: "/notes/missing/" })).toThrow(
             /No export entry found for \/notes\/missing\//u,
         );
-        expect(() => selectExportEntries(manifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
+        expect(() => selectExportEntries(selectionManifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
             /No export entries found under \/notes\/missing\//u,
         );
     });
 
     test("then output targets derive from the requested export root", () => {
-        const targets = resolveExportTargets(manifest.entries, "dist/exports/pdf");
+        const targets = resolveExportTargets(parserManifest.entries, "dist/exports/pdf");
 
         expect(targets[0]?.outputPath).toBe("dist/exports/pdf/notes/a/index.pdf");
         expect(targets[1]?.outputPath).toBe("dist/exports/pdf/notes/software-libraries/b.pdf");

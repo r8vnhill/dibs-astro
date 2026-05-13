@@ -7,49 +7,72 @@ import {
     classifySourcePath,
 } from "../lib/layer-boundary-classification.mjs";
 
+const sourceLayerCases = [
+    ["src/domain/model.ts", "domain"],
+    ["src/application/use-case.ts", "application"],
+    ["src/infrastructure/repository.ts", "infrastructure"],
+    ["src/presentation/adapters/navigation.ts", "presentation-adapter"],
+    ["src/components/Button.astro", "ui"],
+    ["src/layouts/BaseLayout.astro", "ui"],
+    ["src/pages/index.astro", "ui"],
+    ["packages/content-core/src/index.ts", "content-core"],
+    ["packages/site-core/src/index.ts", "site-core"],
+    ["scripts/check-layer-boundaries.mjs", "unknown"],
+] as const;
+
+const resolvedTargetCases = [
+    ["src/domain/model.ts", "domain"],
+    ["src/application/use-case.ts", "application"],
+    ["src/infrastructure/repository.ts", "infrastructure"],
+    ["src/presentation/adapters/navigation.ts", "presentation-adapter"],
+    ["src/presentation/catalog.ts", "presentation"],
+    ["src/components/Button.astro", "ui"],
+    ["src/layouts/BaseLayout.astro", "ui"],
+    ["src/pages/index.astro", "ui"],
+    ["src/data/course.generated.json", "generated-data"],
+    ["src/data/course.generated.jsonld", "generated-data"],
+    ["src/data/course.json", "data"],
+    ["src/utils/path.ts", "utils"],
+    ["src/assets/logo.svg", "assets"],
+    ["src/styles/global.css", "styles"],
+    ["packages/content-core/src/index.ts", "content-core"],
+    ["packages/site-core/src/index.ts", "site-core"],
+    ["scripts/utility.mjs", "unknown"],
+] as const;
+
 describe("classifySourcePath", () => {
-    test.each([
-        ["src/domain/model/Lesson.ts", "domain"],
-        ["src/application/services/NavigationService.ts", "application"],
-        ["src/infrastructure/content/LessonCatalogAdapter.ts", "infrastructure"],
-        ["src/presentation/adapters/navigation.ts", "presentation-adapter"],
-        ["src/components/ui/Card.astro", "ui"],
-        ["src/layouts/LessonLayout.astro", "ui"],
-        ["src/pages/index.astro", "ui"],
-        ["scripts/lib/layer-boundary-checker.mjs", "unknown"],
-    ])("classifies %s as %s", (sourcePath, layer) => {
+    test.each(sourceLayerCases)("classifies %s as %s", (sourcePath, layer) => {
         expect(classifySourcePath(sourcePath)).toEqual({
             path: sourcePath,
             layer,
         });
     });
 
-    test("normalizes source paths before classification", () => {
-        expect(classifySourcePath("src\\domain\\model\\Lesson.ts")).toEqual({
-            path: "src/domain/model/Lesson.ts",
+    test("normalizes Windows paths before classification", () => {
+        expect(classifySourcePath("src\\domain\\model.ts")).toEqual({
+            path: "src/domain/model.ts",
             layer: "domain",
+        });
+    });
+
+    test.each([
+        "src/domain-extra/foo.ts",
+        "src/application-extra/foo.ts",
+        "src/infrastructure-extra/foo.ts",
+        "src/presentation-adapters/foo.ts",
+        "src/datax/file.json",
+        "packages/site-core-extra/src/index.ts",
+        "packages/content-core-extra/src/index.ts",
+    ])("treats sibling path %s as unknown", (sourcePath) => {
+        expect(classifySourcePath(sourcePath)).toEqual({
+            path: sourcePath,
+            layer: "unknown",
         });
     });
 });
 
 describe("classifyResolvedTarget", () => {
-    test.each([
-        ["src/domain/model/Lesson.ts", "domain"],
-        ["src/application/ports/NavigationService.ts", "application"],
-        ["src/infrastructure/content/LessonCatalogAdapter.ts", "infrastructure"],
-        ["src/presentation/adapters/navigation.ts", "presentation-adapter"],
-        ["src/presentation/navigation.ts", "presentation"],
-        ["src/components/ui/Card.astro", "ui"],
-        ["src/layouts/LessonLayout.astro", "ui"],
-        ["src/pages/index.astro", "ui"],
-        ["src/data/bibliography/catalog.generated.json", "generated-data"],
-        ["src/data/bibliography/catalog.generated.jsonld", "generated-data"],
-        ["src/data/bibliography/catalog.json", "data"],
-        ["src/utils/path.ts", "utils"],
-        ["src/assets/logo.svg", "assets"],
-        ["src/styles/global.css", "styles"],
-        ["scripts/whatever.ts", "unknown"],
-    ])("classifies %s as %s", (resolvedPath, target) => {
+    test.each(resolvedTargetCases)("classifies %s as %s", (resolvedPath, target) => {
         expect(classifyResolvedTarget(resolvedPath)).toBe(target);
     });
 
@@ -59,8 +82,20 @@ describe("classifyResolvedTarget", () => {
         ["src/data/foo.generated.json", "generated-data"],
         ["src/data/foo.generated.jsonld", "generated-data"],
         ["src/data/foo.json", "data"],
-    ])("uses precedence so %s is %s", (resolvedPath, target) => {
+    ])("keeps precedence for %s as %s", (resolvedPath, target) => {
         expect(classifyResolvedTarget(resolvedPath)).toBe(target);
+    });
+
+    test.each([
+        "src/domain-extra/foo.ts",
+        "src/application-extra/foo.ts",
+        "src/infrastructure-extra/foo.ts",
+        "src/datax/file.json",
+        "src/presentation-adapters/foo.ts",
+        "packages/site-core-extra/src/index.ts",
+        "packages/content-core-extra/src/index.ts",
+    ])("treats sibling path %s as unknown", (resolvedPath) => {
+        expect(classifyResolvedTarget(resolvedPath)).toBe("unknown");
     });
 });
 
@@ -68,9 +103,13 @@ describe("classifyPackageImport", () => {
     test.each([
         ["astro", "astro"],
         ["astro:content", "astro:content"],
+        ["react", "react"],
         ["react/jsx-runtime", "react"],
         ["zod/v4", "zod"],
-        ["@scope/pkg/subpath", "@scope/pkg"],
+        ["@astrojs/react", "@astrojs/react"],
+        ["@astrojs/react/server", "@astrojs/react"],
+        ["@scope/pkg/sub/path", "@scope/pkg"],
+        ["node:fs", "node:fs"],
     ])("normalizes %s to %s", (importPath, packageName) => {
         expect(classifyPackageImport(importPath)).toEqual({
             target: "external-package",
@@ -94,17 +133,74 @@ describe("classifyImport", () => {
         });
     });
 
-    test("classifies a package import", () => {
+    test("resolved targets win over package-looking import paths", () => {
         expect(
             classifyImport(
-                { importPath: "react/jsx-runtime", kind: "static-import" },
-                undefined,
+                { importPath: "react", kind: "static-import" },
+                "src/utils/react-shim.ts",
             ),
         ).toEqual({
-            importPath: "react/jsx-runtime",
+            importPath: "react",
             importKind: "value",
-            packageName: "react",
+            resolvedPath: "src/utils/react-shim.ts",
+            target: "utils",
+        });
+    });
+
+    test.each([
+        ["react", "react"],
+        ["react/jsx-runtime", "react"],
+        ["@astrojs/react", "@astrojs/react"],
+        ["@astrojs/react/server", "@astrojs/react"],
+    ])("classifies unresolved package import %s as external-package", (importPath, packageName) => {
+        expect(
+            classifyImport({ importPath, kind: "static-import" }, undefined),
+        ).toEqual({
+            importPath,
+            importKind: "value",
+            packageName,
             target: "external-package",
+        });
+    });
+
+    test.each([
+        "./local-helper",
+        "../shared/helper",
+        "~/unknown/path",
+        "$content/something",
+        "/absolute/path",
+        "src/domain/model/Lesson",
+    ])("classifies unresolved non-package import %s as unknown", (importPath) => {
+        expect(
+            classifyImport({ importPath, kind: "static-import" }, undefined),
+        ).toEqual({
+            importPath,
+            importKind: "value",
+            target: "unknown",
+        });
+    });
+
+    test("accepts existing extractor records that use target instead of importPath", () => {
+        expect(
+            classifyImport({ target: "zod/v4", kind: "static-import" }, undefined),
+        ).toEqual({
+            importPath: "zod/v4",
+            importKind: "value",
+            packageName: "zod",
+            target: "external-package",
+        });
+    });
+
+    test.each([
+        ["type-import", "type"],
+        ["type-re-export", "type"],
+        ["static-import", "value"],
+        ["re-export", "value"],
+        ["dynamic-import", "value"],
+        ["future-parser-kind", "value"],
+    ])("classifies %s as %s import kind", (kind, importKind) => {
+        expect(classifyImport({ importPath: "react", kind }, undefined)).toMatchObject({
+            importKind,
         });
     });
 
@@ -132,34 +228,21 @@ describe("classifyImport", () => {
         });
     });
 
-    test("does not classify unresolved project aliases as packages", () => {
-        expect(
-            classifyImport(
-                { importPath: "~/unknown/path", kind: "static-import" },
-                undefined,
-            ),
-        ).toEqual({
-            importPath: "~/unknown/path",
-            importKind: "value",
-            target: "unknown",
-        });
+    test.each([
+        { kind: "static-import" },
+        { importPath: undefined, target: undefined, kind: "static-import" },
+        { importPath: null, kind: "static-import" },
+        { importPath: 42, kind: "static-import" },
+    ])("throws for malformed import record %#", (importRecord) => {
+        expect(() => classifyImport(importRecord, undefined)).toThrow(TypeError);
     });
 
-    test.each([
-        "./local-helper",
-        "../shared/helper",
-        "/absolute/path",
-        "src/domain/model/Lesson",
-    ])("does not classify unresolved non-package import %s as a package", (importPath) => {
-        expect(
-            classifyImport(
-                { importPath, kind: "static-import" },
-                undefined,
-            ),
-        ).toEqual({
-            importPath,
+    test("currently treats an empty import path as an external package", () => {
+        expect(classifyImport({ importPath: "", kind: "static-import" }, undefined)).toEqual({
+            importPath: "",
             importKind: "value",
-            target: "unknown",
+            packageName: "",
+            target: "external-package",
         });
     });
 
@@ -172,20 +255,6 @@ describe("classifyImport", () => {
         ).toMatchObject({
             resolvedPath: "scripts/foo.ts",
             target: "unknown",
-        });
-    });
-
-    test("accepts existing extractor records that use target instead of importPath", () => {
-        expect(
-            classifyImport(
-                { target: "zod/v4", kind: "static-import" },
-                undefined,
-            ),
-        ).toEqual({
-            importPath: "zod/v4",
-            importKind: "value",
-            packageName: "zod",
-            target: "external-package",
         });
     });
 });
