@@ -8,4 +8,9 @@ export const unit2Lessons: readonly Lesson[] = new LessonTreeBuilder()
         "Scripts de apoyo como software reusable",
         `${coursePaths.scriptingLibraries.supportScripts}/`,
     )
+    .link(
+        "tasks-as-abstractions",
+        "Tareas como abstracciones de acciones repetibles",
+        `${coursePaths.scriptingLibraries.tasksAsAbstractions}/`,
+    )
     .build();

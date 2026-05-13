@@ -7,13 +7,15 @@
  * This layout owns the content that belongs to the lesson document itself:
  *
  * - Lesson title
+ * - An optional after-title insertion point supplied by higher-level layouts
  * - Optional metadata panel
  * - Optional repository links panel
  * - Abstract slot and fallback
  * - Main lesson body
  *
  * Browser-shell concerns such as sidebars, reading-time widgets, and previous/next navigation are
- * intentionally left to `NotesLayout.astro`.
+ * intentionally left to `NotesLayout.astro`. This layout exposes the `after-title` slot as a
+ * generic insertion point, but it does not decide what content belongs there.
  *
  * ## Export Mode
  *
@@ -29,11 +31,8 @@ import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
 import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import { Abstract } from "~/components/ui/callouts";
 import ToDo from "~/components/utils/ToDo";
-import {
-    getLessonExportRootAttributes,
-    resolveLessonExportContext,
-} from "~/lib/presentation/export-mode";
 import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
+import { getLessonExportRootAttributes, resolveLessonExportContext } from "~/lib/presentation/export-mode";
 
 const { title, metadata, git, renderMode, exportMode } = Astro.props as LessonDocumentLayoutProps;
 
@@ -48,11 +47,13 @@ const documentAttributes = getLessonExportRootAttributes(exportContext);
 ---
 
 <article
-    id="lesson-content"
-    {...documentAttributes}
+    id="lesson-content" {...documentAttributes}
     class:list={["flex-1", "w-full"]}
 >
     <h1 class:list={["text-2xl sm:text-3xl"]}>{title}</h1>
+
+    <!-- Optional content rendered directly below the lesson title. -->
+    <slot name="after-title" />
 
     {
         metadata && (

@@ -1,7 +1,7 @@
 /**
  * @file Render-contract tests for {@link NotesLayout}.
  *
- * This suite verifies the observable HTML contract of {@link NotesLayout}. It focuses on layout composition and 
+ * This suite verifies the observable HTML contract of {@link NotesLayout}. It focuses on layout composition and
  * integration boundaries rather than visual styling.
  *
  * The protected behaviors are:
@@ -14,7 +14,7 @@
  * - Treating manual navigation as a complete override of automatic navigation.
  * - Rendering lesson metadata through the presentation boundary without exposing infrastructure-only fields.
  *
- * Exhaustive href-normalization behavior belongs in the pure navigation-normalization test suite. This render suite 
+ * Exhaustive href-normalization behavior belongs in the pure navigation-normalization test suite. This render suite
  * only checks that normalized links reach the final rendered anchors.
  */
 
@@ -35,7 +35,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 /**
  * Data-driven case for manual navigation rendering.
  *
- * Each case provides the navigation props passed to {@link NotesLayout} and the exact previous/next links expected in 
+ * Each case provides the navigation props passed to {@link NotesLayout} and the exact previous/next links expected in
  * the rendered navigation region.
  */
 type ManualNavigationCase = {
@@ -54,7 +54,7 @@ type ManualNavigationCase = {
  * - Multiple `previous` links rendered in order.
  * - An optional manual `next` link rendered alongside manual previous links.
  *
- * Precedence edge cases, such as partial overrides and empty arrays, are tested separately because they exercise 
+ * Precedence edge cases, such as partial overrides and empty arrays, are tested separately because they exercise
  * resolution policy rather than link shape.
  */
 const manualNavigationCases = [
@@ -116,7 +116,7 @@ describe("NotesLayout.astro render", () => {
     /**
      * Builds the Astro renderer once for the suite.
      *
-     * The renderer is immutable after creation, and the suite is intentionally not concurrent. Reusing it avoids 
+     * The renderer is immutable after creation, and the suite is intentionally not concurrent. Reusing it avoids
      * repeated setup while keeping shared state stable.
      */
     beforeAll(async () => {
@@ -332,6 +332,32 @@ describe("NotesLayout.astro render", () => {
     });
 
     describe("lesson metadata", () => {
+        test("renders recommended dedication region below the title and above metadata", async () => {
+            const html = await renderNotes(
+                { title: "Introducción a PowerShell" },
+                { pathname: "/notes/scripting/" },
+            );
+
+            const doc = parseHtml(html);
+            const article = queryRequired<HTMLElement>(doc, "#lesson-content");
+            const title = queryRequired<HTMLHeadingElement>(article, "h1");
+            const readingTimeRegion = queryRequired<HTMLElement>(
+                article,
+                "h1 + [data-export-hidden='true']",
+            );
+            const metadata = queryRequired<HTMLElement>(
+                article,
+                "[data-export-role='metadata']",
+            );
+
+            expect(title.textContent).toContain("Introducción a PowerShell");
+            expect(article.contains(readingTimeRegion)).toBe(true);
+            expect(article.contains(metadata)).toBe(true);
+            expect(
+                Array.from(article.children).indexOf(readingTimeRegion),
+            ).toBeLessThan(Array.from(article.children).indexOf(metadata));
+        });
+
         test("renders presentation metadata without infrastructure fields", async () => {
             const html = await renderNotes(
                 { title: "Introducción a PowerShell" },
@@ -355,6 +381,23 @@ describe("NotesLayout.astro render", () => {
             ).toBeTruthy();
 
             expect(metadataPanel.textContent).not.toContain("sourceFile");
+            expect(metadataPanel.textContent).not.toContain("Dedicación recomendada");
+        });
+
+        test("keeps recommended dedication region outside the exportable lesson metadata", async () => {
+            const html = await renderNotes(
+                { title: "Introducción a PowerShell" },
+                { pathname: "/notes/scripting/" },
+            );
+
+            const doc = parseHtml(html);
+            const article = queryRequired<HTMLElement>(doc, "#lesson-content");
+            const readingTimeRegion = queryRequired<HTMLElement>(
+                article,
+                "h1 + [data-export-hidden='true']",
+            );
+
+            expect(readingTimeRegion.closest("[data-export-role='metadata']")).toBeNull();
         });
     });
 });

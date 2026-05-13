@@ -59,6 +59,9 @@ describe("coursePaths", () => {
             expect(coursePaths.scriptingLibraries.supportScripts).toBe(
                 "/notes/scripting/support-scripts",
             );
+            expect(coursePaths.scriptingLibraries.tasksAsAbstractions).toBe(
+                "/notes/scripting/tasks-as-abstractions",
+            );
         });
 
         it("allows internal consumers to read the expected nested paths", () => {
@@ -72,6 +75,7 @@ describe("coursePaths", () => {
             const artifactsTaxonomyPath = `${coursePaths.softwareLibraries.artifactsTaxonomy}/`;
             const whatIsPath = `${coursePaths.softwareLibraries.whatIs}/`;
             const supportScriptsPath = `${coursePaths.scriptingLibraries.supportScripts}/`;
+            const tasksAsAbstractionsPath = `${coursePaths.scriptingLibraries.tasksAsAbstractions}/`;
 
             expect(notesPath).toBe("/notes/");
             expect(installationPath).toBe("/notes/installation/");
@@ -86,6 +90,9 @@ describe("coursePaths", () => {
             expect(artifactsTaxonomyPath).toBe("/notes/software-libraries/artifacts-taxonomy/");
             expect(whatIsPath).toBe("/notes/software-libraries/what-is/");
             expect(supportScriptsPath).toBe("/notes/scripting/support-scripts/");
+            expect(tasksAsAbstractionsPath).toBe(
+                "/notes/scripting/tasks-as-abstractions/",
+            );
         });
     });
 
@@ -128,6 +135,10 @@ describe("coursePaths", () => {
             // Scripting libraries subsection
             ["scriptingLibraries.root", "/notes/scripting"],
             ["scriptingLibraries.supportScripts", "/notes/scripting/support-scripts"],
+            [
+                "scriptingLibraries.tasksAsAbstractions",
+                "/notes/scripting/tasks-as-abstractions",
+            ],
         ] as const;
 
         it.each(mappingTests)("resolves %s to %s", (path, expectedUrl) => {

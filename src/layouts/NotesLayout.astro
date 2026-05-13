@@ -7,7 +7,7 @@
  * This layout composes the main “lesson” experience:
  *
  * - A persistent course sidebar (tree navigation) built from `courseStructure`.
- * - The lesson header (title + reading time estimate).
+ * - The lesson header, with recommended dedication inserted below the document title.
  * - Optional lesson metadata panels (authors, last modified, recent changes, repo links).
  * - A dedicated abstract callout rendered from the named `abstract` slot.
  * - The lesson body via the default `<slot />`.
@@ -197,18 +197,26 @@ const { normalizedNext } = normalizeNavigation(
 
         <!-- Main content area -->
         <div class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}>
-            <div class="contents" data-export-hidden="true">
-                <ReadingTime multiplier={timeMultiplier ?? 1.5} />
-            </div>
-
             {
                 Astro.slots.has("abstract") ? (
                     <LessonDocumentLayout {...documentProps}>
+                        <div
+                            slot="after-title" class="contents"
+                            data-export-hidden="true"
+                        >
+                            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+                        </div>
                         <slot name="abstract" slot="abstract" />
                         <slot />
                     </LessonDocumentLayout>
                 ) : (
                     <LessonDocumentLayout {...documentProps}>
+                        <div
+                            slot="after-title" class="contents"
+                            data-export-hidden="true"
+                        >
+                            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+                        </div>
                         <slot />
                     </LessonDocumentLayout>
                 )

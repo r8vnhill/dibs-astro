@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-11T23:50:25.312Z",
-  "totalLessons": 50,
+  "generatedAt": "2026-05-13T14:02:20.362Z",
+  "totalLessons": 51,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -1553,6 +1553,15 @@
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
         }
       ]
+    },
+    "/notes/scripting/tasks-as-abstractions/": {
+      "sourceFile": "src/pages/notes/scripting/tasks-as-abstractions/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
     },
     "/notes/software-libraries/": {
       "sourceFile": "src/pages/notes/software-libraries/index.astro",

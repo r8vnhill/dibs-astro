@@ -1,0 +1,111 @@
+---
+import * as icons from "~/assets/img/icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Definition } from "~/components/ui/callouts";
+import { B, Dash, Mono } from "~/components/ui/font";
+import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Tareas como abstracciones de acciones repetibles"
+    description="..."
+>
+    <Fragment slot="abstract">
+        <P>
+            La lección anterior mostró que un script de apoyo puede tener un contrato operativo claro: recibe entradas,
+            revisa condiciones del proyecto y comunica resultados. Esta lección da el siguiente paso conceptual: nombrar
+            esas acciones repetibles como tareas.
+        </P>
+
+        <P>
+            El objetivo es preparar el terreno antes de estudiar sistemas de construcción. Antes de delegar trabajo en
+            una herramienta como Gradle, conviene reconocer qué es una tarea, qué contrato expresa y por qué no es
+            simplemente una línea de terminal.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-what-is-a-task">
+        <Heading
+            headingLevel="h2" Icon={icons.Target}
+            slot="heading"
+        >
+            Qué hace visible una tarea
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.ListChecks}>
+            <span slot="title">Tarea</span>
+
+            <P>
+                Una <B>tarea</B> es una unidad de trabajo nombrada, repetible y verificable. No se define solo por el
+                comando que ejecuta, sino por la intención que representa, los datos que necesita, las condiciones que
+                asume, los efectos que produce y el criterio que permite decidir si terminó correctamente.
+            </P>
+        </Definition>
+
+        <List>
+            <ListItem icon={icons.Tag}>El nombre permite identificar o invocar el trabajo.</ListItem>
+            <ListItem icon={icons.ArrowSquareIn}>Las entradas indican qué datos o archivos necesita.</ListItem>
+            <ListItem icon={icons.ShieldCheck}
+            >Las precondiciones declaran qué debe ser cierto antes de ejecutar.</ListItem>
+            <ListItem icon={icons.CheckCircle}>El criterio de éxito permite interpretar el resultado.</ListItem>
+        </List>
+    </NotesSection>
+
+    <NotesSection id="h2-function-script-task">
+        <Heading
+            headingLevel="h2" Icon={icons.ArrowsLeftRight}
+            slot="heading"
+        >
+            Función, script y tarea
+        </Heading>
+
+        <P>
+            Una función estructura código. Un script permite ejecutar código desde un entorno operativo. Una tarea
+            nombra una acción repetible con un contrato propio. Por eso una misma tarea puede estar implementada por una
+            función, expuesta desde un script o gestionada por un sistema de construcción.
+        </P>
+
+        <P>
+            En la siguiente etapa usaremos un script <Mono>library-tasks.main.kts</Mono> para mostrar cómo un archivo
+            <Mono>.main.kts</Mono> puede ofrecer varias tareas pequeñas sin convertirse todavía en un build system.
+        </P>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Formalizar una tarea permite separar el significado del trabajo de la forma concreta en que se ejecuta.
+                Esa separación será importante cuando varias tareas deban coordinarse, reutilizar resultados o
+                ejecutarse de manera consistente en más de un entorno.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Target}>
+                Una tarea es una unidad de trabajo nombrada, repetible y verificable.
+            </ListItem>
+
+            <ListItem icon={icons.TerminalWindow}>
+                Un script puede exponer tareas sin asumir todavía responsabilidades de build system.
+            </ListItem>
+
+            <ListItem icon={icons.Graph}>
+                Cuando aparecen orden, dependencias y resultados reutilizables, la pregunta natural es cómo coordinar
+                esas tareas con una herramienta especializada.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Si una tarea puede nombrarse, ejecutarse y verificarse, la siguiente pregunta aparece naturalmente: qué
+                ocurre cuando muchas tareas deben relacionarse entre sí <Dash kind="em" />
+                con orden, dependencias y resultados compartidos. Esa es la puerta de entrada a los sistemas de
+                construcción.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+</NotesLayout>

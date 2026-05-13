@@ -73,6 +73,7 @@ export const coursePaths = {
     scriptingLibraries: {
         root: scripting,
         supportScripts: joinPath(scripting, "support-scripts"),
+        tasksAsAbstractions: joinPath(scripting, "tasks-as-abstractions"),
     },
 } as const;
 

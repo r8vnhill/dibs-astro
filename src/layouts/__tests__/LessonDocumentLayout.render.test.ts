@@ -22,6 +22,16 @@ const metadataFixture: LessonMetaPanelMetadata = {
     lastModified: "2026-05-10T00:00:00.000Z",
 };
 
+function expectTextOrder(html: string, ...expectedTexts: string[]): void {
+    const indexes = expectedTexts.map((text) => html.indexOf(text));
+
+    expect(indexes).not.toContain(-1);
+
+    for (let index = 1; index < indexes.length; index += 1) {
+        expect(indexes[index]).toBeGreaterThan(indexes[index - 1]);
+    }
+}
+
 describe("LessonDocumentLayout.astro render", () => {
     let renderDocument: ReturnType<typeof createAstroRenderer<LessonDocumentLayoutProps>>;
 
@@ -54,6 +64,27 @@ describe("LessonDocumentLayout.astro render", () => {
         expect(body.textContent).toContain("Document body.");
         expect(body.textContent?.indexOf("Document abstract.")).toBeLessThan(
             body.textContent?.indexOf("Document body.") ?? -1,
+        );
+    });
+
+    test("renders after-title content between the title and metadata", async () => {
+        const html = await (await renderDocument)(
+            {
+                title: "Exportable lesson",
+                metadata: metadataFixture,
+            },
+            {
+                slots: {
+                    "after-title": "<p>After-title marker.</p>",
+                },
+            },
+        );
+
+        expectTextOrder(
+            html,
+            "Exportable lesson",
+            "After-title marker.",
+            "Metadatos de la lección",
         );
     });
 
