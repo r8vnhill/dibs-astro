@@ -424,7 +424,7 @@ pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts
 
 ---
 
-## Cycle 2: Freeze ordering semantics
+## ~~Cycle 2: Freeze ordering semantics~~
 
 **Test first**
 

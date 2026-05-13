@@ -17,17 +17,6 @@ function createEntry(route: string, title: string) {
     } satisfies LessonExportManifest["entries"][number];
 }
 
-const selectionManifest: LessonExportManifest = {
-    generatedAt: "2026-05-11T00:00:00.000Z",
-    entries: [
-        createEntry("/notes/build-systems/", "Build Systems"),
-        createEntry("/notes/software-libraries/", "Software Libraries"),
-        createEntry("/notes/software-libraries/api-design/", "API Design"),
-        createEntry("/notes/software-libraries/testing/", "Testing"),
-        createEntry("/notes/software-libraries-extra/", "Software Libraries Extra"),
-    ],
-};
-
 const parserManifest: LessonExportManifest = {
     generatedAt: "2026-05-11T00:00:00.000Z",
     entries: [
@@ -35,6 +24,19 @@ const parserManifest: LessonExportManifest = {
         createEntry("/notes/software-libraries/b/", "B"),
     ],
 };
+
+function createSelectionManifestFixture(): LessonExportManifest {
+    return {
+        generatedAt: "2026-05-11T00:00:00.000Z",
+        entries: [
+            createEntry("/notes/build-systems/", "Build Systems"),
+            createEntry("/notes/software-libraries/", "Software Libraries"),
+            createEntry("/notes/software-libraries/testing/", "Testing"),
+            createEntry("/notes/software-libraries/api-design/", "API Design"),
+            createEntry("/notes/software-libraries-extra/", "Software Libraries Extra"),
+        ],
+    };
+}
 
 describe("given the PDF export CLI parser", () => {
     test("then all selection uses current default options", () => {
@@ -161,53 +163,57 @@ describe("given the PDF export CLI parser", () => {
 
 describe("given a lesson export manifest", () => {
     test("then valid all selection returns every entry from an already exportable manifest in manifest order", () => {
-        const originalManifest = {
-            ...selectionManifest,
-            entries: selectionManifest.entries.map((entry) => ({ ...entry })),
-        };
+        const manifest = createSelectionManifestFixture();
+        const originalManifest = structuredClone(manifest);
 
-        const selected = selectExportEntries(selectionManifest, { kind: "all" });
+        const selected = selectExportEntries(manifest, { kind: "all" });
 
         expect(selected.map((entry) => entry.route)).toEqual([
             "/notes/build-systems/",
             "/notes/software-libraries/",
-            "/notes/software-libraries/api-design/",
             "/notes/software-libraries/testing/",
+            "/notes/software-libraries/api-design/",
             "/notes/software-libraries-extra/",
         ]);
-        expect(selected).not.toBe(selectionManifest.entries);
-        expect(selectionManifest).toEqual(originalManifest);
+        expect(selected).not.toBe(manifest.entries);
+        expect(manifest).toEqual(originalManifest);
     });
 
     test("then route selection returns one matching entry", () => {
-        const selected = selectExportEntries(selectionManifest, {
+        const manifest = createSelectionManifestFixture();
+
+        const selected = selectExportEntries(manifest, {
             kind: "route",
-            value: "/notes/software-libraries/api-design/",
+            value: "/notes/software-libraries/testing/",
         });
 
         expect(selected).toHaveLength(1);
-        expect(selected[0]?.route).toBe("/notes/software-libraries/api-design/");
-        expect(selectionManifest.entries.map((entry) => entry.route)).toEqual([
+        expect(selected).not.toBe(manifest.entries);
+        expect(selected[0]?.route).toBe("/notes/software-libraries/testing/");
+        expect(manifest.entries.map((entry) => entry.route)).toEqual([
             "/notes/build-systems/",
             "/notes/software-libraries/",
-            "/notes/software-libraries/api-design/",
             "/notes/software-libraries/testing/",
+            "/notes/software-libraries/api-design/",
             "/notes/software-libraries-extra/",
         ]);
     });
 
     test("then subtree selection preserves manifest order", () => {
-        const selected = selectExportEntries(selectionManifest, {
+        const manifest = createSelectionManifestFixture();
+
+        const selected = selectExportEntries(manifest, {
             kind: "subtree",
             value: "/notes/software-libraries/",
         });
 
         expect(selected.map((entry) => entry.route)).toEqual([
             "/notes/software-libraries/",
-            "/notes/software-libraries/api-design/",
             "/notes/software-libraries/testing/",
+            "/notes/software-libraries/api-design/",
         ]);
         expect(selected.map((entry) => entry.route)).not.toContain("/notes/software-libraries-extra/");
+        expect(selected).not.toBe(manifest.entries);
     });
 
     test("then all selection preserves current manifest order", () => {
@@ -220,10 +226,12 @@ describe("given a lesson export manifest", () => {
     });
 
     test("then missing route and subtree selections fail with current messages", () => {
-        expect(() => selectExportEntries(selectionManifest, { kind: "route", value: "/notes/missing/" })).toThrow(
+        const manifest = createSelectionManifestFixture();
+
+        expect(() => selectExportEntries(manifest, { kind: "route", value: "/notes/missing/" })).toThrow(
             /No export entry found for \/notes\/missing\//u,
         );
-        expect(() => selectExportEntries(selectionManifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
+        expect(() => selectExportEntries(manifest, { kind: "subtree", value: "/notes/missing/" })).toThrow(
             /No export entries found under \/notes\/missing\//u,
         );
     });
