@@ -89,6 +89,10 @@ describe("given the PDF lesson export manifest", () => {
         );
 
         expect(entries).toHaveLength(1);
-        expect(entries[0]?.route).toBe("/notes/foo/");
+        expect(entries[0]).toMatchObject({
+            route: "/notes/foo/",
+            exportRoute: "/exports/pdf/notes/foo/",
+            outputPath: "notes/foo/index.pdf",
+        });
     });
 });

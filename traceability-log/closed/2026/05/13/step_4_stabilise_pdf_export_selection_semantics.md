@@ -485,7 +485,13 @@ pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts
 
 ---
 
-## Cycle 4: Freeze exportable-entry boundary
+## ~~Cycle 4: Freeze exportable-entry boundary~~
+
+Status: complete.
+
+Added selector-fixture boundary coverage in `scripts/__tests__/pdf-export-cli.test.ts` and strengthened the non-note
+filtering case in `src/infrastructure/adapters/__tests__/lesson-export-manifest.test.ts`. This documents that
+`selectExportEntries()` receives an already exportable PDF manifest, while manifest construction owns route eligibility.
 
 **Test first**
 

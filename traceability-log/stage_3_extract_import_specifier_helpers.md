@@ -171,7 +171,7 @@ Be careful with `null`: current `importPath ?? target` treats `null` as absent, 
 value becomes `undefined`. The new helper can still throw a deliberate `TypeError` while preserving the observable
 fail-fast result.
 
-## Step 2: Test import-kind classification
+## ~~Step 2: Test import-kind classification~~
 
 Add table-driven cases:
 

@@ -168,6 +168,17 @@ describe("given the PDF export CLI parser", () => {
 });
 
 describe("given a lesson export manifest", () => {
+    test("then the selection fixture contains already exportable PDF entries", () => {
+        const manifest = createSelectionManifestFixture();
+
+        expect(manifest.entries.length).toBeGreaterThan(0);
+        for (const entry of manifest.entries) {
+            expect(entry.route).toMatch(/^\/notes\//u);
+            expect(entry.exportRoute).toMatch(/^\/exports\/pdf\/notes\//u);
+            expect(entry.outputPath).toMatch(/\.pdf$/u);
+        }
+    });
+
     test("then valid all selection returns every entry from an already exportable manifest in manifest order", () => {
         const manifest = createSelectionManifestFixture();
         const originalManifest = structuredClone(manifest);

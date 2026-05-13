@@ -173,7 +173,7 @@ In the CLI parser:
 The policy matcher supports both current DOM report findings shaped as `{ code }` and core-style findings shaped as
 `{ kind }`, including legacy `client-only` normalization to `client-only-island`.
 
-### Step 4: Stabilise selection semantics
+### ~~Step 4: Stabilise selection semantics~~
 
 Define selection as a pure operation:
 
