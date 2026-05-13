@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-13T14:02:20.362Z",
+  "generatedAt": "2026-05-13T15:39:38.213Z",
   "totalLessons": 51,
   "changesLimit": 5,
   "entries": {
@@ -1561,7 +1561,15 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "changes": []
+      "lastModified": "2026-05-13",
+      "changes": [
+        {
+          "hash": "5b22718bb8c592956d57344f4e682d3e18955327",
+          "date": "2026-05-13",
+          "author": "r8vnhill",
+          "subject": "✨ feat(lessons): add task abstraction bridge lesson"
+        }
+      ]
     },
     "/notes/software-libraries/": {
       "sourceFile": "src/pages/notes/software-libraries/index.astro",

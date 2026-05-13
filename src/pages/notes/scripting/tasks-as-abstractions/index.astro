@@ -28,12 +28,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </Fragment>
 
-    <NotesSection id="h2-what-is-a-task">
+    <NotesSection id="h2-task-operational-contract">
         <Heading
             headingLevel="h2" Icon={icons.Target}
             slot="heading"
         >
-            Qué hace visible una tarea
+            El contrato operativo de una tarea
         </Heading>
 
         <Definition headingLevel="h3" icon={icons.ListChecks}>
@@ -46,13 +46,38 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Definition>
 
+        <P>
+            Para que una acción pueda tratarse como tarea, conviene hacer explícito su contrato operativo:
+        </P>
+
         <List>
-            <ListItem icon={icons.Tag}>El nombre permite identificar o invocar el trabajo.</ListItem>
-            <ListItem icon={icons.ArrowSquareIn}>Las entradas indican qué datos o archivos necesita.</ListItem>
-            <ListItem icon={icons.ShieldCheck}
-            >Las precondiciones declaran qué debe ser cierto antes de ejecutar.</ListItem>
-            <ListItem icon={icons.CheckCircle}>El criterio de éxito permite interpretar el resultado.</ListItem>
+            <ListItem icon={icons.Tag}>
+                El <B>nombre</B> permite identificar o invocar el trabajo.
+            </ListItem>
+            <ListItem icon={icons.Target}>
+                La <B>intención</B> explica por qué existe la tarea.
+            </ListItem>
+            <ListItem icon={icons.ArrowSquareIn}>
+                Las <B>entradas</B> indican qué datos, argumentos o archivos necesita.
+            </ListItem>
+            <ListItem icon={icons.ShieldCheck}>
+                Las <B>precondiciones</B> declaran qué debe ser cierto antes de ejecutar.
+            </ListItem>
+            <ListItem icon={icons.ArrowSquareOut}>
+                Los <B>efectos o resultados</B> describen qué produce, modifica o concluye.
+            </ListItem>
+            <ListItem icon={icons.Eye}>
+                La <B>salida observable</B> permite revisar qué ocurrió durante la ejecución.
+            </ListItem>
+            <ListItem icon={icons.CheckCircle}>
+                El <B>criterio de éxito o falla</B> permite interpretar si la tarea terminó correctamente.
+            </ListItem>
         </List>
+
+        <P>
+            Esta separación es útil porque permite razonar sobre una tarea incluso antes de decidir si vivirá en un
+            script, en una herramienta de línea de comandos o en un sistema de construcción.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-function-script-task">

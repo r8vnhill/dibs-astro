@@ -187,7 +187,13 @@ Add table-driven cases:
 
 This preserves the conservative default already present in the classifier.
 
-## Step 3: Test specifier classification
+## ~~Step 3: Test specifier classification~~
+
+Status: complete.
+
+Added `classifyUnresolvedImport()` tests to `scripts/__tests__/layer-boundary-import-specifiers.test.ts` for unresolved
+relative, alias, absolute, source-root, package, scoped package, `node:fs`, and empty-string specifiers. The focused
+red-state verification still fails because `scripts/lib/layer-boundary-import-specifiers.mjs` has not been created yet.
 
 Add tests for:
 
