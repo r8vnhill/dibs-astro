@@ -1,4 +1,4 @@
-# [PLAN] Stage 3: Extract Import-Specifier Helpers
+# [DONE] Stage 3: Extract Import-Specifier Helpers
 
 ## Summary
 
@@ -361,6 +361,8 @@ export { classifyPackageImport } from "./layer-boundary-import-specifiers.mjs";
 This keeps `classifyImport()` behaviour stable while making unresolved import classification independently testable.
 
 ## Step 7: Run Stage 1 and Stage 2 tests as safety nets
+
+Status: verification complete for the focused helper suite and the classifier/rule-evaluation regression suites. `pnpm run check:architecture` still reports pre-existing `ui-boundary` findings in PDF export notes, which are unrelated to this extraction.
 
 Run the focused helper tests first, then the already-pinned integration contract suites:
 

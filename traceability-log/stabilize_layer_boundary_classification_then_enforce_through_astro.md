@@ -172,7 +172,7 @@ pnpm test:unit -- scripts/__tests__/layer-boundary-rule-evaluation.test.ts
 
 ---
 
-# Stage 3: Extract Import-Specifier Helpers
+# ~~Stage 3: Extract Import-Specifier Helpers~~
 
 ## Goal
 
