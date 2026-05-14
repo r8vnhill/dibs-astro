@@ -2,18 +2,17 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition } from "~/components/ui/callouts";
+import { Definition, Explanation } from "~/components/ui/callouts";
+import { BashBlock, KotlinBlock } from "~/components/ui/code";
 import { B, Dash, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
-<NotesLayout
-    title="Tareas como abstracciones de acciones repetibles"
-    description="..."
->
+<NotesLayout title="Tareas como abstracciones de acciones repetibles" description="...">
     <Fragment slot="abstract">
         <P>
             La lección anterior mostró que un script de apoyo puede tener un contrato operativo claro: recibe entradas,
@@ -80,26 +79,255 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </NotesSection>
 
-    <NotesSection id="h2-function-script-task">
+    <NotesSection id="h2-main-kts-example">
+        <Heading
+            headingLevel="h2" Icon={icons.Terminal}
+            slot="heading"
+        >
+            Un script con varias tareas pequeñas
+        </Heading>
+
+        <P>
+            Para hacer concreta esta idea, usaremos un script real llamado <Mono>library-tasks.main.kts</Mono>. El
+            objetivo no es mostrar una característica especial de Kotlin para definir tareas, sino representar
+            explícitamente varias acciones repetibles dentro de un mismo artefacto ejecutable.
+        </P>
+
+        <P>
+            Desde la línea de comandos, el script recibe el nombre de la tarea como primer argumento. Por ejemplo:
+        </P>
+
+        <BashBlock
+            code={`
+                kotlin library-tasks.main.kts list
+                kotlin library-tasks.main.kts count-files .
+                kotlin library-tasks.main.kts summarize .
+            `}
+        >
+            <span slot="title">API esperada</span>
+        </BashBlock>
+
+        <P>
+            Cada comando expresa una intención distinta. <Mono>list</Mono> muestra las tareas disponibles; <Mono
+            >count-files</Mono> cuenta archivos en una carpeta; y <Mono>summarize</Mono>
+            muestra un resumen breve del proyecto revisado.
+        </P>
+
+        <P>
+            La diferencia importante es que ya no pensamos el script como una sola operación concreta. Ahora el script
+            actúa como un pequeño punto de entrada que despacha tareas nombradas. Cada tarea puede tener su propio
+            propósito, entradas, precondiciones, salida observable y criterio de éxito o falla.
+        </P>
+
+        <P>
+            El punto central no es que Kotlin tenga una sintaxis especial para tareas. El punto es que podemos
+            representar tareas explícitamente incluso antes de usar una herramienta especializada como un build system.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-task-interface">
+        <Heading
+            headingLevel="h2" Icon={icons.ListChecks}
+            slot="heading"
+        >
+            Representar una tarea con una interfaz
+        </Heading>
+
+        <P>
+            Para que el script pueda tratar todas las tareas de la misma forma, necesitamos una abstracción común. En
+            este caso, esa abstracción puede ser una interfaz sencilla: cada tarea tiene un <B>nombre</B> y una
+            operación <Mono>run</Mono> que ejecuta su trabajo.
+        </P>
+
+        <KotlinBlock
+            code={`
+                interface Task {
+                    val name: String
+                    val description: String
+
+                    fun run(context: TaskContext): TaskResult
+                }
+
+                class TaskContext(
+                    val projectRoot: Path,
+                )
+
+                interface TaskResult {
+                    val message: String
+                    val exitCode: Int
+                }
+
+                class SuccessfulTaskResult(
+                    override val message: String,
+                ) : TaskResult {
+                    override val exitCode: Int = 0
+                }
+
+                class FailedTaskResult(
+                    override val message: String,
+                ) : TaskResult {
+                    override val exitCode: Int = 1
+                }
+            `}
+        >
+            <span slot="title">Contrato mínimo para representar tareas</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="scripts/library-tasks.main.kts"
+            >
+                scripts/library-tasks.main.kts
+            </DibsSourceLink>
+        </KotlinBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                La interfaz <Mono>Task</Mono> no sabe cómo se lista una tarea, cómo se cuentan archivos ni cómo se
+                resume un proyecto. Solo declara qué debe ofrecer cualquier tarea para poder ser ejecutada por el
+                script.
+            </P>
+
+            <List>
+                <ListItem icon={icons.Tag}>
+                    <Mono>name</Mono> permite identificar la tarea desde la línea de comandos.
+                </ListItem>
+                <ListItem icon={icons.TextAlignLeft}>
+                    <Mono>description</Mono> permite mostrar ayuda o listar las tareas disponibles.
+                </ListItem>
+                <ListItem icon={icons.FolderOpen}>
+                    <Mono>TaskContext</Mono> agrupa la información que la tarea necesita para ejecutarse.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    <Mono>TaskResult</Mono> hace explícito si la ejecución terminó bien o con error.
+                </ListItem>
+            </List>
+
+            <P>
+                Esta estructura evita que el script dependa de casos especiales para cada comando. Mientras una
+                operación implemente <Mono>Task</Mono>, el despachador puede registrarla, encontrarla por nombre y
+                ejecutarla usando el mismo flujo.
+            </P>
+        </Explanation>
+
+        <P>
+            Por ejemplo, una tarea concreta puede implementar esa interfaz sin cambiar el resto del script:
+        </P>
+
+        <KotlinBlock
+            code={`
+            class CountFilesTask : Task {
+                override val name: String = "count-files"
+                override val description: String = "Counts files in the selected project folder."
+
+                override fun run(context: TaskContext): TaskResult {
+                    val fileCount = context.projectRoot
+                        .toFile()
+                        .walkTopDown()
+                        .count { it.isFile }
+
+                    return SuccessfulTaskResult("Found $fileCount files.")
+                }
+            }
+        `}
+        >
+            <span slot="title">Una tarea concreta</span>
+        </KotlinBlock>
+
+        <P>
+            Lo importante no es que esta implementación sea sofisticada, sino que la tarea ya tiene una forma
+            reconocible: nombre, descripción, contexto de ejecución, resultado observable y código de salida. Esa forma
+            común permite agregar nuevas tareas sin rediseñar el script completo.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-task-dispatcher">
         <Heading
             headingLevel="h2" Icon={icons.ArrowsLeftRight}
             slot="heading"
         >
-            Función, script y tarea
+            Despachar una tarea por su nombre
         </Heading>
 
         <P>
-            Una función estructura código. Un script permite ejecutar código desde un entorno operativo. Una tarea
-            nombra una acción repetible con un contrato propio. Por eso una misma tarea puede estar implementada por una
-            función, expuesta desde un script o gestionada por un sistema de construcción.
+            Una vez que las tareas comparten la misma interfaz, el script puede registrarlas en una colección común. En
+            vez de escribir un flujo distinto para cada comando, podemos asociar cada <B>nombre</B> con la tarea que
+            debe ejecutarse.
         </P>
+
+        <KotlinBlock
+            code={`
+            // Otras tareas concretas pueden implementarse de la misma forma.
+            class ListTasksTask : Task { /* ... */ }
+                class SummarizeProjectTask : Task { /* ... */ }
+
+                // El despachador registra las tareas disponibles por nombre.
+                val tasks = listOf(
+                    CountFilesTask(),
+                    ListTasksTask(),
+                    SummarizeProjectTask(),
+                ).associateBy { task -> task.name }
+
+                val taskName = args.firstOrNull()
+                val selectedTask = tasks[taskName]
+
+                val result = if (selectedTask == null) {
+                    FailedTaskResult("Unknown task: $taskName")
+                } else {
+                    val projectRoot = Path(args.getOrElse(1) { "." })
+                    val context = TaskContext(projectRoot)
+
+                    selectedTask.run(context)
+                }
+
+                println(result.message)
+                exitProcess(result.exitCode)
+            `}
+        >
+            <span slot="title">Despacho mínimo de tareas</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="scripts/library-tasks.main.kts"
+            >
+                scripts/library-tasks.main.kts
+            </DibsSourceLink>
+        </KotlinBlock>
 
         <P>
-            En la siguiente etapa usaremos un script <Mono>library-tasks.main.kts</Mono> para mostrar cómo un archivo
-            <Mono>.main.kts</Mono> puede ofrecer varias tareas pequeñas sin convertirse todavía en un build system.
+            El despachador cumple una responsabilidad pequeña: conectar los argumentos de la línea de comandos con una
+            tarea concreta. Para hacerlo, lee el nombre solicitado, busca la tarea correspondiente, construye un
+            contexto de ejecución, ejecuta la tarea y transforma el resultado en salida observable y código de salida.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Esta separación evita que el script mezcle dos decisiones distintas: <B>qué tarea ejecutar</B> y <B>cómo
+                    se ejecuta cada tarea</B>. El despachador solo decide la primera; la segunda queda encapsulada
+                dentro de cada implementación de <Mono>Task</Mono>.
+            </P>
+
+            <List>
+                <ListItem icon={icons.Tag}>
+                    El nombre escrito en la línea de comandos identifica la tarea solicitada.
+                </ListItem>
+                <ListItem icon={icons.ListChecks}>
+                    La tabla <Mono>tasks</Mono> permite buscar una implementación sin escribir casos especiales para
+                    cada comando.
+                </ListItem>
+                <ListItem icon={icons.FolderOpen}>
+                    El <Mono>TaskContext</Mono> agrupa los datos compartidos que la tarea necesita para ejecutarse.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    El <Mono>TaskResult</Mono> concentra el mensaje final y el código de salida.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <P>
+            Lo importante es que agregar una nueva tarea no exige reescribir el flujo principal. Basta con crear otra
+            clase que implemente <Mono>Task</Mono> y registrarla en la lista de tareas disponibles. Esa es la misma idea
+            que luego crecerá en un sistema de construcción: muchas tareas nombradas, cada una con su propio contrato
+            operativo, pero coordinadas por una herramienta común.
         </P>
     </NotesSection>
-
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>

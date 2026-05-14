@@ -261,7 +261,13 @@ node:fs
 
 Expected external-package-shaped results, preserving current behaviour.
 
-## Step 4: Test package-name extraction
+## ~~Step 4: Test package-name extraction~~
+
+Status: complete.
+
+Package-name extraction cases are pinned in `scripts/__tests__/layer-boundary-import-specifiers.test.ts` through direct
+`packageNameFromImportPath()` coverage and supporting `classifyPackageImport()` propagation coverage. The focused
+red-state verification still fails because `scripts/lib/layer-boundary-import-specifiers.mjs` has not been created yet.
 
 Add direct `packageNameFromImportPath()` tests:
 
@@ -277,7 +283,9 @@ Add direct `packageNameFromImportPath()` tests:
 The current scoped package logic uses a scoped-package pattern and falls back to the full import path when a scoped
 match is absent.
 
-## Step 5: Implement the helper module
+## ~~Step 5: Implement the helper module~~
+
+Status: complete. `scripts/lib/layer-boundary-import-specifiers.mjs` now owns the import-specifier helpers, and the focused helper suite plus the classifier and rule-evaluation regression suites pass.
 
 Move only import-specifier logic from `layer-boundary-classification.mjs`:
 
@@ -303,7 +311,9 @@ Do not move:
 The current classification file still contains path-layer predicates and ordered target arrays; those belong to the
 later declarative-rule stage, not this extraction.
 
-## Step 6: Wire `layer-boundary-classification.mjs` to the helper
+## ~~Step 6: Wire `layer-boundary-classification.mjs` to the helper~~
+
+Status: complete. `scripts/lib/layer-boundary-classification.mjs` now delegates unresolved import-specifier handling to `scripts/lib/layer-boundary-import-specifiers.mjs` while preserving the public classifier API and the resolved-target path logic.
 
 Update `classifyImport()` so it delegates import-specifier concerns:
 

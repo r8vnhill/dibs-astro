@@ -1,3 +1,9 @@
+import {
+    classifyImportKind,
+    classifyPackageImport,
+    classifyUnresolvedImport,
+    extractImportPath,
+} from "./layer-boundary-import-specifiers.mjs";
 import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
 
 /**
@@ -36,8 +42,6 @@ import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
 /**
  * @typedef {"value" | "type"} ClassifiedImportKind
  */
-
-const scopedPackagePattern = /^@[^/]+\/[^/]+/;
 
 function isUnder(pathValue, prefix) {
     return pathValue === prefix || pathValue.startsWith(`${prefix}/`);
@@ -154,29 +158,6 @@ const TARGETS = Object.freeze([
     ["site-core", isSiteCoreTarget],
 ]);
 
-function isRelativeImport(importPath) {
-    return importPath.startsWith(".");
-}
-
-function isProjectAliasImport(importPath) {
-    return importPath === "~" || importPath.startsWith("~/") || /^\$[^/]*(?:\/|$)/.test(importPath);
-}
-
-function isBarePackageImport(importPath) {
-    return !isRelativeImport(importPath)
-        && !isProjectAliasImport(importPath)
-        && !importPath.startsWith("/")
-        && !importPath.startsWith("src/");
-}
-
-function importPathFrom(importRecord) {
-    return importRecord.importPath ?? importRecord.target;
-}
-
-function classifiedImportKind(kind) {
-    return kind === "type-import" || kind === "type-re-export" ? "type" : "value";
-}
-
 /**
  * @param {string} sourcePath
  * @returns {{ path: string; layer: SourceLayer }}
@@ -202,20 +183,7 @@ export function classifyResolvedTarget(resolvedPath) {
     return match?.[0] ?? "unknown";
 }
 
-/**
- * @param {string} importPath
- * @returns {{ target: "external-package"; packageName: string }}
- */
-export function classifyPackageImport(importPath) {
-    const packageName = importPath.startsWith("@")
-        ? importPath.match(scopedPackagePattern)?.[0] ?? importPath
-        : importPath.split("/")[0];
-
-    return {
-        target: "external-package",
-        packageName,
-    };
-}
+export { classifyImportKind, classifyPackageImport, classifyUnresolvedImport, extractImportPath };
 
 /**
  * @param {{ importPath?: string; target?: string; kind: string }} importRecord
@@ -229,8 +197,8 @@ export function classifyPackageImport(importPath) {
  * }}
  */
 export function classifyImport(importRecord, resolvedPath) {
-    const importPath = importPathFrom(importRecord);
-    const importKind = classifiedImportKind(importRecord.kind);
+    const importPath = extractImportPath(importRecord);
+    const importKind = classifyImportKind(importRecord.kind);
 
     if (resolvedPath) {
         const normalizedPath = normalizeProjectPath(resolvedPath);
@@ -242,9 +210,5 @@ export function classifyImport(importRecord, resolvedPath) {
         };
     }
 
-    if (isBarePackageImport(importPath)) {
-        return { importPath, importKind, ...classifyPackageImport(importPath) };
-    }
-
-    return { importPath, importKind, target: "unknown" };
+    return { importPath, importKind, ...classifyUnresolvedImport(importPath) };
 }
