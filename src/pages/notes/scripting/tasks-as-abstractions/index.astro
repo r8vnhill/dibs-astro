@@ -7,6 +7,7 @@ import { BashBlock, BashInline, JavaScriptInline, KotlinBlock, KotlinInline, Out
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -137,7 +138,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             Para que el script pueda tratar todas las tareas de la misma forma, necesitamos una abstracción común. En
             este caso, esa abstracción puede ser una interfaz sencilla: cada tarea tiene un <B>nombre</B> y una
-            operación <Mono>run</Mono> que ejecuta su trabajo.
+            operación <KotlinInline>run()</KotlinInline> que ejecuta su trabajo.
         </P>
 
         <KotlinBlock
@@ -752,4 +753,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <ReferencesFromCatalog lessonId="/notes/scripting/tasks-as-abstractions/">
+        <Fragment slot="description-ref:kotlin-coding-conventions">
+            <P>
+                Esta guía oficial de Kotlin presenta convenciones de organización, nombres y formato. Es útil después de
+                esta lección porque ayuda a entender por qué nombres como <KotlinInline>CountFilesTask</KotlinInline>,
+                <KotlinInline>TaskContext</KotlinInline> y <KotlinInline>run()</KotlinInline> no son solo detalles
+                estéticos: comunican qué elementos son clases, funciones, propiedades o valores.
+            </P>
+        </Fragment>
+    </ReferencesFromCatalog>
 </NotesLayout>

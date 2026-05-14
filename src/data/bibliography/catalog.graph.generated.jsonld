@@ -1362,6 +1362,23 @@
       }
     },
     {
+      "@id": "ref:kotlin-coding-conventions",
+      "@type": "WebPage",
+      "name": "Coding conventions",
+      "url": "https://kotlinlang.org/docs/coding-conventions.html",
+      "author": [
+        {
+          "@id": "org:jetbrains"
+        }
+      ],
+      "publisher": {
+        "@id": "org:jetbrains"
+      },
+      "isPartOf": {
+        "@id": "site:kotlin-docs"
+      }
+    },
+    {
       "@id": "ref:kotlin-custom-scripting-tutorial",
       "@type": "WebPage",
       "name": "Get started with Kotlin custom scripting – tutorial",
@@ -2391,6 +2408,12 @@
       "@type": "LearningResource",
       "name": "Scripts de apoyo como software reusable",
       "url": "/notes/scripting/support-scripts/"
+    },
+    {
+      "@id": "/notes/scripting/tasks-as-abstractions/",
+      "@type": "LearningResource",
+      "name": "Tareas como abstracciones de acciones repetibles",
+      "url": "/notes/scripting/tasks-as-abstractions/"
     },
     {
       "@id": "/notes/software-libraries/api-design/documentation/",
@@ -4120,6 +4143,19 @@
       },
       "dibs:reference": {
         "@id": "ref:kotlin-custom-scripting-tutorial"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:tasks-as-abstractions-kotlin-coding-conventions-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/tasks-as-abstractions/"
+      },
+      "dibs:reference": {
+        "@id": "ref:kotlin-coding-conventions"
       },
       "dibs:tags": [
         "recommended"

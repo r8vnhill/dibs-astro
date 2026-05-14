@@ -854,3 +854,11 @@ ref:kotlin-custom-scripting-tutorial
   schema:author org:jetbrains ;
   schema:isPartOf site:kotlin-docs ;
   schema:publisher org:jetbrains .
+
+ref:kotlin-coding-conventions
+  a schema:WebPage ;
+  schema:name "Coding conventions" ;
+  schema:url "https://kotlinlang.org/docs/coding-conventions.html" ;
+  schema:author org:jetbrains ;
+  schema:isPartOf site:kotlin-docs ;
+  schema:publisher org:jetbrains .

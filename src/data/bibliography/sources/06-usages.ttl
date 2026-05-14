@@ -873,3 +873,14 @@ usage:support-scripts-kotlin-custom-scripting-tutorial-recommended
   dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/> ;
   dibs:reference ref:kotlin-custom-scripting-tutorial ;
   dibs:tag "recommended" .
+
+<https://dibs.ravenhill.cl/notes/scripting/tasks-as-abstractions/>
+  a schema:LearningResource ;
+  schema:name "Tareas como abstracciones de acciones repetibles" ;
+  schema:url "/notes/scripting/tasks-as-abstractions/" .
+
+usage:tasks-as-abstractions-kotlin-coding-conventions-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/tasks-as-abstractions/> ;
+  dibs:reference ref:kotlin-coding-conventions ;
+  dibs:tag "recommended" .
