@@ -1,4 +1,4 @@
-import { courseStructure, flattenLessons, type Lesson } from "~/data/course-structure";
+import { courseStructure, flattenLessons, type FlattenedLesson, type Lesson } from "~/data/course-structure";
 import {
     createExportFinding,
     deriveExportRoute,
@@ -47,13 +47,17 @@ export function buildPdfLessonExportEntries(
     lessonPageRegistry: LessonPageRegistry = defaultLessonPageRegistry,
 ): readonly LessonExportManifestEntry[] {
     return flattenLessons(lessons)
-        .filter((lesson) => lesson.href !== undefined)
+        .filter(hasLessonHref)
         .map((lesson) => toPdfLessonExportEntry(lesson, metadataDataset, lessonPageRegistry))
         .filter((entry): entry is LessonExportManifestEntry => entry !== undefined);
 }
 
+function hasLessonHref(lesson: FlattenedLesson): lesson is FlattenedLesson & { readonly href: string } {
+    return lesson.href !== undefined;
+}
+
 function toPdfLessonExportEntry(
-    lesson: Lesson & { readonly href: string },
+    lesson: FlattenedLesson & { readonly href: string },
     metadataDataset = defaultMetadataDataset,
     lessonPageRegistry: LessonPageRegistry = defaultLessonPageRegistry,
 ): LessonExportManifestEntry | undefined {

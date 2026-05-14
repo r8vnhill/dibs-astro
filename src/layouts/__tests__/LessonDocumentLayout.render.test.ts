@@ -28,7 +28,7 @@ function expectTextOrder(html: string, ...expectedTexts: string[]): void {
     expect(indexes).not.toContain(-1);
 
     for (let index = 1; index < indexes.length; index += 1) {
-        expect(indexes[index]).toBeGreaterThan(indexes[index - 1]);
+        expect(indexes[index]!).toBeGreaterThan(indexes[index - 1]!);
     }
 }
 

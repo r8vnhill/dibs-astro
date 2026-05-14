@@ -16,12 +16,20 @@ describe.concurrent("tasks as abstractions lesson render", () => {
                 ),
             },
         );
+        const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(html).toContain("Tareas como abstracciones de acciones repetibles");
-        expect(html).toContain("/notes/scripting/tasks-as-abstractions/");
-        expect(html).toContain("unidad de trabajo nombrada");
-        expect(html).toContain("Función, script y tarea");
-        expect(html).toContain("library-tasks.main.kts");
-        expect(html).toContain("sistemas de construcción");
+        expect(normalizedHtml).toContain("Tareas como abstracciones de acciones repetibles");
+        expect(normalizedHtml).toContain("/notes/scripting/tasks-as-abstractions/");
+        expect(normalizedHtml).toContain(
+            "La lección anterior mostró cómo un script de apoyo puede tener un contrato operativo",
+        );
+        expect(normalizedHtml).toContain("count-files");
+        expect(normalizedHtml).toContain("summarize");
+        expect(normalizedHtml).toMatch(/agregaremos una tercera tarea:[\s\S]*list/);
+        expect(normalizedHtml).toContain("library-tasks.main.kts");
+        expect(normalizedHtml).toContain("sistemas de construcción");
+        expect(normalizedHtml.indexOf("agregaremos una tercera tarea:")).toBeGreaterThan(
+            normalizedHtml.indexOf("summarize"),
+        );
     });
 });

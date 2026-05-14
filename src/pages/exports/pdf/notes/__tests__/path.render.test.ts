@@ -1,11 +1,14 @@
 import { describe, expect, test } from "vitest";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
-import { getPdfLessonExportManifest } from "~/infrastructure/adapters/lesson-export-manifest";
+import {
+    getPdfLessonExportManifest,
+    type LessonExportManifestEntry,
+} from "~/infrastructure/adapters/lesson-export-manifest";
 import ExportNotesPage from "../[...path].astro";
 
 describe("given the PDF export wrapper route", () => {
     test("then the installation export renders static export markers", async () => {
-        const renderPage = await createAstroRenderer<Record<string, never>>(ExportNotesPage);
+        const renderPage = await createAstroRenderer<{ entry: LessonExportManifestEntry }>(ExportNotesPage);
         const entry = getPdfLessonExportManifest().entries.find((candidate) => candidate.route === "/notes/installation/");
 
         if (!entry) {

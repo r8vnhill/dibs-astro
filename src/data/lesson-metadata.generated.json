@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-14T11:25:30.181Z",
+  "generatedAt": "2026-05-14T12:47:04.856Z",
   "totalLessons": 51,
   "changesLimit": 5,
   "entries": {
@@ -1561,8 +1561,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-13",
+      "lastModified": "2026-05-14",
       "changes": [
+        {
+          "hash": "5474db3194558837ad6720b03dc387994068a32c",
+          "date": "2026-05-14",
+          "author": "r8vnhill",
+          "subject": "💡 refactor(imports): Extract and modularize import classification helpers"
+        },
         {
           "hash": "36b9028f54f6ea6cb2c1f9f0d968acab27796c27",
           "date": "2026-05-13",
