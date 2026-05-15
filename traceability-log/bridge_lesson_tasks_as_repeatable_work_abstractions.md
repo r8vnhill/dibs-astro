@@ -3,21 +3,22 @@
 ## Summary
 
 Add a new Unit 2 bridge lesson immediately after **“Scripts de apoyo como software reusable”**. The goal is to formalise
-the concept of a **task** before introducing build systems.
+the concept of a **task** before introducing build systems, using a small Kotlin companion script and a later exercise
+that adds a `list` task.
 
 The lesson should make one conceptual move:
 
 > A task is not merely “a command that runs”; it is a named, repeatable, verifiable unit of work with intent, inputs,
 > preconditions, effects, observable output, and a success/failure criterion.
 
-The lesson will use a real Kotlin `.main.kts` companion script to show how tasks can be represented before adopting a
+The lesson uses a real Kotlin `.main.kts` companion script to show how tasks can be represented before adopting a
 specialised build system. This fits Kotlin scripting well because Kotlin scripts are `.kts` files with top-level
 executable code, intended for script-style execution from the command line. ([Kotlin][1])
 
-The lesson should deliberately stop before Gradle-specific concepts such as task graphs, cacheability, incremental
-execution, and declared task inputs/outputs. Those ideas belong to the following build-systems lessons, where Gradle
-defines tasks as independent units of build work and later enriches them with dependencies, inputs, outputs, and
-execution semantics. ([Gradle][2])
+The lesson deliberately stops before Gradle-specific concepts such as task graphs, cacheability, incremental execution,
+and declared task inputs/outputs. Those ideas belong to the following build-systems lessons, where Gradle defines tasks
+as independent units of build work and later enriches them with dependencies, inputs, outputs, and execution semantics.
+([Gradle][2])
 
 ---
 
@@ -115,11 +116,10 @@ kotlin-companion/scripts/library-tasks.main.kts
 The script should be intentionally small and pedagogical. It should demonstrate task modelling without becoming a
 miniature Gradle clone.
 
-Recommended commands:
+The lesson currently uses these commands as the main examples:
 
 ```bash
-kotlin library-tasks.main.kts list
-kotlin library-tasks.main.kts check-layout .
+kotlin library-tasks.main.kts count-files .
 kotlin library-tasks.main.kts summarize .
 ```
 
@@ -136,7 +136,7 @@ Recommended companion-script design note:
 Recommended task model:
 
 ```kotlin
-interface LibraryTask {
+interface Task {
     val name: String
     val description: String
 
@@ -145,7 +145,6 @@ interface LibraryTask {
 
 class TaskContext(
     val projectRoot: Path,
-    val arguments: List<String> = emptyList(),
 )
 
 interface TaskResult {
@@ -171,50 +170,47 @@ Task implementations should be small classes rather than lambda-only values.
 Example task class:
 
 ```kotlin
-class CheckLayoutTask : LibraryTask {
-    override val name: String = "check-layout"
-    override val description: String = "Checks whether the project contains the expected library files."
+class CountFilesTask : Task {
+    override val name: String = "count-files"
+    override val description: String = "Counts files in the selected project folder."
 
     override fun run(context: TaskContext): TaskResult {
-        val missingPaths = missingExpectedPaths(context.projectRoot)
+        val fileCount = context.projectRoot
+            .toFile()
+            .walkTopDown()
+            .count { it.isFile }
 
-        if (missingPaths.isEmpty()) {
-            return SuccessfulTaskResult("The project layout looks correct.")
-        }
-
-        return FailedTaskResult(
-            "Missing expected paths: ${missingPaths.joinToString(", ")}"
-        )
+        return SuccessfulTaskResult("Found $fileCount files.")
     }
 }
 ```
 
-For the `list` task, prefer constructor injection so the task receives the available task list explicitly:
+The main walkthrough also uses a second task that prints a short project summary:
 
 ```kotlin
-class ListTasksTask(
-    private val tasks: List<LibraryTask>,
-) : LibraryTask {
-    override val name: String = "list"
-    override val description: String = "Lists the available tasks."
+class SummarizeProjectTask : Task {
+    override val name: String = "summarize"
+    override val description: String = "Shows a brief summary of the selected project folder."
 
     override fun run(context: TaskContext): TaskResult {
-        val taskList = tasks.joinToString(separator = "\n") { task ->
-            "- ${task.name}: ${task.description}"
-        }
+        val projectRoot = context.projectRoot.toAbsolutePath().normalize()
+        val fileCount = projectRoot
+            .toFile()
+            .walkTopDown()
+            .count { it.isFile }
 
-        return SuccessfulTaskResult(taskList)
+        return SuccessfulTaskResult("Project: $projectRoot${System.lineSeparator()}Files: $fileCount")
     }
 }
 ```
 
-Keep the script focused on three tasks:
+Keep the script focused on two main walkthrough tasks, with a third task added in the exercise:
 
 | Task           | Purpose                                   | Teaching role                                  |
 | -------------- | ----------------------------------------- | ---------------------------------------------- |
-| `list`         | Show available tasks                      | Demonstrates task discovery                    |
-| `check-layout` | Verify expected library files/directories | Demonstrates preconditions and success/failure |
-| `summarize`    | Print a short project summary             | Demonstrates observable output                 |
+| `count-files` | Count files in the selected folder | Demonstrates a concrete repeatable action |
+| `summarize`   | Print a short project summary | Demonstrates observable output |
+| `list`        | Show available tasks | Added in the exercise to demonstrate discovery |
 
 Avoid adding:
 
@@ -296,8 +292,7 @@ The lesson should show the commands first, then the internal model.
 Example commands:
 
 ```bash
-kotlin library-tasks.main.kts list
-kotlin library-tasks.main.kts check-layout .
+kotlin library-tasks.main.kts count-files .
 kotlin library-tasks.main.kts summarize .
 ```
 
@@ -305,6 +300,9 @@ Recommended explanation:
 
 > El punto central no es que Kotlin tenga una sintaxis especial para tareas. El punto es que podemos representar tareas
 > explícitamente incluso antes de usar una herramienta especializada.
+
+In the actual lesson, the first examples are `count-files` and `summarize`, and the `list` task appears later in the
+exercise as the new task added to the same design.
 
 ---
 
@@ -314,8 +312,7 @@ Show the idea of mapping a name to a task:
 
 ```kotlin
 val tasks = listOf(
-    listTask,
-    checkLayoutTask,
+    countFilesTask,
     summarizeTask,
 ).associateBy { it.name }
 ```
@@ -372,23 +369,23 @@ advanced task guidance emphasises declared inputs, outputs, task actions, depend
 ```text
 library-tasks.main.kts
 ├─ task contracts
-│  ├─ LibraryTask interface
+│  ├─ Task interface
 │  ├─ TaskResult interface
 │  ├─ TaskContext class
 │  ├─ SuccessfulTaskResult class
 │  └─ FailedTaskResult class
 ├─ task definitions
-│  ├─ ListTasksTask
-│  ├─ CheckLayoutTask
-│  └─ SummarizeTask
+│  ├─ CountFilesTask
+│  ├─ SummarizeProjectTask
+│  └─ ListTasksTask (introduced in the exercise)
 ├─ pure helpers
-│  ├─ expectedPaths()
-│  ├─ missingPaths()
-│  └─ projectSummary()
+│  ├─ countFiles()
+│  ├─ projectSummary()
+│  └─ availableTaskLines()
 └─ CLI boundary
-   ├─ parseCommand()
-   ├─ dispatch()
-   └─ renderResult()
+    ├─ parseCommand()
+    ├─ dispatch()
+    └─ renderResult()
 ```
 
 The important design boundary is:
@@ -428,7 +425,7 @@ Suggested row:
 | ------------------------------------------------ | -------------------------------- | ------------------------------------------------------------ |
 | Tareas como abstracciones de acciones repetibles | `scripts/library-tasks.main.kts` | Models support-script operations as named, repeatable tasks. |
 
-Also include the three invocation examples.
+Also include the three invocation examples actually used by the lesson: `count-files .`, `summarize .`, and `list`.
 
 ---
 
@@ -474,7 +471,8 @@ Recommended assertions:
 - rendered HTML contains `/notes/scripting/tasks-as-abstractions/`;
 - rendered HTML contains `library-tasks.main.kts`;
 - rendered HTML links to `dibs-course/kotlin-companion`;
-- rendered HTML includes examples with `kotlin library-tasks.main.kts`;
+- rendered HTML includes examples with `kotlin library-tasks.main.kts count-files .` and `kotlin library-tasks.main.kts summarize .`;
+- rendered HTML includes the later `list` exercise or solution content;
 - rendered HTML includes the conceptual distinction between function, script, and task;
 - rendered HTML includes the bridge toward build systems.
 
@@ -485,16 +483,16 @@ Recommended assertions:
 Recommended, if the companion repository already has a script-test convention:
 
 ```bash
-kotlin scripts/library-tasks.main.kts list
-kotlin scripts/library-tasks.main.kts check-layout .
+kotlin scripts/library-tasks.main.kts count-files .
 kotlin scripts/library-tasks.main.kts summarize .
+kotlin scripts/library-tasks.main.kts list
 ```
 
 Assert:
 
+- `count-files .` exits successfully;
+- `summarize .` exits successfully;
 - `list` exits successfully;
-- `check-layout .` exits successfully for the companion root;
-- `check-layout` exits unsuccessfully for a temporary incomplete directory;
 - unknown task exits unsuccessfully and prints available tasks.
 
 If there is no existing test harness in `kotlin-companion`, document these as manual validation commands for now and
@@ -525,9 +523,9 @@ pnpm test:unit -- course-structure
 1. Add the `.main.kts` script.
 2. Start with the public command behaviour:
 
-   - `list`;
-   - `check-layout`;
+    - `count-files`;
    - `summarize`;
+    - `list`;
    - unknown task.
 3. Keep the task model minimal.
 4. Run the script manually or through the existing companion test command.
@@ -571,7 +569,7 @@ The change is complete when:
 - `coursePaths` exposes the new route;
 - the lesson explains tasks as named, repeatable, verifiable units of work;
 - the lesson clearly distinguishes function, script, and task;
-- the Kotlin companion script exists and supports `list`, `check-layout`, and `summarize`;
+- the Kotlin companion script exists and supports `count-files`, `summarize`, and `list`;
 - the lesson links to the companion script with `DibsSourceLink`;
 - render tests cover the new lesson;
 - course-structure tests cover path and ordering;
@@ -586,8 +584,9 @@ The change is complete when:
 - The companion script should remain real, executable, and small.
 - The deprecated `task-automation` material may be used only as background inspiration.
 - No new dependencies are needed.
+- The actual lesson introduces `list` in the exercise rather than as one of the initial commands.
 - Task graphs, dependency resolution, cacheability, incremental execution, and declared inputs/outputs are intentionally
-  deferred to the build-system sequence.
+    deferred to the build-system sequence.
 
 [1]: https://kotlinlang.org/docs/command-line.html?utm_source=chatgpt.com "Kotlin command-line compiler"
 [2]: https://docs.gradle.org/current/userguide/more_about_tasks.html?utm_source=chatgpt.com "Understanding Tasks"

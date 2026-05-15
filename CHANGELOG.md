@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/).
 
+## [0.21.0] - 2026-05-15
+
+### Added
+
+- Added new and expanded Spanish scripting lessons for Unit 2, centered on support scripts as reusable software and tasks as named, repeatable units of work.
+- Added Kotlin companion-script examples and lesson render coverage so the scripting sequence connects conceptual task design with executable support scripts.
+- Added static PDF lesson export routes plus Playwright-backed export scripts for selected lessons, whole-course dry runs, representative smoke exports, and opt-in CI artifacts.
+- Added `@ravenhill/lesson-export-core` and `@ravenhill/shiki-core` as publishable workspace packages that support the lesson export and code-highlighting workflows.
+
+### Changed
+
+- Introduced export-aware lesson layouts and components, including `LessonDocumentLayout`, so lesson pages can render with site chrome for the web and document-focused structure for PDF output.
+- Routed site code highlighting through the app-local `src/lib/code-highlighting` boundary backed by `@ravenhill/shiki-core`, keeping lesson code blocks separate from reusable highlighting infrastructure.
+- Expanded local and CI quality gates so `pnpm check` builds and validates reusable packages, regenerates project data, runs Astro checks, verifies generated lesson metadata, and enforces architecture-boundary findings.
+
+### Fixed
+
+- Stabilized PDF export route selection, route ordering, output-path validation, failure reporting, and exportable-entry boundaries with focused tests.
+- Hardened import-specifier classification, package-name extraction, and source-file discovery used by the layer-boundary checker so package imports, type-only imports, and workspace-package paths are classified consistently.
+- Removed the deprecated app-local Shiki compatibility layer after adopting `@ravenhill/shiki-core` and the dedicated code-highlighting boundary.
+
 ## [0.20.0] - 2026-05-08
 
 ### Added
