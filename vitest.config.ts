@@ -27,6 +27,9 @@ export default getViteConfig({
             "@ravenhill/lesson-export-core": fileURLToPath(
                 new URL("./packages/lesson-export-core/src/index.ts", import.meta.url),
             ),
+            "@ravenhill/shiki-core": fileURLToPath(
+                new URL("./packages/shiki-core/src/index.ts", import.meta.url),
+            ),
         },
     },
     test: {

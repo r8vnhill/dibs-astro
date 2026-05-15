@@ -28,14 +28,15 @@ export function resolvePdfSmokeEntry(manifest, preferredRoute = DEFAULT_PDF_SMOK
 
 export function createPdfSmokeWorkspace(projectRoot, runId = createPdfSmokeRunId()) {
     const relativeRoot = path.posix.join("tmp", "pdf-export-smoke", runId);
+    const absoluteRoot = resolveProjectPath(projectRoot, relativeRoot);
 
     return {
         relativeRoot,
         relativeOutDir: path.posix.join(relativeRoot, "pdf"),
         relativeReportPath: path.posix.join(relativeRoot, "report.json"),
-        absoluteRoot: path.resolve(projectRoot, relativeRoot),
-        absoluteOutDir: path.resolve(projectRoot, relativeRoot, "pdf"),
-        absoluteReportPath: path.resolve(projectRoot, relativeRoot, "report.json"),
+        absoluteRoot,
+        absoluteOutDir: resolveProjectPath(absoluteRoot, "pdf"),
+        absoluteReportPath: resolveProjectPath(absoluteRoot, "report.json"),
     };
 }
 
@@ -106,4 +107,16 @@ export async function assertPreviewServerStopped(port, timeoutMs = 2000) {
 
 function delay(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function resolveProjectPath(root, ...segments) {
+    if (isWindowsAbsolutePath(root)) {
+        return path.win32.resolve(root, ...segments);
+    }
+
+    return path.resolve(root, ...segments);
+}
+
+function isWindowsAbsolutePath(value) {
+    return /^[a-z]:[\\/]/iu.test(value);
 }
