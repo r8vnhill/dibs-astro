@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 
 import { getViteConfig } from "astro/config";
+import { fileURLToPath } from "node:url";
 
 // Ensure icon generation is skipped when Vitest loads Astro/Vite config in Node.
 process.env.SKIP_ICON_GENERATION ??= "true";
@@ -21,6 +22,13 @@ process.env.SKIP_ICON_GENERATION ??= "true";
  *   disabling CSS speeds up test runs and avoids unrelated transform errors in jsdom.
  */
 export default getViteConfig({
+    resolve: {
+        alias: {
+            "@ravenhill/lesson-export-core": fileURLToPath(
+                new URL("./packages/lesson-export-core/src/index.ts", import.meta.url),
+            ),
+        },
+    },
     test: {
         // Run project unit tests under src, scripts, and workspace packages.
         include: [

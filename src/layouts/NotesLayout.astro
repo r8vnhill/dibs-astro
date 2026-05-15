@@ -173,8 +173,10 @@ const autoNav = await resolveAutoNav(pathname, courseNavigationTree);
 
 // Allow manual override from frontmatter (if provided). Manual previous arrays intentionally
 // replace the auto-resolved previous lesson instead of merging with it.
-const effectivePrevious = previous ?? autoNav.previous ?? undefined;
-const effectiveNext = next ?? autoNav.next ?? undefined;
+const hasManualNavigation =
+    Object.hasOwn(Astro.props, "previous") || Object.hasOwn(Astro.props, "next");
+const effectivePrevious = hasManualNavigation ? previous : autoNav.previous ?? undefined;
+const effectiveNext = hasManualNavigation ? next : autoNav.next ?? undefined;
 
 // Normalize hrefs for consistency (e.g. ensure trailing slashes). Previous links are normalized as
 // a list because the template renders them as a left-side stack when more than one is provided.
@@ -223,7 +225,7 @@ const { normalizedNext } = normalizeNavigation(
             }
 
             {
-                (normalizedNext || normalizedPreviousList.length > 0) && (
+                (hasManualNavigation || normalizedNext || normalizedPreviousList.length > 0) && (
                     <nav
                         aria-label="Siguiente o anterior lección" data-export-hidden="true"
                         class:list={[

@@ -1,172 +1,91 @@
-#!/usr/bin/env node
+import { execFile } from "node:child_process";
+import { unlink } from "node:fs/promises";
+import { resolve } from "node:path";
+import { stdin } from "node:process";
+import { promisify } from "node:util";
 
-/**
- * Validates that the package tarball contains only intended distributable files.
- *
- * This script ensures:
- * - Required files are included: dist/index.js, dist/index.d.ts, README.md, package.json
- * - Source files are excluded: src/**, tests/**, scripts/**, vitest.config.*, tsup.config.*
- * - Package metadata is correct: name, version, type: "module", exports, main, types, files
- */
+const execFileAsync = promisify(execFile);
 
-import { execSync } from "child_process";
-import { readFileSync } from "fs";
-import { join, resolve } from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+const expectedFiles = new Set([
+    "package/README.md",
+    "package/dist/index.d.ts",
+    "package/dist/index.js",
+    "package/dist/index.js.map",
+    "package/package.json",
+]);
 
-const scriptDir = dirname(fileURLToPath(import.meta.url));
-const packageRoot = resolve(scriptDir, "..");
-const packageJsonPath = join(packageRoot, "package.json");
+const blockedPatterns = [
+    /^package\/AGENTS\.md$/u,
+    /^package\/src\//u,
+    /^package\/tests?\//u,
+    /^package\/scripts\//u,
+    /^package\/tsup\.config\.ts$/u,
+    /^package\/.*\.test\./u,
+    /^package\/vitest\.config\./u,
+    /^package\/.*\.tgz$/u,
+];
 
-function normalizePath(filePath) {
-    // Convert Windows backslashes to forward slashes for consistent comparison
-    return filePath.replace(/\\/g, "/");
+const input = process.argv.includes("--pack")
+    ? await packPackage()
+    : await stdinToString();
+const packOutput = JSON.parse(input);
+const packEntries = Array.isArray(packOutput) ? packOutput : [packOutput];
+const files = new Set(
+    packEntries.flatMap((entry) => entry.files.map((file) => `package/${file.path}`)),
+);
+
+const missingFiles = [...expectedFiles].filter((file) => !files.has(file));
+const extraFiles = [...files].filter((file) => !expectedFiles.has(file));
+const blockedFiles = [...files].filter((file) => blockedPatterns.some((pattern) => pattern.test(file)));
+
+if (missingFiles.length > 0 || extraFiles.length > 0 || blockedFiles.length > 0) {
+    console.error(formatPackIssue("Missing expected package files", missingFiles));
+    console.error(formatPackIssue("Unexpected package files", extraFiles));
+    console.error(formatPackIssue("Blocked package files", blockedFiles));
+    process.exit(1);
 }
 
-try {
-    // Parse package.json
-    const packageJsonContent = readFileSync(packageJsonPath, "utf8");
-    const pkgMetadata = JSON.parse(packageJsonContent);
+await removePackedTarballs(packEntries);
 
-    console.log(`📦 Validating pack from package root: ${packageRoot}`);
-    console.log(`   Package: ${pkgMetadata.name}@${pkgMetadata.version}\n`);
-
-    // Run pnpm pack --dry-run --json to get structured output
-    const output = execSync("pnpm pack --dry-run --json", {
-        cwd: packageRoot,
-        encoding: "utf8",
+async function packPackage() {
+    const executable = process.platform === "win32" ? "cmd.exe" : "npm";
+    const args = process.platform === "win32"
+        ? ["/d", "/c", "npm.cmd", "pack", "--json"]
+        : ["pack", "--json"];
+    const { stdout } = await execFileAsync(executable, args, {
+        cwd: resolve(import.meta.dirname, ".."),
     });
+    return stdout;
+}
 
-    let packedFiles = [];
-    try {
-        const jsonOutput = JSON.parse(output);
-        packedFiles = Array.isArray(jsonOutput) ? jsonOutput : [jsonOutput];
-        if (
-            packedFiles.length > 0 &&
-            packedFiles[0].filename
-        ) {
-            // Extract the files array from the pack result
-            packedFiles = packedFiles[0].files || [];
+async function removePackedTarballs(entries) {
+    await Promise.all(entries.map(async (entry) => {
+        if (typeof entry.filename !== "string" || entry.filename.length === 0) {
+            return;
         }
-    } catch {
-        // Fallback if JSON parsing fails: try text parsing
-        packedFiles = output
-            .split("\n")
-            .filter(line => line.trim() && !line.includes("Building"))
-            .map(line => ({
-                path: line.trim(),
-            }));
-    }
 
-    const packedFilePaths = packedFiles.map(f => normalizePath(f.path || f));
+        await unlink(resolve(import.meta.dirname, "..", entry.filename)).catch((error) => {
+            if (error?.code !== "ENOENT") {
+                throw error;
+            }
+        });
+    }));
+}
 
-    // Define expected and forbidden files
-    const requiredFiles = [
-        "package.json",
-        "README.md",
-        "dist/index.js",
-        "dist/index.d.ts",
-    ];
+function stdinToString() {
+    return new Promise((resolve, reject) => {
+        let data = "";
+        stdin.setEncoding("utf8");
+        stdin.on("data", (chunk) => {
+            data += chunk;
+        });
+        stdin.on("end", () => resolve(data));
+        stdin.on("error", reject);
+    });
+}
 
-    const forbiddenPatterns = [
-        /^src\//,
-        /^tests?\//,
-        /^scripts\//,
-        /^vitest\.config\./,
-        /^tsup\.config\./,
-        /^\.git/,
-        /^node_modules\//,
-        /\.tgz$/,
-    ];
-
-    let hasErrors = false;
-
-    // Check required files
-    console.log("Checking required files:");
-    for (const requiredFile of requiredFiles) {
-        const found = packedFilePaths.some(p => p.endsWith(requiredFile) || p === requiredFile);
-        if (found) {
-            console.log(`  ✅ ${requiredFile}`);
-        } else {
-            console.error(`  ❌ Missing: ${requiredFile}`);
-            hasErrors = true;
-        }
-    }
-
-    // Check for forbidden files
-    console.log("\nChecking for excluded files:");
-    for (const filePath of packedFilePaths) {
-        const isForbidden = forbiddenPatterns.some(pattern => pattern.test(filePath));
-        if (isForbidden) {
-            console.error(`  ❌ Should not be included: ${filePath}`);
-            hasErrors = true;
-        }
-    }
-
-    // Validate package metadata
-    console.log("\nValidating package metadata:");
-    const metadataChecks = [
-        {
-            name: "name",
-            condition: pkgMetadata.name === "@ravenhill/shiki-core",
-            value: pkgMetadata.name,
-        },
-        {
-            name: "version",
-            condition: pkgMetadata.version && pkgMetadata.version.match(/^\d+\.\d+\.\d+/),
-            value: pkgMetadata.version,
-        },
-        {
-            name: 'type: "module"',
-            condition: pkgMetadata.type === "module",
-            value: pkgMetadata.type,
-        },
-        {
-            name: "main",
-            condition: pkgMetadata.main === "./dist/index.js",
-            value: pkgMetadata.main,
-        },
-        {
-            name: "types",
-            condition: pkgMetadata.types === "./dist/index.d.ts",
-            value: pkgMetadata.types,
-        },
-        {
-            name: "exports (root only)",
-            condition:
-                pkgMetadata.exports &&
-                pkgMetadata.exports["."] &&
-                !Object.keys(pkgMetadata.exports).some(key => key !== "."),
-            value: Object.keys(pkgMetadata.exports || {}),
-        },
-        {
-            name: "files",
-            condition:
-                Array.isArray(pkgMetadata.files) &&
-                pkgMetadata.files.includes("dist") &&
-                pkgMetadata.files.includes("README.md"),
-            value: pkgMetadata.files,
-        },
-    ];
-
-    for (const check of metadataChecks) {
-        if (check.condition) {
-            console.log(`  ✅ ${check.name}: ${JSON.stringify(check.value)}`);
-        } else {
-            console.error(`  ❌ ${check.name}: ${JSON.stringify(check.value)}`);
-            hasErrors = true;
-        }
-    }
-
-    if (!hasErrors) {
-        console.log("\n✅ Pack validation passed");
-        process.exit(0);
-    } else {
-        console.error("\n❌ Pack validation failed");
-        process.exit(1);
-    }
-} catch (error) {
-    console.error("❌ Pack check failed:", error instanceof Error ? error.message : error);
-    process.exit(1);
+function formatPackIssue(title, files) {
+    return files.length > 0
+        ? `${title}:\n${files.map((file) => `- ${file}`).join("\n")}`
+        : `${title}: none`;
 }

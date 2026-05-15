@@ -23,8 +23,8 @@
         "typecheck": "tsc --noEmit",
         "test": "pnpm exec vitest run --config vitest.config.ts",
         "lint": "publint --strict",
-        "pack:check": "node scripts/assert-pack-files.mjs",
-        "pack:dry-run": "pnpm pack --dry-run",
+        "pack:check": "node scripts/assert-pack-files.mjs --pack",
+        "pack:dry-run": "npm pack --dry-run",
         "consumer:check": "node scripts/validate-packed-consumer.mjs",
         "check": "pnpm run build && pnpm run typecheck && pnpm run test && pnpm run lint && pnpm run pack:check && pnpm run consumer:check"
     },
