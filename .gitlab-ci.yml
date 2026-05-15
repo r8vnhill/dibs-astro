@@ -85,6 +85,7 @@ pdf_export_smoke:
         - docker
     needs:
         - job: deps
+          optional: true
     allow_failure: true
     rules:
         - if: '$EXPORT_PDF_SMOKE == "1"'
