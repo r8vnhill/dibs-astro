@@ -53,6 +53,8 @@ const CITATION_LANGUAGE_NAME = "name=\"citation_language\"";
 const OG_LOCALE_ES = "<meta property=\"og:locale\" content=\"es_CL\">";
 const OG_LOCALE_EN = "<meta property=\"og:locale\" content=\"en_GB\">";
 const SOCIAL_IMAGE_PATH = "/DIBS.logo.png";
+const FAVICON_ICO_PATH = "/favicon.ico";
+const FAVICON_PNG_PATH = "/DIBS.logo.png";
 const DC_TYPE_WEBPAGE = "<meta name=\"DC.type\" content=\"Web Page\">";
 const DC_TYPE_JOURNAL_ARTICLE = "<meta name=\"DC.type\" content=\"Journal Article\">";
 
@@ -192,6 +194,21 @@ describe.concurrent("Head.astro render", () => {
          * No JSON-LD for website pages.
          */
         expect(extractJsonLd(html)).toBeUndefined();
+    });
+
+    test("renders browser icon links with conventional ico and png fallbacks", async () => {
+        const html = await renderHead({
+            title: WEBSITE_TITLE,
+            description: WEBSITE_DESCRIPTION,
+            url: WEBSITE_URL,
+        });
+
+        expect(html).toContain(
+            `<link rel="icon" href="${FAVICON_ICO_PATH}" type="image/x-icon">`,
+        );
+        expect(html).toContain(
+            `<link rel="icon" href="${FAVICON_PNG_PATH}" type="image/png">`,
+        );
     });
 
     /**
