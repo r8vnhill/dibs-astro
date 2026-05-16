@@ -20,6 +20,21 @@ import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 describe("LessonCatalogAdapter", () => {
     describe("findTrailByHref with grouped sections", () => {
+        it("returns the authored nested catalog trail without the notes root by default", async () => {
+            const testAdapter = adapterForAuthoredNestedTrail();
+            const trail = await testAdapter.findTrailByHref(
+                "/notes/scripting/tasks-as-abstractions/",
+            );
+
+            expect(trail).toEqual([
+                { title: "Build Systems", href: "/notes/scripting/" },
+                {
+                    title: "Tasks as Abstractions",
+                    href: "/notes/scripting/tasks-as-abstractions/",
+                },
+            ]);
+        });
+
         it("returns a trail for a nested lesson with ancestors", async () => {
             const testAdapter = adapterForGroupedSections();
             const trail = await testAdapter.findTrailByHref("/notes/section-a/lesson-a1/");
@@ -223,6 +238,32 @@ const wrapInNotesRoot = (
 ];
 
 /**
+ * Builds a nested catalog whose authored titles do not mirror the route segments.
+ *
+ * This fixture locks the basic `findTrailByHref(...)` contract: the returned trail must come from the authored catalog
+ * tree, preserving titles and hrefs, instead of deriving labels from URL segments.
+ *
+ * @returns A nested catalog rooted under `Notes`.
+ */
+const makeAuthoredNestedTrailFixture = (): readonly DomainLesson[] =>
+    wrapInNotesRoot([
+        lessonNode({
+            id: "scripting-group",
+            title: "Build Systems",
+            kind: "group",
+            href: "/notes/scripting/",
+            children: [
+                lessonNode({
+                    id: "task-abstractions",
+                    title: "Tasks as Abstractions",
+                    kind: "link",
+                    href: "/notes/scripting/tasks-as-abstractions/",
+                }),
+            ],
+        }),
+    ]);
+
+/**
  * Builds a catalog with two grouped sections.
  *
  * The fixture models two important ancestor behaviors:
@@ -332,6 +373,14 @@ const makeTopLevelLessonFixture = (options: {
  */
 const adapterForGroupedSections = (): LessonCatalogAdapter =>
     new LessonCatalogAdapter(makeGroupedSectionsFixture());
+
+/**
+ * Creates an adapter backed by the authored nested trail fixture.
+ *
+ * @returns A {@link LessonCatalogAdapter} configured for the basic authored-trail contract.
+ */
+const adapterForAuthoredNestedTrail = (): LessonCatalogAdapter =>
+    new LessonCatalogAdapter(makeAuthoredNestedTrailFixture());
 
 /**
  * Creates an adapter backed by the deep-nesting fixture.
