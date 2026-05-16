@@ -19,7 +19,7 @@ Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the l
 
 ## TDD Cycles
 
-1. **Catalog trail query**
+1. ~~**Catalog trail query**~~
    - Add failing unit tests in the catalog adapter for:
      - a middle lesson returning ordered ancestors plus current lesson
      - a top-level lesson returning only `Notes` + current lesson after presentation mapping

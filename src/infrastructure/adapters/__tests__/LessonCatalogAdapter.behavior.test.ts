@@ -7,7 +7,7 @@
  * - ancestor inclusion for nested lessons;
  * - omission of the synthetic `Notes` root by default;
  * - optional inclusion of that root when requested;
- * - href normalization for equivalent path variants; and
+ * - href normalization for supported path variants; and
  * - rejection of blank href inputs.
  *
  * The fixtures are intentionally small and explicit. Each one models a different catalog shape so the expected trail
@@ -19,6 +19,63 @@ import type { Lesson as DomainLesson } from "~/data/course-structure";
 import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 describe("LessonCatalogAdapter", () => {
+    describe("findTrailByHref with normalized href variants", () => {
+        const canonicalHref = "/notes/scripting/tasks-as-abstractions/";
+        const expectedTrail = [
+            { title: "Build Systems", href: "/notes/scripting/" },
+            {
+                title: "Tasks as Abstractions",
+                href: "/notes/scripting/tasks-as-abstractions/",
+            },
+        ];
+
+        it.each(normalizedHrefVariants(canonicalHref))(
+            "resolves %s to the authored lesson trail",
+            async (href) => {
+                const testAdapter = adapterForAuthoredNestedTrail();
+                const trail = await testAdapter.findTrailByHref(href);
+
+                expect(trail).toEqual(expectedTrail);
+            },
+        );
+    });
+
+    describe("findTrailByHref with includeNotesRoot", () => {
+        const href = "/notes/scripting/tasks-as-abstractions/";
+        const authoredTrail = [
+            { title: "Build Systems", href: "/notes/scripting/" },
+            {
+                title: "Tasks as Abstractions",
+                href: "/notes/scripting/tasks-as-abstractions/",
+            },
+        ];
+        const trailWithRoot = [
+            { title: "Notes", href: "/notes/" },
+            ...authoredTrail,
+        ];
+
+        it("excludes the synthetic root when options are omitted", async () => {
+            const testAdapter = adapterForAuthoredNestedTrail();
+            const trail = await testAdapter.findTrailByHref(href);
+
+            expect(trail).toEqual(authoredTrail);
+        });
+
+        it("excludes the synthetic root when includeNotesRoot is false", async () => {
+            const testAdapter = adapterForAuthoredNestedTrail();
+            const trail = await testAdapter.findTrailByHref(href, { includeNotesRoot: false });
+
+            expect(trail).toEqual(authoredTrail);
+        });
+
+        it("prepends the synthetic root when includeNotesRoot is true", async () => {
+            const testAdapter = adapterForAuthoredNestedTrail();
+            const trail = await testAdapter.findTrailByHref(href, { includeNotesRoot: true });
+
+            expect(trail).toEqual(trailWithRoot);
+        });
+    });
+
     describe("findTrailByHref with grouped sections", () => {
         it("returns the authored nested catalog trail without the notes root by default", async () => {
             const testAdapter = adapterForAuthoredNestedTrail();
@@ -77,6 +134,34 @@ describe("LessonCatalogAdapter", () => {
         });
     });
 
+    describe("findTrailByHref with linkable and non-linkable groups", () => {
+        it("preserves authored group hrefs and plain intermediate group labels", async () => {
+            const testAdapter = adapterForLinkableAndNonLinkableGroups();
+            const trail = await testAdapter.findTrailByHref(
+                "/notes/scripting/tasks-as-abstractions/",
+            );
+
+            expect(trail).toEqual([
+                { title: "Build Systems", href: "/notes/scripting/" },
+                { title: "Task Design" },
+                {
+                    title: "Tasks as Abstractions",
+                    href: "/notes/scripting/tasks-as-abstractions/",
+                },
+            ]);
+        });
+
+        it("resolves lessons nested below non-linkable groups", async () => {
+            const testAdapter = adapterForLinkableAndNonLinkableGroups();
+            const trail = await testAdapter.findTrailByHref("/notes/catalog-design/");
+
+            expect(trail).toEqual([
+                { title: "Library Design" },
+                { title: "Catalog Design", href: "/notes/catalog-design/" },
+            ]);
+        });
+    });
+
     describe("findTrailByHref with deep nesting", () => {
         it("returns the exact trail for a three-level nested lesson", async () => {
             const testAdapter = adapterForDeepNesting();
@@ -125,7 +210,7 @@ describe("LessonCatalogAdapter", () => {
             const canonicalHref = "/notes/unit-1/section-1a/lesson-1a1/";
             const canonicalTrail = await testAdapter.findTrailByHref(canonicalHref);
 
-            for (const variant of noisyHrefVariants(canonicalHref)) {
+            for (const variant of normalizedHrefVariants(canonicalHref)) {
                 const trail = await testAdapter.findTrailByHref(variant);
                 expect(trail).toEqual(canonicalTrail);
             }
@@ -305,6 +390,52 @@ const makeGroupedSectionsFixture = (): readonly DomainLesson[] =>
     ]);
 
 /**
+ * Builds a catalog that mixes linkable and non-linkable groups.
+ *
+ * The fixture keeps group titles intentionally different from URL segments so the trail contract depends on authored
+ * catalog data, not route parsing.
+ *
+ * @returns A grouped catalog rooted under `Notes`.
+ */
+const makeLinkableAndNonLinkableGroupsFixture = (): readonly DomainLesson[] =>
+    wrapInNotesRoot([
+        lessonNode({
+            id: "scripting-group",
+            title: "Build Systems",
+            kind: "group",
+            href: "/notes/scripting/",
+            children: [
+                lessonNode({
+                    id: "task-design-group",
+                    title: "Task Design",
+                    kind: "group",
+                    children: [
+                        lessonNode({
+                            id: "task-abstractions",
+                            title: "Tasks as Abstractions",
+                            kind: "link",
+                            href: "/notes/scripting/tasks-as-abstractions/",
+                        }),
+                    ],
+                }),
+            ],
+        }),
+        lessonNode({
+            id: "library-design-group",
+            title: "Library Design",
+            kind: "group",
+            children: [
+                lessonNode({
+                    id: "catalog-design",
+                    title: "Catalog Design",
+                    kind: "link",
+                    href: "/notes/catalog-design/",
+                }),
+            ],
+        }),
+    ]);
+
+/**
  * Builds a three-level hierarchy for trail traversal tests.
  *
  * This fixture is used to verify:
@@ -383,6 +514,14 @@ const adapterForAuthoredNestedTrail = (): LessonCatalogAdapter =>
     new LessonCatalogAdapter(makeAuthoredNestedTrailFixture());
 
 /**
+ * Creates an adapter backed by the linkable/non-linkable group fixture.
+ *
+ * @returns A {@link LessonCatalogAdapter} configured for ancestor group linkability scenarios.
+ */
+const adapterForLinkableAndNonLinkableGroups = (): LessonCatalogAdapter =>
+    new LessonCatalogAdapter(makeLinkableAndNonLinkableGroupsFixture());
+
+/**
  * Creates an adapter backed by the deep-nesting fixture.
  *
  * @returns A {@link LessonCatalogAdapter} configured for nested traversal, root inclusion, and href-normalization
@@ -418,9 +557,12 @@ const adapterForTopLevelLesson = (options: {
  * @param href Canonical lesson href.
  * @returns Equivalent href variants expected to resolve to the same trail.
  */
-const noisyHrefVariants = (href: string): readonly string[] => [
-    `${href}?section=intro&lang=es`,
-    `${href}#section`,
+const normalizedHrefVariants = (href: string): readonly string[] => [
+    href,
+    href.replace(/\/$/, ""),
+    href.replace(/^\//, ""),
     href.replace(/\//g, "//"),
     `  ${href}  `,
+    `${href}?section=intro`,
+    `${href}#intro`,
 ];

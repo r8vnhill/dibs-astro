@@ -1,4 +1,4 @@
-# [PLAN] Catalog Trail Query
+# [DONE] Catalog Trail Query
 
 ## Summary
 
@@ -50,7 +50,7 @@ That distinction is the main regression this slice should lock down.
 - Replacing the compatibility flag with a new breadcrumb API.
 - Deriving trails from raw URL segments.
 
-## TDD Cycle 1: Lock the Basic Contract
+## ~~TDD Cycle 1: Lock the Basic Contract~~
 
 Status: implemented and verified in `tdd_cycle_1_lock_the_authored_nested_trail_contract.md`.
 
@@ -92,7 +92,9 @@ carrying ancestry state, not by splitting the requested `href`.
 - The current lesson is last.
 - No URL-segment-derived labels appear in the trail.
 
-## TDD Cycle 2: Cover Top-Level and Missing Routes
+## ~~TDD Cycle 2: Cover Top-Level and Missing Routes~~
+
+Status: implemented and verified in `tdd_cycle_2_lock_top_level_and_missing_route_trails.md`.
 
 ### Red
 
@@ -111,13 +113,22 @@ slice.
 
 Adjust lookup behavior only if the current implementation fails one of these contract cases.
 
+### Verification
+
+- Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
+- Result: passed without production code changes.
+- Missing-route contract: returns `[]`.
+- Top-level trail contract: returns only the authored lesson by default.
+
 ### Acceptance criteria
 
 - Top-level lessons do not gain fake ancestors from URL segments.
 - Missing routes fail cleanly and predictably.
 - Existing consumers are not forced to handle a new return type.
 
-## TDD Cycle 3: Groups With and Without Authored `href`
+## ~~TDD Cycle 3: Groups With and Without Authored `href`~~
+
+Status: implemented and verified in `tdd_cycle_3_lock_linkable_and_non_linkable_group_trails.md`.
 
 ### Red
 
@@ -137,13 +148,22 @@ are labels only.
 
 Make the trail item construction preserve authored `href` only when available. Avoid fabricating group links.
 
+### Verification
+
+- Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
+- Result: 15 tests passed without production code changes.
+- Group linkability contract: authored group hrefs are preserved, groups without hrefs remain plain trail labels, and
+  lessons below non-linkable groups resolve normally.
+
 ### Acceptance criteria
 
 - Authored group links are preserved.
 - Non-authored groups remain in the trail but do not receive synthetic `href`s.
 - Current lesson lookup is not blocked by non-linkable ancestors.
 
-## TDD Cycle 4: Normalize `href` Variants
+## ~~TDD Cycle 4: Normalize `href` Variants~~
+
+Status: implemented and verified in `src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`.
 
 ### Red
 
@@ -166,13 +186,23 @@ Assert all variants produce the same normalized trail.
 
 Route every lookup through the existing href-normalization path before matching catalog entries.
 
+### Verification
+
+- Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
+- Result: passed.
+- Production code changes: none.
+- Covered variants: canonical href, missing trailing slash, missing leading slash, repeated slashes, surrounding whitespace, query string, and fragment.
+- Normalization authority: `LessonHref.create(...)` remains the single source of truth.
+
 ### Acceptance criteria
 
 - Equivalent href variants resolve to the same lesson.
 - The returned trail is stable regardless of input formatting.
 - Normalization does not turn this into URL-segment breadcrumb generation.
 
-## TDD Cycle 5: Preserve `includeNotesRoot`
+## ~~TDD Cycle 5: Preserve `includeNotesRoot`~~
+
+Status: implemented and verified in `tdd_cycle_5_preserve_includenotesroot_compatibility.md`.
 
 ### Red
 
@@ -190,6 +220,14 @@ Assert the root item is prepended and does not replace authored ancestry.
 
 Keep root handling as a thin final decoration step around the ancestry trail. Do not mix root rendering concerns into
 the recursive catalog walk.
+
+### Verification
+
+- Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
+- Result: 25 tests passed.
+- Production code changes: none.
+- Compatibility contract: omitted options and `{ includeNotesRoot: false }` exclude `Notes`; `{ includeNotesRoot: true }`
+  prepends `{ title: "Notes", href: "/notes/" }` before authored ancestry.
 
 ### Acceptance criteria
 
