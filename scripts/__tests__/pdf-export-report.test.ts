@@ -64,6 +64,52 @@ describe("given PDF export report entries", () => {
         });
     });
 
+    test("then a report preserves the current top-level shape, summary, and entry ordering", () => {
+        const exportedEntry = {
+            route: "/notes/a/",
+            exportRoute: "/exports/pdf/notes/a/",
+            url: "https://example.test/a/",
+            outputPath: "dist/a.pdf",
+            status: "exported",
+            title: "A",
+            findings: [],
+        };
+        const failedEntry = {
+            route: "/notes/b/",
+            exportRoute: "/exports/pdf/notes/b/",
+            url: "https://example.test/b/",
+            outputPath: "dist/b.pdf",
+            status: "failed",
+            title: "B",
+            findings: [{ code: "client-only", message: "Fallback content", severity: "warning" }],
+            error: {
+                kind: "pdf-generation-failed",
+                message: "Preview returned an invalid response.",
+            },
+        };
+        const report = createExportReport({
+            generatedAt: "2026-05-11T00:00:00.000Z",
+            baseUrl: "http://127.0.0.1:4321/",
+            outDir: "dist/exports/pdf",
+            selection: { kind: "route", value: "/notes/a/" },
+            entries: [exportedEntry, failedEntry],
+        });
+
+        expect(report).toEqual({
+            generatedAt: "2026-05-11T00:00:00.000Z",
+            baseUrl: "http://127.0.0.1:4321/",
+            outDir: "dist/exports/pdf",
+            selection: { kind: "route", value: "/notes/a/" },
+            summary: {
+                selected: 2,
+                exported: 1,
+                failed: 1,
+                findings: 1,
+            },
+            entries: [exportedEntry, failedEntry],
+        });
+    });
+
     test("then a report includes the current top-level shape and computed summary", () => {
         const report = createExportReport({
             generatedAt: "2026-05-11T00:00:00.000Z",
@@ -162,6 +208,12 @@ describe("given PDF export report entries", () => {
         expect(hasFatalExportFindings(reportWithFindings([{ code: "unknown" }, {}]), {
             failOn: ["client-only-island"],
         })).toBe(false);
+    });
+
+    test("then targeted finding policy triggers when any matching finding is present", () => {
+        expect(hasFatalExportFindings(reportWithFindings([{ kind: "hidden-content" }, { code: "client-only" }]), {
+            failOn: ["client-only-island"],
+        })).toBe(true);
     });
 
     test("then targeted finding policy does not mutate the report", () => {

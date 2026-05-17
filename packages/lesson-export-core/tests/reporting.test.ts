@@ -29,6 +29,18 @@ describe("given export report entries", () => {
         });
     });
 
+    test("then empty report summaries keep the full zero-value contract", () => {
+        expect(buildExportSummary([])).toEqual({
+            selected: 0,
+            exported: 0,
+            failed: 0,
+            skipped: 0,
+            findings: 0,
+            findingsByKind: {},
+            failuresByKind: {},
+        });
+    });
+
     test("then findings are grouped by normalised kind", () => {
         expect(countFindingsByKind([
             {
@@ -69,23 +81,24 @@ describe("given export report entries", () => {
         });
     });
 
-    test("then a mixed report summary contains additive Phase 8 counts", () => {
-        const entries: readonly LessonExportReportEntryLike[] = [
-            { status: "exported" },
-            {
+    test("then a mixed report summary contains additive counts without mutating entries", () => {
+        const entries: readonly LessonExportReportEntryLike[] = Object.freeze([
+            Object.freeze({ status: "exported" }),
+            Object.freeze({
                 status: "exported",
-                findings: [{ kind: "hidden-content" }],
-            },
-            {
+                findings: Object.freeze([Object.freeze({ kind: "hidden-content" })]),
+            }),
+            Object.freeze({
                 status: "failed",
-                error: { kind: "pdf-generation-failed" },
-                findings: [{ kind: "unknown" }],
-            },
-            {
+                error: Object.freeze({ kind: "pdf-generation-failed" }),
+                findings: Object.freeze([Object.freeze({ kind: "unknown" })]),
+            }),
+            Object.freeze({
                 status: "skipped",
-                findings: [{ kind: "client-only" }],
-            },
-        ];
+                findings: Object.freeze([Object.freeze({ kind: "client-only" })]),
+            }),
+        ]);
+        const snapshot = JSON.stringify(entries);
 
         expect(buildExportSummary(entries)).toEqual({
             selected: 4,
@@ -101,21 +114,6 @@ describe("given export report entries", () => {
                 "pdf-generation-failed": 1,
             },
         });
-        expect(entries).toEqual([
-            { status: "exported" },
-            {
-                status: "exported",
-                findings: [{ kind: "hidden-content" }],
-            },
-            {
-                status: "failed",
-                error: { kind: "pdf-generation-failed" },
-                findings: [{ kind: "unknown" }],
-            },
-            {
-                status: "skipped",
-                findings: [{ kind: "client-only" }],
-            },
-        ]);
+        expect(JSON.stringify(entries)).toBe(snapshot);
     });
 });
