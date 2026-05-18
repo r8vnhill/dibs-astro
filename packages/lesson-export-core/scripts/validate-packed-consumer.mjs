@@ -190,9 +190,14 @@ function quoteShellArgument(value) {
 const runtimeConsumerSource = String.raw`import {
     LESSON_EXPORT_CORE_PACKAGE_NAME,
     LESSON_EXPORT_CORE_VERSION,
+    buildExportSummary,
+    countEntriesByStatus,
+    countFailuresByKind,
+    countFindingsByKind,
     deriveExportRoute,
     derivePdfOutputPath,
     filterManifest,
+    hasFatalExportFindings,
     normalizeLessonRoute,
     validateManifest,
 } from "@ravenhill/lesson-export-core";
@@ -205,16 +210,16 @@ if (!/^\d+\.\d+\.\d+$/u.test(LESSON_EXPORT_CORE_VERSION)) {
     throw new Error("Unexpected package version: " + LESSON_EXPORT_CORE_VERSION);
 }
 
-const route = normalizeLessonRoute("notes/software-libraries/artifacts-taxonomy");
-if (route !== "/notes/software-libraries/artifacts-taxonomy/") {
+const route = normalizeLessonRoute("notes/kousei-arima");
+if (route !== "/notes/kousei-arima/") {
     throw new Error("normalizeLessonRoute returned an unexpected route.");
 }
 
-if (deriveExportRoute(route) !== "/exports/pdf/notes/software-libraries/artifacts-taxonomy/") {
+if (deriveExportRoute(route) !== "/exports/pdf/notes/kousei-arima/") {
     throw new Error("deriveExportRoute returned an unexpected route.");
 }
 
-if (derivePdfOutputPath(route) !== "notes/software-libraries/artifacts-taxonomy.pdf") {
+if (derivePdfOutputPath(route) !== "notes/kousei-arima/index.pdf") {
     throw new Error("derivePdfOutputPath returned an unexpected path.");
 }
 
@@ -223,8 +228,8 @@ const manifest = {
     entries: [{
         route,
         exportRoute: deriveExportRoute(route),
-        title: "Artifacts taxonomy",
-        sourceFile: "src/pages/notes/software-libraries/artifacts-taxonomy/index.astro",
+        title: "Kousei Arima",
+        sourceFile: "src/pages/notes/kousei-arima/index.astro",
         outputPath: derivePdfOutputPath(route),
     }],
 };
@@ -236,12 +241,62 @@ if (filterManifest(manifest, { kind: "all" }).entries.length !== 1) {
 if (!validateManifest(manifest).valid) {
     throw new Error("validateManifest returned an unexpected finding.");
 }
+
+const reportEntries = [
+    {
+        status: "exported",
+        findings: [{ kind: "client-only-island" }],
+    },
+    {
+        status: "failed",
+        findings: [{ code: "hidden-content" }],
+        error: { kind: "pdf-generation-failed" },
+    },
+    {
+        status: "skipped",
+        findings: [],
+    },
+];
+
+const statusCounts = countEntriesByStatus(reportEntries);
+if (statusCounts.exported !== 1 || statusCounts.failed !== 1 || statusCounts.skipped !== 1) {
+    throw new Error("countEntriesByStatus returned unexpected counts.");
+}
+
+const findingsByKind = countFindingsByKind(reportEntries);
+if (findingsByKind["client-only-island"] !== 1 || findingsByKind["hidden-content"] !== 1) {
+    throw new Error("countFindingsByKind returned unexpected counts.");
+}
+
+const failuresByKind = countFailuresByKind(reportEntries);
+if (failuresByKind["pdf-generation-failed"] !== 1) {
+    throw new Error("countFailuresByKind returned unexpected counts.");
+}
+
+const summary = buildExportSummary(reportEntries);
+if (summary.selected !== 3 || summary.findings !== 2 || summary.failed !== 1) {
+    throw new Error("buildExportSummary returned an unexpected summary.");
+}
+
+if (!hasFatalExportFindings(reportEntries, ["client-only"])) {
+    throw new Error("hasFatalExportFindings did not normalize a legacy fatal policy kind.");
+}
+
+if (hasFatalExportFindings(reportEntries, ["unresolved-todo"])) {
+    throw new Error("hasFatalExportFindings matched an absent fatal policy kind.");
+}
 `;
 
 const subpathRuntimeConsumerSource = String.raw`const blockedSubpaths = [
+    "@ravenhill/lesson-export-core/findings",
+    "@ravenhill/lesson-export-core/reporting",
     "@ravenhill/lesson-export-core/routes",
+    "@ravenhill/lesson-export-core/src/findings",
     "@ravenhill/lesson-export-core/src/index.js",
+    "@ravenhill/lesson-export-core/src/reporting",
+    "@ravenhill/lesson-export-core/dist/findings",
     "@ravenhill/lesson-export-core/dist/index.js",
+    "@ravenhill/lesson-export-core/dist/reporting",
 ];
 
 for (const specifier of blockedSubpaths) {
@@ -260,19 +315,27 @@ for (const specifier of blockedSubpaths) {
 `;
 
 const typeConsumerSource = String.raw`import {
+    buildExportSummary,
+    countEntriesByStatus,
+    countFailuresByKind,
+    countFindingsByKind,
     deriveExportRoute,
     derivePdfOutputPath,
+    hasFatalExportFindings,
     normalizeLessonRoute,
     type LessonExportEntry,
+    type LessonExportFailurePolicy,
     type LessonExportManifest,
+    type LessonExportReportEntryLike,
+    type LessonExportSummary,
 } from "@ravenhill/lesson-export-core";
 
-const route = normalizeLessonRoute("notes/foo");
+const route = normalizeLessonRoute("notes/kousei-arima");
 const entry: LessonExportEntry = {
     route,
     exportRoute: deriveExportRoute(route),
-    title: "Foo",
-    sourceFile: "src/pages/notes/foo.astro",
+    title: "Kousei Arima",
+    sourceFile: "src/pages/notes/kousei-arima.astro",
     outputPath: derivePdfOutputPath(route),
 };
 const manifest: LessonExportManifest = {
@@ -280,10 +343,32 @@ const manifest: LessonExportManifest = {
     entries: [entry],
 };
 
+const reportEntries: readonly LessonExportReportEntryLike[] = [
+    {
+        status: "exported",
+        findings: [{ kind: "client-only-island" }],
+    },
+    {
+        status: "failed",
+        error: { kind: "pdf-generation-failed" },
+    },
+];
+const summary: LessonExportSummary = buildExportSummary(reportEntries);
+const failOn: LessonExportFailurePolicy = ["client-only"];
+
+countEntriesByStatus(reportEntries);
+countFindingsByKind(reportEntries);
+countFailuresByKind(reportEntries);
+hasFatalExportFindings(reportEntries, failOn);
 void manifest;
+void summary;
 `;
 
 const subpathTypeConsumerSource = String.raw`// @ts-expect-error Subpath imports are intentionally unsupported.
+import("@ravenhill/lesson-export-core/findings");
+// @ts-expect-error Subpath imports are intentionally unsupported.
+import("@ravenhill/lesson-export-core/reporting");
+// @ts-expect-error Subpath imports are intentionally unsupported.
 import("@ravenhill/lesson-export-core/routes");
 `;
 

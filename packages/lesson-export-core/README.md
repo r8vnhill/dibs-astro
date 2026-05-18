@@ -26,10 +26,19 @@ Route semantics:
 Import from the package root only:
 
 ```ts
-import { derivePdfOutputPath, normalizeLessonRoute } from "@ravenhill/lesson-export-core";
+import {
+    buildExportSummary,
+    derivePdfOutputPath,
+    hasFatalExportFindings,
+    normalizeLessonRoute,
+} from "@ravenhill/lesson-export-core";
 ```
 
-Subpath imports are not public API.
+Subpath imports such as `@ravenhill/lesson-export-core/reporting` or
+`@ravenhill/lesson-export-core/findings` are not public API. The package
+metadata intentionally exposes only the root entry point, and the packed
+consumer check verifies that internal `src/*`, `dist/*`, reporting, and
+finding subpaths stay private.
 
 ## Example
 
@@ -50,11 +59,17 @@ match a host-provided failure policy:
 ```ts
 import {
     buildExportSummary,
+    countEntriesByStatus,
+    countFailuresByKind,
+    countFindingsByKind,
     hasFatalExportFindings,
     normalizeExportFindingKind,
 } from "@ravenhill/lesson-export-core";
 
 console.log(normalizeExportFindingKind("client-only"));
+console.log(countEntriesByStatus([{ status: "exported" }]));
+console.log(countFindingsByKind([{ status: "exported", findings: [{ code: "client-only" }] }]));
+console.log(countFailuresByKind([{ status: "failed", error: { kind: "pdf-generation-failed" } }]));
 console.log(buildExportSummary([
     {
         status: "exported",

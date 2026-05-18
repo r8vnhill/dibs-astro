@@ -135,7 +135,7 @@ Do not move `collectExportFindings` unless it is already independent of Playwrig
 
 Do not move `writeExportReport`; filesystem writes are host-specific.
 
-### Cycle 4: Lock the public package boundary
+### ~~Cycle 4: Lock the public package boundary~~
 
 Verify that package consumers still import from the root:
 
