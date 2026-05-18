@@ -81,7 +81,7 @@ Cover:
 
 The key outcome is that current behaviour is locked before extraction.
 
-### Cycle 2: Add pure report/policy helpers to export-core
+### ~~Cycle 2: Add pure report/policy helpers to export-core~~
 
 Update:
 
@@ -117,7 +117,7 @@ Re-export through the package root only. Node’s package `exports` field is the
 entry points, so this cycle should preserve the existing root-only API discipline and avoid new subpath imports.
 ([Node.js][2])
 
-### Cycle 3: Refactor the script adapter
+### ~~Cycle 3: Refactor the script adapter~~
 
 Update:
 

@@ -6,33 +6,25 @@ import {
     hasFatalExportFindings as hasFatalExportFindingsCore,
 } from "@ravenhill/lesson-export-core";
 
-export function createExportReport({ generatedAt, baseUrl, outDir, selection, entries }) {
-    const summary = buildExportSummaryCore(entries);
-
+export function createExportReport({
+    generatedAt,
+    baseUrl,
+    outDir,
+    selection,
+    entries,
+}) {
     return {
         generatedAt,
         baseUrl,
         outDir,
         selection,
-        summary: {
-            selected: summary.selected,
-            exported: summary.exported,
-            failed: summary.failed,
-            findings: summary.findings,
-        },
+        summary: summarizeExportEntries(entries),
         entries,
     };
 }
 
 export function summarizeExportEntries(entries) {
-    const summary = buildExportSummaryCore(entries);
-
-    return {
-        selected: summary.selected,
-        exported: summary.exported,
-        failed: summary.failed,
-        findings: summary.findings,
-    };
+    return toScriptSummary(buildExportSummaryCore(entries));
 }
 
 export async function writeExportReport(reportPath, report) {
@@ -50,4 +42,13 @@ export function collectExportFindings(pageFindings) {
 
 export function hasFatalExportFindings(report, findingPolicy) {
     return hasFatalExportFindingsCore(report.entries, findingPolicy.failOn);
+}
+
+function toScriptSummary(summary) {
+    return {
+        selected: summary.selected,
+        exported: summary.exported,
+        failed: summary.failed,
+        findings: summary.findings,
+    };
 }
