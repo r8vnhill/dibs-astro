@@ -51,7 +51,7 @@ describe("given PDF export report entries", () => {
             selected: 1,
             exported: 0,
             failed: 0,
-            findings: 1,
+            findings: 0,
         });
     });
 

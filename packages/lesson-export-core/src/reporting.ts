@@ -3,7 +3,8 @@ import { type LessonExportFindingKind, normalizeExportFindingKind } from "./find
 export type LessonExportReportStatus = "exported" | "failed" | "skipped";
 
 export interface LessonExportReportFindingLike {
-    readonly kind: unknown;
+    readonly kind?: unknown;
+    readonly code?: unknown;
 }
 
 export interface LessonExportReportErrorLike {
@@ -23,6 +24,8 @@ export interface LessonExportStatusCounts {
 }
 
 export type LessonExportKindCounts = Partial<Record<LessonExportFindingKind, number>>;
+
+export type LessonExportFailurePolicy = "any" | readonly unknown[];
 
 export interface LessonExportSummary extends LessonExportStatusCounts {
     readonly selected: number;
@@ -50,7 +53,7 @@ export function countFindingsByKind(
 
     for (const entry of entries) {
         for (const finding of entry.findings ?? []) {
-            addKindCount(counts, finding.kind);
+            addKindCount(counts, finding.kind ?? finding.code);
         }
     }
 
@@ -84,6 +87,42 @@ export function buildExportSummary(
     };
 }
 
+export function hasFatalExportFindings(
+    entries: readonly LessonExportReportEntryLike[],
+    failOn: LessonExportFailurePolicy,
+): boolean {
+    if (failOn === "any") {
+        return entries.some((entry) => (entry.findings ?? []).length > 0);
+    }
+
+    if (failOn.length === 0) {
+        return false;
+    }
+
+    const fatalKinds = new Set<LessonExportFindingKind>();
+    for (const value of failOn) {
+        const kind = normalizeExportFindingKind(value);
+        if (kind !== undefined) {
+            fatalKinds.add(kind);
+        }
+    }
+
+    if (fatalKinds.size === 0) {
+        return false;
+    }
+
+    for (const entry of entries) {
+        for (const finding of entry.findings ?? []) {
+            const kind = normalizeFindingKind(finding);
+            if (kind !== undefined && fatalKinds.has(kind)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 type MutableLessonExportStatusCounts = {
     -readonly [Key in keyof LessonExportStatusCounts]: LessonExportStatusCounts[Key];
 };
@@ -109,4 +148,8 @@ function addKindCount(counts: MutableLessonExportKindCounts, value: unknown): vo
 
 function sumKindCounts(counts: LessonExportKindCounts): number {
     return Object.values(counts).reduce((total, count) => total + (count ?? 0), 0);
+}
+
+function normalizeFindingKind(finding: LessonExportReportFindingLike): LessonExportFindingKind | undefined {
+    return normalizeExportFindingKind(finding.kind ?? finding.code);
 }

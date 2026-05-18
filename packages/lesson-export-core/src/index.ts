@@ -1,44 +1,63 @@
 /**
  * @packageDocumentation
  *
- * Pure planning contracts for lesson export workflows.
+ * Pure, host-agnostic contracts for planning lesson export workflows.
  *
- * `@ravenhill/lesson-export-core` provides host-agnostic helpers for describing, validating, filtering, and
- * summarizing lesson export plans. It is intended to be consumed by orchestration layers such as CLI scripts, build
- * integrations, or application-specific exporters.
+ * `@ravenhill/lesson-export-core` is the reusable core behind lesson export orchestration. It describes route, 
+ * manifest, finding, report, and failure-policy contracts without depending on Astro, Playwright, the DOM, the 
+ * filesystem, process exits, or CLI parsing.
  *
- * The package focuses on deterministic export planning:
+ * Use this package from host adapters such as:
  *
- * - normalizing and validating lesson routes;
+ * - CLI export scripts;
+ * - build integrations;
+ * - application-specific PDF exporters;
+ * - tests that need deterministic export planning fixtures.
+ *
+ * ## Responsibilities
+ *
+ * The package owns pure operations that can be tested without a host runtime:
+ *
+ * - normalizing and validating source lesson routes;
  * - deriving export routes from source routes;
  * - deriving safe PDF output paths;
  * - filtering and validating export manifests;
- * - representing export findings with canonical runtime values;
+ * - representing findings with canonical runtime values;
  * - normalizing legacy finding kinds;
- * - building aggregate report summaries from export entries.
+ * - summarizing export entries for reports;
+ * - evaluating findings against a host-provided failure policy.
  *
- * The package deliberately does **not** perform host-specific work. It does not render Astro components, inspect the
- * DOM, launch browsers, read generated site data, write PDF files, or decide process exit policies. Those concerns
- * belong to the consuming application.
+ * It deliberately does not own side effects:
  *
- * Keeping this layer pure makes the contracts easier to test, reuse, and evolve independently from any particular
- * exporter implementation.
+ * - rendering Astro pages;
+ * - inspecting browser or DOM state;
+ * - launching Playwright;
+ * - reading generated site data;
+ * - writing PDFs or other files;
+ * - parsing CLI arguments;
+ * - deciding process exit behavior.
  *
- * ## Semantic types
+ * Keep those behaviors in the consuming adapter and pass only normalized inputs into this package.
  *
- * Route-shaped and path-shaped values use branded types to prevent accidental mixing of semantically different strings:
+ * ## Semantic strings
  *
- * - {@link LessonRoute} identifies a source lesson route.
- * - {@link ExportRoute} identifies the generated export route.
- * - {@link PdfOutputPath} identifies a validated PDF output path.
+ * Route-shaped and path-shaped values are branded so callers cannot casually mix semantically different strings:
  *
- * Use the route and output-path helpers to create these values instead of casting strings directly.
+ * - {@link LessonRoute} is a normalized source lesson route.
+ * - {@link ExportRoute} is a generated PDF export route.
+ * - {@link PdfOutputPath} is a validated PDF output path.
  *
- * ## Findings and reports
+ * Create these values through {@link normalizeLessonRoute}, {@link deriveExportRoute}, and
+ * {@link derivePdfOutputPath}. Avoid direct casts at call sites because they bypass the validation boundary.
  *
- * Export findings are represented by the canonical {@link LessonExportFindingKind} registry. Use
- * {@link normalizeExportFindingKind} when reading legacy or host-provided values, and use {@link buildExportSummary}
- * when aggregating report entries for CLI or UI presentation.
+ * ## Findings, reports, and failure policies
+ *
+ * Findings use the canonical {@link LessonExportFindingKind} registry. Normalize external, legacy, or host-provided 
+ * values with {@link normalizeExportFindingKind} before storing or comparing them.
+ *
+ * Use {@link buildExportSummary} to aggregate report entries for CLI or UI output. Use {@link hasFatalExportFindings} 
+ * to evaluate a {@link LessonExportFailurePolicy}. The result tells the host whether a finding policy matched; the 
+ * host remains responsible for mapping that result to logs, artifacts, process exits, or build failures.
  *
  * ## Public imports
  *
@@ -48,29 +67,41 @@
  * import {
  *   buildExportSummary,
  *   derivePdfOutputPath,
+ *   hasFatalExportFindings,
  *   normalizeLessonRoute,
  * } from "@ravenhill/lesson-export-core";
  * ```
  *
- * Subpath imports are not part of the public API and may change without notice.
+ * Subpath imports are internal and may change without notice.
  */
 
 import packageJson from "../package.json" with { type: "json" };
 
 /**
- * Published package name used by diagnostics, metadata, and integration tests.
+ * Name of the published package.
+ *
+ * Use this value in diagnostics, generated metadata, and integration tests that need to assert the public package 
+ * identity.
  */
 export const LESSON_EXPORT_CORE_PACKAGE_NAME = "@ravenhill/lesson-export-core";
 
 /**
- * Package version read from `package.json`.
+ * Version of the published package, read from `package.json`.
+ *
+ * This value is runtime metadata for diagnostics and integration tests. Do not use it to gate feature behavior.
  */
 export const LESSON_EXPORT_CORE_VERSION = packageJson.version;
 
 export { filterManifest } from "./filters";
 export { createExportFinding, exportFindingKinds, isExportFindingKind, normalizeExportFindingKind } from "./findings";
 export { derivePdfOutputPath, isSafePdfOutputPath } from "./output-paths";
-export { buildExportSummary, countEntriesByStatus, countFailuresByKind, countFindingsByKind } from "./reporting";
+export {
+    buildExportSummary,
+    countEntriesByStatus,
+    countFailuresByKind,
+    countFindingsByKind,
+    hasFatalExportFindings,
+} from "./reporting";
 export { deriveExportRoute, normalizeExportRoutePrefix, normalizeLessonRoute } from "./routes";
 export {
     detectDuplicateExportRoutes,
@@ -92,6 +123,7 @@ export type {
 } from "./manifest";
 export type { DerivePdfOutputPathOptions } from "./output-paths";
 export type {
+    LessonExportFailurePolicy,
     LessonExportKindCounts,
     LessonExportReportEntryLike,
     LessonExportReportErrorLike,

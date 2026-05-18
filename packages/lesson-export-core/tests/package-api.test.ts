@@ -18,6 +18,7 @@ describe("given the root package API", () => {
         expect(typeof api.countFindingsByKind).toBe("function");
         expect(typeof api.countFailuresByKind).toBe("function");
         expect(typeof api.buildExportSummary).toBe("function");
+        expect(typeof api.hasFatalExportFindings).toBe("function");
     });
 
     test("then package metadata exposes only the root subpath", () => {

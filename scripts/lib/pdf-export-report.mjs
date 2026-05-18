@@ -1,25 +1,37 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { normalizeExportFindingKind } from "@ravenhill/lesson-export-core";
+import {
+    buildExportSummary as buildExportSummaryCore,
+    hasFatalExportFindings as hasFatalExportFindingsCore,
+} from "@ravenhill/lesson-export-core";
 
 export function createExportReport({ generatedAt, baseUrl, outDir, selection, entries }) {
+    const summary = buildExportSummaryCore(entries);
+
     return {
         generatedAt,
         baseUrl,
         outDir,
         selection,
-        summary: summarizeExportEntries(entries),
+        summary: {
+            selected: summary.selected,
+            exported: summary.exported,
+            failed: summary.failed,
+            findings: summary.findings,
+        },
         entries,
     };
 }
 
 export function summarizeExportEntries(entries) {
+    const summary = buildExportSummaryCore(entries);
+
     return {
-        selected: entries.length,
-        exported: entries.filter((entry) => entry.status === "exported").length,
-        failed: entries.filter((entry) => entry.status === "failed").length,
-        findings: entries.reduce((total, entry) => total + entry.findings.length, 0),
+        selected: summary.selected,
+        exported: summary.exported,
+        failed: summary.failed,
+        findings: summary.findings,
     };
 }
 
@@ -37,26 +49,5 @@ export function collectExportFindings(pageFindings) {
 }
 
 export function hasFatalExportFindings(report, findingPolicy) {
-    const failOn = findingPolicy.failOn;
-
-    if (failOn === "any") {
-        return report.summary.findings > 0;
-    }
-
-    if (failOn.length === 0) {
-        return false;
-    }
-
-    const fatalKinds = new Set(failOn);
-    return report.entries.some((entry) =>
-        (entry.findings ?? []).some((finding) => {
-            const kind = normalizeReportFindingKind(finding);
-
-            return kind !== undefined && fatalKinds.has(kind);
-        }),
-    );
-}
-
-function normalizeReportFindingKind(finding) {
-    return normalizeExportFindingKind(finding.kind ?? finding.code);
+    return hasFatalExportFindingsCore(report.entries, findingPolicy.failOn);
 }

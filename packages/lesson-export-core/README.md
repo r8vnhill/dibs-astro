@@ -10,7 +10,8 @@ The package provides pure helpers for:
 - filtering export manifests;
 - reporting structured manifest findings;
 - normalizing export finding kinds;
-- aggregating host-provided export report entries.
+- aggregating host-provided export report entries;
+- evaluating host-provided finding policies.
 
 It does not render Astro components, launch browsers, read generated site data, or write PDFs.
 
@@ -43,14 +44,30 @@ console.log(derivePdfOutputPath(route));
 
 ## Findings and Reports
 
-Use the canonical finding registry when validating CLI input or normalizing report data:
+Use the canonical finding registry when validating CLI input, normalizing report data, or evaluating whether findings
+match a host-provided failure policy:
 
 ```ts
-import { buildExportSummary, normalizeExportFindingKind } from "@ravenhill/lesson-export-core";
+import {
+    buildExportSummary,
+    hasFatalExportFindings,
+    normalizeExportFindingKind,
+} from "@ravenhill/lesson-export-core";
 
 console.log(normalizeExportFindingKind("client-only"));
-console.log(buildExportSummary([{ status: "failed", error: { kind: "pdf-generation-failed" } }]));
+console.log(buildExportSummary([
+    {
+        status: "exported",
+        findings: [{ code: "client-only" }],
+    },
+]));
+console.log(hasFatalExportFindings([
+    {
+        status: "exported",
+        findings: [{ code: "client-only" }],
+    },
+], ["client-only-island"]));
 ```
 
 The package only aggregates structural report data. Rendering, DOM collection, browser automation, filesystem writes,
-and process exit policy stay in the consuming application.
+CLI parsing, and process exit behaviour stay in the consuming application.
