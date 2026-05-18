@@ -1,8 +1,8 @@
 import path from "node:path";
 
+import { resolveExportTargets, selectExportEntries } from "./pdf-export-cli.mjs";
 import { buildLessonPdfExportManifest } from "./pdf-export-manifest.mjs";
 import { createExportReport, writeExportReport } from "./pdf-export-report.mjs";
-import { resolveExportTargets, selectExportEntries } from "./pdf-export-cli.mjs";
 
 const defaultDependencies = {
     buildLessonPdfExportManifest,
@@ -15,6 +15,21 @@ const defaultDependencies = {
 };
 
 export async function runPdfExport({ projectRoot, options, dependencies = defaultDependencies }) {
+    const { targets } = preparePdfExportRun({ options, dependencies });
+
+    if (!options.dryRun) {
+        throw new Error("pdf-export-runner currently only handles dry-run execution.");
+    }
+
+    await writeDryRunReport({
+        projectRoot,
+        options,
+        targets,
+        dependencies,
+    });
+}
+
+export function preparePdfExportRun({ options, dependencies = defaultDependencies }) {
     const { manifest, validation } = dependencies.buildLessonPdfExportManifest({
         outDir: options.outDir,
     });
@@ -27,10 +42,10 @@ export async function runPdfExport({ projectRoot, options, dependencies = defaul
     const selectedEntries = dependencies.selectExportEntries(manifest, options.selection);
     const targets = dependencies.resolveExportTargets(selectedEntries, options.outDir);
 
-    if (!options.dryRun) {
-        throw new Error("pdf-export-runner currently only handles dry-run execution.");
-    }
+    return { manifest, selectedEntries, targets };
+}
 
+async function writeDryRunReport({ projectRoot, options, targets, dependencies }) {
     const report = dependencies.createExportReport({
         generatedAt: dependencies.now().toISOString(),
         baseUrl: options.baseUrl ?? "dry-run",

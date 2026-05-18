@@ -391,15 +391,20 @@ Videodrone / Faceplant
 Videodrone / Ty Jonathan Down
 ```
 
-### Cycle 2 — Move manifest validation and target resolution
+### ~~Cycle 2 — Move manifest validation and target resolution~~
 
-1. Add tests proving manifest validation errors fail before:
+Implemented in `traceability-log/cycle_2_move_manifest_validation_and_target_resolution.md` by adding
+`preparePdfExportRun(...)` as the shared planning helper. The runner owns manifest construction, validation, selection,
+and target resolution; the executable temporarily consumes the same helper for real exports until Cycle 3 moves the
+remaining side-effectful orchestration.
+
+1. Added tests proving manifest validation errors fail before:
 
    - build;
    - preview startup;
    - browser launch.
-2. Move manifest construction, validation, selection, and target resolution into the runner.
-3. Preserve the current validation error formatting.
+2. Moved manifest construction, validation, selection, and target resolution into the runner module.
+3. Preserved the current validation error formatting.
 
 ### Cycle 3 — Move build and preview lifecycle
 

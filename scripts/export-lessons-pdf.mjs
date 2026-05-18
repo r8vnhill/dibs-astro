@@ -1,29 +1,20 @@
 #!/usr/bin/env node
 
-import path from "node:path";
 import { mkdir } from "node:fs/promises";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { chromium } from "playwright";
 import { buildSite } from "./lib/build-site.mjs";
-import { buildLessonPdfExportManifest } from "./lib/pdf-export-manifest.mjs";
-import { runPdfExport } from "./lib/pdf-export-runner.mjs";
-import {
-    parseCliArgs,
-    resolveExportTargets,
-    selectExportEntries,
-} from "./lib/pdf-export-cli.mjs";
+import { parseCliArgs } from "./lib/pdf-export-cli.mjs";
 import {
     collectExportFindings,
     createExportReport,
     hasFatalExportFindings,
     writeExportReport,
 } from "./lib/pdf-export-report.mjs";
-import {
-    startPreviewServer,
-    stopPreviewServer,
-    waitForPreview,
-} from "./lib/preview-server.mjs";
+import { preparePdfExportRun, runPdfExport } from "./lib/pdf-export-runner.mjs";
+import { startPreviewServer, stopPreviewServer, waitForPreview } from "./lib/preview-server.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -47,19 +38,7 @@ const main = async () => {
         return;
     }
 
-    const { manifest, validation } = buildLessonPdfExportManifest({
-        outDir: options.outDir,
-    });
-    const validationErrors = validation.findings.filter(
-        (finding) => finding.severity === "error",
-    );
-
-    if (validationErrors.length > 0) {
-        throw new Error(formatValidationErrors(validationErrors));
-    }
-
-    const selectedEntries = selectExportEntries(manifest, options.selection);
-    const targets = resolveExportTargets(selectedEntries, options.outDir);
+    const { targets } = preparePdfExportRun({ projectRoot, options });
 
     if (!options.skipBuild) {
         await buildSite({ projectRoot });
@@ -105,11 +84,11 @@ const main = async () => {
                     );
                 }
 
-                await page.locator('[data-export-role="document"]').waitFor({
+                await page.locator("[data-export-role=\"document\"]").waitFor({
                     state: "attached",
                     timeout: options.timeoutMs,
                 });
-                await page.locator('[data-export-role="body"]').waitFor({
+                await page.locator("[data-export-role=\"body\"]").waitFor({
                     state: "attached",
                     timeout: options.timeoutMs,
                 });
@@ -118,17 +97,15 @@ const main = async () => {
                     "[data-export-finding]",
                     (elements) =>
                         elements.map((element) => ({
-                            code:
-                                element.getAttribute("data-export-finding") ??
-                                element.dataset.exportFinding ??
-                                "unknown",
+                            code: element.getAttribute("data-export-finding")
+                                ?? element.dataset.exportFinding
+                                ?? "unknown",
                             message: element.textContent?.trim() || undefined,
-                            severity:
-                                element.getAttribute(
-                                    "data-export-finding-severity",
-                                ) ??
-                                element.dataset.exportFindingSeverity ??
-                                undefined,
+                            severity: element.getAttribute(
+                                "data-export-finding-severity",
+                            )
+                                ?? element.dataset.exportFindingSeverity
+                                ?? undefined,
                         })),
                 );
 
@@ -169,10 +146,9 @@ const main = async () => {
                     findings: [],
                     error: {
                         kind: "pdf-generation-failed",
-                        message:
-                            error instanceof Error
-                                ? error.message
-                                : String(error),
+                        message: error instanceof Error
+                            ? error.message
+                            : String(error),
                     },
                 });
             }
@@ -220,11 +196,4 @@ main().catch((error) => {
 
 function normalizeBaseUrl(baseUrl) {
     return new URL("/", baseUrl).href;
-}
-
-function formatValidationErrors(findings) {
-    return [
-        "PDF lesson export manifest is invalid:",
-        ...findings.map((finding) => `- ${finding.message}`),
-    ].join("\n");
 }
