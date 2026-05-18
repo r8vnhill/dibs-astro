@@ -1,4 +1,4 @@
-# [PLAN] Consolidate PDF report policy inside `@ravenhill/lesson-export-core`
+# [DONE] Consolidate PDF report policy inside `@ravenhill/lesson-export-core`
 
 ## Summary
 

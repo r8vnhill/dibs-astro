@@ -7,14 +7,23 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { buildSite } from "./lib/build-site.mjs";
 import { buildLessonPdfExportManifest } from "./lib/pdf-export-manifest.mjs";
-import { parseCliArgs, resolveExportTargets, selectExportEntries } from "./lib/pdf-export-cli.mjs";
+import { runPdfExport } from "./lib/pdf-export-runner.mjs";
+import {
+    parseCliArgs,
+    resolveExportTargets,
+    selectExportEntries,
+} from "./lib/pdf-export-cli.mjs";
 import {
     collectExportFindings,
     createExportReport,
     hasFatalExportFindings,
     writeExportReport,
 } from "./lib/pdf-export-report.mjs";
-import { startPreviewServer, stopPreviewServer, waitForPreview } from "./lib/preview-server.mjs";
+import {
+    startPreviewServer,
+    stopPreviewServer,
+    waitForPreview,
+} from "./lib/preview-server.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,8 +42,17 @@ const main = async () => {
         );
     }
 
-    const { manifest, validation } = buildLessonPdfExportManifest({ outDir: options.outDir });
-    const validationErrors = validation.findings.filter((finding) => finding.severity === "error");
+    if (options.dryRun) {
+        await runPdfExport({ projectRoot, options });
+        return;
+    }
+
+    const { manifest, validation } = buildLessonPdfExportManifest({
+        outDir: options.outDir,
+    });
+    const validationErrors = validation.findings.filter(
+        (finding) => finding.severity === "error",
+    );
 
     if (validationErrors.length > 0) {
         throw new Error(formatValidationErrors(validationErrors));
@@ -43,41 +61,27 @@ const main = async () => {
     const selectedEntries = selectExportEntries(manifest, options.selection);
     const targets = resolveExportTargets(selectedEntries, options.outDir);
 
-    if (options.dryRun) {
-        const report = createExportReport({
-            generatedAt: new Date().toISOString(),
-            baseUrl: options.baseUrl ?? "dry-run",
-            outDir: options.outDir,
-            selection: options.selection,
-            entries: targets.map(({ entry, outputPath }) => ({
-                route: entry.route,
-                exportRoute: entry.exportRoute,
-                url: options.baseUrl ? new URL(entry.exportRoute, options.baseUrl).href : entry.exportRoute,
-                outputPath,
-                status: "skipped",
-                title: entry.title,
-                findings: [],
-            })),
-        });
-
-        await writeExportReport(path.resolve(projectRoot, options.reportPath), report);
-        console.log(`[export-lessons-pdf] Dry run selected ${report.summary.selected} lesson(s).`);
-        return;
-    }
-
     if (!options.skipBuild) {
         await buildSite({ projectRoot });
     }
 
-    let baseUrl = options.baseUrl ? normalizeBaseUrl(options.baseUrl) : undefined;
+    let baseUrl = options.baseUrl
+        ? normalizeBaseUrl(options.baseUrl)
+        : undefined;
     let previewProcess;
     const reportEntries = [];
     let failureCount = 0;
 
     try {
         if (!baseUrl) {
-            previewProcess = startPreviewServer({ projectRoot, port: options.port });
-            baseUrl = await waitForPreview(`http://127.0.0.1:${options.port}/`, options.timeoutMs);
+            previewProcess = startPreviewServer({
+                projectRoot,
+                port: options.port,
+            });
+            baseUrl = await waitForPreview(
+                `http://127.0.0.1:${options.port}/`,
+                options.timeoutMs,
+            );
         }
 
         const browser = await chromium.launch();
@@ -87,14 +91,18 @@ const main = async () => {
             const filePath = path.resolve(projectRoot, outputPath);
 
             try {
-                const page = await browser.newPage({ viewport: { width: 1280, height: 1600 } });
+                const page = await browser.newPage({
+                    viewport: { width: 1280, height: 1600 },
+                });
                 const response = await page.goto(url, {
                     waitUntil: "domcontentloaded",
                     timeout: options.timeoutMs,
                 });
 
                 if (!response || !response.ok()) {
-                    throw new Error(`Preview returned an invalid response for ${url}.`);
+                    throw new Error(
+                        `Preview returned an invalid response for ${url}.`,
+                    );
                 }
 
                 await page.locator('[data-export-role="document"]').waitFor({
@@ -106,11 +114,23 @@ const main = async () => {
                     timeout: options.timeoutMs,
                 });
 
-                const pageFindings = await page.$$eval("[data-export-finding]", (elements) => elements.map((element) => ({
-                    code: element.getAttribute("data-export-finding") ?? element.dataset.exportFinding ?? "unknown",
-                    message: element.textContent?.trim() || undefined,
-                    severity: element.getAttribute("data-export-finding-severity") ?? element.dataset.exportFindingSeverity ?? undefined,
-                })));
+                const pageFindings = await page.$$eval(
+                    "[data-export-finding]",
+                    (elements) =>
+                        elements.map((element) => ({
+                            code:
+                                element.getAttribute("data-export-finding") ??
+                                element.dataset.exportFinding ??
+                                "unknown",
+                            message: element.textContent?.trim() || undefined,
+                            severity:
+                                element.getAttribute(
+                                    "data-export-finding-severity",
+                                ) ??
+                                element.dataset.exportFindingSeverity ??
+                                undefined,
+                        })),
+                );
 
                 await mkdir(path.dirname(filePath), { recursive: true });
                 await page.pdf({
@@ -149,7 +169,10 @@ const main = async () => {
                     findings: [],
                     error: {
                         kind: "pdf-generation-failed",
-                        message: error instanceof Error ? error.message : String(error),
+                        message:
+                            error instanceof Error
+                                ? error.message
+                                : String(error),
                     },
                 });
             }
@@ -170,17 +193,24 @@ const main = async () => {
         entries: reportEntries,
     });
 
-    await writeExportReport(path.resolve(projectRoot, options.reportPath), report);
+    await writeExportReport(
+        path.resolve(projectRoot, options.reportPath),
+        report,
+    );
 
     if (hasFatalExportFindings(report, options.findingPolicy)) {
-        throw new Error("PDF export findings matched the configured --fail-on policy.");
+        throw new Error(
+            "PDF export findings matched the configured --fail-on policy.",
+        );
     }
 
     if (failureCount > 0) {
         throw new Error(`PDF export failed for ${failureCount} lesson(s).`);
     }
 
-    console.log(`[export-lessons-pdf] Exported ${report.summary.exported} lesson(s) to ${options.outDir}.`);
+    console.log(
+        `[export-lessons-pdf] Exported ${report.summary.exported} lesson(s) to ${options.outDir}.`,
+    );
 };
 
 main().catch((error) => {

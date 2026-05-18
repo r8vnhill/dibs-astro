@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-14T12:47:04.856Z",
+  "generatedAt": "2026-05-18T20:36:18.598Z",
   "totalLessons": 51,
   "changesLimit": 5,
   "entries": {
@@ -1561,8 +1561,26 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-14",
+      "lastModified": "2026-05-15",
       "changes": [
+        {
+          "hash": "e8f2c4cab0832e1b7e67864ee9a77390b3c1936a",
+          "date": "2026-05-15",
+          "author": "r8vnhill",
+          "subject": "✨ feat(notes): Update description for task abstraction lesson in NotesLayout"
+        },
+        {
+          "hash": "200838636b64de93371a0b5c62daf02ee3b82924",
+          "date": "2026-05-14",
+          "author": "r8vnhill",
+          "subject": "🌟 feat(lessons): Add Kotlin conventions reference to tasks-as-abstractions lesson"
+        },
+        {
+          "hash": "d7da7b4b6e2eced4aae52683858749d67168d4cf",
+          "date": "2026-05-14",
+          "author": "r8vnhill",
+          "subject": "🚀 lesson(scripting): Expand on tasks as abstractions"
+        },
         {
           "hash": "5474db3194558837ad6720b03dc387994068a32c",
           "date": "2026-05-14",
@@ -1574,12 +1592,6 @@
           "date": "2026-05-13",
           "author": "r8vnhill",
           "subject": "📝 docs(notes): Expand task contract lesson"
-        },
-        {
-          "hash": "5b22718bb8c592956d57344f4e682d3e18955327",
-          "date": "2026-05-13",
-          "author": "r8vnhill",
-          "subject": "✨ feat(lessons): add task abstraction bridge lesson"
         }
       ]
     },
