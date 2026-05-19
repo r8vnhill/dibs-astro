@@ -1,27 +1,43 @@
 import path from "node:path";
 
+import { buildSite } from "./build-site.mjs";
 import { resolveExportTargets, selectExportEntries } from "./pdf-export-cli.mjs";
 import { buildLessonPdfExportManifest } from "./pdf-export-manifest.mjs";
 import { createExportReport, writeExportReport } from "./pdf-export-report.mjs";
+import { startPreviewServer, stopPreviewServer, waitForPreview } from "./preview-server.mjs";
 
 const defaultDependencies = {
+    buildSite,
     buildLessonPdfExportManifest,
     selectExportEntries,
     resolveExportTargets,
     createExportReport,
     writeExportReport,
+    startPreviewServer,
+    waitForPreview,
+    stopPreviewServer,
+    exportPreparedTargets: async () => {
+        throw new Error("pdf-export-runner requires exportPreparedTargets for real export execution.");
+    },
     now: () => new Date(),
     logger: console,
 };
 
-export async function runPdfExport({ projectRoot, options, dependencies = defaultDependencies }) {
+export async function runPdfExport({ projectRoot, options, dependencies = {} }) {
+    dependencies = { ...defaultDependencies, ...dependencies };
     const { targets } = preparePdfExportRun({ options, dependencies });
 
-    if (!options.dryRun) {
-        throw new Error("pdf-export-runner currently only handles dry-run execution.");
+    if (options.dryRun) {
+        await writeDryRunReport({
+            projectRoot,
+            options,
+            targets,
+            dependencies,
+        });
+        return;
     }
 
-    await writeDryRunReport({
+    await exportPreparedRun({
         projectRoot,
         options,
         targets,
@@ -29,7 +45,8 @@ export async function runPdfExport({ projectRoot, options, dependencies = defaul
     });
 }
 
-export function preparePdfExportRun({ options, dependencies = defaultDependencies }) {
+export function preparePdfExportRun({ options, dependencies = {} }) {
+    dependencies = { ...defaultDependencies, ...dependencies };
     const { manifest, validation } = dependencies.buildLessonPdfExportManifest({
         outDir: options.outDir,
     });
@@ -74,9 +91,43 @@ async function writeDryRunReport({ projectRoot, options, targets, dependencies }
     );
 }
 
+async function exportPreparedRun({ projectRoot, options, targets, dependencies }) {
+    if (!options.skipBuild) {
+        await dependencies.buildSite({ projectRoot });
+    }
+
+    let baseUrl = options.baseUrl
+        ? normalizeBaseUrl(options.baseUrl)
+        : undefined;
+    let previewProcess;
+
+    try {
+        if (!baseUrl) {
+            previewProcess = dependencies.startPreviewServer({
+                projectRoot,
+                port: options.port,
+            });
+            baseUrl = await dependencies.waitForPreview(
+                `http://127.0.0.1:${options.port}/`,
+                options.timeoutMs,
+            );
+        }
+
+        await dependencies.exportPreparedTargets({ targets, baseUrl });
+    } finally {
+        if (previewProcess && !options.keepServer) {
+            await dependencies.stopPreviewServer(previewProcess);
+        }
+    }
+}
+
 function formatValidationErrors(findings) {
     return [
         "PDF lesson export manifest is invalid:",
         ...findings.map((finding) => `- ${finding.message}`),
     ].join("\n");
+}
+
+function normalizeBaseUrl(baseUrl) {
+    return new URL("/", baseUrl).href;
 }

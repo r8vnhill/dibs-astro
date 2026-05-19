@@ -406,7 +406,11 @@ remaining side-effectful orchestration.
 2. Moved manifest construction, validation, selection, and target resolution into the runner module.
 3. Preserved the current validation error formatting.
 
-### Cycle 3 — Move build and preview lifecycle
+### ~~Cycle 3 — Move build and preview lifecycle~~
+
+Implemented in `traceability-log/cycle_3_move_build_and_preview_lifecycle.md` by moving build and preview lifecycle
+ownership into `runPdfExport(...)`. The executable now calls the runner for real exports and temporarily injects
+`exportPreparedTargets(...)` for the remaining Chromium/page/PDF/report work until Cycle 4+.
 
 1. Add tests proving:
 

@@ -50,16 +50,41 @@ function createDependencies({ validationFindings = [] } = {}) {
         },
     }));
     const writeExportReport = vi.fn(async () => {});
+    const buildSite = vi.fn(async () => {});
+    const startPreviewServer = vi.fn(() => ({ pid: 1234 }));
+    const waitForPreview = vi.fn(async () => "http://127.0.0.1:4321/");
+    const stopPreviewServer = vi.fn(async () => {});
+    const exportPreparedTargets = vi.fn(async () => {});
     const logger = { log: vi.fn() };
 
     return {
+        buildSite,
         buildLessonPdfExportManifest,
         selectExportEntries,
         resolveExportTargets,
         createExportReport,
         writeExportReport,
+        startPreviewServer,
+        waitForPreview,
+        stopPreviewServer,
+        exportPreparedTargets,
         now: () => new Date("2026-05-11T00:00:00.000Z"),
         logger,
+    };
+}
+
+function createRealExportOptions(overrides = {}) {
+    return {
+        dryRun: false,
+        outDir: "dist/exports/pdf",
+        reportPath: "dist/exports/pdf/report.json",
+        selection: { kind: "all" },
+        baseUrl: undefined,
+        port: 4321,
+        timeoutMs: 30_000,
+        skipBuild: false,
+        keepServer: false,
+        ...overrides,
     };
 }
 
@@ -238,18 +263,13 @@ describe("given the PDF export runner", () => {
 
         test("then non-dry-run resolves targets before the temporary runner guard", async () => {
             const dependencies = createDependencies();
-            const options = {
-                dryRun: false,
-                outDir: "dist/exports/pdf",
-                reportPath: "dist/exports/pdf/report.json",
-                selection: { kind: "all" },
-            };
+            const options = createRealExportOptions();
 
-            await expect(runPdfExport({
+            await runPdfExport({
                 projectRoot: "e:/teaching/DIBS/projects/astro-website",
                 options,
                 dependencies,
-            })).rejects.toThrow("pdf-export-runner currently only handles dry-run execution.");
+            });
 
             expect(dependencies.buildLessonPdfExportManifest).toHaveBeenCalledWith({
                 outDir: options.outDir,
@@ -264,6 +284,137 @@ describe("given the PDF export runner", () => {
             );
             expect(dependencies.createExportReport).not.toHaveBeenCalled();
             expect(dependencies.writeExportReport).not.toHaveBeenCalled();
+            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
+                targets: resolvedTargets,
+                baseUrl: "http://127.0.0.1:4321/",
+            });
+        });
+    });
+
+    describe("when a real export uses a provided baseUrl", () => {
+        test("then it normalizes the baseUrl and skips preview startup", async () => {
+            const dependencies = createDependencies();
+            const projectRoot = "e:/teaching/DIBS/projects/astro-website";
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/site/page/",
+            });
+
+            await runPdfExport({ projectRoot, options, dependencies });
+
+            expect(dependencies.buildSite).toHaveBeenCalledWith({ projectRoot });
+            expect(dependencies.startPreviewServer).not.toHaveBeenCalled();
+            expect(dependencies.waitForPreview).not.toHaveBeenCalled();
+            expect(dependencies.stopPreviewServer).not.toHaveBeenCalled();
+            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
+                targets: resolvedTargets,
+                baseUrl: "http://127.0.0.1:5000/",
+            });
+        });
+
+        test("then skipBuild prevents the build but still exports prepared targets", async () => {
+            const dependencies = createDependencies();
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options,
+                dependencies,
+            });
+
+            expect(dependencies.buildSite).not.toHaveBeenCalled();
+            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
+                targets: resolvedTargets,
+                baseUrl: "http://127.0.0.1:5000/",
+            });
+        });
+    });
+
+    describe("when a real export needs a preview server", () => {
+        test("then it builds, starts preview, waits for readiness, exports, and stops preview in order", async () => {
+            const dependencies = createDependencies();
+            const projectRoot = "e:/teaching/DIBS/projects/astro-website";
+            const previewProcess = { pid: 9876 };
+            dependencies.startPreviewServer.mockReturnValue(previewProcess);
+            dependencies.waitForPreview.mockResolvedValue("http://127.0.0.1:4321/");
+            const options = createRealExportOptions();
+
+            await runPdfExport({ projectRoot, options, dependencies });
+
+            expect(dependencies.buildSite).toHaveBeenCalledWith({ projectRoot });
+            expect(dependencies.startPreviewServer).toHaveBeenCalledWith({
+                projectRoot,
+                port: 4321,
+            });
+            expect(dependencies.waitForPreview).toHaveBeenCalledWith(
+                "http://127.0.0.1:4321/",
+                30_000,
+            );
+            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
+                targets: resolvedTargets,
+                baseUrl: "http://127.0.0.1:4321/",
+            });
+            expect(dependencies.stopPreviewServer).toHaveBeenCalledWith(previewProcess);
+
+            expect(dependencies.buildSite.mock.invocationCallOrder[0]).toBeLessThan(
+                dependencies.startPreviewServer.mock.invocationCallOrder[0],
+            );
+            expect(dependencies.startPreviewServer.mock.invocationCallOrder[0]).toBeLessThan(
+                dependencies.waitForPreview.mock.invocationCallOrder[0],
+            );
+            expect(dependencies.waitForPreview.mock.invocationCallOrder[0]).toBeLessThan(
+                dependencies.exportPreparedTargets.mock.invocationCallOrder[0],
+            );
+            expect(dependencies.exportPreparedTargets.mock.invocationCallOrder[0]).toBeLessThan(
+                dependencies.stopPreviewServer.mock.invocationCallOrder[0],
+            );
+        });
+
+        test("then keepServer leaves a started preview running", async () => {
+            const dependencies = createDependencies();
+            const options = createRealExportOptions({ keepServer: true });
+
+            await runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options,
+                dependencies,
+            });
+
+            expect(dependencies.startPreviewServer).toHaveBeenCalledOnce();
+            expect(dependencies.stopPreviewServer).not.toHaveBeenCalled();
+        });
+
+        test("then a build failure stops before preview startup", async () => {
+            const dependencies = createDependencies();
+            dependencies.buildSite.mockRejectedValue(new Error("Build failed."));
+
+            await expect(runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options: createRealExportOptions(),
+                dependencies,
+            })).rejects.toThrow("Build failed.");
+
+            expect(dependencies.startPreviewServer).not.toHaveBeenCalled();
+            expect(dependencies.waitForPreview).not.toHaveBeenCalled();
+            expect(dependencies.exportPreparedTargets).not.toHaveBeenCalled();
+            expect(dependencies.stopPreviewServer).not.toHaveBeenCalled();
+        });
+
+        test("then preview stops when exporting prepared targets fails", async () => {
+            const dependencies = createDependencies();
+            const previewProcess = { pid: 2468 };
+            dependencies.startPreviewServer.mockReturnValue(previewProcess);
+            dependencies.exportPreparedTargets.mockRejectedValue(new Error("Export failed."));
+
+            await expect(runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options: createRealExportOptions(),
+                dependencies,
+            })).rejects.toThrow("Export failed.");
+
+            expect(dependencies.stopPreviewServer).toHaveBeenCalledWith(previewProcess);
         });
     });
 });
