@@ -1,13 +1,13 @@
-export { discoverSourceFiles } from "./layer-boundary-files.mjs";
-export { extractImports } from "./layer-boundary-imports.mjs";
-export { evaluateBoundaryRules } from "./layer-boundary-rule-evaluation.mjs";
-export { resolveImportTarget } from "./layer-boundary-paths.mjs";
+export { discoverSourceFiles } from "./files.mjs";
+export { extractImports } from "./imports.mjs";
+export { evaluateBoundaryRules } from "./rule-evaluation.mjs";
+export { resolveImportTarget } from "./paths.mjs";
 
-import { discoverSourceFiles } from "./layer-boundary-files.mjs";
-import { extractImports } from "./layer-boundary-imports.mjs";
-import { evaluateBoundaryRules } from "./layer-boundary-rule-evaluation.mjs";
-import { resolveImportTarget } from "./layer-boundary-paths.mjs";
-import { initialBoundaryRules } from "./layer-boundary-rules.mjs";
+import { discoverSourceFiles } from "./files.mjs";
+import { extractImports } from "./imports.mjs";
+import { evaluateBoundaryRules } from "./rule-evaluation.mjs";
+import { resolveImportTarget } from "./paths.mjs";
+import { initialBoundaryRules } from "./rules.mjs";
 
 export async function checkLayerBoundaries(files, options = {}) {
     const rules = options.rules ?? initialBoundaryRules;

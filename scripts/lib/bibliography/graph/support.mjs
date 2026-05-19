@@ -20,7 +20,7 @@
 /**
  * Bibliography record consumed by the graph builders.
  *
- * @typedef {import("./records.mjs").BibliographyRecord} BibliographyRecord
+ * @typedef {import("../reader/records.mjs").BibliographyRecord} BibliographyRecord
  */
 
 /**

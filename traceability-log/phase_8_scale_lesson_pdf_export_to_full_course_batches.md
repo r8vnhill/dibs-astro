@@ -118,9 +118,10 @@ Before changing contracts, the current exporter behaviour has been characterized
 
 This reduces the risk of Phase 8 becoming a broad, hard-to-review rewrite.
 
-Baseline notes to preserve or intentionally migrate in later steps:
+Baseline notes already migrated or intentionally preserved:
 
-- `--fail-on-finding` is currently a boolean parser option.
+- The old boolean finding-policy shorthand was removed after the transition cycle. Use repeatable
+  `--fail-on <findingKind>` instead.
 - Report summaries currently include `selected`, `exported`, `failed`, and `findings`; they do not include a dedicated
   `skipped` counter yet.
 - DOM findings are currently collected as `{ code, message, severity }` and are not normalised.
@@ -160,7 +161,7 @@ In the CLI parser:
 
 - Added repeatable `--fail-on <findingKind>` and `--fail-on=<findingKind>`.
 - Replaced parsed `failOnFinding: boolean` with `findingPolicy: { failOn: "any" | LessonExportFindingKind[] }`.
-- Kept `--fail-on-finding` as deprecated shorthand for “fail on any finding” with a CLI-entrypoint deprecation warning.
+- Removed the old boolean finding-policy shorthand after the transition cycle.
 - Validated every supplied finding kind before build, preview, or Playwright startup.
 - Rejected conflicting finding-policy flags and preserved existing selection conflict checks:
 
@@ -297,7 +298,7 @@ Add tests for pure contracts first:
 - CLI parsing:
 
   - repeatable `--fail-on`;
-  - deprecated `--fail-on-finding`;
+  - the removed boolean finding-policy shorthand is rejected as an unknown flag;
   - `--continue-on-error`;
   - invalid finding kind;
   - mutually exclusive selection flags;
@@ -350,7 +351,7 @@ Use small fixtures rather than full-course fixtures:
 - The same scenario exits zero with `--continue-on-error`.
 - `--fail-on unresolved-todo` exits non-zero only when that finding appears.
 - `--fail-on hidden-content --fail-on unresolved-todo` fails on either kind.
-- `--fail-on-finding` fails on any finding and emits a deprecation warning.
+- The removed boolean finding-policy shorthand is rejected as an unknown flag.
 - Dry run writes a report without launching preview or Playwright.
 - Report path uses the resolved target path, not stale manifest defaults.
 
@@ -378,8 +379,8 @@ EXPORT_PDF_SMOKE=1 pnpm test:pdf-smoke
 
 ## Migration Notes
 
-- Keep `--fail-on-finding` for one transition cycle.
-- Print a deprecation warning that suggests `--fail-on <kind>` or the documented “any finding” replacement.
+- The old boolean finding-policy shorthand has been removed after its transition cycle.
+- Use repeatable `--fail-on <kind>` for stricter content-quality gates.
 - Do not remove existing report fields.
 - Do not rename public route/path fields.
 - Do not add full-course PDF generation to `pnpm check`.

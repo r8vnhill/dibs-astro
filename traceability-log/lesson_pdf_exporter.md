@@ -4,9 +4,9 @@
 
 Use **dedicated export routes + Playwright + a small host-agnostic export core package**.
 
-Implementation note: the PDF export now also excludes web chrome through the shared
-`data-export-hidden="true"` contract and a central print rule, so the generated PDFs contain the lesson document
-without the site header, footer, sidebar, or lesson navigation chrome.
+Implementation note: the PDF export now also excludes web chrome through the shared `data-export-hidden="true"` contract
+and a central print rule, so the generated PDFs contain the lesson document without the site header, footer, sidebar, or
+lesson navigation chrome.
 
 The uploaded analysis is already directionally right: the hard problem is not “how to print HTML”, but how to make
 lessons render as deterministic documents instead of interactive web pages. The current baseline includes Astro lesson
@@ -368,7 +368,7 @@ Implementation note:
 
 ```text
 - The smoke wrapper lives in `scripts/test-pdf-export-smoke.mjs`.
-- The smoke helpers live in `scripts/lib/pdf-export-smoke.mjs`.
+- The smoke helpers live in `scripts/lib/pdf-export/smoke.mjs`.
 - CI exposes the advisory job as `pdf_export_smoke`.
 - Temporary smoke artifacts live under `tmp/pdf-export-smoke/`.
 ```
@@ -397,7 +397,6 @@ Work:
   - unresolved-todo
   - pdf-generation-failed
 - Add repeatable `--fail-on findingKind` for targeted stricter policies.
-- Keep deprecated `--fail-on-finding` as one-cycle shorthand for failing on any finding.
 - Add `--continue-on-error` for batch exports.
 - Add stable output naming for nested lesson paths.
 ```

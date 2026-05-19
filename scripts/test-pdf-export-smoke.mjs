@@ -6,14 +6,14 @@ import path from "node:path";
 import { mkdir, readFile, rm, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
-import { buildLessonPdfExportManifest } from "./lib/pdf-export-manifest.mjs";
+import { buildLessonPdfExportManifest } from "./lib/pdf-export/manifest.mjs";
 import {
     assertPdfSmokeReport,
     assertPreviewServerStopped,
     createPdfSmokeWorkspace,
     readPdfSmokeConfig,
     resolvePdfSmokeEntry,
-} from "./lib/pdf-export-smoke.mjs";
+} from "./lib/pdf-export/smoke.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

@@ -1,6 +1,6 @@
 import {
-    filterManifest,
     derivePdfOutputPath,
+    filterManifest,
     normalizeExportFindingKind,
     normalizeLessonRoute,
 } from "@ravenhill/lesson-export-core";
@@ -22,12 +22,8 @@ export function parseCliArgs(argv, defaults = {}) {
         findingPolicy: { failOn: [] },
         timeoutMs: defaults.timeoutMs ?? 30_000,
         dryRun: false,
-        diagnostics: {
-            usedDeprecatedFailOnFinding: false,
-        },
     };
     const failOnKinds = [];
-    let deprecatedFailOnFinding = false;
 
     for (let index = 0; index < argv.length; index += 1) {
         const argument = argv[index];
@@ -77,10 +73,6 @@ export function parseCliArgs(argv, defaults = {}) {
                 failOnKinds.push(parseFindingKind(requireValue(flag, value), flag));
                 if (inlineValue === undefined) index += 1;
                 break;
-            case "--fail-on-finding":
-                deprecatedFailOnFinding = true;
-                options.diagnostics.usedDeprecatedFailOnFinding = true;
-                break;
             case "--timeout":
                 options.timeoutMs = parsePositiveInteger(requireValue(flag, value), flag);
                 if (inlineValue === undefined) index += 1;
@@ -93,17 +85,15 @@ export function parseCliArgs(argv, defaults = {}) {
         }
     }
 
-    const selectionKinds = [selection.route, selection.subtree, selection.all].filter((value) => value !== undefined && value !== false);
+    const selectionKinds = [selection.route, selection.subtree, selection.all].filter((value) =>
+        value !== undefined && value !== false
+    );
     if (selectionKinds.length !== 1) {
         throw new Error("Exactly one of --route, --subtree, or --all must be provided.");
     }
 
-    if (deprecatedFailOnFinding && failOnKinds.length > 0) {
-        throw new Error("--fail-on-finding cannot be combined with --fail-on.");
-    }
-
     options.findingPolicy = {
-        failOn: deprecatedFailOnFinding ? "any" : deduplicateKinds(failOnKinds),
+        failOn: deduplicateKinds(failOnKinds),
     };
 
     if (selection.route !== undefined) {
@@ -137,9 +127,11 @@ export function selectExportEntries(manifest, selection) {
 
     const filtered = filterManifest(manifest, filter);
     if (filtered.entries.length === 0) {
-        throw new Error(selection.kind === "route"
-            ? `No export entry found for ${selection.value}.`
-            : `No export entries found under ${selection.value}.`);
+        throw new Error(
+            selection.kind === "route"
+                ? `No export entry found for ${selection.value}.`
+                : `No export entries found under ${selection.value}.`,
+        );
     }
 
     return [...filtered.entries];

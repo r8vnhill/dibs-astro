@@ -1,4 +1,4 @@
-import metadataDataset from "../../src/data/lesson-metadata.generated.json" with { type: "json" };
+import metadataDataset from "../../../src/data/lesson-metadata.generated.json" with { type: "json" };
 
 import {
     deriveExportRoute,

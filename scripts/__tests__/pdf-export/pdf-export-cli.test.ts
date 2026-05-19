@@ -5,7 +5,7 @@ import {
     normalizeLessonRoute,
 } from "@ravenhill/lesson-export-core";
 import { describe, expect, test } from "vitest";
-import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../../lib/pdf-export-cli.mjs";
+import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../../lib/pdf-export/cli.mjs";
 
 function createEntry(route: string, title: string) {
     return {
@@ -54,9 +54,6 @@ describe("given the PDF export CLI parser", () => {
             findingPolicy: { failOn: [] },
             timeoutMs: 30_000,
             dryRun: false,
-            diagnostics: {
-                usedDeprecatedFailOnFinding: false,
-            },
         });
         expect(parsed.baseUrl).toBeUndefined();
     });
@@ -86,7 +83,8 @@ describe("given the PDF export CLI parser", () => {
             "5000",
             "--skip-build",
             "--keep-server",
-            "--fail-on-finding",
+            "--fail-on",
+            "hidden-content",
             "--timeout=45000",
         ]);
 
@@ -98,11 +96,8 @@ describe("given the PDF export CLI parser", () => {
             port: 5000,
             skipBuild: true,
             keepServer: true,
-            findingPolicy: { failOn: "any" },
+            findingPolicy: { failOn: ["hidden-content"] },
             timeoutMs: 45_000,
-            diagnostics: {
-                usedDeprecatedFailOnFinding: true,
-            },
         });
     });
 
@@ -141,9 +136,6 @@ describe("given the PDF export CLI parser", () => {
         expect(() => parseCliArgs(["--all", "--fail-on", "unknown"])).toThrow(
             /Invalid finding kind for --fail-on: unknown/u,
         );
-        expect(() => parseCliArgs(["--all", "--fail-on-finding", "--fail-on", "hidden-content"])).toThrow(
-            /--fail-on-finding cannot be combined with --fail-on/u,
-        );
     });
 
     test("then invalid flag combinations fail fast", () => {
@@ -163,6 +155,7 @@ describe("given the PDF export CLI parser", () => {
     test("then current parser rejects missing values, unknown flags, invalid numbers, and unsafe relative paths", () => {
         expect(() => parseCliArgs(["--route"])).toThrow(/Missing value for --route/u);
         expect(() => parseCliArgs(["--all", "--unknown"])).toThrow(/Unknown flag: --unknown/u);
+        expect(() => parseCliArgs(["--all", "--fail-on-finding"])).toThrow(/Unknown flag: --fail-on-finding/u);
         expect(() => parseCliArgs(["--all", "--timeout", "0"])).toThrow(/Invalid numeric value for --timeout/u);
         expect(() => parseCliArgs(["--all", "--outDir", "../pdf"])).toThrow(/Path must be relative/u);
         expect(() => parseCliArgs(["--all", "--report", "C:\\tmp\\report.json"])).toThrow(/Path must be relative/u);

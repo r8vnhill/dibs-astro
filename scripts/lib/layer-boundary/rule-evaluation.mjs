@@ -1,12 +1,12 @@
 import {
     classifyImport,
     classifySourcePath,
-} from "./layer-boundary-classification.mjs";
-import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
+} from "./classification.mjs";
+import { normalizeProjectPath } from "./paths.mjs";
 import {
     allowedExceptions,
     initialBoundaryRules,
-} from "./layer-boundary-rules.mjs";
+} from "./rules.mjs";
 
 function importPathFrom(importRecord) {
     return importRecord.importPath ?? importRecord.target;

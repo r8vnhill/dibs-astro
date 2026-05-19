@@ -1,4 +1,4 @@
-# [PLAN] Refactor PDF Export CLI Runner
+# [DONE] Refactor PDF Export CLI Runner
 
 ## Summary
 
@@ -66,7 +66,7 @@ APIs/features and says these warnings must include a `code` property. ([Node.js]
 Add:
 
 ```txt
-scripts/lib/pdf-export-runner.mjs
+scripts/lib/pdf-export/runner.mjs
 ```
 
 Primary internal API:
@@ -118,7 +118,7 @@ without turning the runner into a service locator.
 
 ### 4. Extract per-target export
 
-Add `exportOneTarget(...)` inside `pdf-export-runner.mjs` or a neighbouring local helper.
+Add `exportOneTarget(...)` inside `scripts/lib/pdf-export/runner.mjs` or a neighbouring local helper.
 
 Responsibilities:
 
@@ -370,6 +370,9 @@ runPdfExport({ projectRoot, options, dependencies });
 
 This API is intentionally local to `scripts/lib`.
 
+Later cleanup moved the PDF export script helpers under `scripts/lib/pdf-export/` to keep `scripts/lib` organized by
+domain. The runner API remains internal.
+
 ## TDD Implementation Plan
 
 ### ~~Cycle 1 — Move dry-run orchestration~~
@@ -455,28 +458,32 @@ for recoverable per-target failures and unrecoverable orchestration/report failu
 Implemented in `traceability-log/cycle_6_lock_locator_based_finding_collection.md` by adding a focused test around the
 Playwright page double:
 
-   - uses `locator("[data-export-finding]").evaluateAll(...)`;
-   - preserves `code`, `message`, and `severity` mapping.
+- uses `locator("[data-export-finding]").evaluateAll(...)`;
+- preserves `code`, `message`, and `severity` mapping.
+
 2. No production code change was needed because the runner already used the Locator-based collection API.
 3. Keep collected finding object shape unchanged.
 
-### Cycle 7 — Improve final failure summary
+### ~~Cycle 7 — Improve final failure summary~~
 
-1. Add table-driven tests for final outcomes:
+Implemented in `traceability-log/cycle_7_consolidate_final_pdf_export_failure_decision.md`.
+
+1. Added table-driven tests for final outcomes:
 
    - no failures and no fatal findings succeeds;
    - generation failures fail after report writing;
    - fatal findings fail after report writing;
    - both categories produce one combined error.
-2. Implement `formatFinalExportFailure(...)`.
-3. Preserve report-before-failure behaviour.
+2. Implemented runner-local `formatFinalExportFailure(...)`.
+3. Replaced priority-ordered final failure checks with one report-based decision after report writing.
+4. Preserved report-before-failure behaviour and the existing success log.
 
 ## Test Plan
 
 Add:
 
 ```txt
-scripts/__tests__/pdf-export/pdf-export-runner.test.ts
+scripts/__tests__/pdf-export/runner.test.ts
 ```
 
 BDD-style coverage:
@@ -507,12 +514,15 @@ scripts/__tests__/pdf-export/pdf-export-smoke.test.ts
 ## Verification Commands
 
 ```bash
-pnpm test:unit -- \
+pnpm exec vitest run \
   scripts/__tests__/pdf-export/pdf-export-cli.test.ts \
   scripts/__tests__/pdf-export/pdf-export-report.test.ts \
   scripts/__tests__/pdf-export/pdf-export-smoke.test.ts \
-  scripts/__tests__/pdf-export/pdf-export-runner.test.ts
+  scripts/__tests__/pdf-export/runner.test.ts
 ```
+
+Use `pnpm exec vitest run ...` for focused file paths. In this environment, `pnpm test:unit -- ...` can forward a
+literal `"--"` into Vitest and leave the process stuck.
 
 Optional smoke check:
 

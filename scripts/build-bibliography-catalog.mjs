@@ -1,8 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildCatalogArtifactFromTurtle } from "./lib/bibliography-catalog-builder.mjs";
-import { assembleTurtleFiles } from "./lib/assemble-bibliography-ttl.mjs";
+import { buildCatalogArtifactFromTurtle } from "./lib/bibliography/catalog-builder.mjs";
+import { assembleTurtleFiles } from "./lib/bibliography/assemble-ttl.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

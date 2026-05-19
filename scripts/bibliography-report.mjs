@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
     buildBibliographyReport,
     formatBibliographyReportCsv,
-} from "./lib/bibliography-report-read-model.mjs";
+} from "./lib/bibliography/report-read-model.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

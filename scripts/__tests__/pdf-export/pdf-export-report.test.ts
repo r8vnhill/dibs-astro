@@ -4,7 +4,7 @@ import {
     createExportReport,
     hasFatalExportFindings,
     summarizeExportEntries,
-} from "../../lib/pdf-export-report.mjs";
+} from "../../lib/pdf-export/report.mjs";
 
 describe("given PDF export report entries", () => {
     test("then summary counts exported, failed, and findings totals", () => {

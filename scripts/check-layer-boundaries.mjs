@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { runBoundaryCheck } from "./lib/layer-boundary-checker.mjs";
+import { runBoundaryCheck } from "./lib/layer-boundary/checker.mjs";
 
 const result = await runBoundaryCheck({ cwd: process.cwd() });
 

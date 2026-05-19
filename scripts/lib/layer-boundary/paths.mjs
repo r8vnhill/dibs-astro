@@ -1,5 +1,5 @@
 import path from "node:path";
-import { loadAliasMappings } from "./layer-boundary-aliases.mjs";
+import { loadAliasMappings } from "./aliases.mjs";
 
 const packageScopePattern = /^@[^/]+\/[^/]+/;
 

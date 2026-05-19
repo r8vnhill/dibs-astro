@@ -3,8 +3,8 @@ import {
     classifyPackageImport,
     classifyUnresolvedImport,
     extractImportPath,
-} from "./layer-boundary-import-specifiers.mjs";
-import { normalizeProjectPath } from "./layer-boundary-paths.mjs";
+} from "./import-specifiers.mjs";
+import { normalizeProjectPath } from "./paths.mjs";
 
 /**
  * @typedef {

@@ -3,7 +3,7 @@ import {
     getReferenceStats,
     loadBibliographyCatalog,
     usageMatchesTagFilters,
-} from "../../src/lib/bibliography/catalog-core.mjs";
+} from "../../../src/lib/bibliography/catalog-core.mjs";
 
 const csvEscape = (value) => {
     if (value == null) return "";

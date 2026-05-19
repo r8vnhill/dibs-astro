@@ -9,7 +9,7 @@ import {
     bibliographyReportCsvRows,
     buildBibliographyReport,
     formatBibliographyReportCsv,
-} from "../../lib/bibliography-report-read-model.mjs";
+} from "../../lib/bibliography/report-read-model.mjs";
 
 const catalogFixture = {
     "@context": "https://schema.org",

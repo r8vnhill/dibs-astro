@@ -4,14 +4,17 @@ import path from "node:path";
 import { chromium as defaultChromium } from "playwright";
 
 import { buildSite } from "./build-site.mjs";
-import { resolveExportTargets, selectExportEntries } from "./pdf-export-cli.mjs";
-import { buildLessonPdfExportManifest } from "./pdf-export-manifest.mjs";
+import {
+    resolveExportTargets,
+    selectExportEntries,
+} from "./cli.mjs";
+import { buildLessonPdfExportManifest } from "./manifest.mjs";
 import {
     collectExportFindings,
     createExportReport,
     hasFatalExportFindings,
     writeExportReport,
-} from "./pdf-export-report.mjs";
+} from "./report.mjs";
 import {
     startPreviewServer,
     stopPreviewServer,
@@ -19,8 +22,8 @@ import {
 } from "./preview-server.mjs";
 
 const exportDomSelectors = {
-    document: "[data-export-role=\"document\"]",
-    body: "[data-export-role=\"body\"]",
+    document: '[data-export-role="document"]',
+    body: '[data-export-role="body"]',
     finding: "[data-export-finding]",
 };
 
@@ -42,7 +45,11 @@ const defaultDependencies = {
     writeExportReport,
 };
 
-export async function runPdfExport({ projectRoot, options, dependencies = {} }) {
+export async function runPdfExport({
+    projectRoot,
+    options,
+    dependencies = {},
+}) {
     dependencies = { ...defaultDependencies, ...dependencies };
     const { targets } = preparePdfExportRun({ options, dependencies });
 
@@ -69,19 +76,32 @@ export function preparePdfExportRun({ options, dependencies = {} }) {
     const { manifest, validation } = dependencies.buildLessonPdfExportManifest({
         outDir: options.outDir,
     });
-    const validationErrors = validation.findings.filter((finding) => finding.severity === "error");
+    const validationErrors = validation.findings.filter(
+        (finding) => finding.severity === "error",
+    );
 
     if (validationErrors.length > 0) {
         throw new Error(formatValidationErrors(validationErrors));
     }
 
-    const selectedEntries = dependencies.selectExportEntries(manifest, options.selection);
-    const targets = dependencies.resolveExportTargets(selectedEntries, options.outDir);
+    const selectedEntries = dependencies.selectExportEntries(
+        manifest,
+        options.selection,
+    );
+    const targets = dependencies.resolveExportTargets(
+        selectedEntries,
+        options.outDir,
+    );
 
     return { manifest, selectedEntries, targets };
 }
 
-async function writeDryRunReport({ projectRoot, options, targets, dependencies }) {
+async function writeDryRunReport({
+    projectRoot,
+    options,
+    targets,
+    dependencies,
+}) {
     const report = dependencies.createExportReport({
         generatedAt: dependencies.now().toISOString(),
         baseUrl: options.baseUrl ?? "dry-run",
@@ -110,7 +130,12 @@ async function writeDryRunReport({ projectRoot, options, targets, dependencies }
     );
 }
 
-async function exportPreparedRun({ projectRoot, options, targets, dependencies }) {
+async function exportPreparedRun({
+    projectRoot,
+    options,
+    targets,
+    dependencies,
+}) {
     if (!options.skipBuild) {
         await dependencies.buildSite({ projectRoot });
     }
@@ -136,7 +161,7 @@ async function exportPreparedRun({ projectRoot, options, targets, dependencies }
         browser = await dependencies.chromium.launch();
 
         try {
-            const { reportEntries, failureCount } = await exportTargets({
+            const reportEntries = await exportTargets({
                 browser,
                 targets,
                 baseUrl,
@@ -158,14 +183,20 @@ async function exportPreparedRun({ projectRoot, options, targets, dependencies }
                 report,
             );
 
-            if (dependencies.hasFatalExportFindings(report, options.findingPolicy)) {
-                throw new Error(
-                    "PDF export findings matched the configured --fail-on policy.",
-                );
-            }
+            const hasFatalFindings = dependencies.hasFatalExportFindings(
+                report,
+                options.findingPolicy,
+            );
+            const generationFailureCount = report.summary.failed;
 
-            if (failureCount > 0) {
-                throw new Error(`PDF export failed for ${failureCount} lesson(s).`);
+            if (hasFatalFindings || generationFailureCount > 0) {
+                throw new Error(
+                    formatFinalExportFailure({
+                        hasFatalFindings,
+                        generationFailureCount,
+                        reportPath: options.reportPath,
+                    }),
+                );
             }
 
             dependencies.logger.log(
@@ -181,9 +212,15 @@ async function exportPreparedRun({ projectRoot, options, targets, dependencies }
     }
 }
 
-async function exportTargets({ browser, targets, baseUrl, projectRoot, options, dependencies }) {
+async function exportTargets({
+    browser,
+    targets,
+    baseUrl,
+    projectRoot,
+    options,
+    dependencies,
+}) {
     const reportEntries = [];
-    let failureCount = 0;
 
     for (const target of targets) {
         const result = await exportOneTarget({
@@ -200,11 +237,10 @@ async function exportTargets({ browser, targets, baseUrl, projectRoot, options, 
             continue;
         }
 
-        failureCount += 1;
         reportEntries.push(toFailedReportEntry(result));
     }
 
-    return { reportEntries, failureCount };
+    return reportEntries;
 }
 
 async function exportOneTarget({
@@ -288,13 +324,15 @@ async function waitForExportDomContract(page, timeoutMs) {
 async function collectPageFindings(page) {
     return page.locator(exportDomSelectors.finding).evaluateAll((elements) =>
         elements.map((element) => ({
-            code: element.getAttribute("data-export-finding")
-                ?? element.dataset.exportFinding
-                ?? "unknown",
+            code:
+                element.getAttribute("data-export-finding") ??
+                element.dataset.exportFinding ??
+                "unknown",
             message: element.textContent?.trim() || undefined,
-            severity: element.getAttribute("data-export-finding-severity")
-                ?? element.dataset.exportFindingSeverity
-                ?? undefined,
+            severity:
+                element.getAttribute("data-export-finding-severity") ??
+                element.dataset.exportFindingSeverity ??
+                undefined,
         })),
     );
 }
@@ -328,6 +366,32 @@ function formatValidationErrors(findings) {
     return [
         "PDF lesson export manifest is invalid:",
         ...findings.map((finding) => `- ${finding.message}`),
+    ].join("\n");
+}
+
+function formatFinalExportFailure({
+    hasFatalFindings,
+    generationFailureCount,
+    reportPath,
+}) {
+    const bullets = [];
+
+    if (hasFatalFindings) {
+        bullets.push(
+            "- export findings matched the configured --fail-on policy",
+        );
+    }
+
+    if (generationFailureCount > 0) {
+        bullets.push(
+            `- PDF generation failed for ${generationFailureCount} lesson(s)`,
+        );
+    }
+
+    return [
+        "PDF export completed with problems after writing the report:",
+        ...bullets,
+        `Report: ${reportPath}`,
     ].join("\n");
 }
 

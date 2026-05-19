@@ -5,9 +5,6 @@
  * here so the graph package exposes one cohesive entrypoint while keeping implementation details split across smaller
  * sibling modules.
  *
- * The root-level `bibliography-catalog-builder.graph.mjs` file re-exports this module as the stable compatibility
- * facade for tests and external script imports.
- *
  * The graph package is organized as follows:
  *
  * - `support.mjs` defines shared helper logic and builder-context contracts.

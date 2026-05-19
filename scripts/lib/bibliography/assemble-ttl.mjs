@@ -107,17 +107,17 @@ export async function assembleTurtleFiles(sourcesDir, outputFile) {
 }
 
 /**
- * Command-line usage: node assemble-bibliography-ttl.mjs <sourcesDir> <outputFile>
+ * Command-line usage: node assemble-ttl.mjs <sourcesDir> <outputFile>
  */
 if (import.meta.url === `file://${process.argv[1]}`) {
     const sourcesDir =
         process.argv[2] ||
-        join(__dirname, "../../src/data/bibliography/sources");
+        join(__dirname, "../../../src/data/bibliography/sources");
     const outputFile =
         process.argv[3] ||
         join(
             __dirname,
-            "../../src/data/bibliography/catalog.graph.generated.ttl",
+            "../../../src/data/bibliography/catalog.graph.generated.ttl",
         );
 
     assembleTurtleFiles(sourcesDir, outputFile)

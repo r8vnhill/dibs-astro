@@ -30,7 +30,7 @@ import {
     discoverSourceFiles,
     formatBoundaryFindings,
     runBoundaryCheck,
-} from "../../lib/layer-boundary-checker.mjs";
+} from "../../lib/layer-boundary/checker.mjs";
 
 /**
  * Options accepted by the public checker API.
