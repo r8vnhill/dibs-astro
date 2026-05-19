@@ -450,13 +450,14 @@ for recoverable per-target failures and unrecoverable orchestration/report failu
    - report writing fails.
 3. Preserved the existing `browser.close()` dedicated `finally` without changing public behavior.
 
-### Cycle 6 — Replace finding collection API
+### ~~Cycle 6 — Replace finding collection API~~
 
-1. Add a focused test around the Playwright page double:
+Implemented in `traceability-log/cycle_6_lock_locator_based_finding_collection.md` by adding a focused test around the
+Playwright page double:
 
    - uses `locator("[data-export-finding]").evaluateAll(...)`;
    - preserves `code`, `message`, and `severity` mapping.
-2. Replace `page.$$eval(...)`.
+2. No production code change was needed because the runner already used the Locator-based collection API.
 3. Keep collected finding object shape unchanged.
 
 ### Cycle 7 — Improve final failure summary

@@ -515,32 +515,52 @@ describe("given the PDF export runner", () => {
     });
 
     describe("when the runner exports prepared targets directly", () => {
-        test("then it exports one target with the current Playwright contract", async () => {
+        test("then it collects findings through locator.evaluateAll and preserves the mapped shape", async () => {
             const dependencies = createDependencies();
             const events: EventLog = [];
-            const firstPage = createPageDouble({
-                events,
-                findingElements: [
-                    {
-                        getAttribute: (attribute: string) => {
-                            switch (attribute) {
-                                case "data-export-finding":
-                                    return "missing-alt-text";
-                                case "data-export-finding-severity":
-                                    return "warning";
-                                default:
-                                    return null;
-                            }
-                        },
-                        dataset: {
-                            exportFinding: "missing-alt-text",
-                            exportFindingSeverity: "warning",
-                        },
-                        textContent: "  Image without alt text  ",
+            const fakeFindingElements = [
+                {
+                    getAttribute: (attribute: string) => {
+                        switch (attribute) {
+                            case "data-export-finding":
+                                return "client-only-island";
+                            case "data-export-finding-severity":
+                                return "warning";
+                            default:
+                                return null;
+                        }
                     },
-                ],
-                label: "androth",
-            });
+                    dataset: {
+                        exportFinding: "client-only-island",
+                        exportFindingSeverity: "warning",
+                    },
+                    textContent: " Pikachu island rendered on the client only. ",
+                },
+            ];
+            const findingLocator = createLocatorDouble("[data-export-finding]", fakeFindingElements);
+            const documentLocator = createLocatorDouble("[data-export-role=\"document\"]", []);
+            const bodyLocator = createLocatorDouble("[data-export-role=\"body\"]", []);
+            const firstPage = {
+                goto: vi.fn(async () => ({ ok: () => true })),
+                pdf: vi.fn(async () => {
+                    events.push("export-ok:androth");
+                }),
+                close: vi.fn(async () => {
+                    events.push("page-close:androth");
+                }),
+                locator: vi.fn((selector: string) => {
+                    switch (selector) {
+                        case "[data-export-role=\"document\"]":
+                            return documentLocator;
+                        case "[data-export-role=\"body\"]":
+                            return bodyLocator;
+                        case "[data-export-finding]":
+                            return findingLocator;
+                        default:
+                            return createLocatorDouble(selector, []);
+                    }
+                }),
+            };
             const secondPage = createPageDouble({ events, label: "tuul" });
             const browser = createBrowserDouble([firstPage, secondPage], { events });
             dependencies.chromium.launch.mockResolvedValue(browser);
@@ -565,6 +585,7 @@ describe("given the PDF export runner", () => {
             expect(firstPage.locator).toHaveBeenCalledWith("[data-export-role=\"document\"]");
             expect(firstPage.locator).toHaveBeenCalledWith("[data-export-role=\"body\"]");
             expect(firstPage.locator).toHaveBeenCalledWith("[data-export-finding]");
+            expect(findingLocator.evaluateAll).toHaveBeenCalledOnce();
             expect(dependencies.mkdir).toHaveBeenCalledWith(
                 path.dirname(path.resolve(projectRoot, resolvedTargets[0].outputPath)),
                 { recursive: true },
@@ -607,8 +628,8 @@ describe("given the PDF export runner", () => {
                         title: manifestEntries[0].title,
                         findings: [
                             {
-                                code: "missing-alt-text",
-                                message: "Image without alt text",
+                                code: "client-only-island",
+                                message: "Pikachu island rendered on the client only.",
                                 severity: "warning",
                             },
                         ],
