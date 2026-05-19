@@ -421,18 +421,13 @@ ownership into `runPdfExport(...)`. The executable now calls the runner for real
 2. Move build and preview orchestration into the runner.
 3. Keep preview cleanup in `finally`.
 
-### Cycle 4 — Extract per-target export
+### ~~Cycle 4 — Extract per-target export~~
 
-1. Add tests proving successful export:
+Implemented in `traceability-log/cycle_4_extract_per_target_playwright_export.md`.
 
-   - opens a page;
-   - navigates to the expected URL;
-   - waits for the export DOM contract;
-   - writes the PDF;
-   - closes the page;
-   - records an exported report entry.
-2. Implement `exportOneTarget(...)`.
-3. Keep PDF options exactly unchanged.
+The runner now owns the per-target Playwright export lifecycle, including page creation, navigation, DOM waits,
+finding collection, PDF writing, page cleanup, browser cleanup, and report entry mapping for exported and failed
+targets.
 
 ### Cycle 5 — Harden failure handling
 

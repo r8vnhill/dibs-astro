@@ -44,9 +44,12 @@ function createDependencies({ validationFindings = [] } = {}) {
         ...input,
         summary: {
             selected: input.entries.length,
-            exported: 0,
-            failed: 0,
-            findings: 0,
+            exported: input.entries.filter((entry) => entry.status === "exported").length,
+            failed: input.entries.filter((entry) => entry.status === "failed").length,
+            findings: input.entries.reduce(
+                (total, entry) => total + (entry.findings?.length ?? 0),
+                0,
+            ),
         },
     }));
     const writeExportReport = vi.fn(async () => {});
@@ -54,22 +57,79 @@ function createDependencies({ validationFindings = [] } = {}) {
     const startPreviewServer = vi.fn(() => ({ pid: 1234 }));
     const waitForPreview = vi.fn(async () => "http://127.0.0.1:4321/");
     const stopPreviewServer = vi.fn(async () => {});
-    const exportPreparedTargets = vi.fn(async () => {});
+    const chromium = {
+        launch: vi.fn(async () => createBrowserDouble([createPageDouble(), createPageDouble()])),
+    };
+    const mkdir = vi.fn(async () => {});
+    const hasFatalExportFindings = vi.fn(() => false);
     const logger = { log: vi.fn() };
 
     return {
         buildSite,
         buildLessonPdfExportManifest,
-        selectExportEntries,
-        resolveExportTargets,
+        chromium,
         createExportReport,
-        writeExportReport,
-        startPreviewServer,
-        waitForPreview,
-        stopPreviewServer,
-        exportPreparedTargets,
-        now: () => new Date("2026-05-11T00:00:00.000Z"),
+        hasFatalExportFindings,
         logger,
+        mkdir,
+        resolveExportTargets,
+        selectExportEntries,
+        startPreviewServer,
+        stopPreviewServer,
+        waitForPreview,
+        writeExportReport,
+        now: () => new Date("2026-05-11T00:00:00.000Z"),
+    };
+}
+
+function createBrowserDouble(pages = [createPageDouble()]) {
+    const pageQueue = [...pages];
+
+    return {
+        newPage: vi.fn(async () => {
+            const page = pageQueue.shift();
+            if (!page) {
+                throw new Error("No more pages available.");
+            }
+
+            return page;
+        }),
+        close: vi.fn(async () => {}),
+    };
+}
+
+function createPageDouble({
+    findingElements = [],
+    gotoImplementation,
+    response = { ok: () => true },
+} = {}) {
+    const locators = new Map();
+
+    return {
+        goto: vi.fn(gotoImplementation ?? (async () => response)),
+        pdf: vi.fn(async () => {}),
+        close: vi.fn(async () => {}),
+        locator: vi.fn((selector) => {
+            if (!locators.has(selector)) {
+                locators.set(selector, createLocatorDouble(selector, findingElements));
+            }
+
+            return locators.get(selector);
+        }),
+    };
+}
+
+function createLocatorDouble(selector, findingElements) {
+    if (selector === "[data-export-finding]") {
+        return {
+            waitFor: vi.fn(async () => {}),
+            evaluateAll: vi.fn(async (callback) => callback(findingElements)),
+        };
+    }
+
+    return {
+        waitFor: vi.fn(async () => {}),
+        evaluateAll: vi.fn(async () => []),
     };
 }
 
@@ -260,35 +320,6 @@ describe("given the PDF export runner", () => {
             expect(dependencies.createExportReport).not.toHaveBeenCalled();
             expect(dependencies.writeExportReport).not.toHaveBeenCalled();
         });
-
-        test("then non-dry-run resolves targets before the temporary runner guard", async () => {
-            const dependencies = createDependencies();
-            const options = createRealExportOptions();
-
-            await runPdfExport({
-                projectRoot: "e:/teaching/DIBS/projects/astro-website",
-                options,
-                dependencies,
-            });
-
-            expect(dependencies.buildLessonPdfExportManifest).toHaveBeenCalledWith({
-                outDir: options.outDir,
-            });
-            expect(dependencies.selectExportEntries).toHaveBeenCalledWith(
-                manifest,
-                options.selection,
-            );
-            expect(dependencies.resolveExportTargets).toHaveBeenCalledWith(
-                manifestEntries,
-                options.outDir,
-            );
-            expect(dependencies.createExportReport).not.toHaveBeenCalled();
-            expect(dependencies.writeExportReport).not.toHaveBeenCalled();
-            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
-                targets: resolvedTargets,
-                baseUrl: "http://127.0.0.1:4321/",
-            });
-        });
     });
 
     describe("when a real export uses a provided baseUrl", () => {
@@ -298,6 +329,10 @@ describe("given the PDF export runner", () => {
             const options = createRealExportOptions({
                 baseUrl: "http://127.0.0.1:5000/site/page/",
             });
+            const firstPage = createPageDouble();
+            const secondPage = createPageDouble();
+            const browser = createBrowserDouble([firstPage, secondPage]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
 
             await runPdfExport({ projectRoot, options, dependencies });
 
@@ -305,18 +340,23 @@ describe("given the PDF export runner", () => {
             expect(dependencies.startPreviewServer).not.toHaveBeenCalled();
             expect(dependencies.waitForPreview).not.toHaveBeenCalled();
             expect(dependencies.stopPreviewServer).not.toHaveBeenCalled();
-            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
-                targets: resolvedTargets,
-                baseUrl: "http://127.0.0.1:5000/",
-            });
+            expect(dependencies.chromium.launch).toHaveBeenCalledOnce();
+            expect(dependencies.createExportReport).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    baseUrl: "http://127.0.0.1:5000/",
+                }),
+            );
+            expect(browser.close).toHaveBeenCalledOnce();
         });
 
-        test("then skipBuild prevents the build but still exports prepared targets", async () => {
+        test("then skipBuild prevents the build but still exports the targets", async () => {
             const dependencies = createDependencies();
             const options = createRealExportOptions({
                 baseUrl: "http://127.0.0.1:5000/",
                 skipBuild: true,
             });
+            const browser = createBrowserDouble([createPageDouble(), createPageDouble()]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
 
             await runPdfExport({
                 projectRoot: "e:/teaching/DIBS/projects/astro-website",
@@ -325,10 +365,8 @@ describe("given the PDF export runner", () => {
             });
 
             expect(dependencies.buildSite).not.toHaveBeenCalled();
-            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
-                targets: resolvedTargets,
-                baseUrl: "http://127.0.0.1:5000/",
-            });
+            expect(dependencies.chromium.launch).toHaveBeenCalledOnce();
+            expect(browser.close).toHaveBeenCalledOnce();
         });
     });
 
@@ -339,6 +377,8 @@ describe("given the PDF export runner", () => {
             const previewProcess = { pid: 9876 };
             dependencies.startPreviewServer.mockReturnValue(previewProcess);
             dependencies.waitForPreview.mockResolvedValue("http://127.0.0.1:4321/");
+            const browser = createBrowserDouble([createPageDouble(), createPageDouble()]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
             const options = createRealExportOptions();
 
             await runPdfExport({ projectRoot, options, dependencies });
@@ -352,10 +392,8 @@ describe("given the PDF export runner", () => {
                 "http://127.0.0.1:4321/",
                 30_000,
             );
-            expect(dependencies.exportPreparedTargets).toHaveBeenCalledWith({
-                targets: resolvedTargets,
-                baseUrl: "http://127.0.0.1:4321/",
-            });
+            expect(dependencies.chromium.launch).toHaveBeenCalledOnce();
+            expect(browser.close).toHaveBeenCalledOnce();
             expect(dependencies.stopPreviewServer).toHaveBeenCalledWith(previewProcess);
 
             expect(dependencies.buildSite.mock.invocationCallOrder[0]).toBeLessThan(
@@ -365,15 +403,17 @@ describe("given the PDF export runner", () => {
                 dependencies.waitForPreview.mock.invocationCallOrder[0],
             );
             expect(dependencies.waitForPreview.mock.invocationCallOrder[0]).toBeLessThan(
-                dependencies.exportPreparedTargets.mock.invocationCallOrder[0],
+                dependencies.chromium.launch.mock.invocationCallOrder[0],
             );
-            expect(dependencies.exportPreparedTargets.mock.invocationCallOrder[0]).toBeLessThan(
+            expect(dependencies.chromium.launch.mock.invocationCallOrder[0]).toBeLessThan(
                 dependencies.stopPreviewServer.mock.invocationCallOrder[0],
             );
         });
 
         test("then keepServer leaves a started preview running", async () => {
             const dependencies = createDependencies();
+            const browser = createBrowserDouble([createPageDouble(), createPageDouble()]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
             const options = createRealExportOptions({ keepServer: true });
 
             await runPdfExport({
@@ -398,23 +438,181 @@ describe("given the PDF export runner", () => {
 
             expect(dependencies.startPreviewServer).not.toHaveBeenCalled();
             expect(dependencies.waitForPreview).not.toHaveBeenCalled();
-            expect(dependencies.exportPreparedTargets).not.toHaveBeenCalled();
+            expect(dependencies.chromium.launch).not.toHaveBeenCalled();
             expect(dependencies.stopPreviewServer).not.toHaveBeenCalled();
         });
 
-        test("then preview stops when exporting prepared targets fails", async () => {
+        test("then preview stops when browser launch fails", async () => {
             const dependencies = createDependencies();
             const previewProcess = { pid: 2468 };
             dependencies.startPreviewServer.mockReturnValue(previewProcess);
-            dependencies.exportPreparedTargets.mockRejectedValue(new Error("Export failed."));
+            dependencies.chromium.launch.mockRejectedValue(new Error("Launch failed."));
 
             await expect(runPdfExport({
                 projectRoot: "e:/teaching/DIBS/projects/astro-website",
                 options: createRealExportOptions(),
                 dependencies,
-            })).rejects.toThrow("Export failed.");
+            })).rejects.toThrow("Launch failed.");
 
             expect(dependencies.stopPreviewServer).toHaveBeenCalledWith(previewProcess);
+        });
+    });
+
+    describe("when the runner exports prepared targets directly", () => {
+        test("then it exports one target with the current Playwright contract", async () => {
+            const dependencies = createDependencies();
+            const firstPage = createPageDouble({
+                findingElements: [
+                    {
+                        getAttribute: (attribute) => {
+                            switch (attribute) {
+                                case "data-export-finding":
+                                    return "missing-alt-text";
+                                case "data-export-finding-severity":
+                                    return "warning";
+                                default:
+                                    return null;
+                            }
+                        },
+                        dataset: {
+                            exportFinding: "missing-alt-text",
+                            exportFindingSeverity: "warning",
+                        },
+                        textContent: "  Image without alt text  ",
+                    },
+                ],
+            });
+            const secondPage = createPageDouble();
+            const browser = createBrowserDouble([firstPage, secondPage]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
+            const projectRoot = "e:/teaching/DIBS/projects/astro-website";
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await runPdfExport({ projectRoot, options, dependencies });
+
+            expect(browser.newPage).toHaveBeenCalledWith({
+                viewport: { width: 1280, height: 1600 },
+            });
+            expect(firstPage.goto).toHaveBeenCalledWith(
+                "http://127.0.0.1:5000/exports/pdf/notes/blackthorne/androth/",
+                {
+                    waitUntil: "domcontentloaded",
+                    timeout: options.timeoutMs,
+                },
+            );
+            expect(firstPage.locator).toHaveBeenCalledWith("[data-export-role=\"document\"]");
+            expect(firstPage.locator).toHaveBeenCalledWith("[data-export-role=\"body\"]");
+            expect(firstPage.locator).toHaveBeenCalledWith("[data-export-finding]");
+            expect(dependencies.mkdir).toHaveBeenCalledWith(
+                path.dirname(path.resolve(projectRoot, resolvedTargets[0].outputPath)),
+                { recursive: true },
+            );
+            expect(firstPage.pdf).toHaveBeenCalledWith({
+                path: path.resolve(projectRoot, resolvedTargets[0].outputPath),
+                format: "A4",
+                printBackground: true,
+                preferCSSPageSize: true,
+                margin: {
+                    top: "0",
+                    right: "0",
+                    bottom: "0",
+                    left: "0",
+                },
+            });
+            expect(firstPage.close).toHaveBeenCalledOnce();
+            expect(secondPage.close).toHaveBeenCalledOnce();
+            expect(browser.close).toHaveBeenCalledOnce();
+
+            expect(dependencies.createExportReport).toHaveBeenCalledWith({
+                generatedAt: "2026-05-11T00:00:00.000Z",
+                baseUrl: "http://127.0.0.1:5000/",
+                outDir: options.outDir,
+                selection: options.selection,
+                entries: [
+                    {
+                        route: manifestEntries[0].route,
+                        exportRoute: manifestEntries[0].exportRoute,
+                        url: "http://127.0.0.1:5000/exports/pdf/notes/blackthorne/androth/",
+                        outputPath: resolvedTargets[0].outputPath,
+                        status: "exported",
+                        title: manifestEntries[0].title,
+                        findings: [
+                            {
+                                code: "missing-alt-text",
+                                message: "Image without alt text",
+                                severity: "warning",
+                            },
+                        ],
+                    },
+                    {
+                        route: manifestEntries[1].route,
+                        exportRoute: manifestEntries[1].exportRoute,
+                        url: "http://127.0.0.1:5000/exports/pdf/notes/blackthorne/tuul/",
+                        outputPath: resolvedTargets[1].outputPath,
+                        status: "exported",
+                        title: manifestEntries[1].title,
+                        findings: [],
+                    },
+                ],
+            });
+        });
+
+        test("then it records failed targets, continues, writes the report, and fails after report writing", async () => {
+            const dependencies = createDependencies();
+            const firstPage = createPageDouble({
+                gotoImplementation: async () => {
+                    throw new Error("Navigation failed.");
+                },
+            });
+            const secondPage = createPageDouble();
+            const browser = createBrowserDouble([firstPage, secondPage]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
+            const projectRoot = "e:/teaching/DIBS/projects/astro-website";
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await expect(runPdfExport({ projectRoot, options, dependencies })).rejects.toThrow(
+                "PDF export failed for 1 lesson(s).",
+            );
+
+            expect(firstPage.close).toHaveBeenCalledOnce();
+            expect(secondPage.close).toHaveBeenCalledOnce();
+            expect(browser.close).toHaveBeenCalledOnce();
+            expect(dependencies.writeExportReport).toHaveBeenCalledOnce();
+
+            const reportInput = dependencies.createExportReport.mock.calls[0][0];
+            expect(reportInput.entries).toEqual([
+                {
+                    route: manifestEntries[0].route,
+                    exportRoute: manifestEntries[0].exportRoute,
+                    url: "http://127.0.0.1:5000/exports/pdf/notes/blackthorne/androth/",
+                    outputPath: resolvedTargets[0].outputPath,
+                    status: "failed",
+                    title: manifestEntries[0].title,
+                    findings: [],
+                    error: {
+                        kind: "pdf-generation-failed",
+                        message: "Navigation failed.",
+                    },
+                },
+                {
+                    route: manifestEntries[1].route,
+                    exportRoute: manifestEntries[1].exportRoute,
+                    url: "http://127.0.0.1:5000/exports/pdf/notes/blackthorne/tuul/",
+                    outputPath: resolvedTargets[1].outputPath,
+                    status: "exported",
+                    title: manifestEntries[1].title,
+                    findings: [],
+                },
+            ]);
+            expect(dependencies.writeExportReport.mock.invocationCallOrder[0]).toBeLessThan(
+                browser.close.mock.invocationCallOrder[0],
+            );
         });
     });
 });
