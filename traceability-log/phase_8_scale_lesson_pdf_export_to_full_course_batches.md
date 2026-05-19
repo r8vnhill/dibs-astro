@@ -160,8 +160,7 @@ In the CLI parser:
 
 - Added repeatable `--fail-on <findingKind>` and `--fail-on=<findingKind>`.
 - Replaced parsed `failOnFinding: boolean` with `findingPolicy: { failOn: "any" | LessonExportFindingKind[] }`.
-- Kept `--fail-on-finding` as deprecated shorthand for “fail on any finding” with a CLI-entrypoint deprecation
-  warning.
+- Kept `--fail-on-finding` as deprecated shorthand for “fail on any finding” with a CLI-entrypoint deprecation warning.
 - Validated every supplied finding kind before build, preview, or Playwright startup.
 - Rejected conflicting finding-policy flags and preserved existing selection conflict checks:
 
@@ -371,7 +370,7 @@ designed for browser automation, while Vitest remains better suited for fast uni
 
 ```bash
 pnpm run check:lesson-export-core
-pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts scripts/__tests__/pdf-export-report.test.ts
+pnpm test:unit -- scripts/__tests__/pdf-export/pdf-export-cli.test.ts scripts/__tests__/pdf-export/pdf-export-report.test.ts
 pnpm test:astro
 pnpm export:pdf:dry-run
 EXPORT_PDF_SMOKE=1 pnpm test:pdf-smoke

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { evaluateBoundaryRules } from "../lib/layer-boundary-rule-evaluation.mjs";
+import { evaluateBoundaryRules } from "../../lib/layer-boundary-rule-evaluation.mjs";
 
 function importRecord(importPath, kind = "static-import") {
     return { target: importPath, kind };

@@ -5,7 +5,7 @@ import {
     classifyPackageImport,
     classifyResolvedTarget,
     classifySourcePath,
-} from "../lib/layer-boundary-classification.mjs";
+} from "../../lib/layer-boundary-classification.mjs";
 
 const sourceLayerCases = [
     ["src/domain/model.ts", "domain"],

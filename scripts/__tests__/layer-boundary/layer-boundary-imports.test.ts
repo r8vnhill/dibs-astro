@@ -3,7 +3,7 @@ import { describe, expect, it, test } from "vitest";
 import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { discoverSourceFiles, extractImports } from "../lib/layer-boundary-checker.mjs";
+import { discoverSourceFiles, extractImports } from "../../lib/layer-boundary-checker.mjs";
 
 describe("boundary checker dependencies", () => {
     it("loads the dependency-backed checker adapters in the ESM test environment", async () => {

@@ -9,7 +9,7 @@ import {
     isProjectAliasImport,
     isRelativeImport,
     packageNameFromImportPath,
-} from "../lib/layer-boundary-import-specifiers.mjs";
+} from "../../lib/layer-boundary-import-specifiers.mjs";
 
 describe("layer-boundary import specifiers", () => {
     describe("extractImportPath", () => {

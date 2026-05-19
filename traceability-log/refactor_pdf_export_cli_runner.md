@@ -425,21 +425,30 @@ ownership into `runPdfExport(...)`. The executable now calls the runner for real
 
 Implemented in `traceability-log/cycle_4_extract_per_target_playwright_export.md`.
 
-The runner now owns the per-target Playwright export lifecycle, including page creation, navigation, DOM waits,
-finding collection, PDF writing, page cleanup, browser cleanup, and report entry mapping for exported and failed
-targets.
+The runner now owns the per-target Playwright export lifecycle, including page creation, navigation, DOM waits, finding
+collection, PDF writing, page cleanup, browser cleanup, and report entry mapping for exported and failed targets.
 
-### Cycle 5 — Harden failure handling
+### ~~Cycle 5 — Harden failure handling~~
 
-1. Add tests proving failed page export:
+Implemented in `traceability-log/cycle_5_harden_pdf_export_failure_handling.md`.
+
+The runner already had the intended production lifecycle after Cycle 4: per-target page cleanup in
+`exportOneTarget(...)` and browser cleanup in a dedicated `finally`. Cycle 5 hardened that behavior with focused tests
+for recoverable per-target failures and unrecoverable orchestration/report failures.
+
+1. Added tests proving failed page export:
 
    - records `pdf-generation-failed`;
    - closes the page;
    - continues with later targets;
    - writes the report;
    - fails after report writing.
-2. Add tests proving browser closure on unexpected loop/browser errors.
-3. Move `browser.close()` into a dedicated `finally`.
+2. Added tests proving browser closure when:
+
+   - `browser.newPage()` fails before a page exists;
+   - report creation fails;
+   - report writing fails.
+3. Preserved the existing `browser.close()` dedicated `finally` without changing public behavior.
 
 ### Cycle 6 — Replace finding collection API
 
@@ -466,7 +475,7 @@ targets.
 Add:
 
 ```txt
-scripts/__tests__/pdf-export-runner.test.ts
+scripts/__tests__/pdf-export/pdf-export-runner.test.ts
 ```
 
 BDD-style coverage:
@@ -489,19 +498,19 @@ Table-driven tests:
 Keep existing suites unchanged:
 
 ```txt
-scripts/__tests__/pdf-export-cli.test.ts
-scripts/__tests__/pdf-export-report.test.ts
-scripts/__tests__/pdf-export-smoke.test.ts
+scripts/__tests__/pdf-export/pdf-export-cli.test.ts
+scripts/__tests__/pdf-export/pdf-export-report.test.ts
+scripts/__tests__/pdf-export/pdf-export-smoke.test.ts
 ```
 
 ## Verification Commands
 
 ```bash
 pnpm test:unit -- \
-  scripts/__tests__/pdf-export-cli.test.ts \
-  scripts/__tests__/pdf-export-report.test.ts \
-  scripts/__tests__/pdf-export-smoke.test.ts \
-  scripts/__tests__/pdf-export-runner.test.ts
+  scripts/__tests__/pdf-export/pdf-export-cli.test.ts \
+  scripts/__tests__/pdf-export/pdf-export-report.test.ts \
+  scripts/__tests__/pdf-export/pdf-export-smoke.test.ts \
+  scripts/__tests__/pdf-export/pdf-export-runner.test.ts
 ```
 
 Optional smoke check:

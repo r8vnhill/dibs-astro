@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
 
-import { checkLayerBoundaries } from "../lib/layer-boundary-checker.mjs";
-import { evaluateBoundaryRules } from "../lib/layer-boundary-rule-evaluation.mjs";
+import { checkLayerBoundaries } from "../../lib/layer-boundary-checker.mjs";
+import { evaluateBoundaryRules } from "../../lib/layer-boundary-rule-evaluation.mjs";
 import {
     allowedExceptions,
     boundaryRules,
     initialBoundaryRules,
-} from "../lib/layer-boundary-rules.mjs";
+} from "../../lib/layer-boundary-rules.mjs";
 
 const expectedRuleOrder = [
     "domain-boundary",

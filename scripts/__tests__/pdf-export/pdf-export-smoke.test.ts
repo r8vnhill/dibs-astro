@@ -7,7 +7,7 @@ import {
     createPdfSmokeWorkspace,
     readPdfSmokeConfig,
     resolvePdfSmokeEntry,
-} from "../lib/pdf-export-smoke.mjs";
+} from "../../lib/pdf-export-smoke.mjs";
 
 describe("pdf export smoke helpers", () => {
     test("requires explicit opt-in before running the smoke test", () => {

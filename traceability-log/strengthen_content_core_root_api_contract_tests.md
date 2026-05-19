@@ -538,7 +538,7 @@ Status: passed.
 Run the architecture boundary tests:
 
 ```sh
-pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts
+pnpm test:unit -- scripts/__tests__/layer-boundary/layer-boundary-rules.test.ts
 pnpm check:architecture
 ```
 

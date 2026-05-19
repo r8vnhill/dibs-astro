@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { loadAliasMappings } from "../lib/layer-boundary-aliases.mjs";
-import { normalizeProjectPath, resolveImportTarget } from "../lib/layer-boundary-paths.mjs";
+import { loadAliasMappings } from "../../lib/layer-boundary-aliases.mjs";
+import { normalizeProjectPath, resolveImportTarget } from "../../lib/layer-boundary-paths.mjs";
 
 describe("loadAliasMappings", () => {
     test("loads aliases from a tsconfig-shaped object and keeps fallback aliases", () => {

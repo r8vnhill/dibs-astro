@@ -5,14 +5,16 @@ import {
     normalizeLessonRoute,
 } from "@ravenhill/lesson-export-core";
 import { describe, expect, test } from "vitest";
-import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../lib/pdf-export-cli.mjs";
+import { parseCliArgs, resolveExportTargets, selectExportEntries } from "../../lib/pdf-export-cli.mjs";
 
 function createEntry(route: string, title: string) {
     return {
         route: normalizeLessonRoute(route),
         exportRoute: deriveExportRoute(route),
         title,
-        sourceFile: `src/pages${route === "/notes/build-systems/" ? "/notes/build-systems/index.astro" : route.slice(0, -1)}.astro`,
+        sourceFile: `src/pages${
+            route === "/notes/build-systems/" ? "/notes/build-systems/index.astro" : route.slice(0, -1)
+        }.astro`,
         outputPath: derivePdfOutputPath(route),
     } satisfies LessonExportManifest["entries"][number];
 }

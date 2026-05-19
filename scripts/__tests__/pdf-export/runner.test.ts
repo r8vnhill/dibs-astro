@@ -2,7 +2,36 @@ import path from "node:path";
 
 import { describe, expect, test, vi } from "vitest";
 
-import { preparePdfExportRun, runPdfExport } from "../lib/pdf-export-runner.mjs";
+import { preparePdfExportRun, runPdfExport } from "../../lib/pdf-export-runner.mjs";
+
+// cSpell:words androth blackthorne domcontentloaded tuul
+
+type EventLog = string[];
+
+type ValidationFinding = {
+    severity: string;
+    message: string;
+};
+
+type ReportEntry = {
+    status: string;
+    findings?: unknown[];
+};
+
+type ReportInput = {
+    entries: ReportEntry[];
+};
+
+type FindingElement = {
+    getAttribute: (attribute: string) => string | null;
+    dataset: {
+        exportFinding?: string;
+        exportFindingSeverity?: string;
+    };
+    textContent?: string | null;
+};
+
+type PageDouble = ReturnType<typeof createPageDouble>;
 
 const manifestEntries = [
     {
@@ -33,14 +62,8 @@ const resolvedTargets = [
     },
 ];
 
-function createDependencies({ validationFindings = [] } = {}) {
-    const buildLessonPdfExportManifest = vi.fn(() => ({
-        manifest,
-        validation: { findings: validationFindings },
-    }));
-    const selectExportEntries = vi.fn(() => manifestEntries);
-    const resolveExportTargets = vi.fn(() => resolvedTargets);
-    const createExportReport = vi.fn((input) => ({
+function createReport(input: ReportInput) {
+    return {
         ...input,
         summary: {
             selected: input.entries.length,
@@ -51,7 +74,19 @@ function createDependencies({ validationFindings = [] } = {}) {
                 0,
             ),
         },
+    };
+}
+
+function createDependencies({
+    validationFindings = [],
+}: { validationFindings?: ValidationFinding[] } = {}) {
+    const buildLessonPdfExportManifest = vi.fn(() => ({
+        manifest,
+        validation: { findings: validationFindings },
     }));
+    const selectExportEntries = vi.fn(() => manifestEntries);
+    const resolveExportTargets = vi.fn(() => resolvedTargets);
+    const createExportReport = vi.fn((input: ReportInput) => createReport(input));
     const writeExportReport = vi.fn(async () => {});
     const buildSite = vi.fn(async () => {});
     const startPreviewServer = vi.fn(() => ({ pid: 1234 }));
@@ -82,7 +117,10 @@ function createDependencies({ validationFindings = [] } = {}) {
     };
 }
 
-function createBrowserDouble(pages = [createPageDouble()]) {
+function createBrowserDouble(
+    pages: PageDouble[] = [createPageDouble()],
+    { events = [] }: { events?: EventLog } = {},
+) {
     const pageQueue = [...pages];
 
     return {
@@ -94,22 +132,40 @@ function createBrowserDouble(pages = [createPageDouble()]) {
 
             return page;
         }),
-        close: vi.fn(async () => {}),
+        close: vi.fn(async () => {
+            events.push("browser-close");
+        }),
     };
 }
 
 function createPageDouble({
+    events = [],
     findingElements = [],
     gotoImplementation,
+    label = "page",
+    pdfImplementation,
     response = { ok: () => true },
+}: {
+    events?: EventLog;
+    findingElements?: FindingElement[];
+    gotoImplementation?: () => Promise<unknown>;
+    label?: string;
+    pdfImplementation?: () => Promise<void>;
+    response?: { ok: () => boolean };
 } = {}) {
     const locators = new Map();
 
     return {
         goto: vi.fn(gotoImplementation ?? (async () => response)),
-        pdf: vi.fn(async () => {}),
-        close: vi.fn(async () => {}),
-        locator: vi.fn((selector) => {
+        pdf: vi.fn(
+            pdfImplementation ?? (async () => {
+                events.push(`export-ok:${label}`);
+            }),
+        ),
+        close: vi.fn(async () => {
+            events.push(`page-close:${label}`);
+        }),
+        locator: vi.fn((selector: string) => {
             if (!locators.has(selector)) {
                 locators.set(selector, createLocatorDouble(selector, findingElements));
             }
@@ -119,11 +175,11 @@ function createPageDouble({
     };
 }
 
-function createLocatorDouble(selector, findingElements) {
+function createLocatorDouble(selector: string, findingElements: FindingElement[]) {
     if (selector === "[data-export-finding]") {
         return {
             waitFor: vi.fn(async () => {}),
-            evaluateAll: vi.fn(async (callback) => callback(findingElements)),
+            evaluateAll: vi.fn(async (callback: (elements: FindingElement[]) => unknown) => callback(findingElements)),
         };
     }
 
@@ -461,10 +517,12 @@ describe("given the PDF export runner", () => {
     describe("when the runner exports prepared targets directly", () => {
         test("then it exports one target with the current Playwright contract", async () => {
             const dependencies = createDependencies();
+            const events: EventLog = [];
             const firstPage = createPageDouble({
+                events,
                 findingElements: [
                     {
-                        getAttribute: (attribute) => {
+                        getAttribute: (attribute: string) => {
                             switch (attribute) {
                                 case "data-export-finding":
                                     return "missing-alt-text";
@@ -481,9 +539,10 @@ describe("given the PDF export runner", () => {
                         textContent: "  Image without alt text  ",
                     },
                 ],
+                label: "androth",
             });
-            const secondPage = createPageDouble();
-            const browser = createBrowserDouble([firstPage, secondPage]);
+            const secondPage = createPageDouble({ events, label: "tuul" });
+            const browser = createBrowserDouble([firstPage, secondPage], { events });
             dependencies.chromium.launch.mockResolvedValue(browser);
             const projectRoot = "e:/teaching/DIBS/projects/astro-website";
             const options = createRealExportOptions({
@@ -525,6 +584,13 @@ describe("given the PDF export runner", () => {
             expect(firstPage.close).toHaveBeenCalledOnce();
             expect(secondPage.close).toHaveBeenCalledOnce();
             expect(browser.close).toHaveBeenCalledOnce();
+            expect(events).toEqual([
+                "export-ok:androth",
+                "page-close:androth",
+                "export-ok:tuul",
+                "page-close:tuul",
+                "browser-close",
+            ]);
 
             expect(dependencies.createExportReport).toHaveBeenCalledWith({
                 generatedAt: "2026-05-11T00:00:00.000Z",
@@ -562,13 +628,24 @@ describe("given the PDF export runner", () => {
 
         test("then it records failed targets, continues, writes the report, and fails after report writing", async () => {
             const dependencies = createDependencies();
+            const events: EventLog = [];
+            dependencies.createExportReport.mockImplementation((input: ReportInput) => {
+                events.push("create-report");
+                return createReport(input);
+            });
+            dependencies.writeExportReport.mockImplementation(async () => {
+                events.push("write-report");
+            });
             const firstPage = createPageDouble({
+                events,
                 gotoImplementation: async () => {
+                    events.push("export-failed:androth");
                     throw new Error("Navigation failed.");
                 },
+                label: "androth",
             });
-            const secondPage = createPageDouble();
-            const browser = createBrowserDouble([firstPage, secondPage]);
+            const secondPage = createPageDouble({ events, label: "tuul" });
+            const browser = createBrowserDouble([firstPage, secondPage], { events });
             dependencies.chromium.launch.mockResolvedValue(browser);
             const projectRoot = "e:/teaching/DIBS/projects/astro-website";
             const options = createRealExportOptions({
@@ -613,6 +690,110 @@ describe("given the PDF export runner", () => {
             expect(dependencies.writeExportReport.mock.invocationCallOrder[0]).toBeLessThan(
                 browser.close.mock.invocationCallOrder[0],
             );
+            expect(events).toEqual([
+                "export-failed:androth",
+                "page-close:androth",
+                "export-ok:tuul",
+                "page-close:tuul",
+                "create-report",
+                "write-report",
+                "browser-close",
+            ]);
+        });
+
+        test("then browser allocation failures close the browser without exporting later targets", async () => {
+            const dependencies = createDependencies();
+            const browser = createBrowserDouble([]);
+            dependencies.chromium.launch.mockResolvedValue(browser);
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await expect(runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options,
+                dependencies,
+            })).rejects.toThrow("No more pages available.");
+
+            expect(browser.newPage).toHaveBeenCalledOnce();
+            expect(dependencies.createExportReport).not.toHaveBeenCalled();
+            expect(dependencies.writeExportReport).not.toHaveBeenCalled();
+            expect(browser.close).toHaveBeenCalledOnce();
+        });
+
+        test("then report creation failures close the browser without writing the report", async () => {
+            const dependencies = createDependencies();
+            const events: EventLog = [];
+            const firstPage = createPageDouble({ events, label: "androth" });
+            const secondPage = createPageDouble({ events, label: "tuul" });
+            const browser = createBrowserDouble([firstPage, secondPage], { events });
+            dependencies.chromium.launch.mockResolvedValue(browser);
+            dependencies.createExportReport.mockImplementation(() => {
+                events.push("create-report");
+                throw new Error("Report creation failed.");
+            });
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await expect(runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options,
+                dependencies,
+            })).rejects.toThrow("Report creation failed.");
+
+            expect(firstPage.close).toHaveBeenCalledOnce();
+            expect(secondPage.close).toHaveBeenCalledOnce();
+            expect(dependencies.writeExportReport).not.toHaveBeenCalled();
+            expect(browser.close).toHaveBeenCalledOnce();
+            expect(events).toEqual([
+                "export-ok:androth",
+                "page-close:androth",
+                "export-ok:tuul",
+                "page-close:tuul",
+                "create-report",
+                "browser-close",
+            ]);
+        });
+
+        test("then report writing failures close the browser after the write attempt", async () => {
+            const dependencies = createDependencies();
+            const events: EventLog = [];
+            dependencies.writeExportReport.mockImplementation(async () => {
+                events.push("write-report");
+                throw new Error("Report write failed.");
+            });
+            const firstPage = createPageDouble({ events, label: "androth" });
+            const secondPage = createPageDouble({ events, label: "tuul" });
+            const browser = createBrowserDouble([firstPage, secondPage], { events });
+            dependencies.chromium.launch.mockResolvedValue(browser);
+            const options = createRealExportOptions({
+                baseUrl: "http://127.0.0.1:5000/",
+                skipBuild: true,
+            });
+
+            await expect(runPdfExport({
+                projectRoot: "e:/teaching/DIBS/projects/astro-website",
+                options,
+                dependencies,
+            })).rejects.toThrow("Report write failed.");
+
+            expect(dependencies.createExportReport).toHaveBeenCalledOnce();
+            expect(dependencies.writeExportReport).toHaveBeenCalledOnce();
+            expect(browser.close).toHaveBeenCalledOnce();
+            expect(dependencies.writeExportReport.mock.invocationCallOrder[0]).toBeLessThan(
+                browser.close.mock.invocationCallOrder[0],
+            );
+            expect(events).toEqual([
+                "export-ok:androth",
+                "page-close:androth",
+                "export-ok:tuul",
+                "page-close:tuul",
+                "write-report",
+                "browser-close",
+            ]);
         });
     });
 });

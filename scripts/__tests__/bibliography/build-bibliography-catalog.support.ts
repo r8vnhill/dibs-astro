@@ -1,4 +1,4 @@
-import { buildCatalogArtifactFromTurtle } from "../lib/bibliography-catalog-builder.mjs";
+import { buildCatalogArtifactFromTurtle } from "../../lib/bibliography-catalog-builder.mjs";
 
 export type GraphNode = Record<string, unknown> & { "@id": string; "@type": string };
 export type CatalogArtifact = {
