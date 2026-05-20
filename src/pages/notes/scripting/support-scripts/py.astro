@@ -1,0 +1,53 @@
+---
+import * as icons from "~/assets/img/icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { BashBlock, BashInline } from "~/components/ui/code";
+import { Mono } from "~/components/ui/font";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="Scripts de apoyo reusables en Python"
+    description="Si estás leyendo esto, es porque se me olvidó agregar la descripción."
+>
+    <NotesSection id="h2-running-python-script">
+        <Heading
+            headingLevel="h2" Icon={icons.TerminalWindow}
+            slot="heading"
+        >
+            Ejecutar un script Python como herramienta local
+        </Heading>
+
+        <P>
+            La lección base presentó el script de apoyo como una herramienta local para revisar si un proyecto contiene
+            los archivos esperados de una biblioteca reutilizable. En esta versión comparativa conservamos ese contrato
+            inicial, pero cambiamos el punto de partida: el archivo será un script Python llamado <Mono
+            >check_library_layout.py</Mono>.
+        </P>
+
+        <P>
+            Mientras la versión en Kotlin usa un archivo <Mono>.main.kts</Mono> ejecutado mediante <Mono>kotlin</Mono>,
+            la versión en Python puede comenzar como un archivo <Mono>.py</Mono> común invocado con el intérprete de
+            Python. Para revisar un proyecto, usaremos esta forma general:
+        </P>
+
+        <BashBlock code="python check_library_layout.py $PROJECT_DIR">
+            <span slot="title">Ejecutar el script sobre <BashInline>$PROJECT_DIR</BashInline></span>
+        </BashBlock>
+
+        <P>
+            El marcador <BashInline>$PROJECT_DIR</BashInline> representa el directorio del proyecto que queremos
+            revisar. Por ejemplo, para ejecutar el script sobre el directorio de trabajo actual, podemos pasar
+            <BashInline>.</BashInline> como argumento:
+        </P>
+
+        <BashBlock code="python check_library_layout.py .">
+            <span slot="title">Ejecutar el script sobre el directorio actual</span>
+            <span slot="footer">
+                El punto <BashInline>.</BashInline> representa el directorio de trabajo actual.
+            </span>
+        </BashBlock>
+    </NotesSection>
+</NotesLayout>
