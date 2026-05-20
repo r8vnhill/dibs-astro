@@ -6,6 +6,12 @@ describe("resolveDibsProjectPath", () => {
         expect(resolveDibsProjectPath({ repo: "scripts" })).toBe("r8vnhill/dibs-scripts");
     });
 
+    test("resolves the Python companion through the migration registry", () => {
+        expect(resolveDibsProjectPath({ repo: "python-companion" })).toBe(
+            "dibs-course/python-companion",
+        );
+    });
+
     test("resolves migrated repositories through the migration registry", () => {
         expect(resolveDibsProjectPath({ repo: "kotlin-companion" })).toBe(
             "dibs-course/kotlin-companion",

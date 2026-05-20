@@ -1,4 +1,4 @@
-## [PLAN] Section 2 With `argparse`
+## [DONE] Section 2 With `argparse`
 
 Write Section 2 of the Python comparative `support-scripts` lesson as a complete section draft: Astro structure, Spanish
 technical prose, and one minimal Python example.

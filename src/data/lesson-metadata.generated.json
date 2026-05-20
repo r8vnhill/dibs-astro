@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T12:27:53.984Z",
+  "generatedAt": "2026-05-20T17:17:27.117Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1563,6 +1563,12 @@
       ],
       "lastModified": "2026-05-20",
       "changes": [
+        {
+          "hash": "830e22ca1fc3725b7f65554c72f1144df5cb8be1",
+          "date": "2026-05-20",
+          "author": "r8vnhill",
+          "subject": "🎨💾 feat(lessons/scripts): Centralize icon-text alignment + introduce argparse lesson draft + GitLab repo utils"
+        },
         {
           "hash": "d50d8a034a10fc1967db888e208b0d5c72b778f4",
           "date": "2026-05-20",

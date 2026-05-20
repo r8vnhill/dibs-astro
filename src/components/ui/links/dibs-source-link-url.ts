@@ -1,4 +1,5 @@
 const migratedProjectPaths = {
+    "python-companion": "dibs-course/python-companion",
     "kotlin-companion": "dibs-course/kotlin-companion",
 } as const;
 

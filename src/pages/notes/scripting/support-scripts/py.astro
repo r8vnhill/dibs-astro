@@ -2,8 +2,12 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { BashBlock, BashInline, PythonBlock, PythonInline } from "~/components/ui/code";
+import { Explanation } from "~/components/ui/callouts";
+import { BashBlock, BashInline, KotlinInline, PythonBlock, PythonInline } from "~/components/ui/code";
 import { Mono } from "~/components/ui/font";
+import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -61,10 +65,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <P>
             En la sección anterior, el valor <BashInline code="$PROJECT_DIR" /> quedó como una entrada posicional
-            recibida desde la terminal. La lección base en Kotlin trata ese valor de forma manual: inspecciona <Mono
-            >args</Mono> directamente y valida su presencia antes de seguir. En Python, <PythonInline code="argparse" />
-            permite declarar ese contrato de entrada con más claridad y delegar a la biblioteca estándar la ayuda, el
-            uso y los errores habituales de línea de comandos.
+            recibida desde la terminal. La lección base en Kotlin trata ese valor de forma manual: inspecciona
+            <KotlinInline>args</KotlinInline> directamente y valida su presencia antes de seguir. En Python,
+            <PythonInline code="argparse" /> permite declarar ese contrato de entrada con más claridad y delegar a la
+            biblioteca estándar la ayuda, el uso y los errores habituales de línea de comandos.<FootnoteRef index={1} />
         </P>
 
         <PythonBlock
@@ -95,13 +99,45 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Declarar y leer la entrada del script</span>
         </PythonBlock>
 
-        <P>
-            El objeto <PythonInline code="ArgumentParser" /> describe la interfaz de línea de comandos del script. Con
-            <PythonInline code={`add_argument("project_root", ...)`} /> declaramos un argumento posicional obligatorio,
-            y con <PythonInline code="parse_args()" /> leemos lo que llegó desde la terminal para obtener un objeto cuyo
-            atributo <PythonInline code="project_root" /> contiene el valor recibido. En este punto, el dato sigue
-            siendo texto; todavía no lo convertimos en una ruta de sistema de archivos.
-        </P>
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.BracketsCurly}>
+                    La anotación <PythonInline code="argparse.Namespace" /> indica el tipo de objeto que devuelve
+                    <PythonInline code="parse_args()" />. En este caso, ese objeto agrupa los valores recibidos desde la
+                    terminal: como declaramos un argumento llamado <PythonInline code="project_root" />, luego podemos
+                    leerlo mediante <PythonInline code="args.project_root" />.
+                </ListItem>
+
+                <ListItem icon={icons.TerminalWindow}>
+                    El objeto <PythonInline code="ArgumentParser" /> representa la interfaz de línea de comandos del
+                    script. Su descripción no valida archivos todavía; solo documenta qué hace la herramienta y prepara
+                    el parser para declarar qué entradas espera recibir.
+                </ListItem>
+
+                <ListItem icon={icons.NumberOne}>
+                    La llamada <PythonInline code={`add_argument("project_root", ...)`} /> agrega un argumento
+                    posicional obligatorio. Esto significa que quien ejecute el script debe entregar un valor después
+                    del nombre del archivo, por ejemplo <BashInline code="python check_library_layout.py ." />. Si ese
+                    valor no aparece, <PythonInline code="argparse" /> puede reportar el error sin que escribamos una
+                    validación manual equivalente.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowRight}>
+                    La llamada <PythonInline code="parse_args()" /> lee los argumentos reales entregados por la terminal
+                    y construye el objeto <PythonInline code="args" />. Por ahora, <PythonInline code="project_root" />
+                    queda representado como texto; más adelante lo transformaremos en una ruta explícita con
+                    <PythonInline code="pathlib.Path" />.
+                </ListItem>
+
+                <ListItem icon={icons.Play}>
+                    Finalmente, la condición <PythonInline code={`__name__ == "__main__"`} /> hace que <PythonInline
+                        code="main()"
+                    /> se ejecute solo cuando este archivo se usa como script principal. Esta separación mantiene el
+                    punto de entrada claro y evita ejecutar la lógica principal si el archivo se importa desde otro
+                    módulo.
+                </ListItem>
+            </List>
+        </Explanation>
 
         <BashBlock code="python check_library_layout.py --help">
             <span slot="title">Mostrar la ayuda generada</span>
@@ -125,4 +161,100 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <PythonInline code="pathlib.Path" /> para revisar los archivos esperados del proyecto.
         </P>
     </NotesSection>
+
+    <NotesSection id="h2-review-paths-with-pathlib">
+        <Heading
+            headingLevel="h2" Icon={icons.Path}
+            slot="heading"
+        >
+            Revisar rutas con <PythonInline code="pathlib" />
+        </Heading>
+
+        <P>
+            <PythonInline code="argparse" /> ya le dio un nombre a la entrada recibida desde la terminal:
+            <PythonInline code="project_root" />. Ese valor, sin embargo, todavía es texto. Para revisar archivos del
+            proyecto, el script necesita tratarlo como una ruta del sistema de archivos. En la lección base, Kotlin
+            hacía esa conversión con <KotlinInline code="Path.of(projectPath)" /> y preguntaba por la existencia de una
+            ruta con <KotlinInline code="Files.exists(path)" />. En Python, <PythonInline code="pathlib" /> mantiene
+            esas operaciones cerca del objeto <PythonInline code="Path" />.
+        </P>
+
+        <PythonBlock
+            code={`
+                import argparse
+                # [!code focus:1]
+                from pathlib import Path
+
+
+                def parse_args() -> argparse.Namespace:
+                    parser = argparse.ArgumentParser(
+                        description="Check whether a library project contains the expected files.",
+                    )
+                    parser.add_argument(
+                        "project_root",
+                        help="Project directory to inspect.",
+                    )
+                    return parser.parse_args()
+
+                
+                def main() -> None:
+                    args = parse_args()
+                    # [!code focus:9]
+                    project_root = Path(args.project_root)
+                    expected_files = ["README.md", "LICENSE", "CODE_OF_CONDUCT.md"]
+
+                    for expected_file in expected_files:
+                        path = project_root / expected_file
+                        if path.exists():
+                            print(f"Found: {expected_file}")
+                        else:
+                            print(f"Missing: {expected_file}")
+            `}
+        >
+            <span slot="title">Revisar los archivos esperados con <PythonInline code="pathlib" /></span>
+            <DibsSourceLink
+                slot="source" repo="python-companion"
+                file="scripts/check_library_layout.py"
+            >scripts/check_library_layout.py</DibsSourceLink>
+        </PythonBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.Path}>
+                    <PythonInline code="Path" /> representa una ruta del sistema de archivos. En este fragmento,
+                    <PythonInline code="Path(args.project_root)" /> convierte el texto recibido desde la terminal en un
+                    objeto que el script puede componer y consultar de forma explícita.
+                </ListItem>
+
+                <ListItem icon={icons.FolderOpen}>
+                    La expresión <PythonInline code="project_root / expected_file" /> construye una ruta dentro del
+                    directorio del proyecto. En este contexto, <PythonInline code="/" /> no representa una división
+                    numérica, sino la operación que <PythonInline code="pathlib" /> usa para unir segmentos de ruta.
+                </ListItem>
+
+                <ListItem icon={icons.ListChecks}>
+                    La llamada <PythonInline code="path.exists()" /> pregunta si la ruta compuesta existe. Es la
+                    comprobación que cumple el mismo papel operativo que <KotlinInline code="Files.exists(path)" /> en
+                    la versión base, pero queda expresada como una operación del propio objeto <PythonInline
+                        code="Path"
+                    />.
+                </ListItem>
+
+                <ListItem icon={icons.Repeat}>
+                    El ciclo <PythonInline code="for expected_file in expected_files" /> repite la misma revisión para
+                    cada archivo esperado: <Mono>README.md</Mono>, <Mono>LICENSE</Mono> y <Mono
+                    >CODE_OF_CONDUCT.md</Mono>.
+                </ListItem>
+            </List>
+        </Explanation>
+    </NotesSection>
+
+    <Footnotes>
+        <Footnote index={1}>
+            Si bien, en Kotlin vimos un ejemplo simple en el que procesábamos los argumentos de forma manual, en la
+            práctica usaríamos una biblioteca como <Link href="https://ajalt.github.io/clikt/">Clikt</Link> para
+            declarar el contrato de entrada de forma más clara y delegar a la biblioteca la ayuda, el uso y los errores
+            habituales de línea de comandos.
+        </Footnote>
+    </Footnotes>
 </NotesLayout>

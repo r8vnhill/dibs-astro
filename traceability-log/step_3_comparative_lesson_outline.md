@@ -38,7 +38,7 @@ Those topics can appear as brief forward references, but they should not become 
 
 ## Proposed Outline
 
-### ~~Section 1: Ejecutar un script Python como herramienta local~~
+### [✔️] Section 1: Ejecutar un script Python como herramienta local
 
 Compare the operational shape of a Python script with the Kotlin `.main.kts` execution model.
 
@@ -57,7 +57,7 @@ Main points:
 
 Keep this section short. Its role is to establish the execution model, not to explain Python installation or packaging.
 
-### Section 2: Declarar el contrato de entrada con `argparse`
+### [✔️] Section 2: Declarar el contrato de entrada con `argparse`
 
 Introduce `argparse.ArgumentParser` as the Python standard-library mechanism for declaring a small CLI contract.
 
@@ -73,7 +73,7 @@ Main points:
 The official Python documentation describes `argparse` as a standard module for user-friendly command-line interfaces
 that can generate help/usage output and report invalid arguments automatically. 
 
-### Section 3: Revisar rutas con `pathlib`
+### [✔️] Section 3: Revisar rutas con `pathlib`
 
 Use `pathlib.Path` to represent the project root and expected files.
 
@@ -95,7 +95,7 @@ Main points:
 The official Python documentation presents `pathlib` as an object-oriented API for filesystem paths, with path classes
 that model operating-system-specific semantics. 
 
-### Section 4: Nombrar responsabilidades pequeñas
+### [ ] Section 4: Nombrar responsabilidades pequeñas
 
 Extract the script into small functions.
 
@@ -120,7 +120,7 @@ Main points:
 This section should include the strongest maintainability comparison: Kotlin pushes more feedback into the compiler;
 Python makes the code lightweight, but the project must decide how much static checking to add.
 
-### Section 5: Comunicar resultados de forma útil
+### [ ] Section 5: Comunicar resultados de forma útil
 
 Keep the output close to the base lesson’s operational contract.
 
@@ -141,7 +141,7 @@ Main points:
 A small result structure may be introduced only if it clarifies the code without turning the lesson into a
 data-modelling lesson.
 
-### Section 6: Ventajas y límites de Python para scripts de apoyo
+### [ ] Section 6: Ventajas y límites de Python para scripts de apoyo
 
 Make the comparative judgment explicit.
 
@@ -161,7 +161,7 @@ Python trade-offs against Kotlin:
 
 Keep the section framed around software-library support tooling, not generic language preference.
 
-### Abstract
+### [ ] Abstract
 
 Write this after the body sections and conclusion are drafted, even though it will appear at the top of the final
 `py.astro` page.
@@ -175,7 +175,7 @@ interfaces and filesystem operations.
 Avoid re-teaching what a support script is. The abstract should explicitly assume that the base Kotlin lesson already
 covered that motivation.
 
-### ConclusionsLayout
+### [ ] ConclusionsLayout
 
 Close with a comparative conclusion.
 
