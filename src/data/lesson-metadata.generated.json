@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-18T20:36:18.598Z",
-  "totalLessons": 51,
+  "generatedAt": "2026-05-20T12:27:53.984Z",
+  "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -1551,6 +1551,23 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
+        }
+      ]
+    },
+    "/notes/scripting/support-scripts/py/": {
+      "sourceFile": "src/pages/notes/scripting/support-scripts/py.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-05-20",
+      "changes": [
+        {
+          "hash": "d50d8a034a10fc1967db888e208b0d5c72b778f4",
+          "date": "2026-05-20",
+          "author": "r8vnhill",
+          "subject": "📝 lesson(scripting): add Python support script comparison start"
         }
       ]
     },

@@ -12,7 +12,8 @@
  * This component is designed to be:
  *
  * - **Predictable**: fixed base layout classes, consistent sizing rules
- * - **Composable**: consumer can fully override the icon region using a named slot
+ * - **Composable**: consumer can fully override the icon region using a named slot or extra classes
+ * - **Centered**: icon and text align vertically in the shared row layout by default
  * - **Accessible**: decorative icons are hidden from assistive tech by default, and informative
  *   icons can be labeled
  *
@@ -179,7 +180,7 @@ const resolvedSize = sizeFor(headingLevel);
 const hasIconSlot = Astro.slots.has("icon");
 ---
 
-<Tag class:list={["flex items-start gap-2", resolvedSize, className]} {...rest}>
+<Tag class:list={["flex items-center gap-2", resolvedSize, className]} {...rest}>
     {
         hasIconSlot
             ? <slot name="icon" />

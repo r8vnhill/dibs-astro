@@ -2,7 +2,7 @@
 import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { BashBlock, BashInline } from "~/components/ui/code";
+import { BashBlock, BashInline, PythonBlock, PythonInline } from "~/components/ui/code";
 import { Mono } from "~/components/ui/font";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -49,5 +49,80 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 El punto <BashInline>.</BashInline> representa el directorio de trabajo actual.
             </span>
         </BashBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-declaring-input-contract">
+        <Heading
+            headingLevel="h2" Icon={icons.FileCode}
+            slot="heading"
+        >
+            Declarar el contrato de entrada con <PythonInline code="argparse" />
+        </Heading>
+
+        <P>
+            En la sección anterior, el valor <BashInline code="$PROJECT_DIR" /> quedó como una entrada posicional
+            recibida desde la terminal. La lección base en Kotlin trata ese valor de forma manual: inspecciona <Mono
+            >args</Mono> directamente y valida su presencia antes de seguir. En Python, <PythonInline code="argparse" />
+            permite declarar ese contrato de entrada con más claridad y delegar a la biblioteca estándar la ayuda, el
+            uso y los errores habituales de línea de comandos.
+        </P>
+
+        <PythonBlock
+            code={`
+                import argparse
+
+
+                def parse_args() -> argparse.Namespace:
+                    parser = argparse.ArgumentParser(
+                        description="Check whether a library project contains the expected files.",
+                    )
+                    parser.add_argument(
+                        "project_root",
+                        help="Project directory to inspect.",
+                    )
+                    return parser.parse_args()
+
+
+                def main() -> None:
+                    args = parse_args()
+                    print(f"Checking project: {args.project_root}")
+
+
+                if __name__ == "__main__":
+                    main()
+            `}
+        >
+            <span slot="title">Declarar y leer la entrada del script</span>
+        </PythonBlock>
+
+        <P>
+            El objeto <PythonInline code="ArgumentParser" /> describe la interfaz de línea de comandos del script. Con
+            <PythonInline code={`add_argument("project_root", ...)`} /> declaramos un argumento posicional obligatorio,
+            y con <PythonInline code="parse_args()" /> leemos lo que llegó desde la terminal para obtener un objeto cuyo
+            atributo <PythonInline code="project_root" /> contiene el valor recibido. En este punto, el dato sigue
+            siendo texto; todavía no lo convertimos en una ruta de sistema de archivos.
+        </P>
+
+        <BashBlock code="python check_library_layout.py --help">
+            <span slot="title">Mostrar la ayuda generada</span>
+        </BashBlock>
+
+        <BashBlock code="python check_library_layout.py">
+            <span slot="title">Falla cuando falta el argumento obligatorio</span>
+        </BashBlock>
+
+        <P>
+            Esa declaración trae dos efectos observables sin escribir ramas personalizadas en el script. Si una persona
+            ejecuta el comando con <BashInline code="--help" />, <PythonInline code="argparse" /> muestra la ayuda y el
+            uso generados automáticamente. Si lo ejecuta sin <PythonInline code="project_root" />, el parser detiene el
+            programa con un error estándar que indica que falta el argumento posicional obligatorio. El detalle exacto
+            del texto puede variar según la versión de Python, pero el contrato visible se mantiene estable.
+        </P>
+
+        <P>
+            Así, el script ya no recibe un valor anónimo desde la terminal, sino una entrada con nombre y documentación.
+            El siguiente paso será tomar <PythonInline code="project_root" /> y convertirlo en una ruta con
+            <PythonInline code="pathlib.Path" /> para revisar los archivos esperados del proyecto.
+        </P>
     </NotesSection>
 </NotesLayout>
