@@ -249,6 +249,139 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Explanation>
     </NotesSection>
 
+    <NotesSection id="h2-name-small-responsibilities">
+        <Heading
+            headingLevel="h2" Icon={icons.BracketsCurly}
+            slot="heading"
+        >
+            Nombrar responsabilidades pequeñas
+        </Heading>
+
+        <P>
+            La versión anterior ya revisa los archivos esperados, pero concentra demasiadas decisiones en <PythonInline
+                code="main()"
+            />. Esa función lee los argumentos, convierte texto en ruta, declara la lista de archivos, recorre esa
+            lista, revisa cada ruta y decide qué imprimir.
+        </P>
+
+        <P>
+            El script es funcionalmente el mismo, pero su flujo se vuelve más difícil de leer y modificar. Al extraer
+            funciones pequeñas, cada nombre empieza a comunicar una responsabilidad concreta.
+        </P>
+
+        <P>
+            La lección base en Kotlin ya mostró este mismo criterio de diseño: una función pequeña puede nombrar una
+            responsabilidad repetida sin convertir el script en una arquitectura grande. Python permite aplicar esa
+            disciplina con poca ceremonia. La diferencia está en el modelo de retroalimentación: Kotlin comprueba las
+            firmas con el compilador, mientras que las anotaciones de Python documentan la intención y ayudan a
+            herramientas externas, pero el intérprete no las hace cumplir por sí solo.
+        </P>
+
+        <PythonBlock
+            code={`
+                import argparse
+                from pathlib import Path
+                # [!code focus:1]
+                from typing import Final
+
+
+                # [!code focus:1]
+                EXPECTED_FILES: Final[tuple[str, ...]] = ("README.md", "LICENSE", "CODE_OF_CONDUCT.md")
+
+
+                # [!code focus:1]
+                def parse_args() -> argparse.Namespace:
+                    parser = argparse.ArgumentParser(
+                        description="Check whether a library project contains the expected files.",
+                    )
+                    parser.add_argument(
+                        "project_root",
+                        help="Project directory to inspect.",
+                    )
+                    return parser.parse_args()
+
+
+                # [!code focus:1]
+                def check_path(project_root: Path, relative_path: str) -> bool:
+                    return (project_root / relative_path).exists()
+
+
+                # [!code focus:1]
+                def check_project_layout(project_root: Path) -> None:
+                    for relative_path in EXPECTED_FILES:
+                        if check_path(project_root, relative_path):
+                            print(f"Found: {relative_path}")
+                        else:
+                            print(f"Missing: {relative_path}")
+
+
+                # [!code focus:4]
+                def main() -> None:
+                    args = parse_args()
+                    project_root = Path(args.project_root)
+                    check_project_layout(project_root)
+
+
+                if __name__ == "__main__":
+                    main()
+            `}
+        >
+            <span slot="title">Separar el flujo en funciones pequeñas</span>
+            <DibsSourceLink
+                slot="source" repo="python-companion"
+                file="scripts/check_library_layout.py"
+            >scripts/check_library_layout.py</DibsSourceLink>
+        </PythonBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.ListChecks}>
+                    <PythonInline code="EXPECTED_FILES" /> nombra la política del proyecto como un dato compartido por
+                    el script: esperamos encontrar <Mono>README.md</Mono>, <Mono>LICENSE</Mono> y <Mono
+                    >CODE_OF_CONDUCT.md</Mono>. El nombre en mayúsculas sigue la convención habitual para valores
+                    constantes, y la anotación <PythonInline code="Final[tuple[str, ...]]" /> comunica dos decisiones de
+                    diseño: el nombre no debería reasignarse y la colección se modela como una tupla de textos,
+                    que además es inmutable. En Python, <PythonInline code="Final" /> orienta a herramientas de análisis
+                    estático, pero no impide la reasignación en tiempo de ejecución por sí solo.
+                </ListItem>
+
+                <ListItem icon={icons.Path}>
+                    <PythonInline code="check_path()" /> se ocupa de una comprobación del sistema de archivos. Recibe
+                    una ruta base, recibe una ruta relativa y devuelve <PythonInline code="True" /> o
+                    <PythonInline code="False" /> según exista la ruta compuesta. No decide todavía cómo comunicar el
+                    resultado; como no imprime directamente, esta función es más fácil de probar y reutilizar.
+                </ListItem>
+
+                <ListItem icon={icons.Repeat}>
+                    <PythonInline code="check_project_layout()" /> coordina las revisiones. Recorre los archivos
+                    esperados, llama a <PythonInline code="check_path()" /> y mantiene, por ahora, la salida simple con
+                    <PythonInline code="print()" /> para conservar el comportamiento observable de la sección anterior.
+                </ListItem>
+
+                <ListItem icon={icons.Play}>
+                    <PythonInline code="main()" /> queda como punto de entrada breve. Su responsabilidad es conectar el
+                    contrato de línea de comandos con el flujo del script: leer los argumentos, construir el
+                    <PythonInline code="Path" /> inicial y delegar la revisión.
+                </ListItem>
+
+                <ListItem icon={icons.FileCode}>
+                    Las anotaciones como <PythonInline code="Path" />, <PythonInline code="str" />,
+                    <PythonInline code="bool" /> y <PythonInline code="None" /> hacen visible qué espera cada función y
+                    qué devuelve. En Python, esa información mejora la lectura y habilita revisiones con herramientas,
+                    pero no reemplaza las garantías estáticas que Kotlin entrega por compilación.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <P>
+            Esta separación no agrega comportamiento nuevo: el script sigue revisando los mismos archivos y mostrando
+            las mismas líneas de estado. Lo que cambia es la forma de leerlo. Ahora cada nombre indica una
+            responsabilidad pequeña, y el siguiente punto de diseño queda más claro: si el script comunica resultados,
+            esa salida debe ser útil para quien lo ejecuta localmente y suficientemente predecible para una
+            automatización futura.
+        </P>
+    </NotesSection>
+
     <Footnotes>
         <Footnote index={1}>
             Si bien, en Kotlin vimos un ejemplo simple en el que procesábamos los argumentos de forma manual, en la
