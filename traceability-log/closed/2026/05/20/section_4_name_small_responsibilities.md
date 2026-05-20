@@ -1,4 +1,4 @@
-# [PLAN] Section 4: Name Small Responsibilities
+# [DONE] Section 4: Name Small Responsibilities
 
 ## Summary
 

@@ -4,7 +4,7 @@ import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Explanation } from "~/components/ui/callouts";
 import { BashBlock, BashInline, KotlinInline, PythonBlock, PythonInline } from "~/components/ui/code";
-import { Mono } from "~/components/ui/font";
+import { I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
@@ -320,10 +320,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     args = parse_args()
                     project_root = Path(args.project_root)
                     check_project_layout(project_root)
-
-
-                if __name__ == "__main__":
-                    main()
             `}
         >
             <span slot="title">Separar el flujo en funciones pequeñas</span>
@@ -338,11 +334,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.ListChecks}>
                     <PythonInline code="EXPECTED_FILES" /> nombra la política del proyecto como un dato compartido por
                     el script: esperamos encontrar <Mono>README.md</Mono>, <Mono>LICENSE</Mono> y <Mono
-                    >CODE_OF_CONDUCT.md</Mono>. El nombre en mayúsculas sigue la convención habitual para valores
-                    constantes, y la anotación <PythonInline code="Final[tuple[str, ...]]" /> comunica dos decisiones de
-                    diseño: el nombre no debería reasignarse y la colección se modela como una tupla de textos,
-                    que además es inmutable. En Python, <PythonInline code="Final" /> orienta a herramientas de análisis
-                    estático, pero no impide la reasignación en tiempo de ejecución por sí solo.
+                    >CODE_OF_CONDUCT.md</Mono>. La anotación <PythonInline code="Final[tuple[str, ...]]" /> comunica que
+                    el nombre no debería reasignarse y que la colección es una tupla inmutable de textos. Los puntos
+                    suspensivos en <PythonInline code="tuple[str, ...]" /> indican que la tupla puede tener cualquier
+                    cantidad de elementos, siempre que todos sean <PythonInline code="str" />. En Python, <PythonInline
+                        code="Final"
+                    /> ayuda a herramientas de análisis estático como <I href="https://docs.astral.sh/ruff/">ruff</I>,
+                    pero no impone esa restricción en tiempo de ejecución por sí solo.
                 </ListItem>
 
                 <ListItem icon={icons.Path}>
@@ -359,27 +357,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
-                    <PythonInline code="main()" /> queda como punto de entrada breve. Su responsabilidad es conectar el
-                    contrato de línea de comandos con el flujo del script: leer los argumentos, construir el
-                    <PythonInline code="Path" /> inicial y delegar la revisión.
-                </ListItem>
-
-                <ListItem icon={icons.FileCode}>
-                    Las anotaciones como <PythonInline code="Path" />, <PythonInline code="str" />,
-                    <PythonInline code="bool" /> y <PythonInline code="None" /> hacen visible qué espera cada función y
-                    qué devuelve. En Python, esa información mejora la lectura y habilita revisiones con herramientas,
-                    pero no reemplaza las garantías estáticas que Kotlin entrega por compilación.
+                    <PythonInline code="main()" /> pasa de mezclar la lectura de argumentos, la conversión de tipos y la
+                    revisión de archivos a ser un coordinador de alto nivel.
                 </ListItem>
             </List>
         </Explanation>
-
-        <P>
-            Esta separación no agrega comportamiento nuevo: el script sigue revisando los mismos archivos y mostrando
-            las mismas líneas de estado. Lo que cambia es la forma de leerlo. Ahora cada nombre indica una
-            responsabilidad pequeña, y el siguiente punto de diseño queda más claro: si el script comunica resultados,
-            esa salida debe ser útil para quien lo ejecuta localmente y suficientemente predecible para una
-            automatización futura.
-        </P>
     </NotesSection>
 
     <Footnotes>

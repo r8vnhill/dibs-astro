@@ -95,7 +95,7 @@ Main points:
 The official Python documentation presents `pathlib` as an object-oriented API for filesystem paths, with path classes
 that model operating-system-specific semantics. 
 
-### [ ] Section 4: Nombrar responsabilidades pequeñas
+### [✔️] Section 4: Nombrar responsabilidades pequeñas
 
 Extract the script into small functions.
 
