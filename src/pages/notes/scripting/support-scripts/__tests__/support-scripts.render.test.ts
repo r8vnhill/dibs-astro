@@ -2,6 +2,7 @@ import { JSDOM } from "jsdom";
 import { describe, expect, test } from "vitest";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import SupportScriptsPage from "../index.astro";
+import PythonSupportScriptsPage from "../py.astro";
 
 describe.concurrent("support scripts lesson render", () => {
     test("renders the reusable support scripts lesson", async () => {
@@ -38,5 +39,26 @@ describe.concurrent("support scripts lesson render", () => {
         expect(text).toContain("args.isNotEmpty()");
         expect(text).not.toContain("data class");
         expect(text).not.toContain("Files.walk");
+    });
+
+    test("renders the Python comparative conclusion", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(PythonSupportScriptsPage);
+
+        const html = await renderPage(
+            {},
+            {
+                request: new Request(
+                    "https://dibs.ravenhill.cl/notes/scripting/support-scripts/py/",
+                ),
+            },
+        );
+
+        const text = new JSDOM(html).window.document.body.textContent ?? "";
+        expect(text).toContain("Conclusiones");
+        expect(text).toContain("Puntos clave");
+        expect(text).toContain("argparse");
+        expect(text).toContain("pathlib.Path");
+        expect(text).toContain("retroalimentación estática");
+        expect(text).toContain("Reflexión de cierre");
     });
 });

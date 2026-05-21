@@ -8,6 +8,7 @@ import { I, Mono } from "~/components/ui/font";
 import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -363,6 +364,73 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </List>
         </Explanation>
     </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                La versión en Python no cambia los criterios de diseño del script de apoyo: el contrato de entrada debe
+                quedar explícito, las comprobaciones sobre rutas del proyecto deben ser legibles y las responsabilidades
+                conviene nombrarlas antes de que el flujo principal acumule demasiadas decisiones. Lo que cambia es la
+                forma de expresar esas decisiones en una herramienta local.
+            </P>
+
+            <P>
+                En este ejemplo, Python reduce la ceremonia inicial al ejecutar un archivo común, declarar la interfaz
+                de terminal con <PythonInline code="argparse" /> y modelar rutas con <PythonInline
+                    code="pathlib.Path"
+                />. Esa concisión permite concentrarse rápido en la revisión de archivos y en la salida que comunica qué
+                encontró el script.
+            </P>
+
+            <P>
+                La comparación con Kotlin también deja un límite visible. Las funciones pequeñas y las anotaciones
+                ayudan a leer el script Python y a habilitar herramientas de análisis, pero no sustituyen la
+                retroalimentación estática que Kotlin entrega desde el compilador cuando el script crece junto con el
+                proyecto.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.TerminalWindow}>
+                Python permite iniciar un script de apoyo con poca ceremonia cuando el problema todavía es acotado.
+            </ListItem>
+
+            <ListItem icon={icons.FileCode}>
+                <PythonInline code="argparse" /> convierte un valor posicional de la terminal en un contrato de entrada
+                declarado, con ayuda y errores habituales de línea de comandos.
+            </ListItem>
+
+            <ListItem icon={icons.Path}>
+                <PythonInline code="pathlib.Path" /> mantiene la composición de rutas y las comprobaciones de existencia
+                cerca del objeto que representa una ruta del sistema de archivos.
+            </ListItem>
+
+            <ListItem icon={icons.BracketsCurly}>
+                Extraer funciones pequeñas sigue siendo una decisión de diseño importante aunque el lenguaje permita
+                escribir el flujo con pocas líneas.
+            </ListItem>
+
+            <ListItem icon={icons.WarningCircle}>
+                Las anotaciones de Python mejoran la lectura y la retroalimentación de herramientas externas, pero el
+                intérprete no las hace cumplir por sí solo.
+            </ListItem>
+
+            <ListItem icon={icons.ShieldCheck}>
+                Kotlin conserva una ventaja cuando el script necesita más verificación estática y mayor
+                retroalimentación al refactorizar.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Elegir entre estas dos formas de scripting no exige declarar una opción ganadora. Python resulta
+                atractivo cuando la herramienta debe mantenerse pequeña, local y fácil de ejecutar; Kotlin resulta más
+                pertinente cuando el script debe evolucionar cerca de un proyecto JVM y beneficiarse de comprobaciones
+                en compilación. Si el proyecto elige Python, esa ligereza se sostiene mejor con convenciones explícitas,
+                anotaciones, pruebas, linters y herramientas de comprobación de tipos.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
 
     <Footnotes>
         <Footnote index={1}>

@@ -120,46 +120,18 @@ Main points:
 This section should include the strongest maintainability comparison: Kotlin pushes more feedback into the compiler;
 Python makes the code lightweight, but the project must decide how much static checking to add.
 
-### [ ] Section 5: Comunicar resultados de forma útil
+### [✔️] ConclusionsLayout
 
-Keep the output close to the base lesson’s operational contract.
+Close with a comparative conclusion.
 
-Use simple status lines such as:
+Required conclusion points:
 
-```text
-Found README.md
-Missing LICENSE
-```
-
-Main points:
-
-- The script should communicate findings in a way that is useful for a person running it locally.
-- Output should remain predictable enough to support later automation.
-- Avoid introducing JSON in this lesson unless the base lesson already requires it; structured output would broaden the
-  comparison beyond the immediate support-script example.
-
-A small result structure may be introduced only if it clarifies the code without turning the lesson into a
-data-modelling lesson.
-
-### [ ] Section 6: Ventajas y límites de Python para scripts de apoyo
-
-Make the comparative judgment explicit.
-
-Python advantages:
-
-- faster path from idea to usable local tool;
-- concise filesystem operations with `pathlib`;
-- built-in CLI support with `argparse`;
-- low ceremony for project-local automation.
-
-Python trade-offs against Kotlin:
-
-- weaker static refactoring guarantees by default;
-- type annotations are not enforced by the interpreter alone;
-- larger scripts need tests, linters, and type checkers to stay maintainable;
-- integration may be less direct in a Kotlin/JVM-first project.
-
-Keep the section framed around software-library support tooling, not generic language preference.
+- The reusable-script design criteria remain the same across languages.
+- Python reduces ceremony for local tooling.
+- `argparse` and `pathlib` make common support-script responsibilities compact.
+- Small functions still matter; Python does not remove the need for design.
+- Kotlin offers stronger static feedback when scripts grow with the codebase.
+- Python scripts can remain maintainable when paired with annotations, tests, linters, and clear project conventions.
 
 ### [ ] Abstract
 
@@ -174,19 +146,6 @@ interfaces and filesystem operations.
 
 Avoid re-teaching what a support script is. The abstract should explicitly assume that the base Kotlin lesson already
 covered that motivation.
-
-### [ ] ConclusionsLayout
-
-Close with a comparative conclusion.
-
-Required conclusion points:
-
-- The reusable-script design criteria remain the same across languages.
-- Python reduces ceremony for local tooling.
-- `argparse` and `pathlib` make common support-script responsibilities compact.
-- Small functions still matter; Python does not remove the need for design.
-- Kotlin offers stronger static feedback when scripts grow with the codebase.
-- Python scripts can remain maintainable when paired with annotations, tests, linters, and clear project conventions.
 
 ## Suggested Code Example Arc
 

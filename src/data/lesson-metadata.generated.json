@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T19:15:22.541Z",
+  "generatedAt": "2026-05-21T10:43:59.818Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1563,6 +1563,18 @@
       ],
       "lastModified": "2026-05-20",
       "changes": [
+        {
+          "hash": "f98e485c1257164bd1bf6e817feefbb3c9ed125f",
+          "date": "2026-05-20",
+          "author": "r8vnhill",
+          "subject": "📝 docs(support-scripts): Refine Python section flow"
+        },
+        {
+          "hash": "a7a486e04cdd3bebb327766a8b28fb899e89d04e",
+          "date": "2026-05-20",
+          "author": "r8vnhill",
+          "subject": "✨ lesson(scripting): Add Section 4 on naming small responsibilities"
+        },
         {
           "hash": "c96d1a860b234d616006480180a62ccf7e02dbbc",
           "date": "2026-05-20",
