@@ -17,6 +17,23 @@ import NotesSection from "~/layouts/NotesSection.astro";
     title="Scripts de apoyo reusables en Python"
     description="Si estás leyendo esto, es porque se me olvidó agregar la descripción."
 >
+    <Fragment slot="abstract">
+        <P>
+            Esta lección revisita desde Python el script de apoyo desarrollado en la versión base con Kotlin. Partimos
+            de la misma premisa: el estudiantado ya conoce el propósito de una herramienta local para revisar archivos
+            esperados en una biblioteca reusable, por lo que aquí nos concentramos en cómo cambia la forma de expresar
+            ese diseño.
+        </P>
+
+        <P>
+            La comparación sigue el recorrido del script: ejecutar <Mono>check_library_layout.py</Mono> como herramienta
+            local, declarar su contrato de entrada con <PythonInline code="argparse" />, modelar rutas con <PythonInline
+                code="pathlib.Path"
+            /> y separar responsabilidades pequeñas. El foco no es declarar una opción ganadora, sino entender cuándo la
+            baja ceremonia de Python ayuda y cuándo las garantías estáticas de Kotlin siguen siendo relevantes.
+        </P>
+    </Fragment>
+
     <NotesSection id="h2-running-python-script">
         <Heading
             headingLevel="h2" Icon={icons.TerminalWindow}

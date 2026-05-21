@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T10:43:59.818Z",
+  "generatedAt": "2026-05-21T12:04:17.852Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1561,8 +1561,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-20",
+      "lastModified": "2026-05-21",
       "changes": [
+        {
+          "hash": "478a768f3f209a1aeb4af0f90e55117c4c5e7683",
+          "date": "2026-05-21",
+          "author": "r8vnhill",
+          "subject": "📝 lesson(support-scripts): Add Python comparative conclusion"
+        },
         {
           "hash": "f98e485c1257164bd1bf6e817feefbb3c9ed125f",
           "date": "2026-05-20",
@@ -1586,12 +1592,6 @@
           "date": "2026-05-20",
           "author": "r8vnhill",
           "subject": "🎨💾 feat(lessons/scripts): Centralize icon-text alignment + introduce argparse lesson draft + GitLab repo utils"
-        },
-        {
-          "hash": "d50d8a034a10fc1967db888e208b0d5c72b778f4",
-          "date": "2026-05-20",
-          "author": "r8vnhill",
-          "subject": "📝 lesson(scripting): add Python support script comparison start"
         }
       ]
     },

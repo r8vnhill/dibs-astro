@@ -1,4 +1,4 @@
-# [PLAN] Step 3: Comparative Lesson Outline
+# [DONE] Step 3: Comparative Lesson Outline
 
 ## Summary
 
@@ -133,7 +133,7 @@ Required conclusion points:
 - Kotlin offers stronger static feedback when scripts grow with the codebase.
 - Python scripts can remain maintainable when paired with annotations, tests, linters, and clear project conventions.
 
-### [ ] Abstract
+### [✔️] Abstract
 
 Write this after the body sections and conclusion are drafted, even though it will appear at the top of the final
 `py.astro` page.

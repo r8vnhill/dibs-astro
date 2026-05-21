@@ -7,6 +7,12 @@ Kotlin-based `support-scripts` lesson.
 The implementation must add a discoverable link from the base lesson through `LinksLayout` and `PythonLink`, while
 leaving the existing pedagogical content in `index.astro` unchanged.
 
+## Current Status
+
+The comparative lesson file already exists at `astro-website/src/pages/notes/scripting/support-scripts/py.astro`,
+and `PythonLink` is already exported. The base lesson still needs the comparative link block, the lesson still has a
+placeholder description, and the bibliography work is still pending.
+
 ## Scope
 
 ### Included
@@ -26,7 +32,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
 
 ## Implementation Steps
 
-1. **Inspect the local lesson conventions**
+1. **Inspect the local lesson conventions** _(completed)_
 
    Review:
 
@@ -38,7 +44,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    Confirm where comparative links are normally placed, preferably near the end of the lesson before references or
    closing material.
 
-2. **Verify Python link support**
+2. **Verify Python link support** _(completed)_
 
    Confirm that `PythonLink` already exists and is exported from:
 
@@ -47,7 +53,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
 
    No new `XxxLink.astro` should be created unless this verification fails.
 
-3. **Design the comparative lesson outline**
+3. **Design the comparative lesson outline** _(completed)_
 
    Draft the structure for `py.astro` before writing full prose. The outline should include:
 
@@ -68,7 +74,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    - packaging a script into a reusable tool;
    - trade-offs around typing, refactoring safety, and dependency management.
 
-4. **Create `py.astro`**
+4. **Create `py.astro`** _(completed)_
 
    Add:
 
@@ -86,7 +92,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    - use short, maintainable examples;
    - prefer examples that scale from ad-hoc scripts to reusable support tooling.
 
-5. **Add the comparative link from the base lesson**
+5. **Add the comparative link from the base lesson** _(pending)_
 
    Update only the import section and the final link block in:
 
@@ -99,7 +105,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    Then add or update a `LinksLayout` block that links to the Python comparison. Keep the route consistent with the `py`
    slug and ensure the internal href ends with `/`.
 
-6. **Run lightweight validation**
+6. **Run lightweight validation** _(pending)_
 
    Prefer the narrowest available check that catches Astro import and typing errors. Use one of the following, depending
    on what the project exposes:
@@ -108,7 +114,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    - the subproject check command;
    - `pnpm check` only if the narrower command is unavailable or too unreliable.
 
-7. **Perform editorial and structural review**
+7. **Perform editorial and structural review** _(pending)_
 
    Confirm that:
 
@@ -118,9 +124,17 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    - `PythonLink` is reused rather than recreated;
    - all internal routes use trailing `/`;
    - the comparative lesson includes no Kotlin code blocks;
-   - the lesson states at least one Python strength;
-   - the lesson states at least one Kotlin/Python trade-off;
    - the base lesson’s educational content was not modified.
+
+8. **Add bibliography** _(pending)_
+
+   Add or update the bibliography references needed to support the comparative lesson, keeping the existing lesson
+   structure intact and using the project bibliography flow rather than ad hoc citations.
+
+9. **Replace the placeholder description** _(pending)_
+
+   Update the `description` in `py.astro` so it states the actual lesson purpose instead of the temporary placeholder
+   text.
 
 ## Relevant Files
 
@@ -154,8 +168,7 @@ leaving the existing pedagogical content in `index.astro` unchanged.
    - inclusive language;
    - comparison against Kotlin is explicit;
    - no Kotlin code is included;
-   - Python examples are realistic support-script examples;
-   - advantages and trade-offs are both visible.
+   - Python examples are realistic support-script examples.
 
 2. **Astro structure verification**
 
