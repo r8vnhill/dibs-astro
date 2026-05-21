@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T12:04:17.852Z",
+  "generatedAt": "2026-05-21T19:49:27.212Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1564,6 +1564,12 @@
       "lastModified": "2026-05-21",
       "changes": [
         {
+          "hash": "3c17208be5dc7df8708b725419ae408ee01e6ca8",
+          "date": "2026-05-21",
+          "author": "r8vnhill",
+          "subject": "📝 lesson(scripting): Finalize comparative outline and abstract for Python"
+        },
+        {
           "hash": "478a768f3f209a1aeb4af0f90e55117c4c5e7683",
           "date": "2026-05-21",
           "author": "r8vnhill",
@@ -1586,12 +1592,6 @@
           "date": "2026-05-20",
           "author": "r8vnhill",
           "subject": "✨ lesson(scripting): Implement Section 2 input contracts with argparse"
-        },
-        {
-          "hash": "830e22ca1fc3725b7f65554c72f1144df5cb8be1",
-          "date": "2026-05-20",
-          "author": "r8vnhill",
-          "subject": "🎨💾 feat(lessons/scripts): Centralize icon-text alignment + introduce argparse lesson draft + GitLab repo utils"
         }
       ]
     },
