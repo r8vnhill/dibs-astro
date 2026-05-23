@@ -43,12 +43,34 @@ describe("given manifest filtering", () => {
         expect(filtered.entries).toEqual(manifest.entries);
     });
 
+    test("then all preserves manifest metadata while copying the wrapper", () => {
+        const manifest = createManifest();
+
+        const filtered = filterManifest(manifest, { kind: "all" });
+
+        expect(filtered).not.toBe(manifest);
+        expect(filtered.entries).not.toBe(manifest.entries);
+        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expect(filtered.entries).toEqual(manifest.entries);
+    });
+
     test("then exact route matching normalizes filter input", () => {
         const manifest = createManifest();
 
         const filtered = filterManifest(manifest, { kind: "exact-route", route: "notes/a" });
 
         expect(routesOf(filtered)).toEqual(["/notes/a/"]);
+    });
+
+    test("then exact route matching returns an empty copied manifest when no entry matches", () => {
+        const manifest = createManifest();
+
+        const filtered = filterManifest(manifest, { kind: "exact-route", route: "/notes/missing/" });
+
+        expect(filtered).not.toBe(manifest);
+        expect(filtered.entries).not.toBe(manifest.entries);
+        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expect(filtered.entries).toEqual([]);
     });
 
     test("then subtree matching preserves original order", () => {
@@ -60,5 +82,25 @@ describe("given manifest filtering", () => {
             "/notes/software-libraries/b/",
             "/notes/software-libraries/c/",
         ]);
+    });
+
+    test("then subtree matching returns an empty copied manifest when no entry matches", () => {
+        const manifest = createManifest();
+
+        const filtered = filterManifest(manifest, { kind: "subtree", routePrefix: "/notes/missing" });
+
+        expect(filtered).not.toBe(manifest);
+        expect(filtered.entries).not.toBe(manifest.entries);
+        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expect(filtered.entries).toEqual([]);
+    });
+
+    test("then filtered entries are asserted by value instead of object identity", () => {
+        const manifest = createManifest();
+        const expectedEntries = [createEntry("/notes/a/", "A")];
+
+        const filtered = filterManifest(manifest, { kind: "exact-route", route: "/notes/a/" });
+
+        expect(filtered.entries).toEqual(expectedEntries);
     });
 });

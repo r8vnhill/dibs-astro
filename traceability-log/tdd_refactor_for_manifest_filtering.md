@@ -38,7 +38,7 @@ Run the existing focused test suite and confirm there are no behavioural changes
 
 ---
 
-## Phase 2: Contract Expansion
+## Phase 2: Contract Expansion [DONE]
 
 ### Goal
 
@@ -81,6 +81,10 @@ unless reference reuse is intentionally promoted to public contract.
 ### Expected TDD State
 
 These tests should pass with the current implementation unless there is already an undocumented contract gap.
+
+### Verification
+
+Implemented in `packages/lesson-export-core/tests/filters.test.ts` and verified with the focused package test suite.
 
 ---
 
