@@ -1,4 +1,4 @@
-# [PLAN] TDD Refactor For Manifest Filtering
+# [DONE] TDD Refactor For Manifest Filtering
 
 ## Summary
 
@@ -18,7 +18,7 @@ The refactor should preserve the wrapper-copy contract: `filterManifest` returns
 
 ### Goal
 
-Improve the test structure without changing behaviour.
+Improve the test structure without changing behavior.
 
 ### Changes
 
@@ -26,7 +26,7 @@ Improve the test structure without changing behaviour.
 * Add `createEntry(route, title, sourceFile?)`.
 * Add `routesOf(manifest)` for concise route assertions.
 * Use `satisfies LessonExportManifest` for fixture objects.
-* Keep all existing assertions behaviourally equivalent.
+* Keep all existing assertions behaviorally equivalent.
 
 ### Expected TDD State
 
@@ -34,7 +34,7 @@ This phase should stay green throughout. It is a safe refactor phase.
 
 ### Verification
 
-Run the existing focused test suite and confirm there are no behavioural changes.
+Run the existing focused test suite and confirm there are no behavioral changes.
 
 ---
 
@@ -141,7 +141,7 @@ test.each([
 
 ### Expected TDD State
 
-This phase should probably stay green. It expands coverage around already-intended behaviour.
+This phase should probably stay green. It expands coverage around already-intended behavior.
 
 ---
 
@@ -149,7 +149,7 @@ This phase should probably stay green. It expands coverage around already-intend
 
 ### Goal
 
-Pin the behaviour that requires implementation change.
+Pin the behavior that requires implementation change.
 
 ### Changes
 
@@ -207,7 +207,7 @@ This phase should go red if the current implementation uses raw `startsWith`.
 
 ---
 
-## Phase 5: Implementation Refactor
+## Phase 5: Implementation Refactor [DONE]
 
 ### Goal
 
@@ -332,16 +332,3 @@ For every manifest and subtree prefix:
 - returned entries preserve original order;
 - the input manifest is not mutated.
 ```
-
-## Why This Grouping Is Better
-
-The phase structure gives the refactor a cleaner rhythm:
-
-1. **Phase 1** improves test maintainability.
-2. **Phase 2** pins stable contracts.
-3. **Phase 3** expands normalisation coverage.
-4. **Phase 4** introduces the expected failing behaviour tests.
-5. **Phase 5** performs the implementation change.
-6. **Phase 6** verifies and stops.
-
-That separation makes it easier to review each commit and avoids mixing harmless test cleanup with behavioural changes.

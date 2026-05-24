@@ -21,6 +21,14 @@ Route semantics:
 - It rejects raw query strings, raw fragments, relative path segments, absolute URLs, and control characters.
 - It does not enforce that the route belongs to `/notes/**`; that remains a manifest-validation concern.
 
+Manifest filtering with `filterManifest()`:
+
+- `all` filter returns a new entries array containing all entries (wrapper copy).
+- `exact-route` filter returns entries whose route exactly matches the normalized filter route.
+- `subtree` filter returns entries that are **descendants only** of the normalized route prefix (the prefix root itself is excluded).
+  For example, filtering by `/notes/software-libraries/` excludes an entry at `/notes/software-libraries/` but includes `/notes/software-libraries/diary/`.
+  Sibling prefixes like `/notes/software-libraries-advanced/` are also excluded due to canonical route shape with trailing slashes.
+
 ## Import Policy
 
 Import from the package root only:
