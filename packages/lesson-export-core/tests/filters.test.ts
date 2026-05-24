@@ -54,10 +54,18 @@ describe("given manifest filtering", () => {
         expect(filtered.entries).toEqual(manifest.entries);
     });
 
-    test("then exact route matching normalizes filter input", () => {
+    test.each([
+        { label: "bare path", route: "notes/a" },
+        { label: "leading slash", route: "/notes/a" },
+        { label: "trailing slash", route: "notes/a/" },
+        { label: "leading and trailing slash", route: "/notes/a/" },
+    ])("then exact route matching normalizes a $label", ({ route }) => {
         const manifest = createManifest();
 
-        const filtered = filterManifest(manifest, { kind: "exact-route", route: "notes/a" });
+        const filtered = filterManifest(manifest, {
+            kind: "exact-route",
+            route,
+        });
 
         expect(routesOf(filtered)).toEqual(["/notes/a/"]);
     });
@@ -73,10 +81,21 @@ describe("given manifest filtering", () => {
         expect(filtered.entries).toEqual([]);
     });
 
-    test("then subtree matching preserves original order", () => {
+    test.each([
+        { label: "bare path", routePrefix: "notes/software-libraries" },
+        { label: "leading slash", routePrefix: "/notes/software-libraries" },
+        { label: "trailing slash", routePrefix: "notes/software-libraries/" },
+        {
+            label: "leading and trailing slash",
+            routePrefix: "/notes/software-libraries/",
+        },
+    ])("then subtree matching normalizes a $label prefix", ({ routePrefix }) => {
         const manifest = createManifest();
 
-        const filtered = filterManifest(manifest, { kind: "subtree", routePrefix: "/notes/software-libraries" });
+        const filtered = filterManifest(manifest, {
+            kind: "subtree",
+            routePrefix,
+        });
 
         expect(routesOf(filtered)).toEqual([
             "/notes/software-libraries/b/",

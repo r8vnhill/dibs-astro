@@ -88,7 +88,7 @@ Implemented in `packages/lesson-export-core/tests/filters.test.ts` and verified 
 
 ---
 
-## Phase 3: Normalisation Coverage With DDT
+## Phase 3: Normalisation Coverage With DDT [DONE]
 
 ### Goal
 
