@@ -1,3 +1,14 @@
+/**
+ * @file Contract tests for manifest filtering.
+ *
+ * These tests pin the public projection behavior of `filterManifest`:
+ *
+ * - filter inputs are normalized before matching;
+ * - returned manifests preserve manifest-level metadata;
+ * - returned manifests and entry arrays are copied;
+ * - subtree filters match descendants, not the subtree root itself;
+ * - similarly named sibling prefixes are excluded.
+ */
 import { describe, expect, test } from "vitest";
 import {
     deriveExportRoute,
@@ -7,6 +18,12 @@ import {
     normalizeLessonRoute,
 } from "../src";
 
+/**
+ * Builds a manifest entry through the public route helpers.
+ *
+ * Keeping fixture construction on the same public helpers used by production code prevents tests from depending on 
+ * hand-written canonical paths.
+ */
 const createEntry = (
     route: string,
     title: string,
@@ -19,6 +36,12 @@ const createEntry = (
     outputPath: derivePdfOutputPath(route),
 });
 
+/**
+ * Creates a fresh manifest fixture for each test.
+ *
+ * The fixture intentionally includes one unrelated lesson and two lessons in the same subtree so tests can assert 
+ * exact-route and subtree projections without sharing mutable state across cases.
+ */
 const createManifest = () =>
     ({
         generatedAt: "2026-05-10T00:00:00.000Z",
@@ -29,7 +52,28 @@ const createManifest = () =>
         ],
     }) satisfies LessonExportManifest;
 
+/**
+ * Returns manifest routes in entry order.
+ *
+ * Most assertions care about the public route projection rather than the full manifest entry shape, so this keeps 
+ * tests focused on observable behavior.
+ */
 const routesOf = (manifest: LessonExportManifest) => manifest.entries.map((entry) => entry.route);
+
+/**
+ * Asserts the common manifest projection contract.
+ *
+ * Filtering must preserve manifest-level metadata while returning fresh wrapper objects so consumers can treat the 
+ * result as an independent projection.
+ */
+const expectCopiedManifest = (
+    filtered: LessonExportManifest,
+    manifest: LessonExportManifest,
+): void => {
+    expect(filtered).not.toBe(manifest);
+    expect(filtered.entries).not.toBe(manifest.entries);
+    expect(filtered.generatedAt).toBe(manifest.generatedAt);
+};
 
 describe("given manifest filtering", () => {
     test("then all returns every entry in original order in a new manifest object", () => {
@@ -37,8 +81,7 @@ describe("given manifest filtering", () => {
 
         const filtered = filterManifest(manifest, { kind: "all" });
 
-        expect(filtered).not.toBe(manifest);
-        expect(filtered.entries).not.toBe(manifest.entries);
+        expectCopiedManifest(filtered, manifest);
         expect(routesOf(filtered)).toEqual(routesOf(manifest));
         expect(filtered.entries).toEqual(manifest.entries);
     });
@@ -48,9 +91,7 @@ describe("given manifest filtering", () => {
 
         const filtered = filterManifest(manifest, { kind: "all" });
 
-        expect(filtered).not.toBe(manifest);
-        expect(filtered.entries).not.toBe(manifest.entries);
-        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expectCopiedManifest(filtered, manifest);
         expect(filtered.entries).toEqual(manifest.entries);
     });
 
@@ -73,11 +114,12 @@ describe("given manifest filtering", () => {
     test("then exact route matching returns an empty copied manifest when no entry matches", () => {
         const manifest = createManifest();
 
-        const filtered = filterManifest(manifest, { kind: "exact-route", route: "/notes/missing/" });
+        const filtered = filterManifest(manifest, {
+            kind: "exact-route",
+            route: "/notes/missing/",
+        });
 
-        expect(filtered).not.toBe(manifest);
-        expect(filtered.entries).not.toBe(manifest.entries);
-        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expectCopiedManifest(filtered, manifest);
         expect(filtered.entries).toEqual([]);
     });
 
@@ -172,11 +214,12 @@ describe("given manifest filtering", () => {
     test("then subtree matching returns an empty copied manifest when no entry matches", () => {
         const manifest = createManifest();
 
-        const filtered = filterManifest(manifest, { kind: "subtree", routePrefix: "/notes/missing" });
+        const filtered = filterManifest(manifest, {
+            kind: "subtree",
+            routePrefix: "/notes/missing",
+        });
 
-        expect(filtered).not.toBe(manifest);
-        expect(filtered.entries).not.toBe(manifest.entries);
-        expect(filtered.generatedAt).toBe(manifest.generatedAt);
+        expectCopiedManifest(filtered, manifest);
         expect(filtered.entries).toEqual([]);
     });
 
@@ -184,7 +227,10 @@ describe("given manifest filtering", () => {
         const manifest = createManifest();
         const expectedEntries = [createEntry("/notes/a/", "A")];
 
-        const filtered = filterManifest(manifest, { kind: "exact-route", route: "/notes/a/" });
+        const filtered = filterManifest(manifest, {
+            kind: "exact-route",
+            route: "/notes/a/",
+        });
 
         expect(filtered.entries).toEqual(expectedEntries);
     });
