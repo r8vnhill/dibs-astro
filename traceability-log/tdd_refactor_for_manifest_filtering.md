@@ -145,7 +145,7 @@ This phase should probably stay green. It expands coverage around already-intend
 
 ---
 
-## Phase 4: Subtree Semantics Red Tests
+## Phase 4: Subtree Semantics Red Tests [DONE]
 
 ### Goal
 
@@ -153,7 +153,7 @@ Pin the behaviour that requires implementation change.
 
 ### Changes
 
-Add a test proving subtree root inclusion:
+Add a test proving subtree filters exclude the exact subtree root:
 
 ```ts
 createEntry("/notes/software-libraries/", "Ozzmosis")
@@ -163,10 +163,21 @@ Expected routes:
 
 ```ts
 [
-    "/notes/software-libraries/",
     "/notes/software-libraries/diary-of-a-madman/",
     "/notes/software-libraries/no-more-tears/",
 ]
+```
+
+Add a root-only edge case proving the exact subtree root is removed when it is the only match:
+
+```ts
+createEntry("/notes/software-libraries/", "Ozzmosis")
+```
+
+Expected routes:
+
+```ts
+[]
 ```
 
 Add a failing sibling-prefix boundary test:

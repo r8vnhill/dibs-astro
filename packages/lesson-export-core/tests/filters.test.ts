@@ -103,6 +103,72 @@ describe("given manifest filtering", () => {
         ]);
     });
 
+    test("then subtree matching excludes the exact subtree root", () => {
+        const manifest = {
+            ...createManifest(),
+            entries: [
+                createEntry("/notes/software-libraries/", "Ozzmosis"),
+                createEntry(
+                    "/notes/software-libraries/diary-of-a-madman/",
+                    "Diary of a Madman",
+                ),
+                createEntry(
+                    "/notes/software-libraries/no-more-tears/",
+                    "No More Tears",
+                ),
+            ],
+        } satisfies LessonExportManifest;
+
+        const filtered = filterManifest(manifest, {
+            kind: "subtree",
+            routePrefix: "/notes/software-libraries",
+        });
+
+        expect(routesOf(filtered)).toEqual([
+            "/notes/software-libraries/diary-of-a-madman/",
+            "/notes/software-libraries/no-more-tears/",
+        ]);
+    });
+
+    test("then subtree matching returns empty entries when only the subtree root matches", () => {
+        const manifest = {
+            ...createManifest(),
+            entries: [createEntry("/notes/software-libraries/", "Ozzmosis")],
+        } satisfies LessonExportManifest;
+
+        const filtered = filterManifest(manifest, {
+            kind: "subtree",
+            routePrefix: "/notes/software-libraries",
+        });
+
+        expect(routesOf(filtered)).toEqual([]);
+    });
+
+    test("then subtree matching excludes similarly named sibling prefixes", () => {
+        const manifest = {
+            ...createManifest(),
+            entries: [
+                createEntry(
+                    "/notes/software-libraries/diary-of-a-madman/",
+                    "Diary of a Madman",
+                ),
+                createEntry(
+                    "/notes/software-libraries-advanced/bark-at-the-moon/",
+                    "Bark at the Moon",
+                ),
+            ],
+        } satisfies LessonExportManifest;
+
+        const filtered = filterManifest(manifest, {
+            kind: "subtree",
+            routePrefix: "/notes/software-libraries",
+        });
+
+        expect(routesOf(filtered)).toEqual([
+            "/notes/software-libraries/diary-of-a-madman/",
+        ]);
+    });
+
     test("then subtree matching returns an empty copied manifest when no entry matches", () => {
         const manifest = createManifest();
 
