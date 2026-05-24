@@ -21,8 +21,8 @@ import {
 /**
  * Builds a manifest entry through the public route helpers.
  *
- * Keeping fixture construction on the same public helpers used by production code prevents tests from depending on 
- * hand-written canonical paths.
+ * Keeping fixture construction on the same public helpers used by production code prevents tests from depending on
+ * handwritten canonical paths.
  */
 const createEntry = (
     route: string,
@@ -39,7 +39,7 @@ const createEntry = (
 /**
  * Creates a fresh manifest fixture for each test.
  *
- * The fixture intentionally includes one unrelated lesson and two lessons in the same subtree so tests can assert 
+ * The fixture intentionally includes one unrelated lesson and two lessons in the same subtree so tests can assert
  * exact-route and subtree projections without sharing mutable state across cases.
  */
 const createManifest = () =>
@@ -55,7 +55,7 @@ const createManifest = () =>
 /**
  * Returns manifest routes in entry order.
  *
- * Most assertions care about the public route projection rather than the full manifest entry shape, so this keeps 
+ * Most assertions care about the public route projection rather than the full manifest entry shape, so this keeps
  * tests focused on observable behavior.
  */
 const routesOf = (manifest: LessonExportManifest) => manifest.entries.map((entry) => entry.route);
@@ -63,7 +63,7 @@ const routesOf = (manifest: LessonExportManifest) => manifest.entries.map((entry
 /**
  * Asserts the common manifest projection contract.
  *
- * Filtering must preserve manifest-level metadata while returning fresh wrapper objects so consumers can treat the 
+ * Filtering must preserve manifest-level metadata while returning fresh wrapper objects so consumers can treat the
  * result as an independent projection.
  */
 const expectCopiedManifest = (
