@@ -208,7 +208,7 @@ Implement `ResolvedLanguageLoadRequest`.
 Use fake data like `khonshu-script`, `midnight-mission`, or `hunter-moon-lang` for unknown-language cases, without
 repeating the same reference across tests.
 
-### Cycle 3 — Canonical load results
+### Cycle 3 — Canonical load results [DONE]
 
 **Red**
 

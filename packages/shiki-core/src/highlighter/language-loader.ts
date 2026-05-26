@@ -39,6 +39,7 @@ export function resolveLoadableLanguage(language: string): ResolvedLanguageLoadR
  *
  * Handles special cases (like "text"), normalizes aliases,
  * checks if already loaded, and returns a result indicating success or failure.
+ * Successful results return the canonical BundledLanguage, not the caller's input.
  */
 export async function ensureLanguageLoaded(
     highlighter: Highlighter,
@@ -53,14 +54,14 @@ export async function ensureLanguageLoaded(
 
     // Check if already loaded
     if (highlighter.getLoadedLanguages().includes(request.language)) {
-        return { kind: "loaded" };
+        return { kind: "loaded", language: request.language };
     }
 
     // Attempt to load
     try {
         await loadLanguage(request.language);
-        return { kind: "loaded" };
+        return { kind: "loaded", language: request.language };
     } catch (error) {
-        return { kind: "load-failed", language, error };
+        return { kind: "load-failed", language: request.language, error };
     }
 }

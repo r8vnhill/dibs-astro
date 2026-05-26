@@ -104,11 +104,11 @@ describe("ensureLanguageLoaded plain-text normalization", () => {
             loadLanguage,
         );
 
-        expect(result).toEqual({ kind: "loaded" });
+        expect(result).toEqual({ kind: "loaded", language: "typescript" });
         expect(loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
     });
 
-    it("does not load an already loaded canonical language", async () => {
+    it("returns canonical language when an alias is already loaded", async () => {
         const highlighter = createHighlighter(["typescript"]);
         const loadLanguage = vi.fn();
 
@@ -118,11 +118,11 @@ describe("ensureLanguageLoaded plain-text normalization", () => {
             loadLanguage,
         );
 
-        expect(result).toEqual({ kind: "loaded" });
+        expect(result).toEqual({ kind: "loaded", language: "typescript" });
         expect(loadLanguage).not.toHaveBeenCalled();
     });
 
-    it("keeps failed load results on the legacy caller-input shape", async () => {
+    it("returns canonical language even on failed load", async () => {
         const highlighter = createHighlighter();
         const error = new Error("Shadow Cabinet load failed");
 
@@ -136,7 +136,7 @@ describe("ensureLanguageLoaded plain-text normalization", () => {
 
         expect(result).toEqual({
             kind: "load-failed",
-            language: "ts",
+            language: "typescript",
             error,
         });
     });
