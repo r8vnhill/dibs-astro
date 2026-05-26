@@ -187,7 +187,7 @@ Implement `isPlainTextLanguage` and route plain-text aliases through `resolveLoa
 Keep the alias set private unless other modules need direct access. Export the predicate only if tests live outside the
 module boundary.
 
-### Cycle 2 — Pure resolution contract
+### Cycle 2 — Pure resolution contract [DONE]
 
 **Red**
 

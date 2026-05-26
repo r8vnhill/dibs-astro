@@ -13,6 +13,27 @@ const plainTextLanguages = new Set(["text", "txt", "plain", "plaintext"]);
 
 const isPlainTextLanguage = (language: string): boolean => plainTextLanguages.has(language.trim().toLowerCase());
 
+export type ResolvedLanguageLoadRequest =
+    | { readonly kind: "plain-text" }
+    | { readonly kind: "unknown-language"; readonly language: string }
+    | { readonly kind: "loadable"; readonly language: BundledLanguage };
+
+export function resolveLoadableLanguage(language: string): ResolvedLanguageLoadRequest {
+    const normalizedLanguage = language.trim();
+
+    if (isPlainTextLanguage(normalizedLanguage)) {
+        return { kind: "plain-text" };
+    }
+
+    const { resolvedLang } = resolveShikiLanguage(normalizedLanguage);
+
+    if (!resolvedLang) {
+        return { kind: "unknown-language", language };
+    }
+
+    return { kind: "loadable", language: resolvedLang };
+}
+
 /**
  * Ensures a language is loaded in the highlighter.
  *
@@ -24,25 +45,20 @@ export async function ensureLanguageLoaded(
     language: string,
     loadLanguage: (lang: BundledLanguage) => Promise<void>,
 ): Promise<LanguageLoadResult> {
-    if (isPlainTextLanguage(language)) {
-        return { kind: "plain-text" };
-    }
+    const request = resolveLoadableLanguage(language);
 
-    // Resolve the language to a bundled name
-    const { resolvedLang } = resolveShikiLanguage(language);
-
-    if (!resolvedLang) {
-        return { kind: "unknown-language", language };
+    if (request.kind !== "loadable") {
+        return request;
     }
 
     // Check if already loaded
-    if (highlighter.getLoadedLanguages().includes(resolvedLang)) {
+    if (highlighter.getLoadedLanguages().includes(request.language)) {
         return { kind: "loaded" };
     }
 
     // Attempt to load
     try {
-        await loadLanguage(resolvedLang);
+        await loadLanguage(request.language);
         return { kind: "loaded" };
     } catch (error) {
         return { kind: "load-failed", language, error };

@@ -29,6 +29,7 @@ export const languageAliases: Record<string, BundledLanguage | null> = {
     scala: "scala",
     shell: "shell",
     sh: "bash",
+    ts: "typescript",
     plaintext: null,
 };
 

@@ -20,6 +20,7 @@ describe("language resolution", () => {
             "json",
             "md",
             "sh",
+            "ts",
             "plaintext",
         ])("recognizes known alias: %s", (alias) => {
             expect(isKnownShikiAlias(alias)).toBe(true);
@@ -47,6 +48,7 @@ describe("language resolution", () => {
             { input: "md", expected: "markdown", shouldWarn: false },
             { input: "sh", expected: "bash", shouldWarn: false },
             { input: "nu", expected: "nushell", shouldWarn: false },
+            { input: "ts", expected: "typescript", shouldWarn: false },
         ])("resolves known alias: $input -> $expected", ({ input, expected, shouldWarn }) => {
             const result = resolveShikiLanguage(input);
             expect(result.resolvedLang).toBe(expected);
@@ -135,6 +137,7 @@ describe("language resolution", () => {
             expect(languageAliases["javascript"]).toBe("javascript");
             expect(languageAliases["md"]).toBe("markdown");
             expect(languageAliases["sh"]).toBe("bash");
+            expect(languageAliases["ts"]).toBe("typescript");
             expect(languageAliases["plaintext"]).toBeNull();
         });
 
