@@ -17,6 +17,7 @@ Current publish target:
 
 - Host-agnostic Shiki highlighter lifecycle management.
 - Language alias and language resolution contracts.
+- Plain-text language normalization for text, txt, plain, and plaintext inputs.
 - Fallback HTML rendering contracts.
 - Reusable transformer contracts.
 - Root-only ESM package output with external consumer validation.
@@ -27,6 +28,7 @@ Shiki infrastructure that is **not** UI-specific:
 
 - Highlighter orchestration and caching.
 - Language name normalization and alias mapping.
+- Plain-text identifiers that bypass loading while still preserving the existing `plaintext` compatibility alias.
 - Transformer composition (abstract contracts).
 - Plain HTML fallback rendering.
 - Theme configuration constants.
