@@ -39,18 +39,32 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <List>
+            <ListItem icon={icons.GitBranch}>
+                <Link href="https://git-scm.com/">Git</Link>: Sistema de control de versiones que usaremos para clonar
+                repositorios del curso, registrar cambios y trabajar con proyectos de forma reproducible.
+            </ListItem>
+
             <ListItem icon={icons.BracketsCurly}>
-                <Link href="https://openjdk.org/">Java Development Kit (JDK)</Link>: Entorno requerido para ejecutar
-                Kotlin. Se recomienda la versión 21 (LTS) o superior.
+                <Link href="https://openjdk.org/">JDK 21</Link>: Entorno de ejecución requerido por Kotlin, Gradle y
+                otras herramientas del ecosistema JVM.
             </ListItem>
 
             <ListItem icon={icons.Lightning}>
-                <Link href="https://kotlinlang.org/">Kotlin</Link>: Lenguaje de programación principal del curso.
+                <Link href="https://kotlinlang.org/docs/command-line.html">Kotlin CLI</Link>: Herramienta de línea de
+                comandos para ejecutar scripts de apoyo <InlineBash code=".kts" /> / <InlineBash code=".main.kts" /> y
+                comprobar que el entorno Kotlin está disponible fuera del IDE.
             </ListItem>
 
             <ListItem icon={icons.Package}>
-                <Link href="https://gradle.org/">Gradle</Link>: Herramienta para compilar proyectos y gestionar
-                dependencias.
+                <Link href="https://docs.gradle.org/current/userguide/gradle_wrapper.html">Gradle Wrapper</Link>: Gradle
+                es la herramienta de construcción usada por los proyectos Kotlin del curso. En los repositorios del
+                curso, el camino normal será usar el Wrapper incluido mediante <InlineBash code="./gradlew" /> o
+                <InlineBash code="gradlew.bat" /> para ejecutar tareas con la versión esperada por cada proyecto.
+            </ListItem>
+
+            <ListItem icon={icons.Code}>
+                Editor o IDE: Espacio de trabajo para editar, inspeccionar, ejecutar y refactorizar código durante el
+                curso.
             </ListItem>
         </List>
     </NotesSection>
@@ -75,6 +89,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 limitado.
             </ListItem>
         </List>
+
+        <StudentPack />
     </NotesSection>
 
     <NotesSection id="installation-guide">
@@ -160,8 +176,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 <PowerShellBlock code={`scoop install openjdk21 kotlin gradle idea`}>
                                     <span slot="title">Instalar herramientas (IntelliJ IDEA)</span>
                                 </PowerShellBlock>
-
-                                <StudentPack />
                             </TabsContent>
 
                             <TabsContent value="vscode">
@@ -226,8 +240,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 >
                                     <span slot="title">Instalar herramientas esenciales (IntelliJ IDEA)</span>
                                 </BashScript>
-
-                                <StudentPack />
                             </TabsContent>
 
                             <TabsContent value="vscode">
@@ -328,7 +340,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 >
                                     <span slot="title">Instalar herramientas esenciales (IntelliJ IDEA)</span>
                                 </BashScript>
-                                <StudentPack />
                             </TabsContent>
 
                             <TabsContent value="vscode">
@@ -343,7 +354,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 >
                                     <span slot="title">Instalar herramientas esenciales (Visual Studio Code)</span>
                                 </BashScript>
-                                <StudentPack />
                             </TabsContent>
                         </Tabs>
                     </NotesSection>

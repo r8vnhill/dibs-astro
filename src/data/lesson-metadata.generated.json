@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T19:49:27.212Z",
+  "generatedAt": "2026-05-26T01:24:28.934Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1444,8 +1444,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-03-27",
+      "lastModified": "2026-05-21",
       "changes": [
+        {
+          "hash": "5b023055dd04b5bdd249e4d3c4b1ec1e4cfa6792",
+          "date": "2026-05-21",
+          "author": "r8vnhill",
+          "subject": "🔥♻️ lesson(installation): Reframe around Kotlin CLI and simplify scope"
+        },
         {
           "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
           "date": "2026-03-27",
@@ -1469,12 +1475,6 @@
           "date": "2025-09-26",
           "author": "r8vnhill",
           "subject": "✨📝♻️🔧 Enfoque en PowerShell, reescritura de notas y nuevo icono `Prohibit`"
-        },
-        {
-          "hash": "52ddf6c1d59161a2d549849293999343394df938",
-          "date": "2025-09-26",
-          "author": "r8vnhill",
-          "subject": "✨📝💄🖼️🐛 Revamp installation guide, add UI components & icons, diff-highlighting, and fix tabs scoping"
         }
       ]
     },

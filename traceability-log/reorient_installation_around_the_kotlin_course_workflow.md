@@ -159,7 +159,7 @@ Acceptance criteria:
 - PowerShell is explicitly not required for the main path.
 - The page no longer promises terminal customisation.
 
-### Step 2 — Tool model pass
+### ~~Step 2 — Tool model pass~~
 
 Rewrite essential and recommended tools.
 
