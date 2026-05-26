@@ -165,7 +165,7 @@ After `ensureLanguageLoaded` returns:
 
 ## TDD Cycles
 
-### Cycle 1 — Plain-text normalization
+### Cycle 1 — Plain-text normalization [DONE]
 
 **Red**
 
