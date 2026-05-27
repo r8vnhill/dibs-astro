@@ -69,39 +69,56 @@ Context and essential rules for agents collaborating in this repository.
 - Use `*.render.test.ts` for `.astro` component rendering with `pnpm test:astro`.
 - Use `*.test.ts` or `*.test.tsx` for unit or integration tests in jsdom with `pnpm test:unit`.
 - For Astro rendering, reuse helpers from `src/test-utils/astro-render.ts`.
-- Structure tests with BDD-oriented grouping. Prefer `suite` for the Given context, `describe` for the When context, and `test` for Then expectations:
+- Structure tests with BDD-oriented grouping. Use `suite` for the Given context, `describe` for the When context, and `test` for Then expectations:
 
 ```ts
 suite("given a normalized bibliography source", () => {
     describe("when references are grouped by lesson", () => {
         test("then recommended references keep source order", () => {
-            // ...
+            // Arrange
+
+            // Act
+
+            // Assert
         });
 
         test("then pending entries stay hidden by default", () => {
-            // ...
+            // Arrange
+
+            // Act
+
+            // Assert
         });
     });
 
     describe("when pending entries are explicitly included", () => {
         test("then pending references are returned", () => {
-            // ...
+            // Arrange
+
+            // Act
+
+            // Assert
         });
     });
 });
 ```
 
-- For simpler behavior, use one `describe` as the Given context and `test` as Then expectations:
+- For simpler behavior with no separate When context, use `suite` as the Given context and `test` as Then expectations:
 
 ```ts
-describe("given a page reference range", () => {
+suite("given a page reference range", () => {
     test("then reversed bounds are normalized", () => {
-        // ...
+        // Arrange
+
+        // Act
+
+        // Assert
     });
 });
 ```
 
-- Avoid deeply nested `describe` blocks. Prefer the `suite` / `describe` / `test` shape, or `describe` / `test` for small suites.
+- Do not use `it`; always prefer `test`, including table cases such as `test.each(...)`.
+- Avoid deeply nested `describe` blocks. Prefer `suite` / `describe` / `test`, or `suite` / `test` when there is no meaningful When grouping.
 
 ## Content and Components
 

@@ -1,264 +1,326 @@
 /**
- * Tests for @ravenhill/shiki-core Phase 3 implementation.
+ * Tests for @ravenhill/shiki-core highlighter service orchestration.
  *
- * Covers highlighter service creation, orchestration, language loading,
- * fallback rendering, and global cache synchronization.
+ * Covers service creation, language loading, fallback rendering,
+ * and global cache synchronization.
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createShikiHighlighterService, getShikiHighlighter } from "../src/highlighter/service";
 import type { Highlighter } from "shiki";
+import { beforeEach, describe, expect, suite, test, vi } from "vitest";
+import {
+    __resetShikiWarningsForTests,
+    createShikiHighlighterService,
+    getShikiHighlighter,
+} from "../src/highlighter/service";
 
 function createMockHighlighter(): Highlighter {
     return {
         getLoadedLanguages: vi.fn(() => []),
         loadLanguage: vi.fn(async () => {}),
-        codeToHtml: vi.fn((code) => `<pre><code>${code}</code></pre>`),
+        codeToHtml: vi.fn((code, options) => {
+            const lang = (options as { lang?: string }).lang ?? "unknown";
+            return `<pre data-lang="${lang}"><code>${code}</code></pre>`;
+        }),
     } as any;
 }
 
-describe("createShikiHighlighterService", () => {
+function cacheHighlighterForService(highlighter: Highlighter): void {
+    const globalCache = globalThis as any;
+    globalCache.__dibsShikiHighlighterPromise = Promise.resolve(highlighter);
+}
+
+suite("given a Shiki highlighter service", () => {
     beforeEach(() => {
-        // Clear global cache before each test
         const globalCache = globalThis as any;
         delete globalCache.__dibsShikiHighlighterPromise;
+        __resetShikiWarningsForTests();
     });
 
-    it("creates a service that provides getHighlighter and highlightToHtml", () => {
+    test("then it provides getHighlighter and highlightToHtml", () => {
+        // Arrange
         const service = createShikiHighlighterService();
 
+        // Act / Assert
         expect(service.getHighlighter).toBeDefined();
         expect(service.highlightToHtml).toBeDefined();
         expect(typeof service.getHighlighter).toBe("function");
         expect(typeof service.highlightToHtml).toBe("function");
     });
 
-    it("lazily creates a highlighter on first getHighlighter call", async () => {
+    test("then it lazily creates one highlighter on first getHighlighter call", async () => {
+        // Arrange
         const service = createShikiHighlighterService();
 
+        // Act
         const highlighter1 = await service.getHighlighter();
         const highlighter2 = await service.getHighlighter();
 
+        // Assert
         expect(highlighter1).toBe(highlighter2);
     });
 
-    it("renders text language directly without loading", async () => {
-        const mockHighlighter = createMockHighlighter();
+    describe("when rendering a language alias", () => {
+        test("then it renders with the canonical loaded language", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService();
 
-        const service = createShikiHighlighterService({
-            retry: (op) => op(),
+            // Act
+            const html = await service.highlightToHtml({
+                code: "const moon = 'Khonshu';",
+                language: "ts",
+            });
+
+            // Assert
+            expect(mockHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
+            expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+                "const moon = 'Khonshu';",
+                expect.objectContaining({ lang: "typescript" }),
+            );
+            expect(html).toContain('data-lang="typescript"');
         });
-
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
-
-        const html = await service.highlightToHtml({
-            code: "plain text",
-            language: "text",
-        });
-
-        expect(html).toContain("plain text");
-        expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
     });
 
-    it("wraps language loading with the configured retry function", async () => {
-        const mockHighlighter = createMockHighlighter();
-        mockHighlighter.getLoadedLanguages = vi.fn(() => []);
+    describe("when rendering plain-text aliases", () => {
+        test.each(["text", "txt", "plain", "plaintext"])(
+            "then %s renders through Shiki text without loading a language",
+            async (language) => {
+                // Arrange
+                const mockHighlighter = createMockHighlighter();
+                cacheHighlighterForService(mockHighlighter);
+                const service = createShikiHighlighterService();
 
-        const retryFn = vi.fn((op) => op());
-        const service = createShikiHighlighterService({ retry: retryFn });
+                // Act
+                const html = await service.highlightToHtml({
+                    code: "plain text",
+                    language,
+                });
 
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
-
-        await service.highlightToHtml({
-            code: "code",
-            language: "javascript",
-        });
-
-        // Verify retry was called for language loading
-        expect(retryFn).toHaveBeenCalled();
-    });
-
-    it("handles unknown languages by returning fallback HTML", async () => {
-        const mockHighlighter = createMockHighlighter();
-        const warnFn = vi.fn();
-
-        const service = createShikiHighlighterService({ warn: warnFn });
-
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
-
-        const html = await service.highlightToHtml({
-            code: "some code",
-            language: "unknown-lang-xyz",
-        });
-
-        expect(html).toContain("some code");
-        expect(warnFn).toHaveBeenCalledWith(
-            expect.stringContaining("not recognized"),
+                // Assert
+                expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
+                expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+                    "plain text",
+                    expect.objectContaining({ lang: "text" }),
+                );
+                expect(html).toContain('data-lang="text"');
+            },
         );
     });
 
-    it("warns only once per unknown language", async () => {
-        const mockHighlighter = createMockHighlighter();
-        const warnFn = vi.fn();
+    describe("when loading a configured language", () => {
+        test("then it wraps language loading with the configured retry function", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            const retryFn = vi.fn((op) => op());
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({ retry: retryFn });
 
-        const service = createShikiHighlighterService({ warn: warnFn });
+            // Act
+            await service.highlightToHtml({
+                code: "code",
+                language: "javascript",
+            });
 
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
-
-        await service.highlightToHtml({
-            code: "code1",
-            language: "unknown-xyz",
+            // Assert
+            expect(retryFn).toHaveBeenCalledWith(expect.any(Function), {
+                operation: "load-language",
+                language: "javascript",
+            });
         });
-
-        await service.highlightToHtml({
-            code: "code2",
-            language: "unknown-xyz",
-        });
-
-        expect(warnFn).toHaveBeenCalledTimes(1);
     });
 
-    it("handles language load failures by returning fallback HTML", async () => {
-        const mockHighlighter = createMockHighlighter();
-        mockHighlighter.loadLanguage = vi.fn(async () => {
-            throw new Error("Network failure");
+    describe("when rendering unknown languages", () => {
+        test("then it returns fallback HTML without loading a language", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            const warnFn = vi.fn();
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({ warn: warnFn });
+
+            // Act
+            const html = await service.highlightToHtml({
+                code: "some code",
+                language: "unknown-lang-xyz",
+            });
+
+            // Assert
+            expect(html).toContain("some code");
+            expect(html).toContain('class="shiki"');
+            expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
+            expect(mockHighlighter.codeToHtml).not.toHaveBeenCalled();
+            expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("not recognized"));
         });
-        const warnFn = vi.fn();
 
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
+        test("then it warns only once per unknown language", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            const warnFn = vi.fn();
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({ warn: warnFn });
 
-        const service = createShikiHighlighterService({ warn: warnFn });
+            // Act
+            await service.highlightToHtml({
+                code: "code1",
+                language: "unknown-xyz",
+            });
 
-        const html = await service.highlightToHtml({
-            code: "code",
-            language: "python",
+            await service.highlightToHtml({
+                code: "code2",
+                language: "unknown-xyz",
+            });
+
+            // Assert
+            expect(warnFn).toHaveBeenCalledTimes(1);
         });
-
-        expect(html).toContain("code");
-        expect(warnFn).toHaveBeenCalledWith(
-            expect.stringContaining("could not be loaded"),
-        );
     });
 
-    it("passes transformers through to the highlighter", async () => {
-        const mockHighlighter = createMockHighlighter();
-        mockHighlighter.getLoadedLanguages = vi.fn(() => ["python"]);
-        mockHighlighter.codeToHtml = vi.fn(() => "<pre>highlighted</pre>");
+    describe("when language loading fails", () => {
+        test("then it returns fallback HTML and warns", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            mockHighlighter.loadLanguage = vi.fn(async () => {
+                throw new Error("Network failure");
+            });
+            const warnFn = vi.fn();
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({ warn: warnFn });
 
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
+            // Act
+            const html = await service.highlightToHtml({
+                code: "code",
+                language: "py",
+            });
 
-        const service = createShikiHighlighterService();
-
-        const mockTransformer = { name: "test" };
-        await service.highlightToHtml({
-            code: "code",
-            language: "python",
-            transformers: [mockTransformer as any],
+            // Assert
+            expect(mockHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("python");
+            expect(mockHighlighter.codeToHtml).not.toHaveBeenCalled();
+            expect(html).toContain("code");
+            expect(html).toContain('class="shiki"');
+            expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("could not be loaded"));
         });
-
-        expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
-            "code",
-            expect.objectContaining({
-                transformers: [mockTransformer],
-            }),
-        );
     });
 
-    it("uses provided theme or falls back to default", async () => {
-        const mockHighlighter = createMockHighlighter();
-        mockHighlighter.getLoadedLanguages = vi.fn(() => ["javascript"]);
-        mockHighlighter.codeToHtml = vi.fn(() => "<pre>html</pre>");
-        const codeToHtmlMock = mockHighlighter.codeToHtml as ReturnType<typeof vi.fn>;
+    describe("when rendering with extra options", () => {
+        test("then it passes transformers through to the highlighter", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            mockHighlighter.getLoadedLanguages = vi.fn(() => ["python"]);
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService();
+            const mockTransformer = { name: "test" };
 
-        // Inject the mock
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
+            // Act
+            await service.highlightToHtml({
+                code: "code",
+                language: "python",
+                transformers: [mockTransformer as any],
+            });
 
-        const service = createShikiHighlighterService({
-            defaultTheme: "catppuccin-latte",
+            // Assert
+            expect(mockHighlighter.codeToHtml).toHaveBeenCalledWith(
+                "code",
+                expect.objectContaining({
+                    transformers: [mockTransformer],
+                }),
+            );
         });
 
-        // With custom theme
-        await service.highlightToHtml({
-            code: "code",
-            language: "javascript",
-            theme: "catppuccin-mocha",
+        test("then it uses the provided theme or falls back to the default", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            mockHighlighter.getLoadedLanguages = vi.fn(() => ["javascript"]);
+            const codeToHtmlMock = mockHighlighter.codeToHtml as ReturnType<typeof vi.fn>;
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({
+                defaultTheme: "catppuccin-latte",
+            });
+
+            // Act
+            await service.highlightToHtml({
+                code: "code",
+                language: "javascript",
+                theme: "catppuccin-mocha",
+            });
+
+            // Assert
+            expect(codeToHtmlMock).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ theme: "catppuccin-mocha" }),
+            );
+
+            // Act
+            codeToHtmlMock.mockClear();
+            await service.highlightToHtml({
+                code: "code",
+                language: "javascript",
+            });
+
+            // Assert
+            expect(codeToHtmlMock).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({ theme: "catppuccin-latte" }),
+            );
         });
-
-        expect(codeToHtmlMock).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ theme: "catppuccin-mocha" }),
-        );
-
-        // With default theme
-        codeToHtmlMock.mockClear();
-        await service.highlightToHtml({
-            code: "code",
-            language: "javascript",
-        });
-
-        expect(codeToHtmlMock).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ theme: "catppuccin-latte" }),
-        );
     });
 
-    it("synchronizes highlighter with global cache", async () => {
+    test("then it synchronizes the highlighter with the global cache", async () => {
+        // Arrange
         const globalCache = globalThis as any;
         delete globalCache.__dibsShikiHighlighterPromise;
-
         const service = createShikiHighlighterService();
 
-        // Get the highlighter (should create and store in global)
+        // Act
         const highlighter = await service.getHighlighter();
 
+        // Assert
         expect(globalCache.__dibsShikiHighlighterPromise).toBeDefined();
         expect(await globalCache.__dibsShikiHighlighterPromise).toBe(highlighter);
     });
 
-    it("rehydrates from existing global cache", async () => {
+    test("then it rehydrates from an existing global cache", async () => {
+        // Arrange
         const mockHighlighter = createMockHighlighter();
-        const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
-
+        cacheHighlighterForService(mockHighlighter);
         const service = createShikiHighlighterService();
+
+        // Act
         const highlighter = await service.getHighlighter();
 
+        // Assert
         expect(highlighter).toBe(mockHighlighter);
     });
 });
 
-describe("getShikiHighlighter", () => {
+suite("given no cached Shiki highlighter", () => {
     beforeEach(() => {
         const globalCache = globalThis as any;
         delete globalCache.__dibsShikiHighlighterPromise;
     });
 
-    it("throws if no highlighter has been cached", async () => {
+    test("then getShikiHighlighter throws", async () => {
+        // Act / Assert
         await expect(getShikiHighlighter()).rejects.toThrow(
             /No cached Shiki highlighter found/,
         );
     });
+});
 
-    it("returns the cached highlighter promise", async () => {
-        const mockHighlighter = createMockHighlighter();
+suite("given a cached Shiki highlighter", () => {
+    beforeEach(() => {
         const globalCache = globalThis as any;
-        globalCache.__dibsShikiHighlighterPromise = Promise.resolve(mockHighlighter);
+        delete globalCache.__dibsShikiHighlighterPromise;
+    });
 
+    test("then getShikiHighlighter returns the cached highlighter promise", async () => {
+        // Arrange
+        const mockHighlighter = createMockHighlighter();
+        cacheHighlighterForService(mockHighlighter);
+
+        // Act
         const highlighter = await getShikiHighlighter();
 
+        // Assert
         expect(highlighter).toBe(mockHighlighter);
     });
 });

@@ -254,7 +254,7 @@ Implemented on May 26, 2026. `ensureLanguageLoaded` now accepts a private
 `Pick<Highlighter, "getLoadedLanguages">` capability alias, and loader tests pass minimal fakes without `Highlighter`
 casts. Verification passed with the focused/package shiki-core Vitest run and package typecheck outside the sandbox.
 
-### Cycle 5 — Service integration without deduplication
+### Cycle 5 — Service integration without deduplication [DONE]
 
 **Red**
 
@@ -282,6 +282,17 @@ function getRenderableLanguage(loadResult: LanguageLoadResult): BundledLanguage 
 ```
 
 Only keep this helper if it removes branching noise.
+
+**Result**
+
+Implemented on May 27, 2026. `service.ts` now routes every language, including `text`, `txt`, `plain`, and
+`plaintext`, through `ensureLanguageLoaded`, renders successful loads from `loadResult.language`, and no longer imports
+or calls `resolveShikiLanguage`. Unknown and failed languages still use the existing fallback renderer, retry wrapping
+around `highlighter.loadLanguage` is unchanged, and no in-flight deduplication map was added.
+
+Verification passed outside the sandbox with focused service tests, focused loader tests, package typecheck, and the full
+`@ravenhill/shiki-core` Vitest suite. The sandboxed Vitest runs failed before test execution with `EPERM` while reading
+`node_modules/.pnpm/fdir.../dist/types.js`, matching the earlier Windows sandbox issue.
 
 ### Cycle 6 — In-flight deduplication
 
