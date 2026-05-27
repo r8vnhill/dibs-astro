@@ -1,15 +1,13 @@
 import type { Highlighter } from "shiki";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { ensureLanguageLoaded, resolveLoadableLanguage } from "../src/highlighter/language-loader";
 
-function createHighlighter(loadedLanguages: string[] = []): Pick<Highlighter, "getLoadedLanguages"> {
-    return {
-        getLoadedLanguages: vi.fn(() => loadedLanguages),
-    };
-}
+const createHighlighter = (loadedLanguages: string[] = []): Pick<Highlighter, "getLoadedLanguages"> => ({
+    getLoadedLanguages: vi.fn(() => loadedLanguages),
+});
 
 describe("resolveLoadableLanguage", () => {
-    it.each([
+    test.each([
         ["ts", "typescript"],
         ["py", "python"],
         [" ts ", "typescript"],
@@ -21,7 +19,7 @@ describe("resolveLoadableLanguage", () => {
         });
     });
 
-    it.each([
+    test.each([
         "text",
         "txt",
         "plain",
@@ -38,7 +36,7 @@ describe("resolveLoadableLanguage", () => {
         expect(resolveLoadableLanguage(language)).toEqual({ kind: "plain-text" });
     });
 
-    it.each([
+    test.each([
         "midnight-mission",
         " hunter-moon-lang ",
     ])("preserves original unknown input %s", (language) => {
@@ -50,7 +48,7 @@ describe("resolveLoadableLanguage", () => {
 });
 
 describe("ensureLanguageLoaded plain-text normalization", () => {
-    it.each([
+    test.each([
         "text",
         "txt",
         "plain",
@@ -67,25 +65,17 @@ describe("ensureLanguageLoaded plain-text normalization", () => {
         const highlighter = createHighlighter();
         const loadLanguage = vi.fn();
 
-        const result = await ensureLanguageLoaded(
-            highlighter as Highlighter,
-            language,
-            loadLanguage,
-        );
+        const result = await ensureLanguageLoaded(highlighter, language, loadLanguage);
 
         expect(result).toEqual({ kind: "plain-text" });
         expect(loadLanguage).not.toHaveBeenCalled();
     });
 
-    it("returns unknown-language for unresolved non-plain-text input", async () => {
+    test("returns unknown-language for unresolved non-plain-text input", async () => {
         const highlighter = createHighlighter();
         const loadLanguage = vi.fn();
 
-        const result = await ensureLanguageLoaded(
-            highlighter as Highlighter,
-            "khonshu-script",
-            loadLanguage,
-        );
+        const result = await ensureLanguageLoaded(highlighter, "khonshu-script", loadLanguage);
 
         expect(result).toEqual({
             kind: "unknown-language",
@@ -94,45 +84,33 @@ describe("ensureLanguageLoaded plain-text normalization", () => {
         expect(loadLanguage).not.toHaveBeenCalled();
     });
 
-    it("loads aliases through their canonical bundled language", async () => {
+    test("loads aliases through their canonical bundled language", async () => {
         const highlighter = createHighlighter();
         const loadLanguage = vi.fn().mockResolvedValue(undefined);
 
-        const result = await ensureLanguageLoaded(
-            highlighter as Highlighter,
-            "ts",
-            loadLanguage,
-        );
+        const result = await ensureLanguageLoaded(highlighter, "ts", loadLanguage);
 
         expect(result).toEqual({ kind: "loaded", language: "typescript" });
         expect(loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
     });
 
-    it("returns canonical language when an alias is already loaded", async () => {
+    test("returns canonical language when an alias is already loaded", async () => {
         const highlighter = createHighlighter(["typescript"]);
         const loadLanguage = vi.fn();
 
-        const result = await ensureLanguageLoaded(
-            highlighter as Highlighter,
-            "ts",
-            loadLanguage,
-        );
+        const result = await ensureLanguageLoaded(highlighter, "ts", loadLanguage);
 
         expect(result).toEqual({ kind: "loaded", language: "typescript" });
         expect(loadLanguage).not.toHaveBeenCalled();
     });
 
-    it("returns canonical language even on failed load", async () => {
+    test("returns canonical language even on failed load", async () => {
         const highlighter = createHighlighter();
         const error = new Error("Shadow Cabinet load failed");
 
-        const result = await ensureLanguageLoaded(
-            highlighter as Highlighter,
-            "ts",
-            async () => {
-                throw error;
-            },
-        );
+        const result = await ensureLanguageLoaded(highlighter, "ts", async () => {
+            throw error;
+        });
 
         expect(result).toEqual({
             kind: "load-failed",

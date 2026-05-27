@@ -228,7 +228,7 @@ Update `LanguageLoadResult` and `ensureLanguageLoaded`.
 
 Update all exhaustiveness checks and remove any stale `{ kind: "loaded" }` expectations.
 
-### Cycle 4 — Boundary narrowing
+### Cycle 4 — Boundary narrowing [DONE]
 
 **Red**
 
@@ -247,6 +247,12 @@ type LoadedLanguageReader = Pick<Highlighter, "getLoadedLanguages">;
 ```
 
 This cycle should be type-level only. Runtime behavior should not change.
+
+**Result**
+
+Implemented on May 26, 2026. `ensureLanguageLoaded` now accepts a private
+`Pick<Highlighter, "getLoadedLanguages">` capability alias, and loader tests pass minimal fakes without `Highlighter`
+casts. Verification passed with the focused/package shiki-core Vitest run and package typecheck outside the sandbox.
 
 ### Cycle 5 — Service integration without deduplication
 

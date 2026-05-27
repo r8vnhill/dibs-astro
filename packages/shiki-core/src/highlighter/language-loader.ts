@@ -9,6 +9,8 @@ import type { BundledLanguage, Highlighter } from "shiki";
 import { resolveShikiLanguage } from "../languages/resolution";
 import type { LanguageLoadResult } from "./types";
 
+type LoadedLanguageReader = Pick<Highlighter, "getLoadedLanguages">;
+
 const plainTextLanguages = new Set(["text", "txt", "plain", "plaintext"]);
 
 const isPlainTextLanguage = (language: string): boolean => plainTextLanguages.has(language.trim().toLowerCase());
@@ -42,7 +44,7 @@ export function resolveLoadableLanguage(language: string): ResolvedLanguageLoadR
  * Successful results return the canonical BundledLanguage, not the caller's input.
  */
 export async function ensureLanguageLoaded(
-    highlighter: Highlighter,
+    highlighter: LoadedLanguageReader,
     language: string,
     loadLanguage: (lang: BundledLanguage) => Promise<void>,
 ): Promise<LanguageLoadResult> {
