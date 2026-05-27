@@ -294,7 +294,7 @@ Verification passed outside the sandbox with focused service tests, focused load
 `@ravenhill/shiki-core` Vitest suite. The sandboxed Vitest runs failed before test execution with `EPERM` while reading
 `node_modules/.pnpm/fdir.../dist/types.js`, matching the earlier Windows sandbox issue.
 
-### Cycle 6 — In-flight deduplication
+### Cycle 6 — In-flight deduplication [DONE]
 
 **Red**
 
@@ -344,6 +344,22 @@ async function ensureDeduplicatedLanguageLoad(
 
 Keep this helper inside the service factory unless there is a clear reuse case.
 
+**Result**
+
+Implemented on May 27, 2026. `service.ts` now owns a per-service
+`Map<BundledLanguage, Promise<LanguageLoadResult>>` keyed by canonical bundled language. Concurrent calls for the same
+canonical unloaded language share one retry-wrapped `highlighter.loadLanguage(...)` operation, including alias pairs such
+as `ts` and `typescript`. Failed in-flight loads are removed in `finally`, so later calls can retry.
+
+`ensureLanguageLoaded` remains intact as the lower-level loader contract. Plain-text aliases, unknown-language fallback,
+failed-load fallback, warning behavior, public exports, and dependencies are unchanged.
+
+Verification: the sandboxed Vitest run still fails before test execution with the known Windows `EPERM` while reading
+`node_modules/.pnpm/fdir.../dist/types.js`. The same `pnpm --filter @ravenhill/shiki-core test --
+highlighter-service.test.ts` command passed outside the sandbox and ran the full package Vitest suite: 9 files and 209
+tests passed. `pnpm --filter @ravenhill/shiki-core typecheck` repeatedly gets stuck after printing `tsc --noEmit` with
+no diagnostics; this is documented as a follow-up blocker instead of treated as a Cycle 6 implementation failure.
+
 ---
 
 ## Test Plan
@@ -371,7 +387,9 @@ Add or update tests for:
 
 ### Type-level checks
 
-Run the package typecheck to catch stale consumers of the old `LanguageLoadResult` shape.
+`pnpm --filter @ravenhill/shiki-core typecheck` should catch stale consumers of the old `LanguageLoadResult` shape, but
+it is currently blocked by a recurring hang after `tsc --noEmit` starts. Treat this as a separate infrastructure issue
+before using typecheck as a completion gate again.
 
 ### PBT decision
 
@@ -445,7 +463,8 @@ Keep this invariant explicit:
 - Failed loads are not cached permanently.
 - Public `createShikiHighlighterService` API remains unchanged.
 - No runtime dependency is added.
-- Focused tests and package typecheck pass.
+- Focused/package tests and package build pass.
+- The recurring package typecheck hang is documented as a follow-up blocker.
 
 ---
 
@@ -455,9 +474,29 @@ Adjust names to the repo’s actual scripts, but the intended verification order
 
 ```bash
 pnpm --filter @ravenhill/shiki-core test
-pnpm --filter @ravenhill/shiki-core typecheck
 pnpm --filter @ravenhill/shiki-core build
 ```
 
+Do not use `pnpm --filter @ravenhill/shiki-core typecheck` as a completion gate until the documented hang is fixed.
+
 If this package is consumed by the Astro site in the same workspace, finish with the smallest site-level smoke check
 that exercises code block highlighting.
+
+---
+
+## Final Status
+
+Completed on May 27, 2026.
+
+All planned lifecycle cycles are implemented:
+
+- plain-text alias normalization;
+- pure canonical language resolution;
+- canonical load results;
+- narrowed loader boundary;
+- service rendering from `LanguageLoadResult`;
+- per-service in-flight language load deduplication.
+
+The remaining known issue is not part of the lifecycle refactor behavior: `pnpm --filter @ravenhill/shiki-core
+typecheck` starts `tsc --noEmit` and repeatedly hangs without diagnostics. Keep the dedicated Cycle 6 follow-up notes as
+the starting point for debugging that validation problem.

@@ -29,6 +29,23 @@ function cacheHighlighterForService(highlighter: Highlighter): void {
     globalCache.__dibsShikiHighlighterPromise = Promise.resolve(highlighter);
 }
 
+function createDeferred<T = void>() {
+    let resolve!: (value: T | PromiseLike<T>) => void;
+    let reject!: (reason?: unknown) => void;
+
+    const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+        resolve = resolvePromise;
+        reject = rejectPromise;
+    });
+
+    return { promise, resolve, reject };
+}
+
+async function flushMicrotasks(): Promise<void> {
+    await Promise.resolve();
+    await Promise.resolve();
+}
+
 suite("given a Shiki highlighter service", () => {
     beforeEach(() => {
         const globalCache = globalThis as any;
@@ -127,6 +144,101 @@ suite("given a Shiki highlighter service", () => {
                 operation: "load-language",
                 language: "javascript",
             });
+        });
+    });
+
+    describe("when language loading is already in flight", () => {
+        test("then concurrent calls for the same alias share one canonical load", async () => {
+            // Arrange
+            const languageLoad = createDeferred();
+            const mockHighlighter = createMockHighlighter();
+            mockHighlighter.loadLanguage = vi.fn(() => languageLoad.promise);
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService();
+
+            // Act
+            const firstRender = service.highlightToHtml({
+                code: "const first = 'Moon Knight';",
+                language: "ts",
+            });
+            const secondRender = service.highlightToHtml({
+                code: "const second = 'Khonshu';",
+                language: "ts",
+            });
+
+            await flushMicrotasks();
+
+            // Assert
+            expect(mockHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
+
+            // Act
+            languageLoad.resolve();
+            const [firstHtml, secondHtml] = await Promise.all([firstRender, secondRender]);
+
+            // Assert
+            expect(firstHtml).toContain('data-lang="typescript"');
+            expect(secondHtml).toContain('data-lang="typescript"');
+        });
+
+        test("then aliases with the same canonical language share one load", async () => {
+            // Arrange
+            const languageLoad = createDeferred();
+            const mockHighlighter = createMockHighlighter();
+            mockHighlighter.loadLanguage = vi.fn(() => languageLoad.promise);
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService();
+
+            // Act
+            const aliasRender = service.highlightToHtml({
+                code: "const alias = 'ts';",
+                language: "ts",
+            });
+            const canonicalRender = service.highlightToHtml({
+                code: "const canonical = 'typescript';",
+                language: "typescript",
+            });
+
+            await flushMicrotasks();
+
+            // Assert
+            expect(mockHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
+
+            // Act
+            languageLoad.resolve();
+            const [aliasHtml, canonicalHtml] = await Promise.all([aliasRender, canonicalRender]);
+
+            // Assert
+            expect(aliasHtml).toContain('data-lang="typescript"');
+            expect(canonicalHtml).toContain('data-lang="typescript"');
+        });
+
+        test("then failed in-flight loads are removed so later calls can retry", async () => {
+            // Arrange
+            const mockHighlighter = createMockHighlighter();
+            const warnFn = vi.fn();
+            mockHighlighter.loadLanguage = vi.fn()
+                .mockRejectedValueOnce(new Error("First failure"))
+                .mockResolvedValueOnce(undefined);
+            cacheHighlighterForService(mockHighlighter);
+            const service = createShikiHighlighterService({ warn: warnFn });
+
+            // Act
+            const fallbackHtml = await service.highlightToHtml({
+                code: "const failed = true;",
+                language: "ts",
+            });
+            const retryHtml = await service.highlightToHtml({
+                code: "const retry = true;",
+                language: "ts",
+            });
+
+            // Assert
+            expect(mockHighlighter.loadLanguage).toHaveBeenCalledTimes(2);
+            expect(mockHighlighter.loadLanguage).toHaveBeenNthCalledWith(1, "typescript");
+            expect(mockHighlighter.loadLanguage).toHaveBeenNthCalledWith(2, "typescript");
+            expect(fallbackHtml).toContain('class="shiki"');
+            expect(retryHtml).toContain('data-lang="typescript"');
+            expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("could not be loaded"));
         });
     });
 
@@ -289,6 +401,40 @@ suite("given a Shiki highlighter service", () => {
 
         // Assert
         expect(highlighter).toBe(mockHighlighter);
+    });
+});
+
+suite("given separate Shiki highlighter service instances", () => {
+    beforeEach(() => {
+        const globalCache = globalThis as any;
+        delete globalCache.__dibsShikiHighlighterPromise;
+        __resetShikiWarningsForTests();
+    });
+
+    test("then in-flight language loads are not shared across service instances", async () => {
+        // Arrange
+        const firstHighlighter = createMockHighlighter();
+        const secondHighlighter = createMockHighlighter();
+        cacheHighlighterForService(firstHighlighter);
+        const firstService = createShikiHighlighterService();
+        cacheHighlighterForService(secondHighlighter);
+        const secondService = createShikiHighlighterService();
+
+        // Act
+        await Promise.all([
+            firstService.highlightToHtml({
+                code: "const first = true;",
+                language: "ts",
+            }),
+            secondService.highlightToHtml({
+                code: "const second = true;",
+                language: "ts",
+            }),
+        ]);
+
+        // Assert
+        expect(firstHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
+        expect(secondHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("typescript");
     });
 });
 
