@@ -387,9 +387,10 @@ Add or update tests for:
 
 ### Type-level checks
 
-`pnpm --filter @ravenhill/shiki-core typecheck` should catch stale consumers of the old `LanguageLoadResult` shape, but
-it is currently blocked by a recurring hang after `tsc --noEmit` starts. Treat this as a separate infrastructure issue
-before using typecheck as a completion gate again.
+`pnpm --filter @ravenhill/shiki-core typecheck` catches stale consumers of the old `LanguageLoadResult` shape and passes
+in normal execution. Previous confusion came from two factors: the package script is silent while `tsc --noEmit` runs,
+and Codex sandbox runs can fail before meaningful TypeScript execution because of `EPERM` access to pnpm-managed
+`node_modules`.
 
 ### PBT decision
 
@@ -463,8 +464,8 @@ Keep this invariant explicit:
 - Failed loads are not cached permanently.
 - Public `createShikiHighlighterService` API remains unchanged.
 - No runtime dependency is added.
-- Focused/package tests and package build pass.
-- The recurring package typecheck hang is documented as a follow-up blocker.
+- Focused/package tests, package typecheck, and package build pass in normal execution.
+- Sandbox `EPERM` failures are documented as environment-specific validation limits.
 
 ---
 
@@ -473,11 +474,19 @@ Keep this invariant explicit:
 Adjust names to the repo’s actual scripts, but the intended verification order is:
 
 ```bash
+pnpm --filter @ravenhill/shiki-core typecheck
 pnpm --filter @ravenhill/shiki-core test
 pnpm --filter @ravenhill/shiki-core build
 ```
 
-Do not use `pnpm --filter @ravenhill/shiki-core typecheck` as a completion gate until the documented hang is fixed.
+When `typecheck` appears silent, run the diagnostic script for compiler timing and file-count visibility:
+
+```bash
+pnpm --filter @ravenhill/shiki-core typecheck:diagnostics
+```
+
+If a Codex sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission
+limit and rerun outside the sandbox before diagnosing a source-level TypeScript failure.
 
 If this package is consumed by the Astro site in the same workspace, finish with the smallest site-level smoke check
 that exercises code block highlighting.
@@ -497,6 +506,6 @@ All planned lifecycle cycles are implemented:
 - service rendering from `LanguageLoadResult`;
 - per-service in-flight language load deduplication.
 
-The remaining known issue is not part of the lifecycle refactor behavior: `pnpm --filter @ravenhill/shiki-core
-typecheck` starts `tsc --noEmit` and repeatedly hangs without diagnostics. Keep the dedicated Cycle 6 follow-up notes as
-the starting point for debugging that validation problem.
+The remaining validation nuance is not part of the lifecycle refactor behavior: `pnpm --filter @ravenhill/shiki-core
+typecheck` is quiet while `tsc --noEmit` runs, and Codex sandbox runs may fail with `EPERM` before TypeScript executes.
+Use `typecheck:diagnostics` when timing visibility is needed.

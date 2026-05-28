@@ -212,6 +212,10 @@ The package artifact is intentionally small: `package.json`, `README.md`, and th
 - Wrong registry endpoint: use the project endpoint for publish and the group endpoint for consumer installs.
 - Duplicate version: stop and choose a new version if `0.1.0` already exists in the registry.
 - Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint mapping.
+- Typecheck appears silent: the default script runs `tsc --noEmit`, so it may produce no output until it exits. Use
+  `pnpm --filter @ravenhill/shiki-core typecheck:diagnostics` for compiler timing and file-count diagnostics. If a
+  Codex sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission
+  limit and rerun outside the sandbox before diagnosing a source-level TypeScript failure.
 - Accidental subpath import attempt: import from `@ravenhill/shiki-core` only; subpaths are not part of the supported contract.
 
 ## Implementation Status

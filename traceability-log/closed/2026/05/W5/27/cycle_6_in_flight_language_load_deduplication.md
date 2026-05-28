@@ -461,19 +461,22 @@ plain-text aliases were not changed.
 - Sandboxed `pnpm --filter @ravenhill/shiki-core test -- highlighter-service.test.ts` failed before test execution with
   the recurring Windows `EPERM` while reading `node_modules/.pnpm/fdir.../dist/types.js`.
 - The same test command passed outside the sandbox and ran the full package Vitest suite: 9 files and 209 tests passed.
-- `pnpm --filter @ravenhill/shiki-core typecheck` is a recurring unresolved blocker: it prints `tsc --noEmit`, then gets
-  stuck with no diagnostics. Treat this as a follow-up infrastructure/debugging task before requiring typecheck as a
-  completion gate again.
+- `pnpm --filter @ravenhill/shiki-core typecheck` passes in normal execution. The earlier confusion came from silent
+  `tsc --noEmit` output and Codex sandbox `EPERM` failures under `node_modules/.pnpm`.
 
-## Follow-up: Typecheck Hang
+## Follow-up: Typecheck Diagnostics
 
-Investigate why `pnpm --filter @ravenhill/shiki-core typecheck` does not exit after starting `tsc --noEmit`.
+Use the diagnostic command when `pnpm --filter @ravenhill/shiki-core typecheck` appears silent:
 
-Useful first checks:
+```bash
+pnpm --filter @ravenhill/shiki-core typecheck:diagnostics
+```
 
-- run `pnpm --filter @ravenhill/shiki-core exec tsc --noEmit --extendedDiagnostics`;
-- run from `packages/shiki-core` directly with `pnpm exec tsc --noEmit --listFiles`;
-- compare behavior with `tsc --showConfig`;
-- check whether TypeScript is traversing unexpected project references, generated files, packed tarballs, or workspace
-  paths outside `packages/shiki-core`;
-- confirm whether Node 26.1.0, pnpm filtering, or Windows filesystem permissions are involved.
+Equivalent direct package diagnostic:
+
+```bash
+pnpm --dir packages/shiki-core exec tsc --noEmit --pretty false --extendedDiagnostics
+```
+
+If a Codex sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission
+limit and rerun outside the sandbox before diagnosing a source-level TypeScript failure.

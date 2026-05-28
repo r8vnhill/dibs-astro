@@ -27,7 +27,7 @@ type LoadedLanguageReader = Pick<Highlighter, "getLoadedLanguages">;
 /**
  * Plain-text identifiers accepted before Shiki alias resolution.
  *
- * `text`, `txt`, and `plain` mirror Shiki's plain-text behavior. `plaintext` is kept as a project compatibility alias
+ * `text`, `txt`, and `plain` mirror Shiki's plain-text behavior. `plaintext` is kept as a project compatibility alias,
  * so existing callers continue to bypass syntax highlighting.
  */
 const plainTextLanguages = new Set(["text", "txt", "plain", "plaintext"]);
@@ -92,7 +92,7 @@ export type ResolvedLanguageLoadRequest =
  * - known aliases return a canonical {@link BundledLanguage};
  * - unknown identifiers preserve the original caller input.
  *
- * The trimmed input is used for plain-text detection and Shiki alias resolution. Unknown results intentionally keep 
+ * The trimmed input is used for plain-text detection and Shiki alias resolution. Unknown results intentionally keep
  * the original input for clearer diagnostics.
  *
  * @param language Caller-provided language identifier.
@@ -126,7 +126,7 @@ export function resolveLoadableLanguage(
  * - is already loaded or was loaded successfully;
  * - failed to load and should use fallback rendering.
  *
- * Successful and failed load branches both carry the canonical {@link BundledLanguage}. Unknown-language branches 
+ * Successful and failed load branches both carry the canonical {@link BundledLanguage}. Unknown-language branches
  * preserve the original caller input because no canonical language exists.
  *
  * @param highlighter Highlighter capability used to inspect loaded languages.

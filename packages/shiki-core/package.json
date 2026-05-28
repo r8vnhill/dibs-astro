@@ -21,6 +21,7 @@
     "scripts": {
         "build": "tsup",
         "typecheck": "tsc --noEmit",
+        "typecheck:diagnostics": "pnpm exec tsc --noEmit --pretty false --extendedDiagnostics",
         "test": "pnpm exec vitest run --config vitest.config.ts",
         "lint": "publint --strict",
         "pack:check": "node scripts/assert-pack-files.mjs --pack",
