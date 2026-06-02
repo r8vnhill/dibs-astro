@@ -3,7 +3,6 @@ import * as icons from "~/assets/img/icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
-import Info from "~/components/ui/callouts/Info.astro";
 import Warning from "~/components/ui/callouts/Warning.astro";
 import { BashScript, InlineBash, PowerShellBlock } from "~/components/ui/code";
 import { B, I } from "~/components/ui/font";
@@ -25,8 +24,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
         <P>
             Esta lección se concentra en dejar listas las herramientas necesarias para ese recorrido. Los gestores de
-            paquetes y las preferencias de terminal pueden ayudar a instalar o ajustar el entorno, pero no son el centro
-            del flujo principal.
+            paquetes son la ruta soportada para instalarlas, pero no son el centro conceptual del flujo principal.
         </P>
     </Fragment>
 
@@ -137,8 +135,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            <B>Scoop</B> es el gestor de paquetes recomendado en Windows. Permite instalar aplicaciones
-                            de línea de comando y gráficas de forma sencilla desde PowerShell. Más detalles en su
+                            <B>Scoop</B> es la ruta de instalación soportada en Windows. Lo usaremos solo para preparar
+                            las herramientas del curso; la documentación oficial está en su
                             <Link href="https://scoop.sh/">sitio oficial</Link>.
                         </P>
 
@@ -162,8 +160,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            Con <B>Scoop</B> puedes instalar todas las herramientas necesarias para el curso:
-                            JDK&nbsp;21, Gradle, IntelliJ IDEA y Visual Studio Code.
+                            Con <B>Scoop</B> instala Git, JDK&nbsp;21, Kotlin CLI, Gradle y el editor que usarás durante
+                            el curso. Los proyectos se ejecutarán normalmente con el Gradle Wrapper incluido en cada
+                            repositorio, pero mantener Gradle instalado ayuda a revisar el entorno y crear proyectos
+                            cuando sea necesario.
                         </P>
 
                         <Tabs defaultValue="idea">
@@ -173,17 +173,39 @@ import NotesSection from "~/layouts/NotesSection.astro";
                             </TabsList>
 
                             <TabsContent value="idea">
-                                <PowerShellBlock code={`scoop install openjdk21 kotlin gradle idea`}>
+                                <PowerShellBlock code={`scoop install git openjdk21 kotlin gradle idea`}>
                                     <span slot="title">Instalar herramientas (IntelliJ IDEA)</span>
                                 </PowerShellBlock>
                             </TabsContent>
 
                             <TabsContent value="vscode">
-                                <PowerShellBlock code={`scoop install openjdk21 kotlin gradle vscode`}>
+                                <PowerShellBlock code={`scoop install git openjdk21 kotlin gradle vscode`}>
                                     <span slot="title">Instalar herramientas (VS Code)</span>
                                 </PowerShellBlock>
                             </TabsContent>
                         </Tabs>
+                    </NotesSection>
+
+                    <NotesSection id="tools-verification-windows">
+                        <Heading Icon={icons.CheckCircle} headingLevel="h4">
+                            Verificar herramientas
+                        </Heading>
+
+                        <PowerShellBlock
+                            code={`
+                                git --version
+                                java --version
+                                kotlin -version
+                                gradle --version
+                            `}
+                        >
+                            <Fragment slot="title">Comprobar Git, Java, Kotlin CLI y Gradle</Fragment>
+                        </PowerShellBlock>
+
+                        <P>
+                            Cuando clones un repositorio del curso, ejecuta sus tareas con
+                            <InlineBash code="gradlew.bat" /> desde la carpeta del proyecto.
+                        </P>
                     </NotesSection>
                 </NotesSection>
             </TabsContent>
@@ -200,8 +222,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            En <B>macOS</B>, <B>Homebrew</B> es el gestor de paquetes recomendado. Permite instalar
-                            tanto herramientas de línea de comando como aplicaciones gráficas con una sintaxis sencilla.
+                            En <B>macOS</B>, <B>Homebrew</B> es la ruta de instalación soportada para preparar las
+                            herramientas del curso.
                         </P>
 
                         <BashScript
@@ -221,8 +243,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            Con <B>Homebrew</B> puedes instalar todas las herramientas necesarias para el curso:
-                            JDK&nbsp;21, Kotlin, Gradle, IntelliJ IDEA y Visual Studio Code.
+                            Con <B>Homebrew</B> instala Git, JDK&nbsp;21, Kotlin CLI, Gradle y el editor que usarás
+                            durante el curso. Los proyectos se ejecutarán normalmente con el Gradle Wrapper incluido en
+                            cada repositorio, pero mantener Gradle instalado ayuda a revisar el entorno y crear
+                            proyectos cuando sea necesario.
                         </P>
 
                         <Tabs defaultValue="idea">
@@ -234,7 +258,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                             <TabsContent value="idea">
                                 <BashScript
                                     code={`
-                                        brew install openjdk@21 kotlin gradle
+                                        brew install git openjdk@21 kotlin gradle
                                         brew install --cask intellij-idea
                                     `}
                                 >
@@ -245,7 +269,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                             <TabsContent value="vscode">
                                 <BashScript
                                     code={`
-                                        brew install openjdk@21 kotlin gradle
+                                        brew install git openjdk@21 kotlin gradle
                                         brew install --cask visual-studio-code
                                     `}
                                 >
@@ -254,15 +278,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 </BashScript>
                             </TabsContent>
                         </Tabs>
+                    </NotesSection>
 
-                        <Info>
-                            <slot slot="title">Sobre <InlineBash code="--cask" /></slot>
+                    <NotesSection id="tools-verification-macos">
+                        <Heading Icon={icons.CheckCircle} headingLevel="h4">
+                            Verificar herramientas
+                        </Heading>
 
-                            La opción <InlineBash code="--cask" /> instala aplicaciones gráficas (como IntelliJ o
-                            VS&nbsp;Code).
-                        </Info>
+                        <BashScript
+                            code={`
+                                git --version
+                                java --version
+                                kotlin -version
+                                gradle --version
+                            `}
+                        >
+                            <Fragment slot="title">Comprobar Git, Java, Kotlin CLI y Gradle</Fragment>
+                        </BashScript>
 
-                        <JDK21Note />
+                        <P>
+                            Cuando clones un repositorio del curso, ejecuta sus tareas con
+                            <InlineBash code="./gradlew" /> desde la carpeta del proyecto.
+                        </P>
                     </NotesSection>
                 </NotesSection>
             </TabsContent>
@@ -279,9 +316,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            <Link href="https://nixos.org">Nix</Link> nos permite usar las mismas instrucciones en
-                            distintas distribuciones de Linux (Debian/Ubuntu, Fedora, Arch, openSUSE, etc.) para
-                            instalar todas las herramientas del curso.
+                            <Link href="https://nixos.org">Nix</Link> es la ruta de instalación soportada en Linux. Nos
+                            permite usar las mismas instrucciones con paquetes de
+                            <Link href="https://search.nixos.org/packages">Nixpkgs</Link> en distintas distribuciones.
                         </P>
 
                         <BashScript
@@ -306,8 +343,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Heading>
 
                         <P>
-                            Con <B>Nix</B> puedes instalar todas las herramientas necesarias para el curso: JDK&nbsp;21,
-                            Kotlin, Gradle, IntelliJ IDEA y Visual Studio Code.
+                            Con <B>Nixpkgs</B> instala Git, JDK&nbsp;21, Kotlin CLI, Gradle y el editor que usarás
+                            durante el curso. Los proyectos se ejecutarán normalmente con el Gradle Wrapper incluido en
+                            cada repositorio, pero mantener Gradle instalado ayuda a revisar el entorno y crear
+                            proyectos cuando sea necesario.
                         </P>
 
                         <BashScript
@@ -332,6 +371,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 <BashScript
                                     code={`
                                         NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                                            nixpkgs#git \\
                                             nixpkgs#openjdk21 \\
                                             nixpkgs#kotlin \\
                                             nixpkgs#gradle \\
@@ -346,6 +386,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                                 <BashScript
                                     code={`
                                         NIXPKGS_ALLOW_UNFREE=1 nix profile add --impure \\
+                                            nixpkgs#git \\
                                             nixpkgs#openjdk21 \\
                                             nixpkgs#kotlin \\
                                             nixpkgs#gradle \\
@@ -358,10 +399,32 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         </Tabs>
                     </NotesSection>
 
-                    <JDK21Note />
+                    <NotesSection id="tools-verification-linux">
+                        <Heading Icon={icons.CheckCircle} headingLevel="h4">
+                            Verificar herramientas
+                        </Heading>
+
+                        <BashScript
+                            code={`
+                                git --version
+                                java --version
+                                kotlin -version
+                                gradle --version
+                            `}
+                        >
+                            <Fragment slot="title">Comprobar Git, Java, Kotlin CLI y Gradle</Fragment>
+                        </BashScript>
+
+                        <P>
+                            Cuando clones un repositorio del curso, ejecuta sus tareas con
+                            <InlineBash code="./gradlew" /> desde la carpeta del proyecto.
+                        </P>
+                    </NotesSection>
                 </NotesSection>
             </TabsContent>
         </Tabs>
+
+        <JDK21Note />
     </NotesSection>
 
     <NotesSection id="h2-conclusion">
@@ -373,17 +436,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Con estas herramientas instaladas y tu terminal personalizada, ya cuentas con un entorno moderno, productivo
-            y cómodo para trabajar en el curso. No se trata solo de estética: tener un flujo de trabajo fluido y
-            consistente te permitirá concentrarte en lo importante —diseñar y construir bibliotecas de software de
-            calidad.
+            Con estas herramientas instaladas, ya cuentas con la base técnica para trabajar en los proyectos del curso:
+            clonar repositorios con Git, ejecutar scripts de apoyo con Kotlin CLI y usar el Gradle Wrapper incluido en
+            cada proyecto.
         </P>
 
         <P>
-            Recuerda que esta configuración no es estática. Puedes ajustar temas, atajos y módulos adicionales a medida
-            que descubras qué te resulta más útil.
-            <B>Tu entorno es tuyo</B>, adáptalo a tus necesidades para que se convierta en una herramienta que trabaje a
-            tu favor.
+            Si alguna herramienta no responde como esperas, vuelve a las verificaciones de tu sistema operativo antes de
+            continuar con el flujo de trabajo del curso.
         </P>
     </NotesSection>
 </NotesLayout>

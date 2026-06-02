@@ -170,15 +170,14 @@ Acceptance criteria:
 - Gradle is essential (we will use it to create projects and wrappers).
 - Student Pack appears once.
 
-### Step 3 — OS installation pass
+### ~~Step 3 — OS installation pass~~
 
 Refactor Windows, macOS, and Linux tabs to use the same structure.
 
 Acceptance criteria:
 
 - Each OS path installs or points to Git, JDK 21, Kotlin CLI, and an editor.
-- Windows Kotlin CLI is not Scoop-only.
-- Scoop/Homebrew/Nix are helpers, not the lesson’s main topic.
+- Scoop/Homebrew/Nix are the supported routes
 - No OS tab requires PowerShell as course tooling.
 
 ### Step 4 — Verification pass

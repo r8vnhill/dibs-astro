@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T01:24:28.934Z",
+  "generatedAt": "2026-06-02T14:19:42.305Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1444,8 +1444,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-21",
+      "lastModified": "2026-05-26",
       "changes": [
+        {
+          "hash": "fbe82ef105f16d33a01a944f5831563f9457ee26",
+          "date": "2026-05-26",
+          "author": "r8vnhill",
+          "subject": "🎨📝 lesson(installation): Rewrite tool model for clarity and consistency"
+        },
         {
           "hash": "5b023055dd04b5bdd249e4d3c4b1ec1e4cfa6792",
           "date": "2026-05-21",
@@ -1469,12 +1475,6 @@
           "date": "2025-11-08",
           "author": "r8vnhill",
           "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
-        },
-        {
-          "hash": "fe64dd240232fa156308b5d41149ba92db4eff8f",
-          "date": "2025-09-26",
-          "author": "r8vnhill",
-          "subject": "✨📝♻️🔧 Enfoque en PowerShell, reescritura de notas y nuevo icono `Prohibit`"
         }
       ]
     },
