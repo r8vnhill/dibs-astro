@@ -108,3 +108,10 @@ The consumer validation proves that:
 - Follow the inclusive documentation guidance from the root project: prefer precise, clear, respectful terminology over loaded metaphors.
 - Avoid terms such as `violation` or `violations` in new public types, docs, and tests when a more descriptive alternative works.
 - Do not rename exported API terms mechanically. If compatibility is involved, propose aliases or a migration path first.
+
+## Tests
+
+- Follow the repository Vitest shape: `suite` is Given, `describe` is When, and `test` is Then.
+- If a test has no meaningful When grouping, use `suite` directly with `test`.
+- Keep Arrange, Act, and Assert phases visually separated inside non-trivial tests.
+- Do not use `it`; always prefer `test`, including data-driven cases such as `test.each(...)`.

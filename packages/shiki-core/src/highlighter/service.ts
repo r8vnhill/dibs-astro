@@ -5,25 +5,39 @@
  */
 
 import { createHighlighter } from "shiki";
-import type { Highlighter } from "shiki";
+import type { BundledLanguage, Highlighter } from "shiki";
+import { renderFallbackCodeHtml } from "../fallback/html";
+import { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME, defaultLanguages } from "./defaults";
+import { readFromGlobalCache, syncToGlobal } from "./global-singleton";
+import { resolveLoadableLanguage } from "./language-loader";
 import { createStore } from "./store";
-import { syncToGlobal, readFromGlobalCache } from "./global-singleton";
-import { ensureLanguageLoaded } from "./language-loader";
-import { shouldWarn, resetWarnings } from "./warnings";
-import { buildPlainHtml } from "../fallback/html";
-import { resolveShikiLanguage } from "../languages/resolution";
 import type {
+    HighlightToHtmlOptions,
+    LanguageLoadResult,
     ShikiHighlighterService,
     ShikiHighlighterServiceOptions,
     ShikiRetry,
-    HighlightToHtmlOptions,
 } from "./types";
-import { defaultLanguages, DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME } from "./defaults";
+import { resetWarnings, shouldWarn } from "./warnings";
 
 /**
  * Default no-retry function.
  */
 const directExecution: ShikiRetry = (operation) => operation();
+
+function getRenderableLanguage(loadResult: LanguageLoadResult): BundledLanguage | "text" | null {
+    switch (loadResult.kind) {
+        case "loaded":
+            return loadResult.language;
+
+        case "plain-text":
+            return "text";
+
+        case "unknown-language":
+        case "load-failed":
+            return null;
+    }
+}
 
 /**
  * Creates a Shiki highlighter service with optional custom retry behavior.
@@ -32,17 +46,22 @@ const directExecution: ShikiRetry = (operation) => operation();
  * @returns A service providing highlighter access and highlighting operations
  */
 export function createShikiHighlighterService(
-    options?: ShikiHighlighterServiceOptions
+    options?: ShikiHighlighterServiceOptions,
 ): ShikiHighlighterService {
     const optionsOrDefault = options || {};
     const retry = optionsOrDefault.retry || directExecution;
     const customWarn = optionsOrDefault.warn;
     const defaultTheme = optionsOrDefault.defaultTheme || DEFAULT_DARK_THEME;
     const initialLanguages = optionsOrDefault.initialLanguages || defaultLanguages;
+    const inFlightLanguageLoads = new Map<BundledLanguage, Promise<LanguageLoadResult>>();
 
-    // Wrap the warn function to ensure proper type
     const warnMessage = ((msg: string): void => {
-        (customWarn as any)?.(msg) || console.warn(msg);
+        if (customWarn) {
+            customWarn(msg);
+            return;
+        }
+
+        console.warn(msg);
     }) as (msg: string) => void;
 
     // Create the promise-backed store with global cache synchronization
@@ -66,44 +85,71 @@ export function createShikiHighlighterService(
         highlighterStore.setForTests(cachedGlobalPromise);
     }
 
+    async function loadResolvedLanguage(
+        highlighter: Highlighter,
+        language: BundledLanguage,
+    ): Promise<LanguageLoadResult> {
+        try {
+            await retry(async () => highlighter.loadLanguage(language), {
+                operation: "load-language",
+                language,
+            });
+
+            return { kind: "loaded", language };
+        } catch (error) {
+            return { kind: "load-failed", language, error };
+        }
+    }
+
+    async function ensureServiceLanguageLoaded(
+        highlighter: Highlighter,
+        language: string,
+    ): Promise<LanguageLoadResult> {
+        const request = resolveLoadableLanguage(language);
+
+        if (request.kind !== "loadable") {
+            return request;
+        }
+
+        if (highlighter.getLoadedLanguages().includes(request.language)) {
+            return { kind: "loaded", language: request.language };
+        }
+
+        const currentLoad = inFlightLanguageLoads.get(request.language);
+
+        if (currentLoad) {
+            return currentLoad;
+        }
+
+        const nextLoad = loadResolvedLanguage(highlighter, request.language);
+        inFlightLanguageLoads.set(request.language, nextLoad);
+
+        try {
+            return await nextLoad;
+        } finally {
+            if (inFlightLanguageLoads.get(request.language) === nextLoad) {
+                inFlightLanguageLoads.delete(request.language);
+            }
+        }
+    }
+
     return {
         getHighlighter: () => highlighterStore.get(),
 
         async highlightToHtml(options: HighlightToHtmlOptions): Promise<string> {
             const { code, language, theme = defaultTheme, meta, transformers = [] } = options;
 
-            // "text" can be rendered directly without loading
-            const lower = language.toLowerCase();
-            if (lower === "text") {
-                const highlighter = await highlighterStore.get();
-                return highlighter.codeToHtml(code, {
-                    lang: "text",
-                    theme,
-                    ...(meta && { meta }),
-                    ...(transformers && transformers.length > 0 && { transformers: [...transformers] }),
-                } as any);
-            }
-
             // Get or create the highlighter
             const highlighter = await highlighterStore.get();
 
             // Ensure the language is loaded
-            const loadResult = await ensureLanguageLoaded(
-                highlighter,
-                language,
-                async (lang) =>
-                    retry(async () => highlighter.loadLanguage(lang), {
-                        operation: "load-language",
-                        language: lang,
-                    }),
-            );
+            const loadResult = await ensureServiceLanguageLoaded(highlighter, language);
 
             // Handle load outcomes
-            if (loadResult.kind === "loaded") {
-                // Language is ready, render highlighted HTML
-                const { resolvedLang } = resolveShikiLanguage(language);
+            const renderableLanguage = getRenderableLanguage(loadResult);
+            if (renderableLanguage) {
                 return highlighter.codeToHtml(code, {
-                    lang: resolvedLang!,
+                    lang: renderableLanguage,
                     theme,
                     ...(meta && { meta }),
                     ...(transformers && transformers.length > 0 && { transformers: [...transformers] }),
@@ -114,13 +160,15 @@ export function createShikiHighlighterService(
             if (loadResult.kind === "unknown-language" && shouldWarn("unknown-language", language)) {
                 warnMessage(`[shiki] language "${language}" not recognized. Rendering as plain text.`);
             } else if (loadResult.kind === "load-failed" && shouldWarn("load-failed", language)) {
-                const errorMsg = loadResult.error instanceof Error 
-                    ? loadResult.error.message 
+                const errorMsg = loadResult.error instanceof Error
+                    ? loadResult.error.message
                     : String(loadResult.error);
-                warnMessage(`[shiki] language "${language}" could not be loaded (${errorMsg}). Rendering as plain text.`);
+                warnMessage(
+                    `[shiki] language "${language}" could not be loaded (${errorMsg}). Rendering as plain text.`,
+                );
             }
 
-            return buildPlainHtml(code, [], []);
+            return renderFallbackCodeHtml(code, [], []);
         },
     };
 }

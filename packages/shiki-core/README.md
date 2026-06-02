@@ -17,6 +17,7 @@ Current publish target:
 
 - Host-agnostic Shiki highlighter lifecycle management.
 - Language alias and language resolution contracts.
+- Plain-text language normalization for text, txt, plain, and plaintext inputs.
 - Fallback HTML rendering contracts.
 - Reusable transformer contracts.
 - Root-only ESM package output with external consumer validation.
@@ -27,6 +28,7 @@ Shiki infrastructure that is **not** UI-specific:
 
 - Highlighter orchestration and caching.
 - Language name normalization and alias mapping.
+- Plain-text identifiers that bypass loading while still preserving the existing `plaintext` compatibility alias.
 - Transformer composition (abstract contracts).
 - Plain HTML fallback rendering.
 - Theme configuration constants.
@@ -210,6 +212,10 @@ The package artifact is intentionally small: `package.json`, `README.md`, and th
 - Wrong registry endpoint: use the project endpoint for publish and the group endpoint for consumer installs.
 - Duplicate version: stop and choose a new version if `0.1.0` already exists in the registry.
 - Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint mapping.
+- Typecheck appears silent: the default script runs `tsc --noEmit`, so it may produce no output until it exits. Use
+  `pnpm --filter @ravenhill/shiki-core typecheck:diagnostics` for compiler timing and file-count diagnostics. If a
+  Codex sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission
+  limit and rerun outside the sandbox before diagnosing a source-level TypeScript failure.
 - Accidental subpath import attempt: import from `@ravenhill/shiki-core` only; subpaths are not part of the supported contract.
 
 ## Implementation Status

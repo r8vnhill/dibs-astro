@@ -2,16 +2,16 @@
  * Internal type definitions for highlighter orchestration.
  */
 
-import type { Highlighter, ShikiTransformer } from "shiki";
+import type { BundledLanguage, Highlighter, ShikiTransformer } from "shiki";
 
 /**
  * Result from language loading operations.
  */
 export type LanguageLoadResult =
-    | { readonly kind: "loaded" }
     | { readonly kind: "plain-text" }
     | { readonly kind: "unknown-language"; readonly language: string }
-    | { readonly kind: "load-failed"; readonly language: string; readonly error: unknown };
+    | { readonly kind: "loaded"; readonly language: BundledLanguage }
+    | { readonly kind: "load-failed"; readonly language: BundledLanguage; readonly error: unknown };
 
 /**
  * Retry context passed to retry operations.
