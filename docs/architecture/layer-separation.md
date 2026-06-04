@@ -11,6 +11,7 @@ the authoritative description of the current boundaries when they conflict with 
 - **Domain**: Pure business rules and use-case logic, free of frameworks and I/O.
 - **Application**: Orchestration layer that composes domain entities and ports, returning DTOs to callers.
 - **Content core**: Workspace package with host-agnostic navigation and lesson metadata contracts shared by the app.
+- **HTML core**: Workspace package with host-agnostic HTML semantic primitives shared by rendering code and adapters.
 - **Site core**: Workspace package with host-agnostic repository and site-link primitives shared by the app.
 - **Infrastructure**: Concrete data-source implementations and external service adapters.
 - **Presentation adapters**: Local composition root for UI use cases; bridges application services to UI-safe payloads.
@@ -25,6 +26,10 @@ The repo uses a layered structure inside `src/`:
     contracts, repository interfaces, and application services.
   - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local
     aliases.
+
+- `packages/html-core`
+  - Owns extracted pure HTML semantic primitives such as heading-level contracts.
+  - Contains no Astro imports, DOM or browser runtime behavior, generated data, UI components, CSS, or app-local aliases.
 
 - `packages/site-core`
   - Owns extracted pure repository references, supported hosting platforms, platform normalization, and repository/commit
@@ -61,6 +66,7 @@ The main content seams are now present in code:
 
 - Navigation rules and lesson metadata helpers are centered in `packages/content-core` and consumed through
   repository/service boundaries.
+- HTML semantic primitives are being centered in `packages/html-core` and are exposed through the package root.
 - Repository hosting primitives are centered in `packages/site-core` and consumed through the package root.
 - Reference-content business rules live in `src/domain/reference-content.ts`.
 - The generated lesson metadata dataset boundary remains app-local in `src/utils/lesson-metadata.ts`.
@@ -92,6 +98,7 @@ These paths are locked with high-value test suites:
 | Source layer                                          | Allowed targets                                                                                                 | Forbidden targets/packages                                                                                | Notes                                   |
 | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | `packages/content-core/src/**`                        | `content-core`                                                                                                  | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`   | Host-agnostic content core.             |
+| `packages/html-core/src/**`                           | `html-core`                                                                                                     | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`   | Host-agnostic HTML primitives.          |
 | `packages/site-core/src/**`                           | `site-core`                                                                                                     | app-local layers, data, generated data, utilities, assets, styles, `content-core`, `astro`, `react`, `zod` | Host-agnostic repository primitives.    |
 | `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                           | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                            | Pure app-local business rules only.     |
 | `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                            | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`                 | App-local orchestration and ports only. |
@@ -104,6 +111,7 @@ These paths are locked with high-value test suites:
 - Type-only imports are checked as architectural dependencies.
 - Package subpaths are normalized: `react/jsx-runtime` → `react`, `zod/v4` → `zod`.
 - `@ravenhill/content-core` must be consumed through the package root; package subpath imports are not allowed.
+- `@ravenhill/html-core` must be consumed through the package root; package subpath imports are not allowed.
 - `@ravenhill/site-core` must be consumed through the package root; package subpath imports are not allowed.
 - Generated data: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are classified as
   `generated-data`.
@@ -217,6 +225,7 @@ as a compatibility alias. New code should read `findings`; the alias will be rem
 When adding new source files:
 
 - Put reusable host-agnostic navigation and lesson metadata core in `packages/content-core/src/`.
+- Put reusable host-agnostic HTML semantic primitives in `packages/html-core/src/`.
 - Put reusable host-agnostic repository primitives in `packages/site-core/src/`.
 - Put app-local pure business rules and domain logic in `src/domain/`.
 - Put app-local use-case orchestration and port contracts in `src/application/`.
@@ -233,11 +242,13 @@ Examples:
 - Valid: UI imports view-model or normalization helpers from `$presentation/adapters/*`.
 - Valid: a presentation adapter imports an infrastructure adapter to retrieve static site data.
 - Valid: app code imports extracted navigation or metadata contracts from `@ravenhill/content-core`.
+- Valid after consumer migration: rendering code imports HTML semantic primitives from `@ravenhill/html-core`.
 - Valid: app code imports repository primitives from `@ravenhill/site-core`.
 - Not allowed: UI imports `~/data/course-structure`, `~/data/site`, or `~/data/bibliography/catalog` directly.
 - Not allowed: UI imports `$domain/reference-content` or `$application/ports` directly.
 - Not allowed: application code imports `astro`, `react`, `zod`, generated data, or UI components.
 - Not allowed: any code imports from `@ravenhill/content-core/*` package subpaths.
+- Not allowed: any code imports from `@ravenhill/html-core/*` package subpaths.
 - Not allowed: any code imports from `@ravenhill/site-core/*` package subpaths.
 
 ## Presentation Adapter Contracts
@@ -318,6 +329,10 @@ imports, and import records into the layer vocabulary used by the rule matrix.
 
 **Phase 1 content-core extraction** added `packages/content-core/src/**` as a checked source layer and allowed app
 layers to consume `@ravenhill/content-core` through the package root.
+
+**HTML-core extraction** added `packages/html-core/src/**` as a host-agnostic package for HTML semantic primitives. The
+package contract requires root-only consumption through `@ravenhill/html-core`; app-local consumers are migrated in the
+later consumer phase.
 
 **Site-core extraction** added `packages/site-core/src/**` as a checked source layer and allowed app layers to consume
 `@ravenhill/site-core` through the package root for repository primitives.

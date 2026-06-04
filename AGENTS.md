@@ -27,6 +27,7 @@ Context and essential rules for agents collaborating in this repository.
 - Deployment is static on Cloudflare Workers; do not introduce SSR or server endpoints.
 - Application code lives in `src/`; reusable workspace packages live in `packages/*`.
 - `packages/content-core` is a private, host-agnostic package consumed as `@ravenhill/content-core`.
+- `packages/html-core` is a private, host-agnostic package for HTML semantic primitives, exposed as `@ravenhill/html-core`.
 - `packages/site-core` is a private, host-agnostic package consumed as `@ravenhill/site-core`.
 - `packages/shiki-core` is a private, host-agnostic package consumed as `@ravenhill/shiki-core`.
 - TypeScript logic is layered under `src/domain`, `src/application`, `src/infrastructure`, and `src/presentation`.
