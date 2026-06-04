@@ -4,8 +4,16 @@ import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import Warning from "~/components/ui/callouts/Warning.astro";
-import { BashScript, InlineBash, PowerShellBlock } from "~/components/ui/code";
-import { B, I } from "~/components/ui/font";
+import {
+    BashBlock,
+    BashScript,
+    InlineBash,
+    KotlinBlock,
+    PowerShellBlock,
+    PowerShellInline,
+} from "~/components/ui/code";
+import InlineCode from "~/components/ui/code/InlineCode.astro";
+import { B, I, Mono } from "~/components/ui/font";
 import { Link } from "~/components/ui/links";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
@@ -427,23 +435,77 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <JDK21Note />
     </NotesSection>
 
-    <NotesSection id="h2-conclusion">
+    <NotesSection id="workflow-verification">
         <Heading
             Icon={icons.FlagCheckered} headingLevel="h2"
             slot="heading"
         >
-            Conclusión
+            Verificación final
         </Heading>
 
         <P>
-            Con estas herramientas instaladas, ya cuentas con la base técnica para trabajar en los proyectos del curso:
-            clonar repositorios con Git, ejecutar scripts de apoyo con Kotlin CLI y usar el Gradle Wrapper incluido en
-            cada proyecto.
+            Esta última verificación no busca enseñar nuevas herramientas. Su objetivo es confirmar que tu entorno ya
+            está listo para el flujo de trabajo del curso: clonar repositorios con Git, ejecutar scripts de apoyo con
+            Kotlin CLI y trabajar con proyectos Kotlin mediante el Gradle Wrapper incluido en cada repositorio.
         </P>
 
         <P>
-            Si alguna herramienta no responde como esperas, vuelve a las verificaciones de tu sistema operativo antes de
-            continuar con el flujo de trabajo del curso.
+            Primero, verifica que las herramientas principales respondan desde la terminal. En Java, revisa que la
+            versión principal sea 21.
+        </P>
+
+        <BashScript
+            code={`
+                git --version
+                java --version
+                kotlin -version
+                gradle --version
+            `}
+        >
+            <span slot="title">Comprobar Git, Java, Kotlin CLI y Gradle</span>
+        </BashScript>
+
+        <P>
+            <Link href="https://docs.gradle.org/current/userguide/gradle_wrapper.html">Gradle Wrapper</Link> es el
+            camino normal dentro del curso porque usa la versión de Gradle definida por cada repositorio. El comando
+            <InlineBash code="gradle --version" /> comprueba la instalación global de Gradle; en cambio, <InlineBash
+                code="./gradlew"
+            /> y <PowerShellInline code=".\\gradlew.bat" /> comprueban que un proyecto concreto puede ejecutar sus
+            tareas con la versión esperada.
+        </P>
+
+        <P>
+            Para comprobar el Wrapper, entra primero a un repositorio del curso que incluya los archivos
+            <InlineCode code="gradlew" /> y <InlineCode code="gradlew.bat" />. Luego ejecuta el comando correspondiente
+            a tu sistema operativo.
+        </P>
+
+        <BashBlock code={`./gradlew --version`}>
+            <span slot="title">Comprobar el Gradle Wrapper en Linux, macOS o WSL</span>
+        </BashBlock>
+
+        <PowerShellBlock code={`.\\gradlew.bat --version`}>
+            <span slot="title">Comprobar el Gradle Wrapper en Windows</span>
+        </PowerShellBlock>
+
+        <P>
+            Finalmente, puedes comprobar que Kotlin CLI ejecuta scripts creando un archivo pequeño llamado <Mono
+            >hello.main.kts</Mono> con este contenido mínimo:
+        </P>
+
+        <KotlinBlock code={`println("DIBS Kotlin CLI environment is ready.")`}>
+            <span slot="source">hello.main.kts</span>
+        </KotlinBlock>
+
+        <BashBlock code={`kotlin hello.main.kts`}>
+            <span slot="title">Ejecutar el script de prueba</span>
+        </BashBlock>
+
+        <P>
+            Esta verificación solo confirma que el entorno está listo. En la lección sobre <Link
+                href="/notes/scripting/support-scripts/"
+            >scripts de apoyo</Link> veremos cómo usar archivos <Mono>.main.kts</Mono> en contexto, qué
+            responsabilidades deberían tener y cómo integrarlos al flujo de trabajo del curso.
         </P>
     </NotesSection>
 </NotesLayout>

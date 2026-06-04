@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T14:19:42.305Z",
+  "generatedAt": "2026-06-04T18:45:19.305Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1444,8 +1444,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-26",
+      "lastModified": "2026-06-02",
       "changes": [
+        {
+          "hash": "2bb3ed3b0e1c64ab924ccaffe6d58932eb4bd0eb",
+          "date": "2026-06-02",
+          "author": "r8vnhill",
+          "subject": "♻️ refactor(installation): Reorient installation guide to focus on Kotlin course workflow and verification"
+        },
         {
           "hash": "fbe82ef105f16d33a01a944f5831563f9457ee26",
           "date": "2026-05-26",
@@ -1469,12 +1475,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "e19e91b55db9b11d5a9dd462c403718d3e29b999",
-          "date": "2025-11-08",
-          "author": "r8vnhill",
-          "subject": "📝 docs(nushell): Simplificar Nushell y actualizar directrices"
         }
       ]
     },

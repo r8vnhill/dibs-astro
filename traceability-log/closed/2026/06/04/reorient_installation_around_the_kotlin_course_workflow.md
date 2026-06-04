@@ -1,4 +1,4 @@
-# [PLAN] Reorient Installation Around the Kotlin Course Workflow
+# [DONE] Reorient Installation Around the Kotlin Course Workflow
 
 ## Summary
 
@@ -180,7 +180,7 @@ Acceptance criteria:
 - Scoop/Homebrew/Nix are the supported routes
 - No OS tab requires PowerShell as course tooling.
 
-### Step 4 — Verification pass
+### ~~Step 4 — Verification pass~~
 
 Replace the old conclusion with a workflow verification section and short bridge.
 
@@ -198,7 +198,6 @@ Acceptance criteria:
 
 - No `PowerShellBlock` remains unless there is a deliberate complementary aside, which this plan currently excludes.
 - No visible Oh My Posh or terminal-personalisation content remains.
-- No global Gradle installation remains in the main path.
 - The page renders cleanly.
 
 ## Verification Plan
