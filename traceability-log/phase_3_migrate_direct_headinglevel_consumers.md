@@ -141,7 +141,7 @@ Keep the component implementation unchanged. This should be a source-of-truth mi
 
 ---
 
-## Cycle 3 — Lock Callout Heading Behavior
+## Cycle 3 — Lock Callout Heading Behavior [DONE]
 
 ### Goal
 
@@ -197,10 +197,27 @@ tests need the same setup.
 
 ### Acceptance Criteria
 
-- Callout render tests cover custom heading level behavior.
-- Existing title and body rendering remain covered.
-- Tests do not inspect import paths.
-- Tests pass before migrating the callout imports.
+- [x] Callout render tests cover custom heading level behavior.
+- [x] Existing title and body rendering remain covered.
+- [x] Tests do not inspect import paths.
+- [x] Tests pass before migrating the callout imports.
+
+### Completion Notes
+
+- Extended `src/components/ui/callouts/__tests__/Definition.render.test.ts` with a focused
+  `Definition callout heading` suite.
+- The suite renders a definition callout with `headingLevel="h2"` and confirms that the emitted
+  heading is an `<h2>`.
+- The tests keep title behavior observable by checking the visible composed title
+  `Definición - The World` and the existing `callout__title` class.
+- The tests also verify that slotted body content remains preserved.
+- Validation passed with:
+
+```powershell
+pnpm test:astro -- src/components/ui/callouts/__tests__/Definition.render.test.ts
+```
+
+The wrapper ran the Astro render suite and reported 31 files / 244 tests passing.
 
 ### Non-goals
 
