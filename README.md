@@ -8,9 +8,9 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 [![DIBS Site](https://img.shields.io/badge/site-dibs.ravenhill.cl-purple)](https://dibs.ravenhill.cl)
 
-This repository contains the public site for DIBS, a course on software library design and implementation.
-The site is built with Astro, Tailwind CSS v4, and React islands, and it is deployed as a static site to Cloudflare
-Workers Static Assets.
+This repository contains the public site for DIBS, a course on software library design and implementation. The site is
+built with Astro, Tailwind CSS v4, and React islands, and it is deployed as a static site to Cloudflare Workers Static
+Assets.
 
 The course content itself is in Spanish. This README is in English to keep the repository reusable and easier to adapt
 as a foundation for courses in other languages.
@@ -34,16 +34,18 @@ pnpm dev
 | ------------------------------------ | ------------------------------------------------------------------------ |
 | `pnpm dev`                           | Starts the local Astro development server after regenerating data.       |
 | `pnpm build`                         | Regenerates data and builds the static production site into `dist/`.     |
+| `pnpm build:html-core`               | Builds the host-agnostic HTML semantic primitives package.               |
 | `pnpm preview`                       | Runs the local Astro/Wrangler preview proxy for the built site.          |
 | `pnpm check`                         | Runs generated-data checks, Astro checks, and architecture boundaries.   |
+| `pnpm check:html-core`               | Runs the focused validation gate for `@ravenhill/html-core`.             |
 | `pnpm check:architecture`            | Runs the focused layer-boundary architecture checker.                    |
 | `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
 | `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
 | `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
 | `pnpm export:pdf`                    | Exports selected lesson PDFs from the static export routes.              |
 | `pnpm export:pdf:all`                | Exports every lesson PDF-capable route.                                  |
-| `pnpm export:pdf:smoke`              | Exports one representative lesson PDF for a quick local smoke run.      |
-| `pnpm test:pdf-smoke`                | Runs the opt-in end-to-end PDF smoke check (`EXPORT_PDF_SMOKE=1`).      |
+| `pnpm export:pdf:smoke`              | Exports one representative lesson PDF for a quick local smoke run.       |
+| `pnpm test:pdf-smoke`                | Runs the opt-in end-to-end PDF smoke check (`EXPORT_PDF_SMOKE=1`).       |
 | `pnpm export:pdf:dry-run`            | Resolves PDF export targets without launching Chromium.                  |
 | `pnpm playwright:install`            | Installs the Chromium browser binaries used by the PDF exporter.         |
 | `pnpm fmt`                           | Formats the repository with dprint.                                      |
@@ -67,6 +69,7 @@ DIBS content is written in Spanish and organized as structured course material.
 - `src/pages/` contains the site pages, including the course notes.
 - `src/layouts/` contains the shared page layouts.
 - `src/components/` contains reusable UI, semantic, and navigation components.
+- `packages/html-core/` contains host-agnostic HTML semantic primitives consumed through `@ravenhill/html-core`.
 - `src/assets/img/icons/` stores the local SVG icon set used by the project.
 - `src/data/` contains structured content and course metadata.
 - `docs/` contains repository documentation, architecture notes, and third-party attribution.
@@ -92,8 +95,8 @@ pnpm build
 ```
 
 Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
-the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The
-PDF smoke check is intentionally separate from the default gate: run `pnpm test:pdf-smoke` only when you want the
+the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The PDF
+smoke check is intentionally separate from the default gate: run `pnpm test:pdf-smoke` only when you want the
 browser-backed exporter path. It removes its temporary workspace after a successful run unless
 `EXPORT_PDF_SMOKE_KEEP_OUTPUT=1` is set.
 
@@ -136,8 +139,8 @@ This repository is primarily maintained as the official DIBS course site. Contri
 - Local-first assets where possible.
 - Existing formatting, test, and attribution requirements.
 
-For larger changes, open an issue first to discuss scope and expected impact. See
-[`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for the project conventions.
+For larger changes, open an issue first to discuss scope and expected impact. See [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for the project conventions.
 
 ## Related Documentation
 
@@ -152,8 +155,8 @@ For larger changes, open an issue first to discuss scope and expected impact. Se
 
 This project is licensed under the **[BSD 2-Clause License](./LICENSE)**.
 
-You may use, adapt, and share this code for personal, academic, or educational purposes as long as the
-required attribution is preserved.
+You may use, adapt, and share this code for personal, academic, or educational purposes as long as the required
+attribution is preserved.
 
 ## Iconography and Credits
 

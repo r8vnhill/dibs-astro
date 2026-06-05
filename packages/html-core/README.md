@@ -2,8 +2,8 @@
 
 Host-agnostic HTML semantic primitives for Ravenhill projects.
 
-This package provides small, reusable TypeScript contracts for HTML semantics without depending on Astro, DOM APIs,
-UI components, generated data, or site-specific configuration.
+This package provides small, reusable TypeScript contracts for HTML semantics without depending on Astro, DOM APIs, UI
+components, generated data, or site-specific configuration.
 
 ## Public API
 
@@ -13,8 +13,7 @@ Import from the package root only:
 import type { HeadingLevel } from "@ravenhill/html-core";
 ```
 
-Subpath imports are intentionally unsupported so the package can change its internal layout without breaking
-consumers.
+Subpath imports are intentionally unsupported so the package can change its internal layout without breaking consumers.
 
 ## Heading Levels
 
@@ -24,8 +23,8 @@ consumers.
 type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 ```
 
-Use it when a component, adapter, or host-agnostic helper needs to accept a semantic heading level while keeping
-invalid strings out of the type contract.
+Use it when a component, adapter, or host-agnostic helper needs to accept a semantic heading level while keeping invalid
+strings out of the type contract.
 
 ```ts
 type SectionHeadingProps = {
@@ -48,5 +47,8 @@ This package should stay focused on reusable HTML semantic contracts. It should 
 From the `astro-website` workspace root:
 
 ```sh
-pnpm --filter @ravenhill/html-core check
+pnpm check:html-core
+pnpm build:html-core
 ```
+
+The package can also be validated directly with `pnpm --filter @ravenhill/html-core check`.

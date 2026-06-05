@@ -20,6 +20,9 @@ importers:
       '@ravenhill/content-core':
         specifier: workspace:*
         version: link:packages/content-core
+      '@ravenhill/html-core':
+        specifier: workspace:*
+        version: link:packages/html-core
       '@ravenhill/lesson-export-core':
         specifier: workspace:*
         version: link:packages/lesson-export-core

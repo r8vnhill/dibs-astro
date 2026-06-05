@@ -19,8 +19,8 @@
     ],
     "sideEffects": false,
     "scripts": {
-        "build": "tsup",
-        "check": "pnpm run build && tsc --noEmit && pnpm exec vitest run --config vitest.config.ts && publint --strict && pnpm run pack:check && pnpm run consumer:check",
+        "build": "pnpm exec tsup",
+        "check": "pnpm run build && pnpm exec tsc --noEmit && pnpm exec vitest run --config vitest.config.ts && pnpm exec publint --strict && pnpm run pack:check && pnpm run consumer:check",
         "consumer:check": "node scripts/validate-packed-consumer.mjs",
         "pack:check": "node scripts/assert-pack-files.mjs --pack",
         "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"

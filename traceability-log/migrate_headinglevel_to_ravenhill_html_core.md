@@ -170,7 +170,7 @@ Prefer a tiny `consumer:check` fixture or script over brittle tests that inspect
 
 ---
 
-## Phase 2 — Wire the Package into the Workspace
+## Phase 2 — Wire the Package into the Workspace [DONE]
 
 ### Goal
 
@@ -247,6 +247,16 @@ Keep root scripts thin, preferably delegating to package-level scripts with `pnp
 - `pnpm build:html-core` passes.
 - `pnpm check` includes `check:html-core` before consumers that may import the package.
 - Lockfile changes are limited to the new workspace dependency wiring.
+
+### Completion Notes
+
+- `packages/html-core` is included through the existing `packages/*` workspace pattern.
+- Root scripts now expose `build:html-core` and `check:html-core`.
+- `build:html-core` runs in `predev`, `prebuild`, and `predeploy`.
+- Root `check` runs `check:html-core` before Astro checks and architecture checks.
+- The root app declares `@ravenhill/html-core` with the `workspace:*` protocol so later direct consumers resolve the
+  local package.
+- Validation passed with `pnpm check:html-core` and `pnpm build:html-core`.
 
 ### Non-goals
 
