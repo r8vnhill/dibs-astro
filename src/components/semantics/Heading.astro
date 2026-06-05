@@ -82,9 +82,9 @@
  *
  * @see {@link HeadingLevel}
  */
+import type { HeadingLevel } from "@ravenhill/html-core";
 import type { HTMLAttributes } from "astro/types";
 import type { AstroComponentFactory } from "~/types/astro-component";
-import type { HeadingLevel } from "~/utils";
 import FilledIcon from "../ui/callouts/FilledIcon.astro";
 
 /**
@@ -104,41 +104,41 @@ type TagName = Exclude<HeadingLevel, "h1">;
  *     merging.
  */
 type Props = {
-  /**
-   * Optional Astro component used as the icon glyph. When provided (and when no `icon` slot
-   * exists), it is rendered via {@link FilledIcon}.
-   */
-  Icon?: AstroComponentFactory | null;
+    /**
+     * Optional Astro component used as the icon glyph. When provided (and when no `icon` slot
+     * exists), it is rendered via {@link FilledIcon}.
+     */
+    Icon?: AstroComponentFactory | null;
 
-  /**
-   * Which heading tag to render (`h2`–`h6`). Defaults to `{ts} "h3"`.
-   */
-  headingLevel?: TagName;
+    /**
+     * Which heading tag to render (`h2`–`h6`). Defaults to `{ts} "h3"`.
+     */
+    headingLevel?: TagName;
 
-  /**
-   * Additional classes appended to the heading element. Defaults to an empty string.
-   */
-  class?: string;
+    /**
+     * Additional classes appended to the heading element. Defaults to an empty string.
+     */
+    class?: string;
 
-  /**
-   * Whether the icon is purely decorative. Defaults to `{ts} true`. If `{ts} false`, `iconLabel`
-   * should be provided.
-   */
-  decorativeIcon?: boolean;
+    /**
+     * Whether the icon is purely decorative. Defaults to `{ts} true`. If `{ts} false`, `iconLabel`
+     * should be provided.
+     */
+    decorativeIcon?: boolean;
 
-  /**
-   * Accessible label used when `decorativeIcon` is `{ts} false`.
-   */
-  iconLabel?: string;
+    /**
+     * Accessible label used when `decorativeIcon` is `{ts} false`.
+     */
+    iconLabel?: string;
 } & Omit<HTMLAttributes<"h2">, "class">;
 
 const {
-  Icon = null,
-  headingLevel = "h3",
-  class: className = "",
-  decorativeIcon = true,
-  iconLabel,
-  ...rest
+    Icon = null,
+    headingLevel = "h3",
+    class: className = "",
+    decorativeIcon = true,
+    iconLabel,
+    ...rest
 } = Astro.props as Props;
 
 /**
@@ -152,11 +152,11 @@ const Tag = headingLevel;
  * This is intentionally centralized to keep heading sizing consistent across the site.
  */
 const sizeClasses: Record<TagName, string> = {
-  h2: "text-xl sm:text-2xl",
-  h3: "text-lg sm:text-xl",
-  h4: "text-base sm:text-lg",
-  h5: "text-sm sm:text-base",
-  h6: "text-xs sm:text-sm",
+    h2: "text-xl sm:text-2xl",
+    h3: "text-lg sm:text-xl",
+    h4: "text-base sm:text-lg",
+    h5: "text-sm sm:text-base",
+    h6: "text-xs sm:text-sm",
 };
 
 /**

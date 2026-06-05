@@ -86,7 +86,7 @@ node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts src/co
 
 ---
 
-## Cycle 2 — Migrate `Heading.astro` to `@ravenhill/html-core`
+## Cycle 2 — Migrate `Heading.astro` to `@ravenhill/html-core` [DONE]
 
 ### Goal
 
@@ -121,11 +121,18 @@ Keep the component implementation unchanged. This should be a source-of-truth mi
 
 ### Acceptance Criteria
 
-- `Heading.astro` imports `HeadingLevel` from `@ravenhill/html-core`.
-- Focused heading render tests pass.
-- No rendered HTML changes.
-- No dependency wiring is added unless this file belongs to a package that does not already declare
+- [x] `Heading.astro` imports `HeadingLevel` from `@ravenhill/html-core`.
+- [x] Focused heading render tests pass.
+- [x] No rendered HTML changes.
+- [x] No dependency wiring is added unless this file belongs to a package that does not already declare
   `@ravenhill/html-core`.
+
+### Completion Notes
+
+- Updated `src/components/semantics/Heading.astro` to import the `HeadingLevel` type from the
+  `@ravenhill/html-core` package root.
+- Left the component implementation, defaults, classes, slots, and rendered markup unchanged.
+- Confirmed that the root app already declares `@ravenhill/html-core` as a `workspace:*` dependency.
 
 ### Non-goals
 
