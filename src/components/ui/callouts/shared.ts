@@ -3,7 +3,7 @@ import Brain from "~/assets/img/icons/brain.svg";
 import NoteIcon from "~/assets/img/icons/note.svg";
 import Star from "~/assets/img/icons/star.svg";
 import type { AstroComponentFactory } from "~/types/astro-component";
-import type { HeadingLevel } from "~/utils";
+import type { HeadingLevel } from "@ravenhill/html-core";
 
 /**
  * Shared public API surface for "callout" / admonition-style components (e.g., Abstract, Important,

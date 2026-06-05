@@ -274,7 +274,7 @@ Keep root scripts thin, preferably delegating to package-level scripts with `pnp
 
 ---
 
-## Phase 3 — Migrate Direct Consumers
+## Phase 3 — Migrate Direct Consumers [DONE]
 
 ### Goal
 

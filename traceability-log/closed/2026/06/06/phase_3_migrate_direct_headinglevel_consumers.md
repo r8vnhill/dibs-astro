@@ -1,4 +1,4 @@
-# [PLAN] Phase 3: Migrate Direct `HeadingLevel` Consumers
+# [DONE] Phase 3: Migrate Direct `HeadingLevel` Consumers
 
 ## Summary
 
@@ -227,7 +227,7 @@ The wrapper ran the Astro render suite and reported 31 files / 244 tests passing
 
 ---
 
-## Cycle 4 — Migrate Callout Consumers
+## Cycle 4 — Migrate Callout Consumers [DONE]
 
 ### Goal
 
@@ -262,10 +262,25 @@ Keep shared props and heading rendering unchanged.
 
 ### Acceptance Criteria
 
-- `shared.ts` imports `HeadingLevel` from `@ravenhill/html-core`.
-- `CalloutHeading.astro` imports `HeadingLevel` from `@ravenhill/html-core`.
-- Callout render tests pass.
-- No callout HTML, classes, slots, IDs, or default semantics change.
+- [x] `shared.ts` imports `HeadingLevel` from `@ravenhill/html-core`.
+- [x] `CalloutHeading.astro` imports `HeadingLevel` from `@ravenhill/html-core`.
+- [x] Callout render tests pass.
+- [x] No callout HTML, classes, slots, IDs, or default semantics change.
+
+### Completion Notes
+
+- Updated `src/components/ui/callouts/shared.ts` and
+  `src/components/ui/callouts/CalloutHeading.astro` to import the `HeadingLevel` type from the
+  `@ravenhill/html-core` package root.
+- Left callout props, heading defaults, title classes, slots, generated IDs, and rendered markup unchanged.
+- Confirmed both touched callout files now resolve `HeadingLevel` from `@ravenhill/html-core`.
+- Validation passed with:
+
+```powershell
+pnpm test:astro -- src/components/ui/callouts/__tests__/Definition.render.test.ts
+```
+
+The wrapper ran the Astro render suite and reported 31 files / 244 tests passing.
 
 ### Non-goals
 
@@ -275,7 +290,7 @@ Keep shared props and heading rendering unchanged.
 
 ---
 
-## Cycle 5 — Verify Phase 3 Import Boundary
+## Cycle 5 — Verify Phase 3 Import Boundary [DONE]
 
 ### Goal
 
@@ -309,10 +324,33 @@ Leave `src/utils/heading-level.ts` and `src/utils/index.ts` unchanged.
 
 ### Acceptance Criteria
 
-- No touched Phase 3 consumer imports `HeadingLevel` from `~/utils`.
-- The legacy bridge still exists.
-- No unrelated files are migrated opportunistically.
-- Any package that imports `@ravenhill/html-core` directly declares the dependency explicitly.
+- [x] No touched Phase 3 consumer imports `HeadingLevel` from `~/utils`.
+- [x] The legacy bridge still exists.
+- [x] No unrelated files are migrated opportunistically.
+- [x] Any package that imports `@ravenhill/html-core` directly declares the dependency explicitly.
+
+### Completion Notes
+
+- Confirmed the three Phase 3 consumers now import `HeadingLevel` from `@ravenhill/html-core`:
+  `src/components/semantics/Heading.astro`, `src/components/ui/callouts/shared.ts`, and
+  `src/components/ui/callouts/CalloutHeading.astro`.
+- Confirmed the legacy bridge remains available in `src/utils/heading-level.ts` and `src/utils/index.ts`.
+- Searched `src` and `packages` for `HeadingLevel`; no unrelated app consumers were migrated, and no new package outside
+  the root app imports `@ravenhill/html-core` directly.
+- Confirmed the root app already declares `"@ravenhill/html-core": "workspace:*"` in `package.json`.
+- Validation passed with:
+
+```powershell
+node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts src/components/semantics/__tests__/Heading.render.test.ts src/components/ui/callouts/__tests__/Definition.render.test.ts
+pnpm check:architecture
+pnpm check:html-core
+```
+
+- The planned wrapper command
+  `pnpm test:astro -- src/components/semantics src/components/ui/callouts` unexpectedly ran the full Astro suite and
+  failed in unrelated Shiki code highlighting coverage with
+  `[dev-retry] shiki create-highlighter timed out after 1500ms`. The direct Phase 3 render test invocation passed
+  2 files / 8 tests.
 
 ### Non-goals
 
