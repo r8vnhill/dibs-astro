@@ -92,7 +92,7 @@ placeholder description, and the bibliography work is still pending.
    - use short, maintainable examples;
    - prefer examples that scale from ad-hoc scripts to reusable support tooling.
 
-5. **Add the comparative link from the base lesson** _(pending)_
+5. **Add the comparative link from the base lesson** _(done)_
 
    Update only the import section and the final link block in:
 
