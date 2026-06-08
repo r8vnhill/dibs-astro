@@ -53,6 +53,22 @@ pnpm dev
 | `pnpm bibliography:report`           | Regenerates the bibliography catalog and prints the bibliography report. |
 | `pnpm deploy`                        | Builds and deploys the site with Wrangler.                               |
 
+## Lesson PDF Export
+
+The PDF exporter writes one report after each run, even when selected lessons fail. By default, any failed lesson makes
+the command exit non-zero after successful PDFs and failed entries have been written.
+
+Useful flags:
+
+- `--continue-on-error` keeps partial batch exports advisory when at least one selected lesson succeeds. It still exits
+  non-zero when every selected lesson fails.
+- `--fail-on <findingKind>` makes matching report findings fatal. Repeat it to configure multiple kinds. This policy is
+  independent of `--continue-on-error`.
+- `--dry-run` resolves targets and writes a skipped-entry report without launching preview or Chromium.
+
+The report summary includes selected, exported, failed, skipped, findings, grouped finding/failure counts, and the
+applied exit policy.
+
 ## Course Content
 
 DIBS content is written in Spanish and organized as structured course material.

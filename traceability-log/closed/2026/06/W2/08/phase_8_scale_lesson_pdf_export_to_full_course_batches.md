@@ -193,7 +193,22 @@ Rules:
 Astro static export routes should continue to be generated from `getStaticPaths()` because Astro requires dynamic static
 routes to return concrete `params`, with optional `props` for page data. ([Astro Docs][3])
 
-### Step 5: Add resilient batch execution
+### ~~Step 5: Add resilient batch execution~~
+
+Status: complete.
+
+The runner now keeps failures inside the per-lesson boundary:
+
+- `exportSelectedLessons()` iterates every resolved target in manifest order and always appends one report entry per
+  selected lesson.
+- `exportOneLesson()` opens a fresh Playwright page per lesson and catches lesson-scoped failures, including page
+  allocation, navigation, DOM contract, finding collection, directory creation, and PDF generation errors.
+- `toFailedExportEntry()` records failed lessons with `status: "failed"`, `error.kind: "pdf-generation-failed"`,
+  `route`, `exportRoute`, `url`, `outputPath`, and the error message.
+- Browser launch, preview startup, report creation, and report writing failures remain orchestration failures because no
+  reliable per-lesson report can be completed in those cases.
+- Focused runner tests now cover partial batch continuation after navigation/PDF failures and after Playwright page
+  allocation failures.
 
 Refactor the orchestration loop into small functions:
 
@@ -228,31 +243,36 @@ On failure:
 Playwright’s model supports browser pages and browser contexts as independent browser sessions, so keeping per-lesson
 failure isolation explicit is aligned with the tool’s execution model. ([Playwright][4])
 
-### Step 6: Improve DOM finding collection
+### ~~Step 6: Improve DOM finding collection~~
 
-Add a focused collector:
+Status: complete.
+
+Added a focused collector:
 
 ```ts
-collectExportFindings(document): ExportFinding[]
+collectExportFindings(document, { route }): ExportFinding[]
 ```
 
-It should detect:
+It detects:
 
 - `data-export-finding="client-only"`
 - `data-export-finding="client-only-island"`
 - `data-export-finding="hidden-content"`
 - `data-export-finding="unresolved-todo"`
 
-It should normalise kinds through `normalizeExportFindingKind()` and preserve useful context:
+The collector normalises kinds through `normalizeExportFindingKind()` and preserves DOM context:
 
 - route
 - selector or nearest export role
 - text excerpt, when safe and short
 - source: `"dom"`
 
-Keep this collector deterministic and covered with render-contract tests.
+The runner now parses the rendered page HTML in Node and uses the same deterministic collector that is covered by the
+focused report tests. Unknown DOM finding markers are ignored by this collector.
 
-### Step 7: Merge manifest and DOM findings
+### ~~Step 7: Merge manifest and DOM findings~~
+
+Status: complete.
 
 For each selected entry, report findings from both sources:
 
@@ -268,7 +288,26 @@ This is important because full-course reports should explain both:
 - problems known before rendering, such as missing source metadata;
 - problems discovered only after rendering, such as unresolved TODO markers or hidden export content.
 
-### Step 8: Finalise exit policy
+Implementation notes:
+
+- Successful entries merge `entry.findings` with collected DOM findings.
+- Failed entries and dry-run entries still report manifest findings, because those findings are known before rendering.
+- Manifest findings are annotated with `source: "manifest"` and DOM findings with `source: "dom"` at report-entry
+  construction time.
+
+### ~~Step 8: Finalise exit policy~~
+
+Status: complete.
+
+Implementation notes:
+
+- Added `--continue-on-error` parsing with a default of `false`.
+- Added script-local `decidePdfExportExitCode(report, policy)` in `scripts/lib/pdf-export/report.mjs`.
+- Kept `--continue-on-error` scoped to partial PDF generation failures only.
+- Kept total generation failure and configured `--fail-on` findings non-zero.
+- Applied the same policy after dry-run report writing, so fatal findings included in a dry-run report still fail.
+- Added `summary.skipped`, `summary.findingsByKind`, `summary.failuresByKind`, and `summary.exitPolicy` as additive
+  report fields.
 
 Use this matrix:
 

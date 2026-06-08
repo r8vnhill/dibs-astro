@@ -1,30 +1,28 @@
 import { mkdir as defaultMkdir } from "node:fs/promises";
 import path from "node:path";
 
+import { JSDOM as DefaultJSDOM } from "jsdom";
 import { chromium as defaultChromium } from "playwright";
 
 import { buildSite } from "./build-site.mjs";
-import {
-    resolveExportTargets,
-    selectExportEntries,
-} from "./cli.mjs";
+import { resolveExportTargets, selectExportEntries } from "./cli.mjs";
 import { buildLessonPdfExportManifest } from "./manifest.mjs";
-import {
-    collectExportFindings,
-    createExportReport,
-    hasFatalExportFindings,
-    writeExportReport,
-} from "./report.mjs";
 import {
     startPreviewServer,
     stopPreviewServer,
     waitForPreview,
 } from "./preview-server.mjs";
+import {
+    collectExportFindings,
+    createExportReport,
+    decidePdfExportExitCode,
+    hasFatalExportFindings,
+    writeExportReport,
+} from "./report.mjs";
 
 const exportDomSelectors = {
     document: '[data-export-role="document"]',
     body: '[data-export-role="body"]',
-    finding: "[data-export-finding]",
 };
 
 const defaultDependencies = {
@@ -33,7 +31,9 @@ const defaultDependencies = {
     chromium: defaultChromium,
     collectExportFindings,
     createExportReport,
+    decidePdfExportExitCode,
     hasFatalExportFindings,
+    JSDOM: DefaultJSDOM,
     logger: console,
     mkdir: defaultMkdir,
     now: () => new Date(),
@@ -107,6 +107,7 @@ async function writeDryRunReport({
         baseUrl: options.baseUrl ?? "dry-run",
         outDir: options.outDir,
         selection: options.selection,
+        exitPolicy: toReportExitPolicy(options),
         entries: targets.map(({ entry, outputPath }) => ({
             route: entry.route,
             exportRoute: entry.exportRoute,
@@ -116,7 +117,7 @@ async function writeDryRunReport({
             outputPath,
             status: "skipped",
             title: entry.title,
-            findings: [],
+            findings: mergeExportFindings(entry),
         })),
     });
 
@@ -124,6 +125,24 @@ async function writeDryRunReport({
         path.resolve(projectRoot, options.reportPath),
         report,
     );
+
+    const exitCode = dependencies.decidePdfExportExitCode(report, {
+        continueOnError: options.continueOnError ?? false,
+        findingPolicy: getFindingPolicy(options),
+    });
+
+    if (exitCode !== 0) {
+        throw new Error(
+            formatFinalExportFailure({
+                hasFatalFindings: dependencies.hasFatalExportFindings(
+                    report,
+                    getFindingPolicy(options),
+                ),
+                generationFailureCount: report.summary.failed,
+                reportPath: options.reportPath,
+            }),
+        );
+    }
 
     dependencies.logger.log(
         `[export-lessons-pdf] Dry run selected ${report.summary.selected} lesson(s).`,
@@ -161,7 +180,7 @@ async function exportPreparedRun({
         browser = await dependencies.chromium.launch();
 
         try {
-            const reportEntries = await exportTargets({
+            const reportEntries = await exportSelectedLessons({
                 browser,
                 targets,
                 baseUrl,
@@ -175,6 +194,7 @@ async function exportPreparedRun({
                 baseUrl,
                 outDir: options.outDir,
                 selection: options.selection,
+                exitPolicy: toReportExitPolicy(options),
                 entries: reportEntries,
             });
 
@@ -183,17 +203,19 @@ async function exportPreparedRun({
                 report,
             );
 
-            const hasFatalFindings = dependencies.hasFatalExportFindings(
-                report,
-                options.findingPolicy,
-            );
-            const generationFailureCount = report.summary.failed;
+            const exitCode = dependencies.decidePdfExportExitCode(report, {
+                continueOnError: options.continueOnError ?? false,
+                findingPolicy: getFindingPolicy(options),
+            });
 
-            if (hasFatalFindings || generationFailureCount > 0) {
+            if (exitCode !== 0) {
                 throw new Error(
                     formatFinalExportFailure({
-                        hasFatalFindings,
-                        generationFailureCount,
+                        hasFatalFindings: dependencies.hasFatalExportFindings(
+                            report,
+                            getFindingPolicy(options),
+                        ),
+                        generationFailureCount: report.summary.failed,
                         reportPath: options.reportPath,
                     }),
                 );
@@ -212,7 +234,7 @@ async function exportPreparedRun({
     }
 }
 
-async function exportTargets({
+async function exportSelectedLessons({
     browser,
     targets,
     baseUrl,
@@ -223,13 +245,15 @@ async function exportTargets({
     const reportEntries = [];
 
     for (const target of targets) {
-        const result = await exportOneTarget({
+        const result = await exportOneLesson({
             browser,
             target,
             baseUrl,
             projectRoot,
             timeoutMs: options.timeoutMs,
             mkdir: dependencies.mkdir,
+            collectExportFindings: dependencies.collectExportFindings,
+            JSDOM: dependencies.JSDOM,
         });
 
         if (result.status === "exported") {
@@ -237,28 +261,32 @@ async function exportTargets({
             continue;
         }
 
-        reportEntries.push(toFailedReportEntry(result));
+        reportEntries.push(toFailedExportEntry(result));
     }
 
     return reportEntries;
 }
 
-async function exportOneTarget({
+async function exportOneLesson({
     browser,
     target,
     baseUrl,
     projectRoot,
     timeoutMs,
     mkdir,
+    collectExportFindings,
+    JSDOM,
 }) {
     const { entry, outputPath } = target;
     const url = new URL(entry.exportRoute, baseUrl).href;
     const filePath = path.resolve(projectRoot, outputPath);
-    const page = await browser.newPage({
-        viewport: { width: 1280, height: 1600 },
-    });
+    let page;
 
     try {
+        page = await browser.newPage({
+            viewport: { width: 1280, height: 1600 },
+        });
+
         const response = await page.goto(url, {
             waitUntil: "domcontentloaded",
             timeout: timeoutMs,
@@ -270,7 +298,10 @@ async function exportOneTarget({
 
         await waitForExportDomContract(page, timeoutMs);
 
-        const pageFindings = await collectPageFindings(page);
+        const findings = collectExportFindings(
+            new JSDOM(await page.content()).window.document,
+            { route: entry.route },
+        );
 
         await mkdir(path.dirname(filePath), { recursive: true });
         await page.pdf({
@@ -291,7 +322,7 @@ async function exportOneTarget({
             entry,
             url,
             outputPath,
-            findings: collectExportFindings(pageFindings),
+            findings: mergeExportFindings(entry, findings),
         };
     } catch (error) {
         return {
@@ -305,7 +336,9 @@ async function exportOneTarget({
             },
         };
     } finally {
-        await page.close();
+        if (page) {
+            await page.close();
+        }
     }
 }
 
@@ -321,22 +354,6 @@ async function waitForExportDomContract(page, timeoutMs) {
     });
 }
 
-async function collectPageFindings(page) {
-    return page.locator(exportDomSelectors.finding).evaluateAll((elements) =>
-        elements.map((element) => ({
-            code:
-                element.getAttribute("data-export-finding") ??
-                element.dataset.exportFinding ??
-                "unknown",
-            message: element.textContent?.trim() || undefined,
-            severity:
-                element.getAttribute("data-export-finding-severity") ??
-                element.dataset.exportFindingSeverity ??
-                undefined,
-        })),
-    );
-}
-
 function toExportedReportEntry(result) {
     return {
         route: result.entry.route,
@@ -349,7 +366,7 @@ function toExportedReportEntry(result) {
     };
 }
 
-function toFailedReportEntry(result) {
+function toFailedExportEntry(result) {
     return {
         route: result.entry.route,
         exportRoute: result.entry.exportRoute,
@@ -357,8 +374,24 @@ function toFailedReportEntry(result) {
         outputPath: result.outputPath,
         status: "failed",
         title: result.entry.title,
-        findings: [],
+        findings: mergeExportFindings(result.entry),
         error: result.error,
+    };
+}
+
+function mergeExportFindings(entry, domFindings = []) {
+    return [
+        ...(entry.findings ?? []).map((finding) =>
+            withFindingSource(finding, "manifest"),
+        ),
+        ...domFindings.map((finding) => withFindingSource(finding, "dom")),
+    ];
+}
+
+function withFindingSource(finding, source) {
+    return {
+        ...finding,
+        source,
     };
 }
 
@@ -393,6 +426,17 @@ function formatFinalExportFailure({
         ...bullets,
         `Report: ${reportPath}`,
     ].join("\n");
+}
+
+function toReportExitPolicy(options) {
+    return {
+        continueOnError: options.continueOnError ?? false,
+        failOn: getFindingPolicy(options).failOn,
+    };
+}
+
+function getFindingPolicy(options) {
+    return options.findingPolicy ?? { failOn: [] };
 }
 
 function normalizeBaseUrl(baseUrl) {

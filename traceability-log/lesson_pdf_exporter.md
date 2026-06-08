@@ -308,11 +308,16 @@ Pipeline:
 3. Wait for the preview URL with a small built-in fetch retry loop.
 4. Load each export route with Playwright Chromium.
 5. Assert `data-export-role="document"` exists.
-6. Collect export findings from `[data-export-finding]`.
+6. Parse rendered HTML and collect normalized DOM findings from supported `[data-export-finding]` markers.
 7. Write PDF to the manifest-derived output path.
-8. Write `dist-pdf/export-report.json`.
+8. Write `dist-pdf/export-report.json` with manifest findings and DOM findings merged per selected lesson.
 9. Shut down the preview process.
 ```
+
+Supported DOM finding markers are `client-only`, `client-only-island`, `hidden-content`, and `unresolved-todo`. The
+exporter normalizes `client-only` to `client-only-island` and records route, source, selector context, and a short text
+excerpt in the report entry. Manifest findings are also preserved in the same entry with `source: "manifest"`, including
+dry-run and failed export entries where no DOM inspection is available.
 
 PDF defaults:
 
@@ -381,9 +386,11 @@ Exit criteria:
 - CI can run a minimal smoke test when enabled.
 ```
 
-### Phase 8 — Scale from one lesson to all lessons
+### ~~Phase 8 — Scale from one lesson to all lessons~~
 
 Goal: move from proof of architecture to course distribution.
+
+Status: implemented in `traceability-log/phase_8_scale_lesson_pdf_export_to_full_course_batches.md`.
 
 Work:
 

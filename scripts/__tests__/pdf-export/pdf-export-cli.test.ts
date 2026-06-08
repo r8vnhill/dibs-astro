@@ -51,6 +51,7 @@ describe("given the PDF export CLI parser", () => {
             port: 4321,
             skipBuild: false,
             keepServer: false,
+            continueOnError: false,
             findingPolicy: { failOn: [] },
             timeoutMs: 30_000,
             dryRun: false,
@@ -83,6 +84,7 @@ describe("given the PDF export CLI parser", () => {
             "5000",
             "--skip-build",
             "--keep-server",
+            "--continue-on-error",
             "--fail-on",
             "hidden-content",
             "--timeout=45000",
@@ -96,6 +98,7 @@ describe("given the PDF export CLI parser", () => {
             port: 5000,
             skipBuild: true,
             keepServer: true,
+            continueOnError: true,
             findingPolicy: { failOn: ["hidden-content"] },
             timeoutMs: 45_000,
         });

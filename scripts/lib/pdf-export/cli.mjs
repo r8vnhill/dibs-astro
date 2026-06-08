@@ -14,11 +14,14 @@ export function parseCliArgs(argv, defaults = {}) {
 
     const options = {
         outDir: normalizeRelativePath(defaults.outDir ?? "dist/exports/pdf"),
-        reportPath: normalizeRelativePath(defaults.reportPath ?? "dist/exports/pdf/report.json"),
+        reportPath: normalizeRelativePath(
+            defaults.reportPath ?? "dist/exports/pdf/report.json",
+        ),
         baseUrl: undefined,
         port: defaults.port ?? 4321,
         skipBuild: false,
         keepServer: false,
+        continueOnError: false,
         findingPolicy: { failOn: [] },
         timeoutMs: defaults.timeoutMs ?? 30_000,
         dryRun: false,
@@ -48,11 +51,15 @@ export function parseCliArgs(argv, defaults = {}) {
                 selection.all = true;
                 break;
             case "--outDir":
-                options.outDir = normalizeRelativePath(requireValue(flag, value));
+                options.outDir = normalizeRelativePath(
+                    requireValue(flag, value),
+                );
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--report":
-                options.reportPath = normalizeRelativePath(requireValue(flag, value));
+                options.reportPath = normalizeRelativePath(
+                    requireValue(flag, value),
+                );
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--baseUrl":
@@ -60,7 +67,10 @@ export function parseCliArgs(argv, defaults = {}) {
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--port":
-                options.port = parsePositiveInteger(requireValue(flag, value), flag);
+                options.port = parsePositiveInteger(
+                    requireValue(flag, value),
+                    flag,
+                );
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--skip-build":
@@ -69,12 +79,20 @@ export function parseCliArgs(argv, defaults = {}) {
             case "--keep-server":
                 options.keepServer = true;
                 break;
+            case "--continue-on-error":
+                options.continueOnError = true;
+                break;
             case "--fail-on":
-                failOnKinds.push(parseFindingKind(requireValue(flag, value), flag));
+                failOnKinds.push(
+                    parseFindingKind(requireValue(flag, value), flag),
+                );
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--timeout":
-                options.timeoutMs = parsePositiveInteger(requireValue(flag, value), flag);
+                options.timeoutMs = parsePositiveInteger(
+                    requireValue(flag, value),
+                    flag,
+                );
                 if (inlineValue === undefined) index += 1;
                 break;
             case "--dry-run":
@@ -85,11 +103,15 @@ export function parseCliArgs(argv, defaults = {}) {
         }
     }
 
-    const selectionKinds = [selection.route, selection.subtree, selection.all].filter((value) =>
-        value !== undefined && value !== false
-    );
+    const selectionKinds = [
+        selection.route,
+        selection.subtree,
+        selection.all,
+    ].filter((value) => value !== undefined && value !== false);
     if (selectionKinds.length !== 1) {
-        throw new Error("Exactly one of --route, --subtree, or --all must be provided.");
+        throw new Error(
+            "Exactly one of --route, --subtree, or --all must be provided.",
+        );
     }
 
     options.findingPolicy = {
@@ -98,14 +120,20 @@ export function parseCliArgs(argv, defaults = {}) {
 
     if (selection.route !== undefined) {
         return {
-            selection: { kind: "route", value: normalizeLessonRoute(selection.route) },
+            selection: {
+                kind: "route",
+                value: normalizeLessonRoute(selection.route),
+            },
             ...options,
         };
     }
 
     if (selection.subtree !== undefined) {
         return {
-            selection: { kind: "subtree", value: normalizeLessonRoute(selection.subtree) },
+            selection: {
+                kind: "subtree",
+                value: normalizeLessonRoute(selection.subtree),
+            },
             ...options,
         };
     }
@@ -121,9 +149,10 @@ export function selectExportEntries(manifest, selection) {
         return [...manifest.entries];
     }
 
-    const filter = selection.kind === "route"
-        ? { kind: "exact-route", route: selection.value }
-        : { kind: "subtree", routePrefix: selection.value };
+    const filter =
+        selection.kind === "route"
+            ? { kind: "exact-route", route: selection.value }
+            : { kind: "subtree", routePrefix: selection.value };
 
     const filtered = filterManifest(manifest, filter);
     if (filtered.entries.length === 0) {
@@ -181,7 +210,11 @@ function normalizeRelativePath(value) {
         throw new Error("Path value must not be empty.");
     }
 
-    if (/^[A-Za-z]:/u.test(trimmed) || trimmed.startsWith("/") || trimmed.startsWith("..")) {
+    if (
+        /^[A-Za-z]:/u.test(trimmed) ||
+        trimmed.startsWith("/") ||
+        trimmed.startsWith("..")
+    ) {
         throw new Error(`Path must be relative: ${value}`);
     }
 
