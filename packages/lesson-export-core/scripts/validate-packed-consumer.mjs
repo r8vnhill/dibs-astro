@@ -199,6 +199,7 @@ const runtimeConsumerSource = String.raw`import {
     filterManifest,
     hasFatalExportFindings,
     normalizeLessonRoute,
+    planBookExports,
     validateManifest,
 } from "@ravenhill/lesson-export-core";
 
@@ -236,6 +237,28 @@ const manifest = {
 
 if (filterManifest(manifest, { kind: "all" }).entries.length !== 1) {
     throw new Error("filterManifest returned an unexpected entry count.");
+}
+
+const bookPlan = planBookExports({
+    course: [{
+        id: "unit-1",
+        title: "Unit 1",
+        kind: "group",
+        children: [{
+            id: "kousei-arima",
+            title: "Kousei Arima",
+            kind: "link",
+            href: route,
+        }],
+    }],
+    manifest,
+    outDir: "dist/pdf",
+    availablePdfPaths: new Set([derivePdfOutputPath(route)]),
+    fullCourse: { title: "Your Lie in April" },
+});
+
+if (bookPlan.targets.length !== 2 || bookPlan.targets[0].kind !== "full-course") {
+    throw new Error("planBookExports returned an unexpected book target plan.");
 }
 
 if (!validateManifest(manifest).valid) {
@@ -323,6 +346,9 @@ const typeConsumerSource = String.raw`import {
     derivePdfOutputPath,
     hasFatalExportFindings,
     normalizeLessonRoute,
+    planBookExports,
+    type BookExportPlan,
+    type BookExportTarget,
     type LessonExportEntry,
     type LessonExportFailurePolicy,
     type LessonExportManifest,
@@ -342,6 +368,24 @@ const manifest: LessonExportManifest = {
     generatedAt: "2026-05-10T00:00:00.000Z",
     entries: [entry],
 };
+const bookPlan: BookExportPlan = planBookExports({
+    course: [{
+        id: "unit-1",
+        title: "Unit 1",
+        kind: "group",
+        children: [{
+            id: "kousei-arima",
+            title: "Kousei Arima",
+            kind: "link",
+            href: route,
+        }],
+    }],
+    manifest,
+    outDir: "dist/pdf",
+    availablePdfPaths: new Set([derivePdfOutputPath(route)]),
+    fullCourse: { title: "Your Lie in April" },
+});
+const firstBookTarget: BookExportTarget | undefined = bookPlan.targets[0];
 
 const reportEntries: readonly LessonExportReportEntryLike[] = [
     {
@@ -361,6 +405,7 @@ countFindingsByKind(reportEntries);
 countFailuresByKind(reportEntries);
 hasFatalExportFindings(reportEntries, failOn);
 void manifest;
+void firstBookTarget;
 void summary;
 `;
 

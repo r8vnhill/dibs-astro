@@ -30,6 +30,7 @@
         "check": "pnpm run build && pnpm run typecheck && pnpm run test && pnpm run lint && pnpm run pack:check && pnpm run consumer:check"
     },
     "devDependencies": {
+        "fast-check": "^4.5.3",
         "publint": "^0.3.19",
         "tsup": "^8.5.1",
         "typescript": "^5.9.2",

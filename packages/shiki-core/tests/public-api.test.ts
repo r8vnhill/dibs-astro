@@ -1,17 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { expect, suite, test } from "vitest";
 import * as shikiCore from "../src";
 
-describe("@ravenhill/shiki-core public API", () => {
-    it("exposes Phase 2 extracted implementations", () => {
+suite("given the @ravenhill/shiki-core public API", () => {
+    test("then it exposes Phase 2 extracted implementations", () => {
         // Theme defaults
         expect(shikiCore).toHaveProperty("DEFAULT_DARK_THEME");
         expect(shikiCore).toHaveProperty("DEFAULT_LIGHT_THEME");
         expect(shikiCore).toHaveProperty("SHIKI_DEFAULT_THEMES");
 
         // Fallback HTML rendering
-        expect(shikiCore).toHaveProperty("escapeCodeHtml");
+        expect(shikiCore).toHaveProperty("escapeHtmlText");
+        expect(shikiCore).toHaveProperty("escapeHtmlAttribute");
         expect(shikiCore).toHaveProperty("renderFallbackCodeHtml");
-        expect(shikiCore).toHaveProperty("buildPlainHtml");
 
         // Language resolution
         expect(shikiCore).toHaveProperty("isKnownShikiAlias");
@@ -26,14 +26,14 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(shikiCore).toHaveProperty("transformerNotationLineTextColor");
     });
 
-    it("exposes Phase 3 real implementations", () => {
+    test("then it exposes Phase 3 real implementations", () => {
         expect(shikiCore).toHaveProperty("createShikiHighlighterService");
         expect(shikiCore).toHaveProperty("getShikiHighlighter");
         // Backward compatibility alias
         expect(shikiCore).toHaveProperty("createShikiHighlighter");
     });
 
-    it("exposes type contracts", () => {
+    test("then it exposes type contracts", () => {
         const _serviceCheck: shikiCore.ShikiHighlighterService = {
             getHighlighter: async () => {
                 throw new Error("mock");
@@ -51,7 +51,7 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(_retryCheck).toBeDefined();
     });
 
-    it("creates a service that provides highlighter access", () => {
+    test("then it creates a service that provides highlighter access", () => {
         const service = shikiCore.createShikiHighlighterService();
         expect(service).toHaveProperty("getHighlighter");
         expect(service).toHaveProperty("highlightToHtml");
@@ -59,19 +59,19 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(typeof service.highlightToHtml).toBe("function");
     });
 
-    it("exposes correct default theme values", () => {
+    test("then it exposes correct default theme values", () => {
         expect(shikiCore.DEFAULT_DARK_THEME).toBe("catppuccin-mocha");
         expect(shikiCore.DEFAULT_LIGHT_THEME).toBe("catppuccin-latte");
     });
 
-    it("exposes theme compatibility alias", () => {
+    test("then it exposes theme compatibility alias", () => {
         expect(shikiCore.SHIKI_DEFAULT_THEMES).toEqual({
             light: "catppuccin-latte",
             dark: "catppuccin-mocha",
         });
     });
 
-    it("exposes transformer factory functions", () => {
+    test("then it exposes transformer factory functions", () => {
         const tailwindTransformer = shikiCore.createTailwindClassTransformer({
             pre: "rounded-lg",
         });
@@ -83,9 +83,9 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(colorTransformer.name).toBe("notation-line-text-color");
     });
 
-    it("exposes fallback HTML rendering functions", () => {
-        const escaped = shikiCore.escapeCodeHtml("<script>");
-        expect(escaped).toBe("&lt;script&gt;");
+    test("then it exposes fallback HTML rendering functions", () => {
+        expect(shikiCore.escapeHtmlText("'quoted'")).toBe("'quoted'");
+        expect(shikiCore.escapeHtmlAttribute("'quoted'")).toBe("&#39;quoted&#39;");
 
         const html = shikiCore.renderFallbackCodeHtml("code", ["pre-class"], ["code-class"]);
         expect(html).toContain('<pre class="shiki pre-class">');
@@ -93,7 +93,7 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(html).toContain("code</code></pre>");
     });
 
-    it("exposes language resolution functions", () => {
+    test("then it exposes language resolution functions", () => {
         const pyResult = shikiCore.resolveShikiLanguage("py");
         expect(pyResult.resolvedLang).toBe("python");
         expect(pyResult.shouldWarn).toBe(false);
@@ -109,7 +109,7 @@ describe("@ravenhill/shiki-core public API", () => {
         expect(notAlias).toBe(false);
     });
 
-    it("exposes available languages array", () => {
+    test("then it exposes available languages array", () => {
         expect(shikiCore.availableLanguages).toBeDefined();
         expect(Array.isArray(shikiCore.availableLanguages)).toBe(true);
         expect(shikiCore.availableLanguages.length).toBeGreaterThan(0);

@@ -4,7 +4,8 @@ Host-agnostic Shiki infrastructure for Ravenhill projects.
 
 ## Status
 
-`@ravenhill/shiki-core` is a pilot workspace package with a publication path to the GitLab Package Registry. It is designed to be reused across multiple Ravenhill projects as a standalone package.
+`@ravenhill/shiki-core` is a pilot workspace package with a publication path to the GitLab Package Registry. It is
+designed to be reused across multiple Ravenhill projects as a standalone package.
 
 Current publish target:
 
@@ -74,14 +75,14 @@ import { createShikiHighlighterService } from "@ravenhill/shiki-core";
 // Create a service with optional custom retry handler
 const shikiService = createShikiHighlighterService({
     retry: myRetryHandler, // Optional
-    warn: customWarnFn,    // Optional
+    warn: customWarnFn, // Optional
     defaultTheme: "catppuccin-latte", // Optional
     initialLanguages: ["javascript", "python"], // Optional
 });
 
 // Use it for rendering
 const html = await shikiService.highlightToHtml({
-    code: 'console.log("hello")',
+    code: "console.log(\"hello\")",
     language: "javascript",
 });
 ```
@@ -118,13 +119,15 @@ Import from the package root only:
 ```ts
 import {
     createShikiHighlighterService,
-    getShikiHighlighter,
-    normalizeShikiLanguage,
-    renderFallbackCodeHtml,
     DEFAULT_DARK_THEME,
     DEFAULT_LIGHT_THEME,
-    type ShikiHighlighterService,
+    escapeHtmlAttribute,
+    escapeHtmlText,
+    getShikiHighlighter,
     type HighlightToHtmlOptions,
+    normalizeShikiLanguage,
+    renderFallbackCodeHtml,
+    type ShikiHighlighterService,
     type ShikiRetry,
     type ShikiRetryContext,
 } from "@ravenhill/shiki-core";
@@ -165,6 +168,30 @@ npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken
 pnpm --dir packages/shiki-core publish --no-git-checks
 ```
 
+## Fallback HTML Escaping
+
+Fallback rendering keeps HTML escaping context-specific:
+
+- `escapeHtmlText` escapes code text for HTML text nodes: `&`, `<`, and `>`.
+- `escapeHtmlAttribute` escapes attribute values: `&`, `<`, `>`, `"`, and `'`.
+- `escapeCodeHtml` remains available as a compatibility alias for attribute-context escaping.
+
+`renderFallbackCodeHtml` uses text-context escaping for code content and attribute-context escaping for generated class
+attributes.
+
+Fallback class rendering is defensive: class arrays may contain whitespace-heavy strings or multiple
+whitespace-separated tokens, and the renderer trims them, drops empty tokens, escapes each token for attribute context,
+and joins them with a single space. The `<pre>` element always includes the `shiki` class before any caller-provided
+classes. The inner `<code>` element includes a `class` attribute only when normalized code classes are present.
+
+The focused fallback tests combine example-based cases with `fast-check` properties for escaping and class-normalization
+invariants. Those properties assert that rendered code text does not expose raw markup delimiters or ampersands, escaped
+attribute values do not expose raw markup-sensitive characters, and normalized class attributes do not contain repeated
+whitespace.
+
+`buildPlainHtml` remains available as a deprecated compatibility alias. It accepts the same optional readonly class
+arrays as `renderFallbackCodeHtml` and delegates directly to that canonical renderer.
+
 ## Build and Package Checks
 
 Run package validation from the repository root:
@@ -173,7 +200,8 @@ Run package validation from the repository root:
 pnpm check:shiki-core
 ```
 
-That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, verifies the pack file list, validates the packed tarball from a temporary external consumer, and runs the Vitest test suite.
+That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, verifies the
+pack file list, validates the packed tarball from a temporary external consumer, and runs the Vitest test suite.
 
 `dist/` is generated output and should not be edited by hand.
 
@@ -183,7 +211,8 @@ To run only the packaged-consumer validation:
 pnpm --dir packages/shiki-core run consumer:check
 ```
 
-That command builds the package, creates a local tarball, installs it into a temporary project outside the workspace, and verifies runtime imports, TypeScript declarations, and blocked subpath imports.
+That command builds the package, creates a local tarball, installs it into a temporary project outside the workspace,
+and verifies runtime imports, TypeScript declarations, and blocked subpath imports.
 
 To run only the tests:
 
@@ -197,26 +226,30 @@ To run only the pack file checks:
 pnpm --dir packages/shiki-core run pack:check
 ```
 
-The package artifact is intentionally small: `package.json`, `README.md`, and the built `dist` entry files. Source files, tests, local build config, and agent guidance are excluded from the packed artifact.
+The package artifact is intentionally small: `package.json`, `README.md`, and the built `dist` entry files. Source
+files, tests, local build config, and agent guidance are excluded from the packed artifact.
 
 ## Design Goals
 
 - **Neutral identity**: `shiki-core` to enable reuse beyond DIBS
 - **Host-agnostic**: Pure highlighting abstractions without Astro or platform-specific coupling
 - **Publication-ready**: The package is ready for manual GitLab registry publication at `0.1.0`
-- **Root-only API**: Consumers import from `@ravenhill/shiki-core`, not package subpaths; validation checks this boundary
+- **Root-only API**: Consumers import from `@ravenhill/shiki-core`, not package subpaths; validation checks this
+  boundary
 
 ## Troubleshooting
 
 - Missing auth token: configure the project and group registry tokens locally before publishing or installing.
 - Wrong registry endpoint: use the project endpoint for publish and the group endpoint for consumer installs.
 - Duplicate version: stop and choose a new version if `0.1.0` already exists in the registry.
-- Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint mapping.
+- Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint
+  mapping.
 - Typecheck appears silent: the default script runs `tsc --noEmit`, so it may produce no output until it exits. Use
-  `pnpm --filter @ravenhill/shiki-core typecheck:diagnostics` for compiler timing and file-count diagnostics. If a
-  Codex sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission
-  limit and rerun outside the sandbox before diagnosing a source-level TypeScript failure.
-- Accidental subpath import attempt: import from `@ravenhill/shiki-core` only; subpaths are not part of the supported contract.
+  `pnpm --filter @ravenhill/shiki-core typecheck:diagnostics` for compiler timing and file-count diagnostics. If a Codex
+  sandbox run fails with `EPERM` under `node_modules/.pnpm`, treat it as an execution-environment permission limit and
+  rerun outside the sandbox before diagnosing a source-level TypeScript failure.
+- Accidental subpath import attempt: import from `@ravenhill/shiki-core` only; subpaths are not part of the supported
+  contract.
 
 ## Implementation Status
 

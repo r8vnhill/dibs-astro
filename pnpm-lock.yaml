@@ -226,6 +226,9 @@ importers:
         specifier: ^3.9.1
         version: 3.13.0
     devDependencies:
+      fast-check:
+        specifier: ^4.5.3
+        version: 4.5.3
       publint:
         specifier: ^0.3.19
         version: 0.3.19
