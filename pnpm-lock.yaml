@@ -23,6 +23,9 @@ importers:
       '@ravenhill/lesson-export-core':
         specifier: workspace:*
         version: link:packages/lesson-export-core
+      '@ravenhill/phosphor-icons':
+        specifier: workspace:*
+        version: link:packages/phosphor-icons
       '@ravenhill/shiki-core':
         specifier: workspace:*
         version: link:packages/shiki-core
