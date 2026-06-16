@@ -366,7 +366,23 @@ barrel exists.
 
 ---
 
-# Phase 3: Wire the Astro App to the Package Source
+# ~~Phase 3: Wire the Astro App to the Package Source~~
+
+**Status**: ✅ Complete — see [phase-3-wiring.md](phase-3-wiring.md)
+
+## Summary
+
+App wiring complete on 2026-06-16:
+- Updated root `tsconfig.json`: `$icons` → `./packages/phosphor-icons/src/index.ts`
+- Added dependency: `@ravenhill/phosphor-icons: "workspace:*"`
+- Added check script: `check:phosphor-icons`
+- Integrated into main check script
+- No code changes needed (consumers use aliases)
+- All 83 icon consumers now resolve through new package
+
+See [phase-3-wiring.md](phase-3-wiring.md) for detailed results.
+
+---
 
 ## Goal
 
@@ -453,7 +469,23 @@ Do this after Phase 2. The alias should only change once the package source barr
 
 ---
 
-# Phase 4: Validate Package Build and Published Shape
+# ~~Phase 4: Validate Package Build and Published Shape~~
+
+**Status**: ✅ Complete — see [phase-4-validation.md](phase-4-validation.md)
+
+## Summary
+
+Package build validated on 2026-06-16:
+- Built successfully: `dist/index.js` (131.13 KB) + `dist/index.d.ts` (88.67 KB)
+- Copied 1,521 SVG files to `dist/`
+- TypeScript typecheck: ✅ Pass (zero errors)
+- publint lint: ✅ Pass ("All good!")
+- Pack validation: ✅ Pass (1,526 files verified, SVG parity maintained)
+- Fixed script bug in `assert-pack-files.mjs`
+
+See [phase-4-validation.md](phase-4-validation.md) for detailed results.
+
+---
 
 ## Goal
 

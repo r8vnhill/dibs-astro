@@ -2,7 +2,7 @@
 
 **Project**: Extract Phosphor icons into `@ravenhill/phosphor-icons`\
 **Started**: 2026-06-16\
-**Current Phase**: ✅ Phase 2 (Asset Migration) — Complete
+**Current Phase**: ✅ Phase 4 (Package Build Validation) — Complete
 
 ---
 
@@ -13,9 +13,16 @@
 | **0** | Document baseline; verify current SVG contract | ✅ Complete | [phase-0-characterization.md](phase-0-characterization.md) |
 | **1** | Create package scaffold without moving files   | ✅ Complete | [phase-1-scaffold.md](phase-1-scaffold.md)                 |
 | **2** | Move SVGs; regenerate barrel                   | ✅ Complete | [phase-2-migration.md](phase-2-migration.md)               |
-| **3** | Wire Astro app to package source via alias     | ⏳ Pending  | —                                                          |
-| **4** | Validate package build and published shape     | ⏳ Pending  | —                                                          |
+| **3** | Wire Astro app to package source via alias     | ✅ Complete | [phase-3-wiring.md](phase-3-wiring.md)                     |
+| **4** | Validate package build and published shape     | ✅ Complete | [phase-4-validation.md](phase-4-validation.md)             |
 | **5** | Validate end-to-end Astro integration          | ⏳ Pending  | —                                                          |
+
+---
+
+## Progress Summary
+
+✅ **Four phases complete** — Package extracted, assets migrated, app wired, build validated\
+🚀 **One phase remaining** — End-to-end Astro integration testing
 
 ---
 

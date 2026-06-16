@@ -8,6 +8,9 @@ import { fileURLToPath } from "node:url";
 
 const execFileAsync = promisify(execFile);
 
+// Define packageRoot early so it's available to functions
+const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
 // Required files that MUST be present in the tarball
 const requiredFiles = new Set([
     "package/README.md",
@@ -47,7 +50,6 @@ const blockedFiles = [...files].filter((f) =>
 );
 
 // Check 3: SVG count parity — count src SVGs and dist SVGs
-const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const srcDir = resolve(packageRoot, "src");
 const srcSvgFiles = (await readdir(srcDir)).filter((f) => f.endsWith(".svg"));
 const srcSvgCount = srcSvgFiles.length;
