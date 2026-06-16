@@ -255,7 +255,22 @@ migration errors.
 
 ---
 
-# Phase 2: Move Assets and Regenerate the Barrel
+# ~~Phase 2: Move Assets and Regenerate the Barrel~~
+
+**Status**: ✅ Complete — see [phase-2-migration.md](phase-2-migration.md)
+
+## Summary
+
+Assets migration complete on 2026-06-16:
+- Moved 1,521 SVG files from `src/assets/img/icons/` → `packages/phosphor-icons/src/`
+- Updated generator paths in 2 files
+- Regenerated barrel: 1,521 exports in `packages/phosphor-icons/src/index.ts`
+- Deleted old app icons directory
+- SVG count parity verified: ✅ 1,521 = 1,521
+
+See [phase-2-migration.md](phase-2-migration.md) for full details.
+
+---
 
 ## Goal
 

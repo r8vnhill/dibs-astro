@@ -35,7 +35,7 @@
                 "./src/assets/*"
             ],
             "$icons": [
-                "./src/assets/img/icons/index.ts"
+                "./packages/phosphor-icons/src/index.ts"
             ],
             "$semantics": [
                 "./src/components/semantics/index.ts"

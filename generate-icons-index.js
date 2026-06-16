@@ -14,7 +14,7 @@ import { pathToFileURL } from "node:url";
 
 // Asset directories to process
 const ASSET_DIRS = {
-    icons: path.resolve("src/assets/img/icons"),
+    icons: path.resolve("packages/phosphor-icons/src"),
     logos: path.resolve("src/assets/img/logos"),
 };
 
