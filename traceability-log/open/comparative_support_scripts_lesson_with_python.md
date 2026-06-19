@@ -9,8 +9,8 @@ leaving the existing pedagogical content in `index.astro` unchanged.
 
 ## Current Status
 
-The comparative lesson file already exists at `astro-website/src/pages/notes/scripting/support-scripts/py.astro`,
-and `PythonLink` is already exported. The base lesson still needs the comparative link block, the lesson still has a
+The comparative lesson file already exists at `astro-website/src/pages/notes/scripting/support-scripts/py.astro`, and
+`PythonLink` is already exported. The base lesson still needs the comparative link block, the lesson still has a
 placeholder description, and the bibliography work is still pending.
 
 ## Scope
@@ -105,7 +105,7 @@ placeholder description, and the bibliography work is still pending.
    Then add or update a `LinksLayout` block that links to the Python comparison. Keep the route consistent with the `py`
    slug and ensure the internal href ends with `/`.
 
-6. **Run lightweight validation** _(pending)_
+6. **Run lightweight validation** _(completed)_
 
    Prefer the narrowest available check that catches Astro import and typing errors. Use one of the following, depending
    on what the project exposes:
@@ -114,7 +114,13 @@ placeholder description, and the bibliography work is still pending.
    - the subproject check command;
    - `pnpm check` only if the narrower command is unavailable or too unreliable.
 
-7. **Perform editorial and structural review** _(pending)_
+   Result: ran `node scripts/run-astro-check.mjs` from `astro-website`. The command completed diagnostics but failed
+   with existing repository-wide `ts(2307)` errors for imports from `~/assets/img/icons`. Running
+   `pnpm run generate-icons` first reported the generated icon exports were already up to date, and rerunning the same
+   Astro check produced the same missing-module errors. No new diagnostic was specific to
+   `src/pages/notes/scripting/support-scripts/py.astro` beyond the shared icon import failure.
+
+7. **Perform editorial and structural review** _(completed)_
 
    Confirm that:
 
@@ -126,14 +132,28 @@ placeholder description, and the bibliography work is still pending.
    - the comparative lesson includes no Kotlin code blocks;
    - the base lesson’s educational content was not modified.
 
-8. **Add bibliography** _(pending)_
+   Result: all checks pass.
+
+   - `py.astro` sits next to `index.astro` in `src/pages/notes/scripting/support-scripts/`, with a lowercase
+     name.
+   - The base lesson exposes the comparison through a `LinksLayout` block (`<PythonLink />`) placed after the
+     conclusions and before `ReferencesFromCatalog`.
+   - `PythonLink` is imported from the links barrel (`~/components/ui/links`); no new link component was created.
+   - The Python link resolves through `resolveLanguageHref`, which always appends a trailing `/`
+     (`/notes/scripting/support-scripts/py/`).
+   - `py.astro` contains no `KotlinBlock`; Kotlin appears only via short `KotlinInline` references used to make the
+     comparison explicit, which is consistent with the comparative intent.
+   - The base lesson's pedagogical sections are unchanged; the only edits are the `LinksLayout`/`PythonLink` imports
+     and the final link block.
+
+8. **Add bibliography** _(done)_
 
    Add or update the bibliography references needed to support the comparative lesson, keeping the existing lesson
    structure intact and using the project bibliography flow rather than ad hoc citations.
 
-9. **Replace the placeholder description** _(pending)_
+9. **Replace the placeholder description** _(completed)_
 
-   Update the `description` in `py.astro` so it states the actual lesson purpose instead of the temporary placeholder
+   Updated the `description` in `py.astro` so it states the actual lesson purpose instead of the temporary placeholder
    text.
 
 ## Relevant Files

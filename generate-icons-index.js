@@ -3,7 +3,7 @@
 // This script scans asset directories for SVG files and automatically generates
 // `index.ts` files exporting each one using PascalCase names. This allows imports like:
 //
-//   import { Copy, TerminalWindow } from "~/assets/img/icons";
+//   import { Copy, TerminalWindow } from "$icons";
 //   import { Logo, Favicon } from "~/assets/img/logos";
 //
 // Run manually with `pnpm generate-icons` or integrate into your build step.
@@ -14,7 +14,7 @@ import { pathToFileURL } from "node:url";
 
 // Asset directories to process
 const ASSET_DIRS = {
-    icons: path.resolve("packages/phosphor-icons/src"),
+    icons: path.resolve("packages/astro-icons/src"),
     logos: path.resolve("src/assets/img/logos"),
 };
 

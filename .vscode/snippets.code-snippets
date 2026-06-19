@@ -50,7 +50,7 @@
 	"NotesLayout": {
 		"body": [
 			"---",
-			"import * as icons from \"~/assets/img/icons\";",
+			"import * as icons from \"$icons\";",
 			"import NotesLayout from \"~/layouts/NotesLayout.astro\";",
 			"import ToDo from \"~/components/utils/ToDo.tsx\";",
 			"---",

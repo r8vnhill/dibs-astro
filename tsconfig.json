@@ -35,7 +35,10 @@
                 "./src/assets/*"
             ],
             "$icons": [
-                "./packages/phosphor-icons/src/index.ts"
+                "./packages/astro-icons/src/index.ts"
+            ],
+            "$icons/*": [
+                "./packages/astro-icons/src/*"
             ],
             "$semantics": [
                 "./src/components/semantics/index.ts"

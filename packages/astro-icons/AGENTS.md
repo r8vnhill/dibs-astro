@@ -1,14 +1,14 @@
-# Agent Guide: @ravenhill/phosphor-icons
+# Agent Guide: @ravenhill/astro-icons
 
 ## What is this package?
 
-`@ravenhill/phosphor-icons` is a workspace package that holds 1,521 Phosphor icon SVG files and exports them as Astro
+`@ravenhill/astro-icons` is a workspace package that holds 1,521 SVG icon files and exports them as Astro
 SVG components. It is consumed by the Astro app via the `$icons` path alias.
 
 ## Directory structure
 
 ```
-packages/phosphor-icons/
+packages/astro-icons/
   src/
     index.ts              (auto-generated barrel with 1,521 re-exports)
     svg.d.ts              (module declaration for *.svg imports)
@@ -121,7 +121,7 @@ Phase 5 by running the Astro dev server and production build.
 ### Rebuild the package
 
 ```sh
-pnpm --filter @ravenhill/phosphor-icons build
+pnpm --filter @ravenhill/astro-icons build
 ```
 
 Check that `dist/` contains:
@@ -132,7 +132,7 @@ Check that `dist/` contains:
 ### Validate the package
 
 ```sh
-pnpm --filter @ravenhill/phosphor-icons check
+pnpm --filter @ravenhill/astro-icons check
 ```
 
 This runs build, typecheck, lint, and pack validation.
@@ -140,7 +140,7 @@ This runs build, typecheck, lint, and pack validation.
 ### Test package publication
 
 ```sh
-pnpm --filter @ravenhill/phosphor-icons pack:dry-run
+pnpm --filter @ravenhill/astro-icons pack:dry-run
 ```
 
 This creates a fake tarball and lists its contents without publishing.
@@ -151,7 +151,7 @@ This creates a fake tarball and lists its contents without publishing.
 - **If pack validation fails**: Check that `dist/` was populated after build (copy-assets.mjs ran), and that the SVG
   count matches.
 - **If the Astro app can't find icons**: Check that `$icons` alias in root `tsconfig.json` points to
-  `./packages/phosphor-icons/src/index.ts`.
+  `./packages/astro-icons/src/index.ts`.
 - **If icons don't render in the browser**: The issue is likely in the Astro app's SVG pipeline, not in this package.
 
 ## References

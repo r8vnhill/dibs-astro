@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-06T17:03:47.089Z",
+  "generatedAt": "2026-06-19T14:10:40.111Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1526,8 +1526,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-08",
+      "lastModified": "2026-06-06",
       "changes": [
+        {
+          "hash": "3a1e7d9d77a31bc6554b1a4cfb38b60a6c5a8cbf",
+          "date": "2026-06-06",
+          "author": "r8vnhill",
+          "subject": "✅ feat(scripting): Add Python link and layout to support-scripts lesson"
+        },
         {
           "hash": "c8c458e85c793b67f24526188159aac9a8faa47d",
           "date": "2026-05-08",

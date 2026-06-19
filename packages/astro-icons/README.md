@@ -1,10 +1,10 @@
-# @ravenhill/phosphor-icons
+# @ravenhill/astro-icons
 
-Phosphor icon SVG assets for Ravenhill projects.
+SVG icon assets for Ravenhill Astro projects.
 
 ## Overview
 
-This package exports 1,521 Phosphor icon SVG files as Astro SVG components (`AstroComponentFactory`). It is designed for
+This package exports SVG icon files as Astro SVG components (`AstroComponentFactory`). It is designed for
 use in the Astro 5 ecosystem where `.svg` imports are natively transformed into renderable components.
 
 ## Usage
@@ -29,7 +29,7 @@ import * as icons from "$icons";
 First-party packages or external consumers can import from the published npm package:
 
 ```ts
-import { Acorn, BookOpen } from "@ravenhill/phosphor-icons";
+import { Acorn, BookOpen } from "@ravenhill/astro-icons";
 
 // Use as Astro components in Astro files, or wrap for other frameworks
 ```
@@ -47,7 +47,7 @@ import { Acorn, BookOpen } from "@ravenhill/phosphor-icons";
 
 The Astro app uses this package through the `$icons` path alias (defined in root `tsconfig.json`):
 
-- **Source**: `./packages/phosphor-icons/src/index.ts` (auto-generated barrel)
+- **Source**: `./packages/astro-icons/src/index.ts` (auto-generated barrel)
 - **Pipeline**: Astro's native SVG component transformation
 - **Import**: All components use the `$icons` alias; no code changes needed when using the package
 
@@ -55,7 +55,7 @@ The Astro app uses this package through the `$icons` path alias (defined in root
 
 External projects consuming this package use the npm-published `dist/` folder:
 
-- **Source**: `@ravenhill/phosphor-icons` from npm registry
+- **Source**: `@ravenhill/astro-icons` from npm registry
 - **Published path**: `dist/index.js` + 1,521 SVG files in `dist/`
 - **SVG compatibility**: Requires an SVG-to-component pipeline (e.g., Astro's native support, custom loaders, or wrapper
   code)

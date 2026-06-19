@@ -1,7 +1,7 @@
-import * as icons from "~/assets/img/icons";
-import Brain from "~/assets/img/icons/brain.svg";
-import NoteIcon from "~/assets/img/icons/note.svg";
-import Star from "~/assets/img/icons/star.svg";
+import * as icons from "$icons";
+import Brain from "$icons/brain.svg";
+import NoteIcon from "$icons/note.svg";
+import Star from "$icons/star.svg";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
 

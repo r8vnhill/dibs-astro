@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { generateIconsIndex } from "../../generate-icons-index.js";
 
 const ICONS_DIR = path.resolve(
-    fileURLToPath(new URL("../../packages/phosphor-icons/src", import.meta.url)),
+    fileURLToPath(new URL("../../packages/astro-icons/src", import.meta.url)),
 );
 
 const LOGOS_DIR = path.resolve(

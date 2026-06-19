@@ -1,9 +1,9 @@
 {
-    "name": "@ravenhill/phosphor-icons",
+    "name": "@ravenhill/astro-icons",
     "version": "0.1.0",
     "type": "module",
     "private": false,
-    "description": "Phosphor icon SVG assets for Ravenhill projects.",
+    "description": "SVG icon assets for Ravenhill Astro projects.",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
