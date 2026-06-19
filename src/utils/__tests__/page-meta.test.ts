@@ -331,3 +331,163 @@ describe.concurrent("buildHeadPageMeta", () => {
         );
     });
 });
+
+/**
+ * Characterization of {@link buildHeadPageMeta} using non-DIBS, Kaleido Star–inspired fixtures.
+ *
+ * The existing suite above exercises the same helper with DIBS hosts and defaults. This block
+ * intentionally avoids DIBS content to lock the behavior that the helper does not *conceptually*
+ * require any DIBS-specific values — a prerequisite for moving it into the reusable
+ * `@ravenhill/astro-head` package.
+ *
+ * These tests are behavior-preserving: they assert the current observable output of the helper, not
+ * a desired future contract.
+ */
+describe.concurrent("buildHeadPageMeta (non-DIBS characterization)", () => {
+    const KALEIDO_URL = "https://kaleido-stage.example/notes/practice/";
+    const KALEIDO_TITLE = "Sora Naegino Practice Notes";
+
+    /**
+     * Builds a {@link PageMeta} for an article using Kaleido Star–style values.
+     */
+    const buildKaleidoArticleMeta = (overrides: Partial<PageMeta> = {}): PageMeta => ({
+        type: "article",
+        canonicalUrl: KALEIDO_URL,
+        authors: [
+            { name: "Sora Naegino", url: "https://kaleido-stage.example/staff/sora-naegino" },
+            { name: "Layla Hamilton" },
+        ],
+        lastModified: "2026-03-21",
+        language: "en",
+        ...overrides,
+    });
+
+    test.each([
+        {
+            name: "trims surrounding whitespace and drops fully blank names",
+            authors: [
+                { name: "Sora Naegino" },
+                { name: "  Layla Hamilton  " },
+                { name: "" },
+            ],
+            expectedNames: ["Sora Naegino", "Layla Hamilton"],
+        },
+        {
+            name: "drops whitespace-only names",
+            authors: [{ name: "  " }, { name: "\t" }, { name: "Mia Guillem" }],
+            expectedNames: ["Mia Guillem"],
+        },
+    ])("buildHeadPageMeta trims author names and removes blank authors ($name)", (
+        { authors, expectedNames },
+    ) => {
+        const result = buildHeadPageMeta({
+            title: KALEIDO_TITLE,
+            url: KALEIDO_URL,
+            pageMeta: { type: "article", authors },
+        });
+
+        expect(result.citationAuthors).toEqual(expectedNames);
+    });
+
+    test("buildHeadPageMeta preserves author URLs for JSON-LD", () => {
+        const result = buildHeadPageMeta({
+            title: KALEIDO_TITLE,
+            url: KALEIDO_URL,
+            pageMeta: buildKaleidoArticleMeta(),
+        });
+
+        expect(result.jsonLd?.author).toEqual([
+            {
+                "@type": "Person",
+                name: "Sora Naegino",
+                url: "https://kaleido-stage.example/staff/sora-naegino",
+            },
+            { "@type": "Person", name: "Layla Hamilton" },
+        ]);
+    });
+
+    test.each([
+        { name: "missing language", language: undefined, expected: "es" },
+        { name: "empty language", language: "", expected: "es" },
+        { name: "whitespace-only language", language: "   ", expected: "es" },
+        { name: "explicit language", language: "en", expected: "en" },
+    ])(
+        "buildHeadPageMeta defaults missing or blank language to es ($name)",
+        ({ language, expected }) => {
+            const result = buildHeadPageMeta({
+                title: KALEIDO_TITLE,
+                url: KALEIDO_URL,
+                pageMeta: {
+                    type: "website",
+                    ...(language !== undefined ? { language } : {}),
+                },
+            });
+
+            expect(result.citationLanguage).toBe(expected);
+        },
+    );
+
+    test.each([
+        {
+            name: "invalid canonical URL",
+            canonicalUrl: "not a url",
+        },
+        {
+            name: "relative canonical URL",
+            canonicalUrl: "/notes/practice/",
+        },
+    ])(
+        "buildHeadPageMeta falls back to the input URL for $name",
+        ({ canonicalUrl }) => {
+            const result = buildHeadPageMeta({
+                title: KALEIDO_TITLE,
+                url: ` ${KALEIDO_URL} `,
+                pageMeta: { type: "article", canonicalUrl },
+            });
+
+            expect(result.canonicalUrl).toBe(KALEIDO_URL);
+            expect(result.jsonLd?.mainEntityOfPage).toBe(KALEIDO_URL);
+        },
+    );
+
+    test.each([
+        { name: "article", type: "article" as const, hasJsonLd: true },
+        { name: "website", type: "website" as const, hasJsonLd: false },
+    ])(
+        "buildHeadPageMeta generates JSON-LD exactly when the effective type is article ($name)",
+        ({ type, hasJsonLd }) => {
+            const result = buildHeadPageMeta({
+                title: KALEIDO_TITLE,
+                url: KALEIDO_URL,
+                pageMeta: buildKaleidoArticleMeta({ type }),
+            });
+
+            if (hasJsonLd) {
+                expect(result.jsonLd?.["@type"]).toBe("Article");
+            } else {
+                expect(result.jsonLd).toBeUndefined();
+            }
+        },
+    );
+
+    test("buildHeadPageMeta works with non-DIBS host-like fixture values", () => {
+        const result = buildHeadPageMeta({
+            title: ` ${KALEIDO_TITLE} `,
+            url: KALEIDO_URL,
+            pageMeta: buildKaleidoArticleMeta(),
+        });
+
+        expect(result.type).toBe("article");
+        expect(result.canonicalUrl).toBe(KALEIDO_URL);
+        expect(result.citationAuthors).toEqual(["Sora Naegino", "Layla Hamilton"]);
+        expect(result.citationLanguage).toBe("en");
+        expect(result.citationDate).toBe("2026-03-21");
+        expect(result.citationLastModifiedDate).toBe("2026-03-21");
+
+        expect(result.jsonLd?.["@context"]).toBe("https://schema.org");
+        expect(result.jsonLd?.headline).toBe(KALEIDO_TITLE);
+        expect(result.jsonLd?.inLanguage).toBe("en");
+        expect(result.jsonLd?.mainEntityOfPage).toBe(KALEIDO_URL);
+        expect(result.jsonLd?.dateModified).toBe("2026-03-21");
+    });
+});

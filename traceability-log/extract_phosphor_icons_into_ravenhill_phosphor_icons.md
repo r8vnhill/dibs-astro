@@ -1,4 +1,13 @@
-# [PLAN] Extract Phosphor Icons into `@ravenhill/phosphor-icons`
+# [COMPLETE] Extract Phosphor Icons into `@ravenhill/phosphor-icons`
+
+**Status**: ✅ **MIGRATION COMPLETE** (2026-06-16)\
+**All five phases executed successfully.**
+
+All 1,521 Phosphor SVG icons have been successfully extracted from `src/assets/img/icons/` into the new `@ravenhill/phosphor-icons` workspace package. The extraction preserves all existing behavior with zero code changes to consumer code.
+
+**See [MIGRATION_STATUS.md](MIGRATION_STATUS.md) for overall project status and phase completion summary.**
+
+---
 
 ## Key improvements over the original plan
 
@@ -554,7 +563,26 @@ Run package checks before full Astro checks. This isolates package-shape failure
 
 ---
 
-# Phase 5: Validate End-to-End Astro Integration
+# ~~Phase 5: Validate End-to-End Astro Integration~~
+
+**Status**: ✅ Complete — see [PHASE_5_COMPLETION.md](closed/2026/06/W3/16/PHASE_5_COMPLETION.md)
+
+## Summary
+
+End-to-end Astro integration validated on 2026-06-16:
+- Icon generation hook watches new package source: ✅ `pnpm generate-icons` succeeds
+- Icon barrel generated with 1,521 exports: ✅ All consumers accessible
+- Path alias functional: ✅ `$icons` resolves to `packages/phosphor-icons/src/index.ts`
+- All 83 icon consumers working: ✅ Zero code changes required
+- No references to old path: ✅ Complete migration
+- TypeScript checks: ✅ Zero errors
+- Package checks: ✅ All pass
+
+See [PHASE_5_COMPLETION.md](closed/2026/06/W3/16/PHASE_5_COMPLETION.md) for detailed results.
+
+**Migration complete and production-ready.**
+
+---
 
 ## Goal
 

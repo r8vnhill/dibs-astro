@@ -41,6 +41,25 @@ import { Acorn, BookOpen } from "@ravenhill/phosphor-icons";
 - **Distribution**: `dist/` contains both the re-export barrel and all SVG files
 - **SVG pipeline**: Consumers must have an SVG loader compatible with Astro's native SVG support
 
+## Consumption Model
+
+### Ravenhill Astro App (Internal)
+
+The Astro app uses this package through the `$icons` path alias (defined in root `tsconfig.json`):
+
+- **Source**: `./packages/phosphor-icons/src/index.ts` (auto-generated barrel)
+- **Pipeline**: Astro's native SVG component transformation
+- **Import**: All components use the `$icons` alias; no code changes needed when using the package
+
+### External Consumers (Publication)
+
+External projects consuming this package use the npm-published `dist/` folder:
+
+- **Source**: `@ravenhill/phosphor-icons` from npm registry
+- **Published path**: `dist/index.js` + 1,521 SVG files in `dist/`
+- **SVG compatibility**: Requires an SVG-to-component pipeline (e.g., Astro's native support, custom loaders, or wrapper
+  code)
+
 ## Building
 
 ```sh
