@@ -24,7 +24,8 @@
         "lint": "publint --strict",
         "pack:check": "node scripts/assert-pack-files.mjs --pack",
         "pack:dry-run": "npm pack --dry-run",
-        "check": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run pack:check"
+        "check": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run pack:check",
+        "test:audit-icons": "node --test scripts/test/icon-name.test.mjs scripts/test/icon-inventory.test.mjs"
     },
     "devDependencies": {
         "publint": "^0.3.19",

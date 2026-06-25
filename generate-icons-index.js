@@ -12,6 +12,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+import { toPascalCase } from "./packages/astro-icons/scripts/lib/icon-name.mjs";
+
 // Asset directories to process
 const ASSET_DIRS = {
     icons: path.resolve("packages/astro-icons/src"),
@@ -29,7 +31,12 @@ function buildStableContent(lines) {
 }
 
 function buildOutputContent(lines) {
-    return PREAMBLE + `${TIMESTAMP_PREFIX}${new Date().toISOString()}\n` + lines.join("\n") + "\n";
+    return (
+        PREAMBLE +
+        `${TIMESTAMP_PREFIX}${new Date().toISOString()}\n` +
+        lines.join("\n") +
+        "\n"
+    );
 }
 
 function normalizeGeneratedContent(content) {
@@ -38,19 +45,6 @@ function normalizeGeneratedContent(content) {
 
 function hasGeneratedTimestamp(content) {
     return content.includes(TIMESTAMP_PREFIX);
-}
-
-/**
- * Converts a filename like `copy-icon.svg` or `terminal_window.svg` to PascalCase: CopyIcon,
- * TerminalWindow
- *
- * @param {string} filename - The SVG filename (e.g., "copy-icon.svg")
- * @returns {string} - PascalCase version without extension
- */
-function toPascalCase(filename) {
-    return filename
-        .replace(/\.svg$/, "") // Remove .svg extension
-        .replace(/(^\w|[-_]\w)/g, (match) => match.replace(/[-_]/, "").toUpperCase());
 }
 
 /**
@@ -86,9 +80,9 @@ export function generateIconsIndex(options = {}) {
         : null;
 
     if (
-        currentContent !== null
-        && hasGeneratedTimestamp(currentContent)
-        && normalizeGeneratedContent(currentContent) === nextStableContent
+        currentContent !== null &&
+        hasGeneratedTimestamp(currentContent) &&
+        normalizeGeneratedContent(currentContent) === nextStableContent
     ) {
         if (!quiet) {
             console.log(
@@ -111,7 +105,8 @@ export function generateIconsIndex(options = {}) {
     return { changed: true, count: files.length };
 }
 
-const invokedDirectly = import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
+const invokedDirectly =
+    import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
 
 if (invokedDirectly) {
     generateIconsIndex({ assetType: "icons" });
