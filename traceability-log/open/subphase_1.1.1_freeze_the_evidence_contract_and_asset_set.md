@@ -1,9 +1,10 @@
 # [PLAN] Subphase 1.1.1 --- Freeze the Evidence Contract and Asset Set
 
-Status: Cycle 1 complete. `packages/astro-icons/LICENSES/third-party-icons.json` exists with the nine non-Phosphor
-asset records derived from `migration/icon-inventory.json` (sorted lexically by `file`, export names copied verbatim,
-`phosphor.inventoryCount` = 1512). All SHA-256 fields remain `null`, deferred to Cycle 2. Verified with a temporary,
-uncommitted Node check (not part of the diff). Cycles 2 and 3 remain open.
+Status: Cycles 1 and 2 complete. `packages/astro-icons/LICENSES/third-party-icons.json` exists with the nine
+non-Phosphor asset records derived from `migration/icon-inventory.json` (sorted lexically by `file`, export names
+copied verbatim, `phosphor.inventoryCount` = 1512). Every `localArtifact.sha256` is now a lowercase 64-character
+hexadecimal digest of the current raw `src/<file>` bytes; no other field changed. Verified with temporary,
+uncommitted Node checks (not part of the diff). Cycle 3 remains open.
 
 ## Summary
 
@@ -263,7 +264,7 @@ unresolved.
 
 ---
 
-# Cycle 2 — Bind Records to the Current SVG Bytes
+# Cycle 2 — Bind Records to the Current SVG Bytes [DONE]
 
 ## Goal
 

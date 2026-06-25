@@ -6,7 +6,7 @@
             "exportName": "Bash",
             "file": "bash.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "96e7ccccfc44e40d442983108ffde5a2af722aba1eca87cd367851f7f1da7477"
             },
             "notes": [],
             "provenance": {
@@ -57,7 +57,7 @@
             "exportName": "Csv",
             "file": "csv.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "d262e6738cad00d69941ca8e961341440e92e3c6c2496d49aa42a32b913eb0e0"
             },
             "notes": [],
             "provenance": {
@@ -108,7 +108,7 @@
             "exportName": "Json",
             "file": "json.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "523bd811a8948fd6de79c9c1f870457342fd57c3b844bf4f04de2e46c21d0c93"
             },
             "notes": [],
             "provenance": {
@@ -159,7 +159,7 @@
             "exportName": "Kotlin",
             "file": "kotlin.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "77bf09cf6a8a2b0c1ab675786596e67826d9af64958b1842b9d063996224a229"
             },
             "notes": [],
             "provenance": {
@@ -210,7 +210,7 @@
             "exportName": "NushellLogo",
             "file": "nushell-logo.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "16abfde8df25d79bca381a7cff2d42663ca572fed541111ca0c7f0fd47e41ee1"
             },
             "notes": [],
             "provenance": {
@@ -261,7 +261,7 @@
             "exportName": "Powershell",
             "file": "powershell.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "b93fab323bee0f92743402d573e484e242741181e306b9e3330540e76e11da2b"
             },
             "notes": [],
             "provenance": {
@@ -312,7 +312,7 @@
             "exportName": "Python",
             "file": "python.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "b3e41f7418673c1faff250beb41d04155f785befa16240ed870af2b9d6a87939"
             },
             "notes": [],
             "provenance": {
@@ -363,7 +363,7 @@
             "exportName": "Scala",
             "file": "scala.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "3547b7cc578a8b026b0213e19f0b345e59f3c7d92d3a0e0dd474c421da84e0b1"
             },
             "notes": [],
             "provenance": {
@@ -414,7 +414,7 @@
             "exportName": "Xml",
             "file": "xml.svg",
             "localArtifact": {
-                "sha256": null
+                "sha256": "f1af0508aff2ec7556363ce41b0b538b4ee71e9deba34444585b0a7da3f8f438"
             },
             "notes": [],
             "provenance": {
