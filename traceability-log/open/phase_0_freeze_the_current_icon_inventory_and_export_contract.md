@@ -22,7 +22,19 @@ or process dependencies, derives counts from the canonical `icons` array, detect
 name, and raises `IconInventoryError` with stable codes (`MISSING_CUSTOM_ICON`, `EXPORT_NAME_COLLISION`,
 `INVALID_INVENTORY_COUNTS`). BDD-style coverage lives in
 `packages/astro-icons/scripts/test/icon-inventory.test.mjs` and is wired into `test:audit-icons`
-(16 tests passing total). Cycles 3-4 (filesystem/CLI adapters, frozen contract artifact) are still pending.
+(16 tests passing total).
+
+Cycle 3 is complete: `packages/astro-icons/scripts/audit-icons.mjs` is a thin orchestration layer exposing
+`scanSvgDirectory`, `serializeInventory`, and `runAudit` for testing, plus a `main()` CLI entry point. It resolves
+`src/` and `migration/icon-inventory.json` relative to the script module (not `process.cwd()`), scans only direct
+`.svg` entries non-recursively, serializes the frozen-artifact schema with two-space indentation and exactly one
+trailing line feed, and compares `--check` against the complete committed bytes rather than reparsing JSON. CLI
+argument parsing rejects missing mode, both modes together, and unknown arguments. BDD-style coverage with One
+Piece-themed temporary fixtures lives in `packages/astro-icons/scripts/test/audit-icons.test.mjs` and is wired into
+`test:audit-icons` (24 tests passing total). `package.json` now also exposes `audit-icons` (`--check`) and
+`audit-icons:update` (`--write`). Running `pnpm --filter @ravenhill/astro-icons audit-icons` against the real source
+correctly fails with a missing-artifact diagnostic, since `migration/icon-inventory.json` has not been generated yet.
+Cycle 4 (freeze and verify the repository contract) is still pending.
 
 ## Scope Classification
 
@@ -449,7 +461,7 @@ Do not expose stack traces as normal CLI diagnostics.
 
 ---
 
-# Cycle 3 — Add Deterministic Filesystem, Serialization, and CLI Adapters
+# Cycle 3 — Add Deterministic Filesystem, Serialization, and CLI Adapters [DONE]
 
 ## Goal
 
