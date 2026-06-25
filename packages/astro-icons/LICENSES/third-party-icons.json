@@ -1,0 +1,486 @@
+{
+    "assets": [
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Bash",
+            "file": "bash.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Csv",
+            "file": "csv.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Json",
+            "file": "json.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Kotlin",
+            "file": "kotlin.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "NushellLogo",
+            "file": "nushell-logo.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Powershell",
+            "file": "powershell.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Python",
+            "file": "python.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Scala",
+            "file": "scala.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        },
+        {
+            "assetType": null,
+            "displayName": null,
+            "exportName": "Xml",
+            "file": "xml.svg",
+            "localArtifact": {
+                "sha256": null
+            },
+            "notes": [],
+            "provenance": {
+                "match": {
+                    "details": null,
+                    "evidenceStatus": "unresolved",
+                    "method": null
+                },
+                "retrievalSource": {
+                    "revision": null,
+                    "suppliedByMaintainer": false,
+                    "url": null
+                },
+                "upstreamSource": {
+                    "project": null,
+                    "revision": null,
+                    "url": null
+                }
+            },
+            "redistribution": {
+                "conclusion": "undetermined",
+                "rationale": null
+            },
+            "releaseDecision": {
+                "action": "pending",
+                "riskAcceptance": null
+            },
+            "rights": {
+                "copyright": {
+                    "basis": null,
+                    "concludedLicense": "NOASSERTION",
+                    "licenseFile": null,
+                    "sourceUrl": null,
+                    "verifiedAt": null
+                },
+                "trademark": {
+                    "applies": "unknown",
+                    "notes": null,
+                    "owner": null,
+                    "policyUrl": null,
+                    "verifiedAt": null
+                }
+            }
+        }
+    ],
+    "inventoryFile": "migration/icon-inventory.json",
+    "packageCodeCopyrightHolder": "Ignacio Slater-Muñoz",
+    "phosphor": {
+        "copyright": {
+            "concludedLicense": "NOASSERTION",
+            "copyrightNotice": null,
+            "licenseFile": null,
+            "licenseSourceUrl": null
+        },
+        "inventoryCount": 1512,
+        "project": "Phosphor Icons",
+        "source": {
+            "commit": null,
+            "evidence": null,
+            "evidenceStatus": "unresolved",
+            "package": null,
+            "url": null,
+            "verifiedAt": null,
+            "version": null
+        }
+    },
+    "reviewStatus": "in-progress",
+    "schemaVersion": 1
+}

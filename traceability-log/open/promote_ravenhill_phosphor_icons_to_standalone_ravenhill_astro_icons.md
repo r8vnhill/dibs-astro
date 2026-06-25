@@ -1,6 +1,6 @@
 # [PLAN] Promote `@ravenhill/phosphor-icons` to Standalone `@ravenhill/astro-icons`
 
-## Phase 0: Freeze the Source Contract
+## Phase 0: Freeze the Source Contract [DONE]
 
 ### Goal
 
