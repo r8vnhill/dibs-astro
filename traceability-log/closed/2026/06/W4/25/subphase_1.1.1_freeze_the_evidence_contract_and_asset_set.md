@@ -1,11 +1,5 @@
 # [PLAN] Subphase 1.1.1 --- Freeze the Evidence Contract and Asset Set
 
-Status: Cycles 1 and 2 complete. `packages/astro-icons/LICENSES/third-party-icons.json` exists with the nine
-non-Phosphor asset records derived from `migration/icon-inventory.json` (sorted lexically by `file`, export names
-copied verbatim, `phosphor.inventoryCount` = 1512). Every `localArtifact.sha256` is now a lowercase 64-character
-hexadecimal digest of the current raw `src/<file>` bytes; no other field changed. Verified with temporary,
-uncommitted Node checks (not part of the diff). Cycle 3 remains open.
-
 ## Summary
 
 Create the initial `third-party-icons.json` evidence manifest directly from the frozen Phase 0 icon inventory.
@@ -353,7 +347,7 @@ Do not change any other evidence field.
 
 ---
 
-# Cycle 3 — Normalize and Verify the Frozen Skeleton
+# Cycle 3 — Normalize and Verify the Frozen Skeleton [DONE]
 
 ## Goal
 

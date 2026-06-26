@@ -225,7 +225,7 @@ It must not be treated as the completed Subphase 1.1 artifact.
 
 ---
 
-# Phase 1 — Freeze the Evidence Contract and Asset Set
+# Phase 1 — Freeze the Evidence Contract and Asset Set [DONE]
 
 ## Goal
 
