@@ -390,7 +390,16 @@ Run after README update.
 
 ---
 
-# Phase 1.3.4 --- Update Package Publication Metadata
+# Phase 1.3.4 --- Update Package Publication Metadata [DONE]
+
+## Current Status
+
+[DONE] `packages/astro-icons/package.json` now declares `license: "BSD-2-Clause"` and includes `LICENSE` and `LICENSES`
+in the package `files` allowlist. `test:licenses` passed, `licenses:check` passed, and protected diffs were empty for
+README, AGENTS, license text files, generated notices, frozen manifest, SVG/source files, and inventory.
+
+`pnpm --filter @ravenhill/astro-icons lint` failed before package analysis because `publint` could not be resolved from
+`packages/astro-icons/node_modules/publint/src/cli.js`; no lint finding was produced for this phase's metadata change.
 
 ## Goal
 
