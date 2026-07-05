@@ -203,6 +203,59 @@ This order surfaces permission blockers before documentation or automation is bu
 
 ---
 
+# Findings — Phosphor Corpus Lineage
+
+## Established repository evidence
+
+- Import commit `1833b9e65a91917b565da9dae0df29c1642448a2`, dated 2026-03-19, documents a manual copy of the Phosphor
+  `regular` variant from `B:\Downloads\phosphor-icons` into the `phosphor-icons/core` layout.
+- The license notice committed alongside that import contains `Copyright (c) 2020-2024 Phosphor Icons`.
+- No commit or lockfile ever pinned a `@phosphor-icons/core` package dependency.
+- Subsequent commits moved or renamed the Phosphor assets but did not alter their SVG bytes.
+
+## External comparison method
+
+- Ten official `phosphor-icons/core` tags were resolved to immutable commit SHAs and downloaded as commit-addressed
+  archives; candidate regular-weight filenames were normalized (e.g. `acorn-regular.svg` → `acorn.svg`) against the
+  1,512 local Phosphor-group filenames read from `migration/icon-inventory.json`.
+- Every candidate received a complete normalized filename-set comparison (Stage A); candidates whose set matched exactly
+  advanced to a complete, unsampled byte-by-byte comparison of all 1,512 files (Stage B).
+
+## Candidates investigated
+
+- 10 candidate revisions were compared by filename set; 8 were rejected as `STAGE_A_FILENAME_SET_MISMATCH`.
+- 2 candidates reached an exact filename-set match: `a2a0bfd7cb66d08a` (`assets/regular`) and `a5e861b1bd29ab95`
+  (`raw/regular`). Both resolved to the same representative commit `036f8574bbfc7b74bb9220ee6c8e8a02103e9dc4`.
+- Complete byte comparison (3,024 logical comparisons, no sampling) found: `assets/regular` matched 0 of 1,512 files;
+  `raw/regular` matched 1,365 of 1,512 files, leaving 147 local files unexplained.
+
+## Conclusion
+
+Lineage is **unresolved** (`reasonCode: BYTE_MISMATCHES_UNEXPLAINED`). No candidate's corpus fully matches the local
+1,512-file corpus, so no exact commit, equivalent revision set, or positively-evidenced mixed-corpus lineage can be
+asserted under the DDT lineage matrix defined in `subphase_1.1.2_resolve_the_phosphor_corpus_lineage.md`.
+
+## Downstream consequence
+
+- Phase 1 records Phosphor provenance as `unresolved` rather than blocking on an unproven exact revision; no upstream
+  package, version, or commit is guessed in `packages/astro-icons/LICENSES/third-party-icons.json`.
+- Subphase 1.3 may safely copy the MIT notice text captured below as the applicable Phosphor license notice, but it must
+  not cite an exact upstream tag, version, or immutable commit URL as the source of that text, since none is verified.
+
+## Independent license conclusion
+
+The MIT conclusion is supported independently of exact corpus lineage: the license notice was committed
+contemporaneously with the original import and is unaffected by which upstream revision (if any) exactly matches the
+current 1,512-file corpus. `concludedLicense` is recorded as `"MIT"` with `copyrightNotice`
+`"Copyright (c) 2020-2024 Phosphor Icons"`; `licenseSourceUrl` remains `null` because no exact upstream revision is
+verified to link to.
+
+## Package-code holder
+
+`Ignacio Slater-Muñoz`.
+
+---
+
 # Subphase 1.2 — Define the Machine-Readable Attribution Contract
 
 ## Goal
@@ -754,4 +807,5 @@ The following remain outside Phase 1:
 [2]: https://www.python.org/psf/trademarks/?utm_source=chatgpt.com "PSF Trademark Usage Policy | Python Software Foundation"
 [3]: https://github.com/phosphor-icons/core/blob/main/LICENSE?utm_source=chatgpt.com "MIT License - phosphor-icons/core"
 [4]: https://docs.npmjs.com/cli/v10/configuring-npm/package-json/?utm_source=chatgpt.com "package.json"
+
 [5]: https://spdx.org/licenses/BSD-2-Clause.html?utm_source=chatgpt.com "BSD 2-Clause \"Simplified\ "License"

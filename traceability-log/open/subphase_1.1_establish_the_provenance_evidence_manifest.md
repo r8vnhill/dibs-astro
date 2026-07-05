@@ -296,7 +296,7 @@ And it cannot satisfy the subphase acceptance criteria
 
 ---
 
-# Phase 2 — Resolve the Phosphor Corpus Lineage
+# Phase 2 — Resolve the Phosphor Corpus Lineage [DONE]
 
 ## Goal
 

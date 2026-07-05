@@ -464,8 +464,8 @@
     "packageCodeCopyrightHolder": "Ignacio Slater-Muñoz",
     "phosphor": {
         "copyright": {
-            "concludedLicense": "NOASSERTION",
-            "copyrightNotice": null,
+            "concludedLicense": "MIT",
+            "copyrightNotice": "Copyright (c) 2020-2024 Phosphor Icons",
             "licenseFile": null,
             "licenseSourceUrl": null
         },
@@ -473,11 +473,11 @@
         "project": "Phosphor Icons",
         "source": {
             "commit": null,
-            "evidence": null,
+            "evidence": "Ten phosphor-icons/core candidate revisions were compared against the local 1,512-file corpus. Two candidates (assets/regular, raw/regular) matched the local normalized filename set exactly and advanced to a complete byte comparison against representative commit 036f8574bbfc7b74bb9220ee6c8e8a02103e9dc4: assets/regular matched 0 of 1,512 files and raw/regular matched 1,365 of 1,512 files, leaving 147 local files unexplained by either exact-set candidate. Neither candidate fully matched, so no exact or equivalent upstream revision is asserted.",
             "evidenceStatus": "unresolved",
             "package": null,
-            "url": null,
-            "verifiedAt": null,
+            "url": "https://github.com/phosphor-icons/core",
+            "verifiedAt": "2026-07-05T00:00:00Z",
             "version": null
         }
     },

@@ -1,4 +1,4 @@
-# [PLAN] Subphase 1.1.2 --- Resolve the Phosphor Corpus Lineage
+# [DONE] Subphase 1.1.2 --- Resolve the Phosphor Corpus Lineage
 
 ## Summary
 
@@ -388,7 +388,20 @@ And the nearest candidates and their deltas are documented
 
 ---
 
-# Phase 1.1.2.3 — Record the Evidence and Preserve Repository Purity
+# Phase 1.1.2.3 — Record the Evidence and Preserve Repository Purity [DONE]
+
+## Current Status
+
+Phase 1.1.2.3 is complete; see
+`traceability-log/closed/2026/07/W1/05/phase_1.1.2.3_record_phosphor_evidence.md` for the full cycle record. The
+manifest's `phosphor.source` and `phosphor.copyright` fields were updated to the unresolved-lineage contract
+(`evidenceStatus: "unresolved"`, `package`/`version`/`commit` null, `url` pointing to `phosphor-icons/core`) and the
+independently supported MIT conclusion (`concludedLicense: "MIT"`, notice `Copyright (c) 2020-2024 Phosphor Icons`).
+A `## Findings — Phosphor Corpus Lineage` section was appended to
+`traceability-log/open/phase_1_establish_licensing_provenance_and_attribution.md`. Only those two files changed;
+`reviewStatus` remains `"in-progress"` and `inventoryCount` remains 1,512. This closes Subphase 1.1.2: the Phosphor
+corpus lineage remains unresolved, and the MIT license conclusion is the strongest supportable, independently
+verified claim.
 
 ## Goal
 
