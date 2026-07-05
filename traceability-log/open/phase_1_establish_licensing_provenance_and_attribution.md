@@ -256,6 +256,89 @@ verified to link to.
 
 ---
 
+# Findings — Non-Phosphor Asset Provenance
+
+## Investigation Method
+
+These findings transcribe the completed Phase 3.2 research pass (see
+`traceability-log/open/phase_3_verify_the_nine_non_phosphor_assets.md`) into the manifest and this narrative record.
+That pass used an external research hand-off (a self-contained brief was drafted and sent for research, and the
+response was relayed back and incorporated) rather than direct fetches performed by the agent. No raw upstream SVG
+has been fetched and no byte or normalized-content comparison against a local file has been performed for any of the
+nine assets. Consequently every conclusion below is intentionally conservative: `NOASSERTION` for copyright unless a
+page-specific license was quoted, and no evidence status is promoted to `verified`. The Phase 2 Research Handoff
+Checklist (fetch, byte-compare, normalize, structurally compare) remains the gate for any future pass that wants to
+strengthen this evidence; it is not executed here.
+
+## Batch A — Brand-Controlled Assets
+
+- **`powershell`** — no local fingerprint to anchor on; matched only by visual/project association to a Wikimedia
+  candidate and the official PowerShell/Microsoft brand context. `metadata-only`, `partially-verified`. Microsoft's
+  trademark policy applies to the PowerShell mark independently of any code license.
+- **`python`** — the local file's Inkscape `sodipodi:docname="python-logo-only.svg"` matches the exact filename
+  convention used on the Python Software Foundation's brand-assets page. `metadata-only`, `partially-verified`. PSF
+  trademark terms apply separately from any code license.
+- **`kotlin`** — the local gradient stops match the published Kotlin brand gradient. `metadata-only`,
+  `partially-verified`. Kotlin Foundation/JetBrains brand-asset constraints apply separately from any code license.
+- **`scala`** — cross-batch-corrected: the local file's own `SVG Repo` upload comment matches an exact SVG Repo asset
+  page, so this asset is treated as aggregator-sourced rather than brand-controlled for match-method purposes, even
+  though the mark itself is Scala's brand. `metadata-only`, `partially-verified`.
+
+## Batch B — Project and Community Marks
+
+- **`nushell-logo`** — the local file is a VTracer lossy auto-trace (confirmed via embedded generator metadata), so
+  the match method is capped at `visual-match` against a Wikimedia candidate; it can never be byte- or
+  structurally-identical to a real source vector. `partially-verified`.
+- **`json`** — the local `<title>JSON logo</title>` matches the well-known JSON mark family, but the exact vector's
+  lineage to a specific rights holder (original author vs. mirror vs. aggregator repost) is not established.
+  `metadata-only`, `partially-verified`.
+- **`bash`** — cross-batch-corrected: like `scala`, the local file's own `SVG Repo` upload comment matches an exact
+  SVG Repo asset page, so this asset is treated as aggregator-sourced. `metadata-only`, `partially-verified`.
+
+## Batch C — Generic and Aggregator-Sourced Icons
+
+- **`csv`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match
+  is not established. `metadata-only`, `unresolved`.
+- **`xml`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match
+  is not established. `metadata-only`, `unresolved`.
+
+An aggregator-style candidate page being visually similar is not sufficient to claim verified source status; both
+assets remain `unresolved` until a raw/local comparison is performed.
+
+## Cross-Batch Correction
+
+`bash` and `scala` are both classified as aggregator-sourced (`metadata-only` match method) rather than by their
+original batch assignment, because their local files carry an `SVG Repo` upload comment that matches an exact SVG
+Repo asset page. `nushell-logo` remains capped at `visual-match` because it is a machine-generated auto-trace, not an
+authored vector, and so cannot be byte- or structurally-compared to any source.
+
+## Redistribution Conclusions
+
+```text
+permission-required: python, kotlin, powershell
+undetermined: bash, scala, nushell-logo, json, csv, xml
+```
+
+The three `permission-required` assets are brand/trademark-controlled marks whose code-adjacent licenses (if any)
+do not cover logo redistribution. The six `undetermined` assets have no confirmed page-specific license and no
+confirmed rights holder for the exact local file.
+
+## Outstanding Maintainer Decisions
+
+For all nine assets, `releaseDecision.action` remains `pending`. Before any asset can move to `include` or `exclude`:
+
+- **`powershell`, `python`, `kotlin`** — need both an exact byte/structural comparison against the candidate source
+  and explicit trademark clearance from the respective brand owner (Microsoft, PSF, Kotlin Foundation/JetBrains).
+- **`scala`, `bash`, `nushell-logo`, `json`** — need an exact byte or normalized-content comparison against the
+  candidate source (or, for `nushell-logo`, confirmation that a `visual-match` ceiling is an acceptable evidence
+  level for a maintainer decision).
+- **`csv`, `xml`** — need the exact source page confirmed (not just a plausible style match) before any further
+  evidence work is meaningful.
+
+No maintainer risk acceptance has been created for any asset.
+
+---
+
 # Subphase 1.2 — Define the Machine-Readable Attribution Contract
 
 ## Goal

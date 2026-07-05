@@ -388,7 +388,23 @@ Then the older source revision governs the recorded provenance
 
 ---
 
-# Phase 3 — Verify the Nine Non-Phosphor Assets
+# [DONE] Phase 3 — Verify the Nine Non-Phosphor Assets
+
+## Current Status
+
+- All nine non-Phosphor assets were transcribed into the provenance manifest from the completed Phase 3.2 evidence
+  table.
+- Match-method distribution: 8 `metadata-only`, 1 `visual-match` (`nushell-logo`, capped due to VTracer auto-trace
+  metadata).
+- Evidence-status distribution: 7 `partially-verified`, 2 `unresolved` (`csv`, `xml`).
+- Redistribution conclusions: 3 `permission-required` (`powershell`, `python`, `kotlin`) and 6 `undetermined` (`bash`,
+  `scala`, `nushell-logo`, `json`, `csv`, `xml`).
+- Cross-batch corrections: `bash` and `scala` are treated as aggregator-sourced records based on local SVG Repo upload
+  metadata and exact candidate pages.
+- All nine `releaseDecision.action` values remain `pending`; no raw byte/structural comparison was performed in this
+  pass, and no maintainer risk acceptance was created.
+- See `traceability-log/open/phase_1_establish_licensing_provenance_and_attribution.md`,
+  `Findings — Non-Phosphor Asset Provenance`, for the audit narrative.
 
 ## Goal
 

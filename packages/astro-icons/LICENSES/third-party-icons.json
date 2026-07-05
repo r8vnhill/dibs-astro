@@ -8,17 +8,19 @@
             "localArtifact": {
                 "sha256": "96e7ccccfc44e40d442983108ffde5a2af722aba1eca87cd367851f7f1da7477"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local file's own SVG Repo upload comment matched to an exact SVG Repo asset page; no byte fetch performed.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://www.svgrepo.com/svg/376359/bash"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -28,7 +30,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Aggregator page found but exact local-file byte match and trademark/license clearance are unverified."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -39,7 +41,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://www.svgrepo.com/svg/376359/bash",
                     "verifiedAt": null
                 },
                 "trademark": {
@@ -59,17 +61,19 @@
             "localArtifact": {
                 "sha256": "d262e6738cad00d69941ca8e961341440e92e3c6c2496d49aa42a32b913eb0e0"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
+                    "details": "Plausible SVG Repo candidate page found by visual/style search; exact local-file match not established.",
                     "evidenceStatus": "unresolved",
-                    "method": null
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://www.svgrepo.com/svg/161804/csv"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -79,7 +83,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Candidate aggregator page found by style search only; exact local-file match and license are unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -90,7 +94,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://www.svgrepo.com/svg/161804/csv",
                     "verifiedAt": null
                 },
                 "trademark": {
@@ -110,17 +114,19 @@
             "localArtifact": {
                 "sha256": "523bd811a8948fd6de79c9c1f870457342fd57c3b844bf4f04de2e46c21d0c93"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local <title>JSON logo</title> matches the known JSON mark family; exact vector lineage to a specific rights holder not established.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://commons.wikimedia.org/wiki/File:JSON_vector_logo.svg"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -130,7 +136,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Candidate mirror found but original rights holder and license are unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -141,7 +147,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://commons.wikimedia.org/wiki/File:JSON_vector_logo.svg",
                     "verifiedAt": null
                 },
                 "trademark": {
@@ -161,27 +167,29 @@
             "localArtifact": {
                 "sha256": "77bf09cf6a8a2b0c1ab675786596e67826d9af64958b1842b9d063996224a229"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local gradient stops match the published Kotlin brand gradient; no byte fetch performed.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://kotlinlang.org/docs/kotlin-brand-assets.html"
                 },
                 "upstreamSource": {
-                    "project": null,
+                    "project": "Kotlin Foundation",
                     "revision": null,
-                    "url": null
+                    "url": "https://kotlinlang.org/docs/kotlin-brand-assets.html"
                 }
             },
             "redistribution": {
-                "conclusion": "undetermined",
-                "rationale": null
+                "conclusion": "permission-required",
+                "rationale": "Kotlin Foundation brand-asset usage constraints apply separately from any code license; trademark clearance is unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -192,14 +200,14 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://kotlinlang.org/docs/kotlin-brand-assets.html",
                     "verifiedAt": null
                 },
                 "trademark": {
-                    "applies": "unknown",
-                    "notes": null,
-                    "owner": null,
-                    "policyUrl": null,
+                    "applies": "yes",
+                    "notes": "Kotlin Foundation/JetBrains brand-asset usage constraints; clearance not confirmed for this exact asset.",
+                    "owner": "Kotlin Foundation",
+                    "policyUrl": "https://kotlinlang.org/docs/kotlin-brand-assets.html",
                     "verifiedAt": null
                 }
             }
@@ -212,17 +220,19 @@
             "localArtifact": {
                 "sha256": "16abfde8df25d79bca381a7cff2d42663ca572fed541111ca0c7f0fd47e41ee1"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local file is a VTracer lossy auto-trace (confirmed via embedded generator metadata); capped at visual comparison against a Wikimedia candidate, never byte/structural.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "visual-match"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://commons.wikimedia.org/wiki/File:Logo_of_nushell_shell.svg"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -232,7 +242,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Candidate mirror found but exact license (CC-BY-SA-4.0 claimed) and byte match are unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -243,7 +253,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Logo_of_nushell_shell.svg",
                     "verifiedAt": null
                 },
                 "trademark": {
@@ -263,17 +273,19 @@
             "localArtifact": {
                 "sha256": "b93fab323bee0f92743402d573e484e242741181e306b9e3330540e76e11da2b"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "No local fingerprint; matched only by visual/project association to Wikimedia and PowerShell project candidates.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://commons.wikimedia.org/wiki/File:Powershell_128.svg"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -282,8 +294,8 @@
                 }
             },
             "redistribution": {
-                "conclusion": "undetermined",
-                "rationale": null
+                "conclusion": "permission-required",
+                "rationale": "Microsoft trademark policy applies to the PowerShell mark separately from any code license; clearance is unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -294,14 +306,14 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Powershell_128.svg",
                     "verifiedAt": null
                 },
                 "trademark": {
-                    "applies": "unknown",
-                    "notes": null,
-                    "owner": null,
-                    "policyUrl": null,
+                    "applies": "yes",
+                    "notes": "Microsoft trademark policy; clearance not confirmed for this exact asset.",
+                    "owner": "Microsoft Corporation",
+                    "policyUrl": "https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks",
                     "verifiedAt": null
                 }
             }
@@ -314,27 +326,29 @@
             "localArtifact": {
                 "sha256": "b3e41f7418673c1faff250beb41d04155f785befa16240ed870af2b9d6a87939"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local Inkscape sodipodi:docname=\"python-logo-only.svg\" matches the PSF brand-assets filename convention; no byte fetch performed.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://www.python.org/community/logos/"
                 },
                 "upstreamSource": {
-                    "project": null,
+                    "project": "Python Software Foundation",
                     "revision": null,
-                    "url": null
+                    "url": "https://www.python.org/community/logos/"
                 }
             },
             "redistribution": {
-                "conclusion": "undetermined",
-                "rationale": null
+                "conclusion": "permission-required",
+                "rationale": "PSF trademark/logo terms apply separately from any code license; clearance is unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -345,14 +359,14 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://www.python.org/community/logos/",
                     "verifiedAt": null
                 },
                 "trademark": {
-                    "applies": "unknown",
-                    "notes": null,
-                    "owner": null,
-                    "policyUrl": null,
+                    "applies": "yes",
+                    "notes": "PSF trademark policy; clearance not confirmed for this exact asset.",
+                    "owner": "Python Software Foundation",
+                    "policyUrl": "https://www.python.org/psf/trademarks",
                     "verifiedAt": null
                 }
             }
@@ -365,17 +379,19 @@
             "localArtifact": {
                 "sha256": "3547b7cc578a8b026b0213e19f0b345e59f3c7d92d3a0e0dd474c421da84e0b1"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
-                    "evidenceStatus": "unresolved",
-                    "method": null
+                    "details": "Local file's own SVG Repo upload comment matched to an exact SVG Repo asset page; no byte fetch performed.",
+                    "evidenceStatus": "partially-verified",
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://www.svgrepo.com/svg/508943/scala"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -385,7 +401,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Aggregator page found but exact local-file byte match and trademark/license clearance are unverified."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -396,7 +412,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://www.svgrepo.com/svg/508943/scala",
                     "verifiedAt": null
                 },
                 "trademark": {
@@ -416,17 +432,19 @@
             "localArtifact": {
                 "sha256": "f1af0508aff2ec7556363ce41b0b538b4ee71e9deba34444585b0a7da3f8f438"
             },
-            "notes": [],
+            "notes": [
+                "Provenance from external research pass; not independently byte-verified."
+            ],
             "provenance": {
                 "match": {
-                    "details": null,
+                    "details": "Plausible SVG Repo candidate page found by visual/style search; exact local-file match not established.",
                     "evidenceStatus": "unresolved",
-                    "method": null
+                    "method": "metadata-only"
                 },
                 "retrievalSource": {
                     "revision": null,
                     "suppliedByMaintainer": false,
-                    "url": null
+                    "url": "https://www.svgrepo.com/svg/486922/xml-document"
                 },
                 "upstreamSource": {
                     "project": null,
@@ -436,7 +454,7 @@
             },
             "redistribution": {
                 "conclusion": "undetermined",
-                "rationale": null
+                "rationale": "Candidate aggregator page found by style search only; exact local-file match and license are unconfirmed."
             },
             "releaseDecision": {
                 "action": "pending",
@@ -447,7 +465,7 @@
                     "basis": null,
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
-                    "sourceUrl": null,
+                    "sourceUrl": "https://www.svgrepo.com/svg/486922/xml-document",
                     "verifiedAt": null
                 },
                 "trademark": {

@@ -528,7 +528,7 @@ Run after all three research batches and before any manifest/documentation edits
 
 ---
 
-# Phase 3 — Apply the Consolidated Provenance Edits
+# Phase 3.3 — Apply the Consolidated Provenance Edits [DONE]
 
 ## Goal
 
@@ -804,7 +804,7 @@ Run after the manifest and findings document are updated.
 
 ---
 
-# Phase 4 — Verify Manifest Contract, Diffs, and Repository Purity
+# Phase 3.4 — Verify Manifest Contract, Diffs, and Repository Purity
 
 ## Goal
 
