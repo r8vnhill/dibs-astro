@@ -1,4 +1,14 @@
-# [PLAN] Subphase 1.3 --- Add License Texts and Package Documentation
+# [PLAN] Subphase 1.3 --- Add License Texts and Package Documentation [DONE]
+
+## Current Status
+
+[DONE] All five phases are complete. `packages/astro-icons/LICENSE` and `LICENSES/PHOSPHOR.txt` hold the canonical
+license texts; `LICENSES/README.md` documents the license directory; `README.md` and `AGENTS.md` carry attribution and
+maintainer guidance; `package.json` declares `"license": "BSD-2-Clause"` and includes `LICENSE`/`LICENSES` in `files`.
+Final verification (Phase 1.3.5) confirmed `test:licenses` and `licenses:check` pass, the pre-existing `publint`
+resolution failure is unchanged and undocumented-as-new, and `LICENSES/third-party-icons.json`,
+`LICENSES/THIRD_PARTY.md`, `src/`, and `migration/icon-inventory.json` remain byte-unchanged. Subphase 1.4 pack-contract
+work has not been started.
 
 ## Scope Classification
 
@@ -476,7 +486,30 @@ Run after Phases 1–3.
 
 ---
 
-# Phase 5 --- Verify Attribution Files and Repository Purity
+# Phase 1.3.5 --- Verify Attribution Files and Repository Purity [DONE]
+
+## Current Status
+
+[DONE] Final Subphase 1.3 verification was performed.
+
+Verification performed:
+
+- `pnpm --filter @ravenhill/astro-icons test:licenses` — PASS (49/49 tests).
+- `pnpm --filter @ravenhill/astro-icons licenses:check` — PASS ("Third-party notice is current.").
+- `pnpm --filter @ravenhill/astro-icons lint` — FAIL with the previously documented `publint` resolution issue
+  (`Cannot find module '.../packages/astro-icons/node_modules/publint/src/cli.js'`); this is the same pre-existing
+  tooling issue reported in Phase 1.3.4 and was not remediated in this phase.
+
+Repository purity:
+
+- `LICENSE`, `LICENSES/PHOSPHOR.txt`, and `LICENSES/README.md` exist with the expected content.
+- `README.md` and `AGENTS.md` carry the attribution/maintainer guidance added in Phases 1.3.2-1.3.3.
+- `package.json` declares `"license": "BSD-2-Clause"` and includes `LICENSE`/`LICENSES` in `files`.
+- `git diff` against `LICENSES/third-party-icons.json`, `LICENSES/THIRD_PARTY.md`, `src/`,
+  `migration/icon-inventory.json`, and `package.json` was empty for all five paths.
+
+No changelog, package version, pack-contract, manifest, generated-notice, source-asset, staging, commit, or archive work
+was performed. Subphase 1.3 is now complete; Subphase 1.4 (pack-contract checks) has not been started.
 
 ## Goal
 

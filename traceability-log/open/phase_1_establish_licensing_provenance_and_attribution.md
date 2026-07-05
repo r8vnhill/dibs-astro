@@ -551,7 +551,7 @@ The generated notice should:
 
 ---
 
-# Subphase 1.3 — Add License Texts and Package Documentation
+# Subphase 1.3 — Add License Texts and Package Documentation [DONE]
 
 ## Goal
 
