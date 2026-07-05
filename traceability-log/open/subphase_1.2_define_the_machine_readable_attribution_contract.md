@@ -580,7 +580,21 @@ Run after Phases 1 and 2.
 
 ---
 
-# Phase 1.2.4 --- Generate the Baseline Notice and Wire Package Scripts
+# Phase 1.2.4 --- Generate the Baseline Notice and Wire Package Scripts [DONE]
+
+## Current Status
+
+[DONE] Package-local license scripts were added, `LICENSES/THIRD_PARTY.md` was generated from the frozen completed
+manifest, and check mode passes against the generated baseline.
+
+Verification performed:
+
+- `pnpm --filter @ravenhill/astro-icons test:licenses`
+- `pnpm --filter @ravenhill/astro-icons licenses:update`
+- `pnpm --filter @ravenhill/astro-icons licenses:check`
+
+No changes were made to `third-party-icons.json`, `icon-inventory.json`, SVG assets, package exports, package runtime
+code, dependencies, or broader package check composition.
 
 ## Goal
 
