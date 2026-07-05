@@ -1,4 +1,4 @@
-# [PLAN] Subphase 1.1 — Establish the Provenance Evidence Manifest
+# [DONE] Subphase 1.1 — Establish the Provenance Evidence Manifest
 
 ## Summary
 
@@ -563,7 +563,7 @@ For every non-Phosphor asset:
 
 ---
 
-# Phase 4 — Normalize and Close the Evidence Manifest
+# Phase 4 — Normalize and Close the Evidence Manifest [DONE]
 
 ## Goal
 

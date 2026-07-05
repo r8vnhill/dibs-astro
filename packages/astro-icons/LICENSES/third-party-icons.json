@@ -1,15 +1,16 @@
 {
     "assets": [
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "Bash logo",
             "exportName": "Bash",
             "file": "bash.svg",
             "localArtifact": {
                 "sha256": "96e7ccccfc44e40d442983108ffde5a2af722aba1eca87cd367851f7f1da7477"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: aggregator candidate found, but exact local match and trademark/license clearance remain unverified."
             ],
             "provenance": {
                 "match": {
@@ -33,7 +34,7 @@
                 "rationale": "Aggregator page found but exact local-file byte match and trademark/license clearance are unverified."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -42,7 +43,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://www.svgrepo.com/svg/376359/bash",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -54,15 +55,16 @@
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "file-type-icon",
+            "displayName": "CSV file-type icon",
             "exportName": "Csv",
             "file": "csv.svg",
             "localArtifact": {
                 "sha256": "d262e6738cad00d69941ca8e961341440e92e3c6c2496d49aa42a32b913eb0e0"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: redistribution remains undetermined and exact source page is unconfirmed."
             ],
             "provenance": {
                 "match": {
@@ -86,7 +88,7 @@
                 "rationale": "Candidate aggregator page found by style search only; exact local-file match and license are unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -95,7 +97,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://www.svgrepo.com/svg/161804/csv",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -107,15 +109,16 @@
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "JSON logo",
             "exportName": "Json",
             "file": "json.svg",
             "localArtifact": {
                 "sha256": "523bd811a8948fd6de79c9c1f870457342fd57c3b844bf4f04de2e46c21d0c93"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: exact vector lineage and trademark status remain unresolved."
             ],
             "provenance": {
                 "match": {
@@ -139,7 +142,7 @@
                 "rationale": "Candidate mirror found but original rights holder and license are unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -148,7 +151,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://commons.wikimedia.org/wiki/File:JSON_vector_logo.svg",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -160,15 +163,16 @@
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "Kotlin logo",
             "exportName": "Kotlin",
             "file": "kotlin.svg",
             "localArtifact": {
                 "sha256": "77bf09cf6a8a2b0c1ab675786596e67826d9af64958b1842b9d063996224a229"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: trademark-controlled brand asset; redistribution requires permission or stronger clearance."
             ],
             "provenance": {
                 "match": {
@@ -192,7 +196,7 @@
                 "rationale": "Kotlin Foundation brand-asset usage constraints apply separately from any code license; trademark clearance is unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -201,27 +205,28 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://kotlinlang.org/docs/kotlin-brand-assets.html",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "yes",
                     "notes": "Kotlin Foundation/JetBrains brand-asset usage constraints; clearance not confirmed for this exact asset.",
                     "owner": "Kotlin Foundation",
                     "policyUrl": "https://kotlinlang.org/docs/kotlin-brand-assets.html",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 }
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "Nushell logo",
             "exportName": "NushellLogo",
             "file": "nushell-logo.svg",
             "localArtifact": {
                 "sha256": "16abfde8df25d79bca381a7cff2d42663ca572fed541111ca0c7f0fd47e41ee1"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: local file is a VTracer trace; source match and license obligations remain unresolved."
             ],
             "provenance": {
                 "match": {
@@ -245,7 +250,7 @@
                 "rationale": "Candidate mirror found but exact license (CC-BY-SA-4.0 claimed) and byte match are unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -254,7 +259,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Logo_of_nushell_shell.svg",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -266,15 +271,16 @@
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "PowerShell logo",
             "exportName": "Powershell",
             "file": "powershell.svg",
             "localArtifact": {
                 "sha256": "b93fab323bee0f92743402d573e484e242741181e306b9e3330540e76e11da2b"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: Microsoft brand/trademark clearance remains required."
             ],
             "provenance": {
                 "match": {
@@ -298,7 +304,7 @@
                 "rationale": "Microsoft trademark policy applies to the PowerShell mark separately from any code license; clearance is unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -307,27 +313,28 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://commons.wikimedia.org/wiki/File:Powershell_128.svg",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "yes",
                     "notes": "Microsoft trademark policy; clearance not confirmed for this exact asset.",
                     "owner": "Microsoft Corporation",
                     "policyUrl": "https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 }
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "Python logo",
             "exportName": "Python",
             "file": "python.svg",
             "localArtifact": {
                 "sha256": "b3e41f7418673c1faff250beb41d04155f785befa16240ed870af2b9d6a87939"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: PSF logo/trademark clearance remains required."
             ],
             "provenance": {
                 "match": {
@@ -351,7 +358,7 @@
                 "rationale": "PSF trademark/logo terms apply separately from any code license; clearance is unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -360,27 +367,28 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://www.python.org/community/logos/",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "yes",
                     "notes": "PSF trademark policy; clearance not confirmed for this exact asset.",
                     "owner": "Python Software Foundation",
                     "policyUrl": "https://www.python.org/psf/trademarks",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 }
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "logo",
+            "displayName": "Scala logo",
             "exportName": "Scala",
             "file": "scala.svg",
             "localArtifact": {
                 "sha256": "3547b7cc578a8b026b0213e19f0b345e59f3c7d92d3a0e0dd474c421da84e0b1"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: aggregator candidate found, but exact local match and trademark clearance remain unverified."
             ],
             "provenance": {
                 "match": {
@@ -404,7 +412,7 @@
                 "rationale": "Aggregator page found but exact local-file byte match and trademark/license clearance are unverified."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -413,7 +421,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://www.svgrepo.com/svg/508943/scala",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -425,15 +433,16 @@
             }
         },
         {
-            "assetType": null,
-            "displayName": null,
+            "assetType": "file-type-icon",
+            "displayName": "XML file-type icon",
             "exportName": "Xml",
             "file": "xml.svg",
             "localArtifact": {
                 "sha256": "f1af0508aff2ec7556363ce41b0b538b4ee71e9deba34444585b0a7da3f8f438"
             },
             "notes": [
-                "Provenance from external research pass; not independently byte-verified."
+                "Provenance from external research pass; not independently byte-verified.",
+                "Excluded from packaging: redistribution remains undetermined and exact source page is unconfirmed."
             ],
             "provenance": {
                 "match": {
@@ -457,7 +466,7 @@
                 "rationale": "Candidate aggregator page found by style search only; exact local-file match and license are unconfirmed."
             },
             "releaseDecision": {
-                "action": "pending",
+                "action": "exclude",
                 "riskAcceptance": null
             },
             "rights": {
@@ -466,7 +475,7 @@
                     "concludedLicense": "NOASSERTION",
                     "licenseFile": null,
                     "sourceUrl": "https://www.svgrepo.com/svg/486922/xml-document",
-                    "verifiedAt": null
+                    "verifiedAt": "2026-07-05"
                 },
                 "trademark": {
                     "applies": "unknown",
@@ -499,6 +508,6 @@
             "version": null
         }
     },
-    "reviewStatus": "in-progress",
+    "reviewStatus": "complete",
     "schemaVersion": 1
 }

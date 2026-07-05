@@ -115,7 +115,7 @@ Do not add a custom preamble or pointer inside the BSD license text itself.
 
 ---
 
-# Subphase 1.1 — Establish Provenance and Redistribution Status
+# Subphase 1.1 — Establish Provenance and Redistribution Status [DONE]
 
 ## Goal
 
@@ -203,9 +203,9 @@ This order surfaces permission blockers before documentation or automation is bu
 
 ---
 
-# Findings — Phosphor Corpus Lineage
+## Findings --- Phosphor Corpus Lineage
 
-## Established repository evidence
+### Established repository evidence
 
 - Import commit `1833b9e65a91917b565da9dae0df29c1642448a2`, dated 2026-03-19, documents a manual copy of the Phosphor
   `regular` variant from `B:\Downloads\phosphor-icons` into the `phosphor-icons/core` layout.
@@ -213,7 +213,7 @@ This order surfaces permission blockers before documentation or automation is bu
 - No commit or lockfile ever pinned a `@phosphor-icons/core` package dependency.
 - Subsequent commits moved or renamed the Phosphor assets but did not alter their SVG bytes.
 
-## External comparison method
+### External comparison method
 
 - Ten official `phosphor-icons/core` tags were resolved to immutable commit SHAs and downloaded as commit-addressed
   archives; candidate regular-weight filenames were normalized (e.g. `acorn-regular.svg` → `acorn.svg`) against the
@@ -221,7 +221,7 @@ This order surfaces permission blockers before documentation or automation is bu
 - Every candidate received a complete normalized filename-set comparison (Stage A); candidates whose set matched exactly
   advanced to a complete, unsampled byte-by-byte comparison of all 1,512 files (Stage B).
 
-## Candidates investigated
+### Candidates investigated
 
 - 10 candidate revisions were compared by filename set; 8 were rejected as `STAGE_A_FILENAME_SET_MISMATCH`.
 - 2 candidates reached an exact filename-set match: `a2a0bfd7cb66d08a` (`assets/regular`) and `a5e861b1bd29ab95`
@@ -229,20 +229,20 @@ This order surfaces permission blockers before documentation or automation is bu
 - Complete byte comparison (3,024 logical comparisons, no sampling) found: `assets/regular` matched 0 of 1,512 files;
   `raw/regular` matched 1,365 of 1,512 files, leaving 147 local files unexplained.
 
-## Conclusion
+### Conclusion
 
 Lineage is **unresolved** (`reasonCode: BYTE_MISMATCHES_UNEXPLAINED`). No candidate's corpus fully matches the local
 1,512-file corpus, so no exact commit, equivalent revision set, or positively-evidenced mixed-corpus lineage can be
 asserted under the DDT lineage matrix defined in `subphase_1.1.2_resolve_the_phosphor_corpus_lineage.md`.
 
-## Downstream consequence
+### Downstream consequence
 
 - Phase 1 records Phosphor provenance as `unresolved` rather than blocking on an unproven exact revision; no upstream
   package, version, or commit is guessed in `packages/astro-icons/LICENSES/third-party-icons.json`.
 - Subphase 1.3 may safely copy the MIT notice text captured below as the applicable Phosphor license notice, but it must
   not cite an exact upstream tag, version, or immutable commit URL as the source of that text, since none is verified.
 
-## Independent license conclusion
+### Independent license conclusion
 
 The MIT conclusion is supported independently of exact corpus lineage: the license notice was committed
 contemporaneously with the original import and is unaffected by which upstream revision (if any) exactly matches the
@@ -250,15 +250,15 @@ current 1,512-file corpus. `concludedLicense` is recorded as `"MIT"` with `copyr
 `"Copyright (c) 2020-2024 Phosphor Icons"`; `licenseSourceUrl` remains `null` because no exact upstream revision is
 verified to link to.
 
-## Package-code holder
+### Package-code holder
 
 `Ignacio Slater-Muñoz`.
 
 ---
 
-# Findings — Non-Phosphor Asset Provenance
+## Findings — Non-Phosphor Asset Provenance
 
-## Investigation Method
+### Investigation Method
 
 These findings transcribe the completed Phase 3.2 research pass (see
 `traceability-log/open/phase_3_verify_the_nine_non_phosphor_assets.md`) into the manifest and this narrative record.
@@ -270,7 +270,7 @@ page-specific license was quoted, and no evidence status is promoted to `verifie
 Checklist (fetch, byte-compare, normalize, structurally compare) remains the gate for any future pass that wants to
 strengthen this evidence; it is not executed here.
 
-## Batch A — Brand-Controlled Assets
+### Batch A — Brand-Controlled Assets
 
 - **`powershell`** — no local fingerprint to anchor on; matched only by visual/project association to a Wikimedia
   candidate and the official PowerShell/Microsoft brand context. `metadata-only`, `partially-verified`. Microsoft's
@@ -284,7 +284,7 @@ strengthen this evidence; it is not executed here.
   page, so this asset is treated as aggregator-sourced rather than brand-controlled for match-method purposes, even
   though the mark itself is Scala's brand. `metadata-only`, `partially-verified`.
 
-## Batch B — Project and Community Marks
+### Batch B — Project and Community Marks
 
 - **`nushell-logo`** — the local file is a VTracer lossy auto-trace (confirmed via embedded generator metadata), so
   the match method is capped at `visual-match` against a Wikimedia candidate; it can never be byte- or
@@ -295,7 +295,7 @@ strengthen this evidence; it is not executed here.
 - **`bash`** — cross-batch-corrected: like `scala`, the local file's own `SVG Repo` upload comment matches an exact
   SVG Repo asset page, so this asset is treated as aggregator-sourced. `metadata-only`, `partially-verified`.
 
-## Batch C — Generic and Aggregator-Sourced Icons
+### Batch C — Generic and Aggregator-Sourced Icons
 
 - **`csv`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match
   is not established. `metadata-only`, `unresolved`.
@@ -305,14 +305,14 @@ strengthen this evidence; it is not executed here.
 An aggregator-style candidate page being visually similar is not sufficient to claim verified source status; both
 assets remain `unresolved` until a raw/local comparison is performed.
 
-## Cross-Batch Correction
+### Cross-Batch Correction
 
 `bash` and `scala` are both classified as aggregator-sourced (`metadata-only` match method) rather than by their
 original batch assignment, because their local files carry an `SVG Repo` upload comment that matches an exact SVG
 Repo asset page. `nushell-logo` remains capped at `visual-match` because it is a machine-generated auto-trace, not an
 authored vector, and so cannot be byte- or structurally-compared to any source.
 
-## Redistribution Conclusions
+### Redistribution Conclusions
 
 ```text
 permission-required: python, kotlin, powershell
@@ -323,19 +323,23 @@ The three `permission-required` assets are brand/trademark-controlled marks whos
 do not cover logo redistribution. The six `undetermined` assets have no confirmed page-specific license and no
 confirmed rights holder for the exact local file.
 
-## Outstanding Maintainer Decisions
+### Closed Maintainer Decisions
 
-For all nine assets, `releaseDecision.action` remains `pending`. Before any asset can move to `include` or `exclude`:
+All nine non-Phosphor assets are now marked `releaseDecision.action: "exclude"` in `third-party-icons.json`, closing
+Subphase 1.1 Phase 4 (`reviewStatus: "complete"`). No source SVG was removed or modified — exclusion is a manifest
+decision not to ship these assets under the current evidence state, and it is reversible if stronger evidence or
+explicit permission is later obtained:
 
-- **`powershell`, `python`, `kotlin`** — need both an exact byte/structural comparison against the candidate source
-  and explicit trademark clearance from the respective brand owner (Microsoft, PSF, Kotlin Foundation/JetBrains).
-- **`scala`, `bash`, `nushell-logo`, `json`** — need an exact byte or normalized-content comparison against the
-  candidate source (or, for `nushell-logo`, confirmation that a `visual-match` ceiling is an acceptable evidence
-  level for a maintainer decision).
-- **`csv`, `xml`** — need the exact source page confirmed (not just a plausible style match) before any further
-  evidence work is meaningful.
+- **`powershell`, `python`, `kotlin`** are excluded because redistribution remains `permission-required`: Microsoft,
+  PSF, and Kotlin Foundation/JetBrains trademark clearance is unconfirmed for these exact assets, and no exact
+  byte/structural comparison against a candidate source has been performed.
+- **`bash`, `scala`, `nushell-logo`, `json`, `csv`, `xml`** are excluded because redistribution remains
+  `undetermined`: no exact byte or normalized-content comparison against a candidate source has been performed (or,
+  for `nushell-logo`, no confirmation that its `visual-match` ceiling is an acceptable evidence level), and for
+  `csv`/`xml` the exact source page itself remains unconfirmed.
 
-No maintainer risk acceptance has been created for any asset.
+`releaseDecision.riskAcceptance` remains `null` for all nine — no maintainer risk acceptance has been created, since
+`exclude` requires only an exclusion rationale, not a risk-acceptance record.
 
 ---
 
