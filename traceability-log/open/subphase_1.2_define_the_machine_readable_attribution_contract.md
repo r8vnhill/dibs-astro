@@ -39,7 +39,7 @@ Do not use real project asset names as the primary oracle.
 
 ---
 
-# Phase 1 --- Define and Test the Pure Manifest Validator
+# Phase 1.2.1 --- Define and Test the Pure Manifest Validator [DONE]
 
 ## Goal
 
@@ -258,7 +258,7 @@ Implement Phase 1 before the generator. The generator should not render from an 
 
 ---
 
-# Phase 2 --- Define and Test the Notice Renderer
+# Phase 1.2.2 --- Define and Test the Notice Renderer [DONE]
 
 ## Goal
 
@@ -430,7 +430,7 @@ Run after Phase 1’s validator exists, but before implementing CLI write/check 
 
 ---
 
-# Phase 3 --- Add CLI Orchestration for `--write` and `--check`
+# Phase 1.2.3 --- Add CLI Orchestration for `--write` and `--check`
 
 ## Goal
 
