@@ -804,7 +804,7 @@ Run after the manifest and findings document are updated.
 
 ---
 
-# Phase 3.4 — Verify Manifest Contract, Diffs, and Repository Purity
+# Phase 3.4 — Verify Manifest Contract, Diffs, and Repository Purity [DONE]
 
 ## Goal
 
