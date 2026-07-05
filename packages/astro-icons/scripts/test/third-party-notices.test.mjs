@@ -25,7 +25,12 @@ const buildAsset = (overrides = {}) => ({
     file: "roshar.svg",
     rights: {
         copyright: { concludedLicense: "NOASSERTION", basis: null },
-        trademark: { applies: "unknown", owner: null, policyUrl: null, notes: null },
+        trademark: {
+            applies: "unknown",
+            owner: null,
+            policyUrl: null,
+            notes: null,
+        },
     },
     redistribution: { conclusion: "undetermined" },
     releaseDecision: { action: "exclude" },
@@ -33,7 +38,7 @@ const buildAsset = (overrides = {}) => ({
 });
 
 describe("module contract", () => {
-    test("exports the four pure renderer functions and nothing filesystem-related", () => {
+    test("exports the four pure renderer functions", () => {
         assert.equal(typeof renderThirdPartyNotice, "function");
         assert.equal(typeof renderPhosphorSection, "function");
         assert.equal(typeof renderAssetSection, "function");
@@ -46,7 +51,10 @@ describe("renderThirdPartyNotice", () => {
         const manifest = {
             phosphor: buildPhosphor(),
             assets: [
-                buildAsset({ displayName: "Scadrial logo", file: "scadrial.svg" }),
+                buildAsset({
+                    displayName: "Scadrial logo",
+                    file: "scadrial.svg",
+                }),
                 buildAsset({ displayName: "Roshar logo", file: "roshar.svg" }),
             ],
         };
@@ -65,7 +73,12 @@ describe("renderThirdPartyNotice", () => {
     test("places the Phosphor section before any asset section", () => {
         const manifest = {
             phosphor: buildPhosphor(),
-            assets: [buildAsset({ displayName: "Nalthis logo", file: "nalthis.svg" })],
+            assets: [
+                buildAsset({
+                    displayName: "Nalthis logo",
+                    file: "nalthis.svg",
+                }),
+            ],
         };
 
         const notice = renderThirdPartyNotice(manifest);
@@ -82,7 +95,10 @@ describe("renderThirdPartyNotice", () => {
             assets: [buildAsset()],
         };
 
-        assert.equal(renderThirdPartyNotice(manifest), renderThirdPartyNotice(manifest));
+        assert.equal(
+            renderThirdPartyNotice(manifest),
+            renderThirdPartyNotice(manifest),
+        );
     });
 
     test("ends with exactly one trailing newline", () => {
@@ -139,7 +155,10 @@ describe("renderAssetSection", () => {
         );
 
         assert.match(section, /Recorded release decision: exclude/u);
-        assert.match(section, /Redistribution conclusion: permission-required/u);
+        assert.match(
+            section,
+            /Redistribution conclusion: permission-required/u,
+        );
         assert.doesNotMatch(section, /approved/iu);
         assert.doesNotMatch(section, /cleared/iu);
         assert.doesNotMatch(section, /permission granted/iu);
@@ -158,14 +177,25 @@ describe("renderAssetSection", () => {
         const withBasis = renderAssetSection(
             buildAsset({
                 rights: {
-                    copyright: { concludedLicense: "NOASSERTION", basis: "Sourced from Silence Divine" },
-                    trademark: { applies: "unknown", owner: null, policyUrl: null, notes: null },
+                    copyright: {
+                        concludedLicense: "NOASSERTION",
+                        basis: "Sourced from Silence Divine",
+                    },
+                    trademark: {
+                        applies: "unknown",
+                        owner: null,
+                        policyUrl: null,
+                        notes: null,
+                    },
                 },
             }),
         );
         const withoutBasis = renderAssetSection(buildAsset());
 
-        assert.match(withBasis, /Copyright basis: Sourced from Silence Divine/u);
+        assert.match(
+            withBasis,
+            /Copyright basis: Sourced from Silence Divine/u,
+        );
         assert.doesNotMatch(withoutBasis, /Copyright basis:/u);
     });
 

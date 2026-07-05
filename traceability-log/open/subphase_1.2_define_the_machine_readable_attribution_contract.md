@@ -430,7 +430,7 @@ Run after Phase 1’s validator exists, but before implementing CLI write/check 
 
 ---
 
-# Phase 1.2.3 --- Add CLI Orchestration for `--write` and `--check`
+# Phase 1.2.3 --- Add CLI Orchestration for `--write` and `--check` [DONE]
 
 ## Goal
 
@@ -580,7 +580,7 @@ Run after Phases 1 and 2.
 
 ---
 
-# Phase 4 --- Generate the Baseline Notice and Wire Package Scripts
+# Phase 1.2.4 --- Generate the Baseline Notice and Wire Package Scripts
 
 ## Goal
 
@@ -685,11 +685,11 @@ Manually inspect the generated notice for:
 
 ## Suggested Execution Order
 
-Run after Phase 3.
+Run after Phase 1.2.3.
 
 ---
 
-# Phase 5 --- Final Verification and Repository Purity
+# Phase 1.2.5 --- Final Verification and Repository Purity
 
 ## Goal
 
