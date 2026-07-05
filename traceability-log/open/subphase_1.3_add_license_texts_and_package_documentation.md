@@ -258,7 +258,14 @@ Run after Phase 1.
 
 ---
 
-# Phase 1.3.3 --- Update Package README and Maintainer Guidance
+# Phase 1.3.3 --- Update Package README and Maintainer Guidance [DONE]
+
+## Current Status
+
+[DONE] See `phase_1.3.3_update_package_readme_and_maintainer_guidance.md` for the executed cycle detail.
+`packages/astro-icons/README.md` and `AGENTS.md` were updated with attribution/licensing and maintainer guidance
+sections; `third-party-icons.json`, `THIRD_PARTY.md`, `package.json`, license texts, SVGs, and `icon-inventory.json`
+remain unchanged. Phase 4 (package.json metadata) and Phase 5 (final verification) remain open.
 
 ## Goal
 
@@ -383,7 +390,7 @@ Run after README update.
 
 ---
 
-# Phase 4 --- Update Package Publication Metadata
+# Phase 1.3.4 --- Update Package Publication Metadata
 
 ## Goal
 

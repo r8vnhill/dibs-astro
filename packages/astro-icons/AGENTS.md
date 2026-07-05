@@ -2,8 +2,8 @@
 
 ## What is this package?
 
-`@ravenhill/astro-icons` is a workspace package that holds 1,521 SVG icon files and exports them as Astro
-SVG components. It is consumed by the Astro app via the `$icons` path alias.
+`@ravenhill/astro-icons` is a workspace package that holds 1,521 SVG icon files and exports them as Astro SVG
+components. It is consumed by the Astro app via the `$icons` path alias.
 
 ## Directory structure
 
@@ -117,6 +117,36 @@ Phase 5 by running the Astro dev server and production build.
 2. Run `pnpm generate-icons` from the monorepo root
 3. The barrel (`src/index.ts`) is regenerated automatically
 4. Commit the SVG and the updated barrel
+
+### Add or change a non-Phosphor icon's attribution
+
+Every non-Phosphor icon addition or change requires updating
+[`LICENSES/third-party-icons.json`](LICENSES/third-party-icons.json) with a record that includes:
+
+- the exact source URL for the asset;
+- asset-specific terms (do not assume a software project's license covers its logos, trademarks, icons, or file-type
+  marks — those are frequently governed by separate terms);
+- a copyright conclusion;
+- a trademark status;
+- a redistribution conclusion;
+- a release decision (e.g., include, exclude, or unresolved).
+
+If any of these cannot be determined with confidence, record the record as unresolved and track the open question in the
+traceability log. Do not treat unresolved or excluded assets as redistributable.
+
+After changing the manifest, regenerate and check the generated notices:
+
+```powershell
+pnpm --filter @ravenhill/astro-icons test:licenses
+pnpm --filter @ravenhill/astro-icons licenses:update
+pnpm --filter @ravenhill/astro-icons licenses:check
+```
+
+`licenses:update` regenerates [`LICENSES/THIRD_PARTY.md`](LICENSES/THIRD_PARTY.md) from the manifest; never hand-edit
+that file.
+
+When package pack-contract checks are added in a later phase, they must also pass before a newly included asset can
+ship. That gate does not exist yet.
 
 ### Rebuild the package
 

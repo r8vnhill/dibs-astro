@@ -4,8 +4,8 @@ SVG icon assets for Ravenhill Astro projects.
 
 ## Overview
 
-This package exports SVG icon files as Astro SVG components (`AstroComponentFactory`). It is designed for
-use in the Astro 5 ecosystem where `.svg` imports are natively transformed into renderable components.
+This package exports SVG icon files as Astro SVG components (`AstroComponentFactory`). It is designed for use in the
+Astro 5 ecosystem where `.svg` imports are natively transformed into renderable components.
 
 ## Usage
 
@@ -88,6 +88,18 @@ pnpm generate-icons
 ```
 
 Do not edit `src/index.ts` manually.
+
+## Attribution and licensing
+
+The package code is licensed under BSD-2-Clause; see [`LICENSE`](./LICENSE).
+
+Bundled third-party icon assets are tracked separately from the package code. See
+[`LICENSES/README.md`](./LICENSES/README.md) for the license-file layout,
+[`LICENSES/PHOSPHOR.txt`](./LICENSES/PHOSPHOR.txt) for the Phosphor license text, and
+[`LICENSES/THIRD_PARTY.md`](./LICENSES/THIRD_PARTY.md) for the generated third-party attribution notice.
+
+Non-Phosphor custom assets are excluded from packaging unless future evidence, release decisions, and package checks
+explicitly allow inclusion. Attribution records do not imply sponsorship, endorsement, or redistribution clearance.
 
 ## Publishing
 
