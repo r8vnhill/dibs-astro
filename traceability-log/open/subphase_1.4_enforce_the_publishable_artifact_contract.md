@@ -95,7 +95,25 @@ Run first. This reduces the risk of behavior drift during refactoring.
 
 ---
 
-# Phase 1.4.2 — Extract Pure Pack-Contract Logic
+# Phase 1.4.2 — Extract Pure Pack-Contract Logic [DONE]
+
+## Current Status
+
+[DONE] `assert-pack-files.mjs` now exposes import-safe pure helpers and a guarded CLI entry point. The extracted pack
+contract preserves existing runtime-file, blocked-file, and SVG-parity behavior; requires package license and attribution
+files; derives included-asset license references from the manifest; blocks `package/migration/`; reports grouped
+diagnostics; and enforces `releaseDecision.action: "include"` only when `redistribution.conclusion === "permitted"`.
+
+Verification performed:
+
+- `pnpm --filter @ravenhill/astro-icons exec node --test scripts/test/assert-pack-files.test.mjs` — 20 tests passed
+  across 7 suites.
+- `cmd /c git diff --check`
+- Protected diffs were empty for frozen evidence, generated notice, package metadata, README, AGENTS, source assets, and
+  inventory.
+
+Phase 1.4.3 and later remain open for CLI preservation verification, package script wiring, documentation updates, real
+pack checks, and traceability closure.
 
 ## Goal
 

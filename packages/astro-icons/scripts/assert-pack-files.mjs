@@ -1,18 +1,16 @@
 import { execFile } from "node:child_process";
-import { readdir } from "node:fs/promises";
-import { resolve, dirname } from "node:path";
-import { unlink } from "node:fs/promises";
+import { readFile, readdir, unlink } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import { stdin } from "node:process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const execFileAsync = promisify(execFile);
 
-// Define packageRoot early so it's available to functions
-const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const scriptPath = fileURLToPath(import.meta.url);
+const packageRoot = resolve(dirname(scriptPath), "..");
 
-// Required files that MUST be present in the tarball
-const requiredFiles = new Set([
+export const REQUIRED_RUNTIME_FILES = Object.freeze([
     "package/README.md",
     "package/package.json",
     "package/dist/index.js",
@@ -20,80 +18,250 @@ const requiredFiles = new Set([
     "package/dist/index.js.map",
 ]);
 
-// Patterns for files that must NOT be present
-const blockedPatterns = [
+export const BLOCKED_PATTERNS = Object.freeze([
     /^package\/AGENTS\.md$/u,
     /^package\/src\//u,
     /^package\/scripts\//u,
+    /^package\/migration\//u,
     /^package\/tsup\.config\.ts$/u,
     /^package\/tsconfig\.json$/u,
-];
+]);
 
-const input = process.argv.includes("--pack")
-    ? await packPackage()
-    : await stdinToString();
+const CORE_LICENSE_FILES = Object.freeze([
+    "package/LICENSE",
+    "package/LICENSES/README.md",
+    "package/LICENSES/PHOSPHOR.txt",
+    "package/LICENSES/THIRD_PARTY.md",
+    "package/LICENSES/third-party-icons.json",
+]);
 
-const packOutput = JSON.parse(input);
-const packEntries = Array.isArray(packOutput) ? packOutput : [packOutput];
-const files = new Set(
-    packEntries.flatMap((entry) =>
-        entry.files.map((file) => `package/${file.path}`),
-    ),
+const LICENSE_REFERENCE_PATHS = Object.freeze([
+    Object.freeze(["rights", "copyright", "licenseFile"]),
+    Object.freeze(["rights", "trademark", "licenseFile"]),
+    Object.freeze(["rights", "trademark", "permissionFile"]),
+    Object.freeze(["rights", "trademark", "policyFile"]),
+]);
+
+export const DEFAULT_MANIFEST_PATH = resolve(
+    packageRoot,
+    "LICENSES",
+    "third-party-icons.json",
 );
 
-// Check 1: All required files present
-const missingFiles = [...requiredFiles].filter((f) => !files.has(f));
+const getManifestAssets = (manifest) =>
+    Array.isArray(manifest?.assets) ? manifest.assets : [];
 
-// Check 2: No blocked files present
-const blockedFiles = [...files].filter((f) =>
-    blockedPatterns.some((p) => p.test(f)),
-);
-
-// Check 3: SVG count parity — count src SVGs and dist SVGs
-const srcDir = resolve(packageRoot, "src");
-const srcSvgFiles = (await readdir(srcDir)).filter((f) => f.endsWith(".svg"));
-const srcSvgCount = srcSvgFiles.length;
-
-// Count SVGs in the tarball dist
-const distSvgCount = [...files].filter((f) =>
-    /^package\/dist\/.+\.svg$/u.test(f),
-).length;
-
-const svgCountMismatch = srcSvgCount > 0 && srcSvgCount !== distSvgCount;
-
-// Report results
-const hasIssues =
-    missingFiles.length > 0 || blockedFiles.length > 0 || svgCountMismatch;
-
-if (missingFiles.length > 0) {
-    console.error(
-        `Missing required files:\n${missingFiles.map((f) => `  - ${f}`).join("\n")}`,
+const getAtPath = (object, path) =>
+    path.reduce(
+        (value, segment) => (value == null ? undefined : value[segment]),
+        object,
     );
+
+const toPackagePath = (path) => {
+    const normalized = path.replace(/\\/gu, "/").replace(/^\.?\//u, "");
+    return normalized.startsWith("package/")
+        ? normalized
+        : `package/${normalized}`;
+};
+
+/**
+ * Derives the legal and attribution files that must be present in the published tarball.
+ *
+ * @param {object} manifest
+ * @returns {string[]}
+ */
+export function deriveRequiredLicenseFiles(manifest) {
+    const required = new Set(CORE_LICENSE_FILES);
+
+    for (const asset of getManifestAssets(manifest)) {
+        if (asset?.releaseDecision?.action !== "include") {
+            continue;
+        }
+
+        for (const path of LICENSE_REFERENCE_PATHS) {
+            const reference = getAtPath(asset, path);
+            if (typeof reference === "string" && reference.length > 0) {
+                required.add(toPackagePath(reference));
+            }
+        }
+    }
+
+    return [...required].sort();
 }
 
-if (blockedFiles.length > 0) {
-    console.error(
-        `Blocked files present:\n${blockedFiles.map((f) => `  - ${f}`).join("\n")}`,
+/**
+ * Finds required files that are absent from a package file list.
+ *
+ * @param {Iterable<string>} files
+ * @param {Iterable<string>} requiredFiles
+ * @returns {string[]}
+ */
+export function findMissingFiles(files, requiredFiles) {
+    const fileSet = new Set(files);
+    return [...requiredFiles].filter((file) => !fileSet.has(file)).sort();
+}
+
+/**
+ * Finds blocked files present in a package file list.
+ *
+ * @param {Iterable<string>} files
+ * @param {RegExp[]} blockedPatterns
+ * @returns {string[]}
+ */
+export const findBlockedFiles = (files, blockedPatterns) =>
+    [...files]
+        .filter((file) => blockedPatterns.some((pattern) => pattern.test(file)))
+        .sort();
+
+/**
+ * Checks that source SVG count and packaged dist SVG count match.
+ *
+ * @param {Iterable<string>} files
+ * @param {number} srcSvgCount
+ * @returns {string[]}
+ */
+export function checkSvgParity(files, srcSvgCount) {
+    const distSvgCount = [...files].filter((file) =>
+        /^package\/dist\/.+\.svg$/u.test(file),
+    ).length;
+
+    if (srcSvgCount === 0 || srcSvgCount === distSvgCount) {
+        return [];
+    }
+
+    return [
+        `svgParity.mismatch: src has ${srcSvgCount}, dist in tarball has ${distSvgCount}`,
+    ];
+}
+
+/**
+ * Finds manifest assets marked for inclusion without permitted redistribution.
+ *
+ * @param {object} manifest
+ * @returns {string[]}
+ */
+export const findIncludedAssetsWithoutPermittedRedistribution = (manifest) =>
+    getManifestAssets(manifest)
+        .filter((asset) => asset?.releaseDecision?.action === "include")
+        .filter((asset) => asset?.redistribution?.conclusion !== "permitted")
+        .map((asset) => {
+            const file = asset?.file ?? "<unknown>";
+            const conclusion = asset?.redistribution?.conclusion ?? "<missing>";
+            return `redistribution.notPermitted: ${file} is included but redistribution conclusion is ${conclusion}`;
+        })
+        .sort();
+
+/**
+ * Evaluates a package file list against the full pack contract.
+ *
+ * @param {{ files: Iterable<string>, manifest: object, srcSvgCount: number }} options
+ * @returns {{ ok: boolean, findings: { missingFiles: string[], blockedFiles: string[], svgParity: string[], redistribution: string[] } }}
+ */
+export function evaluatePackContents({ files, manifest, srcSvgCount }) {
+    const fileSet = new Set(files);
+    const requiredFiles = [
+        ...REQUIRED_RUNTIME_FILES,
+        ...deriveRequiredLicenseFiles(manifest),
+    ];
+
+    const findings = {
+        missingFiles: findMissingFiles(fileSet, requiredFiles),
+        blockedFiles: findBlockedFiles(fileSet, BLOCKED_PATTERNS),
+        svgParity: checkSvgParity(fileSet, srcSvgCount),
+        redistribution:
+            findIncludedAssetsWithoutPermittedRedistribution(manifest),
+    };
+
+    return {
+        ok: Object.values(findings).every((group) => group.length === 0),
+        findings,
+    };
+}
+
+/**
+ * CLI entry point.
+ *
+ * @param {{ argv?: string[], stdout?: (message: string) => void, stderr?: (message: string) => void }} options
+ * @returns {Promise<void>}
+ */
+export async function main({
+    argv = process.argv.slice(2),
+    stdout = console.log,
+    stderr = console.error,
+} = {}) {
+    const input = argv.includes("--pack")
+        ? await packPackage()
+        : await stdinToString();
+    const packEntries = parsePackEntries(input);
+    const files = extractPackFiles(packEntries);
+    const srcSvgCount = await countSourceSvgs();
+    const manifest = await readJsonFile(DEFAULT_MANIFEST_PATH);
+    const result = evaluatePackContents({ files, manifest, srcSvgCount });
+
+    printFindings(result.findings, stderr);
+
+    if (!result.ok) {
+        process.exitCode = 1;
+        return;
+    }
+
+    const distSvgCount = [...files].filter((file) =>
+        /^package\/dist\/.+\.svg$/u.test(file),
+    ).length;
+    stdout(
+        `✓ Pack check passed: ${files.size} files total, ${distSvgCount} SVGs in dist.`,
     );
+
+    await removePackedTarballs(packEntries);
 }
 
-if (svgCountMismatch) {
-    console.error(
-        `SVG count mismatch: src has ${srcSvgCount}, dist in tarball has ${distSvgCount}`,
+function parsePackEntries(input) {
+    const packOutput = JSON.parse(input);
+    return Array.isArray(packOutput) ? packOutput : [packOutput];
+}
+
+export const extractPackFiles = (packEntries) =>
+    new Set(
+        packEntries.flatMap((entry) =>
+            entry.files.map((file) => `package/${file.path}`),
+        ),
     );
+
+function printFindings(findings, stderr) {
+    if (findings.missingFiles.length > 0) {
+        stderr(
+            `Missing required files:\n${findings.missingFiles
+                .map((file) => `  - ${file}`)
+                .join("\n")}`,
+        );
+    }
+
+    if (findings.blockedFiles.length > 0) {
+        stderr(
+            `Blocked files present:\n${findings.blockedFiles
+                .map((file) => `  - ${file}`)
+                .join("\n")}`,
+        );
+    }
+
+    for (const finding of findings.svgParity) {
+        stderr(finding);
+    }
+
+    for (const finding of findings.redistribution) {
+        stderr(finding);
+    }
 }
 
-if (hasIssues) {
-    process.exit(1);
+const readJsonFile = async (path) => JSON.parse(await readFile(path, "utf8"));
+
+async function countSourceSvgs() {
+    const srcDir = resolve(packageRoot, "src");
+    const srcSvgFiles = (await readdir(srcDir)).filter((file) =>
+        file.endsWith(".svg"),
+    );
+    return srcSvgFiles.length;
 }
-
-console.log(
-    `✓ Pack check passed: ${files.size} files total, ${distSvgCount} SVGs in dist.`,
-);
-
-await removePackedTarballs(packEntries);
-
-// ============= Helper functions =============
 
 async function packPackage() {
     const executable = process.platform === "win32" ? "cmd.exe" : "npm";
@@ -140,4 +308,10 @@ function stdinToString() {
         stdin.on("end", () => resolve(data));
         stdin.on("error", reject);
     });
+}
+
+const isMainModule = process.argv[1] && resolve(process.argv[1]) === scriptPath;
+
+if (isMainModule) {
+    await main();
 }
