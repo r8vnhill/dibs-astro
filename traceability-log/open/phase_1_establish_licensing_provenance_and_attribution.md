@@ -343,7 +343,7 @@ explicit permission is later obtained:
 
 ---
 
-# Subphase 1.2 — Define the Machine-Readable Attribution Contract
+# Subphase 1.2 — Define the Machine-Readable Attribution Contract [DONE]
 
 ## Goal
 

@@ -703,7 +703,21 @@ Run after Phase 1.2.3.
 
 ---
 
-# Phase 1.2.5 --- Final Verification and Repository Purity
+# Phase 1.2.5 --- Final Verification and Repository Purity [DONE]
+
+## Current Status
+
+[DONE] `test:licenses` now covers the validator, renderer, and CLI/contract suites, and the generated notice remains
+current against the frozen manifest.
+
+Verification performed:
+
+- `pnpm --filter @ravenhill/astro-icons test:licenses` — 49 tests passed across 16 suites.
+- `pnpm --filter @ravenhill/astro-icons licenses:check` — `Third-party notice is current.`
+- Protected diffs were empty for `third-party-icons.json`, `icon-inventory.json`, and `packages/astro-icons/src`.
+
+No staging, commit, archive, broader check composition, dependency changes, manifest edits, inventory edits, or SVG
+edits were performed.
 
 ## Goal
 
@@ -849,19 +863,3 @@ Run last and repeat after every correction.
 - Do not wire license checks into top-level package checks yet.
 - Do not add new runtime dependencies.
 - Do not archive the subphase.
-
----
-
-# Main Improvements Over the Original Plan
-
-The original plan is solid, but this version tightens it in five ways:
-
-1. **Separates validator, renderer, CLI, and generated baseline** so failures have clear ownership.
-2. **Makes the real frozen schema explicit** and avoids the older illustrative `redistribution.status` shape.
-3. **Uses Sanderson-themed synthetic fixtures** for this session instead of One Piece fixtures.
-4. **Gates rendering behind validation** so `THIRD_PARTY.md` cannot be generated from a structurally invalid manifest.
-5. **Keeps Subphase 1.2 isolated** from Subphase 1.3 and 1.4 work, especially `PHOSPHOR.txt`, pack assertions, and
-   top-level check composition.
-
-DDT is useful for validator and renderer matrix tests. PBT is not warranted here: the contract is fixed, the manifest
-schema is known, and the main risk is deterministic drift, not a broad input domain.

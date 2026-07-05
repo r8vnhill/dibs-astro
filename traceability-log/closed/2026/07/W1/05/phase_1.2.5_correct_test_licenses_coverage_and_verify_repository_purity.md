@@ -1,4 +1,28 @@
-# [PLAN] Phase 1.2.5 --- Correct `test:licenses` Coverage and Verify Repository Purity
+# [DONE] Phase 1.2.5 --- Correct `test:licenses` Coverage and Verify Repository Purity
+
+## Phase 1.2.5 Verification Report
+
+Implemented on 2026-07-05.
+
+| Check                                                 | Result |
+| ----------------------------------------------------- | ------ |
+| `test:licenses` includes contract tests               | PASS   |
+| `pnpm --filter @ravenhill/astro-icons test:licenses`  | PASS   |
+| `pnpm --filter @ravenhill/astro-icons licenses:check` | PASS   |
+| `third-party-icons.json` unchanged                    | PASS   |
+| `icon-inventory.json` unchanged                       | PASS   |
+| SVG assets unchanged                                  | PASS   |
+| `package.json` limited to intended script wiring      | PASS   |
+| `THIRD_PARTY.md` present and current                  | PASS   |
+| No staging/commit/archive performed                   | PASS   |
+
+Verification details:
+
+- `test:licenses` now runs `license-metadata.test.mjs`, `third-party-notices.test.mjs`, and
+  `third-party-notices.contract.test.mjs`.
+- The corrected test command ran 49 tests across 16 suites, all passing.
+- `licenses:check` reported `Third-party notice is current.`
+- Protected diffs were empty for `third-party-icons.json`, `icon-inventory.json`, and `packages/astro-icons/src`.
 
 ## Scope Classification
 
