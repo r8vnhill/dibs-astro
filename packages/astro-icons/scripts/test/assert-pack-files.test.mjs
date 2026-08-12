@@ -1,9 +1,8 @@
-import { describe, test } from "node:test";
 import assert from "node:assert/strict";
+import { describe, test } from "node:test";
 
 import {
     BLOCKED_PATTERNS,
-    REQUIRED_RUNTIME_FILES,
     checkSvgParity,
     deriveRequiredLicenseFiles,
     evaluatePackContents,
@@ -11,6 +10,7 @@ import {
     findIncludedAssetsWithoutPermittedRedistribution,
     findMissingFiles,
     main,
+    REQUIRED_RUNTIME_FILES,
 } from "../assert-pack-files.mjs";
 
 // Sanderson-themed fixture names only; never the real 1,521-icon production tarball.
@@ -68,6 +68,71 @@ describe("module contract", () => {
         );
         assert.equal(typeof evaluatePackContents, "function");
         assert.equal(typeof main, "function");
+    });
+
+    test("main adapts injected shell effects and returns success without process exit", async () => {
+        const calls = [];
+        const files = completeFiles();
+        const entries = [{ filename: "astro-icons-0.1.0.tgz" }];
+        const status = await main({
+            argv: ["--pack"],
+            dependencies: {
+                readPackFiles: (argv) => {
+                    calls.push(["readPackFiles", argv]);
+                    return Promise.resolve({ entries, files });
+                },
+                countSourceSvgs: () => {
+                    calls.push("countSourceSvgs");
+                    return Promise.resolve(2);
+                },
+                readManifest: () => {
+                    calls.push("readManifest");
+                    return Promise.resolve(buildManifest());
+                },
+                writeDiagnostic: () => calls.push("writeDiagnostic"),
+                writeOutput: (message) => calls.push(["writeOutput", message]),
+                removePackedTarballs: (receivedEntries) => calls.push(["removePackedTarballs", receivedEntries]),
+            },
+        });
+
+        assert.equal(status, 0);
+        assert.equal(
+            calls.filter((call) => call === "countSourceSvgs").length,
+            1,
+        );
+        assert.equal(
+            calls.filter((call) => call === "readManifest").length,
+            1,
+        );
+        assert.deepEqual(calls.at(-1), ["removePackedTarballs", entries]);
+    });
+
+    test("main renders independent findings and returns failure", async () => {
+        const diagnostics = [];
+        const files = completeFiles(["package/scripts/urithiru.mjs"]);
+        files.delete("package/LICENSE");
+
+        const status = await main({
+            dependencies: {
+                readPackFiles: async () => ({ entries: [], files }),
+                countSourceSvgs: async () => 2,
+                readManifest: async () =>
+                    buildManifest([
+                        buildAsset({
+                            releaseDecision: { action: "include" },
+                            redistribution: { conclusion: "restricted" },
+                        }),
+                    ]),
+                writeDiagnostic: (message) => diagnostics.push(message),
+                writeOutput: () => assert.fail("failure must not be reported as success"),
+                removePackedTarballs: () => assert.fail("failed packs must not be cleaned"),
+            },
+        });
+
+        assert.equal(status, 1);
+        assert.ok(diagnostics.some((message) => message.includes("Missing required files")));
+        assert.ok(diagnostics.some((message) => message.includes("Blocked files present")));
+        assert.ok(diagnostics.some((message) => message.includes("redistribution.notPermitted")));
     });
 });
 
@@ -324,5 +389,34 @@ describe("evaluatePackContents", () => {
         );
         assert.equal(result.findings.svgParity.length, 1);
         assert.equal(result.findings.redistribution.length, 1);
+    });
+
+    test("findings are unchanged when packed files are reordered", () => {
+        const manifest = buildManifest([
+            buildAsset({
+                releaseDecision: { action: "include" },
+                redistribution: { conclusion: "undetermined" },
+            }),
+        ]);
+        const files = [...completeFiles(["package/scripts/urithiru.mjs"])];
+        const reversed = [...files].reverse();
+
+        assert.deepEqual(
+            evaluatePackContents({ files, manifest, srcSvgCount: 2 }).findings,
+            evaluatePackContents({ files: reversed, manifest, srcSvgCount: 2 }).findings,
+        );
+    });
+
+    test("adding an unrelated file does not remove an existing finding", () => {
+        const files = completeFiles();
+        files.delete("package/LICENSE");
+        const manifest = buildManifest();
+
+        const before = evaluatePackContents({ files, manifest, srcSvgCount: 2 });
+        files.add("package/NOTICE.txt");
+        const after = evaluatePackContents({ files, manifest, srcSvgCount: 2 });
+
+        assert.ok(after.findings.missingFiles.includes("package/LICENSE"));
+        assert.deepEqual(after.findings.missingFiles, before.findings.missingFiles);
     });
 });

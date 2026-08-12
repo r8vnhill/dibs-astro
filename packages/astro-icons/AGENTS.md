@@ -145,8 +145,15 @@ pnpm --filter @ravenhill/astro-icons licenses:check
 `licenses:update` regenerates [`LICENSES/THIRD_PARTY.md`](LICENSES/THIRD_PARTY.md) from the manifest; never hand-edit
 that file.
 
-When package pack-contract checks are added in a later phase, they must also pass before a newly included asset can
-ship. That gate does not exist yet.
+The publishable-artifact contract is enforced by `pack:check` before an included asset can ship:
+
+- `releaseDecision.action: "include"` requires `redistribution.conclusion: "permitted"`;
+- an included asset's `licenseFile`, `permissionFile`, and `policyFile` references must be present in the artifact;
+- development-only paths such as `migration/` remain blocked;
+- there is no `risk-accepted` override.
+
+The checker enforces recorded repository policy and package integrity; it does not determine legal rights. Any future
+exception requires an explicit policy and traceability decision rather than an ad hoc enum extension.
 
 ### Rebuild the package
 

@@ -1,9 +1,9 @@
 import { execFile } from "node:child_process";
-import { readFile, readdir, unlink } from "node:fs/promises";
+import { readdir, readFile, unlink } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { stdin } from "node:process";
-import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
@@ -48,8 +48,25 @@ export const DEFAULT_MANIFEST_PATH = resolve(
     "third-party-icons.json",
 );
 
-const getManifestAssets = (manifest) =>
-    Array.isArray(manifest?.assets) ? manifest.assets : [];
+const defaultDependencies = Object.freeze({
+    readManifest: () => readJsonFile(DEFAULT_MANIFEST_PATH),
+    readPackFiles: (argv) =>
+        (argv.includes("--pack") ? packPackage() : stdinToString()).then(
+            (input) => {
+                const packEntries = parsePackEntries(input);
+                return {
+                    entries: packEntries,
+                    files: extractPackFiles(packEntries),
+                };
+            },
+        ),
+    countSourceSvgs: () => countSourceSvgs(),
+    writeDiagnostic: (message) => console.error(message),
+    writeOutput: (message) => console.log(message),
+    removePackedTarballs: (entries) => removePackedTarballs(entries),
+});
+
+const getManifestAssets = (manifest) => Array.isArray(manifest?.assets) ? manifest.assets : [];
 
 const getAtPath = (object, path) =>
     path.reduce(
@@ -121,9 +138,7 @@ export const findBlockedFiles = (files, blockedPatterns) =>
  * @returns {string[]}
  */
 export function checkSvgParity(files, srcSvgCount) {
-    const distSvgCount = [...files].filter((file) =>
-        /^package\/dist\/.+\.svg$/u.test(file),
-    ).length;
+    const distSvgCount = [...files].filter((file) => /^package\/dist\/.+\.svg$/u.test(file)).length;
 
     if (srcSvgCount === 0 || srcSvgCount === distSvgCount) {
         return [];
@@ -168,8 +183,7 @@ export function evaluatePackContents({ files, manifest, srcSvgCount }) {
         missingFiles: findMissingFiles(fileSet, requiredFiles),
         blockedFiles: findBlockedFiles(fileSet, BLOCKED_PATTERNS),
         svgParity: checkSvgParity(fileSet, srcSvgCount),
-        redistribution:
-            findIncludedAssetsWithoutPermittedRedistribution(manifest),
+        redistribution: findIncludedAssetsWithoutPermittedRedistribution(manifest),
     };
 
     return {
@@ -181,38 +195,33 @@ export function evaluatePackContents({ files, manifest, srcSvgCount }) {
 /**
  * CLI entry point.
  *
- * @param {{ argv?: string[], stdout?: (message: string) => void, stderr?: (message: string) => void }} options
- * @returns {Promise<void>}
+ * @param {{ argv?: string[], dependencies?: object }} options
+ * @returns {Promise<number>}
  */
 export async function main({
     argv = process.argv.slice(2),
-    stdout = console.log,
-    stderr = console.error,
+    dependencies = defaultDependencies,
 } = {}) {
-    const input = argv.includes("--pack")
-        ? await packPackage()
-        : await stdinToString();
-    const packEntries = parsePackEntries(input);
-    const files = extractPackFiles(packEntries);
-    const srcSvgCount = await countSourceSvgs();
-    const manifest = await readJsonFile(DEFAULT_MANIFEST_PATH);
+    const { entries, files } = await dependencies.readPackFiles(argv);
+    const [srcSvgCount, manifest] = await Promise.all([
+        dependencies.countSourceSvgs(),
+        dependencies.readManifest(),
+    ]);
     const result = evaluatePackContents({ files, manifest, srcSvgCount });
 
-    printFindings(result.findings, stderr);
+    printFindings(result.findings, dependencies.writeDiagnostic);
 
     if (!result.ok) {
-        process.exitCode = 1;
-        return;
+        return 1;
     }
 
-    const distSvgCount = [...files].filter((file) =>
-        /^package\/dist\/.+\.svg$/u.test(file),
-    ).length;
-    stdout(
+    const distSvgCount = [...files].filter((file) => /^package\/dist\/.+\.svg$/u.test(file)).length;
+    dependencies.writeOutput(
         `✓ Pack check passed: ${files.size} files total, ${distSvgCount} SVGs in dist.`,
     );
 
-    await removePackedTarballs(packEntries);
+    await dependencies.removePackedTarballs(entries);
+    return 0;
 }
 
 function parsePackEntries(input) {
@@ -222,34 +231,36 @@ function parsePackEntries(input) {
 
 export const extractPackFiles = (packEntries) =>
     new Set(
-        packEntries.flatMap((entry) =>
-            entry.files.map((file) => `package/${file.path}`),
-        ),
+        packEntries.flatMap((entry) => entry.files.map((file) => `package/${file.path}`)),
     );
 
-function printFindings(findings, stderr) {
+function printFindings(findings, writeDiagnostic) {
     if (findings.missingFiles.length > 0) {
-        stderr(
-            `Missing required files:\n${findings.missingFiles
-                .map((file) => `  - ${file}`)
-                .join("\n")}`,
+        writeDiagnostic(
+            `Missing required files:\n${
+                findings.missingFiles
+                    .map((file) => `  - ${file}`)
+                    .join("\n")
+            }`,
         );
     }
 
     if (findings.blockedFiles.length > 0) {
-        stderr(
-            `Blocked files present:\n${findings.blockedFiles
-                .map((file) => `  - ${file}`)
-                .join("\n")}`,
+        writeDiagnostic(
+            `Blocked files present:\n${
+                findings.blockedFiles
+                    .map((file) => `  - ${file}`)
+                    .join("\n")
+            }`,
         );
     }
 
     for (const finding of findings.svgParity) {
-        stderr(finding);
+        writeDiagnostic(finding);
     }
 
     for (const finding of findings.redistribution) {
-        stderr(finding);
+        writeDiagnostic(finding);
     }
 }
 
@@ -257,18 +268,15 @@ const readJsonFile = async (path) => JSON.parse(await readFile(path, "utf8"));
 
 async function countSourceSvgs() {
     const srcDir = resolve(packageRoot, "src");
-    const srcSvgFiles = (await readdir(srcDir)).filter((file) =>
-        file.endsWith(".svg"),
-    );
+    const srcSvgFiles = (await readdir(srcDir)).filter((file) => file.endsWith(".svg"));
     return srcSvgFiles.length;
 }
 
 async function packPackage() {
     const executable = process.platform === "win32" ? "cmd.exe" : "npm";
-    const args =
-        process.platform === "win32"
-            ? ["/d", "/c", "npm.cmd", "pack", "--json"]
-            : ["pack", "--json"];
+    const args = process.platform === "win32"
+        ? ["/d", "/c", "npm.cmd", "pack", "--dry-run", "--json"]
+        : ["pack", "--dry-run", "--json"];
 
     const { stdout } = await execFileAsync(executable, args, {
         cwd: packageRoot,
@@ -281,8 +289,8 @@ async function removePackedTarballs(entries) {
     await Promise.all(
         entries.map(async (entry) => {
             if (
-                typeof entry.filename !== "string" ||
-                entry.filename.length === 0
+                typeof entry.filename !== "string"
+                || entry.filename.length === 0
             ) {
                 return;
             }
@@ -313,5 +321,5 @@ function stdinToString() {
 const isMainModule = process.argv[1] && resolve(process.argv[1]) === scriptPath;
 
 if (isMainModule) {
-    await main();
+    process.exitCode = await main();
 }

@@ -98,6 +98,9 @@ Bundled third-party icon assets are tracked separately from the package code. Se
 [`LICENSES/PHOSPHOR.txt`](./LICENSES/PHOSPHOR.txt) for the Phosphor license text, and
 [`LICENSES/THIRD_PARTY.md`](./LICENSES/THIRD_PARTY.md) for the generated third-party attribution notice.
 
+`pack:check` verifies that the publishable package contains `LICENSE`, the required `LICENSES/*` notices, and the
+licensing evidence referenced by included assets. This is a package-integrity check, not legal advice.
+
 Non-Phosphor custom assets are excluded from packaging unless future evidence, release decisions, and package checks
 explicitly allow inclusion. Attribution records do not imply sponsorship, endorsement, or redistribution clearance.
 

@@ -1,134 +1,93 @@
-# [PLAN] Subphase 1.4 --- Enforce the Publishable Artifact Contract
+# [PLAN] Subphase 1.4 — Complete and Verify the Publishable Artifact Contract
 
 ## Scope Classification
 
 **Recommended structure:** medium-scope **phases**.
 
+The original classification is correct, but the remaining work should be reduced to four phases:
+
+1. harden and characterize the CLI shell;
+2. integrate the contract into package workflows and documentation;
+3. verify the contract against the real publishable artifact;
+4. close traceability and prove repository purity.
+
+Phases 1.4.1 and 1.4.2 are already complete and form the behavioral baseline.
+
 ---
 
-# Phase 1.4.1 — Characterize the Existing Pack Contract [DONE]
+# Architectural Direction
 
-## Current Status
-
-[DONE] `packages/astro-icons/scripts/test/assert-pack-files.test.mjs` was created with characterization tests for
-`findMissingFiles`, `findBlockedFiles`, and `checkSvgParity`, using Sanderson-themed synthetic fixtures (no `npm pack`,
-no real filesystem access). The tests cover: all required runtime files present/absent (`README.md`, `package.json`,
-`dist/index.js`, `dist/index.d.ts`, `dist/index.js.map`); each currently blocked pattern present/absent (`AGENTS.md`,
-`src/`, `scripts/`, `tsup.config.ts`, `tsconfig.json`); and SVG parity match/mismatch/ zero-source cases.
-
-Running `node --test packages/astro-icons/scripts/test/assert-pack-files.test.mjs` currently fails with
-`SyntaxError: The requested module '../assert-pack-files.mjs' does not provide an export named 'checkSvgParity'` — this
-is the expected Red state per this phase's own scope ("Modify later, but not yet" for `assert-pack-files.mjs`). The test
-file pins down the intended pure-function contract; Phase 2 turns it Green by extracting `findMissingFiles`,
-`findBlockedFiles`, and `checkSvgParity` (plus the new license/redistribution functions) as named exports without
-changing existing required-file, blocked-pattern, or SVG-parity behavior.
-
-## Goal
-
-Lock current behavior before refactoring `assert-pack-files.mjs`.
-
-## Scope
-
-Create:
+Use a **functional core, imperative shell**:
 
 ```text
-packages/astro-icons/scripts/test/assert-pack-files.test.mjs
+pack file list ─┐
+manifest ───────┼─> pure pack-contract evaluator ─> structured findings
+SVG count ──────┘                                  │
+                                                   v
+                                      CLI diagnostic formatter
+                                                   │
+                                                   v
+                                             exit status
 ```
 
-Modify later, but not yet:
+The pure core owns:
+
+- required-file derivation;
+- blocked-file detection;
+- SVG parity;
+- redistribution-policy evaluation;
+- aggregation of findings.
+
+The imperative shell owns:
+
+- reading the attribution manifest;
+- obtaining the actual pack file list;
+- counting source SVGs;
+- formatting output;
+- setting `process.exitCode`.
+
+Do not introduce services, microservices, or framework abstractions. This is a package-local verification utility;
+additional deployment boundaries would increase complexity without improving modularity.
+
+Prefer dependency injection at the `main()` boundary over mocking Node modules.
+
+If `assert-pack-files.mjs` approaches the repository's 500-line source-file limit after the remaining work, extract the
+pure core to:
+
+```text
+packages/astro-icons/scripts/lib/pack-contract.mjs
+```
+
+and leave:
 
 ```text
 packages/astro-icons/scripts/assert-pack-files.mjs
 ```
 
-## Cycle 1.1 — Characterize Existing Required and Blocked Files
+as the thin shell.
 
-### Red
-
-```gherkin
-Feature: Current pack file contract
-
-Scenario: Existing required runtime files are preserved
-  Given a package tarball file list
-  When pack contents are evaluated
-  Then README.md, package.json, dist/index.js, dist/index.d.ts, and dist/index.js.map are required
-
-Scenario: Existing blocked package internals are still rejected
-  Given a package tarball file list containing scripts or source files
-  When pack contents are evaluated
-  Then AGENTS.md, src/, scripts/, tsup.config.ts, and tsconfig.json are rejected
-```
-
-### Green
-
-Add tests that describe the existing behavior using pure fixtures, but do not call `npm pack`.
-
-Use Sanderson-themed fixture filenames where extra assets are needed, for example:
-
-```text
-package/dist/roshar.svg
-package/dist/scadrial.svg
-package/scripts/urithiru.mjs
-```
-
-### Refactor
-
-Keep tests independent from the real package tarball. The test suite should be able to run without building or packing.
-
-## Acceptance Criteria
-
-- Existing required-file behavior is covered.
-- Existing blocked-pattern behavior is covered.
-- Existing SVG parity behavior is covered.
-- Tests do not execute `npm pack`.
-- Tests do not read the real filesystem.
-
-## Non-Goals
-
-- Do not add new license requirements yet.
-- Do not refactor CLI behavior yet.
-- Do not modify package scripts yet.
-
-## Suggested Execution Order
-
-Run first. This reduces the risk of behavior drift during refactoring.
+Do **not** split the file merely to create additional modules if it remains small and cohesive.
 
 ---
 
-# Phase 1.4.2 — Extract Pure Pack-Contract Logic [DONE]
+# Completed Baseline
 
-## Current Status
+## Phase 1.4.1 — Characterize the Existing Pack Contract [DONE]
 
-[DONE] `assert-pack-files.mjs` now exposes import-safe pure helpers and a guarded CLI entry point. The extracted pack
-contract preserves existing runtime-file, blocked-file, and SVG-parity behavior; requires package license and attribution
-files; derives included-asset license references from the manifest; blocks `package/migration/`; reports grouped
-diagnostics; and enforces `releaseDecision.action: "include"` only when `redistribution.conclusion === "permitted"`.
+Established characterization coverage for:
 
-Verification performed:
+- required runtime files;
+- blocked internals;
+- SVG parity;
+- synthetic, filesystem-independent fixtures.
 
-- `pnpm --filter @ravenhill/astro-icons exec node --test scripts/test/assert-pack-files.test.mjs` — 20 tests passed
-  across 7 suites.
-- `cmd /c git diff --check`
-- Protected diffs were empty for frozen evidence, generated notice, package metadata, README, AGENTS, source assets, and
-  inventory.
+No further work is required unless a remaining phase discovers an uncharacterized behavior.
 
-Phase 1.4.3 and later remain open for CLI preservation verification, package script wiring, documentation updates, real
-pack checks, and traceability closure.
+---
 
-## Goal
+## Phase 1.4.2 — Extract Pure Pack-Contract Logic [DONE]
 
-Refactor `assert-pack-files.mjs` into importable pure functions plus thin CLI behavior.
-
-## Scope
-
-Modify:
-
-```text
-packages/astro-icons/scripts/assert-pack-files.mjs
-packages/astro-icons/scripts/test/assert-pack-files.test.mjs
-```
-
-Export pure functions:
+Established:
 
 ```js
 deriveRequiredLicenseFiles(manifest);
@@ -139,278 +98,277 @@ findIncludedAssetsWithoutPermittedRedistribution(manifest);
 evaluatePackContents({ files, manifest, srcSvgCount });
 ```
 
-## Cycle 2.1 — Derive Required License Files
+and:
 
-### Red
+- import-safe module behavior;
+- guarded CLI execution;
+- required legal-file derivation;
+- `package/migration/` blocking;
+- `include => redistribution.conclusion === "permitted"`;
+- grouped diagnostics;
+- preservation of existing runtime-file, blocked-file, and SVG-parity behavior.
 
-```gherkin
-Feature: Required license files
-
-Scenario: Core license files are always required
-  Given an attribution manifest
-  When required license files are derived
-  Then package/LICENSE is required
-  And package/LICENSES/README.md is required
-  And package/LICENSES/PHOSPHOR.txt is required
-  And package/LICENSES/THIRD_PARTY.md is required
-  And package/LICENSES/third-party-icons.json is required
-
-Scenario: Included asset license references are required
-  Given an included asset references LICENSES/SHARDBLADE.txt
-  When required license files are derived
-  Then package/LICENSES/SHARDBLADE.txt is required
-```
-
-### Green
-
-Implement:
-
-```js
-deriveRequiredLicenseFiles(manifest);
-```
-
-Rules:
-
-- always require the fixed core files;
-- include asset-specific `licenseFile`, `permissionFile`, and `policyFile` references only for assets with:
-
-```js
-releaseDecision.action === "include";
-```
-
-- convert manifest-relative paths into tarball paths with the `package/` prefix.
-
-### Refactor
-
-Keep path normalization in one helper. Avoid string concatenation scattered across the evaluator.
-
-## Cycle 2.2 — Enforce Include Requires Permitted Redistribution
-
-### Red
-
-```gherkin
-Feature: Included asset redistribution gate
-
-Scenario: Included asset with permitted redistribution passes
-  Given an asset has releaseDecision.action include
-  And redistribution.conclusion permitted
-  When pack contents are evaluated
-  Then no redistribution finding is reported
-
-Scenario Outline: Included asset without permitted redistribution fails
-  Given an asset has releaseDecision.action include
-  And redistribution.conclusion is <conclusion>
-  When pack contents are evaluated
-  Then a redistribution finding is reported
-
-Examples:
-  | conclusion          |
-  | restricted          |
-  | permission-required |
-  | undetermined        |
-```
-
-### Green
-
-Implement:
-
-```js
-findIncludedAssetsWithoutPermittedRedistribution(manifest);
-```
-
-Do **not** add `risk-accepted` to the frozen release-action vocabulary. Do **not** mutate the manifest. The rule is
-simply:
-
-```js
-(include => redistribution.conclusion === "permitted");
-```
-
-### Refactor
-
-Name findings clearly, for example:
-
-```text
-redistribution.notPermitted: roshar.svg is included but redistribution conclusion is undetermined
-```
-
-## Cycle 2.3 — Compose Grouped Pack Diagnostics
-
-### Red
-
-```gherkin
-Feature: Grouped pack diagnostics
-
-Scenario: Multiple pack contract failures are reported together
-  Given a pack file list missing LICENSE
-  And containing package/scripts/build.mjs
-  And having an SVG count mismatch
-  And a manifest with an included asset whose redistribution is undetermined
-  When pack contents are evaluated
-  Then missing-file findings are reported
-  And blocked-file findings are reported
-  And SVG parity findings are reported
-  And redistribution findings are reported
-```
-
-### Green
-
-Implement:
-
-```js
-evaluatePackContents({ files, manifest, srcSvgCount });
-```
-
-Return a grouped diagnostic shape, for example:
-
-```js
-{
-  ok: false,
-  findings: {
-    missingFiles: [],
-    blockedFiles: [],
-    svgParity: [],
-    redistribution: []
-  }
-}
-```
-
-or a flat list with stable prefixes. Prefer grouped findings if it matches the phase doc’s diagnostic goal.
-
-### Refactor
-
-Keep existing SVG parity semantics unchanged. The only behavior additions are legal-file requirements, `migration/`
-blocking, and the include/permitted rule.
-
-## Acceptance Criteria
-
-- Pure functions are exported.
-- Importing the module does not execute `npm pack`.
-- Existing required-file, blocked-pattern, and SVG parity behavior is preserved.
-- `package/LICENSE` and the required `package/LICENSES/*` files are enforced.
-- Included assets require `redistribution.conclusion === "permitted"`.
-- Multiple findings are reported together.
-- Tests use synthetic fixtures, not the real manifest as the oracle.
-
-## Non-Goals
-
-- Do not change `third-party-icons.json`.
-- Do not add a `risk-accepted` release action.
-- Do not alter existing license-metadata tests.
-- Do not remove SVG parity behavior.
-
-## Suggested Execution Order
-
-Run after Phase 1.
+These semantics are now the baseline for the remaining phases.
 
 ---
 
-# Phase 3 — Preserve and Thin the CLI
+# Phase 1.4.3 — Harden the CLI as a Thin, Testable Shell
 
 ## Goal
 
-Keep `assert-pack-files.mjs` executable while making it safe to import from tests.
+Prove that the existing guarded CLI correctly adapts external I/O to the pure evaluator without duplicating contract
+logic.
+
+This **replaces** the previous plan to "add" a main-module guard: that guard already exists after Phase 1.4.2.
 
 ## Scope
 
-Modify:
+Modify as necessary:
 
 ```text
 packages/astro-icons/scripts/assert-pack-files.mjs
+packages/astro-icons/scripts/test/assert-pack-files.test.mjs
 ```
 
-## Cycle 3.1 — Add Main-Module Guard
+Optionally create only if needed for cohesion or the 500-line limit:
 
-### Red
-
-```gherkin
-Feature: assert-pack-files import safety
-
-Scenario: Importing assert-pack-files does not run npm pack
-  Given a test imports assert-pack-files.mjs
-  When the module is loaded
-  Then npm pack is not executed
-  And stdin is not read
-  And process.exitCode is not changed
+```text
+packages/astro-icons/scripts/lib/pack-contract.mjs
 ```
-
-### Green
-
-Wrap top-level execution in a guarded `main()`:
-
-```js
-export const main = async (...) => { ... };
-
-if (resolve(process.argv[1] ?? "") === fileURLToPath(import.meta.url)) {
-  await main();
-}
-```
-
-Mirror the package’s existing `generate-third-party-notices.mjs` pattern.
-
-### Refactor
-
-Make `main()` thin:
-
-1. obtain pack file list from existing stdin/`npm pack` behavior;
-2. read `LICENSES/third-party-icons.json`;
-3. compute `srcSvgCount`;
-4. call `evaluatePackContents`;
-5. print grouped diagnostics;
-6. set `process.exitCode = 1` on failure.
-
-## Cycle 3.2 — Read Manifest for Required File Derivation
-
-### Red
-
-```gherkin
-Feature: Manifest-derived pack requirements
-
-Scenario: pack:check derives required legal files from the attribution manifest
-  Given the attribution manifest exists
-  When assert-pack-files runs
-  Then required legal files are derived from the manifest
-  And LICENSES files are not hardcoded ad hoc in the CLI body
-```
-
-### Green
-
-Add package-root-relative defaults, similar to the notice generator:
-
-```js
-DEFAULT_MANIFEST_PATH;
-```
-
-Read the manifest inside `main()`, not inside pure functions.
-
-### Refactor
-
-Keep filesystem access in CLI helpers only.
-
-## Acceptance Criteria
-
-- CLI still supports existing pack/stdin behavior.
-- Importing the script has no side effects.
-- CLI reads the manifest once and passes it into pure evaluation.
-- Diagnostics remain readable.
-- `pack:check` behavior is preserved except for the new pack-contract rules.
-
-## Non-Goals
-
-- Do not change package build output.
-- Do not change `pack:dry-run`.
-- Do not make `publint` part of legal verification.
-
-## Suggested Execution Order
-
-Run after pure function tests pass.
 
 ---
 
-# Phase 4 — Wire Package Scripts and Documentation
+## Cycle 3.1 — Characterize Import and Entry-Point Safety
+
+### Red
+
+```gherkin
+Feature: assert-pack-files module boundary
+
+Scenario: Importing the module has no observable CLI side effects
+  Given assert-pack-files.mjs is imported by another module
+  When module evaluation completes
+  Then no pack command is executed
+  And no filesystem input is consumed
+  And no diagnostics are written
+  And process.exitCode is unchanged
+```
+
+### Green
+
+Add a regression test for the guard established during Phase 1.4.2.
+
+Do not reimplement the guard if the existing implementation already satisfies the test.
+
+### Refactor
+
+Keep the existing portable ESM entry-point guard.
+
+Do not migrate solely to:
+
+```js
+if (import.meta.main) {
+    ...
+}
+```
+
+within this subphase.
+
+`import.meta.main` is available in recent Node versions but remains an early-development API, so adopting it would add
+compatibility risk without improving this contract.
+
+---
+
+## Cycle 3.2 — Inject Imperative Dependencies
+
+### Red
+
+```gherkin
+Feature: Pack-contract CLI orchestration
+
+Scenario: Successful evaluation returns success
+  Given manifest loading succeeds
+  And the source SVG count is available
+  And the packed file list satisfies the contract
+  When main executes
+  Then the evaluator receives those values exactly once
+  And the CLI completes successfully
+
+Scenario: Contract violations return failure
+  Given the evaluator reports one or more findings
+  When main executes
+  Then all findings are rendered
+  And the CLI reports failure
+
+Scenario: Independent contract failures are not fail-fast
+  Given missing-file and redistribution findings exist
+  When main executes
+  Then both categories are reported
+```
+
+### Green
+
+Prefer:
+
+```js
+export const main = async (dependencies = defaultDependencies) => {
+    // orchestration only
+};
+```
+
+with a small dependency object representing only the shell operations that genuinely require effects, for example:
+
+```js
+{
+    readManifest, readPackFiles, countSourceSvgs, writeDiagnostic;
+}
+```
+
+The exact names should follow the existing script vocabulary.
+
+`main()` should return an exit-status value or result rather than calling `process.exit()`.
+
+The entry-point wrapper may translate that result to:
+
+```js
+process.exitCode = ...
+```
+
+to preserve existing external behavior.
+
+### Refactor
+
+Keep `main()` below approximately 25 lines by delegating:
+
+- I/O acquisition;
+- pure evaluation;
+- diagnostic formatting.
+
+Do not mock `node:fs`, `node:child_process`, or entire ESM modules if simple dependency injection makes those effects
+explicit.
+
+---
+
+## Cycle 3.3 — Characterize CLI Input Compatibility
+
+### Red
+
+```gherkin
+Feature: Existing pack-file acquisition
+
+Scenario: Existing invocation mode remains supported
+  Given pack:check is invoked through the package script
+  When assert-pack-files obtains the packed file list
+  Then the existing supported input mechanism still works
+  And the resulting file names are passed to evaluatePackContents unchanged
+```
+
+If both stdin and command-driven acquisition are currently supported, use DDT:
+
+```text
+mode           expected
+-------------  ------------------------
+stdin          preserved
+pack command   preserved
+```
+
+### Green
+
+Characterize, rather than redesign, the existing acquisition modes.
+
+### Refactor
+
+Normalize external data at one boundary.
+
+The pure evaluator should receive only:
+
+```js
+{
+    files, manifest, srcSvgCount;
+}
+```
+
+and know nothing about stdin, package managers, JSON serialization, or the filesystem.
+
+---
+
+## Cycle 3.4 — Keep Diagnostics Deterministic
+
+### Red
+
+```gherkin
+Feature: Deterministic diagnostics
+
+Scenario: The same contract violations produce the same diagnostic ordering
+  Given identical semantic inputs
+  When the evaluator is invoked repeatedly
+  Then findings are reported deterministically
+```
+
+Use DDT for multiple simultaneous finding categories.
+
+### Green
+
+Preserve the existing grouped diagnostic representation.
+
+If ordering is currently unspecified, establish one at the formatter boundary rather than coupling individual detection
+functions to presentation order.
+
+### Refactor
+
+Keep semantic detection separate from textual presentation:
+
+```text
+evaluatePackContents()
+        |
+        v
+structured findings
+        |
+        v
+formatPackFindings()
+```
+
+Only introduce `formatPackFindings()` if it materially reduces duplication.
+
+---
+
+## Acceptance Criteria
+
+- Importing `assert-pack-files.mjs` has no side effects.
+- The existing main-module guard has explicit regression coverage.
+- `main()` is a thin imperative shell.
+- External effects can be replaced with test doubles without module mocking.
+- Pure functions perform no filesystem, process, stdin, or child-process access.
+- Existing CLI invocation modes remain compatible.
+- All independent findings are reported together.
+- `process.exit()` is not used for normal validation failure.
+- Any new or modified function remains small and focused.
+- No source file exceeds 500 lines.
+
+## Non-Goals
+
+- Do not change pack-contract semantics.
+- Do not add new license rules.
+- Do not add a `risk-accepted` action.
+- Do not change publication contents.
+- Do not migrate runtime or package-manager versions here.
+- Do not introduce a CLI framework.
+- Do not add a mocking dependency.
+- Do not adopt experimental module mocking.
+- Do not adopt `import.meta.main` merely for novelty.
+
+## Suggested Execution Order
+
+Run immediately after the completed pure-core phase.
+
+---
+
+# Phase 1.4.4 — Integrate the Contract into Package Workflows and Maintainer Documentation
 
 ## Goal
 
-Make the new pack-file tests part of the package workflow and document the new enforcement rule.
+Make pack-contract verification a first-class package quality gate and clearly document its ownership and legal
+limitations.
 
 ## Scope
 
@@ -422,18 +380,20 @@ packages/astro-icons/AGENTS.md
 packages/astro-icons/README.md
 ```
 
-## Cycle 4.1 — Add `test:pack-files`
+---
+
+## Cycle 4.1 — Add the Package-Local Unit-Test Command
 
 ### Red
 
 ```gherkin
-Feature: Pack contract test script
+Feature: Package-local pack-contract tests
 
-Scenario: Pack contract unit tests are package-local
-  Given assert-pack-files.test.mjs exists
-  When package scripts are updated
-  Then test:pack-files runs that test file
-  And check runs test:pack-files before or alongside pack:check
+Scenario: Maintainers can execute pack-contract tests independently
+  Given the astro-icons package
+  When test:pack-files is executed
+  Then only the pack-contract unit tests are run
+  And their exit status is propagated
 ```
 
 ### Green
@@ -444,117 +404,336 @@ Add:
 "test:pack-files": "node --test scripts/test/assert-pack-files.test.mjs"
 ```
 
-Wire it into the existing `check` script alongside `pack:check`.
+Wire it into the package's existing quality workflow.
 
-### Refactor
+Prefer composition of named scripts rather than repeating the underlying command.
 
-Do not change unrelated scripts. Keep `test:licenses`, `licenses:check`, and `licenses:update` unchanged.
-
-## Cycle 4.2 — Update Maintainer Guidance
-
-### Red
-
-```gherkin
-Feature: Maintainer guidance for included assets
-
-Scenario: Maintainers know the pack contract blocks unsafe included assets
-  Given a maintainer changes a non-Phosphor asset to include
-  When they read AGENTS.md
-  Then they learn redistribution.conclusion must be permitted
-  And risk-accepted is not currently implemented
-  And future exceptions require a new traceability decision
-```
-
-### Green
-
-Update the existing attribution section in `AGENTS.md`:
-
-- `releaseDecision.action: "include"` requires `redistribution.conclusion: "permitted"`;
-- `pnpm --filter @ravenhill/astro-icons pack:check` will fail otherwise;
-- no `risk-accepted` override exists yet;
-- future need for risk acceptance must be handled through a new traceability entry, not an ad hoc enum value.
-
-## Cycle 4.3 — Update README Attribution Note
-
-### Red
-
-```gherkin
-Feature: README pack-contract note
-
-Scenario: README explains packaged notice enforcement
-  Given README has an Attribution and licensing section
-  When Subphase 1.4 documentation is added
-  Then it states pack:check verifies legal notice files in the published tarball
-  And it does not claim pack:check is legal advice
-```
-
-### Green
-
-Add one sentence to README:
+For example, conceptually:
 
 ```text
-`pack:check` verifies that the published tarball includes `LICENSE`, the required `LICENSES/*` notice files, and any included asset-specific license references.
+check
+├── test:licenses
+├── test:pack-files
+├── licenses:check
+├── build
+└── pack:check
 ```
+
+Preserve the actual repository ordering where ordering has semantic consequences.
 
 ### Refactor
 
-Keep the README change short. Detailed maintainer workflow belongs in `AGENTS.md`.
+Do not duplicate long command strings across scripts.
+
+Do not alter unrelated package scripts.
+
+---
+
+## Cycle 4.2 — Strengthen the DDT Contract Matrix
+
+## Goal
+
+Make the pack-contract tests easier to audit and extend.
+
+### Red
+
+Express matrix-shaped behavior as data rather than nearly identical tests.
+
+Required-file matrix:
+
+```text
+README.md
+package.json
+dist/index.js
+dist/index.d.ts
+dist/index.js.map
+LICENSE
+LICENSES/README.md
+LICENSES/PHOSPHOR.txt
+LICENSES/THIRD_PARTY.md
+LICENSES/third-party-icons.json
+```
+
+Blocked-path matrix:
+
+```text
+AGENTS.md
+migration/
+scripts/
+src/
+tsup.config.ts
+tsconfig.json
+```
+
+Redistribution matrix:
+
+```text
+release action  conclusion           expected
+--------------  -------------------  --------
+include         permitted            pass
+include         restricted           fail
+include         permission-required  fail
+include         undetermined         fail
+exclude         any                  no include finding
+```
+
+Asset-reference matrix:
+
+```text
+licenseFile
+permissionFile
+policyFile
+```
+
+### Green
+
+Use table-driven subtests with descriptive BDD names.
+
+Avoid opaque numeric case identifiers.
+
+### Refactor
+
+Keep each matrix close to the behavior it specifies.
+
+Do not create a generic test-data framework.
+
+---
+
+## Cycle 4.3 — Add High-Value Metamorphic Checks Where Already Semantically True
+
+### Red
+
+Check relationships rather than enumerating additional arbitrary examples.
+
+Candidate properties:
+
+```gherkin
+Scenario: Reordering the packed file list does not change the semantic findings
+  Given a packed file list
+  When the same entries are supplied in a different order
+  Then the same semantic contract violations are detected
+
+Scenario: Adding an unrelated permitted file does not remove an existing violation
+  Given a file list that violates the contract
+  When an unrelated publishable file is added
+  Then the existing violation remains
+```
+
+### Green
+
+Implement only properties that are already implied by the characterized contract.
+
+Compare semantic findings rather than presentation ordering where appropriate.
+
+### Refactor
+
+Keep these as a handful of explicit transformations.
+
+Do not add a PBT dependency solely for two or three finite invariants.
+
+---
+
+## Cycle 4.4 — Update Maintainer Guidance
+
+Update `AGENTS.md` to state explicitly:
+
+- `releaseDecision.action: "include"` requires `redistribution.conclusion: "permitted"`;
+- `pack:check` rejects an included asset that does not satisfy that implication;
+- included asset-specific `licenseFile`, `permissionFile`, and `policyFile` references become publishable-artifact
+  requirements;
+- there is no `risk-accepted` override;
+- adding such an exception in the future requires an explicit policy and traceability decision rather than an ad hoc
+  enum extension.
+
+Keep legal evidence and software policy conceptually separate:
+
+```text
+manifest evidence
+        ↓
+release decision
+        ↓
+pack contract
+```
+
+The checker enforces recorded policy; it does not determine legal rights.
+
+---
+
+## Cycle 4.5 — Update Consumer-Facing README Documentation
+
+Add a concise statement to the attribution/licensing section, for example:
+
+```text
+`pack:check` verifies that the publishable package contains `LICENSE`, the required
+`LICENSES/*` notices, and the referenced licensing evidence required by included assets.
+```
+
+Also state, if needed in the surrounding wording, that this is a package integrity check and not legal advice.
+
+Detailed workflow remains in `AGENTS.md`.
+
+---
 
 ## Acceptance Criteria
 
 - `test:pack-files` exists.
-- `check` runs `test:pack-files` and `pack:check`.
-- README and AGENTS updates are narrow.
-- No license manifest records change.
-- No generated notices are regenerated.
+- The package-level `check` workflow executes it.
+- Existing quality scripts are composed rather than duplicated.
+- Required, blocked, asset-reference, and redistribution matrices use DDT.
+- High-value metamorphic relations are tested only where behavior is already established.
+- README documentation remains concise.
+- `AGENTS.md` contains the detailed maintainer contract.
+- No manifest or generated notice changes occur.
 
 ## Non-Goals
 
 - Do not run `licenses:update`.
 - Do not edit `third-party-icons.json`.
-- Do not add a risk-accepted vocabulary value.
-- Do not add new dependencies.
+- Do not regenerate `THIRD_PARTY.md`.
+- Do not introduce PBT solely for this finite contract.
+- Do not add a test framework.
+- Do not introduce snapshot testing for the entire CLI output.
+- Do not add `risk-accepted`.
 
 ## Suggested Execution Order
 
-Run after Phases 2–3 pass.
+Run after Phase 1.4.3.
 
 ---
 
-# Phase 5 — Verify Build, Pack, and Dry-Run Contents
+# Phase 1.4.5 — Verify the Contract Against the Real Publishable Artifact
 
 ## Goal
 
-Prove the new pack contract works against the real package build and tarball file list.
+Prove that the pure contract and CLI shell correctly validate the actual package contents generated by the repository's
+publication toolchain.
+
+This should be **machine-verifiable**, not primarily a manual dry-run inspection.
 
 ## Scope
 
-Run from repository root:
+Verification from the repository root.
 
-```powershell
-Set-Location "e:\teaching\DIBS\projects\astro-website"
-```
+Potentially modify only the existing pack-check wiring if needed to consume the actual packer's machine-readable file
+list.
 
-## Cycle 5.1 — Run Package Verification Commands
+---
+
+## Cycle 5.1 — Make the Real Pack File List the Integration Oracle
 
 ### Red
 
 ```gherkin
-Feature: Publishable artifact verification
+Feature: Real publishable artifact integration
 
-Scenario: Package checks enforce attribution files
-  Given the pack contract has been implemented
-  When package verification commands run
-  Then license tests pass
-  And pack-file tests pass
-  And licenses:check passes
-  And build passes
-  And pack:check passes
+Scenario: The actual dry-run package satisfies the pack contract
+  Given the package has been built
+  When the package manager computes the files that would be packed
+  And that file list is evaluated by assert-pack-files
+  Then the contract passes
 ```
 
 ### Green
 
-Run:
+Prefer machine-readable dry-run output from the package manager actually used by the repository.
+
+For supported pnpm versions, the intended primitive is conceptually:
+
+```powershell
+pnpm pack --dry-run --json
+```
+
+rather than parsing human-oriented terminal output.
+
+`pnpm pack --dry-run` is specifically intended to verify the files that would enter the package, and `--json` provides
+structured output.
+
+If the repository's pinned pnpm version does not support this combination, preserve the existing pack mechanism rather
+than upgrading the toolchain inside this subphase.
+
+### Refactor
+
+Have exactly one adapter convert packer output into:
+
+```js
+string[]
+```
+
+of tarball-relative filenames.
+
+Do not duplicate npm/pnpm JSON parsing inside the pure evaluator.
+
+---
+
+## Cycle 5.2 — Verify Required Legal Artifacts
+
+### Red
+
+```gherkin
+Feature: Legal files in the publishable artifact
+
+Scenario: Fixed legal files are present
+  Given the actual dry-run package file list
+  Then package/LICENSE is present
+  And package/LICENSES/README.md is present
+  And package/LICENSES/PHOSPHOR.txt is present
+  And package/LICENSES/THIRD_PARTY.md is present
+  And package/LICENSES/third-party-icons.json is present
+
+Scenario: Included asset references are present
+  Given an included asset references an additional licensing file
+  Then that referenced file exists in the actual package file list
+```
+
+### Green
+
+Use `pack:check` as the machine assertion.
+
+Do not infer publication solely from the source tree or `package.json.files`.
+
+The publishable-artifact file list is the authoritative integration evidence.
+
+npm's package rules automatically include certain files such as `package.json`, README, and LICENSE, while other files
+are governed by packaging rules, which further supports checking the actual generated pack list rather than assuming
+source-tree presence implies publication.
+
+---
+
+## Cycle 5.3 — Verify Internal Files Remain Excluded
+
+### Red
+
+```gherkin
+Feature: Development internals are absent from the publishable artifact
+
+Scenario Outline: Development-only paths are excluded
+  Given the real package dry-run
+  Then <path> is absent
+
+Examples:
+  | path           |
+  | migration/     |
+  | scripts/       |
+  | src/           |
+  | tsconfig.json  |
+  | tsup.config.ts |
+```
+
+### Green
+
+Enforce through the existing blocked-file contract.
+
+### Refactor
+
+Do not reproduce these exclusions in a second integration-specific implementation.
+
+The pure blocked-file rule remains the single semantic source of truth.
+
+---
+
+## Cycle 5.4 — Execute the Verification Ladder
+
+Run in increasing integration scope:
 
 ```powershell
 pnpm --filter @ravenhill/astro-icons test:licenses
@@ -562,83 +741,177 @@ pnpm --filter @ravenhill/astro-icons test:pack-files
 pnpm --filter @ravenhill/astro-icons licenses:check
 pnpm --filter @ravenhill/astro-icons build
 pnpm --filter @ravenhill/astro-icons pack:check
+pnpm --filter @ravenhill/astro-icons pack:dry-run
 pnpm --filter @ravenhill/astro-icons lint
 ```
 
-Expected:
+Interpretation:
 
-- all except `lint` pass;
-- `lint` may still fail with the known pre-existing `publint` module-resolution issue;
-- document the lint failure, do not fix it here.
+1. pure/unit tests;
+2. metadata consistency;
+3. build;
+4. real artifact contract;
+5. independent dry-run evidence;
+6. broader package tooling.
 
-### Refactor
+Do **not** encode "`lint` is expected to fail" as acceptance behavior.
 
-If `pack:check` fails because required legal files are absent from the tarball, inspect `package.json.files` and the
-pack file list. Do not weaken the assertion.
+Instead:
 
-## Cycle 5.2 — Inspect Dry-Run Pack File List
+```text
+lint passes
+    -> record pass
 
-### Red
+lint fails only with the previously known publint issue
+    -> demonstrate it is pre-existing and record it as a non-blocking external caveat
 
-```gherkin
-Feature: Pack dry-run file list
-
-Scenario: Published tarball includes notices and excludes internals
-  Given the package has been built
-  When pack:dry-run is inspected
-  Then LICENSE is included
-  And LICENSES/README.md is included
-  And LICENSES/PHOSPHOR.txt is included
-  And LICENSES/THIRD_PARTY.md is included
-  And LICENSES/third-party-icons.json is included
-  And migration, scripts, src, tsconfig.json, and tsup.config.ts are excluded
+lint introduces any new failure
+    -> block completion
 ```
 
-### Green
+---
 
-Run:
+## Cycle 5.5 — Optional Targeted Mutation Validation
 
-```powershell
-pnpm --filter @ravenhill/astro-icons pack:dry-run
+Mutation testing has unusually good leverage on a few rules:
+
+```js
+action === "include"
+conclusion === "permitted"
+blockedPatterns.some(...)
+missingFiles.length === 0
+svgCount === srcSvgCount
 ```
 
-Inspect the file list for required inclusions/exclusions.
+If the repository **already has mutation-testing infrastructure**, run it against the pure pack-contract core and verify
+that changing these predicates is killed by the tests.
 
-### Refactor
+If no mutation-testing framework already exists, defer adding one. Installing and maintaining an additional framework
+solely for this small verifier is not justified by this subphase.
 
-If dry-run disagrees with `pack:check`, fix the pure evaluator or CLI adapter, not the generated notice or manifest.
+A future repository-wide mutation-testing initiative would be a better location.
+
+---
+
+## Testing-Technique Decision
+
+### BDD
+
+**Use extensively.**
+
+It describes the package policy clearly and maps well to traceability.
+
+### DDT
+
+**Use extensively.**
+
+Best fit for:
+
+- fixed required files;
+- blocked path prefixes;
+- redistribution conclusions;
+- referenced license fields.
+
+### Mock Testing
+
+**Use narrowly.**
+
+Mock only imperative boundary functions through dependency injection.
+
+Avoid mocking pure functions or implementation details.
+
+### PBT
+
+**Do not add.**
+
+The core domain is a finite, policy-defined matrix rather than a broad generative input space.
+
+If future path-normalization or arbitrary manifest-validation logic becomes substantially more complex, reconsider a
+mature PBT library then.
+
+### Metamorphic Testing
+
+**Use selectively.**
+
+Good candidates are order/permutation and irrelevant-file transformations, provided characterization confirms those
+relations.
+
+### Mutation Testing
+
+**High-value but optional.**
+
+Use existing infrastructure if available; otherwise defer.
+
+### Differential Testing
+
+**Not warranted for the contract evaluator itself.**
+
+There is no second independent implementation of the same policy that would constitute a meaningful differential oracle.
+
+Do not compare npm and pnpm merely to manufacture a differential test unless the project genuinely supports publishing
+through both.
+
+### Fuzz Testing
+
+**Not warranted in this subphase.**
+
+The evaluator consumes internally controlled manifest structures and package-manager-generated file lists rather than an
+exposed untrusted parser surface.
+
+Path traversal, malformed manifests, and hostile input hardening would constitute a separate security-hardening scope.
+
+---
 
 ## Acceptance Criteria
 
+- Real package contents are evaluated automatically.
+- The integration path uses structured packer output where supported.
 - `test:licenses` passes.
 - `test:pack-files` passes.
 - `licenses:check` passes.
 - `build` passes.
 - `pack:check` passes.
-- `pack:dry-run` includes `LICENSE` and required `LICENSES/*`.
-- `pack:dry-run` excludes `migration/`, `scripts/`, `src/`, `tsconfig.json`, and `tsup.config.ts`.
-- Known `publint` issue is documented if still present.
+- Required legal files are present in the real publishable artifact.
+- Included asset-specific references are present.
+- Development internals are absent.
+- Any lint failure is demonstrated to be pre-existing before being accepted as a caveat.
+- No contract assertion is weakened merely to make the real pack pass.
 
 ## Non-Goals
 
 - Do not publish.
-- Do not run `licenses:update`.
-- Do not edit package assets or manifest records.
-- Do not fix the `publint` dependency-resolution issue here.
+- Do not add a second packaging implementation.
+- Do not migrate to pnpm 12.
+- Do not move to Node Current merely because it is newer.
+- Do not fix unrelated `publint` behavior.
+- Do not introduce a mutation-testing dependency solely for this script.
+- Do not alter source assets or licensing evidence.
 
 ## Suggested Execution Order
 
-Run after Phase 4.
+Run after package scripts and documentation are wired.
 
 ---
 
-# Phase 6 — Close Traceability for Subphase 1.4 and Phase 1
+# Phase 1.4.6 — Close Traceability and Prove Repository Purity
 
 ## Goal
 
-Record implementation and verification results, and close Phase 1.
+Close Subphase 1.4 and Phase 1 only after implementation, real-artifact verification, and protected-file checks all
+succeed.
+
+This combines the original traceability and repository-purity phases because they form a single closure operation.
 
 ## Scope
+
+Inspect:
+
+```text
+packages/astro-icons/LICENSES/third-party-icons.json
+packages/astro-icons/LICENSES/THIRD_PARTY.md
+packages/astro-icons/migration/icon-inventory.json
+packages/astro-icons/src/
+```
 
 Modify:
 
@@ -646,138 +919,132 @@ Modify:
 traceability-log/open/phase_1_establish_licensing_provenance_and_attribution.md
 ```
 
-## Cycle 6.1 — Close Subphase 1.4
-
-### Red
-
-```gherkin
-Feature: Subphase 1.4 traceability closure
-
-Scenario: Subphase 1.4 records enforced pack contract
-  Given pack-contract tests and pack:check pass
-  When the traceability document is updated
-  Then Subphase 1.4 is marked DONE
-  And Current Status summarizes tests, rules, verification, and known lint caveat
-  And it records that risk-accepted remains deferred
-```
-
-### Green
-
-Update:
-
-```markdown
-# Subphase 1.4 — Enforce the Publishable Artifact Contract [DONE]
-```
-
-or match the document’s established heading style.
-
-Add `## Current Status` covering:
-
-- pure tests added for `assert-pack-files.mjs`;
-- required files enforced:
-
-  - `package/LICENSE`;
-  - `package/LICENSES/README.md`;
-  - `package/LICENSES/PHOSPHOR.txt`;
-  - `package/LICENSES/THIRD_PARTY.md`;
-  - `package/LICENSES/third-party-icons.json`;
-  - included asset-specific license references;
-- blocked `package/migration/`;
-- included assets require `redistribution.conclusion: "permitted"`;
-- verification commands and outcomes;
-- known `lint`/`publint` caveat, if still present;
-- `risk-accepted` escape hatch remains deferred.
-
-## Cycle 6.2 — Close Phase 1
-
-### Red
-
-```gherkin
-Feature: Phase 1 traceability closure
-
-Scenario: Phase 1 closes after all four subphases are done
-  Given Subphases 1.1, 1.2, 1.3, and 1.4 are DONE
-  When the Phase 1 status is updated
-  Then Phase 1 is marked complete
-  And the status cross-references end-to-end acceptance criteria
-  And deferred work remains explicit
-```
-
-### Green
-
-Add or update the Phase 1 top-level status:
-
-- all four subphases complete;
-- end-to-end acceptance criteria satisfied;
-- deferred work remains explicit, especially:
-
-  - future `risk-accepted` process;
-  - any future rights-holder permissions;
-  - the known `publint` tooling issue if still unresolved.
-
-### Refactor
-
-Keep the traceability update factual. Do not rewrite already-closed subphases.
-
-## Acceptance Criteria
-
-- Subphase 1.4 marked `[DONE]`.
-- Phase 1 marked complete.
-- Verification outcomes recorded.
-- Known lint caveat recorded if applicable.
-- Deferred risk-accepted path remains future work.
-- No archived files are moved.
-- No unrelated traceability sections are rewritten.
-
-## Non-Goals
-
-- Do not archive the phase.
-- Do not stage or commit.
-- Do not edit closed traceability files.
-- Do not claim legal approval beyond recorded evidence.
-
-## Suggested Execution Order
-
-Run after Phase 5 passes or passes with the accepted lint caveat.
-
 ---
 
-# Phase 7 — Final Repository Purity Report
+## Cycle 6.1 — Prove Protected Evidence Is Unchanged
 
-## Goal
-
-Confirm only intended implementation, documentation, package-script, and traceability files changed.
-
-## Scope
-
-Run:
-
-```powershell
-git status --short
-
-git diff -- packages/astro-icons/LICENSES/third-party-icons.json
-git diff -- packages/astro-icons/LICENSES/THIRD_PARTY.md
-git diff -- packages/astro-icons/migration/icon-inventory.json
-git diff -- packages/astro-icons/src
-```
-
-## Red
+### Red
 
 ```gherkin
-Feature: Subphase 1.4 repository purity
+Feature: Licensing-evidence preservation
 
-Scenario: Pack-contract enforcement does not change frozen evidence or assets
+Scenario: Pack-contract enforcement does not alter provenance evidence
   Given Subphase 1.4 implementation is complete
-  When protected diffs are inspected
+  When protected repository paths are compared with the baseline
   Then third-party-icons.json is unchanged
   And THIRD_PARTY.md is unchanged
   And icon-inventory.json is unchanged
   And src is unchanged
 ```
 
-## Green
+### Green
 
-Expected in-scope changes:
+Run:
+
+```powershell
+git diff -- packages/astro-icons/LICENSES/third-party-icons.json
+git diff -- packages/astro-icons/LICENSES/THIRD_PARTY.md
+git diff -- packages/astro-icons/migration/icon-inventory.json
+git diff -- packages/astro-icons/src
+```
+
+All must be empty.
+
+### Refactor
+
+If any protected path changed, stop closure and determine whether the change is accidental.
+
+Do not normalize, regenerate, or "clean up" protected evidence as part of this phase.
+
+---
+
+## Cycle 6.2 — Close Subphase 1.4
+
+### Red
+
+```gherkin
+Feature: Subphase 1.4 traceability closure
+
+Scenario: The traceability log records implemented artifact enforcement
+  Given all Subphase 1.4 acceptance criteria pass
+  When its status is closed
+  Then the log records the enforced policy
+  And the verification commands
+  And their outcomes
+  And any accepted pre-existing tooling caveat
+  And explicitly deferred policy work
+```
+
+### Green
+
+Mark the subphase `[DONE]` using the document's established style.
+
+Record concisely:
+
+- pure contract tests;
+- CLI-shell characterization;
+- required legal files;
+- manifest-derived asset references;
+- blocked `migration/`;
+- `include => permitted`;
+- actual pack verification;
+- package-script integration;
+- relevant documentation changes;
+- exact verification results;
+- any demonstrated pre-existing `publint` caveat;
+- deferred `risk-accepted` process.
+
+Do not describe the checker as legal approval.
+
+---
+
+## Cycle 6.3 — Close Phase 1
+
+### Red
+
+```gherkin
+Feature: Phase 1 completion
+
+Scenario: Phase 1 closes only after every subphase is complete
+  Given Subphases 1.1 through 1.4 are DONE
+  And their acceptance criteria are satisfied
+  When the Phase 1 status is updated
+  Then Phase 1 is marked complete
+  And deferred work remains explicit
+```
+
+### Green
+
+Record:
+
+- all four subphases complete;
+- end-to-end acceptance criteria satisfied;
+- unresolved work remains outside Phase 1.
+
+Explicit deferrals should include, where still applicable:
+
+- a future `risk-accepted` policy;
+- future rights-holder permission work;
+- unrelated publication-tooling issues.
+
+### Refactor
+
+Avoid rewriting already-closed historical sections.
+
+Traceability should describe evidence, not duplicate implementation documentation.
+
+---
+
+## Cycle 6.4 — Final Repository Purity Check
+
+Run:
+
+```powershell
+git status --short
+git diff --check
+```
+
+Expected in-scope changes should be limited to the implementation actually required by the final design, approximately:
 
 ```text
 M packages/astro-icons/scripts/assert-pack-files.mjs
@@ -788,80 +1055,121 @@ M packages/astro-icons/README.md
 M traceability-log/open/phase_1_establish_licensing_provenance_and_attribution.md
 ```
 
-Expected protected empty diffs:
+If the size/cohesion gate required pure-core extraction, also allow:
 
 ```text
-packages/astro-icons/LICENSES/third-party-icons.json
-packages/astro-icons/LICENSES/THIRD_PARTY.md
-packages/astro-icons/migration/icon-inventory.json
-packages/astro-icons/src
+A packages/astro-icons/scripts/lib/pack-contract.mjs
 ```
 
-## Refactor
+and corresponding moves/edits.
 
-If protected files changed, revert or stop. This phase enforces the existing artifact contract; it does not change
-attribution evidence or source assets.
+Do not treat this expected list as an oracle if Git reports an unexplained additional change; investigate it.
+
+---
 
 ## Acceptance Criteria
 
-- Only intended files changed.
-- Frozen manifest unchanged.
-- Generated notice unchanged.
-- Inventory unchanged.
-- Source assets unchanged.
-- No `licenses:update` drift.
-- No publishing, staging, or commit occurred.
+- Protected manifest is unchanged.
+- Generated third-party notice is unchanged.
+- Inventory is unchanged.
+- Source assets are unchanged.
+- `git diff --check` passes.
+- Subphase 1.4 is `[DONE]`.
+- Phase 1 is complete.
+- Verification commands and outcomes are recorded.
+- Any accepted tooling caveat is explicitly demonstrated as pre-existing.
+- Deferred policy work remains explicit.
+- No staging, commit, publication, or archival occurs.
 
 ## Non-Goals
 
+- Do not regenerate evidence.
+- Do not run `licenses:update`.
+- Do not archive Phase 1.
 - Do not stage.
 - Do not commit.
 - Do not publish.
-- Do not archive.
+- Do not claim legal approval.
 
 ## Suggested Execution Order
 
 Run last.
 
+The protected-file check must occur **before** marking the traceability entries complete.
+
 ---
 
 # Final Acceptance Matrix
 
-| Area                | Acceptance criterion                                                                                                         |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Unit tests          | `assert-pack-files.test.mjs` covers required files, blocked files, SVG parity, combined findings, and include/permitted rule |
-| Pure logic          | `assert-pack-files.mjs` exports import-safe pure functions                                                                   |
-| CLI safety          | Importing `assert-pack-files.mjs` does not run `npm pack`                                                                    |
-| Required notices    | Pack contract requires `LICENSE` and fixed `LICENSES/*` files                                                                |
-| Asset references    | Included asset `licenseFile`/`permissionFile`/`policyFile` references are required in tarball                                |
-| Redistribution gate | `include` requires `redistribution.conclusion === "permitted"`                                                               |
-| Blocked internals   | `migration/`, `scripts/`, `src/`, `tsconfig.json`, and `tsup.config.ts` are blocked                                          |
-| Package scripts     | `test:pack-files` exists and `check` includes it with `pack:check`                                                           |
-| Documentation       | README and AGENTS mention the new pack enforcement rule                                                                      |
-| Verification        | `test:licenses`, `test:pack-files`, `licenses:check`, `build`, and `pack:check` pass                                         |
-| Dry run             | `pack:dry-run` includes legal files and excludes internals                                                                   |
-| Lint caveat         | Known `publint` issue documented if still present                                                                            |
-| Traceability        | Subphase 1.4 and Phase 1 marked `[DONE]` with Current Status                                                                 |
-| Frozen evidence     | `third-party-icons.json` unchanged                                                                                           |
-| Generated notice    | `THIRD_PARTY.md` unchanged                                                                                                   |
-| Assets/inventory    | `src/` and `migration/icon-inventory.json` unchanged                                                                         |
+| Area                 | Acceptance criterion                                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Characterization     | Previously established runtime, blocked-file, SVG-parity, licensing, and redistribution behavior remains covered |
+| Architecture         | Pure contract logic is isolated from I/O                                                                         |
+| CLI                  | CLI is a thin imperative shell with testable injected effects                                                    |
+| Import safety        | Importing the script performs no CLI work                                                                        |
+| Main guard           | Existing ESM entry-point guard has regression coverage                                                           |
+| Required notices     | Actual package contains `LICENSE` and required `LICENSES/*` files                                                |
+| Asset references     | Included asset-specific licensing references are required in the real artifact                                   |
+| Redistribution       | `include` requires `redistribution.conclusion === "permitted"`                                                   |
+| Internals            | `migration/`, `scripts/`, `src/`, `tsconfig.json`, and `tsup.config.ts` are rejected                             |
+| Diagnostics          | Independent violations are aggregated and reported deterministically                                             |
+| DDT                  | Fixed policy matrices use table-driven tests                                                                     |
+| Metamorphic testing  | High-value invariant transformations are covered where characterization supports them                            |
+| PBT                  | No unnecessary property-testing dependency is introduced                                                         |
+| Mocking              | Only imperative shell boundaries are mocked/injected                                                             |
+| Mutation testing     | Existing mutation infrastructure is used if available; otherwise deferred                                        |
+| Differential testing | Not artificially introduced without an independent equivalent implementation                                     |
+| Fuzzing              | Deferred unless an untrusted parsing boundary is introduced                                                      |
+| Package scripts      | `test:pack-files` is package-local and incorporated into quality checks                                          |
+| Real artifact        | Contract is exercised against the package manager's actual dry-run file list                                     |
+| Documentation        | README explains the artifact check; AGENTS documents maintainer policy                                           |
+| Verification         | Unit, license, build, pack-contract, and dry-run checks pass                                                     |
+| Lint caveat          | Any accepted failure is explicitly proven pre-existing rather than assumed                                       |
+| Traceability         | Subphase 1.4 and Phase 1 are closed only after verification                                                      |
+| Frozen evidence      | `third-party-icons.json` remains unchanged                                                                       |
+| Generated evidence   | `THIRD_PARTY.md` remains unchanged                                                                               |
+| Assets/inventory     | `src/` and `icon-inventory.json` remain unchanged                                                                |
+| Repository purity    | `git diff --check` passes and only intended files changed                                                        |
+
+---
 
 # Consolidated Non-Goals
 
 - Do not edit `LICENSES/third-party-icons.json`.
 - Do not edit `LICENSES/THIRD_PARTY.md`.
 - Do not run `licenses:update`.
-- Do not change any asset `releaseDecision`.
-- Do not add `risk-accepted` to release-action vocabulary.
+- Do not change asset `releaseDecision` records.
+- Do not add `risk-accepted`.
 - Do not contact rights holders.
-- Do not publish to npm.
-- Do not treat `publint` as legal verification.
-- Do not fix the known `publint` module-resolution issue here.
-- Do not edit `migration/icon-inventory.json`.
-- Do not touch `src/`.
+- Do not publish.
 - Do not stage or commit.
 - Do not archive traceability files.
+- Do not modify `migration/icon-inventory.json`.
+- Do not modify `src/`.
+- Do not weaken SVG parity.
+- Do not treat `publint` as legal verification.
+- Do not fix unrelated `publint` issues.
+- Do not introduce microservices or a CLI framework.
+- Do not add dependencies without demonstrated value.
+- Do not adopt experimental Node APIs solely because they are newer.
+- Do not upgrade to pnpm 12 while it remains a release candidate.
+- Do not move to Node Current merely to satisfy a "latest version" policy.
 
-DDT is useful for the pack-file matrix: required files, blocked patterns, SVG parity, include/permitted redistribution
-cases, and combined diagnostics. PBT is not warranted here; the critical behavior is a fixed package-contract matrix
-over known file-list categories, not a broad input-space property.
+---
+
+# Toolchain Follow-Up Recommendation
+
+Keep runtime/package-manager modernization **outside this behavior-preserving subphase**.
+
+As of August 2026:
+
+- Node 24 is an LTS release suitable for production use; Node 26 remains Current.
+- pnpm 11 is the stable production line; pnpm 12 is still a release candidate.
+- pnpm 11.20 includes relevant security hardening and is worth evaluating separately if the workspace currently pins an
+  older pnpm 11 release.
+- pnpm supports structured `pack --dry-run --json` output suitable for artifact-contract integration testing.
+- Node's ordinary `node:test` mocking facilities are sufficient for shell test doubles, while ESM module mocking remains
+  experimental.
+
+Any runtime or package-manager upgrade should therefore be its own traceable change with its own characterization and CI
+verification rather than being hidden inside the licensing-contract refactor.
