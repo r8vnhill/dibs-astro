@@ -32,7 +32,7 @@
         "audit-icons:update": "node scripts/audit-icons.mjs --write",
         "test:audit-icons": "node --test scripts/test/icon-name.test.mjs scripts/test/icon-inventory.test.mjs scripts/test/audit-icons.test.mjs scripts/test/icon-inventory.contract.test.mjs scripts/test/release-policy.test.mjs scripts/test/generate-exports.test.mjs scripts/test/copy-assets.test.mjs",
         "test:licenses": "node --test scripts/test/license-metadata.test.mjs scripts/test/third-party-notices.test.mjs scripts/test/third-party-notices.contract.test.mjs",
-        "test:pack-files": "node --test scripts/test/pack-contract.test.mjs scripts/test/assert-pack-files-cli.test.mjs",
+        "test:pack-files": "node --test scripts/test/pack-contract.test.mjs scripts/test/assert-pack-files-cli.test.mjs scripts/test/pack-artifact.integration.test.mjs",
         "licenses:check": "node scripts/generate-third-party-notices.mjs --check",
         "licenses:update": "node scripts/generate-third-party-notices.mjs --write"
     },

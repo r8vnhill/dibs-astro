@@ -88,7 +88,7 @@ Run this first. It reduces the main migration risk: silently changing icon names
 
 ---
 
-## Phase 1: Verify Licensing and Attribution
+## Phase 1: Verify Licensing and Attribution [DONE]
 
 ### Goal
 
