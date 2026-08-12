@@ -14,25 +14,37 @@
 // every local icon, while `tsup` builds the standalone npm package from src/publishable.ts, so
 // excluded custom assets (see LICENSES/third-party-icons.json) never enter the published API.
 //
-// Run manually with `pnpm generate-icons` or integrate into your build step.
+// Icon classification comes from the frozen, audited `migration/icon-inventory.json` -- never
+// from a live re-scan of src/*.svg -- via `resolveReleasePlan()`. The live source directory is
+// consulted only to detect drift against that frozen record (see
+// packages/astro-icons/scripts/lib/publishable-plan.mjs).
+//
+// Run manually with `pnpm generate-icons` (writes) or `pnpm generate-icons --check` (verifies
+// the committed generated surfaces match the frozen release plan without writing anything), or
+// integrate into your build step.
 
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { toPascalCase } from "./packages/astro-icons/scripts/lib/icon-name.mjs";
-import { buildIconInventory } from "./packages/astro-icons/scripts/lib/icon-inventory.mjs";
-import { CUSTOM_BASE_NAMES } from "./packages/astro-icons/scripts/lib/custom-base-names.mjs";
-import { derivePublishableIcons } from "./packages/astro-icons/scripts/lib/release-policy.mjs";
 import { planExportModules } from "./packages/astro-icons/scripts/lib/generate-exports.mjs";
+import {
+    formatReleasePolicyFindings,
+    resolveReleasePlan,
+} from "./packages/astro-icons/scripts/lib/publishable-plan.mjs";
+
+const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
+const resolveFromScript = (...segments) => path.resolve(SCRIPT_DIR, ...segments);
 
 // Asset directories to process
 const ASSET_DIRS = {
-    icons: path.resolve("packages/astro-icons/src"),
-    logos: path.resolve("src/assets/img/logos"),
+    icons: resolveFromScript("packages/astro-icons/src"),
+    logos: resolveFromScript("src/assets/img/logos"),
 };
 
-const MANIFEST_PATH = path.resolve("packages/astro-icons/LICENSES/third-party-icons.json");
+const MANIFEST_PATH = resolveFromScript("packages/astro-icons/LICENSES/third-party-icons.json");
+const INVENTORY_PATH = resolveFromScript("packages/astro-icons/migration/icon-inventory.json");
 const SHARD_SIZE = 300;
 
 // Header to prepend to generated files.
@@ -63,12 +75,13 @@ function hasGeneratedTimestamp(content) {
 }
 
 /**
- * Generates a flat `index.ts` for a plain (non-policy-gated) asset directory such as logos.
+ * Generates (or checks) a flat `index.ts` for a plain (non-policy-gated) asset directory such as
+ * logos.
  *
- * @param {{ quiet?: boolean }} options
+ * @param {{ quiet?: boolean, check?: boolean }} options
  * @returns {{ changed: boolean, count: number }}
  */
-function generateFlatIndex({ quiet }) {
+function generateFlatIndex({ quiet, check = false }) {
     const assetDir = ASSET_DIRS.logos;
     const outputFile = path.join(assetDir, "index.ts");
 
@@ -78,31 +91,30 @@ function generateFlatIndex({ quiet }) {
         .map((f) => `export { default as ${toPascalCase(f)} } from "./${f}";`);
 
     const nextStableContent = buildStableContent(lines);
-    const nextContent = buildOutputContent(lines);
     const currentContent = fs.existsSync(outputFile)
         ? fs.readFileSync(outputFile, "utf8")
         : null;
 
-    if (
-        currentContent !== null &&
+    const isUpToDate = currentContent !== null &&
         hasGeneratedTimestamp(currentContent) &&
-        normalizeGeneratedContent(currentContent) === nextStableContent
-    ) {
+        normalizeGeneratedContent(currentContent) === nextStableContent;
+
+    if (isUpToDate) {
         if (!quiet) {
             console.log(`= Logos exports already up to date (${files.length} files).`);
         }
         return { changed: false, count: files.length };
     }
 
-    fs.writeFileSync(outputFile, nextContent);
+    if (check) {
+        throw new Error(`Generated logos export is stale: ${outputFile}`);
+    }
+
+    fs.writeFileSync(outputFile, buildOutputContent(lines));
     if (!quiet) {
         console.log(`✓ Generated ${outputFile} with ${files.length} logos.`);
     }
     return { changed: true, count: files.length };
-}
-
-function readManifest() {
-    return JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
 }
 
 function writeIfChanged(filePath, content) {
@@ -124,7 +136,9 @@ function removeStalePartFiles(partDir, keepFileNames) {
 }
 
 /**
- * Writes one sharded export surface (parts + barrel) and reports whether anything changed.
+ * Pure planning step: turns an icon list into the exact set of generated files (parts + barrel)
+ * this surface should contain. Shared by the write path and the check path so neither can drift
+ * from the other.
  *
  * @param {{
  *   icons: { file: string, exportName: string }[],
@@ -132,12 +146,15 @@ function removeStalePartFiles(partDir, keepFileNames) {
  *   surfaceName: "internal" | "publishable",
  *   barrelFileName: string,
  * }} options
- * @returns {boolean}
+ * @returns {{
+ *   partDir: string,
+ *   parts: { filePath: string, content: string }[],
+ *   barrelPath: string,
+ *   barrelContent: string,
+ * }}
  */
-function writeExportSurface({ icons, assetDir, surfaceName, barrelFileName }) {
+function planExportSurface({ icons, assetDir, surfaceName, barrelFileName }) {
     const partDir = path.join(assetDir, "generated", surfaceName);
-    fs.mkdirSync(partDir, { recursive: true });
-
     const { parts, barrel } = planExportModules({
         icons,
         svgRelativePrefix: "../../",
@@ -145,35 +162,87 @@ function writeExportSurface({ icons, assetDir, surfaceName, barrelFileName }) {
         shardSize: SHARD_SIZE,
     });
 
-    removeStalePartFiles(partDir, parts.map((part) => part.fileName));
-
-    let changed = false;
-    for (const part of parts) {
-        changed = writeIfChanged(path.join(partDir, part.fileName), part.content) || changed;
-    }
-    changed = writeIfChanged(path.join(assetDir, barrelFileName), barrel) || changed;
-    return changed;
-}
-
-function formatReleasePolicyFindings(findings) {
-    return findings.map((finding) => `  - ${finding.code}: ${finding.file}`).join("\n");
+    return {
+        partDir,
+        parts: parts.map((part) => ({
+            filePath: path.join(partDir, part.fileName),
+            content: part.content,
+        })),
+        barrelPath: path.join(assetDir, barrelFileName),
+        barrelContent: barrel,
+    };
 }
 
 /**
- * Generates the internal (`src/index.ts`) and publishable (`src/publishable.ts`) icon export
- * surfaces from the frozen icon inventory and attribution manifest. The generator consumes
- * `derivePublishableIcons` records rather than independently re-scanning or reclassifying files.
+ * Writes a planned export surface to disk, removing stale part files. Returns whether anything
+ * changed.
  *
- * @param {{ quiet?: boolean }} options
+ * @param {ReturnType<typeof planExportSurface>} plan
+ * @returns {boolean}
+ */
+function applyExportSurfacePlan(plan) {
+    fs.mkdirSync(plan.partDir, { recursive: true });
+    removeStalePartFiles(plan.partDir, plan.parts.map((part) => path.basename(part.filePath)));
+
+    let changed = false;
+    for (const part of plan.parts) {
+        changed = writeIfChanged(part.filePath, part.content) || changed;
+    }
+    changed = writeIfChanged(plan.barrelPath, plan.barrelContent) || changed;
+    return changed;
+}
+
+/**
+ * Compares a planned export surface against what is currently committed, without writing
+ * anything. Returns the paths that are stale (missing, differing content, or an unplanned extra
+ * part file).
+ *
+ * @param {ReturnType<typeof planExportSurface>} plan
+ * @returns {string[]}
+ */
+function findStaleExportSurfacePaths(plan) {
+    const stale = [];
+    const expectedFileNames = new Set(plan.parts.map((part) => path.basename(part.filePath)));
+
+    if (fs.existsSync(plan.partDir)) {
+        for (const entry of fs.readdirSync(plan.partDir)) {
+            if (entry.endsWith(".ts") && !expectedFileNames.has(entry)) {
+                stale.push(path.join(plan.partDir, entry));
+            }
+        }
+    }
+
+    for (const part of plan.parts) {
+        const current = fs.existsSync(part.filePath) ? fs.readFileSync(part.filePath, "utf8") : null;
+        if (current !== part.content) {
+            stale.push(part.filePath);
+        }
+    }
+
+    const currentBarrel = fs.existsSync(plan.barrelPath) ? fs.readFileSync(plan.barrelPath, "utf8") : null;
+    if (currentBarrel !== plan.barrelContent) {
+        stale.push(plan.barrelPath);
+    }
+
+    return stale;
+}
+
+/**
+ * Generates (or checks) the internal (`src/index.ts`) and publishable (`src/publishable.ts`)
+ * icon export surfaces from the frozen icon inventory and attribution manifest. The generator
+ * consumes `resolveReleasePlan()` records rather than independently re-scanning or reclassifying
+ * files; the live source directory is only used by that resolver to detect drift.
+ *
+ * @param {{ quiet?: boolean, check?: boolean }} options
  * @returns {{ changed: boolean, count: number }}
  */
-function generateIconSurfaces({ quiet }) {
+function generateIconSurfaces({ quiet, check = false }) {
     const assetDir = ASSET_DIRS.icons;
-    const files = fs.readdirSync(assetDir).filter((f) => f.endsWith(".svg"));
-
-    const inventory = buildIconInventory(files, CUSTOM_BASE_NAMES);
-    const manifest = readManifest();
-    const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
+    const { inventory, publishableIcons, findings } = resolveReleasePlan({
+        inventoryPath: INVENTORY_PATH,
+        manifestPath: MANIFEST_PATH,
+        srcDir: assetDir,
+    });
 
     if (findings.length > 0) {
         throw new Error(
@@ -181,20 +250,43 @@ function generateIconSurfaces({ quiet }) {
         );
     }
 
-    const internalChanged = writeExportSurface({
+    const internalPlan = planExportSurface({
         icons: inventory.icons,
         assetDir,
         surfaceName: "internal",
         barrelFileName: "index.ts",
     });
-    const publishableChanged = writeExportSurface({
+    const publishablePlan = planExportSurface({
         icons: publishableIcons,
         assetDir,
         surfaceName: "publishable",
         barrelFileName: "publishable.ts",
     });
 
+    if (check) {
+        const stale = [
+            ...findStaleExportSurfacePaths(internalPlan),
+            ...findStaleExportSurfacePaths(publishablePlan),
+        ];
+        if (stale.length > 0) {
+            throw new Error(
+                `Generated icon exports are stale relative to the frozen release plan:\n${
+                    stale.map((filePath) => `  - ${filePath}`).join("\n")
+                }`,
+            );
+        }
+        if (!quiet) {
+            console.log(
+                `✓ Icon exports are up to date (${inventory.icons.length} internal, ${publishableIcons.length} publishable).`,
+            );
+        }
+        return { changed: false, count: inventory.icons.length };
+    }
+
+    const internalChanged = applyExportSurfacePlan(internalPlan);
+    const publishableChanged = applyExportSurfacePlan(publishablePlan);
     const changed = internalChanged || publishableChanged;
+
     if (!quiet) {
         console.log(
             changed
@@ -207,27 +299,48 @@ function generateIconSurfaces({ quiet }) {
 }
 
 /**
- * Generates the export barrel(s) for the given asset type.
+ * Generates (or checks) the export barrel(s) for the given asset type.
  *
- * @param {{ assetType?: "icons" | "logos"; quiet?: boolean }} [options]
+ * @param {{ assetType?: "icons" | "logos"; quiet?: boolean; check?: boolean }} [options]
  * @returns {{ changed: boolean, count: number }}
  */
 export function generateIconsIndex(options = {}) {
-    const { assetType = "icons", quiet = false } = options;
+    const { assetType = "icons", quiet = false, check = false } = options;
 
     if (assetType === "icons") {
-        return generateIconSurfaces({ quiet });
+        return generateIconSurfaces({ quiet, check });
     }
     if (assetType === "logos") {
-        return generateFlatIndex({ quiet });
+        return generateFlatIndex({ quiet, check });
     }
     throw new Error(`Unknown asset type: ${assetType}`);
+}
+
+function parseCliArgs(argv) {
+    const check = argv.includes("--check");
+    const assetTypeArg = argv.find((arg) => arg.startsWith("--asset-type="));
+    const assetType = assetTypeArg ? assetTypeArg.split("=")[1] : null;
+    return { check, assetType };
 }
 
 const invokedDirectly =
     import.meta.url === pathToFileURL(process.argv[1] ?? "").href;
 
 if (invokedDirectly) {
-    generateIconsIndex({ assetType: "icons" });
-    generateIconsIndex({ assetType: "logos" });
+    const { check, assetType } = parseCliArgs(process.argv.slice(2));
+    const assetTypes = assetType ? [assetType] : ["icons", "logos"];
+
+    let failed = false;
+    for (const type of assetTypes) {
+        try {
+            generateIconsIndex({ assetType: type, quiet: false, check });
+        } catch (error) {
+            failed = true;
+            console.error(error.message);
+        }
+    }
+
+    if (failed) {
+        process.exitCode = 1;
+    }
 }

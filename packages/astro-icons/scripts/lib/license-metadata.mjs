@@ -64,6 +64,30 @@ function collectStringFields(value, path = []) {
 }
 
 /**
+ * Finds manifest asset `file` values referenced by more than one record. Extracted so callers
+ * that only care about duplicate evidence (e.g. the release-policy core) do not need to re-derive
+ * this from scratch or reimplement it against a different data shape.
+ *
+ * @param {{ file?: string }[]} assets
+ * @returns {string[]}
+ */
+export function findDuplicateManifestFiles(assets) {
+    const seen = new Set();
+    const duplicates = new Set();
+    for (const asset of assets) {
+        const file = asset?.file;
+        if (typeof file !== "string") {
+            continue;
+        }
+        if (seen.has(file)) {
+            duplicates.add(file);
+        }
+        seen.add(file);
+    }
+    return [...duplicates].sort();
+}
+
+/**
  * Reports missing inventory files, unexpected manifest files, and duplicate manifest file
  * entries, all in one call.
  *
@@ -73,8 +97,7 @@ function collectStringFields(value, path = []) {
  */
 export function validateAttributionCoverage(customInventoryFiles, assets) {
     const inventorySet = new Set(customInventoryFiles);
-    const assetFiles = assets.map((asset) => asset.file);
-    const assetFileSet = new Set(assetFiles);
+    const assetFileSet = new Set(assets.map((asset) => asset.file));
 
     const missing = [...inventorySet]
         .filter((file) => !assetFileSet.has(file))
@@ -82,20 +105,12 @@ export function validateAttributionCoverage(customInventoryFiles, assets) {
     const unexpected = [...assetFileSet]
         .filter((file) => !inventorySet.has(file))
         .sort();
-
-    const seen = new Set();
-    const duplicates = new Set();
-    for (const file of assetFiles) {
-        if (seen.has(file)) {
-            duplicates.add(file);
-        }
-        seen.add(file);
-    }
+    const duplicates = findDuplicateManifestFiles(assets);
 
     return [
         ...missing.map((file) => `coverage.missing: ${file}`),
         ...unexpected.map((file) => `coverage.unexpected: ${file}`),
-        ...[...duplicates].sort().map((file) => `coverage.duplicate: ${file}`),
+        ...duplicates.map((file) => `coverage.duplicate: ${file}`),
     ];
 }
 

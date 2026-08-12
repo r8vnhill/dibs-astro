@@ -12,15 +12,6 @@ import {
     REQUIRED_RUNTIME_FILES,
 } from "../assert-pack-files.mjs";
 
-if (test.each === undefined) {
-    test.each = (cases) => (name, fn) => {
-        for (const testCase of cases) {
-            const args = Array.isArray(testCase) ? testCase : [testCase];
-            test(name.replaceAll("%s", args.map(String).join(",")), () => fn(...args));
-        }
-    };
-}
-
 // Sanderson-themed fixture names only; never the real 1,521-icon production tarball.
 const CORE_LICENSE_FILES = [
     "package/LICENSE",
@@ -254,9 +245,8 @@ describe("findIncludedAssetsWithoutPermittedRedistribution", () => {
         assert.deepEqual(findings, []);
     });
 
-    test.each(["restricted", "permission-required", "undetermined"])(
-        "reports included assets with %s redistribution",
-        (conclusion) => {
+    for (const conclusion of ["restricted", "permission-required", "undetermined"]) {
+        test(`reports included assets with ${conclusion} redistribution`, () => {
             const findings = findIncludedAssetsWithoutPermittedRedistribution(
                 buildManifest([
                     buildAsset({
@@ -270,16 +260,20 @@ describe("findIncludedAssetsWithoutPermittedRedistribution", () => {
             assert.equal(findings.length, 1);
             assert.match(findings[0], /scadrial\.svg/u);
             assert.match(findings[0], new RegExp(conclusion, "u"));
-        },
-    );
+        });
+    }
 
-    test.each(["exclude", "pending"])("ignores %s assets with undetermined redistribution", (action) => {
-        const findings = findIncludedAssetsWithoutPermittedRedistribution(
-            buildManifest([buildAsset({ releaseDecision: { action }, redistribution: { conclusion: "undetermined" } })]),
-        );
+    for (const action of ["exclude", "pending"]) {
+        test(`ignores ${action} assets with undetermined redistribution`, () => {
+            const findings = findIncludedAssetsWithoutPermittedRedistribution(
+                buildManifest([
+                    buildAsset({ releaseDecision: { action }, redistribution: { conclusion: "undetermined" } }),
+                ]),
+            );
 
-        assert.deepEqual(findings, []);
-    });
+            assert.deepEqual(findings, []);
+        });
+    }
 });
 
 describe("evaluatePackContents", () => {

@@ -55,6 +55,12 @@ export const DEFAULT_MANIFEST_PATH = resolve(
     "third-party-icons.json",
 );
 
+export const DEFAULT_INVENTORY_PATH = resolve(
+    packageRoot,
+    "migration",
+    "icon-inventory.json",
+);
+
 const DEFAULT_SRC_DIR = resolve(packageRoot, "src");
 
 const defaultDependencies = Object.freeze({
@@ -67,7 +73,11 @@ const defaultDependencies = Object.freeze({
         ),
     readPublishableIcons: () =>
         Promise.resolve(
-            resolvePublishableIcons({ srcDir: DEFAULT_SRC_DIR, manifestPath: DEFAULT_MANIFEST_PATH }),
+            resolvePublishableIcons({
+                srcDir: DEFAULT_SRC_DIR,
+                manifestPath: DEFAULT_MANIFEST_PATH,
+                inventoryPath: DEFAULT_INVENTORY_PATH,
+            }),
         ),
     writeDiagnostic: (message) => console.error(message),
     writeOutput: (message) => console.log(message),

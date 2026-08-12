@@ -1,16 +1,16 @@
-// Imperative boundary: reads the on-disk release-policy inputs (the src/*.svg listing and the
-// attribution manifest) and resolves them through the pure release-policy core. Shared by
-// copy-assets.mjs and assert-pack-files.mjs so neither shell independently reinterprets the
-// publication rules.
+// Imperative boundary: reads the frozen, audited icon inventory (migration/icon-inventory.json)
+// and the attribution manifest, and treats the live src/*.svg listing only as evidence of drift
+// against that frozen record -- never as a source of classification. Resolves everything through
+// the pure release-policy core. This is the single entry point shared by copy-assets.mjs,
+// assert-pack-files.mjs, and generate-icons-index.js so none of them independently reinterprets
+// or reconstructs the publication rules.
 
 import { readdirSync, readFileSync } from "node:fs";
 
-import { buildIconInventory } from "./icon-inventory.mjs";
-import { CUSTOM_BASE_NAMES } from "./custom-base-names.mjs";
-import { derivePublishableIcons } from "./release-policy.mjs";
+import { derivePublishableIcons, diffSourceAgainstInventory } from "./release-policy.mjs";
 
 /**
- * Renders release-policy findings as human-readable diagnostic lines.
+ * Renders release-policy (or source-drift) findings as human-readable diagnostic lines.
  *
  * @param {{ code: string, file: string }[]} findings
  * @returns {string}
@@ -18,20 +18,62 @@ import { derivePublishableIcons } from "./release-policy.mjs";
 export const formatReleasePolicyFindings = (findings) =>
     findings.map((finding) => `  - ${finding.code}: ${finding.file}`).join("\n");
 
+const readJsonFile = (path) => JSON.parse(readFileSync(path, "utf8"));
+
+const listSourceSvgFiles = (srcDir) =>
+    readdirSync(srcDir).filter((file) => file.endsWith(".svg"));
+
+const sortFindings = (findings) =>
+    [...findings].sort((a, b) => a.code.localeCompare(b.code) || a.file.localeCompare(b.file));
+
 /**
- * Resolves the current publishable icon plan from the on-disk source directory and attribution
- * manifest. Throws when the release policy reports unresolved findings, so callers never
- * silently copy or package an inconsistent asset set.
+ * Resolves the full audited release plan: the frozen inventory and manifest are the
+ * classification authority; the live source directory is consulted only to detect drift
+ * (an inventory member missing from disk, or a source file untracked by the inventory).
  *
- * @param {{ srcDir: string, manifestPath: string }} paths
+ * @param {{ inventoryPath: string, manifestPath: string, srcDir: string }} paths
+ * @returns {{
+ *   inventory: object,
+ *   manifest: object,
+ *   publishableIcons: { file: string, exportName: string }[],
+ *   findings: { code: string, file: string }[],
+ * }}
+ */
+export function resolveReleasePlan({ inventoryPath, manifestPath, srcDir }) {
+    const inventory = readJsonFile(inventoryPath);
+    const manifest = readJsonFile(manifestPath);
+    const sourceFiles = listSourceSvgFiles(srcDir);
+    const inventoryFiles = inventory.icons.map((icon) => icon.file);
+
+    const driftFindings = diffSourceAgainstInventory({ inventoryFiles, sourceFiles });
+    const { publishableIcons, findings: policyFindings } = derivePublishableIcons({
+        inventory,
+        manifest,
+    });
+
+    return {
+        inventory,
+        manifest,
+        publishableIcons,
+        findings: sortFindings([...driftFindings, ...policyFindings]),
+    };
+}
+
+/**
+ * Resolves the current publishable icon plan from the frozen inventory, attribution manifest,
+ * and source-directory drift check. Throws when release policy or source/inventory drift reports
+ * unresolved findings, so callers never silently copy, package, or generate exports for an
+ * inconsistent asset set.
+ *
+ * @param {{ inventoryPath: string, manifestPath: string, srcDir: string }} paths
  * @returns {{ file: string, exportName: string }[]}
  */
-export function resolvePublishableIcons({ srcDir, manifestPath }) {
-    const filenames = readdirSync(srcDir).filter((file) => file.endsWith(".svg"));
-    const inventory = buildIconInventory(filenames, CUSTOM_BASE_NAMES);
-    const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-
-    const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
+export function resolvePublishableIcons({ inventoryPath, manifestPath, srcDir }) {
+    const { publishableIcons, findings } = resolveReleasePlan({
+        inventoryPath,
+        manifestPath,
+        srcDir,
+    });
 
     if (findings.length > 0) {
         throw new Error(

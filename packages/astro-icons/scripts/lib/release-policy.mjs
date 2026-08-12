@@ -2,11 +2,25 @@
 // in-memory icon inventory and attribution manifest. No filesystem, process, or CLI
 // dependencies. The build shell and the pack-contract verifier both consume this module's
 // output instead of independently reinterpreting release-decision rules.
+//
+// Publication-relevant manifest vocabulary/duplicate checks are reused from license-metadata.mjs
+// (also filesystem-independent) rather than re-derived here, so there is exactly one place that
+// knows the frozen releaseDecision.action / redistribution.conclusion vocabularies.
+
+import {
+    findDuplicateManifestFiles,
+    RELEASE_DECISION_ACTIONS,
+    REDISTRIBUTION_CONCLUSIONS,
+} from "./license-metadata.mjs";
 
 export const RELEASE_POLICY_FINDING_CODES = Object.freeze({
     MISSING_MANIFEST_ASSET: "releasePolicy.missingManifestAsset",
     UNKNOWN_MANIFEST_ASSET: "releasePolicy.unknownManifestAsset",
     NOT_PERMITTED: "releasePolicy.notPermitted",
+    DUPLICATE_MANIFEST_ASSET: "releasePolicy.duplicateManifestAsset",
+    INVALID_RELEASE_VOCABULARY: "releasePolicy.invalidReleaseVocabulary",
+    MISSING_SOURCE: "releasePolicy.missingSource",
+    UNTRACKED_SOURCE: "releasePolicy.untrackedSource",
 });
 
 const PERMITTED_CONCLUSION = "permitted";
@@ -87,10 +101,71 @@ function resolveCustomIcon(icon, manifestByFile) {
     return { finding: { code: RELEASE_POLICY_FINDING_CODES.NOT_PERMITTED, file: icon.file } };
 }
 
+/**
+ * Finds manifest assets whose `releaseDecision.action` or `redistribution.conclusion` falls
+ * outside the frozen vocabularies. This fails closed on malformed/unknown values instead of
+ * letting `resolveCustomIcon()` silently treat them the same as a valid "exclude"/"pending".
+ *
+ * @param {object} manifest
+ * @returns {{ code: string, file: string }[]}
+ */
+function findInvalidVocabularyAssets(manifest) {
+    const actionSet = new Set(RELEASE_DECISION_ACTIONS);
+    const conclusionSet = new Set(REDISTRIBUTION_CONCLUSIONS);
+
+    return getManifestAssets(manifest)
+        .filter((asset) => typeof asset?.file === "string")
+        .filter((asset) =>
+            !actionSet.has(asset.releaseDecision?.action) ||
+            !conclusionSet.has(asset.redistribution?.conclusion)
+        )
+        .map((asset) => ({
+            code: RELEASE_POLICY_FINDING_CODES.INVALID_RELEASE_VOCABULARY,
+            file: asset.file,
+        }));
+}
+
+/**
+ * Finds manifest assets that reference the same file more than once, reusing the shared
+ * attribution-coverage duplicate detector rather than `indexManifestByFile()`'s last-value-wins
+ * `Map.set()` behavior.
+ *
+ * @param {object} manifest
+ * @returns {{ code: string, file: string }[]}
+ */
+function findDuplicateManifestAssets(manifest) {
+    return findDuplicateManifestFiles(getManifestAssets(manifest)).map((file) => ({
+        code: RELEASE_POLICY_FINDING_CODES.DUPLICATE_MANIFEST_ASSET,
+        file,
+    }));
+}
+
 const sortFindings = (findings) =>
     [...findings].sort((a, b) => a.code.localeCompare(b.code) || a.file.localeCompare(b.file));
 
 const sortIcons = (icons) => [...icons].sort((a, b) => a.file.localeCompare(b.file));
+
+/**
+ * Compares the frozen inventory's file list against a live source-directory listing. The source
+ * directory only ever answers "does reality still match the audited inventory?" — never "what
+ * classification should this newly discovered file receive?".
+ *
+ * @param {{ inventoryFiles: Iterable<string>, sourceFiles: Iterable<string> }} options
+ * @returns {{ code: string, file: string }[]}
+ */
+export function diffSourceAgainstInventory({ inventoryFiles, sourceFiles }) {
+    const inventorySet = new Set(inventoryFiles);
+    const sourceSet = new Set(sourceFiles);
+
+    const missingSource = [...inventorySet]
+        .filter((file) => !sourceSet.has(file))
+        .map((file) => ({ code: RELEASE_POLICY_FINDING_CODES.MISSING_SOURCE, file }));
+    const untrackedSource = [...sourceSet]
+        .filter((file) => !inventorySet.has(file))
+        .map((file) => ({ code: RELEASE_POLICY_FINDING_CODES.UNTRACKED_SOURCE, file }));
+
+    return sortFindings([...missingSource, ...untrackedSource]);
+}
 
 /**
  * Derives the publishable asset set from an inventory and an attribution manifest.
@@ -121,7 +196,11 @@ export function derivePublishableIcons({ inventory, manifest }) {
     const inventoryFiles = new Set(inventory.icons.map((icon) => icon.file));
 
     const publishable = [];
-    const findings = [...findUnknownManifestAssets(manifest, inventoryFiles)];
+    const findings = [
+        ...findUnknownManifestAssets(manifest, inventoryFiles),
+        ...findDuplicateManifestAssets(manifest),
+        ...findInvalidVocabularyAssets(manifest),
+    ];
 
     for (const icon of inventory.icons) {
         if (icon.group === "phosphor") {

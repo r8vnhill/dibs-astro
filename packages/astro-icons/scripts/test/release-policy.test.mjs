@@ -4,22 +4,11 @@ import { describe, test } from "node:test";
 import {
     derivePublishableIcons,
     diffAssetFileSets,
+    diffSourceAgainstInventory,
     hasPermittedRedistribution,
     isIncludedAction,
     RELEASE_POLICY_FINDING_CODES,
 } from "../lib/release-policy.mjs";
-
-if (test.each === undefined) {
-    test.each = (cases) => (name, fn) => {
-        for (const testCase of cases) {
-            const args = Array.isArray(testCase) ? testCase : [testCase];
-            test(
-                name.replaceAll("%s", args.map(String).join(",")),
-                () => fn(...args),
-            );
-        }
-    };
-}
 
 // Sanderson-themed fixture names only; never the real 1,521-icon production inventory.
 const phosphorIcon = (file) => ({ file, exportName: file.replace(".svg", ""), group: "phosphor" });
@@ -131,31 +120,31 @@ describe("Feature: publication evidence consistency", () => {
 
     for (const { label, group, manifestState, result } of releasePolicyMatrix) {
         test(`inventory group / manifest state -> result: ${label}`, () => {
-        const file = "roshar.svg";
-        const inventory = { icons: [{ file, exportName: "Roshar", group }] };
-        const manifest = manifestState === null
-            ? buildManifest()
-            : buildManifest([
-                buildAsset({
-                    file,
-                    releaseDecision: { action: manifestState.action },
-                    redistribution: { conclusion: manifestState.conclusion },
-                }),
-            ]);
+            const file = "roshar.svg";
+            const inventory = { icons: [{ file, exportName: "Roshar", group }] };
+            const manifest = manifestState === null
+                ? buildManifest()
+                : buildManifest([
+                    buildAsset({
+                        file,
+                        releaseDecision: { action: manifestState.action },
+                        redistribution: { conclusion: manifestState.conclusion },
+                    }),
+                ]);
 
-        const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
+            const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
 
-        if (result === "publish") {
-            assert.equal(publishableIcons.length, 1);
-            assert.deepEqual(findings, []);
-        } else if (result === "policy error") {
-            assert.equal(publishableIcons.length, 0);
-            assert.equal(findings.length, 1);
-            assert.equal(findings[0].code, RELEASE_POLICY_FINDING_CODES.NOT_PERMITTED);
-        } else {
-            assert.equal(publishableIcons.length, 0);
-            assert.deepEqual(findings, []);
-        }
+            if (result === "publish") {
+                assert.equal(publishableIcons.length, 1);
+                assert.deepEqual(findings, []);
+            } else if (result === "policy error") {
+                assert.equal(publishableIcons.length, 0);
+                assert.equal(findings.length, 1);
+                assert.equal(findings[0].code, RELEASE_POLICY_FINDING_CODES.NOT_PERMITTED);
+            } else {
+                assert.equal(publishableIcons.length, 0);
+                assert.deepEqual(findings, []);
+            }
         });
     }
 });
@@ -202,6 +191,105 @@ describe("Feature: release-policy invariants", () => {
         assert.deepEqual(
             publishableIcons.map((icon) => icon.file),
             ["acorn.svg", "nalthis.svg", "scadrial.svg"],
+        );
+    });
+});
+
+describe("Feature: frozen inventory authority", () => {
+    test("Scenario: an unreviewed source SVG cannot become publishable", () => {
+        const findings = diffSourceAgainstInventory({
+            inventoryFiles: ["roshar.svg"],
+            sourceFiles: ["roshar.svg", "worldhopper.svg"],
+        });
+
+        assert.deepEqual(findings, [
+            { code: RELEASE_POLICY_FINDING_CODES.UNTRACKED_SOURCE, file: "worldhopper.svg" },
+        ]);
+    });
+
+    test("Scenario: a frozen inventory member must still exist in source", () => {
+        const findings = diffSourceAgainstInventory({
+            inventoryFiles: ["roshar.svg"],
+            sourceFiles: [],
+        });
+
+        assert.deepEqual(findings, [
+            { code: RELEASE_POLICY_FINDING_CODES.MISSING_SOURCE, file: "roshar.svg" },
+        ]);
+    });
+
+    const sourceDriftMatrix = [
+        { label: "present / present", inventory: ["roshar.svg"], source: ["roshar.svg"], expectedCodes: [] },
+        {
+            label: "present / absent",
+            inventory: ["roshar.svg"],
+            source: [],
+            expectedCodes: [RELEASE_POLICY_FINDING_CODES.MISSING_SOURCE],
+        },
+        {
+            label: "absent / present",
+            inventory: [],
+            source: ["worldhopper.svg"],
+            expectedCodes: [RELEASE_POLICY_FINDING_CODES.UNTRACKED_SOURCE],
+        },
+    ];
+
+    for (const { label, inventory, source, expectedCodes } of sourceDriftMatrix) {
+        test(`inventory/source presence -> result: ${label}`, () => {
+            const findings = diffSourceAgainstInventory({
+                inventoryFiles: inventory,
+                sourceFiles: source,
+            });
+
+            assert.deepEqual(findings.map((finding) => finding.code), expectedCodes);
+        });
+    }
+});
+
+describe("Feature: release-policy vocabulary", () => {
+    const invalidVocabularyMatrix = [
+        { label: "unknown releaseDecision.action", action: "experimental", conclusion: "permitted" },
+        { label: "unknown redistribution.conclusion", action: "include", conclusion: "unknown" },
+    ];
+
+    for (const { label, action, conclusion } of invalidVocabularyMatrix) {
+        test(`Scenario Outline: unknown release vocabulary blocks publication - ${label}`, () => {
+            const inventory = { icons: [customIcon("roshar.svg")] };
+            const manifest = buildManifest([
+                buildAsset({
+                    file: "roshar.svg",
+                    releaseDecision: { action },
+                    redistribution: { conclusion },
+                }),
+            ]);
+
+            const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
+
+            assert.deepEqual(publishableIcons, []);
+            assert.ok(
+                findings.some((finding) =>
+                    finding.code === RELEASE_POLICY_FINDING_CODES.INVALID_RELEASE_VOCABULARY &&
+                    finding.file === "roshar.svg"
+                ),
+            );
+        });
+    }
+
+    test("Scenario: duplicate manifest assets block publication", () => {
+        const inventory = { icons: [customIcon("roshar.svg")] };
+        const manifest = buildManifest([
+            buildAsset({ file: "roshar.svg", releaseDecision: { action: "include" }, redistribution: { conclusion: "permitted" } }),
+            buildAsset({ file: "roshar.svg", releaseDecision: { action: "exclude" } }),
+        ]);
+
+        const { publishableIcons, findings } = derivePublishableIcons({ inventory, manifest });
+
+        assert.deepEqual(publishableIcons, []);
+        assert.ok(
+            findings.some((finding) =>
+                finding.code === RELEASE_POLICY_FINDING_CODES.DUPLICATE_MANIFEST_ASSET &&
+                finding.file === "roshar.svg"
+            ),
         );
     });
 });

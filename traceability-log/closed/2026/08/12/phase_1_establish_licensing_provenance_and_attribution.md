@@ -962,7 +962,7 @@ git diff --check                                                            # cl
 
 All frozen licensing and inventory evidence, and every `src/*.svg` byte, remain unchanged.
 
-### Closure
+### Closure (original)
 
 With the verification ladder above passing (aside from the pre-existing, unrelated `icon-inventory.json` indentation
 finding noted above) and frozen evidence confirmed byte-unchanged, Subphase 1.4 is marked `[DONE]`. Subphases 1.1,
@@ -970,3 +970,132 @@ finding noted above) and frozen evidence confirmed byte-unchanged, Subphase 1.4 
 the critical release-policy predicates (Cycle 4.4 of the corrective plan) is deferred: no mutation-testing
 infrastructure exists in this repository yet, and one was not added solely for this small verifier, per that plan's
 own non-goals.
+
+This closure was subsequently found premature: a code review identified that the "single audited release plan"
+described above still let `publishable-plan.mjs` (and `generate-icons-index.js`) reconstruct classification from a
+live `readdirSync()` scan instead of reading the frozen `migration/icon-inventory.json`, among other findings. That
+correction is recorded below.
+
+---
+
+## Subphase 1.4 Re-Closure Record — Hardening the Release-Policy Pipeline
+
+A follow-up code review of the work closed above
+([`traceability-log/open/harden_the_release_policy_pipeline_and_establish_a_single_audited_publication_plan.md`](./harden_the_release_policy_pipeline_and_establish_a_single_audited_publication_plan.md))
+found several real defects severe enough to reopen this closure. This record documents their correction, executed as
+four phases.
+
+### What changed
+
+1. **Frozen inventory is now the publication authority (P0 fix).**
+   `packages/astro-icons/scripts/lib/publishable-plan.mjs` was rewritten: `resolveReleasePlan()` and
+   `resolvePublishableIcons()` now read the committed `migration/icon-inventory.json` as the classification authority
+   and the attribution manifest, and treat the live `src/*.svg` listing only as drift evidence via a new pure
+   `diffSourceAgainstInventory()` in `scripts/lib/release-policy.mjs`. An SVG present on disk but absent from the
+   frozen inventory (`releasePolicy.untrackedSource`) or an inventory member missing from disk
+   (`releasePolicy.missingSource`) now blocks every publication-sensitive command. `generate-icons-index.js`
+   (monorepo root) had the identical live-reclassification bug and was corrected the same way, and its path
+   resolution was switched from `process.cwd()` to `import.meta.url`-relative so it can be invoked from either the
+   repository root or the `astro-icons` package directory. `copy-assets.mjs` and `assert-pack-files.mjs` now pass an
+   explicit `inventoryPath` through the same shared `resolvePublishableIcons()` entry point — none of the three
+   consumers (build, pack verification, export generation) independently reinterprets the release policy.
+2. **Manifest vocabulary and duplicate detection reused, not reimplemented (P1 fix).**
+   `release-policy.mjs` now imports `RELEASE_DECISION_ACTIONS`, `REDISTRIBUTION_CONCLUSIONS`, and a newly extracted
+   `findDuplicateManifestFiles()` from `license-metadata.mjs` (both remain filesystem-independent, so no circular
+   dependency). `derivePublishableIcons()` adds two new finding codes: `releasePolicy.invalidReleaseVocabulary` for
+   any manifest asset whose `releaseDecision.action` or `redistribution.conclusion` falls outside the frozen
+   vocabulary (previously silently treated the same as a valid `exclude`), and
+   `releasePolicy.duplicateManifestAsset` for a `file` referenced by more than one manifest record (previously
+   `indexManifestByFile()`'s `Map.set()` silently kept the last value).
+3. **Verification pipeline ordering corrected (P0 fix).**
+   `scripts/test/pack-artifact.integration.test.mjs` — which independently reconstructed the `npm pack --dry-run
+   --json` adapter and ran *before* `build` inside `test:pack-files` — was deleted; `pack:check` (the real
+   production CLI, already invoked later in the ladder) is now the sole real-artifact integration oracle, per the
+   plan's stated preference. `test:pack-files` is pure/CLI-injected only and needs no `dist/`.
+   `test.each` monkeypatches were removed from `release-policy.test.mjs` and `pack-contract.test.mjs` in favor of
+   plain `for` loops (also fixing an indentation regression in one existing DDT loop). `test:audit-icons` is now
+   wired into `check` (previously it ran in CI only by coincidence of a separate test job, not through the package's
+   own `check`).
+4. **Generated export surfaces gained a non-mutating freshness check (P1 fix).**
+   `generate-icons-index.js` now separates planning (`planExportSurface()`, reusing the existing
+   `planExportModules()` primitive) from writing (`applyExportSurfacePlan()`) and checking
+   (`findStaleExportSurfacePaths()`), so `--write` and `--check` cannot drift from each other. A new
+   `generate-icons:check` package script (`node ../../generate-icons-index.js --check --asset-type=icons`) fails if
+   the committed `src/index.ts`, `src/publishable.ts`, or any sharded `src/generated/**/part-NNN.ts` no longer
+   matches the frozen release plan.
+5. **Built-artifact API-to-asset integrity check added (P1 fix).**
+   A new pure module `scripts/lib/artifact-integrity.mjs` (`findUnresolvedSvgImports()`) and imperative shell
+   `scripts/verify-artifact-integrity.mjs` parse `dist/index.js`'s import specifiers with `es-module-lexer`
+   (semantic specifiers, not a textual regex) and confirm every `.svg` import resolves to a file actually present in
+   `dist/`. This is the complementary direction to `pack:check`'s existing `comparePublishedSvgSet` (which confirms
+   every packaged SVG is approved by policy). `es-module-lexer` was added as an explicit `astro-icons` devDependency
+   (root workspace already had it; pnpm's per-package resolution needed it declared locally too).
+6. **Verification ladder reordered to the plan's target sequence.** `package.json`'s `check` script is now:
+   `test:audit-icons → test:licenses → test:pack-files → licenses:check → generate-icons:check → build → typecheck →
+   pack:check → verify:artifact-integrity → lint` — `lint` last, so a `publint` tooling hiccup never blocks
+   collecting package-contract evidence.
+
+None of these changes alter any release decision, redistribution conclusion, `LICENSES/third-party-icons.json`
+record, `migration/icon-inventory.json` record, or `src/*.svg` byte. For the currently valid, fully-audited
+repository state (every `src/*.svg` file already has a matching frozen-inventory record, and all nine custom assets
+use valid, non-duplicated vocabulary), the new checks add zero new findings — the change is purely "fail closed on
+future drift that should never have been silently publishable."
+
+### Verification commands and outcomes
+
+Run from the repository root against the corrected implementation:
+
+```powershell
+pnpm --filter @ravenhill/astro-icons test:audit-icons      # 69 tests, 68 pass, 1 fail — pre-existing (see note)
+pnpm --filter @ravenhill/astro-icons test:licenses          # 49/49 pass
+pnpm --filter @ravenhill/astro-icons test:pack-files        # 36/36 pass; runs with no dist/ present
+pnpm --filter @ravenhill/astro-icons licenses:check          # pass — "Third-party notice is current."
+pnpm --filter @ravenhill/astro-icons generate-icons:check     # pass — "Icon exports are up to date (1521 internal, 1512 publishable)."
+pnpm --filter @ravenhill/astro-icons build                     # pass — tsup + copy-assets.mjs; "Copied 1512 publishable SVG files"
+pnpm --filter @ravenhill/astro-icons typecheck                  # pass — no diagnostics
+pnpm --filter @ravenhill/astro-icons pack:check                  # pass — "1522 files total, 1512 publishable SVGs in dist."
+pnpm --filter @ravenhill/astro-icons verify:artifact-integrity    # pass — "1512 SVG import(s) all resolve to packaged files."
+pnpm --filter @ravenhill/astro-icons lint                          # pass — publint: "All good!"
+```
+
+Every ladder segment above passes when run individually. Running the aggregate `pnpm --filter @ravenhill/astro-icons
+check` in one shot fails at its first step, `test:audit-icons`, because that step now runs as part of `check` for
+the first time (this was itself one of the P1 findings being fixed) and immediately surfaces the pre-existing,
+unrelated `icon-inventory.contract.test.mjs` byte-for-byte indentation mismatch documented below and in the original
+closure record above. This is a direct, expected consequence of correctly wiring `test:audit-icons` into `check` —
+not a regression introduced by this hardening pass.
+
+**Note on `test:audit-icons` (carried forward, unresolved, out of scope):** the same pre-existing test
+(`icon-inventory.contract.test.mjs`, "matches the committed migration/icon-inventory.json byte-for-byte") still
+fails because the committed `migration/icon-inventory.json` is four-space indented on disk while
+`audit-icons.mjs`'s `serializeInventory` emits two-space JSON. This predates both corrective plans, is unrelated to
+the release-policy hardening in this record, and was not introduced, touched, or fixed by it — per this plan's own
+explicit instruction not to fix it (fixing it would require either reformatting the frozen `icon-inventory.json`,
+which is forbidden, or changing `serializeInventory`'s indentation, which is a distinct, unreviewed change). It
+remains a known, separately-tracked finding.
+
+**Note on `pack:dry-run` (carried forward, environment-only):** as in the prior verification pass on this machine,
+`npm pack --dry-run` invoked directly succeeds; the pnpm-wrapped invocation path is the same pre-existing
+Windows/pnpm shell-wrapper quirk noted previously and was not investigated further, since `pack:check` and `lint`
+(which both invoke the real packer through their own adapters) both pass.
+
+### Repository purity confirmation
+
+```powershell
+git diff --stat -- packages/astro-icons/LICENSES/third-party-icons.json   # empty
+git diff --stat -- packages/astro-icons/migration/icon-inventory.json     # empty
+git diff --stat -- 'packages/astro-icons/src/*.svg'                       # empty
+git diff --check                                                          # clean (exit 0)
+```
+
+All frozen licensing and inventory evidence, and every `src/*.svg` byte, remain unchanged.
+
+### Closure
+
+With every individual verification-ladder segment passing, frozen evidence confirmed byte-unchanged, and the only
+non-passing state being the aggregate `check` invocation's exposure of the pre-existing, explicitly out-of-scope
+`icon-inventory.contract.test.mjs` indentation mismatch, Subphase 1.4 is re-marked `[DONE]` under the corrected
+architecture: the frozen inventory is now the sole publication-classification authority, source/inventory drift
+fails closed, generated export surfaces have a reproducibility check, and the built artifact's API surface is
+verified against its packaged assets in both directions. **Phase 1 is re-closed** as of this record. Mutation-testing
+coverage remains deferred per the same non-goal as the original closure.

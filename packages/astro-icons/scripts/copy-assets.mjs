@@ -12,6 +12,7 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const srcDir = resolve(packageRoot, "src");
 const distDir = resolve(packageRoot, "dist");
 const manifestPath = resolve(packageRoot, "LICENSES", "third-party-icons.json");
+const inventoryPath = resolve(packageRoot, "migration", "icon-inventory.json");
 
 /**
  * Copies a fixed file collection from one directory to another, creating the destination
@@ -29,7 +30,7 @@ export async function copyFiles({ files, sourceDirectory, destinationDirectory }
 }
 
 async function main() {
-    const publishableIcons = resolvePublishableIcons({ srcDir, manifestPath });
+    const publishableIcons = resolvePublishableIcons({ srcDir, manifestPath, inventoryPath });
     const files = publishableIcons.map((icon) => icon.file);
 
     const count = await copyFiles({
