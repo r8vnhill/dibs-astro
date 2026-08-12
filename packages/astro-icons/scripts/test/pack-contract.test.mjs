@@ -3,15 +3,23 @@ import { describe, test } from "node:test";
 
 import {
     BLOCKED_PATTERNS,
-    checkSvgParity,
+    comparePublishedSvgSet,
     deriveRequiredLicenseFiles,
     evaluatePackContents,
     findBlockedFiles,
     findIncludedAssetsWithoutPermittedRedistribution,
     findMissingFiles,
-    main,
     REQUIRED_RUNTIME_FILES,
 } from "../assert-pack-files.mjs";
+
+if (test.each === undefined) {
+    test.each = (cases) => (name, fn) => {
+        for (const testCase of cases) {
+            const args = Array.isArray(testCase) ? testCase : [testCase];
+            test(name.replaceAll("%s", args.map(String).join(",")), () => fn(...args));
+        }
+    };
+}
 
 // Sanderson-themed fixture names only; never the real 1,521-icon production tarball.
 const CORE_LICENSE_FILES = [
@@ -39,6 +47,8 @@ const buildAsset = (overrides = {}) => ({
 
 const buildManifest = (assets = []) => ({ assets });
 
+const publishable = (...files) => files.map((file) => ({ file, exportName: file }));
+
 const completeFiles = (extra = []) =>
     new Set([
         ...REQUIRED_RUNTIME_FILES,
@@ -48,91 +58,14 @@ const completeFiles = (extra = []) =>
         ...extra,
     ]);
 
-if (test.each === undefined) {
-    test.each = (cases) => (name, fn) => {
-        for (const testCase of cases) {
-            test(name.replaceAll("%s", String(testCase)), () => fn(testCase));
-        }
-    };
-}
-
 describe("module contract", () => {
-    test("exports pure helpers and an injectable main without running CLI side effects on import", () => {
+    test("exports pure pack-contract helpers with no shell side effects on import", () => {
         assert.equal(typeof findMissingFiles, "function");
         assert.equal(typeof findBlockedFiles, "function");
-        assert.equal(typeof checkSvgParity, "function");
+        assert.equal(typeof comparePublishedSvgSet, "function");
         assert.equal(typeof deriveRequiredLicenseFiles, "function");
-        assert.equal(
-            typeof findIncludedAssetsWithoutPermittedRedistribution,
-            "function",
-        );
+        assert.equal(typeof findIncludedAssetsWithoutPermittedRedistribution, "function");
         assert.equal(typeof evaluatePackContents, "function");
-        assert.equal(typeof main, "function");
-    });
-
-    test("main adapts injected shell effects and returns success without process exit", async () => {
-        const calls = [];
-        const files = completeFiles();
-        const entries = [{ filename: "astro-icons-0.1.0.tgz" }];
-        const status = await main({
-            argv: ["--pack"],
-            dependencies: {
-                readPackFiles: (argv) => {
-                    calls.push(["readPackFiles", argv]);
-                    return Promise.resolve({ entries, files });
-                },
-                countSourceSvgs: () => {
-                    calls.push("countSourceSvgs");
-                    return Promise.resolve(2);
-                },
-                readManifest: () => {
-                    calls.push("readManifest");
-                    return Promise.resolve(buildManifest());
-                },
-                writeDiagnostic: () => calls.push("writeDiagnostic"),
-                writeOutput: (message) => calls.push(["writeOutput", message]),
-                removePackedTarballs: (receivedEntries) => calls.push(["removePackedTarballs", receivedEntries]),
-            },
-        });
-
-        assert.equal(status, 0);
-        assert.equal(
-            calls.filter((call) => call === "countSourceSvgs").length,
-            1,
-        );
-        assert.equal(
-            calls.filter((call) => call === "readManifest").length,
-            1,
-        );
-        assert.deepEqual(calls.at(-1), ["removePackedTarballs", entries]);
-    });
-
-    test("main renders independent findings and returns failure", async () => {
-        const diagnostics = [];
-        const files = completeFiles(["package/scripts/urithiru.mjs"]);
-        files.delete("package/LICENSE");
-
-        const status = await main({
-            dependencies: {
-                readPackFiles: async () => ({ entries: [], files }),
-                countSourceSvgs: async () => 2,
-                readManifest: async () =>
-                    buildManifest([
-                        buildAsset({
-                            releaseDecision: { action: "include" },
-                            redistribution: { conclusion: "restricted" },
-                        }),
-                    ]),
-                writeDiagnostic: (message) => diagnostics.push(message),
-                writeOutput: () => assert.fail("failure must not be reported as success"),
-                removePackedTarballs: () => assert.fail("failed packs must not be cleaned"),
-            },
-        });
-
-        assert.equal(status, 1);
-        assert.ok(diagnostics.some((message) => message.includes("Missing required files")));
-        assert.ok(diagnostics.some((message) => message.includes("Blocked files present")));
-        assert.ok(diagnostics.some((message) => message.includes("redistribution.notPermitted")));
     });
 });
 
@@ -160,10 +93,7 @@ describe("findMissingFiles", () => {
 
 describe("findBlockedFiles", () => {
     test("reports no findings when no blocked internals are present", () => {
-        const files = new Set([
-            ...REQUIRED_RUNTIME_FILES,
-            "package/dist/roshar.svg",
-        ]);
+        const files = new Set([...REQUIRED_RUNTIME_FILES, "package/dist/roshar.svg"]);
 
         assert.deepEqual(findBlockedFiles(files, BLOCKED_PATTERNS), []);
     });
@@ -190,38 +120,66 @@ describe("findBlockedFiles", () => {
     });
 });
 
-describe("checkSvgParity", () => {
-    test("reports no finding when the SVG counts match", () => {
-        const files = new Set([
-            "package/dist/roshar.svg",
-            "package/dist/scadrial.svg",
-        ]);
+describe("Feature: exact packaged SVG contract", () => {
+    test("Scenario: exact publishable set passes", () => {
+        const files = new Set(["package/dist/roshar.svg", "package/dist/scadrial.svg"]);
 
-        assert.deepEqual(checkSvgParity(files, 2), []);
+        assert.deepEqual(
+            comparePublishedSvgSet({ files, publishableIcons: publishable("roshar.svg", "scadrial.svg") }),
+            { missingAssets: [], unexpectedAssets: [] },
+        );
     });
 
-    test("reports a finding when src has SVGs but dist in the tarball has fewer", () => {
+    test("Scenario: a publishable SVG is missing", () => {
         const files = new Set(["package/dist/roshar.svg"]);
 
-        const findings = checkSvgParity(files, 2);
+        const result = comparePublishedSvgSet({
+            files,
+            publishableIcons: publishable("roshar.svg", "scadrial.svg"),
+        });
 
-        assert.equal(findings.length, 1);
-        assert.match(findings[0], /2/u);
-        assert.match(findings[0], /1/u);
+        assert.deepEqual(result.missingAssets, ["package/dist/scadrial.svg"]);
+        assert.deepEqual(result.unexpectedAssets, []);
     });
 
-    test("does not report a finding when src has zero SVGs", () => {
-        const files = new Set([]);
+    test("Scenario: an excluded SVG is packaged", () => {
+        const files = new Set(["package/dist/roshar.svg", "package/dist/bash.svg"]);
 
-        assert.deepEqual(checkSvgParity(files, 0), []);
+        const result = comparePublishedSvgSet({ files, publishableIcons: publishable("roshar.svg") });
+
+        assert.deepEqual(result.unexpectedAssets, ["package/dist/bash.svg"]);
+    });
+
+    test("Scenario: equal counts with different names fail", () => {
+        const files = new Set(["package/dist/roshar.svg", "package/dist/nalthis.svg"]);
+
+        const result = comparePublishedSvgSet({
+            files,
+            publishableIcons: publishable("roshar.svg", "scadrial.svg"),
+        });
+
+        assert.deepEqual(result.missingAssets, ["package/dist/scadrial.svg"]);
+        assert.deepEqual(result.unexpectedAssets, ["package/dist/nalthis.svg"]);
+    });
+});
+
+describe("Feature: pack evaluator domain boundary", () => {
+    test("Scenario: the evaluator requires publication policy, not source-directory knowledge", () => {
+        // evaluatePackContents accepts publishableIcons directly; no src-directory count input
+        // exists in its signature, so this call alone demonstrates the boundary.
+        const result = evaluatePackContents({
+            files: completeFiles(),
+            manifest: buildManifest(),
+            publishableIcons: publishable("roshar.svg", "scadrial.svg"),
+        });
+
+        assert.equal(result.ok, true);
     });
 });
 
 describe("deriveRequiredLicenseFiles", () => {
     test("always requires package license and core attribution files", () => {
-        const required = deriveRequiredLicenseFiles(buildManifest());
-
-        assert.deepEqual(required, CORE_LICENSE_FILES);
+        assert.deepEqual(deriveRequiredLicenseFiles(buildManifest()), CORE_LICENSE_FILES);
     });
 
     test("requires included asset license, permission, and policy references", () => {
@@ -254,18 +212,12 @@ describe("deriveRequiredLicenseFiles", () => {
                 buildAsset({
                     file: "nightblood.svg",
                     releaseDecision: { action: "exclude" },
-                    rights: {
-                        copyright: { licenseFile: "LICENSES/NIGHTBLOOD.txt" },
-                        trademark: {},
-                    },
+                    rights: { copyright: { licenseFile: "LICENSES/NIGHTBLOOD.txt" }, trademark: {} },
                 }),
                 buildAsset({
                     file: "nalthis.svg",
                     releaseDecision: { action: "pending" },
-                    rights: {
-                        copyright: { licenseFile: "LICENSES/NALTHIS.txt" },
-                        trademark: {},
-                    },
+                    rights: { copyright: { licenseFile: "LICENSES/NALTHIS.txt" }, trademark: {} },
                 }),
             ]),
         );
@@ -287,11 +239,7 @@ describe("deriveRequiredLicenseFiles", () => {
             ]),
         );
 
-        assert.equal(
-            required.filter((file) => file === "package/LICENSES/HONOR.txt")
-                .length,
-            1,
-        );
+        assert.equal(required.filter((file) => file === "package/LICENSES/HONOR.txt").length, 1);
     });
 });
 
@@ -299,51 +247,39 @@ describe("findIncludedAssetsWithoutPermittedRedistribution", () => {
     test("reports no finding for included assets with permitted redistribution", () => {
         const findings = findIncludedAssetsWithoutPermittedRedistribution(
             buildManifest([
-                buildAsset({
-                    releaseDecision: { action: "include" },
-                    redistribution: { conclusion: "permitted" },
-                }),
+                buildAsset({ releaseDecision: { action: "include" }, redistribution: { conclusion: "permitted" } }),
             ]),
         );
 
         assert.deepEqual(findings, []);
     });
 
-    test.each([
-        "restricted",
-        "permission-required",
-        "undetermined",
-    ])("reports included assets with %s redistribution", (conclusion) => {
-        const findings = findIncludedAssetsWithoutPermittedRedistribution(
-            buildManifest([
-                buildAsset({
-                    file: "scadrial.svg",
-                    releaseDecision: { action: "include" },
-                    redistribution: { conclusion },
-                }),
-            ]),
-        );
-
-        assert.equal(findings.length, 1);
-        assert.match(findings[0], /scadrial\.svg/u);
-        assert.match(findings[0], new RegExp(conclusion, "u"));
-    });
-
-    test.each(["exclude", "pending"])(
-        "ignores %s assets with undetermined redistribution",
-        (action) => {
+    test.each(["restricted", "permission-required", "undetermined"])(
+        "reports included assets with %s redistribution",
+        (conclusion) => {
             const findings = findIncludedAssetsWithoutPermittedRedistribution(
                 buildManifest([
                     buildAsset({
-                        releaseDecision: { action },
-                        redistribution: { conclusion: "undetermined" },
+                        file: "scadrial.svg",
+                        releaseDecision: { action: "include" },
+                        redistribution: { conclusion },
                     }),
                 ]),
             );
 
-            assert.deepEqual(findings, []);
+            assert.equal(findings.length, 1);
+            assert.match(findings[0], /scadrial\.svg/u);
+            assert.match(findings[0], new RegExp(conclusion, "u"));
         },
     );
+
+    test.each(["exclude", "pending"])("ignores %s assets with undetermined redistribution", (action) => {
+        const findings = findIncludedAssetsWithoutPermittedRedistribution(
+            buildManifest([buildAsset({ releaseDecision: { action }, redistribution: { conclusion: "undetermined" } })]),
+        );
+
+        assert.deepEqual(findings, []);
+    });
 });
 
 describe("evaluatePackContents", () => {
@@ -351,20 +287,21 @@ describe("evaluatePackContents", () => {
         const result = evaluatePackContents({
             files: completeFiles(),
             manifest: buildManifest(),
-            srcSvgCount: 2,
+            publishableIcons: publishable("roshar.svg", "scadrial.svg"),
         });
 
         assert.equal(result.ok, true);
         assert.deepEqual(result.findings, {
             missingFiles: [],
             blockedFiles: [],
-            svgParity: [],
+            missingAssets: [],
+            unexpectedAssets: [],
             redistribution: [],
         });
     });
 
-    test("reports missing, blocked, SVG parity, and redistribution findings together", () => {
-        const files = completeFiles(["package/scripts/urithiru.mjs"]);
+    test("reports missing, blocked, missing-asset, unexpected-asset, and redistribution findings together", () => {
+        const files = completeFiles(["package/scripts/urithiru.mjs", "package/dist/bash.svg"]);
         files.delete("package/LICENSE");
         files.delete("package/dist/scadrial.svg");
 
@@ -377,33 +314,28 @@ describe("evaluatePackContents", () => {
                     redistribution: { conclusion: "undetermined" },
                 }),
             ]),
-            srcSvgCount: 2,
+            publishableIcons: publishable("roshar.svg", "scadrial.svg"),
         });
 
         assert.equal(result.ok, false);
         assert.ok(result.findings.missingFiles.includes("package/LICENSE"));
-        assert.ok(
-            result.findings.blockedFiles.includes(
-                "package/scripts/urithiru.mjs",
-            ),
-        );
-        assert.equal(result.findings.svgParity.length, 1);
+        assert.ok(result.findings.blockedFiles.includes("package/scripts/urithiru.mjs"));
+        assert.deepEqual(result.findings.missingAssets, ["package/dist/scadrial.svg"]);
+        assert.deepEqual(result.findings.unexpectedAssets, ["package/dist/bash.svg"]);
         assert.equal(result.findings.redistribution.length, 1);
     });
 
     test("findings are unchanged when packed files are reordered", () => {
         const manifest = buildManifest([
-            buildAsset({
-                releaseDecision: { action: "include" },
-                redistribution: { conclusion: "undetermined" },
-            }),
+            buildAsset({ releaseDecision: { action: "include" }, redistribution: { conclusion: "undetermined" } }),
         ]);
+        const publishableIcons = publishable("roshar.svg", "scadrial.svg");
         const files = [...completeFiles(["package/scripts/urithiru.mjs"])];
         const reversed = [...files].reverse();
 
         assert.deepEqual(
-            evaluatePackContents({ files, manifest, srcSvgCount: 2 }).findings,
-            evaluatePackContents({ files: reversed, manifest, srcSvgCount: 2 }).findings,
+            evaluatePackContents({ files, manifest, publishableIcons }).findings,
+            evaluatePackContents({ files: reversed, manifest, publishableIcons }).findings,
         );
     });
 
@@ -411,10 +343,11 @@ describe("evaluatePackContents", () => {
         const files = completeFiles();
         files.delete("package/LICENSE");
         const manifest = buildManifest();
+        const publishableIcons = publishable("roshar.svg", "scadrial.svg");
 
-        const before = evaluatePackContents({ files, manifest, srcSvgCount: 2 });
+        const before = evaluatePackContents({ files, manifest, publishableIcons });
         files.add("package/NOTICE.txt");
-        const after = evaluatePackContents({ files, manifest, srcSvgCount: 2 });
+        const after = evaluatePackContents({ files, manifest, publishableIcons });
 
         assert.ok(after.findings.missingFiles.includes("package/LICENSE"));
         assert.deepEqual(after.findings.missingFiles, before.findings.missingFiles);

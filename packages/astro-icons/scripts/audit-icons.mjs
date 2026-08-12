@@ -9,6 +9,7 @@ import {
     buildIconInventory,
     IconInventoryError,
 } from "./lib/icon-inventory.mjs";
+import { CUSTOM_BASE_NAMES } from "./lib/custom-base-names.mjs";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -21,17 +22,7 @@ export const DEFAULT_ARTIFACT_PATH = resolve(
 
 const SCHEMA_VERSION = 1;
 
-const CUSTOM_BASE_NAMES = [
-    "bash",
-    "csv",
-    "json",
-    "kotlin",
-    "nushell-logo",
-    "powershell",
-    "python",
-    "scala",
-    "xml",
-];
+export { CUSTOM_BASE_NAMES };
 
 /**
  * Lists the direct .svg filenames in a flat directory, lexically sorted.

@@ -1,9 +1,16 @@
 import { execFile } from "node:child_process";
-import { readdir, readFile, unlink } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { stdin } from "node:process";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
+
+import {
+    diffAssetFileSets,
+    hasPermittedRedistribution,
+    isIncludedAction,
+} from "./lib/release-policy.mjs";
+import { resolvePublishableIcons } from "./lib/publishable-plan.mjs";
 
 const execFileAsync = promisify(execFile);
 
@@ -48,22 +55,22 @@ export const DEFAULT_MANIFEST_PATH = resolve(
     "third-party-icons.json",
 );
 
+const DEFAULT_SRC_DIR = resolve(packageRoot, "src");
+
 const defaultDependencies = Object.freeze({
     readManifest: () => readJsonFile(DEFAULT_MANIFEST_PATH),
     readPackFiles: (argv) =>
         (argv.includes("--pack") ? packPackage() : stdinToString()).then(
-            (input) => {
-                const packEntries = parsePackEntries(input);
-                return {
-                    entries: packEntries,
-                    files: extractPackFiles(packEntries),
-                };
-            },
+            (input) => ({
+                files: extractPackFiles(parsePackEntries(input)),
+            }),
         ),
-    countSourceSvgs: () => countSourceSvgs(),
+    readPublishableIcons: () =>
+        Promise.resolve(
+            resolvePublishableIcons({ srcDir: DEFAULT_SRC_DIR, manifestPath: DEFAULT_MANIFEST_PATH }),
+        ),
     writeDiagnostic: (message) => console.error(message),
     writeOutput: (message) => console.log(message),
-    removePackedTarballs: (entries) => removePackedTarballs(entries),
 });
 
 const getManifestAssets = (manifest) => Array.isArray(manifest?.assets) ? manifest.assets : [];
@@ -91,7 +98,7 @@ export function deriveRequiredLicenseFiles(manifest) {
     const required = new Set(CORE_LICENSE_FILES);
 
     for (const asset of getManifestAssets(manifest)) {
-        if (asset?.releaseDecision?.action !== "include") {
+        if (!isIncludedAction(asset)) {
             continue;
         }
 
@@ -131,22 +138,18 @@ export const findBlockedFiles = (files, blockedPatterns) =>
         .sort();
 
 /**
- * Checks that source SVG count and packaged dist SVG count match.
+ * Compares the actual packaged `dist/*.svg` set against the release-policy-derived publishable
+ * set. Requires only the publication policy, not any source-directory knowledge.
  *
- * @param {Iterable<string>} files
- * @param {number} srcSvgCount
- * @returns {string[]}
+ * @param {{ files: Iterable<string>, publishableIcons: { file: string }[] }} options
+ * @returns {{ missingAssets: string[], unexpectedAssets: string[] }}
  */
-export function checkSvgParity(files, srcSvgCount) {
-    const distSvgCount = [...files].filter((file) => /^package\/dist\/.+\.svg$/u.test(file)).length;
+export function comparePublishedSvgSet({ files, publishableIcons }) {
+    const expectedFiles = publishableIcons.map((icon) => `package/dist/${icon.file}`);
+    const actualFiles = [...files].filter((file) => /^package\/dist\/.+\.svg$/u.test(file));
+    const { missing, unexpected } = diffAssetFileSets(expectedFiles, actualFiles);
 
-    if (srcSvgCount === 0 || srcSvgCount === distSvgCount) {
-        return [];
-    }
-
-    return [
-        `svgParity.mismatch: src has ${srcSvgCount}, dist in tarball has ${distSvgCount}`,
-    ];
+    return { missingAssets: missing, unexpectedAssets: unexpected };
 }
 
 /**
@@ -157,8 +160,8 @@ export function checkSvgParity(files, srcSvgCount) {
  */
 export const findIncludedAssetsWithoutPermittedRedistribution = (manifest) =>
     getManifestAssets(manifest)
-        .filter((asset) => asset?.releaseDecision?.action === "include")
-        .filter((asset) => asset?.redistribution?.conclusion !== "permitted")
+        .filter((asset) => isIncludedAction(asset))
+        .filter((asset) => !hasPermittedRedistribution(asset))
         .map((asset) => {
             const file = asset?.file ?? "<unknown>";
             const conclusion = asset?.redistribution?.conclusion ?? "<missing>";
@@ -169,20 +172,35 @@ export const findIncludedAssetsWithoutPermittedRedistribution = (manifest) =>
 /**
  * Evaluates a package file list against the full pack contract.
  *
- * @param {{ files: Iterable<string>, manifest: object, srcSvgCount: number }} options
- * @returns {{ ok: boolean, findings: { missingFiles: string[], blockedFiles: string[], svgParity: string[], redistribution: string[] } }}
+ * @param {{
+ *   files: Iterable<string>,
+ *   manifest: object,
+ *   publishableIcons: { file: string }[],
+ * }} options
+ * @returns {{
+ *   ok: boolean,
+ *   findings: {
+ *     missingFiles: string[],
+ *     blockedFiles: string[],
+ *     missingAssets: string[],
+ *     unexpectedAssets: string[],
+ *     redistribution: string[],
+ *   },
+ * }}
  */
-export function evaluatePackContents({ files, manifest, srcSvgCount }) {
+export function evaluatePackContents({ files, manifest, publishableIcons }) {
     const fileSet = new Set(files);
     const requiredFiles = [
         ...REQUIRED_RUNTIME_FILES,
         ...deriveRequiredLicenseFiles(manifest),
     ];
+    const svgSet = comparePublishedSvgSet({ files: fileSet, publishableIcons });
 
     const findings = {
         missingFiles: findMissingFiles(fileSet, requiredFiles),
         blockedFiles: findBlockedFiles(fileSet, BLOCKED_PATTERNS),
-        svgParity: checkSvgParity(fileSet, srcSvgCount),
+        missingAssets: svgSet.missingAssets,
+        unexpectedAssets: svgSet.unexpectedAssets,
         redistribution: findIncludedAssetsWithoutPermittedRedistribution(manifest),
     };
 
@@ -202,12 +220,12 @@ export async function main({
     argv = process.argv.slice(2),
     dependencies = defaultDependencies,
 } = {}) {
-    const { entries, files } = await dependencies.readPackFiles(argv);
-    const [srcSvgCount, manifest] = await Promise.all([
-        dependencies.countSourceSvgs(),
+    const { files } = await dependencies.readPackFiles(argv);
+    const [publishableIcons, manifest] = await Promise.all([
+        dependencies.readPublishableIcons(),
         dependencies.readManifest(),
     ]);
-    const result = evaluatePackContents({ files, manifest, srcSvgCount });
+    const result = evaluatePackContents({ files, manifest, publishableIcons });
 
     printFindings(result.findings, dependencies.writeDiagnostic);
 
@@ -215,12 +233,10 @@ export async function main({
         return 1;
     }
 
-    const distSvgCount = [...files].filter((file) => /^package\/dist\/.+\.svg$/u.test(file)).length;
     dependencies.writeOutput(
-        `✓ Pack check passed: ${files.size} files total, ${distSvgCount} SVGs in dist.`,
+        `✓ Pack check passed: ${files.size} files total, ${publishableIcons.length} publishable SVGs in dist.`,
     );
 
-    await dependencies.removePackedTarballs(entries);
     return 0;
 }
 
@@ -255,8 +271,12 @@ function printFindings(findings, writeDiagnostic) {
         );
     }
 
-    for (const finding of findings.svgParity) {
-        writeDiagnostic(finding);
+    for (const file of findings.missingAssets) {
+        writeDiagnostic(`svgSet.missing: ${file} is expected but absent from the tarball`);
+    }
+
+    for (const file of findings.unexpectedAssets) {
+        writeDiagnostic(`svgSet.unexpected: ${file} is packaged but is not publishable`);
     }
 
     for (const finding of findings.redistribution) {
@@ -265,12 +285,6 @@ function printFindings(findings, writeDiagnostic) {
 }
 
 const readJsonFile = async (path) => JSON.parse(await readFile(path, "utf8"));
-
-async function countSourceSvgs() {
-    const srcDir = resolve(packageRoot, "src");
-    const srcSvgFiles = (await readdir(srcDir)).filter((file) => file.endsWith(".svg"));
-    return srcSvgFiles.length;
-}
 
 async function packPackage() {
     const executable = process.platform === "win32" ? "cmd.exe" : "npm";
@@ -283,27 +297,6 @@ async function packPackage() {
     });
 
     return stdout;
-}
-
-async function removePackedTarballs(entries) {
-    await Promise.all(
-        entries.map(async (entry) => {
-            if (
-                typeof entry.filename !== "string"
-                || entry.filename.length === 0
-            ) {
-                return;
-            }
-
-            await unlink(resolve(packageRoot, entry.filename)).catch(
-                (error) => {
-                    if (error?.code !== "ENOENT") {
-                        throw error;
-                    }
-                },
-            );
-        }),
-    );
 }
 
 function stdinToString() {

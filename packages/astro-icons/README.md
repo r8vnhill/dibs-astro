@@ -36,10 +36,16 @@ import { Acorn, BookOpen } from "@ravenhill/astro-icons";
 
 ## Architecture
 
-- **Source**: `src/` contains 1,521 SVG files + auto-generated `index.ts` barrel
-- **Build**: tsup externalizes SVG imports; `copy-assets.mjs` post-build copies SVGs to `dist/`
-- **Distribution**: `dist/` contains both the re-export barrel and all SVG files
-- **SVG pipeline**: Consumers must have an SVG loader compatible with Astro's native SVG support
+- **Source**: `src/` contains every repository-local SVG file plus two generated barrels:
+  `index.ts` (internal, every icon) and `publishable.ts` (only release-policy-approved icons).
+- **Build**: tsup builds the standalone package from `src/publishable.ts` and externalizes SVG
+  imports; `copy-assets.mjs` post-build copies only publishable SVGs to `dist/`.
+- **Distribution**: `dist/` contains the publishable re-export barrel and only publishable SVG
+  files — never the small set of custom assets whose release decision is `exclude`.
+- **SVG pipeline**: Consumers must have an SVG loader compatible with Astro's native SVG support.
+
+Source/internal availability is not permission to publish. See [`AGENTS.md`](./AGENTS.md) for the
+full internal-vs-publishable contract.
 
 ## Consumption Model
 
@@ -47,16 +53,18 @@ import { Acorn, BookOpen } from "@ravenhill/astro-icons";
 
 The Astro app uses this package through the `$icons` path alias (defined in root `tsconfig.json`):
 
-- **Source**: `./packages/astro-icons/src/index.ts` (auto-generated barrel)
+- **Source**: `./packages/astro-icons/src/index.ts` (auto-generated internal barrel)
 - **Pipeline**: Astro's native SVG component transformation
-- **Import**: All components use the `$icons` alias; no code changes needed when using the package
+- **Import**: All components use the `$icons` alias; every repository-local icon remains
+  available internally, including custom assets excluded from publication.
 
 ### External Consumers (Publication)
 
 External projects consuming this package use the npm-published `dist/` folder:
 
 - **Source**: `@ravenhill/astro-icons` from npm registry
-- **Published path**: `dist/index.js` + 1,521 SVG files in `dist/`
+- **Published path**: `dist/index.js` (built from `src/publishable.ts`) + the publishable SVG
+  files in `dist/`
 - **SVG compatibility**: Requires an SVG-to-component pipeline (e.g., Astro's native support, custom loaders, or wrapper
   code)
 
@@ -68,8 +76,8 @@ pnpm build
 
 This runs:
 
-1. `tsup` — emits `dist/index.js`, `dist/index.d.ts`, and source map
-2. `scripts/copy-assets.mjs` — copies 1,521 SVGs from `src/` to `dist/`
+1. `tsup` — builds `src/publishable.ts` into `dist/index.js`, `dist/index.d.ts`, and a source map
+2. `scripts/copy-assets.mjs` — copies only release-policy-approved SVGs from `src/` to `dist/`
 
 ## Validation
 

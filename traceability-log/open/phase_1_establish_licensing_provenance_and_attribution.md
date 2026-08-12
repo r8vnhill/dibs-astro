@@ -696,7 +696,7 @@ package-contract test suite. Separate scripts provide clearer failure ownership.
 
 ---
 
-# Subphase 1.4 — Enforce the Publishable Artifact Contract
+# Subphase 1.4 — Enforce the Publishable Artifact Contract [DONE]
 
 ## Goal
 
@@ -896,3 +896,77 @@ The following remain outside Phase 1:
 [4]: https://docs.npmjs.com/cli/v10/configuring-npm/package-json/?utm_source=chatgpt.com "package.json"
 
 [5]: https://spdx.org/licenses/BSD-2-Clause.html?utm_source=chatgpt.com "BSD 2-Clause \"Simplified\ "License"
+
+---
+
+## Subphase 1.4 Closure Record — Publication-Surface Correction
+
+Subphase 1.4's original implementation enforced *count* parity between `src/*.svg` and the packaged `dist/*.svg`
+set, which is not the same claim as "the tarball contains exactly the release-policy-approved asset set." This was
+corrected under
+[`traceability-log/open/align_ravenhill_astro_icons_publication_with_the_recorded_release_policy.md`](./align_ravenhill_astro_icons_publication_with_the_recorded_release_policy.md),
+executed as four phases:
+
+1. **Release policy core** — `packages/astro-icons/scripts/lib/release-policy.mjs` derives the publishable asset set
+   from the frozen inventory and attribution manifest (Phosphor baseline + `include`/`permitted` custom assets only).
+2. **Internal vs. publishable surfaces** — `src/index.ts` (internal, every local icon, used via the `$icons` alias)
+   and `src/publishable.ts` (only publishable icons, what `tsup` builds into `dist/index.js`) are now generated as
+   separate, sharded barrels (`src/generated/{internal,publishable}/part-NNN.ts`) from the same policy core.
+   `scripts/copy-assets.mjs` now copies only publishable SVGs into `dist/`.
+3. **Set-based pack contract** — `scripts/assert-pack-files.mjs` replaced `checkSvgParity` (count comparison) with
+   `comparePublishedSvgSet` (exact expected/actual filename-set comparison via `evaluatePackContents`), and removed
+   the dead dry-run tarball cleanup path (`npm pack --dry-run` never produces a real tarball to clean up).
+4. **Artifact verification** — the real `npm pack --dry-run --json` output was evaluated through the same pure
+   contract; no independent integration-only definition of valid package contents was introduced.
+
+This intentionally changes production behavior: none of the nine currently-excluded custom assets (`bash`, `csv`,
+`json`, `kotlin`, `nushell-logo`, `powershell`, `python`, `scala`, `xml`) can enter the standalone package, while all
+nine remain available to the monorepo internally via `src/index.ts`. No release decision, `third-party-icons.json`
+record, `icon-inventory.json` record, or SVG byte was changed.
+
+### Verification commands and outcomes
+
+Run from the repository root against the corrected implementation:
+
+```powershell
+pnpm --filter @ravenhill/astro-icons test:audit-icons   # 57/58 pass; see note below
+pnpm --filter @ravenhill/astro-icons test:licenses       # 49/49 pass
+pnpm --filter @ravenhill/astro-icons test:pack-files     # 28/28 pass
+pnpm --filter @ravenhill/astro-icons licenses:check       # pass — "Third-party notice is current."
+pnpm --filter @ravenhill/astro-icons build                # pass — tsup + copy-assets.mjs
+pnpm --filter @ravenhill/astro-icons typecheck             # pass — no diagnostics
+pnpm --filter @ravenhill/astro-icons pack:check             # pass — "1522 files total, 1512 publishable SVGs in dist."
+pnpm --filter @ravenhill/astro-icons lint                    # pass — publint: "All good!"
+```
+
+`pack:check` runs the real `npm pack --dry-run --json` output through `evaluatePackContents`: `missingAssets` and
+`unexpectedAssets` are both empty, `bash.svg` and the other eight excluded assets are absent from `dist/`, and every
+required legal file (`LICENSE`, `LICENSES/README.md`, `LICENSES/PHOSPHOR.txt`, `LICENSES/THIRD_PARTY.md`,
+`LICENSES/third-party-icons.json`) is present.
+
+**Note on `test:audit-icons`:** one pre-existing test (`icon-inventory.contract.test.mjs`, "matches the committed
+migration/icon-inventory.json byte-for-byte") fails because the committed `migration/icon-inventory.json` is
+indented with four spaces on disk while `audit-icons.mjs`'s `serializeInventory` emits two-space JSON. This mismatch
+predates this correction, is unrelated to the publication-surface fix, and was not introduced or touched by it — the
+frozen file itself was not modified (see below). It is left open as a separate, pre-existing finding.
+
+### Repository purity confirmation
+
+```powershell
+git diff --stat -- packages/astro-icons/LICENSES/third-party-icons.json   # empty
+git diff --stat -- packages/astro-icons/LICENSES/THIRD_PARTY.md            # empty
+git diff --stat -- packages/astro-icons/migration/icon-inventory.json      # empty
+git diff --stat -- 'packages/astro-icons/src/*.svg'                        # empty
+git diff --check                                                            # clean (exit 0)
+```
+
+All frozen licensing and inventory evidence, and every `src/*.svg` byte, remain unchanged.
+
+### Closure
+
+With the verification ladder above passing (aside from the pre-existing, unrelated `icon-inventory.json` indentation
+finding noted above) and frozen evidence confirmed byte-unchanged, Subphase 1.4 is marked `[DONE]`. Subphases 1.1,
+1.2, and 1.3 were already `[DONE]`; **Phase 1 is therefore closed** as of this record. Mutation-testing coverage of
+the critical release-policy predicates (Cycle 4.4 of the corrective plan) is deferred: no mutation-testing
+infrastructure exists in this repository yet, and one was not added solely for this small verifier, per that plan's
+own non-goals.
