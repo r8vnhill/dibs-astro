@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { JSX } from "react";
 import type { StyledComponent, Theme } from "~/utils";
 import { themeOptions } from "./ThemeOptions";
+import type { ThemeLabels } from "./ThemeSwitcher";
 
 /**
  * Props for the ThemeSwitcherButton component.
@@ -23,6 +24,7 @@ type ThemeSwitcherButtonProps = {
      * Optional accessible label or tooltip for the button.
      */
     title?: string;
+    labels: ThemeLabels;
 } & StyledComponent;
 
 /**
@@ -45,10 +47,12 @@ export function ThemeSwitcherButton({
     toggle,
     isOpen,
     className,
-    title = "Cambiar tema",
+    title,
+    labels,
 }: ThemeSwitcherButtonProps): JSX.Element {
     // Retrieve the label and icon for the current theme
     const option = themeOptions[theme] ?? { label: theme, icon: null };
+    const label = labels[theme];
 
     return (
         <button
@@ -60,12 +64,12 @@ export function ThemeSwitcherButton({
             onClick={toggle}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
-            title={title}
+            title={title ?? labels.change}
         >
             {option.icon}
             {/* Screen-reader only label for accessibility */}
-            <span className="sr-only">Tema actual:</span>
-            {option.label}
+            <span className="sr-only">{labels.current}</span>
+            {label}
         </button>
     );
 }

@@ -1,3 +1,4 @@
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, sharpImageService } from "astro/config";
 import { readdirSync, statSync } from "node:fs";
@@ -97,6 +98,11 @@ export default defineConfig({
         plugins: [
             // Enables TailwindCSS within the Vite build pipeline
             tailwindcss(),
+            paraglideVitePlugin({
+                project: "./project.inlang",
+                outdir: "./src/generated/i18n",
+                emitTsDeclarations: true,
+            }),
         ],
     },
 

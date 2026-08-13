@@ -2,8 +2,6 @@ import {
     AdjacentLessons,
     CONTENT_CORE_PACKAGE_NAME,
     CONTENT_CORE_VERSION,
-    formatDate,
-    formatLessonDate,
     LessonHref,
     LessonMetadataService,
     LessonSequenceService,
@@ -16,7 +14,7 @@ import {
     parseIsoShortDateValue,
     parseLessonSourceFile,
     parseNonEmptyText,
-    resolveLessonDateDisplay,
+    resolveLessonDate,
 } from "@ravenhill/content-core";
 import { describe, expect, test } from "vitest";
 import packageManifest from "../../package.json" with { type: "json" };
@@ -43,8 +41,6 @@ describe("content-core root API values", () => {
 
     test("exposes lesson-metadata value symbols and helpers", () => {
         expect(LessonMetadataService).toBeDefined();
-        expect(formatDate).toBeTypeOf("function");
-        expect(formatLessonDate).toBeTypeOf("function");
         expect(normalizeLessonMetadataPathname).toBeTypeOf("function");
         expect(parseAbsoluteUrl).toBeTypeOf("function");
         expect(parseGitCommitHash).toBeTypeOf("function");
@@ -52,6 +48,6 @@ describe("content-core root API values", () => {
         expect(parseIsoShortDateValue).toBeTypeOf("function");
         expect(parseLessonSourceFile).toBeTypeOf("function");
         expect(parseNonEmptyText).toBeTypeOf("function");
-        expect(resolveLessonDateDisplay).toBeTypeOf("function");
+        expect(resolveLessonDate).toBeTypeOf("function");
     });
 });

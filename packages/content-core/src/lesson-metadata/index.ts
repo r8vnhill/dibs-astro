@@ -3,14 +3,14 @@
  *
  * Internal barrel for the `lesson-metadata` submodule.
  *
- * This module defines the local aggregation boundary for lesson-metadata concerns. It keeps the package entry point 
+ * This module defines the local aggregation boundary for lesson-metadata concerns. It keeps the package entry point
  * easy to maintain while allowing the internal file layout to evolve without leaking implementation details to
  * application code.
  *
  * The submodule is organized around these concerns:
  *
  * - date helpers for parsing, formatting, and display fallback behavior;
- * - branded values for trusted semantic fields such as URLs, commit hashes, ISO short dates, source files, and 
+ * - branded values for trusted semantic fields such as URLs, commit hashes, ISO short dates, source files, and
  *   non-empty text;
  * - path normalization for stable lesson-metadata lookup keys;
  * - domain records for validated lesson metadata;
@@ -19,10 +19,10 @@
  * - service and DTO contracts for resolving external metadata into trusted records;
  * - the default metadata service implementation.
  *
- * Date, path, and branded-value helpers are intentionally re-exported here because adapters, tests, and generated-data 
+ * Date, path, and branded-value helpers are intentionally re-exported here because adapters, tests, and generated-data
  * loaders must use the same normalization and validation rules as the service layer.
  *
- * Prefer importing from `@ravenhill/content-core` in application code. Imports from this internal path couple 
+ * Prefer importing from `@ravenhill/content-core` in application code. Imports from this internal path couple
  * consumers to the current package layout and make future refactors more disruptive.
  *
  * @example
@@ -35,15 +35,7 @@
  */
 
 // Date parsing, formatting, and display-fallback helpers.
-export {
-    DEFAULT_LESSON_METADATA_LOCALE,
-    formatDate,
-    formatLessonDate,
-    type LessonDateDisplayResult,
-    parseIsoShortDate,
-    resolveLessonDateDisplay,
-    UNKNOWN_LESSON_DATE_LABEL,
-} from "./date";
+export { type LessonDate, parseIsoShortDate, resolveLessonDate } from "./date";
 
 // Branded semantic values and parsers for trusted metadata fields.
 export {

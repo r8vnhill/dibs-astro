@@ -11,6 +11,8 @@
  */
 
 import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
+import { m } from "~/generated/i18n/messages";
+import type { LocalizedString } from "~/generated/i18n/messages";
 import GitHubLink from "./GitHubLink.astro";
 import GitLabLink from "./GitLabLink.astro";
 import HeaderNav from "./nav/HeaderNav";
@@ -19,11 +21,25 @@ type Props = {
     title: string;
     gitlab?: { username: string; repo: string };
     github?: { username: string; repo: string };
+    themeLabels: {
+        current: LocalizedString;
+        change: LocalizedString;
+        light: LocalizedString;
+        dark: LocalizedString;
+        auto: LocalizedString;
+    };
 };
 
-const { title, gitlab, github } = Astro.props as Props;
+const { title, gitlab, github, themeLabels } = Astro.props as Props;
 const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
 const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : {};
+const navItems = [
+    { id: "home", href: "/", label: m.nav_home() },
+    { id: "notes", href: "/notes/", label: m.nav_notes() },
+    { id: "lessons", href: "/lessons/", label: m.nav_lessons() },
+    { id: "syllabus", href: "/syllabus/", label: m.nav_syllabus() },
+    { id: "assignments", href: "/assignments/", label: m.nav_assignments() },
+];
 ---
 
 <!-- Header with themed background, border, and shadow -->
@@ -60,18 +76,18 @@ const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : 
         <div class:list={["flex", "items-center", "gap-6"]}>
             <!-- Site title linking to homepage -->
             <a href="/" class:list={["text-xl", "font-bold", "text-primary"]}>
-                <span class="sr-only">Go to homepage</span>
+                <span class="sr-only">{m.header_home_aria()}</span>
                 {title}
             </a>
 
             <!-- Main navigation component -->
-            <HeaderNav />
+            <HeaderNav items={navItems} />
         </div>
 
         <!-- Right section: theme switcher and repository links -->
         <div class:list={["flex", "items-center", "gap-4"]}>
             <!-- Dark/light mode toggle -->
-            <ThemeSwitcher client:load />
+            <ThemeSwitcher client:load labels={themeLabels} />
 
             <!-- GitLab repository link (optional) -->
             {gitlab && <GitLabLink {...gitlab} />}

@@ -29,6 +29,7 @@
  * validation) lives in `~/utils/page-meta`.
  */
 
+import { getLocaleProfile } from "$presentation/i18n/locale-profile";
 import { site } from "~/utils";
 import { buildHeadPageMeta, type PageMeta } from "~/utils/page-meta";
 
@@ -131,27 +132,8 @@ const resolvedMeta = buildHeadPageMeta({
  */
 const isArticle = resolvedMeta.type === "article";
 
-/**
- * Maps a BCP 47 language tag into an Open Graph locale string.
- *
- * ## Examples:
- *
- * - "es" → "es_CL"
- * - "es-CL" → "es_CL"
- * - "en" → "en_GB"
- *
- * Falls back to "es_CL" for unknown languages.
- */
-function ogLocaleFromLanguage(language: string): string {
-    const normalized = language.trim().toLowerCase();
-
-    if (normalized === "es" || normalized.startsWith("es-")) return "es_CL";
-    if (normalized === "en" || normalized.startsWith("en-")) return "en_GB";
-
-    return "es_CL";
-}
-
-const ogLocale = ogLocaleFromLanguage(resolvedMeta.citationLanguage);
+const localeProfile = getLocaleProfile(resolvedMeta.citationLanguage);
+const ogLocale = localeProfile.openGraphLocale;
 const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 ---
 
@@ -177,9 +159,7 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 <!-- Responsive layout -->
 <meta name="viewport" content="width=device-width" />
 
-<!--
-    Global font loading lives in <head>, not in global.css, to keep Vite's CSS module graph local.
--->
+<!-- Global font loading lives in <head>, not in global.css, to keep Vite's CSS module graph local. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link
     rel="preconnect" href="https://fonts.gstatic.com"
@@ -223,11 +203,7 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
         <>
             <meta name="citation_title" content={title} />
 
-            {
-                resolvedMeta.citationAuthors.map((author) => (
-                    <meta name="citation_author" content={author} />
-                ))
-            }
+            {resolvedMeta.citationAuthors.map((author) => <meta name="citation_author" content={author} />)}
 
             {
                 resolvedMeta.citationDate
@@ -236,10 +212,7 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 
             {
                 resolvedMeta.citationLastModifiedDate && (
-                    <meta
-                        name="citation_last_modified_date"
-                        content={resolvedMeta.citationLastModifiedDate}
-                    />
+                    <meta name="citation_last_modified_date" content={resolvedMeta.citationLastModifiedDate} />
                 )
             }
 
@@ -279,9 +252,6 @@ const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
 <!-- Optional 404 retro font -->
 {
     include404Font && (
-        <link
-            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-            rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
     )
 }

@@ -10,7 +10,7 @@ consumed through the GitLab group registry endpoint. Release automation remains 
 Current publish target:
 
 - package: `@ravenhill/content-core`
-- version: `0.1.0`
+- version: `0.2.0`
 - publish registry: `https://gitlab.com/api/v4/projects/71752456/packages/npm/`
 - consumer registry: `https://gitlab.com/api/v4/groups/110542663/-/packages/npm/`
 
@@ -36,7 +36,7 @@ Configure the `@ravenhill` scope to read from the GitLab group registry:
 Install the pilot package:
 
 ```sh
-npm install @ravenhill/content-core@0.1.0
+npm install @ravenhill/content-core@0.2.0
 ```
 
 If your token is not already configured locally, set it without committing secrets:
@@ -76,7 +76,7 @@ pnpm --dir packages/content-core exec npm pkg get name version private publishCo
 Check whether the release version already exists before publishing:
 
 ```sh
-npm view @ravenhill/content-core@0.1.0 version \
+npm view @ravenhill/content-core@0.2.0 version \
   --registry=https://gitlab.com/api/v4/groups/110542663/-/packages/npm/
 ```
 
@@ -96,8 +96,8 @@ Run package validation from the repository root:
 pnpm check:content-core
 ```
 
-That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, verifies
-the dry-run pack file list, validates the packed tarball from a temporary external consumer, and then runs the focused
+That command builds `dist/index.js` and `dist/index.d.ts`, typechecks the package, runs `publint --strict`, verifies the
+dry-run pack file list, validates the packed tarball from a temporary external consumer, and then runs the focused
 Vitest type contract tests for the package root. `dist/` is generated output and should not be edited by hand.
 
 To run only the packaged-consumer validation:
@@ -132,7 +132,7 @@ files, tests, local build config, and agent guidance are excluded from the packe
 
 - **Neutral identity**: `content-core` (not `course-core`) to enable reuse beyond DIBS
 - **Host-agnostic**: Pure content abstractions without Astro or platform-specific coupling
-- **Pilot publication**: The package is ready for manual GitLab registry publication at `0.1.0`
+- **Pilot publication**: The package is ready for manual GitLab registry publication at `0.2.0`
 - **Root-only API**: Consumers import from `@ravenhill/content-core`, not package subpaths; type fixtures check this
   boundary alongside removed-name compatibility guards
 
@@ -142,10 +142,10 @@ files, tests, local build config, and agent guidance are excluded from the packe
   service.
 - Lesson metadata: branded metadata records, parser helpers, explicit result contracts, date/path helpers, repository
   contracts, DTOs, and the metadata service.
-- Curriculum: `CurriculumConcept` (a minimal reusable concept identity), `CurriculumFacets` (a generic
-  dimension-to-tags mechanism with no built-in vocabulary), and `CurriculumUnit<Metadata>` (a coherent treatment
-  grouping concepts and facets, with optional, opaque host-owned metadata). This is a data contract only — no
-  relationships, traversal, validation, or concrete facet/language vocabulary. Those remain host policy.
+- Curriculum: `CurriculumConcept` (a minimal reusable concept identity), `CurriculumFacets` (a generic dimension-to-tags
+  mechanism with no built-in vocabulary), and `CurriculumUnit<Metadata>` (a coherent treatment grouping concepts and
+  facets, with optional, opaque host-owned metadata). This is a data contract only — no relationships, traversal,
+  validation, or concrete facet/language vocabulary. Those remain host policy.
 - Package identity constants for workspace consumption checks.
 
 Consumers should use service-oriented names from the package root:
@@ -167,6 +167,13 @@ with fields that cannot be branded returns `kind: "invalid"` with stable issue p
 `kind: "missing"`. The presentation bridge exposes the result object and Astro layouts render metadata panels only for
 `kind: "found"`.
 
+## 0.2.0 migration
+
+Date presentation is no longer part of the package API. Replace `formatDate`, `formatLessonDate`, and
+`resolveLessonDateDisplay` with `resolveLessonDate`, then format a `known` date and choose missing-date copy in the
+consuming application's presentation layer. This intentionally removes the former Spanish fallback and regional locale
+default from the host-agnostic package.
+
 ## Troubleshooting
 
 - Missing auth token: configure the project and group registry tokens locally before publishing or installing.
@@ -174,8 +181,8 @@ with fields that cannot be branded returns `kind: "invalid"` with stable issue p
 - Duplicate version: stop and choose a new version if `0.1.0` already exists in the registry.
 - Tarball 404 after group metadata resolution: add the project endpoint token mapping as well as the group endpoint
   mapping.
-- Accidental subpath import attempt: import from `@ravenhill/content-core` only; subpaths are not part of the
-  supported contract.
+- Accidental subpath import attempt: import from `@ravenhill/content-core` only; subpaths are not part of the supported
+  contract.
 
 ## Future Evolution
 

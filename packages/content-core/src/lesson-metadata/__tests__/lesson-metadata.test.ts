@@ -1,14 +1,6 @@
 import fc from "fast-check";
 import { describe, expect, test } from "vitest";
-import {
-    DEFAULT_LESSON_METADATA_LOCALE,
-    formatDate,
-    formatLessonDate,
-    normalizeLessonMetadataPathname,
-    parseIsoShortDate,
-    resolveLessonDateDisplay,
-    UNKNOWN_LESSON_DATE_LABEL,
-} from "../index";
+import { normalizeLessonMetadataPathname, parseIsoShortDate, resolveLessonDate } from "../index";
 
 describe("lesson-metadata domain", () => {
     describe("normalizeLessonMetadataPathname", () => {
@@ -113,73 +105,27 @@ describe("lesson-metadata domain", () => {
         });
     });
 
-    describe("formatDate", () => {
-        test("uses UTC by default", () => {
-            const date = new Date("2024-04-01T00:00:00.000Z");
-
-            expect(formatDate(date, "en-CA")).toBe("April 1, 2024");
-        });
-
-        test("merges partial options without dropping the UTC default", () => {
-            const date = new Date("2024-04-01T00:00:00.000Z");
-
-            expect(formatDate(date, "en-US", { month: "long", day: "numeric" })).toBe(
-                "April 1, 2024",
-            );
-        });
-
-        test("respects an explicit caller timezone override", () => {
-            const date = new Date("2024-04-01T00:00:00.000Z");
-
-            expect(
-                formatDate(date, "en-US", {
-                    day: "numeric",
-                    month: "long",
-                    timeZone: "America/Los_Angeles",
-                }),
-            ).toBe("March 31, 2024");
-        });
-    });
-
-    describe("lesson date display policy", () => {
+    describe("lesson date semantics", () => {
         test("returns a semantic missing result for undefined", () => {
-            expect(resolveLessonDateDisplay(undefined)).toEqual({ kind: "missing" });
+            expect(resolveLessonDate(undefined)).toEqual({ kind: "missing" });
         });
 
         test.each(["", "   "])("returns a semantic missing result for blank input %j", (value) => {
-            expect(resolveLessonDateDisplay(value)).toEqual({ kind: "missing" });
+            expect(resolveLessonDate(value)).toEqual({ kind: "missing" });
         });
 
-        test("returns a formatted result for valid ISO dates", () => {
-            expect(resolveLessonDateDisplay("2026-02-16", "en-GB")).toEqual({
-                kind: "formatted",
-                value: "16 February 2026",
+        test("returns a known UTC date for valid ISO dates", () => {
+            expect(resolveLessonDate("2026-02-16")).toEqual({
+                kind: "known",
+                value: new Date("2026-02-16T00:00:00.000Z"),
             });
         });
 
         test("returns a trimmed passthrough result for invalid date strings", () => {
-            expect(resolveLessonDateDisplay("  invalid-date  ")).toEqual({
+            expect(resolveLessonDate("  invalid-date  ")).toEqual({
                 kind: "passthrough",
                 value: "invalid-date",
             });
-        });
-
-        test("preserves the current unknown-date fallback label", () => {
-            expect(formatLessonDate(undefined)).toBe(UNKNOWN_LESSON_DATE_LABEL);
-        });
-
-        test("formats ISO short date in default locale with stable properties", () => {
-            const formatted = formatLessonDate("2026-02-16", DEFAULT_LESSON_METADATA_LOCALE);
-            expect(formatted.length).toBeGreaterThan(0);
-            expect(formatted).toContain("2026");
-        });
-
-        test("formats ISO short date with deterministic en-GB output", () => {
-            expect(formatLessonDate("2026-02-16", "en-GB")).toBe("16 February 2026");
-        });
-
-        test("returns raw date when format is invalid", () => {
-            expect(formatLessonDate("invalid")).toBe("invalid");
         });
     });
 });

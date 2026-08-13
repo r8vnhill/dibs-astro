@@ -1,8 +1,8 @@
 /**
  * @file Infrastructure-facing boundary for the generated lesson metadata dataset.
  *
- * This module wraps `lesson-metadata.generated.json` and exposes a small, runtime-validated API for reading lesson 
- * metadata. The generated JSON is treated as an infrastructure artifact: callers should not import it directly from 
+ * This module wraps `lesson-metadata.generated.json` and exposes a small, runtime-validated API for reading lesson
+ * metadata. The generated JSON is treated as an infrastructure artifact: callers should not import it directly from
  * application or presentation code.
  *
  * The boundary provides:
@@ -24,7 +24,7 @@
  *
  * ## Architectural role
  *
- * Production code should normally access lesson metadata through the infrastructure adapter layer instead of importing 
+ * Production code should normally access lesson metadata through the infrastructure adapter layer instead of importing
  * the generated JSON directly. This module remains the validation and compatibility surface behind those adapters.
  *
  * ## Normalized route contract
@@ -37,37 +37,32 @@
  * - contain no query string or fragment;
  * - represent index pages through their containing route.
  *
- * {@link normalizeLessonPathname} accepts relative paths, absolute paths, and URL-like input. It discards query 
+ * {@link normalizeLessonPathname} accepts relative paths, absolute paths, and URL-like input. It discards query
  * strings and fragments before delegating canonicalization to the domain lesson metadata normalizer.
  */
+import { DEFAULT_LOCALE_PROFILE } from "$presentation/i18n/locale-profile";
+import { normalizeLessonMetadataPathname, parseIsoShortDate as parseDomainIsoShortDate } from "@ravenhill/content-core";
 import { z } from "zod";
+import { m } from "~/generated/i18n/messages";
 import metadataRaw from "../data/lesson-metadata.generated.json";
-import {
-    DEFAULT_LESSON_METADATA_LOCALE,
-    formatDate as formatDomainDate,
-    formatLessonDate as formatDomainLessonDate,
-    normalizeLessonMetadataPathname,
-    parseIsoShortDate as parseDomainIsoShortDate,
-    UNKNOWN_LESSON_DATE_LABEL,
-} from "@ravenhill/content-core";
 
 /**
  * Default locale used when formatting lesson metadata dates.
  *
- * The domain formatting helpers use `Intl.DateTimeFormat`, so callers may override this locale per call when they need 
+ * The domain formatting helpers use `Intl.DateTimeFormat`, so callers may override this locale per call when they need
  * a different display language.
  */
-export const DEFAULT_LOCALE = DEFAULT_LESSON_METADATA_LOCALE;
+export const DEFAULT_LOCALE: string = DEFAULT_LOCALE_PROFILE.formatLocale;
 
 /**
  * Fallback label used when a lesson date is missing or intentionally unknown.
  */
-export const UNKNOWN_DATE_LABEL = UNKNOWN_LESSON_DATE_LABEL;
+export const UNKNOWN_DATE_LABEL = m.lesson_metadata_unknown_date();
 
 /**
  * Zod schema for an author associated with a lesson.
  *
- * Authors are usually resolved by the metadata generator from the lesson author registry. The URL is optional because 
+ * Authors are usually resolved by the metadata generator from the lesson author registry. The URL is optional because
  * some authors may only have a display name.
  */
 const lessonMetadataAuthorSchema = z.object({
@@ -78,7 +73,7 @@ const lessonMetadataAuthorSchema = z.object({
 /**
  * Zod schema for a git change entry associated with a lesson.
  *
- * Change entries are derived from git history and stored as JSON-friendly strings. Dates are kept as ISO short date 
+ * Change entries are derived from git history and stored as JSON-friendly strings. Dates are kept as ISO short date
  * strings and parsed on demand by {@link parseIsoShortDate}.
  */
 const lessonMetadataChangeSchema = z.object({
@@ -91,7 +86,7 @@ const lessonMetadataChangeSchema = z.object({
 /**
  * Zod schema for one lesson metadata entry.
  *
- * `lastModified` is optional because metadata generation may run in environments where git history is incomplete or 
+ * `lastModified` is optional because metadata generation may run in environments where git history is incomplete or
  * unavailable, such as shallow CI clones.
  */
 const lessonMetadataEntrySchema = z.object({
@@ -104,7 +99,7 @@ const lessonMetadataEntrySchema = z.object({
 /**
  * Zod schema for the full generated lesson metadata dataset.
  *
- * The `entries` object is keyed by normalized lesson route. This schema validates the JSON shape at runtime before the 
+ * The `entries` object is keyed by normalized lesson route. This schema validates the JSON shape at runtime before the
  * dataset is exposed to callers.
  */
 const lessonMetadataDatasetSchema = z.object({
@@ -140,7 +135,7 @@ const lessonMetadataDatasetSchema = z.object({
 /**
  * Author metadata associated with a lesson.
  *
- * This type is inferred from {@link lessonMetadataAuthorSchema}, keeping the TypeScript representation aligned with 
+ * This type is inferred from {@link lessonMetadataAuthorSchema}, keeping the TypeScript representation aligned with
  * runtime validation.
  *
  * @property name Display name of the author.
@@ -151,7 +146,7 @@ export type LessonMetadataAuthor = z.infer<typeof lessonMetadataAuthorSchema>;
 /**
  * Git change metadata associated with a lesson.
  *
- * This type is inferred from {@link lessonMetadataChangeSchema}, keeping the TypeScript representation aligned with 
+ * This type is inferred from {@link lessonMetadataChangeSchema}, keeping the TypeScript representation aligned with
  * runtime validation.
  *
  * @property hash Commit hash, usually abbreviated by the generator.
@@ -176,7 +171,7 @@ export type LessonMetadataEntry = z.infer<typeof lessonMetadataEntrySchema>;
 /**
  * Runtime-validated representation of the generated lesson metadata dataset.
  *
- * This type is inferred from {@link lessonMetadataDatasetSchema}, keeping the compile-time model aligned with the Zod 
+ * This type is inferred from {@link lessonMetadataDatasetSchema}, keeping the compile-time model aligned with the Zod
  * runtime boundary.
  *
  * @property generatedAt ISO timestamp indicating when the dataset was produced.
@@ -210,7 +205,7 @@ export class LessonMetadataDatasetError extends Error {
 /**
  * Cached validated dataset for the default generated metadata source.
  *
- * The generated JSON is parsed once on first access through {@link getLessonMetadataDataset}. Subsequent calls reuse 
+ * The generated JSON is parsed once on first access through {@link getLessonMetadataDataset}. Subsequent calls reuse
  * the cached value to avoid repeated validation work.
  */
 let datasetCache: ReadonlyLessonMetadataDataset | undefined;
@@ -287,7 +282,7 @@ export const formatDate = (
         timeZone: "UTC",
     },
 ): string => {
-    return formatDomainDate(date, locale, options);
+    return new Intl.DateTimeFormat(locale, options).format(date);
 };
 
 /**
@@ -329,7 +324,9 @@ export const formatLessonDate = (
     locale = DEFAULT_LOCALE,
     options?: Intl.DateTimeFormatOptions,
 ): string => {
-    return formatDomainLessonDate(date, locale, options);
+    const parsed = parseIsoShortDate(date);
+    if (!date?.trim()) return UNKNOWN_DATE_LABEL;
+    return parsed ? formatDate(parsed, locale, options) : date.trim();
 };
 
 /**

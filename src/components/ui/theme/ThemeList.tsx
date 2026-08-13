@@ -2,6 +2,7 @@ import type { JSX } from "react";
 import { applyTheme, type Theme } from "~/utils";
 import { ThemeListItem } from "./ThemeListItem";
 import { themeOptions } from "./ThemeOptions";
+import type { ThemeLabels } from "./ThemeSwitcher";
 
 /**
  * Props for the ThemeList component.
@@ -19,6 +20,7 @@ type ThemeListProps = {
      * Function to close the theme list UI.
      */
     close: () => void;
+    labels: ThemeLabels;
 };
 
 /**
@@ -41,18 +43,10 @@ export function ThemeList({
     theme,
     setTheme,
     close,
+    labels,
 }: ThemeListProps): JSX.Element {
-    // Describes a theme option along with its metadata
-    type LabeledTheme = [
-        Theme,
-        {
-            label: string;
-            icon: JSX.Element;
-        },
-    ];
-
     // Converts the themeOptions object into a list of labeled theme entries
-    const themeOptionsList = Object.entries(themeOptions) as LabeledTheme[];
+    const themeOptionsList = Object.entries(themeOptions) as [Theme, { icon: JSX.Element }][];
 
     return (
         <ul
@@ -67,7 +61,7 @@ export function ThemeList({
         absolute rounded
       "
         >
-            {themeOptionsList.map(([value, { label, icon }]) => (
+            {themeOptionsList.map(([value, { icon }]) => (
                 <ThemeListItem
                     value={value}
                     isSelected={theme === value}
@@ -77,7 +71,7 @@ export function ThemeList({
                         close(); // Close the dropdown
                     }}
                     icon={icon}
-                    label={label}
+                    label={labels[value]}
                 />
             ))}
         </ul>

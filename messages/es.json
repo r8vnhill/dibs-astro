@@ -1,0 +1,26 @@
+{
+    "nav_home": "Inicio",
+    "nav_notes": "Apuntes",
+    "nav_lessons": "Clases",
+    "nav_syllabus": "Temario",
+    "nav_assignments": "Tareas",
+    "header_home_aria": "Ir a la página de inicio",
+    "theme_current": "Tema actual:",
+    "theme_change": "Cambiar tema",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro",
+    "theme_auto": "Auto",
+    "reading_time_label": "Dedicación recomendada",
+    "reading_time_minutes": [
+        {
+            "declarations": ["input count", "local plural = count: plural"],
+            "selectors": ["plural"],
+            "match": {
+                "plural=one": "{count} minuto",
+                "plural=other": "{count} minutos"
+            }
+        }
+    ],
+    "reading_time_help": "Considera contenido visible y relevante; ignora texto colapsado u opcional.",
+    "lesson_metadata_unknown_date": "sin fecha registrada"
+}

@@ -159,6 +159,7 @@ For larger changes, open an issue first to discuss scope and expected impact. Se
 
 - [Vite fetchModule timeout troubleshooting](./docs/troubleshooting-vite-fetchmodule-timeout.md)
 - [Layer separation architecture note](./docs/architecture/layer-separation.md)
+- [UI localization readiness](./docs/i18n.md)
 - [Third-party assets](./docs/third-party-assets.md)
 - [Contributing guide](./CONTRIBUTING.md)
 - [Code of conduct](./CODE_OF_CONDUCT.md)

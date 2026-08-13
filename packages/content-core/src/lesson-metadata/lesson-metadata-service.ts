@@ -1,8 +1,8 @@
 import { LessonHref } from "../navigation/lesson-href";
+import { resolveLessonDate } from "./date";
 import { normalizeLessonMetadataPathname } from "./pathname";
 import type { LessonMetadataRepository } from "./repositories";
 import type { LessonMetadataResolutionResult } from "./results";
-import { resolveLessonDateDisplay } from "./date";
 import type { LessonMetadataDto, LessonMetadataServiceContract } from "./types";
 
 function assertNever(value: never): never {
@@ -22,7 +22,7 @@ export class LessonMetadataService implements LessonMetadataServiceContract {
                 return {
                     kind: "found",
                     metadata: toLessonMetadataDto(result.metadata),
-                    displayDate: resolveLessonDateDisplay(result.metadata.lastModified),
+                    displayDate: resolveLessonDate(result.metadata.lastModified),
                 };
             case "missing":
             case "invalid":

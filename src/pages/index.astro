@@ -1,157 +1,118 @@
 ---
 import * as icons from "$icons";
-import { buildRepoUrl } from "@ravenhill/site-core";
-import { getWebsiteRepoRef } from "$presentation/adapters/site-data";
 import { site } from "~/utils";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 /**
  * Editorial homepage for the public site root.
  *
- * This page keeps its content model local on purpose: the landing is a small, curated composition
- * that balances current entry points (`/notes/`) with the broader roadmap of the site without
- * introducing a separate content source.
+ * The homepage describes DIBS as a course, in a fixed order: what it is, what you learn, the
+ * reference architecture the site embodies, the technology stack behind that implementation, and
+ * how to start. It intentionally does not describe the development status of the website itself —
+ * repository links already live in the shared header, and unfinished site areas do not appear here
+ * as advertised destinations.
+ *
+ * Content stays local to this page on purpose: it is a small, curated composition with no
+ * demonstrated reuse elsewhere yet.
  */
-type FeatureCard = {
-    eyebrow: string;
+type LearningPillar = {
+    icon: keyof typeof icons;
     title: string;
     body: string;
 };
 
-type RoadmapCard = {
-    title: string;
-    href: string;
-    status: string;
-    body: string;
-    accent: "primary" | "muted";
+type ArchitectureLayer = {
+    icon: keyof typeof icons;
+    name: string;
+    role: string;
+    core: boolean;
 };
 
-type JourneyStep = {
-    label: string;
-    href: string;
-    description: string;
+type TechStackItem = {
+    icon: keyof typeof icons;
+    name: string;
+    role: string;
 };
-
-type ProjectLink = {
-    label: string;
-    href: string;
-    description: string;
-};
-
-const isDefined = <T,>(value: T | undefined): value is T => value !== undefined;
-const isExternalUrl = (href: string): boolean => /^https?:\/\//.test(href);
 
 const title = site.SHORT_TITLE;
 const description =
-    "Portada editorial del curso DIBS: apuntes técnicos, automatización, diseño de bibliotecas y roadmap del sitio.";
+    "DIBS es un curso online de nivel universitario sobre diseño e implementación de bibliotecas de software.";
 
-const githubRef = getWebsiteRepoRef("github");
-const gitlabRef = getWebsiteRepoRef("gitlab");
+const learningPillars = [
+    {
+        icon: "PuzzlePiece",
+        title: "Diseño modular y abstracción",
+        body:
+            "Separar responsabilidades y ocultar detalles de implementación para que un componente pueda cambiar sin arrastrar al resto del sistema.",
+    },
+    {
+        icon: "PlugsConnected",
+        title: "APIs y contratos explícitos",
+        body:
+            "Diseñar superficies públicas claras, versionadas y predecibles, pensadas para quienes las consumen y no solo para quien las escribe.",
+    },
+    {
+        icon: "ArrowsClockwise",
+        title: "Verificación, mantención y evolución",
+        body:
+            "Construir con pruebas, automatización y disciplina de versionado que permitan que una biblioteca siga siendo confiable a medida que cambia.",
+    },
+] as const satisfies readonly LearningPillar[];
 
-const githubUrl = githubRef ? buildRepoUrl(githubRef, "github") : undefined;
-const gitlabUrl = gitlabRef ? buildRepoUrl(gitlabRef, "gitlab") : undefined;
-// The secondary CTA prefers a public repo when available, but falls back to an internal course
-// route so the landing always exposes a concrete next step.
-const projectCtaHref = gitlabUrl ?? githubUrl ?? "/notes/software-libraries/";
-const projectCtaIsExternal = isExternalUrl(projectCtaHref);
+const architectureLayers = [
+    {
+        icon: "Browsers",
+        name: "Presentación",
+        role: "Adapta datos ya resueltos para la interfaz; consume aplicación e infraestructura sin exponer sus detalles.",
+        core: false,
+    },
+    {
+        icon: "Gear",
+        name: "Aplicación",
+        role: "Orquesta casos de uso: coordina el dominio y los puertos que necesita, sin contener reglas de negocio.",
+        core: false,
+    },
+    {
+        icon: "Cube",
+        name: "Dominio",
+        role: "El núcleo conceptual: reglas de negocio puras, sin dependencias de frameworks ni de infraestructura.",
+        core: true,
+    },
+    {
+        icon: "HardDrives",
+        name: "Infraestructura",
+        role: "Implementa los contratos que el dominio y la aplicación declaran: acceso a datos, APIs externas, I/O.",
+        core: false,
+    },
+] as const satisfies readonly ArchitectureLayer[];
 
-const featureCards = [
+const techStack = [
     {
-        eyebrow: "Apuntes técnicos",
-        title: "Explicaciones para estudiar con más contexto",
-        body:
-            "Notas pensadas para profundizar conceptos, volver sobre ejemplos y conectar ideas entre unidades.",
+        icon: "RocketLaunch",
+        name: "Astro",
+        role: "Framework del sitio: renderiza HTML estático por defecto e hidrata solo lo interactivo.",
     },
     {
-        eyebrow: "Automatización",
-        title: "Scripting como herramienta de trabajo real",
-        body:
-            "PowerShell, pipelines y tareas repetibles como parte del desarrollo cotidiano, no como tema aislado.",
+        icon: "Palette",
+        name: "Tailwind CSS",
+        role: "Sistema de estilos utilitario para construir la interfaz de forma consistente.",
     },
     {
-        eyebrow: "Bibliotecas",
-        title: "Diseño de software reusable",
-        body:
-            "El sitio gira en torno a modelado, contratos, herramientas de build y decisiones de diseño para bibliotecas.",
+        icon: "MarkdownLogo",
+        name: "Markdoc",
+        role: "Formato de autoría de los apuntes: Markdown extendido con componentes propios.",
     },
     {
-        eyebrow: "Comparaciones",
-        title: "Contrastes entre ecosistemas y herramientas",
-        body:
-            "Cuando conviene, los apuntes comparan lenguajes o shells para distinguir mejor conceptos y tradeoffs.",
-    },
-] as const satisfies readonly FeatureCard[];
-
-const roadmapCards = [
-    {
-        title: "Apuntes",
-        href: "/notes/",
-        status: "Disponible hoy",
-        body:
-            "La parte más desarrollada del sitio. Aquí ya está el recorrido principal del curso y el material técnico con mayor profundidad.",
-        accent: "primary",
+        icon: "Atom",
+        name: "React Islands",
+        role: "Componentes interactivos aislados, usados solo donde el sitio realmente los necesita.",
     },
     {
-        title: "Clases",
-        href: "/lessons/",
-        status: "En desarrollo",
-        body:
-            "Espacio para apoyar sesiones, síntesis y materiales de clase cuando ese frente del sitio madure más.",
-        accent: "muted",
+        icon: "Shapes",
+        name: "Infraestructura de íconos local",
+        role: "Un set de íconos propio, auditado y empaquetado como parte del mismo sitio.",
     },
-    {
-        title: "Temario",
-        href: "/syllabus/",
-        status: "Próximamente",
-        body:
-            "Visión global del programa, progresión de unidades y expectativas del curso en un formato más institucional.",
-        accent: "muted",
-    },
-    {
-        title: "Tareas",
-        href: "/assignments/",
-        status: "Próximamente",
-        body:
-            "Área prevista para actividades y entregables, todavía presentada como parte del roadmap del sitio.",
-        accent: "muted",
-    },
-] as const satisfies readonly RoadmapCard[];
-
-const journeySteps = [
-    {
-        label: "1. Cómo empezar",
-        href: "/notes/",
-        description: "Una guía rápida para entender cómo leer y aprovechar el apunte.",
-    },
-    {
-        label: "2. Herramientas necesarias",
-        href: "/notes/installation/",
-        description: "Instalación y setup básico para seguir el curso con menos fricción.",
-    },
-    {
-        label: "3. Unidad 1",
-        href: "/notes/software-libraries/",
-        description:
-            "La entrada conceptual al desarrollo de bibliotecas, automatización y scripting.",
-    },
-] as const satisfies readonly JourneyStep[];
-
-const projectLinks = [
-    githubUrl
-        ? {
-            label: "GitHub",
-            href: githubUrl,
-            description: "Repositorio espejo y superficie pública del proyecto.",
-        }
-        : undefined,
-    gitlabUrl
-        ? {
-            label: "GitLab",
-            href: gitlabUrl,
-            description: "Repositorio principal del sitio y flujo de trabajo del curso.",
-        }
-        : undefined,
-].filter(isDefined) satisfies ProjectLink[];
+] as const satisfies readonly TechStackItem[];
 
 const sectionContainer = "mx-auto max-w-7xl px-6 sm:px-10 lg:px-12";
 const sectionKicker = "text-sm font-semibold uppercase tracking-[0.14em] text-primary";
@@ -164,6 +125,8 @@ const interactiveHover =
     "transition hover:border-primary/30 hover:bg-primary/4 hover:[&_h3]:text-primary";
 const interactiveCard =
     `group rounded-2xl border border-base-border bg-base-background shadow-sm ${interactiveHover} ${focusRing}`;
+const unavailableChip =
+    "inline-flex items-center gap-2 rounded-full border border-dashed border-base-border bg-base-background/60 px-3 py-1.5 text-sm text-base-subtle";
 ---
 
 <BaseLayout pageTitle={title} {description}>
@@ -175,8 +138,8 @@ const interactiveCard =
             <div class="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
                 <div class="max-w-3xl">
                     <div class="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/6 px-3 py-1 text-sm text-primary">
-                        <icons.Compass class="size-4" aria-hidden="true" />
-                        <span>Curso y sitio en evolución</span>
+                        <icons.GraduationCap class="size-4" aria-hidden="true" />
+                        <span>Curso online de nivel universitario</span>
                     </div>
 
                     <h1 class="mt-7 max-w-4xl text-5xl font-semibold tracking-tight text-balance text-base-text sm:text-6xl lg:text-6xl">
@@ -184,12 +147,12 @@ const interactiveCard =
                     </h1>
 
                     <p class="mt-6 max-w-2xl text-lg leading-8 text-base-subtle sm:text-xl">
-                        Un espacio para estudiar diseño de bibliotecas, automatización y scripting
-                        con una mirada técnica, progresiva y orientada a decisiones reales de
-                        desarrollo.
+                        Aprende a diseñar bibliotecas de software robustas, reutilizables,
+                        verificables y capaces de evolucionar sin romper a quienes dependen de
+                        ellas.
                     </p>
 
-                    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+                    <div class="mt-8 flex flex-wrap items-center gap-4">
                         <a
                             href="/notes/"
                             class:list={[
@@ -198,80 +161,70 @@ const interactiveCard =
                             ]}
                         >
                             <icons.ArrowRight class="size-4" aria-hidden="true" />
-                            Empezar por los apuntes
+                            Explorar apuntes
                         </a>
 
-                        <a
-                            href={projectCtaHref}
-                            target={projectCtaIsExternal ? "_blank" : undefined}
-                            rel={projectCtaIsExternal
-                                ? "noopener noreferrer"
-                                : undefined}
-                            class:list={[
-                                "inline-flex items-center justify-center gap-2 rounded-md border border-base-border bg-base-background/70 px-5 py-3 text-sm font-semibold text-base-text transition hover:border-primary/40 hover:bg-primary/5",
-                                focusRing,
-                            ]}
-                        >
-                            <icons.GitBranch class="size-4" aria-hidden="true" />
-                            {
-                                projectCtaIsExternal
-                                    ? "Seguir el proyecto"
-                                    : "Ver el proyecto"
-                            }
-                        </a>
+                        <span aria-label="Bibliografía, próximamente" class={unavailableChip}>
+                            <icons.BookOpenText class="size-4" aria-hidden="true" />
+                            Bibliografía · Próximamente
+                        </span>
                     </div>
                 </div>
 
-                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                    <article class="rounded-2xl border border-primary/20 bg-base-background/85 p-5 shadow-sm backdrop-blur">
-                        <div class="flex items-center gap-3 text-primary">
-                            <icons.BookOpenText class="size-5" aria-hidden="true" />
-                            <span class="text-sm font-medium">Disponible ahora</span>
-                        </div>
-                        <p class="mt-3 text-2xl font-semibold text-base-text">Apuntes técnicos</p>
-                        <p class="mt-2 text-sm leading-6 text-base-subtle">
-                            El sitio ya funciona como una base de estudio navegable: notas,
-                            ejemplos, comparaciones y progresión por unidades.
-                        </p>
-                    </article>
-
-                    <article class="rounded-2xl border border-base-border/80 bg-base-background/55 p-4 shadow-sm backdrop-blur">
-                        <div class="flex items-center gap-3 text-base-subtle">
-                            <icons.MapTrifold class="size-5" aria-hidden="true" />
-                            <span class="text-sm font-medium">Roadmap visible</span>
-                        </div>
-                        <p class="mt-3 text-xl font-semibold text-base-text">
-                            Clases, temario y tareas
-                        </p>
-                        <p class="mt-2 text-sm leading-6 text-base-subtle">
-                            Estas áreas ya aparecen en el mapa del sitio, pero todavía están
-                            madurando como parte del roadmap.
-                        </p>
-                    </article>
-                </div>
+                <article class="rounded-2xl border border-primary/20 bg-base-background/85 p-5 shadow-sm backdrop-blur">
+                    <div class="flex items-center gap-3 text-primary">
+                        <icons.BookOpenText class="size-5" aria-hidden="true" />
+                        <span class="text-sm font-medium">Disponible ahora</span>
+                    </div>
+                    <p class="mt-3 text-2xl font-semibold text-base-text">Apuntes técnicos</p>
+                    <p class="mt-2 text-sm leading-6 text-base-subtle">
+                        El material más desarrollado del curso: notas, ejemplos y progresión por
+                        unidades, listos para estudiar de forma autónoma.
+                    </p>
+                </article>
             </div>
         </div>
     </section>
 
     <section class:list={[sectionContainer, "py-16"]}>
         <div class="max-w-3xl">
-            <p class={sectionKicker}>Qué encontrarás aquí</p>
+            <p class={sectionKicker}>¿Qué es DIBS?</p>
             <h2 class={sectionTitle}>
-                Un sitio pensado para estudiar, comparar y construir criterio técnico
+                Un curso online de nivel universitario para el estudio autónomo
             </h2>
+            <p class="mt-4 leading-7 text-base-subtle">
+                DIBS es un curso a tu propio ritmo, con la profundidad de un curso de nivel
+                universitario, sin implicar matrícula ni una institución formal detrás. Los apuntes combinan
+                explicaciones conceptuales con ejemplos prácticos pensados para volver sobre ellos
+                más de una vez.
+            </p>
         </div>
 
-        <ul class="mt-8 grid gap-4 md:grid-cols-2">
+        <div class="mt-6 max-w-3xl rounded-2xl border border-base-border bg-base-background/60 px-5 py-4">
+            <div class="flex items-start gap-3">
+                <icons.Translate class="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                <p class="text-sm leading-6 text-base-subtle">
+                    El curso se dicta íntegramente en español.
+                </p>
+            </div>
+        </div>
+
+        <ul class="mt-10 grid gap-4 md:grid-cols-3">
             {
-                featureCards.map((card) => (
-                    <li class="list-none">
-                        <article class:list={[surfaceCard, "p-6"]}>
-                            <p class="text-sm font-medium text-primary">{card.eyebrow}</p>
-                            <h3 class="mt-3 text-xl font-semibold text-base-text">{card.title}</h3>
-                            <p class="mt-3 leading-7 text-base-subtle">{card.body}</p>
-                        </article>
-                    </li>
-                ))
+                learningPillars.map((pillar) => {
+                    const Icon = icons[pillar.icon];
+                    return (
+                        <li class="list-none">
+                            <article class:list={[surfaceCard, "p-6"]}>
+                                <Icon class="size-6 text-primary" aria-hidden="true" />
+                                <h3 class="mt-4 text-lg font-semibold text-base-text">
+                                    {pillar.title}
+                                </h3>
+                                <p class="mt-3 leading-7 text-base-subtle">{pillar.body}</p>
+                            </article>
+                        </li>
+                    );
+                })
             }
         </ul>
     </section>
@@ -279,136 +232,125 @@ const interactiveCard =
     <section class="border-y border-base-border bg-primary/4">
         <div class:list={[sectionContainer, "py-16"]}>
             <div class="max-w-3xl">
-                <p class={sectionKicker}>Mapa del sitio hoy</p>
+                <p class={sectionKicker}>Arquitectura de referencia</p>
                 <h2 class={sectionTitle}>
-                    Lo que ya puedes recorrer y lo que todavía está creciendo
+                    El sitio DIBS también es una implementación de referencia
                 </h2>
+                <p class="mt-4 leading-7 text-base-subtle">
+                    El sitio DIBS usa esta organización en capas como arquitectura de referencia
+                    para las ideas del curso, no como una regla universal que toda biblioteca deba
+                    seguir. La Presentación depende de la Aplicación, que depende del Dominio; la
+                    Infraestructura, en cambio, implementa los contratos que el Dominio y la
+                    Aplicación declaran, sin que el Dominio dependa de ella.
+                </p>
             </div>
 
-            <ul class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <ul class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {
-                    roadmapCards.map((card) => (
-                        <li class="list-none">
-                            <a
-                                href={card.href}
-                                class:list={[
-                                    "group block h-full rounded-2xl border p-6 shadow-sm",
-                                    card.accent === "primary"
-                                        ? `border-primary/30 bg-base-background transition hover:border-primary/50 hover:bg-primary/6 ${focusRing}`
-                                        : `border-base-border bg-base-background/80 ${interactiveHover} ${focusRing}`,
-                                ]}
-                            >
-                                <div class="flex items-center justify-between gap-3">
-                                    <h3 class="text-xl font-semibold text-base-text">
-                                        {card.title}
+                    architectureLayers.map((layer) => {
+                        const Icon = icons[layer.icon];
+                        return (
+                            <li class="list-none">
+                                <article
+                                    class:list={[
+                                        "h-full rounded-2xl border p-6 shadow-sm",
+                                        layer.core
+                                            ? "border-primary/40 bg-base-background"
+                                            : "border-base-border bg-base-background/80",
+                                    ]}
+                                >
+                                    <div class="flex items-center justify-between gap-2">
+                                        <Icon
+                                            class:list={[
+                                                "size-6",
+                                                layer.core ? "text-primary" : "text-base-subtle",
+                                            ]}
+                                            aria-hidden="true"
+                                        />
+                                        {
+                                            layer.core && (
+                                                <span class="rounded-full bg-primary/12 px-2.5 py-1 text-xs font-medium text-primary">
+                                                    Núcleo conceptual
+                                                </span>
+                                            )
+                                        }
+                                    </div>
+                                    <h3 class="mt-4 text-lg font-semibold text-base-text">
+                                        {layer.name}
                                     </h3>
-                                    <span
-                                        class:list={[
-                                            "rounded-full px-2.5 py-1 text-xs font-medium",
-                                            card.accent === "primary"
-                                                ? "bg-primary/12 text-primary"
-                                                : "bg-base-border/60 text-base-subtle",
-                                        ]}
-                                    >
-                                        {card.status}
-                                    </span>
-                                </div>
-                                <p class="mt-3 leading-7 text-base-subtle">{card.body}</p>
-                                <div class="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
-                                    <span>Ir a {card.title}</span>
-                                    <icons.ArrowRight
-                                        class="size-4 transition group-hover:translate-x-0.5"
-                                        aria-hidden="true"
-                                    />
-                                </div>
-                            </a>
-                        </li>
-                    ))
+                                    <p class="mt-3 leading-7 text-base-subtle">{layer.role}</p>
+                                </article>
+                            </li>
+                        );
+                    })
                 }
             </ul>
         </div>
     </section>
 
-    <section class:list={[sectionContainer, "grid gap-10 py-16 lg:grid-cols-[0.95fr_1.05fr]"]}>
-        <div class="max-w-2xl">
-            <p class={sectionKicker}>Recorrido recomendado</p>
-            <h2 class={sectionTitle}>Cómo empezar sin perder contexto</h2>
+    <section class:list={[sectionContainer, "py-16"]}>
+        <div class="max-w-3xl">
+            <p class={sectionKicker}>Stack tecnológico</p>
+            <h2 class={sectionTitle}>
+                Tecnologías detrás de la implementación de referencia
+            </h2>
             <p class="mt-4 leading-7 text-base-subtle">
-                Si vienes por primera vez, conviene seguir un recorrido corto antes de explorar por
-                cuenta propia. La idea es instalar rápido el marco del curso y recién después entrar
-                a los detalles.
+                Las herramientas concretas que usa el sitio para construir esa arquitectura de
+                referencia.
             </p>
         </div>
 
-        <nav aria-label="Recorrido recomendado">
-            <ol class="space-y-4">
-                {
-                    journeySteps.map((step) => (
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {
+                techStack.map((item) => {
+                    const Icon = icons[item.icon];
+                    return (
                         <li class="list-none">
-                            <a href={step.href} class:list={[interactiveCard, "block p-5"]}>
-                                <div class="flex items-start gap-4">
-                                    <div class="mt-1 inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                        <icons.ArrowCircleRight
-                                            class="size-5 transition group-hover:translate-x-0.5"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-base-text">
-                                            {step.label}
-                                        </h3>
-                                        <p class="mt-2 leading-7 text-base-subtle">
-                                            {step.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
+                            <article class:list={[surfaceCard, "h-full p-5"]}>
+                                <Icon class="size-6 text-primary" aria-hidden="true" />
+                                <p class="mt-3 font-semibold text-base-text">{item.name}</p>
+                                <p class="mt-2 text-sm leading-6 text-base-subtle">{item.role}</p>
+                            </article>
                         </li>
-                    ))
-                }
-            </ol>
-        </nav>
+                    );
+                })
+            }
+        </ul>
     </section>
 
     <section class="border-t border-base-border bg-base-background/60">
         <div class:list={[sectionContainer, "py-16"]}>
-            <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-                <div class="max-w-3xl">
-                    <p class={sectionKicker}>Proyecto en construcción</p>
-                    <h2 class={sectionTitle}>Seguir el proyecto</h2>
-                    <p class="mt-4 leading-7 text-base-subtle">
-                        DIBS crece como material docente y como proyecto técnico. Los repositorios
-                        permiten seguir la evolución del sitio, revisar decisiones de implementación
-                        y entender mejor cómo este material también se construye como software.
-                    </p>
-                </div>
+            <div class="max-w-3xl">
+                <p class={sectionKicker}>Cómo seguir el curso</p>
+                <h2 class={sectionTitle}>Empieza por los apuntes</h2>
+            </div>
 
-                <ul class="grid gap-4">
-                    {
-                        projectLinks.map((link) => (
-                            <li class="list-none">
-                                <a
-                                    href={link.href} target="_blank"
-                                    rel="noopener noreferrer"
-                                    class:list={[interactiveCard, "block p-5"]}
-                                >
-                                    <div class="flex items-center justify-between gap-3">
-                                        <span class="text-lg font-semibold text-base-text">
-                                            {link.label}
-                                        </span>
-                                        <icons.ArrowUpRight
-                                            class="size-4 text-primary transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                                            aria-hidden="true"
-                                        />
-                                    </div>
-                                    <p class="mt-2 leading-7 text-base-subtle">
-                                        {link.description}
-                                    </p>
-                                </a>
-                            </li>
-                        ))
-                    }
-                </ul>
+            <div class="mt-8 flex flex-wrap items-stretch gap-4">
+                <a
+                    href="/notes/"
+                    class:list={[interactiveCard, "flex min-w-64 flex-1 items-center gap-4 p-5 sm:flex-none"]}
+                >
+                    <div class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <icons.ArrowCircleRight
+                            class="size-5 transition group-hover:translate-x-0.5"
+                            aria-hidden="true"
+                        />
+                    </div>
+                    <div>
+                        <p class="text-lg font-semibold text-base-text">Apuntes</p>
+                        <p class="mt-1 text-sm leading-6 text-base-subtle">
+                            La ruta de estudio disponible hoy.
+                        </p>
+                    </div>
+                </a>
+
+                <span aria-label="Temario, próximamente" class={unavailableChip}>
+                    Temario · Próximamente
+                </span>
+
+                <span aria-label="Bibliografía, próximamente" class={unavailableChip}>
+                    Bibliografía · Próximamente
+                </span>
             </div>
         </div>
     </section>

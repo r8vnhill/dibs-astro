@@ -1,4 +1,6 @@
-import { formatLessonDate, type LessonMetadataDto } from "@ravenhill/content-core";
+import { getWebsiteRepoRef, getWebsiteRepoRefs } from "$presentation/adapters/site-data";
+import { DEFAULT_LOCALE_PROFILE } from "$presentation/i18n/locale-profile";
+import { type LessonMetadataDto, resolveLessonDate } from "@ravenhill/content-core";
 import {
     buildCommitUrl,
     normalizePlatforms,
@@ -6,7 +8,7 @@ import {
     type RepoPlatform,
     type RepoRef,
 } from "@ravenhill/site-core";
-import { getWebsiteRepoRef, getWebsiteRepoRefs } from "$presentation/adapters/site-data";
+import { m } from "~/generated/i18n/messages";
 import type { PartialRecord } from "~/types/records";
 
 export type LessonMetaPanelMetadata = LessonMetadataDto;
@@ -55,6 +57,20 @@ export function buildLessonMetaPanelViewModel({
             links: buildChangeLinks(change.hash, availablePlatforms, websiteRepoRefs),
         })),
     };
+}
+
+function formatLessonDate(date?: string): string {
+    const resolved = resolveLessonDate(date);
+
+    if (resolved.kind === "missing") return m.lesson_metadata_unknown_date();
+    if (resolved.kind === "passthrough") return resolved.value;
+
+    return new Intl.DateTimeFormat(DEFAULT_LOCALE_PROFILE.formatLocale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "UTC",
+    }).format(resolved.value);
 }
 
 function formatAuthors(authors: LessonMetaPanelMetadata["authors"]): string {

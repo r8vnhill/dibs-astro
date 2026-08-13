@@ -1,4 +1,5 @@
-export type LessonDateDisplayResult =
+/** A host-independent interpretation of a stored lesson date. */
+export type LessonDate =
     | {
         kind: "missing";
     }
@@ -7,28 +8,15 @@ export type LessonDateDisplayResult =
         value: string;
     }
     | {
-        kind: "formatted";
-        value: string;
+        kind: "known";
+        value: Date;
     };
 
-export const DEFAULT_LESSON_METADATA_LOCALE = "es-CL";
-export const UNKNOWN_LESSON_DATE_LABEL = "sin fecha registrada";
-
 const ISO_SHORT_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-const DEFAULT_DATE_FORMAT_OPTIONS = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-} as const satisfies Intl.DateTimeFormatOptions;
 
 function normalizeOptionalText(value?: string): string | undefined {
     const normalized = value?.trim();
     return normalized ? normalized : undefined;
-}
-
-function assertNever(value: never): never {
-    throw new Error(`Unexpected lesson date display result: ${JSON.stringify(value)}`);
 }
 
 export function parseIsoShortDate(date?: string): Date | undefined {
@@ -55,21 +43,7 @@ export function parseIsoShortDate(date?: string): Date | undefined {
     return isSameDate ? parsed : undefined;
 }
 
-export const formatDate = (
-    date: Date,
-    locale = DEFAULT_LESSON_METADATA_LOCALE,
-    options: Intl.DateTimeFormatOptions = {},
-): string =>
-    new Intl.DateTimeFormat(locale, {
-        ...DEFAULT_DATE_FORMAT_OPTIONS,
-        ...options,
-    }).format(date);
-
-export function resolveLessonDateDisplay(
-    date?: string,
-    locale = DEFAULT_LESSON_METADATA_LOCALE,
-    options?: Intl.DateTimeFormatOptions,
-): LessonDateDisplayResult {
+export function resolveLessonDate(date?: string): LessonDate {
     const normalized = normalizeOptionalText(date);
     if (!normalized) {
         return { kind: "missing" };
@@ -81,25 +55,7 @@ export function resolveLessonDateDisplay(
     }
 
     return {
-        kind: "formatted",
-        value: formatDate(parsed, locale, options),
+        kind: "known",
+        value: parsed,
     };
-}
-
-export function formatLessonDate(
-    date?: string,
-    locale = DEFAULT_LESSON_METADATA_LOCALE,
-    options?: Intl.DateTimeFormatOptions,
-): string {
-    const display = resolveLessonDateDisplay(date, locale, options);
-
-    switch (display.kind) {
-        case "missing":
-            return UNKNOWN_LESSON_DATE_LABEL;
-        case "passthrough":
-        case "formatted":
-            return display.value;
-        default:
-            return assertNever(display);
-    }
 }

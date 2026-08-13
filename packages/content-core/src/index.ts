@@ -10,15 +10,15 @@
  * - lesson metadata: authorship, provenance, dates, history, and validated metadata records;
  * - curriculum: a minimal, host-agnostic data contract for concepts, facets, and units.
  *
- * The package does not depend on Astro, generated JSON files, CMS APIs, UI frameworks, or host-specific routing. Host 
+ * The package does not depend on Astro, generated JSON files, CMS APIs, UI frameworks, or host-specific routing. Host
  * applications provide data through repository contracts, while this package provides pure value objects, service
  * implementations, result types, and normalization helpers.
  *
- * Public records use branded values to represent fields that have crossed a validation boundary. Date, path, and 
+ * Public records use branded values to represent fields that have crossed a validation boundary. Date, path, and
  * branded-value parsers are exported so adapters, tests, and generated-data loaders can apply the same rules as the
  * service layer.
  *
- * Import from this entry point only. Submodule imports couple consumers to the current internal layout and are not 
+ * Import from this entry point only. Submodule imports couple consumers to the current internal layout and are not
  * part of the supported package contract.
  *
  * @example
@@ -37,7 +37,7 @@ import packageJson from "../package.json" with { type: "json" };
 /**
  * Canonical package name.
  *
- * Use this constant in workspace tests, dependency-boundary checks, diagnostics, and package identity assertions 
+ * Use this constant in workspace tests, dependency-boundary checks, diagnostics, and package identity assertions
  * instead of duplicating the literal package name.
  */
 export const CONTENT_CORE_PACKAGE_NAME = "@ravenhill/content-core";
@@ -45,7 +45,7 @@ export const CONTENT_CORE_PACKAGE_NAME = "@ravenhill/content-core";
 /**
  * Current package version.
  *
- * This value is read from package metadata so runtime diagnostics and workspace consumption checks report the same 
+ * This value is read from package metadata so runtime diagnostics and workspace consumption checks report the same
  * version as the package manager.
  */
 export const CONTENT_CORE_VERSION = packageJson.version;
@@ -77,7 +77,7 @@ export type {
 /**
  * Lesson-metadata public API.
  *
- * This group exposes validated metadata records, semantic branded values, parser helpers, explicit lookup/resolution 
+ * This group exposes validated metadata records, semantic branded values, parser helpers, explicit lookup/resolution
  * results, repository contracts, and the default metadata service.
  *
  * Metadata lookup distinguishes three states:
@@ -86,13 +86,10 @@ export type {
  * - `missing`: no metadata record matched the lesson;
  * - `invalid`: a matching record exists but failed validation.
  *
- * This distinction lets host adapters and presentation layers avoid treating broken generated metadata as ordinary 
+ * This distinction lets host adapters and presentation layers avoid treating broken generated metadata as ordinary
  * absence.
  */
 export {
-    DEFAULT_LESSON_METADATA_LOCALE,
-    formatDate,
-    formatLessonDate,
     LessonMetadataService,
     normalizeLessonMetadataPathname,
     parseAbsoluteUrl,
@@ -101,15 +98,14 @@ export {
     parseIsoShortDateValue,
     parseLessonSourceFile,
     parseNonEmptyText,
-    resolveLessonDateDisplay,
-    UNKNOWN_LESSON_DATE_LABEL,
+    resolveLessonDate,
 } from "./lesson-metadata";
 
 export type {
     AbsoluteUrl,
     GitCommitHash,
     IsoShortDate,
-    LessonDateDisplayResult,
+    LessonDate,
     LessonMetadataAuthor,
     LessonMetadataAuthorDto,
     LessonMetadataChange,

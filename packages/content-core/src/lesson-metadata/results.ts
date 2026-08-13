@@ -1,5 +1,5 @@
 import type { LessonHref } from "../navigation/lesson-href";
-import type { LessonDateDisplayResult } from "./date";
+import type { LessonDate } from "./date";
 import type { LessonMetadataRecord } from "./records";
 import type { LessonMetadataDto } from "./types";
 
@@ -28,7 +28,7 @@ export type LessonMetadataResolutionResult =
     | Readonly<{
         kind: "found";
         metadata: LessonMetadataDto;
-        displayDate: LessonDateDisplayResult;
+        displayDate: LessonDate;
     }>
     | Readonly<{
         kind: "missing";

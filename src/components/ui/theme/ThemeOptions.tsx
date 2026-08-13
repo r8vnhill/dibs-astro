@@ -15,15 +15,13 @@ const ICON_CLASS = "inline h-4 w-4";
  *
  * @template Theme - The set of possible theme keys.
  */
-export type ThemeOptions = {
-    [key in Theme]: { label: string; icon: ReactNode };
-};
+export type ThemeOptions = { [key in Theme]: { icon: ReactNode } };
 
 /**
  * An object mapping theme keys to their respective display options.
  */
 export const themeOptions: ThemeOptions = {
-    light: { label: "Claro", icon: <Sun className={ICON_CLASS} /> },
-    dark: { label: "Oscuro", icon: <Moon className={ICON_CLASS} /> },
-    auto: { label: "Auto", icon: <Monitor className={ICON_CLASS} /> },
+    light: { icon: <Sun className={ICON_CLASS} /> },
+    dark: { icon: <Moon className={ICON_CLASS} /> },
+    auto: { icon: <Monitor className={ICON_CLASS} /> },
 };

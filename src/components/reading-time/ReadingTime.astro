@@ -6,14 +6,23 @@
  * Also wraps the widget with ExcludeFromReadingTime so it doesn't affect the count.
  */
 
+import { m } from "~/generated/i18n/messages";
 import ExcludeFromReadingTime from "./ExcludeFromReadingTime.astro";
 import ReadingTimeIsland, { type ReadingTimeProps } from "./ReadingTime.tsx";
 
 export interface Props extends ReadingTimeProps {}
 
 const props = Astro.props as Props;
+const localizedProps = {
+    label: props.label ?? m.reading_time_label(),
+    minuteLabel: m.reading_time_minutes,
+    helpText: m.reading_time_help(),
+};
 ---
 
 <ExcludeFromReadingTime>
-    <ReadingTimeIsland client:load {...props} />
+    <ReadingTimeIsland
+        client:load {...props}
+        {...localizedProps}
+    />
 </ExcludeFromReadingTime>

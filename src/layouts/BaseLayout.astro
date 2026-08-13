@@ -23,10 +23,12 @@
  * - Centralize metadata and language decisions.
  * - Fail gracefully in restricted environments (e.g. disabled `localStorage`).
  */
+import { getWebsiteRepoRef } from "$presentation/adapters/site-data";
+import { DEFAULT_LOCALE_PROFILE } from "$presentation/i18n/locale-profile";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/header/Header.astro";
 import Head from "~/components/meta/Head.astro";
-import { getWebsiteRepoRef } from "$presentation/adapters/site-data";
+import { m } from "~/generated/i18n/messages";
 import "~/styles/global.css"; // Tailwind + CSS variables
 import { site } from "~/utils";
 import type { PageMeta } from "~/utils/page-meta";
@@ -104,7 +106,8 @@ const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
  *
  * Always trimmed and guaranteed non-empty.
  */
-const documentLang = (lang ?? pageMeta?.language ?? "es").trim() || "es";
+const documentLang = (lang ?? pageMeta?.language ?? DEFAULT_LOCALE_PROFILE.htmlLanguage).trim()
+    || DEFAULT_LOCALE_PROFILE.htmlLanguage;
 
 /**
  * Props passed to the {@link Head} component.
@@ -125,6 +128,14 @@ const headerProps = {
     title: site.SHORT_TITLE,
     ...(gitlabRepoInfo ? { gitlab: gitlabRepoInfo } : {}),
     ...(githubRepoInfo ? { github: githubRepoInfo } : {}),
+};
+
+const themeLabels = {
+    current: m.theme_current(),
+    change: m.theme_change(),
+    light: m.theme_light(),
+    dark: m.theme_dark(),
+    auto: m.theme_auto(),
 };
 ---
 
@@ -205,7 +216,7 @@ const headerProps = {
             Global site header.
             Includes title and repository links.
         -->
-        <Header {...headerProps} />
+        <Header {...headerProps} {themeLabels} />
 
         <!--
             Main content container.

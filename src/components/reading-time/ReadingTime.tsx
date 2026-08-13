@@ -10,6 +10,7 @@
 import { clsx } from "clsx";
 import { Clock } from "phosphor-react";
 import type { FC, ReactNode } from "react";
+import type { LocalizedString, Reading_Time_MinutesInputs } from "~/generated/i18n/messages";
 import { useReadingTime } from "./useReadingTime";
 
 export interface ReadingTimeProps {
@@ -25,8 +26,12 @@ export interface ReadingTimeProps {
     ariaLive?: "off" | "polite" | "assertive";
     /** Optional custom icon element. If omitted, a Lucide Clock is used. */
     icon?: ReactNode;
-    /** Label shown before the minutes. */
-    label?: string;
+    /** Localized label resolved by the Astro composition boundary. */
+    label?: LocalizedString;
+    /** Localized plural-aware minute label resolved by the Astro composition boundary. */
+    minuteLabel?: (inputs: Reading_Time_MinutesInputs) => LocalizedString;
+    /** Localized explanatory copy resolved by the Astro composition boundary. */
+    helpText?: LocalizedString;
 }
 
 export const ReadingTime: FC<ReadingTimeProps> = ({
@@ -36,7 +41,9 @@ export const ReadingTime: FC<ReadingTimeProps> = ({
     className = "",
     ariaLive = "polite",
     icon = <Clock className="w-5 h-5 text-primary" />,
-    label = "Dedicación recomendada",
+    label,
+    minuteLabel,
+    helpText,
 }) => {
     const minutes = useReadingTime(multiplier, containerSelector, undefined, wpm);
     if (minutes == null) return null;
@@ -60,10 +67,10 @@ export const ReadingTime: FC<ReadingTimeProps> = ({
         >
             <p className="mb-1 flex items-center gap-2 font-medium">
                 <span className="text-primary">{icon}</span>
-                {label}: {minutes} {minutes === 1 ? "minuto" : "minutos"}
+                {label}: {minuteLabel?.({ count: minutes })}
             </p>
             <p className="m-0 text-sm opacity-80">
-                Considera contenido visible y relevante; ignora texto colapsado u opcional.
+                {helpText}
             </p>
         </div>
     );

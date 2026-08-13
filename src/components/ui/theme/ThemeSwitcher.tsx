@@ -1,10 +1,19 @@
 import clsx from "clsx";
 import { type Dispatch, type JSX, type SetStateAction, useEffect, useRef, useState } from "react";
+import type { LocalizedString } from "~/generated/i18n/messages";
 import { useDisclosure, useOutsideClick } from "~/hooks";
 import * as utils from "~/utils";
 import { applyTheme, type Theme } from "~/utils";
 import { ThemeList } from "./ThemeList";
 import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
+
+export type ThemeLabels = Readonly<{
+    current: LocalizedString;
+    change: LocalizedString;
+    light: LocalizedString;
+    dark: LocalizedString;
+    auto: LocalizedString;
+}>;
 
 /**
  * <ThemeSwitcher /> is a dropdown component that allows users to toggle between themes (e.g.,
@@ -16,7 +25,7 @@ import { ThemeSwitcherButton } from "./ThemeSwitcherButton";
  * - Syncs the theme state with other browser tabs.
  * - Displays a toggle button and a list of selectable themes.
  */
-export default function ThemeSwitcher(): JSX.Element {
+export default function ThemeSwitcher({ labels }: { labels: ThemeLabels }): JSX.Element {
     const [theme, setTheme] = useState<Theme>(utils.theme.DEFAULT);
 
     // Reference to the dropdown wrapper to detect outside clicks
@@ -34,10 +43,10 @@ export default function ThemeSwitcher(): JSX.Element {
             ref={dropdownRef}
         >
             {/* Toggle button for the theme dropdown */}
-            <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} />
+            <ThemeSwitcherButton theme={theme} toggle={toggle} isOpen={isOpen} labels={labels} />
 
             {/* Conditionally render the dropdown list of themes */}
-            {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} />}
+            {isOpen && <ThemeList theme={theme} setTheme={setTheme} close={close} labels={labels} />}
         </div>
     );
 }

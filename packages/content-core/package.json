@@ -1,6 +1,6 @@
 {
     "name": "@ravenhill/content-core",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "type": "module",
     "private": false,
     "description": "Content abstraction layer for reusable documentation and learning systems.",

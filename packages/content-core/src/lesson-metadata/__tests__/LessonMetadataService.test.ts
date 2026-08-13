@@ -82,8 +82,8 @@ describe("LessonMetadataService", () => {
                 ],
             },
             displayDate: {
-                kind: "formatted",
-                value: "10 de abril de 2026",
+                kind: "known",
+                value: new Date("2026-04-10T00:00:00.000Z"),
             },
         });
     });
