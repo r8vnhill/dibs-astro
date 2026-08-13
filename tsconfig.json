@@ -12,6 +12,7 @@
     "compilerOptions": {
         "jsx": "react-jsx",
         "jsxImportSource": "react",
+        "baseUrl": ".",
         "paths": {
             "~/*": [
                 "./src/*"
@@ -35,7 +36,7 @@
                 "./src/assets/*"
             ],
             "$icons": [
-                "@ravenhill/astro-icons"
+                "./src/icons.ts"
             ],
             "$semantics": [
                 "./src/components/semantics/index.ts"

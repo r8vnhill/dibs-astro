@@ -33,7 +33,7 @@ variables:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
         - pnpm config set store-dir ${PNPM_STORE_DIR}
-        - pnpm config set //gitlab.com/api/v4/groups/110542663/-/packages/npm/:_authToken ${CI_JOB_TOKEN}
+        - pnpm config set //gitlab.com/api/v4/projects/85350050/packages/npm/:_authToken ${CI_JOB_TOKEN}
         - pnpm install --frozen-lockfile
 
 deps:
