@@ -3,15 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateIconsIndex } from "../../generate-icons-index.js";
 
-const ICONS_DIR = path.resolve(
-    fileURLToPath(new URL("../../packages/astro-icons/src", import.meta.url)),
-);
-
 const LOGOS_DIR = path.resolve(
     fileURLToPath(new URL("../../src/assets/img/logos", import.meta.url)),
 );
 
-const ASSET_DIRS = { icons: ICONS_DIR, logos: LOGOS_DIR } as const;
+const ASSET_DIRS = { logos: LOGOS_DIR } as const;
 
 function isIndexGenerationDisabled(): boolean {
     const skipByFlag = process.env.SKIP_ICON_GENERATION === "true";
@@ -58,10 +54,9 @@ export function generateIconsIntegration(): AstroIntegration {
                     return;
                 }
 
-                const iconResult = generateIconsIndex({ assetType: "icons", quiet: false });
                 const logoResult = generateIconsIndex({ assetType: "logos", quiet: false });
 
-                const changed = iconResult.changed || logoResult.changed;
+                const changed = logoResult.changed;
                 logger.info(
                     changed
                         ? "Generated asset indices."
@@ -82,10 +77,9 @@ export function generateIconsIntegration(): AstroIntegration {
                     return;
                 }
 
-                const iconResult = generateIconsIndex({ assetType: "icons", quiet: true });
                 const logoResult = generateIconsIndex({ assetType: "logos", quiet: true });
 
-                const changed = iconResult.changed || logoResult.changed;
+                const changed = logoResult.changed;
                 logger.info(
                     changed
                         ? "Generated asset indices before build."

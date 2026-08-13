@@ -1,6 +1,5 @@
 ---
-import fishDark from "$icons/fish-simple.svg?url";
-import fishLight from "$icons/fish.svg?url";
+import { Fish, FishSimple } from "$icons";
 import { resolveLanguageHref } from "./helpers";
 import LangLink from "./LangLink.astro";
 
@@ -16,12 +15,10 @@ const {
     slug,
     name = "fish",
     class: className,
-    srcLight = fishLight,
-    srcDark = fishDark,
 } = Astro.props as Props;
 
 const { href } = resolveLanguageHref(Astro.url.pathname, slug, "fish");
-const hasDarkVariant = Boolean(srcDark && srcDark !== srcLight);
+const hasDarkVariant = true;
 const lightClass = hasDarkVariant
     ? "inline-block size-6 object-contain dark:hidden [image-rendering:crisp-edges]"
     : "inline-block size-6 object-contain [image-rendering:crisp-edges]";
@@ -33,23 +30,8 @@ const lightClass = hasDarkVariant
         class:list={[className]}
     >
         <Fragment slot="icon">
-            <img
-                src={srcLight} alt=""
-                width="24" height="24"
-                class={lightClass} loading="lazy"
-                decoding="async" aria-hidden="true"
-            />
-            {
-                hasDarkVariant && (
-                    <img
-                        src={srcDark} alt=""
-                        width="24" height="24"
-                        class="hidden dark:inline object-contain size-6 [image-rendering:crisp-edges]"
-                        loading="lazy"
-                        decoding="async" aria-hidden="true"
-                    />
-                )
-            }
+            <Fish class={lightClass} aria-hidden="true" />
+            <FishSimple class="hidden dark:inline object-contain size-6" aria-hidden="true" />
         </Fragment>
     </LangLink>
 </span>

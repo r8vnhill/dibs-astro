@@ -1,6 +1,5 @@
 ---
-import nushellLight from "$icons/nushell-logo.svg?url";
-import nushellDark from "$icons/nushell-logo.svg?url";
+import { NushellLogo } from "@ravenhill/astro-icons/custom";
 import { resolveLanguageHref } from "./helpers";
 import LangLink from "./LangLink.astro";
 
@@ -16,12 +15,10 @@ const {
     slug,
     name = "Nushell",
     class: className,
-    srcLight = nushellLight,
-    srcDark = nushellDark,
 } = Astro.props as Props;
 
 const { href } = resolveLanguageHref(Astro.url.pathname, slug, "nushell");
-const hasDarkVariant = Boolean(srcDark && srcDark !== srcLight);
+const hasDarkVariant = false;
 const lightClass = hasDarkVariant
     ? "inline-block size-6 object-contain dark:hidden [image-rendering:crisp-edges]"
     : "inline-block size-6 object-contain [image-rendering:crisp-edges]";
@@ -33,23 +30,7 @@ const lightClass = hasDarkVariant
         class:list={[className]}
     >
         <Fragment slot="icon">
-            <img
-                src={srcLight} alt=""
-                width="24" height="24"
-                class={lightClass} loading="lazy"
-                decoding="async" aria-hidden="true"
-            />
-            {
-                hasDarkVariant && (
-                    <img
-                        src={srcDark} alt=""
-                        width="24" height="24"
-                        class="hidden dark:inline object-contain size-6 [image-rendering:crisp-edges]"
-                        loading="lazy"
-                        decoding="async" aria-hidden="true"
-                    />
-                )
-            }
+            <NushellLogo class={lightClass} aria-hidden="true" />
         </Fragment>
     </LangLink>
 </span>

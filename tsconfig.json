@@ -35,10 +35,7 @@
                 "./src/assets/*"
             ],
             "$icons": [
-                "./packages/astro-icons/src/index.ts"
-            ],
-            "$icons/*": [
-                "./packages/astro-icons/src/*"
+                "@ravenhill/astro-icons"
             ],
             "$semantics": [
                 "./src/components/semantics/index.ts"

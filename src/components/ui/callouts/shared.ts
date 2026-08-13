@@ -1,7 +1,5 @@
 import * as icons from "$icons";
-import Brain from "$icons/brain.svg";
-import NoteIcon from "$icons/note.svg";
-import Star from "$icons/star.svg";
+import { Brain, Note, Star } from "$icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
 
@@ -155,7 +153,7 @@ export const calloutVariants: Record<CalloutVariant, CalloutVariantConfig> = {
     important: { title: "Importante", icon: Star },
     info: { title: "Información", icon: icons.Info },
     more: { title: "Más información", icon: icons.DotsThreeOutline },
-    note: { title: "Nota", icon: NoteIcon },
+    note: { title: "Nota", icon: Note },
     question: { title: "Piensa rápido", icon: icons.Question },
     solution: { title: "Solución", icon: icons.CheckCircle },
     tip: { title: "Tip", icon: icons.Lightbulb },

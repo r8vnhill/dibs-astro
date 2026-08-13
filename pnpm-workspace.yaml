@@ -1,6 +1,9 @@
 packages:
   - .
-  - packages/*
+  - packages/content-core
+  - packages/lesson-export-core
+  - packages/shiki-core
+  - packages/site-core
 
 allowBuilds:
   '@tailwindcss/oxide': true
