@@ -3,7 +3,7 @@ import * as icons from "$icons";
 import { Heading, P } from "~/components/semantics";
 import { Important, Tip, Warning } from "~/components/ui/callouts";
 import { KotlinBlock, KotlinInline } from "~/components/ui/code";
-import { B, I, Mono } from "~/components/ui/font";
+import { B, I } from "~/components/ui/font";
 import { ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -13,22 +13,58 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="La biblioteca como artefacto de software"
-    description="Explica la biblioteca como una implementación con una API consumida externamente: su superficie, contrato, encapsulación y compromisos de estabilidad."
+    description="Explica una biblioteca desde la perspectiva de quien la consume: su API, superficie, contrato, encapsulación y compromisos de estabilidad."
 >
     <Fragment slot="abstract">
         <P>
-            En la lección anterior distinguimos los artefactos por su destinatario, modo de consumo, contrato visible y
-            estabilidad esperada. En una biblioteca, estos cuatro ejes convergen alrededor de su API: otras personas
-            desarrolladoras escriben código que depende de lo que la biblioteca expone.
+            Una biblioteca ofrece capacidades para que otros programas puedan reutilizarlas. Para entender cómo
+            diseñarla, necesitamos distinguir dos perspectivas: lo que ocurre dentro de la biblioteca y aquello que
+            puede observar el código que la utiliza.
         </P>
 
+        <Important headingLevel="h3">
+            <span slot="title">Un modelo para esta lección</span>
+
+            <P>
+                Pensaremos una biblioteca como una <B>implementación</B> que ofrece una <B>API</B> a
+                <B>código consumidor</B>. La API establece una frontera: hacia afuera quedan las formas de interacción y
+                las garantías que ofrecemos; hacia adentro quedan las decisiones que queremos poder cambiar.
+            </P>
+        </Important>
+
         <P>
-            Usaremos este modelo de diseño: <B>biblioteca = implementación + API consumida externamente</B>. La
-            implementación realiza una capacidad; la API define qué puede conocer y utilizar quien la consume. Esta
-            frontera determina la superficie, el contrato, lo que podemos encapsular y las decisiones que adquieren
-            compromisos de estabilidad.
+            Al terminar esta lección deberías poder distinguir implementación, API y código consumidor; diferenciar
+            superficie y contrato; explicar por qué la encapsulación conserva libertad de cambio; y relacionar una API
+            publicada con compromisos de estabilidad.
         </P>
     </Fragment>
+
+    <NotesSection id="h2-why">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Question}
+        >
+            ¿Por qué usar bibliotecas?
+        </Heading>
+
+        <P>
+            Muchos programas necesitan resolver problemas que ya han sido resueltos antes: procesar formatos,
+            comunicarse mediante protocolos, ejecutar algoritmos, validar datos o interactuar con un sistema operativo.
+            Una biblioteca permite <B>reutilizar una capacidad mediante una interfaz conocida</B>, concentrando su
+            implementación, mantenimiento y pruebas en un componente que múltiples aplicaciones pueden integrar.
+        </P>
+
+        <Tip headingLevel="h3">
+            <span slot="title">¿Construir o adoptar?</span>
+
+            <P>
+                Si el problema es común, su solución está bien entendida y existe una biblioteca mantenida que satisface
+                los requisitos, normalmente conviene adoptarla. Construir una propia tiene más sentido cuando el
+                problema pertenece al núcleo diferenciador del dominio o cuando las alternativas no ofrecen las
+                garantías necesarias.
+            </P>
+        </Tip>
+    </NotesSection>
 
     <NotesSection id="h2-boundary">
         <Heading
@@ -39,72 +75,65 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Una biblioteca es un artefacto diseñado para ser integrado desde otros programas. Su propósito no es el uso
-            directo de personas usuarias finales, sino ofrecer capacidades reutilizables a código externo. Podemos
-            representar su frontera así:
-        </P>
-
-        <Important headingLevel="h3">
-            <span slot="title">Implementación interna → API → código consumidor</span>
-
-            <P>
-                La <B>implementación</B> contiene código, algoritmos, estructuras y decisiones que realizan la
-                capacidad. La <B>API</B> es la superficie disponible para integrarla. El
-                <B>consumidor</B> es el código externo que usa esa superficie y pasa a depender de su contrato.
-            </P>
-        </Important>
-
-        <P>
-            Este es un modelo de diseño, no una definición matemática. Evita dos confusiones: una API por sí sola no
-            constituye una biblioteca, y una implementación por sí sola no describe cómo otra aplicación puede
-            integrarla. Toda biblioteca expone una API, pero no toda API pertenece a una biblioteca: también las exponen
-            servicios web, frameworks y sistemas operativos.
+            Usaremos como ejemplo una pequeña biblioteca ficticia inspirada libremente en <I>Kiseijuu</I>, de Hitoshi
+            Iwaaki. Su propósito es consultar si un huésped presenta señales compatibles con un parásito.
         </P>
 
         <KotlinBlock
             code={`
-                // Misma capacidad interna
-                internal fun calculateChecksum(bytes: ByteArray): Long = TODO()
+                data class HostId(val value: String)
 
-                // Biblioteca A
-                fun checksum(bytes: ByteArray): Long = calculateChecksum(bytes)
+                enum class Detection {
+                    DETECTED,
+                    NOT_DETECTED,
+                    INCONCLUSIVE,
+                }
 
-                // Biblioteca B
-                data class Checksum(val value: Long)
+                internal fun analyzeHost(id: HostId): Detection = TODO()
 
-                fun checksum(bytes: ByteArray): Checksum =
-                    Checksum(calculateChecksum(bytes))
+                fun detectParasite(id: HostId): Detection =
+                    analyzeHost(id)
             `}
         >
-            <span slot="title">La misma implementación puede sostener contratos distintos</span>
+            <span slot="title">Implementación interna → API → código consumidor</span>
             <span slot="footer">
-                Ambas bibliotecas podrían usar el mismo algoritmo interno, pero quien las consume depende de superficies
-                diferentes: una devuelve un <Mono>Long</Mono> y la otra un
-                <Mono>Checksum</Mono>. Por eso una implementación equivalente no implica un contrato público
-                equivalente.
+                El código consumidor puede llamar a <KotlinInline code="detectParasite" />, pero no necesita conocer
+                <KotlinInline code="analyzeHost" />. Esa separación establece una frontera entre lo que ofrecemos y las
+                decisiones internas con las que lo implementamos.
             </span>
         </KotlinBlock>
+
+        <P>
+            Este es un modelo de diseño, no una definición matemática. Una API por sí sola no constituye una biblioteca,
+            y una implementación por sí sola no explica cómo otro programa puede integrarla. Además, no toda API
+            pertenece a una biblioteca: también exponen APIs los sistemas operativos, frameworks y servicios.
+        </P>
     </NotesSection>
 
-    <NotesSection id="h2-consumers">
+    <NotesSection id="h2-consumer-perspective">
         <Heading
             slot="heading" headingLevel="h2"
             Icon={icons.UsersThree}
         >
-            Consumidores: una biblioteca existe para ser integrada
+            La biblioteca desde la perspectiva de quien la consume
         </Heading>
 
         <P>
             Un <B>consumidor</B> es cualquier código situado fuera de la frontera de implementación que depende de la
-            API de la biblioteca. Puede pertenecer a una aplicación publicada, a otro módulo del mismo repositorio o a
-            un proyecto interno de una organización.
+            API. Puede ser una aplicación publicada, otro módulo del mismo repositorio o un proyecto interno de una
+            organización. Aquí <I>externo</I> significa externo a la implementación, no necesariamente público en
+            internet.
         </P>
 
         <P>
-            Aquí <I>externo</I> significa externo a la implementación, no necesariamente público en internet. Una
-            biblioteca distribuida desde un repositorio abierto y una compartida solo dentro de una organización
-            mantienen la misma relación fundamental: código consumidor integra una superficie que no controla
-            directamente.
+            Para quien implementa nuestra biblioteca, pueden importar los sensores utilizados, la estructura de datos
+            que almacena las observaciones o el algoritmo que clasifica una señal. Para quien la consume, esos detalles
+            <B>no deberían necesitar conocerse</B> mientras permanezcan detrás de la frontera y se preserve el contrato.
+        </P>
+
+        <P>
+            Sin embargo, una decisión deja de ser puramente interna cuando produce un efecto que el consumidor puede
+            observar y del cual puede empezar a depender.
         </P>
     </NotesSection>
 
@@ -113,20 +142,55 @@ import NotesSection from "~/layouts/NotesSection.astro";
             slot="heading" headingLevel="h2"
             Icon={icons.Plugs}
         >
-            Superficie de API: lo que hacemos observable
+            Superficie de API: ¿con qué puedo interactuar?
         </Heading>
 
         <P>
-            La <B>superficie de API</B> es el conjunto de elementos expuestos mediante los cuales otras aplicaciones
-            pueden depender de una biblioteca. Incluye nombres, tipos, funciones, propiedades, constructores,
-            parámetros, tipos de retorno, errores y semántica observable.
+            La <B>superficie de API</B> describe los elementos expuestos mediante los cuales el código consumidor puede
+            interactuar con la biblioteca. Dependiendo del lenguaje y del tipo de biblioteca, puede incluir funciones,
+            métodos, tipos, propiedades, constructores, parámetros, valores de retorno, constantes y errores expuestos
+            como tipos.
         </P>
 
-        <P>
-            Cada elemento que hacemos parte de esa superficie crea una nueva forma en que código externo puede depender
-            de la biblioteca. La superficie responde <I>con qué puedo interactuar</I>; todavía no responde por completo
-            qué puedo esperar de esa interacción.
-        </P>
+        <KotlinBlock
+            code={`
+                data class HostId(val value: String)
+
+                enum class Detection {
+                    DETECTED,
+                    NOT_DETECTED,
+                    INCONCLUSIVE,
+                }
+
+                fun detectParasite(id: HostId): Detection
+            `}
+        >
+            <span slot="title">Podemos identificar la superficie directamente en el código</span>
+            <span slot="footer">
+                Quien consume puede depender de <KotlinInline code="HostId" />, <KotlinInline code="Detection" />,
+                <KotlinInline code="detectParasite" />, su parámetro y su tipo de retorno. Esas decisiones forman la
+                <B>forma</B> de la interacción.
+            </span>
+        </KotlinBlock>
+
+        <Important headingLevel="h3">
+            <span slot="title">Superficie = ¿con qué puedo interactuar?</span>
+
+            <P>
+                La superficie describe qué está disponible para usar. Todavía no especifica por completo qué significan
+                los resultados ni qué garantías acompañan a cada operación.
+            </P>
+        </Important>
+
+        <Warning headingLevel="h3">
+            <span slot="title">Accesible no siempre significa API soportada</span>
+
+            <P>
+                Un elemento puede ser técnicamente accesible sin que quienes mantienen la biblioteca pretendan ofrecerlo
+                como parte estable de su API. La visibilidad del lenguaje ayuda a construir la frontera, pero la API
+                soportada también depende de documentación, módulos, convenciones y herramientas del ecosistema.
+            </P>
+        </Warning>
     </NotesSection>
 
     <NotesSection id="h2-contract">
@@ -134,25 +198,38 @@ import NotesSection from "~/layouts/NotesSection.astro";
             slot="heading" headingLevel="h2"
             Icon={icons.Scroll}
         >
-            Contrato: exponer algo también significa prometer algo
+            Contrato: ¿en qué puedo confiar?
         </Heading>
 
         <P>
             La superficie y el contrato están relacionados, pero no son lo mismo. La superficie describe los elementos
-            disponibles; el <B>contrato</B> describe aquello en lo que quien consume puede confiar al usarlos. La
-            sintaxis es solo una parte de ese contrato.
+            disponibles; el <B>contrato</B> describe aquello en lo que quien consume puede confiar al utilizarlos. La
+            firma de una función muestra parte de la API, pero no todas sus garantías.
         </P>
 
-        <KotlinBlock code={`fun findUser(id: UserId): User?`}>
+        <KotlinBlock code={`fun detectParasite(id: HostId): Detection`}>
             <span slot="title">Una firma muestra solo parte del contrato</span>
             <span slot="footer">
-                La firma muestra una función y sus tipos. El contrato además puede incluir qué significa <KotlinInline
-                    code="null"
-                />, si la operación realiza E/S, cómo informa un fallo, qué cuenta como la misma persona usuaria y si
-                llamadas repetidas observan cambios de estado. No necesitamos resolver esas preguntas todavía; basta
-                reconocer que también forman parte de lo que se promete.
+                Todavía necesitamos saber qué significa <KotlinInline code="INCONCLUSIVE" />, si la operación realiza
+                E/S, cómo informa un fallo, si puede devolver observaciones desactualizadas y si dos llamadas
+                consecutivas pueden producir resultados diferentes aunque el huésped no haya cambiado.
             </span>
         </KotlinBlock>
+
+        <P>
+            Un contrato puede incluir el significado de los resultados, precondiciones, efectos, cambios de estado,
+            comportamiento ante errores, relaciones entre operaciones, garantías de identidad y, cuando se prometen
+            explícitamente, propiedades como rendimiento o concurrencia.
+        </P>
+
+        <Important headingLevel="h3">
+            <span slot="title">Contrato = ¿en qué puedo confiar?</span>
+
+            <P>
+                La superficie determina <I>cómo</I> interactuamos con la biblioteca. El contrato determina
+                <I>qué podemos esperar</I> de esa interacción.
+            </P>
+        </Important>
     </NotesSection>
 
     <NotesSection id="h2-encapsulation">
@@ -160,21 +237,79 @@ import NotesSection from "~/layouts/NotesSection.astro";
             slot="heading" headingLevel="h2"
             Icon={icons.Lock}
         >
-            Encapsulación: la otra cara de la API
+            Encapsulación: controlar de qué puede depender el exterior
         </Heading>
 
         <P>
-            Diseñar una API no consiste solo en decidir qué exponer. También consiste en decidir qué no exponer. La
-            frontera de la biblioteca separa el <B>contrato expuesto</B> de la
-            <B>implementación oculta</B>.
+            Encapsular no significa simplemente marcar elementos como privados. Significa <B>controlar aquello de lo que
+                el código externo puede depender</B>. Una decisión correctamente encapsulada puede cambiar sin requerir
+            cambios en quienes consumen la biblioteca.
         </P>
 
+        <KotlinBlock
+            code={`
+                internal fun analyzeHost(id: HostId): Detection {
+                    val cached = cache[id]
+                    if (cached != null) return cached
+
+                    return sensorRepository
+                        .read(id)
+                        .classify()
+                }
+            `}
+        >
+            <span slot="title">La implementación puede evolucionar detrás de la frontera</span>
+            <span slot="footer">
+                Podemos cambiar el almacenamiento, introducir una caché o sustituir el algoritmo de clasificación sin
+                modificar <KotlinInline code="detectParasite" />. Eso es seguro solo si también preservamos las
+                garantías observables que forman parte de su contrato.
+            </span>
+        </KotlinBlock>
+
         <P>
-            Mientras preserve el contrato observable, la implementación puede cambiar: es posible sustituir un
-            algoritmo, reorganizar estructuras de datos o mejorar el rendimiento sin obligar a quienes consumen a
-            modificar su código. Encapsular es conservar esa libertad al mantener las decisiones internas fuera de
-            aquello de lo que el exterior puede depender.
+            Esta libertad de cambio es una de las razones centrales para ocultar decisiones internas. Una decisión que
+            atraviesa la frontera pasa a formar parte, explícita o implícitamente, de aquello que debemos considerar al
+            evolucionar la biblioteca.
         </P>
+    </NotesSection>
+
+    <NotesSection id="h2-observable-change">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Eye}
+        >
+            ¿Qué cambios puede observar quien consume?
+        </Heading>
+
+        <P>
+            Supongamos que mantenemos la misma operación:
+        </P>
+
+        <KotlinBlock code={`fun detectParasite(id: HostId): Detection`}>
+            <span slot="title">Clasifica cada cambio antes de continuar</span>
+            <span slot="footer">
+                Pregúntate si cada cambio modifica solo la implementación, cambia la superficie o altera el contrato aun
+                cuando la firma permanezca igual.
+            </span>
+        </KotlinBlock>
+
+        <P>
+            <B>1.</B> Reemplazamos una búsqueda lineal por un índice. <B>2.</B> Cambiamos la representación interna de
+            las observaciones. <B>3.</B> <KotlinInline code="INCONCLUSIVE" /> ahora también significa “falló la conexión
+            con el sensor”. <B>4.</B> Cambiamos el retorno a <KotlinInline code="Result<Detection>" />. <B>5.</B>
+            Introducimos una caché que puede devolver información de hasta cinco minutos de antigüedad.
+        </P>
+
+        <Tip headingLevel="h3">
+            <span slot="title">Una posible clasificación</span>
+
+            <P>
+                Los cambios 1 y 2 pueden permanecer completamente internos. El cambio 3 conserva la superficie, pero
+                cambia el significado observable y, por tanto, el contrato. El cambio 4 modifica la superficie y también
+                obliga a revisar el contrato. El cambio 5 puede conservar la firma, pero introduce una nueva garantía
+                temporal que el consumidor podría observar.
+            </P>
+        </Tip>
     </NotesSection>
 
     <NotesSection id="h2-stability">
@@ -186,106 +321,73 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Exponer una decisión inicia una cadena sencilla: la publicamos, código externo empieza a usarla, ese código
-            depende de ella y cambiarla adquiere un costo. Por eso la estabilidad no es solo una cualidad deseable: es
-            una consecuencia de que la biblioteca tiene consumidores.
+            Cuando publicamos una decisión, código externo puede empezar a utilizarla. Ese uso crea una dependencia, y
+            modificar aquello de lo que otros programas dependen puede obligarlos a cambiar.
         </P>
+
+        <Important headingLevel="h3">
+            <span slot="title">Exponer → depender → mantener</span>
+
+            <P>
+                Una decisión expuesta puede transformarse en una dependencia externa. Por eso una API crea
+                <B>compromisos de estabilidad</B>: no significa que nunca pueda cambiar, sino que sus cambios deben
+                considerar a quienes ya dependen de ella.
+            </P>
+        </Important>
 
         <Warning headingLevel="h3">
-            <span slot="title">La frontera marca qué puede cambiar con libertad</span>
+            <span slot="title">La firma no es la única forma de romper una API</span>
 
             <P>
-                Lo interno puede cambiar mientras preserve el contrato observable; lo expuesto debe evolucionar
-                considerando las dependencias que ya existen. Más adelante estudiaremos cómo hacer esa evolución sin
-                romper a quienes ya integran la biblioteca.
+                Cambiar nombres o tipos puede romper código inmediatamente, pero también podemos romper expectativas sin
+                cambiar ninguna firma. Alterar el significado de un resultado, los efectos de una operación o una
+                garantía de identidad puede producir incompatibilidades de comportamiento.
             </P>
         </Warning>
-    </NotesSection>
-
-    <NotesSection id="h2-consumer-perspective">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.User}
-        >
-            La biblioteca desde la perspectiva de quien la consume
-        </Heading>
 
         <P>
-            Para quien implementa, una biblioteca contiene archivos, algoritmos, estructuras de datos y decisiones
-            internas. Para quien la consume, esos detalles son irrelevantes mientras no atraviesen la frontera de la
-            API. Lo que puede conocer, usar y de lo que puede depender es aquello que la biblioteca expone.
+            Más adelante distinguiremos distintas formas de compatibilidad —por ejemplo, compatibilidad de código
+            fuente, binaria y de comportamiento— y estudiaremos técnicas para evolucionar APIs de manera controlada.
         </P>
-
-        <P>
-            Esto no vuelve irrelevante la calidad de la implementación. Significa que sus detalles no forman parte de la
-            identidad de la biblioteca frente a sus consumidores, salvo cuando se vuelven observables a través del
-            contrato.
-        </P>
-    </NotesSection>
-
-    <NotesSection id="h2-why">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Question}
-        >
-            ¿Por qué usar bibliotecas?
-        </Heading>
-
-        <P>
-            Las bibliotecas permiten reutilizar capacidades ya implementadas y mantenidas, en vez de resolver los mismos
-            problemas desde cero en cada proyecto. Así concentran correcciones, pruebas e interoperabilidad en un punto
-            compartido y dejan más espacio para el dominio particular de cada aplicación.
-        </P>
-
-        <Tip headingLevel="h3">
-            <span slot="title">¿Construir o adoptar?</span>
-
-            <P>
-                Si un problema es común, su solución está bien entendida y existe una biblioteca mantenida que responde
-                a los requisitos, normalmente conviene adoptarla. Construir una propia tiene más sentido cuando el caso
-                pertenece al núcleo diferenciador del dominio o cuando las alternativas no ofrecen las garantías
-                necesarias. Adoptar también implica aceptar una API, dependencias y un ritmo de evolución.
-            </P>
-        </Tip>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Una biblioteca combina una implementación con una API consumida externamente. Esa API permite la
-                integración, su comportamiento observable forma un contrato y la frontera protege los detalles que deben
-                permanecer encapsulados.
+                Una biblioteca ofrece capacidades a código externo mediante una <B>API</B>. La superficie determina con
+                qué puede interactuar quien la consume; el contrato determina en qué puede confiar; y la encapsulación
+                mantiene decisiones internas fuera de esas dependencias.
             </P>
 
             <P>
-                Cuando otras aplicaciones dependen de esa frontera, las decisiones expuestas pasan a tener compromisos
-                de estabilidad. Por eso entender una biblioteca desde la perspectiva de quien la consume es el punto de
-                partida para pensar su API.
+                Cuando otras aplicaciones empiezan a depender de la API aparecen compromisos de estabilidad. Por eso
+                diseñar una biblioteca no consiste solo en escribir una implementación correcta: también consiste en
+                decidir cuidadosamente <B>qué permitiremos observar y de qué permitiremos depender</B>.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Books}>
-                <B>Biblioteca = implementación + API consumida externamente.</B>
+                <B>Biblioteca = implementación que ofrece una API a código consumidor.</B>
             </ListItem>
             <ListItem icon={icons.Plugs}>
-                La API es la superficie a través de la cual otro código integra la biblioteca.
+                <B>Superficie:</B> ¿con qué puede interactuar quien consume?
             </ListItem>
             <ListItem icon={icons.Scroll}>
-                El contrato incluye la forma de la superficie y su comportamiento observable.
+                <B>Contrato:</B> ¿en qué puede confiar al interactuar?
             </ListItem>
             <ListItem icon={icons.Lock}>
-                Encapsular mantiene decisiones internas fuera de aquello de lo que los consumidores pueden depender.
+                <B>Encapsulación:</B> ¿qué decisiones internas no debería necesitar conocer?
             </ListItem>
             <ListItem icon={icons.ArrowsClockwise}>
-                Exponer una decisión crea dependencias y, por tanto, compromisos de estabilidad.
+                <B>Estabilidad:</B> ¿qué ocurre cuando código externo empieza a depender de la API?
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                Si la API define aquello de lo que otras personas pueden depender, la siguiente pregunta es inevitable:
-                ¿qué deberíamos exponer y cómo deberíamos diseñarlo?
+                Si cada elemento expuesto puede convertirse en una dependencia, la siguiente pregunta es inevitable:
+                <B>¿qué deberíamos exponer y cómo deberíamos diseñarlo?</B>
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -294,7 +396,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="description-ref:parnas-decomposing-systems-1972">
             Parnas presenta una idea fundacional para esta lección: los módulos deben ocultar las decisiones de diseño
             que probablemente cambien. Es una buena lectura para profundizar por qué encapsular no es solo separar
-            archivos, sino gestionar una frontera que preserva libertad de cambio.
+            archivos, sino controlar qué decisiones pueden convertirse en dependencias externas.
         </Fragment>
 
         <Fragment slot="description-ref:kotlin-library-authors-guidelines-introduction">
