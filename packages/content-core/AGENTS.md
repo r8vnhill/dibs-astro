@@ -14,11 +14,17 @@ Context and essential rules for agents working in this package.
 
 - `@ravenhill/content-core` is a host-agnostic workspace package under the Astro site that now has a pilot
   publication path.
-- It contains extracted host-agnostic navigation and lesson metadata core logic.
+- It contains extracted host-agnostic navigation and lesson metadata core logic, plus a minimal host-agnostic
+  curriculum data contract.
 - It builds from `src/index.ts` to `dist/index.js` and `dist/index.d.ts` through `tsup`.
 - The stabilized root API uses `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`.
 - Lesson metadata records use branded semantic value types and explicit `found`/`missing`/`invalid` result unions.
+- The curriculum contract (`CurriculumConcept`, `CurriculumFacets`, `CurriculumUnit<Metadata>`) is data only: no
+  relationships, traversal, validation, or concrete facet/language vocabulary. Do not add DIBS-specific curriculum
+  vocabulary (e.g. a fixed language or material-kind union) to this package; those stay host policy.
+- `tsconfig.json` is intentionally framework-neutral (no Astro/React compiler configuration) since this package is
+  pilot-published standalone; do not reintroduce an `astro/tsconfigs/*` extend or JSX options here.
 - Keep the package host-agnostic: do not import Astro, UI components, Cloudflare APIs, or site-specific infrastructure.
 - Public vocabulary should stay content-neutral rather than DIBS-specific unless the user explicitly chooses otherwise.
 

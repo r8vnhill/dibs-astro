@@ -6,6 +6,7 @@ import { normalizeProjectPath } from "./paths.mjs";
 import {
     allowedExceptions,
     initialBoundaryRules,
+    rootOnlyWorkspacePackages,
 } from "./rules.mjs";
 
 function importPathFrom(importRecord) {
@@ -35,6 +36,21 @@ function isForbiddenPackage(rule, classifiedImport) {
     );
 }
 
+/**
+ * Checks a rule's package allowlist, when one is declared.
+ *
+ * `allowedPackages === undefined` preserves denylist-only behavior (allow unless forbidden). A declared array, even
+ * an empty one, means only listed bare packages may be imported at all — used by reusable packages that must stay
+ * dependency-free.
+ */
+function isPackageNotAllowed(rule, classifiedImport) {
+    if (rule.allowedPackages === undefined || !classifiedImport.packageName) {
+        return false;
+    }
+
+    return !rule.allowedPackages.includes(classifiedImport.packageName);
+}
+
 function isForbiddenTarget(rule, classifiedImport) {
     return rule.forbiddenTargets.includes(classifiedImport.target);
 }
@@ -49,14 +65,16 @@ function isNotAllowedTarget(rule, classifiedImport) {
     );
 }
 
-function isForbiddenContentCoreSubpath(classifiedImport) {
-    return classifiedImport.packageName === "@ravenhill/content-core"
-        && classifiedImport.importPath !== "@ravenhill/content-core";
-}
-
-function isForbiddenSiteCoreSubpath(classifiedImport) {
-    return classifiedImport.packageName === "@ravenhill/site-core"
-        && classifiedImport.importPath !== "@ravenhill/site-core";
+/**
+ * Finds a root-only workspace package whose subpath was imported directly, if any.
+ *
+ * Data-driven replacement for a per-package "isForbiddenXSubpath" function: adding a new reusable package to
+ * `rootOnlyWorkspacePackages` extends this check without touching the evaluator.
+ */
+function forbiddenWorkspacePackageSubpath(classifiedImport, registry) {
+    return registry.find((entry) =>
+        classifiedImport.packageName === entry.packageName && classifiedImport.importPath !== entry.packageName
+    );
 }
 
 function toViolation(importRecord, classifiedSource, classifiedImport, rule, reason) {
@@ -117,30 +135,24 @@ export function evaluateBoundaryRules(
         );
     }
 
-    if (isForbiddenContentCoreSubpath(classifiedImport)) {
+    if (isPackageNotAllowed(rule, classifiedImport)) {
         return toViolation(
             importRecord,
             classifiedSource,
             classifiedImport,
-            {
-                id: "content-core-root-import",
-                message: "@ravenhill/content-core must be consumed through its root entry point.",
-                suggestion: "Import from @ravenhill/content-core instead of a package subpath.",
-            },
-            "forbidden-package-subpath",
+            rule,
+            "package-not-allowed",
         );
     }
 
-    if (isForbiddenSiteCoreSubpath(classifiedImport)) {
+    const workspaceSubpathEntry = forbiddenWorkspacePackageSubpath(classifiedImport, rootOnlyWorkspacePackages);
+
+    if (workspaceSubpathEntry) {
         return toViolation(
             importRecord,
             classifiedSource,
             classifiedImport,
-            {
-                id: "site-core-root-import",
-                message: "@ravenhill/site-core must be consumed through its root entry point.",
-                suggestion: "Import from @ravenhill/site-core instead of a package subpath.",
-            },
+            workspaceSubpathEntry,
             "forbidden-package-subpath",
         );
     }

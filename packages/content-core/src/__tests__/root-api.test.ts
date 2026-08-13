@@ -19,6 +19,13 @@ import {
     resolveLessonDateDisplay,
 } from "@ravenhill/content-core";
 import { describe, expect, test } from "vitest";
+import packageManifest from "../../package.json" with { type: "json" };
+
+describe("content-core package manifest", () => {
+    test("declares exactly the root export", () => {
+        expect(Object.keys(packageManifest.exports)).toEqual(["."]);
+    });
+});
 
 describe("content-core root API values", () => {
     test("exposes package identity values", () => {

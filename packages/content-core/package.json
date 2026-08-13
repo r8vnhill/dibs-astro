@@ -20,12 +20,14 @@
     "sideEffects": false,
     "scripts": {
         "build": "tsup",
-        "check": "pnpm run build && tsc --noEmit && publint --strict && pnpm run pack:check && pnpm run consumer:check",
+        "check": "pnpm run build && tsc --noEmit && pnpm run check:ts6 && publint --strict && pnpm run pack:check && pnpm run consumer:check",
+        "check:ts6": "tsc6 --noEmit",
         "consumer:check": "node scripts/validate-packed-consumer.mjs",
         "pack:check": "node scripts/assert-pack-files.mjs --pack",
         "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"
     },
     "devDependencies": {
+        "@typescript/typescript6": "^6.0.2",
         "publint": "^0.3.19",
         "tsup": "^8.5.1",
         "typescript": "^5.9.2"

@@ -22,6 +22,7 @@ Current publish target:
   `LessonMetadataServiceContract`
 - Branded lesson metadata record values for trusted repository data
 - Explicit metadata lookup results that distinguish `found`, `missing`, and `invalid`
+- A minimal, host-agnostic curriculum data contract: `CurriculumConcept`, `CurriculumFacets`, and `CurriculumUnit`
 - Root-only ESM package output with external consumer validation
 
 ## Installation
@@ -141,6 +142,10 @@ files, tests, local build config, and agent guidance are excluded from the packe
   service.
 - Lesson metadata: branded metadata records, parser helpers, explicit result contracts, date/path helpers, repository
   contracts, DTOs, and the metadata service.
+- Curriculum: `CurriculumConcept` (a minimal reusable concept identity), `CurriculumFacets` (a generic
+  dimension-to-tags mechanism with no built-in vocabulary), and `CurriculumUnit<Metadata>` (a coherent treatment
+  grouping concepts and facets, with optional, opaque host-owned metadata). This is a data contract only — no
+  relationships, traversal, validation, or concrete facet/language vocabulary. Those remain host policy.
 - Package identity constants for workspace consumption checks.
 
 Consumers should use service-oriented names from the package root:

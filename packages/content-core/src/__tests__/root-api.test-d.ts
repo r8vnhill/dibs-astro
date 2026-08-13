@@ -1,5 +1,8 @@
 import type {
     AbsoluteUrl,
+    CurriculumConcept,
+    CurriculumFacets,
+    CurriculumUnit,
     GitCommitHash,
     IsoShortDate,
     LessonMetadataDto,
@@ -63,4 +66,15 @@ test("exposes stabilized type contracts from the package root", () => {
     expectTypeOf<GitCommitHash>().toMatchTypeOf<string>();
     expectTypeOf<IsoShortDate>().toMatchTypeOf<string>();
     expectTypeOf<LessonSourceFile>().toMatchTypeOf<string>();
+
+    assertType<CurriculumConcept>({ id: "abstraction", title: "Abstraction" });
+
+    assertType<CurriculumUnit>({
+        id: "data-abstraction",
+        title: "Data abstraction",
+        conceptIds: ["abstraction"],
+        facets: { level: ["advanced"] },
+    });
+
+    expectTypeOf<CurriculumFacets>().toMatchTypeOf<Readonly<Record<string, readonly string[]>>>();
 });

@@ -22,6 +22,19 @@ function ruleForForbiddenPackages(forbiddenPackages) {
     }];
 }
 
+function ruleForAllowedPackages(allowedPackages) {
+    return [{
+        id: "test-allowlisted-package-boundary",
+        source: "domain",
+        allowedTargets: ["domain"],
+        forbiddenTargets: [],
+        forbiddenPackages: [],
+        allowedPackages,
+        message: "Test allowlisted package boundary.",
+        suggestion: "Use an allowlisted dependency.",
+    }];
+}
+
 describe("evaluateBoundaryRules", () => {
     describe("source classification", () => {
         test("allows unknown source paths", () => {
@@ -267,6 +280,72 @@ describe("evaluateBoundaryRules", () => {
             );
 
             expect(result.status).toBe("allowed");
+        });
+    });
+
+    describe("package allowlist", () => {
+        test("allows unknown packages when no allowlist is declared", () => {
+            const result = evaluateBoundaryRules(
+                "src/domain/model.ts",
+                importRecord("left-pad"),
+                undefined,
+                ruleForForbiddenPackages([]),
+            );
+
+            expect(result.status).toBe("allowed");
+        });
+
+        test("rejects a bare package that is not in a declared allowlist, even an empty one", () => {
+            const result = evaluateBoundaryRules(
+                "src/domain/model.ts",
+                importRecord("left-pad"),
+                undefined,
+                ruleForAllowedPackages([]),
+            );
+
+            expect(result.status).toBe("violation");
+            expect(result.violation).toMatchObject({
+                ruleId: "test-allowlisted-package-boundary",
+                packageName: "left-pad",
+                reason: "package-not-allowed",
+            });
+        });
+
+        test("allows a bare package that is in a declared allowlist", () => {
+            const result = evaluateBoundaryRules(
+                "src/domain/model.ts",
+                importRecord("vitest"),
+                undefined,
+                ruleForAllowedPackages(["vitest"]),
+            );
+
+            expect(result.status).toBe("allowed");
+        });
+
+        test("does not apply the allowlist to resolved (non-package) imports", () => {
+            const result = evaluateBoundaryRules(
+                "src/domain/model.ts",
+                importRecord("$domain/value"),
+                resolvedPath("src/domain/value.ts"),
+                ruleForAllowedPackages([]),
+            );
+
+            expect(result.status).toBe("allowed");
+        });
+
+        test("checks the allowlist after the forbidden-package denylist", () => {
+            const rule = ruleForAllowedPackages(["react"]);
+            rule[0].forbiddenPackages = ["react"];
+
+            const result = evaluateBoundaryRules(
+                "src/domain/model.ts",
+                importRecord("react"),
+                undefined,
+                rule,
+            );
+
+            expect(result.status).toBe("violation");
+            expect(result.violation.reason).toBe("forbidden-package");
         });
     });
 

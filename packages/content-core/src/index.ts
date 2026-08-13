@@ -3,11 +3,12 @@
  *
  * Public API for `@ravenhill/content-core`.
  *
- * This package provides host-agnostic content services for learning platforms, documentation sites, and course 
- * websites. It focuses on two reusable content concerns:
+ * This package provides host-agnostic content services for learning platforms, documentation sites, and course
+ * websites. It focuses on three reusable content concerns:
  *
  * - lesson navigation: canonical hrefs, adjacency, trails, sequencing, and navigation lookup;
- * - lesson metadata: authorship, provenance, dates, history, and validated metadata records.
+ * - lesson metadata: authorship, provenance, dates, history, and validated metadata records;
+ * - curriculum: a minimal, host-agnostic data contract for concepts, facets, and units.
  *
  * The package does not depend on Astro, generated JSON files, CMS APIs, UI frameworks, or host-specific routing. Host 
  * applications provide data through repository contracts, while this package provides pure value objects, service
@@ -123,3 +124,17 @@ export type {
     LessonSourceFile,
     NonEmptyText,
 } from "./lesson-metadata";
+
+/**
+ * Curriculum public API.
+ *
+ * This group exposes the smallest coherent, host-agnostic curriculum data contract:
+ *
+ * - {@link CurriculumConcept} is a minimal reusable concept identity a unit can reference;
+ * - {@link CurriculumFacets} is a generic dimension-to-tags mechanism with no built-in vocabulary;
+ * - {@link CurriculumUnit} groups concepts and facets with optional, opaque host-owned metadata.
+ *
+ * This is a data contract only. It does not model relationships, traversal, validation, or any concrete facet or
+ * language vocabulary; those remain host policy.
+ */
+export type { CurriculumConcept, CurriculumFacets, CurriculumUnit } from "./curriculum";

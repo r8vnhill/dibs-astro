@@ -6,6 +6,7 @@ import {
     allowedExceptions,
     boundaryRules,
     initialBoundaryRules,
+    rootOnlyWorkspacePackages,
 } from "../../lib/layer-boundary/rules.mjs";
 
 const expectedRuleOrder = [
@@ -514,6 +515,25 @@ describe("Cycle 2 rule matrix", () => {
         expect(rule.forbiddenPackages).toEqual(["astro", "react", "react-dom", "zod"]);
     });
 
+    test.each([
+        "content-core-boundary",
+        "site-core-boundary",
+    ])("%s declares a package allowlist rather than relying on the denylist alone", (id) => {
+        const rule = ruleById(id);
+
+        expect(rule.allowedPackages).toEqual(expect.arrayContaining(["vitest", "fast-check"]));
+    });
+
+    test.each([
+        "domain-boundary",
+        "application-boundary",
+        "infrastructure-boundary",
+        "presentation-adapter-boundary",
+        "ui-boundary",
+    ])("%s leaves allowedPackages undefined, preserving denylist-only behavior", (id) => {
+        expect(ruleById(id).allowedPackages).toBeUndefined();
+    });
+
     test("UI depends on presentation-facing targets and forbids inner implementation layers", () => {
         const uiRule = ruleById("ui-boundary");
 
@@ -802,6 +822,46 @@ describe("Cycle 2 exact exceptions", () => {
         );
 
         expect(violations).toEqual([]);
+    });
+});
+
+describe("rootOnlyWorkspacePackages", () => {
+    test("is a data-driven registry covering the reusable workspace packages", () => {
+        expect(rootOnlyWorkspacePackages.map((entry) => entry.packageName)).toEqual([
+            "@ravenhill/content-core",
+            "@ravenhill/site-core",
+        ]);
+    });
+
+    test.each([
+        ["@ravenhill/content-core", "content-core-root-import"],
+        ["@ravenhill/site-core", "site-core-root-import"],
+    ])("rejects a %s subpath import from any source layer", (packageName, expectedRuleId) => {
+        const result = evaluateBoundaryRules(
+            "src/presentation/adapters/navigation-bridge.ts",
+            importRecord(`${packageName}/internal`),
+            undefined,
+        );
+
+        expect(result.status).toBe("violation");
+        expect(result.violation).toMatchObject({
+            ruleId: expectedRuleId,
+            packageName,
+            reason: "forbidden-package-subpath",
+        });
+    });
+
+    test.each([
+        "@ravenhill/content-core",
+        "@ravenhill/site-core",
+    ])("allows importing %s through its root entry point", (packageName) => {
+        const result = evaluateBoundaryRules(
+            "src/presentation/adapters/navigation-bridge.ts",
+            importRecord(packageName),
+            undefined,
+        );
+
+        expect(result.status).toBe("allowed");
     });
 });
 

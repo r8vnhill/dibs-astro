@@ -9,3 +9,8 @@ test("does not expose lesson-metadata as a public subpath", () => {
     // @ts-expect-error Consumers must import from @ravenhill/content-core.
     expectTypeOf<typeof import("@ravenhill/content-core/lesson-metadata")>().not.toBeAny();
 });
+
+test("does not expose curriculum as a public subpath", () => {
+    // @ts-expect-error Consumers must import from @ravenhill/content-core.
+    expectTypeOf<typeof import("@ravenhill/content-core/curriculum")>().not.toBeAny();
+});
