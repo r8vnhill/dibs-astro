@@ -1,28 +1,47 @@
 ---
-/**
- * ReadingTime.astro
- * -----------------
- * Astro wrapper that hydrates the React island on the client.
- * Also wraps the widget with ExcludeFromReadingTime so it doesn't affect the count.
- */
-
+import * as icons from "$icons";
 import { m } from "~/generated/i18n/messages";
 import ExcludeFromReadingTime from "./ExcludeFromReadingTime.astro";
-import ReadingTimeIsland, { type ReadingTimeProps } from "./ReadingTime.tsx";
 
-export interface Props extends ReadingTimeProps {}
+type Props = Readonly<{
+    minutes: number;
+    className?: string;
+    ariaLive?: "off" | "polite" | "assertive";
+    label?: string;
+}>;
 
-const props = Astro.props as Props;
-const localizedProps = {
-    label: props.label ?? m.reading_time_label(),
-    minuteLabel: m.reading_time_minutes,
-    helpText: m.reading_time_help(),
-};
+const {
+    minutes,
+    className = "",
+    ariaLive = "polite",
+    label = m.reading_time_label(),
+} = Astro.props as Props;
+
+const minuteLabel = m.reading_time_minutes({ count: minutes });
 ---
 
 <ExcludeFromReadingTime>
-    <ReadingTimeIsland
-        client:load {...props}
-        {...localizedProps}
-    />
+    <div
+        data-reading-time
+        class:list={[
+            "not-prose",
+            "rounded-md",
+            "ring-1",
+            "ring-inset",
+            "ring-white/10",
+            "bg-blue-500/5",
+            "px-4",
+            "py-3",
+            "text-[var(--rt-fg,inherit)]",
+            "shadow-sm",
+            className,
+        ]}
+        aria-live={ariaLive}
+    >
+        <p class="mb-1 flex items-center gap-2 font-medium">
+            <span class="text-primary"><icons.Clock class="h-5 w-5" aria-hidden="true" /></span>
+            {label}: {minuteLabel}
+        </p>
+        <p class="m-0 text-sm opacity-80">{m.reading_time_help()}</p>
+    </div>
 </ExcludeFromReadingTime>

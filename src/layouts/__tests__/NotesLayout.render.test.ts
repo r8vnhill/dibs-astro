@@ -374,6 +374,11 @@ describe("NotesLayout.astro render", () => {
 
             expect(title.textContent).toContain("Introducción a PowerShell");
             expect(article.contains(readingTimeRegion)).toBe(true);
+            expect(readingTimeRegion.querySelector("[data-reading-time]")).not.toBeNull();
+            expect(readingTimeRegion.querySelector("[data-reading-time]")?.textContent).toContain(
+                "Dedicación recomendada",
+            );
+            expect(readingTimeRegion.closest("astro-island")).toBeNull();
             expect(article.contains(metadata)).toBe(true);
             expect(
                 Array.from(article.children).indexOf(readingTimeRegion),

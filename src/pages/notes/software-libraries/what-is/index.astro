@@ -90,24 +90,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     INCONCLUSIVE,
                 }
 
-                internal fun analyzeHost(id: HostId): Detection = TODO()
+                private fun analyzeHost(id: HostId): Detection = TODO()
 
                 fun detectParasite(id: HostId): Detection =
                     analyzeHost(id)
             `}
         >
-            <span slot="title">Implementación interna → API → código consumidor</span>
+            <span slot="title">
+                Implementación interna <icons.ArrowRight
+                    class="mx-1 inline-block size-4 align-middle" aria-hidden="true"
+                /> API <icons.ArrowRight class="mx-1 inline-block size-4 align-middle" aria-hidden="true" /> código
+                consumidor
+            </span>
             <span slot="footer">
-                El código consumidor puede llamar a <KotlinInline code="detectParasite" />, pero no necesita conocer
-                <KotlinInline code="analyzeHost" />. Esa separación establece una frontera entre lo que ofrecemos y las
-                decisiones internas con las que lo implementamos.
+                El código consumidor puede llamar a <KotlinInline code="detectParasite()" />, pero no necesita conocer
+                <KotlinInline code="analyzeHost()" />. Esa separación establece una frontera entre lo que ofrecemos y
+                las decisiones internas con las que lo implementamos.
             </span>
         </KotlinBlock>
 
         <P>
-            Este es un modelo de diseño, no una definición matemática. Una API por sí sola no constituye una biblioteca,
-            y una implementación por sí sola no explica cómo otro programa puede integrarla. Además, no toda API
-            pertenece a una biblioteca: también exponen APIs los sistemas operativos, frameworks y servicios.
+            Una API por sí sola no constituye una biblioteca, y una implementación por sí sola no explica cómo otro
+            programa puede integrarla. Además, no toda API pertenece a una biblioteca: también exponen APIs los sistemas
+            operativos, frameworks y servicios.
         </P>
     </NotesSection>
 
@@ -220,7 +225,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             Un contrato puede incluir el significado de los resultados, precondiciones, efectos, cambios de estado,
             comportamiento ante errores, relaciones entre operaciones, garantías de identidad y, cuando se prometen
-            explícitamente, propiedades como rendimiento o concurrencia.
+            explícitamente, propiedades como rendimiento o concurrencia. Diseñar una superficie pequeña y coherente
+            ayuda a que esas garantías sean comprensibles y sostenibles, una recomendación central de
+            <ReferenceCitation
+                referenceId="bloch-how-to-design-good-api-2006" readingsPath={libraryWhatIsReadings.readingsPath}
+            >Bloch (2006)</ReferenceCitation>.
         </P>
 
         <Important headingLevel="h3">
@@ -337,7 +346,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
 
         <Important headingLevel="h3">
-            <span slot="title">Exponer → depender → mantener</span>
+            <span slot="title">
+                Exponer
+                <icons.ArrowRight class="mx-1 inline-block size-4 align-middle" aria-hidden="true" />
+                depender
+                <icons.ArrowRight class="mx-1 inline-block size-4 align-middle" aria-hidden="true" />
+                mantener
+            </span>
 
             <P>
                 Una decisión expuesta puede transformarse en una dependencia externa. Por eso una API crea
@@ -363,7 +378,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 readingsPath={libraryWhatIsReadings.readingsPath}
             >Kotlin</ReferenceCitation>). Más adelante distinguiremos distintas formas de compatibilidad —por ejemplo,
             compatibilidad de código fuente, binaria y de comportamiento— y estudiaremos técnicas para evolucionar APIs
-            de manera controlada.
+            de manera controlada. Las guías de compatibilidad de Kotlin muestran por qué incluso cambios aparentemente
+            pequeños deben evaluarse desde la perspectiva del código ya compilado y de quienes lo consumen
+            (<ReferenceCitation
+                referenceId="kotlin-backward-compatibility-guidelines" readingsPath={libraryWhatIsReadings.readingsPath}
+            >compatibilidad hacia atrás</ReferenceCitation>).
         </P>
     </NotesSection>
 

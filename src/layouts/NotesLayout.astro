@@ -61,6 +61,11 @@ import type { RepoRef } from "@ravenhill/site-core";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
 import LessonToc from "~/components/notes/LessonToc.astro";
+import {
+    DEFAULT_TIME_MULTIPLIER,
+    estimateReadingTime,
+    extractReadableText,
+} from "~/components/reading-time/reading-time";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import LessonDocumentLayout from "~/layouts/LessonDocumentLayout.astro";
@@ -185,6 +190,14 @@ const { normalizedNext } = normalizeNavigation(
     effectiveNext,
     Array.isArray(effectivePrevious) ? effectivePrevious[0] : effectivePrevious,
 );
+
+const hasAbstract = Astro.slots.has("abstract");
+const abstractHtml = hasAbstract ? await Astro.slots.render("abstract") : "";
+const bodyHtml = await Astro.slots.render("default");
+const readingTime = estimateReadingTime(
+    extractReadableText(`${title}\n${abstractHtml}\n${bodyHtml}`),
+    { timeMultiplier: timeMultiplier ?? DEFAULT_TIME_MULTIPLIER },
+);
 ---
 
 <BaseLayout
@@ -214,16 +227,16 @@ const { normalizedNext } = normalizeNavigation(
                 </div>
             </details>
             {
-                Astro.slots.has("abstract") ? (
+                hasAbstract ? (
                     <LessonDocumentLayout {...documentProps}>
                         <div
                             slot="after-title" class="contents"
                             data-export-hidden="true"
                         >
-                            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+                            <ReadingTime minutes={readingTime.minutes} />
                         </div>
-                        <slot name="abstract" slot="abstract" />
-                        <slot />
+                        <Fragment slot="abstract" set:html={abstractHtml} />
+                        <Fragment set:html={bodyHtml} />
                     </LessonDocumentLayout>
                 ) : (
                     <LessonDocumentLayout {...documentProps}>
@@ -231,9 +244,9 @@ const { normalizedNext } = normalizeNavigation(
                             slot="after-title" class="contents"
                             data-export-hidden="true"
                         >
-                            <ReadingTime multiplier={timeMultiplier ?? 1.5} />
+                            <ReadingTime minutes={readingTime.minutes} />
                         </div>
-                        <slot />
+                        <Fragment set:html={bodyHtml} />
                     </LessonDocumentLayout>
                 )
             }
