@@ -1,7 +1,11 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import Heading from "~/components/semantics/Heading.astro";
+import type { AstroComponentFactory } from "~/types/astro-component";
+import type { HeadingLevel } from "~/utils";
 
 type AsTag = "section" | "div" | "article";
+type TagName = Exclude<HeadingLevel, "h1">;
 
 type Props = {
     /** Element to render; defaults to 'section' for better semantics */
@@ -10,6 +14,12 @@ type Props = {
     ariaLabel?: string;
     /** Apply a conventional container layout (max-w & padding) */
     container?: boolean;
+    /** Plain-text heading. Ignored when the `heading` slot is provided. */
+    title?: string;
+    /** Optional icon forwarded to the internally rendered heading. */
+    Icon?: AstroComponentFactory | null;
+    /** Heading tag rendered for `title`. Defaults to 'h2', the ordinary section level. */
+    headingLevel?: TagName;
 } & HTMLAttributes<"section">;
 
 const {
@@ -17,17 +27,22 @@ const {
     id,
     ariaLabel,
     container = false,
+    title,
+    Icon = null,
+    headingLevel = "h2",
     class: className,
     ...rest
 } = Astro.props as Props;
 
 const resolvedId = id ?? `notes-section-${crypto.randomUUID()}`;
 const headingId = `${resolvedId}-heading`;
+const hasHeadingSlot = Astro.slots.has("heading");
 
-/** We can’t “detect” if the heading slot is filled ahead of time.
- * Convention: when using the heading slot, set its root element id={headingId}.
+/** The `heading` slot is the escape hatch for rich headings. We can't "detect" if it's filled ahead
+ * of time, so by convention its root element must set id={headingId} for aria-labelledby to resolve.
  * Example:
  *   <Heading id={headingId} ...>Title</Heading>
+ * The `title` prop path below sets this id automatically.
  */
 const Tag = as;
 ---
@@ -41,6 +56,16 @@ const Tag = as;
     ]}
     {...rest}
 >
-    <slot name="heading" />
+    {hasHeadingSlot && <slot name="heading" />}
+    {
+        !hasHeadingSlot && title && (
+            <Heading
+                id={headingId} {headingLevel}
+                {Icon}
+            >
+                {title}
+            </Heading>
+        )
+    }
     <slot />
 </Tag>

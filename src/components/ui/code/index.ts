@@ -16,20 +16,16 @@ export { default as CInline } from "./c/CInline.astro";
 export { default as CodeBlock } from "./CodeBlock.astro";
 export { default as CsvBlock } from "./csv/CsvBlock.astro";
 export { default as InlineCode } from "./InlineCode.astro";
-export {
-    default as InlineJavaScript,
-    default as JavaScriptInline,
-} from "./js/InlineJavaScript.astro";
+export { default as InlineJavaScript, default as JavaScriptInline } from "./js/InlineJavaScript.astro";
 export { default as JavaScriptBlock } from "./js/JavaScriptBlock.astro";
 export { default as JsonBlock } from "./json/JsonBlock.astro";
-export { default as KotlinInline } from "./kt/KotlinInline.astro";
 export { default as KotlinBlock } from "./kt/KotlinBlock.astro";
+export { default as KotlinInline } from "./kt/KotlinInline.astro";
 export { default as MarkdownInline } from "./md/MarkdownInline.astro";
+export { default as NimBlock } from "./nim/NimBlock.astro";
+export { default as NimInline } from "./nim/NimInline.astro";
 export { default as NushellInline } from "./nushell/NushellInline.astro";
-export {
-    default as InlinePowerShell,
-    default as PowerShellInline,
-} from "./ps1/InlinePowerShell.astro";
+export { default as InlinePowerShell, default as PowerShellInline } from "./ps1/InlinePowerShell.astro";
 export { default as PowerShellBlock } from "./ps1/PowerShellBlock.astro";
 export { default as PowerShellTerminal } from "./ps1/PowerShellTerminal.astro";
 export { default as InlinePython, default as PythonInline } from "./py/InlinePython.astro";

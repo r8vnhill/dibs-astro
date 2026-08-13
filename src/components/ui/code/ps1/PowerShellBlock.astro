@@ -9,12 +9,13 @@
 import * as Icons from "$icons";
 import { CodeBlock } from "~/components/ui/code";
 
-const { code, class: className = "" } = Astro.props;
+const { code, title, class: className = "" } = Astro.props;
 ---
 
 <CodeBlock
     lang="powershell" icon={Icons.Powershell}
-    {code} class={className}
+    {code} {title}
+    class={className}
 >
     <Fragment slot="title">
         <slot name="title" />

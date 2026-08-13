@@ -4,14 +4,15 @@ import CodeBlock from "../CodeBlock.astro";
 
 type Props = {
     code: string;
+    title?: string;
 };
 
-const { code }: Props = Astro.props;
+const { code, title }: Props = Astro.props;
 ---
 
 <CodeBlock
     lang="xml" icon={icons.Xml}
-    {code}
+    {code} {title}
 >
     <Fragment slot="title">
         <slot name="title" />

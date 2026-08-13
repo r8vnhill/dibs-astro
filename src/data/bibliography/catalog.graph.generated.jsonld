@@ -516,6 +516,12 @@
       "name": "Morgan Kaufmann"
     },
     {
+      "@id": "org:nim-language",
+      "@type": "Organization",
+      "name": "Nim Programming Language",
+      "url": "https://nim-lang.org/"
+    },
+    {
       "@id": "org:nodejs",
       "@type": "Organization",
       "name": "Node.js",
@@ -1704,6 +1710,15 @@
       },
       "isPartOf": {
         "@id": "work:communications-of-the-acm"
+      }
+    },
+    {
+      "@id": "ref:nim-manual-effect-system",
+      "@type": "WebPage",
+      "name": "Effect system | Nim Manual",
+      "url": "https://nim-lang.org/docs/manual.html#effect-system",
+      "publisher": {
+        "@id": "org:nim-language"
       }
     },
     {
@@ -3035,6 +3050,19 @@
       },
       "dibs:tags": [
         "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-nim-manual-effect-system-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nim-manual-effect-system"
+      },
+      "dibs:tags": [
+        "recommended"
       ]
     },
     {

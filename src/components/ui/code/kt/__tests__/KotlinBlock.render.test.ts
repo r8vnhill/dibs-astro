@@ -5,6 +5,7 @@ import KotlinBlock from "../KotlinBlock.astro";
 
 type KotlinBlockProps = {
     code: string;
+    title?: string;
 };
 
 let renderKotlinBlock: Awaited<ReturnType<typeof createAstroRenderer<KotlinBlockProps>>>;
@@ -50,5 +51,25 @@ describe("KotlinBlock.astro render", () => {
         expect(document.body.textContent).toContain("Solo titulo");
         expect(document.body.textContent).not.toContain("Contexto adicional");
         expect(document.querySelector("pre")).not.toBeNull();
+    });
+
+    test("renders the title prop when no title slot is provided", async () => {
+        const html = await renderKotlinBlock({ code: "fun main() = println(\"hi\")", title: "Ejemplo por prop" });
+
+        const document = parseHtml(html);
+
+        expect(document.body.textContent).toContain("Ejemplo por prop");
+    });
+
+    test("prefers a rich title slot over the title prop when both are given", async () => {
+        const html = await renderKotlinBlock(
+            { code: "fun main() = println(\"hi\")", title: "Ignorado" },
+            { slots: { title: "<span>Slot con <em>énfasis</em></span>" } },
+        );
+
+        const document = parseHtml(html);
+
+        expect(document.body.innerHTML).toContain("<em>énfasis</em>");
+        expect(document.body.textContent).not.toContain("Ignorado");
     });
 });

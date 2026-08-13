@@ -128,6 +128,11 @@ org:kotlin-help
   schema:name "Kotlin Help" ;
   schema:url "https://kotlinlang.org/docs/" .
 
+org:nim-language
+  a schema:Organization ;
+  schema:name "Nim Programming Language" ;
+  schema:url "https://nim-lang.org/" .
+
 org:gradle-docs
   a schema:Organization ;
   schema:name "Gradle Documentation" ;

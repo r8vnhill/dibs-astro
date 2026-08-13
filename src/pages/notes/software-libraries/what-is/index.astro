@@ -1,15 +1,17 @@
 ---
 import * as icons from "$icons";
-import { Heading, P } from "~/components/semantics";
-import { Important, Tip, Warning } from "~/components/ui/callouts";
-import { KotlinBlock, KotlinInline } from "~/components/ui/code";
+import { P } from "~/components/semantics";
+import { Important, More, Question, Tip, Warning } from "~/components/ui/callouts";
+import { KotlinBlock, KotlinInline, NimBlock, NimInline } from "~/components/ui/code";
 import { B, I } from "~/components/ui/font";
-import { ListItem } from "~/components/ui/list";
+import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
 import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+
+const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as const;
 ---
 
 <NotesLayout
@@ -23,9 +25,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             puede observar el código que la utiliza.
         </P>
 
-        <Important headingLevel="h3">
-            <span slot="title">Un modelo para esta lección</span>
-
+        <Important title="Un modelo para esta lección">
             <P>
                 Pensaremos una biblioteca como una <B>implementación</B> que ofrece una <B>API</B> a <B>código
                     consumidor</B>. La API establece una frontera: hacia afuera quedan las formas de interacción y las
@@ -40,14 +40,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </Fragment>
 
-    <NotesSection id="h2-why">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Question}
-        >
-            ¿Por qué usar bibliotecas?
-        </Heading>
-
+    <NotesSection
+        id="h2-why" title="¿Por qué usar bibliotecas?"
+        Icon={icons.Question}
+    >
         <P>
             Muchos programas necesitan resolver problemas que ya han sido resueltos antes: procesar formatos,
             comunicarse mediante protocolos, ejecutar algoritmos, validar datos o interactuar con un sistema operativo.
@@ -55,9 +51,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             implementación, mantenimiento y pruebas en un componente que múltiples aplicaciones pueden integrar.
         </P>
 
-        <Tip headingLevel="h3">
-            <span slot="title">¿Construir o adoptar?</span>
-
+        <Tip title="¿Construir o adoptar?">
             <P>
                 Si el problema es común, su solución está bien entendida y existe una biblioteca mantenida que satisface
                 los requisitos, normalmente conviene adoptarla. Construir una propia tiene más sentido cuando el
@@ -67,14 +61,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Tip>
     </NotesSection>
 
-    <NotesSection id="h2-boundary">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.ArrowsLeftRight}
-        >
-            Una biblioteca tiene una frontera
-        </Heading>
-
+    <NotesSection
+        id="h2-boundary" title="Una biblioteca tiene una frontera"
+        Icon={icons.ArrowsLeftRight}
+    >
         <P>
             Usaremos como ejemplo una pequeña biblioteca ficticia inspirada libremente en <I>Kiseijuu</I>, de Hitoshi
             Iwaaki. Su propósito es consultar si un huésped presenta señales compatibles con un parásito.
@@ -116,14 +106,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </NotesSection>
 
-    <NotesSection id="h2-consumer-perspective">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.UsersThree}
-        >
-            La biblioteca desde la perspectiva de quien la consume
-        </Heading>
-
+    <NotesSection
+        id="h2-consumer-perspective" title="La biblioteca desde la perspectiva de quien la consume"
+        Icon={icons.UsersThree}
+    >
         <P>
             Un <B>consumidor</B> es cualquier código situado fuera de la frontera de implementación que depende de la
             API. Puede ser una aplicación publicada, otro módulo del mismo repositorio o un proyecto interno de una
@@ -143,14 +129,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </P>
     </NotesSection>
 
-    <NotesSection id="h2-surface">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Plugs}
-        >
-            Superficie de API: ¿con qué puedo interactuar?
-        </Heading>
-
+    <NotesSection
+        id="h2-surface" title="Superficie de API: ¿con qué puedo interactuar?"
+        Icon={icons.Plugs}
+    >
         <P>
             La <B>superficie de API</B> describe los elementos expuestos mediante los cuales el código consumidor puede
             interactuar con la biblioteca. Dependiendo del lenguaje y del tipo de biblioteca, puede incluir funciones,
@@ -170,27 +152,23 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
                 fun detectParasite(id: HostId): Detection
             `}
+            title="Podemos identificar la superficie directamente en el código"
         >
-            <span slot="title">Podemos identificar la superficie directamente en el código</span>
             <span slot="footer">
                 Quien consume puede depender de <KotlinInline code="HostId" />, <KotlinInline code="Detection" />,
-                <KotlinInline code="detectParasite" />, su parámetro y su tipo de retorno. Esas decisiones forman la
+                <KotlinInline code="detectParasite()" />, su parámetro y su tipo de retorno. Esas decisiones forman la
                 <B>forma</B> de la interacción.
             </span>
         </KotlinBlock>
 
-        <Important headingLevel="h3">
-            <span slot="title">Superficie = ¿con qué puedo interactuar?</span>
-
+        <Important title="Superficie = ¿con qué puedo interactuar?">
             <P>
                 La superficie describe qué está disponible para usar. Todavía no especifica por completo qué significan
                 los resultados ni qué garantías acompañan a cada operación.
             </P>
         </Important>
 
-        <Warning headingLevel="h3">
-            <span slot="title">Accesible no siempre significa API soportada</span>
-
+        <Warning title="Accesible no siempre significa API soportada">
             <P>
                 Un elemento puede ser técnicamente accesible sin que quienes mantienen la biblioteca pretendan ofrecerlo
                 como parte estable de su API. La visibilidad del lenguaje ayuda a construir la frontera, pero la API
@@ -199,22 +177,19 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Warning>
     </NotesSection>
 
-    <NotesSection id="h2-contract">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Scroll}
-        >
-            Contrato: ¿en qué puedo confiar?
-        </Heading>
-
+    <NotesSection
+        id="h2-contract" title="Contrato: ¿en qué puedo confiar?"
+        Icon={icons.Scroll}
+    >
         <P>
             La superficie y el contrato están relacionados, pero no son lo mismo. La superficie describe los elementos
             disponibles; el <B>contrato</B> describe aquello en lo que quien consume puede confiar al utilizarlos. La
             firma de una función muestra parte de la API, pero no todas sus garantías.
         </P>
 
-        <KotlinBlock code={`fun detectParasite(id: HostId): Detection`}>
-            <span slot="title">Una firma muestra solo parte del contrato</span>
+        <KotlinBlock
+            code={`fun detectParasite(id: HostId): Detection`} title="Una firma muestra solo parte del contrato"
+        >
             <span slot="footer">
                 Todavía necesitamos saber qué significa <KotlinInline code="INCONCLUSIVE" />, si la operación realiza
                 E/S, cómo informa un fallo, si puede devolver observaciones desactualizadas y si dos llamadas
@@ -222,19 +197,50 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </span>
         </KotlinBlock>
 
+        <More headingLevel="h3" icon={icons.Code}>
+            <Fragment slot="title">Comparación con Nim: más información en la declaración</Fragment>
+
+            <P>
+                En Kotlin, la firma anterior expresa principalmente los tipos de entrada y salida. Otros lenguajes
+                pueden incorporar más información verificable a la declaración. Nim, por ejemplo, posee un sistema de
+                efectos y pragmas con los que se pueden restringir propiedades adicionales de un procedimiento.
+            </P>
+
+            <KotlinBlock code={`fun classifyHost(id: HostId): Detection`} title="Kotlin" />
+
+            <NimBlock
+                code={`
+                    proc classifyHost(id: HostId): Detection
+                        {.raises: [], noSideEffect.}
+                `}
+                title="Nim"
+            />
+
+            <P>
+                <NimInline code="raises: []" /> declara que el procedimiento no puede propagar excepciones rastreadas
+                por el sistema de efectos de Nim, mientras que <NimInline code="noSideEffect" /> expresa una restricción
+                sobre efectos laterales que el compilador debe poder verificar. La declaración puede trasladar una parte
+                mayor del contrato a información comprobable, pero no expresa todo aquello en lo que puede depender
+                quien consume la API: por ejemplo, el significado de <NimInline code="Detection" />, la frescura de una
+                observación o las relaciones esperadas entre llamadas. Nim también permite modelar efectos definidos por
+                la aplicación mediante <NimInline code="tags" />; ese mecanismo queda fuera del alcance de esta
+                introducción (<ReferenceCitation {...citationContext} referenceId="nim-manual-effect-system">
+                    Nim Manual
+                </ReferenceCitation>).
+            </P>
+        </More>
+
         <P>
             Un contrato puede incluir el significado de los resultados, precondiciones, efectos, cambios de estado,
             comportamiento ante errores, relaciones entre operaciones, garantías de identidad y, cuando se prometen
             explícitamente, propiedades como rendimiento o concurrencia. Diseñar una superficie pequeña y coherente
             ayuda a que esas garantías sean comprensibles y sostenibles, una recomendación central de
-            <ReferenceCitation
-                referenceId="bloch-how-to-design-good-api-2006" readingsPath={libraryWhatIsReadings.readingsPath}
-            >Bloch (2006)</ReferenceCitation>.
+            <ReferenceCitation {...citationContext} referenceId="bloch-how-to-design-good-api-2006">
+                Bloch (2006)
+            </ReferenceCitation>.
         </P>
 
-        <Important headingLevel="h3">
-            <span slot="title">Contrato = ¿en qué puedo confiar?</span>
-
+        <Important title="Contrato = ¿en qué puedo confiar?">
             <P>
                 La superficie determina <I>cómo</I> interactuamos con la biblioteca. El contrato determina
                 <I>qué podemos esperar</I> de esa interacción.
@@ -242,26 +248,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Important>
     </NotesSection>
 
-    <NotesSection id="h2-encapsulation">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Lock}
-        >
-            Encapsulación: controlar de qué puede depender el exterior
-        </Heading>
-
+    <NotesSection
+        id="h2-encapsulation" title="Encapsulación: controlar de qué puede depender el exterior"
+        Icon={icons.Lock}
+    >
         <P>
             Encapsular no significa simplemente marcar elementos como privados. Significa <B>controlar aquello de lo que
                 el código externo puede depender</B>. El ocultamiento de información busca mantener detrás de la
             frontera las decisiones de diseño que probablemente cambien, como explica <ReferenceCitation
-                referenceId="parnas-decomposing-systems-1972" readingsPath={libraryWhatIsReadings.readingsPath}
+                {...citationContext} referenceId="parnas-decomposing-systems-1972"
             >Parnas (1972)</ReferenceCitation>. Una decisión correctamente encapsulada puede cambiar sin requerir
             cambios en quienes consumen la biblioteca.
         </P>
 
         <KotlinBlock
             code={`
-                internal fun analyzeHost(id: HostId): Detection {
+                private fun analyzeHost(id: HostId): Detection {
                     val cached = cache[id]
                     if (cached != null) return cached
 
@@ -270,8 +272,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                         .classify()
                 }
             `}
+            title="La implementación puede evolucionar detrás de la frontera"
         >
-            <span slot="title">La implementación puede evolucionar detrás de la frontera</span>
             <span slot="footer">
                 Podemos cambiar el almacenamiento, introducir una caché o sustituir el algoritmo de clasificación sin
                 modificar <KotlinInline code="detectParasite" />. Eso es seguro solo si también preservamos las
@@ -283,74 +285,71 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Esta libertad de cambio es una de las razones centrales para ocultar decisiones internas. Los módulos que
             esconden complejidad detrás de interfaces pequeñas son una idea central de los módulos profundos descritos
             por
-            <ReferenceCitation
-                referenceId="ousterhout-philosophy-software-design-2021"
-                readingsPath={libraryWhatIsReadings.readingsPath}
-            >
+            <ReferenceCitation {...citationContext} referenceId="ousterhout-philosophy-software-design-2021">
                 Ousterhout (2021)
             </ReferenceCitation>. Una decisión que atraviesa la frontera pasa a formar parte, explícita o
             implícitamente, de aquello que debemos considerar al evolucionar la biblioteca.
         </P>
-    </NotesSection>
 
-    <NotesSection id="h2-observable-change">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Eye}
+        <Question
+            id="h2-observable-change" title="¿Qué cambios puede observar quien consume?"
+            headingLevel="h3"
         >
-            ¿Qué cambios puede observar quien consume?
-        </Heading>
+            <P>
+                Supongamos que mantenemos la misma operación:
+            </P>
 
-        <P>
-            Supongamos que mantenemos la misma operación:
-        </P>
-
-        <KotlinBlock code={`fun detectParasite(id: HostId): Detection`}>
-            <span slot="title">Clasifica cada cambio antes de continuar</span>
-            <span slot="footer">
-                Pregúntate si cada cambio modifica solo la implementación, cambia la superficie o altera el contrato aun
-                cuando la firma permanezca igual.
-            </span>
-        </KotlinBlock>
-
-        <P>
-            <B>1.</B> Reemplazamos una búsqueda lineal por un índice. <B>2.</B> Cambiamos la representación interna de
-            las observaciones. <B>3.</B> <KotlinInline code="INCONCLUSIVE" /> ahora también significa “falló la conexión
-            con el sensor”. <B>4.</B> Cambiamos el retorno a <KotlinInline code="Result<Detection>" />. <B>5.</B>
-            Introducimos una caché que puede devolver información de hasta cinco minutos de antigüedad.
-        </P>
-
-        <Tip headingLevel="h3">
-            <span slot="title">Una posible clasificación</span>
+            <KotlinBlock
+                code={`fun detectParasite(id: HostId): Detection`} title="Clasifica cada cambio antes de continuar"
+            />
 
             <P>
-                Los cambios 1 y 2 pueden permanecer completamente internos. El cambio 3 conserva la superficie, pero
-                cambia el significado observable y, por tanto, el contrato. El cambio 4 modifica la superficie y también
-                obliga a revisar el contrato. El cambio 5 puede conservar la firma, pero introduce una nueva garantía
-                temporal que el consumidor podría observar.
+                Pregúntate si cada cambio modifica solo la implementación, cambia la superficie o altera el contrato aun
+                cuando la firma permanezca igual.
+
+                <List>
+                    <ListItem icon={icons.NumberOne}>Reemplazamos una búsqueda lineal por un índice.</ListItem>
+                    <ListItem icon={icons.NumberTwo}
+                    >Cambiamos la representación interna de las observaciones.</ListItem>
+                    <ListItem icon={icons.NumberThree}><KotlinInline code="INCONCLUSIVE" /> ahora también significa
+                        “falló la conexión con el sensor”.</ListItem>
+                    <ListItem icon={icons.NumberFour}
+                    >Cambiamos el retorno a <KotlinInline code="Result<Detection>" />.</ListItem>
+                    <ListItem icon={icons.NumberFive}
+                    >Introducimos una caché que puede devolver información de hasta cinco minutos de
+                        antigüedad.</ListItem>
+                </List>
             </P>
-        </Tip>
+
+            <More
+                title="Una posible clasificación" headingLevel="h4"
+                id="h4-change-classification"
+            >
+                <P>
+                    Los cambios 1 y 2 pueden permanecer completamente internos. El cambio 3 conserva la superficie, pero
+                    cambia el significado observable y, por tanto, el contrato. El cambio 4 modifica la superficie y
+                    también obliga a revisar el contrato. El cambio 5 puede conservar la firma, pero introduce una nueva
+                    garantía temporal que el consumidor podría observar.
+                </P>
+            </More>
+        </Question>
     </NotesSection>
 
-    <NotesSection id="h2-stability">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.ArrowsClockwise}
-        >
-            Estabilidad: las dependencias externas crean compromisos
-        </Heading>
-
+    <NotesSection
+        id="h2-stability" title="Estabilidad: las dependencias externas crean compromisos"
+        Icon={icons.ArrowsClockwise}
+    >
         <P>
             Cuando publicamos una decisión, código externo puede empezar a utilizarla. Ese uso crea una dependencia, y
             modificar aquello de lo que otros programas dependen puede obligarlos a cambiar.
         </P>
 
-        <Important headingLevel="h3">
+        <Important>
             <span slot="title">
                 Exponer
-                <icons.ArrowRight class="mx-1 inline-block size-4 align-middle" aria-hidden="true" />
+                <icons.ArrowRight class="mx-1 inline-block size-5 align-middle" aria-hidden="true" />
                 depender
-                <icons.ArrowRight class="mx-1 inline-block size-4 align-middle" aria-hidden="true" />
+                <icons.ArrowRight class="mx-1 inline-block size-5 align-middle" aria-hidden="true" />
                 mantener
             </span>
 
@@ -361,9 +360,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Important>
 
-        <Warning headingLevel="h3">
-            <span slot="title">La firma no es la única forma de romper una API</span>
-
+        <Warning title="La firma no es la única forma de romper una API">
             <P>
                 Cambiar nombres o tipos puede romper código inmediatamente, pero también podemos romper expectativas sin
                 cambiar ninguna firma. Alterar el significado de un resultado, los efectos de una operación o una
@@ -374,14 +371,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <P>
             Las guías de quienes publican bibliotecas Kotlin conectan esta superficie con compromisos explícitos de
             compatibilidad (<ReferenceCitation
-                referenceId="kotlin-library-authors-guidelines-introduction"
-                readingsPath={libraryWhatIsReadings.readingsPath}
-            >Kotlin</ReferenceCitation>). Más adelante distinguiremos distintas formas de compatibilidad —por ejemplo,
-            compatibilidad de código fuente, binaria y de comportamiento— y estudiaremos técnicas para evolucionar APIs
-            de manera controlada. Las guías de compatibilidad de Kotlin muestran por qué incluso cambios aparentemente
-            pequeños deben evaluarse desde la perspectiva del código ya compilado y de quienes lo consumen
-            (<ReferenceCitation
-                referenceId="kotlin-backward-compatibility-guidelines" readingsPath={libraryWhatIsReadings.readingsPath}
+                {...citationContext} referenceId="kotlin-library-authors-guidelines-introduction"
+            >Kotlin</ReferenceCitation>). Las distintas formas de compatibilidad —por ejemplo, compatibilidad de código
+            fuente, binaria y de comportamiento— muestran por qué incluso cambios aparentemente pequeños deben evaluarse
+            desde la perspectiva del código ya compilado y de quienes lo consumen (<ReferenceCitation
+                {...citationContext} referenceId="kotlin-backward-compatibility-guidelines"
             >compatibilidad hacia atrás</ReferenceCitation>).
         </P>
     </NotesSection>
@@ -421,8 +415,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="closing-reflection">
             <P>
-                Si cada elemento expuesto puede convertirse en una dependencia, la siguiente pregunta es inevitable:
-                <B>¿qué deberíamos exponer y cómo deberíamos diseñarlo?</B>
+                Si cada decisión observable puede convertirse en una dependencia, diseñar una biblioteca también
+                significa <B>decidir qué queremos comprometernos a mantener.</B> Entonces, <I>¿Qué debería formar parte
+                    de nuestra API, qué garantías deberíamos ofrecer y qué decisiones conviene mantener detrás de su
+                    frontera?</I>
             </P>
         </Fragment>
     </ConclusionsLayout>

@@ -133,6 +133,15 @@ const exportContext = resolveLessonExportContext({
 
 const normalizedCode = normalizeIndentation(code);
 
+// Presence checks (Astro.slots.has()/bare property) reflect static template structure through a
+// forwarding layer, not runtime truthiness, so a wrapper's conditionally-empty forwarded slot still
+// reads as "present" here. Deciding from the actually-rendered content avoids that, mirroring
+// CalloutShell's title/slot precedence.
+const titleSlotContent = await Astro.slots.render?.("title");
+const hasTitleContent = Boolean(titleSlotContent && titleSlotContent.trim().length > 0);
+const sourceSlotContent = await Astro.slots.render?.("source");
+const hasSourceContent = Boolean(sourceSlotContent && sourceSlotContent.trim().length > 0);
+
 const commonTransformers = [
     transformerColorizedBrackets(),
     transformerColorHighlight() as unknown as ShikiTransformer,
@@ -146,22 +155,22 @@ const commonTransformers = [
 
 <div class:list={[...baseClasses, className]} data-export-role={exportContext.isPdfExport ? "code-block" : undefined}>
     {
-        (Astro.slots.title || Astro.slots.source || title || source) && (
+        (hasTitleContent || hasSourceContent || title || source) && (
             <div class:list={[...baseTitleClasses, titleClasses]}>
                 {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
                 {
-                    Astro.slots.title ? (
+                    hasTitleContent ? (
                         <div class="truncate">
                             <slot name="title" />
                         </div>
                     ) : <span class="truncate">{title}</span>
                 }
                 {
-                    (Astro.slots.source || source) && (
+                    (hasSourceContent || source) && (
                         <span
                             class:list={["ml-auto", "text-s", "font-mono", "text-primary/60", "italic", "truncate"]}
                         >
-                            {Astro.slots.source ? <slot name="source" /> : source}
+                            {hasSourceContent ? <slot name="source" /> : source}
                         </span>
                     )
                 }

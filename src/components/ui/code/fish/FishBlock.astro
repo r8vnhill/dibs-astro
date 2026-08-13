@@ -9,12 +9,13 @@
 import * as Icons from "$icons";
 import { CodeBlock } from "~/components/ui/code";
 
-const { code, class: className = "" } = Astro.props;
+const { code, title, class: className = "" } = Astro.props;
 ---
 
 <CodeBlock
     lang="bash" icon={Icons.Fish}
-    {code} class={className}
+    {code} {title}
+    class={className}
 >
     <span slot="title">
         <slot name="title" />

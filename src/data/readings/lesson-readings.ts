@@ -34,6 +34,10 @@ export const libraryWhatIsReadings = {
             referenceId: "kotlin-backward-compatibility-guidelines",
             note: "Introduce la compatibilidad que retomaremos al estudiar la evolución de APIs.",
         },
+        {
+            referenceId: "nim-manual-effect-system",
+            note: "Referencia primaria para las restricciones de excepciones y efectos laterales de Nim.",
+        },
     ],
     additional: [
         {

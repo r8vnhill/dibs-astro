@@ -485,6 +485,12 @@ usage:lib-what-is-kotlin-backward-compatibility-guidelines-pending
   dibs:reference ref:kotlin-backward-compatibility-guidelines ;
   dibs:tag "recommended" .
 
+usage:lib-what-is-nim-manual-effect-system-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:nim-manual-effect-system ;
+  dibs:tag "recommended" .
+
 usage:lib-what-is-parnas-decomposing-systems-1972-recommended
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;

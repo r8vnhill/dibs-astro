@@ -440,6 +440,12 @@ ref:kotlin-backward-compatibility-guidelines
   schema:url "https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html" ;
   schema:publisher org:kotlin-help .
 
+ref:nim-manual-effect-system
+  a schema:WebPage ;
+  schema:name "Effect system | Nim Manual" ;
+  schema:url "https://nim-lang.org/docs/manual.html#effect-system" ;
+  schema:publisher org:nim-language .
+
 ref:kotlin-informative-documentation-guidelines
   a schema:WebPage ;
   schema:name "Best practices for library authors to create informative documentation | Kotlin" ;

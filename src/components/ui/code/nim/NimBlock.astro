@@ -11,7 +11,7 @@ const { code, title }: Props = Astro.props;
 ---
 
 <CodeBlock
-    lang="rust" icon={icons.FileRs}
+    lang="nim" icon={icons.Code}
     {code} {title}
 >
     <Fragment slot="title">
@@ -19,5 +19,8 @@ const { code, title }: Props = Astro.props;
     </Fragment>
     <Fragment slot="source">
         <slot name="source" />
+    </Fragment>
+    <Fragment slot="footer">
+        <slot name="footer" />
     </Fragment>
 </CodeBlock>

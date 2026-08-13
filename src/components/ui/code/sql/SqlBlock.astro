@@ -8,12 +8,12 @@
  */
 import { CodeBlock } from "~/components/ui/code";
 
-const { code, class: className = "" } = Astro.props;
+const { code, title, class: className = "" } = Astro.props;
 ---
 
 <CodeBlock
     lang="sql" {code}
-    class={className}
+    {title} class={className}
 >
     <Fragment slot="title">
         <slot name="title" />
