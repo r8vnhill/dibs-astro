@@ -2004,6 +2004,23 @@
       }
     },
     {
+      "@id": "ref:parnas-decomposing-systems-1972",
+      "@type": "ScholarlyArticle",
+      "name": "On the Criteria To Be Used in Decomposing Systems into Modules",
+      "url": "https://dl.acm.org/doi/10.1145/361598.361623",
+      "datePublished": "1972-12",
+      "pageStart": 1053,
+      "pageEnd": 1058,
+      "author": [
+        {
+          "@id": "person:d-l-parnas"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "ref:pep-557-data-classes",
       "@type": "WebPage",
       "name": "PEP 557 – Data Classes | peps.python.org",
@@ -2936,7 +2953,7 @@
         "@id": "ref:kotlin-backward-compatibility-guidelines"
       },
       "dibs:tags": [
-        "pending-revision"
+        "recommended"
       ]
     },
     {
@@ -2975,7 +2992,7 @@
         "@id": "ref:kotlin-library-authors-guidelines-introduction"
       },
       "dibs:tags": [
-        "pending-revision"
+        "recommended"
       ]
     },
     {
@@ -3028,6 +3045,19 @@
       },
       "dibs:tags": [
         "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-parnas-decomposing-systems-1972-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:parnas-decomposing-systems-1972"
+      },
+      "dibs:tags": [
+        "recommended"
       ]
     },
     {

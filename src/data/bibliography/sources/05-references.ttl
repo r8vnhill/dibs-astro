@@ -457,6 +457,16 @@ ref:bloch-how-to-design-good-api-2006
   schema:isPartOf work:oopsla-2006-companion ;
   schema:publisher org:acm .
 
+ref:parnas-decomposing-systems-1972
+  a schema:ScholarlyArticle ;
+  schema:name "On the Criteria To Be Used in Decomposing Systems into Modules" ;
+  schema:url "https://dl.acm.org/doi/10.1145/361598.361623" ;
+  schema:datePublished "1972-12" ;
+  schema:pageStart 1053 ;
+  schema:pageEnd 1058 ;
+  schema:author person:d-l-parnas ;
+  schema:publisher org:acm .
+
 ref:gradle-plugin-development-plugin
   a schema:WebPage ;
   schema:name "Gradle Plugin Development Plugin" ;

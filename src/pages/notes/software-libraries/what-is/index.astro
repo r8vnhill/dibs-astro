@@ -1,14 +1,10 @@
 ---
 import * as icons from "$icons";
-import { Enquote, P } from "~/components/semantics";
-import Heading from "~/components/semantics/Heading.astro";
-import { Important, Note, Tip, Warning } from "~/components/ui/callouts";
-import B from "~/components/ui/font/B.astro";
-import Dash from "~/components/ui/font/Dash.astro";
-import I from "~/components/ui/font/I.astro";
-import { Footnote, FootnoteRef, Footnotes } from "~/components/ui/footnotes";
-import { Link } from "~/components/ui/links";
-import { List, ListItem } from "~/components/ui/list";
+import { Heading, P } from "~/components/semantics";
+import { Important, Tip, Warning } from "~/components/ui/callouts";
+import { KotlinBlock, KotlinInline } from "~/components/ui/code";
+import { B, I, Mono } from "~/components/ui/font";
+import { ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -17,103 +13,214 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout
     title="La biblioteca como artefacto de software"
-    description="Profundiza en la biblioteca como artefacto de software orientado a reutilización programática, diseño de APIs y contraste con otros conceptos del ecosistema."
+    description="Explica la biblioteca como una implementación con una API consumida externamente: su superficie, contrato, encapsulación y compromisos de estabilidad."
 >
     <Fragment slot="abstract">
         <P>
-            Después de introducir la taxonomía básica de artefactos de software, esta lección se
-            centra en un caso particular: la <B>biblioteca</B>. El foco ya no está en comparar
-            categorías generales, sino en entender qué distingue a un artefacto diseñado para ser
-            integrado desde código por otras personas desarrolladoras.
+            En la lección anterior distinguimos los artefactos por su destinatario, modo de consumo, contrato visible y
+            estabilidad esperada. En una biblioteca, estos cuatro ejes convergen alrededor de su API: otras personas
+            desarrolladoras escriben código que depende de lo que la biblioteca expone.
         </P>
 
         <P>
-            Veremos por qué una biblioteca se entiende mejor como una <I>API</I> con implementación,
-            por qué su diseño se evalúa sobre todo por la claridad y estabilidad del contrato que
-            ofrece, y cómo esa mirada prepara el resto del curso sobre diseño de bibliotecas.
+            Usaremos este modelo de diseño: <B>biblioteca = implementación + API consumida externamente</B>. La
+            implementación realiza una capacidad; la API define qué puede conocer y utilizar quien la consume. Esta
+            frontera determina la superficie, el contrato, lo que podemos encapsular y las decisiones que adquieren
+            compromisos de estabilidad.
         </P>
     </Fragment>
 
-    <NotesSection id="h2-what-is">
+    <NotesSection id="h2-boundary">
         <Heading
             slot="heading" headingLevel="h2"
-            Icon={icons.Books}
+            Icon={icons.ArrowsLeftRight}
         >
-            ¿Qué es una biblioteca de software?
+            Una biblioteca tiene una frontera
         </Heading>
 
         <P>
-            Una <B>biblioteca de software</B> es un artefacto diseñado para ser <B>integrado desde
-                otros programas</B> mediante una API. Su propósito principal no es el uso directo
-            por parte de personas usuarias finales, sino ofrecer capacidades reutilizables que otras
-            personas desarrolladoras puedan incorporar en sus aplicaciones.
+            Una biblioteca es un artefacto diseñado para ser integrado desde otros programas. Su propósito no es el uso
+            directo de personas usuarias finales, sino ofrecer capacidades reutilizables a código externo. Podemos
+            representar su frontera así:
+        </P>
+
+        <Important headingLevel="h3">
+            <span slot="title">Implementación interna → API → código consumidor</span>
+
+            <P>
+                La <B>implementación</B> contiene código, algoritmos, estructuras y decisiones que realizan la
+                capacidad. La <B>API</B> es la superficie disponible para integrarla. El
+                <B>consumidor</B> es el código externo que usa esa superficie y pasa a depender de su contrato.
+            </P>
+        </Important>
+
+        <P>
+            Este es un modelo de diseño, no una definición matemática. Evita dos confusiones: una API por sí sola no
+            constituye una biblioteca, y una implementación por sí sola no describe cómo otra aplicación puede
+            integrarla. Toda biblioteca expone una API, pero no toda API pertenece a una biblioteca: también las exponen
+            servicios web, frameworks y sistemas operativos.
+        </P>
+
+        <KotlinBlock
+            code={`
+                // Misma capacidad interna
+                internal fun calculateChecksum(bytes: ByteArray): Long = TODO()
+
+                // Biblioteca A
+                fun checksum(bytes: ByteArray): Long = calculateChecksum(bytes)
+
+                // Biblioteca B
+                data class Checksum(val value: Long)
+
+                fun checksum(bytes: ByteArray): Checksum =
+                    Checksum(calculateChecksum(bytes))
+            `}
+        >
+            <span slot="title">La misma implementación puede sostener contratos distintos</span>
+            <span slot="footer">
+                Ambas bibliotecas podrían usar el mismo algoritmo interno, pero quien las consume depende de superficies
+                diferentes: una devuelve un <Mono>Long</Mono> y la otra un
+                <Mono>Checksum</Mono>. Por eso una implementación equivalente no implica un contrato público
+                equivalente.
+            </span>
+        </KotlinBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-consumers">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.UsersThree}
+        >
+            Consumidores: una biblioteca existe para ser integrada
+        </Heading>
+
+        <P>
+            Un <B>consumidor</B> es cualquier código situado fuera de la frontera de implementación que depende de la
+            API de la biblioteca. Puede pertenecer a una aplicación publicada, a otro módulo del mismo repositorio o a
+            un proyecto interno de una organización.
         </P>
 
         <P>
-            En lugar de resolver un problema completo de principio a fin como una aplicación, una
-            biblioteca encapsula funcionalidades, abstracciones o reglas de negocio que pueden
-            reutilizarse en distintos contextos. Por eso su diseño se evalúa sobre todo por la <B
-            >claridad</B>, la <B>coherencia</B> y la <B>estabilidad</B> del contrato que ofrece.
+            Aquí <I>externo</I> significa externo a la implementación, no necesariamente público en internet. Una
+            biblioteca distribuida desde un repositorio abierto y una compartida solo dentro de una organización
+            mantienen la misma relación fundamental: código consumidor integra una superficie que no controla
+            directamente.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-surface">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Plugs}
+        >
+            Superficie de API: lo que hacemos observable
+        </Heading>
+
+        <P>
+            La <B>superficie de API</B> es el conjunto de elementos expuestos mediante los cuales otras aplicaciones
+            pueden depender de una biblioteca. Incluye nombres, tipos, funciones, propiedades, constructores,
+            parámetros, tipos de retorno, errores y semántica observable.
         </P>
 
         <P>
-            Una biblioteca puede ser <B>pública</B> o <B>privada</B>. Algunas se distribuyen por
-            repositorios abiertos <Dash kind="em" /> como <Link href="https://central.sonatype.com"
-            >Maven Central</Link>, <Link href="https://pypi.org">PyPI</Link> o <Link
-                href="https://www.nuget.org"
-            >NuGet</Link> <Dash kind="em" />, mientras que otras circulan solo dentro de una
-            organización. Esa diferencia afecta su distribución, pero no cambia su naturaleza como
-            artefacto: en todos los casos, una biblioteca existe para ser reutilizada e integrada
-            desde código.
+            Cada elemento que hacemos parte de esa superficie crea una nueva forma en que código externo puede depender
+            de la biblioteca. La superficie responde <I>con qué puedo interactuar</I>; todavía no responde por completo
+            qué puedo esperar de esa interacción.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-contract">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Scroll}
+        >
+            Contrato: exponer algo también significa prometer algo
+        </Heading>
+
+        <P>
+            La superficie y el contrato están relacionados, pero no son lo mismo. La superficie describe los elementos
+            disponibles; el <B>contrato</B> describe aquello en lo que quien consume puede confiar al usarlos. La
+            sintaxis es solo una parte de ese contrato.
         </P>
 
-        <NotesSection id="h3-api">
-            <Heading
-                slot="heading" headingLevel="h3"
-                Icon={icons.Plugs}
-            >
-                <B>API</B> (Interfaz de Programación de Aplicaciones)
-            </Heading>
+        <KotlinBlock code={`fun findUser(id: UserId): User?`}>
+            <span slot="title">Una firma muestra solo parte del contrato</span>
+            <span slot="footer">
+                La firma muestra una función y sus tipos. El contrato además puede incluir qué significa <KotlinInline
+                    code="null"
+                />, si la operación realiza E/S, cómo informa un fallo, qué cuenta como la misma persona usuaria y si
+                llamadas repetidas observan cambios de estado. No necesitamos resolver esas preguntas todavía; basta
+                reconocer que también forman parte de lo que se promete.
+            </span>
+        </KotlinBlock>
+    </NotesSection>
+
+    <NotesSection id="h2-encapsulation">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.Lock}
+        >
+            Encapsulación: la otra cara de la API
+        </Heading>
+
+        <P>
+            Diseñar una API no consiste solo en decidir qué exponer. También consiste en decidir qué no exponer. La
+            frontera de la biblioteca separa el <B>contrato expuesto</B> de la
+            <B>implementación oculta</B>.
+        </P>
+
+        <P>
+            Mientras preserve el contrato observable, la implementación puede cambiar: es posible sustituir un
+            algoritmo, reorganizar estructuras de datos o mejorar el rendimiento sin obligar a quienes consumen a
+            modificar su código. Encapsular es conservar esa libertad al mantener las decisiones internas fuera de
+            aquello de lo que el exterior puede depender.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-stability">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.ArrowsClockwise}
+        >
+            Estabilidad: las dependencias externas crean compromisos
+        </Heading>
+
+        <P>
+            Exponer una decisión inicia una cadena sencilla: la publicamos, código externo empieza a usarla, ese código
+            depende de ella y cambiarla adquiere un costo. Por eso la estabilidad no es solo una cualidad deseable: es
+            una consecuencia de que la biblioteca tiene consumidores.
+        </P>
+
+        <Warning headingLevel="h3">
+            <span slot="title">La frontera marca qué puede cambiar con libertad</span>
 
             <P>
-                Una <B>API</B> (<B class="text-primary">A</B>pplication <B class="text-primary"
-                >P</B>rogramming <B class="text-primary">I</B>nterface) es el <I>contrato</I> que
-                define cómo un componente de software puede ser usado por otros. Ese contrato
-                establece qué operaciones están disponibles y qué expectativas de uso existen, sin
-                exigir que quien consume la API conozca su implementación interna.
+                Lo interno puede cambiar mientras preserve el contrato observable; lo expuesto debe evolucionar
+                considerando las dependencias que ya existen. Más adelante estudiaremos cómo hacer esa evolución sin
+                romper a quienes ya integran la biblioteca.
             </P>
+        </Warning>
+    </NotesSection>
 
-            <P>
-                En términos simples, una API es la <I>superficie pública</I> de un sistema: aquello
-                con lo que otras partes pueden interactuar. Puede incluir nombres, parámetros,
-                tipos, errores, semántica y reglas de uso.
-            </P>
+    <NotesSection id="h2-consumer-perspective">
+        <Heading
+            slot="heading" headingLevel="h2"
+            Icon={icons.User}
+        >
+            La biblioteca desde la perspectiva de quien la consume
+        </Heading>
 
-            <P>
-                El término <B>API</B> es amplio. Un <I>objeto</I> expone una API mediante sus
-                métodos y propiedades; un <I>servicio web</I>, mediante endpoints; y un
-                <I>sistema operativo</I>, mediante llamadas de sistema. En todos los casos, una API
-                funciona como punto de contacto entre componentes o capas de software.
-            </P>
+        <P>
+            Para quien implementa, una biblioteca contiene archivos, algoritmos, estructuras de datos y decisiones
+            internas. Para quien la consume, esos detalles son irrelevantes mientras no atraviesen la frontera de la
+            API. Lo que puede conocer, usar y de lo que puede depender es aquello que la biblioteca expone.
+        </P>
 
-            <Important>
-                <span slot="title">API ≠ biblioteca</span>
-
-                <P>
-                    Una <B>biblioteca</B> es una implementación reutilizable que <B>expone</B> una
-                    API. Pero una API puede existir sin ser una biblioteca: por ejemplo, en un
-                    servicio web, un framework o un entorno operativo. Toda biblioteca tiene API,
-                    pero no toda API es una biblioteca.
-                </P>
-            </Important>
-
-            <P>
-                Pensar una <B>biblioteca como API</B> ayuda a decidir qué parte del sistema se
-                vuelve visible y estable para otras personas o componentes. Por eso, principios como
-                claridad, consistencia, facilidad de uso, estabilidad y extensibilidad sirven como
-                criterios para diseñar y evaluar bibliotecas.
-            </P>
-        </NotesSection>
+        <P>
+            Esto no vuelve irrelevante la calidad de la implementación. Significa que sus detalles no forman parte de la
+            identidad de la biblioteca frente a sus consumidores, salvo cuando se vuelven observables a través del
+            contrato.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-why">
@@ -121,425 +228,83 @@ import NotesSection from "~/layouts/NotesSection.astro";
             slot="heading" headingLevel="h2"
             Icon={icons.Question}
         >
-            ¿Por qué necesitamos bibliotecas de software?
+            ¿Por qué usar bibliotecas?
         </Heading>
 
         <P>
-            Las bibliotecas existen para evitar que cada proyecto tenga que resolver una y otra vez
-            los mismos problemas desde cero. Nos permiten reutilizar <B>capacidades ya implementadas
-                y mantenidas</B>, y concentrar el esfuerzo en el <B>dominio del problema</B> en
-            lugar de dispersarlo en infraestructura repetitiva.
+            Las bibliotecas permiten reutilizar capacidades ya implementadas y mantenidas, en vez de resolver los mismos
+            problemas desde cero en cada proyecto. Así concentran correcciones, pruebas e interoperabilidad en un punto
+            compartido y dejan más espacio para el dominio particular de cada aplicación.
         </P>
-
-        <List>
-            <ListItem icon={icons.RocketLaunch}>
-                <B>Productividad</B>: aceleran el desarrollo al reutilizar componentes ya
-                disponibles.
-            </ListItem>
-
-            <ListItem icon={icons.ShieldCheck}>
-                <B>Confiabilidad</B>: concentran correcciones, pruebas y mejoras en un punto
-                reutilizable.
-            </ListItem>
-
-            <ListItem icon={icons.Stack}>
-                <B>Consistencia</B>: ayudan a estandarizar APIs, formatos y prácticas de
-                implementación.
-            </ListItem>
-
-            <ListItem icon={icons.Plugs}>
-                <B>Interoperabilidad</B>: facilitan la conexión con protocolos, formatos, servicios
-                o sistemas externos.
-            </ListItem>
-
-            <ListItem icon={icons.Wrench}>
-                <B>Mantenibilidad</B>: permiten evolucionar capacidades compartidas sin duplicar
-                esfuerzo en múltiples proyectos.
-            </ListItem>
-        </List>
 
         <Tip headingLevel="h3">
-            <span slot="title">Regla práctica</span>
+            <span slot="title">¿Construir o adoptar?</span>
 
             <P>
-                Si un problema es <I>común</I>, su solución está bien entendida y existe una
-                biblioteca mantenida para abordarlo, normalmente conviene reutilizarla. Por ejemplo,
-                para <I>parsear JSON</I> o <I>conectar a una base de datos</I> suele ser mejor
-                apoyarse en soluciones existentes. Diseñar una propia tiene más sentido cuando la
-                necesidad pertenece al núcleo de tu dominio o cuando las opciones disponibles no
-                satisfacen los requisitos del proyecto.
+                Si un problema es común, su solución está bien entendida y existe una biblioteca mantenida que responde
+                a los requisitos, normalmente conviene adoptarla. Construir una propia tiene más sentido cuando el caso
+                pertenece al núcleo diferenciador del dominio o cuando las alternativas no ofrecen las garantías
+                necesarias. Adoptar también implica aceptar una API, dependencias y un ritmo de evolución.
             </P>
         </Tip>
-
-        <Warning headingLevel="h3">
-            Usar una biblioteca no es gratis: también implica adoptar su API, sus dependencias, su
-            ritmo de evolución y sus restricciones. La decisión no es solo <I>reutilizar o no</I>,
-            sino <I>qué dependencia vale la pena incorporar</I>.
-        </Warning>
-
-        <NotesSection id="h3-open-source">
-            <Heading
-                slot="heading" headingLevel="h3"
-                Icon={icons.GlobeHemisphereEast}
-            >
-                Open-source
-            </Heading>
-
-            <P>
-                En el ecosistema abierto, muchas bibliotecas evolucionan de forma colaborativa y se
-                convierten en infraestructura reusable para otros proyectos. En este contexto, las
-                bibliotecas permiten:
-            </P>
-
-            <List>
-                <ListItem icon={icons.UsersThree}>
-                    <B>Colaboración</B>: incorporar correcciones, mejoras y nuevas ideas desde una
-                    comunidad amplia.
-                </ListItem>
-
-                <ListItem icon={icons.GitBranch}>
-                    <B>Transparencia</B>: permitir revisión pública del código, su historial y sus
-                    decisiones de diseño, lo que facilita auditoría y aumenta la confianza cuando
-                    existe mantenimiento activo.
-                </ListItem>
-
-                <ListItem icon={icons.ArrowsClockwise}>
-                    <B>Ritmo de innovación</B>: difundir estándares, prácticas y soluciones con
-                    rapidez entre proyectos y ecosistemas.
-                </ListItem>
-
-                <ListItem icon={icons.Certificate}>
-                    <B>Licencias</B>: definir con claridad las condiciones de uso, modificación y
-                    redistribución, y exigir compatibilidad con las dependencias y con la forma en
-                    que el proyecto será publicado.
-                </ListItem>
-            </List>
-        </NotesSection>
-
-        <NotesSection id="h3-proprietary">
-            <Heading
-                slot="heading" headingLevel="h3"
-                Icon={icons.Factory}
-            >
-                Software propietario
-            </Heading>
-
-            <P>
-                En contextos cerrados, las bibliotecas permiten reutilizar capacidades internas,
-                coordinar mejor el trabajo entre equipos y controlar con más claridad la evolución
-                técnica del sistema.
-            </P>
-
-            <List>
-                <ListItem icon={icons.PuzzlePiece}>
-                    <B>Modularidad interna</B>: facilitan que equipos distintos colaboren mediante
-                    contratos estables, en lugar de depender de implementaciones acopladas entre sí.
-                </ListItem>
-
-                <ListItem icon={icons.BookOpenText}>
-                    <B>Conocimiento compartido</B>: encapsulan reglas de negocio, integraciones
-                    internas y convenciones de la organización en componentes reutilizables.
-                </ListItem>
-
-                <ListItem icon={icons.Path}>
-                    <B>Gobernanza y trazabilidad</B>: ayudan a mantener visibilidad sobre versiones,
-                    dependencias, auditorías y políticas internas de mantenimiento.
-                </ListItem>
-
-                <ListItem icon={icons.Package}>
-                    <B>Reutilización y sostenibilidad</B>: reducen duplicación de esfuerzo y evitan
-                    que cada equipo resuelva el mismo problema con soluciones ad-hoc.
-                </ListItem>
-            </List>
-
-            <Tip headingLevel="h4">
-                <span slot="title">Política interna recomendada</span>
-
-                <P>
-                    Mantener un catálogo de bibliotecas aprobadas, registrar dependencias y acordar
-                    criterios de versionado, actualización y mantenimiento compartido.
-                </P>
-            </Tip>
-
-            <Warning headingLevel="h4">
-                Una biblioteca interna también introduce responsabilidades: alguien debe mantenerla,
-                documentarla y coordinar su evolución para que no se transforme en una dependencia
-                frágil o en un cuello de botella organizacional.
-            </Warning>
-        </NotesSection>
-
-        <Important headingLevel="h3">
-            <span slot="title">
-                ¿Cuándo construir y cuándo adoptar?
-            </span>
-
-            <P class="mb-3">
-                Elegir entre adoptar una biblioteca existente o construir una propia depende del
-                problema, del nivel de control que necesitas, del costo de mantenimiento y de las
-                restricciones técnicas o legales del proyecto.
-            </P>
-
-            <List>
-                <ListItem icon={icons.Lightbulb}>
-                    <B>Adoptar</B>: conviene usar una biblioteca existente cuando el problema es
-                    común, la solución está madura, tiene mantenimiento activo y su licencia es
-                    compatible con tu proyecto.
-                </ListItem>
-
-                <ListItem icon={icons.Target}>
-                    <B>Construir</B>: conviene desarrollar una solución propia cuando el caso forma
-                    parte del núcleo diferenciador de tu sistema, está sujeto a regulación
-                    específica o requiere garantías especiales de rendimiento, seguridad,
-                    trazabilidad o compatibilidad. También cuando las alternativas disponibles no
-                    ofrecen una licencia adecuada o imponen restricciones incompatibles con tu forma
-                    de uso, redistribución o publicación.
-                </ListItem>
-            </List>
-        </Important>
-    </NotesSection>
-
-    <NotesSection id="h2-categories">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Folders}
-        >
-            Categorías de bibliotecas de software
-        </Heading>
-
-        <P>
-            No todas las bibliotecas se distinguen según el mismo criterio. Algunas categorías
-            describen el <B>rol</B> que cumplen dentro de un ecosistema; otras, la forma en que se
-            <B>distribuyen</B> o se <B>vinculan</B> con un programa. No hace falta estudiarlas todas
-            en detalle, pero sí conviene conocer las más relevantes para entender el panorama
-            actual.
-        </P>
-
-        <NotesSection id="h3-roles">
-            <Heading Icon={icons.BookOpen} headingLevel="h3">
-                Según su rol en el ecosistema
-            </Heading>
-
-            <List>
-                <ListItem icon={icons.BookOpen}>
-                    <B>Biblioteca estándar</B>: conjunto de funciones, tipos y módulos que acompaña
-                    oficialmente a un lenguaje o plataforma. <I>Ejemplos:</I>
-                    <Link href="https://kotlinlang.org/api/core/kotlin-stdlib/"
-                    >Kotlin Standard Library</Link>, <Link
-                        href="https://docs.oracle.com/en/java/javase/25/core/java-core-libraries1.html"
-                    >Java Core Libraries</Link>, <Link
-                        href="https://docs.python.org/3/library/index.html"
-                    >Python Standard Library</Link>.
-                </ListItem>
-
-                <ListItem icon={icons.UsersThree}>
-                    <B>Bibliotecas de terceros</B>: desarrolladas y mantenidas fuera del lenguaje o
-                    plataforma base, pero reutilizadas por la comunidad. <I>Ejemplos:</I>
-                    <Link href="https://arrow-kt.io/">Arrow</Link> en Kotlin, <Link
-                        href="https://pandas.pydata.org/"
-                    >Pandas</Link> en Python.
-                </ListItem>
-
-                <ListItem icon={icons.Factory}>
-                    <B>Bibliotecas internas</B>: creadas dentro de una organización para reutilizar
-                    capacidades propias entre proyectos o equipos.
-                </ListItem>
-            </List>
-        </NotesSection>
-        <NotesSection id="h3-distribution">
-            <Heading Icon={icons.Link} headingLevel="h3">
-                Según cómo se distribuyen o vinculan
-            </Heading>
-
-            <List>
-                <ListItem icon={icons.FileCode}>
-                    <B>Estáticas</B>: se incorporan al programa en tiempo de compilación o enlace,
-                    de modo que el ejecutable resultante no depende de ese artefacto como archivo
-                    separado en tiempo de ejecución. <I>Ejemplo:</I> un binario en C que ya lleva
-                    dentro todas las funciones de su librería matemática.
-                </ListItem>
-
-                <ListItem icon={icons.Link}>
-                    <B>Dinámicas / compartidas</B>: se cargan en tiempo de ejecución y pueden ser
-                    compartidas por varios programas, reduciendo tamaño y facilitando
-                    actualizaciones.
-                    <I>Ejemplo:</I> DLL en Windows o .so en Linux.
-                </ListItem>
-
-                <ListItem icon={icons.Code}>
-                    <B>De código compilado</B>: se publican y distribuyen como artefactos compilados
-                    listos para usar (p. ej., JARs en la JVM). Es el caso más común en ecosistemas
-                    modernos como Kotlin, donde las dependencias se publican precompiladas en
-                    repositorios centrales y se descargan en tiempo de construcción.
-                </ListItem>
-
-                <ListItem icon={icons.Toolbox}>
-                    <B>De tiempo de ejecución</B>: proporcionan capacidades básicas del entorno de
-                    ejecución, como memoria, concurrencia, E/S o integración con la plataforma.
-                    Normalmente vienen con el compilador o la plataforma.
-                </ListItem>
-            </List>
-        </NotesSection>
-
-        <Note headingLevel="h3">
-            Estas categorías no son excluyentes. Por ejemplo, una biblioteca estándar puede
-            distribuirse como binario dinámico, como parte del entorno de ejecución, como código
-            compilado o de otra forma, dependiendo del ecosistema.
-        </Note>
-    </NotesSection>
-
-    <NotesSection id="h2-examples">
-        <Heading
-            slot="heading" headingLevel="h2"
-            Icon={icons.Star}
-        >
-            Ejemplos de bibliotecas populares
-        </Heading>
-
-        <P>
-            Cada ecosistema combina una biblioteca estándar con bibliotecas de terceros
-            desarrolladas por la comunidad. Conocer algunos ejemplos ayuda a entender qué problemas
-            resuelve el ecosistema, cómo se distribuyen sus soluciones y por qué la disponibilidad y
-            madurez de estas herramientas es a menudo tan decisiva como las características del
-            lenguaje mismo.
-        </P>
-
-        <List>
-            <ListItem icon={icons.BookOpen}>
-                <B>Bibliotecas estándar</B>: cada lenguaje suele traer una colección oficial de
-                funciones y clases. <I>Ejemplos:</I> <Link
-                    href="https://kotlinlang.org/api/core/kotlin-stdlib/"
-                >Kotlin Standard Library</Link> en Kotlin, <Link
-                    href="https://docs.oracle.com/en/java/javase/25/core/java-core-libraries1.html"
-                >Java Core Libraries</Link> en Java, <Link
-                    href="https://docs.python.org/3/library/index.html"
-                >Python Standard Library</Link> en Python, <Link
-                    href="https://en.cppreference.com/w/cpp/standard_library.html"
-                >C++ Standard Library</Link> en C++.
-            </ListItem>
-
-            <ListItem icon={icons.Stack}>
-                <B>Análisis de datos y utilidades funcionales</B>: desde librerías de análisis hasta
-                abstracciones para programación funcional, inmutabilidad y manejo de errores tipado.
-                <I>Ejemplos:</I> <Link href="https://pandas.pydata.org/">Pandas</Link> en Python,
-                <Link href="https://numpy.org/">NumPy</Link> en Python, <Link
-                    href="https://arrow-kt.io/"
-                >Arrow</Link> en Kotlin, <Link href="https://github.com/google/guava/">Guava</Link>
-                en Java.
-            </ListItem>
-
-            <ListItem icon={icons.Network}>
-                <B>Red y comunicación</B>: facilitan conectarse a internet, trabajar con APIs o
-                manejar protocolos distribuidos. <I>Ejemplos:</I> <Link
-                    href="https://square.github.io/okhttp/"
-                >OkHttp</Link> en la JVM,<FootnoteRef index={1} /> <Link
-                    href="https://requests.readthedocs.io/en/latest/"
-                >Requests</Link> en Python, <Link href="https://axios-http.com/">Axios</Link> en
-                JavaScript.
-            </ListItem>
-
-            <ListItem icon={icons.Lock}>
-                <B>Seguridad y criptografía</B>: ofrecen primitivas para cifrado, autenticación y
-                verificación de datos, muchas veces como cimientos de todo el ecosistema. <I
-                >Ejemplos:</I> <Link href="https://www.bouncycastle.org">BouncyCastle</Link> en la
-                JVM y .NET,<FootnoteRef index={2} /> <Link href="https://cryptography.io/en/latest/"
-                >cryptography</Link> en Python, <Link href="https://openssl-library.org"
-                >OpenSSL</Link> en C/C++.
-            </ListItem>
-
-            <ListItem icon={icons.ChartBar}>
-                <B>Procesamiento científico y matemático</B>: útiles para cálculos avanzados,
-                análisis de datos o machine learning. <I>Ejemplos:</I> <Link
-                    href="https://numpy.org/"
-                >NumPy</Link> en Python, <Link href="https://scikit-learn.org/stable/"
-                >scikit-learn</Link> en Python, <Link href="https://ejml.org/wiki/index.php"
-                >EJML</Link> en la JVM, <Link href="https://fluxml.ai/">Flux.jl</Link> en Julia.
-            </ListItem>
-        </List>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                En esta lección vimos que una <B>biblioteca</B> no es simplemente software reusable,
-                sino un artefacto diseñado para ser <B>integrado desde código</B> mediante una API.
-                Por eso su valor no depende solo de lo que implementa, sino de la claridad,
-                coherencia y estabilidad del contrato que ofrece a otras personas desarrolladoras.
+                Una biblioteca combina una implementación con una API consumida externamente. Esa API permite la
+                integración, su comportamiento observable forma un contrato y la frontera protege los detalles que deben
+                permanecer encapsulados.
             </P>
 
             <P>
-                También vimos por qué las bibliotecas son importantes: concentran capacidades
-                reutilizables, reducen duplicación de esfuerzo, facilitan interoperabilidad y
-                permiten que proyectos y equipos se enfoquen en su dominio en lugar de rehacer
-                infraestructura común. Esa decisión, sin embargo, no es automática: adoptar una
-                biblioteca también implica asumir su API, sus dependencias y su ritmo de evolución.
-            </P>
-
-            <P>
-                Con ese marco, la biblioteca aparece con más nitidez como un artefacto propio dentro
-                del ecosistema de software: puede ser pública o privada, circular por distintos
-                repositorios y adoptar distintas formas de distribución, sin dejar de ser una
-                biblioteca.
+                Cuando otras aplicaciones dependen de esa frontera, las decisiones expuestas pasan a tener compromisos
+                de estabilidad. Por eso entender una biblioteca desde la perspectiva de quien la consume es el punto de
+                partida para pensar su API.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
+            <ListItem icon={icons.Books}>
+                <B>Biblioteca = implementación + API consumida externamente.</B>
+            </ListItem>
             <ListItem icon={icons.Plugs}>
-                <B>Biblioteca = integración programática</B>: una biblioteca se diseña para ser
-                usada desde código mediante una API, no para uso final directo.
+                La API es la superficie a través de la cual otro código integra la biblioteca.
             </ListItem>
-
             <ListItem icon={icons.Scroll}>
-                <B>API como contrato</B>: pensar una biblioteca como API ayuda a evaluar su diseño
-                por la claridad, coherencia, estabilidad y extensibilidad de su superficie pública.
+                El contrato incluye la forma de la superficie y su comportamiento observable.
             </ListItem>
-
-            <ListItem icon={icons.RocketLaunch}>
-                <B>Razón práctica</B>: reutilizar bibliotecas permite concentrar esfuerzo en el
-                dominio del problema y evitar rehacer infraestructura común.
+            <ListItem icon={icons.Lock}>
+                Encapsular mantiene decisiones internas fuera de aquello de lo que los consumidores pueden depender.
             </ListItem>
-
-            <ListItem icon={icons.Package}>
-                <B>Distribución no cambia la naturaleza</B>: una biblioteca puede ser pública o
-                privada y circular por distintos repositorios, pero sigue siendo biblioteca mientras
-                su forma de consumo sea la integración desde código.
-            </ListItem>
-
-            <ListItem icon={icons.Lightbulb}>
-                <B>Adoptar o construir</B>: conviene reutilizar cuando el problema es común y existe
-                una solución mantenida; construir una propia tiene más sentido cuando el caso
-                pertenece al núcleo del dominio o exige requisitos especiales.
+            <ListItem icon={icons.ArrowsClockwise}>
+                Exponer una decisión crea dependencias y, por tanto, compromisos de estabilidad.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            Diseñar una biblioteca no es solo escribir código reusable: es diseñar una <B>interfaz
-                de colaboración</B> para otras personas desarrolladoras. Esa perspectiva <Dash
-                kind="em"
-            /> biblioteca como API, contrato y punto de integración <Dash kind="em" /> será la
-            brújula para todo lo que sigue en el curso.
+            <P>
+                Si la API define aquello de lo que otras personas pueden depender, la siguiente pregunta es inevitable:
+                ¿qué deberíamos exponer y cómo deberíamos diseñarlo?
+            </P>
         </Fragment>
     </ConclusionsLayout>
 
     <ReferencesFromCatalog lessonId="/notes/software-libraries/what-is/">
-        <Fragment slot="description-ref:library-computing-wikipedia-2025">
-            Puede interesarte si quieres contrastar la definición operativa de esta lección con una
-            mirada más panorámica e histórica. El artículo ayuda a conectar la idea de biblioteca
-            con reutilización, API, jerarquías entre bibliotecas y categorías como estática,
-            dinámica o compartida, así que sirve tanto para reforzar lo esencial como para ampliar
-            vocabulario técnico que probablemente volverá a aparecer en otros ecosistemas.
+        <Fragment slot="description-ref:parnas-decomposing-systems-1972">
+            Parnas presenta una idea fundacional para esta lección: los módulos deben ocultar las decisiones de diseño
+            que probablemente cambien. Es una buena lectura para profundizar por qué encapsular no es solo separar
+            archivos, sino gestionar una frontera que preserva libertad de cambio.
+        </Fragment>
+
+        <Fragment slot="description-ref:kotlin-library-authors-guidelines-introduction">
+            Esta guía conecta la superficie y el contrato con preocupaciones actuales de quienes publican bibliotecas:
+            claridad, previsibilidad y compatibilidad para código consumidor.
+        </Fragment>
+
+        <Fragment slot="description-ref:kotlin-backward-compatibility-guidelines">
+            Esta lectura adelanta el tema de estabilidad que retomaremos al estudiar la evolución de APIs: cómo los
+            cambios publicados afectan a quienes ya dependen de una biblioteca.
         </Fragment>
     </ReferencesFromCatalog>
-
-    <Footnotes>
-        <Footnote index={1}>
-            Java Virtual Machine: plataforma de ejecución para lenguajes como Java, Kotlin o Scala.
-            Una biblioteca <Enquote>para la JVM</Enquote> puede usarse en cualquiera de ellos.
-        </Footnote>
-
-        <Footnote index={2}>
-            .NET: plataforma de ejecución y framework que soporta lenguajes como C#, F#, y Visual
-            Basic. Una biblioteca <Enquote>para .NET</Enquote> puede usarse en cualquiera de estos
-            lenguajes, siempre que se ejecute sobre el mismo runtime.
-        </Footnote>
-    </Footnotes>
 </NotesLayout>
