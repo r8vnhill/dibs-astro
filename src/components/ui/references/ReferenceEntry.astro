@@ -93,130 +93,164 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
     ref.type === "Book"
         ? (
         <Book
-            id={referenceAnchor(ref.id)}
-            chapter={resolveDisplayTitle(ref)} bookTitle={(ref as NormalizedBookReference).bookTitle}
+            id={referenceAnchor(ref.id)} chapter={resolveDisplayTitle(ref)}
+            bookTitle={(ref as NormalizedBookReference).bookTitle}
             {...((ref as NormalizedBookReference).pages ? { pages: (ref as NormalizedBookReference).pages } : {})}
         >
-                {getDescriptionOverride() && <Fragment slot="description"><div set:html={getDescriptionOverride()} /></Fragment>}
-                {editorialNote && <Fragment slot="description"><p class="mt-1 text-sm text-base-subtle-text">{editorialNote}</p></Fragment>}
-                {ref.authors.length > 0 && <AuthorList slot="authors" authors={ref.authors} />}
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description"><div set:html={getDescriptionOverride()} /></Fragment>
+                )
+            }
+            {
+                editorialNote && (
+                    <Fragment slot="description"><div
+                            class="mt-3 text-sm text-base-subtle-text" set:html={editorialNote}
+                        /></Fragment>
+                )
+            }
+            {ref.authors.length > 0 && <AuthorList slot="authors" authors={ref.authors} />}
         </Book>
     )
-        : ref.type === "WebPage"
-        ? (
-            <WebPage
-                id={referenceAnchor(ref.id)}
-                title={resolveDisplayTitle(ref)} url={(ref as NormalizedWebReference).url}
-                {...((ref as NormalizedWebReference).location
-                    ? { location: (ref as NormalizedWebReference).location }
-                    : {})}
-                {...((ref as NormalizedWebReference).locationUrl
-                    ? { locationUrl: (ref as NormalizedWebReference).locationUrl }
-                    : {})}
-            >
-                {
-                    getDescriptionOverride() && (
-                        <Fragment slot="description">
-                            <div set:html={getDescriptionOverride()} />
-                        </Fragment>
-                    )
-                }
-                {editorialNote && <Fragment slot="description"><p class="mt-1 text-sm text-base-subtle-text">{editorialNote}</p></Fragment>}
+    : ref.type === "WebPage"
+    ? (
+        <WebPage
+            id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
+            url={(ref as NormalizedWebReference).url}
+            {...((ref as NormalizedWebReference).location
+                ? { location: (ref as NormalizedWebReference).location }
+                : {})}
+            {...((ref as NormalizedWebReference).locationUrl
+                ? { locationUrl: (ref as NormalizedWebReference).locationUrl }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+            {
+                editorialNote && (
+                    <Fragment slot="description"><div
+                            class="mt-3 text-sm text-base-subtle-text" set:html={editorialNote}
+                        /></Fragment>
+                )
+            }
 
-                {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
-            </WebPage>
-        )
-        : ref.type === "VideoObject"
-        ? (
-            <Video
-                id={referenceAnchor(ref.id)}
-                title={resolveDisplayTitle(ref)} url={(ref as NormalizedVideoReference).url}
-                {...((ref as NormalizedVideoReference).platform
-                    ? { platform: (ref as NormalizedVideoReference).platform }
-                    : {})}
-                {...((ref as NormalizedVideoReference).platformUrl
-                    ? { platformUrl: (ref as NormalizedVideoReference).platformUrl }
-                    : {})}
-                {...((ref as NormalizedVideoReference).datePublished
-                    ? { date: (ref as NormalizedVideoReference).datePublished }
-                    : {})}
-            >
-                {
-                    getDescriptionOverride() && (
-                        <Fragment slot="description">
-                            <div set:html={getDescriptionOverride()} />
-                        </Fragment>
-                    )
-                }
-                {editorialNote && <Fragment slot="description"><p class="mt-1 text-sm text-base-subtle-text">{editorialNote}</p></Fragment>}
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </WebPage>
+    )
+    : ref.type === "VideoObject"
+    ? (
+        <Video
+            id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
+            url={(ref as NormalizedVideoReference).url}
+            {...((ref as NormalizedVideoReference).platform
+                ? { platform: (ref as NormalizedVideoReference).platform }
+                : {})}
+            {...((ref as NormalizedVideoReference).platformUrl
+                ? { platformUrl: (ref as NormalizedVideoReference).platformUrl }
+                : {})}
+            {...((ref as NormalizedVideoReference).datePublished
+                ? { date: (ref as NormalizedVideoReference).datePublished }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+            {
+                editorialNote && (
+                    <Fragment slot="description"><div
+                            class="mt-3 text-sm text-base-subtle-text" set:html={editorialNote}
+                        /></Fragment>
+                )
+            }
 
-                {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
-            </Video>
-        )
-        : ref.type === "ScholarlyArticle"
-        ? (
-            <ScholarlyArticle
-                id={referenceAnchor(ref.id)}
-                title={resolveDisplayTitle(ref)} url={(ref as NormalizedArticleReference).url}
-                {...((ref as NormalizedArticleReference).publication
-                    ? { publication: (ref as NormalizedArticleReference).publication }
-                    : {})}
-                {...((ref as NormalizedArticleReference).publicationUrl
-                    ? { publicationUrl: (ref as NormalizedArticleReference).publicationUrl }
-                    : {})}
-                {...((ref as NormalizedArticleReference).pages
-                    ? { pages: (ref as NormalizedArticleReference).pages }
-                    : {})}
-            >
-                {
-                    getDescriptionOverride() && (
-                        <Fragment slot="description">
-                            <div set:html={getDescriptionOverride()} />
-                        </Fragment>
-                    )
-                }
-                {editorialNote && <Fragment slot="description"><p class="mt-1 text-sm text-base-subtle-text">{editorialNote}</p></Fragment>}
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </Video>
+    )
+    : ref.type === "ScholarlyArticle"
+    ? (
+        <ScholarlyArticle
+            id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
+            url={(ref as NormalizedArticleReference).url}
+            {...((ref as NormalizedArticleReference).publication
+                ? { publication: (ref as NormalizedArticleReference).publication }
+                : {})}
+            {...((ref as NormalizedArticleReference).publicationUrl
+                ? { publicationUrl: (ref as NormalizedArticleReference).publicationUrl }
+                : {})}
+            {...((ref as NormalizedArticleReference).pages
+                ? { pages: (ref as NormalizedArticleReference).pages }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+            {
+                editorialNote && (
+                    <Fragment slot="description"><div
+                            class="mt-3 text-sm text-base-subtle-text" set:html={editorialNote}
+                        /></Fragment>
+                )
+            }
 
-                {
-                    getPublicationOverride() && (
-                        <Fragment slot="publication">
-                            <span set:html={getPublicationOverride()} />
-                        </Fragment>
-                    )
-                }
+            {
+                getPublicationOverride() && (
+                    <Fragment slot="publication">
+                        <span set:html={getPublicationOverride()} />
+                    </Fragment>
+                )
+            }
 
-                {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
-            </ScholarlyArticle>
-        )
-        : (
-            <Thesis
-                id={referenceAnchor(ref.id)}
-                title={resolveDisplayTitle(ref)} url={(ref as NormalizedThesisReference).url}
-                {...((ref as NormalizedThesisReference).institution
-                    ? { institution: (ref as NormalizedThesisReference).institution }
-                    : {})}
-                {...((ref as NormalizedThesisReference).institutionUrl
-                    ? { institutionUrl: (ref as NormalizedThesisReference).institutionUrl }
-                    : {})}
-            >
-                {
-                    getDescriptionOverride() && (
-                        <Fragment slot="description">
-                            <div set:html={getDescriptionOverride()} />
-                        </Fragment>
-                    )
-                }
-                {editorialNote && <Fragment slot="description"><p class="mt-1 text-sm text-base-subtle-text">{editorialNote}</p></Fragment>}
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </ScholarlyArticle>
+    )
+    : (
+        <Thesis
+            id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
+            url={(ref as NormalizedThesisReference).url}
+            {...((ref as NormalizedThesisReference).institution
+                ? { institution: (ref as NormalizedThesisReference).institution }
+                : {})}
+            {...((ref as NormalizedThesisReference).institutionUrl
+                ? { institutionUrl: (ref as NormalizedThesisReference).institutionUrl }
+                : {})}
+        >
+            {
+                getDescriptionOverride() && (
+                    <Fragment slot="description">
+                        <div set:html={getDescriptionOverride()} />
+                    </Fragment>
+                )
+            }
+            {
+                editorialNote && (
+                    <Fragment slot="description"><div
+                            class="mt-3 text-sm text-base-subtle-text" set:html={editorialNote}
+                        /></Fragment>
+                )
+            }
 
-                {
-                    getInstitutionOverride() && (
-                        <Fragment slot="institution">
-                            <span set:html={getInstitutionOverride()} />
-                        </Fragment>
-                    )
-                }
+            {
+                getInstitutionOverride() && (
+                    <Fragment slot="institution">
+                        <span set:html={getInstitutionOverride()} />
+                    </Fragment>
+                )
+            }
 
-                {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
-            </Thesis>
-        )
+            {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
+        </Thesis>
+    )
 }

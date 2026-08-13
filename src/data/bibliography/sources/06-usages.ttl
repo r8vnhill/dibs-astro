@@ -557,6 +557,18 @@ usage:lib-what-is-library-computing-wikipedia-2025-pending
   dibs:reference ref:library-computing-wikipedia-2025 ;
   dibs:tag "recommended" .
 
+usage:lib-what-is-software-engineering-google-hyrums-law-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:software-engineering-google-hyrums-law ;
+  dibs:tag "recommended" .
+
+usage:lib-what-is-java-language-specification-binary-compatibility-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
+  dibs:reference ref:java-language-specification-binary-compatibility ;
+  dibs:tag "additional" .
+
 usage:software-artifacts-taxonomy-kotlin-backward-compatibility-guidelines-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/> ;

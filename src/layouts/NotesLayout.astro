@@ -214,7 +214,7 @@ const readingTime = estimateReadingTime(
         </div>
 
         <!-- Main content area -->
-        <div class:list={["min-w-0", "w-full", "px-4", "py-8", "sm:px-6", "xl:px-8"]}>
+        <div class:list={["lesson-reading-column", "min-w-0", "w-full", "px-4", "py-8", "sm:px-6", "xl:px-8"]}>
             <details class="mb-6 rounded border border-base-border p-3 lg:hidden" data-export-hidden="true">
                 <summary class="cursor-pointer font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                     Navegación del curso
@@ -309,17 +309,18 @@ const readingTime = estimateReadingTime(
     .lesson-reading-shell {
         display: grid;
         min-width: 0;
+        align-items: start;
     }
 
     @media (min-width: 1024px) {
         .lesson-reading-shell {
-            grid-template-columns: 17rem minmax(0, 1fr);
+            grid-template-columns: var(--sidebar-course, 17rem) minmax(0, 1fr);
         }
     }
 
     @media (min-width: 1440px) {
         .lesson-reading-shell {
-            grid-template-columns: 18rem minmax(0, 1fr) 18rem;
+            grid-template-columns: var(--sidebar-course, 18rem) minmax(0, 1fr) var(--sidebar-page, 18rem);
         }
     }
 
@@ -334,7 +335,8 @@ const readingTime = estimateReadingTime(
     }
 
     #lesson-content {
-        max-width: var(--content-measure);
+        width: min(100%, var(--content-reading, 72ch));
+        max-width: var(--content-reading, 72ch);
         margin-inline: auto;
         font-size: var(--content-font-size);
         line-height: var(--content-line-height);
@@ -357,7 +359,7 @@ const readingTime = estimateReadingTime(
 
     #lesson-content :is(h2, h3, h4) {
         color: var(--base-text-color);
-        scroll-margin-top: 5.5rem;
+        scroll-margin-top: var(--lesson-header-offset, 5.5rem);
     }
 
     #lesson-content h2 {

@@ -5,14 +5,16 @@ import CodeBlock from "../CodeBlock.astro";
 type Props = {
     code: string;
     title?: string;
+    compact?: boolean;
 };
 
-const { code, title }: Props = Astro.props;
+const { code, title, compact = false }: Props = Astro.props;
 ---
 
 <CodeBlock
     lang="nim" icon={icons.Code}
     {code} {title}
+    {compact}
 >
     <Fragment slot="title">
         <slot name="title" />

@@ -5,6 +5,7 @@ import CodeLayout, { type CodeProps } from "./CodeLayout.astro";
 type CodeBlockProps = {
     filename?: string;
     transformers?: ShikiTransformer[];
+    compact?: boolean;
 } & CodeProps;
 
 const {
@@ -15,6 +16,7 @@ const {
     filename,
     icon: Icon,
     transformers = [],
+    compact = false,
 } = Astro.props as CodeBlockProps;
 
 const classes = ["bg-surface-50", "dark:bg-surface-800"];
@@ -30,9 +32,10 @@ if (title) {
 
 <CodeLayout
     class:list={[...classes, className]} icon={Icon}
-    source={filename} {code}
-    {lang} {transformers}
-    {...ariaLabel ? { "aria-label": ariaLabel } : {}} {...title ? { title } : {}}
+    {compact} source={filename}
+    {code} {lang}
+    {transformers} {...ariaLabel ? { "aria-label": ariaLabel } : {}}
+    {...title ? { title } : {}}
 >
     {
         Astro.slots.title && (

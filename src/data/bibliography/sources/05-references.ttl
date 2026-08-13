@@ -516,6 +516,16 @@ ref:kotlin-evolution-principles
   schema:url "https://kotlinlang.org/docs/kotlin-evolution-principles.html" ;
   schema:publisher org:kotlin-help .
 
+ref:software-engineering-google-hyrums-law
+  a schema:WebPage ;
+  schema:name "What Is Software Engineering? | Software Engineering at Google" ;
+  schema:url "https://abseil.io/resources/swe-book/html/ch01.html" .
+
+ref:java-language-specification-binary-compatibility
+  a schema:WebPage ;
+  schema:name "Chapter 13. Binary Compatibility | Java Language Specification" ;
+  schema:url "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html" .
+
 ref:maven-central-repository
   a schema:WebPage ;
   schema:name "Maven Central Repository – Maven" ;

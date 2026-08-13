@@ -1306,6 +1306,12 @@
       }
     },
     {
+      "@id": "ref:java-language-specification-binary-compatibility",
+      "@type": "WebPage",
+      "name": "Chapter 13. Binary Compatibility | Java Language Specification",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html"
+    },
+    {
       "@id": "ref:jdriven-nushell-basics-structured-data",
       "@type": "WebPage",
       "name": "Nushell basics: structured data in your shell",
@@ -2313,6 +2319,12 @@
       }
     },
     {
+      "@id": "ref:software-engineering-google-hyrums-law",
+      "@type": "WebPage",
+      "name": "What Is Software Engineering? | Software Engineering at Google",
+      "url": "https://abseil.io/resources/swe-book/html/ch01.html"
+    },
+    {
       "@id": "ref:spdx-license-list",
       "@type": "WebPage",
       "name": "SPDX License List",
@@ -2962,6 +2974,19 @@
       ]
     },
     {
+      "@id": "usage:lib-what-is-java-language-specification-binary-compatibility-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:java-language-specification-binary-compatibility"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
       "@id": "usage:lib-what-is-kotlin-backward-compatibility-guidelines-pending",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
@@ -3102,6 +3127,19 @@
       },
       "dibs:tags": [
         "pending-revision"
+      ]
+    },
+    {
+      "@id": "usage:lib-what-is-software-engineering-google-hyrums-law-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/software-libraries/what-is/"
+      },
+      "dibs:reference": {
+        "@id": "ref:software-engineering-google-hyrums-law"
+      },
+      "dibs:tags": [
+        "recommended"
       ]
     },
     {

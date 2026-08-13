@@ -25,13 +25,14 @@ const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as 
             puede observar el código que la utiliza.
         </P>
 
-        <Important title="Un modelo para esta lección">
+        <section class="mt-6 border-l-2 border-primary/60 pl-4" aria-labelledby="lesson-model-heading">
+            <h2 id="lesson-model-heading" class="mt-0 text-xl">Un modelo para esta lección</h2>
             <P>
                 Pensaremos una biblioteca como una <B>implementación</B> que ofrece una <B>API</B> a <B>código
                     consumidor</B>. La API establece una frontera: hacia afuera quedan las formas de interacción y las
                 garantías que ofrecemos; hacia adentro quedan las decisiones que queremos poder cambiar.
             </P>
-        </Important>
+        </section>
 
         <P>
             Al terminar esta lección deberías poder distinguir implementación, API y código consumidor; diferenciar
@@ -189,6 +190,7 @@ const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as 
 
         <KotlinBlock
             code={`fun detectParasite(id: HostId): Detection`} title="Una firma muestra solo parte del contrato"
+            compact
         >
             <span slot="footer">
                 Todavía necesitamos saber qué significa <KotlinInline code="INCONCLUSIVE" />, si la operación realiza
@@ -301,37 +303,35 @@ const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as 
 
             <KotlinBlock
                 code={`fun detectParasite(id: HostId): Detection`} title="Clasifica cada cambio antes de continuar"
+                compact
             />
 
             <P>
                 Pregúntate si cada cambio modifica solo la implementación, cambia la superficie o altera el contrato aun
                 cuando la firma permanezca igual.
-
-                <List>
-                    <ListItem icon={icons.NumberOne}>Reemplazamos una búsqueda lineal por un índice.</ListItem>
-                    <ListItem icon={icons.NumberTwo}
-                    >Cambiamos la representación interna de las observaciones.</ListItem>
-                    <ListItem icon={icons.NumberThree}><KotlinInline code="INCONCLUSIVE" /> ahora también significa
-                        “falló la conexión con el sensor”.</ListItem>
-                    <ListItem icon={icons.NumberFour}
-                    >Cambiamos el retorno a <KotlinInline code="Result<Detection>" />.</ListItem>
-                    <ListItem icon={icons.NumberFive}
-                    >Introducimos una caché que puede devolver información de hasta cinco minutos de
-                        antigüedad.</ListItem>
-                </List>
             </P>
 
-            <More
-                title="Una posible clasificación" headingLevel="h4"
-                id="h4-change-classification"
-            >
-                <P>
-                    Los cambios 1 y 2 pueden permanecer completamente internos. El cambio 3 conserva la superficie, pero
-                    cambia el significado observable y, por tanto, el contrato. El cambio 4 modifica la superficie y
-                    también obliga a revisar el contrato. El cambio 5 puede conservar la firma, pero introduce una nueva
-                    garantía temporal que el consumidor podría observar.
-                </P>
-            </More>
+            <List ordered class="my-5 space-y-4">
+                <ListItem>Reemplazamos una búsqueda lineal por un índice.</ListItem>
+                <ListItem>Cambiamos la representación interna de las observaciones.</ListItem>
+                <ListItem><KotlinInline code="INCONCLUSIVE" /> ahora también significa “falló la conexión con el
+                    sensor”.</ListItem>
+                <ListItem>Cambiamos el retorno a <KotlinInline code="Result<Detection>" />.</ListItem>
+                <ListItem>Introducimos una caché que puede devolver información de hasta cinco minutos de
+                    antigüedad.</ListItem>
+            </List>
+
+            <details class="my-6 rounded-md border border-primary/40 bg-primary/5 p-4">
+                <summary class="cursor-pointer font-semibold text-primary">Revelar una posible clasificación</summary>
+                <div class="mt-3">
+                    <P>
+                        Los cambios 1 y 2 pueden permanecer completamente internos. El cambio 3 conserva la superficie,
+                        pero cambia el significado observable y, por tanto, el contrato. El cambio 4 modifica la
+                        superficie y también obliga a revisar el contrato. El cambio 5 puede conservar la firma, pero
+                        introduce una nueva garantía temporal que el consumidor podría observar.
+                    </P>
+                </div>
+            </details>
         </Question>
     </NotesSection>
 
@@ -422,4 +422,23 @@ const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as 
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <NotesSection
+        id="continue-reading" title="Continúa explorando"
+        Icon={icons.BookOpen}
+    >
+        <P>
+            Si quieres profundizar, puedes explorar las lecturas complementarias sobre ocultamiento de información,
+            diseño de APIs, compatibilidad y mecanismos de otros lenguajes.
+        </P>
+        <p class="mt-5">
+            <a
+                href={libraryWhatIsReadings.readingsPath}
+                class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
+            >
+                Ver lecturas complementarias
+                <icons.ArrowRight class="ml-2 size-5" aria-hidden="true" />
+            </a>
+        </p>
+    </NotesSection>
 </NotesLayout>

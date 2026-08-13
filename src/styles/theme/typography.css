@@ -12,9 +12,14 @@
     --text-xl: 1.6rem;
     --text-2xl: 2rem;
     --text-3xl: 2.5rem;
-    --content-font-size: 1rem;
+    --content-font-size: 1.0625rem;
     --content-line-height: 1.65;
-    --content-measure: 64rem;
+    --content-measure: 72ch;
+    --content-reading: 72ch;
+    --sidebar-course: 18rem;
+    --sidebar-page: 18rem;
+    --lesson-header-offset: 5.5rem;
+    --focus-color: var(--theme-color-primary);
 }
 
 @theme {
@@ -48,5 +53,25 @@
         font-family: var(--font-mono);
         font-variant-ligatures: contextual;
         text-rendering: optimizeLegibility;
+    }
+
+    :where(a, button, summary):focus-visible {
+        outline: 2px solid var(--focus-color);
+        outline-offset: 3px;
+    }
+
+    html {
+        scroll-padding-top: var(--lesson-header-offset);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            scroll-behavior: auto !important;
+            transition-duration: 0.01ms !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+        }
     }
 }

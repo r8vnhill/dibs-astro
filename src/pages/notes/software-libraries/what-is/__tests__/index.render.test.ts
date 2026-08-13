@@ -43,9 +43,9 @@ describe.concurrent("Library 'what-is' lesson render", () => {
             "h2-surface",
             "h2-contract",
             "h2-encapsulation",
-            "h2-observable-change",
             "h2-stability",
             "conclusions",
+            "continue-reading",
         ]);
 
         const headings = sections.map(section => {
@@ -60,14 +60,14 @@ describe.concurrent("Library 'what-is' lesson render", () => {
             "Superficie de API: ¿con qué puedo interactuar?",
             "Contrato: ¿en qué puedo confiar?",
             "Encapsulación: controlar de qué puede depender el exterior",
-            "¿Qué cambios puede observar quien consume?",
             "Estabilidad: las dependencias externas crean compromisos",
             "Conclusiones",
+            "Continúa explorando",
         ]);
 
         // Only the migrated main sections (not ConclusionsLayout, which is out of scope here) are
         // expected to have their heading id auto-wired to aria-labelledby.
-        for (const section of sections.slice(0, 8)) {
+        for (const section of sections.slice(0, 7)) {
             expect(section.getAttribute("aria-labelledby")).toBe(`${section.id}-heading`);
             expect(section.querySelector("h2")?.id).toBe(`${section.id}-heading`);
         }
@@ -89,5 +89,33 @@ describe.concurrent("Library 'what-is' lesson render", () => {
         expect(summary?.textContent).toContain("más información en la declaración");
         expect(disclosure?.textContent).toContain("raises: []");
         expect(disclosure?.querySelector("code")?.textContent).toBeTruthy();
+    });
+
+    test("renders the observable-change exercise as an ordered disclosure", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(WhatIsPage);
+        const html = await renderPage({}, {
+            request: new Request("https://dibs.ravenhill.cl/notes/software-libraries/what-is/"),
+        });
+        const doc = parseHtml(html);
+        const section = doc.querySelector("#h2-observable-change");
+
+        expect(section?.querySelector("ol")).not.toBeNull();
+        expect(section?.querySelectorAll("ol > li")).toHaveLength(5);
+        const disclosure = Array.from(section?.querySelectorAll("details") ?? []).find(element =>
+            element.textContent?.includes("Revelar una posible clasificación")
+        );
+        expect(disclosure).not.toBeNull();
+        expect(disclosure?.hasAttribute("open")).toBe(false);
+    });
+
+    test("keeps one-line contract signatures compact", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(WhatIsPage);
+        const html = await renderPage({}, {
+            request: new Request("https://dibs.ravenhill.cl/notes/software-libraries/what-is/"),
+        });
+        const doc = parseHtml(html);
+        const signatureBlocks = Array.from(doc.querySelectorAll("[data-code-compact='true']"));
+
+        expect(signatureBlocks).toHaveLength(2);
     });
 });

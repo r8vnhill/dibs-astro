@@ -1,0 +1,25 @@
+---
+import type { LessonReading } from "~/data/readings/lesson-readings";
+import type { NormalizedReference } from "~/lib/bibliography";
+import ReferenceEntry from "./ReferenceEntry.astro";
+
+interface Props {
+    reference: NormalizedReference;
+    reading: LessonReading;
+}
+
+const { reference, reading } = Astro.props;
+const guide = `
+    <div class="space-y-2">
+        <p class="text-xs uppercase tracking-wide text-base-subtle-text">${reading.type} · ${reading.difficulty} · ${reading.extent}</p>
+        <p><strong>Por qué leerlo.</strong> ${reading.why}</p>
+        <p><strong>En qué enfocarse.</strong> ${reading.focus}</p>
+        <p><strong>Después de leer.</strong> ${reading.afterReading}</p>
+        ${reading.guidingQuestion ? `<p><strong>Pregunta guía.</strong> ${reading.guidingQuestion}</p>` : ""}
+    </div>`;
+---
+
+<ReferenceEntry
+    {reference} preparedSlots={{}}
+    editorialNote={guide}
+/>

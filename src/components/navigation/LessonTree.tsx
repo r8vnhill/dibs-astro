@@ -149,7 +149,7 @@ export const LessonTree = memo(
                                         className={clsx(
                                             "flex-1 block rounded-md px-2.5 py-2 text-sm leading-snug no-underline outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 shadow-none ring-0 border-0 transition-colors",
                                             isActive
-                                                ? "text-primary font-semibold"
+                                                ? "border-l-2 border-primary bg-primary/10 text-primary font-semibold"
                                                 : "text-base-text hover:bg-base-border/10 hover:text-primary focus-visible:bg-base-border/10 focus-visible:text-primary",
                                         )}
                                     >

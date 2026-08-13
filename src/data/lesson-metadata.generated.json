@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T21:12:43.345Z",
+  "generatedAt": "2026-08-13T22:14:45.963Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1851,6 +1851,12 @@
       "lastModified": "2026-08-13",
       "changes": [
         {
+          "hash": "a31463052c6d42fdc363205c6787d6597708ca9a",
+          "date": "2026-08-13",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 tests(release/lessons): Add render-contract tests & consolidate lesson authoring"
+        },
+        {
           "hash": "5947017cfa3407a0cb6a307bf1dde5fdabbbb418",
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
@@ -1873,12 +1879,6 @@
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🧑‍🏫 feat(lesson): Reframe Lesson 1B around API contract as library boundary"
-        },
-        {
-          "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
-          "date": "2026-06-19",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🚚 refactor(icons): rename shared icon package"
         }
       ]
     },
