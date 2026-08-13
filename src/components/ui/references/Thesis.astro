@@ -33,6 +33,7 @@ import { resolveThesisReference, THESIS_REFERENCE_SLOTS } from "./thesis-referen
  * slots when the rendered content needs custom markup; prefer props for plain text metadata.
  */
 type Props = {
+    id?: string;
     /**
      * Plain-text fallback thesis title.
      *
@@ -76,7 +77,7 @@ const slots = await resolveOptionalSlots(Astro.slots, THESIS_REFERENCE_SLOTS);
 const reference = resolveThesisReference(Astro.props, slots);
 ---
 
-<ListItem icon={icons.Student}>
+<ListItem id={Astro.props.id} icon={icons.Student} class="scroll-mt-24">
     <Enquote type="english-double">
         <a href={reference.url} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
             {

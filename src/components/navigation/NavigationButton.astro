@@ -64,6 +64,11 @@ const labelText = iconPosition === "left"
     ]}
 >
     {iconPosition === "left" && <slot name="icon" />}
-    {label}
+    <span class="flex flex-col items-start leading-snug">
+        <span class="text-xs font-medium text-base-subtle-text">{
+            iconPosition === "left" ? "Anterior" : "Siguiente"
+        }</span>
+        <span data-navigation-title>{label}</span>
+    </span>
     {iconPosition === "right" && <slot name="icon" />}
 </a>

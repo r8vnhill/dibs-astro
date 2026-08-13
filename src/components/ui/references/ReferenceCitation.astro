@@ -1,0 +1,14 @@
+---
+import { referenceCitationHref } from "~/lib/references/reference-links";
+
+interface Props {
+    referenceId: string;
+    readingsPath: string;
+}
+
+const { referenceId, readingsPath } = Astro.props as Props;
+---
+
+<a href={referenceCitationHref(readingsPath, referenceId)} class="reference-citation">
+    <slot />
+</a>

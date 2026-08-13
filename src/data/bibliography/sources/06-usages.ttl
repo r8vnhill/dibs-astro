@@ -501,13 +501,13 @@ usage:lib-what-is-kotlin-evolution-principles-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
   dibs:reference ref:kotlin-evolution-principles ;
-  dibs:tag "pending-revision" .
+  dibs:tag "additional" .
 
 usage:lib-what-is-bloch-how-to-design-good-api-2006-pending
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/software-libraries/what-is/> ;
   dibs:reference ref:bloch-how-to-design-good-api-2006 ;
-  dibs:tag "pending-revision" .
+  dibs:tag "additional" .
 
 usage:lib-what-is-frakes-software-reuse-research-2005-pending
   a dibs:ReferenceUsage ;

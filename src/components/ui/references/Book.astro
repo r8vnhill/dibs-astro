@@ -6,6 +6,7 @@ import { formatPageReference, type PageReference } from "~/lib/bibliography";
 import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 
 type Props = {
+    id?: string;
     chapter?: string;
     pages?: PageReference;
     bookTitle?: string;
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const {
+    id,
     chapter,
     pages,
     bookTitle,
@@ -43,7 +45,7 @@ const {
 } = await resolveOptionalSlots(Astro.slots, ["chapter", "bookTitle", "authors", "description"]);
 ---
 
-<ListItem icon={icons.Book} class="space-y-1">
+<ListItem id={id} icon={icons.Book} class="space-y-1 scroll-mt-24">
     <div class="flex flex-wrap items-baseline gap-x-1.5">
         <Enquote type={quoteType}>
             {chapterSlot.kind === "meaningful" ? <slot name="chapter" /> : chapter}

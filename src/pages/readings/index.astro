@@ -1,0 +1,21 @@
+---
+import { publishedReadings } from "~/data/readings/lesson-readings";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout pageTitle="Lecturas">
+    <section class="mx-auto max-w-3xl px-6 py-12">
+        <h1>Lecturas</h1>
+        <p class="mt-4 text-lg">Referencias seleccionadas para profundizar en las lecciones del curso.</p>
+        <ul class="mt-8 space-y-4">
+            {
+                publishedReadings.map((reading) => (
+                    <li class="rounded border border-base-border p-4">
+                        <a class="text-lg font-semibold" href={reading.readingsPath}>{reading.title}</a>
+                        <p class="mt-1 text-sm text-base-subtle-text">Lecturas asociadas a esta lección.</p>
+                    </li>
+                ))
+            }
+        </ul>
+    </section>
+</BaseLayout>

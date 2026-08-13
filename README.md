@@ -8,9 +8,10 @@
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 [![DIBS Site](https://img.shields.io/badge/site-dibs.ravenhill.cl-purple)](https://dibs.ravenhill.cl)
 
-This repository contains the public site for DIBS, a course on software library design and implementation.
-The site is built with Astro, Tailwind CSS v4, and React islands, and it is deployed as a static site to Cloudflare
-Workers Static Assets.
+DIBS is an online, university-level course on software library design and implementation, designed for autonomous
+study rather than formal institutional enrollment. This repository contains its public site, which also serves as a
+reference implementation of some of the course's own architectural ideas. The site is built with Astro, Tailwind
+CSS v4, and React islands, and it is deployed as a static site to Cloudflare Workers Static Assets.
 
 The course content itself is in Spanish. This README is in English to keep the repository reusable and easier to adapt
 as a foundation for courses in other languages.

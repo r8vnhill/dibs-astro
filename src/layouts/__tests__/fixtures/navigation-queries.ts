@@ -95,7 +95,7 @@ export const previousLinksFrom = (
 ): readonly RenderedNavigationLink[] =>
     [...nav.querySelectorAll<HTMLAnchorElement>("a[rel=\"prev\"]")].map(
         (link) => ({
-            title: normalizedText(link.textContent),
+            title: normalizedText(link.querySelector("[data-navigation-title]")?.textContent),
             href: link.getAttribute("href") ?? "",
         }),
     );
@@ -116,7 +116,7 @@ export const nextLinkFrom = (
     }
 
     return {
-        title: normalizedText(link.textContent),
+        title: normalizedText(link.querySelector("[data-navigation-title]")?.textContent),
         href: link.getAttribute("href") ?? "",
     };
 };

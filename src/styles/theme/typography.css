@@ -12,6 +12,9 @@
     --text-xl: 1.6rem;
     --text-2xl: 2rem;
     --text-3xl: 2.5rem;
+    --content-font-size: 1rem;
+    --content-line-height: 1.65;
+    --content-measure: 64rem;
 }
 
 @theme {

@@ -48,6 +48,7 @@
  * - When there is no “previous” button, a hidden placeholder is used on wide screens to
  *   preserve alignment without adding noise to assistive technologies.
  */
+import * as icons from "$icons";
 import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { resolveLessonMetadata } from "$presentation/adapters/lesson-metadata-bridge";
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
@@ -57,9 +58,9 @@ import {
     normalizePreviousNavigation,
 } from "$presentation/adapters/navigation-normalization";
 import type { RepoRef } from "@ravenhill/site-core";
-import * as icons from "$icons";
 import LessonSidebar from "~/components/navigation/LessonSidebar";
 import NavigationButton from "~/components/navigation/NavigationButton.astro";
+import LessonToc from "~/components/notes/LessonToc.astro";
 import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import LessonDocumentLayout from "~/layouts/LessonDocumentLayout.astro";
@@ -173,8 +174,7 @@ const autoNav = await resolveAutoNav(pathname, courseNavigationTree);
 
 // Allow manual override from frontmatter (if provided). Manual previous arrays intentionally
 // replace the auto-resolved previous lesson instead of merging with it.
-const hasManualNavigation =
-    Object.hasOwn(Astro.props, "previous") || Object.hasOwn(Astro.props, "next");
+const hasManualNavigation = Object.hasOwn(Astro.props, "previous") || Object.hasOwn(Astro.props, "next");
 const effectivePrevious = hasManualNavigation ? previous : autoNav.previous ?? undefined;
 const effectiveNext = hasManualNavigation ? next : autoNav.next ?? undefined;
 
@@ -191,14 +191,28 @@ const { normalizedNext } = normalizeNavigation(
     pageTitle={title} {...(description !== undefined ? { description } : {})}
     {pageMeta}
 >
-    <div class="flex">
+    <div class="lesson-reading-shell">
         <!-- Sidebar with course structure navigation -->
-        <div class="contents" data-export-hidden="true">
-            <LessonSidebar client:load lessons={courseNavigationTree} />
+        <div class="hidden lg:contents" data-export-hidden="true">
+            <LessonSidebar
+                client:load lessons={courseNavigationTree}
+                currentPath={pathname}
+            />
         </div>
 
         <!-- Main content area -->
-        <div class:list={["flex-1", "w-full", "px-4", "md:px-8", "max-w-5xl", "mx-auto"]}>
+        <div class:list={["min-w-0", "w-full", "px-4", "py-8", "sm:px-6", "xl:px-8"]}>
+            <details class="mb-6 rounded border border-base-border p-3 lg:hidden" data-export-hidden="true">
+                <summary class="cursor-pointer font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    Navegación del curso
+                </summary>
+                <div class="mt-3 max-h-[60vh] overflow-y-auto">
+                    <LessonSidebar
+                        client:load lessons={courseNavigationTree}
+                        currentPath={pathname}
+                    />
+                </div>
+            </details>
             {
                 Astro.slots.has("abstract") ? (
                     <LessonDocumentLayout {...documentProps}>
@@ -225,7 +239,8 @@ const { normalizedNext } = normalizeNavigation(
             }
 
             {
-                (hasManualNavigation || normalizedNext || normalizedPreviousList.length > 0) && (
+                (hasManualNavigation || normalizedNext || normalizedPreviousList.length > 0)
+                    && (
                     <nav
                         aria-label="Siguiente o anterior lección" data-export-hidden="true"
                         class:list={[
@@ -273,10 +288,75 @@ const { normalizedNext } = normalizeNavigation(
                 )
             }
         </div>
+        <LessonToc />
     </div>
 </BaseLayout>
 
 <style is:global>
+    .lesson-reading-shell {
+        display: grid;
+        min-width: 0;
+    }
+
+    @media (min-width: 1024px) {
+        .lesson-reading-shell {
+            grid-template-columns: 17rem minmax(0, 1fr);
+        }
+    }
+
+    @media (min-width: 1440px) {
+        .lesson-reading-shell {
+            grid-template-columns: 18rem minmax(0, 1fr) 18rem;
+        }
+    }
+
+    .lesson-toc {
+        display: none;
+    }
+
+    @media (min-width: 1440px) {
+        .lesson-toc {
+            display: block;
+        }
+    }
+
+    #lesson-content {
+        max-width: var(--content-measure);
+        margin-inline: auto;
+        font-size: var(--content-font-size);
+        line-height: var(--content-line-height);
+    }
+
+    #lesson-content > h1 {
+        margin-top: 0;
+        margin-bottom: 0.4em;
+        color: var(--base-text-color);
+    }
+
+    #lesson-content > section,
+    #lesson-content > div[data-export-role="body"] > section {
+        margin-top: 3.5rem;
+    }
+
+    #lesson-content p + p {
+        margin-top: 1.1rem;
+    }
+
+    #lesson-content :is(h2, h3, h4) {
+        color: var(--base-text-color);
+        scroll-margin-top: 5.5rem;
+    }
+
+    #lesson-content h2 {
+        margin-top: 0;
+        font-size: clamp(1.4rem, 2vw, 1.75rem);
+    }
+
+    #lesson-content :not(pre) > code {
+        border-radius: 0.25rem;
+        background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+        padding: 0.08em 0.28em;
+    }
     /**
      * Sidebar tree styles.
      *
@@ -293,57 +373,6 @@ const { normalizedNext } = normalizeNavigation(
     }
 
     .lesson-tree li {
-        position: relative;
-        line-height: 1.3;
-    }
-
-    .lesson-tree a {
-        display: inline-block;
-        padding: 2px 0;
-    }
-
-    /* Highlight current page in sidebar */
-    .lesson-tree a.text-primary {
-        position: relative;
-    }
-
-    .lesson-tree a.text-primary::before {
-        content: "";
-        position: absolute;
-        left: -0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 4px;
-        height: 60%;
-        background: var(--color-primary);
-        border-radius: 2px;
-    }
-
-    /* Tree “connector” line */
-    .lesson-tree li::before {
-        content: "";
-        position: absolute;
-        top: 0.75rem;
-        left: 0.5rem;
-        width: 1px;
-        height: 100%;
-        background-color: var(--color-base-border);
-        opacity: 0.5;
-    }
-
-    .lesson-tree li:last-child::before {
-        height: 0.8rem;
-    }
-
-    /* Indentation for grouped subtrees */
-    .lesson-tree .tree-node {
-        padding-left: 0.75rem; /* extra space for the tree line */
-    }
-
-    /* Visual separator between major groups */
-    .lesson-tree .tree-separator {
-        border-top: 1px solid var(--color-base-border);
-        margin-top: 0.75rem;
-        padding-top: 0.75rem;
+        line-height: 1.35;
     }
 </style>

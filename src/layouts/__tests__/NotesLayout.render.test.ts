@@ -128,6 +128,28 @@ describe("NotesLayout.astro render", () => {
     });
 
     describe("abstract slot", () => {
+        test("renders one lesson identity heading and a labelled local-navigation landmark", async () => {
+            const html = await renderNotes(
+                { title: "Brian's very confusing day" },
+                {
+                    slots: {
+                        default: `
+                            <section id="meaningful-section">
+                                <h2>A meaningful section</h2>
+                                <p>The body.</p>
+                            </section>
+                        `,
+                    },
+                },
+            );
+            const doc = parseHtml(html);
+
+            expect(doc.querySelectorAll("#lesson-content > h1")).toHaveLength(1);
+            expect(
+                doc.querySelector("[data-testid='lesson-toc'] nav")?.getAttribute("aria-label"),
+            ).toBe("En esta página");
+        });
+
         test("renders abstract content before the default body", async () => {
             const html = await renderNotes(
                 { title: "Brian's very confusing day" },

@@ -37,6 +37,7 @@ import {
 import { ReferenceContractError } from "./ReferenceContractError";
 
 type Props = {
+    id?: string;
     /** Fallback article title when the `title` slot is absent or empty. */
     title?: string;
 
@@ -56,7 +57,7 @@ type Props = {
     author?: string;
 };
 
-const { title, url, publication, publicationUrl, pages, author }: Props = Astro.props;
+const { id, title, url, publication, publicationUrl, pages, author }: Props = Astro.props;
 
 // Resolve optional slots once so the template stays declarative.
 const {
@@ -89,7 +90,7 @@ if (import.meta.env.DEV && publicationUrl && !publication) {
 }
 ---
 
-<ListItem icon={icons.FileText}>
+<ListItem id={id} icon={icons.FileText} class="scroll-mt-24">
     <Enquote type="english-double">
         <a href={url} {...externalLinkAttrs}>
             {

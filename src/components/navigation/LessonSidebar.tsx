@@ -26,9 +26,9 @@
  *   the test id remains a convenient fallback for UI snapshots.
  */
 
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import clsx from "clsx";
 import { memo } from "react";
-import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { LessonTree } from "./LessonTree";
 
 /**
@@ -47,6 +47,7 @@ interface Props {
      * - Already normalized/validated by the caller (this component treats it as trusted input).
      */
     lessons: readonly CourseNavigationLesson[];
+    currentPath?: string;
 }
 
 /**
@@ -55,24 +56,28 @@ interface Props {
  * @param props Component props.
  * @returns Sidebar element containing the {@link LessonTree}.
  */
-function LessonSidebar({ lessons }: Props) {
+function LessonSidebar({ lessons, currentPath }: Props) {
     return (
         <aside
             aria-label="Navegación del curso"
             data-testid="lesson-sidebar-panel"
             className={clsx(
                 "relative flex-shrink-0",
-                "w-72 min-w-72",
+                "w-full min-w-0",
                 "px-3 py-4",
                 "bg-base-background/98",
                 "backdrop-blur-md",
                 "border-r border-base-border/50",
-                "shadow-sm",
+                "lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]",
                 "overflow-y-auto overflow-x-hidden",
                 "shrink-0 h-full",
             )}
         >
-            <LessonTree lessons={lessons} persistKey="lesson-tree" />
+            <LessonTree
+                lessons={lessons}
+                persistKey="lesson-tree"
+                {...(currentPath !== undefined ? { currentPath } : {})}
+            />
         </aside>
     );
 }

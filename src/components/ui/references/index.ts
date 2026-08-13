@@ -15,6 +15,7 @@ export { default as Book } from "./Book.astro";
 export { default as GenericReference } from "./GenericReference.astro";
 export { default as LessonReferencesFromCatalog } from "./LessonReferencesFromCatalog.astro";
 export { default as OfficialDocs } from "./OfficialDocs.astro";
+export { default as ReferenceCitation } from "./ReferenceCitation.astro";
 export { MissingReferenceTitleError, ReferenceContractError } from "./ReferenceContractError";
 export { default as References } from "./References.astro";
 export { default as ReferencesFromCatalog } from "./ReferencesFromCatalog.astro";

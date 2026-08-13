@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-13T12:46:54.517Z",
+  "generatedAt": "2026-08-13T16:00:16.561Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1851,6 +1851,12 @@
       "lastModified": "2026-08-13",
       "changes": [
         {
+          "hash": "8c1bdfe1d9a989d2024bb1b8c4d7abde66b6bf92",
+          "date": "2026-08-13",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🚀 feat(publish): Implement provenance-aware release pipeline"
+        },
+        {
           "hash": "4e2cfb04f9d50e582dbaea872737c30cc978690f",
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
@@ -1873,12 +1879,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "29b762d3b4473989c146624d72509690b534a360",
-          "date": "2026-04-01",
-          "author": "r8vnhill",
-          "subject": "♻️📝 refactor(bibliography): harden page references and lesson refs"
         }
       ]
     },

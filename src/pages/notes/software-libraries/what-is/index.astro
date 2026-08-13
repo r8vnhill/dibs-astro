@@ -5,7 +5,8 @@ import { Important, Tip, Warning } from "~/components/ui/callouts";
 import { KotlinBlock, KotlinInline } from "~/components/ui/code";
 import { B, I } from "~/components/ui/font";
 import { ListItem } from "~/components/ui/list";
-import { ReferencesFromCatalog } from "~/components/ui/references";
+import { ReferenceCitation } from "~/components/ui/references";
+import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -26,9 +27,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Un modelo para esta lección</span>
 
             <P>
-                Pensaremos una biblioteca como una <B>implementación</B> que ofrece una <B>API</B> a
-                <B>código consumidor</B>. La API establece una frontera: hacia afuera quedan las formas de interacción y
-                las garantías que ofrecemos; hacia adentro quedan las decisiones que queremos poder cambiar.
+                Pensaremos una biblioteca como una <B>implementación</B> que ofrece una <B>API</B> a <B>código
+                    consumidor</B>. La API establece una frontera: hacia afuera quedan las formas de interacción y las
+                garantías que ofrecemos; hacia adentro quedan las decisiones que queremos poder cambiar.
             </P>
         </Important>
 
@@ -242,7 +243,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <P>
             Encapsular no significa simplemente marcar elementos como privados. Significa <B>controlar aquello de lo que
-                el código externo puede depender</B>. Una decisión correctamente encapsulada puede cambiar sin requerir
+                el código externo puede depender</B>. El ocultamiento de información busca mantener detrás de la
+            frontera las decisiones de diseño que probablemente cambien, como explica <ReferenceCitation
+                referenceId="parnas-decomposing-systems-1972" readingsPath={libraryWhatIsReadings.readingsPath}
+            >Parnas (1972)</ReferenceCitation>. Una decisión correctamente encapsulada puede cambiar sin requerir
             cambios en quienes consumen la biblioteca.
         </P>
 
@@ -267,9 +271,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </KotlinBlock>
 
         <P>
-            Esta libertad de cambio es una de las razones centrales para ocultar decisiones internas. Una decisión que
-            atraviesa la frontera pasa a formar parte, explícita o implícitamente, de aquello que debemos considerar al
-            evolucionar la biblioteca.
+            Esta libertad de cambio es una de las razones centrales para ocultar decisiones internas. Los módulos que
+            esconden complejidad detrás de interfaces pequeñas son una idea central de los módulos profundos descritos
+            por
+            <ReferenceCitation
+                referenceId="ousterhout-philosophy-software-design-2021"
+                readingsPath={libraryWhatIsReadings.readingsPath}
+            >
+                Ousterhout (2021)
+            </ReferenceCitation>. Una decisión que atraviesa la frontera pasa a formar parte, explícita o
+            implícitamente, de aquello que debemos considerar al evolucionar la biblioteca.
         </P>
     </NotesSection>
 
@@ -346,8 +357,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Warning>
 
         <P>
-            Más adelante distinguiremos distintas formas de compatibilidad —por ejemplo, compatibilidad de código
-            fuente, binaria y de comportamiento— y estudiaremos técnicas para evolucionar APIs de manera controlada.
+            Las guías de quienes publican bibliotecas Kotlin conectan esta superficie con compromisos explícitos de
+            compatibilidad (<ReferenceCitation
+                referenceId="kotlin-library-authors-guidelines-introduction"
+                readingsPath={libraryWhatIsReadings.readingsPath}
+            >Kotlin</ReferenceCitation>). Más adelante distinguiremos distintas formas de compatibilidad —por ejemplo,
+            compatibilidad de código fuente, binaria y de comportamiento— y estudiaremos técnicas para evolucionar APIs
+            de manera controlada.
         </P>
     </NotesSection>
 
@@ -391,22 +407,4 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </P>
         </Fragment>
     </ConclusionsLayout>
-
-    <ReferencesFromCatalog lessonId="/notes/software-libraries/what-is/">
-        <Fragment slot="description-ref:parnas-decomposing-systems-1972">
-            Parnas presenta una idea fundacional para esta lección: los módulos deben ocultar las decisiones de diseño
-            que probablemente cambien. Es una buena lectura para profundizar por qué encapsular no es solo separar
-            archivos, sino controlar qué decisiones pueden convertirse en dependencias externas.
-        </Fragment>
-
-        <Fragment slot="description-ref:kotlin-library-authors-guidelines-introduction">
-            Esta guía conecta la superficie y el contrato con preocupaciones actuales de quienes publican bibliotecas:
-            claridad, previsibilidad y compatibilidad para código consumidor.
-        </Fragment>
-
-        <Fragment slot="description-ref:kotlin-backward-compatibility-guidelines">
-            Esta lectura adelanta el tema de estabilidad que retomaremos al estudiar la evolución de APIs: cómo los
-            cambios publicados afectan a quienes ya dependen de una biblioteca.
-        </Fragment>
-    </ReferencesFromCatalog>
 </NotesLayout>

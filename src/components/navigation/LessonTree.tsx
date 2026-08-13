@@ -1,7 +1,7 @@
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import clsx from "clsx";
 import { CaretDown, CaretRight } from "phosphor-react";
 import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
-import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 
 /**
  * Props:
@@ -16,166 +16,178 @@ interface Props {
      * When provided, user toggles will be saved and restored.
      */
     persistKey?: string;
+    currentPath?: string;
 }
 
-export const LessonTree = memo(function LessonTree({ lessons, depth = 0, persistKey }: Props) {
-    const [currentPath, setCurrentPath] = useState<string>(() => {
-        if (typeof window === "undefined") return "/";
-        return window.location.pathname;
-    });
-    const [open, setOpen] = useState<Record<string, boolean>>({});
+function expandedBranches(
+    nodes: readonly CourseNavigationLesson[],
+    currentPath: string,
+): Record<string, boolean> {
+    const expanded: Record<string, boolean> = {};
 
-    useEffect(() => {
-        const syncPathFromLocation = () => {
-            setCurrentPath(window.location.pathname);
-        };
+    const walk = (entries: readonly CourseNavigationLesson[]): boolean =>
+        entries.some((entry) => {
+            const childMatch = entry.children ? walk(entry.children) : false;
+            const selfMatch = entry.href === currentPath;
 
-        // Sync once after mount and keep in sync for history navigation.
-        syncPathFromLocation();
-        window.addEventListener("popstate", syncPathFromLocation);
+            if (childMatch) expanded[entry.href ?? entry.title] = true;
 
-        // Keep compatibility if Astro view transitions are enabled later.
-        document.addEventListener("astro:page-load", syncPathFromLocation);
+            return selfMatch || childMatch;
+        });
 
-        return () => {
-            window.removeEventListener("popstate", syncPathFromLocation);
-            document.removeEventListener("astro:page-load", syncPathFromLocation);
-        };
-    }, []);
+    walk(nodes);
+    return expanded;
+}
 
-    // Auto-expand parents of active path once per render tree
-    useEffect(() => {
-        const expanded: Record<string, boolean> = {};
-        const walk = (nodes: readonly CourseNavigationLesson[]): boolean => {
-            let matchedSubtree = false;
-            for (const node of nodes) {
-                const key = node.href ?? node.title;
-                const selfMatch = node.href === currentPath;
-                const childMatch = node.children ? walk(node.children) : false;
-                if (childMatch) {
-                    expanded[key] = true;
-                }
-                matchedSubtree = matchedSubtree || selfMatch || childMatch;
-            }
-            return matchedSubtree;
-        };
-        walk(lessons);
+export const LessonTree = memo(
+    function LessonTree({ lessons, depth = 0, persistKey, currentPath: initialPath }: Props) {
+        const [currentPath, setCurrentPath] = useState<string>(() => {
+            if (initialPath) return initialPath;
+            if (typeof window === "undefined") return "/";
+            return window.location.pathname;
+        });
+        const [open, setOpen] = useState<Record<string, boolean>>(() =>
+            expandedBranches(lessons, initialPath ?? (typeof window === "undefined" ? "/" : window.location.pathname))
+        );
 
-        let persisted: Record<string, boolean> = {};
-        if (persistKey && typeof window !== "undefined") {
-            try {
-                const raw = localStorage.getItem(persistKey);
-                if (raw) persisted = JSON.parse(raw);
-            } catch {
-                // ignore parse errors
-            }
-        }
+        useEffect(() => {
+            const syncPathFromLocation = () => {
+                setCurrentPath(window.location.pathname);
+            };
 
-        setOpen((prev) => ({ ...prev, ...expanded, ...persisted }));
-    }, [lessons, currentPath, persistKey]);
+            // Sync once after mount and keep in sync for history navigation.
+            syncPathFromLocation();
+            window.addEventListener("popstate", syncPathFromLocation);
 
-    const toggle = useCallback((key: string) => {
-        setOpen((prev) => {
-            const currentValue = prev[key] ?? true;
-            const nextValue = !currentValue;
-            const next = { ...prev, [key]: nextValue };
+            // Keep compatibility if Astro view transitions are enabled later.
+            document.addEventListener("astro:page-load", syncPathFromLocation);
+
+            return () => {
+                window.removeEventListener("popstate", syncPathFromLocation);
+                document.removeEventListener("astro:page-load", syncPathFromLocation);
+            };
+        }, []);
+
+        // Auto-expand parents of active path once per render tree
+        useEffect(() => {
+            const expanded = expandedBranches(lessons, currentPath);
+
+            let persisted: Record<string, boolean> = {};
             if (persistKey && typeof window !== "undefined") {
                 try {
-                    localStorage.setItem(persistKey, JSON.stringify(next));
+                    const raw = localStorage.getItem(persistKey);
+                    if (raw) persisted = JSON.parse(raw);
                 } catch {
-                    // ignore quota errors
+                    // ignore parse errors
                 }
             }
-            return next;
-        });
-    }, [persistKey]);
 
-    // Use a fixed set of Tailwind classes so the compiler can tree-shake correctly.
-    const INDENTS = ["pl-0", "pl-3", "pl-6", "pl-9"] as const;
-    const indentPadding = (d: number) => INDENTS[Math.min(d, INDENTS.length - 1)];
+            setOpen((prev) => ({ ...prev, ...expanded, ...persisted }));
+        }, [lessons, currentPath, persistKey]);
 
-    // Small subcomponents to keep markup concise and reusable
-    function ToggleBtn({ onClick, isOpen }: { onClick: () => void; isOpen: boolean }) {
-        return (
-            <button
-                onClick={onClick}
-                aria-label={isOpen ? "Contraer sección" : "Expandir sección"}
-                className="flex-none w-5 h-5 grid place-items-center rounded hover:bg-base-border/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-base-text/60 hover:text-base-text transition-all"
-            >
-                {isOpen
-                    ? <CaretDown size={14} weight="bold" />
-                    : <CaretRight size={14} weight="bold" />}
-            </button>
-        );
-    }
+        const toggle = useCallback((key: string) => {
+            setOpen((prev) => {
+                const currentValue = prev[key] ?? false;
+                const nextValue = !currentValue;
+                const next = { ...prev, [key]: nextValue };
+                if (persistKey && typeof window !== "undefined") {
+                    try {
+                        localStorage.setItem(persistKey, JSON.stringify(next));
+                    } catch {
+                        // ignore quota errors
+                    }
+                }
+                return next;
+            });
+        }, [persistKey]);
 
-    const renderLessons = useCallback((
-        nodes: readonly CourseNavigationLesson[],
-        level: number,
-    ): ReactNode[] => {
-        return nodes.map((lesson, index) => {
-            const key = lesson.href ?? `${lesson.title}-${level}-${index}`;
-            const isActive = lesson.href ? currentPath === lesson.href : false;
-            const hasChildren = !!lesson.children?.length;
-            const isOpen = open[key] ?? true;
+        // Use a fixed set of Tailwind classes so the compiler can tree-shake correctly.
+        const INDENTS = ["pl-0", "pl-3", "pl-6", "pl-9"] as const;
+        const indentPadding = (d: number) => INDENTS[Math.min(d, INDENTS.length - 1)];
 
+        // Small subcomponents to keep markup concise and reusable
+        function ToggleBtn({ onClick, isOpen }: { onClick: () => void; isOpen: boolean }) {
             return (
-                <li
-                    key={key}
-                    role="treeitem"
-                    aria-expanded={hasChildren ? isOpen : undefined}
-                    className={clsx("tree-node", indentPadding(level), "relative")}
+                <button
+                    onClick={onClick}
+                    aria-label={isOpen ? "Contraer sección" : "Expandir sección"}
+                    className="flex-none w-5 h-5 grid place-items-center rounded hover:bg-base-border/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-base-text/60 hover:text-base-text transition-all"
                 >
-                    <div className="flex items-center gap-1.5">
-                        {hasChildren
-                            ? <ToggleBtn onClick={() => toggle(key)} isOpen={isOpen} />
-                            : <div className="w-5" aria-hidden="true" />}
-                        {lesson.href
-                            ? (
-                                <a
-                                    href={lesson.href}
-                                    aria-current={isActive ? "page" : undefined}
-                                    className={clsx(
-                                        "flex-1 block mx-2 rounded-lg px-3 py-1.5 text-sm no-underline outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 shadow-none ring-0 border-0 border-l-0 transition-colors",
-                                        isActive
-                                            ? "bg-primary/15 text-primary font-semibold"
-                                            : "text-base-text hover:bg-base-border/10 hover:text-primary focus-visible:bg-base-border/10 focus-visible:text-primary",
-                                    )}
-                                >
-                                    {lesson.title}
-                                </a>
-                            )
-                            : (
-                                <span
-                                    className={clsx(
-                                        "flex-1 px-3 py-1 mx-2 ml-1",
-                                        "text-base-text/60",
-                                        "font-semibold text-xs uppercase tracking-wider",
-                                    )}
-                                >
-                                    {lesson.title}
-                                </span>
-                            )}
-                    </div>
-                    {hasChildren && isOpen && (
-                        <div className="mt-1">
-                            <nav aria-label="Navegación de lecciones" className="lesson-tree">
-                                <ul role="tree" className="space-y-1">
-                                    {renderLessons(lesson.children!, level + 1)}
-                                </ul>
-                            </nav>
-                        </div>
-                    )}
-                </li>
+                    {isOpen
+                        ? <CaretDown size={14} weight="bold" />
+                        : <CaretRight size={14} weight="bold" />}
+                </button>
             );
-        });
-    }, [currentPath, toggle, open]);
+        }
 
-    return (
-        <nav aria-label="Navegación de lecciones" className="lesson-tree">
-            <ul role="tree" className="space-y-1">
-                {renderLessons(lessons, depth)}
-            </ul>
-        </nav>
-    );
-});
+        const renderLessons = useCallback((
+            nodes: readonly CourseNavigationLesson[],
+            level: number,
+        ): ReactNode[] => {
+            return nodes.map((lesson) => {
+                const key = lesson.href ?? lesson.title;
+                const isActive = lesson.href ? currentPath === lesson.href : false;
+                const hasChildren = !!lesson.children?.length;
+                const isOpen = open[key] ?? false;
+
+                return (
+                    <li
+                        key={key}
+                        role="treeitem"
+                        aria-expanded={hasChildren ? isOpen : undefined}
+                        className={clsx("tree-node", indentPadding(level), "relative")}
+                    >
+                        <div className="flex items-center gap-1.5">
+                            {hasChildren
+                                ? <ToggleBtn onClick={() => toggle(key)} isOpen={isOpen} />
+                                : <div className="w-5" aria-hidden="true" />}
+                            {lesson.href
+                                ? (
+                                    <a
+                                        href={lesson.href}
+                                        aria-current={isActive ? "page" : undefined}
+                                        className={clsx(
+                                            "flex-1 block rounded-md px-2.5 py-2 text-sm leading-snug no-underline outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 shadow-none ring-0 border-0 transition-colors",
+                                            isActive
+                                                ? "text-primary font-semibold"
+                                                : "text-base-text hover:bg-base-border/10 hover:text-primary focus-visible:bg-base-border/10 focus-visible:text-primary",
+                                        )}
+                                    >
+                                        {lesson.title}
+                                    </a>
+                                )
+                                : (
+                                    <span
+                                        className={clsx(
+                                            "flex-1 px-2.5 py-2",
+                                            "text-base-text/60",
+                                            "font-semibold text-xs uppercase tracking-wider",
+                                        )}
+                                    >
+                                        {lesson.title}
+                                    </span>
+                                )}
+                        </div>
+                        {hasChildren && isOpen && (
+                            <div className="mt-1">
+                                <nav aria-label="Navegación de lecciones" className="lesson-tree">
+                                    <ul role="tree" className="space-y-1">
+                                        {renderLessons(lesson.children!, level + 1)}
+                                    </ul>
+                                </nav>
+                            </div>
+                        )}
+                    </li>
+                );
+            });
+        }, [currentPath, toggle, open]);
+
+        return (
+            <nav aria-label="Navegación de lecciones" className="lesson-tree">
+                <ul role="tree" className="space-y-1">
+                    {renderLessons(lessons, depth)}
+                </ul>
+            </nav>
+        );
+    },
+);

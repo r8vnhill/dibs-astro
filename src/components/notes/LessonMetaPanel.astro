@@ -31,11 +31,8 @@ import {
     type LessonMetaPanelMetadata,
 } from "$presentation/adapters/lesson-metadata-panel";
 import { getWebsiteRepoRefs } from "$presentation/adapters/site-data";
+import { type RepoPlatform, type RepoRef } from "@ravenhill/site-core";
 import type { PartialRecord } from "~/types/records";
-import {
-    type RepoPlatform,
-    type RepoRef,
-} from "@ravenhill/site-core";
 import { Mono } from "../ui/font";
 import { Link } from "../ui/links";
 
@@ -85,85 +82,76 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
 ---
 
 <section
-    data-testid="lesson-metadata-panel"
-    aria-labelledby={sectionHeadingId}
+    data-testid="lesson-metadata-panel" aria-labelledby={sectionHeadingId}
     class:list={[
-        "rounded-md",
-        "border",
-        "px-4",
-        "py-3",
+        "border-l-2",
+        "px-3",
+        "py-2",
         "text-sm",
-        "bg-base-elevated",
-        "text-base-text",
-        "border-base-border",
+        "text-base-subtle-text",
+        "border-primary/50",
         "mt-3",
     ]}
 >
     <h2
-        id={sectionHeadingId} class="font-semibold"
+        id={sectionHeadingId} class="sr-only"
         data-testid="panel-title"
     >
         Metadatos de la lección
     </h2>
 
-    <dl class="space-y-1">
-        <div>
-            <dt class="font-semibold inline">Autoría:</dt>
-            <dd class="inline ml-1" data-testid="authors-value">
-                {authorsText || "sin autoría registrada"}
-            </dd>
-        </div>
-        <div>
-            <dt class="font-semibold inline">
-                Última actualización:
-            </dt>
-            <dd class="inline ml-1" data-testid="last-updated-value">{lastModified}</dd>
-        </div>
-    </dl>
+    <p>
+        <span data-testid="authors-value">{authorsText || "sin autoría registrada"}</span>
+        <span aria-hidden="true"> · </span>
+        <span>Actualizado <time data-testid="last-updated-value">{lastModified}</time></span>
+    </p>
 
-    <div class="mt-2">
-        <h3 id={recentChangesHeadingId} class="font-semibold">
-            Cambios recientes:
-        </h3>
+    <details class="mt-2">
+        <summary class="cursor-pointer font-medium text-base-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            Historial de cambios
+        </summary>
+        <div class="mt-2">
+            <h3 id={recentChangesHeadingId} class="sr-only">Cambios recientes</h3>
 
-        {
-            recentChanges.length > 0 ? (
-                <ul class="list-disc list-inside mt-1" data-testid="changes-list">
-                    {
-                        recentChanges.map((change) => (
-                            <li>
-                                <Mono>{change.shortHash}</Mono>
-                                {" · "}
-                                {change.formattedDate}
-                                {" · "}
-                                {change.subject}
-                                {
-                                    change.links.length > 0 && (
-                                        <span class="ml-1">
-                                            (
-                                            {
-                                                change.links.map(
-                                                    (link, index) => (
-                                                    <Fragment>
-                                                        {index > 0 && " / "}
-                                                        <Link href={link.href}>{link.label}</Link>
-                                                    </Fragment>
-                                                ),
+            {
+                recentChanges.length > 0 ? (
+                    <ul class="list-disc list-inside mt-1" data-testid="changes-list">
+                        {
+                            recentChanges.map((change) => (
+                                <li>
+                                    <Mono>{change.shortHash}</Mono>
+                                    {" · "}
+                                    {change.formattedDate}
+                                    {" · "}
+                                    {change.subject}
+                                    {
+                                        change.links.length > 0 && (
+                                            <span class="ml-1">
+                                                (
+                                                {
+                                                    change.links.map(
+                                                        (link, index) => (
+                                                        <Fragment>
+                                                            {index > 0 && " / "}
+                                                            <Link href={link.href}>{link.label}</Link>
+                                                        </Fragment>
+                                                    ),
+                                                    )
+                                                }
                                                 )
-                                            }
-                                            )
-                                        </span>
-                                    )
-                                }
-                            </li>
-                        ))
-                    }
-                </ul>
-            ) : (
-                <p class="mt-1" data-testid="changes-empty">
-                    No hay cambios registrados.
-                </p>
-            )
-        }
-    </div>
+                                            </span>
+                                        )
+                                    }
+                                </li>
+                            ))
+                        }
+                    </ul>
+                ) : (
+                    <p class="mt-1" data-testid="changes-empty">
+                        No hay cambios registrados.
+                    </p>
+                )
+            }
+        </div>
+    </details>
 </section>

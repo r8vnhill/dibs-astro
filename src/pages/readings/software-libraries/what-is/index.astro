@@ -1,0 +1,64 @@
+---
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
+import ReferenceEntry from "~/components/ui/references/ReferenceEntry.astro";
+import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getReferencesForLesson } from "~/lib/bibliography";
+
+const catalog = getDefaultBibliographyCatalog();
+const groups = getReferencesForLesson(catalog, libraryWhatIsReadings.lessonPath, {
+    includeTags: ["recommended", "additional"],
+});
+const readingsById = new Map([
+    ...libraryWhatIsReadings.recommended,
+    ...libraryWhatIsReadings.additional,
+].map((reading) => [reading.referenceId, reading] as const));
+const slots = {};
+---
+
+<BaseLayout pageTitle={`Lecturas · ${libraryWhatIsReadings.title}`}>
+    <main class="mx-auto max-w-4xl px-6 py-12">
+        <p><a href="/readings/">← Todas las lecturas</a></p>
+        <h1 class="mt-6">{libraryWhatIsReadings.title}</h1>
+        <p class="mt-4">Referencias para profundizar en los conceptos de la lección.</p>
+        <p class="mt-2"><a href={libraryWhatIsReadings.lessonPath}>Volver a la lección</a></p>
+
+        <section class="mt-12" aria-labelledby="recommended-heading">
+            <h2 id="recommended-heading">Lecturas recomendadas</h2>
+            <ul class="mt-6 space-y-5">
+                {
+                    groups.recommended
+                        .filter(({ reference }) => readingsById.has(reference.id))
+                        .map(({ reference }) => (
+                            <ReferenceEntry
+                                {reference}
+                                preparedSlots={slots}
+                                {...(readingsById.get(reference.id)?.note
+                                    ? { editorialNote: readingsById.get(reference.id)?.note }
+                                    : {})}
+                            />
+                        ))
+                }
+            </ul>
+        </section>
+
+        <section class="mt-12" aria-labelledby="additional-heading">
+            <h2 id="additional-heading">Referencias adicionales</h2>
+            <ul class="mt-6 space-y-5">
+                {
+                    groups.additional
+                        .filter(({ reference }) => readingsById.has(reference.id))
+                        .map(({ reference }) => (
+                            <ReferenceEntry
+                                {reference}
+                                preparedSlots={slots}
+                                {...(readingsById.get(reference.id)?.note
+                                    ? { editorialNote: readingsById.get(reference.id)?.note }
+                                    : {})}
+                            />
+                        ))
+                }
+            </ul>
+        </section>
+    </main>
+</BaseLayout>

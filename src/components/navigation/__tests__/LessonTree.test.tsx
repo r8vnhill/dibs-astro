@@ -24,10 +24,10 @@
  *   regressions obvious (e.g., a missing tree item wrapper or toggle button).
  */
 
+import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { getCourseNavigationTree } from "$presentation/adapters/course-navigation";
 import { LessonTree } from "../LessonTree";
 
 /**
@@ -86,7 +86,7 @@ function setPath(path: string) {
  * @throws Error if no matching ancestor tree item exists.
  */
 function closestTreeItem(element: Element): HTMLElement {
-    const treeItem = element.closest('[role="treeitem"]');
+    const treeItem = element.closest("[role=\"treeitem\"]");
     if (!treeItem) {
         throw new Error("Expected element inside a tree item.");
     }
@@ -173,17 +173,17 @@ describe("LessonTree", () => {
     describe("given the current page is a deep child in the lesson tree", () => {
         describe("when the component is rendered", () => {
             test("then all ancestor sections are expanded to show the active page", async () => {
-                    setPath("/notes/software-libraries/api-design/fundamentals/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
 
-                    render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+                render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
-                    // The active child should be visible after ancestors expand.
-                    expect(
-                        await screen.findByText("Diseñar la API desde el dominio"),
-                    ).toBeInTheDocument();
+                // The active child should be visible after ancestors expand.
+                expect(
+                    await screen.findByText("Diseñar la API desde el dominio"),
+                ).toBeInTheDocument();
 
-                    // Ancestor section label is visible (expanded container).
-                    expect(screen.getByText("Principios de diseño de APIs")).toBeInTheDocument();
+                // Ancestor section label is visible (expanded container).
+                expect(screen.getByText("Principios de diseño de APIs")).toBeInTheDocument();
             });
         });
     });
@@ -288,12 +288,14 @@ describe("LessonTree", () => {
     describe("given a rendered lesson tree", () => {
         describe("when hover styling is applied to child links", () => {
             test("then hover classes are scoped to the link, not the parent tree item", async () => {
-                setPath("/notes/installation/");
+                setPath("/notes/software-libraries/api-design/fundamentals/");
                 render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
 
                 const sectionLabel = await screen.findByText("Principios de diseño de APIs");
                 const sectionTreeItem = closestTreeItem(sectionLabel);
-                const childLink = await screen.findByRole("link", { name: "Dise\u00f1ar la API desde el dominio" });
+                const childLink = await screen.findByRole("link", {
+                    name: "La biblioteca como artefacto de software",
+                });
 
                 expect(sectionTreeItem.className).not.toContain("group");
                 expect(childLink.className).toContain("hover:bg-base-border/10");
@@ -313,8 +315,35 @@ describe("LessonTree", () => {
                 const activeLink = await screen.findByRole("link", { name: "Diseñar la API desde el dominio" });
 
                 expect(activeLink).toHaveAttribute("aria-current", "page");
-                expect(activeLink.className).toContain("bg-primary/15");
+                expect(activeLink.className).toContain("text-primary");
+                expect(activeLink.className).toContain("font-semibold");
+                expect(activeLink.className).not.toContain("bg-primary/15");
             });
+        });
+
+        test("then unrelated units remain collapsed", async () => {
+            setPath("/notes/software-libraries/api-design/fundamentals/");
+            render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+            const unrelatedUnit = closestTreeItem(
+                await screen.findByText("Unidad 2 - Bibliotecas de scripting y automatización de tareas"),
+            );
+
+            expect(unrelatedUnit).toHaveAttribute("aria-expanded", "false");
+        });
+
+        test("then a collapsed unrelated unit can be expanded", async () => {
+            const user = userEvent.setup();
+
+            setPath("/notes/software-libraries/api-design/fundamentals/");
+            render(<LessonTree lessons={courseStructure} persistKey={persistKey} />);
+
+            const unrelatedUnit = closestTreeItem(
+                await screen.findByText("Unidad 2 - Bibliotecas de scripting y automatización de tareas"),
+            );
+            await user.click(getToggleButton(unrelatedUnit));
+
+            expect(unrelatedUnit).toHaveAttribute("aria-expanded", "true");
         });
     });
 

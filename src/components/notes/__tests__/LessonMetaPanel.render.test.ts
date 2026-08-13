@@ -38,11 +38,11 @@
  * - Use DDT (`test.each`) for coverage without repetition.
  */
 
+import type { LessonMetaPanelMetadata } from "$presentation/adapters/lesson-metadata-panel";
+import type { RepoPlatform, RepoRef } from "@ravenhill/site-core";
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { LessonMetaPanelMetadata } from "$presentation/adapters/lesson-metadata-panel";
 import type { PartialRecord } from "~/types/records";
-import type { RepoPlatform, RepoRef } from "@ravenhill/site-core";
 import { type AstroRender, createAstroRenderer } from "../../../test-utils/astro-render";
 import LessonMetaPanel from "../LessonMetaPanel.astro";
 
@@ -127,16 +127,13 @@ describe.concurrent("LessonMetaPanel.astro render", () => {
         renderPanel = await createAstroRenderer<LessonMetaPanelProps>(LessonMetaPanel);
     });
 
-    test("renders base panel labels", async () => {
+    test("renders compact provenance with a disclosure for detailed history", async () => {
         const html = await renderPanel({ metadata: createMetadata() });
         const doc = parseHtml(html);
 
         expect(textByTestId(doc, "panel-title")).toBe("Metadatos de la lección");
-
-        // These labels are asserted via body text because they may not have dedicated test ids
-        // (but remain stable user-facing copy).
-        expect(doc.body.textContent).toContain("Última actualización:");
-        expect(doc.body.textContent).toContain("Cambios recientes:");
+        expect(doc.querySelector("details summary")?.textContent?.trim()).toBe("Historial de cambios");
+        expect(doc.body.textContent).toContain("Actualizado");
     });
 
     /**

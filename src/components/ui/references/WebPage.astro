@@ -20,6 +20,7 @@ import { ReferenceContractError } from "./ReferenceContractError";
 
 // Define props and destructure them from Astro.props
 type Props = {
+    id?: string;
     /**
      * The external URL to link to.
      */
@@ -42,7 +43,7 @@ type Props = {
     author?: string;
 };
 
-const { url, title, location, locationUrl, author }: Props = Astro.props;
+const { id, url, title, location, locationUrl, author }: Props = Astro.props;
 const {
     title: titleSlot,
     location: locationSlot,
@@ -65,7 +66,7 @@ if (import.meta.env.DEV && locationUrl && !location) {
 }
 ---
 
-<ListItem icon={icons.Globe}>
+<ListItem id={id} icon={icons.Globe} class="scroll-mt-24">
     <Enquote type="english-double">
         <a href={url} {...externalLinkAttrs}>
             {
