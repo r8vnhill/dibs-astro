@@ -510,6 +510,24 @@ suite("given remaining shared normalization inputs", () => {
             });
         });
 
+        test("then ScholarlyArticle omits publicationUrl when publication is absent", () => {
+            expect(normalizeScholarlyArticleReference({
+                kind: "ScholarlyArticle",
+                id: "ref:article-without-publication",
+                rawType: "ScholarlyArticle",
+                title: "Standalone Article",
+                url: "https://doi.example/standalone",
+            })).toEqual({
+                id: "ref:article-without-publication",
+                type: "ScholarlyArticle",
+                rawType: "ScholarlyArticle",
+                title: "Standalone Article",
+                url: "https://doi.example/standalone",
+                authors: [],
+                keywords: [],
+            });
+        });
+
         test("then Thesis falls back to the thesis URL when institutionUrl is absent", () => {
             expect(normalizeThesisReference({
                 kind: "Thesis",

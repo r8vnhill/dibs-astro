@@ -119,7 +119,9 @@ export const normalizeScholarlyArticleReference = (input) => {
         rawType: input.rawType,
         title: input.title,
         url: input.url,
-        publicationUrl: fallbackToReferenceUrl(input.publicationUrl, input.url),
+        ...(input.publication
+            ? { publicationUrl: fallbackToReferenceUrl(input.publicationUrl, input.url) }
+            : {}),
         authors: input.authors ?? [],
         keywords: input.keywords ?? [],
     };

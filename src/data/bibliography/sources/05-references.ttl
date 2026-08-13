@@ -465,6 +465,7 @@ ref:parnas-decomposing-systems-1972
   schema:pageStart 1053 ;
   schema:pageEnd 1058 ;
   schema:author person:d-l-parnas ;
+  schema:isPartOf work:communications-of-the-acm ;
   schema:publisher org:acm .
 
 ref:gradle-plugin-development-plugin
