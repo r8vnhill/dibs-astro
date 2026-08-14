@@ -51,7 +51,7 @@ const {
                     {recommendedHeading}
                 </Heading>
                 <List>
-                    <slot name="recommended" />
+                    <Fragment set:html={recommendedSlot.html} />
                 </List>
             </NotesSection>
         )
@@ -64,7 +64,7 @@ const {
                     {additionalHeading}
                 </Heading>
                 <List>
-                    <slot name="additional" />
+                    <Fragment set:html={additionalSlot.html} />
                 </List>
             </NotesSection>
         )

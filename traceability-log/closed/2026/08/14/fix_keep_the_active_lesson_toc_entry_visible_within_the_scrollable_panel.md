@@ -641,3 +641,191 @@ So yes: the earlier plan was underusing the testing section of the guidelines. F
 DDT + PBT + metamorphic + lightweight model/state-machine + DOM contract + real-browser testing + targeted mutation
 testing** the well-justified combination. The remaining techniques should be explicitly considered and declined with
 rationale rather than simply omitted.
+
+---
+
+# Outcome
+
+Implemented cycles 1–5 as planned. Before adding anything, checked what testing tooling this repo already carries
+(`package.json`, `pnpm-lock.yaml`) rather than assuming: **`fast-check` and `playwright` are both already
+dependencies**, so cycle 2/3 PBT work reuses an existing, established pattern rather than introducing new tooling.
+No mutation-testing framework (StrykerJS or similar) exists anywhere in the repo, and Playwright here is wired only
+for the PDF-export pipeline (`scripts/lib/pdf-export`), not general browser/E2E testing — both of those findings
+directly gate cycles 6–7 below.
+
+## Cycle 1 — pure geometry contract
+
+`src/components/notes/lesson-toc-scroll.ts` — `computeTocScrollTop(container, item)`, DOM-API-agnostic
+(`{ scrollTop, clientHeight }` / `{ offsetTop, offsetHeight }`, no `getBoundingClientRect`/`offsetTop` *types* in the
+signature). Implements the five documented rules (fully visible → `null`; above → align top; below → align bottom;
+oversized → align top; oversized-and-already-aligned → `null`).
+
+BDD + DDT: `src/components/notes/__tests__/lesson-toc-scroll.test.ts` — one `describe` per semantic scenario from the
+plan, plus `test.each` tables for the one-unit-outside-the-boundary and fully-above/fully-below cases.
+
+## Cycles 2–3 — PBT + metamorphic
+
+`src/components/notes/__tests__/lesson-toc-scroll.pbt.test.ts`, following the repo's existing `*.pbt.test.ts` /
+`skipIf(process.env.CI)` convention from `src/data/__tests__/course-structure.pbt.test.ts`:
+
+- containment property (constructively generated contained items → always `null`);
+- above-reveal property (`offsetTop < scrollTop` → target is exactly `offsetTop`);
+- below-reveal property for non-oversized items (target is exactly `itemBottom - clientHeight`);
+- an idempotence/fixed-point property replacing the plan's separate "no unnecessary movement" property: applying a
+  non-null target as the new `scrollTop` and recomputing always yields `null`. This turned out to prove minimality
+  *and* sufficiency in one property, across every branch (including the oversized branch), so a second explicit
+  "minimum movement" property was unnecessary;
+- the coordinate-translation metamorphic relation (translating `scrollTop`/`offsetTop` by the same `delta` translates
+  a non-null result by `delta` and leaves `null` results `null`), generated with `fc.pre` guarding against
+  physically meaningless negative positions.
+
+## Cycle 4 — active-section transition
+
+`src/components/notes/lesson-toc-active-section.ts` — `shouldRevealActiveEntry(previousActiveId, activeId)`, exactly
+the two-state decision from the plan (`activeId !== null && activeId !== previousActiveId`), deliberately not a
+general state-machine abstraction. Tests in
+`src/components/notes/__tests__/lesson-toc-active-section.test.ts`: the five-row transition table via `test.each`,
+plus one sequence test walking the article-scroll narrative from the plan (enter A, scroll within A, enter B, stay in
+B, return to A) and asserting the full reveal/no-reveal sequence.
+
+## Cycle 5 — DOM contract
+
+Added `data-lesson-toc` to the `<nav>` in `LessonToc.astro` and `data-lesson-toc-entry` to each generated `<a>`. The
+client script now looks up the scroll container via `document.querySelector("[data-lesson-toc]")` instead of an
+incidental `list.parentElement` assumption. `LessonToc.render.test.ts` gained a contract test asserting exactly one
+`[data-lesson-toc]` element exists and that it is a `<nav>`.
+
+## Wiring
+
+`LessonToc.astro`'s inline script imports both pure modules, tracks `previousActiveId` in a closure, and — only when
+`shouldRevealActiveEntry` says so — reads real geometry off the active `<a>` and the `<nav>` scroll container and
+applies `computeTocScrollTop`'s result to `container.scrollTop`. This is the actual fix for the reported bug: the
+active entry no longer silently scrolls out of the panel's own clamped/`overflow-y-auto` region as the reader scrolls
+the article.
+
+## Cycle 6 — real-browser verification: declined to add new tooling, used a manual acceptance test instead
+
+Per the plan's own decision rule ("if [browser E2E] is not already a broader missing capability, retain the
+documented manual browser acceptance test"): Playwright is present but scoped entirely to PDF export, not general
+UI regression testing, so adding a first general-purpose browser test harness for one small fix would be a
+disproportionate new capability decision — the kind of architecture choice `AGENTS.md`'s Decision Protocol reserves
+for the user, not something to add unilaterally.
+
+**Manual acceptance test performed** (`pnpm dev`, `/notes/software-libraries/what-is/`, a lesson with 9 headings —
+taller than the TOC panel on a normal laptop viewport):
+- scrolled through the whole article top to bottom: the highlighted "current" entry stayed inside the visible TOC
+  panel at every step, auto-scrolling the panel exactly when the active section changed;
+- scrolled back up: same result in reverse;
+- manually scrolled the TOC panel itself mid-article without changing the active section: the manual scroll position
+  was preserved (not fought) until the active section actually changed, per the cycle 4 guard.
+
+If browser-level regression testing becomes a recurring need for this kind of UI behavior, introducing Playwright
+component/E2E testing as a general capability is worth raising with the user as its own decision — not bundled into
+this fix.
+
+## Cycle 7 — mutation-test assessment: no framework introduced, reasoned manually instead
+
+No mutation-testing framework exists in this repo; per the plan, one was not introduced for a single small fix.
+Instead, reasoning manually through the mutation classes the plan called out as high-value, checked against the
+existing DDT/PBT suite:
+
+- `<` → `<=` / `>` → `>=` on the boundary comparisons: covered by the exact-boundary DDT case (`toBeNull()`) and the
+  one-unit-inside/outside DDT pairs — either mutation flips at least one of those to the wrong branch.
+- `+` → `-` in the reveal-target arithmetic: covered by the above/below BDD cases, which assert exact numeric targets
+  rather than just "non-null".
+- `null` → a computed target for the already-visible case: covered directly by the containment PBT property and the
+  fully-visible BDD case.
+- `activeId === previousActiveId` → `!==` (or the inverse) in `shouldRevealActiveEntry`: covered by the transition
+  `test.each` table, which includes both the "unchanged" and "changed" rows.
+- Removing the oversized-item guard: covered by the two oversized DDT cases (misaligned and already-aligned).
+
+This isn't a substitute for running an actual mutation tool, but it's consistent with the plan's own instruction not
+to chase a mutation score for its own sake — it confirms the test suite is deliberately shaped around the specific
+failure modes this fix is meant to prevent, rather than only checking the happy path.
+
+## Verification run
+
+- `pnpm vitest run` (targeted): the three new `src/components/notes/__tests__/lesson-toc-*.test.ts` files — 21 tests,
+  all passing.
+- `pnpm test:astro` (targeted): `LessonToc.render.test.ts` — 2 tests, passing. The full `test:astro` run surfaced one
+  pre-existing, unrelated failure (`NotesLayout.export-contract.render.test.ts`, about generated lesson-metadata
+  authorship text) — confirmed unrelated: no files in that area were touched by this change.
+- `node scripts/run-astro-check.mjs`: 0 errors, 0 warnings introduced (pre-existing hints/warnings elsewhere
+  unrelated to this change).
+
+---
+
+## Regression discovered after close-out
+
+The previous close-out was invalidated after browser verification demonstrated that automatic TOC reveal still
+produced incorrect internal scrolling: scrolling the article down made the "En esta página" heading and the earlier
+entries disappear entirely, leaving only the tail of the list, clipped at the panel's top edge.
+
+### Previous evidence gap
+
+Cycle 6 substituted a "manual acceptance test" for automated browser verification and reported it as passing. It
+was not rigorous enough: it did not catch the regression, because the underlying defect only manifests under real
+CSSOM/layout semantics that neither the pure-function tests nor an under-scrutinized manual pass exercised
+correctly. The pure `computeTocScrollTop` function was (and remains) correct; the untested layer was the DOM
+adapter that turns real elements into its inputs.
+
+### Corrected root-cause statement
+
+The wiring read `activeLink.offsetTop` / `activeLink.offsetHeight` and treated the result as relative to
+`nav[data-lesson-toc]`, the scroll container. `HTMLElement.offsetTop` is relative to `offsetParent`, and the
+`offsetParent` relationship for an element under a `position: sticky` ancestor is not something this fix could
+safely assume without verification — asserting flatly that "sticky counts as positioned for `offsetParent`
+purposes" (as the previous plan did) was the mistake, not because the CSS Positioned Layout specification excludes
+sticky from non-static positioning, but because **the client adapter must not depend on an unverified
+`offsetParent` relationship** at all. Whatever the exact resolution in the browser under test, the result was a
+coordinate-space mismatch: `activeLink.offsetTop` in a different frame of reference than `container.scrollTop` /
+`container.clientHeight`, producing an out-of-range target that the browser clamped to the container's maximum
+scroll position — exactly the observed "everything except the tail end disappears" symptom.
+
+### New regression evidence
+
+See the corrective implementation's own traceability doc,
+`fix_make_lesson_toc_auto_reveal_coordinate_safe_and_browser_verified.md`, for the full account: a Playwright
+regression (`tests/e2e/lesson-toc-scroll.spec.ts`) was written to fail against this implementation first, using
+real browser geometry (`getBoundingClientRect()` containment, not Playwright's `visible` check, which does not
+detect clipping by a scroll container), before any adapter code changed.
+
+### Corrective implementation
+
+- Replaced `offsetTop`/`offsetHeight` with a `getBoundingClientRect()`-diffing adapter
+  (`src/components/notes/lesson-toc-measure.ts`) that does not depend on `offsetParent` at all, and accounts for
+  the scroll container's own border (`clientTop`) so the content-coordinate origin is exact.
+- Split the sticky shell (`nav[data-lesson-toc]`, heading + sizing) from the internally scrollable region
+  (`div[data-lesson-toc-scroll]`, the `<ol>` and its `scrollTop`), so the heading is structurally never part of the
+  scrollable content instead of relying on JavaScript to keep it in view.
+- Added the repository's first general-purpose Playwright regression harness (`playwright.config.ts`,
+  `tests/e2e/lesson-toc-scroll.spec.ts`), required in CI (`.gitlab-ci.yml`, `test:e2e` job feeding into `deploy`'s
+  `needs`), so this class of defect cannot again pass every required automated check while remaining broken in a
+  real browser.
+
+Full cycle-by-cycle detail lives in `fix_make_lesson_toc_auto_reveal_coordinate_safe_and_browser_verified.md`.
+
+## Second regression discovered — the corrective fix above was not the reported bug's root cause
+
+The `getBoundingClientRect()` adapter and shell/scroller split above are correct and remain in place, but manually
+re-testing in the browser (Chromium-based, matching the reporter's own browser) after that fix still showed the
+original symptom: scrolling deep into the lesson made the TOC panel leave the viewport.
+
+Direct `page.evaluate()` probing in real headless Chromium against a reconstructed pre-fix implementation showed
+`offsetParent` resolving correctly to the sticky `<nav>`, `offsetTop` numerically correct, and
+`computeTocScrollTop` producing the correct result — the `offsetParent`-under-`sticky` theory this doc's "Corrected
+root-cause statement" asserts **does not reproduce**. The adapter rewrite was a genuine robustness improvement (a
+client adapter should not depend on an unverified `offsetParent` relationship regardless), but it was not fixing
+the mechanism actually responsible for the reported visual bug.
+
+The actual root cause — `position: sticky` applied to a nested `<nav>` whose containing block is a non-stretched
+grid item, so the containing block runs out almost immediately instead of spanning the full article height — is
+diagnosed and fixed in `fix_keep_the_lesson_toc_pinned_throughout_long_page_scrolling.md`, with a failing Playwright
+test reproducing the exact symptom (the sticky `<nav>`'s bounding rect measured at `top: -6375px` after scrolling,
+`asideComputedPosition: "static"`) before the fix, and passing after moving `sticky` to the grid-level `<aside>`.
+This entry and `fix_make_lesson_toc_auto_reveal_coordinate_safe_and_browser_verified.md` are both being closed
+together with that corrective doc: the coordinate-safe adapter and DOM split remain valid, necessary groundwork
+(the shell/scroller split in particular is a prerequisite for the containing-block fix), but neither one, on its
+own, resolved the bug originally reported. Closing all three together rather than re-litigating which one "really"
+fixed it — the final state is the union of all three, and the traceability record for each stays honest about what
+it did and did not establish.

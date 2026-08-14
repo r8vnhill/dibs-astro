@@ -1,5 +1,5 @@
 import {
-    classifyRenderedReferenceContent,
+    classifyRenderedContent,
     isMeaningfulSlotContent,
     type ResolvedInlineField,
     type ResolvedSlotContent,
@@ -45,7 +45,7 @@ export async function resolveOptionalSlot(
         return { kind: "empty", html: "" };
     }
 
-    return classifyRenderedReferenceContent(await slots.render(name));
+    return classifyRenderedContent(await slots.render(name));
 }
 
 export async function resolveOptionalSlots<TName extends string>(

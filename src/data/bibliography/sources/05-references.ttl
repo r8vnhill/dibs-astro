@@ -721,6 +721,7 @@ ref:ousterhout-philosophy-software-design-2021
   schema:name "A Philosophy of Software Design" ;
   schema:datePublished "2021" ;
   schema:author person:john-ousterhout ;
+  schema:isPartOf work:philosophy-software-design ;
   schema:publisher org:yaknyam-press .
 
 ref:geewax-api-design-patterns-2021

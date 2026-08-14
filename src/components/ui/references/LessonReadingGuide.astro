@@ -1,0 +1,46 @@
+---
+import type { LessonReadingGuide as LessonReadingGuideModel } from "~/lib/readings/lesson-readings-contract";
+
+interface Props {
+    guide: LessonReadingGuideModel;
+}
+
+const { guide } = Astro.props;
+---
+
+<div class="mt-3 text-sm text-base-subtle-text">
+    <dl class="space-y-2">
+        <div>
+            <dt class="font-semibold text-base-text">Tipo</dt>
+            <dd>{guide.type}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold text-base-text">Dificultad</dt>
+            <dd>{guide.difficulty}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold text-base-text">Extensión</dt>
+            <dd>{guide.extent}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold text-base-text">Por qué leerlo</dt>
+            <dd>{guide.why}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold text-base-text">En qué enfocarse</dt>
+            <dd>{guide.focus}</dd>
+        </div>
+        <div>
+            <dt class="font-semibold text-base-text">Después de leer</dt>
+            <dd>{guide.afterReading}</dd>
+        </div>
+        {
+            guide.guidingQuestion && (
+                <div>
+                    <dt class="font-semibold text-base-text">Pregunta guía</dt>
+                    <dd>{guide.guidingQuestion}</dd>
+                </div>
+            )
+        }
+    </dl>
+</div>

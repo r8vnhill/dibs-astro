@@ -23,6 +23,10 @@ import {
 } from "@shikijs/transformers";
 import type { ShikiTransformer } from "shiki";
 import { transformerColorHighlight } from "shiki-transformer-color-highlight";
+import {
+    classifyRenderedContent,
+    isMeaningfulSlotContent,
+} from "$presentation/adapters/reference-content";
 import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
 import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { AstroComponentFactory } from "~/types/astro-component";
@@ -134,14 +138,16 @@ const exportContext = resolveLessonExportContext({
 
 const normalizedCode = normalizeIndentation(code);
 
-// Presence checks (Astro.slots.has()/bare property) reflect static template structure through a
-// forwarding layer, not runtime truthiness, so a wrapper's conditionally-empty forwarded slot still
-// reads as "present" here. Deciding from the actually-rendered content avoids that, mirroring
-// CalloutShell's title/slot precedence.
-const titleSlotContent = await Astro.slots.render?.("title");
-const hasTitleContent = Boolean(titleSlotContent && titleSlotContent.trim().length > 0);
-const sourceSlotContent = await Astro.slots.render?.("source");
-const hasSourceContent = Boolean(sourceSlotContent && sourceSlotContent.trim().length > 0);
+// Title and source are content-sensitive: a forwarding wrapper can expose an empty slot even
+// though `Astro.slots.has()` is true. Capture each one once, classify it with the shared rule,
+// and reuse that capture below. Footer is presence-sensitive and therefore renders normally.
+const renderContentSlot = async (name: "title" | "source") => Astro.slots.has(name)
+    ? classifyRenderedContent(await Astro.slots.render(name))
+    : classifyRenderedContent("");
+const titleSlot = await renderContentSlot("title");
+const sourceSlot = await renderContentSlot("source");
+const titleSlotHtml = isMeaningfulSlotContent(titleSlot) ? titleSlot.html : undefined;
+const sourceSlotHtml = isMeaningfulSlotContent(sourceSlot) ? sourceSlot.html : undefined;
 
 const commonTransformers = [
     transformerColorizedBrackets(),
@@ -160,20 +166,18 @@ const commonTransformers = [
     data-export-role={exportContext.isPdfExport ? "code-block" : undefined}
 >
     {
-        (hasTitleContent || hasSourceContent || title || source) && (
+        (titleSlotHtml || sourceSlotHtml || title || source) && (
             <div class:list={[...baseTitleClasses, compact ? "px-3 py-1.5 text-xs" : "", titleClasses]}>
                 {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
                 {
-                    hasTitleContent ? (
-                        <div class="truncate">
-                            <slot name="title" />
-                        </div>
+                    titleSlotHtml ? (
+                        <div class="truncate" set:html={titleSlotHtml} />
                     ) : <span class="truncate">{title}</span>
                 }
                 {
-                    (hasSourceContent || source) && (
+                    (sourceSlotHtml || source) && (
                         <span class:list={["ml-auto", "text-s", "font-mono", "text-primary/60", "italic", "truncate"]}>
-                            {hasSourceContent ? <slot name="source" /> : source}
+                            {sourceSlotHtml ? <Fragment set:html={sourceSlotHtml} /> : source}
                         </span>
                     )
                 }
@@ -198,7 +202,7 @@ const commonTransformers = [
     </div>
 
     {
-        Astro.slots.footer && (
+        Astro.slots.has("footer") && (
             <div class:list={[...baseFooterClasses, footerClasses]}>
                 <slot name="footer" />
             </div>

@@ -821,6 +821,19 @@
       }
     },
     {
+      "@id": "work:philosophy-software-design",
+      "@type": "CreativeWork",
+      "name": "A Philosophy of Software Design",
+      "author": [
+        {
+          "@id": "person:john-ousterhout"
+        }
+      ],
+      "publisher": {
+        "@id": "org:yaknyam-press"
+      }
+    },
+    {
       "@id": "work:plas-2007",
       "@type": "CreativeWork",
       "name": "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security",
@@ -2022,6 +2035,9 @@
       ],
       "publisher": {
         "@id": "org:yaknyam-press"
+      },
+      "isPartOf": {
+        "@id": "work:philosophy-software-design"
       }
     },
     {

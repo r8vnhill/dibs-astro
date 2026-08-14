@@ -86,11 +86,21 @@ export function hasMeaningfulTextContent(html: string): boolean {
     return normalizedText.length > 0;
 }
 
-export function classifyRenderedReferenceContent(html: string): ResolvedSlotContent {
+/**
+ * Classify captured Astro slot output without coupling the rule to a particular component.
+ *
+ * Components that need rendered-content fallback semantics must capture a slot once, classify
+ * that capture here, and reuse the same HTML for output. Presence-only slots should not use this
+ * helper because they can render normally after `Astro.slots.has()`.
+ */
+export function classifyRenderedContent(html: string): ResolvedSlotContent {
     return hasMeaningfulTextContent(html)
         ? { kind: "meaningful", html }
         : EMPTY_SLOT_CONTENT;
 }
+
+/** @deprecated Use {@link classifyRenderedContent}; retained for reference-renderer compatibility. */
+export const classifyRenderedReferenceContent = classifyRenderedContent;
 
 export const isMeaningfulSlotContent = (
     content: ResolvedSlotContent,

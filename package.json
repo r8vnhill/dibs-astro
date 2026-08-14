@@ -37,6 +37,7 @@
         "test:typecheck:content-core": "node ./node_modules/vitest/vitest.mjs list --typecheck.only --config vitest.content-core.types.config.ts && pnpm --dir packages/content-core exec tsc --noEmit --pretty false",
         "test:astro": "node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts",
         "playwright:install": "pnpm exec playwright install chromium",
+        "test:e2e": "playwright test",
         "test:watch": "vitest --watch",
         "test:watch:astro": "node ./node_modules/vitest/vitest.mjs --watch --config vitest.astro.config.ts",
         "test:ui": "vitest --ui"
@@ -73,6 +74,7 @@
     "devDependencies": {
         "@astrojs/react": "^4.4.0",
         "@inlang/plugin-message-format": "4.3.0",
+        "@playwright/test": "1.59.1",
         "@shikijs/colorized-brackets": "^3.9.1",
         "@shikijs/transformers": "^3.9.1",
         "@tailwindcss/vite": "^4.1.11",

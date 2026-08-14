@@ -22,9 +22,12 @@ suite("given the library readings catalog", () => {
         expect(html).toContain("Lecturas esenciales");
         expect(html).toContain("De la idea a la práctica");
         expect(html).toContain("Para profundizar");
-        expect(html).toContain("Por qué leerlo.");
-        expect(html).toContain("Pregunta guía.");
+        expect(html).toContain("Por qué leerlo");
+        expect(html).toContain("Pregunta guía");
         expect(html).toContain("What Is Software Engineering?");
         expect(html).toContain("Chapter 13. Binary Compatibility");
+        expect(html).toContain("<dl");
+        expect(html).toContain("Por qué leerlo");
+        expect(html).not.toContain("<ul class=\"mt-6 space-y-5\"></ul>");
     });
 });

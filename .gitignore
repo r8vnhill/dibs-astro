@@ -98,6 +98,11 @@ $RECYCLE.BIN/
 ### Cloudflare Wrangler ###
 .wrangler/
 
+### Playwright ###
+test-results/
+playwright-report/
+blob-report/
+
 ### Educational documentation ###
 # Temporary or generated files in exercises
 *.solucion.*

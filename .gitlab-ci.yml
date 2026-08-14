@@ -82,6 +82,31 @@ test:astro-render:
         - pnpm run build:site-core
         - pnpm exec vitest run --config vitest.astro.config.ts
 
+test:e2e:
+    stage: test
+    extends: .node-job
+    image: mcr.microsoft.com/playwright:v1.59.1-noble
+    tags:
+        - local
+        - docker
+    needs:
+        - job: deps
+    script:
+        - pnpm run i18n:compile
+        - pnpm run build:content-core
+        - pnpm run build:lesson-export-core
+        - pnpm run build:site-core
+        - pnpm run build:shiki-core
+        - pnpm run generate:bibliography-catalog
+        - pnpm run generate:lesson-metadata
+        - pnpm exec playwright test
+    artifacts:
+        when: always
+        paths:
+            - playwright-report/
+            - test-results/
+        expire_in: 7 days
+
 pdf_export_smoke:
     stage: test
     extends: .node-job
@@ -122,6 +147,7 @@ build:
         - job: test:check
         - job: test:unit
         - job: test:astro-render
+        - job: test:e2e
     script:
         - apk add --no-cache git
         - pnpm build
@@ -144,6 +170,7 @@ deploy:
         - job: test:check
         - job: test:unit
         - job: test:astro-render
+        - job: test:e2e
         - job: build
           artifacts: true
     rules:

@@ -28,6 +28,7 @@
 export { Lesson, type LessonProps } from "./entities/Lesson";
 
 export {
+    classifyRenderedContent,
     classifyRenderedReferenceContent,
     decodeHtmlWhitespaceEntities,
     hasMeaningfulTextContent,

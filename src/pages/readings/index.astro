@@ -1,5 +1,6 @@
 ---
 import { publishedReadings } from "~/data/readings/lesson-readings";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 ---
 
@@ -11,7 +12,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
             {
                 publishedReadings.map((reading) => (
                     <li class="rounded border border-base-border p-4">
-                        <a class="text-lg font-semibold" href={reading.readingsPath}>{reading.title}</a>
+                        <a class="text-lg font-semibold" href={lessonReadingsRoute(reading.lessonPath)}>{reading.title}</a>
                         <p class="mt-1 text-sm text-base-subtle-text">Lecturas asociadas a esta lección.</p>
                     </li>
                 ))

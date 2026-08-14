@@ -7,11 +7,12 @@ import { B, I } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
 import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
-const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as const;
+const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReadings.lessonPath) } as const;
 ---
 
 <NotesLayout
@@ -433,7 +434,7 @@ const citationContext = { readingsPath: libraryWhatIsReadings.readingsPath } as 
         </P>
         <p class="mt-5">
             <a
-                href={libraryWhatIsReadings.readingsPath}
+                href={lessonReadingsRoute(libraryWhatIsReadings.lessonPath)}
                 class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
             >
                 Ver lecturas complementarias

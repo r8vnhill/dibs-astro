@@ -17,6 +17,7 @@
  */
 
 export {
+    classifyRenderedContent,
     classifyRenderedReferenceContent,
     isMeaningfulSlotContent,
     type ResolvedInlineField,

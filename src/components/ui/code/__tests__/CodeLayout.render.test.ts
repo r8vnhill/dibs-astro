@@ -82,6 +82,35 @@ describe("CodeLayout.astro render", () => {
             expect(html).toContain("example.py");
         });
 
+        test.each([
+            ["an absent title slot", {}, "Prop title"],
+            ["an empty title slot", { title: "<!-- intentionally empty -->" }, "Prop title"],
+            ["a whitespace-only title slot", { title: " \n\t " }, "Prop title"],
+            ["a meaningful title slot", { title: "<em>Slot title</em>" }, "Slot title"],
+        ])("uses the prop fallback for $0 when appropriate", async (_case, slots, expectedTitle) => {
+            const html = await (await renderCode)(
+                { code: "x = 10", lang: "python", title: "Prop title" },
+                { slots },
+            );
+
+            expect(parseHtml(html).querySelector(".truncate")?.textContent?.trim()).toBe(expectedTitle);
+        });
+
+        test("preserves rich title and source slot content over props", async () => {
+            const html = await (await renderCode)(
+                { code: "x = 10", lang: "python", title: "Prop title", source: "prop.py" },
+                { slots: { title: "<em>Slot title</em>", source: "<strong>slot.py</strong>" } },
+            );
+            const doc = parseHtml(html);
+
+            expect(doc.querySelector("em")?.textContent).toBe("Slot title");
+            expect(doc.querySelector("strong")?.textContent).toBe("slot.py");
+            expect(html).not.toContain("Prop title");
+            expect(html).not.toContain("prop.py");
+            expect(html.match(/Slot title/g)).toHaveLength(1);
+            expect(html.match(/slot\.py/g)).toHaveLength(1);
+        });
+
         test("does not render export-role attribute in web mode", async () => {
             const html = await (await renderCode)({
                 code: "x = 1",

@@ -9,23 +9,30 @@
 ---
 
 <aside
-    aria-label="En esta página" class="lesson-toc"
+    aria-label="En esta página" class="lesson-toc sticky top-[var(--lesson-header-offset,5.5rem)] self-start"
     data-export-hidden="true" data-testid="lesson-toc"
 >
     <nav
-        aria-label="En esta página"
-        class="sticky top-[var(--lesson-header-offset,5.5rem)] max-h-[calc(100vh-var(--lesson-header-offset,5.5rem)-1rem)] overflow-y-auto border-l border-base-border px-5 py-2"
+        aria-label="En esta página" data-lesson-toc
+        class="flex max-h-[calc(100vh-var(--lesson-header-offset,5.5rem)-1rem)] min-h-0 flex-col border-l border-base-border px-5 py-2"
     >
         <p class="text-sm font-semibold text-base-text">En esta página</p>
-        <ol class="mt-3 space-y-1 text-sm text-base-subtle-text" data-lesson-toc-list></ol>
+        <div class="mt-3 min-h-0 flex-1 overflow-y-auto" data-lesson-toc-scroll>
+            <ol class="space-y-1 text-sm text-base-subtle-text" data-lesson-toc-list></ol>
+        </div>
     </nav>
 </aside>
 
 <script>
+    import { shouldRevealActiveEntry } from "./lesson-toc-active-section.ts";
+    import { measureTocEntry } from "./lesson-toc-measure.ts";
+    import { computeTocScrollTop } from "./lesson-toc-scroll.ts";
+
     const article = document.querySelector<HTMLElement>("#lesson-content");
     const list = document.querySelector<HTMLOListElement>("[data-lesson-toc-list]");
+    const scroller = document.querySelector<HTMLElement>("[data-lesson-toc-scroll]");
 
-    if (article && list) {
+    if (article && list && scroller) {
         const sections = [...article.querySelectorAll<HTMLElement>("section[data-lesson-section][id]")]
             .map((section) => ({
                 id: section.id,
@@ -38,6 +45,7 @@
             const link = document.createElement("a");
             link.href = `#${id}`;
             link.textContent = heading.textContent?.trim() ?? id;
+            link.setAttribute("data-lesson-toc-entry", "true");
             link.className =
                 "block rounded px-2 py-1.5 leading-snug no-underline hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
             item.append(link);
@@ -45,10 +53,12 @@
             return { id, link };
         });
 
+        let previousActiveId: string | null = null;
+
         const updateCurrentSection = () => {
             const activeId = [...sections]
                 .reverse()
-                .find(({ heading }) => heading.getBoundingClientRect().top <= 160)?.id ?? sections[0]?.id;
+                .find(({ heading }) => heading.getBoundingClientRect().top <= 160)?.id ?? sections[0]?.id ?? null;
 
             links.forEach(({ id, link }) => {
                 const isCurrent = id === activeId;
@@ -57,6 +67,18 @@
                 link.classList.toggle("text-primary", isCurrent);
                 link.classList.toggle("font-medium", isCurrent);
             });
+
+            if (shouldRevealActiveEntry(previousActiveId, activeId)) {
+                const activeLink = links.find((entry) => entry.id === activeId)?.link;
+                const target = activeLink
+                    ? computeTocScrollTop(
+                        { scrollTop: scroller.scrollTop, clientHeight: scroller.clientHeight },
+                        measureTocEntry(scroller, activeLink),
+                    )
+                    : null;
+                if (target !== null) scroller.scrollTop = target;
+            }
+            previousActiveId = activeId;
         };
 
         updateCurrentSection();

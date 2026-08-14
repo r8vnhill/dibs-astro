@@ -11,7 +11,6 @@ export type LessonReading = Readonly<{
 
 export type LessonReadings = Readonly<{
     lessonPath: string;
-    readingsPath: string;
     title: string;
     essential: readonly LessonReading[];
     practice: readonly LessonReading[];
@@ -20,7 +19,6 @@ export type LessonReadings = Readonly<{
 
 export const libraryWhatIsReadings = {
     lessonPath: "/notes/software-libraries/what-is/",
-    readingsPath: "/readings/software-libraries/what-is/",
     title: "La biblioteca como artefacto de software",
     essential: [
         {

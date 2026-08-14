@@ -1,17 +1,18 @@
 ---
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import GuidedReferenceEntry from "~/components/ui/references/GuidedReferenceEntry.astro";
-import { type LessonReading, libraryWhatIsReadings } from "~/data/readings/lesson-readings";
+import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
+import {
+    formatLessonReadingsDiagnostics,
+    resolveLessonReadings,
+} from "~/lib/readings/lesson-readings-contract";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 
-const catalog = getDefaultBibliographyCatalog();
-const referenceFor = (reading: LessonReading) =>
-    catalog.referencesById.get(`ref:${reading.referenceId}`) ?? catalog.referencesById.get(reading.referenceId);
-const sections = [
-    { id: "essential-heading", title: "Lecturas esenciales", readings: libraryWhatIsReadings.essential },
-    { id: "practice-heading", title: "De la idea a la práctica", readings: libraryWhatIsReadings.practice },
-    { id: "deeper-heading", title: "Para profundizar", readings: libraryWhatIsReadings.deeper },
-] as const;
+const resolution = resolveLessonReadings(libraryWhatIsReadings, getDefaultBibliographyCatalog());
+if (!resolution.ok) {
+    throw new Error(`Lesson readings resolution failed:\n${formatLessonReadingsDiagnostics(resolution.diagnostics)}`);
+}
+const { sections } = resolution.value;
 ---
 
 <BaseLayout pageTitle={`Lecturas · ${libraryWhatIsReadings.title}`}>
@@ -36,10 +37,9 @@ const sections = [
                     <h2 {id}>{title}</h2>
                     <ul class="mt-6 space-y-5">
                         {
-                            readings.map((reading) => {
-                                const reference = referenceFor(reading);
-                                return reference ? <GuidedReferenceEntry {reference} {reading} />: null;
-                                               })
+                            readings.map((reading) => (
+                                <GuidedReferenceEntry reference={reading.reference} reading={reading.guide} />
+                            ))
                         }
                     </ul>
                 </section>

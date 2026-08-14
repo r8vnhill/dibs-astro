@@ -57,6 +57,7 @@ interface Props {
 }
 
 const { reference: ref, preparedSlots, fallbackTitle, editorialNote } = Astro.props;
+const hasEditorial = Astro.slots.has("editorial");
 
 /**
  * Resolve the display title for this reference.
@@ -109,6 +110,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
                         /></Fragment>
                 )
             }
+            {hasEditorial && <Fragment slot="description"><slot name="editorial" /></Fragment>}
             {ref.authors.length > 0 && <AuthorList slot="authors" authors={ref.authors} />}
         </Book>
     )
@@ -138,6 +140,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
                         /></Fragment>
                 )
             }
+            {hasEditorial && <Fragment slot="description"><slot name="editorial" /></Fragment>}
 
             {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
         </WebPage>
@@ -171,6 +174,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
                         /></Fragment>
                 )
             }
+            {hasEditorial && <Fragment slot="description"><slot name="editorial" /></Fragment>}
 
             {ref.authors.length > 0 && <AuthorList slot="author" authors={ref.authors} />}
         </Video>
@@ -204,6 +208,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
                         /></Fragment>
                 )
             }
+            {hasEditorial && <Fragment slot="description"><slot name="editorial" /></Fragment>}
 
             {
                 getPublicationOverride() && (
@@ -241,6 +246,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
                         /></Fragment>
                 )
             }
+            {hasEditorial && <Fragment slot="description"><slot name="editorial" /></Fragment>}
 
             {
                 getInstitutionOverride() && (

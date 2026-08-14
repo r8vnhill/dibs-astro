@@ -17,6 +17,12 @@ work:learn-powershell-month-lunches-4e
   schema:name "Learn PowerShell in a month of lunches, fourth edition: Covers Windows, Linux, and MacOS" ;
   schema:author person:travis-plunk .
 
+work:philosophy-software-design
+  a schema:CreativeWork ;
+  schema:name "A Philosophy of Software Design" ;
+  schema:author person:john-ousterhout ;
+  schema:publisher org:yaknyam-press .
+
 work:python-distilled
   a schema:CreativeWork ;
   schema:name "Python Distilled" ;

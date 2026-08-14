@@ -6,14 +6,12 @@ import ExcludeFromReadingTime from "./ExcludeFromReadingTime.astro";
 type Props = Readonly<{
     minutes: number;
     className?: string;
-    ariaLive?: "off" | "polite" | "assertive";
     label?: string;
 }>;
 
 const {
     minutes,
     className = "",
-    ariaLive = "polite",
     label = m.reading_time_label(),
 } = Astro.props as Props;
 
@@ -36,7 +34,6 @@ const minuteLabel = m.reading_time_minutes({ count: minutes });
             "shadow-sm",
             className,
         ]}
-        aria-live={ariaLive}
     >
         <p class="mb-1 flex items-center gap-2 font-medium">
             <span class="text-primary"><icons.Clock class="h-5 w-5" aria-hidden="true" /></span>

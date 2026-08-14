@@ -1,7 +1,7 @@
 import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
-    classifyRenderedReferenceContent,
+    classifyRenderedContent,
     hasMeaningfulTextContent,
     normalizeFallbackText,
     normalizeHref,
@@ -29,14 +29,14 @@ describe("reference-content domain", () => {
         });
 
         it("preserves original html for meaningful content", () => {
-            expect(classifyRenderedReferenceContent("<em>Título</em>")).toEqual({
+            expect(classifyRenderedContent("<em>Título</em>")).toEqual({
                 kind: "meaningful",
                 html: "<em>Título</em>",
             });
         });
 
         it("normalizes non-meaningful content to the empty payload", () => {
-            expect(classifyRenderedReferenceContent("<!-- empty -->")).toEqual({
+            expect(classifyRenderedContent("<!-- empty -->")).toEqual({
                 kind: "empty",
                 html: "",
             });

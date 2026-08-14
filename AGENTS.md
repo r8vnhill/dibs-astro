@@ -51,6 +51,11 @@ Context and essential rules for agents collaborating in this repository.
 - After bibliography changes, run `pnpm generate:bibliography-catalog` and keep both sources and generated artifacts in sync.
 - New bibliography work should target the Turtle catalog, not legacy `*.bibliography.jsonld` files.
 
+Lesson-specific readings must resolve completely against the generated bibliography catalog before rendering. Configure
+reference IDs in bare or `ref:` form; the readings contract normalizes them once and rejects missing or duplicate
+entries. Keep pedagogical guidance in `src/data/readings/lesson-readings.ts` and render it through structural Astro
+components rather than HTML strings. Run the focused readings tests and `pnpm check` after changing this boundary.
+
 ## Code Conventions
 
 - Use the aliases in `tsconfig.json`: `~/*`, `$components/*`, `$layouts/*`, `$styles/*`, `$utils/*`, `$hooks/*`, `$assets/*`, `$icons`, `$semantics`, `$callouts`, `$domain/*`, `$application/*`, `$infrastructure/*`, `$presentation/*`, and `$test-utils/*`.
@@ -127,6 +132,8 @@ suite("given a page reference range", () => {
 - Do not modify code examples inside educational blocks such as `<PowerShellBlock>` unless explicitly requested.
 - For inline snippets with spaces, use the `code` prop in components such as `<InlineCode>`, `<PowerShellInline>`, `<NushellInline>`, or `<PythonInline>`.
 - For normal bibliography references, prefer the graph-backed flow documented in `src/data/bibliography/README.md`.
+- A content-sensitive Astro slot must be rendered once, classified, and emitted from that same capture; use presence-only checks for slots whose visible emptiness does not affect fallback behavior.
+- Static reading-time extraction must preserve lexical boundaries from HTML semantics, exclude `.exclude-from-reading-time`, `<script>`, and `<style>` subtrees, and count only `<summary>` content for closed `<details>`.
 
 ## Deploy
 

@@ -176,6 +176,12 @@ builder or adding tests around the generated graph.
 
 ## Rendering model
 
+Lesson-specific reading pages use a separate typed configuration for pedagogical guidance. The readings resolver first
+normalizes configured IDs, verifies every entry exists exactly once in this catalog, and only then passes resolved
+references to Astro components. A missing or duplicate entry is a build error; it must never be filtered out into an
+empty list. Bibliographic metadata remains owned by this catalog, while rationale, focus, difficulty, and reading
+questions remain owned by the lesson-readings configuration.
+
 For normal graph-backed lesson pages, prefer `LessonReferencesFromCatalog`.
 
 Use `ReferencesFromCatalog` when a caller needs explicit `source`, `lessonId`, or tag-filter configuration.
