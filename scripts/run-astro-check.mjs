@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 
 const result = spawnSync(
     process.execPath,
-    ["./node_modules/astro/astro.js", "check"],
+    ["--require", "./scripts/astro-check-typescript6-bridge.cjs", "./node_modules/astro/bin/astro.mjs", "check"],
     {
         stdio: "inherit",
         env: {

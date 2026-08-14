@@ -25,8 +25,10 @@ pnpm dev
 
 ## Prerequisites
 
-- Node.js `20` and pnpm `9` match the current GitLab CI configuration in `.gitlab-ci.yml`.
-- Corepack is recommended so pnpm can be activated consistently.
+- Node.js `24.11.0` is the validated runtime; `.nvmrc` records the exact local version and `package.json` permits the
+  supported Node 24 line.
+- pnpm `11.8.0` is pinned in `package.json#packageManager`. Enable Corepack before installation so it selects that
+  version consistently.
 - Cloudflare deployment requires Wrangler access to the configured Cloudflare account and route.
 
 ## Command Reference
@@ -107,6 +109,13 @@ pnpm check
 pnpm test
 pnpm build
 ```
+
+`pnpm check` begins by confirming that the active Node and pnpm versions match the supported toolchain contract. Run
+`pnpm check:toolchain` alone when diagnosing a local or CI bootstrap mismatch.
+
+The project compiler is TypeScript 7. `astro check` and declaration emit are temporarily launched through a narrow
+TypeScript 6 bridge because their current tooling still requires TypeScript's programmatic API; the bridge can be
+removed once those tools support the native TypeScript 7 compiler API.
 
 Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
 the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The

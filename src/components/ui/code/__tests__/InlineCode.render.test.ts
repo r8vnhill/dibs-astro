@@ -39,7 +39,7 @@
  */
 
 import { JSDOM } from "jsdom";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { createAstroRenderer } from "../../../../test-utils/astro-render";
 import InlineCode from "../InlineCode.astro";
 
@@ -154,6 +154,10 @@ async function renderInlineCodeHtml(
 describe("InlineCode.astro render", () => {
     beforeAll(async () => {
         render = await createAstroRenderer<InlineCodeProps>(InlineCode);
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
     /**

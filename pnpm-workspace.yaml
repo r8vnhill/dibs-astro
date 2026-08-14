@@ -5,6 +5,9 @@ packages:
   - packages/shiki-core
   - packages/site-core
 
+autoInstallPeers: true
+nodeLinker: hoisted
+
 allowBuilds:
   '@tailwindcss/oxide': true
   dprint: true
@@ -12,9 +15,7 @@ allowBuilds:
   sharp: true
   workerd: true
 
-onlyBuiltDependencies:
-  - "@tailwindcss/oxide"
-  - dprint
-  - esbuild
-  - sharp
-  - workerd
+minimumReleaseAgeExclude:
+  - astro@7.2.2
+  - miniflare@5.20260811.1-alpha
+  - wrangler@4.123.0

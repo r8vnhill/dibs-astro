@@ -10,8 +10,8 @@ stages:
     - deploy
 
 variables:
-    NODE_VERSION: "20"
-    PNPM_VERSION: "9.15.9"
+    NODE_VERSION: "24.11.0"
+    PNPM_VERSION: "11.8.0"
     PNPM_STORE_DIR: .pnpm-store
     GIT_DEPTH: "20"
     GIT_STRATEGY: fetch
@@ -85,13 +85,14 @@ test:astro-render:
 test:e2e:
     stage: test
     extends: .node-job
-    image: mcr.microsoft.com/playwright:v1.59.1-noble
+    image: node:${NODE_VERSION}-bookworm
     tags:
         - local
         - docker
     needs:
         - job: deps
     script:
+        - pnpm exec playwright install --with-deps chromium
         - pnpm run i18n:compile
         - pnpm run build:content-core
         - pnpm run build:lesson-export-core

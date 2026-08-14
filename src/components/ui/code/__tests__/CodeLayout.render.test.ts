@@ -154,9 +154,12 @@ describe("CodeLayout.astro render", () => {
                 renderMode: "pdf",
             });
 
-            // In PDF mode, only LightCode should render, no DarkCode
-            // This is verified by not finding the dark theme variant
-            expect(html).toContain("LightCode");
+            const document = parseHtml(html);
+
+            // Component names are not part of the emitted HTML contract. PDF output has exactly
+            // one highlighted block and does not include DarkCode's `dark:block` variant.
+            expect(document.querySelectorAll("pre")).toHaveLength(1);
+            expect(html).not.toContain("dark:block");
         });
 
         test("preserves title in PDF export mode", async () => {

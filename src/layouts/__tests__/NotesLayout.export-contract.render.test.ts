@@ -76,8 +76,8 @@ describe("NotesLayout export contract", () => {
 
         expect(metadataRegions).toHaveLength(1);
         expect(metadata.textContent).toContain("Metadatos de la lección");
-        expect(metadata.textContent).toContain("Autoría:");
-        expect(metadata.textContent).toContain("Última actualización:");
+        expect(metadata.querySelector("[data-testid='authors-value']")?.textContent).toContain("Ignacio Slater-Muñoz");
+        expect(metadata.querySelector("[data-testid='last-updated-value']")?.textContent).toBeTruthy();
         expect(metadata.textContent).not.toContain("sourceFile");
     });
 

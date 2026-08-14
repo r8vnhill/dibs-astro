@@ -148,9 +148,9 @@ Run the local preflight checks before publishing:
 pnpm install
 pnpm check:shiki-core
 pnpm check
-pnpm --dir packages/shiki-core run consumer:check
-pnpm --dir packages/shiki-core run pack:dry-run
-pnpm --dir packages/shiki-core exec npm pkg get name version private publishConfig exports files types main
+pnpm --dir=packages/shiki-core run consumer:check
+pnpm --dir=packages/shiki-core run pack:dry-run
+pnpm --dir=packages/shiki-core exec npm pkg get name version private publishConfig exports files types main
 ```
 
 Check whether the release version already exists before publishing:
@@ -165,7 +165,7 @@ Publish manually from the package directory after configuring `NPM_TOKEN` locall
 ```sh
 export NPM_TOKEN="<token-with-package-publish-permission>"
 npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
-pnpm --dir packages/shiki-core publish --no-git-checks
+pnpm --dir=packages/shiki-core publish --no-git-checks
 ```
 
 ## Fallback HTML Escaping
@@ -208,7 +208,7 @@ pack file list, validates the packed tarball from a temporary external consumer,
 To run only the packaged-consumer validation:
 
 ```sh
-pnpm --dir packages/shiki-core run consumer:check
+pnpm --dir=packages/shiki-core run consumer:check
 ```
 
 That command builds the package, creates a local tarball, installs it into a temporary project outside the workspace,
@@ -217,13 +217,13 @@ and verifies runtime imports, TypeScript declarations, and blocked subpath impor
 To run only the tests:
 
 ```sh
-pnpm --dir packages/shiki-core run test
+pnpm --dir=packages/shiki-core run test
 ```
 
 To run only the pack file checks:
 
 ```sh
-pnpm --dir packages/shiki-core run pack:check
+pnpm --dir=packages/shiki-core run pack:check
 ```
 
 The package artifact is intentionally small: `package.json`, `README.md`, and the built `dist` entry files. Source

@@ -68,9 +68,9 @@ Run the local preflight checks before publishing:
 pnpm install
 pnpm check:content-core
 pnpm check
-pnpm --dir packages/content-core run consumer:check
-pnpm --dir packages/content-core run pack:dry-run
-pnpm --dir packages/content-core exec npm pkg get name version private publishConfig exports files types main
+pnpm --dir=packages/content-core run consumer:check
+pnpm --dir=packages/content-core run pack:dry-run
+pnpm --dir=packages/content-core exec npm pkg get name version private publishConfig exports files types main
 ```
 
 Check whether the release version already exists before publishing:
@@ -85,7 +85,7 @@ Publish manually from the package directory after configuring `NPM_TOKEN` locall
 ```sh
 export NPM_TOKEN="<token-with-package-publish-permission>"
 npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
-pnpm --dir packages/content-core publish --no-git-checks
+pnpm --dir=packages/content-core publish --no-git-checks
 ```
 
 ## Build and Package Checks
@@ -103,7 +103,7 @@ Vitest type contract tests for the package root. `dist/` is generated output and
 To run only the packaged-consumer validation:
 
 ```sh
-pnpm --dir packages/content-core run consumer:check
+pnpm --dir=packages/content-core run consumer:check
 ```
 
 That command builds the package, creates a local tarball, installs it into a temporary project outside the workspace,
