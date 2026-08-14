@@ -13,7 +13,7 @@
  * - Export markers for PDF selectors and print styling.
  */
 
-import { availableLanguages, transformerNotationLineTextColor } from "@ravenhill/shiki-core";
+import { availableLanguages, createLineTextColorTransformer } from "@ravenhill/shiki-core";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import {
     transformerNotationDiff,
@@ -155,7 +155,7 @@ const commonTransformers = [
     transformerNotationFocus(),
     transformerNotationHighlight(),
     transformerNotationErrorLevel(),
-    transformerNotationLineTextColor(),
+    createLineTextColorTransformer(),
     transformerNotationDiff(),
 ];
 ---

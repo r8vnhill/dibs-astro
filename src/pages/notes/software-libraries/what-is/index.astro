@@ -6,12 +6,13 @@ import { KotlinBlock, KotlinInline, NimBlock, NimInline } from "~/components/ui/
 import { B, I } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
-import { libraryWhatIsReadings } from "~/data/readings/lesson-readings";
+import { getLibraryWhatIsReadings } from "$presentation/adapters/lesson-readings";
 import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 
+const libraryWhatIsReadings = getLibraryWhatIsReadings();
 const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReadings.lessonPath) } as const;
 ---
 

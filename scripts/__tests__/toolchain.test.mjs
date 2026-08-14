@@ -3,7 +3,7 @@ import { expect, suite, test } from "vitest";
 import { assertSupportedToolchain, parseNodeRange } from "../lib/toolchain.mjs";
 
 const packageManifest = {
-    engines: { node: ">=24 <25" },
+    engines: { node: ">=24 <27" },
     packageManager: "pnpm@11.8.0",
 };
 
@@ -18,11 +18,21 @@ suite("given the supported platform declaration", () => {
         ).not.toThrow();
     });
 
-    test("then it rejects an unsupported Node major", () => {
+    test("then it accepts a newer Node major within the widened range", () => {
         expect(() =>
             assertSupportedToolchain({
                 packageManifest,
                 nodeVersion: "26.7.0",
+                pnpmVersion: "11.8.0",
+            }),
+        ).not.toThrow();
+    });
+
+    test("then it rejects an unsupported Node major", () => {
+        expect(() =>
+            assertSupportedToolchain({
+                packageManifest,
+                nodeVersion: "27.0.0",
                 pnpmVersion: "11.8.0",
             }),
         ).toThrow("does not satisfy engines.node");
@@ -39,6 +49,6 @@ suite("given the supported platform declaration", () => {
     });
 
     test("then it parses the supported Node range", () => {
-        expect(parseNodeRange(">=24 <25")).toEqual({ minimum: 24, exclusiveMaximum: 25 });
+        expect(parseNodeRange(">=24 <27")).toEqual({ minimum: 24, exclusiveMaximum: 27 });
     });
 });

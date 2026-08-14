@@ -1,7 +1,9 @@
 ---
-import { publishedReadings } from "~/data/readings/lesson-readings";
+import { getPublishedReadings } from "$presentation/adapters/lesson-readings";
 import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const publishedReadings = getPublishedReadings();
 ---
 
 <BaseLayout pageTitle="Lecturas">

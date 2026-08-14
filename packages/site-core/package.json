@@ -24,10 +24,11 @@
         "pack:dry-run": "node scripts/assert-pack-files.mjs --pack"
     },
     "devDependencies": {
+        "@types/node": "^24.1.0",
         "fast-check": "^4.5.3",
         "publint": "^0.3.19",
         "tsup": "^8.5.1",
-        "typescript": "^7.0.2",
+        "typescript": "^6.0.3",
         "vitest": "^4.1.10"
     },
     "publishConfig": {

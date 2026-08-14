@@ -12,7 +12,7 @@
  */
 
 import type { ShikiTransformer } from "shiki";
-import { availableLanguages, applyTailwindClasses } from "@ravenhill/shiki-core";
+import { availableLanguages, createTailwindClassTransformer } from "@ravenhill/shiki-core";
 import { highlightToHtml } from "~/lib/code-highlighting";
 
 type Props = {
@@ -43,7 +43,7 @@ const html = await highlightToHtml({
     theme: "catppuccin-mocha",
     transformers: [
         ...transformers,
-        applyTailwindClasses({ pre: preClasses, code: codeClassList }),
+        createTailwindClassTransformer({ pre: preClasses, code: codeClassList }),
     ],
     fallbackPreClasses: preClasses,
     fallbackCodeClasses: codeClassList,

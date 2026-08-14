@@ -223,10 +223,10 @@ describe("given a lesson export manifest", () => {
         });
 
         expect(selected.map((entry) => entry.route)).toEqual([
-            "/notes/software-libraries/",
             "/notes/software-libraries/testing/",
             "/notes/software-libraries/api-design/",
         ]);
+        expect(selected.map((entry) => entry.route)).not.toContain("/notes/software-libraries/");
         expect(selected.map((entry) => entry.route)).not.toContain("/notes/software-libraries-extra/");
         expect(selected).not.toBe(manifest.entries);
     });

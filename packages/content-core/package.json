@@ -30,7 +30,7 @@
         "@typescript/typescript6": "^6.0.2",
         "publint": "^0.3.19",
         "tsup": "^8.5.1",
-        "typescript": "^7.0.2"
+        "typescript": "^6.0.3"
     },
     "publishConfig": {
         "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",

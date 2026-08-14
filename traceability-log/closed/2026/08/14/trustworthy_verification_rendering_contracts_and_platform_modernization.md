@@ -593,7 +593,7 @@ with:
 
 ---
 
-# Milestone 4 — Modernize the supported platform
+# Milestone 4 — Modernize the supported platform [DONE]
 
 ## Goal
 

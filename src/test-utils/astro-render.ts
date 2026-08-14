@@ -68,7 +68,7 @@
 
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { loadRenderers } from "astro:container";
-import { getContainerRenderer as getReactContainerRenderer } from "@astrojs/react";
+import { getContainerRenderer as getReactContainerRenderer } from "@astrojs/react/container-renderer";
 
 /**
  * Extracts the component parameter type accepted by `AstroContainer.renderToString`.
