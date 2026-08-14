@@ -490,9 +490,12 @@ Simplify `ReadingTime.astro` into static informational markup.
 
 ---
 
-# Focused content follow-up — Align fragment taxonomy and terminology
+# Focused content follow-up — Align fragment taxonomy and terminology [DONE]
 
 This remains separate from infrastructure because it intentionally modifies document-facing semantics.
+
+> Completed on 14 August 2026. The focused close-out records the canonical H3 fragment, direct-rename compatibility
+> rationale, terminology update, and verification evidence. This does not close the broader modernization plan.
 
 ## Cycle A — Align the observable-change fragment with its actual heading level
 

@@ -295,7 +295,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReading
         </P>
 
         <Question
-            id="h2-observable-change" title="¿Qué cambios puede observar quien consume?"
+            id="h3-observable-change" title="¿Qué cambios puede observar quien consume?"
             headingLevel="h3"
         >
             <P>
@@ -361,11 +361,12 @@ const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReading
             </P>
         </Important>
 
-        <Warning title="La firma no es la única forma de romper una API">
+        <Warning title="Una incompatibilidad no siempre cambia la firma">
             <P>
-                Cambiar nombres o tipos puede romper código inmediatamente, pero también podemos romper expectativas sin
-                cambiar ninguna firma. Alterar el significado de un resultado, los efectos de una operación o una
-                garantía de identidad puede producir incompatibilidades de comportamiento.
+                Cambiar nombres o tipos puede hacer que el código consumidor deje de ser compatible de inmediato, pero
+                también pueden aparecer incompatibilidades sin cambiar ninguna firma. Alterar el significado de un
+                resultado, los efectos de una operación o una garantía de identidad puede producir incompatibilidades de
+                comportamiento.
             </P>
         </Warning>
 

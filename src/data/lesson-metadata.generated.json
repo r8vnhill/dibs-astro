@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14T10:05:02.728Z",
+  "generatedAt": "2026-08-14T10:29:39.993Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1848,8 +1848,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-13",
+      "lastModified": "2026-08-14",
       "changes": [
+        {
+          "hash": "0ed27267e65923bddda51c13b5cff620c7d33aa0",
+          "date": "2026-08-14",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🚀 feat(tests+readings): Add functionality tests and integrate reading contract system"
+        },
         {
           "hash": "9823d7c1b70ac78b2a776f624982e75df269279e",
           "date": "2026-08-13",
@@ -1873,12 +1879,6 @@
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🚀 feat(ci): Restore deterministic and hermetic release path for `@ravenhill/astro-icons`"
-        },
-        {
-          "hash": "8c1bdfe1d9a989d2024bb1b8c4d7abde66b6bf92",
-          "date": "2026-08-13",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🚀 feat(publish): Implement provenance-aware release pipeline"
         }
       ]
     },

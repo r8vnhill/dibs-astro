@@ -7,7 +7,7 @@
  */
 
 import { JSDOM } from "jsdom";
-import { describe, expect, test } from "vitest";
+import { expect, suite, test } from "vitest";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import WhatIsPage from "../index.astro";
 
@@ -15,7 +15,7 @@ function parseHtml(html: string): Document {
     return new JSDOM(html).window.document;
 }
 
-describe.concurrent("Library 'what-is' lesson render", () => {
+suite.concurrent("given the library 'what-is' lesson", () => {
     test("keeps stable section anchors and heading hierarchy", async () => {
         const renderPage = await createAstroRenderer<Record<string, never>>(WhatIsPage);
         const html = await renderPage(
@@ -91,14 +91,17 @@ describe.concurrent("Library 'what-is' lesson render", () => {
         expect(disclosure?.querySelector("code")?.textContent).toBeTruthy();
     });
 
-    test("renders the observable-change exercise as an ordered disclosure", async () => {
+    test("then the observable-change exercise remains an H3 subsection with a canonical fragment", async () => {
         const renderPage = await createAstroRenderer<Record<string, never>>(WhatIsPage);
         const html = await renderPage({}, {
             request: new Request("https://dibs.ravenhill.cl/notes/software-libraries/what-is/"),
         });
         const doc = parseHtml(html);
-        const section = doc.querySelector("#h2-observable-change");
+        const section = doc.querySelector("#h3-observable-change");
 
+        expect(section).not.toBeNull();
+        expect(section?.closest("#h2-encapsulation")).not.toBeNull();
+        expect(section?.querySelector("h3")?.id).toBe("h3-observable-change__title");
         expect(section?.querySelector("ol")).not.toBeNull();
         expect(section?.querySelectorAll("ol > li")).toHaveLength(5);
         const disclosure = Array.from(section?.querySelectorAll("details") ?? []).find(element =>
@@ -106,6 +109,23 @@ describe.concurrent("Library 'what-is' lesson render", () => {
         );
         expect(disclosure).not.toBeNull();
         expect(disclosure?.hasAttribute("open")).toBe(false);
+    });
+
+    test("then the API-stability warning uses neutral incompatibility terminology", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(WhatIsPage);
+        const html = await renderPage({}, {
+            request: new Request("https://dibs.ravenhill.cl/notes/software-libraries/what-is/"),
+        });
+        const doc = parseHtml(html);
+        const warning = Array.from(doc.querySelectorAll("[data-variant='warning']")).find(section =>
+            section.textContent?.includes("Una incompatibilidad no siempre cambia la firma")
+        );
+
+        expect(warning).not.toBeUndefined();
+        expect(warning?.textContent).toContain("código consumidor deje de ser compatible");
+        expect(warning?.textContent).toMatch(/incompatibilidades\s+de\s+comportamiento/);
+        expect(doc.body.textContent).not.toContain("La firma no es la única forma de romper una API");
+        expect(doc.body.textContent).not.toContain("Cambiar nombres o tipos puede romper código inmediatamente");
     });
 
     test("keeps one-line contract signatures compact", async () => {
