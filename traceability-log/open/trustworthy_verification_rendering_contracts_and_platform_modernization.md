@@ -1,247 +1,260 @@
-# Trustworthy Verification, Rendering Contracts, and Platform Modernization
+# Trustworthy Contracts, Rendering Semantics, and Platform Modernization
 
-## Overall assessment
+## Summary
 
-The architectural direction is substantially better than the previous state. In particular, I would **keep**:
+Harden the remaining correctness and architecture issues identified in the recent `dev/qa` changes, while avoiding work that has already been superseded or explicitly rejected.
 
-- the replacement of the React reading-time island with static Astro and small deterministic functions;
-- the increasing use of BDD render-contract tests;
-- `NotesSection` taking ownership of semantic heading markup;
-- title-prop/rich-slot precedence for authoring components;
-- the separation between canonical bibliography metadata and lesson-specific pedagogical guidance;
-- the move toward explicit release provenance and artifact verification. ([GitLab][2])
+The initiative now covers four coherent concerns:
 
-There are, however, **two blockers in the current branch**, followed by several architectural issues that I would
-resolve before implementing the large readings UI redesign.
+```text
+canonical generated-artifact consistency
+                ↓
+bibliography/readings integrity
+                ↓
+rendering + reading-time semantics
+                ↓
+platform modernization
+```
+
+A small lesson-semantic cleanup remains as an intentional content follow-up.
+
+### External dependency
+
+The CI runner/portable-pipeline remediation identified in the review is **already covered by another task** and is therefore not duplicated here. This plan assumes that task will restore executable CI evidence. Until it lands, individual cycles can be verified locally; final completion requires the canonical CI quality gate to execute successfully.
+
+### Behavior-preservation boundary
+
+Unless explicitly stated otherwise, preserve:
+
+* lesson-visible content;
+* bibliography records and identifiers;
+* reference ordering;
+* public routes;
+* code-block rendering semantics;
+* reading-time policy;
+* published package behavior.
+
+The only intentional content-level changes are:
+
+* neutral terminology in the lesson;
+* renaming the observable-change fragment from `h2` to `h3` to match its existing semantic nesting.
 
 ---
 
-# Findings
+# Milestone 1 — Restore canonical generated-artifact consistency [DONE]
 
-## P0 — Required: the branch currently has no usable CI evidence [superseded as part of another task]
+## Goal
 
-The current `.gitlab-ci.yml` assigns `local` and `docker` tags globally, and repeats those tags on the individual jobs.
-([GitLab][3]) GitLab uses job tags to determine which runners are eligible to execute a job. ([GitLab Docs][4])
+Ensure the `astro-icons` generated inventory has one deterministic canonical representation and that the committed artifact is reproducible byte-for-byte from its source data.
 
-That configuration is currently preventing verification:
+## Scope
 
-- the `6ddce307` pipeline's `deps` job waited about 5,094 seconds and then failed with
-  `stuck_pending_no_matching_runners`; its runner remained `null`; all dependent quality jobs were skipped;
-  ([GitLab][5])
-- the current `9823d7c1` pipeline was canceled after roughly 751 seconds with its `deps` job still unassigned to any
-  runner, and all jobs show the same `docker`/`local` tags. ([GitLab][6])
+* `packages/astro-icons/scripts/audit-icons.mjs`
+* `packages/astro-icons/migration/icon-inventory.json`
+* `icon-inventory.contract.test.mjs`
+* nearby generator documentation/comments
 
-Consequently, `a3146305` and `9823d7c1` do **not** have independent CI evidence that their render-contract, content, and
-generated-artifact changes pass.
+This milestone **does not include GitLab runner configuration, CI job topology, pnpm caching, or the former `deps` job**. Those belong to the superseding CI task.
 
-### Recommendation
+## Phase 1.1 — Characterize canonical serialization
 
-Make ordinary verification jobs portable:
+### Red
 
-```text
-test:check
-test:unit
-test:astro-render
-build
-```
+Add the smallest focused contract test:
 
-should use an available GitLab runner without private/local tags unless they genuinely require local infrastructure.
+> given a deterministic inventory
+> when it is serialized
+> then it uses four-space indentation and exactly one trailing LF
 
-Reserve specialized tags for:
+Also characterize key ordering if the serializer promises deterministic ordering.
 
-- deployment;
-- hardware-specific work;
-- jobs requiring private infrastructure;
-- other genuine environmental constraints.
+### Green
 
-This is especially important for a project presenting reproducibility as part of its engineering methodology.
-
-### Related CI simplification
-
-The current `deps` stage does not provide an installed workspace to subsequent jobs. Every `.node-job` executes its own
-`pnpm install --frozen-lockfile`, while `needs: deps` only orders the jobs; GitLab jobs run independently unless data is
-explicitly transferred through cache/artifacts. ([GitLab][3])
-
-So today:
-
-```text
-deps
-  pnpm install
-      ↓
-test:unit
-  pnpm install again
-
-test:check
-  pnpm install again
-
-test:astro-render
-  pnpm install again
-
-build
-  pnpm install again
-```
-
-and there is a `PNPM_STORE_DIR` but no corresponding CI cache. ([GitLab][3])
-
-I would remove the serial `deps` gate and cache the pnpm store using a lockfile-derived cache key. GitLab explicitly
-recommends cache for downloaded dependencies and supports `cache:key:files` for invalidation based on files such as the
-lockfile. ([GitLab Docs][7])
-
----
-
-## P0 — Required: the canonical `astro-icons` gate is deterministically inconsistent
-
-This is an inherited branch defect, but the recent release commits make it especially important because root
-`pnpm check` explicitly invokes `check:astro-icons`. ([GitLab][8])
-
-The package's canonical check starts with `test:audit-icons`, which includes `icon-inventory.contract.test.mjs`.
-([GitLab][9]) That contract regenerates the inventory and compares it **byte-for-byte** with the committed
-`migration/icon-inventory.json`. ([GitLab][10])
-
-But:
-
-- `serializeInventory()` explicitly emits JSON with **two-space indentation**; ([GitLab][11])
-- the committed inventory uses **four-space indentation**. ([GitLab][12])
-
-Therefore the current committed artifact and its canonical serializer cannot be byte-identical.
-
-This also conflicts with the project-wide four-space formatting convention.
-
-### Recommendation
-
-Change the canonical serializer to:
+Change the canonical serializer to the project convention:
 
 ```js
 JSON.stringify(artifact, null, 4);
 ```
 
-and update its documentation accordingly.
+followed by exactly one LF.
 
-Do **not** solve this by reformatting the committed artifact to two spaces: four spaces agree with the project
-guidelines.
+### Refactor
 
-Add a tiny regression fixture that establishes:
+Keep serialization as a pure operation separate from filesystem writing.
 
-> given a deterministic inventory when it is serialized then it uses four-space indentation and exactly one trailing LF
+If serialization and persistence are currently coupled, prefer:
 
-Then run the full real-corpus byte contract.
+```text
+inventory
+    ↓
+serializeInventory
+    ↓
+string
+    ↓
+writeInventory
+```
 
-This is behavior-preserving with respect to the artifact's semantic content.
+rather than making tests interact with the filesystem unnecessarily.
+
+## Phase 1.2 — Regenerate the real artifact
+
+### Red
+
+Run the existing real-corpus byte contract and demonstrate the mismatch before regeneration.
+
+### Green
+
+Regenerate `migration/icon-inventory.json` only through the canonical generator.
+
+### Refactor
+
+Update documentation/comments describing the serialization format so code, test, generated artifact, and documentation agree.
+
+## Acceptance criteria
+
+* canonical serialization uses four spaces;
+* output terminates with exactly one LF;
+* the real committed inventory is byte-identical to regenerated output;
+* no generated artifact is edited manually;
+* `check:astro-icons` passes locally;
+* once the external CI task is available, the same contract passes in canonical CI.
+
+## Non-goals
+
+* CI runner remediation;
+* CI dependency caching;
+* package behavior changes;
+* restructuring the icon inventory schema.
 
 ---
 
-## P1 — Required: missing bibliography records are silently removed from the readings page
+# Milestone 2 — Make lesson-reading references fail closed and structurally rendered
 
-The new `lesson-readings.ts` is a good abstraction: pedagogical metadata is strongly classified into type, difficulty,
-extent, purpose, focus, outcome, and optional guiding question. ([GitLab][13])
+## Goal
 
-But the page resolves each configured ID at rendering time and then does:
+Guarantee that every configured complementary reading resolves exactly once to canonical bibliography data and that pedagogical text remains typed text rather than becoming manually assembled HTML.
+
+## Scope
+
+* `src/data/readings/lesson-readings.ts`
+* `/readings/software-libraries/what-is/`
+* `GuidedReferenceEntry.astro`
+* `ReferenceEntry.astro`
+* bibliography/readings integrity tests
+
+## Phase 2.1 — Introduce explicit reading resolution
+
+### Goal
+
+Move catalog resolution out of page rendering and establish one pure integrity boundary.
+
+### Red
+
+Use DDT for:
+
+```text
+valid reference
+missing reference
+duplicate inside one stage
+duplicate across stages
+accepted ID normalization
+stage-order preservation
+reading-order preservation
+```
+
+Prefer BDD descriptions such as:
+
+> given a configured reading whose reference ID is absent from the catalog
+> when lesson readings are resolved
+> then resolution reports a missing-reference finding
+
+### Green
+
+Introduce a pure resolver, conceptually:
+
+```text
+LessonReadings
+      +
+BibliographyCatalog
+      ↓
+resolveLessonReadings
+      ↓
+ResolvedLessonReadings | ReadingResolutionFinding[]
+```
+
+Use expressive finding types, for example:
 
 ```ts
-return reference
-    ? <GuidedReferenceEntry {reference} {reading} />
-    : null;
+type ReadingResolutionFinding =
+    | { code: "missing-reference"; referenceId: string }
+    | { code: "duplicate-reference"; referenceId: string };
 ```
 
-([GitLab][14])
+Only add `invalid-reference-id` if there is an actual project-level syntax contract for IDs.
 
-For a scholarly readings page, this is the wrong failure mode.
+### Refactor
 
-A typo such as:
+Keep:
 
-```text
-parnas-decomposing-system-1972
-```
+* bibliography lookup;
+* integrity policy;
+* Astro presentation;
 
-would not produce a build failure. It would silently make Parnas disappear from the student-facing page.
+as separate concerns.
 
-That undermines both correctness and bibliographic provenance.
+Do not make the Astro page responsible for interpreting findings.
 
-### Recommendation
+## Phase 2.2 — Fail closed at the page boundary
 
-Introduce a small pure domain function:
+### Red
 
-```text
-lesson-readings configuration
-        +
-bibliography catalog
-        ↓
-resolveLessonReadings(...)
-        ↓
-ResolvedLessonReadings
-     or
-ReadingResolutionFinding[]
-```
+Characterize the current undesirable behavior:
 
-Use structured findings such as:
+> given an unresolved configured reference
+> when the readings page is prepared
+> then the reference must not silently disappear
 
-```text
-missing-reference
-duplicate-reference
-invalid-reference-id
-```
+### Green
 
-The Astro page should consume **already-resolved data** and should never contain `reference ? ... : null`.
-
-Use DDT to cover:
-
-- valid IDs;
-- missing ID;
-- canonical `ref:` normalization if both forms remain supported;
-- duplicate references within a stage;
-- duplicates across stages;
-- preservation of configured order.
-
-This is also a natural place to establish the invariant:
-
-> every published lesson reading resolves to exactly one catalog record.
-
----
-
-## P1 — Required: `GuidedReferenceEntry` creates a new unnecessary raw-HTML trust boundary
-
-The new component constructs an HTML string manually:
+Remove:
 
 ```ts
-const guide = `
-    ...
-    ${reading.why}
-    ...
-    ${reading.focus}
-    ...
-`;
+reference
+    ? <GuidedReferenceEntry ... />
+    : null
 ```
 
-and passes that string as `editorialNote`. ([GitLab][15])
+The page should receive only resolved entries or fail with an actionable diagnostic before rendering.
 
-`ReferenceEntry` then injects `editorialNote` with `set:html` for every supported reference kind. The component's own
-documentation correctly describes `set:html` as a trust boundary. ([GitLab][16])
+### Refactor
 
-The data is repository-controlled today, so I would **not classify this as an immediate external-input security
-vulnerability**. The architectural problem is different: ordinary pedagogical strings have unnecessarily crossed from:
+If several readings pages will immediately use the same resolver, expose a small reusable application-level function.
+
+Do not create a generic bibliography service for one concrete use case.
+
+## Phase 2.3 — Remove pedagogical raw-HTML construction
+
+### Red
+
+Add regression cases containing:
 
 ```text
-typed text
+<T>
+A & B
+"quoted text"
 ```
 
-to:
+and assert the intended visible text.
 
-```text
-hand-assembled HTML string
+### Green
+
+Replace manually constructed HTML such as:
+
+```ts
+const guide = `...${reading.why}...`;
 ```
 
-to:
-
-```text
-raw HTML sink
-```
-
-A future note containing something as innocent as `<T>` or `A & B` can acquire HTML semantics instead of remaining
-ordinary text.
-
-### Recommendation
-
-Render pedagogical guidance through Astro markup:
+with ordinary Astro markup:
 
 ```astro
 <p>
@@ -250,714 +263,552 @@ Render pedagogical guidance through Astro markup:
 </p>
 ```
 
-rather than serializing it.
+### Refactor
 
-The desired boundary is:
+Separate responsibilities:
 
 ```text
 bibliographic catalog
         ↓
 ReferenceEntry
 
-lesson pedagogical model
+pedagogical metadata
         ↓
-GuidedReferenceEntry markup
+GuidedReferenceEntry
 ```
 
-not:
+If `editorialNote: string` has no remaining legitimate raw-HTML caller after this refactor, remove it rather than retaining an unused trust boundary.
 
-```text
-lesson model
-    ↓
-HTML serialization
-    ↓
-ReferenceEntry set:html
-```
+If other consumers genuinely require trusted HTML, make that exceptional contract explicit instead of treating every string as potentially pre-rendered markup.
 
-Add a regression test with editorial data containing:
+## Acceptance criteria
 
-```text
-<T>
-A & B
-"quoted text"
-```
+* every configured reading resolves exactly once;
+* a mistyped bibliography ID fails with an actionable diagnostic;
+* no reading can silently disappear;
+* order and stage classification remain unchanged;
+* bibliographic metadata remains catalog-owned;
+* pedagogical metadata remains `lesson-readings.ts`-owned;
+* ordinary pedagogical strings never require `set:html`;
+* `<`, `>`, `&`, and quotes remain ordinary text;
+* current visible reading content remains behaviorally equivalent.
 
-and assert that it renders as the intended visible text.
+## Non-goals
 
-I would also use this refactor to remove `editorialNote: string` from `ReferenceEntry` if no other caller genuinely
-needs raw prepared HTML.
+* changing bibliography IDs;
+* redesigning the bibliography catalog;
+* generic CMS infrastructure;
+* implementing the wide readings UI in this milestone.
 
 ---
 
-## P1 — High value: slot presence is now determined by rendering a slot and then the slot is rendered again
+# Milestone 3 — Consolidate rendering semantics and reading-time correctness
 
-`a3146305` improved title-prop/slot precedence, but `CodeLayout` now performs:
+## Goal
 
-```ts
-const titleSlotContent = await Astro.slots.render("title");
-```
+Give each presentation value one deterministic render path and ensure reading-time extraction respects all semantic text boundaries currently supported by course content.
 
-to determine whether content is meaningful, then later emits:
+## Scope
 
-```astro
-<slot name="title" />
-```
-
-The same pattern exists for `source`. ([GitLab][17])
-
-This creates two render paths for one logical slot.
-
-Astro's documented model is that `Astro.slots.render()` returns the rendered HTML string; its example then emits that
-captured string with `set:html`. Astro explicitly describes this as an advanced API and notes that ordinary `<slot />`
-rendering should be preferred when possible. ([Astro Docs][18])
-
-The project already encountered exactly the reason to use `render()` here—conditionally forwarded but empty slots—so the
-clean approach is:
-
-```text
-render once
-    ↓
-classify meaningful/empty
-    ↓
-emit the captured rendered result once
-```
-
-The reference components have similar inconsistent slot-handling paths; `resolveOptionalSlots()` itself calls
-`slots.render()`, while some components subsequently use `<slot>` again. ([GitLab][19])
-
-### Recommendation
-
-Establish one project-wide slot-resolution rule:
-
-- simple slot where mere presence is sufficient → `Astro.slots.has()` + `<slot>`;
-- slot whose rendered emptiness must be inspected → `Astro.slots.render()` exactly once, retain the string, and emit
-  that result once.
-
-Do not maintain:
-
-```text
-render to inspect
-+
-render again to display
-```
-
-Characterization tests for current prop/slot precedence already provide a strong safety net; extend them across code
-blocks and bibliography components before refactoring.
+* `CodeLayout.astro`
+* reference components
+* `reference-content.ts`
+* reading-time components/utilities
+* affected render-contract tests
 
 ---
 
-## P1 — High value: the static reading-time extractor has an incomplete text-boundary model
-
-The static refactor itself is excellent: `extractReadableText()` and `estimateReadingTime()` are small and
-deterministic, and the previous client-side React computation has disappeared. ([GitLab][20])
-
-However, the extractor currently manually inserts whitespace around:
-
-```text
-p, li, h1...h6, pre, blockquote,
-summary, section, article, div
-```
-
-before asking Cheerio for `.text()`. ([GitLab][21])
-
-Cheerio documents that `.text()` concatenates descendant text content. ([Cheerio][22])
-
-That means structures not present in the hand-maintained boundary list can collapse adjacent logical text. Relevant
-lesson content types include or may later include:
-
-```text
-td / th
-dt / dd
-caption
-figcaption
-```
-
-For example, adjacent table-cell text can become one token for reading-time purposes unless a separator is explicitly
-introduced.
-
-### Recommendation
-
-First characterize the intended initial-reading-state semantics with DDT:
-
-```text
-paragraph
-list
-table
-definition list
-figure/caption
-code/pre
-open details
-closed details
-excluded subtree
-```
-
-Then either:
-
-1. expand a single explicit `READING_TEXT_BOUNDARY_ELEMENTS` contract; or
-2. traverse the parsed tree and introduce separators between appropriate element boundaries.
-
-I prefer **option 1 initially** because it is simpler and the site's content vocabulary is bounded.
-
-The project already has `fast-check` installed. ([GitLab][8]) Once the finite element cases are covered with DDT, PBT
-could cheaply strengthen the existing metamorphic guarantees:
-
-> adding formatting whitespace does not change the estimate
-
-and:
-
-> wrapping text in semantically neutral inline markup does not change the estimate.
-
-That is optional, but unlike introducing another PBT library, there is essentially no new dependency cost.
-
----
-
-## P2 — Accessibility: static reading time still declares itself as a live region
-
-The React implementation was removed, but `ReadingTime.astro` still defaults to:
-
-```text
-aria-live="polite"
-```
-
-even though its content is now entirely generated before the page reaches the browser. ([GitLab][23])
-
-WAI-ARIA defines live regions as regions typically updated after an external event while focus may be elsewhere.
-([W3C][24])
-
-The reading-time value no longer has such behavior.
-
-### Recommendation
-
-Remove the `ariaLive` prop and `aria-live` attribute entirely unless there is another caller that genuinely updates the
-component dynamically.
-
-The component should now be ordinary static informational content.
-
----
-
-## P2 — The lesson's heading taxonomy is inconsistent
-
-The current lesson gives:
-
-```astro
-<Question
-    id="h2-observable-change" ...
-    headingLevel="h3"
-/>
-```
-
-inside the encapsulation H2. ([GitLab][25])
-
-That produces an identifier explicitly claiming `h2` while the rendered semantic heading is H3.
-
-It also makes **observable change** subordinate to encapsulation even though it is one of the lesson's major conceptual
-transitions.
-
-### Recommendation [superseded: rename to h3]
-
-Because the fragment ID may already be externally linked, preserve:
-
-```text
-#h2-observable-change
-```
-
-but promote the content back to a top-level `NotesSection` H2.
-
-That restores:
-
-```text
-encapsulation
-    ↓
-observable behavior
-    ↓
-stability
-```
-
-without breaking existing fragment URLs.
-
-If nesting it under encapsulation is intentional pedagogically, then schedule a later fragment-ID migration rather than
-letting identifier taxonomy and document semantics disagree indefinitely.
-
----
-
-## P2 — Hard terminology requirement: replace “romper una API”
-
-The current Spanish lesson contains:
-
-> `La firma no es la única forma de romper una API`
-
-and:
-
-> `Cambiar nombres o tipos puede romper código inmediatamente`
-
-([GitLab][25])
-
-Under the project's explicit neutral/non-violent terminology requirement, I would replace these without changing the
-lesson's meaning.
-
-For example:
-
-> **Una incompatibilidad no siempre cambia la firma**
-
-and:
-
-> **Cambiar nombres o tipos puede volver incompatible el código consumidor inmediatamente.**
-
-This is a pure wording change.
-
----
-
-## P2 — Commit/provenance granularity should be tightened [rejected]
-
-The latest four commits modify approximately:
-
-- 2,290 lines;
-- 1,633 lines;
-- 1,159 lines;
-- 3,161 lines. ([GitLab][1])
-
-Some of that size is traceability documentation and generated material, but the commits still combine multiple
-independently meaningful concerns.
-
-There is also a concrete provenance mismatch in the latest commit: its message says it **created a new wide academic
-reading workspace**, yet the current production page still uses `max-w-4xl` and has no wide two-column workspace or
-contextual rail. ([GitLab][1]) The wide workspace exists as a detailed implementation **plan**, not yet as the
-production layout.
-
-For a project emphasizing traceability, commit messages should distinguish:
-
-```text
-plan
-implementation
-generated evidence
-```
-
-accurately.
-
-I would align future commits with small green vertical slices rather than closing a whole plan in one large commit.
-
----
-
-# Ecosystem assessment
-
-The repository is also due for a deliberate toolchain modernization, but I would **not mix that work with the
-correctness fixes above**.
-
-The root currently uses Node 20 in CI, Astro `5.15.1`, TypeScript `5.9.2`, and pnpm `9.15.9`. ([GitLab][3])
-
-Node 20 reached EOL on March 24, 2026. Node 24 is the current LTS line and is supported through April 2028.
-([Node.js][26]) **Moving CI to Node 24 should be required.**
-
-Astro's current stable line is `7.2.x`, and Astro's own documentation strongly recommends moving to the current major.
-The official migration path from Astro 5 is sequential: first migrate to Astro 6, which requires Node `22.12.0+`, then
-migrate from 6 to 7. ([Astro Docs][27])
-
-TypeScript 7 is now the current release. ([TypeScript][28]) I would nevertheless upgrade it **after** Astro and its
-integrations because TypeScript 7's native compiler generation represents a larger tooling transition than an ordinary
-TypeScript minor upgrade.
-
-pnpm 11 is the current stable major; it requires Node 22+ and introduces tighter supply-chain defaults and a new store
-architecture. pnpm 12 is still presented through the `next-12` path, so I would treat 12 as experimental for this
-project today. ([pnpm][29])
-
----
-
-# Improvement Plan — Trustworthy Verification, Rendering Contracts, and Platform Modernization
-
-The scope spans CI, a package contract, presentation infrastructure, reading-time semantics, bibliography integration,
-and the framework/toolchain. That is **large scope**, so milestones are justified.
-
-## Milestone 1 — Restore an executable, green canonical quality gate
+## Phase 3.1 — Establish a single slot-resolution policy
 
 ### Goal
 
-A clean checkout of `dev/qa` can execute all required verification on available CI infrastructure and `pnpm check`
-succeeds deterministically.
+Remove the pattern where the same logical slot is rendered once for inspection and a second time for output.
 
-### Scope
+### Red
 
-- `.gitlab-ci.yml`
-- root package/runtime configuration
-- `packages/astro-icons/scripts/audit-icons.mjs`
-- `migration/icon-inventory.json`
-- inventory contract tests
+Extend existing prop/slot characterization tests to cover:
 
-### Suggested phases
+* meaningful title slot;
+* forwarded-but-empty title slot;
+* title prop only;
+* title prop + meaningful slot;
+* source equivalent cases;
+* rich reference slots where relevant.
 
-**1.1 — Fix the inventory serialization contract**
+Preserve existing precedence semantics exactly.
 
-Red:
+### Green
 
-> given a canonical inventory when serialized then its persisted representation uses four-space indentation and one
-> trailing LF.
-
-Green:
-
-- switch serializer to four spaces;
-- regenerate only through the canonical workflow.
-
-Refactor:
-
-- keep serialization pure;
-- update comments/documentation together.
-
-**1.2 — Restore runner portability**
-
-- remove `local/docker` tags from portable verification jobs, or provision an explicitly reliable matching runner;
-- run `check`, unit, Astro-render, and build jobs on normal Linux CI;
-- retain specialized tags only where justified.
-
-**1.3 — Remove the ineffective `deps` serialization point**
-
-- delete the standalone `deps` job unless it begins producing a genuine artifact;
-- cache `.pnpm-store` with a lockfile-derived key;
-- let independent quality jobs install from the frozen lockfile in parallel.
-
-**1.4 — Move CI to Node 24 LTS**
-
-Keep pnpm unchanged initially so runtime modernization and package-manager modernization are independently diagnosable.
-
-### Acceptance criteria
-
-- no required branch job remains pending because of unmatched runner tags;
-- `pnpm check` is green from a clean checkout;
-- the real icon inventory matches its generated form byte-for-byte;
-- test jobs can execute in parallel;
-- Node 20 no longer appears in CI;
-- the pipeline produces independent evidence for `check`, unit tests, Astro rendering, and production build.
-
-### Non-goals
-
-- Astro major migration;
-- pnpm major migration;
-- readings UI redesign.
-
----
-
-# Milestone 2 — Make lesson-reading references fail closed and structurally rendered
-
-### Goal
-
-Every configured reading resolves exactly once to canonical bibliography data, and pedagogical content never needs to
-pass through manually constructed HTML.
-
-### Scope
-
-- `lesson-readings.ts`
-- readings page
-- `GuidedReferenceEntry.astro`
-- `ReferenceEntry.astro`
-- bibliography/readings integrity tests
-
-### Suggested phases
-
-**2.1 — Introduce a pure reading resolver**
-
-Model:
+Apply one of two contracts to each slot:
 
 ```text
-LessonReadings
-+
-BibliographyCatalog
-        ↓
-resolveLessonReadings
-        ↓
-ResolvedLessonReadings | findings
-```
-
-Write DDT first for:
-
-- missing references;
-- duplicate references;
-- normalization;
-- stage/order preservation.
-
-**2.2 — Remove silent omission**
-
-The page must receive a resolved configuration. There should be no:
-
-```ts
-reference ? ... : null
-```
-
-path.
-
-**2.3 — Remove string-built editorial HTML**
-
-Characterize current rendered output, then convert pedagogical fields to regular Astro markup.
-
-Special-character regression cases should include `<`, `>`, `&`, and quotes.
-
-### Acceptance criteria
-
-- one mistyped reference ID fails the build with a structured, actionable diagnostic;
-- no reading disappears silently;
-- bibliography metadata remains catalog-owned;
-- pedagogical metadata remains lesson-owned;
-- no pedagogical plain string is interpolated into a `set:html` sink;
-- existing visible reading content and order are preserved.
-
-### Non-goals
-
-- modifying catalog IDs;
-- implementing the planned wide readings workspace;
-- generic CMS infrastructure.
-
----
-
-# Milestone 3 — Consolidate render semantics and reading-time correctness
-
-### Goal
-
-Presentation components have one deterministic rendering path per slot, and reading-time calculations faithfully reflect
-the site's supported semantic content.
-
-### Scope
-
-- `CodeLayout.astro`
-- reference components and `reference-content.ts`
-- reading-time components/utilities
-- affected render-contract tests
-
-### Suggested phases
-
-**3.1 — Render meaningful slots once**
-
-Use existing prop/slot characterization tests as the Red safety net.
-
-Refactor every inspected slot to follow one policy:
-
-```text
-render → classify → emit captured rendering
+presence is sufficient
+    → Astro.slots.has()
+    → <slot />
 ```
 
 or:
 
 ```text
-has → emit slot
+rendered emptiness matters
+    → Astro.slots.render() once
+    → classify captured content
+    → emit captured rendering once
 ```
 
-but never both for the same content.
+Never use both paths for one logical value.
 
-**3.2 — Complete readable-text boundaries**
+### Refactor
 
-Add DDT for:
+If repeated rendered-slot classification is substantial, keep a small pure helper around the captured string.
 
-- tables;
-- definition lists;
-- figure captions;
-- existing list/paragraph/code/details cases.
+Avoid building a generalized slot framework.
 
-Then extend the boundary model with the smallest coherent implementation.
+## Acceptance criteria
 
-**3.3 — Strengthen metamorphic assurance**
-
-Because `fast-check` is already present, optionally turn existing metamorphic examples into generated properties for:
-
-- formatting-whitespace invariance;
-- neutral inline-wrapper invariance.
-
-Do this only after concrete example/DDT coverage is strong.
-
-**3.4 — Remove obsolete live-region semantics**
-
-Characterize the static output, then remove `aria-live` from reading-time markup.
-
-### Acceptance criteria
-
-- inspected slots have one rendering path;
-- existing rich-slot precedence remains unchanged;
-- table/definition-list text cannot collapse into accidental single tokens;
-- static reading time has no live-region semantics;
-- no client-side reading-time hydration returns;
-- existing production lesson reading estimates remain within the declared algorithm's semantics.
-
-### Non-goals
-
-- changing WPM/multiplier policy;
-- replacing Cheerio without evidence that another parser improves the contract;
-- restoring React.
+* no inspected slot is rendered twice;
+* existing title/source precedence remains unchanged;
+* conditionally forwarded empty slots continue to behave correctly;
+* bibliography and code-block components use the same documented policy.
 
 ---
 
-# Milestone 4 — Modernize the Astro/TypeScript/pnpm platform
+## Phase 3.2 — Complete the reading-text boundary contract
 
 ### Goal
 
-Bring the project onto supported current tooling without combining framework migration with unrelated behavior changes.
+Ensure semantic block boundaries cannot accidentally concatenate words and change reading-time estimates.
 
-### Scope
+### Red
 
-- runtime metadata;
-- `package.json`;
-- lockfile/workspace configuration;
-- Astro and official integrations;
-- TypeScript;
-- pnpm;
-- build/render/PDF compatibility evidence.
+Add DDT for:
 
-### Phase 4.1 — Pin the runtime/toolchain contract
+* paragraphs;
+* lists;
+* table cells and headers;
+* definition terms/descriptions;
+* captions;
+* figure captions;
+* `pre`/code;
+* open `details`;
+* closed `details`;
+* excluded subtrees.
 
-Add an explicit project-level package-manager/runtime contract rather than keeping the pnpm version only in GitLab
-variables.
+Example:
 
-For example, use the repository's preferred mechanism for:
+> given adjacent table cells
+> when readable text is extracted
+> then the cells contribute separate lexical tokens
 
-```text
-Node 24 LTS
-exact supported pnpm version
+### Green
+
+Prefer one explicit element taxonomy initially:
+
+```ts
+const READING_TEXT_BOUNDARY_ELEMENTS = [
+    ...
+] as const;
 ```
 
-so local and CI execution agree.
+Add only the elements supported by actual content semantics.
 
-### Phase 4.2 — pnpm 9 → current pnpm 11
+### Refactor
 
-Treat this as an explicit migration because pnpm 11 changes configuration/security semantics. ([pnpm][29])
+Keep:
 
-Verify:
+```text
+HTML parsing
+    ↓
+readable-text extraction
+    ↓
+word/complexity estimation
+```
 
-- workspace resolution;
-- lifecycle/build permissions;
-- publishing scripts;
-- GitLab registry behavior;
-- lockfile reproducibility.
+as distinct functions.
 
-Do not adopt pnpm 12 yet.
+Do not replace Cheerio unless evidence shows the abstraction itself is unsuitable.
 
-### Phase 4.3 — Astro 5 → 6
+---
 
-Follow Astro's official migration path and run the full render-contract corpus. Astro 6 raises the Node baseline, which
-is already satisfied by Milestone 1's Node 24 migration. ([Astro Docs][30])
+## Phase 3.3 — Strengthen metamorphic assurance
 
-### Phase 4.4 — Astro 6 → 7
+The repository already has `fast-check`, so no new dependency is required.
 
-Pay particular attention to:
+After example/DDT coverage is established, consider generated properties for:
 
-- JSX/inline whitespace;
-- Vite/Rolldown integration;
-- custom plugins;
-- static HTML output;
-- PDF exports;
-- Astro component render tests.
+> adding formatting whitespace does not change the reading estimate
 
-Astro 7 switches to Vite 8/Rolldown and includes changes to JSX whitespace behavior, making the existing render-contract
-tests particularly valuable during this upgrade. ([Astro][31])
+> wrapping text in semantically neutral inline markup does not change the reading estimate
 
-### Phase 4.5 — TypeScript 7
+> duplicating excluded content does not change readable text
 
-After Astro 7 and its integrations are stable, migrate TypeScript separately.
+Keep these properties targeted. Do not attempt to generate arbitrary HTML documents.
 
-Treat it as a compiler/tooling migration rather than a routine dependency bump.
+---
+
+## Phase 3.4 — Remove obsolete live-region behavior
+
+### Red
+
+Characterize the static `ReadingTime` output and confirm no runtime update occurs.
+
+### Green
+
+Remove:
+
+```text
+aria-live="polite"
+```
+
+and the corresponding prop if nothing else uses it dynamically.
+
+### Refactor
+
+Simplify `ReadingTime.astro` into static informational markup.
+
+## Acceptance criteria
+
+* slots that require inspection are rendered once;
+* rich-slot behavior is preserved;
+* tables, definition lists, and captions preserve lexical boundaries;
+* reading-time calculations remain deterministic;
+* no React/client hydration returns;
+* static reading time no longer advertises itself as a live region;
+* WPM and complexity multipliers remain unchanged.
+
+## Non-goals
+
+* changing reading-time policy;
+* changing WPM values;
+* replacing Cheerio without evidence;
+* restoring a client-side implementation.
+
+---
+
+# Focused content follow-up — Align fragment taxonomy and terminology
+
+This remains separate from infrastructure because it intentionally modifies document-facing semantics.
+
+## Cycle A — Align the observable-change fragment with its actual heading level
+
+The superseding decision is to **retain the section as an H3 under encapsulation**.
+
+Therefore, do not promote it to a top-level `NotesSection`.
+
+### Red
+
+Characterize:
+
+* heading hierarchy;
+* inbound references to `#h2-observable-change`;
+* generated TOC/section links if applicable.
+
+Add a regression test:
+
+> given the observable-change subsection
+> when the lesson renders
+> then it is an H3 with the fragment `h3-observable-change`
+
+### Green
+
+Rename:
+
+```text
+h2-observable-change
+```
+
+to:
+
+```text
+h3-observable-change
+```
+
+and update every project-owned reference to the new fragment.
+
+### Refactor
+
+Search the repository for stale terminology/IDs rather than updating only the defining component:
+
+```text
+h2-observable-change
+#h2-observable-change
+```
+
+If externally published links are considered a compatibility contract, add an explicit compatibility mechanism only if the project already has a policy for fragment migrations. Do not retain a knowingly misleading `h2-*` identifier merely by accident.
 
 ### Acceptance criteria
 
-- current supported Node LTS;
-- current stable pnpm major;
-- current stable Astro major;
-- TypeScript 7 or a documented, evidence-backed temporary exception;
-- all Astro render-contract tests green;
-- static site and PDF builds reproducible;
-- no unexpected lesson whitespace/content changes;
-- release tooling remains functional.
-
-### Non-goals
-
-- adopting pnpm 12 pre-release tooling;
-- adopting experimental Astro functionality merely because it is available;
-- redesigning architecture during framework migration.
-
----
-
-# Intentional follow-up — Lesson semantic structure and terminology
-
-I would keep this separate because it modifies educational/document semantics rather than infrastructure.
-
-Apply two focused changes:
-
-1. promote `#h2-observable-change` to an actual top-level H2 while preserving its existing fragment identifier;
-2. replace the lesson-local wording around _“romper una API”_ with neutral incompatibility terminology.
-
-Acceptance should be based on the lesson's existing render-contract test:
+* the subsection remains H3;
+* its ID is `h3-observable-change`;
+* no project-owned stale `h2-observable-change` reference remains;
+* lesson hierarchy remains:
 
 ```text
-surface
-→ contract
-→ encapsulation
-→ observable behavior
-→ stability
+Encapsulación
+    └── ¿Qué cambios puede observar quien consume?
+
+Estabilidad
 ```
 
-with fragment IDs unchanged where externally observable.
+---
+
+## Cycle B — Use neutral incompatibility terminology
+
+### Red
+
+Characterize the intended lesson meaning.
+
+### Green
+
+Replace wording such as:
+
+> La firma no es la única forma de romper una API
+
+with something closer to:
+
+> **Una incompatibilidad no siempre cambia la firma**
+
+and:
+
+> Cambiar nombres o tipos puede romper código inmediatamente.
+
+with:
+
+> **Cambiar nombres o tipos puede volver incompatible el código consumidor inmediatamente.**
+
+### Acceptance criteria
+
+* technical meaning is preserved;
+* local terminology follows the project's inclusive/neutral naming requirement;
+* standardized external terminology is not unnecessarily renamed.
 
 ---
 
-## Suggested execution order
+# Milestone 4 — Modernize the supported platform
 
-The critical path is:
+## Goal
+
+Bring the repository onto current supported runtime, framework, package-manager, and compiler generations through independently diagnosable migrations.
+
+The Node upgrade moves here because the superseded CI task should not cause this plan to duplicate CI-topology work.
+
+## Scope
+
+* runtime/toolchain metadata;
+* `package.json`;
+* workspace/lockfile configuration;
+* Astro and official integrations;
+* pnpm;
+* TypeScript;
+* render/build/PDF compatibility evidence
+
+---
+
+## Phase 4.1 — Declare Node 24 as the project runtime
+
+### Goal
+
+Move the project away from Node 20 and make the local/CI runtime contract explicit.
+
+### Scope
+
+Update the appropriate repository-owned runtime declarations, such as:
+
+* `engines`;
+* version-manager files if present;
+* container/runtime metadata;
+* documentation.
+
+The separate CI task should consume this canonical runtime declaration rather than this milestone independently redesigning CI.
+
+### Acceptance criteria
+
+* Node 24 is the declared supported runtime;
+* local/tooling documentation agrees;
+* dependency installation and current checks succeed under Node 24;
+* no duplicate contradictory Node version remains in project-owned configuration.
+
+---
+
+## Phase 4.2 — Upgrade pnpm 9 → 11
+
+### Red
+
+Characterize:
+
+* workspace dependency resolution;
+* package scripts;
+* lifecycle/build permissions;
+* package publication;
+* lockfile reproducibility.
+
+### Green
+
+Upgrade to the current supported pnpm 11 release and regenerate the lockfile using the canonical package-manager workflow.
+
+### Refactor
+
+Move package-manager version ownership into the repository's canonical toolchain declaration if it currently exists only in CI variables.
+
+### Acceptance criteria
+
+* frozen-lockfile installation succeeds;
+* workspace topology is unchanged;
+* publishing/release scripts behave equivalently;
+* regenerated lockfile is reproducible;
+* no unintended lifecycle-script behavior is introduced.
+
+---
+
+## Phase 4.3 — Astro 5 → 6
+
+Follow Astro's supported sequential migration path.
+
+Use the existing render-contract suite as the main behavior-preservation oracle.
+
+Verify particularly:
+
+* lesson rendering;
+* slot semantics;
+* static builds;
+* bibliography pages;
+* PDF generation.
+
+---
+
+## Phase 4.4 — Astro 6 → 7
+
+Keep this separate from 4.3 so changes introduced by each major remain diagnosable.
+
+Verify:
+
+* JSX/inline whitespace;
+* Vite/Rolldown behavior;
+* custom integrations/plugins;
+* static HTML output;
+* PDF output;
+* component render contracts.
+
+No unrelated component redesign belongs in this phase.
+
+---
+
+## Phase 4.5 — TypeScript 7
+
+Upgrade only after the Astro ecosystem is stable on its current major.
+
+Treat TypeScript 7 as a compiler/toolchain transition and verify:
+
+* type checking;
+* Astro integration;
+* scripts;
+* generated types;
+* test tooling;
+* any direct compiler-API dependencies.
+
+If an ecosystem dependency still requires TypeScript 6, document the specific incompatibility and use a bounded transitional arrangement rather than silently remaining on an old compiler.
+
+## Milestone acceptance criteria
+
+* Node 24 is canonical;
+* pnpm 11 is canonical;
+* the project uses the current supported Astro major;
+* TypeScript 7 is adopted or a concrete ecosystem blocker is documented;
+* all existing render contracts remain green;
+* static site build remains reproducible;
+* PDF generation remains correct;
+* release tooling remains functional;
+* the migration contains no unrelated UI redesign.
+
+## Non-goals
+
+* experimental pnpm prereleases;
+* experimental Astro functionality without a research/engineering justification;
+* architecture redesign during version migration.
+
+---
+
+# Removed work
+
+The following is intentionally **absent** from the plan:
+
+### Commit/provenance granularity
+
+The recommendation concerning commit size, commit-message granularity, and distinguishing plan/implementation/generated-evidence commits was rejected. It therefore:
+
+* is not an implementation task;
+* is not an acceptance criterion;
+* does not constrain TDD-cycle size or commit structure;
+* does not appear in traceability requirements.
+
+### CI topology remediation
+
+Runner portability, removal/reworking of the `deps` stage, and pnpm-store CI caching are handled by the superseding task.
+
+This plan should reference that task as a dependency where necessary, **not reproduce its implementation work**.
+
+---
+
+# Suggested execution order
+
+The revised dependency graph becomes:
 
 ```text
+External CI remediation task
+        │
+        │ enables canonical CI evidence
+        ▼
 Milestone 1
-restore trustworthy verification
-        ↓
+canonical astro-icons artifact
+        │
+        ▼
 Milestone 2
-harden readings/reference boundaries
-        ↓
-Milestone 3
-consolidate rendering contracts
-        ↓
-semantic lesson cleanup
-        ↓
+readings/reference integrity
+        │
+        ├────────────────────────┐
+        ▼                        ▼
+Milestone 3              Content follow-up
+render semantics          h3 ID + terminology
+        │                        │
+        └──────────┬─────────────┘
+                   ▼
 Milestone 4
 platform modernization
-        ↓
+                   │
+                   ▼
 wide readings UI implementation
 ```
 
-I would specifically **not start the planned readings-workspace UI refactor yet**. The latest commit already contains a
-good design plan, but the current implementation still has the narrow `max-w-4xl` page and, more importantly, the
-underlying readings resolver and guided-reference composition currently have fail-open/raw-HTML problems. ([GitLab][14])
-Fixing those boundaries first gives the later UI work a much cleaner substrate.
+Milestone 2 remains a prerequisite for the planned wide readings redesign because the UI should be built over a fail-closed, structurally rendered readings model rather than over the current nullable-resolution/raw-HTML path.
 
-The minimum useful next vertical slice is therefore quite small:
+Milestone 3 and the small lesson-content follow-up can proceed independently once Milestone 2 is stable.
+
+---
+
+# Minimum useful next vertical slice
+
+With the superseded CI work removed, the next slice should be:
 
 ```text
-4-space inventory serialization
-        +
-portable CI runner
-        +
-one green clean-checkout pipeline
+inventory serialization regression test
+        ↓
+four-space canonical serializer
+        ↓
+regenerated inventory
+        ↓
+real-corpus byte contract green
 ```
 
-Only after that green baseline exists would I consider any subsequent commit “verified.”
+Then move directly to the smallest readings integrity slice:
 
-[1]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/9823d7c1"
-[2]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/a3146305 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/a3146305"
-[3]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/.gitlab-ci.yml/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/.gitlab-ci.yml/raw?ref=9823d7c1"
-[4]: https://docs.gitlab.com/ci/runners/configure_runners/ "https://docs.gitlab.com/ci/runners/configure_runners/"
-[5]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/pipelines/2758481429/jobs?per_page=100 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/pipelines/2758481429/jobs?per_page=100"
-[6]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/pipelines/2758907690/jobs?per_page=100 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/pipelines/2758907690/jobs?per_page=100"
-[7]: https://docs.gitlab.com/ci/caching/ "https://docs.gitlab.com/ci/caching/"
-[8]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/package.json/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/package.json/raw?ref=9823d7c1"
-[9]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fpackage.json/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fpackage.json/raw?ref=9823d7c1"
-[10]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fscripts%2Ftest%2Ficon-inventory.contract.test.mjs/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fscripts%2Ftest%2Ficon-inventory.contract.test.mjs/raw?ref=9823d7c1"
-[11]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fscripts%2Faudit-icons.mjs/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fscripts%2Faudit-icons.mjs/raw?ref=9823d7c1"
-[12]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fmigration%2Ficon-inventory.json/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/packages%2Fastro-icons%2Fmigration%2Ficon-inventory.json/raw?ref=9823d7c1"
-[13]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fdata%2Freadings%2Flesson-readings.ts/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fdata%2Freadings%2Flesson-readings.ts/raw?ref=9823d7c1"
-[14]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fpages%2Freadings%2Fsoftware-libraries%2Fwhat-is%2Findex.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fpages%2Freadings%2Fsoftware-libraries%2Fwhat-is%2Findex.astro/raw?ref=9823d7c1"
-[15]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2FGuidedReferenceEntry.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2FGuidedReferenceEntry.astro/raw?ref=9823d7c1"
-[16]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2FReferenceEntry.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2FReferenceEntry.astro/raw?ref=9823d7c1"
-[17]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Fcode%2FCodeLayout.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Fcode%2FCodeLayout.astro/raw?ref=9823d7c1"
-[18]: https://docs.astro.build/en/reference/astro-syntax/ "https://docs.astro.build/en/reference/astro-syntax/"
-[19]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2Freference-content.ts/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Fui%2Freferences%2Freference-content.ts/raw?ref=9823d7c1"
-[20]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/5947017c "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/commits/5947017c"
-[21]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Freading-time%2Freading-time.ts/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Freading-time%2Freading-time.ts/raw?ref=9823d7c1"
-[22]: https://cheerio.js.org/docs/basics/manipulation/ "https://cheerio.js.org/docs/basics/manipulation/"
-[23]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Freading-time%2FReadingTime.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fcomponents%2Freading-time%2FReadingTime.astro/raw?ref=9823d7c1"
-[24]: https://www.w3.org/TR/wai-aria-1.2/ "https://www.w3.org/TR/wai-aria-1.2/"
-[25]: https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fpages%2Fnotes%2Fsoftware-libraries%2Fwhat-is%2Findex.astro/raw?ref=9823d7c1 "https://gitlab.com/api/v4/projects/r8vnhill%2Fdibs-astro-website/repository/files/src%2Fpages%2Fnotes%2Fsoftware-libraries%2Fwhat-is%2Findex.astro/raw?ref=9823d7c1"
-[26]: https://nodejs.org/en/about/previous-releases "https://nodejs.org/en/about/previous-releases"
-[27]: https://docs.astro.build/en/upgrade-astro/ "https://docs.astro.build/en/upgrade-astro/"
-[28]: https://www.typescriptlang.org/ "https://www.typescriptlang.org/"
-[29]: https://pnpm.io/blog/releases/11.0 "https://pnpm.io/blog/releases/11.0"
-[30]: https://docs.astro.build/en/guides/upgrade-to/v6/ "https://docs.astro.build/en/guides/upgrade-to/v6/"
-[31]: https://astro.build/blog/astro-7/ "https://astro.build/blog/astro-7/"
+```text
+one missing-reference failing test
+        ↓
+pure resolver
+        ↓
+page consumes resolved reading
+        ↓
+silent null path removed
+```
+
+That gives the project two concrete improvements—deterministic generated evidence and fail-closed scholarly references—without duplicating the separate CI initiative or retaining the rejected provenance work.

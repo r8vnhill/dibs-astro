@@ -332,6 +332,16 @@ const readingTime = estimateReadingTime(
         .lesson-toc {
             display: block;
         }
+
+        /*
+         * The three-column desktop shell gives the lesson enough room to breathe,
+         * but a 72ch measure leaves a visibly narrow island in the middle of wide
+         * screens. Widen only the desktop reading column; smaller viewports keep
+         * the comfortable default measure and the sidebars remain unchanged.
+         */
+        #lesson-content {
+            --content-reading: 84ch;
+        }
     }
 
     #lesson-content {
