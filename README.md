@@ -1,209 +1,511 @@
-# dibs-astro: Design and Implementation of Software Libraries
+# DIBS — Design and Implementation of Software Libraries
 
-[![Framework](https://img.shields.io/badge/framework-Astro-blue)](https://astro.build)
-[![Build](https://img.shields.io/badge/build-pnpm-yellowgreen)](https://pnpm.io)
-[![Platform](https://img.shields.io/badge/platform-Cloudflare%20Workers-orange)](https://workers.cloudflare.com)
-[![License](https://img.shields.io/badge/license-BSD--2--Clause-blue.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[![Purpose](https://img.shields.io/badge/purpose-educational-yellow)](https://dibs.ravenhill.cl)
-![Status](https://img.shields.io/badge/status-active-brightgreen)
-[![DIBS Site](https://img.shields.io/badge/site-dibs.ravenhill.cl-purple)](https://dibs.ravenhill.cl)
+## Diseño e Implementación de Bibliotecas de Software
 
-DIBS is an online, university-level course on software library design and implementation, designed for autonomous
-study rather than formal institutional enrollment. This repository contains its public site, which also serves as a
-reference implementation of some of the course's own architectural ideas. The site is built with Astro, Tailwind
-CSS v4, and React islands, and it is deployed as a static site to Cloudflare Workers Static Assets.
+DIBS is an online, university-level course about designing and implementing software libraries.
 
-The course content itself is in Spanish. This README is in English to keep the repository reusable and easier to adapt
-as a foundation for courses in other languages.
+The course is designed for autonomous study. Its website is also a real software project used to demonstrate several of
+the architectural, testing, reproducibility, and software-quality practices discussed in the course.
 
-## Quick Start
+- **Course:** [dibs.ravenhill.cl](https://dibs.ravenhill.cl)
+- **Course language:** Spanish
+- **Repository documentation:** English
+- **Production model:** static Astro site
+- **Primary local production-like execution:** Docker
+
+## For students
+
+You do **not** need to clone or build this repository to study DIBS.
+
+Start at:
+
+**[dibs.ravenhill.cl](https://dibs.ravenhill.cl)**
+
+The public site contains the course lessons, exercises, supplementary material, and bibliographic references.
+
+If you are interested only in the course content, the rest of this README is optional.
+
+## Run the website locally
+
+The recommended way to run the production website locally is with Docker.
+
+DIBS is generated as a static site. The container serves the generated `dist/` artifact with unprivileged NGINX on port
+`8080`; Astro, Node.js, pnpm, and the application source are not part of the production runtime.
+
+```mermaid
+flowchart LR
+    source[Course and application source]
+    build[pnpm build]
+    dist[Static dist artifact]
+    cloudflare[Cloudflare Workers Static Assets]
+    image[OCI image]
+    nginx[Unprivileged NGINX]
+
+    source --> build
+    build --> dist
+    dist --> cloudflare
+    dist --> image
+    image --> nginx
+```
+
+### Requirements
+
+To build the image locally you need:
+
+- Docker with BuildKit support;
+- access to the GitLab npm registry used by the `@ravenhill` packages;
+- an authenticated npm configuration stored **outside this repository**.
+
+The npm configuration is passed to BuildKit as a temporary secret. Registry credentials must not be passed through
+Docker `ARG`, `ENV`, or committed configuration files.
+
+### Build the image
+
+Set `NPM_CONFIG_USERCONFIG` to an npm configuration that can access the required GitLab packages.
+
+#### PowerShell
+
+```powershell
+$env:NPM_CONFIG_USERCONFIG = "$HOME\.npmrc"
+
+docker build `
+    --secret "id=npmrc,src=$env:NPM_CONFIG_USERCONFIG" `
+    --tag dibs-astro:local `
+    .
+```
+
+#### POSIX shell
 
 ```sh
-pnpm install
+export NPM_CONFIG_USERCONFIG="$HOME/.npmrc"
+
+docker build \
+    --secret id=npmrc,src="$NPM_CONFIG_USERCONFIG" \
+    --tag dibs-astro:local \
+    .
+```
+
+### Run the container
+
+```sh
+docker run \
+    --rm \
+    --read-only \
+    --tmpfs /tmp \
+    --publish 8080:8080 \
+    dibs-astro:local
+```
+
+Open:
+
+http://localhost:8080
+
+The container runs without root privileges. Its root filesystem is read-only, with `/tmp` provided explicitly for the
+temporary state required by NGINX.
+
+### Verify the production container
+
+The repository includes a container contract that builds and checks the production image:
+
+```sh
+node scripts/test-container.mjs
+```
+
+`NPM_CONFIG_USERCONFIG` must be configured as described above.
+
+The contract checks representative production behavior, including:
+
+- the homepage;
+- a representative lesson;
+- generated Astro assets;
+- the custom 404 page;
+- legacy route behavior;
+- non-root execution;
+- absence of Node.js, pnpm, source code, installed development dependencies, and npm credentials from the runtime image.
+
+The harness removes only the temporary resources it creates.
+
+---
+
+# For contributors and maintainers
+
+Use the direct Node.js workflow when editing course material, components, styles, metadata, tests, or build
+infrastructure.
+
+## Development toolchain
+
+The canonical development environment is:
+
+- Node.js `24.11.0`;
+- pnpm `11.8.0`.
+
+These versions are declared by the repository rather than being informal recommendations.
+
+Enable the expected pnpm version through Corepack:
+
+```sh
+corepack enable
+corepack prepare pnpm@11.8.0 --activate
+```
+
+The project also depends on packages from the `@ravenhill` GitLab npm registry, so dependency installation requires
+appropriate registry authentication.
+
+Install dependencies using the committed lockfile:
+
+```sh
+pnpm install --frozen-lockfile
+```
+
+Do not update the lockfile merely to make a local installation succeed. If the frozen installation fails, identify the
+dependency or environment mismatch first.
+
+## Start the development server
+
+```sh
 pnpm dev
 ```
 
-## Prerequisites
+The development command prepares the generated and workspace artifacts required by the site before starting Astro.
 
-- Node.js `24.11.0` is the validated runtime; `.nvmrc` records the exact local version and `package.json` permits the
-  supported Node 24 line.
-- pnpm `11.8.0` is pinned in `package.json#packageManager`. Enable Corepack before installation so it selects that
-  version consistently.
-- Cloudflare deployment requires Wrangler access to the configured Cloudflare account and route.
+The development server is intended for editing and interactive development. It is **not** the production runtime;
+production delivery uses the static `dist/` artifact.
 
-## Command Reference
+## Validate a change
 
-| Command                              | Purpose                                                                  |
-| ------------------------------------ | ------------------------------------------------------------------------ |
-| `pnpm dev`                           | Starts the local Astro development server after regenerating data.       |
-| `pnpm build`                         | Regenerates data and builds the static production site into `dist/`.     |
-| `pnpm preview`                       | Runs the local Astro/Wrangler preview proxy for the built site.          |
-| `pnpm check`                         | Runs generated-data checks, Astro checks, and architecture boundaries.   |
-| `pnpm check:architecture`            | Runs the focused layer-boundary architecture checker.                    |
-| `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
-| `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
-| `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
-| `pnpm test:container`                | Builds and probes the optional unprivileged static-site container.       |
-| `pnpm export:pdf`                    | Exports selected lesson PDFs from the static export routes.              |
-| `pnpm export:pdf:all`                | Exports every lesson PDF-capable route.                                  |
-| `pnpm export:pdf:smoke`              | Exports one representative lesson PDF for a quick local smoke run.      |
-| `pnpm test:pdf-smoke`                | Runs the opt-in end-to-end PDF smoke check (`EXPORT_PDF_SMOKE=1`).      |
-| `pnpm export:pdf:dry-run`            | Resolves PDF export targets without launching Chromium.                  |
-| `pnpm playwright:install`            | Installs the Chromium browser binaries used by the PDF exporter.         |
-| `pnpm fmt`                           | Formats the repository with dprint.                                      |
-| `pnpm generate-icons`                | Regenerates the SVG export index under `src/assets/img/icons/`.          |
-| `pnpm generate:bibliography-catalog` | Builds generated bibliography catalog artifacts.                         |
-| `pnpm generate:lesson-metadata`      | Regenerates lesson metadata.                                             |
-| `pnpm bibliography:report`           | Regenerates the bibliography catalog and prints the bibliography report. |
-| `pnpm deploy`                        | Builds and deploys the site with Wrangler.                               |
+During development, run the narrowest test or check relevant to the behavior you are modifying.
 
-## Lesson PDF Export
+Before completing a substantial change, run the complete applicable quality gates.
 
-The PDF exporter writes one report after each run, even when selected lessons fail. By default, any failed lesson makes
-the command exit non-zero after successful PDFs and failed entries have been written.
+### Common commands
 
-Useful flags:
+| Command                           | Purpose                                                                    |
+| --------------------------------- | -------------------------------------------------------------------------- |
+| `pnpm check`                      | Runs toolchain, generated-data, workspace, Astro, and architecture checks. |
+| `pnpm test:unit`                  | Runs the ordinary Vitest suite.                                            |
+| `pnpm test:astro`                 | Runs Astro component/render tests.                                         |
+| `pnpm test:e2e`                   | Runs browser-level Playwright tests.                                       |
+| `pnpm test`                       | Runs the repository's default automated test contract.                     |
+| `pnpm build`                      | Produces the canonical static site in `dist/`.                             |
+| `node scripts/test-container.mjs` | Builds and verifies the production OCI runtime locally.                    |
+| `pnpm fmt`                        | Formats supported repository files with dprint.                            |
 
-- `--continue-on-error` keeps partial batch exports advisory when at least one selected lesson succeeds. It still exits
-  non-zero when every selected lesson fails.
-- `--fail-on <findingKind>` makes matching report findings fatal. Repeat it to configure multiple kinds. This policy is
-  independent of `--continue-on-error`.
-- `--dry-run` resolves targets and writes a skipped-entry report without launching preview or Chromium.
-
-The report summary includes selected, exported, failed, skipped, findings, grouped finding/failure counts, and the
-applied exit policy.
-
-## Course Content
-
-DIBS content is written in Spanish and organized as structured course material.
-
-- Lessons and course pages live under `src/pages/`.
-- Shared course metadata, navigation structure, and generated lesson data live under `src/data/`.
-- Bibliographic data and attribution live under `src/data/` and `docs/`.
-- Slides, exercises, and supplementary resources are linked from the public site when available.
-
-## Project Structure
-
-- `src/pages/` contains the site pages, including the course notes.
-- `src/layouts/` contains the shared page layouts.
-- `src/components/` contains reusable UI, semantic, and navigation components.
-- `src/assets/img/icons/` stores the local SVG icon set used by the project.
-- `src/data/` contains structured content and course metadata.
-- `docs/` contains repository documentation, architecture notes, and third-party attribution.
-
-## Architecture Overview
-
-The site separates course content, presentation layouts, reusable UI primitives, and structured metadata. Course pages
-compose semantic components and shared layouts, while navigation, bibliography, generated metadata, and other structured
-data stay under `src/data/`. This keeps lesson authoring mostly independent from lower-level rendering details and makes
-future course iterations easier to extend.
-
-For the current architecture boundary notes, see
-[`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md).
-
-## Quality Gates
-
-Before deployment or a larger pull request, run:
+A typical complete validation sequence is:
 
 ```sh
 pnpm check
 pnpm test
+pnpm test:e2e
 pnpm build
 ```
 
-`pnpm check` begins by confirming that the active Node and pnpm versions match the supported toolchain contract. Run
-`pnpm check:toolchain` alone when diagnosing a local or CI bootstrap mismatch.
+Run the container contract as well when modifying:
 
-The project uses TypeScript 6 because Astro's current checker and declaration tooling require its programmatic API.
-`scripts/astro-check-typescript6-bridge.cjs` keeps that compatibility boundary explicit.
+- the Dockerfile;
+- NGINX configuration;
+- static routing behavior;
+- runtime security policy;
+- generated asset delivery;
+- container-related CI.
 
-Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
-the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The
-PDF smoke check is intentionally separate from the default gate: run `pnpm test:pdf-smoke` only when you want the
-browser-backed exporter path. It removes its temporary workspace after a successful run unless
-`EXPORT_PDF_SMOKE_KEEP_OUTPUT=1` is set.
+The container contract is intentionally separate from the default test suite because it requires a local container
+runtime and authenticated package-registry access.
+
+## Architecture
+
+DIBS uses Astro as a static-site generator with React islands for interactive behavior.
+
+The canonical deployment artifact is `dist/`.
+
+```mermaid
+flowchart TD
+    content[Course content]
+    app[Application code]
+    metadata[Generated metadata]
+    workspaces[Internal workspace packages]
+    astro[Astro static build]
+    dist[dist/]
+
+    cloudflare[Cloudflare Workers Static Assets]
+    oci[OCI image]
+    nginx[Unprivileged NGINX]
+
+    content --> metadata
+    app --> astro
+    workspaces --> astro
+    metadata --> astro
+    astro --> dist
+
+    dist --> cloudflare
+    dist --> oci
+    oci --> nginx
+```
+
+Cloudflare and OCI are **delivery mechanisms**, not separate application implementations. Both serve the same
+static-site contract.
+
+The project currently uses:
+
+- Astro 7;
+- React 19 islands;
+- Tailwind CSS 4;
+- TypeScript 6;
+- Vitest for unit and Astro-render testing;
+- Playwright for browser-level testing;
+- pnpm workspaces for reusable internal packages.
+
+Architectural dependency rules are documented in:
+
+[`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md)
+
+## Repository structure
+
+```text
+src/
+├── assets/          project-owned static assets
+├── components/      reusable UI and semantic components
+├── data/            structured course and bibliography data
+├── layouts/         shared page layouts
+├── pages/           public routes and course lessons
+└── presentation/    presentation-facing adapters
+
+packages/
+├── content-core/        content-domain functionality
+├── lesson-export-core/  lesson export functionality
+├── shiki-core/          syntax-highlighting functionality
+└── site-core/           reusable site functionality
+
+docker/
+└── default.conf     static NGINX serving configuration
+
+scripts/             generation, validation, export, build, and CI tooling
+docs/                architecture, operations, attribution, and maintenance documentation
+```
+
+Course-facing pages primarily live under `src/pages/`.
+
+Structured navigation, bibliography data, generated metadata, and other non-presentation contracts are maintained
+separately so that page components do not become responsible for application-wide data rules.
+
+## Generated artifacts
+
+Several parts of the site are generated from canonical source data.
+
+When changing content or metadata:
+
+1. use the repository's existing generation commands;
+2. do not manually edit generated output unless that file explicitly documents itself as editable;
+3. run `pnpm check`;
+4. confirm generation does not leave unexpected tracked changes.
+
+Generated artifacts should be deterministic: the same source and toolchain should produce the same repository state.
+
+## Container architecture
+
+The Docker image uses a multi-stage build.
+
+### Build stage
+
+The build stage contains:
+
+- Node.js;
+- pnpm;
+- source code;
+- workspace packages;
+- build dependencies.
+
+It installs dependencies using the frozen lockfile and runs the canonical `pnpm build` path.
+
+Private npm authentication is available only during dependency installation through a BuildKit secret mount.
+
+### Runtime stage
+
+The runtime contains the generated site and the minimum NGINX runtime needed to serve it.
+
+It intentionally excludes:
+
+- Node.js;
+- pnpm;
+- `node_modules`;
+- project source;
+- Git metadata;
+- npm credentials;
+- build caches.
+
+The runtime listens on port `8080` and runs without root privileges.
+
+The Dockerfile remains platform-neutral. Supported publication platforms are selected by CI.
+
+## CI model
+
+GitLab CI keeps different assurance boundaries separate rather than treating one successful job as evidence for every
+property.
+
+The intended flow is:
+
+```mermaid
+flowchart TD
+    source[Source + frozen dependency contract]
+
+    check[Static and architecture checks]
+    unit[Unit tests]
+    astro[Astro render tests]
+    e2e[Browser tests]
+    build[Static production build]
+
+    candidate[OCI candidate]
+    http[HTTP contract]
+    browser[Container browser contract]
+    policy[OCI/runtime policy]
+
+    publish[Verified image publication]
+
+    source --> check
+    source --> unit
+    source --> astro
+    source --> e2e
+    source --> build
+
+    check --> candidate
+    unit --> candidate
+    astro --> candidate
+    build --> candidate
+
+    candidate --> http
+    candidate --> browser
+    candidate --> policy
+
+    http --> publish
+    browser --> publish
+    policy --> publish
+```
+
+The OCI pipeline uses rootless BuildKit. It does not require Docker-in-Docker, privileged execution, or a mounted host
+Docker socket.
+
+Package-registry credentials are supplied temporarily during the build and must not be persisted into the image.
+
+Operational details for the self-hosted GitLab Runner are documented in:
+
+[`docs/gitlab-runner-setup.md`](./docs/gitlab-runner-setup.md)
 
 ## Deployment
 
-The project is generated as a static Astro build and can be delivered either through Cloudflare Workers Static Assets
-or as an unprivileged NGINX OCI image. Both targets consume the same `dist/` artifact contract.
+DIBS has two delivery targets for the same `dist/` artifact.
 
-- `pnpm build` creates the production output in `dist/`.
-- `wrangler.toml` serves `./dist` through the `[assets]` configuration.
-- `pnpm deploy` runs the release build and deploys with Wrangler.
-- `docker build --secret id=npmrc,src="$NPM_CONFIG_USERCONFIG" -t dibs-astro:local .` builds the OCI target.
-- `docker run --rm --read-only --tmpfs /tmp -p 8080:8080 dibs-astro:local` runs it locally.
-- `pnpm test:container` performs the opt-in HTTP and runtime-policy checks; it requires Docker and an authenticated npm
-  config supplied through `NPM_CONFIG_USERCONFIG`.
+### Cloudflare Workers Static Assets
 
-GitLab publishes temporary pipeline images, SHA-addressable `main` images, and version/tag aliases for releases. The
-container build uses rootless BuildKit and does not replace the Cloudflare deployment.
+Cloudflare is the public website's existing production delivery target.
+
+The deployment command is:
+
+```sh
+pnpm deploy
+```
+
+Wrangler publishes the generated static artifact according to `wrangler.toml`.
+
+### OCI image
+
+The OCI image packages the same static site behind unprivileged NGINX.
+
+This provides a portable, production-like runtime for:
+
+- local verification;
+- CI;
+- reproducibility;
+- alternate hosting environments.
+
+Dockerization does not introduce a second application runtime or change the semantics of the Astro site.
+
+## PDF lesson export
+
+Some lessons can be exported as PDF documents through the browser-backed export pipeline.
+
+| Command                   | Purpose                                             |
+| ------------------------- | --------------------------------------------------- |
+| `pnpm export:pdf`         | Exports selected lesson routes.                     |
+| `pnpm export:pdf:all`     | Exports all PDF-capable lessons.                    |
+| `pnpm export:pdf:dry-run` | Resolves export targets without launching Chromium. |
+| `pnpm export:pdf:smoke`   | Exports one representative lesson.                  |
+| `pnpm test:pdf-smoke`     | Runs the opt-in end-to-end PDF export contract.     |
+
+The PDF pipeline is not part of the default quality gate because it requires a browser runtime.
+
+## Course-content conventions
+
+Course content is written in Spanish.
+
+Repository-level implementation and maintenance documentation is written in English.
+
+When contributing course material:
+
+- preserve the pedagogical progression of the surrounding lesson;
+- keep code examples in English;
+- preserve bibliography and attribution metadata;
+- use existing content components and conventions where possible;
+- avoid coupling lesson prose to implementation details that students do not need to know.
+
+The website is both educational material and software, so content changes should preserve both pedagogical clarity and
+build correctness.
 
 ## Troubleshooting
 
-### `vite:invoke fetchModule` timeout while importing `src/styles/global.css`
+Repository-specific troubleshooting belongs in focused documents under `docs/` rather than accumulating indefinitely in
+this README.
 
-If Astro/Vite reports an error like:
+### Astro/Vite `fetchModule` timeout
 
-```text
-Error: transport invoke timed out after 60000ms
-... "name":"fetchModule" ... "/src/styles/global.css"
-```
+For the known timeout involving `src/styles/global.css`, see:
 
-Recommended recovery:
+[`docs/troubleshooting-vite-fetchmodule-timeout.md`](./docs/troubleshooting-vite-fetchmodule-timeout.md)
 
-```sh
-rm -rf .astro node_modules/.vite
-pnpm dev
-```
+### GitLab Runner and container infrastructure
 
-For the broader repository-specific findings around this error, including PowerShell recovery commands and the
-evidence-vs-inference boundary for this failure mode, see
-[`docs/troubleshooting-vite-fetchmodule-timeout.md`](./docs/troubleshooting-vite-fetchmodule-timeout.md).
+See:
+
+[`docs/gitlab-runner-setup.md`](./docs/gitlab-runner-setup.md)
+
+When adding a recurring operational issue, prefer creating or extending a focused runbook and linking it here.
 
 ## Contributing
 
-This repository is primarily maintained as the official DIBS course site. Contributions should preserve:
+This repository is maintained as both:
 
-- Spanish course content.
-- English repository-level documentation.
-- Local-first assets where possible.
-- Existing formatting, test, and attribution requirements.
+1. the public DIBS course;
+2. a software project supporting the course.
 
-For larger changes, open an issue first to discuss scope and expected impact. See
-[`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for the project conventions.
+Changes should preserve:
 
-## Related Documentation
+- pedagogical clarity for students;
+- Spanish course content;
+- English repository-level documentation;
+- explicit architectural boundaries;
+- reproducible generated artifacts;
+- attribution and licensing requirements;
+- deterministic checks where practical;
+- the distinction between the static application artifact and its delivery mechanisms.
 
-- [Vite fetchModule timeout troubleshooting](./docs/troubleshooting-vite-fetchmodule-timeout.md)
-- [Layer separation architecture note](./docs/architecture/layer-separation.md)
-- [UI localization readiness](./docs/i18n.md)
-- [Third-party assets](./docs/third-party-assets.md)
-- [Contributing guide](./CONTRIBUTING.md)
-- [Code of conduct](./CODE_OF_CONDUCT.md)
-- [Phosphor Icons license](./docs/licenses/phosphor-icons-MIT.txt)
+Before submitting a substantial change:
+
+1. run the narrowest tests relevant to the change;
+2. run the complete applicable quality gates;
+3. verify generated artifacts remain canonical;
+4. run the container contract if the deployment/runtime boundary changed.
+
+Additional contribution guidance:
+
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md)
+- [`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md)
 
 ## License
 
-This project is licensed under the **[BSD 2-Clause License](./LICENSE)**.
+DIBS is licensed under the [BSD 2-Clause License](./LICENSE).
 
-You may use, adapt, and share this code for personal, academic, or educational purposes as long as the
-required attribution is preserved.
+Third-party assets retain their respective licenses and attribution requirements.
 
-## Iconography and Credits
+See:
 
-This site includes SVGs from **Phosphor Icons** in `src/assets/img/icons/`.
-
-- Official site: <https://phosphoricons.com/>
-- Repository: <https://github.com/phosphor-icons/core>
-- License for those icons: MIT
-- License text included in the repo: [`docs/licenses/phosphor-icons-MIT.txt`](./docs/licenses/phosphor-icons-MIT.txt)
-- Attribution and integration notes: [`docs/third-party-assets.md`](./docs/third-party-assets.md)
-
-## DIBS Course Site
-
-The full DIBS course is available at:
-
-👉 [https://dibs.ravenhill.cl](https://dibs.ravenhill.cl)
-
-It includes complete lessons, slides, exercises, and supplementary resources in Spanish.
+- [`docs/third-party-assets.md`](./docs/third-party-assets.md)
+- [`docs/licenses/`](./docs/licenses/)

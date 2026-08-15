@@ -453,8 +453,9 @@ A job without matching tags can remain stuck even when the runner appears online
 ## Rootless BuildKit and container jobs
 
 The static OCI image is built by a dedicated `moby/buildkit:rootless` job with `privileged = false`; it does not use
-Docker-in-Docker or a Docker socket. The job pushes a pipeline-scoped candidate image to the GitLab Container Registry,
-and the following contract job consumes that exact candidate through a GitLab service alias.
+Docker-in-Docker or a Docker socket. The job pushes one pipeline-scoped candidate image to the GitLab Container Registry,
+records its manifest digest as `tmp/oci-candidate.json`, and the HTTP/browser/policy jobs consume that exact candidate.
+The publish job runs only after those checks and promotes the recorded digest without rebuilding the image.
 
 Configure the runner or project with registry authentication available to private service images through
 `DOCKER_AUTH_CONFIG`. Do not place registry passwords in `.gitlab-ci.yml`.
@@ -469,9 +470,10 @@ pnpm test:container
 Remove-Item Env:NPM_CONFIG_USERCONFIG
 ```
 
-The contract job checks the candidate at `http://dibs:8080`; it does not mount `/var/run/docker.sock`. This keeps the
-runner daemonless while still testing the image that was built. The runtime image is expected to operate as an
-unprivileged NGINX process with a read-only filesystem and a writable `/tmp` tmpfs.
+The contract job checks the candidate at `http://dibs:8080`; the OCI policy job reads the registry manifest/configuration
+and layer metadata independently. Neither job mounts `/var/run/docker.sock`. This keeps the runner daemonless while
+still testing the image that was built. The runtime image is expected to operate as an unprivileged NGINX process with
+a read-only filesystem and a writable `/tmp` tmpfs.
 
 ## CI Variable: Cloudflare API Token
 
