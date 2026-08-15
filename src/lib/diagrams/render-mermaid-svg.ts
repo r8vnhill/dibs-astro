@@ -1,19 +1,32 @@
 import { renderMermaidSVG } from "beautiful-mermaid";
 import type { DiagramSpec } from "./types";
 
+/**
+ * DIBS semantic roles are resolved by MermaidDiagram's wrapper rather than by
+ * the renderer or by individual lessons. This keeps the SVG contract stable
+ * while allowing graphical contrast to evolve independently from prose.
+ */
+const diagramColorOptions = {
+    bg: "var(--diagram-background)",
+    fg: "var(--diagram-foreground)",
+    line: "var(--diagram-line)",
+    accent: "var(--diagram-accent)",
+    muted: "var(--diagram-muted)",
+    surface: "var(--diagram-surface)",
+    border: "var(--diagram-border)",
+} as const;
+
+const diagramLayoutOptions = {
+    padding: 20,
+    nodeSpacing: 32,
+    layerSpacing: 48,
+    componentSpacing: 32,
+} as const;
+
 const rendererOptions = {
-    bg: "var(--background)",
-    fg: "var(--foreground)",
-    line: "var(--muted-foreground)",
-    accent: "var(--primary)",
-    muted: "var(--muted-foreground)",
-    surface: "var(--card)",
-    border: "var(--border)",
+    ...diagramColorOptions,
     font: "inherit",
-    padding: 28,
-    nodeSpacing: 28,
-    layerSpacing: 40,
-    componentSpacing: 48,
+    ...diagramLayoutOptions,
     transparent: true,
 } as const;
 

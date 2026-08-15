@@ -12,11 +12,11 @@ const descriptionId = `${spec.id}-description`;
 ---
 
 <figure
-    class="my-8 w-full not-prose" aria-describedby={descriptionId}
+    class="diagram-figure my-8 w-full not-prose" aria-describedby={descriptionId}
     data-diagram-id={spec.id}
 >
     <div
-        class="mx-auto w-full overflow-hidden [&>svg]:h-auto [&>svg]:w-full" aria-hidden="true"
+        class="diagram-viewport mx-auto w-full" aria-hidden="true"
         set:html={svg}
     />
     <figcaption class="mx-auto mt-3 max-w-prose text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -24,3 +24,47 @@ const descriptionId = `${spec.id}-description`;
         <span id={descriptionId} class="sr-only">{spec.description}</span>
     </figcaption>
 </figure>
+
+<style>
+    .diagram-figure {
+        /* Keep graphical contrast independent from prose and card semantics. */
+        --diagram-background: var(--background);
+        --diagram-foreground: var(--foreground);
+        --diagram-muted: var(--muted-foreground);
+        --diagram-line: var(--color-neutral-500);
+        --diagram-accent: var(--primary);
+        --diagram-surface: var(--muted);
+        --diagram-border: var(--border);
+    }
+
+    .dark .diagram-figure {
+        --diagram-line: var(--color-neutral-400);
+    }
+
+    .diagram-viewport {
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+    }
+
+    /* SVG is injected with set:html, so it does not receive Astro's scope attribute. */
+    .diagram-viewport :global(svg) {
+        display: block;
+        inline-size: max-content;
+        min-inline-size: 100%;
+        max-inline-size: none;
+        block-size: auto;
+        margin-inline: auto;
+    }
+
+    @media print {
+        .diagram-viewport {
+            overflow: visible;
+        }
+
+        .diagram-viewport :global(svg) {
+            inline-size: 100%;
+            min-inline-size: 0;
+            max-inline-size: 100%;
+        }
+    }
+</style>

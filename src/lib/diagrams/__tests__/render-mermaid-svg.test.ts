@@ -1,5 +1,6 @@
 import fc from "fast-check";
 import { expect, suite, test } from "vitest";
+import { canonicalDiagramSpecs } from "../__fixtures__/diagram-specs";
 import { renderDiagramSvg } from "../render-mermaid-svg";
 import type { DiagramSpec } from "../types";
 
@@ -22,6 +23,37 @@ suite("given a Mermaid diagram specification", () => {
         expect(svg).toContain("viewBox=");
     });
 
+    test.each(canonicalDiagramSpecs)("then the canonical fixture $id renders deterministically", (spec) => {
+        const first = renderDiagramSvg(spec);
+
+        expect(first).toBe(renderDiagramSvg(spec));
+        expect((first.match(/<svg\b/g) ?? []).length).toBe(1);
+    });
+
+    test.each(canonicalDiagramSpecs)("then the canonical fixture $id keeps its semantic labels", (spec) => {
+        const svg = renderDiagramSvg(spec);
+
+        for (const label of semanticLabels(spec.source)) {
+            expect(svg).toContain(label);
+        }
+    });
+
+    test("then every renderer role uses the diagram semantic token contract", () => {
+        const svg = renderDiagramSvg(simpleDiagram);
+
+        for (const role of [
+            "background",
+            "foreground",
+            "line",
+            "accent",
+            "muted",
+            "surface",
+            "border",
+        ]) {
+            expect(svg).toContain(`var(--diagram-${role})`);
+        }
+    });
+
     test("then invalid source reports the diagram identity", () => {
         expect(() => renderDiagramSvg({ ...simpleDiagram, id: "broken-flow", source: "not a diagram" })).toThrow(
             /broken-flow.*Flujo simple/,
@@ -42,3 +74,9 @@ suite("given a Mermaid diagram specification", () => {
         );
     });
 });
+
+function semanticLabels(source: string): string[] {
+    return Array.from(source.matchAll(/(?:\[|\{|\|)([^\]|}]+)(?:\]|\}|\|)/g))
+        .map((match) => match[1]?.trim() ?? "")
+        .filter((label) => label.length > 0 && !label.includes("--"));
+}
