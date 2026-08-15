@@ -1,0 +1,26 @@
+---
+import { renderDiagramSvg } from "~/lib/diagrams/render-mermaid-svg";
+import type { DiagramSpec } from "~/lib/diagrams/types";
+
+interface Props {
+    spec: DiagramSpec;
+}
+
+const { spec } = Astro.props;
+const svg = renderDiagramSvg(spec);
+const descriptionId = `${spec.id}-description`;
+---
+
+<figure
+    class="my-8 w-full not-prose" aria-describedby={descriptionId}
+    data-diagram-id={spec.id}
+>
+    <div
+        class="mx-auto w-full overflow-hidden [&>svg]:h-auto [&>svg]:w-full" aria-hidden="true"
+        set:html={svg}
+    />
+    <figcaption class="mx-auto mt-3 max-w-prose text-center text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+        <span class="font-semibold text-zinc-800 dark:text-zinc-200">{spec.title}</span>
+        <span id={descriptionId} class="sr-only">{spec.description}</span>
+    </figcaption>
+</figure>
