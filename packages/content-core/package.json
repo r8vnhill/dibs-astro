@@ -33,7 +33,7 @@
         "typescript": "^6.0.3"
     },
     "publishConfig": {
-        "@ravenhill:registry": "https://gitlab.com/api/v4/projects/71752456/packages/npm/",
+        "@ravenhill:registry": "https://gitlab.com/api/v4/projects/r8vnhill%2Fnpm-packages/packages/npm/",
         "access": "restricted"
     }
 }

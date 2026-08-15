@@ -1,4 +1,54 @@
-# Companion code for the ``support-scripts/nushell`` lesson
+# [DONE] Companion code for the ``support-scripts/nushell`` lesson
+
+## Completion Summary
+
+Implemented cycles 1-3 (the minimum useful vertical slice) plus the durable parts of cycle 4's
+verification path, against `scripts-nushell` and `astro-website`.
+
+**Cycle 1 — runnable companion artifacts.** Verified locally installed Nushell is 0.114.1, matching
+the plan's primary validation target, so no separate compatibility-floor lane was needed; documented
+`>=0.114.0` once in `scripts-nushell/README.md`'s "Requirements and setup" (`run` requires 0.114.0+).
+Created `scripts-nushell/support-scripts/check-expected-files.nu` (byte-identical to the lesson
+block), `check-library-layout.nu` (`def main []: record -> record`, with a maintainer doc comment),
+and `album-title-module.nu` (`export def album-title []: record -> string`, doc comment, no
+fixture-path constant per the plan). Created `scripts-nushell/resources/album.json` matching the
+lesson's `JsonBlock` exactly. Wrote `scripts-nushell/tests/support-scripts.nu` using `use std/assert`
+against real `mktemp -d` scratch directories and the real `album.json` fixture (no mocks). Key
+Nushell idioms discovered empirically (via direct `nu 0.114.1` experiments) and used throughout:
+`source <literal-relative-path>` after `cd $dir` inside a helper `def` returns the script's
+structured record directly (avoiding the unstructured printed-table text a subprocess would produce);
+wrapping `run <script>.nu` inside a named `def` helper (not a bare top-level statement) avoids
+Nushell's "auto-invoke `main`" leak into the caller's scope.
+
+**Cycle 2 — full behavioral state space.** Extended the test file with the exhaustive 8-combination
+truth table for `check-expected-files.nu` presence/absence (data-driven via a table literal, not
+8 near-duplicate functions), a metamorphic case (adding unrelated files does not change the
+missing-file result), and a metamorphic case for `album-title` (unrelated extra record fields do not
+change the returned title). All 7 test functions pass (`nu tests/support-scripts.nu`), and all four
+`.nu` files pass `nu-check` (`album-title-module.nu` also passes `nu-check --as-module`).
+
+**Cycle 3 — website ↔ companion contract.** In `nushell.astro`, changed the existing
+`check-expected-files.nu` `<DibsSourceLink>` from `repo="nushell-companion"` (a project that doesn't
+exist) to `repo="scripts-nushell" file="support-scripts/check-expected-files.nu"`, and added the
+missing `<DibsSourceLink>` for `check-library-layout.nu`. Did not add source links to
+`album-title-module.nu`, the raw `album.json` pipeline, terminal invocations, `each` examples, or the
+`run`/`^external-program` pseudocode, per the plan. Added a regression test to
+`nushell.render.test.ts` asserting both links resolve to
+`https://gitlab.com/r8vnhill/dibs-scripts-nushell/-/blob/main/support-scripts/<file>` (the existing
+`DibsSourceLink` fallback-namespace behavior for repos not in the migrated-project registry already
+produces the correct GitLab URL, so no change was needed to `dibs-source-link-url.ts`). Added the
+Lesson 5 row and a `support-scripts/` bullet to `scripts-nushell/README.md`.
+
+**Cycle 4 (partial) — verification path.** Documented the local verification command
+(`nu-check` over all three scripts/module + `nu tests/support-scripts.nu`) once, under
+`scripts-nushell/README.md`'s "Development" section. Did not add cross-repository CI wiring or a
+golden-comparison script/job, since neither repository currently has CI infrastructure to extend
+(per the plan's non-goal: no new network dependency between the two repositories); the
+lesson/companion source-text synchronization remains a review-time check, as the plan specifies.
+
+**Verification run:** `nu tests/support-scripts.nu` (7/7), `nu-check` on all four companion files,
+`astro-website` full suite via `pnpm test` (1433 unit + 354 render tests, all passing, including the
+new source-link test).
 
 ## Goal
 

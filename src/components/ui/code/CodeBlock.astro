@@ -15,6 +15,7 @@ const {
     title,
     filename,
     icon: Icon,
+    titleClasses,
     transformers = [],
     compact = false,
 } = Astro.props as CodeBlockProps;
@@ -34,6 +35,7 @@ if (title) {
     class:list={[...classes, className]} icon={Icon}
     {compact} source={filename}
     {code} {lang}
+    {titleClasses}
     {transformers} {...ariaLabel ? { "aria-label": ariaLabel } : {}}
     {...title ? { title } : {}}
 >

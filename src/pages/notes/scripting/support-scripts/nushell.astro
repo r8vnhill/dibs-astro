@@ -3,7 +3,7 @@ import * as icons from "$icons";
 import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Info, Warning } from "~/components/ui/callouts";
+import { Definition, Explanation, Important, Info, Warning } from "~/components/ui/callouts";
 import More from "~/components/ui/callouts/More.astro";
 import { JsonBlock, NushellBlock, NushellInline, NushellRecord, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
@@ -220,8 +220,8 @@ const citationContext = {
                 </ListItem>
 
                 <ListItem icon={icons.Table}>
-                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <NushellRecord plural /> con la misma
-                    forma. <B>Datos estructurados ≠ tabla dibujada en la terminal.</B>
+                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <NushellRecord plural />
+                    con la misma forma. <B>Datos estructurados ≠ tabla dibujada en la terminal.</B>
                 </ListItem>
             </List>
         </Explanation>
@@ -270,8 +270,8 @@ const citationContext = {
         >
             <span slot="title">Calcular los archivos faltantes como datos</span>
             <DibsSourceLink
-                slot="source" file="check-expected-files.nu"
-                repo="nushell-companion"
+                slot="source" file="support-scripts/check-expected-files.nu"
+                repo="scripts-nushell"
             />
         </NushellBlock>
         <P>
@@ -319,8 +319,8 @@ const citationContext = {
 
                 <ListItem icon={icons.ArrowRight}>
                     Ese resultado todavía puede entrar en otro pipeline. Por ejemplo, otra etapa podría seleccionar
-                    campos, filtrar proyectos incompletos o convertir el <NushellRecord /> a JSON recién en el límite donde
-                    realmente se necesite una representación textual.
+                    campos, filtrar proyectos incompletos o convertir el <NushellRecord /> a JSON recién en el límite
+                    donde realmente se necesite una representación textual.
                 </ListItem>
             </List>
         </Explanation>
@@ -362,14 +362,19 @@ const citationContext = {
         </JsonBlock>
 
         <P>
-            <B>Una vez que elegimos un formato que Nushell reconoce, <NushellInline code="open" /> integra el paso de
-                decodificación al flujo normal del shell.</B> No es que dejemos de elegir un formato de almacenamiento;
-            ya lo elegimos al guardar <Mono>album.json</Mono> como JSON. Lo que cambia es que <NushellInline
-                code="open"
-            /> reconoce la extensión, invoca el conversor correspondiente<Dash kind="em" /><NushellInline
+            <B>Una vez que elegimos un formato que Nushell reconoce, <NushellInline code="open" /> integra su
+                decodificación al flujo normal del shell.</B> Al abrir <Mono>album.json</Mono>, Nushell reconoce la
+            extensión <Mono>.json</Mono>, invoca el conversor correspondiente<Dash kind="em" /><NushellInline
                 code="from json"
-            /> en este caso<Dash kind="em" /> y entrega directamente valores Nushell, sin que tengamos que escribir ni
-            invocar ese paso de decodificación nosotros mismos.
+            /> en este caso<Dash kind="em" /> y entrega directamente valores Nushell.
+        </P>
+
+        <P>
+            Seguimos eligiendo JSON como representación persistida; eso no cambia. La diferencia es que, después de
+            <NushellInline code="open" />, podemos trabajar con esos datos mediante comandos como <NushellInline
+                code="get"
+            />, <NushellInline code="where" /> y <NushellInline code="select" />, sin convertirlos manualmente desde
+            texto.
         </P>
 
         <MermaidDiagram spec={persistedRepresentationToRuntimeValue} />
@@ -402,9 +407,9 @@ const citationContext = {
                 <ListItem icon={icons.FileCode}>
                     <NushellInline code="open album.json" /> reconoce la extensión <Mono>.json</Mono> y devuelve un{
                         " "
-                    }<NushellRecord /> Nushell nativo: la representación de archivo, el archivo JSON, y el valor de Nushell
-                    son dos capas distintas, aunque <NushellInline code="open" /> las conecte sin que tengamos que
-                    escribir el paso intermedio.
+                    }<NushellRecord /> Nushell nativo: la representación de archivo, el archivo JSON, y el valor de
+                    Nushell son dos capas distintas, aunque <NushellInline code="open" /> las conecte sin que tengamos
+                    que escribir el paso intermedio.
                 </ListItem>
 
                 <ListItem icon={icons.ListChecks}>
@@ -461,16 +466,26 @@ const citationContext = {
 
         <NushellBlock
             code={`
-                def album-title []: record -> string {
+                export def album-title []: record -> string {
                     get title
                 }
             `}
         >
             <span slot="title">Un comando con contrato de entrada y salida</span>
+            <DibsSourceLink
+                slot="source" file="support-scripts/album-title.nu"
+                repo="scripts-nushell"
+            />
         </NushellBlock>
 
-        <NushellBlock code="open album.json | album-title">
-            <span slot="title">Composición compatible: <Mono>record</Mono> entra, <Mono>string</Mono> sale</span>
+        <NushellBlock
+            code={`
+                use support-scripts/album-title.nu *
+                open album.json | album-title
+            `}
+        >
+            <span slot="title"
+            >Composición compatible: <NushellInline code="record" /> entra, <NushellInline code="string" /> sale</span>
         </NushellBlock>
 
         <OutputBlock code="Powerslave">
@@ -478,10 +493,11 @@ const citationContext = {
         </OutputBlock>
 
         <NushellBlock code={`"Powerslave" | album-title`}>
-            <span slot="title">Composición incompatible</span>
+            <span slot="title">Pipeline con tipos incompatibles</span>
         </NushellBlock>
 
         <OutputBlock
+            variant="error" label="Error de tipo"
             code={`
                 Error: nu::parser::input_type_mismatch
 
@@ -493,14 +509,22 @@ const citationContext = {
                   ╰────
             `}
         >
-            <span slot="title">Nushell reporta el tipo incompatible antes de la ejecución normal</span>
+            <span slot="title">Entrada de pipeline incompatible</span>
         </OutputBlock>
+
+        <P>
+            <NushellInline code="album-title" /> está definida para ejecutarse sin entrada de pipeline. Al escribir
+            {" "}<NushellInline code={`"Powerslave" | album-title`} />, el pipeline intenta entregar un{" "}
+            <Mono>string</Mono> a un comando cuya firma no lo acepta. Nushell puede detectar esta incompatibilidad
+            antes de la ejecución normal del pipeline.
+        </P>
 
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.CheckCircle}>
-                    <NushellInline code="album-title" /> declara <NushellInline code="record -> string" />: espera un
-                    <NushellRecord /> por pipeline y produce un <Mono>string</Mono>. <NushellInline
+                    <NushellInline code="album-title" /> declara <NushellInline code="record -> string" />: espera un{
+                        " "
+                    }<NushellRecord /> por pipeline y produce un <Mono>string</Mono>. <NushellInline
                         code="open album.json"
                     /> produce exactamente ese <NushellRecord />, así que la composición es válida.
                 </ListItem>
@@ -512,18 +536,6 @@ const citationContext = {
                 </ListItem>
             </List>
         </Explanation>
-
-        <Definition headingLevel="h3" icon={icons.Scales}>
-            <span slot="title">Lo que esto no significa</span>
-
-            <P>
-                El punto no es que Nushell tenga un sistema de tipos equivalente al de Kotlin. Es que las etapas de un
-                pipeline pueden exponer <B>información de compatibilidad de entrada y salida</B>, de modo que componer
-                dos etapas es más que asumir que ambas comparten <Mono>stdin</Mono>/<Mono>stdout</Mono>: también podemos
-                preguntar si sus tipos declarados encajan. Ese contrato de tipo pertenece a los comandos internos; sigue
-                sin decir nada sobre qué produce un proceso externo, que trataremos más adelante.
-            </P>
-        </Definition>
     </NotesSection>
 
     <NotesSection id="h2-script-as-pipeline-stage">
@@ -535,11 +547,12 @@ const citationContext = {
         </Heading>
 
         <P>
-            Nushell <B>0.114</B> introdujo <NushellInline code="run" />, que permite que un script <Mono>.nu</Mono>
-            reciba una entrada de pipeline, la transforme y entregue un valor que el siguiente comando puede seguir
-            componiendo, ejecutándose en su propio ámbito. Los ejemplos de esta sección requieren Nushell
-            <B>0.114+</B>. Con lo visto hasta aquí, esta capacidad completa la progresión: valores estructurados,
-            contratos de tipo declarados y ahora un script reusable que participa del pipeline como una etapa más.
+            Nushell&nbsp;<B>0.114</B> introdujo <NushellInline code="run" />, que permite que un script <Mono
+            >.nu</Mono>{" "}reciba una entrada de pipeline, la transforme y entregue un valor que el siguiente comando
+            puede seguir componiendo, ejecutándose en su propio ámbito. Los ejemplos de esta sección requieren
+            Nushell&nbsp;<B>0.114+</B>. Con lo visto hasta aquí, esta capacidad completa la progresión: valores
+            estructurados, contratos de tipo declarados y ahora un script reusable que participa del pipeline como una
+            etapa más.
         </P>
 
         <MermaidDiagram spec={runPipelineStageProgression} />
@@ -557,7 +570,7 @@ const citationContext = {
                     )
 
                     let missing_paths = (
-                        $expected_paths
+                        $expected_pathsh
                         | where {|expected| $expected not-in $present_paths}
                     )
 
@@ -570,18 +583,22 @@ const citationContext = {
             `}
         >
             <span slot="title"><Mono>check-library-layout.nu</Mono></span>
+            <DibsSourceLink
+                slot="source" file="support-scripts/check-library-layout.nu"
+                repo="scripts-nushell"
+            />
         </NushellBlock>
 
         <P>
             Igual que <NushellInline code="album-title" />, este script declara <NushellInline
                 code="record -> record"
-            />: recibe un <NushellRecord /> de pipeline y produce otro. Con <NushellInline code="run" />, puede participar
-            directamente como etapa dentro de un pipeline mayor:
+            />: recibe un <NushellRecord /> de pipeline y produce otro. Con <NushellInline code="run" />, puede
+            participar directamente como etapa dentro de un pipeline mayor:
         </P>
 
         <NushellBlock
             code={`
-                [{ project_root: "powerslave" } { project_root: "somewhere-else" }]
+                [{ project_root: "powerslave" } { project_root: "somewhere-in-time" }]
                 | each {|project| $project | run check-library-layout.nu}
                 | where not complete
             `}
@@ -591,11 +608,11 @@ const citationContext = {
 
         <OutputBlock
             code={`
-                ╭───┬────────────────┬──────────┬────────────────────────────────────╮
-                │ # │    project     │ complete │               missing               │
-                ├───┼────────────────┼──────────┼────────────────────────────────────┤
-                │ 0 │ somewhere-else │ false    │ [README.md, LICENSE, CODE_OF_COND…] │
-                ╰───┴────────────────┴──────────┴────────────────────────────────────╯
+                ╭───┬───────────────────┬──────────┬─────────────────────────────────────╮
+                │ # │    project        │ complete │               missing               │
+                ├───┼───────────────────┼──────────┼─────────────────────────────────────┤
+                │ 0 │ somewhere-in-time │ false    │ [README.md, LICENSE, CODE_OF_COND…] │
+                ╰───┴───────────────────┴──────────┴─────────────────────────────────────╯
             `}
         >
             <span slot="title">Solo los proyectos incompletos</span>
@@ -614,20 +631,6 @@ const citationContext = {
                 </ListItem>
             </List>
         </Explanation>
-
-        <Definition headingLevel="h3" icon={icons.PuzzlePiece}>
-            <span slot="title">La diferencia clave</span>
-
-            <P>
-                Aquí aparece una diferencia que no es solo sintáctica: <NushellInline
-                    code="record → run check-library-layout.nu → record → where"
-                /> se mantiene íntegramente dentro del pipeline interno de Nushell. El script de Nushell puede formar
-                parte directamente de un pipeline de valores estructurados: recibe un valor, produce otro y el siguiente
-                comando continúa trabajando con su estructura. Un programa Kotlin puede implementar una interfaz o
-                protocolo equivalente, pero este modelo de composición no forma parte de su mecanismo habitual de
-                ejecución como proceso.
-            </P>
-        </Definition>
     </NotesSection>
 
     <NotesSection id="h2-representation-and-execution-boundary">
@@ -639,9 +642,9 @@ const citationContext = {
         </Heading>
 
         <P>
-            Todos los ejemplos anteriores <Dash kind="em" />desde el sistema de archivos hasta <NushellInline
+            Todos los ejemplos anteriores<Dash kind="em" />desde el sistema de archivos hasta <NushellInline
                 code="run"
-            /><Dash kind="em" /> se mantienen dentro de comandos y scripts internos de Nushell. Cuando el pipeline cruza
+            /><Dash kind="em" />se mantienen dentro de comandos y scripts internos de Nushell. Cuando el pipeline cruza
             hacia un proceso externo<Dash kind="em" />por ejemplo, un ejecutable compilado o un comando del sistema<Dash
                 kind="em"
             />, esa frontera deja de ser transparente: la salida estándar del proceso llega como texto o bytes, no como

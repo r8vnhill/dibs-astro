@@ -129,6 +129,33 @@ suite("given the Nushell comparative lesson", () => {
         expect(html).toMatch(/incompatib/);
     });
 
+    test("then the compatible pipeline's result renders as a neutral output, not a diagnostic", async () => {
+        const { doc } = await renderLesson();
+        const resultBlocks = Array.from(doc.querySelectorAll("pre")).filter((pre) =>
+            pre.textContent?.includes("Powerslave") && !pre.textContent?.includes("nu::parser")
+        );
+
+        expect(resultBlocks.length).toBeGreaterThan(0);
+        for (const block of resultBlocks) {
+            const wrapper = block.closest(".border");
+            expect(wrapper?.textContent).not.toMatch(/error de tipo/i);
+        }
+    });
+
+    test("then the incompatible pipeline's diagnostic is marked as an error and titled accordingly", async () => {
+        const { doc } = await renderLesson();
+        const diagnosticPre = Array.from(doc.querySelectorAll("pre")).find((pre) =>
+            pre.textContent?.includes("nu::parser::input_type_mismatch")
+        );
+        const wrapper = diagnosticPre?.closest(".border");
+
+        expect(wrapper?.textContent).toContain("Error de tipo");
+        expect(wrapper?.textContent).toContain("Entrada de pipeline incompatible");
+        expect(wrapper?.querySelector(".border-b svg")).not.toBeNull();
+        expect(diagnosticPre?.textContent).toContain("nu::parser::input_type_mismatch");
+        expect(diagnosticPre?.textContent).not.toContain("Error de tipo");
+    });
+
     test("then it replaces the NUON fixture with album.json as the primary persisted example", async () => {
         const { html } = await renderLesson();
 
@@ -179,5 +206,18 @@ suite("given the Nushell comparative lesson", () => {
 
         expect(html).not.toContain("fun ");
         expect(html).not.toContain("data class");
+    });
+
+    test("then the file-based examples link to their scripts-nushell companion source", async () => {
+        const { doc } = await renderLesson();
+        const hrefs = Array.from(doc.querySelectorAll("a.dibs-source-link"))
+            .map((link) => link.getAttribute("href") ?? "");
+
+        expect(hrefs).toContain(
+            "https://gitlab.com/r8vnhill/dibs-scripts-nushell/-/blob/main/support-scripts/check-expected-files.nu",
+        );
+        expect(hrefs).toContain(
+            "https://gitlab.com/r8vnhill/dibs-scripts-nushell/-/blob/main/support-scripts/check-library-layout.nu",
+        );
     });
 });

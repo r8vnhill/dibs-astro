@@ -2,6 +2,7 @@ import * as icons from "$icons";
 import { Brain, Note, Star } from "$icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
+import { semanticColors } from "../shared/semanticColors";
 
 /**
  * Shared public API surface for "callout" / admonition-style components (e.g., Abstract, Important,
@@ -183,11 +184,11 @@ export const calloutColors: Record<
     },
     danger: {
         bg: "#fff5f5",
-        border: "#e53e3e",
-        title: "#c53030",
+        border: semanticColors.error.light.border,
+        title: semanticColors.error.light.foreground,
         bgDark: "#3b0d0c",
-        borderDark: "#f87171",
-        titleDark: "#fca5a5",
+        borderDark: semanticColors.error.dark.border,
+        titleDark: semanticColors.error.dark.foreground,
     },
     definition: {
         bg: "#f8fafc",

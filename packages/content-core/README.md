@@ -11,7 +11,7 @@ Current publish target:
 
 - package: `@ravenhill/content-core`
 - version: `0.2.0`
-- publish registry: `https://gitlab.com/api/v4/projects/71752456/packages/npm/`
+- publish registry: `https://gitlab.com/api/v4/projects/r8vnhill%2Fnpm-packages/packages/npm/`
 - consumer registry: `https://gitlab.com/api/v4/groups/110542663/-/packages/npm/`
 
 ## What It Provides
@@ -43,7 +43,7 @@ If your token is not already configured locally, set it without committing secre
 
 ```sh
 npm config set -- //gitlab.com/api/v4/groups/110542663/-/packages/npm/:_authToken="${NPM_TOKEN}"
-npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
+npm config set -- //gitlab.com/api/v4/projects/r8vnhill%2Fnpm-packages/packages/npm/:_authToken="${NPM_TOKEN}"
 ```
 
 ## Usage
@@ -84,7 +84,7 @@ Publish manually from the package directory after configuring `NPM_TOKEN` locall
 
 ```sh
 export NPM_TOKEN="<token-with-package-publish-permission>"
-npm config set -- //gitlab.com/api/v4/projects/71752456/packages/npm/:_authToken="${NPM_TOKEN}"
+npm config set -- //gitlab.com/api/v4/projects/r8vnhill%2Fnpm-packages/packages/npm/:_authToken="${NPM_TOKEN}"
 pnpm --dir=packages/content-core publish --no-git-checks
 ```
 

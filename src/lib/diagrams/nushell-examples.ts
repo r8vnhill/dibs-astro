@@ -39,14 +39,12 @@ export const persistedRepresentationToRuntimeValue: DiagramSpec = {
     id: "persisted-representation-to-runtime-value",
     title: "De la representación persistida al valor de Nushell",
     description:
-        "album.json es una representación almacenada; open atraviesa la frontera de decodificación y produce valores Nushell que luego pueden transformarse.",
-    source: `sequenceDiagram
-        participant Disco as album.json
-        participant Runtime as Valores Nushell
-        participant Pipeline as Transformaciones
-
-        Disco->>Runtime: open (decodificación)
-        Runtime->>Pipeline: get · where · select`,
+        "album.json es una representación almacenada; open la convierte en un valor Nushell, y cada etapa del pipeline transforma ese valor en una forma distinta hasta llegar a la tabla final.",
+    source: `flowchart LR
+        file["album.json · JSON persistido"] -->|open| album["record · title · year · tracks"]
+        album -->|get tracks| tracks["lista · tracks"]
+        tracks -->|where duration_seconds > 420| filtered["lista · tracks filtrados"]
+        filtered -->|select title duration_seconds| result["tabla · title · duration_seconds"]`,
 };
 
 export const runPipelineStageProgression: DiagramSpec = {

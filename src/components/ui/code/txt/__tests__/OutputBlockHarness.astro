@@ -1,0 +1,37 @@
+---
+/**
+ * Test-only wrapper that instantiates `OutputBlock` with real, literal slot children.
+ *
+ * The Astro Container test API's top-level `slots` option marshals slot content through
+ * `SlotString` objects rather than compiling it the normal way. That synthetic path does not
+ * correctly resolve a nested `<slot name="title" />` when it has a static sibling (as
+ * `OutputBlock` does for its error-variant label) — content compiled through this harness's own
+ * literal JSX children does not go through that path and behaves like real page usage.
+ */
+import OutputBlock from "../OutputBlock.astro";
+
+type Props = {
+    code: string;
+    title?: string;
+    variant?: "default" | "error";
+    label?: string;
+    titleText?: string;
+    footerText?: string;
+};
+
+const { code, title, variant = "default", label, titleText, footerText } = Astro.props as Props;
+---
+
+{
+    variant === "error" ? (
+        <OutputBlock code={code} {...(title !== undefined ? { title } : {})} variant="error" label={label!}>
+            {titleText && <span slot="title">{titleText}</span>}
+            {footerText && <span slot="footer">{footerText}</span>}
+        </OutputBlock>
+    ) : (
+        <OutputBlock code={code} {...(title !== undefined ? { title } : {})}>
+            {titleText && <span slot="title">{titleText}</span>}
+            {footerText && <span slot="footer">{footerText}</span>}
+        </OutputBlock>
+    )
+}

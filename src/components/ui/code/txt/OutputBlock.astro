@@ -1,23 +1,53 @@
 ---
+import * as icons from "$icons";
 import CodeBlock from "../CodeBlock.astro";
 
-type Props = {
+type OutputBlockBaseProps = {
     code: string;
     lang?: string;
     title?: string;
 };
 
-const { code, lang = "text", title = "Output" }: Props = Astro.props;
+// Discriminated on `variant` so a caller cannot pass `variant="error"` without a `label`, or a
+// `label` without opting into the error variant. Colors mirror `semanticColors.error`
+// (`~/components/ui/shared/semanticColors`) as literal Tailwind arbitrary-value classes, since
+// Tailwind's build-time scanner needs the class strings to appear verbatim in this file — it
+// cannot see them through a runtime string interpolation.
+type OutputBlockVariantProps =
+    | { variant?: "default"; label?: never }
+    | { variant: "error"; label: string };
+
+type Props = OutputBlockBaseProps & OutputBlockVariantProps;
+
+const props = Astro.props as Props;
+const { code, lang = "text", title = "Output" } = props;
+const isError = props.variant === "error";
+const label = isError ? props.label : undefined;
+
+const blockClasses = isError
+    ? "bg-base-200 dark:bg-surface-700 border-[#e53e3e]/70 dark:border-[#f87171]/70"
+    : "bg-base-200 dark:bg-surface-700 border-base-border/30";
+
+const titleClasses = isError
+    ? "text-[#c53030] dark:text-[#fca5a5] border-b-[#e53e3e]/30 dark:border-b-[#f87171]/30"
+    : undefined;
 ---
 
 <CodeBlock
     {code} {lang}
-    {title} class="bg-base-200 dark:bg-surface-700 border-base-border/30"
+    {title} class={blockClasses}
+    {titleClasses}
+    {...isError ? { icon: icons.Warning } : {}}
 >
-    <span slot="title">
+    <Fragment slot="title">
+        {isError && (
+            <span class="mr-2 shrink-0 rounded bg-[#e53e3e]/10 px-1.5 py-0.5 text-xs font-bold uppercase tracking-wide text-[#c53030] dark:bg-[#f87171]/10 dark:text-[#fca5a5]">
+                {label}
+            </span>
+        )}
         <slot name="title" />
-    </span>
-    <span slot="footer">
+    </Fragment>
+    <Fragment slot="footer">
         <slot name="footer" />
-    </span>
+    </Fragment>
 </CodeBlock>

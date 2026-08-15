@@ -296,7 +296,7 @@ Add built-fixture HTML validation with `html-validate:recommended`, especially `
 
 ---
 
-# Milestone 2 — Create `@ravenhill/astro-semantics`
+# Milestone 2 — Create `@ravenhill/astro-semantics` [DONE]
 
 ### Goal
 
