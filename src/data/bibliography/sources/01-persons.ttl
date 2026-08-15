@@ -187,6 +187,26 @@ person:arnaud-lauret
   schema:familyName "Lauret" ;
   schema:url "https://apihandyman.io" .
 
+person:michael-greenberg
+  a schema:Person ;
+  schema:givenName "Michael" ;
+  schema:familyName "Greenberg" .
+
+person:malte-sippel
+  a schema:Person ;
+  schema:givenName "Malte" ;
+  schema:familyName "Sippel" .
+
+person:horst-schirmeier
+  a schema:Person ;
+  schema:givenName "Horst" ;
+  schema:familyName "Schirmeier" .
+
+person:jan-sorva
+  a schema:Person ;
+  schema:givenName "Jan" ;
+  schema:familyName "Sorva" .
+
 person:robert-c-martin
   a schema:Person ;
   schema:givenName "Robert C." ;

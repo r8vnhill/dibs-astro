@@ -1,0 +1,51 @@
+---
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
+import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
+import GuidedReferenceEntry from "~/components/ui/references/GuidedReferenceEntry.astro";
+import {
+    formatLessonReadingsDiagnostics,
+    resolveLessonReadings,
+} from "~/lib/readings/lesson-readings-contract";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const supportScriptsNushellReadings = getSupportScriptsNushellReadings();
+const resolution = resolveLessonReadings(supportScriptsNushellReadings, getDefaultBibliographyCatalog());
+if (!resolution.ok) {
+    throw new Error(`Lesson readings resolution failed:\n${formatLessonReadingsDiagnostics(resolution.diagnostics)}`);
+}
+const { sections } = resolution.value;
+---
+
+<BaseLayout pageTitle={`Lecturas · ${supportScriptsNushellReadings.title}`}>
+    <main class="mx-auto max-w-4xl px-6 py-12">
+        <p><a href="/readings/">← Todas las lecturas</a></p>
+        <h1 class="mt-6">{supportScriptsNushellReadings.title}</h1>
+        <p class="mt-4">Referencias para profundizar en los conceptos de la lección.</p>
+        <p class="mt-2"><a href={supportScriptsNushellReadings.lessonPath}>Volver a la lección</a></p>
+
+        <aside class="mt-8 rounded-lg border border-base-border bg-base-surface p-5" aria-labelledby="route-heading">
+            <h2 id="route-heading" class="text-xl font-semibold">Cómo usar estas lecturas</h2>
+            <p class="mt-3">
+                No necesitas leer todas estas fuentes. Comienza por Greenberg et al. y Sippel y Schirmeier para
+                situar el argumento central de la lección; después, revisa la documentación oficial de Nushell citada
+                en la sección de práctica; deja Handa et al. y Sorva para cuando quieras profundizar en el modelo de
+                dataflow o en la pedagogía de los modelos de ejecución.
+            </p>
+        </aside>
+
+        {
+            sections.map(({ id, title, readings }) => (
+                <section class="mt-12" aria-labelledby={id}>
+                    <h2 {id}>{title}</h2>
+                    <ul class="mt-6 space-y-5">
+                        {
+                            readings.map((reading) => (
+                                <GuidedReferenceEntry reference={reading.reference} reading={reading.guide} />
+                            ))
+                        }
+                    </ul>
+                </section>
+            ))
+        }
+    </main>
+</BaseLayout>

@@ -138,6 +138,18 @@
       "familyName": "Sun"
     },
     {
+      "@id": "person:horst-schirmeier",
+      "@type": "Person",
+      "givenName": "Horst",
+      "familyName": "Schirmeier"
+    },
+    {
+      "@id": "person:jan-sorva",
+      "@type": "Person",
+      "givenName": "Jan",
+      "familyName": "Sorva"
+    },
+    {
       "@id": "person:jeffrey-p-snover",
       "@type": "Person",
       "givenName": "Jeffrey P.",
@@ -204,6 +216,12 @@
       "familyName": "Ramalho"
     },
     {
+      "@id": "person:malte-sippel",
+      "@type": "Person",
+      "givenName": "Malte",
+      "familyName": "Sippel"
+    },
+    {
       "@id": "person:mario-casciaro",
       "@type": "Person",
       "givenName": "Mario",
@@ -240,6 +258,12 @@
       "@type": "Person",
       "givenName": "Meiyappan",
       "familyName": "Nagappan"
+    },
+    {
+      "@id": "person:michael-greenberg",
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Greenberg"
     },
     {
       "@id": "person:michael-w-godfrey",
@@ -673,6 +697,14 @@
       ]
     },
     {
+      "@id": "work:acm-toce",
+      "@type": "CreativeWork",
+      "name": "ACM Transactions on Computing Education",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:acm-tosem",
       "@type": "CreativeWork",
       "name": "ACM Transactions on Software Engineering and Methodology",
@@ -762,6 +794,14 @@
       }
     },
     {
+      "@id": "work:hotos-2021",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the Workshop on Hot Topics in Operating Systems",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:ieee-transactions-software-engineering",
       "@type": "CreativeWork",
       "name": "IEEE Transactions on Software Engineering",
@@ -837,6 +877,14 @@
       "@id": "work:plas-2007",
       "@type": "CreativeWork",
       "name": "Proceedings of the 2007 Workshop on Programming Languages and Analysis for Security",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
+      "@id": "work:plos-2023",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the 12th Workshop on Programming Languages and Operating Systems",
       "publisher": {
         "@id": "org:acm"
       }
@@ -1196,6 +1244,32 @@
       "url": "https://docs.gradle.org/current/userguide/userguide.html",
       "publisher": {
         "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:greenberg-unix-shell-next-50-years-2021",
+      "@type": "ScholarlyArticle",
+      "name": "Unix shell programming: the next 50 years",
+      "url": "https://doi.org/10.1145/3458336.3465294",
+      "datePublished": "2021",
+      "pageStart": 104,
+      "pageEnd": 111,
+      "author": [
+        {
+          "@id": "person:michael-greenberg"
+        },
+        {
+          "@id": "person:konstantinos-kallas"
+        },
+        {
+          "@id": "person:nikos-vasilakis"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:hotos-2021"
       }
     },
     {
@@ -2339,6 +2413,29 @@
       }
     },
     {
+      "@id": "ref:sippel-process-composition-typed-unix-pipes-2023",
+      "@type": "ScholarlyArticle",
+      "name": "Process Composition with Typed Unix Pipes",
+      "url": "https://doi.org/10.1145/3623759.3624546",
+      "datePublished": "2023",
+      "pageStart": 34,
+      "pageEnd": 40,
+      "author": [
+        {
+          "@id": "person:malte-sippel"
+        },
+        {
+          "@id": "person:horst-schirmeier"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:plos-2023"
+      }
+    },
+    {
       "@id": "ref:snover-windows-powershell-unplugged-2015",
       "@type": "VideoObject",
       "name": "Windows PowerShell Unplugged",
@@ -2358,6 +2455,26 @@
       "@type": "WebPage",
       "name": "What Is Software Engineering? | Software Engineering at Google",
       "url": "https://abseil.io/resources/swe-book/html/ch01.html"
+    },
+    {
+      "@id": "ref:sorva-notional-machines-2013",
+      "@type": "ScholarlyArticle",
+      "name": "Notional machines and introductory programming education",
+      "url": "https://doi.org/10.1145/2483710.2483713",
+      "datePublished": "2013",
+      "pageStart": 1,
+      "pageEnd": 31,
+      "author": [
+        {
+          "@id": "person:jan-sorva"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:acm-toce"
+      }
     },
     {
       "@id": "ref:spdx-license-list",

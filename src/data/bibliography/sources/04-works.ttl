@@ -123,3 +123,18 @@ work:javascript-for-impatient-programmers
   a schema:CreativeWork ;
   schema:name "JavaScript for impatient programmers" ;
   schema:author person:axel-rauschmayer .
+
+work:hotos-2021
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the Workshop on Hot Topics in Operating Systems" ;
+  schema:publisher org:acm .
+
+work:plos-2023
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the 12th Workshop on Programming Languages and Operating Systems" ;
+  schema:publisher org:acm .
+
+work:acm-toce
+  a schema:CreativeWork ;
+  schema:name "ACM Transactions on Computing Education" ;
+  schema:publisher org:acm .

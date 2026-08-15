@@ -130,4 +130,100 @@ export const libraryWhatIsReadings: LessonReadings = {
     ],
 };
 
-export const publishedReadings = [libraryWhatIsReadings] as const;
+export const supportScriptsNushellReadings: LessonReadings = {
+    lessonPath: "/notes/scripting/support-scripts/nushell/",
+    title: "Scripts de apoyo reusables en Nushell",
+    essential: [
+        {
+            referenceId: "greenberg-unix-shell-next-50-years-2021",
+            type: "Fuente primaria",
+            difficulty: "Intermedia",
+            extent: "Corta",
+            why:
+                "Ubica la composición de comandos que motiva esta lección dentro de una tradición mucho más antigua que Nushell: la composición universal y el procesamiento por streams del shell Unix.",
+            focus:
+                "Identifica qué propiedades del shell Unix sobreviven en Nushell y cuáles cambian cuando el pipeline interno pasa a transportar valores en lugar de bytes.",
+            afterReading:
+                "Deberías poder explicar por qué Nushell extiende el modelo de composición de Unix en lugar de inventarlo.",
+            guidingQuestion:
+                "¿Qué propiedad del shell Unix sigue siendo la misma en Nushell, y cuál cambia al reemplazar bytes por valores estructurados?",
+        },
+        {
+            referenceId: "sippel-process-composition-typed-unix-pipes-2023",
+            type: "Fuente primaria",
+            difficulty: "Intermedia",
+            extent: "Corta",
+            why:
+                "Explica por qué un flujo de bytes no comunica por sí mismo qué tipo o representación espera el siguiente comando, motivando la necesidad de contratos de tipo en la composición de pipelines.",
+            focus:
+                "Concéntrate en la distinción entre un pipe que solo transporta bytes y uno cuyas etapas exponen información de tipo de entrada y salida.",
+            afterReading:
+                "Deberías poder justificar por qué exponer tipos de entrada y salida entre etapas de un pipeline es una mejora sobre el contrato de stdin/stdout.",
+            guidingQuestion:
+                "¿Qué puede diagnosticar un pipeline tipado antes de ejecutarse que un pipeline de bytes no puede?",
+        },
+        {
+            referenceId: "nushell-pipelines",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Media",
+            why:
+                "Documenta la mecánica exacta que distingue esta lección: cómo se comportan los pipelines de Nushell entre comandos internos, hacia procesos externos y entre procesos externos.",
+            focus:
+                "Lee la sección que distingue interno→interno, interno→externo, externo→interno y externo→externo.",
+            afterReading:
+                "Deberías poder predecir si una etapa concreta de un pipeline de Nushell recibirá un valor estructurado o texto.",
+        },
+    ],
+    practice: [
+        {
+            referenceId: "nushell-loading-data",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Media",
+            why:
+                "Detalla cómo `open` reconoce la extensión de un archivo e invoca el conversor `from ...` correspondiente, la base del ejemplo con `album.json` de esta lección.",
+            focus: "Revisa qué formatos reconoce `open` de forma nativa y qué ocurre con formatos no reconocidos.",
+            afterReading:
+                "Deberías poder explicar la diferencia entre un formato que Nushell reconoce automáticamente y uno que requiere análisis manual.",
+        },
+        {
+            referenceId: "nushell-v0-114-0-blog",
+            type: "Referencia técnica",
+            difficulty: "Intermedia",
+            extent: "Media",
+            why:
+                "Es la fuente primaria sobre `run` y sobre el fortalecimiento de la inferencia y verificación de tipos en pipelines a partir de la versión 0.114.",
+            focus: "Busca las secciones sobre `run` y sobre inferencia y verificación de tipos de pipeline.",
+            afterReading:
+                "Deberías poder situar en qué versión concreta de Nushell dejaron de ser opcionales las verificaciones de tipo usadas en esta lección.",
+        },
+    ],
+    deeper: [
+        {
+            referenceId: "handa-order-aware-dataflow-pipelines-2021",
+            type: "Fuente primaria",
+            difficulty: "Avanzada",
+            extent: "Secciones seleccionadas",
+            why:
+                "Profundiza en un modelo de dataflow para pipelines Unix paralelos; relevante para el tratamiento de pipelines como composición de etapas, aunque el orden de ejecución paralelo excede el alcance de esta lección.",
+            focus: "No necesitas seguir el modelo de paralelismo completo; concéntrate en cómo describen una etapa de pipeline como una unidad de composición.",
+            afterReading:
+                "Deberías poder relacionar una etapa de pipeline con una unidad de composición, más allá de si su ejecución es secuencial o paralela.",
+        },
+        {
+            referenceId: "sorva-notional-machines-2013",
+            type: "Conceptual",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why:
+                "Argumenta por qué explicitar el modelo de ejecución (una \"máquina nocional\") ayuda a quien aprende a razonar sobre la dinámica de un sistema, justificando los diagramas de esta lección.",
+            focus:
+                "Lee por qué los modelos mentales de la dinámica de ejecución son una fuente frecuente de dificultad para quienes aprenden a programar.",
+            afterReading:
+                "Deberías poder explicar por qué esta lección presenta un modelo explícito del pipeline antes de mostrar sintaxis.",
+        },
+    ],
+};
+
+export const publishedReadings = [libraryWhatIsReadings, supportScriptsNushellReadings] as const;

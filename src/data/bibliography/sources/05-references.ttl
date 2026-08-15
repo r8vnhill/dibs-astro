@@ -439,6 +439,39 @@ ref:nushell-v0-114-0-blog
   schema:datePublished "2026-07-04" ;
   schema:publisher org:nushell .
 
+ref:greenberg-unix-shell-next-50-years-2021
+  a schema:ScholarlyArticle ;
+  schema:name "Unix shell programming: the next 50 years" ;
+  schema:url "https://doi.org/10.1145/3458336.3465294" ;
+  schema:datePublished "2021" ;
+  schema:pageStart 104 ;
+  schema:pageEnd 111 ;
+  schema:author person:michael-greenberg, person:konstantinos-kallas, person:nikos-vasilakis ;
+  schema:isPartOf work:hotos-2021 ;
+  schema:publisher org:acm .
+
+ref:sippel-process-composition-typed-unix-pipes-2023
+  a schema:ScholarlyArticle ;
+  schema:name "Process Composition with Typed Unix Pipes" ;
+  schema:url "https://doi.org/10.1145/3623759.3624546" ;
+  schema:datePublished "2023" ;
+  schema:pageStart 34 ;
+  schema:pageEnd 40 ;
+  schema:author person:malte-sippel, person:horst-schirmeier ;
+  schema:isPartOf work:plos-2023 ;
+  schema:publisher org:acm .
+
+ref:sorva-notional-machines-2013
+  a schema:ScholarlyArticle ;
+  schema:name "Notional machines and introductory programming education" ;
+  schema:url "https://doi.org/10.1145/2483710.2483713" ;
+  schema:datePublished "2013" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 31 ;
+  schema:author person:jan-sorva ;
+  schema:isPartOf work:acm-toce ;
+  schema:publisher org:acm .
+
 ref:snover-windows-powershell-unplugged-2015
   a schema:VideoObject ;
   schema:name "Windows PowerShell Unplugged" ;

@@ -113,8 +113,8 @@ describe.concurrent("support scripts lesson render", () => {
         expect(text).toContain("pipeline");
         expect(text).toContain("ls");
 
-        // Cycle 3: loading structured file formats
-        expect(text).toContain("open album.nuon");
+        // Cycle 3/4: loading structured file formats
+        expect(text).toContain("open album.json");
         expect(text).toContain("NUON");
         expect(text).toContain("duration_seconds");
 

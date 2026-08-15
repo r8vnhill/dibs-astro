@@ -1,15 +1,22 @@
 ---
 import * as icons from "$icons";
+import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Info, Tip } from "~/components/ui/callouts";
-import { NushellBlock, NushellInline, OutputBlock } from "~/components/ui/code";
+import { Definition, Explanation, Info } from "~/components/ui/callouts";
+import { JsonBlock, NushellBlock, NushellInline, OutputBlock } from "~/components/ui/code";
 import { B, Dash, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
-import { ReferencesFromCatalog } from "~/components/ui/references";
+import { ReferenceCitation } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
+
+const supportScriptsNushellReadings = getSupportScriptsNushellReadings();
+const citationContext = {
+    readingsPath: lessonReadingsRoute(supportScriptsNushellReadings.lessonPath),
+} as const;
 ---
 
 <NotesLayout
@@ -19,16 +26,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <Fragment slot="abstract">
         <P>
             Esta lección revisita el mismo script de apoyo desarrollado en la versión base con Kotlin, pero desde un
-            modelo de ejecución sustancialmente distinto: un shell cuyos comandos ya trabajan con valores
-            estructurados. Asumimos que ya conoces el propósito del script<Dash kind="em" />revisar si un proyecto
-            contiene los archivos esperados de una biblioteca reusable<Dash kind="em" />, así que no volveremos a
-            explicar colecciones, argumentos, rutas ni funciones desde cero.
+            modelo de ejecución sustancialmente distinto: un shell cuyos comandos ya trabajan con valores estructurados.
+            Asumimos que ya conoces el propósito del script<Dash kind="em" />revisar si un proyecto contiene los
+            archivos esperados de una biblioteca reusable<Dash kind="em" />, así que no volveremos a explicar
+            colecciones, argumentos, rutas ni funciones desde cero.
         </P>
 
         <P>
             <B>¿Qué cambia si el script no solo se ejecuta desde un shell, sino que el propio shell trabaja con datos
-            estructurados?</B> Ese es el eje de esta comparación. El objetivo del script no cambia; cambia qué tipo de
-            valores entrega el entorno y cómo podemos componer las operaciones sobre ellos.
+                estructurados?</B> Ese es el eje de esta comparación. El objetivo del script no cambia; cambia qué tipo
+            de valores entrega el entorno y cómo podemos componer las operaciones sobre ellos.
         </P>
     </Fragment>
 
@@ -41,9 +48,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Usaremos el mismo proyecto de ejemplo que motivó la lección base, ahora inspirado en <I
-            >Powerslave</I>, de Iron Maiden. El script sigue teniendo la misma responsabilidad: recibir un directorio
-            de proyecto y comprobar si contiene los archivos esperados de una biblioteca.
+            Usaremos el mismo proyecto de ejemplo que motivó la lección base, ahora inspirado en <I>Powerslave</I>, de
+            Iron Maiden. El script sigue teniendo la misma responsabilidad: recibir un directorio de proyecto y
+            comprobar si contiene los archivos esperados de una biblioteca.
         </P>
 
         <OutputBlock
@@ -52,7 +59,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 ├── README.md
                 ├── LICENSE
                 ├── CODE_OF_CONDUCT.md
-                └── album.nuon
+                └── album.json
             `}
         >
             <span slot="title">Proyecto de ejemplo: <Mono>powerslave/</Mono></span>
@@ -63,11 +70,136 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <P>
                 El objetivo no cambia; cambia qué tipo de valores entrega el entorno y cómo podemos componer las
-                operaciones sobre ellos. En Kotlin, comprobar si una ruta existe requería convertir texto en
-                <Mono>Path</Mono> y consultarlo explícitamente. En Nushell, buena parte de esa información ya llega
-                como datos.
+                operaciones sobre ellos. En Kotlin, comprobar si una ruta existe requería convertir texto en <Mono
+                >Path</Mono> y consultarlo explícitamente. En Nushell, buena parte de esa información ya llega como
+                datos.
             </P>
         </Definition>
+    </NotesSection>
+
+    <NotesSection id="h2-unix-pipe-to-structured-pipeline">
+        <Heading
+            headingLevel="h2" Icon={icons.GitBranch}
+            slot="heading"
+        >
+            Del pipe de Unix al pipeline estructurado
+        </Heading>
+
+        <P>
+            Antes de mirar sintaxis, conviene ubicar esta comparación en su linaje. La idea de componer programas
+            independientes conectando la salida de uno con la entrada de otro <Dash kind="em" />la composición
+            universal, sostenida por procesamiento en streams<Dash kind="em" /> es una de las razones por las que la
+            programación de shell sigue siendo útil pese a las limitaciones semánticas y de herramientas que se le
+            reconocen desde hace décadas, como argumentan <ReferenceCitation
+                {...citationContext} referenceId="greenberg-unix-shell-next-50-years-2021"
+            >Greenberg et al. (2021)</ReferenceCitation>.
+        </P>
+
+        <OutputBlock
+            code={`
+                Unix:
+                programa → bytes/texto → programa
+
+                Nushell, entre comandos internos:
+                comando → valores estructurados → comando
+            `}
+        >
+            <span slot="title">Lo que se hereda y lo que cambia</span>
+        </OutputBlock>
+
+        <P>
+            La idea de composición se hereda de Unix; lo que cambia es la representación que se compone. Nushell no es
+            tampoco el único punto de este espacio de diseño: PowerShell es otro shell establecido cuyo pipeline interno
+            transporta objetos en lugar de solo texto. Nushell conviene entenderlo como un punto más de esta evolución,
+            no como el origen de los pipelines estructurados.
+        </P>
+
+        <Info headingLevel="h3" icon={icons.WarningCircle}>
+            <span slot="title">Por qué esto importa</span>
+
+            <P>
+                Un flujo de bytes no comunica por sí mismo qué tipo o representación espera el siguiente programa; esa
+                compatibilidad depende de convenciones externas al propio pipe, como serialización y parseo acordados
+                fuera de la tubería. Esa limitación motiva directamente el trabajo sobre <I>typed Unix pipes</I> de{" "}
+                <ReferenceCitation {...citationContext} referenceId="sippel-process-composition-typed-unix-pipes-2023"
+                >Sippel y Schirmeier (2023)</ReferenceCitation>, y es la razón teórica detrás de la frontera que
+                exploraremos hacia el final de esta lección.
+            </P>
+        </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-mental-model-for-this-lesson">
+        <Heading
+            headingLevel="h2" Icon={icons.FlowArrow}
+            slot="heading"
+        >
+            Un modelo mental para esta lección
+        </Heading>
+
+        <P>
+            Entender la dinámica de ejecución <Dash kind="em" />qué valor recibe cada etapa y qué valor produce<Dash
+                kind="em"
+            /> suele ser una fuente de dificultad al aprender un sistema nuevo, y hacer explícito ese modelo antes de
+            ver sintaxis ayuda a razonar sobre los ejemplos que siguen (<ReferenceCitation
+                {...citationContext} referenceId="sorva-notional-machines-2013"
+            >Sorva, 2013</ReferenceCitation>). Este modelo no describe cómo funciona Nushell internamente; describe cómo
+            conviene <I>pensar</I> sobre él mientras aprendemos.
+        </P>
+
+        <OutputBlock
+            code={`
+                Pipeline interno de Nushell
+
+                Value
+                  ↓
+                command A
+                  ↓
+                Value
+                  ↓
+                command B
+                  ↓
+                Value
+            `}
+        >
+            <span slot="title">Modelo mental: comandos internos</span>
+        </OutputBlock>
+
+        <P>
+            Cuando el pipeline cruza hacia un proceso externo <Dash kind="em" />un ejecutable compilado o un comando del
+            sistema<Dash kind="em" />, el modelo cambia: el valor debe convertirse antes de entregarse por
+            <Mono>stdin</Mono>, y lo que vuelve por <Mono>stdout</Mono> llega como bytes o texto, no como un valor
+            Nushell.
+        </P>
+
+        <OutputBlock
+            code={`
+                Pipeline mixto
+
+                Nu Value
+                  ↓
+                serialización
+                  ↓
+                stdin / stdout
+                  ↓
+                proceso externo
+                  ↓
+                bytes / texto
+                  ↓
+                parseo explícito
+                  ↓
+                Nu Value
+            `}
+        >
+            <span slot="title">Modelo mental: proceso externo en el medio</span>
+        </OutputBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Retendremos estos dos modelos durante toda la lección: dentro de comandos internos, Nushell entrega y
+                recibe valores directamente; al cruzar hacia un proceso externo, ese valor se convierte a bytes o texto
+                y hay que reconstruirlo explícitamente si se necesita estructura de nuevo.
+            </P>
+        </Explanation>
     </NotesSection>
 
     <NotesSection id="h2-filesystem-already-produces-data">
@@ -79,8 +211,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En Nushell, listar el contenido de un directorio no produce texto para interpretar línea por línea:
-            produce una lista de <I>records</I>, cada uno con campos con nombre propio.
+            En Nushell, listar el contenido de un directorio no produce texto para interpretar línea por línea: produce
+            una lista de <I>records</I>, cada uno con campos con nombre propio.
         </P>
 
         <NushellBlock code="ls">
@@ -95,7 +227,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 │ 0 │ CODE_OF_CONDUCT.md  │ file │  1.1 KB │ 2 hours ago  │
                 │ 1 │ LICENSE             │ file │  1.0 KB │ 2 hours ago  │
                 │ 2 │ README.md           │ file │  2.4 KB │ 2 hours ago  │
-                │ 3 │ album.nuon          │ file │  512 B  │ 2 hours ago  │
+                │ 3 │ album.json          │ file │  512 B  │ 2 hours ago  │
                 ╰───┴─────────────────────┴──────┴─────────┴──────────────╯
             `}
         >
@@ -108,26 +240,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     Cada fila es un <I>record</I> con campos <NushellInline code="name" />, <NushellInline
                         code="type"
                     />, <NushellInline code="size" /> y <NushellInline code="modified" />. No estamos leyendo una
-                    representación textual de <NushellInline code="ls" />: estamos manipulando esos campos
-                    directamente.
+                    representación textual de <NushellInline code="ls" />: estamos manipulando esos campos directamente.
                 </ListItem>
 
                 <ListItem icon={icons.Table}>
-                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <I>records</I> con la
-                    misma forma. <B>Datos estructurados ≠ tabla dibujada en la terminal.</B>
+                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <I>records</I> con la misma
+                    forma. <B>Datos estructurados ≠ tabla dibujada en la terminal.</B>
                 </ListItem>
             </List>
         </Explanation>
-
-        <Tip headingLevel="h3" icon={icons.WarningCircle}>
-            <span slot="title">Un límite importante</span>
-
-            <P>
-                Esta estructura pertenece a los comandos internos de Nushell, como <NushellInline code="ls" />. Un
-                proceso externo sigue entregando su salida estándar como texto o bytes; Nushell no la convierte en
-                datos estructurados automáticamente. Volveremos sobre este límite más adelante.
-            </P>
-        </Tip>
     </NotesSection>
 
     <NotesSection id="h2-filter-without-converting-to-text">
@@ -195,10 +316,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 </ListItem>
 
                 <ListItem icon={icons.BracketsCurly}>
-                    El bloque final construye un nuevo <I>record</I> con los campos <NushellInline
-                        code="project"
-                    />, <NushellInline code="complete" /> y <NushellInline code="missing" />: el mismo tipo de informe
-                    que el script en Kotlin comunicaba por texto, pero conservado como datos.
+                    El bloque final construye un nuevo <I>record</I> con los campos <NushellInline code="project" />,
+                    <NushellInline code="complete" /> y <NushellInline code="missing" />: el mismo tipo de informe que
+                    el script en Kotlin comunicaba por texto, pero conservado como datos.
                 </ListItem>
             </List>
         </Explanation>
@@ -213,40 +333,60 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            El contrato original solo comprobaba si <Mono>album.nuon</Mono> existía. Ahora podemos ir más allá y
-            preguntar por su contenido, porque Nushell puede cargar formatos como NUON, JSON, TOML, YAML o CSV
+            El contrato original solo comprobaba si <Mono>album.json</Mono> existía. Ahora podemos ir más allá y
+            preguntar por su contenido, porque Nushell puede cargar formatos como JSON, NUON, TOML, YAML o CSV
             directamente como valores.
         </P>
 
-        <NushellBlock
+        <JsonBlock
             code={`
                 {
-                    title: "Powerslave"
-                    year: 1984
-                    tracks: [
-                        { title: "Aces High", duration_seconds: 271 }
-                        { title: "2 Minutes to Midnight", duration_seconds: 362 }
-                        { title: "Losfer Words (Big 'Orra)", duration_seconds: 255 }
-                        { title: "Flash of the Blade", duration_seconds: 245 }
-                        { title: "The Duellists", duration_seconds: 252 }
-                        { title: "Back in the Village", duration_seconds: 315 }
-                        { title: "Powerslave", duration_seconds: 321 }
-                        { title: "Rime of the Ancient Mariner", duration_seconds: 825 }
+                    "title": "Powerslave",
+                    "year": 1984,
+                    "tracks": [
+                        { "title": "Aces High", "duration_seconds": 271 },
+                        { "title": "2 Minutes to Midnight", "duration_seconds": 362 },
+                        { "title": "Losfer Words (Big 'Orra)", "duration_seconds": 255 },
+                        { "title": "Flash of the Blade", "duration_seconds": 245 },
+                        { "title": "The Duellists", "duration_seconds": 252 },
+                        { "title": "Back in the Village", "duration_seconds": 315 },
+                        { "title": "Powerslave", "duration_seconds": 321 },
+                        { "title": "Rime of the Ancient Mariner", "duration_seconds": 825 }
                     ]
                 }
             `}
         >
-            <span slot="title"><Mono>album.nuon</Mono></span>
-        </NushellBlock>
+            <span slot="title"><Mono>album.json</Mono></span>
+        </JsonBlock>
 
         <P>
-            Preguntar qué canciones duran más de siete minutos ya no exige elegir un formato, escribir un modelo de
-            datos y deserializar texto. Basta con abrir el archivo y seguir componiendo el pipeline:
+            <B>Una vez que elegimos un formato que Nushell reconoce, <NushellInline code="open" /> integra el paso de
+                decodificación al flujo normal del shell.</B> No es que dejemos de elegir un formato de almacenamiento;
+            ya lo elegimos al guardar <Mono>album.json</Mono> como JSON. Lo que cambia es que <NushellInline
+                code="open"
+            /> reconoce la extensión, invoca el conversor correspondiente<Dash kind="em" /><NushellInline
+                code="from json"
+            /> en este caso<Dash kind="em" /> y entrega directamente valores Nushell, sin que tengamos que escribir ni
+            invocar ese paso de decodificación nosotros mismos.
         </P>
+
+        <OutputBlock
+            code={`
+                album.json
+                    ↓ open
+                JSON representation is parsed
+                    ↓
+                Nushell record/list values
+                    ↓
+                get / where / select
+            `}
+        >
+            <span slot="title">De la representación persistida al valor de Nushell</span>
+        </OutputBlock>
 
         <NushellBlock
             code={`
-                open album.nuon
+                open album.json
                 | get tracks
                 | where duration_seconds > 420
                 | select title duration_seconds
@@ -270,8 +410,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.FileCode}>
-                    <NushellInline code="open album.nuon" /> reconoce la extensión <Mono>.nuon</Mono> y devuelve un
-                    <I>record</I> Nushell nativo, sin pasar por un paso intermedio de texto.
+                    <NushellInline code="open album.json" /> reconoce la extensión <Mono>.json</Mono> y devuelve un
+                    <I>record</I> Nushell nativo: la representación de archivo, el archivo JSON, y el valor de Nushell
+                    son dos capas distintas, aunque <NushellInline code="open" /> las conecte sin que tengamos que
+                    escribir el paso intermedio.
                 </ListItem>
 
                 <ListItem icon={icons.ListChecks}>
@@ -283,14 +425,114 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Explanation>
 
         <Info headingLevel="h3" icon={icons.WarningCircle}>
+            <span slot="title">¿Y NUON?</span>
+
+            <P>
+                Nushell también reconoce <Mono>.nuon</Mono>, su propia notación<Dash kind="em" />descrita como un
+                superconjunto de JSON, con algunas limitaciones frente al modelo de valores completo de Nushell<Dash
+                    kind="em"
+                />. NUON es conveniente cuando los datos son propios de Nushell y no necesitan salir de ese entorno: por
+                ejemplo, configuración local de un script. En este ejemplo preferimos JSON porque el mismo artefacto de
+                apoyo <Mono>album.json</Mono> podría ser consumido más adelante por Kotlin, Python, JavaScript u otra
+                herramienta, sin depender de un formato específico de un shell.
+            </P>
+        </Info>
+
+        <Info headingLevel="h3" icon={icons.WarningCircle}>
             <span slot="title">Conveniencia, no capacidad exclusiva</span>
 
             <P>
-                Kotlin también puede leer y transformar <Mono>album.nuon</Mono>, pero requiere elegir e invocar una
-                biblioteca de deserialización adecuada para el formato elegido. En Nushell, abrir un formato
-                reconocido es parte del flujo ordinario del shell, no una dependencia adicional del proyecto.
+                Kotlin también puede leer y transformar <Mono>album.json</Mono>, pero requiere elegir e invocar una
+                biblioteca de deserialización adecuada para el formato elegido. En Nushell, abrir un formato reconocido
+                es parte del flujo ordinario del shell, no una dependencia adicional del proyecto.
             </P>
         </Info>
+    </NotesSection>
+
+    <NotesSection id="h2-pipeline-type-contracts">
+        <Heading
+            headingLevel="h2" Icon={icons.Scales}
+            slot="heading"
+        >
+            El pipeline también tiene contratos de tipo
+        </Heading>
+
+        <P>
+            Hasta ahora vimos que los comandos internos intercambian valores estructurados. Nushell <B>0.114</B>{" "}
+            además fortaleció la inferencia y verificación de tipos: el tipo de <NushellInline code="$in" /> se infiere
+            desde el pipeline que lo rodea, el tipo de salida se propaga a través de expresiones de pipeline, y las
+            firmas de entrada y salida de un comando se usan para verificar su cuerpo en tiempo de análisis. Cada etapa
+            puede exponer, además del valor que produce, información sobre qué tipo de entrada espera y qué tipo de
+            salida entrega<Dash kind="em" />el punto central del trabajo de <ReferenceCitation
+                {...citationContext} referenceId="sippel-process-composition-typed-unix-pipes-2023"
+            >Sippel y Schirmeier (2023)</ReferenceCitation> sobre pipes tipados.
+        </P>
+
+        <NushellBlock
+            code={`
+                def album-title []: record -> string {
+                    get title
+                }
+            `}
+        >
+            <span slot="title">Un comando con contrato de entrada y salida</span>
+        </NushellBlock>
+
+        <NushellBlock code="open album.json | album-title">
+            <span slot="title">Composición compatible: <Mono>record</Mono> entra, <Mono>string</Mono> sale</span>
+        </NushellBlock>
+
+        <OutputBlock code="Powerslave">
+            <span slot="title">Resultado</span>
+        </OutputBlock>
+
+        <NushellBlock code={`"Powerslave" | album-title`}>
+            <span slot="title">Composición incompatible</span>
+        </NushellBlock>
+
+        <OutputBlock
+            code={`
+                Error: nu::parser::input_type_mismatch
+
+                  × Command does not support string input.
+                  ╭─[entry #1:1:1]
+                1 │ "Powerslave" | album-title
+                  ·                ─────┬─────
+                  ·                     ╰── command doesn't support string input
+                  ╰────
+            `}
+        >
+            <span slot="title">Nushell reporta el tipo incompatible antes de la ejecución normal</span>
+        </OutputBlock>
+
+        <Explanation headingLevel="h3">
+            <List>
+                <ListItem icon={icons.CheckCircle}>
+                    <NushellInline code="album-title" /> declara <NushellInline code="record -> string" />: espera un
+                    <I>record</I> por pipeline y produce un <Mono>string</Mono>. <NushellInline
+                        code="open album.json"
+                    /> produce exactamente ese <I>record</I>, así que la composición es válida.
+                </ListItem>
+
+                <ListItem icon={icons.XCircle}>
+                    Conectar un <Mono>string</Mono> literal a la misma firma no satisface el contrato declarado, y
+                    Nushell puede diagnosticarlo antes de la ejecución ordinaria, no solo cuando el cuerpo del comando
+                    falla en tiempo de ejecución.
+                </ListItem>
+            </List>
+        </Explanation>
+
+        <Definition headingLevel="h3" icon={icons.Scales}>
+            <span slot="title">Lo que esto no significa</span>
+
+            <P>
+                El punto no es que Nushell tenga un sistema de tipos equivalente al de Kotlin. Es que las etapas de un
+                pipeline pueden exponer <B>información de compatibilidad de entrada y salida</B>, de modo que componer
+                dos etapas es más que asumir que ambas comparten <Mono>stdin</Mono>/<Mono>stdout</Mono>: también podemos
+                preguntar si sus tipos declarados encajan. Ese contrato de tipo pertenece a los comandos internos; sigue
+                sin decir nada sobre qué produce un proceso externo, que trataremos más adelante.
+            </P>
+        </Definition>
     </NotesSection>
 
     <NotesSection id="h2-script-as-pipeline-stage">
@@ -298,14 +540,27 @@ import NotesSection from "~/layouts/NotesSection.astro";
             headingLevel="h2" Icon={icons.PuzzlePiece}
             slot="heading"
         >
-            Un script también puede ser una etapa del pipeline
+            <NushellInline code="run" /> como culminación: un script como etapa del pipeline
         </Heading>
 
         <P>
             Nushell <B>0.114</B> introdujo <NushellInline code="run" />, que permite que un script <Mono>.nu</Mono>
             reciba una entrada de pipeline, la transforme y entregue un valor que el siguiente comando puede seguir
-            componiendo. Los ejemplos de esta sección requieren Nushell <B>0.114+</B>.
+            componiendo, ejecutándose en su propio ámbito. Los ejemplos de esta sección requieren Nushell
+            <B>0.114+</B>. Con lo visto hasta aquí, esta capacidad completa la progresión: valores estructurados,
+            contratos de tipo declarados y ahora un script reusable que participa del pipeline como una etapa más.
         </P>
+
+        <OutputBlock
+            code={`
+                structured values
+                → typed pipeline contracts
+                → reusable script
+                → reusable script as pipeline stage
+            `}
+        >
+            <span slot="title">La progresión que llega a <NushellInline code="run" /></span>
+        </OutputBlock>
 
         <NushellBlock
             code={`
@@ -336,8 +591,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </NushellBlock>
 
         <P>
-            Con <NushellInline code="run" />, este script puede recibir un valor estructurado, producir otro y dejar
-            que el pipeline continúe filtrando el resultado:
+            Igual que <NushellInline code="album-title" />, este script declara <NushellInline
+                code="record -> record"
+            />: recibe un <I>record</I> de pipeline y produce otro. Con <NushellInline code="run" />, puede participar
+            directamente como etapa dentro de un pipeline mayor:
         </P>
 
         <NushellBlock
@@ -365,19 +622,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Play}>
-                    La firma <NushellInline code="def main []: record -> record" /> declara que este script espera
-                    recibir un <I>record</I> por pipeline y devuelve otro; <NushellInline code="$in" /> lee ese valor
-                    de entrada dentro de <NushellInline code="main" />.
-                </ListItem>
-
-                <ListItem icon={icons.PuzzlePiece}>
                     <NushellInline code="run check-library-layout.nu" /> ejecuta el script como una etapa más del
-                    pipeline, no como un proceso separado cuya salida haya que reinterpretar.
+                    pipeline de valores estructurados, no como un proceso separado cuya salida haya que reinterpretar.
                 </ListItem>
 
                 <ListItem icon={icons.Funnel}>
-                    <NushellInline code="where not complete" /> sigue trabajando sobre los campos del resultado
-                    devuelto por el script, exactamente como lo haría con cualquier otro <I>record</I>.
+                    <NushellInline code="where not complete" /> sigue trabajando sobre los campos del resultado devuelto
+                    por el script, exactamente como lo haría con cualquier otro <I>record</I>.
                 </ListItem>
             </List>
         </Explanation>
@@ -386,42 +637,51 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">La diferencia clave</span>
 
             <P>
-                Aquí aparece una diferencia que no es solo sintáctica. El script de Nushell puede formar parte
-                directamente de un pipeline de valores estructurados: recibe un valor, produce otro y el siguiente
+                Aquí aparece una diferencia que no es solo sintáctica: <NushellInline
+                    code="record → run check-library-layout.nu → record → where"
+                /> se mantiene íntegramente dentro del pipeline interno de Nushell. El script de Nushell puede formar
+                parte directamente de un pipeline de valores estructurados: recibe un valor, produce otro y el siguiente
                 comando continúa trabajando con su estructura. Un programa Kotlin puede implementar una interfaz o
                 protocolo equivalente, pero este modelo de composición no forma parte de su mecanismo habitual de
                 ejecución como proceso.
             </P>
-
-            <P>
-                Esto tampoco significa que cualquier programa externo preserve automáticamente esos valores. Al cruzar
-                hacia un proceso externo, volvemos a una frontera de texto o bytes y debemos decidir cómo representar
-                los datos.
-            </P>
         </Definition>
     </NotesSection>
 
-    <NotesSection id="h2-where-structure-is-lost">
+    <NotesSection id="h2-representation-and-execution-boundary">
         <Heading
             headingLevel="h2" Icon={icons.WarningCircle}
             slot="heading"
         >
-            Dónde se pierde la estructura
+            Dónde la representación vuelve a ser explícita
         </Heading>
 
         <P>
-            Todos los ejemplos anteriores se mantienen dentro de comandos internos de Nushell. Cuando el pipeline
-            cruza hacia un proceso externo<Dash kind="em" />por ejemplo, un ejecutable compilado o un comando del
-            sistema<Dash kind="em" />, esa frontera deja de ser transparente: la salida estándar del proceso llega
-            como texto o bytes, no como un <I>record</I> o una tabla.
+            Todos los ejemplos anteriores <Dash kind="em" />desde el sistema de archivos hasta <NushellInline
+                code="run"
+            /><Dash kind="em" /> se mantienen dentro de comandos y scripts internos de Nushell. Cuando el pipeline cruza
+            hacia un proceso externo<Dash kind="em" />por ejemplo, un ejecutable compilado o un comando del sistema<Dash
+                kind="em"
+            />, esa frontera deja de ser transparente: la salida estándar del proceso llega como texto o bytes, no como
+            un <I>record</I> o una tabla.
         </P>
 
-        <NushellBlock
-            code={`
+        <NushellBlock code={`
+                value | run script.nu | internal-command
+            `}>
+            <span slot="title">Dentro del runtime: el valor se mantiene estructurado</span>
+        </NushellBlock>
+
+        <NushellBlock code={`
+                value | ^external-program | parse
+            `}>
+            <span slot="title">Cruzando la frontera: hay que reconstruir la estructura</span>
+        </NushellBlock>
+
+        <NushellBlock code={`
                 ^git rev-parse --short HEAD
                 | str trim
-            `}
-        >
+            `}>
             <span slot="title">Un proceso externo entrega texto, no datos estructurados</span>
         </NushellBlock>
 
@@ -430,85 +690,77 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 El prefijo <NushellInline code="^" /> invoca <NushellInline code="git" /> como proceso externo. Su
                 salida es una cadena de texto que necesitamos limpiar con <NushellInline code="str trim" />; si ese
                 proceso entregara JSON, tendríamos que reconstruir la estructura explícitamente con un comando como
-                <NushellInline code="from json" />. Nushell no asume que todo proceso externo comparte su modelo
-                interno de datos.
+                <NushellInline code="from json" />. Nushell no asume que todo proceso externo comparte su modelo interno
+                de datos, y esa es exactamente la limitación que motiva pensar en contratos de tipo explícitos entre
+                etapas de un pipeline, como los que documentan <ReferenceCitation
+                    {...citationContext} referenceId="sippel-process-composition-typed-unix-pipes-2023"
+                >Sippel y Schirmeier (2023)</ReferenceCitation>.
             </P>
         </Explanation>
-    </NotesSection>
-
-    <NotesSection id="h2-native-nushell-vs-kotlin">
-        <Heading
-            headingLevel="h2" Icon={icons.Stack}
-            slot="heading"
-        >
-            Qué ofrece Nushell nativamente que Kotlin no ofrece como modelo de ejecución
-        </Heading>
 
         <P>
-            El recorrido de esta lección fue progresivamente más consecuente: primero, el sistema de archivos ya
-            entrega datos estructurados; luego, filtrar y seleccionar campos no exige convertir nada a texto; después,
-            formatos como NUON se cargan directamente como valores; y finalmente, un script <Mono>.nu</Mono> puede
-            participar como una etapa más de un pipeline estructurado.
-        </P>
-
-        <List>
-            <ListItem icon={icons.Database}>Datos de sistema de archivos estructurados desde el origen.</ListItem>
-            <ListItem icon={icons.Funnel}>Transformaciones estructuradas sin serialización intermedia.</ListItem>
-            <ListItem icon={icons.FileCode}>Formatos de archivo comunes cargados como valores nativos.</ListItem>
-            <ListItem icon={icons.PuzzlePiece}>Un script pipeline-native como etapa de composición.</ListItem>
-            <ListItem icon={icons.WarningCircle}>Una frontera explícita hacia procesos externos.</ListItem>
-        </List>
-
-        <P>
-            <B>Un script de Nushell puede integrarse nativamente como una etapa de un pipeline estructurado de
-            Nushell. Un programa Kotlin puede implementar protocolos o abstracciones equivalentes, pero ese modelo no
-            forma parte de la composición estándar de procesos de Kotlin.</B> La diferencia no está en qué es capaz de
-            calcular cada lenguaje, sino en qué modelo de composición ofrece el entorno de ejecución de manera nativa.
+            <B>Nushell no amplía qué transformaciones son computables respecto de Kotlin; cambia qué contratos de
+                composición ofrece directamente su entorno de ejecución.</B> Dentro de un pipeline de Nushell, comandos
+            y scripts pueden intercambiar valores estructurados y exponer tipos de entrada y salida. Al cruzar hacia un
+            proceso externo, esa garantía deja de estar implícita y vuelve a ser necesario acordar una representación.
         </P>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                El script de apoyo revisado en Kotlin sigue resolviendo el mismo problema en Nushell: recibir un
-                proyecto, comprobar archivos esperados y comunicar el resultado. Lo que cambia por completo es el
-                modelo de ejecución que sostiene ese contrato. En Nushell, el sistema de archivos, los formatos de
-                archivo comunes y hasta el propio script participan del mismo lenguaje de valores estructurados que
-                atraviesa el pipeline.
+                <B>Los pipelines no son nuevos:</B> heredamos de Unix una forma particularmente poderosa de componer
+                programas independientes conectando su entrada y su salida.
             </P>
 
             <P>
-                Esa diferencia no convierte a Kotlin en un lenguaje computacionalmente limitado: cualquier
-                transformación mostrada aquí también puede escribirse en Kotlin. Lo que Nushell ofrece de forma nativa
-                es un modelo de composición de procesos donde un script puede recibir y producir datos estructurados
-                como una etapa más del pipeline, sin que eso exija diseñar una interfaz o protocolo adicional.
+                <B>La representación importa:</B> pasar valores estructurados en lugar de texto reduce la necesidad de
+                reconstruir significado dentro del mismo runtime, y exponer contratos de tipo entre etapas hace
+                explícita la compatibilidad de una composición antes de ejecutarla.
+            </P>
+
+            <P>
+                <B>La frontera importa:</B> cuando dejamos el runtime de Nushell para ejecutar otro proceso, debemos
+                volver a hacer explícito cómo se representan y reconstruyen los datos. Esa frontera no depende de qué
+                puede calcular cada lenguaje, sino de qué modelo de composición ofrece de forma nativa el entorno de
+                ejecución.
+            </P>
+
+            <P>
+                composición → representación → contratos de tipo → frontera de proceso
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
+            <ListItem icon={icons.GitBranch}>
+                Nushell hereda la composición universal del shell Unix; su aporte es transportar valores estructurados
+                entre comandos internos en lugar de solo bytes.
+            </ListItem>
+
             <ListItem icon={icons.Database}>
                 Los comandos internos de Nushell, como <NushellInline code="ls" />, entregan valores estructurados
                 <Dash kind="em" />registros y listas<Dash kind="em" />, no texto para reinterpretar.
             </ListItem>
 
-            <ListItem icon={icons.Table}>
-                La visualización tabular es una forma de mostrar datos estructurados, no un tipo de dato distinto.
+            <ListItem icon={icons.FileCode}>
+                <NushellInline code="open" /> integra el paso de decodificación de un formato reconocido<Dash
+                    kind="em"
+                />como JSON<Dash kind="em" /> al flujo normal del shell, sin eliminar la elección de formato.
             </ListItem>
 
-            <ListItem icon={icons.FileCode}>
-                <NushellInline code="open" /> carga formatos como NUON, JSON, TOML o YAML directamente como valores,
-                sin requerir una biblioteca de deserialización adicional.
+            <ListItem icon={icons.Scales}>
+                Desde Nushell 0.114, los comandos pueden declarar y verificar contratos de tipo de entrada y salida
+                antes de ejecutarse.
             </ListItem>
 
             <ListItem icon={icons.PuzzlePiece}>
-                Desde Nushell 0.114, <NushellInline code="run" /> permite que un script <Mono>.nu</Mono> reciba
-                entrada de pipeline, la transforme y produzca un valor que el siguiente comando puede seguir
-                componiendo.
+                <NushellInline code="run" /> permite que un script <Mono>.nu</Mono> participe como una etapa más de un
+                pipeline estructurado, culminando esa progresión.
             </ListItem>
 
             <ListItem icon={icons.WarningCircle}>
-                La estructura se pierde en la frontera hacia procesos externos: su salida llega como texto o bytes
-                hasta que se reconstruye explícitamente.
+                La estructura vuelve a ser una elección explícita en la frontera hacia procesos externos: su salida
+                llega como texto o bytes hasta que se reconstruye.
             </ListItem>
         </Fragment>
 
@@ -516,23 +768,33 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <P>
                 La pregunta que abrió esta lección no era solo sintáctica: ¿qué cambia cuando el propio shell trabaja
                 con datos estructurados? La respuesta no es que Nushell pueda calcular algo que Kotlin no pueda
-                calcular, sino que ofrece, de forma nativa, un modelo de composición de procesos distinto: uno donde
-                un script pequeño puede convertirse en una pieza más de un pipeline de datos, en lugar de un programa
+                calcular, sino que ofrece, de forma nativa, un modelo de composición de procesos distinto: uno donde un
+                script pequeño puede convertirse en una pieza más de un pipeline de datos, en lugar de un programa
                 aislado que solo produce texto.
             </P>
         </Fragment>
     </ConclusionsLayout>
 
-    <ReferencesFromCatalog lessonId="/notes/scripting/support-scripts/nushell/">
-        <Fragment slot="description-ref:nushell-pipelines">
-            Documentación oficial sobre pipelines en Nushell: cómo los comandos internos transmiten valores
-            estructurados entre etapas y en qué punto la frontera con procesos externos vuelve a introducir texto o
-            bytes sin estructura.
-        </Fragment>
+    <NotesSection id="continue-reading">
+        <Heading
+            headingLevel="h2" Icon={icons.BookOpen}
+            slot="heading"
+        >
+            Continúa explorando
+        </Heading>
 
-        <Fragment slot="description-ref:nushell-open-command">
-            Referencia del comando <NushellInline code="open" />, que carga formatos comunes como NUON, JSON, TOML,
-            YAML o CSV directamente como valores de Nushell, sin un paso de deserialización manual.
-        </Fragment>
-    </ReferencesFromCatalog>
+        <P>
+            Si quieres profundizar, puedes explorar las lecturas complementarias sobre la historia de los pipelines
+            Unix, pipes tipados, la documentación oficial de Nushell y la pedagogía de los modelos de ejecución.
+        </P>
+        <p class="mt-5">
+            <a
+                href={lessonReadingsRoute(supportScriptsNushellReadings.lessonPath)}
+                class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
+            >
+                Ver lecturas complementarias
+                <icons.ArrowRight class="ml-2 size-5" aria-hidden="true" />
+            </a>
+        </p>
+    </NotesSection>
 </NotesLayout>

@@ -10,4 +10,8 @@
  * @see {@link LessonReadingsAdapter} for the concrete data adapter.
  */
 
-export { getLibraryWhatIsReadings, getPublishedReadings } from "$infrastructure/adapters/LessonReadingsAdapter";
+export {
+    getLibraryWhatIsReadings,
+    getPublishedReadings,
+    getSupportScriptsNushellReadings,
+} from "$infrastructure/adapters/LessonReadingsAdapter";
