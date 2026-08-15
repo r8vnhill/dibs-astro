@@ -19,6 +19,7 @@ $ node generate-icons-index.js
 ```
 
 **Result**: ✅ Icon generation hook successfully:
+
 - Watches the new `packages/phosphor-icons/src/` directory
 - Generates `src/index.ts` barrel with 1,521 SVG exports
 - Generates logos barrel independently
@@ -62,17 +63,20 @@ $ node generate-icons-index.js
 All 83 icon consumers remain functional:
 
 **Callout Components** (11 files):
+
 - `Abstract.astro`, `Danger.astro`, `Definition.astro`, etc.
 - Import from `shared.ts`
 - Transitively resolve icons through `$icons` → `packages/phosphor-icons/src/index.ts`
 - ✅ Zero code changes required
 
 **Reference Components** (6 files):
+
 - `Book.astro`, `Video.astro`, `References.astro`, etc.
 - Use icons from barrel
 - ✅ Functional with new alias target
 
 **Notes Pages** (66+ files):
+
 - Use callout and reference components
 - Transitively resolve icons
 - ✅ All components render correctly
@@ -89,9 +93,7 @@ packages/phosphor-icons/src/index.ts:
   - Total: 1,524 lines
 ```
 
-**TypeScript typecheck**: ✅ Zero errors
-**Lint**: ✅ All checks pass
-**Package check**: ✅ SVG parity maintained
+**TypeScript typecheck**: ✅ Zero errors **Lint**: ✅ All checks pass **Package check**: ✅ SVG parity maintained
 
 ---
 
@@ -144,47 +146,52 @@ All 1,521 PascalCase export names remain identical:
 
 ## Metrics
 
-| Metric                      | Value         |
-| --------------------------- | ------------- |
-| Icon consumers affected     | 83            |
-| Code changes required       | 0             |
-| SVG files moved             | 1,521         |
-| Exports generated           | 1,521         |
-| SVGs copied to dist/        | 1,521         |
-| Icon count parity           | 100% ✅       |
-| Files in dist/              | 1,524         |
-| TypeScript errors           | 0             |
-| Build script errors         | 0             |
-| Import resolution errors    | 0             |
-| Alias resolution failures   | 0             |
-| Workspace linking issues    | 0             |
-| Time to completion          | < 10 minutes  |
+| Metric                    | Value        |
+| ------------------------- | ------------ |
+| Icon consumers affected   | 83           |
+| Code changes required     | 0            |
+| SVG files moved           | 1,521        |
+| Exports generated         | 1,521        |
+| SVGs copied to dist/      | 1,521        |
+| Icon count parity         | 100% ✅      |
+| Files in dist/            | 1,524        |
+| TypeScript errors         | 0            |
+| Build script errors       | 0            |
+| Import resolution errors  | 0            |
+| Alias resolution failures | 0            |
+| Workspace linking issues  | 0            |
+| Time to completion        | < 10 minutes |
 
 ---
 
 ## What This Validates
 
 ✅ **Icon generation integration**
+
 - Hook correctly targets new package source
 - Generation script finds all SVGs
 - Barrel exports remain consistent
 
 ✅ **Path alias resolution**
+
 - `$icons` correctly resolves to package source
 - TypeScript compiler follows alias chain
 - Runtime import resolution matches build-time resolution
 
 ✅ **Consumer compatibility**
+
 - All 83 icon-consuming components remain functional
 - Alias transparency works as designed
 - No code refactoring required in app
 
 ✅ **Package accessibility**
+
 - Package is discoverable by pnpm
 - Workspace linking functional
 - Dev and prod both access same source barrel
 
 ✅ **End-to-end behavior preservation**
+
 - Icon assets accessible to dev server
 - Icon assets accessible to production build
 - Generated icon names unchanged
@@ -194,40 +201,46 @@ All 1,521 PascalCase export names remain identical:
 
 ## Verification Checklist
 
-| Item                                          | Status |
-| --------------------------------------------- | ------ |
-| Icon generation runs without error            | ✅     |
-| Icon barrel in new location                   | ✅     |
-| 1,521 exports generated                       | ✅     |
-| `$icons` alias functional                     | ✅     |
-| Package dependency declared                   | ✅     |
-| Check script integrated                       | ✅     |
-| All consumers accessible                      | ✅     |
-| TypeScript compilation passes                 | ✅     |
-| No old icon path references                   | ✅     |
-| SVG count parity maintained                   | ✅     |
-| Build succeeds                                | ✅     |
-| Package checks pass                           | ✅     |
+| Item                               | Status |
+| ---------------------------------- | ------ |
+| Icon generation runs without error | ✅     |
+| Icon barrel in new location        | ✅     |
+| 1,521 exports generated            | ✅     |
+| `$icons` alias functional          | ✅     |
+| Package dependency declared        | ✅     |
+| Check script integrated            | ✅     |
+| All consumers accessible           | ✅     |
+| TypeScript compilation passes      | ✅     |
+| No old icon path references        | ✅     |
+| SVG count parity maintained        | ✅     |
+| Build succeeds                     | ✅     |
+| Package checks pass                | ✅     |
 
 ---
 
 ## Key Findings
 
 ### 1. Alias Transparency
+
 The `$icons` alias proved fully transparent to consumers. No code changes needed because:
+
 - All imports go through aliases (not hardcoded paths)
 - Alias resolution happens at TypeScript level
 - Runtime bundle receives same exports
 
 ### 2. Zero Breaking Changes
+
 No component breaks:
+
 - Callout components still render
 - Reference components still access icons
 - Notes pages still display callouts
 - 83 consumers all functional
 
 ### 3. Generation Hook Works
+
 The existing icon generator (`generate-icons-index.js`) successfully adapted to new location:
+
 - Finds 1,521 SVGs in new path
 - Generates identical barrel structure
 - No updates to generator code needed
@@ -237,12 +250,15 @@ The existing icon generator (`generate-icons-index.js`) successfully adapted to 
 ## Impact on Codebase
 
 ### Files Modified (Phase 5)
+
 - None (verification-only phase)
 
 ### Code Changes
+
 - None (all changes completed in Phase 3-4)
 
 ### Rollback Complexity
+
 - N/A (no modifications in this phase)
 
 ---
@@ -251,11 +267,11 @@ The existing icon generator (`generate-icons-index.js`) successfully adapted to 
 
 All five phases now complete:
 
-| Phase | Goal                                   | Status | Date       |
-| ----- | -------------------------------------- | ------ | ---------- |
+| Phase | Goal                                  | Status | Date       |
+| ----- | ------------------------------------- | ------ | ---------- |
 | 0     | Document baseline and SVG contract    | ✅     | 2026-06-16 |
 | 1     | Create package scaffold               | ✅     | 2026-06-16 |
-| 2     | Move SVGs and generate barrel        | ✅     | 2026-06-16 |
+| 2     | Move SVGs and generate barrel         | ✅     | 2026-06-16 |
 | 3     | Wire Astro app to package source      | ✅     | 2026-06-16 |
 | 4     | Validate package build and shape      | ✅     | 2026-06-16 |
 | 5     | Validate end-to-end Astro integration | ✅     | 2026-06-16 |
@@ -280,6 +296,7 @@ The Astro application successfully consumes the extracted `@ravenhill/phosphor-i
 **The phosphor-icons extraction migration is production-ready.**
 
 All 1,521 Phosphor SVG icons are now:
+
 - Organized in `packages/phosphor-icons/src/`
 - Exported via generated barrel at `packages/phosphor-icons/src/index.ts`
 - Aliased as `$icons` in the Astro app's `tsconfig.json`

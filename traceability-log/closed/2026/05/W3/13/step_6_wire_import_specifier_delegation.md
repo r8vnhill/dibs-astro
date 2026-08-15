@@ -8,7 +8,8 @@ stable.
 
 ## Verified Boundary
 
-- `classifyImport()` calls `extractImportPath()`, `classifyImportKind()`, and `classifyUnresolvedImport()` from the helper module.
+- `classifyImport()` calls `extractImportPath()`, `classifyImportKind()`, and `classifyUnresolvedImport()` from the
+  helper module.
 - `classifyResolvedTarget()` remains local to the classifier module.
 - `normalizeProjectPath()` remains local to the classifier module for resolved paths.
 - `classifyPackageImport()` is still available through the classifier module compatibility export.

@@ -2,8 +2,8 @@
 
 ## TL;DR
 
-If development fails with a `vite:invoke fetchModule` timeout involving
-`/src/styles/global.css`, do not assume the stylesheet itself is broken.
+If development fails with a `vite:invoke fetchModule` timeout involving `/src/styles/global.css`, do not assume the
+stylesheet itself is broken.
 
 First:
 
@@ -12,8 +12,8 @@ First:
 3. Restart with `pnpm dev`.
 4. If the failure repeats on the same edit, capture verbose logs before changing CSS or Shiki-related code.
 
-`DIBS_SHIKI_RUNTIME_PATCH_ENABLED` is not currently read by `config/shiki-warn-tracker.ts`. If it is set in a shell, unset
-it as stale environment cleanup, not because it is an active runtime-patch switch in the current implementation.
+`DIBS_SHIKI_RUNTIME_PATCH_ENABLED` is not currently read by `config/shiki-warn-tracker.ts`. If it is set in a shell,
+unset it as stale environment cleanup, not because it is an active runtime-patch switch in the current implementation.
 
 ## Symptom
 
@@ -47,8 +47,8 @@ caused elsewhere in the module graph.
 
 Repository-backed facts:
 
-- `src/styles/global.css` no longer contains remote font imports and documents that remote font `@import` statements were
-  moved out of CSS.
+- `src/styles/global.css` no longer contains remote font imports and documents that remote font `@import` statements
+  were moved out of CSS.
 - `src/components/meta/Head.astro` loads Google Fonts via `<link rel="stylesheet">`.
 - `config/shiki-warn-tracker.ts` currently suppresses noisy `[Shiki]` warnings only.
 - `pnpm dev` and `pnpm preview` set `DIBS_SHIKI_RUNTIME_PATCH_ENABLED=false` for child processes, but no current config
@@ -142,7 +142,8 @@ Avoid these changes unless a fresh trace justifies them:
 - Do not reintroduce remote CSS `@import url(...)` font loading into `global.css`.
 - Do not assume `DIBS_SHIKI_RUNTIME_PATCH_ENABLED` is an active runtime-patch switch unless code is reintroduced to read
   it.
-- Do not add retry logic around unrelated CSS imports without proving that the retry boundary owns the failing operation.
+- Do not add retry logic around unrelated CSS imports without proving that the retry boundary owns the failing
+  operation.
 
 ## When to investigate further
 
@@ -191,5 +192,5 @@ configuration, consider Astro's `astro:env` schema support for typed environment
 ## Scope of this note
 
 This note documents repository-backed findings and the most likely failure mechanism. It does **not** claim a single
-proven root cause for every future `vite:invoke fetchModule` timeout, because those timeouts are transport-level symptoms
-and can surface through different module paths.
+proven root cause for every future `vite:invoke fetchModule` timeout, because those timeouts are transport-level
+symptoms and can surface through different module paths.

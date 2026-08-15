@@ -2,9 +2,12 @@
 
 ## Summary
 
-Refactor the numeric page-reference utilities so the JavaScript catalog path and the typed TypeScript/Astro/UI path share the same runtime semantics.
+Refactor the numeric page-reference utilities so the JavaScript catalog path and the typed TypeScript/Astro/UI path
+share the same runtime semantics.
 
-This refactor keeps the domain intentionally narrow: a page reference is still a positive, safe-integer numeric page or numeric page range. The goal is not to introduce text parsing, citation locators, Roman numerals, article numbers, or broader bibliographic locator modelling.
+This refactor keeps the domain intentionally narrow: a page reference is still a positive, safe-integer numeric page or
+numeric page range. The goal is not to introduce text parsing, citation locators, Roman numerals, article numbers, or
+broader bibliographic locator modelling.
 
 The refactor introduces two contract improvements:
 
@@ -37,22 +40,21 @@ No public API names should be renamed, and no generated bibliography data shapes
 
 ### 1. `pages-core.mjs` owns runtime behaviour
 
-Move shared behaviour into `pages-core.mjs` and make `pages.ts` delegate to it rather than reimplementing equivalent logic.
+Move shared behaviour into `pages-core.mjs` and make `pages.ts` delegate to it rather than reimplementing equivalent
+logic.
 
 `pages-core.mjs` should expose the runtime helpers needed by both paths:
 
 ```js
 export const DEFAULT_PAGE_FORMAT = Object.freeze({
-  singleLabel: "p.",
-  rangeLabel: "pp.",
-  separator: "–",
+    singleLabel: "p.",
+    rangeLabel: "pp.",
+    separator: "–",
 });
 
-export const isValidPageNumber = (value) =>
-  typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+export const isValidPageNumber = (value) => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 
-export const isRecord = (value) =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
+export const isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
 ```
 
 Prefer a small helper set:
@@ -93,31 +95,32 @@ Parsing functions should accept arbitrary values at runtime.
 This distinction is important:
 
 ```ts
-isPageReference({ start: 10, end: 2 }) // false
-parsePageReference(10, 2)              // { start: 2, end: 10 }
+isPageReference({ start: 10, end: 2 }); // false
+parsePageReference(10, 2); // { start: 2, end: 10 }
 ```
 
 The guard validates an already-normalised value. The parser normalises raw numeric bounds.
 
 ### 3. Keep formatter strict over trusted values
 
-`formatPageReference` should not repair, reorder, or validate arbitrary input. It should format `PageReference | undefined`.
+`formatPageReference` should not repair, reorder, or validate arbitrary input. It should format
+`PageReference | undefined`.
 
 Allowed:
 
 ```ts
-formatPageReference(undefined)
-formatPageReference({ start: 1 })
-formatPageReference({ start: 1, end: 3 })
-formatPageReference(pages, { singleLabel: "page" })
+formatPageReference(undefined);
+formatPageReference({ start: 1 });
+formatPageReference({ start: 1, end: 3 });
+formatPageReference(pages, { singleLabel: "page" });
 ```
 
 Not required:
 
 ```ts
-formatPageReference({ start: "1" })
-formatPageReference({ start: 10, end: 2 })
-formatPageReferenceInput(input)
+formatPageReference({ start: "1" });
+formatPageReference({ start: 10, end: 2 });
+formatPageReferenceInput(input);
 ```
 
 Add `formatPageReferenceInput` only if a real caller currently needs defensive formatting.
@@ -127,7 +130,7 @@ Add `formatPageReferenceInput` only if a real caller currently needs defensive f
 Change formatter options from all-or-nothing to partial customisation.
 
 ```ts
-formatPageReference({ start: 1, end: 3 }, { singleLabel: "page" })
+formatPageReference({ start: 1, end: 3 }, { singleLabel: "page" });
 ```
 
 should still use the default `rangeLabel` and `separator`:
@@ -150,8 +153,8 @@ Preferred conservative option:
 
 ```ts
 export interface PageReference {
-  readonly start: number;
-  readonly end?: number;
+    readonly start: number;
+    readonly end?: number;
 }
 ```
 
@@ -161,16 +164,17 @@ Stricter option, only if ergonomic:
 declare const pageNumberBrand: unique symbol;
 
 export type PageNumber = number & {
-  readonly [pageNumberBrand]: "PageNumber";
+    readonly [pageNumberBrand]: "PageNumber";
 };
 
 export interface PageReference {
-  readonly start: PageNumber;
-  readonly end?: PageNumber;
+    readonly start: PageNumber;
+    readonly end?: PageNumber;
 }
 ```
 
-If callers already trust `PageReference` as the validated boundary, keeping only the existing `PageReference` abstraction is probably enough for this cycle.
+If callers already trust `PageReference` as the validated boundary, keeping only the existing `PageReference`
+abstraction is probably enough for this cycle.
 
 ## Implementation Plan
 
@@ -215,25 +219,25 @@ Use DDT cases for `parsePageReferenceInput(input)`:
 
 ```ts
 it.each([
-  undefined,
-  null,
-  true,
-  false,
-  1,
-  "1",
-  Symbol("page"),
-  () => ({ start: 1 }),
-  [],
-  [1, 2],
-  {},
-  { end: 2 },
-  { start: 0 },
-  { start: -1 },
-  { start: 1.5 },
-  { start: Number.MAX_SAFE_INTEGER + 1 },
-  { start: 1, end: "2" },
+    undefined,
+    null,
+    true,
+    false,
+    1,
+    "1",
+    Symbol("page"),
+    () => ({ start: 1 }),
+    [],
+    [1, 2],
+    {},
+    { end: 2 },
+    { start: 0 },
+    { start: -1 },
+    { start: 1.5 },
+    { start: Number.MAX_SAFE_INTEGER + 1 },
+    { start: 1, end: "2" },
 ])("rejects invalid page-reference input: %p", (input) => {
-  expect(parsePageReferenceInput(input)).toBeUndefined();
+    expect(parsePageReferenceInput(input)).toBeUndefined();
 });
 ```
 
@@ -241,11 +245,11 @@ Add positive cases:
 
 ```ts
 it.each([
-  [{ start: 1 }, { start: 1 }],
-  [{ start: 1, end: 3 }, { start: 1, end: 3 }],
-  [{ start: 3, end: 1 }, { start: 1, end: 3 }],
+    [{ start: 1 }, { start: 1 }],
+    [{ start: 1, end: 3 }, { start: 1, end: 3 }],
+    [{ start: 3, end: 1 }, { start: 1, end: 3 }],
 ])("parses valid page-reference input: %p", (input, expected) => {
-  expect(parsePageReferenceInput(input)).toEqual(expected);
+    expect(parsePageReferenceInput(input)).toEqual(expected);
 });
 ```
 
@@ -255,11 +259,11 @@ Add cases showing missing formatter fields fall back to defaults:
 
 ```ts
 expect(
-  formatPageReference({ start: 1, end: 3 }, { singleLabel: "page" }),
+    formatPageReference({ start: 1, end: 3 }, { singleLabel: "page" }),
 ).toBe("pp. 1–3");
 
 expect(
-  formatPageReference({ start: 1 }, { rangeLabel: "pages" }),
+    formatPageReference({ start: 1 }, { rangeLabel: "pages" }),
 ).toBe("p. 1");
 ```
 
@@ -283,21 +287,20 @@ Suggested shape:
 
 ```js
 const toPageReference = (start, end) => ({
-  start,
-  ...(end !== undefined ? { end } : {}),
+    start,
+    ...(end !== undefined ? { end } : {}),
 });
 
-const parsePageNumber = (value) =>
-  isValidPageNumber(value) ? value : undefined;
+const parsePageNumber = (value) => isValidPageNumber(value) ? value : undefined;
 
 const createOrderedPageReference = (first, second) =>
-  first <= second
-    ? toPageReference(first, second)
-    : toPageReference(second, first);
+    first <= second
+        ? toPageReference(first, second)
+        : toPageReference(second, first);
 
 export const resolvePageFormat = (options = {}) => ({
-  ...DEFAULT_PAGE_FORMAT,
-  ...(isRecord(options) ? options : {}),
+    ...DEFAULT_PAGE_FORMAT,
+    ...(isRecord(options) ? options : {}),
 });
 ```
 
@@ -305,40 +308,41 @@ Then keep public functions small:
 
 ```js
 export function parsePageReference(start, end) {
-  const pageStart = parsePageNumber(start);
-  if (pageStart === undefined) return undefined;
+    const pageStart = parsePageNumber(start);
+    if (pageStart === undefined) return undefined;
 
-  if (end === undefined) return toPageReference(pageStart);
+    if (end === undefined) return toPageReference(pageStart);
 
-  const pageEnd = parsePageNumber(end);
-  if (pageEnd === undefined) return undefined;
+    const pageEnd = parsePageNumber(end);
+    if (pageEnd === undefined) return undefined;
 
-  return createOrderedPageReference(pageStart, pageEnd);
+    return createOrderedPageReference(pageStart, pageEnd);
 }
 ```
 
 ```js
 export function parsePageReferenceInput(input) {
-  if (!isRecord(input)) return undefined;
+    if (!isRecord(input)) return undefined;
 
-  return parsePageReference(input.start, input.end);
+    return parsePageReference(input.start, input.end);
 }
 ```
 
 ```js
 export function formatPageReference(pages, options) {
-  if (!pages) return undefined;
+    if (!pages) return undefined;
 
-  const format = resolvePageFormat(options);
-  const isSinglePage = pages.end === undefined || pages.start === pages.end;
+    const format = resolvePageFormat(options);
+    const isSinglePage = pages.end === undefined || pages.start === pages.end;
 
-  return isSinglePage
-    ? `${format.singleLabel} ${pages.start}`
-    : `${format.rangeLabel} ${pages.start}${format.separator}${pages.end}`;
+    return isSinglePage
+        ? `${format.singleLabel} ${pages.start}`
+        : `${format.rangeLabel} ${pages.start}${format.separator}${pages.end}`;
 }
 ```
 
-Important: `formatPageReference` may assume `pages` is trusted. Do not add validation here unless a current caller passes untrusted data directly.
+Important: `formatPageReference` may assume `pages` is trusted. Do not add validation here unless a current caller
+passes untrusted data directly.
 
 ### Cycle 4: Refactor `pages.ts` as a Typed Facade
 
@@ -346,19 +350,19 @@ Keep TypeScript exports stable:
 
 ```ts
 export interface PageReference {
-  readonly start: number;
-  readonly end?: number;
+    readonly start: number;
+    readonly end?: number;
 }
 
 export interface PageReferenceInput {
-  readonly start?: unknown;
-  readonly end?: unknown;
+    readonly start?: unknown;
+    readonly end?: unknown;
 }
 
 export interface PageFormatOptions {
-  readonly singleLabel: string;
-  readonly rangeLabel: string;
-  readonly separator: string;
+    readonly singleLabel: string;
+    readonly rangeLabel: string;
+    readonly separator: string;
 }
 ```
 
@@ -366,24 +370,25 @@ Update formatter options:
 
 ```ts
 export function formatPageReference(
-  pages: PageReference | undefined,
-  options?: Partial<PageFormatOptions>,
+    pages: PageReference | undefined,
+    options?: Partial<PageFormatOptions>,
 ): string | undefined;
 ```
 
 Delegate runtime behaviour to `pages-core.mjs`.
 
-If TypeScript needs declarations for the `.mjs` module, add a narrow declaration file or local type assertions rather than duplicating logic.
+If TypeScript needs declarations for the `.mjs` module, add a narrow declaration file or local type assertions rather
+than duplicating logic.
 
 Preferred direction:
 
 ```ts
 import {
-  formatPageReference as formatCorePageReference,
-  isPageReference as isCorePageReference,
-  isValidPageNumber as isCoreValidPageNumber,
-  parsePageReference as parseCorePageReference,
-  parsePageReferenceInput as parseCorePageReferenceInput,
+    formatPageReference as formatCorePageReference,
+    isPageReference as isCorePageReference,
+    isValidPageNumber as isCoreValidPageNumber,
+    parsePageReference as parseCorePageReference,
+    parsePageReferenceInput as parseCorePageReferenceInput,
 } from "./pages-core.mjs";
 ```
 
@@ -391,16 +396,16 @@ Then wrap only for types:
 
 ```ts
 export const isValidPageNumber = isCoreValidPageNumber as (
-  value: unknown,
+    value: unknown,
 ) => value is number;
 
 export const isPageReference = isCorePageReference as (
-  value: unknown,
+    value: unknown,
 ) => value is PageReference;
 
 export const parsePageReference = parseCorePageReference as (
-  start: unknown,
-  end?: unknown,
+    start: unknown,
+    end?: unknown,
 ) => PageReference | undefined;
 ```
 
@@ -430,12 +435,12 @@ For any two valid positive safe integers, parsing produces an ordered range.
 
 ```ts
 fc.property(validPageNumber(), validPageNumber(), (a, b) => {
-  const result = parsePageReference(a, b);
+    const result = parsePageReference(a, b);
 
-  expect(result).toEqual({
-    start: Math.min(a, b),
-    end: Math.max(a, b),
-  });
+    expect(result).toEqual({
+        start: Math.min(a, b),
+        end: Math.max(a, b),
+    });
 });
 ```
 
@@ -445,7 +450,7 @@ Any value accepted by `isPageReference` remains valid after parsing its own fiel
 
 ```ts
 fc.property(validPageReference(), (pages) => {
-  expect(parsePageReferenceInput(pages)).toEqual(pages);
+    expect(parsePageReferenceInput(pages)).toEqual(pages);
 });
 ```
 
@@ -455,10 +460,10 @@ Every result produced by `parsePageReference` should satisfy `isPageReference`.
 
 ```ts
 fc.property(validPageNumber(), validPageNumber(), (a, b) => {
-  const result = parsePageReference(a, b);
+    const result = parsePageReference(a, b);
 
-  expect(result).toBeDefined();
-  expect(isPageReference(result)).toBe(true);
+    expect(result).toBeDefined();
+    expect(isPageReference(result)).toBe(true);
 });
 ```
 
@@ -468,10 +473,10 @@ Every valid page reference should format to a non-empty string.
 
 ```ts
 fc.property(validPageReference(), (pages) => {
-  const result = formatPageReference(pages);
+    const result = formatPageReference(pages);
 
-  expect(result).toEqual(expect.any(String));
-  expect(result.length).toBeGreaterThan(0);
+    expect(result).toEqual(expect.any(String));
+    expect(result.length).toBeGreaterThan(0);
 });
 ```
 
@@ -523,11 +528,13 @@ Mitigation: delegate directly to `pages-core.mjs` and use type-level wrappers on
 
 ### Risk: `.mjs` imports become awkward from TypeScript
 
-Mitigation: add a narrow declaration file for `pages-core.mjs` if needed, rather than moving shared runtime logic back into `pages.ts`.
+Mitigation: add a narrow declaration file for `pages-core.mjs` if needed, rather than moving shared runtime logic back
+into `pages.ts`.
 
 ### Risk: partial formatter options hide invalid option objects
 
-Mitigation: only accept object-like options in `resolvePageFormat`; otherwise fall back to defaults. Keep formatter options typed as `Partial<PageFormatOptions>` in TypeScript.
+Mitigation: only accept object-like options in `resolvePageFormat`; otherwise fall back to defaults. Keep formatter
+options typed as `Partial<PageFormatOptions>` in TypeScript.
 
 ### Risk: arrays pass `typeof value === "object"`
 

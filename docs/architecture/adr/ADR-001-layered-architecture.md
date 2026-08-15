@@ -1,13 +1,12 @@
 # ADR-001: Arquitectura de capas (Domain, Application, Infrastructure, Presentation)
 
-**Status:** Accepted
-**Date:** 2026-02-28
-**Deciders:** DIBS Team (Fase 1)
-**Refs:** [phase-0-foundations.md](../phase-0-foundations.md), [layer-separation.md](../layer-separation.md)
+**Status:** Accepted **Date:** 2026-02-28 **Deciders:** DIBS Team (Fase 1) **Refs:**
+[phase-0-foundations.md](../phase-0-foundations.md), [layer-separation.md](../layer-separation.md)
 
 ## Context
 
-El código actual mezcla lógica de negocio, orquestación de casos de uso, detalles de infraestructura e interfaz de usuario en componentes únicos. Esto genera:
+El código actual mezcla lógica de negocio, orquestación de casos de uso, detalles de infraestructura e interfaz de
+usuario en componentes únicos. Esto genera:
 
 - Difícil testabilidad: no se pueden probar reglas de negocio sin dependencias de UI/infraestructura
 - Acoplamiento fuerte: cambios en implementación de almacenamiento fuerzan refactoring de componentes
@@ -55,21 +54,22 @@ Adoptar arquitectura stratified (limpia) con cuatro capas:
 ### ¿Por qué alias de path?
 
 - `$domain/*`, `$application/*`, `$infrastructure/*`, `$presentation/*` hacen explícito el flujo de dependencias.
-- Linter puede validar: Application NO importa de Presentation, Presentation NO importa de Infrastructure directamente (solo via Application).
+- Linter puede validar: Application NO importa de Presentation, Presentation NO importa de Infrastructure directamente
+  (solo via Application).
 
 ## Consequences
 
 ### Positivas
 
-✅ Testabilidad: >90% de cobertura en Domain + Application con tests rápidos (jsdom <100ms).
-✅ Independencia: navegar entre Framework es trivial (Astro→Next, courseStructure→GraphQL, etc.).
-✅ Reusabilidad: servicios de Application usables desde CLI, cron jobs, webhooks.
+✅ Testabilidad: >90% de cobertura en Domain + Application con tests rápidos (jsdom <100ms). ✅ Independencia: navegar
+entre Framework es trivial (Astro→Next, courseStructure→GraphQL, etc.). ✅ Reusabilidad: servicios de Application
+usables desde CLI, cron jobs, webhooks.
 
 ### Negativas / Restricciones
 
-⚠️ Verbosidad inicial: más archivos (puertos, adaptadores, DTOs).
-⚠️ Curva de aprendizaje: requiere disciplina para respetar dependencias y evitar corto-circuitos.
-⚠️ Performance: en sitios pequeños (estáticos), la indirección via puertos puede parecer excesiva (mitigado con inlining en build).
+⚠️ Verbosidad inicial: más archivos (puertos, adaptadores, DTOs). ⚠️ Curva de aprendizaje: requiere disciplina para
+respetar dependencias y evitar corto-circuitos. ⚠️ Performance: en sitios pequeños (estáticos), la indirección via
+puertos puede parecer excesiva (mitigado con inlining en build).
 
 ## Implementation in Fase 1
 

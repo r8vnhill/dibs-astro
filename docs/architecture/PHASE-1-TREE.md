@@ -1,6 +1,7 @@
 # Phase 1: Layered Architecture Visualization
 
-> **Historical note:** This tree captures the repository at the end of Phase 1. It is not the current architecture snapshot. For the current boundaries after Phase 2 and Cycle 8, use `docs/architecture/layer-separation.md`.
+> **Historical note:** This tree captures the repository at the end of Phase 1. It is not the current architecture
+> snapshot. For the current boundaries after Phase 2 and Cycle 8, use `docs/architecture/layer-separation.md`.
 
 ## Current directory tree (after Phase 1)
 
@@ -70,15 +71,15 @@ INavigationService {
 ```typescript
 // 🟢 Application Service (orchestrator)
 class NavigationServiceImpl implements INavigationService {
-  constructor(private lessonCatalog: ILessonCatalog) {}
-  async resolveAutoNav(pathname: string) { /* logic */ }
+    constructor(private lessonCatalog: ILessonCatalog) {}
+    async resolveAutoNav(pathname: string) {/* logic */}
 }
 
 // 🟡 Infrastructure Adapter (implements port)
 class LessonCatalogAdapter implements ILessonCatalog {
-  async getCourseStructure() { /* maps courseStructure */ }
-  async flatten() { /* uses flattenLessons() */ }
-  async findByPath(pathname: string) { /* searches by href */ }
+    async getCourseStructure() {/* maps courseStructure */}
+    async flatten() {/* uses flattenLessons() */}
+    async findByPath(pathname: string) {/* searches by href */}
 }
 ```
 
@@ -108,14 +109,14 @@ Passing: 9/9 ✅
 
 ```json
 {
-  "compilerOptions": {
-    "paths": {
-      "$domain/*": ["src/domain/*"],           // ← New
-      "$application/*": ["src/application/*"], // ← New
-      "$infrastructure/*": ["src/infrastructure/*"], // ← New
-      "$presentation/*": ["src/presentation/*"]      // ← New
+    "compilerOptions": {
+        "paths": {
+            "$domain/*": ["src/domain/*"], // ← New
+            "$application/*": ["src/application/*"], // ← New
+            "$infrastructure/*": ["src/infrastructure/*"], // ← New
+            "$presentation/*": ["src/presentation/*"] // ← New
+        }
     }
-  }
 }
 ```
 
@@ -144,6 +145,4 @@ Not required until Phase 2:
 
 ---
 
-**Phase 1 · Completed**
-**Timestamp:** 2026-02-28
-**Status:** ✅ Ready for Phase 2 (Isolate Domain)
+**Phase 1 · Completed** **Timestamp:** 2026-02-28 **Status:** ✅ Ready for Phase 2 (Isolate Domain)

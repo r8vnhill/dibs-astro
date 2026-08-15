@@ -2,15 +2,15 @@
 
 ## Summary
 
-The first controlled GitLab Package Registry release path for `@ravenhill/content-core` is now documented and wired
-for manual use as `0.1.0`.
+The first controlled GitLab Package Registry release path for `@ravenhill/content-core` is now documented and wired for
+manual use as `0.1.0`.
 
 This phase keeps the release process **manual and maintainer-driven**. The goal is to validate that the package can be
-consumed as a real registry dependency before adding release automation, versioning workflows, or public
-documentation guarantees.
+consumed as a real registry dependency before adding release automation, versioning workflows, or public documentation
+guarantees.
 
-The package is published through the GitLab project npm endpoint and installed by consumers through the GitLab group
-npm endpoint, matching GitLab’s documented npm registry model. ([GitLab Documentation][1])
+The package is published through the GitLab project npm endpoint and installed by consumers through the GitLab group npm
+endpoint, matching GitLab’s documented npm registry model. ([GitLab Documentation][1])
 
 Known GitLab IDs:
 

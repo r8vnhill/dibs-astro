@@ -199,11 +199,10 @@ test("exports the book planning API from the package root", async () => {
 
 Create the full-course book target using existing pre-order course traversal and manifest-matched lesson entries.
 
-Status: implemented. `planBookExports` now builds a normalized manifest route lookup, traverses the host-provided
-course tree in pre-order, skips structural groups, skips course lessons without manifest entries, and creates one
-`full-course` target when exportable lessons exist. Coverage lives in
-`packages/lesson-export-core/tests/book-planning.test.ts`, and the package README describes the current Cycle 2
-planner behavior.
+Status: implemented. `planBookExports` now builds a normalized manifest route lookup, traverses the host-provided course
+tree in pre-order, skips structural groups, skips course lessons without manifest entries, and creates one `full-course`
+target when exportable lessons exist. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and
+the package README describes the current Cycle 2 planner behavior.
 
 ### Scope
 
@@ -397,10 +396,10 @@ describe("unit book planning", () => {
 
 Generate safe, deterministic book output paths under `outDir`.
 
-Status: implemented. `planBookExports` now assigns deterministic full-course and unit book paths under `outDir`,
-rejects path-like or unsafe target ids with `unsafe-output-path` findings, and omits unsafe targets from the returned
-target list. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and the package README
-documents the planned book path contract.
+Status: implemented. `planBookExports` now assigns deterministic full-course and unit book paths under `outDir`, rejects
+path-like or unsafe target ids with `unsafe-output-path` findings, and omits unsafe targets from the returned target
+list. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and the package README documents the
+planned book path contract.
 
 ### Scope
 
@@ -494,9 +493,9 @@ Represent absent already-exported lesson PDFs as findings while preserving valid
 
 Status: implemented. `planBookExports` now compares each planned lesson PDF path with the host-provided
 `availablePdfPaths` set, attaches `missing-input` warning findings to every affected target, mirrors those target
-findings in `plan.findings`, and keeps targets and lesson entries present for the consuming adapter to decide later
-CLI or assembly policy. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and the package
-README documents the missing-input contract.
+findings in `plan.findings`, and keeps targets and lesson entries present for the consuming adapter to decide later CLI
+or assembly policy. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and the package README
+documents the missing-input contract.
 
 ### Scope
 
@@ -595,10 +594,10 @@ describe("missing input findings", () => {
 Make route matching predictable across common route formatting differences.
 
 Status: implemented. `planBookExports` now builds a deterministic manifest index keyed by normalized lesson route,
-matches course links and manifest entries across common leading- and trailing-slash spelling differences, keeps the first
-manifest entry when later entries normalize to the same route, and reports `duplicate-manifest-route` warning findings
-for those later duplicates. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and the package
-README documents the normalized route matching and duplicate manifest route contract.
+matches course links and manifest entries across common leading- and trailing-slash spelling differences, keeps the
+first manifest entry when later entries normalize to the same route, and reports `duplicate-manifest-route` warning
+findings for those later duplicates. Coverage lives in `packages/lesson-export-core/tests/book-planning.test.ts`, and
+the package README documents the normalized route matching and duplicate manifest route contract.
 
 ### Scope
 
@@ -670,8 +669,8 @@ describe("route matching", () => {
 Make the planning layer ready for Phase 9.2 consumption.
 
 Status: implemented. The package root exports `planBookExports` and all public book-planning types, the root API test
-asserts that the planner and type contract resolve from `../src`, and the packed consumer validation imports the
-planner and book-planning types from `@ravenhill/lesson-export-core`. Internal helper functions remain private to
+asserts that the planner and type contract resolve from `../src`, and the packed consumer validation imports the planner
+and book-planning types from `@ravenhill/lesson-export-core`. Internal helper functions remain private to
 `src/book-planning.ts`.
 
 ### Scope

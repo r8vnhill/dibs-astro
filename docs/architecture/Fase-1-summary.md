@@ -2,9 +2,7 @@
 
 ## Status: ✅ COMPLETADO
 
-Iniciada y completada: 2026-02-28
-Metodología: TDD (tests primero)
-Coverage de tests: 5/5 pasando ✅
+Iniciada y completada: 2026-02-28 Metodología: TDD (tests primero) Coverage de tests: 5/5 pasando ✅
 
 ---
 
@@ -47,16 +45,17 @@ src/
 
 ```json
 {
-  "paths": {
-    "$domain/*": ["src/domain/*"],
-    "$application/*": ["src/application/*"],
-    "$infrastructure/*": ["src/infrastructure/*"],
-    "$presentation/*": ["src/presentation/*"]
-  }
+    "paths": {
+        "$domain/*": ["src/domain/*"],
+        "$application/*": ["src/application/*"],
+        "$infrastructure/*": ["src/infrastructure/*"],
+        "$presentation/*": ["src/presentation/*"]
+    }
 }
 ```
 
 Esto permite:
+
 ```typescript
 import { NavigationServiceImpl } from "$application/services";
 import { LessonCatalogAdapter } from "$infrastructure/adapters";
@@ -70,26 +69,25 @@ import { LessonCatalogAdapter } from "$infrastructure/adapters";
 
 ```typescript
 interface ILessonCatalog {
-  getCourseStructure(): Promise<Lesson[]>;
-  findByPath(pathname: string): Promise<Lesson | null>;
-  flatten(): Promise<Lesson[]>;        // Necesario para navegación lineal
+    getCourseStructure(): Promise<Lesson[]>;
+    findByPath(pathname: string): Promise<Lesson | null>;
+    flatten(): Promise<Lesson[]>; // Necesario para navegación lineal
 }
 ```
 
-**Responsable:** proporcionar acceso al catálogo sin exponer estructura interna.
-**Implementación Fase 1:** `LessonCatalogAdapter` (lee `courseStructure`).
-**Implementación futura:** API, GraphQL, MongoDB, etc.
+**Responsable:** proporcionar acceso al catálogo sin exponer estructura interna. **Implementación Fase 1:**
+`LessonCatalogAdapter` (lee `courseStructure`). **Implementación futura:** API, GraphQL, MongoDB, etc.
 
 ### 2. `INavigationService` — Resolución prev/next
 
 ```typescript
 interface INavigationService {
-  resolveAutoNav(pathname: string): Promise<NavigationResult>;
+    resolveAutoNav(pathname: string): Promise<NavigationResult>;
 }
 ```
 
-**Responsable:** orquestar resolución de navegación anterior/siguiente.
-**Implementación:** `NavigationServiceImpl` (depende de `ILessonCatalog`).
+**Responsable:** orquestar resolución de navegación anterior/siguiente. **Implementación:** `NavigationServiceImpl`
+(depende de `ILessonCatalog`).
 
 ---
 
@@ -101,15 +99,16 @@ interface INavigationService {
 
 ```typescript
 export class NavigationServiceImpl implements INavigationService {
-  constructor(private lessonCatalog: ILessonCatalog) {}
+    constructor(private lessonCatalog: ILessonCatalog) {}
 
-  async resolveAutoNav(pathname: string): Promise<NavigationResult> {
-    // Extrae slug → busca en catálogo aplanado → retorna prev/next
-  }
+    async resolveAutoNav(pathname: string): Promise<NavigationResult> {
+        // Extrae slug → busca en catálogo aplanado → retorna prev/next
+    }
 }
 ```
 
 **Responsabilidades:**
+
 - ✅ Extraer slug de rutas (`/notes/unit/lesson/` → `lesson`)
 - ✅ Buscar índice en lista plana de lecciones
 - ✅ Retornar nodos navegables con href normalizado (trailing slash)
@@ -129,13 +128,14 @@ Mapea `courseStructure` (tipo interno complejo) a `ILessonCatalog` (interfaz sim
 
 ```typescript
 export class LessonCatalogAdapter implements ILessonCatalog {
-  async getCourseStructure(): Promise<Lesson[]> {/* mapeo */}
-  async flatten(): Promise<Lesson[]> {/* usa flattenLessons */}
-  async findByPath(pathname: string): Promise<Lesson | null> {/* búsqueda */}
+    async getCourseStructure(): Promise<Lesson[]> {/* mapeo */}
+    async flatten(): Promise<Lesson[]> {/* usa flattenLessons */}
+    async findByPath(pathname: string): Promise<Lesson | null> {/* búsqueda */}
 }
 ```
 
 **Responsabilidades:**
+
 - ✅ Mapear estructura jerárquica actual (`kind: "link" | "group"`) a forma simplificada
 - ✅ Reutilizar `flattenLessons()` del dominio actual
 - ✅ Extraer slugs legibles de rutas (`/notes/.../help/` → `help`)
@@ -153,6 +153,7 @@ export class LessonCatalogAdapter implements ILessonCatalog {
 **Ubicación:** `src/application/services/__tests__/NavigationServiceImpl.test.ts`
 
 Tests (4 + 1 = 5):
+
 1. ✅ Primera lección: `previous === undefined`, `next` definido
 2. ✅ Lección del medio: ambos `previous` y `next` definidos
 3. ✅ Última lección: `next === undefined`, `previous` definido
@@ -166,6 +167,7 @@ Tests (4 + 1 = 5):
 **Ubicación:** `src/infrastructure/adapters/__tests__/LessonCatalogAdapter.test.ts`
 
 Tests (4):
+
 1. ✅ Retorna estructura del curso
 2. ✅ Aplana correctamente en lista lineal
 3. ✅ Busca lección por ruta
@@ -236,7 +238,7 @@ Tests (4):
 | Servicios implementados        | 1                                            |
 | Adaptadores implementados      | 1                                            |
 | Tests unitarios                | 5                                            |
-| Tests pasando                  | 5 ✅                                          |
+| Tests pasando                  | 5 ✅                                         |
 | Cobertura esperada             | >80% (jsdom)                                 |
 | Líneas de código (src/)        | ~300                                         |
 | Líneas de código (tests/)      | ~100                                         |
@@ -269,12 +271,13 @@ import { LessonCatalogAdapter } from "$infrastructure/adapters";
 
 ## Resumen ejecutivo
 
-**Fase 1 completada exitosamente.** Se estableció estructura base de capas estratificadas, definieron contratos (puertos) iniciales y se implementaron servicios Application + adaptadores Infrastructure con 100% de cobertura de tests. El proyecto está listo para Fase 2 (aislar lógica de dominio) o conectar Presentation incrementalmente sin riesgo de regresiones.
+**Fase 1 completada exitosamente.** Se estableció estructura base de capas estratificadas, definieron contratos
+(puertos) iniciales y se implementaron servicios Application + adaptadores Infrastructure con 100% de cobertura de
+tests. El proyecto está listo para Fase 2 (aislar lógica de dominio) o conectar Presentation incrementalmente sin riesgo
+de regresiones.
 
 **Bloqueantes:** Ninguno. Tests pasan, build (astro check) ejecutable, estructura lista para integración.
 
 ---
 
-*Documento generado: Fase 1 · Esqueleto de capas*
-*Fecha: 2026-02-28*
-*Autor: AI Copilot (DIBS)*
+_Documento generado: Fase 1 · Esqueleto de capas_ _Fecha: 2026-02-28_ _Autor: AI Copilot (DIBS)_

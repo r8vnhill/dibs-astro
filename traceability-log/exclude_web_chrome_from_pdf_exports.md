@@ -222,8 +222,7 @@ Validate that the generated PDF does **not** include:
 - global footer.
 
 Status: implemented by marking the global header/footer in `BaseLayout.astro`, reusing the existing
-`data-export-hidden="true"` contract in `NotesLayout.astro`, and adding a shared print rule in
-`src/styles/global.css`.
+`data-export-hidden="true"` contract in `NotesLayout.astro`, and adding a shared print rule in `src/styles/global.css`.
 
 ---
 

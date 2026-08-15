@@ -2,8 +2,10 @@
 
 ## Resumen
 
-Refactorizar `config/patches/shiki/createShikiHighlighter.ts` para que sea la única dueña del lifecycle del highlighter parcheado: normaliza config, cachea por config efectiva, expone `dispose`, elimina `any` relevantes y alinea el fallback con `text`.
-El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe reducirse o retirarse para evitar dos capas de caching sobre la misma factory. La supresión de warnings `[Shiki]` se mantiene.
+Refactorizar `config/patches/shiki/createShikiHighlighter.ts` para que sea la única dueña del lifecycle del highlighter
+parcheado: normaliza config, cachea por config efectiva, expone `dispose`, elimina `any` relevantes y alinea el fallback
+con `text`. El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe reducirse o retirarse para
+evitar dos capas de caching sobre la misma factory. La supresión de warnings `[Shiki]` se mantiene.
 
 ## Cambios clave
 
@@ -18,7 +20,8 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
   - limpiar la entrada cacheada si la creación falla
 - Simplificar `config/shiki-warn-tracker.ts`:
   - conservar el filtro de `console.warn`
-  - eliminar la memoización runtime de `createShikiHighlighter` o convertirla en no-op si el factory ya cachea internamente
+  - eliminar la memoización runtime de `createShikiHighlighter` o convertirla en no-op si el factory ya cachea
+    internamente
 - Endurecer tipos en `config/patches/shiki/types.ts` y callers:
   - reemplazar `Record<string, any>` por un `HighlightCallOptions`
   - tipar `themeOptions` como unión explícita (`{ theme } | { themes }`)
@@ -31,7 +34,8 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
   - mantener compatibilidad aceptando `plaintext` sólo como alias de entrada si todavía aparece en callers o tests
 - Revisar responsabilidad del aliasing:
   - conservar `withAliasResolution()` sólo si agrega política propia por encima de `langAlias`
-  - si sólo reexpresa `langAlias`, mover esa normalización al paso de config/estado y dejar el decorator con una responsabilidad más clara o eliminarlo
+  - si sólo reexpresa `langAlias`, mover esa normalización al paso de config/estado y dejar el decorator con una
+    responsabilidad más clara o eliminarlo
 
 ## APIs e interfaces
 
@@ -45,7 +49,8 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
   - `HighlightResultByFormat` o una unión discriminada por `format`
 - Contratos a mantener:
   - `codeToHtml(code, lang, options)` y `codeToHast(code, lang, options)` siguen siendo async
-  - la pipeline de decorators sigue siendo el punto de composición de aliasing, carga lazy, trimming e inyección de transformers
+  - la pipeline de decorators sigue siendo el punto de composición de aliasing, carga lazy, trimming e inyección de
+    transformers
 - Contratos a aclarar:
   - repeated calls con la misma config normalizada reutilizan la misma instancia/promise
   - `dispose()` invalida esa entrada cacheada y libera recursos del highlighter
@@ -53,7 +58,8 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
 
 ## Plan de pruebas
 
-- Añadir tests unitarios nuevos para `config/patches/shiki/createShikiHighlighter.ts` y/o `decorators.ts` con dobles de Shiki.
+- Añadir tests unitarios nuevos para `config/patches/shiki/createShikiHighlighter.ts` y/o `decorators.ts` con dobles de
+  Shiki.
 - Cobertura mínima por ejemplos:
   - reutiliza la misma instancia para configs normalizadas equivalentes
   - configs distintas generan entradas distintas de cache
@@ -78,7 +84,8 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
 - Verificación final:
   - tests nuevos del patch
   - `pnpm test:unit` para asegurar que el resto de la infraestructura Shiki sigue estable
-  - `pnpm check` sólo si el refactor toca tipos o integración suficientemente amplia como para justificar validación completa
+  - `pnpm check` sólo si el refactor toca tipos o integración suficientemente amplia como para justificar validación
+    completa
 
 ## Ciclos TDD
 
@@ -104,12 +111,17 @@ El plan asume que la memoización actual en `config/shiki-warn-tracker.ts` debe 
 
 5. **Alineación de fallback y alias**
    - Cambiar fallback interno a `text`.
-   - Reducir duplicación entre `langAlias` y `withAliasResolution()` según lo que los tests muestren como responsabilidad real.
+   - Reducir duplicación entre `langAlias` y `withAliasResolution()` según lo que los tests muestren como
+     responsabilidad real.
    - Payoff: coherencia con la otra capa Shiki del repo y menor riesgo de upgrade.
 
 ## Supuestos
 
-- La decisión para este refactor es que el caching viva en `createShikiHighlighter`, no en `config/shiki-warn-tracker.ts`.
-- `config/shiki-warn-tracker.ts` seguirá existiendo para filtrar warnings `[Shiki]`, pero no debe seguir siendo la capa principal de memoización del factory.
-- El fallback objetivo es `text`; si se necesita compatibilidad, `plaintext` se tratará sólo como alias de entrada y no como canonical fallback interno.
-- No se cambia a `shiki/core`, shorthands ni codegen en este refactor; eso queda fuera hasta cerrar lifecycle, typing y normalización del wrapper actual.
+- La decisión para este refactor es que el caching viva en `createShikiHighlighter`, no en
+  `config/shiki-warn-tracker.ts`.
+- `config/shiki-warn-tracker.ts` seguirá existiendo para filtrar warnings `[Shiki]`, pero no debe seguir siendo la capa
+  principal de memoización del factory.
+- El fallback objetivo es `text`; si se necesita compatibilidad, `plaintext` se tratará sólo como alias de entrada y no
+  como canonical fallback interno.
+- No se cambia a `shiki/core`, shorthands ni codegen en este refactor; eso queda fuera hasta cerrar lifecycle, typing y
+  normalización del wrapper actual.

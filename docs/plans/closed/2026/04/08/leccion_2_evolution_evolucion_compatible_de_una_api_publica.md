@@ -2,9 +2,13 @@
 
 ## Resumen
 
-Escribir la lección `src/pages/notes/software-libraries/api-design/evolution/index.astro` como continuación directa de `fundamentals`, apoyada principalmente en `docs/design-relevant-work.md` y enfocada en una idea central: una API publicada ya no se rediseña libremente; se evoluciona cuidando el contrato observable para no romper a quienes la consumen.
+Escribir la lección `src/pages/notes/software-libraries/api-design/evolution/index.astro` como continuación directa de
+`fundamentals`, apoyada principalmente en `docs/design-relevant-work.md` y enfocada en una idea central: una API
+publicada ya no se rediseña libremente; se evoluciona cuidando el contrato observable para no romper a quienes la
+consumen.
 
-La entrega debe incluir la lección completa y su integración en la serie `api-design`: ruta, orden de navegación y trazabilidad bibliográfica. El cierre será solo con conclusiones, sin ejercicio en esta versión.
+La entrega debe incluir la lección completa y su integración en la serie `api-design`: ruta, orden de navegación y
+trazabilidad bibliográfica. El cierre será solo con conclusiones, sin ejercicio en esta versión.
 
 ## Cambios de implementación
 
@@ -36,7 +40,8 @@ La entrega debe incluir la lección completa y su integración en la serie `api-
   5. **Versionado como comunicación de cambio**
      - presentar `major.minor.patch` como convención comunicativa;
      - conectar versión con expectativa de cambio, no solo con numeración;
-     - incluir idea de que no todo cambio merece nueva “era” de API, pero los cambios incompatibles sí requieren señal clara.
+     - incluir idea de que no todo cambio merece nueva “era” de API, pero los cambios incompatibles sí requieren señal
+       clara.
   6. **Tests de regresión como red de seguridad**
      - tests como protección del contrato público;
      - cubrir regresiones de comportamiento, no solo compilación o firmas;
@@ -53,7 +58,8 @@ La entrega debe incluir la lección completa y su integración en la serie `api-
 - Completar la trazabilidad bibliográfica:
   - agregar usos para la nueva lección en `src/data/bibliography/sources/05-usages.ttl`;
   - referenciar principalmente `ref:reddy-api-design-for-cpp-2024` y `ref:kotlin-evolution-principles`;
-  - no convertir `Write the Docs` en referencia principal de esta lección salvo que quede como apoyo menor al tema de comunicación del cambio.
+  - no convertir `Write the Docs` en referencia principal de esta lección salvo que quede como apoyo menor al tema de
+    comunicación del cambio.
 
 ## APIs, interfaces y contenido
 
@@ -86,6 +92,8 @@ La entrega debe incluir la lección completa y su integración en la serie `api-
 ## Asunciones y defaults
 
 - La lección será puramente conceptual, sin ejercicio final.
-- El nivel de compatibilidad se explicará en términos generales de contrato público y comportamiento observable, sin entrar en detalle fuerte de ABI salvo una mención breve si sirve para ilustrar que no toda compatibilidad es igual.
-- La documentación quedará tratada solo como mecanismo para comunicar cambios, deprecaciones y migraciones; su desarrollo completo se reserva para la futura lección `documentation`.
+- El nivel de compatibilidad se explicará en términos generales de contrato público y comportamiento observable, sin
+  entrar en detalle fuerte de ABI salvo una mención breve si sirve para ilustrar que no toda compatibilidad es igual.
+- La documentación quedará tratada solo como mecanismo para comunicar cambios, deprecaciones y migraciones; su
+  desarrollo completo se reserva para la futura lección `documentation`.
 - Los ejemplos serán pequeños, legibles y subordinados a la explicación conceptual, no el centro de la lección.

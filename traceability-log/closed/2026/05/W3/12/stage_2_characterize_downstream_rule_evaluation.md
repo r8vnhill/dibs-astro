@@ -2,8 +2,8 @@
 
 ## Completion Summary
 
-Stage 2 is complete. The evaluator contract is now covered through `evaluateBoundaryRules()` without changing
-production code.
+Stage 2 is complete. The evaluator contract is now covered through `evaluateBoundaryRules()` without changing production
+code.
 
 Implemented coverage in `scripts/__tests__/layer-boundary-rule-evaluation.test.ts`:
 

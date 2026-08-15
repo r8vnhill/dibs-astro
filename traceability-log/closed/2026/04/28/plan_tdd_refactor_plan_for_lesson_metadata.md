@@ -51,7 +51,8 @@ Implementation direction:
   - `2024-13-01`
   - `2024-01-00`
 
-Rationale: `Date.UTC(...)` correctly constructs UTC timestamps, but it still adjusts out-of-range fields, so round-tripping is required to detect invalid calendar dates.
+Rationale: `Date.UTC(...)` correctly constructs UTC timestamps, but it still adjusts out-of-range fields, so
+round-tripping is required to detect invalid calendar dates.
 
 ### 2. UTC-stable date formatting
 
@@ -64,7 +65,8 @@ Implementation direction:
 - Format with `new Intl.DateTimeFormat(locale, { ...DEFAULT_DATE_FORMAT_OPTIONS, ...options })`.
 - Keep explicit caller timezone overrides possible.
 
-Rationale: `Intl.DateTimeFormat` is the standard locale-sensitive formatting API, and its output depends on the provided formatting options, including `timeZone`. [^1]
+Rationale: `Intl.DateTimeFormat` is the standard locale-sensitive formatting API, and its output depends on the provided
+formatting options, including `timeZone`. [^1]
 
 ### 3. Display-policy cleanup
 
@@ -91,7 +93,8 @@ Implementation direction:
 - Discard `search` and `hash`, because metadata lookup keys are canonical lesson routes.
 - Preserve blank input behaviour: blank input normalizes to `/`.
 
-Rationale: the `URL` constructor supports absolute URLs and relative references when a base is provided, while also throwing for invalid URL/base combinations.
+Rationale: the `URL` constructor supports absolute URLs and relative references when a base is provided, while also
+throwing for invalid URL/base combinations.
 
 ### 5. Exhaustiveness guard
 
@@ -210,7 +213,8 @@ suite("lesson metadata pathnames", () => {
 });
 ```
 
-Use DDT for repeated invalid-date and path-normalization cases. Vitest supports `test.each`, which fits these regression matrices well.
+Use DDT for repeated invalid-date and path-normalization cases. Vitest supports `test.each`, which fits these regression
+matrices well.
 
 Use PBT only for stable invariants:
 
@@ -218,7 +222,8 @@ Use PBT only for stable invariants:
 - Normalizing an already-normalized lesson pathname is idempotent.
 - Normalized pathnames are non-empty and start with `/`.
 
-Avoid over-constraining PBT with policies that belong to `LessonHref`, such as whether every path must end with `/`, unless that is already an explicit domain invariant.
+Avoid over-constraining PBT with policies that belong to `LessonHref`, such as whether every path must end with `/`,
+unless that is already an explicit domain invariant.
 
 ## Commands
 

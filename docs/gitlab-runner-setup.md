@@ -1,7 +1,7 @@
 # GitLab Runner Setup on Windows with Docker Desktop WSL2
 
-This document explains how to register, configure, maintain, and troubleshoot the self-hosted GitLab Runner used by
-this project when:
+This document explains how to register, configure, maintain, and troubleshoot the self-hosted GitLab Runner used by this
+project when:
 
 - GitLab Runner is installed on Windows.
 - Setup and maintenance commands are run from PowerShell.
@@ -37,9 +37,9 @@ The pipeline must explicitly request the local Docker runner:
 
 ```yaml
 default:
-  tags:
-    - local
-    - docker
+    tags:
+        - local
+        - docker
 ```
 
 If a job defines its own `tags`, those tags must also include both `local` and `docker`.
@@ -286,21 +286,21 @@ concurrent = 1
 check_interval = 0
 
 [[runners]]
-  name = "dibs-local-windows-docker-runner"
-  url = "https://gitlab.com/"
-  id = 12345678
-  token = "<redacted>"
-  executor = "docker"
+name = "dibs-local-windows-docker-runner"
+url = "https://gitlab.com/"
+id = 12345678
+token = "<redacted>"
+executor = "docker"
 
-  [runners.docker]
-    host = "npipe:////./pipe/docker_engine"
-    image = "node:24.11.0-alpine"
-    privileged = false
-    disable_entrypoint_overwrite = false
-    oom_kill_disable = false
-    disable_cache = false
-    volumes = ["/cache"]
-    shm_size = 0
+[runners.docker]
+host = "npipe:////./pipe/docker_engine"
+image = "node:24.11.0-alpine"
+privileged = false
+disable_entrypoint_overwrite = false
+oom_kill_disable = false
+disable_cache = false
+volumes = ["/cache"]
+shm_size = 0
 ```
 
 The `host` value points the runner at Docker Desktop's Windows named pipe. If Docker Desktop is installed normally, this
@@ -380,8 +380,8 @@ Get-WinEvent -ProviderName gitlab-runner -MaxEvents 80 |
     Select-Object TimeCreated, LevelDisplayName, Message
 ```
 
-Focus on the newest entries first. Older errors can remain in the Windows event log after the service has been fixed.
-A healthy recent startup should include the configured path:
+Focus on the newest entries first. Older errors can remain in the Windows event log after the service has been fixed. A
+healthy recent startup should include the configured path:
 
 ```text
 Starting multi-runner from E:\dev\tools\gitlab-runner\config.toml
@@ -398,24 +398,24 @@ The pipeline must request the local Docker runner explicitly:
 
 ```yaml
 default:
-  tags:
-    - local
-    - docker
+    tags:
+        - local
+        - docker
 ```
 
 Jobs can use Linux Docker images:
 
 ```yaml
 .node-job:
-  image: node:${NODE_VERSION}-alpine
-  before_script:
-    - npm config set fetch-retries 5
-    - npm config set fetch-retry-mintimeout 20000
-    - npm config set fetch-retry-maxtimeout 120000
-    - corepack enable
-    - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
-    - pnpm config set store-dir ${PNPM_STORE_DIR}
-    - pnpm install --frozen-lockfile
+    image: node:${NODE_VERSION}-alpine
+    before_script:
+        - npm config set fetch-retries 5
+        - npm config set fetch-retry-mintimeout 20000
+        - npm config set fetch-retry-maxtimeout 120000
+        - corepack enable
+        - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
+        - pnpm config set store-dir ${PNPM_STORE_DIR}
+        - pnpm install --frozen-lockfile
 ```
 
 Linux container commands are valid in job scripts because they run inside the container, not in Windows PowerShell.
@@ -441,11 +441,11 @@ For example:
 
 ```yaml
 build:
-  stage: build
-  image: node:24.11.0-alpine
-  script:
-    - apk add --no-cache git
-    - pnpm build
+    stage: build
+    image: node:24.11.0-alpine
+    script:
+        - apk add --no-cache git
+        - pnpm build
 ```
 
 A job without matching tags can remain stuck even when the runner appears online.
@@ -453,16 +453,16 @@ A job without matching tags can remain stuck even when the runner appears online
 ## Rootless BuildKit and container jobs
 
 The static OCI image is built by a dedicated `moby/buildkit:rootless` job with `privileged = false`; it does not use
-Docker-in-Docker or a Docker socket. The job pushes one pipeline-scoped candidate image to the GitLab Container Registry,
-records its manifest digest as `tmp/oci-candidate.json`, and the HTTP/browser/policy jobs consume that exact candidate.
-The publish job runs only after those checks and promotes the recorded digest without rebuilding the image.
+Docker-in-Docker or a Docker socket. The job pushes one pipeline-scoped candidate image to the GitLab Container
+Registry, records its manifest digest as `tmp/oci-candidate.json`, and the HTTP/browser/policy jobs consume that exact
+candidate. The publish job runs only after those checks and promotes the recorded digest without rebuilding the image.
 
 Configure the runner or project with registry authentication available to private service images through
 `DOCKER_AUTH_CONFIG`. Do not place registry passwords in `.gitlab-ci.yml`.
 
 The build creates a temporary npm configuration from the GitLab job token and mounts it as a BuildKit secret. It is
-removed at the end of the job and never becomes a Dockerfile `ARG`, `ENV`, layer, or runtime file. Local container builds
-use the same boundary:
+removed at the end of the job and never becomes a Dockerfile `ARG`, `ENV`, layer, or runtime file. Local container
+builds use the same boundary:
 
 ```powershell
 $env:NPM_CONFIG_USERCONFIG = "C:\path\to\authenticated.npmrc"
@@ -470,16 +470,16 @@ pnpm test:container
 Remove-Item Env:NPM_CONFIG_USERCONFIG
 ```
 
-The contract job checks the candidate at `http://dibs:8080`; the OCI policy job reads the registry manifest/configuration
-and layer metadata independently. Neither job mounts `/var/run/docker.sock`. This keeps the runner daemonless while
-still testing the image that was built. The runtime image is expected to operate as an unprivileged NGINX process with
-a read-only filesystem and a writable `/tmp` tmpfs.
+The contract job checks the candidate at `http://dibs:8080`; the OCI policy job reads the registry
+manifest/configuration and layer metadata independently. Neither job mounts `/var/run/docker.sock`. This keeps the
+runner daemonless while still testing the image that was built. The runtime image is expected to operate as an
+unprivileged NGINX process with a read-only filesystem and a writable `/tmp` tmpfs.
 
 The provenance job also checks the candidate's OCI labels against the candidate metadata and requires the BuildKit
 attestation-bearing index. Publication is a separate manifest-only operation: it recomputes the candidate digest,
 promotes only the aliases allowed by the release policy, and resolves every alias afterward. A release tag must equal
-the exact `package.json.version` value. The job does not rebuild the image, and no registry credential is written to
-the repository or printed in diagnostics.
+the exact `package.json.version` value. The job does not rebuild the image, and no registry credential is written to the
+repository or printed in diagnostics.
 
 ## CI Variable: Cloudflare API Token
 
@@ -758,8 +758,8 @@ Log pattern:
 WARNING: CONFIGURATION: Long polling issues detected.
 ```
 
-If there is only one active runner and one job at a time is expected, this is usually not urgent. Confirm that the runner
-is otherwise healthy:
+If there is only one active runner and one job at a time is expected, this is usually not urgent. Confirm that the
+runner is otherwise healthy:
 
 ```powershell
 gitlab-runner verify

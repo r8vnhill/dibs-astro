@@ -497,5 +497,7 @@ Model documentation sites as WebPage sources
 ## Implementation notes
 
 - `site:kotlin-docs` now exists as a `schema:WebSite` node in the catalog source.
-- `ref:kotlin-custom-scripting-tutorial` uses `schema:isPartOf site:kotlin-docs` and keeps JetBrains as the real publisher.
-- WebPage normalization and the catalog builder both accept `WebSite` as the source/container path for visible location text.
+- `ref:kotlin-custom-scripting-tutorial` uses `schema:isPartOf site:kotlin-docs` and keeps JetBrains as the real
+  publisher.
+- WebPage normalization and the catalog builder both accept `WebSite` as the source/container path for visible location
+  text.

@@ -11,8 +11,8 @@ Verification performed:
 - `pnpm --filter @ravenhill/astro-icons licenses:update`
 - `pnpm --filter @ravenhill/astro-icons licenses:check`
 
-Manual notice inspection confirmed one Phosphor section, nine custom asset sections, unresolved Phosphor lineage,
-no timestamp-shaped generated metadata, no permission/approval wording for excluded assets, and exactly one trailing
+Manual notice inspection confirmed one Phosphor section, nine custom asset sections, unresolved Phosphor lineage, no
+timestamp-shaped generated metadata, no permission/approval wording for excluded assets, and exactly one trailing
 newline.
 
 No changes were made to `third-party-icons.json`, `icon-inventory.json`, SVG assets, package exports, package runtime

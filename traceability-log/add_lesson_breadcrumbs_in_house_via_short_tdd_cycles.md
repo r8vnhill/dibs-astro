@@ -2,9 +2,12 @@
 
 ## Summary
 
-Implement lesson breadcrumbs without `astro-breadcrumbs`. The repo already has the right source of truth in `courseStructure`, flattened ancestry metadata, and the presentation adapter layer. The plan should reuse that model, avoid the package's GPL-3.0 dependency, and render a Notes-rooted breadcrumb trail on lesson pages.
+Implement lesson breadcrumbs without `astro-breadcrumbs`. The repo already has the right source of truth in
+`courseStructure`, flattened ancestry metadata, and the presentation adapter layer. The plan should reuse that model,
+avoid the package's GPL-3.0 dependency, and render a Notes-rooted breadcrumb trail on lesson pages.
 
-Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the lesson `<h1>`, with clickable items when an `href` exists and the current page rendered as plain text with `aria-current="page"`.
+Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the lesson `<h1>`, with clickable items when
+an `href` exists and the current page rendered as plain text with `aria-current="page"`.
 
 ## API / Interface Changes
 
@@ -14,8 +17,8 @@ Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the l
 - Add a presentation adapter for breadcrumb resolution, separate from prev/next. Suggested shape:
   - `resolveLessonBreadcrumbs(pathname, lessons): Promise<readonly BreadcrumbItem[]>`
   - `BreadcrumbItem = { title: string; href?: string; current: boolean }`
-- Keep `NavigationServiceImpl.resolveAutoNav()` unchanged for this iteration. Breadcrumbs should be
-  a parallel query, not a forced refactor of the existing prev/next contract.
+- Keep `NavigationServiceImpl.resolveAutoNav()` unchanged for this iteration. Breadcrumbs should be a parallel query,
+  not a forced refactor of the existing prev/next contract.
 
 ## TDD Cycles
 
@@ -26,8 +29,8 @@ Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the l
      - a route not found returning an empty trail
      - groups without `href` contributing non-clickable breadcrumb items
    - Implement `findTrailByHref()` in `LessonCatalogAdapter`.
-   - Use existing tree/flatten data instead of pathname parsing. The trail should come from lesson
-     ancestry, not URL segments.
+   - Use existing tree/flatten data instead of pathname parsing. The trail should come from lesson ancestry, not URL
+     segments.
 
 2. **Presentation adapter**
    - Add failing tests for a new breadcrumb presentation adapter.
@@ -43,7 +46,8 @@ Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the l
      - intermediate items render as links when `href` exists
      - non-clickable ancestors render as plain text
      - final item uses `aria-current="page"`
-   - Implement the component with styling aligned to the existing lesson chrome, keeping separators decorative and out of assistive text.
+   - Implement the component with styling aligned to the existing lesson chrome, keeping separators decorative and out
+     of assistive text.
 
 4. **NotesLayout integration**
    - Add failing render tests in `NotesLayout.render.test.ts` for:
@@ -62,8 +66,10 @@ Assumed UX: render `Notes > ...course hierarchy... > current lesson` above the l
 
 ## Implementation Notes
 
-- Prefer a dedicated breadcrumb component over embedding markup directly in `NotesLayout`; the behavior is reusable and easier to test in isolation.
-- Do not derive breadcrumbs from URL segments. The course hierarchy already encodes better editorial structure and will stay coherent if routes move again.
+- Prefer a dedicated breadcrumb component over embedding markup directly in `NotesLayout`; the behavior is reusable and
+  easier to test in isolation.
+- Do not derive breadcrumbs from URL segments. The course hierarchy already encodes better editorial structure and will
+  stay coherent if routes move again.
 - Treat groups without `href` as breadcrumb text nodes, not links.
 - Do not include `Inicio` in this first version; the agreed root is `Notes`.
 - Keep the breadcrumb pipeline presentation-safe:

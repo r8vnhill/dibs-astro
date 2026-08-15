@@ -4,11 +4,16 @@ Status: Implemented on 2026-04-29.
 
 ## Summary
 
-Refactor `scripts/bibliography-report.mjs` so bibliography reports are computed from the same normalized catalog semantics used by site rendering.
+Refactor `scripts/bibliography-report.mjs` so bibliography reports are computed from the same normalized catalog
+semantics used by site rendering.
 
-The current report script should stop manually inspecting generated graph nodes. Instead, it should delegate catalog loading, reference statistics, book rankings, and lesson/tag summaries to shared read-side helpers. This intentionally aligns report output with runtime catalog behavior, including supported rendered reference types that the old script may omit, such as `VideoObject`.
+The current report script should stop manually inspecting generated graph nodes. Instead, it should delegate catalog
+loading, reference statistics, book rankings, and lesson/tag summaries to shared read-side helpers. This intentionally
+aligns report output with runtime catalog behavior, including supported rendered reference types that the old script may
+omit, such as `VideoObject`.
 
-This phase should stay focused on read-side analytics. It should not retire `ReferencesFromJsonLd`, redesign pending-revision policy, or change rendering behavior.
+This phase should stay focused on read-side analytics. It should not retire `ReferencesFromJsonLd`, redesign
+pending-revision policy, or change rendering behavior.
 
 ## Goals
 
@@ -25,16 +30,19 @@ This phase should stay focused on read-side analytics. It should not retire `Ref
 - Do not change generated JSON-LD structure.
 - Do not centralize `pending-revision` policy yet.
 - Do not decide the long-term compatibility status of `ReferencesFromJsonLd`.
-- Do not introduce a new dependency unless the current repo already has a script runner suitable for TypeScript execution.
+- Do not introduce a new dependency unless the current repo already has a script runner suitable for TypeScript
+  execution.
 - Do not make Astro components responsible for report data.
 
 ---
 
 ## Design Constraint: Node-Safe Shared Core
 
-The key design challenge is that `src/lib/bibliography/catalog.ts` is used by the site, while `scripts/bibliography-report.mjs` runs in Node.
+The key design challenge is that `src/lib/bibliography/catalog.ts` is used by the site, while
+`scripts/bibliography-report.mjs` runs in Node.
 
-Avoid moving all implementation into an untyped `.mjs` file too quickly if that would weaken the TypeScript contract. Prefer this split:
+Avoid moving all implementation into an untyped `.mjs` file too quickly if that would weaken the TypeScript contract.
+Prefer this split:
 
 ```text
 shared pure catalog core
@@ -73,7 +81,8 @@ Recommended implementation options, in order:
    - Having the report script parse raw JSON-LD graph nodes independently.
    - Importing Vite-only raw asset loaders from Node scripts.
 
-The selected option should match the current repository tooling. If no TypeScript script runner exists, use Option 2 for Phase 1 and keep a future migration path toward a typed shared core.
+The selected option should match the current repository tooling. If no TypeScript script runner exists, use Option 2 for
+Phase 1 and keep a future migration path toward a typed shared core.
 
 ---
 
@@ -505,7 +514,8 @@ git diff -- src/data/bibliography/catalog.graph.generated.jsonld
 After implementation:
 
 - Update `docs/architecture/jsonld-references-workflow-report.md` to mark Phase 1 completed.
-- Update `src/data/bibliography/README.md` under “Analysis” to state that `bibliography:report` uses the same normalized catalog model as site rendering.
+- Update `src/data/bibliography/README.md` under “Analysis” to state that `bibliography:report` uses the same normalized
+  catalog model as site rendering.
 - Add a changelog entry noting:
   - bibliography reports now use runtime catalog analytics;
   - report totals now include all supported rendered reference types;
@@ -535,14 +545,18 @@ After implementation:
 - Pending-revision policy is not centralized in Phase 1.
 - The report should use existing runtime tag-filter semantics.
 - No new dependency is required.
-- If the repo cannot execute TypeScript directly from Node scripts, a Node-safe `.mjs` shared core is acceptable for Phase 1, provided the typed `catalog.ts` facade remains stable.
+- If the repo cannot execute TypeScript directly from Node scripts, a Node-safe `.mjs` shared core is acceptable for
+  Phase 1, provided the typed `catalog.ts` facade remains stable.
 
 ## Implementation Notes
 
-- The shared catalog core was extracted to `src/lib/bibliography/catalog-core.mjs`, with `src/lib/bibliography/catalog.ts` kept as the typed runtime facade.
+- The shared catalog core was extracted to `src/lib/bibliography/catalog-core.mjs`, with
+  `src/lib/bibliography/catalog.ts` kept as the typed runtime facade.
 - The pure report read model lives in `scripts/lib/bibliography-report-read-model.mjs`.
-- `scripts/bibliography-report.mjs` now performs only path resolution, file I/O, read-model invocation, and concise console output.
-- Generated report totals changed because the report now reads the current normalized catalog model, including all visible references supported by runtime rendering.
+- `scripts/bibliography-report.mjs` now performs only path resolution, file I/O, read-model invocation, and concise
+  console output.
+- Generated report totals changed because the report now reads the current normalized catalog model, including all
+  visible references supported by runtime rendering.
 
 ## Verification Results
 

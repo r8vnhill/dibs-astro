@@ -4,7 +4,9 @@
 
 Extend the Cycle 1 boundary checker from starter rules into a declarative, testable architecture rule matrix.
 
-This cycle should make the checker capable of representing the intended layered dependency policy, but it must **not** audit, fix, or allowlist real repository violations yet. The outcome is a reliable rule engine and rule dataset, not a repository cleanup.
+This cycle should make the checker capable of representing the intended layered dependency policy, but it must **not**
+audit, fix, or allowlist real repository violations yet. The outcome is a reliable rule engine and rule dataset, not a
+repository cleanup.
 
 ## Goals
 
@@ -81,7 +83,8 @@ type ImportClassification = {
 };
 ```
 
-Type-only imports must still be evaluated as architectural dependencies in Cycle 2. Keep `importKind` because it will be useful for future reporting or policy refinement, but do not exempt type imports.
+Type-only imports must still be evaluated as architectural dependencies in Cycle 2. Keep `importKind` because it will be
+useful for future reporting or policy refinement, but do not exempt type imports.
 
 ---
 
@@ -114,7 +117,8 @@ Recommended source mapping:
 | `src/layouts/**`               | `ui`                   |
 | `src/pages/**`                 | `ui`                   |
 
-Sources outside these paths should be classified as `unknown` and ignored by Cycle 2 unless explicitly covered by a rule.
+Sources outside these paths should be classified as `unknown` and ignored by Cycle 2 unless explicitly covered by a
+rule.
 
 ---
 
@@ -230,7 +234,8 @@ Message:
 
 Suggestion:
 
-> Move framework, validation, data-loading, or adapter-specific logic to application or infrastructure, and expose only domain-level abstractions inward.
+> Move framework, validation, data-loading, or adapter-specific logic to application or infrastructure, and expose only
+> domain-level abstractions inward.
 
 ---
 
@@ -265,11 +270,13 @@ Forbidden packages:
 
 Message:
 
-> Application code may orchestrate domain use cases, but must not depend on infrastructure, UI, generated data, or framework packages.
+> Application code may orchestrate domain use cases, but must not depend on infrastructure, UI, generated data, or
+> framework packages.
 
 Suggestion:
 
-> Depend on domain abstractions or application ports, and move concrete framework/data access to infrastructure adapters.
+> Depend on domain abstractions or application ports, and move concrete framework/data access to infrastructure
+> adapters.
 
 ---
 
@@ -312,7 +319,8 @@ Message:
 
 Suggestion:
 
-> Keep UI-specific composition in presentation adapters or components, and expose infrastructure through application/domain contracts.
+> Keep UI-specific composition in presentation adapters or components, and expose infrastructure through
+> application/domain contracts.
 
 ---
 
@@ -349,7 +357,8 @@ Forbidden packages:
 
 Message:
 
-> Presentation adapters should compose application and infrastructure services, but must not import UI components, layouts, or pages.
+> Presentation adapters should compose application and infrastructure services, but must not import UI components,
+> layouts, or pages.
 
 Suggestion:
 
@@ -406,7 +415,8 @@ Suggestion:
 
 > Route infrastructure access through presentation adapters or application-facing services.
 
-Important: allowing `domain` and `application` from UI is intentional in Cycle 2. Stricter UI dependency rules belong to Cycle 4 after the audit determines which couplings are acceptable.
+Important: allowing `domain` and `application` from UI is intentional in Cycle 2. Stricter UI dependency rules belong to
+Cycle 4 after the audit determines which couplings are acceptable.
 
 ---
 
@@ -432,8 +442,7 @@ const allowedExceptions = [
         id: "example-explicit-transition-only",
         source: "src/application/example.ts",
         target: "src/data/example.generated.jsonld",
-        reason:
-            "Temporary transition while bibliography data access is moved behind an application port.",
+        reason: "Temporary transition while bibliography data access is moved behind an application port.",
         note: "Remove once the infrastructure adapter owns this import.",
     },
 ];
@@ -719,9 +728,11 @@ scripts/__tests__/layer-boundary-rules.test.ts
 ```
 
 The module now exports named source-layer rules, the ordered `boundaryRules` list, and an empty `allowedExceptions`
-list. Runtime checker behaviour remains on the legacy glob-shaped starter rules through `initialBoundaryRules =
-legacyInitialBoundaryRules`; Step 4 is the explicit migration point that should switch `initialBoundaryRules` to
-`boundaryRules` after generic evaluation understands source-layer and target-category vocabulary.
+list. Runtime checker behaviour remains on the legacy glob-shaped starter rules through
+`initialBoundaryRules =
+legacyInitialBoundaryRules`; Step 4 is the explicit migration point that should switch
+`initialBoundaryRules` to `boundaryRules` after generic evaluation understands source-layer and target-category
+vocabulary.
 
 Observed focused gate:
 
@@ -783,9 +794,9 @@ scripts/lib/layer-boundary-checker.mjs
 scripts/__tests__/layer-boundary-rule-evaluation.test.ts
 ```
 
-`initialBoundaryRules` now points to `boundaryRules`. `evaluateBoundaryRules(...)` returns an internal status object
-for allowed, skipped-by-exception, or violation results. `checkLayerBoundaries(...)` still returns only public
-violations, and `formatViolations(...)` remains unchanged.
+`initialBoundaryRules` now points to `boundaryRules`. `evaluateBoundaryRules(...)` returns an internal status object for
+allowed, skipped-by-exception, or violation results. `checkLayerBoundaries(...)` still returns only public violations,
+and `formatViolations(...)` remains unchanged.
 
 Observed focused gate:
 
@@ -844,7 +855,8 @@ formatViolations(...)
 
 `checkLayerBoundaries(...)` should still return only violations.
 
-Skipped exception metadata may exist in lower-level evaluation results, but it should not appear in the formatted report unless a future cycle adds diagnostic reporting.
+Skipped exception metadata may exist in lower-level evaluation results, but it should not appear in the formatted report
+unless a future cycle adds diagnostic reporting.
 
 ### ~~Step 6: Add Rule Matrix Tests~~
 
@@ -868,7 +880,8 @@ The suite now covers:
 
 Add the new DDT-style suite and make each rule explicit.
 
-Use `describe.each(...)` or `test.each(...)` where the contract is identical, but keep named tests for exceptions and classification edge cases.
+Use `describe.each(...)` or `test.each(...)` where the contract is identical, but keep named tests for exceptions and
+classification edge cases.
 
 ### ~~Step 7: Run the Focused Gate~~
 
@@ -940,7 +953,8 @@ Guardrail: keep UI → domain/application observational for this cycle. Only blo
 
 ### Risk: Package subpaths bypass forbidden package checks
 
-Guardrail: normalize packages before evaluation. `react/jsx-runtime` must count as `react`; `zod/v4` must count as `zod`.
+Guardrail: normalize packages before evaluation. `react/jsx-runtime` must count as `react`; `zod/v4` must count as
+`zod`.
 
 ### Risk: Generated data classification is too broad or too narrow
 
@@ -956,7 +970,8 @@ src/data/** -> data
 
 ### Risk: Unknown imports produce noisy false positives
 
-Guardrail: unknown external packages should not fail unless explicitly listed in `forbiddenPackages`. Unknown project paths should be classified as `unknown` and ignored unless a future cycle introduces stricter handling.
+Guardrail: unknown external packages should not fail unless explicitly listed in `forbiddenPackages`. Unknown project
+paths should be classified as `unknown` and ignored unless a future cycle introduces stricter handling.
 
 ---
 

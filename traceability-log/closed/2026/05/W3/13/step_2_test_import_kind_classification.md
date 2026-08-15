@@ -2,7 +2,9 @@
 
 ## Completion Summary
 
-Step 2 is complete. Added helper-level coverage in [scripts/__tests__/layer-boundary-import-specifiers.test.ts](scripts/__tests__/layer-boundary-import-specifiers.test.ts) for `classifyImportKind()`.
+Step 2 is complete. Added helper-level coverage in
+[scripts/**tests**/layer-boundary-import-specifiers.test.ts](scripts/__tests__/layer-boundary-import-specifiers.test.ts)
+for `classifyImportKind()`.
 
 Implemented coverage:
 
@@ -24,7 +26,8 @@ The broader classifier safety-net suites remain available if future helper chang
 
 Characterize `classifyImportKind()` in `scripts/lib/layer-boundary-import-specifiers.mjs`.
 
-This step is **test-first and behaviour-preserving**. It should lock the current conservative mapping from parser import kinds to the normalized classifier kinds:
+This step is **test-first and behaviour-preserving**. It should lock the current conservative mapping from parser import
+kinds to the normalized classifier kinds:
 
 ```ts
 "value" | "type";
@@ -35,7 +38,8 @@ The key contract is:
 - `type-import` and `type-re-export` map to `"type"`;
 - every other known, unknown, future, or missing kind maps to `"value"`.
 
-This preserves the current fail-closed behaviour: if the parser introduces a new import kind later, the boundary checker treats it as a value import unless explicitly taught otherwise.
+This preserves the current fail-closed behaviour: if the parser introduces a new import kind later, the boundary checker
+treats it as a value import unless explicitly taught otherwise.
 
 ---
 
@@ -87,7 +91,8 @@ describe("classifyImportKind", () => {
 });
 ```
 
-If the source-text import extractor also emits names such as `static-import` or `side-effect-import`, include them in the `"value"` group. Otherwise, do not invent parser kinds only for completeness.
+If the source-text import extractor also emits names such as `static-import` or `side-effect-import`, include them in
+the `"value"` group. Otherwise, do not invent parser kinds only for completeness.
 
 ---
 
@@ -116,7 +121,8 @@ describe("classifyImportKind", () => {
 });
 ```
 
-This makes future changes easier to review: adding a new type-only parser kind should require adding it deliberately to the second table.
+This makes future changes easier to review: adding a new type-only parser kind should require adding it deliberately to
+the second table.
 
 ---
 
@@ -133,7 +139,8 @@ test.each([
 });
 ```
 
-This is the core safety contract for the architecture checker. Unknown kinds should not bypass value-import restrictions.
+This is the core safety contract for the architecture checker. Unknown kinds should not bypass value-import
+restrictions.
 
 ---
 
@@ -150,7 +157,8 @@ test.each([
 });
 ```
 
-Do not tighten this in Step 2. If stricter validation is desirable later, create a separate corrective stage because it could change how malformed parser records surface.
+Do not tighten this in Step 2. If stricter validation is desirable later, create a separate corrective stage because it
+could change how malformed parser records surface.
 
 ---
 
@@ -162,7 +170,8 @@ Do not duplicate these helper-level tables in:
 scripts/__tests__/layer-boundary-classification.test.ts
 ```
 
-Instead, rely on a small number of existing classifier-level tests to prove that `classifyImport()` still exposes the same `importKind` values.
+Instead, rely on a small number of existing classifier-level tests to prove that `classifyImport()` still exposes the
+same `importKind` values.
 
 Only run the broader suites if the helper test reveals drift.
 
@@ -198,7 +207,8 @@ describe("classifyImportKind", () => {
 });
 ```
 
-If the test suite’s TypeScript configuration complains about `undefined` or `null`, use a local cast in the test instead of changing the helper signature:
+If the test suite’s TypeScript configuration complains about `undefined` or `null`, use a local cast in the test instead
+of changing the helper signature:
 
 ```ts
 expect(classifyImportKind(undefined as unknown as string)).toBe("value");
@@ -230,7 +240,6 @@ pnpm test:unit -- scripts/__tests__/layer-boundary-classification.test.ts script
 - Unknown and future parser kinds map to `"value"`.
 - Missing kind values, if accepted today, map to `"value"`.
 - No production behaviour is tightened in this step.
-
 
 ---
 

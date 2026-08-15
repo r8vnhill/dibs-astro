@@ -18,13 +18,18 @@ Agregar referencias al catálogo Turtle como pendientes de revisión sin duplica
 ## Flujo
 
 1. **Identificar el objetivo real**
-   - Determina si se trata de una referencia citeable, un trabajo reutilizable, una persona, una organización o una relación de uso.
+   - Determina si se trata de una referencia citeable, un trabajo reutilizable, una persona, una organización o una
+     relación de uso.
    - Si el pedido menciona una lección, un tema o un recurso externo, busca primero la entrada canónica más cercana.
 
 2. **Buscar duplicados antes de editar**
-   - Revisa `src/data/bibliography/sources/*.ttl` para encontrar coincidencias por `ref:` ID, URL canónica, DOI, ISBN, título, autor o trabajo padre.
-   - Revisa también `src/data/bibliography/catalog.graph.generated.ttl` y `src/data/bibliography/catalog.graph.generated.jsonld` solo para confirmar si la entrada ya existe; no los edites manualmente.
-   - Si ya existe una entrada equivalente, actualízala o agrega la relación faltante. No crees una segunda entrada para el mismo recurso.
+   - Revisa `src/data/bibliography/sources/*.ttl` para encontrar coincidencias por `ref:` ID, URL canónica, DOI, ISBN,
+     título, autor o trabajo padre.
+   - Revisa también `src/data/bibliography/catalog.graph.generated.ttl` y
+     `src/data/bibliography/catalog.graph.generated.jsonld` solo para confirmar si la entrada ya existe; no los edites
+     manualmente.
+   - Si ya existe una entrada equivalente, actualízala o agrega la relación faltante. No crees una segunda entrada para
+     el mismo recurso.
 
 3. **Elegir el archivo fuente correcto**
    - `00-prefixes.ttl`: solo prefijos compartidos.
@@ -37,8 +42,10 @@ Agregar referencias al catálogo Turtle como pendientes de revisión sin duplica
 4. **Editar solo la fuente canónica**
    - Mantén los `@prefix` locales intactos.
    - Usa IDs estables y legibles como `ref:<slug>` o `usage:<slug>`.
-   - Si la entrada debe quedar pendiente de revisión, usa `dibs:tag pending-revision` en la relación de uso correspondiente.
-   - Si la referencia aún no debe mostrarse como recomendada, conserva su estado pendiente en la capa de uso, no mediante duplicados paralelos.
+   - Si la entrada debe quedar pendiente de revisión, usa `dibs:tag pending-revision` en la relación de uso
+     correspondiente.
+   - Si la referencia aún no debe mostrarse como recomendada, conserva su estado pendiente en la capa de uso, no
+     mediante duplicados paralelos.
 
 5. **Regenerar el catálogo**
    - Ejecuta `pnpm generate:bibliography-catalog` después de editar los Turtle fuente.
@@ -47,13 +54,16 @@ Agregar referencias al catálogo Turtle como pendientes de revisión sin duplica
 6. **Validar el resultado**
    - Verifica que no aparezcan IDs duplicados.
    - Verifica que no se hayan creado dos nodos para la misma URL, DOI o trabajo canónico.
-   - Si el generador elimina una entrada pendiente porque no es compatible o falta el nodo destino, corrige la fuente antes de continuar.
+   - Si el generador elimina una entrada pendiente porque no es compatible o falta el nodo destino, corrige la fuente
+     antes de continuar.
 
 ## Regla de deduplicación
 
-- Considera duplicada cualquier entrada que represente el mismo recurso canónico, aunque cambie el título visible o el texto descriptivo.
+- Considera duplicada cualquier entrada que represente el mismo recurso canónico, aunque cambie el título visible o el
+  texto descriptivo.
 - Si hay dudas entre crear una entrada nueva o ampliar una existente, prefiere ampliar la existente.
-- Si el solapamiento no se puede resolver con seguridad, detén la edición y reporta la coincidencia candidata antes de crear nada nuevo.
+- Si el solapamiento no se puede resolver con seguridad, detén la edición y reporta la coincidencia candidata antes de
+  crear nada nuevo.
 
 ## Resultado esperado
 

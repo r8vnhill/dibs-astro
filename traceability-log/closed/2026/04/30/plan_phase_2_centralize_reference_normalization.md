@@ -596,11 +596,11 @@ Status:
 
 - Completed with no additional code changes required after the Cycle 7 catalog-caller refactor.
 - `pnpm vitest run src/lib/bibliography` passed with 6 test files and 107 tests green.
-- `pnpm test:astro -- src/components/ui/references/__tests__` passed with the reference render suites green,
-  including `ReferencesFromCatalog`, `ReferencesFromJsonLd`, `GenericReference`, `LessonReferencesFromCatalog`, and
-  the leaf renderers for `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis`.
-- The non-strict warning output already characterized by `ReferencesFromJsonLd.render.test.ts` remained unchanged,
-  so the regression sweep found no contract-breaking drift to repair.
+- `pnpm test:astro -- src/components/ui/references/__tests__` passed with the reference render suites green, including
+  `ReferencesFromCatalog`, `ReferencesFromJsonLd`, `GenericReference`, `LessonReferencesFromCatalog`, and the leaf
+  renderers for `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis`.
+- The non-strict warning output already characterized by `ReferencesFromJsonLd.render.test.ts` remained unchanged, so
+  the regression sweep found no contract-breaking drift to repair.
 
 ---
 
@@ -940,4 +940,5 @@ Mitigation:
 9. Refactor catalog final construction. Completed by `src/lib/bibliography/catalog-core.mjs`.
 10. Remove duplicated helpers.
 11. Update docs and traceability.
-12. Run the full verification gate. Bibliography and reference render sweeps completed by `pnpm vitest run src/lib/bibliography` and `pnpm test:astro -- src/components/ui/references/__tests__`.
+12. Run the full verification gate. Bibliography and reference render sweeps completed by
+    `pnpm vitest run src/lib/bibliography` and `pnpm test:astro -- src/components/ui/references/__tests__`.

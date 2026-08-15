@@ -4,12 +4,12 @@
 
 ### Current Status
 
-The evidence contract was extracted from the closed Phase 1.1.2.2 report and the Subphase 1.1.2 plan without
-re-running any comparison: import commit `1833b9e65a91917b565da9dae0df29c1642448a2` (2026-03-19), 10 candidates with 2
-exact-set candidates (`a2a0bfd7cb66d08a`, `a5e861b1bd29ab95`), representative commit
-`036f8574bbfc7b74bb9220ee6c8e8a02103e9dc4`, byte-match counts 0/1,512 and 1,365/1,512, final classification
-`unresolved` / `BYTE_MISMATCHES_UNEXPLAINED`, and the MIT notice `Copyright (c) 2020-2024 Phosphor Icons`. No new
-comparison, package version, or commit was introduced; the MIT conclusion was kept independent of exact lineage.
+The evidence contract was extracted from the closed Phase 1.1.2.2 report and the Subphase 1.1.2 plan without re-running
+any comparison: import commit `1833b9e65a91917b565da9dae0df29c1642448a2` (2026-03-19), 10 candidates with 2 exact-set
+candidates (`a2a0bfd7cb66d08a`, `a5e861b1bd29ab95`), representative commit `036f8574bbfc7b74bb9220ee6c8e8a02103e9dc4`,
+byte-match counts 0/1,512 and 1,365/1,512, final classification `unresolved` / `BYTE_MISMATCHES_UNEXPLAINED`, and the
+MIT notice `Copyright (c) 2020-2024 Phosphor Icons`. No new comparison, package version, or commit was introduced; the
+MIT conclusion was kept independent of exact lineage.
 
 ### Goal
 
@@ -85,11 +85,11 @@ Run this cycle first. It blocks all later cycles.
 
 `packages/astro-icons/LICENSES/third-party-icons.json` was updated so `phosphor.source` and `phosphor.copyright` carry
 the unresolved-lineage contract: `package`, `version`, and `commit` remain `null`; `url` points to
-`https://github.com/phosphor-icons/core`; `evidenceStatus` is `"unresolved"`; `verifiedAt` is
-`2026-07-05T00:00:00Z`; `evidence` summarizes the ten candidates, two exact-set candidates, and byte-mismatch counts.
+`https://github.com/phosphor-icons/core`; `evidenceStatus` is `"unresolved"`; `verifiedAt` is `2026-07-05T00:00:00Z`;
+`evidence` summarizes the ten candidates, two exact-set candidates, and byte-mismatch counts.
 `copyright.concludedLicense` is `"MIT"` with `copyrightNotice` `"Copyright (c) 2020-2024 Phosphor Icons"`,
-`licenseSourceUrl` and `licenseFile` remain `null`. `reviewStatus` stayed `"in-progress"`, `inventoryCount` stayed
-1512, the JSON parses, and no other field or asset record changed.
+`licenseSourceUrl` and `licenseFile` remain `null`. `reviewStatus` stayed `"in-progress"`, `inventoryCount` stayed 1512,
+the JSON parses, and no other field or asset record changed.
 
 ### Goal
 
@@ -182,9 +182,9 @@ Run after Cycle 1. It can be verified independently before the traceability narr
 A new `## Findings — Phosphor Corpus Lineage` section was appended to
 `traceability-log/open/phase_1_establish_licensing_provenance_and_attribution.md` (inserted after Subphase 1.1's
 Non-goals), covering established repository evidence, the external comparison method, candidates investigated, the
-unresolved conclusion with its downstream consequence for Phase 1 and Subphase 1.3, the independent MIT conclusion,
-and the package-code holder `Ignacio Slater-Muñoz`. The section mirrors the manifest's evidence wording without
-reproducing the full MIT license text and does not claim any SVG, inventory, or package-metadata change.
+unresolved conclusion with its downstream consequence for Phase 1 and Subphase 1.3, the independent MIT conclusion, and
+the package-code holder `Ignacio Slater-Muñoz`. The section mirrors the manifest's evidence wording without reproducing
+the full MIT license text and does not claim any SVG, inventory, or package-metadata change.
 
 ### Goal
 
@@ -260,9 +260,9 @@ Run after Cycle 2 so the Markdown narrative mirrors the final manifest wording.
 
 All eleven field-level assertions passed against the live manifest (`reviewStatus === "in-progress"`,
 `inventoryCount === 1512`, `evidenceStatus === "unresolved"`, `package`/`version`/`commit === null`,
-`source.url === "https://github.com/phosphor-icons/core"`, `concludedLicense === "MIT"`, the exact copyright notice,
-and `licenseSourceUrl`/`licenseFile === null`). `git status --short` showed exactly the two expected modified files
-(plus this untracked plan document); `git diff --stat` against `packages/astro-icons/src`,
+`source.url === "https://github.com/phosphor-icons/core"`, `concludedLicense === "MIT"`, the exact copyright notice, and
+`licenseSourceUrl`/`licenseFile === null`). `git status --short` showed exactly the two expected modified files (plus
+this untracked plan document); `git diff --stat` against `packages/astro-icons/src`,
 `packages/astro-icons/migration/icon-inventory.json`, and `packages/astro-icons/package.json` was empty. No scratch
 checker or temporary artifact was left in the repository.
 

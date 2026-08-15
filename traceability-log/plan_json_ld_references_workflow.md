@@ -2,11 +2,17 @@
 
 ## Summary
 
-Improve the JSON-LD references workflow by consolidating duplicated normalization paths, centralizing pending-revision policy, improving diagnostics for Turtle-authored data, and making editorial/reporting workflows more trustworthy.
+Improve the JSON-LD references workflow by consolidating duplicated normalization paths, centralizing pending-revision
+policy, improving diagnostics for Turtle-authored data, and making editorial/reporting workflows more trustworthy.
 
-The current preferred workflow is graph-backed: Turtle fragments are assembled, parsed with `n3`, validated, emitted as deterministic JSON-LD, loaded into a normalized runtime catalog, and rendered through `LessonReferencesFromCatalog` / `ReferencesFromCatalog`. The older `ReferencesFromJsonLd` ItemList path still exists and bypasses the generated graph, but both callers now share the same final render-facing reference normalization core before reaching `ReferenceEntry`. 
+The current preferred workflow is graph-backed: Turtle fragments are assembled, parsed with `n3`, validated, emitted as
+deterministic JSON-LD, loaded into a normalized runtime catalog, and rendered through `LessonReferencesFromCatalog` /
+`ReferencesFromCatalog`. The older `ReferencesFromJsonLd` ItemList path still exists and bypasses the generated graph,
+but both callers now share the same final render-facing reference normalization core before reaching `ReferenceEntry`.
 
-The plan should preserve the existing strengths: deterministic generated artifacts, normalized runtime maps, shared `NormalizedReference` rendering, and the current protected behavioural baseline across build, load, grouping, and rendering. 
+The plan should preserve the existing strengths: deterministic generated artifacts, normalized runtime maps, shared
+`NormalizedReference` rendering, and the current protected behavioural baseline across build, load, grouping, and
+rendering.
 
 ## Goals
 
@@ -30,29 +36,34 @@ The plan should preserve the existing strengths: deterministic generated artifac
 
 ### 1. Two active JSON-LD shapes
 
-The graph-backed catalog path and the legacy ItemList path both normalize bibliography data, but in separate modules with overlapping logic for reference types, authors, publishers, URLs, pages, and fallback fields. 
+The graph-backed catalog path and the legacy ItemList path both normalize bibliography data, but in separate modules
+with overlapping logic for reference types, authors, publishers, URLs, pages, and fallback fields.
 
 This creates a long-term divergence risk: a fix in one path may not apply to the other.
 
 ### 2. Report/runtime divergence
 
-`scripts/bibliography-report.mjs` manually parses the generated graph instead of reusing `loadBibliographyCatalog`, `getReferenceStats`, and `getMostCitedBooks`, even though those helpers already exist in the runtime catalog layer. 
+`scripts/bibliography-report.mjs` manually parses the generated graph instead of reusing `loadBibliographyCatalog`,
+`getReferenceStats`, and `getMostCitedBooks`, even though those helpers already exist in the runtime catalog layer.
 
 Reports should describe the same catalog model that the site renders.
 
 ### 3. Distributed pending-revision policy
 
-`pending-revision` behaviour currently appears at multiple levels: builder pruning, loader tolerance, query defaults, and rendering defaults. The report notes that the choices are coherent, but distributed. 
+`pending-revision` behaviour currently appears at multiple levels: builder pruning, loader tolerance, query defaults,
+and rendering defaults. The report notes that the choices are coherent, but distributed.
 
 This is a good candidate for a small policy module.
 
 ### 4. Weak authoring diagnostics
 
-Generated graph nodes expose limited provenance: runtime nodes know `sourceLabel`, but generated nodes do not expose which Turtle file or source line produced them. That makes errors harder to fix in a large graph. 
+Generated graph nodes expose limited provenance: runtime nodes know `sourceLabel`, but generated nodes do not expose
+which Turtle file or source line produced them. That makes errors harder to fix in a large graph.
 
 ### 5. Editorial debt is hidden
 
-The catalog has 130 usage nodes, but 102 are `pending-revision`, meaning most graph data is intentionally hidden from public rendering. 
+The catalog has 130 usage nodes, but 102 are `pending-revision`, meaning most graph data is intentionally hidden from
+public rendering.
 
 That is acceptable during migration, but it needs explicit tracking.
 
@@ -92,7 +103,8 @@ src/components/ui/references/
   Rendering only: normalized references in, UI out.
 ```
 
-The important shift is to make **normalization and policy shared**, while keeping **Astro rendering** and **build-script I/O** separate.
+The important shift is to make **normalization and policy shared**, while keeping **Astro rendering** and **build-script
+I/O** separate.
 
 ---
 
@@ -102,20 +114,21 @@ The important shift is to make **normalization and policy shared**, while keepin
 
 Make `scripts/bibliography-report.mjs` reuse the same catalog loader and query helpers as the site.
 
-The report already identifies this as a high-value first planning area: `bibliography-report.mjs` duplicates graph-reading logic instead of reusing `loadBibliographyCatalog`, `getReferenceStats`, and `getMostCitedBooks`. 
+The report already identifies this as a high-value first planning area: `bibliography-report.mjs` duplicates
+graph-reading logic instead of reusing `loadBibliographyCatalog`, `getReferenceStats`, and `getMostCitedBooks`.
 
 ## Changes
 
 - Extract a Node-safe read-side entrypoint, for example:
 
 ```ts
-src/lib/bibliography/catalog-read-model.ts
+src / lib / bibliography / catalog - read - model.ts;
 ```
 
 or, if it must be used by both Node scripts and site runtime:
 
 ```ts
-src/lib/bibliography/catalog-core.ts
+src / lib / bibliography / catalog - core.ts;
 ```
 
 - Keep the module free from Astro imports.
@@ -137,11 +150,11 @@ getPendingRevisionStats(catalog: BibliographyCatalog): PendingRevisionStats
 
 ```ts
 describe("bibliography report read model", () => {
-  test("uses the same stats as the runtime catalog", () => {
-    // Given a generated catalog fixture
-    // When report stats are computed
-    // Then they match runtime catalog stats
-  });
+    test("uses the same stats as the runtime catalog", () => {
+        // Given a generated catalog fixture
+        // When report stats are computed
+        // Then they match runtime catalog stats
+    });
 });
 ```
 
@@ -173,37 +186,40 @@ test.each([
 
 Create one normalization path for all supported reference shapes.
 
-Status: completed for the current supported runtime reference kinds. The legacy ItemList path and the graph-backed catalog path now keep source-specific extraction local, then delegate final render-facing construction for `Book`, `WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis` to the shared normalizer in `src/lib/bibliography/normalize/normalize-reference.mjs`. 
+Status: completed for the current supported runtime reference kinds. The legacy ItemList path and the graph-backed
+catalog path now keep source-specific extraction local, then delegate final render-facing construction for `Book`,
+`WebPage`, `VideoObject`, `ScholarlyArticle`, and `Thesis` to the shared normalizer in
+`src/lib/bibliography/normalize/normalize-reference.mjs`.
 
 ## Changes
 
 Introduce a shared normalization core:
 
 ```ts
-src/lib/bibliography/normalize/
-  normalize-reference.ts
-  normalize-authors.ts
-  normalize-publication.ts
-  normalize-url.ts
-  normalize-pages.ts
-  normalize-fallback-title.ts
+src / lib / bibliography / normalize
+        / normalize - reference.ts;
+normalize - authors.ts;
+normalize - publication.ts;
+normalize - url.ts;
+normalize - pages.ts;
+normalize - fallback - title.ts;
 ```
 
 Recommended design:
 
 ```ts
 type ReferenceInput =
-  | CatalogReferenceInput
-  | ItemListReferenceInput;
+    | CatalogReferenceInput
+    | ItemListReferenceInput;
 
 type NormalizeReferenceOptions = {
-  readonly fallbackTitle?: string;
-  readonly source: "catalog" | "item-list";
+    readonly fallbackTitle?: string;
+    readonly source: "catalog" | "item-list";
 };
 
 function normalizeReference(
-  input: ReferenceInput,
-  options: NormalizeReferenceOptions,
+    input: ReferenceInput,
+    options: NormalizeReferenceOptions,
 ): NormalizedReference;
 ```
 
@@ -219,8 +235,10 @@ This prevents the generic normalizer from knowing too much about either raw form
 
 Current implementation note:
 
-- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling, and strict/non-strict behavior.
-- `src/lib/bibliography/catalog-core.mjs` owns graph resolution, linked-node lookup, pending-only tolerance, and strict/non-strict behavior.
+- `src/lib/bibliography/normalize-jsonld.ts` owns ItemList validation, duplicate detection, fallback-title handling, and
+  strict/non-strict behavior.
+- `src/lib/bibliography/catalog-core.mjs` owns graph resolution, linked-node lookup, pending-only tolerance, and
+  strict/non-strict behavior.
 - Both callers now converge on the same final normalization core.
 
 ## TypeScript Design Suggestions
@@ -229,18 +247,18 @@ Use discriminated unions for supported reference types:
 
 ```ts
 type NormalizedReference =
-  | NormalizedBookReference
-  | NormalizedWebPageReference
-  | NormalizedVideoReference
-  | NormalizedScholarlyArticleReference
-  | NormalizedThesisReference;
+    | NormalizedBookReference
+    | NormalizedWebPageReference
+    | NormalizedVideoReference
+    | NormalizedScholarlyArticleReference
+    | NormalizedThesisReference;
 ```
 
 Use exhaustive checking:
 
 ```ts
 function assertNever(value: never): never {
-  throw new Error(`Unsupported reference type: ${String(value)}`);
+    throw new Error(`Unsupported reference type: ${String(value)}`);
 }
 ```
 
@@ -313,11 +331,13 @@ Decide whether `ReferencesFromJsonLd` is:
 1. a supported long-term public component, or
 2. a compatibility bridge for older lesson pages.
 
-The report explicitly notes that `ReferencesFromJsonLd` remains tested and functional, but its long-term status is unclear. 
+The report explicitly notes that `ReferencesFromJsonLd` remains tested and functional, but its long-term status is
+unclear.
 
 ## Recommendation
 
-Treat it as a **compatibility bridge** unless there is a strong authoring reason to keep direct ItemList JSON-LD as a first-class workflow.
+Treat it as a **compatibility bridge** unless there is a strong authoring reason to keep direct ItemList JSON-LD as a
+first-class workflow.
 
 Suggested policy:
 
@@ -376,20 +396,21 @@ test("renders legacy ItemList references through the shared normalized reference
 
 Make `pending-revision` an explicit policy instead of distributed behaviour.
 
-The current implementation has pending-related behaviour in builder pruning, catalog loading, query defaults, and rendering defaults. 
+The current implementation has pending-related behaviour in builder pruning, catalog loading, query defaults, and
+rendering defaults.
 
 ## Changes
 
 Introduce a policy module:
 
 ```ts
-src/lib/bibliography/pending-revision-policy.ts
+src / lib / bibliography / pending - revision - policy.ts;
 ```
 
 or, if used by build scripts too:
 
 ```ts
-scripts/lib/bibliography/policy/pending-revision-policy.mjs
+scripts / lib / bibliography / policy / pending - revision - policy.mjs;
 ```
 
 Preferred API:
@@ -398,10 +419,10 @@ Preferred API:
 type UsageTag = "recommended" | "additional" | "pending-revision";
 
 type PendingRevisionPolicy = {
-  readonly renderByDefault: boolean;
-  readonly allowMalformedDraftReference: boolean;
-  readonly includeInStats: boolean;
-  readonly pruneWhenUnrenderable: boolean;
+    readonly renderByDefault: boolean;
+    readonly allowMalformedDraftReference: boolean;
+    readonly includeInStats: boolean;
+    readonly pruneWhenUnrenderable: boolean;
 };
 
 function classifyUsageVisibility(tags: readonly UsageTag[]): UsageVisibility;
@@ -448,7 +469,8 @@ For tag arrays:
 
 - order should not affect visibility;
 - duplicate tags should not affect visibility;
-- adding `pending-revision` should not hide an explicitly public `recommended` usage unless the intended policy says otherwise.
+- adding `pending-revision` should not hide an explicitly public `recommended` usage unless the intended policy says
+  otherwise.
 
 ## Acceptance Criteria
 
@@ -464,7 +486,8 @@ For tag arrays:
 
 Make validation errors actionable for lesson authors and maintainers.
 
-The report notes that generated nodes do not expose the Turtle file or source line that produced them, which makes diagnostics less actionable when graph data is malformed. 
+The report notes that generated nodes do not expose the Turtle file or source line that produced them, which makes
+diagnostics less actionable when graph data is malformed.
 
 ## Changes
 
@@ -474,10 +497,10 @@ When assembling numbered Turtle files, preserve metadata:
 
 ```ts
 type TurtleSourceSegment = {
-  readonly filePath: string;
-  readonly startLine: number;
-  readonly endLine: number;
-  readonly text: string;
+    readonly filePath: string;
+    readonly startLine: number;
+    readonly endLine: number;
+    readonly text: string;
 };
 ```
 
@@ -485,9 +508,9 @@ type TurtleSourceSegment = {
 
 ```ts
 type BibliographyRecordProvenance = {
-  readonly sourceFile: string;
-  readonly sourceLine?: number;
-  readonly sourceLabel?: string;
+    readonly sourceFile: string;
+    readonly sourceLine?: number;
+    readonly sourceLabel?: string;
 };
 ```
 
@@ -495,12 +518,12 @@ type BibliographyRecordProvenance = {
 
 ```ts
 type BibliographyValidationError = {
-  readonly code: string;
-  readonly message: string;
-  readonly nodeId: string;
-  readonly sourceFile?: string;
-  readonly sourceLine?: number;
-  readonly suggestion?: string;
+    readonly code: string;
+    readonly message: string;
+    readonly nodeId: string;
+    readonly sourceFile?: string;
+    readonly sourceLine?: number;
+    readonly suggestion?: string;
 };
 ```
 
@@ -551,7 +574,8 @@ Use malformed cases:
 
 Turn `pending-revision` from hidden migration state into visible editorial backlog.
 
-The report states that `pending-revision` dominates the current graph: 102 pending usages versus 14 recommended and 14 additional. 
+The report states that `pending-revision` dominates the current graph: 102 pending usages versus 14 recommended and 14
+additional.
 
 ## Changes
 
@@ -626,7 +650,8 @@ Avoid failing CI immediately while the migration backlog is still intentional.
 
 Make override behaviour discoverable and safer.
 
-Currently, slot overrides are powerful but implicit: lesson pages can override `title`, `description`, `publication`, and `institution` through ID-based slots such as `title-{referenceId}`. 
+Currently, slot overrides are powerful but implicit: lesson pages can override `title`, `description`, `publication`,
+and `institution` through ID-based slots such as `title-{referenceId}`.
 
 ## Options
 
@@ -634,10 +659,10 @@ Currently, slot overrides are powerful but implicit: lesson pages can override `
 
 ```ts
 const referenceSlotName = {
-  title: (id: string) => `title-${id}`,
-  description: (id: string) => `description-${id}`,
-  publication: (id: string) => `publication-${id}`,
-  institution: (id: string) => `institution-${id}`,
+    title: (id: string) => `title-${id}`,
+    description: (id: string) => `description-${id}`,
+    publication: (id: string) => `publication-${id}`,
+    institution: (id: string) => `institution-${id}`,
 } as const;
 ```
 
@@ -655,11 +680,11 @@ Cons:
 
 ```ts
 type ReferenceOverride = {
-  readonly id: string;
-  readonly title?: string;
-  readonly description?: string;
-  readonly publication?: string;
-  readonly institution?: string;
+    readonly id: string;
+    readonly title?: string;
+    readonly description?: string;
+    readonly publication?: string;
+    readonly institution?: string;
 };
 ```
 
@@ -676,7 +701,8 @@ Cons:
 
 ### Recommendation
 
-Use **Option A now**, then evaluate **Option B** only if slot overrides become common enough to justify a structured override API.
+Use **Option A now**, then evaluate **Option B** only if slot overrides become common enough to justify a structured
+override API.
 
 ## Testing
 
@@ -700,7 +726,8 @@ Evaluate whether graph validation should remain custom or adopt a dedicated RDF 
 
 ## Recommendation
 
-Do not add a new dependency immediately. The current system already validates graph records, relation checks, usage tags, missing relations, and deterministic graph shape through tests. 
+Do not add a new dependency immediately. The current system already validates graph records, relation checks, usage
+tags, missing relations, and deterministic graph shape through tests.
 
 Consider a dedicated RDF validation dependency only if:
 

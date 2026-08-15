@@ -285,7 +285,8 @@ match is absent.
 
 ## ~~Step 5: Implement the helper module~~
 
-Status: complete. `scripts/lib/layer-boundary-import-specifiers.mjs` now owns the import-specifier helpers, and the focused helper suite plus the classifier and rule-evaluation regression suites pass.
+Status: complete. `scripts/lib/layer-boundary-import-specifiers.mjs` now owns the import-specifier helpers, and the
+focused helper suite plus the classifier and rule-evaluation regression suites pass.
 
 Move only import-specifier logic from `layer-boundary-classification.mjs`:
 
@@ -313,7 +314,9 @@ later declarative-rule stage, not this extraction.
 
 ## ~~Step 6: Wire `layer-boundary-classification.mjs` to the helper~~
 
-Status: complete. `scripts/lib/layer-boundary-classification.mjs` now delegates unresolved import-specifier handling to `scripts/lib/layer-boundary-import-specifiers.mjs` while preserving the public classifier API and the resolved-target path logic.
+Status: complete. `scripts/lib/layer-boundary-classification.mjs` now delegates unresolved import-specifier handling to
+`scripts/lib/layer-boundary-import-specifiers.mjs` while preserving the public classifier API and the resolved-target
+path logic.
 
 Update `classifyImport()` so it delegates import-specifier concerns:
 
@@ -362,7 +365,9 @@ This keeps `classifyImport()` behaviour stable while making unresolved import cl
 
 ## Step 7: Run Stage 1 and Stage 2 tests as safety nets
 
-Status: verification complete for the focused helper suite and the classifier/rule-evaluation regression suites. `pnpm run check:architecture` still reports pre-existing `ui-boundary` findings in PDF export notes, which are unrelated to this extraction.
+Status: verification complete for the focused helper suite and the classifier/rule-evaluation regression suites.
+`pnpm run check:architecture` still reports pre-existing `ui-boundary` findings in PDF export notes, which are unrelated
+to this extraction.
 
 Run the focused helper tests first, then the already-pinned integration contract suites:
 

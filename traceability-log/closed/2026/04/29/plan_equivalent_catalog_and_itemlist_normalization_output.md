@@ -6,7 +6,8 @@ Status: Implemented on 2026-04-29.
 
 Add a focused characterization suite before refactoring reference normalization.
 
-The suite should lock the current render-facing `NormalizedReference` output for semantically equivalent catalog graph and legacy ItemList inputs. Its purpose is to create a safety net for Phase 2 before introducing a shared normalizer.
+The suite should lock the current render-facing `NormalizedReference` output for semantically equivalent catalog graph
+and legacy ItemList inputs. Its purpose is to create a safety net for Phase 2 before introducing a shared normalizer.
 
 This is a **red/lock step only**:
 
@@ -15,7 +16,8 @@ This is a **red/lock step only**:
 - no generated bibliography artifact changes;
 - no rendering component changes.
 
-If a catalog fixture and an ItemList fixture are semantically equivalent but currently produce different render-facing fields, the test should first document that divergence explicitly rather than silently changing behavior.
+If a catalog fixture and an ItemList fixture are semantically equivalent but currently produce different render-facing
+fields, the test should first document that divergence explicitly rather than silently changing behavior.
 
 ## Goals
 
@@ -82,7 +84,8 @@ const projectComparableReference = (
 };
 ```
 
-Prefer a projection function over direct object equality because catalog references may carry catalog-only IDs or linked-node metadata that ItemList references cannot represent.
+Prefer a projection function over direct object equality because catalog references may carry catalog-only IDs or
+linked-node metadata that ItemList references cannot represent.
 
 ## Comparable Projection Policy
 
@@ -211,7 +214,8 @@ Fallback case:
 - publisher/platform metadata absent;
 - platform or publisher display derives from URL hostname if that is current behavior.
 
-If hostname fallback differs between ItemList and catalog today, add a documented divergence test instead of forcing equivalence.
+If hostname fallback differs between ItemList and catalog today, add a documented divergence test instead of forcing
+equivalence.
 
 ## Case 4: `ScholarlyArticle`
 
@@ -278,7 +282,8 @@ Cover:
 - metadata-specific URL falls back to reference URL when the publisher/container URL is absent;
 - page ranges normalize identically when `pageStart > pageEnd`, if this is current behavior.
 
-Important: these tests should characterize current behavior. If the current behavior is undesirable, mark it as a documented finding for the refactor phase, but do not change production code in this step.
+Important: these tests should characterize current behavior. If the current behavior is undesirable, mark it as a
+documented finding for the refactor phase, but do not change production code in this step.
 
 ## Fixture Design
 
@@ -307,7 +312,8 @@ const itemListBook = JSON.stringify({
 });
 ```
 
-For catalog fixtures, prefer a tiny generated-catalog-shaped JSON-LD object that contains only the nodes required by `loadBibliographyCatalog`.
+For catalog fixtures, prefer a tiny generated-catalog-shaped JSON-LD object that contains only the nodes required by
+`loadBibliographyCatalog`.
 
 Avoid using the real generated catalog because:
 
@@ -394,7 +400,8 @@ Verified on 2026-04-29:
 - `pnpm exec tsc --noEmit`
 - Result: passed.
 
-If the suite reveals unexpected divergence, also run the existing normalization and catalog suites before deciding whether it is a bug or an intentional difference:
+If the suite reveals unexpected divergence, also run the existing normalization and catalog suites before deciding
+whether it is a bug or an intentional difference:
 
 ```bash
 pnpm vitest run \

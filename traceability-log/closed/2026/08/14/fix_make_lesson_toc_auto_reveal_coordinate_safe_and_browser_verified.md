@@ -864,33 +864,31 @@ one can close the failure mode that escaped the previous fix.
 
 # Outcome
 
-Implemented as planned: `lesson-toc-measure.ts` (`getBoundingClientRect()`-diffing, `clientTop`-aware, no
-`offsetParent` dependency), full BDD/DDT/PBT/metamorphic coverage (`lesson-toc-measure.test.ts`,
-`lesson-toc-measure.pbt.test.ts`), the shell/scroller DOM split in `LessonToc.astro`, `LessonToc.render.test.ts`
-structural-contract tests, and `playwright.config.ts` / `tests/e2e/lesson-toc-scroll.spec.ts` as the repository's
-first general-purpose browser regression harness — all passing (35 unit/PBT tests, 3 Playwright scenarios).
+Implemented as planned: `lesson-toc-measure.ts` (`getBoundingClientRect()`-diffing, `clientTop`-aware, no `offsetParent`
+dependency), full BDD/DDT/PBT/metamorphic coverage (`lesson-toc-measure.test.ts`, `lesson-toc-measure.pbt.test.ts`), the
+shell/scroller DOM split in `LessonToc.astro`, `LessonToc.render.test.ts` structural-contract tests, and
+`playwright.config.ts` / `tests/e2e/lesson-toc-scroll.spec.ts` as the repository's first general-purpose browser
+regression harness — all passing (35 unit/PBT tests, 3 Playwright scenarios).
 
 Phase 3's CI requirement was completed as part of closing out
-`fix_keep_the_lesson_toc_pinned_throughout_long_page_scrolling.md` instead of here, since both this spec and that
-doc's `lesson-toc-sticky.spec.ts` are exercised by the same `test:e2e` CI job — wiring it twice was unnecessary. The
-config runs against `astro dev`, not the production build/`preview` server this doc originally specified: cold-start
-cost of the `predev` generation chain made the preview path impractical for iterative local runs, and the CI job
-independently runs the same generation steps `test:unit`/`test:astro-render` already run before invoking Playwright,
-so the tested markup/behavior is equivalent either way.
+`fix_keep_the_lesson_toc_pinned_throughout_long_page_scrolling.md` instead of here, since both this spec and that doc's
+`lesson-toc-sticky.spec.ts` are exercised by the same `test:e2e` CI job — wiring it twice was unnecessary. The config
+runs against `astro dev`, not the production build/`preview` server this doc originally specified: cold-start cost of
+the `predev` generation chain made the preview path impractical for iterative local runs, and the CI job independently
+runs the same generation steps `test:unit`/`test:astro-render` already run before invoking Playwright, so the tested
+markup/behavior is equivalent either way.
 
-**Important correction, made after this cycle closed once already:** the `offsetParent`-under-`sticky` root-cause
-theory that motivated this entire corrective fix does not hold up. Direct browser probing (see the "Second
-regression discovered" section appended to
-`fix_keep_the_active_lesson_toc_entry_visible_within_the_scrollable_panel.md`) found `offsetParent` resolving
-correctly and the pre-fix coordinate math producing the right numbers in real Chromium — the actual bug the user
-reported was never in the `offsetTop`/`offsetParent` measurement path at all. It was a separate, unrelated defect:
-`position: sticky` applied to a nested element whose containing block doesn't span the full grid row, diagnosed and
-fixed in `fix_keep_the_lesson_toc_pinned_throughout_long_page_scrolling.md`.
+**Important correction, made after this cycle closed once already:** the `offsetParent`-under-`sticky` root-cause theory
+that motivated this entire corrective fix does not hold up. Direct browser probing (see the "Second regression
+discovered" section appended to `fix_keep_the_active_lesson_toc_entry_visible_within_the_scrollable_panel.md`) found
+`offsetParent` resolving correctly and the pre-fix coordinate math producing the right numbers in real Chromium — the
+actual bug the user reported was never in the `offsetTop`/`offsetParent` measurement path at all. It was a separate,
+unrelated defect: `position: sticky` applied to a nested element whose containing block doesn't span the full grid row,
+diagnosed and fixed in `fix_keep_the_lesson_toc_pinned_throughout_long_page_scrolling.md`.
 
-That does not make this cycle's work wasted. The `getBoundingClientRect()` adapter is still strictly more correct
-than reading raw `offsetTop`/`offsetHeight` off an element whose `offsetParent` was never actually verified, the
-shell/scroller split is a real structural improvement (and a prerequisite for the containing-block fix — sticky
-now needs a place to live that isn't the scrollable region), and the Playwright harness this doc introduced is the
-same one that caught the actual bug next. But this doc's own stated root cause was wrong, and it is being closed
-alongside the other two TOC traceability docs precisely so that the record says so plainly rather than quietly
-superseding it.
+That does not make this cycle's work wasted. The `getBoundingClientRect()` adapter is still strictly more correct than
+reading raw `offsetTop`/`offsetHeight` off an element whose `offsetParent` was never actually verified, the
+shell/scroller split is a real structural improvement (and a prerequisite for the containing-block fix — sticky now
+needs a place to live that isn't the scrollable region), and the Playwright harness this doc introduced is the same one
+that caught the actual bug next. But this doc's own stated root cause was wrong, and it is being closed alongside the
+other two TOC traceability docs precisely so that the record says so plainly rather than quietly superseding it.

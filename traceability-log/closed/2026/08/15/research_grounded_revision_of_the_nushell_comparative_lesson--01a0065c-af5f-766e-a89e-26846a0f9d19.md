@@ -6,64 +6,58 @@ Implemented all six TDD cycles from this plan against `astro-website`.
 
 **Cycle 1 — bibliography and readings.** Added `person:michael-greenberg`, `person:malte-sippel`,
 `person:horst-schirmeier`, and `person:jan-sorva` to `src/data/bibliography/sources/01-persons.ttl`
-(`person:konstantinos-kallas` and `person:nikos-vasilakis` already existed and were reused). Added
-`work:hotos-2021`, `work:plos-2023`, and `work:acm-toce` to `04-works.ttl`, and
-`ref:greenberg-unix-shell-next-50-years-2021`, `ref:sippel-process-composition-typed-unix-pipes-2023`,
-and `ref:sorva-notional-machines-2013` to `05-references.ttl`, following the `handa`/`bloch`
-`isPartOf` + `publisher org:acm` pattern. Added `supportScriptsNushellReadings` to
-`src/data/readings/lesson-readings.ts` with real Spanish `why`/`focus`/`afterReading`/`guidingQuestion`
-copy for all 7 entries (essential: Greenberg et al. 2021, Sippel & Schirmeier 2023, Nushell Pipelines;
-practice: Nushell Loading Data, Nushell 0.114.0 blog; deeper: Handa et al. 2021, Sorva 2013), wired
-through `getSupportScriptsNushellReadings()` in `LessonReadingsAdapter.ts` and re-exported from
-`presentation/adapters/lesson-readings.ts`. Created the per-lesson readings page
-`src/pages/readings/scripting/support-scripts/nushell/index.astro` mirroring the `what-is` pattern.
+(`person:konstantinos-kallas` and `person:nikos-vasilakis` already existed and were reused). Added `work:hotos-2021`,
+`work:plos-2023`, and `work:acm-toce` to `04-works.ttl`, and `ref:greenberg-unix-shell-next-50-years-2021`,
+`ref:sippel-process-composition-typed-unix-pipes-2023`, and `ref:sorva-notional-machines-2013` to `05-references.ttl`,
+following the `handa`/`bloch` `isPartOf` + `publisher org:acm` pattern. Added `supportScriptsNushellReadings` to
+`src/data/readings/lesson-readings.ts` with real Spanish `why`/`focus`/`afterReading`/`guidingQuestion` copy for all 7
+entries (essential: Greenberg et al. 2021, Sippel & Schirmeier 2023, Nushell Pipelines; practice: Nushell Loading Data,
+Nushell 0.114.0 blog; deeper: Handa et al. 2021, Sorva 2013), wired through `getSupportScriptsNushellReadings()` in
+`LessonReadingsAdapter.ts` and re-exported from `presentation/adapters/lesson-readings.ts`. Created the per-lesson
+readings page `src/pages/readings/scripting/support-scripts/nushell/index.astro` mirroring the `what-is` pattern.
 Regenerated the bibliography catalog with `pnpm generate:bibliography-catalog`.
 
-**Cycles 2-6 — lesson rewrite.** Rewrote `src/pages/notes/scripting/support-scripts/nushell.astro`:
-added "Del pipe de Unix al pipeline estructurado" (Unix lineage, Greenberg citation) and "Un modelo
-mental para esta lección" (two notional-machine `OutputBlock` diagrams, Sorva citation as pedagogical
-rationale only) before syntax-heavy examples; moved the external-process warning out of the early `ls`
-section; added "El pipeline también tiene contratos de tipo" with a type-compatible
-(`open album.json | album-title`) and an incompatible (`"Powerslave" | album-title`) composition,
-citing Sippel & Schirmeier; replaced the `album.nuon` fixture with `album.json` (via the existing
-`JsonBlock` component, not `NushellBlock`, since the content is JSON not Nu syntax), corrected the
-"ya no exige elegir un formato" sentence, and added a "¿Y NUON?" note; reordered so `run` follows the
-type-contracts section as the explicit culmination; merged "Dónde se pierde la estructura" and "Qué
-ofrece Nushell nativamente..." into one closing section with the plan's exact closing paragraph;
-rewrote the conclusions around the three required claims plus the
-"composición → representación → contratos de tipo → frontera de proceso" chain, and added
-"Continúa explorando" linking via `lessonReadingsRoute`. No Kotlin code was introduced.
+**Cycles 2-6 — lesson rewrite.** Rewrote `src/pages/notes/scripting/support-scripts/nushell.astro`: added "Del pipe de
+Unix al pipeline estructurado" (Unix lineage, Greenberg citation) and "Un modelo mental para esta lección" (two
+notional-machine `OutputBlock` diagrams, Sorva citation as pedagogical rationale only) before syntax-heavy examples;
+moved the external-process warning out of the early `ls` section; added "El pipeline también tiene contratos de tipo"
+with a type-compatible (`open album.json | album-title`) and an incompatible (`"Powerslave" | album-title`) composition,
+citing Sippel & Schirmeier; replaced the `album.nuon` fixture with `album.json` (via the existing `JsonBlock` component,
+not `NushellBlock`, since the content is JSON not Nu syntax), corrected the "ya no exige elegir un formato" sentence,
+and added a "¿Y NUON?" note; reordered so `run` follows the type-contracts section as the explicit culmination; merged
+"Dónde se pierde la estructura" and "Qué ofrece Nushell nativamente..." into one closing section with the plan's exact
+closing paragraph; rewrote the conclusions around the three required claims plus the "composición → representación →
+contratos de tipo → frontera de proceso" chain, and added "Continúa explorando" linking via `lessonReadingsRoute`. No
+Kotlin code was introduced.
 
-**Tests.** Extended `src/presentation/adapters/__tests__/lesson-readings.test.ts` for the new lesson
-and `publishedReadings.length === 2`; added
+**Tests.** Extended `src/presentation/adapters/__tests__/lesson-readings.test.ts` for the new lesson and
+`publishedReadings.length === 2`; added
 `src/pages/readings/scripting/support-scripts/nushell/__tests__/index.render.test.ts`; added
-`src/pages/notes/scripting/support-scripts/__tests__/nushell.render.test.ts` (9 tests covering the
-Cycle 2-6 conceptual markers, citations, type-contract example, `album.json` fixture, `run`
-culmination ordering, the mixed-pipeline distinction, the closing conceptual chain, the readings link,
-and absence of Kotlin code); updated the pre-existing
-`src/pages/notes/scripting/support-scripts/__tests__/support-scripts.render.test.ts`, which still
-asserted `open album.nuon`, to assert `open album.json` instead. All new/existing tests use
-`test`/`suite`/`describe`, never `it`.
+`src/pages/notes/scripting/support-scripts/__tests__/nushell.render.test.ts` (9 tests covering the Cycle 2-6 conceptual
+markers, citations, type-contract example, `album.json` fixture, `run` culmination ordering, the mixed-pipeline
+distinction, the closing conceptual chain, the readings link, and absence of Kotlin code); updated the pre-existing
+`src/pages/notes/scripting/support-scripts/__tests__/support-scripts.render.test.ts`, which still asserted
+`open album.nuon`, to assert `open album.json` instead. All new/existing tests use `test`/`suite`/`describe`, never
+`it`.
 
-**Verification.** `pnpm run generate:bibliography-catalog` succeeded. `node vitest run` (full
-`test:unit`): 89 files / 1409 tests passed. `node vitest run --config vitest.astro.config.ts`
-(`test:astro`): 41 files / 325 tests passed. `pnpm run check` (toolchain, i18n, workspace packages,
-bibliography regeneration, `astro check`, lesson-metadata dry-run, `check:architecture`) completed
-with 0 errors, 0 warnings, 15 pre-existing hints unrelated to this change, and no layer-boundary
-findings.
+**Verification.** `pnpm run generate:bibliography-catalog` succeeded. `node vitest run` (full `test:unit`): 89 files /
+1409 tests passed. `node vitest run --config vitest.astro.config.ts` (`test:astro`): 41 files / 325 tests passed.
+`pnpm run check` (toolchain, i18n, workspace packages, bibliography regeneration, `astro check`, lesson-metadata
+dry-run, `check:architecture`) completed with 0 errors, 0 warnings, 15 pre-existing hints unrelated to this change, and
+no layer-boundary findings.
 
 **Deviations from the plan.**
+
 - The plan's Cycle 1 scope list did not mention creating a `src/pages/readings/**` page, but the
-  `readings/software-libraries/what-is/index.astro` pattern this plan explicitly says to mirror
-  requires one (there is no dynamic `/readings/[...slug]` route in this repo), so
-  `src/pages/readings/scripting/support-scripts/nushell/index.astro` was added to make
-  `lessonReadingsRoute` resolve to a real page, consistent with the established per-lesson pattern.
-- No repo-wide "every published lesson reading resolves against the catalog" contract test exists;
-  each per-lesson readings page throws at render time via `resolveLessonReadings` if resolution fails
-  (the same mechanism `what-is` relies on), and the new readings page's render test exercises that
-  path for this lesson.
-- `dprint`/`astro check` reformatted the rewritten `nushell.astro` (attribute wrapping only) during
-  `pnpm check`; content was not altered, and all render tests were re-run afterward to confirm.
+  `readings/software-libraries/what-is/index.astro` pattern this plan explicitly says to mirror requires one (there is
+  no dynamic `/readings/[...slug]` route in this repo), so
+  `src/pages/readings/scripting/support-scripts/nushell/index.astro` was added to make `lessonReadingsRoute` resolve to
+  a real page, consistent with the established per-lesson pattern.
+- No repo-wide "every published lesson reading resolves against the catalog" contract test exists; each per-lesson
+  readings page throws at render time via `resolveLessonReadings` if resolution fails (the same mechanism `what-is`
+  relies on), and the new readings page's render test exercises that path for this lesson.
+- `dprint`/`astro check` reformatted the rewritten `nushell.astro` (attribute wrapping only) during `pnpm check`;
+  content was not altered, and all render tests were re-run afterward to confirm.
 
 ## Summary
 

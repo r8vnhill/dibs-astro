@@ -2,14 +2,17 @@
 
 ## Summary
 
-Refactor the bibliography normalization boundary so builders depend on a cohesive record-reader facade instead of a flat collection of low-level accessor functions.
+Refactor the bibliography normalization boundary so builders depend on a cohesive record-reader facade instead of a flat
+collection of low-level accessor functions.
 
-This change should preserve the current fail-fast normalization model and keep the RDF parsing boundary narrow, while reducing duplication inside `records.mjs` and simplifying builder context. The refactor should proceed in two layers:
+This change should preserve the current fail-fast normalization model and keep the RDF parsing boundary narrow, while
+reducing duplication inside `records.mjs` and simplifying builder context. The refactor should proceed in two layers:
 
 1. unify the accessor internals behind generic reader primitives without changing observable behavior;
 2. introduce a builder-facing facade and migrate callers incrementally.
 
-Behavioral policy changes such as URL validation, duplicate handling, or canonical integer formatting should not be bundled into the core structural refactor unless they are explicitly chosen and locked by tests first.
+Behavioral policy changes such as URL validation, duplicate handling, or canonical integer formatting should not be
+bundled into the core structural refactor unless they are explicitly chosen and locked by tests first.
 
 ## Goals
 
@@ -66,7 +69,8 @@ Focus on the normalization boundary in `records.mjs`, especially:
 - type extraction and required `rdf:type`;
 - usage-tag extraction.
 
-At this stage, do not change implementation. The point is to turn the current module behavior into an executable contract.
+At this stage, do not change implementation. The point is to turn the current module behavior into an executable
+contract.
 
 ### 2. Unify accessor internals behind generic primitives
 
@@ -99,15 +103,19 @@ This step should be behavior-preserving. Do not rename accessors or change polic
 
 ### 3. Fix local type-safety gaps in the reader layer
 
-While unifying internals, fix the existing JSDoc typing/cast weakness around `expectTermType` so the reader layer remains statically helpful rather than becoming a typed façade over loosely checked internals.
+While unifying internals, fix the existing JSDoc typing/cast weakness around `expectTermType` so the reader layer
+remains statically helpful rather than becoming a typed façade over loosely checked internals.
 
-This is part of the refactor, not a separate enhancement, because the generic primitives will otherwise amplify any unsound local typing.
+This is part of the refactor, not a separate enhancement, because the generic primitives will otherwise amplify any
+unsound local typing.
 
 ### 4. Introduce a builder-facing record-reader facade
 
 Add a dedicated facade object that groups record-reading operations into one coherent surface.
 
-The facade should be created in `catalog-builder.mjs` and passed to builders through context. It should expose only record-reading concerns and should not absorb relation validation, pending-revision logic, or other builder orchestration responsibilities.
+The facade should be created in `catalog-builder.mjs` and passed to builders through context. It should expose only
+record-reading concerns and should not absorb relation validation, pending-revision logic, or other builder
+orchestration responsibilities.
 
 Target shape:
 
@@ -124,7 +132,9 @@ Do not overdesign the facade. It should mostly be a cohesive boundary, not a new
 
 Migrate one builder first.
 
-Choose a builder that is representative enough to exercise both scalar and many-value reads, but small enough that the migration remains easy to reason about. The purpose of this step is to validate the facade shape and context split before broader adoption.
+Choose a builder that is representative enough to exercise both scalar and many-value reads, but small enough that the
+migration remains easy to reason about. The purpose of this step is to validate the facade shape and context split
+before broader adoption.
 
 During this step:
 
@@ -156,11 +166,13 @@ The final state of this phase should be:
 - no temporary compatibility path;
 - builders insulated from low-level reader implementation details.
 
-The code should be positioned so a later schema-driven field extractor can be introduced without having to rework builder context again.
+The code should be positioned so a later schema-driven field extractor can be introduced without having to rework
+builder context again.
 
 ## Deferred or Explicitly-Gated Policy Decisions
 
-The original plan mixed architectural refactoring with several semantic decisions. Those should be handled more carefully.
+The original plan mixed architectural refactoring with several semantic decisions. Those should be handled more
+carefully.
 
 Treat the following as explicit decision points rather than casual refactor details:
 
@@ -171,7 +183,8 @@ Decide whether `scalarUrlLiteral` means:
 - “just a literal string that some caller interprets as a URL later”, or
 - “a URL-valued literal validated or normalized at the accessor boundary”.
 
-Do not change this accidentally during the facade refactor. Either preserve the existing behavior for this phase, or lock a new behavior with dedicated tests and perform the rename or validation intentionally.
+Do not change this accidentally during the facade refactor. Either preserve the existing behavior for this phase, or
+lock a new behavior with dedicated tests and perform the rename or validation intentionally.
 
 ### Duplicate handling
 
@@ -180,7 +193,8 @@ Decide whether duplicates in grouped RDF input are:
 - meaningful and must be preserved; or
 - noise and should be de-duplicated while preserving insertion order.
 
-Do not silently add de-duplication during internal reader unification. That is a contract decision, not a mechanical cleanup.
+Do not silently add de-duplication during internal reader unification. That is a contract decision, not a mechanical
+cleanup.
 
 ### Integer lexical policy
 
@@ -190,7 +204,8 @@ Again, this should be a deliberate policy choice backed by tests, not a side eff
 
 ### Hidden policy constants
 
-Replace inline sentinels such as `Number.MAX_SAFE_INTEGER` with named constants such as `UNORDERED_RECORD_INDEX`, but keep this as a readability improvement rather than a semantic change.
+Replace inline sentinels such as `Number.MAX_SAFE_INTEGER` with named constants such as `UNORDERED_RECORD_INDEX`, but
+keep this as a readability improvement rather than a semantic change.
 
 ## Test Plan
 
@@ -242,9 +257,11 @@ Keep PBT out of builder rendering and orchestration logic.
 
 ### Integration coverage
 
-Add one focused integration test for the pilot builder and retain existing catalog-builder and graph-builder suites as the main migration safety net.
+Add one focused integration test for the pilot builder and retain existing catalog-builder and graph-builder suites as
+the main migration safety net.
 
-After the pilot succeeds, rely mostly on existing integration coverage plus narrowly targeted regression tests where the context shape changed.
+After the pilot succeeds, rely mostly on existing integration coverage plus narrowly targeted regression tests where the
+context shape changed.
 
 ## Execution Phases
 
@@ -252,7 +269,8 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
 
 - Add missing BDD and DDT coverage.
 - No production refactor yet.
-- Encode duplicate-policy gaps as explicit red-by-design cases in the reader suite so the contract is visible before Phase 2 implementation.
+- Encode duplicate-policy gaps as explicit red-by-design cases in the reader suite so the contract is visible before
+  Phase 2 implementation.
 - Exit criterion: current behavior is encoded in tests.
 
 ### ~~Phase 2: Internal reader unification~~
@@ -260,7 +278,8 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
 - Implement `optionalOne` and `many`.
 - Route existing exports through them.
 - Fix reader-layer typing issues.
-- Centralize mapped-value dedupe in the shared many-reader path and convert the Phase 1 duplicate cases into normal passing tests.
+- Centralize mapped-value dedupe in the shared many-reader path and convert the Phase 1 duplicate cases into normal
+  passing tests.
 - Exit criterion: all tests remain green with no intended behavior change.
 
 ### ~~Phase 3: Reader facade pilot~~
@@ -268,23 +287,22 @@ After the pilot succeeds, rely mostly on existing integration coverage plus narr
 - Introduce the facade in builder context.
 - Migrate one builder.
 - Add one focused integration test.
-- Implemented with `Reference` as the pilot builder and a bound-source `createCatalogReader(...)`
-  facade.
-- Optional PBT coverage was included for source-label preservation because `fast-check` is already
-  part of the project.
+- Implemented with `Reference` as the pilot builder and a bound-source `createCatalogReader(...)` facade.
+- Optional PBT coverage was included for source-label preservation because `fast-check` is already part of the project.
 - Exit criterion: the pilot proves the context shape is sound.
 
 ### ~~Phase 4: Full migration~~
 
 - Migrate remaining builders.
 - Remove flat helper injection.
-- Implemented across `Person`, `Organization`, `CreativeWork`, `LearningResource`, `Reference`,
-  `Usage`, pending-revision collection, top-level type dispatch, and relation-category validation.
+- Implemented across `Person`, `Organization`, `CreativeWork`, `LearningResource`, `Reference`, `Usage`,
+  pending-revision collection, top-level type dispatch, and relation-category validation.
 - Removed temporary flat reader fields from builder context and tests.
 - Exit criterion: all builders use the facade.
 
 ## Public Interface Notes
 
 - Preserve the current exported accessor API throughout the structural migration.
-- Do not make public-facing naming changes during the facade introduction unless that rename is the explicit purpose of the change.
+- Do not make public-facing naming changes during the facade introduction unless that rename is the explicit purpose of
+  the change.
 - The new builder-facing contract is the record-reader facade, not a larger builder super-context.

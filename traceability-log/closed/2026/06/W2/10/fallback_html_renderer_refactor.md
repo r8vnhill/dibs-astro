@@ -283,9 +283,9 @@ straightforward.
 
 Implemented.
 
-Cycle 4 updated fallback rendering so empty normalized code classes produce `<code>` instead of `<code class="">`,
-while non-empty code classes still render as a `class` attribute. Package documentation now records that `<pre>` always
-keeps its `shiki` class and `<code>` only receives a class attribute when caller-provided code classes remain after
+Cycle 4 updated fallback rendering so empty normalized code classes produce `<code>` instead of `<code class="">`, while
+non-empty code classes still render as a `class` attribute. Package documentation now records that `<pre>` always keeps
+its `shiki` class and `<code>` only receives a class attribute when caller-provided code classes remain after
 normalization.
 
 ## Goal
@@ -413,8 +413,8 @@ Ensure there is only one rendering implementation.
 
 Implemented.
 
-Cycle 6 completed the narrow validation pass for the fallback renderer refactor. The focused fallback suite passed first,
-then the package-level Shiki validation passed without requiring broader website checks.
+Cycle 6 completed the narrow validation pass for the fallback renderer refactor. The focused fallback suite passed
+first, then the package-level Shiki validation passed without requiring broader website checks.
 
 Validation evidence:
 

@@ -2,16 +2,22 @@
 
 ## Summary
 
-Refactor the footnotes family away from the current implicit module-level counter and toward an explicit per-page registry model that auto-numbers refs/notes, fails fast on mismatches, and keeps the existing API available as legacy. Migrate all current callers to the new preferred API in the same change, while preserving the current visual design unless a small accessibility fix requires a class or markup adjustment.
+Refactor the footnotes family away from the current implicit module-level counter and toward an explicit per-page
+registry model that auto-numbers refs/notes, fails fast on mismatches, and keeps the existing API available as legacy.
+Migrate all current callers to the new preferred API in the same change, while preserving the current visual design
+unless a small accessibility fix requires a class or markup adjustment.
 
 ## Implementation Changes
 
-- Introduce a new public helper, `createFootnoteRegistry()`, plus an opaque `FootnotesRegistry` type in the footnotes module.
+- Introduce a new public helper, `createFootnoteRegistry()`, plus an opaque `FootnotesRegistry` type in the footnotes
+  module.
 - Make the new preferred API:
   - page frontmatter creates one registry: `const footnotes = createFootnoteRegistry()`
   - inline refs use `<FootnoteRef registry={footnotes} />`
   - the notes block uses `<Footnotes registry={footnotes}>` and child `<Footnote>`
-- Keep legacy props (`index`, `refId`) working for compatibility, but treat them as legacy mode. Do not allow mixing legacy manual-index mode and registry mode within the same footnotes group; throw a build-time error with a clear message if mixed.
+- Keep legacy props (`index`, `refId`) working for compatibility, but treat them as legacy mode. Do not allow mixing
+  legacy manual-index mode and registry mode within the same footnotes group; throw a build-time error with a clear
+  message if mixed.
 - Replace the shared `counter.ts` global state with registry-owned state:
   - ref sequence counter
   - note sequence counter
@@ -59,7 +65,9 @@ Refactor the footnotes family away from the current implicit module-level counte
   - ref count greater than note count failing
   - note count greater than ref count failing
 - Use DDT for mismatch/error matrices and mixed-mode scenarios.
-- If the registry helper is implemented as a pure TS utility, add unit tests for ordering and ID generation invariants. PBT is optional here; only use it if the helper becomes sufficiently pure and generic to justify invariant-based testing.
+- If the registry helper is implemented as a pure TS utility, add unit tests for ordering and ID generation invariants.
+  PBT is optional here; only use it if the helper becomes sufficiently pure and generic to justify invariant-based
+  testing.
 
 ## Assumptions
 

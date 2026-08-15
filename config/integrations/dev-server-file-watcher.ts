@@ -10,8 +10,7 @@ import { fileURLToPath } from "node:url";
  * @returns An AstroIntegration for dev file watching
  */
 export function devServerFileWatcher(patterns: string[]): AstroIntegration {
-    const normalize = (pattern: string) =>
-        pattern.replace(/[/\\]\*\*?$/, "").replace(/[/\\]\*$/, "");
+    const normalize = (pattern: string) => pattern.replace(/[/\\]\*\*?$/, "").replace(/[/\\]\*$/, "");
 
     return {
         name: "dev-server-file-watcher",

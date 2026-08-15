@@ -2,36 +2,35 @@
 
 ## Implementation status — 2026-08-13
 
-Implemented, with two deliberate adjustments after the actual current package state and toolchain were checked
-against this plan's assumptions:
+Implemented, with two deliberate adjustments after the actual current package state and toolchain were checked against
+this plan's assumptions:
 
 - **Phase 1.1 (tsconfig)**: done as written. `packages/content-core/tsconfig.json` no longer extends
   `astro/tsconfigs/strictest` or configures React JSX; it is a self-contained config carrying the same effective
-  strictness (every flag from the old `base`/`strict`/`strictest` chain was ported explicitly, not just the subset
-  this plan listed, since `resolveJsonModule` etc. are load-bearing for `src/index.ts`).
-- **Phase 1.1 (TS6/TS7 dual toolchain)**: adjusted. The `@typescript/native` package this plan names does not exist
-  on npm; the real TS7 package is plain `typescript@^7.0.2`. Setting `typescript` to that version breaks `tsup`'s
-  `rollup-plugin-dts` (`Cannot read properties of undefined (reading 'useCaseSensitiveFileNames')`) — a live
-  instance of the "Astro-ecosystem tooling still needs the TS6 compiler API" caveat this plan itself cites.
-  Implemented instead: `typescript` stays `^5.9.2` (proven, working), and `@typescript/typescript6@^6.0.2` was added
-  as a genuinely separate `check:ts6` differential compile of the same public contract. Real TS7 adoption is
-  deferred until `tsup`/`rollup-plugin-dts` support it.
+  strictness (every flag from the old `base`/`strict`/`strictest` chain was ported explicitly, not just the subset this
+  plan listed, since `resolveJsonModule` etc. are load-bearing for `src/index.ts`).
+- **Phase 1.1 (TS6/TS7 dual toolchain)**: adjusted. The `@typescript/native` package this plan names does not exist on
+  npm; the real TS7 package is plain `typescript@^7.0.2`. Setting `typescript` to that version breaks `tsup`'s
+  `rollup-plugin-dts` (`Cannot read properties of undefined (reading 'useCaseSensitiveFileNames')`) — a live instance of
+  the "Astro-ecosystem tooling still needs the TS6 compiler API" caveat this plan itself cites. Implemented instead:
+  `typescript` stays `^5.9.2` (proven, working), and `@typescript/typescript6@^6.0.2` was added as a genuinely separate
+  `check:ts6` differential compile of the same public contract. Real TS7 adoption is deferred until
+  `tsup`/`rollup-plugin-dts` support it.
 - **Phase 1.2 (curriculum types)**: done as written. `CurriculumConcept`, `CurriculumFacets`, `CurriculumUnit<Metadata>`
   under `src/curriculum/`, exported from the package root, with the Red-phase BDD/DDT fixtures.
-- **Phase 1.3**: the package already had more API-boundary infrastructure than this plan assumed (root-api
-  `.test-d.ts` fixtures, a pilot-published pack/consumer-check pipeline). Extended that existing infrastructure with
-  curriculum cases and a new `root-api.forbidden-vocabulary.test-d.ts`, rather than authoring new one-off files.
-  Item 4 (generalize the architecture checker) is done: `scripts/lib/layer-boundary/rules.mjs` now exports
-  `rootOnlyWorkspacePackages`, a data-driven registry replacing the two hand-coded
-  `isForbiddenContentCoreSubpath`/`isForbiddenSiteCoreSubpath` functions, and rules gained an `allowedPackages` field
-  (`undefined` preserves prior denylist-only behavior; content-core/site-core now declare an explicit allowlist).
-  Existing "Cycle 2" test assertions were preserved unchanged (additive design); 17 new tests cover the new
-  mechanism.
-- **Phase 1.4 (docs)**: done, adapted to the existing README/AGENTS.md structure rather than the "Phase 0" framing
-  this plan assumed (that framing was already out of date — the package already has a pilot GitLab-registry publish).
+- **Phase 1.3**: the package already had more API-boundary infrastructure than this plan assumed (root-api `.test-d.ts`
+  fixtures, a pilot-published pack/consumer-check pipeline). Extended that existing infrastructure with curriculum cases
+  and a new `root-api.forbidden-vocabulary.test-d.ts`, rather than authoring new one-off files. Item 4 (generalize the
+  architecture checker) is done: `scripts/lib/layer-boundary/rules.mjs` now exports `rootOnlyWorkspacePackages`, a
+  data-driven registry replacing the two hand-coded `isForbiddenContentCoreSubpath`/`isForbiddenSiteCoreSubpath`
+  functions, and rules gained an `allowedPackages` field (`undefined` preserves prior denylist-only behavior;
+  content-core/site-core now declare an explicit allowlist). Existing "Cycle 2" test assertions were preserved unchanged
+  (additive design); 17 new tests cover the new mechanism.
+- **Phase 1.4 (docs)**: done, adapted to the existing README/AGENTS.md structure rather than the "Phase 0" framing this
+  plan assumed (that framing was already out of date — the package already has a pilot GitLab-registry publish).
 
-Full verification: `pnpm run check:content-core`, `pnpm exec vitest run scripts/__tests__/layer-boundary` (374
-passing), `pnpm run check:architecture`, and `pnpm run test:unit` all pass.
+Full verification: `pnpm run check:content-core`, `pnpm exec vitest run scripts/__tests__/layer-boundary` (374 passing),
+`pnpm run check:architecture`, and `pnpm run test:unit` all pass.
 
 ## Goal
 

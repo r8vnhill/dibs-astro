@@ -1,10 +1,13 @@
 # [PLAN] Cycle 1: Boundary Checker Foundation
 
-> **Implementation status:** Completed. The checker foundation was implemented with dependency-backed file discovery, import extraction, alias resolution, glob-based rule matching, focused Vitest coverage, and a standalone CLI. The command is intentionally not wired into `pnpm check` yet.
+> **Implementation status:** Completed. The checker foundation was implemented with dependency-backed file discovery,
+> import extraction, alias resolution, glob-based rule matching, focused Vitest coverage, and a standalone CLI. The
+> command is intentionally not wired into `pnpm check` yet.
 
 ## Summary
 
-Create the first executable vertical slice of the architecture boundary checker for `astro-website`, using dedicated dev dependencies from the beginning instead of a dependency-free parser.
+Create the first executable vertical slice of the architecture boundary checker for `astro-website`, using dedicated dev
+dependencies from the beginning instead of a dependency-free parser.
 
 This cycle proves:
 
@@ -14,7 +17,8 @@ This cycle proves:
 4. source and target paths can be matched against declarative boundary rules;
 5. basic architectural violations can be reported in an actionable format.
 
-This cycle still should **not** encode the full layer matrix. It should establish a robust, testable foundation that Cycle 2 can expand without replacing the parser, scanner, resolver, or matcher.
+This cycle still should **not** encode the full layer matrix. It should establish a robust, testable foundation that
+Cycle 2 can expand without replacing the parser, scanner, resolver, or matcher.
 
 ---
 
@@ -35,7 +39,9 @@ Use them as follows:
 | `picomatch`       | Match rule source/target patterns such as `src/domain/**` and `src/infrastructure/**`. It is a small glob matcher with Bash-style glob support. ([npm][3])                        |
 | `get-tsconfig`    | Load and parse `tsconfig.json`, including path alias configuration, instead of duplicating alias data manually. ([npm][4])                                                        |
 
-Do **not** introduce `dependency-cruiser` or `eslint-plugin-boundaries` in this cycle. They remain valid alternatives if the custom checker grows too much, but Cycle 1 should keep the project-specific checker because it needs custom Astro handling, custom diagnostics, and an architecture-specific output format.
+Do **not** introduce `dependency-cruiser` or `eslint-plugin-boundaries` in this cycle. They remain valid alternatives if
+the custom checker grows too much, but Cycle 1 should keep the project-specific checker because it needs custom Astro
+handling, custom diagnostics, and an architecture-specific output format.
 
 ---
 
@@ -54,7 +60,8 @@ Violation formatting -> local formatter
 CLI exit code       -> thin CLI wrapper
 ```
 
-The important change is that parsing, matching, and config loading are no longer “maybe custom later” concerns. They are first-class dependencies in the design.
+The important change is that parsing, matching, and config loading are no longer “maybe custom later” concerns. They are
+first-class dependencies in the design.
 
 ---
 
@@ -196,7 +203,8 @@ export type { x } from "$domain/x";
 const module = await import("$domain/x");
 ```
 
-The lexer gives target ranges; local source-slice inspection can classify whether a record is `import type`, `export type`, side-effect import, or dynamic import.
+The lexer gives target ranges; local source-slice inspection can classify whether a record is `import type`,
+`export type`, side-effect import, or dynamic import.
 
 ---
 
@@ -264,7 +272,8 @@ const targetMatcher = picomatch(rule.forbiddenTargets);
 
 This makes Cycle 2 easier because the full rule matrix can add patterns without changing the matcher.
 
-Keep a separate `classifyProjectPath` helper for readable diagnostics, but do not make it the only enforcement mechanism.
+Keep a separate `classifyProjectPath` helper for readable diagnostics, but do not make it the only enforcement
+mechanism.
 
 ---
 
@@ -279,7 +288,8 @@ const sourcePatterns = [
 ];
 ```
 
-Unit tests should still use in-memory fixtures. Add only a small integration-style test for file discovery if it can be done cleanly.
+Unit tests should still use in-memory fixtures. Add only a small integration-style test for file discovery if it can be
+done cleanly.
 
 ---
 
@@ -351,10 +361,8 @@ export const initialBoundaryRules = [
             "src/presentation/**",
         ],
         forbiddenPackages: ["astro", "react", "zod"],
-        message:
-            "Domain code must not import application, infrastructure, presentation, or UI framework dependencies.",
-        suggestion:
-            "Move the dependency behind a domain contract or invert the dependency direction.",
+        message: "Domain code must not import application, infrastructure, presentation, or UI framework dependencies.",
+        suggestion: "Move the dependency behind a domain contract or invert the dependency direction.",
     },
     {
         id: "ui-must-not-import-infrastructure",
@@ -431,7 +439,8 @@ Add tests for the `globby` wrapper where practical:
 - excludes `.d.ts`;
 - excludes files outside `src`.
 
-Keep most tests in-memory, but one filesystem-backed test is acceptable for `discoverSourceFiles` because file discovery is inherently filesystem-bound.
+Keep most tests in-memory, but one filesystem-backed test is acceptable for `discoverSourceFiles` because file discovery
+is inherently filesystem-bound.
 
 ---
 
@@ -577,7 +586,8 @@ Use DDT for allowed/forbidden source-target pairs.
 
 ### Property-based tests
 
-Because path normalization can easily regress, add a small PBT test **only if the project already has a property-testing dependency available**. Otherwise, defer PBT to Cycle 2.
+Because path normalization can easily regress, add a small PBT test **only if the project already has a property-testing
+dependency available**. Otherwise, defer PBT to Cycle 2.
 
 A useful property would be:
 

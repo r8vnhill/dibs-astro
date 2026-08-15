@@ -32,7 +32,8 @@ No allowlist entries were added.
 ## Audit Result
 
 - Site metadata access now flows through `$presentation/adapters/site-data`.
-- Course structure access now flows through `$presentation/adapters/course-navigation` and the existing `LessonCatalogAdapter`.
+- Course structure access now flows through `$presentation/adapters/course-navigation` and the existing
+  `LessonCatalogAdapter`.
 - Bibliography catalog default access now flows through `$presentation/adapters/bibliography-catalog`.
 - Simple static UI data now flows through `$presentation/adapters/static-ui-data`.
 - The navigation bridge no longer imports `~/data/course-structure` directly.

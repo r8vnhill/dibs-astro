@@ -4,13 +4,13 @@
 
 [DONE] `packages/astro-icons/README.md` gained an **Attribution and licensing** section linking to `LICENSE`,
 `LICENSES/README.md`, `LICENSES/PHOSPHOR.txt`, and `LICENSES/THIRD_PARTY.md`, separating package-code licensing from
-third-party icon attribution without implying clearance or endorsement. `packages/astro-icons/AGENTS.md` gained an
-"Add or change a non-Phosphor icon's attribution" section describing the `LICENSES/third-party-icons.json` record
-fields, the package-local `test:licenses`/`licenses:update`/`licenses:check` commands, and the future (not yet
-implemented) Subphase 1.4 pack-contract gate. Verified via `git status --short` and `git diff` that only these two
-files changed and all protected paths (`third-party-icons.json`, `THIRD_PARTY.md`, `src/`, `icon-inventory.json`,
-`package.json`, `LICENSE`, `PHOSPHOR.txt`, `LICENSES/README.md`) remain byte-unchanged. Nothing was staged or
-committed. Cycle 4 (optional `test:licenses`/`licenses:check` sanity checks) was not run.
+third-party icon attribution without implying clearance or endorsement. `packages/astro-icons/AGENTS.md` gained an "Add
+or change a non-Phosphor icon's attribution" section describing the `LICENSES/third-party-icons.json` record fields, the
+package-local `test:licenses`/`licenses:update`/`licenses:check` commands, and the future (not yet implemented) Subphase
+1.4 pack-contract gate. Verified via `git status --short` and `git diff` that only these two files changed and all
+protected paths (`third-party-icons.json`, `THIRD_PARTY.md`, `src/`, `icon-inventory.json`, `package.json`, `LICENSE`,
+`PHOSPHOR.txt`, `LICENSES/README.md`) remain byte-unchanged. Nothing was staged or committed. Cycle 4 (optional
+`test:licenses`/`licenses:check` sanity checks) was not run.
 
 ## Scope Classification
 

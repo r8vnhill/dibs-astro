@@ -23,9 +23,12 @@ No checker behaviour, rule evaluation, CLI output, or exit-code behaviour was ch
 
 ## Summary
 
-Introduce a pure, additive classification layer for the architecture boundary checker. This step defines how source files, resolved project targets, package imports, and import records are classified, but does not yet connect that classification to rule evaluation.
+Introduce a pure, additive classification layer for the architecture boundary checker. This step defines how source
+files, resolved project targets, package imports, and import records are classified, but does not yet connect that
+classification to rule evaluation.
 
-The goal is to make Step 3/4 easier, safer, and less ambiguous by giving the checker a deterministic vocabulary for architectural layers and import targets.
+The goal is to make Step 3/4 easier, safer, and less ambiguous by giving the checker a deterministic vocabulary for
+architectural layers and import targets.
 
 ## Scope
 
@@ -114,7 +117,8 @@ classifyPackageImport(importPath);
 classifyImport(importRecord, resolvedPath);
 ```
 
-Use JSDoc typedefs in the `.mjs` file so the API remains type-checkable without converting the script module to TypeScript.
+Use JSDoc typedefs in the `.mjs` file so the API remains type-checkable without converting the script module to
+TypeScript.
 
 Suggested typedefs:
 
@@ -242,7 +246,8 @@ Rules:
 - Unscoped packages keep the first segment.
 - Astro virtual imports such as `astro:content` remain unchanged when they have no slash.
 - The helper assumes the caller is passing a bare package import.
-- Relative imports, absolute paths, and known project aliases should be handled by `classifyImport(...)`, not blindly treated as packages.
+- Relative imports, absolute paths, and known project aliases should be handled by `classifyImport(...)`, not blindly
+  treated as packages.
 
 ### `classifyImport(importRecord, resolvedPath)`
 

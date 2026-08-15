@@ -1,12 +1,15 @@
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/docs/plans/add_lesson_breadcrumbs_in_house_via_short_tdd_cycles.md)
+Read
+[](file:///e%3A/teaching/DIBS/projects/astro-website/docs/plans/add_lesson_breadcrumbs_in_house_via_short_tdd_cycles.md)
 
 Searched for files matching `**/src/infrastructure/adapters/LessonCatalogAdapter.ts`, 1 match
 
 Searched for files matching `**/src/data/course-structure.ts`, 1 match
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/LessonCatalogAdapter.ts#1-1), lines 1 to 80
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/LessonCatalogAdapter.ts#1-1),
+lines 1 to 80
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/LessonCatalogAdapter.ts#80-80), lines 80 to 150
+Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/LessonCatalogAdapter.ts#80-80),
+lines 80 to 150
 
 Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-structure.ts#1-1), lines 1 to 100
 
@@ -16,27 +19,33 @@ Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/data/course-struct
 
 Searched for files matching `**/src/infrastructure/adapters/__tests__/LessonCatalogAdapter.test.ts`, 1 match
 
-Read [](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/__tests__/LessonCatalogAdapter.test.ts#1-1), lines 1 to 80
+Read
+[](file:///e%3A/teaching/DIBS/projects/astro-website/src/infrastructure/adapters/__tests__/LessonCatalogAdapter.test.ts#1-1),
+lines 1 to 80
 
-Created memory file [](file:///b%3A/scoop/apps/vscode/1.113.0/data/user-data/User/workspaceStorage/427d48984ec60010684dd5d26e5008b9/GitHub.copilot-chat/memory-tool/memories/ZWI1ZDllOGEtNWE0Zi00ZDIzLWI5YzYtNTJlMjc2Y2Y5ZWFl/cycle1-catalog-trail-query.md)
+Created memory file
+[](file:///b%3A/scoop/apps/vscode/1.113.0/data/user-data/User/workspaceStorage/427d48984ec60010684dd5d26e5008b9/GitHub.copilot-chat/memory-tool/memories/ZWI1ZDllOGEtNWE0Zi00ZDIzLWI5YzYtNTJlMjc2Y2Y5ZWFl/cycle1-catalog-trail-query.md)
 
 ---
 
 ## Plan: Cycle 1 — Catalog Trail Query
 
-**TL;DR**
-Implement `LessonCatalogAdapter.findTrailByHref(href)` to extract breadcrumb trails from the already-available `parents` metadata in `FlattenedLesson`. This is a short cycle: reuse existing flattening logic, extract ancestors, return ordered trail nodes. No new dependencies needed.
+**TL;DR** Implement `LessonCatalogAdapter.findTrailByHref(href)` to extract breadcrumb trails from the already-available
+`parents` metadata in `FlattenedLesson`. This is a short cycle: reuse existing flattening logic, extract ancestors,
+return ordered trail nodes. No new dependencies needed.
 
 ---
 
 ## What's Already in Place ✅
 
-- **FlattenedLesson** type has `parents` (ancestor titles) and `parentIds` (ancestor IDs)—populated by the pre-order `walkLessons` generator
+- **FlattenedLesson** type has `parents` (ancestor titles) and `parentIds` (ancestor IDs)—populated by the pre-order
+  `walkLessons` generator
 - **LessonCatalogAdapter** already manages flattening and path lookups via `findByPath()`
 - **Test file exists** with patterns for how to structure catalog tests
 - **Normalize path logic** is already working (used in `findAdjacentByHref`)
 
-**Key insight:** The ancestry metadata you need for breadcrumbs is already baked into the data structure. You don't need to reconstruct it from URL segments.
+**Key insight:** The ancestry metadata you need for breadcrumbs is already baked into the data structure. You don't need
+to reconstruct it from URL segments.
 
 ---
 
@@ -56,6 +65,7 @@ type TrailNode = {
 ```
 
 **Behavior:**
+
 - Find the lesson by href
 - Extract its `parents` array (ancestors, already ordered root→leaf)
 - Build TrailNode array: `[...ancestors, current_lesson]`
@@ -64,12 +74,12 @@ type TrailNode = {
 
 ### **Test Cases (4 total)**
 
-| Case | Input | Expected Output | Why |
-|------|-------|-----------------|-----|
-| **1. Middle lesson** | `/notes/software-libraries/artifacts-taxonomy/` | `[{title: "Software Libraries"}, {title: "Artifacts Taxonomy"}]` | Tests ancestor extraction + ordering |
-| **2. Top-level lesson** | `/notes/introduction/` | `[{title: "Introduction"}]` | No ancestors = just current |
-| **3. Not found** | `/notes/does-not-exist/` | `[]` | Graceful null handling |
-| **4. Group without href** | Lesson under groupless section | `[{title: "Section", href: undefined}, {title: "Lesson"}]` | Groups as text nodes in trail |
+| Case                      | Input                                           | Expected Output                                                  | Why                                  |
+| ------------------------- | ----------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------ |
+| **1. Middle lesson**      | `/notes/software-libraries/artifacts-taxonomy/` | `[{title: "Software Libraries"}, {title: "Artifacts Taxonomy"}]` | Tests ancestor extraction + ordering |
+| **2. Top-level lesson**   | `/notes/introduction/`                          | `[{title: "Introduction"}]`                                      | No ancestors = just current          |
+| **3. Not found**          | `/notes/does-not-exist/`                        | `[]`                                                             | Graceful null handling               |
+| **4. Group without href** | Lesson under groupless section                  | `[{title: "Section", href: undefined}, {title: "Lesson"}]`       | Groups as text nodes in trail        |
 
 ---
 
@@ -110,10 +120,12 @@ Add a new `describe("findTrailByHref")` block with 4 test cases:
 
 4. **Group without href in ancestors**
    - Fixture includes group without `href`
-   - Lesson under it: `/notes/groupA/lesson/` → expects `[{ title: "Group A", href: undefined }, { title: "Lesson", href: "/notes/groupA/lesson/" }]`
+   - Lesson under it: `/notes/groupA/lesson/` → expects
+     `[{ title: "Group A", href: undefined }, { title: "Lesson", href: "/notes/groupA/lesson/" }]`
    - Validates that groups are preserved as text nodes
 
 **Test style** (match existing pattern from file):
+
 - Use `describe.concurrent` disabled (avoid shared state)
 - Use a local fixture tree, not real courseStructure
 - Make props factory: `makeTestTree()` returns `Lesson[]` with known structure
@@ -135,6 +147,7 @@ async findTrailByHref(
 ```
 
 **Logic:**
+
 1. Normalize the href using `this.normalizePath()`
 2. Flatten the course structure: `const flattened = await this.flatten()`
 3. Find the lesson: `const lesson = flattened.find(l => this.normalizePath(l.href) === normalizedHref)`
@@ -150,6 +163,7 @@ async findTrailByHref(
 ### **Phase 3: Verify & Refactor**
 
 **Commands:**
+
 1. `pnpm test:unit src/infrastructure/adapters/__tests__/LessonCatalogAdapter.test.ts`
    - All 4 new tests pass ✓
    - Existing tests unchanged + pass ✓
@@ -182,16 +196,19 @@ async findTrailByHref(
 ## Decisions & Scope
 
 ✅ **Decided:**
+
 - Adapter returns configurable Notes root (default: false) to stay flexible for Cycles 2–3
 - Tests use minimal fixture tree to isolate logic from real courseStructure
 - Port interface extension deferred (breadcrumbs are presentation concern; adapter can be internal implementation)
 
 ✅ **Included:**
+
 - TrailNode type implied from plan (reuse in adapter; define locally if needed)
 - Graceful null handling (route not found → empty array)
 - Group ancestor nodes (href: undefined for groups)
 
 ❌ **Excluded:**
+
 - Real courseStructure paths in tests (use fixture instead)
 - Port interface update (defer to Cycle 5)
 - Caching optimization (keep it simple for red→green)

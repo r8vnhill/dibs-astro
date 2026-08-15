@@ -1,8 +1,14 @@
 # Plan — Interactive Multi-Language Curriculum Graph
 
-Yes. I would revise the original plan around a **strict reusable-core / host-adapter / website-UI split**. The uploaded plan already separates domain/query logic from presentation, but some proposed core types still encode DIBS-specific assumptions such as fixed languages and `courseLessonId`.
+Yes. I would revise the original plan around a **strict reusable-core / host-adapter / website-UI split**. The uploaded
+plan already separates domain/query logic from presentation, but some proposed core types still encode DIBS-specific
+assumptions such as fixed languages and `courseLessonId`.
 
-There is also a very natural extraction point already present in the repository: `@ravenhill/content-core` describes itself as host-agnostic, publication-ready, and intended to eventually absorb reusable lesson/course-structure domain models. The root site already consumes it as a workspace package. ([GitHub][1]) I would therefore **promote that existing package into the separate repository**, rather than creating a competing `curriculum-core` abstraction immediately.
+There is also a very natural extraction point already present in the repository: `@ravenhill/content-core` describes
+itself as host-agnostic, publication-ready, and intended to eventually absorb reusable lesson/course-structure domain
+models. The root site already consumes it as a workspace package. ([GitHub][1]) I would therefore **promote that
+existing package into the separate repository**, rather than creating a competing `curriculum-core` abstraction
+immediately.
 
 # Revised architecture
 
@@ -47,7 +53,8 @@ There is also a very natural extraction point already present in the repository:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-This also fits the site's existing architecture: DIBS already treats `src/domain` as framework-free, `src/application` as orchestration, presentation adapters as the bridge to UI-safe data, and Astro/React as UI surfaces. ([GitHub][2])
+This also fits the site's existing architecture: DIBS already treats `src/domain` as framework-free, `src/application`
+as orchestration, presentation adapters as the bridge to UI-safe data, and Astro/React as UI surfaces. ([GitHub][2])
 
 ---
 
@@ -55,35 +62,36 @@ This also fits the site's existing architecture: DIBS already treats `src/domain
 
 | Capability                            | Separate library | DIBS website | Rationale                            |
 | ------------------------------------- | :--------------: | :----------: | ------------------------------------ |
-| Concept model                         |         ✓        |              | Generic curriculum semantics         |
-| Curriculum-unit model                 |         ✓        |              | Reusable by any course               |
-| Directed relations                    |         ✓        |              | Generic graph semantics              |
-| Facets/classification                 |         ✓        |              | Generic filtering mechanism          |
-| Graph validation                      |         ✓        |              | Independent of presentation          |
-| Cycle detection                       |         ✓        |              | Domain invariant                     |
-| Ancestor/descendant traversal         |         ✓        |              | Generic graph operation              |
-| Subgraph selection                    |         ✓        |              | Generic                              |
-| Facet filtering                       |         ✓        |              | Generic                              |
-| Concept → treatments query            |         ✓        |              | Supports parallel material generally |
-| Framework-neutral graph projection    |         ✓        |              | Useful to arbitrary renderers        |
-| Kotlin/Python/Scala definitions       |                  |       ✓      | DIBS-specific ontology               |
-| `main`/`companion`/`practical` policy |                  |       ✓      | Course policy                        |
-| Published/planned policy              |                  |       ✓      | Course/site policy                   |
-| DIBS lesson catalog                   |                  |       ✓      | Content                              |
-| `courseStructure`                     |                  |       ✓      | Existing DIBS navigation model       |
-| Stable-ID → URL resolution            |                  |       ✓      | Site routing                         |
-| Cytoscape adapter                     |                  |  ✓ initially | Renderer-specific                    |
-| ELK configuration                     |                  |       ✓      | Presentation decision                |
-| React component                       |                  |       ✓      | Framework-specific                   |
-| Astro page                            |                  |       ✓      | Host-specific                        |
-| URL query parameters                  |                  |       ✓      | Host navigation policy               |
-| Accessible HTML markup                |                  |       ✓      | Site presentation                    |
-| Colors/style/badges                   |                  |       ✓      | Branding                             |
-| Student progress                      |                  |       ✓      | Host application state               |
+| Concept model                         |        ✓         |              | Generic curriculum semantics         |
+| Curriculum-unit model                 |        ✓         |              | Reusable by any course               |
+| Directed relations                    |        ✓         |              | Generic graph semantics              |
+| Facets/classification                 |        ✓         |              | Generic filtering mechanism          |
+| Graph validation                      |        ✓         |              | Independent of presentation          |
+| Cycle detection                       |        ✓         |              | Domain invariant                     |
+| Ancestor/descendant traversal         |        ✓         |              | Generic graph operation              |
+| Subgraph selection                    |        ✓         |              | Generic                              |
+| Facet filtering                       |        ✓         |              | Generic                              |
+| Concept → treatments query            |        ✓         |              | Supports parallel material generally |
+| Framework-neutral graph projection    |        ✓         |              | Useful to arbitrary renderers        |
+| Kotlin/Python/Scala definitions       |                  |      ✓       | DIBS-specific ontology               |
+| `main`/`companion`/`practical` policy |                  |      ✓       | Course policy                        |
+| Published/planned policy              |                  |      ✓       | Course/site policy                   |
+| DIBS lesson catalog                   |                  |      ✓       | Content                              |
+| `courseStructure`                     |                  |      ✓       | Existing DIBS navigation model       |
+| Stable-ID → URL resolution            |                  |      ✓       | Site routing                         |
+| Cytoscape adapter                     |                  | ✓ initially  | Renderer-specific                    |
+| ELK configuration                     |                  |      ✓       | Presentation decision                |
+| React component                       |                  |      ✓       | Framework-specific                   |
+| Astro page                            |                  |      ✓       | Host-specific                        |
+| URL query parameters                  |                  |      ✓       | Host navigation policy               |
+| Accessible HTML markup                |                  |      ✓       | Site presentation                    |
+| Colors/style/badges                   |                  |      ✓       | Branding                             |
+| Student progress                      |                  |      ✓       | Host application state               |
 
 The key rule is:
 
-> **The library knows what a curriculum graph means; the website knows what DIBS means and how DIBS wants to display it.**
+> **The library knows what a curriculum graph means; the website knows what DIBS means and how DIBS wants to display
+> it.**
 
 ---
 
@@ -91,7 +99,8 @@ The key rule is:
 
 ## Goal
 
-Refactor the proposed domain before implementation so the external library does not accidentally acquire DIBS concepts in its first public API.
+Refactor the proposed domain before implementation so the external library does not accidentally acquire DIBS concepts
+in its first public API.
 
 ## Scope
 
@@ -189,7 +198,8 @@ No renderer, no Astro integration, no DIBS catalog.
 
 Turn the existing workspace proof-of-concept into the independent package boundary.
 
-The current package is intentionally `private: true` but already describes itself as a reusable, host-agnostic package whose future direction is extraction of real domain logic. ([GitHub][1])
+The current package is intentionally `private: true` but already describes itself as a reusable, host-agnostic package
+whose future direction is extraction of real domain logic. ([GitHub][1])
 
 ## Proposed repository structure
 
@@ -235,11 +245,7 @@ Keep modules small and functional; do not introduce `CurriculumGraphManager` or 
 Prefer explicit subpath exports:
 
 ```ts
-import {
-    filterCurriculum,
-    findAncestors,
-    type CurriculumGraph,
-} from "@ravenhill/content-core/curriculum";
+import { type CurriculumGraph, filterCurriculum, findAncestors } from "@ravenhill/content-core/curriculum";
 ```
 
 rather than exposing every internal module.
@@ -248,17 +254,18 @@ rather than exposing every internal module.
 
 I would target **zero runtime dependencies for the first curriculum-core release**.
 
-Graph traversal, filtering, cycle detection, grouping, and projection are all straightforward enough that pulling Cytoscape or another graph package into the domain would be counterproductive.
+Graph traversal, filtering, cycle detection, grouping, and projection are all straightforward enough that pulling
+Cytoscape or another graph package into the domain would be counterproductive.
 
 ### Red
 
 Contract-first specifications around the proposed public API:
 
-* generic facets do not require predefined dimensions;
-* graph construction rejects missing references;
-* configured acyclic relation families reject cycles;
-* filtering preserves original relation semantics;
-* graph operations do not mutate caller-owned values.
+- generic facets do not require predefined dimensions;
+- graph construction rejects missing references;
+- configured acyclic relation families reject cycles;
+- filtering preserves original relation semantics;
+- graph operations do not mutate caller-owned values.
 
 ### Green
 
@@ -270,7 +277,8 @@ Review exported vocabulary as if DIBS did not exist.
 
 ### Acceptance criteria
 
-A tiny independent TypeScript consumer can install the package and build a curriculum graph without Astro, React, DIBS data, or browser APIs.
+A tiny independent TypeScript consumer can install the package and build a curriculum graph without Astro, React, DIBS
+data, or browser APIs.
 
 ---
 
@@ -409,9 +417,11 @@ That separation is essential.
 
 ## Goal
 
-Connect generic curriculum units to the site's existing navigation truth without leaking that mechanism into the external package.
+Connect generic curriculum units to the site's existing navigation truth without leaking that mechanism into the
+external package.
 
-`courseStructure` already owns stable IDs used by UI state and analytics, and those IDs are explicitly intended to remain stable even when titles or URLs change. ([GitHub][3])
+`courseStructure` already owns stable IDs used by UI state and analytics, and those IDs are explicitly intended to
+remain stable even when titles or URLs change. ([GitHub][3])
 
 Create something such as:
 
@@ -507,13 +517,9 @@ Práctica
 
 This is an excellent example of **mechanism versus policy**:
 
-[
-\text{library} = \text{filter mechanism}
-]
+[ \text{library} = \text{filter mechanism} ]
 
-[
-\text{DIBS} = \text{filter policy and vocabulary}
-]
+[ \text{DIBS} = \text{filter policy and vocabulary} ]
 
 ---
 
@@ -533,22 +539,23 @@ belong to DIBS.
 
 The external library should know nothing about:
 
-* `/roadmap/`;
-* URL parameters;
-* browser history;
-* `URLSearchParams`;
-* Astro routes.
+- `/roadmap/`;
+- URL parameters;
+- browser history;
+- `URLSearchParams`;
+- Astro routes.
 
 DIBS can implement:
 
 ```ts
-parseCurriculumQuery(searchParams)
-serializeCurriculumQuery(filter)
+parseCurriculumQuery(searchParams);
+serializeCurriculumQuery(filter);
 ```
 
 using the generic `CurriculumFilter` values returned by `content-core`.
 
-If a second and third site eventually reproduce the exact same encoding problem, **then** extracting a web codec becomes justified.
+If a second and third site eventually reproduce the exact same encoding problem, **then** extracting a web codec becomes
+justified.
 
 Not before.
 
@@ -671,18 +678,19 @@ facets: {
 
 rather than Kotlin/Python/Scala.
 
-That is the strongest architectural check that the library is genuinely generic rather than merely DIBS extracted into npm.
+That is the strongest architectural check that the library is genuinely generic rather than merely DIBS extracted into
+npm.
 
 ### Acceptance criteria
 
 The second consumer:
 
-* uses the same graph model;
-* uses the same traversal/filtering functions;
-* does not import anything named `Dibs`;
-* does not need programming-language facets;
-* does not use Astro;
-* may use a completely different renderer.
+- uses the same graph model;
+- uses the same traversal/filtering functions;
+- does not import anything named `Dibs`;
+- does not need programming-language facets;
+- does not use Astro;
+- may use a completely different renderer.
 
 ---
 
@@ -765,7 +773,9 @@ r8vnhill/dibs-astro
 └── visual/accessibility policy
 ```
 
-This direction is also consistent with the current `content-core` design goal of using a **neutral identity instead of `course-core`**, remaining host-agnostic, and eventually extracting reusable lesson and course-structure domain models. ([GitHub][1])
+This direction is also consistent with the current `content-core` design goal of using a **neutral identity instead of
+`course-core`**, remaining host-agnostic, and eventually extracting reusable lesson and course-structure domain models.
+([GitHub][1])
 
 # Revised execution order
 
@@ -799,9 +809,13 @@ I would change the original implementation sequence to:
 
 The strongest rule I would establish for the entire effort is:
 
-> **If a piece of code needs to know that the course is DIBS, that Kotlin is the main language, that `/roadmap/` exists, or that Astro/Cytoscape is being used, it does not belong in `@ravenhill/content-core`.**
+> **If a piece of code needs to know that the course is DIBS, that Kotlin is the main language, that `/roadmap/` exists,
+> or that Astro/Cytoscape is being used, it does not belong in `@ravenhill/content-core`.**
 
-Conversely, concepts such as **curriculum units, concepts, typed relationships, facets, DAG invariants, traversal, filtering, and subgraph projection are reusable educational-domain abstractions** and are excellent candidates for the independent library. This gives you a genuinely reusable component rather than simply moving DIBS implementation code into another repository.
+Conversely, concepts such as **curriculum units, concepts, typed relationships, facets, DAG invariants, traversal,
+filtering, and subgraph projection are reusable educational-domain abstractions** and are excellent candidates for the
+independent library. This gives you a genuinely reusable component rather than simply moving DIBS implementation code
+into another repository.
 
 [1]: https://github.com/r8vnhill/dibs-astro/tree/main/packages/content-core "dibs-astro/packages/content-core at main · r8vnhill/dibs-astro · GitHub"
 [2]: https://github.com/r8vnhill/dibs-astro/blob/main/docs/architecture/layer-separation.md "dibs-astro/docs/architecture/layer-separation.md at main · r8vnhill/dibs-astro · GitHub"

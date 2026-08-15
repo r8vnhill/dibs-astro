@@ -262,13 +262,13 @@ verified to link to.
 
 These findings transcribe the completed Phase 3.2 research pass (see
 `traceability-log/open/phase_3_verify_the_nine_non_phosphor_assets.md`) into the manifest and this narrative record.
-That pass used an external research hand-off (a self-contained brief was drafted and sent for research, and the
-response was relayed back and incorporated) rather than direct fetches performed by the agent. No raw upstream SVG
-has been fetched and no byte or normalized-content comparison against a local file has been performed for any of the
-nine assets. Consequently every conclusion below is intentionally conservative: `NOASSERTION` for copyright unless a
-page-specific license was quoted, and no evidence status is promoted to `verified`. The Phase 2 Research Handoff
-Checklist (fetch, byte-compare, normalize, structurally compare) remains the gate for any future pass that wants to
-strengthen this evidence; it is not executed here.
+That pass used an external research hand-off (a self-contained brief was drafted and sent for research, and the response
+was relayed back and incorporated) rather than direct fetches performed by the agent. No raw upstream SVG has been
+fetched and no byte or normalized-content comparison against a local file has been performed for any of the nine assets.
+Consequently every conclusion below is intentionally conservative: `NOASSERTION` for copyright unless a page-specific
+license was quoted, and no evidence status is promoted to `verified`. The Phase 2 Research Handoff Checklist (fetch,
+byte-compare, normalize, structurally compare) remains the gate for any future pass that wants to strengthen this
+evidence; it is not executed here.
 
 ### Batch A — Brand-Controlled Assets
 
@@ -286,30 +286,30 @@ strengthen this evidence; it is not executed here.
 
 ### Batch B — Project and Community Marks
 
-- **`nushell-logo`** — the local file is a VTracer lossy auto-trace (confirmed via embedded generator metadata), so
-  the match method is capped at `visual-match` against a Wikimedia candidate; it can never be byte- or
+- **`nushell-logo`** — the local file is a VTracer lossy auto-trace (confirmed via embedded generator metadata), so the
+  match method is capped at `visual-match` against a Wikimedia candidate; it can never be byte- or
   structurally-identical to a real source vector. `partially-verified`.
 - **`json`** — the local `<title>JSON logo</title>` matches the well-known JSON mark family, but the exact vector's
   lineage to a specific rights holder (original author vs. mirror vs. aggregator repost) is not established.
   `metadata-only`, `partially-verified`.
-- **`bash`** — cross-batch-corrected: like `scala`, the local file's own `SVG Repo` upload comment matches an exact
-  SVG Repo asset page, so this asset is treated as aggregator-sourced. `metadata-only`, `partially-verified`.
+- **`bash`** — cross-batch-corrected: like `scala`, the local file's own `SVG Repo` upload comment matches an exact SVG
+  Repo asset page, so this asset is treated as aggregator-sourced. `metadata-only`, `partially-verified`.
 
 ### Batch C — Generic and Aggregator-Sourced Icons
 
-- **`csv`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match
-  is not established. `metadata-only`, `unresolved`.
-- **`xml`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match
-  is not established. `metadata-only`, `unresolved`.
+- **`csv`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match is
+  not established. `metadata-only`, `unresolved`.
+- **`xml`** — a plausible SVG Repo candidate page was found by visual/style search only; the exact local-file match is
+  not established. `metadata-only`, `unresolved`.
 
-An aggregator-style candidate page being visually similar is not sufficient to claim verified source status; both
-assets remain `unresolved` until a raw/local comparison is performed.
+An aggregator-style candidate page being visually similar is not sufficient to claim verified source status; both assets
+remain `unresolved` until a raw/local comparison is performed.
 
 ### Cross-Batch Correction
 
 `bash` and `scala` are both classified as aggregator-sourced (`metadata-only` match method) rather than by their
-original batch assignment, because their local files carry an `SVG Repo` upload comment that matches an exact SVG
-Repo asset page. `nushell-logo` remains capped at `visual-match` because it is a machine-generated auto-trace, not an
+original batch assignment, because their local files carry an `SVG Repo` upload comment that matches an exact SVG Repo
+asset page. `nushell-logo` remains capped at `visual-match` because it is a machine-generated auto-trace, not an
 authored vector, and so cannot be byte- or structurally-compared to any source.
 
 ### Redistribution Conclusions
@@ -319,9 +319,9 @@ permission-required: python, kotlin, powershell
 undetermined: bash, scala, nushell-logo, json, csv, xml
 ```
 
-The three `permission-required` assets are brand/trademark-controlled marks whose code-adjacent licenses (if any)
-do not cover logo redistribution. The six `undetermined` assets have no confirmed page-specific license and no
-confirmed rights holder for the exact local file.
+The three `permission-required` assets are brand/trademark-controlled marks whose code-adjacent licenses (if any) do not
+cover logo redistribution. The six `undetermined` assets have no confirmed page-specific license and no confirmed rights
+holder for the exact local file.
 
 ### Closed Maintainer Decisions
 
@@ -333,10 +333,10 @@ explicit permission is later obtained:
 - **`powershell`, `python`, `kotlin`** are excluded because redistribution remains `permission-required`: Microsoft,
   PSF, and Kotlin Foundation/JetBrains trademark clearance is unconfirmed for these exact assets, and no exact
   byte/structural comparison against a candidate source has been performed.
-- **`bash`, `scala`, `nushell-logo`, `json`, `csv`, `xml`** are excluded because redistribution remains
-  `undetermined`: no exact byte or normalized-content comparison against a candidate source has been performed (or,
-  for `nushell-logo`, no confirmation that its `visual-match` ceiling is an acceptable evidence level), and for
-  `csv`/`xml` the exact source page itself remains unconfirmed.
+- **`bash`, `scala`, `nushell-logo`, `json`, `csv`, `xml`** are excluded because redistribution remains `undetermined`:
+  no exact byte or normalized-content comparison against a candidate source has been performed (or, for `nushell-logo`,
+  no confirmation that its `visual-match` ceiling is an acceptable evidence level), and for `csv`/`xml` the exact source
+  page itself remains unconfirmed.
 
 `releaseDecision.riskAcceptance` remains `null` for all nine — no maintainer risk acceptance has been created, since
 `exclude` requires only an exclusion rationale, not a risk-acceptance record.
@@ -901,23 +901,23 @@ The following remain outside Phase 1:
 
 ## Subphase 1.4 Closure Record — Publication-Surface Correction
 
-Subphase 1.4's original implementation enforced *count* parity between `src/*.svg` and the packaged `dist/*.svg`
-set, which is not the same claim as "the tarball contains exactly the release-policy-approved asset set." This was
-corrected under
+Subphase 1.4's original implementation enforced _count_ parity between `src/*.svg` and the packaged `dist/*.svg` set,
+which is not the same claim as "the tarball contains exactly the release-policy-approved asset set." This was corrected
+under
 [`traceability-log/open/align_ravenhill_astro_icons_publication_with_the_recorded_release_policy.md`](./align_ravenhill_astro_icons_publication_with_the_recorded_release_policy.md),
 executed as four phases:
 
 1. **Release policy core** — `packages/astro-icons/scripts/lib/release-policy.mjs` derives the publishable asset set
    from the frozen inventory and attribution manifest (Phosphor baseline + `include`/`permitted` custom assets only).
-2. **Internal vs. publishable surfaces** — `src/index.ts` (internal, every local icon, used via the `$icons` alias)
-   and `src/publishable.ts` (only publishable icons, what `tsup` builds into `dist/index.js`) are now generated as
-   separate, sharded barrels (`src/generated/{internal,publishable}/part-NNN.ts`) from the same policy core.
+2. **Internal vs. publishable surfaces** — `src/index.ts` (internal, every local icon, used via the `$icons` alias) and
+   `src/publishable.ts` (only publishable icons, what `tsup` builds into `dist/index.js`) are now generated as separate,
+   sharded barrels (`src/generated/{internal,publishable}/part-NNN.ts`) from the same policy core.
    `scripts/copy-assets.mjs` now copies only publishable SVGs into `dist/`.
 3. **Set-based pack contract** — `scripts/assert-pack-files.mjs` replaced `checkSvgParity` (count comparison) with
-   `comparePublishedSvgSet` (exact expected/actual filename-set comparison via `evaluatePackContents`), and removed
-   the dead dry-run tarball cleanup path (`npm pack --dry-run` never produces a real tarball to clean up).
-4. **Artifact verification** — the real `npm pack --dry-run --json` output was evaluated through the same pure
-   contract; no independent integration-only definition of valid package contents was introduced.
+   `comparePublishedSvgSet` (exact expected/actual filename-set comparison via `evaluatePackContents`), and removed the
+   dead dry-run tarball cleanup path (`npm pack --dry-run` never produces a real tarball to clean up).
+4. **Artifact verification** — the real `npm pack --dry-run --json` output was evaluated through the same pure contract;
+   no independent integration-only definition of valid package contents was introduced.
 
 This intentionally changes production behavior: none of the nine currently-excluded custom assets (`bash`, `csv`,
 `json`, `kotlin`, `nushell-logo`, `powershell`, `python`, `scala`, `xml`) can enter the standalone package, while all
@@ -945,10 +945,10 @@ required legal file (`LICENSE`, `LICENSES/README.md`, `LICENSES/PHOSPHOR.txt`, `
 `LICENSES/third-party-icons.json`) is present.
 
 **Note on `test:audit-icons`:** one pre-existing test (`icon-inventory.contract.test.mjs`, "matches the committed
-migration/icon-inventory.json byte-for-byte") fails because the committed `migration/icon-inventory.json` is
-indented with four spaces on disk while `audit-icons.mjs`'s `serializeInventory` emits two-space JSON. This mismatch
-predates this correction, is unrelated to the publication-surface fix, and was not introduced or touched by it — the
-frozen file itself was not modified (see below). It is left open as a separate, pre-existing finding.
+migration/icon-inventory.json byte-for-byte") fails because the committed `migration/icon-inventory.json` is indented
+with four spaces on disk while `audit-icons.mjs`'s `serializeInventory` emits two-space JSON. This mismatch predates
+this correction, is unrelated to the publication-surface fix, and was not introduced or touched by it — the frozen file
+itself was not modified (see below). It is left open as a separate, pre-existing finding.
 
 ### Repository purity confirmation
 
@@ -965,15 +965,14 @@ All frozen licensing and inventory evidence, and every `src/*.svg` byte, remain 
 ### Closure (original)
 
 With the verification ladder above passing (aside from the pre-existing, unrelated `icon-inventory.json` indentation
-finding noted above) and frozen evidence confirmed byte-unchanged, Subphase 1.4 is marked `[DONE]`. Subphases 1.1,
-1.2, and 1.3 were already `[DONE]`; **Phase 1 is therefore closed** as of this record. Mutation-testing coverage of
-the critical release-policy predicates (Cycle 4.4 of the corrective plan) is deferred: no mutation-testing
-infrastructure exists in this repository yet, and one was not added solely for this small verifier, per that plan's
-own non-goals.
+finding noted above) and frozen evidence confirmed byte-unchanged, Subphase 1.4 is marked `[DONE]`. Subphases 1.1, 1.2,
+and 1.3 were already `[DONE]`; **Phase 1 is therefore closed** as of this record. Mutation-testing coverage of the
+critical release-policy predicates (Cycle 4.4 of the corrective plan) is deferred: no mutation-testing infrastructure
+exists in this repository yet, and one was not added solely for this small verifier, per that plan's own non-goals.
 
-This closure was subsequently found premature: a code review identified that the "single audited release plan"
-described above still let `publishable-plan.mjs` (and `generate-icons-index.js`) reconstruct classification from a
-live `readdirSync()` scan instead of reading the frozen `migration/icon-inventory.json`, among other findings. That
+This closure was subsequently found premature: a code review identified that the "single audited release plan" described
+above still let `publishable-plan.mjs` (and `generate-icons-index.js`) reconstruct classification from a live
+`readdirSync()` scan instead of reading the frozen `migration/icon-inventory.json`, among other findings. That
 correction is recorded below.
 
 ---
@@ -991,55 +990,53 @@ four phases.
    `packages/astro-icons/scripts/lib/publishable-plan.mjs` was rewritten: `resolveReleasePlan()` and
    `resolvePublishableIcons()` now read the committed `migration/icon-inventory.json` as the classification authority
    and the attribution manifest, and treat the live `src/*.svg` listing only as drift evidence via a new pure
-   `diffSourceAgainstInventory()` in `scripts/lib/release-policy.mjs`. An SVG present on disk but absent from the
-   frozen inventory (`releasePolicy.untrackedSource`) or an inventory member missing from disk
-   (`releasePolicy.missingSource`) now blocks every publication-sensitive command. `generate-icons-index.js`
-   (monorepo root) had the identical live-reclassification bug and was corrected the same way, and its path
-   resolution was switched from `process.cwd()` to `import.meta.url`-relative so it can be invoked from either the
-   repository root or the `astro-icons` package directory. `copy-assets.mjs` and `assert-pack-files.mjs` now pass an
-   explicit `inventoryPath` through the same shared `resolvePublishableIcons()` entry point — none of the three
-   consumers (build, pack verification, export generation) independently reinterprets the release policy.
-2. **Manifest vocabulary and duplicate detection reused, not reimplemented (P1 fix).**
-   `release-policy.mjs` now imports `RELEASE_DECISION_ACTIONS`, `REDISTRIBUTION_CONCLUSIONS`, and a newly extracted
-   `findDuplicateManifestFiles()` from `license-metadata.mjs` (both remain filesystem-independent, so no circular
-   dependency). `derivePublishableIcons()` adds two new finding codes: `releasePolicy.invalidReleaseVocabulary` for
-   any manifest asset whose `releaseDecision.action` or `redistribution.conclusion` falls outside the frozen
-   vocabulary (previously silently treated the same as a valid `exclude`), and
-   `releasePolicy.duplicateManifestAsset` for a `file` referenced by more than one manifest record (previously
-   `indexManifestByFile()`'s `Map.set()` silently kept the last value).
-3. **Verification pipeline ordering corrected (P0 fix).**
-   `scripts/test/pack-artifact.integration.test.mjs` — which independently reconstructed the `npm pack --dry-run
-   --json` adapter and ran *before* `build` inside `test:pack-files` — was deleted; `pack:check` (the real
-   production CLI, already invoked later in the ladder) is now the sole real-artifact integration oracle, per the
-   plan's stated preference. `test:pack-files` is pure/CLI-injected only and needs no `dist/`.
-   `test.each` monkeypatches were removed from `release-policy.test.mjs` and `pack-contract.test.mjs` in favor of
-   plain `for` loops (also fixing an indentation regression in one existing DDT loop). `test:audit-icons` is now
-   wired into `check` (previously it ran in CI only by coincidence of a separate test job, not through the package's
-   own `check`).
-4. **Generated export surfaces gained a non-mutating freshness check (P1 fix).**
-   `generate-icons-index.js` now separates planning (`planExportSurface()`, reusing the existing
-   `planExportModules()` primitive) from writing (`applyExportSurfacePlan()`) and checking
-   (`findStaleExportSurfacePaths()`), so `--write` and `--check` cannot drift from each other. A new
-   `generate-icons:check` package script (`node ../../generate-icons-index.js --check --asset-type=icons`) fails if
-   the committed `src/index.ts`, `src/publishable.ts`, or any sharded `src/generated/**/part-NNN.ts` no longer
-   matches the frozen release plan.
-5. **Built-artifact API-to-asset integrity check added (P1 fix).**
-   A new pure module `scripts/lib/artifact-integrity.mjs` (`findUnresolvedSvgImports()`) and imperative shell
-   `scripts/verify-artifact-integrity.mjs` parse `dist/index.js`'s import specifiers with `es-module-lexer`
-   (semantic specifiers, not a textual regex) and confirm every `.svg` import resolves to a file actually present in
-   `dist/`. This is the complementary direction to `pack:check`'s existing `comparePublishedSvgSet` (which confirms
-   every packaged SVG is approved by policy). `es-module-lexer` was added as an explicit `astro-icons` devDependency
-   (root workspace already had it; pnpm's per-package resolution needed it declared locally too).
+   `diffSourceAgainstInventory()` in `scripts/lib/release-policy.mjs`. An SVG present on disk but absent from the frozen
+   inventory (`releasePolicy.untrackedSource`) or an inventory member missing from disk (`releasePolicy.missingSource`)
+   now blocks every publication-sensitive command. `generate-icons-index.js` (monorepo root) had the identical
+   live-reclassification bug and was corrected the same way, and its path resolution was switched from `process.cwd()`
+   to `import.meta.url`-relative so it can be invoked from either the repository root or the `astro-icons` package
+   directory. `copy-assets.mjs` and `assert-pack-files.mjs` now pass an explicit `inventoryPath` through the same shared
+   `resolvePublishableIcons()` entry point — none of the three consumers (build, pack verification, export generation)
+   independently reinterprets the release policy.
+2. **Manifest vocabulary and duplicate detection reused, not reimplemented (P1 fix).** `release-policy.mjs` now imports
+   `RELEASE_DECISION_ACTIONS`, `REDISTRIBUTION_CONCLUSIONS`, and a newly extracted `findDuplicateManifestFiles()` from
+   `license-metadata.mjs` (both remain filesystem-independent, so no circular dependency). `derivePublishableIcons()`
+   adds two new finding codes: `releasePolicy.invalidReleaseVocabulary` for any manifest asset whose
+   `releaseDecision.action` or `redistribution.conclusion` falls outside the frozen vocabulary (previously silently
+   treated the same as a valid `exclude`), and `releasePolicy.duplicateManifestAsset` for a `file` referenced by more
+   than one manifest record (previously `indexManifestByFile()`'s `Map.set()` silently kept the last value).
+3. **Verification pipeline ordering corrected (P0 fix).** `scripts/test/pack-artifact.integration.test.mjs` — which
+   independently reconstructed the `npm pack --dry-run
+   --json` adapter and ran _before_ `build` inside
+   `test:pack-files` — was deleted; `pack:check` (the real production CLI, already invoked later in the ladder) is now
+   the sole real-artifact integration oracle, per the plan's stated preference. `test:pack-files` is pure/CLI-injected
+   only and needs no `dist/`. `test.each` monkeypatches were removed from `release-policy.test.mjs` and
+   `pack-contract.test.mjs` in favor of plain `for` loops (also fixing an indentation regression in one existing DDT
+   loop). `test:audit-icons` is now wired into `check` (previously it ran in CI only by coincidence of a separate test
+   job, not through the package's own `check`).
+4. **Generated export surfaces gained a non-mutating freshness check (P1 fix).** `generate-icons-index.js` now separates
+   planning (`planExportSurface()`, reusing the existing `planExportModules()` primitive) from writing
+   (`applyExportSurfacePlan()`) and checking (`findStaleExportSurfacePaths()`), so `--write` and `--check` cannot drift
+   from each other. A new `generate-icons:check` package script
+   (`node ../../generate-icons-index.js --check --asset-type=icons`) fails if the committed `src/index.ts`,
+   `src/publishable.ts`, or any sharded `src/generated/**/part-NNN.ts` no longer matches the frozen release plan.
+5. **Built-artifact API-to-asset integrity check added (P1 fix).** A new pure module
+   `scripts/lib/artifact-integrity.mjs` (`findUnresolvedSvgImports()`) and imperative shell
+   `scripts/verify-artifact-integrity.mjs` parse `dist/index.js`'s import specifiers with `es-module-lexer` (semantic
+   specifiers, not a textual regex) and confirm every `.svg` import resolves to a file actually present in `dist/`. This
+   is the complementary direction to `pack:check`'s existing `comparePublishedSvgSet` (which confirms every packaged SVG
+   is approved by policy). `es-module-lexer` was added as an explicit `astro-icons` devDependency (root workspace
+   already had it; pnpm's per-package resolution needed it declared locally too).
 6. **Verification ladder reordered to the plan's target sequence.** `package.json`'s `check` script is now:
    `test:audit-icons → test:licenses → test:pack-files → licenses:check → generate-icons:check → build → typecheck →
-   pack:check → verify:artifact-integrity → lint` — `lint` last, so a `publint` tooling hiccup never blocks
-   collecting package-contract evidence.
+   pack:check → verify:artifact-integrity → lint`
+   — `lint` last, so a `publint` tooling hiccup never blocks collecting package-contract evidence.
 
-None of these changes alter any release decision, redistribution conclusion, `LICENSES/third-party-icons.json`
-record, `migration/icon-inventory.json` record, or `src/*.svg` byte. For the currently valid, fully-audited
-repository state (every `src/*.svg` file already has a matching frozen-inventory record, and all nine custom assets
-use valid, non-duplicated vocabulary), the new checks add zero new findings — the change is purely "fail closed on
-future drift that should never have been silently publishable."
+None of these changes alter any release decision, redistribution conclusion, `LICENSES/third-party-icons.json` record,
+`migration/icon-inventory.json` record, or `src/*.svg` byte. For the currently valid, fully-audited repository state
+(every `src/*.svg` file already has a matching frozen-inventory record, and all nine custom assets use valid,
+non-duplicated vocabulary), the new checks add zero new findings — the change is purely "fail closed on future drift
+that should never have been silently publishable."
 
 ### Verification commands and outcomes
 
@@ -1058,26 +1055,27 @@ pnpm --filter @ravenhill/astro-icons verify:artifact-integrity    # pass — "15
 pnpm --filter @ravenhill/astro-icons lint                          # pass — publint: "All good!"
 ```
 
-Every ladder segment above passes when run individually. Running the aggregate `pnpm --filter @ravenhill/astro-icons
-check` in one shot fails at its first step, `test:audit-icons`, because that step now runs as part of `check` for
-the first time (this was itself one of the P1 findings being fixed) and immediately surfaces the pre-existing,
-unrelated `icon-inventory.contract.test.mjs` byte-for-byte indentation mismatch documented below and in the original
-closure record above. This is a direct, expected consequence of correctly wiring `test:audit-icons` into `check` —
-not a regression introduced by this hardening pass.
+Every ladder segment above passes when run individually. Running the aggregate
+`pnpm --filter @ravenhill/astro-icons
+check` in one shot fails at its first step, `test:audit-icons`, because that step
+now runs as part of `check` for the first time (this was itself one of the P1 findings being fixed) and immediately
+surfaces the pre-existing, unrelated `icon-inventory.contract.test.mjs` byte-for-byte indentation mismatch documented
+below and in the original closure record above. This is a direct, expected consequence of correctly wiring
+`test:audit-icons` into `check` — not a regression introduced by this hardening pass.
 
 **Note on `test:audit-icons` (carried forward, unresolved, out of scope):** the same pre-existing test
-(`icon-inventory.contract.test.mjs`, "matches the committed migration/icon-inventory.json byte-for-byte") still
-fails because the committed `migration/icon-inventory.json` is four-space indented on disk while
-`audit-icons.mjs`'s `serializeInventory` emits two-space JSON. This predates both corrective plans, is unrelated to
-the release-policy hardening in this record, and was not introduced, touched, or fixed by it — per this plan's own
-explicit instruction not to fix it (fixing it would require either reformatting the frozen `icon-inventory.json`,
-which is forbidden, or changing `serializeInventory`'s indentation, which is a distinct, unreviewed change). It
-remains a known, separately-tracked finding.
+(`icon-inventory.contract.test.mjs`, "matches the committed migration/icon-inventory.json byte-for-byte") still fails
+because the committed `migration/icon-inventory.json` is four-space indented on disk while `audit-icons.mjs`'s
+`serializeInventory` emits two-space JSON. This predates both corrective plans, is unrelated to the release-policy
+hardening in this record, and was not introduced, touched, or fixed by it — per this plan's own explicit instruction not
+to fix it (fixing it would require either reformatting the frozen `icon-inventory.json`, which is forbidden, or changing
+`serializeInventory`'s indentation, which is a distinct, unreviewed change). It remains a known, separately-tracked
+finding.
 
 **Note on `pack:dry-run` (carried forward, environment-only):** as in the prior verification pass on this machine,
-`npm pack --dry-run` invoked directly succeeds; the pnpm-wrapped invocation path is the same pre-existing
-Windows/pnpm shell-wrapper quirk noted previously and was not investigated further, since `pack:check` and `lint`
-(which both invoke the real packer through their own adapters) both pass.
+`npm pack --dry-run` invoked directly succeeds; the pnpm-wrapped invocation path is the same pre-existing Windows/pnpm
+shell-wrapper quirk noted previously and was not investigated further, since `pack:check` and `lint` (which both invoke
+the real packer through their own adapters) both pass.
 
 ### Repository purity confirmation
 
@@ -1095,7 +1093,7 @@ All frozen licensing and inventory evidence, and every `src/*.svg` byte, remain 
 With every individual verification-ladder segment passing, frozen evidence confirmed byte-unchanged, and the only
 non-passing state being the aggregate `check` invocation's exposure of the pre-existing, explicitly out-of-scope
 `icon-inventory.contract.test.mjs` indentation mismatch, Subphase 1.4 is re-marked `[DONE]` under the corrected
-architecture: the frozen inventory is now the sole publication-classification authority, source/inventory drift
-fails closed, generated export surfaces have a reproducibility check, and the built artifact's API surface is
-verified against its packaged assets in both directions. **Phase 1 is re-closed** as of this record. Mutation-testing
-coverage remains deferred per the same non-goal as the original closure.
+architecture: the frozen inventory is now the sole publication-classification authority, source/inventory drift fails
+closed, generated export surfaces have a reproducibility check, and the built artifact's API surface is verified against
+its packaged assets in both directions. **Phase 1 is re-closed** as of this record. Mutation-testing coverage remains
+deferred per the same non-goal as the original closure.

@@ -599,9 +599,9 @@ Implemented phases 1–5 as planned.
 ## Phase 1 — Red, confirmed
 
 Added `playwright.config.ts` (Chromium only, matching the existing `playwright:install` script) and
-`tests/e2e/lesson-toc-sticky.spec.ts`, run against `/notes/software-libraries/what-is/` at `1600×900`. Before
-touching `LessonToc.astro`, the precondition test passed (TOC visible, lesson taller than viewport) and the five
-behavioral tests failed exactly as predicted:
+`tests/e2e/lesson-toc-sticky.spec.ts`, run against `/notes/software-libraries/what-is/` at `1600×900`. Before touching
+`LessonToc.astro`, the precondition test passed (TOC visible, lesson taller than viewport) and the five behavioral tests
+failed exactly as predicted:
 
 ```text
 Expected: in viewport
@@ -616,79 +616,79 @@ Diagnostics: {
 }
 ```
 
-This directly confirms the causal chain this doc predicted: `asideComputedPosition: "static"` — the grid item
-itself never had `position: sticky` — so its own box (shrunk to fit `<nav>`'s content because
-`.lesson-reading-shell { align-items: start }`) is the sticky `<nav>`'s containing block, and that box is far
-shorter than the article. Once scrolled past, the nested sticky `<nav>` has nowhere left to move and scrolls away
-with the document (`top: -6375px`).
+This directly confirms the causal chain this doc predicted: `asideComputedPosition: "static"` — the grid item itself
+never had `position: sticky` — so its own box (shrunk to fit `<nav>`'s content because
+`.lesson-reading-shell { align-items: start }`) is the sticky `<nav>`'s containing block, and that box is far shorter
+than the article. Once scrolled past, the nested sticky `<nav>` has nowhere left to move and scrolls away with the
+document (`top: -6375px`).
 
-This diagnostic also retroactively explains an unexplained finding from the *previous* corrective cycle
-(`fix_make_lesson_toc_auto_reveal_coordinate_safe_and_browser_verified.md`): an ad hoc mid-article wheel-scroll
-probe there produced a confusing `boundingBox y: -3323` reading that was never resolved. It is the same mechanism,
-observed before this fix existed.
+This diagnostic also retroactively explains an unexplained finding from the _previous_ corrective cycle
+(`fix_make_lesson_toc_auto_reveal_coordinate_safe_and_browser_verified.md`): an ad hoc mid-article wheel-scroll probe
+there produced a confusing `boundingBox y: -3323` reading that was never resolved. It is the same mechanism, observed
+before this fix existed.
 
 ## Phase 2 — Green
 
 Moved `sticky top-[var(--lesson-header-offset,5.5rem)]` from `nav[data-lesson-toc]` to the outer `<aside>`
-(`data-testid="lesson-toc"`), added `self-start`, and left the `<nav>` as a plain flex column (heading + scroller)
-with no positioning of its own. Per a CSS Grid item's containing block being the grid area itself regardless of
-`align-items`, sticky now has the full article-height containing block to work within. All 6 Phase 1 tests went
-green immediately, including the entry near the very end of the article that a previous cycle had to deliberately
-*exclude* from its E2E traversal indices because of this exact "runs out of containing block" characteristic —
-that exclusion is no longer necessary and the new spec exercises it directly (`#continue-reading`).
+(`data-testid="lesson-toc"`), added `self-start`, and left the `<nav>` as a plain flex column (heading + scroller) with
+no positioning of its own. Per a CSS Grid item's containing block being the grid area itself regardless of
+`align-items`, sticky now has the full article-height containing block to work within. All 6 Phase 1 tests went green
+immediately, including the entry near the very end of the article that a previous cycle had to deliberately _exclude_
+from its E2E traversal indices because of this exact "runs out of containing block" characteristic — that exclusion is
+no longer necessary and the new spec exercises it directly (`#continue-reading`).
 
-The existing structural render-contract tests (`LessonToc.render.test.ts`: "exactly one internal scrolling
-viewport", "the heading is outside the internally scrollable region") already covered the shell/scroller split
-from the prior cycle and needed no new Red step; only a stale test title ("sticky shell" → "navigation element",
-since sticky no longer lives on the `<nav>`) was corrected.
+The existing structural render-contract tests (`LessonToc.render.test.ts`: "exactly one internal scrolling viewport",
+"the heading is outside the internally scrollable region") already covered the shell/scroller split from the prior cycle
+and needed no new Red step; only a stale test title ("sticky shell" → "navigation element", since sticky no longer lives
+on the `<nav>`) was corrected.
 
 ## Phase 3 — DDT viewport matrix
 
-Added a short-viewport (`1600×480`, not the plan's example `700` — measured this lesson's TOC content at ~438px,
-which fits inside `700 - 104px`; `480` is the value already proven in the prior cycle to force real overflow)
-describe block: heading/shell remain visible after scrolling deep in, and the entry list genuinely overflows and
-scrolls independently without moving the heading. Both pass.
+Added a short-viewport (`1600×480`, not the plan's example `700` — measured this lesson's TOC content at ~438px, which
+fits inside `700 - 104px`; `480` is the value already proven in the prior cycle to force real overflow) describe block:
+heading/shell remain visible after scrolling deep in, and the entry list genuinely overflows and scrolls independently
+without moving the heading. Both pass.
 
 ## Phase 4 — Interaction regression
 
-Added a test that sets the TOC scroller's `scrollTop` directly (deterministic, avoiding the wheel-event
-scroll-chaining ambiguity that produced unexplained results in the prior cycle's ad hoc probing) and asserts
-`window.scrollY` is unchanged, then resumes article scrolling and confirms the TOC shell is still pinned. Passes.
+Added a test that sets the TOC scroller's `scrollTop` directly (deterministic, avoiding the wheel-event scroll-chaining
+ambiguity that produced unexplained results in the prior cycle's ad hoc probing) and asserts `window.scrollY` is
+unchanged, then resumes article scrolling and confirms the TOC shell is still pinned. Passes.
 
 ## Phase 5 — CI
 
 Added `test:e2e` to `.gitlab-ci.yml` as a `test`-stage job, `image: mcr.microsoft.com/playwright:v1.59.1-noble`
 (matching the resolved lockfile version exactly, not the Alpine image the other jobs use — Playwright is not
-well-supported on Alpine/musl), running the same generation steps `test:unit`/`test:astro-render` already run
-before their own commands, then `pnpm exec playwright test`. Added it to both `build` and `deploy`'s `needs` lists
-(matching the existing pattern where `deploy` re-lists every required test job explicitly), `allow_failure` not
-set, with `playwright-report/`/`test-results/` retained as artifacts on failure. This single job covers both
-`tests/e2e/lesson-toc-sticky.spec.ts` (this doc) and `tests/e2e/lesson-toc-scroll.spec.ts` (the previous
-auto-reveal cycle) — one browser harness, not two.
+well-supported on Alpine/musl), running the same generation steps `test:unit`/`test:astro-render` already run before
+their own commands, then `pnpm exec playwright test`. Added it to both `build` and `deploy`'s `needs` lists (matching
+the existing pattern where `deploy` re-lists every required test job explicitly), `allow_failure` not set, with
+`playwright-report/`/`test-results/` retained as artifacts on failure. This single job covers both
+`tests/e2e/lesson-toc-sticky.spec.ts` (this doc) and `tests/e2e/lesson-toc-scroll.spec.ts` (the previous auto-reveal
+cycle) — one browser harness, not two.
 
 `playwright.config.ts`'s project-level default viewport changed from `1600×480` (a leftover from when only the
-auto-reveal spec existed) to `1600×900` ("normal desktop"); `lesson-toc-scroll.spec.ts` now pins its own required
-`480` height via `test.use()` instead of depending on that default, per this doc's own "pin the viewport rather
-than relying on Playwright defaults" guidance.
+auto-reveal spec existed) to `1600×900` ("normal desktop"); `lesson-toc-scroll.spec.ts` now pins its own required `480`
+height via `test.use()` instead of depending on that default, per this doc's own "pin the viewport rather than relying
+on Playwright defaults" guidance.
 
 ## Verification run
 
 - `pnpm exec playwright test tests/e2e/lesson-toc-sticky.spec.ts` — 9/9 passing.
 - `pnpm exec playwright test tests/e2e/lesson-toc-scroll.spec.ts` — 3/3 passing (unaffected by the sticky-ownership
   change).
-- `pnpm vitest run` — 1386/1387 passing; the one failure (`pdf-export-cli.test.ts`, manifest ordering) is
-  unrelated — caused by an uncommitted, in-progress change to `lesson-metadata.generated.json` from concurrent work
-  elsewhere in this working tree, not by anything in this fix.
+- `pnpm vitest run` — 1386/1387 passing; the one failure (`pdf-export-cli.test.ts`, manifest ordering) is unrelated —
+  caused by an uncommitted, in-progress change to `lesson-metadata.generated.json` from concurrent work elsewhere in
+  this working tree, not by anything in this fix.
 - `node ./node_modules/vitest/vitest.mjs run --config vitest.astro.config.ts` — 310/311 passing; the one failure
-  (`NotesLayout.export-contract.render.test.ts`, git-history-derived authorship metadata) is likewise pre-existing
-  and unrelated.
+  (`NotesLayout.export-contract.render.test.ts`, git-history-derived authorship metadata) is likewise pre-existing and
+  unrelated.
 
 ## Root-cause status
 
-This is the confirmed root cause of the originally reported bug, unlike the two prior corrective cycles: the Red
-test in Phase 1 reproduced the exact reported symptom (TOC disappearing while scrolling) with a diagnostic that
-directly names the mechanism (`asideComputedPosition: "static"`, sticky `<nav>` measured at `top: -6375px`), and
-the Green step resolved it with no remaining unexplained behavior. See
-`fix_keep_the_active_lesson_toc_entry_visible_within_the_scrollable_panel.md`'s "Second regression discovered"
-section and this doc's own outcome above for the full chain of what each of the three related traceability docs
-did and did not establish.
+This is the confirmed root cause of the originally reported bug, unlike the two prior corrective cycles: the Red test in
+Phase 1 reproduced the exact reported symptom (TOC disappearing while scrolling) with a diagnostic that directly names
+the mechanism (`asideComputedPosition: "static"`, sticky `<nav>` measured at `top: -6375px`), and the Green step
+resolved it with no remaining unexplained behavior. See
+`fix_keep_the_active_lesson_toc_entry_visible_within_the_scrollable_panel.md`'s "Second regression discovered" section
+and this doc's own outcome above for the full chain of what each of the three related traceability docs did and did not
+establish.

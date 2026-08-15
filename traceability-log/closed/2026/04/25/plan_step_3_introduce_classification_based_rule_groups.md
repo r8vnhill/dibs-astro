@@ -4,9 +4,9 @@ Status: completed on 2026-04-25.
 
 Implemented in:
 
-* `scripts/lib/layer-boundary-rules.mjs`
-* `scripts/__tests__/layer-boundary-rules.test.ts`
-* `docs/architecture/layer-separation.md`
+- `scripts/lib/layer-boundary-rules.mjs`
+- `scripts/__tests__/layer-boundary-rules.test.ts`
+- `docs/architecture/layer-separation.md`
 
 Observed focused gate:
 
@@ -29,9 +29,12 @@ Tests: 12 passed
 
 ## Summary
 
-Introduce the complete Cycle 2 declarative rule matrix in `scripts/lib/layer-boundary-rules.mjs` using source-layer and target-category vocabulary. This step defines the stable rule data that Step 4 will evaluate through `classifySourcePath(...)`, `classifyResolvedTarget(...)`, and package classification.
+Introduce the complete Cycle 2 declarative rule matrix in `scripts/lib/layer-boundary-rules.mjs` using source-layer and
+target-category vocabulary. This step defines the stable rule data that Step 4 will evaluate through
+`classifySourcePath(...)`, `classifyResolvedTarget(...)`, and package classification.
 
-Step 3 must not change runtime checker behaviour yet. The current evaluator still expects path-glob-shaped rules, so this step must keep the existing checker baseline isolated from the new rule shape.
+Step 3 must not change runtime checker behaviour yet. The current evaluator still expects path-glob-shaped rules, so
+this step must keep the existing checker baseline isolated from the new rule shape.
 
 ## Primary Goal
 
@@ -51,11 +54,11 @@ Create the new canonical rule model:
 
 where:
 
-* `source` is a single source-layer id, not a glob list.
-* `allowedTargets` and `forbiddenTargets` use classification ids, not path globs.
-* package restrictions are represented through `forbiddenPackages`.
-* rule messages are stable and human-facing.
-* exception handling is declared but empty for now.
+- `source` is a single source-layer id, not a glob list.
+- `allowedTargets` and `forbiddenTargets` use classification ids, not path globs.
+- package restrictions are represented through `forbiddenPackages`.
+- rule messages are stable and human-facing.
+- exception handling is declared but empty for now.
 
 ## Important Compatibility Decision
 
@@ -67,7 +70,8 @@ The original plan says:
 export const initialBoundaryRules = boundaryRules;
 ```
 
-That is only safe after Step 4 updates the evaluator. Until then, it creates an implicit behaviour change because the evaluator still interprets `source` and `forbiddenTargets` as glob-like fields.
+That is only safe after Step 4 updates the evaluator. Until then, it creates an implicit behaviour change because the
+evaluator still interprets `source` and `forbiddenTargets` as glob-like fields.
 
 Use this Step 3 export shape instead:
 
@@ -99,30 +103,30 @@ This keeps Step 3 green without pretending the evaluator already understands the
 
 ### Add or update
 
-* `scripts/lib/layer-boundary-rules.mjs`
-* `scripts/__tests__/layer-boundary-rules.test.ts`
+- `scripts/lib/layer-boundary-rules.mjs`
+- `scripts/__tests__/layer-boundary-rules.test.ts`
 
 ### Do not change yet
 
-* `scripts/lib/layer-boundary-checker.mjs`
-* `evaluateBoundaryRules(...)`
-* `checkLayerBoundaries(...)`
-* `formatViolations(...)`
-* CLI behaviour
-* import extraction
-* path resolution
-* classification helpers added in Step 2
+- `scripts/lib/layer-boundary-checker.mjs`
+- `evaluateBoundaryRules(...)`
+- `checkLayerBoundaries(...)`
+- `formatViolations(...)`
+- CLI behaviour
+- import extraction
+- path resolution
+- classification helpers added in Step 2
 
 ## Rule Constants
 
 Define one named rule per source layer:
 
 ```js
-export const domainBoundaryRule = { /* ... */ };
-export const applicationBoundaryRule = { /* ... */ };
-export const infrastructureBoundaryRule = { /* ... */ };
-export const presentationAdapterBoundaryRule = { /* ... */ };
-export const uiBoundaryRule = { /* ... */ };
+export const domainBoundaryRule = {/* ... */};
+export const applicationBoundaryRule = {/* ... */};
+export const infrastructureBoundaryRule = {/* ... */};
+export const presentationAdapterBoundaryRule = {/* ... */};
+export const uiBoundaryRule = {/* ... */};
 ```
 
 Then define the canonical ordered list:
@@ -143,31 +147,32 @@ Keep the order intentional: domain → application → infrastructure → presen
 
 Use these exact ids:
 
-* `domain-boundary`
-* `application-boundary`
-* `infrastructure-boundary`
-* `presentation-adapter-boundary`
-* `ui-boundary`
+- `domain-boundary`
+- `application-boundary`
+- `infrastructure-boundary`
+- `presentation-adapter-boundary`
+- `ui-boundary`
 
 ## Target Vocabulary
 
 Use a small, explicit vocabulary aligned with Step 2 classification helpers:
 
-* `domain`
-* `application`
-* `infrastructure`
-* `presentation-adapter`
-* `presentation`
-* `ui`
-* `data`
-* `generated-data`
-* `assets`
-* `styles`
-* `utils`
-* `external`
-* `unknown`
+- `domain`
+- `application`
+- `infrastructure`
+- `presentation-adapter`
+- `presentation`
+- `ui`
+- `data`
+- `generated-data`
+- `assets`
+- `styles`
+- `utils`
+- `external`
+- `unknown`
 
-Only include `external` and `unknown` in rules if Step 2 classification already exposes them and Step 4 intends to evaluate them. Otherwise, keep them out of the rule matrix for now.
+Only include `external` and `unknown` in rules if Step 2 classification already exposes them and Step 4 intends to
+evaluate them. Otherwise, keep them out of the rule matrix for now.
 
 ## Rule Matrix
 
@@ -229,7 +234,8 @@ forbiddenPackages: [],
 
 ### Presentation Adapter
 
-Presentation adapters may compose application/domain/infrastructure with presentation-facing structures, but must not import UI components directly.
+Presentation adapters may compose application/domain/infrastructure with presentation-facing structures, but must not
+import UI components directly.
 
 ```js
 allowedTargets: [
@@ -246,7 +252,8 @@ forbiddenPackages: [],
 
 ### UI
 
-UI code may depend on presentation-facing APIs and stable domain/application abstractions, but must not reach directly into infrastructure.
+UI code may depend on presentation-facing APIs and stable domain/application abstractions, but must not reach directly
+into infrastructure.
 
 ```js
 allowedTargets: [
@@ -273,16 +280,16 @@ traceability-log/plan_cycle_2_data_driven_layer_rules.md
 
 Add a test guard that every rule has:
 
-* non-empty `message`
-* non-empty `suggestion`
-* no duplicated message across rules unless intentionally justified
+- non-empty `message`
+- non-empty `suggestion`
+- no duplicated message across rules unless intentionally justified
 
 Recommended message style:
 
-* state the violated architectural direction
-* name the source layer
-* name the forbidden target or dependency kind
-* avoid implementation-specific wording tied to path globs
+- state the violated architectural direction
+- name the source layer
+- name the forbidden target or dependency kind
+- avoid implementation-specific wording tied to path globs
 
 Example style:
 
@@ -335,7 +342,7 @@ Use BDD-style `describe(...)` sections and DDT tables where the assertion shape 
 8. Domain and application forbid exactly these packages:
 
 ```js
-["astro", "react", "zod"]
+["astro", "react", "zod"];
 ```
 
 9. Non-domain/application rules do not forbid packages.
@@ -346,9 +353,9 @@ Use BDD-style `describe(...)` sections and DDT tables where the assertion shape 
 
 12. `generated-data` is:
 
-* forbidden from domain
-* forbidden from application
-* allowed from infrastructure
+- forbidden from domain
+- forbidden from application
+- allowed from infrastructure
 
 13. `presentation-adapter` forbids UI.
 
@@ -423,7 +430,8 @@ Run the rule-data and classification tests:
 pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-classification.test.ts
 ```
 
-Vitest supports filtering by file name through CLI arguments, so this is a reasonable focused gate for Step 3 rather than running unrelated suites. ([Vitest][1])
+Vitest supports filtering by file name through CLI arguments, so this is a reasonable focused gate for Step 3 rather
+than running unrelated suites. ([Vitest][1])
 
 ## Optional Safety Gate
 
@@ -439,26 +447,27 @@ Do not require the full checker suite to validate the new `boundaryRules` shape 
 
 Step 3 must not include:
 
-* evaluator migration
-* exception matching
-* richer violation metadata
-* CLI output changes
-* checker public API changes
-* repository-wide import refactors
-* real architecture audit
-* package script rewiring
-* path-glob fallback evaluation for the new rule shape
+- evaluator migration
+- exception matching
+- richer violation metadata
+- CLI output changes
+- checker public API changes
+- repository-wide import refactors
+- real architecture audit
+- package script rewiring
+- path-glob fallback evaluation for the new rule shape
 
 ## Step 3 Completion Criteria
 
 Step 3 is complete when:
 
-* `boundaryRules` contains the five full Cycle 2 rule groups.
-* `allowedExceptions` exists and is empty.
-* all new rule-data tests pass.
-* classification tests from Step 2 still pass.
-* current checker behaviour is not accidentally changed.
-* Step 4 has a clear, mechanical migration point: make the evaluator consume classification-shaped rules and then alias `initialBoundaryRules` to `boundaryRules`.
+- `boundaryRules` contains the five full Cycle 2 rule groups.
+- `allowedExceptions` exists and is empty.
+- all new rule-data tests pass.
+- classification tests from Step 2 still pass.
+- current checker behaviour is not accidentally changed.
+- Step 4 has a clear, mechanical migration point: make the evaluator consume classification-shaped rules and then alias
+  `initialBoundaryRules` to `boundaryRules`.
 
 ## Step 4 Handoff Notes
 
@@ -472,7 +481,9 @@ Step 4 should:
 
 ## Rationale References
 
-The plan keeps the new rule matrix as named ESM exports, which aligns with the standard module model used by Node.js and modern JavaScript tooling. ([Node.js][2]) The focused test gate is also consistent with Vitest’s documented support for running targeted test files through filename filtering and `vitest run` workflows. ([Vitest][1])
+The plan keeps the new rule matrix as named ESM exports, which aligns with the standard module model used by Node.js and
+modern JavaScript tooling. ([Node.js][2]) The focused test gate is also consistent with Vitest’s documented support for
+running targeted test files through filename filtering and `vitest run` workflows. ([Vitest][1])
 
 [1]: https://vitest.dev/guide/filtering?utm_source=chatgpt.com "Test Filtering | Guide"
 [2]: https://nodejs.org/api/esm.html?utm_source=chatgpt.com "ECMAScript modules | Node.js v25.9.0 Documentation"

@@ -2,17 +2,19 @@
 
 ## Summary
 
-Refactor `filterManifest` tests and implementation so manifest filtering has clearer contracts, isolated fixtures, table-driven route-normalisation coverage, and correct subtree path semantics.
+Refactor `filterManifest` tests and implementation so manifest filtering has clearer contracts, isolated fixtures,
+table-driven route-normalisation coverage, and correct subtree path semantics.
 
 Keep the public API unchanged:
 
 ```ts
-filterManifest(manifest, filter)
+filterManifest(manifest, filter);
 ```
 
 and keep `LessonExportFilter` as-is.
 
-The refactor should preserve the wrapper-copy contract: `filterManifest` returns a new manifest object and a new `entries` array, while tests should not require entry object identity to be preserved.
+The refactor should preserve the wrapper-copy contract: `filterManifest` returns a new manifest object and a new
+`entries` array, while tests should not require entry object identity to be preserved.
 
 ## Phase 1: Test Harness Cleanup [DONE]
 
@@ -22,11 +24,11 @@ Improve the test structure without changing behavior.
 
 ### Changes
 
-* Replace the top-level shared `manifest` with `createManifest()`.
-* Add `createEntry(route, title, sourceFile?)`.
-* Add `routesOf(manifest)` for concise route assertions.
-* Use `satisfies LessonExportManifest` for fixture objects.
-* Keep all existing assertions behaviorally equivalent.
+- Replace the top-level shared `manifest` with `createManifest()`.
+- Add `createEntry(route, title, sourceFile?)`.
+- Add `routesOf(manifest)` for concise route assertions.
+- Use `satisfies LessonExportManifest` for fixture objects.
+- Keep all existing assertions behaviorally equivalent.
 
 ### Expected TDD State
 
@@ -48,11 +50,11 @@ Pin the stable public contracts before changing subtree semantics.
 
 Add tests for:
 
-* wrapper copying;
-* metadata preservation;
-* empty exact-route results;
-* empty subtree results;
-* value equality instead of entry identity.
+- wrapper copying;
+- metadata preservation;
+- empty exact-route results;
+- empty subtree results;
+- value equality instead of entry identity.
 
 ### Important Assertion Policy
 
@@ -156,7 +158,7 @@ Pin the behavior that requires implementation change.
 Add a test proving subtree filters exclude the exact subtree root:
 
 ```ts
-createEntry("/notes/software-libraries/", "Ozzmosis")
+createEntry("/notes/software-libraries/", "Ozzmosis");
 ```
 
 Expected routes:
@@ -165,19 +167,19 @@ Expected routes:
 [
     "/notes/software-libraries/diary-of-a-madman/",
     "/notes/software-libraries/no-more-tears/",
-]
+];
 ```
 
 Add a root-only edge case proving the exact subtree root is removed when it is the only match:
 
 ```ts
-createEntry("/notes/software-libraries/", "Ozzmosis")
+createEntry("/notes/software-libraries/", "Ozzmosis");
 ```
 
 Expected routes:
 
 ```ts
-[]
+[];
 ```
 
 Add a failing sibling-prefix boundary test:
@@ -186,19 +188,19 @@ Add a failing sibling-prefix boundary test:
 createEntry(
     "/notes/software-libraries-advanced/bark-at-the-moon/",
     "Bark at the Moon",
-)
+);
 ```
 
 Filtering by:
 
 ```ts
-"/notes/software-libraries"
+"/notes/software-libraries";
 ```
 
 must exclude:
 
 ```ts
-"/notes/software-libraries-advanced/bark-at-the-moon/"
+"/notes/software-libraries-advanced/bark-at-the-moon/";
 ```
 
 ### Expected TDD State
@@ -215,10 +217,10 @@ Make the implementation match the pinned contract with small, focused helpers.
 
 ### Changes
 
-* Normalise filter inputs once.
-* Extract a focused route predicate.
-* Preserve wrapper copying in one return path.
-* Keep the implementation small and readable.
+- Normalise filter inputs once.
+- Extract a focused route predicate.
+- Preserve wrapper copying in one return path.
+- Keep the implementation small and readable.
 
 Suggested helper:
 
@@ -247,9 +249,7 @@ const filterEntries = (
 
         case "subtree": {
             const routePrefix = normalizeLessonRoute(filter.routePrefix);
-            return entries.filter((entry) =>
-                isSameRouteOrDescendant(entry.route, routePrefix),
-            );
+            return entries.filter((entry) => isSameRouteOrDescendant(entry.route, routePrefix));
         }
     }
 };
@@ -305,11 +305,11 @@ pnpm check:lesson-export-core
 
 Stop when:
 
-* all focused tests pass;
-* no public API changed;
-* no generated `dist/` files changed;
-* no changelog entry was added;
-* PBT remains deferred.
+- all focused tests pass;
+- no public API changed;
+- no generated `dist/` files changed;
+- no changelog entry was added;
+- PBT remains deferred.
 
 ## Deferred Future Phase: Property-Based Tests
 

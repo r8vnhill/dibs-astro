@@ -250,9 +250,9 @@ This cycle should be type-level only. Runtime behavior should not change.
 
 **Result**
 
-Implemented on May 26, 2026. `ensureLanguageLoaded` now accepts a private
-`Pick<Highlighter, "getLoadedLanguages">` capability alias, and loader tests pass minimal fakes without `Highlighter`
-casts. Verification passed with the focused/package shiki-core Vitest run and package typecheck outside the sandbox.
+Implemented on May 26, 2026. `ensureLanguageLoaded` now accepts a private `Pick<Highlighter, "getLoadedLanguages">`
+capability alias, and loader tests pass minimal fakes without `Highlighter` casts. Verification passed with the
+focused/package shiki-core Vitest run and package typecheck outside the sandbox.
 
 ### Cycle 5 — Service integration without deduplication [DONE]
 
@@ -285,14 +285,14 @@ Only keep this helper if it removes branching noise.
 
 **Result**
 
-Implemented on May 27, 2026. `service.ts` now routes every language, including `text`, `txt`, `plain`, and
-`plaintext`, through `ensureLanguageLoaded`, renders successful loads from `loadResult.language`, and no longer imports
-or calls `resolveShikiLanguage`. Unknown and failed languages still use the existing fallback renderer, retry wrapping
-around `highlighter.loadLanguage` is unchanged, and no in-flight deduplication map was added.
+Implemented on May 27, 2026. `service.ts` now routes every language, including `text`, `txt`, `plain`, and `plaintext`,
+through `ensureLanguageLoaded`, renders successful loads from `loadResult.language`, and no longer imports or calls
+`resolveShikiLanguage`. Unknown and failed languages still use the existing fallback renderer, retry wrapping around
+`highlighter.loadLanguage` is unchanged, and no in-flight deduplication map was added.
 
-Verification passed outside the sandbox with focused service tests, focused loader tests, package typecheck, and the full
-`@ravenhill/shiki-core` Vitest suite. The sandboxed Vitest runs failed before test execution with `EPERM` while reading
-`node_modules/.pnpm/fdir.../dist/types.js`, matching the earlier Windows sandbox issue.
+Verification passed outside the sandbox with focused service tests, focused loader tests, package typecheck, and the
+full `@ravenhill/shiki-core` Vitest suite. The sandboxed Vitest runs failed before test execution with `EPERM` while
+reading `node_modules/.pnpm/fdir.../dist/types.js`, matching the earlier Windows sandbox issue.
 
 ### Cycle 6 — In-flight deduplication [DONE]
 
@@ -346,19 +346,21 @@ Keep this helper inside the service factory unless there is a clear reuse case.
 
 **Result**
 
-Implemented on May 27, 2026. `service.ts` now owns a per-service
-`Map<BundledLanguage, Promise<LanguageLoadResult>>` keyed by canonical bundled language. Concurrent calls for the same
-canonical unloaded language share one retry-wrapped `highlighter.loadLanguage(...)` operation, including alias pairs such
-as `ts` and `typescript`. Failed in-flight loads are removed in `finally`, so later calls can retry.
+Implemented on May 27, 2026. `service.ts` now owns a per-service `Map<BundledLanguage, Promise<LanguageLoadResult>>`
+keyed by canonical bundled language. Concurrent calls for the same canonical unloaded language share one retry-wrapped
+`highlighter.loadLanguage(...)` operation, including alias pairs such as `ts` and `typescript`. Failed in-flight loads
+are removed in `finally`, so later calls can retry.
 
 `ensureLanguageLoaded` remains intact as the lower-level loader contract. Plain-text aliases, unknown-language fallback,
 failed-load fallback, warning behavior, public exports, and dependencies are unchanged.
 
 Verification: the sandboxed Vitest run still fails before test execution with the known Windows `EPERM` while reading
-`node_modules/.pnpm/fdir.../dist/types.js`. The same `pnpm --filter @ravenhill/shiki-core test --
-highlighter-service.test.ts` command passed outside the sandbox and ran the full package Vitest suite: 9 files and 209
-tests passed. `pnpm --filter @ravenhill/shiki-core typecheck` repeatedly gets stuck after printing `tsc --noEmit` with
-no diagnostics; this is documented as a follow-up blocker instead of treated as a Cycle 6 implementation failure.
+`node_modules/.pnpm/fdir.../dist/types.js`. The same
+`pnpm --filter @ravenhill/shiki-core test --
+highlighter-service.test.ts` command passed outside the sandbox and ran the
+full package Vitest suite: 9 files and 209 tests passed. `pnpm --filter @ravenhill/shiki-core typecheck` repeatedly gets
+stuck after printing `tsc --noEmit` with no diagnostics; this is documented as a follow-up blocker instead of treated as
+a Cycle 6 implementation failure.
 
 ---
 
@@ -506,6 +508,7 @@ All planned lifecycle cycles are implemented:
 - service rendering from `LanguageLoadResult`;
 - per-service in-flight language load deduplication.
 
-The remaining validation nuance is not part of the lifecycle refactor behavior: `pnpm --filter @ravenhill/shiki-core
-typecheck` is quiet while `tsc --noEmit` runs, and Codex sandbox runs may fail with `EPERM` before TypeScript executes.
-Use `typecheck:diagnostics` when timing visibility is needed.
+The remaining validation nuance is not part of the lifecycle refactor behavior:
+`pnpm --filter @ravenhill/shiki-core
+typecheck` is quiet while `tsc --noEmit` runs, and Codex sandbox runs may fail with
+`EPERM` before TypeScript executes. Use `typecheck:diagnostics` when timing visibility is needed.

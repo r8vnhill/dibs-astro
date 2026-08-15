@@ -27,8 +27,8 @@ The repo uses a layered structure inside `src/`:
     aliases.
 
 - `packages/site-core`
-  - Owns extracted pure repository references, supported hosting platforms, platform normalization, and repository/commit
-    URL builders.
+  - Owns extracted pure repository references, supported hosting platforms, platform normalization, and
+    repository/commit URL builders.
   - Contains no Astro imports, generated data, DIBS-specific site configuration, UI components, or content-core imports.
 
 - `src/domain`
@@ -89,15 +89,15 @@ These paths are locked with high-value test suites:
 
 ## Layer Rules
 
-| Source layer                                          | Allowed targets                                                                                                 | Forbidden targets/packages                                                                                | Notes                                   |
-| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/content-core/src/**`                        | `content-core`                                                                                                  | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`   | Host-agnostic content core.             |
-| `packages/site-core/src/**`                           | `site-core`                                                                                                     | app-local layers, data, generated data, utilities, assets, styles, `content-core`, `astro`, `react`, `zod` | Host-agnostic repository primitives.    |
-| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                           | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                            | Pure app-local business rules only.     |
-| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                            | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`                 | App-local orchestration and ports only. |
-| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core`   | `presentation`, `ui`                                                                                      | Concrete data-source implementations.   |
-| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`             | `ui`, `components`, `layouts`, `pages`                                                                    | Local composition root.                 |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`     | `domain`, `application`, `infrastructure`                                                                 | Rendering surface.                      |
+| Source layer                                          | Allowed targets                                                                                               | Forbidden targets/packages                                                                                 | Notes                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `packages/content-core/src/**`                        | `content-core`                                                                                                | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`    | Host-agnostic content core.             |
+| `packages/site-core/src/**`                           | `site-core`                                                                                                   | app-local layers, data, generated data, utilities, assets, styles, `content-core`, `astro`, `react`, `zod` | Host-agnostic repository primitives.    |
+| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                             | Pure app-local business rules only.     |
+| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`                  | App-local orchestration and ports only. |
+| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core` | `presentation`, `ui`                                                                                       | Concrete data-source implementations.   |
+| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`           | `ui`, `components`, `layouts`, `pages`                                                                     | Local composition root.                 |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`   | `domain`, `application`, `infrastructure`                                                                  | Rendering surface.                      |
 
 **Implementation notes:**
 
@@ -269,7 +269,8 @@ The main presentation-facing contracts locked in during this phase are:
   - adapt domain reference-content rules into rendering-oriented helpers
   - keep slot precedence and missing-title behavior stable without UI importing domain modules
 
-- `getWebsiteRepoRef(platform)`, `getWebsiteRepoRefs()`, `getDefaultBibliographyCatalog()`, and the static UI data helpers
+- `getWebsiteRepoRef(platform)`, `getWebsiteRepoRefs()`, `getDefaultBibliographyCatalog()`, and the static UI data
+  helpers
   - expose existing static data through explicit presentation-facing modules
   - keep UI components free from direct `src/data/*` imports
   - use `@ravenhill/site-core` for generic repository primitives while keeping concrete site values app-local

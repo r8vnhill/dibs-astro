@@ -2,9 +2,11 @@
 
 ## Summary
 
-Extract a small, test-only helper module for the reference render suites so the shared contract across `Thesis`, `ScholarlyArticle`, `WebPage`, and `Video` is expressed once and asserted consistently.
+Extract a small, test-only helper module for the reference render suites so the shared contract across `Thesis`,
+`ScholarlyArticle`, `WebPage`, and `Video` is expressed once and asserted consistently.
 
-This phase is not about building a generic Astro testing framework. It is about consolidating a narrow set of bibliography-specific render-contract checks that are already duplicated across the reference family:
+This phase is not about building a generic Astro testing framework. It is about consolidating a narrow set of
+bibliography-specific render-contract checks that are already duplicated across the reference family:
 
 - per-render isolation;
 - SSR DOM parsing;
@@ -12,12 +14,15 @@ This phase is not about building a generic Astro testing framework. It is about 
 - slot-over-prop precedence;
 - omission and non-duplication checks.
 
-The helper layer should remain local to the reference test area, sit on top of `src/test-utils/astro-render.ts` plus `cheerio`, and only encode behaviour that is demonstrably shared by at least two suites. Anything component-specific should stay local. That boundary is already implicit in the current plan; this phase should make it an explicit rule.
+The helper layer should remain local to the reference test area, sit on top of `src/test-utils/astro-render.ts` plus
+`cheerio`, and only encode behaviour that is demonstrably shared by at least two suites. Anything component-specific
+should stay local. That boundary is already implicit in the current plan; this phase should make it an explicit rule.
 
 ## Goals
 
 - Reduce duplicated render-contract scaffolding across the four reference suites.
-- Standardize the suites on structural SSR assertions instead of brittle string matching where DOM structure is the real contract.
+- Standardize the suites on structural SSR assertions instead of brittle string matching where DOM structure is the real
+  contract.
 - Preserve suite readability by giving shared assertions a stable vocabulary.
 - Avoid over-extraction by keeping helpers narrowly behavioural and local to the reference-family tests.
 
@@ -26,7 +31,8 @@ The helper layer should remain local to the reference test area, sit on top of `
 - No production component changes.
 - No shared global testing framework under `src/test-utils`.
 - No extraction of rules that are unique to one component.
-- No normalization of component-specific terminology such as `institution`, `publication`, `location`, or `platform` beyond generic helper inputs.
+- No normalization of component-specific terminology such as `institution`, `publication`, `location`, or `platform`
+  beyond generic helper inputs.
 
 ## Extraction Boundary
 
@@ -34,11 +40,14 @@ Create one test-only helper module:
 
 - `src/components/ui/references/__tests__/reference-render-contracts.ts`
 
-This module should only expose helpers for behaviours that are already shared across multiple suites. The current draft already points in this direction; the improvement here is to formalize the retention rule:
+This module should only expose helpers for behaviours that are already shared across multiple suites. The current draft
+already points in this direction; the improvement here is to formalize the retention rule:
 
-> A helper stays shared only if it is used by at least two reference suites and names an observable contract rather than an implementation detail. Otherwise, keep it local.
+> A helper stays shared only if it is used by at least two reference suites and names an observable contract rather than
+> an implementation detail. Otherwise, keep it local.
 
-That rule prevents “helper optimism”, where a utility is extracted because it feels reusable before the duplication actually stabilizes.
+That rule prevents “helper optimism”, where a utility is extracted because it feels reusable before the duplication
+actually stabilizes.
 
 ## Helper Surface
 
@@ -76,18 +85,21 @@ Expose only the following minimal API:
 
 - `expectDescriptionAbsent($)`
 
-These helpers match the original intent, but they should be treated as the maximum surface for this phase, not a starting point for future abstraction.
+These helpers match the original intent, but they should be treated as the maximum surface for this phase, not a
+starting point for future abstraction.
 
 ## Design Constraints
 
 All shared helpers must follow these rules:
 
 - Accept only observable inputs: DOM roots, literal text, URLs, and caller-provided selectors.
-- Never depend on component internals, resolved field kinds, private helper functions, or fragile structure assumptions beyond the immediate render contract.
+- Never depend on component internals, resolved field kinds, private helper functions, or fragile structure assumptions
+  beyond the immediate render contract.
 - Never own suite fixtures such as `BASE_PROPS`.
 - Never encode component-specific wording or semantics that are not shared.
 
-This keeps the helper layer contract-oriented rather than implementation-oriented, which is also consistent with the current draft’s “DOM-oriented and observable-output-oriented” direction.
+This keeps the helper layer contract-oriented rather than implementation-oriented, which is also consistent with the
+current draft’s “DOM-oriented and observable-output-oriented” direction.
 
 ## Suite Standardization Rules
 
@@ -99,7 +111,8 @@ Each touched suite should converge on the same local structure:
 - structural DOM assertions by default;
 - literal string assertions only when the literal output itself is the contract.
 
-This is a worthwhile standardization target already identified in the original plan; the improvement is to make it a hard requirement for touched suites rather than a soft preference.
+This is a worthwhile standardization target already identified in the original plan; the improvement is to make it a
+hard requirement for touched suites rather than a soft preference.
 
 ## Rollout Order
 
@@ -134,11 +147,13 @@ Delete or inline any helper that does not survive that check.
 
 Use shared helpers only for the common contract. Keep location-specific behaviour local.
 
-If `WebPage` does not already support meaningful description coverage, do not force parity merely to justify a helper. The current plan already hints at this; keep it explicit.
+If `WebPage` does not already support meaningful description coverage, do not force parity merely to justify a helper.
+The current plan already hints at this; keep it explicit.
 
 ### 5. Migrate `Video`
 
-Before adopting the shared render helper, remove any `beforeEach`-managed renderer state so the suite matches the per-call isolation model. Then move shared assertions over, while keeping date and platform specifics local.
+Before adopting the shared render helper, remove any `beforeEach`-managed renderer state so the suite matches the
+per-call isolation model. Then move shared assertions over, while keeping date and platform specifics local.
 
 ## Suite-Specific Guidance
 
@@ -159,8 +174,7 @@ Keep local:
 
 ### ScholarlyArticle
 
-Convert the suite to structural DOM assertions.
-Use shared helpers for:
+Convert the suite to structural DOM assertions. Use shared helpers for:
 
 - title contract;
 - publication slot precedence;
@@ -188,8 +202,7 @@ Keep local:
 
 ### Video
 
-First eliminate shared renderer lifecycle state.
-Then use shared helpers for:
+First eliminate shared renderer lifecycle state. Then use shared helpers for:
 
 - title contract;
 - platform slot precedence if structurally equivalent;
@@ -200,7 +213,8 @@ Keep local:
 - date rendering;
 - video-specific platform or publication semantics.
 
-This preserves the selective adoption intent already present in the current plan, but makes the adoption rule more disciplined: use a helper only where the behaviour is truly the same, not merely similar.
+This preserves the selective adoption intent already present in the current plan, but makes the adoption rule more
+disciplined: use a helper only where the behaviour is truly the same, not merely similar.
 
 ## Scenarios That Must Be Covered
 
@@ -216,7 +230,9 @@ The phase is done only if the touched suites collectively and structurally verif
 - missing or whitespace-only title sources throw `MissingReferenceTitleError`;
 - invalid `*Url` without visible text still throws `ReferenceContractError` where that contract already exists.
 
-These scenarios are already present in the source plan; what improves here is the distinction between suite-level coverage and helper-level capability. Not every suite has to cover every variant, but the touched set must prove the shared contract in at least two places before a helper is retained.
+These scenarios are already present in the source plan; what improves here is the distinction between suite-level
+coverage and helper-level capability. Not every suite has to cover every variant, but the touched set must prove the
+shared contract in at least two places before a helper is retained.
 
 ## Definition of Done
 
@@ -224,7 +240,8 @@ This phase is complete when all of the following are true:
 
 - `reference-render-contracts.ts` exists and remains small.
 - Every shared helper is used by at least two suites.
-- `Thesis.render.test.ts`, `ScholarlyArticle.render.test.ts`, `WebPage.render.test.ts`, and `Video.render.test.ts` all use structural SSR assertions for shared render contracts.
+- `Thesis.render.test.ts`, `ScholarlyArticle.render.test.ts`, `WebPage.render.test.ts`, and `Video.render.test.ts` all
+  use structural SSR assertions for shared render contracts.
 - Component-specific behaviours remain local and readable.
 - No touched suite depends on cross-test renderer state.
 - No production files are changed.
@@ -242,7 +259,8 @@ Run, at minimum:
 
 Then run the project’s full Astro render-test command.
 
-That sequence is already in the current plan; the only added expectation is that failures should be used to trim helpers, not to expand them.
+That sequence is already in the current plan; the only added expectation is that failures should be used to trim
+helpers, not to expand them.
 
 ## Risks and Mitigations
 
@@ -292,7 +310,9 @@ Mitigation:
 - `WebPage` description coverage should only be generalized if the component already supports it meaningfully.
 - Local assertions are preferable to shared ones whenever reuse is not already proven.
 
-The main upgrade is that the plan now has a stricter extraction rule, a safer rollout sequence, and a clearer definition of done. Your original version had the right ingredients; this version turns them into a tighter migration strategy grounded in the same intended scope. Source:
+The main upgrade is that the plan now has a stricter extraction rule, a safer rollout sequence, and a clearer definition
+of done. Your original version had the right ingredients; this version turns them into a tighter migration strategy
+grounded in the same intended scope. Source:
 
 ## Outcome
 

@@ -99,7 +99,8 @@ The assertion should remain exact with `toEqual(...)`, not piecemeal title/href 
 - Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
 - Result: passed.
 - Production code changes: none.
-- Covered variants: canonical href, missing trailing slash, missing leading slash, repeated slashes, surrounding whitespace, query string, and fragment.
+- Covered variants: canonical href, missing trailing slash, missing leading slash, repeated slashes, surrounding
+  whitespace, query string, and fragment.
 - Normalization authority: `LessonHref.create(...)` remains the single source of truth.
 
 ## Implementation Guidance

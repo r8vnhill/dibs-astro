@@ -1,21 +1,21 @@
 packages:
-  - .
-  - packages/content-core
-  - packages/lesson-export-core
-  - packages/shiki-core
-  - packages/site-core
+    - .
+    - packages/content-core
+    - packages/lesson-export-core
+    - packages/shiki-core
+    - packages/site-core
 
 autoInstallPeers: true
 nodeLinker: hoisted
 
 allowBuilds:
-  '@tailwindcss/oxide': true
-  dprint: true
-  esbuild: true
-  sharp: true
-  workerd: true
+    "@tailwindcss/oxide": true
+    dprint: true
+    esbuild: true
+    sharp: true
+    workerd: true
 
 minimumReleaseAgeExclude:
-  - astro@7.2.2
-  - miniflare@5.20260811.1-alpha
-  - wrangler@4.123.0
+    - astro@7.2.2
+    - miniflare@5.20260811.1-alpha
+    - wrangler@4.123.0

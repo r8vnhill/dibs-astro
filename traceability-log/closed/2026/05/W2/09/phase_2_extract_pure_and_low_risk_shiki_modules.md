@@ -337,7 +337,8 @@ consumer compatibility reason to change it. ([Tsup][4])
 
 ✅ Phase 2 is complete:
 
-- ✅ `@ravenhill/shiki-core` contains real implementations for all Phase 2 pure helpers (fallback HTML, language resolution, theme defaults, class tokens, transformers)
+- ✅ `@ravenhill/shiki-core` contains real implementations for all Phase 2 pure helpers (fallback HTML, language
+  resolution, theme defaults, class tokens, transformers)
 - ✅ `src/lib/shiki/*` compatibility wrappers preserve existing app import paths (6 wrapper files with thin re-exports)
 - ✅ No highlighter cache or orchestration logic has moved (remains app-local)
 - ✅ No package subpath exports have been added (root-only exports enforced via package.json)

@@ -191,7 +191,8 @@ Route every lookup through the existing href-normalization path before matching 
 - Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
 - Result: passed.
 - Production code changes: none.
-- Covered variants: canonical href, missing trailing slash, missing leading slash, repeated slashes, surrounding whitespace, query string, and fragment.
+- Covered variants: canonical href, missing trailing slash, missing leading slash, repeated slashes, surrounding
+  whitespace, query string, and fragment.
 - Normalization authority: `LessonHref.create(...)` remains the single source of truth.
 
 ### Acceptance criteria
@@ -226,8 +227,8 @@ the recursive catalog walk.
 - Focused test command: `pnpm vitest run src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`
 - Result: 25 tests passed.
 - Production code changes: none.
-- Compatibility contract: omitted options and `{ includeNotesRoot: false }` exclude `Notes`; `{ includeNotesRoot: true }`
-  prepends `{ title: "Notes", href: "/notes/" }` before authored ancestry.
+- Compatibility contract: omitted options and `{ includeNotesRoot: false }` exclude `Notes`;
+  `{ includeNotesRoot: true }` prepends `{ title: "Notes", href: "/notes/" }` before authored ancestry.
 
 ### Acceptance criteria
 

@@ -71,7 +71,7 @@ Main points:
 - This is a concrete Python advantage for small support scripts.
 
 The official Python documentation describes `argparse` as a standard module for user-friendly command-line interfaces
-that can generate help/usage output and report invalid arguments automatically. 
+that can generate help/usage output and report invalid arguments automatically.
 
 ### [✔️] Section 3: Revisar rutas con `pathlib`
 
@@ -93,7 +93,7 @@ Main points:
 - This concision is ergonomic, but it does not remove the need for clear function boundaries.
 
 The official Python documentation presents `pathlib` as an object-oriented API for filesystem paths, with path classes
-that model operating-system-specific semantics. 
+that model operating-system-specific semantics.
 
 ### [✔️] Section 4: Nombrar responsabilidades pequeñas
 

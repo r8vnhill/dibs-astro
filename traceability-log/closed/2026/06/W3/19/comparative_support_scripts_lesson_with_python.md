@@ -134,8 +134,7 @@ placeholder description, and the bibliography work is still pending.
 
    Result: all checks pass.
 
-   - `py.astro` sits next to `index.astro` in `src/pages/notes/scripting/support-scripts/`, with a lowercase
-     name.
+   - `py.astro` sits next to `index.astro` in `src/pages/notes/scripting/support-scripts/`, with a lowercase name.
    - The base lesson exposes the comparison through a `LinksLayout` block (`<PythonLink />`) placed after the
      conclusions and before `ReferencesFromCatalog`.
    - `PythonLink` is imported from the links barrel (`~/components/ui/links`); no new link component was created.
@@ -143,8 +142,8 @@ placeholder description, and the bibliography work is still pending.
      (`/notes/scripting/support-scripts/py/`).
    - `py.astro` contains no `KotlinBlock`; Kotlin appears only via short `KotlinInline` references used to make the
      comparison explicit, which is consistent with the comparative intent.
-   - The base lesson's pedagogical sections are unchanged; the only edits are the `LinksLayout`/`PythonLink` imports
-     and the final link block.
+   - The base lesson's pedagogical sections are unchanged; the only edits are the `LinksLayout`/`PythonLink` imports and
+     the final link block.
 
 8. **Add bibliography** _(done)_
 

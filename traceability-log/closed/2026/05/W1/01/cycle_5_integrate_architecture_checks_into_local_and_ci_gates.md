@@ -17,7 +17,8 @@ GitLab remains the authoritative CI system. GitHub Actions stays manual-only.
 - `.gitlab-ci.yml` now uses `test:check` with `pnpm check` instead of the previous `test:astro-check` job.
 - Build and deploy jobs now depend on `test:check`.
 - GitHub Actions remains manual-only.
-- Contributor-facing workflow docs now describe `pnpm check` as the standard gate and `pnpm check:architecture` as the focused debugging command.
+- Contributor-facing workflow docs now describe `pnpm check` as the standard gate and `pnpm check:architecture` as the
+  focused debugging command.
 
 ## Goal
 

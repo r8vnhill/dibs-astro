@@ -2,21 +2,19 @@
 
 ## Summary
 
-Introduce a builder-facing `reader` facade for bibliography catalog builders and migrate only the
-`Reference` builder as the pilot.
+Introduce a builder-facing `reader` facade for bibliography catalog builders and migrate only the `Reference` builder as
+the pilot.
 
-The goal is to reduce context noise and prepare the builder layer for a cleaner Phase 4 migration,
-without changing catalog semantics. The facade should be a thin, bound-source delegation layer over
-the existing record accessors from `records.mjs`.
+The goal is to reduce context noise and prepare the builder layer for a cleaner Phase 4 migration, without changing
+catalog semantics. The facade should be a thin, bound-source delegation layer over the existing record accessors from
+`records.mjs`.
 
-This phase intentionally keeps the compatibility path for non-pilot builders. `Person`,
-`Organization`, `CreativeWork`, `LearningResource`, and `Usage` continue using the legacy flat reader
-helpers until Phase 4.
+This phase intentionally keeps the compatibility path for non-pilot builders. `Person`, `Organization`, `CreativeWork`,
+`LearningResource`, and `Usage` continue using the legacy flat reader helpers until Phase 4.
 
 ## Design Goals
 
-- Keep the `Reference` builder focused on graph-building decisions, not low-level record-access
-  mechanics.
+- Keep the `Reference` builder focused on graph-building decisions, not low-level record-access mechanics.
 - Centralize source-bound read operations behind one cohesive facade.
 - Preserve all existing validation, URL, duplicate, integer, relation, and pending-revision policies.
 - Keep the migration incremental and reversible.
@@ -34,8 +32,7 @@ helpers until Phase 4.
 
 ## Proposed Module Shape
 
-Prefer a small dedicated module instead of adding more logic directly to
-`scripts/lib/bibliography/catalog-builder.mjs`.
+Prefer a small dedicated module instead of adding more logic directly to `scripts/lib/bibliography/catalog-builder.mjs`.
 
 Add:
 
@@ -85,9 +82,9 @@ Adjust the exact argument order to match the existing `records.mjs` accessors.
 
 ### Rationale
 
-A factory with closures is enough here. A class would add ceremony without improving extensibility,
-because the facade has no mutable state and no polymorphic behavior yet. `Object.freeze(...)` is a
-small defensive measure that makes accidental mutation of the context reader fail earlier in tests.
+A factory with closures is enough here. A class would add ceremony without improving extensibility, because the facade
+has no mutable state and no polymorphic behavior yet. `Object.freeze(...)` is a small defensive measure that makes
+accidental mutation of the context reader fail earlier in tests.
 
 ## Reader Contract
 
@@ -141,14 +138,12 @@ Keep these as separate fields:
 
 `reader` handles source-bound record access.
 
-`recordsById`, `ensureNodeCategory`, `abort`, and `sourceLabel` remain explicit because they are
-not simple read operations. They represent graph lookup, graph validation, error reporting, and
-diagnostic identity.
+`recordsById`, `ensureNodeCategory`, `abort`, and `sourceLabel` remain explicit because they are not simple read
+operations. They represent graph lookup, graph validation, error reporting, and diagnostic identity.
 
 ### Temporary Compatibility Fields
 
-Keep the existing flat reader helper fields for untouched builders, but mark them as deprecated
-or temporary in JSDoc:
+Keep the existing flat reader helper fields for untouched builders, but mark them as deprecated or temporary in JSDoc:
 
 ```js
 /**
@@ -158,8 +153,8 @@ or temporary in JSDoc:
  */
 ```
 
-Do not mark them as formally deprecated with tooling if that would create noisy warnings before
-Phase 4. A plain JSDoc note is enough for this phase.
+Do not mark them as formally deprecated with tooling if that would create noisy warnings before Phase 4. A plain JSDoc
+note is enough for this phase.
 
 ## Implementation Steps
 
@@ -211,21 +206,21 @@ context.abort;
 context.sourceLabel;
 ```
 
-This makes the boundary explicit: `reader` reads RDF-derived values, while the builder still owns
-reference-specific graph construction and validation.
+This makes the boundary explicit: `reader` reads RDF-derived values, while the builder still owns reference-specific
+graph construction and validation.
 
 ### 4. Avoid Over-Generalizing Too Early
 
-Do not introduce a generic `readRequired(...)`, `readOptional(...)`, `readRelation(...)`, or
-`readDate(...)` abstraction in Phase 3.
+Do not introduce a generic `readRequired(...)`, `readOptional(...)`, `readRelation(...)`, or `readDate(...)` abstraction
+in Phase 3.
 
-Those may become useful after more builders are migrated, but adding them now risks encoding
-`Reference`-specific needs into an allegedly generic reader.
+Those may become useful after more builders are migrated, but adding them now risks encoding `Reference`-specific needs
+into an allegedly generic reader.
 
 ### 5. Keep Builder Functions Short
 
-While migrating `buildReferenceNode`, opportunistically extract very small local helpers only if
-the function becomes harder to scan.
+While migrating `buildReferenceNode`, opportunistically extract very small local helpers only if the function becomes
+harder to scan.
 
 Good candidates:
 
@@ -235,8 +230,8 @@ readReferenceRelations(context, record);
 appendReferencePagination(node, fields);
 ```
 
-Only extract if the helper has a clear contract and removes duplication. Avoid creating helpers for
-single-use expressions that are already readable.
+Only extract if the helper has a clear contract and removes duplication. Avoid creating helpers for single-use
+expressions that are already readable.
 
 ## Testing Strategy
 
@@ -257,11 +252,11 @@ suite("createCatalogReader", () => {
 })
 ```
 
-These tests should verify delegation and source binding, not record accessor semantics. The accessor
-semantics should remain covered by existing `records.mjs` tests.
+These tests should verify delegation and source binding, not record accessor semantics. The accessor semantics should
+remain covered by existing `records.mjs` tests.
 
-If stubbing ESM imports is awkward, test through small representative Turtle records instead of
-mocking internals. Prefer observable behavior over brittle module mocks.
+If stubbing ESM imports is awkward, test through small representative Turtle records instead of mocking internals.
+Prefer observable behavior over brittle module mocks.
 
 ### DDT for Facade Delegation
 
@@ -282,12 +277,11 @@ Keep `getNodeTypes` and `getUsageTagLiterals` separate if their argument shape d
 
 ### PBT Option
 
-If the project already uses `fast-check`, add a small property-based test asserting that arbitrary
-non-empty source labels are preserved by the facade.
+If the project already uses `fast-check`, add a small property-based test asserting that arbitrary non-empty source
+labels are preserved by the facade.
 
-If the project does not already use PBT, consider adding `fast-check` as a dev dependency only if
-this repository is already moving toward PBT elsewhere. It is useful here, but not mandatory for
-Phase 3.
+If the project does not already use PBT, consider adding `fast-check` as a dev dependency only if this repository is
+already moving toward PBT elsewhere. It is useful here, but not mandatory for Phase 3.
 
 Potential property:
 
@@ -296,8 +290,8 @@ For any non-empty source label and supported reader method, the bound reader beh
 calling the underlying accessor with that same source label.
 ```
 
-Tradeoff: PBT improves confidence in source-label binding, but adding a new dependency for this
-small phase may be excessive unless the project will use it broadly.
+Tradeoff: PBT improves confidence in source-label binding, but adding a new dependency for this small phase may be
+excessive unless the project will use it broadly.
 
 ### Integration Test for the Pilot
 
@@ -322,15 +316,13 @@ describe("Reference reader facade integration", () => {
 })
 ```
 
-The test should prove that the migrated `Reference` builder still supports the complete pilot
-surface.
+The test should prove that the migrated `Reference` builder still supports the complete pilot surface.
 
 ### Existing Regression Tests
 
 Keep existing reference relation-validation tests green.
 
-Do not rewrite unrelated builder tests in this phase unless the context helper must be updated to
-include `reader`.
+Do not rewrite unrelated builder tests in this phase unless the context helper must be updated to include `reader`.
 
 ## Test Helper Updates
 
@@ -356,8 +348,8 @@ function createGraphBuilderTestContext(overrides = {}) {
 }
 ```
 
-This minimizes duplication and keeps Phase 4 easier: when legacy fields are removed, this helper
-becomes the main place to update tests.
+This minimizes duplication and keeps Phase 4 easier: when legacy fields are removed, this helper becomes the main place
+to update tests.
 
 ## Dependency Guidance
 
@@ -374,8 +366,7 @@ Avoid adding:
 - class-based mocking utilities;
 - broad validation libraries.
 
-This phase is about improving internal boundaries, not changing parsing or validation
-infrastructure.
+This phase is about improving internal boundaries, not changing parsing or validation infrastructure.
 
 ## Acceptance Criteria
 
@@ -388,34 +379,33 @@ Phase 3 is complete when:
 - [x] `GraphBuilderContext` JSDoc documents `reader`.
 - [x] Legacy flat reader fields are clearly marked as temporary compatibility fields.
 - [x] Existing reference relation-validation tests remain green.
-- [x] A focused integration test proves that a `Reference` can be built through
-      `buildCatalogArtifactFromTurtle` after the migration.
+- [x] A focused integration test proves that a `Reference` can be built through `buildCatalogArtifactFromTurtle` after
+      the migration.
 - [x] No semantic policy changes are introduced.
 
 ## Implementation Notes
 
 - Added `scripts/lib/bibliography/catalog-reader.mjs` with a frozen, source-bound facade.
-- Wired one reader instance per `buildCatalogArtifactFromTurtle(...)` call and passed it to the
-  `Reference` builder context.
+- Wired one reader instance per `buildCatalogArtifactFromTurtle(...)` call and passed it to the `Reference` builder
+  context.
 - Migrated only `buildReferenceNode`; other builders still use the temporary flat helper fields.
-- Updated `getRequiredScalar(...)` to prefer `context.reader` when present so the reference name
-  path also goes through the facade.
-- Added `scripts/__tests__/bibliography-catalog-reader.test.ts`, including DDT coverage and the
-  optional `fast-check` source-label preservation property because `fast-check` is already present.
-- Added the focused reference integration test in
-  `scripts/__tests__/build-bibliography-catalog.happy-path.test.ts`.
+- Updated `getRequiredScalar(...)` to prefer `context.reader` when present so the reference name path also goes through
+  the facade.
+- Added `scripts/__tests__/bibliography-catalog-reader.test.ts`, including DDT coverage and the optional `fast-check`
+  source-label preservation property because `fast-check` is already present.
+- Added the focused reference integration test in `scripts/__tests__/build-bibliography-catalog.happy-path.test.ts`.
 
 ## Phase 4 Migration Checklist
 
 Legacy flat reader fields remain in use outside the pilot:
 
 - `Person`: `scalarLiteral`, `scalarUrlLiteral`.
-- `Organization`: `scalarUrlLiteral`; required `schema:name` already works through
-  `getRequiredScalar(...)` when a reader is provided.
-- `CreativeWork`: `namedRefs`; required `schema:name` already works through
-  `getRequiredScalar(...)` when a reader is provided.
-- `LearningResource`: `scalarUrlLiteral`; required `schema:name` already works through
-  `getRequiredScalar(...)` when a reader is provided.
+- `Organization`: `scalarUrlLiteral`; required `schema:name` already works through `getRequiredScalar(...)` when a
+  reader is provided.
+- `CreativeWork`: `namedRefs`; required `schema:name` already works through `getRequiredScalar(...)` when a reader is
+  provided.
+- `LearningResource`: `scalarUrlLiteral`; required `schema:name` already works through `getRequiredScalar(...)` when a
+  reader is provided.
 - `Usage`: `namedRefs`, `getUsageTagLiterals`, `getNodeTypes`.
 
 ## Commands
@@ -452,8 +442,7 @@ pnpm vitest run scripts/__tests__/bibliography-catalog-reader.test.ts
 
 ### Risk: The facade becomes a policy dumping ground
 
-Mitigation: keep the reader contract explicit. It only binds `sourceLabel` and delegates to
-existing accessors.
+Mitigation: keep the reader contract explicit. It only binds `sourceLabel` and delegates to existing accessors.
 
 ### Risk: The context becomes more confusing during migration
 
@@ -461,13 +450,13 @@ Mitigation: document the context in two groups: stable concerns and temporary co
 
 ### Risk: Tests overfit the implementation
 
-Mitigation: prefer integration tests and observable behavior. Use delegation-style tests only for
-the source-binding contract.
+Mitigation: prefer integration tests and observable behavior. Use delegation-style tests only for the source-binding
+contract.
 
 ### Risk: Phase 4 becomes too large
 
-Mitigation: keep a migration checklist of all legacy flat fields used by each builder after Phase 3.
-That checklist should be the starting point for Phase 4.
+Mitigation: keep a migration checklist of all legacy flat fields used by each builder after Phase 3. That checklist
+should be the starting point for Phase 4.
 
 ## Suggested Phase 4 Follow-Up
 
@@ -476,7 +465,7 @@ After the pilot is stable:
 - migrate `Person`, `Organization`, `CreativeWork`, `LearningResource`, and `Usage`;
 - remove legacy flat helper fields from `GraphBuilderContext`;
 - collapse duplicated builder test context setup;
-- consider whether the reader needs higher-level methods based on repeated patterns discovered
-  across all migrated builders;
-- only then decide whether abstractions like `requiredScalar(...)`, `optionalUrl(...)`, or
-  `relationRefs(...)` are justified.
+- consider whether the reader needs higher-level methods based on repeated patterns discovered across all migrated
+  builders;
+- only then decide whether abstractions like `requiredScalar(...)`, `optionalUrl(...)`, or `relationRefs(...)` are
+  justified.

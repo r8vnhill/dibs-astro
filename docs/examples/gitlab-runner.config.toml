@@ -5,12 +5,12 @@ concurrent = 1
 check_interval = 0
 
 [[runners]]
-  name = "dibs-local-windows-docker-runner"
-  url = "https://gitlab.com/"
-  token = "<configure-in-gitlab-and-store-locally>"
-  executor = "docker"
+name = "dibs-local-windows-docker-runner"
+url = "https://gitlab.com/"
+token = "<configure-in-gitlab-and-store-locally>"
+executor = "docker"
 
-  [runners.docker]
-    image = "node:24.11.0-alpine"
-    privileged = false
-    volumes = ["/cache"]
+[runners.docker]
+image = "node:24.11.0-alpine"
+privileged = false
+volumes = ["/cache"]

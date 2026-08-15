@@ -3,7 +3,9 @@
 **Status**: ✅ **MIGRATION COMPLETE** (2026-06-16)\
 **All five phases executed successfully.**
 
-All 1,521 Phosphor SVG icons have been successfully extracted from `src/assets/img/icons/` into the new `@ravenhill/phosphor-icons` workspace package. The extraction preserves all existing behavior with zero code changes to consumer code.
+All 1,521 Phosphor SVG icons have been successfully extracted from `src/assets/img/icons/` into the new
+`@ravenhill/phosphor-icons` workspace package. The extraction preserves all existing behavior with zero code changes to
+consumer code.
 
 **See [MIGRATION_STATUS.md](MIGRATION_STATUS.md) for overall project status and phase completion summary.**
 
@@ -39,6 +41,7 @@ All 1,521 Phosphor SVG icons have been successfully extracted from `src/assets/i
 ## Summary
 
 Baseline documented on 2026-06-16:
+
 - **Current SVG count**: 1,521
 - **Current barrel exports**: 1,521 (parity confirmed)
 - **Barrel location**: `src/assets/img/icons/index.ts`
@@ -123,6 +126,7 @@ Run this first. It protects the rest of the migration from becoming a blind file
 ## Summary
 
 Package scaffolding complete on 2026-06-16:
+
 - Created `packages/phosphor-icons/` with 9 files
 - Package metadata follows `shiki-core` conventions
 - Build pipeline configured: `tsup` (external SVGs) + `copy-assets.mjs` (post-build)
@@ -130,7 +134,7 @@ Package scaffolding complete on 2026-06-16:
 - TypeScript typecheck: ✅ Pass
 - No SVGs moved; no Astro app changes; full rollback possible
 
-See [phase-1-scaffold.md](phase-1-scaffold.md) for detailed implementation.  
+See [phase-1-scaffold.md](phase-1-scaffold.md) for detailed implementation.\
 See [PHASE_1_COMPLETION.md](PHASE_1_COMPLETION.md) for sign-off.
 
 ---
@@ -271,6 +275,7 @@ migration errors.
 ## Summary
 
 Assets migration complete on 2026-06-16:
+
 - Moved 1,521 SVG files from `src/assets/img/icons/` → `packages/phosphor-icons/src/`
 - Updated generator paths in 2 files
 - Regenerated barrel: 1,521 exports in `packages/phosphor-icons/src/index.ts`
@@ -382,6 +387,7 @@ barrel exists.
 ## Summary
 
 App wiring complete on 2026-06-16:
+
 - Updated root `tsconfig.json`: `$icons` → `./packages/phosphor-icons/src/index.ts`
 - Added dependency: `@ravenhill/phosphor-icons: "workspace:*"`
 - Added check script: `check:phosphor-icons`
@@ -485,6 +491,7 @@ Do this after Phase 2. The alias should only change once the package source barr
 ## Summary
 
 Package build validated on 2026-06-16:
+
 - Built successfully: `dist/index.js` (131.13 KB) + `dist/index.d.ts` (88.67 KB)
 - Copied 1,521 SVG files to `dist/`
 - TypeScript typecheck: ✅ Pass (zero errors)
@@ -570,6 +577,7 @@ Run package checks before full Astro checks. This isolates package-shape failure
 ## Summary
 
 End-to-end Astro integration validated on 2026-06-16:
+
 - Icon generation hook watches new package source: ✅ `pnpm generate-icons` succeeds
 - Icon barrel generated with 1,521 exports: ✅ All consumers accessible
 - Path alias functional: ✅ `$icons` resolves to `packages/phosphor-icons/src/index.ts`

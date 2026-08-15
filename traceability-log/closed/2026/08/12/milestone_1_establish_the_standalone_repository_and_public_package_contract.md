@@ -4,10 +4,10 @@
 
 Implemented in the standalone repository `E:\teaching\DIBS\projects\astro-icons`.
 
-Verified with `bun install --frozen-lockfile` and `bun run check`. The repository now has a pinned Bun 1.3.14
-toolchain, committed lockfile, TypeScript 6 baseline, Biome formatting/linting/import organization, explicit ESM
-exports for root, `/phosphor`, and `/custom`, Astro peer and development dependencies, test-only SVG fixtures, a
-single packed-artifact verification flow, `publint`, `attw`, and verification-only GitLab CI.
+Verified with `bun install --frozen-lockfile` and `bun run check`. The repository now has a pinned Bun 1.3.14 toolchain,
+committed lockfile, TypeScript 6 baseline, Biome formatting/linting/import organization, explicit ESM exports for root,
+`/phosphor`, and `/custom`, Astro peer and development dependencies, test-only SVG fixtures, a single packed-artifact
+verification flow, `publint`, `attw`, and verification-only GitLab CI.
 
 The production SVG corpus, release-policy generation, consumer migration, remote repository creation, registry
 configuration, and publishing remain deferred to later milestones as specified below.

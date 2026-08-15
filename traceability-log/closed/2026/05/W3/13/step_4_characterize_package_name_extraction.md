@@ -5,8 +5,8 @@
 Complete. `scripts/__tests__/layer-boundary-import-specifiers.test.ts` already pins package-name extraction through
 `packageNameFromImportPath()` and confirms package-name propagation through `classifyPackageImport()`.
 
-The focused test command still reaches the expected red state because
-`scripts/lib/layer-boundary-import-specifiers.mjs` has not been implemented yet.
+The focused test command still reaches the expected red state because `scripts/lib/layer-boundary-import-specifiers.mjs`
+has not been implemented yet.
 
 ## Summary
 

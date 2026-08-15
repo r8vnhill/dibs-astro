@@ -2,9 +2,11 @@
 
 ## Goal
 
-Refactor `src/utils/dev-transport-retry.ts`, which currently mixes public API, retry policy, abortable timeout handling, configuration resolution, and parsing utilities, into a small set of focused internal modules.
+Refactor `src/utils/dev-transport-retry.ts`, which currently mixes public API, retry policy, abortable timeout handling,
+configuration resolution, and parsing utilities, into a small set of focused internal modules.
 
-The public API must continue to be exposed from the current file so that callers do not need to change imports and no observable behaviour changes as part of this refactor.
+The public API must continue to be exposed from the current file so that callers do not need to change imports and no
+observable behaviour changes as part of this refactor.
 
 ## Scope
 
@@ -132,23 +134,23 @@ DevTransportRetryOptions
 
 The refactor must preserve the following current behaviour:
 
-* when retry is disabled, or `attempts <= 1`, the helper still runs exactly once;
-* timed attempts still receive an `AbortSignal`;
-* timeout failures still surface as `DevTransportTimeoutError` with `code = "ETIMEDOUT"`;
-* the current broad retry classifier remains unchanged in this refactor;
-* retry log wording remains unchanged;
-* delay calculation remains unchanged.
+- when retry is disabled, or `attempts <= 1`, the helper still runs exactly once;
+- timed attempts still receive an `AbortSignal`;
+- timeout failures still surface as `DevTransportTimeoutError` with `code = "ETIMEDOUT"`;
+- the current broad retry classifier remains unchanged in this refactor;
+- retry log wording remains unchanged;
+- delay calculation remains unchanged.
 
 ### Import discipline
 
 External callers must continue importing only from the current public location, for example through:
 
-* `~/utils`; or
-* the existing `dev-transport-retry.ts` file.
+- `~/utils`; or
+- the existing `dev-transport-retry.ts` file.
 
 No new direct imports from internal modules under:
 
-* `src/utils/dev-transport-retry/*`
+- `src/utils/dev-transport-retry/*`
 
 should be introduced outside the feature itself.
 
@@ -160,11 +162,12 @@ should be introduced outside the feature itself.
 
 Keep:
 
-* `src/utils/__tests__/dev-transport-retry.test.ts`
+- `src/utils/__tests__/dev-transport-retry.test.ts`
 
 as the main public-behaviour test suite for this refactor.
 
-Do not split the test suite during this phase unless the code split makes an existing test helper meaningfully unreadable.
+Do not split the test suite during this phase unless the code split makes an existing test helper meaningfully
+unreadable.
 
 ### Minimum verification
 
@@ -195,9 +198,10 @@ pnpm test:unit
 
 The refactor is acceptable when:
 
-* the focused test run passes;
-* `pnpm check` passes; and
-* `pnpm test:unit` either passes fully or fails only because of the already-known debt in `LessonSidebar.test.tsx`, with no new helper-related regressions.
+- the focused test run passes;
+- `pnpm check` passes; and
+- `pnpm test:unit` either passes fully or fails only because of the already-known debt in `LessonSidebar.test.tsx`, with
+  no new helper-related regressions.
 
 ---
 
@@ -213,7 +217,8 @@ Extract shared types and default constants first, since they are low-risk and re
 
 ### Phase 3 — Move classifier and config logic
 
-Extract error classification and option resolution next. These are cohesive units and should be easy to verify in isolation.
+Extract error classification and option resolution next. These are cohesive units and should be easy to verify in
+isolation.
 
 ### Phase 4 — Move timing and timeout mechanics
 
@@ -225,13 +230,15 @@ Extract the main orchestration logic into `runWithDevTransportRetry.ts` and wire
 
 ### Phase 6 — Run verification and clean up
 
-Run focused tests first, then `pnpm check`, then the broader unit suite. Clean up imports and ensure no external caller now depends on internal module paths.
+Run focused tests first, then `pnpm check`, then the broader unit suite. Clean up imports and ensure no external caller
+now depends on internal module paths.
 
 ---
 
 ## Assumptions
 
-* This split is internal only; public surface and behaviour remain unchanged.
-* A dedicated folder at `src/utils/dev-transport-retry/` is preferred over multiple scattered files under `src/utils/`.
-* The existing test file stays where it is for now.
-* Jitter semantics, environment symmetry, and classifier tightening are explicitly out of scope for this refactor and should be handled in later changes.
+- This split is internal only; public surface and behaviour remain unchanged.
+- A dedicated folder at `src/utils/dev-transport-retry/` is preferred over multiple scattered files under `src/utils/`.
+- The existing test file stays where it is for now.
+- Jitter semantics, environment symmetry, and classifier tightening are explicitly out of scope for this refactor and
+  should be handled in later changes.

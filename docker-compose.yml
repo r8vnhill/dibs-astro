@@ -1,24 +1,24 @@
 services:
-  website:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        SOURCE_URL: ${SOURCE_URL:-https://gitlab.com/r8vnhill/dibs-astro-website}
-        SOURCE_REVISION: ${SOURCE_REVISION:-local}
-        IMAGE_VERSION: ${IMAGE_VERSION:-local}
-      secrets:
-        - npmrc
-    image: dibs-astro:local
-    read_only: true
-    tmpfs:
-      - /tmp
-    ports:
-      - "${WEBSITE_PORT:-8080}:8080"
+    website:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                SOURCE_URL: ${SOURCE_URL:-https://gitlab.com/r8vnhill/dibs-astro-website}
+                SOURCE_REVISION: ${SOURCE_REVISION:-local}
+                IMAGE_VERSION: ${IMAGE_VERSION:-local}
+            secrets:
+                - npmrc
+        image: dibs-astro:local
+        read_only: true
+        tmpfs:
+            - /tmp
+        ports:
+            - "${WEBSITE_PORT:-8080}:8080"
 
 # Requires an .npmrc with GitLab package registry auth (see .npmrc and
 # .gitlab-ci.yml's container:build job), pointed to via NPM_CONFIG_USERCONFIG,
 # e.g.: NPM_CONFIG_USERCONFIG=/path/to/dibs.npmrc docker compose build
 secrets:
-  npmrc:
-    file: ${NPM_CONFIG_USERCONFIG}
+    npmrc:
+        file: ${NPM_CONFIG_USERCONFIG}

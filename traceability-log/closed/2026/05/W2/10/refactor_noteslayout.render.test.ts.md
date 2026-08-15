@@ -4,14 +4,17 @@
 
 ## Implementation Summary
 
-All phases and cycles (0-6) have been successfully implemented. The refactor eliminates concurrency risk, centralizes setup boilerplate, and reorganizes tests for clarity and maintainability.
+All phases and cycles (0-6) have been successfully implemented. The refactor eliminates concurrency risk, centralizes
+setup boilerplate, and reorganizes tests for clarity and maintainability.
 
 ### Files Created
+
 - `src/layouts/NotesLayout.props.ts` — Shared prop contract between component and tests
 - `src/layouts/__tests__/fixtures/notes-layout-harness.ts` — Centralized render setup and HTML parsing
 - `src/layouts/__tests__/fixtures/navigation-queries.ts` — DOM query helpers with fail-fast patterns
 
 ### Files Modified
+
 - `src/layouts/NotesLayout.astro` — Uses shared `NotesLayoutProps`, added data-testid to abstract fallback
 - `src/components/notes/LessonMetaPanel.astro` — Added data-testid="lesson-metadata-panel"
 - `src/layouts/__tests__/NotesLayout.render.test.ts` — Fully refactored (Phase 0 + Cycles 1-6)
@@ -19,11 +22,13 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 ### Key Changes
 
 #### Phase 0: Removed Concurrency Risk ✓
+
 - Removed `describe.concurrent`
 - Changed `beforeEach` to `beforeAll` to avoid shared mutable state
 - Changed import from `beforeEach` to `beforeAll`
 
 #### Cycle 1: Extract Render Harness ✓
+
 - Created `createNotesLayoutHarness()` that centralizes:
   - Default request URL (`https://dibs.ravenhill.cl`)
   - Default slots (`abstract` + `default`)
@@ -31,6 +36,7 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 - Test setup code reduced from ~6 lines per test to 1-2 lines
 
 #### Cycle 2: Extract DOM Query Helpers ✓
+
 - Created fail-fast queries that throw diagnostic errors when required elements are missing
 - `navigationFrom()` — requires navigation, throws if absent
 - `maybeNavigationFrom()` — returns null if navigation absent
@@ -39,12 +45,14 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 - `normalizedText()` — centralized whitespace normalization
 
 #### Cycle 3: Replace Brittle Assertions ✓
+
 - Removed brittle Astro serialization checks (`component-url`, `client:only`)
 - Added stable `data-testid="abstract-fallback"` wrapper in layout
 - Updated metadata assertions to use `data-testid="lesson-metadata-panel"` boundary
 - Assertions now focus on user-observable behavior, not implementation details
 
 #### Cycle 4: Add Missing Edge Case Tests ✓
+
 - Added test for unknown routes without manual navigation
 - Added test for `previous: []` empty array behavior
 - Added test for partial override (manual previous without manual next)
@@ -52,6 +60,7 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 - All 4 tests confirm complete manual override precedence rule
 
 #### Cycle 5: BDD Organization + Data-Driven Testing (DDT) ✓
+
 - Reorganized tests into nested `describe` blocks by behavior:
   - `abstract slot` (2 tests)
   - `manual navigation` (2 tests via DDT)
@@ -62,6 +71,7 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 - Reduced test file from ~350 lines to ~350 lines (with better density and clarity)
 
 #### Cycle 6: Share Layout Prop Contract ✓
+
 - Extracted `NotesLayoutProps` to `NotesLayout.props.ts`
 - Both `NotesLayout.astro` and test file import same interface
 - Eliminates prop duplication and drift
@@ -69,6 +79,7 @@ All phases and cycles (0-6) have been successfully implemented. The refactor eli
 ### Test Results
 
 All tests pass. Suite now has:
+
 - **11 total tests** (up from 6, +5 for edge cases)
 - **Better coverage:** edge cases (unknown routes, empty arrays, partial overrides) explicitly tested
 - **Clearer intent:** BDD structure makes behavior visible at a glance
@@ -76,13 +87,13 @@ All tests pass. Suite now has:
 
 ### Metrics
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Test file lines | ~350 | ~350 | same (but clearer) |
-| Tests | 6 | 11 | +5 new edge case tests |
-| Boilerplate per test | ~8 lines | ~1 line | -87% |
-| Selector duplication | 4+ instances | 1 | centralized |
-| Concurrency risk | HIGH | NONE | eliminated |
+| Metric               | Before       | After   | Change                 |
+| -------------------- | ------------ | ------- | ---------------------- |
+| Test file lines      | ~350         | ~350    | same (but clearer)     |
+| Tests                | 6            | 11      | +5 new edge case tests |
+| Boilerplate per test | ~8 lines     | ~1 line | -87%                   |
+| Selector duplication | 4+ instances | 1       | centralized            |
+| Concurrency risk     | HIGH         | NONE    | eliminated             |
 
 ---
 
@@ -98,7 +109,8 @@ All tests pass. Suite now has:
 - ✅ Cycle 5: BDD organization + DDT (improved readability, reduced duplication)
 - ✅ Cycle 6: Shared prop contract (eliminate duplication between component and test)
 
-The suite is now safer, clearer, and easier to maintain. Ready for expanded test coverage without accumulating boilerplate.
+The suite is now safer, clearer, and easier to maintain. Ready for expanded test coverage without accumulating
+boilerplate.
 
 ---
 
@@ -106,7 +118,8 @@ The suite is now safer, clearer, and easier to maintain. Ready for expanded test
 
 **Status: IMPLEMENTED ✓**
 
-All phases and cycles of the refactor have been successfully implemented. The test suite is now safer (concurrency-risk removed), clearer (BDD organization), and easier to maintain (centralized setup and helpers).
+All phases and cycles of the refactor have been successfully implemented. The test suite is now safer (concurrency-risk
+removed), clearer (BDD organization), and easier to maintain (centralized setup and helpers).
 
 ## Summary
 

@@ -16,8 +16,8 @@ Completed.
 
 Implemented result:
 
-- `src/lib/bibliography/catalog-core.mjs` now builds source-local normalization inputs and delegates final
-  render-facing construction to `normalizeReference(...)`.
+- `src/lib/bibliography/catalog-core.mjs` now builds source-local normalization inputs and delegates final render-facing
+  construction to `normalizeReference(...)`.
 - Graph-specific concerns remain in the catalog caller, including linked-node lookup, author and publisher resolution,
   pending-only tolerance, and strict/non-strict behavior.
 - `src/lib/bibliography/__tests__/catalog.test.ts` now includes a fallback-sensitive regression for `WebPage` and

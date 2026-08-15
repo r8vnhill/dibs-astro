@@ -441,8 +441,8 @@ now.
 
 Implemented on May 27, 2026.
 
-Cycle 6 added per-service in-flight language load deduplication in `packages/shiki-core/src/highlighter/service.ts`.
-The service now resolves caller input once, keys active loads by canonical `BundledLanguage`, reuses the active
+Cycle 6 added per-service in-flight language load deduplication in `packages/shiki-core/src/highlighter/service.ts`. The
+service now resolves caller input once, keys active loads by canonical `BundledLanguage`, reuses the active
 `Promise<LanguageLoadResult>` for concurrent calls, and removes entries in `finally` so failed loads do not poison later
 attempts.
 

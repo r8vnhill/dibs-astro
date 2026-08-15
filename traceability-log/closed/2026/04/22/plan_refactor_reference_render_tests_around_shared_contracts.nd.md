@@ -2,7 +2,8 @@
 
 ## Summary
 
-Refactor the reference render-test layer so shared citation-family behavior is tested through a small set of reusable contract helpers, while component-specific behavior remains local to each suite.
+Refactor the reference render-test layer so shared citation-family behavior is tested through a small set of reusable
+contract helpers, while component-specific behavior remains local to each suite.
 
 Start with `Thesis.render.test.ts`, since it already exposes the main problems this refactor should solve:
 
@@ -10,7 +11,8 @@ Start with `Thesis.render.test.ts`, since it already exposes the main problems t
 - brittle string-fragment assertions
 - repeated render-contract logic that likely also applies to sibling reference components
 
-The goal is to improve reliability, clarity, and reuse in the render-test layer without introducing unnecessary abstraction and without changing production behavior unless tests reveal a real contract defect.
+The goal is to improve reliability, clarity, and reuse in the render-test layer without introducing unnecessary
+abstraction and without changing production behavior unless tests reveal a real contract defect.
 
 ## Goals
 
@@ -49,7 +51,8 @@ The goal is to improve reliability, clarity, and reuse in the render-test layer 
 
 ### 1. Renderer isolation is mandatory
 
-Each render assertion must use a fresh Astro renderer created inside a local helper. Do not store renderer state in outer mutable bindings, especially inside `describe.concurrent(...)`.
+Each render assertion must use a fresh Astro renderer created inside a local helper. Do not store renderer state in
+outer mutable bindings, especially inside `describe.concurrent(...)`.
 
 ### 2. Structural assertions are the default
 
@@ -65,7 +68,8 @@ Raw substring assertions should only remain where literal HTML output is itself 
 
 ### 3. Shared helpers must stay narrow
 
-Extract helpers only for behavior that is already shared and observable across multiple components. Helpers should accept:
+Extract helpers only for behavior that is already shared and observable across multiple components. Helpers should
+accept:
 
 - a component renderer
 - base props
@@ -76,7 +80,9 @@ They should not encode component-specific metadata rules.
 
 ### 4. Lower-level normalization stays lower-level
 
-Whitespace normalization, meaningful-content detection, and related invariants should remain tested in `reference-content.test.ts` or other lower-level tests. The render suites should verify rendered behavior, not re-test every normalization branch indirectly.
+Whitespace normalization, meaningful-content detection, and related invariants should remain tested in
+`reference-content.test.ts` or other lower-level tests. The render suites should verify rendered behavior, not re-test
+every normalization branch indirectly.
 
 ## Expected Shared Contracts
 
@@ -102,7 +108,8 @@ Keep these in the owning suite:
 
 ## ~~Phase 1: Fix `Thesis` test isolation~~
 
-Refactor `Thesis.render.test.ts` so each test renders through a local helper that creates a fresh Astro renderer per call.
+Refactor `Thesis.render.test.ts` so each test renders through a local helper that creates a fresh Astro renderer per
+call.
 
 Status: complete
 
@@ -172,7 +179,8 @@ Status: complete
 
 ### Exit criteria
 
-`Thesis.render.test.ts` fully describes the observable behavior expected from the component, including success, omission, override, and failure cases.
+`Thesis.render.test.ts` fully describes the observable behavior expected from the component, including success,
+omission, override, and failure cases.
 
 ### Verification
 
@@ -187,7 +195,8 @@ Run:
 
 Status: complete
 
-Once `Thesis` is stable and structurally asserted, identify repeated arrange/assert patterns across sibling suites and extract only the duplication that is already proven common.
+Once `Thesis` is stable and structurally asserted, identify repeated arrange/assert patterns across sibling suites and
+extract only the duplication that is already proven common.
 
 ### Changes
 
@@ -275,7 +284,8 @@ Run touched suites, then the full Astro render-test command.
 
 - `fast-check` for render suites
 
-If stronger invariant coverage is needed later, use `fast-check` in lower-level pure-helper tests, not in component render tests.
+If stronger invariant coverage is needed later, use `fast-check` in lower-level pure-helper tests, not in component
+render tests.
 
 ## Risks and Controls
 
@@ -295,7 +305,8 @@ DOM assertions can drift into testing markup incidental to layout rather than be
 
 Render tests may start re-testing lower-level normalization logic in indirect, noisy ways.
 
-**Control:** keep normalization invariants in lower-level tests and verify only rendered outcomes at the component layer.
+**Control:** keep normalization invariants in lower-level tests and verify only rendered outcomes at the component
+layer.
 
 ## Completion Criteria
 

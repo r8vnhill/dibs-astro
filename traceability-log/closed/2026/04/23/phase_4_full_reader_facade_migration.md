@@ -2,16 +2,15 @@
 
 ## Summary
 
-Complete the migration from flat record-reader helper injection to the source-bound
-`createCatalogReader(...)` facade across the bibliography catalog builder.
+Complete the migration from flat record-reader helper injection to the source-bound `createCatalogReader(...)` facade
+across the bibliography catalog builder.
 
-This phase makes `reader` the only builder-facing record-reading boundary. It removes the temporary
-compatibility fields introduced during the pilot, simplifies `GraphBuilderContext`, and keeps
-record access consistent across all graph builders.
+This phase makes `reader` the only builder-facing record-reading boundary. It removes the temporary compatibility fields
+introduced during the pilot, simplifies `GraphBuilderContext`, and keeps record access consistent across all graph
+builders.
 
-The migration must preserve existing behavior. It must not rename the low-level accessors in
-`records.mjs`, change URL/integer/duplicate handling, alter relation validation, or introduce
-higher-level schema extraction policies.
+The migration must preserve existing behavior. It must not rename the low-level accessors in `records.mjs`, change
+URL/integer/duplicate handling, alter relation validation, or introduce higher-level schema extraction policies.
 
 ## Design Goals
 
@@ -40,12 +39,12 @@ Keep `createCatalogReader({ sourceLabel })` as the only builder-facing record re
 The facade exposes:
 
 ```js
-reader.scalarLiteral(record, predicate)
-reader.scalarUrlLiteral(record, predicate)
-reader.scalarInteger(record, predicate)
-reader.namedRefs(record, predicate)
-reader.getNodeTypes(record)
-reader.getUsageTagLiterals(record)
+reader.scalarLiteral(record, predicate);
+reader.scalarUrlLiteral(record, predicate);
+reader.scalarInteger(record, predicate);
+reader.namedRefs(record, predicate);
+reader.getNodeTypes(record);
+reader.getUsageTagLiterals(record);
 ```
 
 Each method must:
@@ -84,12 +83,12 @@ After this phase, builder context should contain only stable concerns:
 Remove these temporary compatibility fields from the context:
 
 ```js
-scalarLiteral
-scalarUrlLiteral
-scalarInteger
-namedRefs
-getUsageTagLiterals
-getNodeTypes
+scalarLiteral;
+scalarUrlLiteral;
+scalarInteger;
+namedRefs;
+getUsageTagLiterals;
+getNodeTypes;
 ```
 
 Update `GraphBuilderContext` JSDoc so `reader` is required for all record reads.
@@ -127,8 +126,8 @@ Migrate in a low-risk order from simplest builders to the more policy-adjacent p
 7. shared graph helper cleanup
 8. context contract cleanup
 
-This order keeps the highest-risk paths—`Usage`, pending revisions, and shared helpers—until after
-the straightforward builder migrations have proven the facade shape.
+This order keeps the highest-risk paths—`Usage`, pending revisions, and shared helpers—until after the straightforward
+builder migrations have proven the facade shape.
 
 ## Implementation Plan
 
@@ -165,23 +164,22 @@ context.reader.scalarUrlLiteral(...)
 context.reader.namedRefs(...)
 ```
 
-Only replace direct record-reader access. Do not restructure builder logic unless it removes clear
-duplication.
+Only replace direct record-reader access. Do not restructure builder logic unless it removes clear duplication.
 
 ### 3. Migrate `LearningResource` and `CreativeWork`
 
 Replace flat helper access with `context.reader`.
 
-Watch for duplicated scalar extraction patterns. If the same group of fields is repeatedly read,
-consider a small local helper such as:
+Watch for duplicated scalar extraction patterns. If the same group of fields is repeatedly read, consider a small local
+helper such as:
 
 ```js
 function readCreativeWorkFields(reader, record) {
-  return {
-    name: reader.scalarLiteral(record, schema.name),
-    url: reader.scalarUrlLiteral(record, schema.url),
-    datePublished: reader.scalarLiteral(record, schema.datePublished),
-  };
+    return {
+        name: reader.scalarLiteral(record, schema.name),
+        url: reader.scalarUrlLiteral(record, schema.url),
+        datePublished: reader.scalarLiteral(record, schema.datePublished),
+    };
 }
 ```
 
@@ -216,14 +214,13 @@ This prevents the facade from becoming a mixed read-and-validation abstraction.
 
 ### 5. Migrate Pending-Revision Reads
 
-Change `collectPendingRevisionState(...)` so it receives either the whole context or a narrow reader
-dependency.
+Change `collectPendingRevisionState(...)` so it receives either the whole context or a narrow reader dependency.
 
 Prefer the narrower dependency:
 
 ```js
 function collectPendingRevisionState({ recordsById, reader, sourceLabel }) {
-  // ...
+    // ...
 }
 ```
 
@@ -231,21 +228,21 @@ or:
 
 ```js
 function collectPendingRevisionState(recordsById, reader, sourceLabel) {
-  // ...
+    // ...
 }
 ```
 
-Prefer the object-parameter form if the function already takes several arguments. It is easier to
-extend and less error-prone than positional parameters.
+Prefer the object-parameter form if the function already takes several arguments. It is easier to extend and less
+error-prone than positional parameters.
 
 Do not pass individual reader methods:
 
 ```js
 collectPendingRevisionState({
-  getNodeTypes,
-  getUsageTagLiterals,
-  namedRefs,
-})
+    getNodeTypes,
+    getUsageTagLiterals,
+    namedRefs,
+});
 ```
 
 That recreates the flat-helper problem under a different name.
@@ -258,7 +255,7 @@ Before:
 
 ```js
 function readRequiredScalar(context, record, predicate) {
-  return context.scalarLiteral(record, predicate);
+    return context.scalarLiteral(record, predicate);
 }
 ```
 
@@ -266,7 +263,7 @@ After:
 
 ```js
 function readRequiredScalar(context, record, predicate) {
-  return context.reader.scalarLiteral(record, predicate);
+    return context.reader.scalarLiteral(record, predicate);
 }
 ```
 
@@ -276,20 +273,20 @@ Do not keep fallback logic such as:
 context.reader?.scalarLiteral(...) ?? context.scalarLiteral(...)
 ```
 
-Fallbacks should disappear in Phase 4. Keeping them would make the migration incomplete and hide
-misconfigured test contexts.
+Fallbacks should disappear in Phase 4. Keeping them would make the migration incomplete and hide misconfigured test
+contexts.
 
 ### 7. Remove Flat Helper Injection
 
 In `catalog-builder.mjs`, stop passing these into graph builder contexts:
 
 ```js
-scalarLiteral
-scalarUrlLiteral
-scalarInteger
-namedRefs
-getUsageTagLiterals
-getNodeTypes
+scalarLiteral;
+scalarUrlLiteral;
+scalarInteger;
+namedRefs;
+getUsageTagLiterals;
+getNodeTypes;
 ```
 
 Create one reader per source-bound build context:
@@ -302,12 +299,12 @@ Then pass:
 
 ```js
 const context = {
-  reader,
-  recordsById,
-  ensureNodeCategory,
-  abort,
-  sourceLabel,
-  skippedPendingNodeIds,
+    reader,
+    recordsById,
+    ensureNodeCategory,
+    abort,
+    sourceLabel,
+    skippedPendingNodeIds,
 };
 ```
 
@@ -315,8 +312,7 @@ const context = {
 
 Remove all JSDoc references to temporary flat reader fields.
 
-The final documented contract should make it impossible to infer that builders may still use flat
-accessors.
+The final documented contract should make it impossible to infer that builders may still use flat accessors.
 
 ### 9. Search for Legacy Usage
 
@@ -345,18 +341,18 @@ When a migrated builder becomes harder to scan, extract helpers around coherent 
 Good candidates:
 
 ```js
-readPersonFields(reader, record)
-readOrganizationFields(reader, record)
-readCreativeWorkScalars(reader, record)
-readUsageRelations(reader, record)
-appendUsageTags(node, tags)
+readPersonFields(reader, record);
+readOrganizationFields(reader, record);
+readCreativeWorkScalars(reader, record);
+readUsageRelations(reader, record);
+appendUsageTags(node, tags);
 ```
 
 Avoid helpers that merely wrap one line:
 
 ```js
 function readName(reader, record) {
-  return reader.scalarLiteral(record, schema.name);
+    return reader.scalarLiteral(record, schema.name);
 }
 ```
 
@@ -366,7 +362,7 @@ For helpers with more than two or three dependencies, prefer:
 
 ```js
 function buildUsageNode({ record, context, node }) {
-  // ...
+    // ...
 }
 ```
 
@@ -385,21 +381,21 @@ reader.requiredScalar(...)
 reader.optionalDate(...)
 ```
 
-Those encode builder policy into the reader. If repeated patterns appear after the full migration,
-capture them later in a separate schema-extraction layer.
+Those encode builder policy into the reader. If repeated patterns appear after the full migration, capture them later in
+a separate schema-extraction layer.
 
 ### Consider a Future Schema Extraction Layer
 
 After Phase 4, it may be worth introducing a separate layer such as:
 
 ```js
-extractReferenceFields(reader, record)
-extractPersonFields(reader, record)
-extractUsageFields(reader, record)
+extractReferenceFields(reader, record);
+extractPersonFields(reader, record);
+extractUsageFields(reader, record);
 ```
 
-That layer would be allowed to know about schema-level field groups, while `reader` remains a
-low-level, source-bound accessor facade.
+That layer would be allowed to know about schema-level field groups, while `reader` remains a low-level, source-bound
+accessor facade.
 
 Do not implement that in Phase 4 unless the migration reveals severe duplication.
 
@@ -409,8 +405,7 @@ No new runtime dependency is needed.
 
 Potential dev dependency:
 
-- `fast-check`, only if the project already uses or plans to use property-based testing across the
-  catalog pipeline.
+- `fast-check`, only if the project already uses or plans to use property-based testing across the catalog pipeline.
 
 Avoid adding:
 
@@ -431,24 +426,24 @@ Recommended helper:
 
 ```js
 function createGraphBuilderTestContext(overrides = {}) {
-  const sourceLabel = overrides.sourceLabel ?? "test-source.ttl";
+    const sourceLabel = overrides.sourceLabel ?? "test-source.ttl";
 
-  return {
-    sourceLabel,
-    reader: createCatalogReader({ sourceLabel }),
-    recordsById: new Map(),
-    ensureNodeCategory: vi.fn(),
-    abort: vi.fn((message) => {
-      throw new Error(message);
-    }),
-    skippedPendingNodeIds: new Set(),
-    ...overrides,
-  };
+    return {
+        sourceLabel,
+        reader: createCatalogReader({ sourceLabel }),
+        recordsById: new Map(),
+        ensureNodeCategory: vi.fn(),
+        abort: vi.fn((message) => {
+            throw new Error(message);
+        }),
+        skippedPendingNodeIds: new Set(),
+        ...overrides,
+    };
 }
 ```
 
-Remove compatibility helper fields from test contexts. Tests should fail loudly if a builder still
-uses the old flat helper path.
+Remove compatibility helper fields from test contexts. Tests should fail loudly if a builder still uses the old flat
+helper path.
 
 ### 2. Keep Reader Factory Tests
 
@@ -466,8 +461,7 @@ Coverage should verify:
 
 ### 3. Add Builder Regression Coverage
 
-Add or update focused regression tests for each migrated builder only where existing coverage is
-thin.
+Add or update focused regression tests for each migrated builder only where existing coverage is thin.
 
 Suggested BDD structure:
 
@@ -487,8 +481,8 @@ describe("Usage graph builder", () => {
 })
 ```
 
-Do not assert that `reader.scalarLiteral` was called unless the project already uses spies for this.
-Prefer output-oriented assertions.
+Do not assert that `reader.scalarLiteral` was called unless the project already uses spies for this. Prefer
+output-oriented assertions.
 
 ### 4. Use DDT for Repeated Builder Matrices
 
@@ -503,8 +497,7 @@ test.each([
 ])("%s reads common scalar fields through the reader facade", ...)
 ```
 
-Use DDT only when the assertion shape is genuinely the same. Keep specialised behavior in named
-tests.
+Use DDT only when the assertion shape is genuinely the same. Keep specialised behavior in named tests.
 
 ### 5. Consider PBT for Source Binding
 
@@ -521,8 +514,8 @@ Keep this at the reader-factory level, not the builder level.
 
 ### 6. Integration Regression
 
-Keep or add an integration test through `buildCatalogArtifactFromTurtle` that exercises multiple
-builder types in one Turtle input.
+Keep or add an integration test through `buildCatalogArtifactFromTurtle` that exercises multiple builder types in one
+Turtle input.
 
 The fixture should include:
 
@@ -563,8 +556,7 @@ Run the full bibliography/catalog suite before closing:
 pnpm vitest run scripts/__tests__
 ```
 
-If the repository has a narrower bibliography-only pattern, prefer that over the full script test
-directory.
+If the repository has a narrower bibliography-only pattern, prefer that over the full script test directory.
 
 ## Acceptance Criteria
 
@@ -584,16 +576,15 @@ Phase 4 is complete when:
 
 ## Implementation Notes
 
-- Completed the full builder migration to `context.reader` for `Person`, `Organization`,
-  `CreativeWork`, `Reference`, `LearningResource`, and `Usage`.
-- Removed flat reader helper injection from `catalog-builder.mjs` builder contexts and from
-  graph-builder test contexts.
-- Migrated pending-revision collection to accept `{ recordsByIri, reader }`, preserving the
-  existing pruning behavior while avoiding individual accessor injection.
-- Included the optional boundary cleanup for relation validation: `ensureNodeCategory(...)` now
-  receives the source-bound reader and uses `reader.getNodeTypes(...)` for category checks.
-- Updated `GraphBuilderContext` JSDoc with a required `CatalogReader` contract and removed the
-  temporary compatibility-field documentation.
+- Completed the full builder migration to `context.reader` for `Person`, `Organization`, `CreativeWork`, `Reference`,
+  `LearningResource`, and `Usage`.
+- Removed flat reader helper injection from `catalog-builder.mjs` builder contexts and from graph-builder test contexts.
+- Migrated pending-revision collection to accept `{ recordsByIri, reader }`, preserving the existing pruning behavior
+  while avoiding individual accessor injection.
+- Included the optional boundary cleanup for relation validation: `ensureNodeCategory(...)` now receives the
+  source-bound reader and uses `reader.getNodeTypes(...)` for category checks.
+- Updated `GraphBuilderContext` JSDoc with a required `CatalogReader` contract and removed the temporary
+  compatibility-field documentation.
 - Verified the legacy-context search:
 
 ```sh
@@ -619,8 +610,8 @@ pnpm vitest run scripts/__tests__
 
 ### Risk: Reader absorbs validation policy
 
-Mitigation: keep the reader API fixed during Phase 4. Any requiredness, relation validation, or
-pending-revision logic must stay in builders or graph helpers.
+Mitigation: keep the reader API fixed during Phase 4. Any requiredness, relation validation, or pending-revision logic
+must stay in builders or graph helpers.
 
 ### Risk: Migration leaves hidden fallback paths
 
@@ -628,18 +619,17 @@ Mitigation: remove all fallback logic and run `rg` checks for legacy context fie
 
 ### Risk: Tests continue passing despite incomplete migration
 
-Mitigation: update test context helpers to omit flat helper fields entirely. Any old builder access
-should fail immediately.
+Mitigation: update test context helpers to omit flat helper fields entirely. Any old builder access should fail
+immediately.
 
 ### Risk: Pending-revision code becomes harder to follow
 
-Mitigation: migrate it to accept `reader`, but do not otherwise redesign pending-revision behavior
-in this phase.
+Mitigation: migrate it to accept `reader`, but do not otherwise redesign pending-revision behavior in this phase.
 
 ### Risk: Over-generalization during cleanup
 
-Mitigation: only extract helpers around repeated, coherent field groups. Defer schema extraction
-until after all builders are migrated and duplication is visible.
+Mitigation: only extract helpers around repeated, coherent field groups. Defer schema extraction until after all
+builders are migrated and duplication is visible.
 
 ## Suggested Phase 5 Follow-Up
 

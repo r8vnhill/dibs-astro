@@ -1,17 +1,19 @@
 # Closeout: Refactor `LessonCatalogAdapter.behavior.test.ts` Around Trail Invariants
 
-**Date:** 2026-04-19  
+**Date:** 2026-04-19\
 **Status:** ✅ Complete
 
 ## Summary
 
-Refactored `LessonCatalogAdapter.behavior.test.ts` to express `findTrailByHref(...)` primarily through behavioural invariants, compact scenario tables, and explicit contract tests instead of hand-written example variants.
+Refactored `LessonCatalogAdapter.behavior.test.ts` to express `findTrailByHref(...)` primarily through behavioural
+invariants, compact scenario tables, and explicit contract tests instead of hand-written example variants.
 
 ## Implementation
 
 All five phases of the refactoring plan were executed successfully:
 
 ### Phase 1: Restructure by behavior seams and extract named trails ✅
+
 - Reorganized test suite into focused describe blocks:
   - `findTrailByHref > traversal` — core path resolution
   - `findTrailByHref > root inclusion` — Notes root option handling
@@ -27,12 +29,14 @@ All five phases of the refactoring plan were executed successfully:
   - `DEEP_NESTED_TRAIL_WITH_ROOT`
 
 ### Phase 2: Convert repeated examples to DDT scenario tables ✅
+
 - Collapsed 5 traversal tests into 1 `it.each()` scenario table with columns:
   - `name`, `adapterFactory`, `href`, `expectedTrail`
 - Collapsed 2 root-inclusion tests into 1 `it.each()` with boolean/expected pairs
 - Maintained full `toEqual(...)` assertions for complete output verification
 
 ### Phase 3: Refactor fixture helpers ✅
+
 - Replaced generic `lessonNode(kind, ...)` with two focused builders:
   - `linkLesson({ id, title, href? })` — leaf nodes only
   - `groupLesson({ id, title, href?, children })` — branch nodes with explicit children
@@ -41,6 +45,7 @@ All five phases of the refactoring plan were executed successfully:
 - Improved builder semantics: invalid shapes are harder to express
 
 ### Phase 4: Add explicit trail-contract invariant tests ✅
+
 - Added 6 new invariant-focused assertions:
   - Trail is ordered ancestor-to-current
   - Last element is always the resolved lesson
@@ -51,6 +56,7 @@ All five phases of the refactoring plan were executed successfully:
 - Each invariant is tested across representative fixture scenarios
 
 ### Phase 5: Add narrow PBT for href normalization ✅
+
 - Imported `fast-check` for property-based testing
 - Created `generateNoisyHrefVariant(canonicalHref)` arbitrary that applies only equivalent transformations:
   - surrounding whitespace
@@ -75,14 +81,14 @@ All tests pass. No production code changes were required.
 
 ## Key Improvements
 
-| Dimension | Before | After |
-|-----------|--------|-------|
-| **Test organization** | Grouped by fixture | Grouped by behavior seam |
-| **Duplication** | 11 standalone tests | 5 DDT scenarios + 8 focused tests |
-| **Expected trail clarity** | Inline arrays | Named constants with types |
-| **Helper semantics** | Generic `lessonNode(kind, ...)` | Focused `linkLesson(...)`, `groupLesson(...)` |
-| **Invariant testing** | Implicit in exact examples | Explicit contract assertions |
-| **Normalization coverage** | 1 manual loop | 2 PBT + 1 explicit example |
+| Dimension                  | Before                          | After                                         |
+| -------------------------- | ------------------------------- | --------------------------------------------- |
+| **Test organization**      | Grouped by fixture              | Grouped by behavior seam                      |
+| **Duplication**            | 11 standalone tests             | 5 DDT scenarios + 8 focused tests             |
+| **Expected trail clarity** | Inline arrays                   | Named constants with types                    |
+| **Helper semantics**       | Generic `lessonNode(kind, ...)` | Focused `linkLesson(...)`, `groupLesson(...)` |
+| **Invariant testing**      | Implicit in exact examples      | Explicit contract assertions                  |
+| **Normalization coverage** | 1 manual loop                   | 2 PBT + 1 explicit example                    |
 
 ## Files Modified
 

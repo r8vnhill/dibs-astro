@@ -4,31 +4,37 @@
 
 ## Summary
 
-The deprecated `src/lib/shiki/*` compatibility bridge has been successfully removed after one compatibility window, leaving `@ravenhill/shiki-core` as the single source of truth for reusable, host-agnostic Shiki infrastructure and `~/lib/code-highlighting` as the only Astro app-local highlighting boundary.
+The deprecated `src/lib/shiki/*` compatibility bridge has been successfully removed after one compatibility window,
+leaving `@ravenhill/shiki-core` as the single source of truth for reusable, host-agnostic Shiki infrastructure and
+`~/lib/code-highlighting` as the only Astro app-local highlighting boundary.
 
-This phase was a cleanup and boundary-hardening phase that deleted obsolete wrapper code, removed compatibility-only tests, and updated repository guidance.
+This phase was a cleanup and boundary-hardening phase that deleted obsolete wrapper code, removed compatibility-only
+tests, and updated repository guidance.
 
 ## Goals Accomplished
 
-✅ **Deleted** `src/lib/shiki/**` and all compatibility-only tests  
-✅ **Verified** no active consumer code imported from the deprecated bridge  
-✅ **Created** Phase 6 import boundary test in `tests/architecture/shiki-import-boundary.test.ts`  
+✅ **Deleted** `src/lib/shiki/**` and all compatibility-only tests\
+✅ **Verified** no active consumer code imported from the deprecated bridge\
+✅ **Created** Phase 6 import boundary test in `tests/architecture/shiki-import-boundary.test.ts`\
 ✅ **Preserved** the three-part architectural split:
-  - `@ravenhill/shiki-core` for reusable package APIs
-  - `~/lib/code-highlighting` for app-specific highlighting service
-  - `src/components/ui/code` for UI rendering only  
-✅ **Enforced** root-only package consumption (no `@ravenhill/shiki-core/*` subpath imports)  
-✅ **Updated** this traceability log and repository guidance
+
+- `@ravenhill/shiki-core` for reusable package APIs
+- `~/lib/code-highlighting` for app-specific highlighting service
+- `src/components/ui/code` for UI rendering only\
+  ✅ **Enforced** root-only package consumption (no `@ravenhill/shiki-core/*` subpath imports)\
+  ✅ **Updated** this traceability log and repository guidance
 
 ## What Was Done
 
 ### Step 1: Pre-Deletion Import Analysis
+
 - Scanned entire codebase for imports from `~/lib/shiki`, `src/lib/shiki`, and `@ravenhill/shiki-core/*`
 - **Finding:** No active consumer code imported from the deprecated bridge
 - Only the compatibility tests in `src/lib/shiki/__tests__/` imported from the bridge (by design)
 - This confirmed Phase 5 migration was complete and Phase 6 deletion was safe
 
 ### Step 2: Created Phase 6 Import Boundary Test
+
 - Added `tests/architecture/shiki-import-boundary.test.ts` to enforce final state
 - The test scans the codebase and asserts:
   - ✅ No imports from `~/lib/shiki` (deprecated tilde imports)
@@ -37,11 +43,16 @@ This phase was a cleanup and boundary-hardening phase that deleted obsolete wrap
   - ✅ `src/lib/shiki` directory does not exist
 
 ### Step 3: Deleted Deprecated Bridge
+
 - Removed entire `src/lib/shiki/` directory including:
-  - **Module files:** `cache.ts`, `class-tokens.ts`, `config.ts`, `custom-languages.ts`, `grammars/`, `highlighter.ts`, `html.ts`, `language-aliases.ts`, `line-text-color-helpers.ts`, `line-text-color-transformer.ts`, `service.ts`, `tailwind-class-transformer.ts`, `transformers.ts`
-  - **Test files:** All files under `__tests__/` (public-surface-contract.test.ts, import-boundary.test.ts, compatibility-imports.test.ts)
+  - **Module files:** `cache.ts`, `class-tokens.ts`, `config.ts`, `custom-languages.ts`, `grammars/`, `highlighter.ts`,
+    `html.ts`, `language-aliases.ts`, `line-text-color-helpers.ts`, `line-text-color-transformer.ts`, `service.ts`,
+    `tailwind-class-transformer.ts`, `transformers.ts`
+  - **Test files:** All files under `__tests__/` (public-surface-contract.test.ts, import-boundary.test.ts,
+    compatibility-imports.test.ts)
 
 ### Step 4: Updated Documentation
+
 - Changed status in this traceability log from `[PLAN]` to completion report
 - Documented implementation findings and rationale
 - Updated goals section to mark accomplishments with checkmarks
@@ -68,6 +79,7 @@ pnpm test:unit -- tests/architecture/shiki-import-boundary.test.ts
 ```
 
 Manual verification commands (if needed):
+
 ```sh
 rg "~/lib/shiki|src/lib/shiki|lib/shiki" src config packages tests
 # Expected: No matches
@@ -83,13 +95,13 @@ rg "@ravenhill/shiki-core" src config packages tests
 
 The following boundaries are now enforced by design, testing, and package exports:
 
-| Responsibility                              | Location                    | Import Path                                    |
-| ------------------------------------------- | --------------------------- | ---------------------------------------------- |
-| Reusable Shiki infrastructure               | `@ravenhill/shiki-core`     | `import { ... } from "@ravenhill/shiki-core"`  |
-| App-specific highlighting service & config | `src/lib/code-highlighting` | `import { ... } from "~/lib/code-highlighting"`|
-| Astro/UI rendering for code blocks         | `src/components/ui/code`    | Direct imports within component modules        |
-| **Forbidden:** Deprecated bridge            | *Deleted*                   | **No imports allowed**                         |
-| **Forbidden:** Package subpaths             | N/A                         | **No `@ravenhill/shiki-core/...` allowed**     |
+| Responsibility                             | Location                    | Import Path                                     |
+| ------------------------------------------ | --------------------------- | ----------------------------------------------- |
+| Reusable Shiki infrastructure              | `@ravenhill/shiki-core`     | `import { ... } from "@ravenhill/shiki-core"`   |
+| App-specific highlighting service & config | `src/lib/code-highlighting` | `import { ... } from "~/lib/code-highlighting"` |
+| Astro/UI rendering for code blocks         | `src/components/ui/code`    | Direct imports within component modules         |
+| **Forbidden:** Deprecated bridge           | _Deleted_                   | **No imports allowed**                          |
+| **Forbidden:** Package subpaths            | N/A                         | **No `@ravenhill/shiki-core/...` allowed**      |
 
 ### Key Invariants Enforced
 
@@ -132,14 +144,18 @@ pnpm check
 
 ## Lessons and Assumptions Validated
 
-- **Effective strategy:** The compatibility window strategy was highly effective; Phase 5 had already migrated all consumers, making Phase 6 deletion safe with zero code changes
-- **Test-driven boundaries:** Data-driven tests that scan for forbidden patterns are more maintainable than manual code review for architectural rules
-- **Package encapsulation:** The root-only package import rule is enforced by `package.json` `exports` configuration combined with test-time verification
+- **Effective strategy:** The compatibility window strategy was highly effective; Phase 5 had already migrated all
+  consumers, making Phase 6 deletion safe with zero code changes
+- **Test-driven boundaries:** Data-driven tests that scan for forbidden patterns are more maintainable than manual code
+  review for architectural rules
+- **Package encapsulation:** The root-only package import rule is enforced by `package.json` `exports` configuration
+  combined with test-time verification
 - **No hidden behavior:** No wrapper contained behavior not already covered by Phase 5 migration tests
 
 ## Context for Future Work
 
 If new code needs highlighting functionality:
+
 1. For reusable Shiki infrastructure → import from `@ravenhill/shiki-core`
 2. For app-configured highlighting → import from `~/lib/code-highlighting`
 3. For code block rendering → use `src/components/ui/code`
@@ -154,6 +170,6 @@ Do not create new files under `src/lib/shiki/*` — that boundary was removed an
 
 ---
 
-*Completed by: Phase 6 implementation*  
-*Date: 2026-05-10*  
-*Verified by: tests/architecture/shiki-import-boundary.test.ts*
+_Completed by: Phase 6 implementation_\
+_Date: 2026-05-10_\
+_Verified by: tests/architecture/shiki-import-boundary.test.ts_

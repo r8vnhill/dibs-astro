@@ -1,17 +1,18 @@
 # ✅ Fase 1 · Esqueleto de capas — COMPLETADA
 
-> **Nota histórica:** este documento describe el cierre de la Fase 1. La descripción vigente de las fronteras actuales vive en `docs/architecture/layer-separation.md`. Algunas referencias aquí, como “Domain stub” o integración pendiente de `NotesLayout`, ya no reflejan el estado actual del repositorio.
+> **Nota histórica:** este documento describe el cierre de la Fase 1. La descripción vigente de las fronteras actuales
+> vive en `docs/architecture/layer-separation.md`. Algunas referencias aquí, como “Domain stub” o integración pendiente
+> de `NotesLayout`, ya no reflejan el estado actual del repositorio.
 
-**Fecha:** 2026-02-28
-**Metodología:** TDD (Test-Driven Development)
-**Status:** ✅ LISTO PARA FASE 2
-**Tests:** 9/9 pasando ✅
+**Fecha:** 2026-02-28 **Metodología:** TDD (Test-Driven Development) **Status:** ✅ LISTO PARA FASE 2 **Tests:** 9/9
+pasando ✅
 
 ---
 
 ## Resumen ejecutivo
 
 Se creó exitosamente la arquitectura base de 4 capas estratificadas con:
+
 - **3 capas implementadas:** Application, Infrastructure (Domain → stub)
 - **2 puertos definidos:** LessonCatalog, NavigationService
 - **1 servicio implementado:** NavigationServiceImpl (orquestador)
@@ -105,14 +106,15 @@ Total: 9/9 ✅
 
 ```json
 {
-  "$domain/*": "src/domain/*",
-  "$application/*": "src/application/*",
-  "$infrastructure/*": "src/infrastructure/*",
-  "$presentation/*": "src/presentation/*"
+    "$domain/*": "src/domain/*",
+    "$application/*": "src/application/*",
+    "$infrastructure/*": "src/infrastructure/*",
+    "$presentation/*": "src/presentation/*"
 }
 ```
 
 **Uso:**
+
 ```typescript
 import { NavigationServiceImpl } from "$application/services";
 import { LessonCatalogAdapter } from "$infrastructure/adapters";
@@ -181,8 +183,8 @@ $ pnpm test:watch
 
 ## Criterios de aceptación
 
-| Criterio                | Status              |
-| ----------------------- | ------------------- |
+| Criterio                | Status               |
+| ----------------------- | -------------------- |
 | Estructura TDD          | ✅ Tests primero     |
 | 4 capas base            | ✅ Creadas           |
 | Alias mínimos           | ✅ Agregados (4)     |
@@ -209,17 +211,20 @@ $ pnpm test:watch
 ## Referencia rápida
 
 **Importar interfaces:**
+
 ```typescript
 import type { ILessonCatalog, INavigationService } from "$application/ports";
 ```
 
 **Importar implementaciones:**
+
 ```typescript
 import { NavigationServiceImpl } from "$application/services";
 import { LessonCatalogAdapter } from "$infrastructure/adapters";
 ```
 
 **Composición:**
+
 ```typescript
 const adapter = new LessonCatalogAdapter();
 const service = new NavigationServiceImpl(adapter);
@@ -230,17 +235,17 @@ const result = await service.resolveAutoNav("/notes/..../");
 
 ## Métricas finales
 
-| Métrica                | Valor |
-| ---------------------- | ----- |
-| Archivos de código     | 10    |
-| Archivos de tests      | 2     |
-| Archivos de doc        | 4     |
-| Líneas de código (src) | ~300  |
-| Líneas de tests        | ~150  |
-| Directorios nuevos     | 9     |
+| Métrica                | Valor  |
+| ---------------------- | ------ |
+| Archivos de código     | 10     |
+| Archivos de tests      | 2      |
+| Archivos de doc        | 4      |
+| Líneas de código (src) | ~300   |
+| Líneas de tests        | ~150   |
+| Directorios nuevos     | 9      |
 | Tests pasando          | 9/9 ✅ |
-| Cobertura esperada     | >80%  |
-| Bloqueadores           | 0     |
+| Cobertura esperada     | >80%   |
+| Bloqueadores           | 0      |
 
 ---
 
@@ -248,4 +253,4 @@ const result = await service.resolveAutoNav("/notes/..../");
 
 **Listo para:** Fase 1 (continuación - integración) → Fase 2 (aislar dominio)
 
-*Metodología:* TDD · *Stack:* Astro + React + TypeScript · *Arquitectura:* Layered (Stratified)
+_Metodología:_ TDD · _Stack:_ Astro + React + TypeScript · _Arquitectura:_ Layered (Stratified)

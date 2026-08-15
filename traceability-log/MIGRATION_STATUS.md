@@ -8,21 +8,23 @@
 
 ## Phase Breakdown
 
-| Phase | Goal                                           | Status      | Evidence                                                   |
-| ----- | ---------------------------------------------- | ----------- | ---------------------------------------------------------- |
-| **0** | Document baseline; verify current SVG contract | ✅ Complete | [phase-0-characterization.md](phase-0-characterization.md) |
-| **1** | Create package scaffold without moving files   | ✅ Complete | [phase-1-scaffold.md](phase-1-scaffold.md)                 |
-| **2** | Move SVGs; regenerate barrel                   | ✅ Complete | [phase-2-migration.md](phase-2-migration.md)               |
-| **3** | Wire Astro app to package source via alias     | ✅ Complete | [phase-3-wiring.md](phase-3-wiring.md)                     |
-| **4** | Validate package build and published shape     | ✅ Complete | [phase-4-validation.md](phase-4-validation.md)             |
+| Phase | Goal                                           | Status      | Evidence                                                            |
+| ----- | ---------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+| **0** | Document baseline; verify current SVG contract | ✅ Complete | [phase-0-characterization.md](phase-0-characterization.md)          |
+| **1** | Create package scaffold without moving files   | ✅ Complete | [phase-1-scaffold.md](phase-1-scaffold.md)                          |
+| **2** | Move SVGs; regenerate barrel                   | ✅ Complete | [phase-2-migration.md](phase-2-migration.md)                        |
+| **3** | Wire Astro app to package source via alias     | ✅ Complete | [phase-3-wiring.md](phase-3-wiring.md)                              |
+| **4** | Validate package build and published shape     | ✅ Complete | [phase-4-validation.md](phase-4-validation.md)                      |
 | **5** | Validate end-to-end Astro integration          | ✅ Complete | [PHASE_5_COMPLETION.md](closed/2026/06/W3/16/PHASE_5_COMPLETION.md) |
 
 ---
 
 ## Progress Summary
 
-✅ **All five phases complete** — Package extracted, assets migrated, app wired, build validated, end-to-end integration verified\
-🎉 **Migration complete and production-ready** — All 1,521 Phosphor SVG icons successfully extracted to `@ravenhill/phosphor-icons`
+✅ **All five phases complete** — Package extracted, assets migrated, app wired, build validated, end-to-end integration
+verified\
+🎉 **Migration complete and production-ready** — All 1,521 Phosphor SVG icons successfully extracted to
+`@ravenhill/phosphor-icons`
 
 ---
 

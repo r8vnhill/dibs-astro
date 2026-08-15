@@ -11,7 +11,8 @@ welcome!
 
 ## Code formatting: dprint
 
-We use dprint to keep the codebase consistently formatted across contributors and editors. Please format any changed files with dprint before opening a pull request.
+We use dprint to keep the codebase consistently formatted across contributors and editors. Please format any changed
+files with dprint before opening a pull request.
 
 - Install dprint: https://dprint.dev/#/installation
 - Format changed files locally:
@@ -26,21 +27,21 @@ dprint fmt
 
 Tips:
 
-- If your editor supports it, enable an on-save dprint integration (most editors support a dprint plugin or call the CLI).
+- If your editor supports it, enable an on-save dprint integration (most editors support a dprint plugin or call the
+  CLI).
 - Consider adding a pre-commit hook to run `dprint fmt` on staged files (tools like `husky` or `lefthook` work well).
 
 If you prefer not to install dprint globally, run `pnpm dlx dprint fmt` or `npx dprint fmt` instead.
 
 ## Inline code snippets
 
-When writing inline highlighted code, prefer the `code` prop for any snippet that contains spaces
-or multiple tokens.
+When writing inline highlighted code, prefer the `code` prop for any snippet that contains spaces or multiple tokens.
 
 - Recommended: `<PowerShellInline code="git remote" />`
 - Safe to keep via slot: `<PowerShellInline>Get-Process</PowerShellInline>`
 
-This matters because Astro/template formatting may normalize whitespace or line breaks in the
-default slot, which can make multi-word snippets flaky or render differently than expected.
+This matters because Astro/template formatting may normalize whitespace or line breaks in the default slot, which can
+make multi-word snippets flaky or render differently than expected.
 
 ## Pre-commit hooks (Husky + lint-staged)
 
@@ -52,14 +53,17 @@ This repo uses Husky with lint-staged to automatically format only staged files 
 - Skip temporarily: Use `git commit --no-verify` (not recommended; only for emergencies).
 - Troubleshooting: If hooks don’t run, execute `pnpm run prepare` to (re)install Husky.
 
-Recommended: For large repos, formatting only staged files keeps commits quick. Our lint-staged config lives in `package.json` under the `lint-staged` key.
+Recommended: For large repos, formatting only staged files keeps commits quick. Our lint-staged config lives in
+`package.json` under the `lint-staged` key.
 
 ## Commit messages
 
 Please write commit messages in English.
 
-- Use Conventional Commits (e.g., `feat(scope): short description`, `fix(scope): short description`, `chore(docs): ...`).
+- Use Conventional Commits (e.g., `feat(scope): short description`, `fix(scope): short description`,
+  `chore(docs): ...`).
 - Prefix messages with a gitmoji when relevant (e.g., `📝 chore(docs): ...`).
 - Keep the subject line short (<= 72 chars) and add a brief bullet-list body if more context is needed.
 
-This repo enforces formatting and CI checks; keeping commit messages consistent and in English helps contributors, CI systems, and automated changelog tools.
+This repo enforces formatting and CI checks; keeping commit messages consistent and in English helps contributors, CI
+systems, and automated changelog tools.

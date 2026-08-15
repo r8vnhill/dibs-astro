@@ -2,9 +2,12 @@
 
 ## Resumen
 
-Reformular el bloque `api-design` como una serie de **tres** lecciones en vez de dos. La nueva decisión es separar **documentación** de la lección sobre evolución y compatibilidad, porque merece tratamiento propio como parte del contrato público de una biblioteca y no solo como apoyo secundario de versionado.
+Reformular el bloque `api-design` como una serie de **tres** lecciones en vez de dos. La nueva decisión es separar
+**documentación** de la lección sobre evolución y compatibilidad, porque merece tratamiento propio como parte del
+contrato público de una biblioteca y no solo como apoyo secundario de versionado.
 
 La progresión quedaría así:
+
 1. `fundamentals`: diseñar la API desde el dominio
 2. `evolution`: evolucionar la API sin romper compatibilidad
 3. `documentation`: documentar la API como parte del producto
@@ -32,7 +35,8 @@ La progresión quedaría así:
 
 - **Lección 3: `documentation`**
   - Nueva lección conceptual dedicada a documentación de bibliotecas como parte del diseño de la API.
-  - Objetivo: mostrar que la API no se consume solo desde tipos y firmas, sino también desde ejemplos, guías, referencias, mensajes de error y material de migración.
+  - Objetivo: mostrar que la API no se consume solo desde tipos y firmas, sino también desde ejemplos, guías,
+    referencias, mensajes de error y material de migración.
   - Estructura recomendada:
     - por qué la documentación también es parte del contrato público
     - audiencias y tipos de documentación: getting started, referencia, ejemplos, migración
@@ -44,8 +48,10 @@ La progresión quedaría así:
 - **Fuentes y trazabilidad**
   - `fundamentals`: mantener las actuales.
   - `evolution`: priorizar Reddy Chapter 10 y guías de Kotlin sobre compatibilidad/evolución.
-  - `documentation`: mover aquí el foco principal de `Write the Docs` y cualquier material sobre documentación como parte del producto.
-  - Si faltan referencias específicas en el catálogo para la tercera lección, modelarlas ahí en lugar de dejar bibliografía inline no trazable.
+  - `documentation`: mover aquí el foco principal de `Write the Docs` y cualquier material sobre documentación como
+    parte del producto.
+  - Si faltan referencias específicas en el catálogo para la tercera lección, modelarlas ahí en lugar de dejar
+    bibliografía inline no trazable.
 
 - **Course structure y rutas**
   - El grupo `api-design` debe pasar a tener tres entradas ordenadas.
@@ -77,9 +83,11 @@ La progresión quedaría así:
 
 ## Asunciones y defaults
 
-- Documentación deja de ser un bloque fuerte dentro de `evolution` y pasa a ser **tema principal** de una tercera lección.
+- Documentación deja de ser un bloque fuerte dentro de `evolution` y pasa a ser **tema principal** de una tercera
+  lección.
 - `evolution` sigue siendo la siguiente lección a escribir primero.
-- La tercera lección no necesita entrar en tooling de docs ni pipelines de publicación; el foco sigue siendo conceptual y orientado al diseño de bibliotecas.
+- La tercera lección no necesita entrar en tooling de docs ni pipelines de publicación; el foco sigue siendo conceptual
+  y orientado al diseño de bibliotecas.
 - El bloque `api-design` queda entendido como:
   - diseño inicial del contrato
   - evolución compatible del contrato

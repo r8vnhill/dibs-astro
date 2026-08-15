@@ -100,8 +100,7 @@ const canonicalPlainTextLang = "text";
  * @param lang Caller-provided language identifier.
  * @returns Canonical language identifier used by the patch layer.
  */
-const normalizeLanguageName = (lang: string) =>
-    lang.toLowerCase() === "plaintext" ? canonicalPlainTextLang : lang;
+const normalizeLanguageName = (lang: string) => lang.toLowerCase() === "plaintext" ? canonicalPlainTextLang : lang;
 
 /**
  * Serializes a JSON-like value using stable key ordering.
@@ -139,8 +138,7 @@ function stableSerialize(value: unknown): string {
  * @param langs Language names requested by the caller.
  * @returns Deduplicated list of canonical language names.
  */
-const dedupeLanguages = (langs: string[]) =>
-    Array.from(new Set(langs.map((lang) => normalizeLanguageName(lang))));
+const dedupeLanguages = (langs: string[]) => Array.from(new Set(langs.map((lang) => normalizeLanguageName(lang))));
 
 /**
  * Normalizes the language alias map into a canonical, stably ordered form.
@@ -181,9 +179,7 @@ function normalizeThemeConfig(
     theme: HighlighterOptions["theme"],
     themes: HighlighterThemeMap,
 ) {
-    const themeEntries = Object.entries(themes).sort(([left], [right]) =>
-        left.localeCompare(right)
-    );
+    const themeEntries = Object.entries(themes).sort(([left], [right]) => left.localeCompare(right));
 
     if (themeEntries.length > 0) {
         const normalizedThemes = Object.fromEntries(themeEntries) as HighlighterThemeMap;
@@ -261,28 +257,27 @@ export function normalizeHighlighterConfig({
  *
  * @returns Base highlight executor that forwards normalized state into Shiki.
  */
-const buildBaseHighlightExecutor =
-    (): HighlightExecutor => async (state): Promise<HighlightResult> => {
-        const baseOptions = {
-            defaultColor: state.options?.defaultColor,
-            lang: state.resolvedLang,
-            meta: state.options?.meta ? { __raw: state.options.meta } : undefined,
-            transformers: state.transformers,
-        };
-
-        // Shiki exposes overloads for `theme` and `themes`, so the final option object is
-        // assembled dynamically from the normalized theme state.
-        const sharedOptions = {
-            ...baseOptions,
-            ...state.themeOptions,
-        } as any;
-
-        if (state.format === "html") {
-            return state.highlighter.codeToHtml(state.code, sharedOptions);
-        }
-
-        return state.highlighter.codeToHast(state.code, sharedOptions);
+const buildBaseHighlightExecutor = (): HighlightExecutor => async (state): Promise<HighlightResult> => {
+    const baseOptions = {
+        defaultColor: state.options?.defaultColor,
+        lang: state.resolvedLang,
+        meta: state.options?.meta ? { __raw: state.options.meta } : undefined,
+        transformers: state.transformers,
     };
+
+    // Shiki exposes overloads for `theme` and `themes`, so the final option object is
+    // assembled dynamically from the normalized theme state.
+    const sharedOptions = {
+        ...baseOptions,
+        ...state.themeOptions,
+    } as any;
+
+    if (state.format === "html") {
+        return state.highlighter.codeToHtml(state.code, sharedOptions);
+    }
+
+    return state.highlighter.codeToHast(state.code, sharedOptions);
+};
 
 /**
  * Composes the decorator pipeline around the base highlight executor.

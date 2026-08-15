@@ -13,9 +13,12 @@ and derive from it six foundational concepts:
 3. **contract** — what those exposed elements promise;
 4. **encapsulation** — what remains deliberately hidden;
 5. **stability** — why exposed decisions become harder to change;
-6. **library identity** — from the consumer's perspective, the library is characterized primarily by the contract it exposes rather than by its internal decomposition.
+6. **library identity** — from the consumer's perspective, the library is characterized primarily by the contract it
+   exposes rather than by its internal decomposition.
 
-The lesson should establish the vocabulary. It should **not yet teach how to design a good API**; that remains the responsibility of the following lesson, which already develops domain modeling, encapsulation, minimality, usability, and related principles. ([DIBS][3])
+The lesson should establish the vocabulary. It should **not yet teach how to design a good API**; that remains the
+responsibility of the following lesson, which already develops domain modeling, encapsulation, minimality, usability,
+and related principles. ([DIBS][3])
 
 ---
 
@@ -23,9 +26,12 @@ The lesson should establish the vocabulary. It should **not yet teach how to des
 
 ## Goal
 
-Make the first paragraphs explicitly answer the closing question from the taxonomy lesson rather than restarting with another independent definition of “library.”
+Make the first paragraphs explicitly answer the closing question from the taxonomy lesson rather than restarting with
+another independent definition of “library.”
 
-The taxonomy lesson has already established that two artifacts can share implementation yet differ because their mode of consumption and external contract differ. ([DIBS][2]) Lesson 1B should immediately specialize that principle to libraries.
+The taxonomy lesson has already established that two artifacts can share implementation yet differ because their mode of
+consumption and external contract differ. ([DIBS][2]) Lesson 1B should immediately specialize that principle to
+libraries.
 
 ## Changes
 
@@ -39,13 +45,16 @@ but I would make the relationship more explicit and introduce the consumer immed
 
 Conceptually, the abstract should become:
 
-> **En la lección anterior distinguimos los artefactos por su relación de uso. Para una biblioteca, esa relación es la integración programática: otras personas desarrolladoras escriben código que depende de lo que la biblioteca expone.**
+> **En la lección anterior distinguimos los artefactos por su relación de uso. Para una biblioteca, esa relación es la
+> integración programática: otras personas desarrolladoras escriben código que depende de lo que la biblioteca expone.**
 >
 > **Por eso utilizaremos como modelo inicial:**
 >
 > **biblioteca = implementación + API consumida externamente**
 >
-> **La implementación realiza la capacidad; la API define qué parte de ella puede conocer y utilizar quien consume la biblioteca. Esta frontera determina su superficie, su contrato, qué detalles podemos encapsular y qué decisiones adquieren compromisos de estabilidad.**
+> **La implementación realiza la capacidad; la API define qué parte de ella puede conocer y utilizar quien consume la
+> biblioteca. Esta frontera determina su superficie, su contrato, qué detalles podemos encapsular y qué decisiones
+> adquieren compromisos de estabilidad.**
 
 The wording can be refined later, but those are the semantic commitments I would freeze.
 
@@ -53,7 +62,8 @@ The wording can be refined later, but those are the semantic commitments I would
 
 Add a short opening transition such as:
 
-> **La taxonomía anterior distinguía artefactos según destinatario, modo de consumo, contrato visible y estabilidad esperada. En una biblioteca, estos cuatro ejes convergen alrededor de su API.**
+> **La taxonomía anterior distinguía artefactos según destinatario, modo de consumo, contrato visible y estabilidad
+> esperada. En una biblioteca, estos cuatro ejes convergen alrededor de su API.**
 
 That gives the course continuity instead of repeating the taxonomy.
 
@@ -61,10 +71,10 @@ That gives the course continuity instead of repeating the taxonomy.
 
 After the abstract, students should be able to answer:
 
-* Who primarily consumes a library?
-* How do they consume it?
-* Why does the API become the relevant boundary?
-* Why is the implementation alone insufficient to characterize the library as an artifact?
+- Who primarily consumes a library?
+- How do they consume it?
+- Why does the API become the relevant boundary?
+- Why is the implementation alone insufficient to characterize the library as an artifact?
 
 ---
 
@@ -102,11 +112,12 @@ The equation should explicitly be presented as a **design model**, not a mathema
 
 I would explain its three parts in Spanish:
 
-* **Implementación:** código, algoritmos, estructuras y decisiones internas que realizan la capacidad.
-* **API:** superficie que la biblioteca hace disponible para integración.
-* **Consumidor:** código externo que utiliza esa superficie y pasa a depender de su contrato.
+- **Implementación:** código, algoritmos, estructuras y decisiones internas que realizan la capacidad.
+- **API:** superficie que la biblioteca hace disponible para integración.
+- **Consumidor:** código externo que utiliza esa superficie y pasa a depender de su contrato.
 
-This also prevents a subtle conceptual problem with saying simply “biblioteca = API”: an API is not itself sufficient to constitute a library, which the current `API ≠ biblioteca` section correctly observes. ([DIBS][1])
+This also prevents a subtle conceptual problem with saying simply “biblioteca = API”: an API is not itself sufficient to
+constitute a library, which the current `API ≠ biblioteca` section correctly observes. ([DIBS][1])
 
 ### Add one counterexample
 
@@ -131,9 +142,11 @@ value class Checksum(val value: Long)
 fun checksum(bytes: ByteArray): Checksum = ...
 ```
 
-Do **not** teach value classes here—the example can instead use ordinary types if that would introduce future syntax prematurely. The important observation is:
+Do **not** teach value classes here—the example can instead use ordinary types if that would introduce future syntax
+prematurely. The important observation is:
 
-> the underlying algorithm may be identical, while consumers experience different libraries because they depend on different exposed contracts.
+> the underlying algorithm may be identical, while consumers experience different libraries because they depend on
+> different exposed contracts.
 
 That directly builds on Lesson 1A's existing “same implementation, different artifact” idea. ([DIBS][2])
 
@@ -141,10 +154,10 @@ That directly builds on Lesson 1A's existing “same implementation, different a
 
 Students should distinguish:
 
-* implementation from API;
-* library API from internal implementation surface;
-* library consumer from end user;
-* equivalent implementation from equivalent public contract.
+- implementation from API;
+- library API from internal implementation surface;
+- library consumer from end user;
+- equivalent implementation from equivalent public contract.
 
 ---
 
@@ -154,11 +167,13 @@ I would make these **short conceptual sections**, each derived from the same mod
 
 ## 3.1 `## Consumidores: una biblioteca existe para ser integrada`
 
-The current lesson says that libraries are primarily intended for developers incorporating them into other applications. Keep that content, but promote **consumer** to a first-class term. ([DIBS][1])
+The current lesson says that libraries are primarily intended for developers incorporating them into other applications.
+Keep that content, but promote **consumer** to a first-class term. ([DIBS][1])
 
 Introduce:
 
-> Un consumidor es cualquier código situado fuera de la frontera de implementación que depende de la API de la biblioteca.
+> Un consumidor es cualquier código situado fuera de la frontera de implementación que depende de la API de la
+> biblioteca.
 
 Important nuance:
 
@@ -166,11 +181,12 @@ Important nuance:
 
 That lets the concept work equally well for:
 
-* Maven Central libraries;
-* internal organizational libraries;
-* modules consumed only inside a monorepo.
+- Maven Central libraries;
+- internal organizational libraries;
+- modules consumed only inside a monorepo.
 
-The current lesson already correctly notes that public versus private distribution does not change the underlying nature of a library. ([DIBS][1])
+The current lesson already correctly notes that public versus private distribution does not change the underlying nature
+of a library. ([DIBS][1])
 
 ---
 
@@ -178,23 +194,27 @@ The current lesson already correctly notes that public versus private distributi
 
 This concept needs to become explicit; currently “superficie pública” appears briefly but is not developed. ([DIBS][1])
 
-Define API surface operationally as the set of exposed elements through which consumers can depend on the library, for example:
+Define API surface operationally as the set of exposed elements through which consumers can depend on the library, for
+example:
 
-* names;
-* types;
-* functions;
-* properties;
-* constructors;
-* parameters;
-* return types;
-* exceptions/errors;
-* observable semantics.
+- names;
+- types;
+- functions;
+- properties;
+- constructors;
+- parameters;
+- return types;
+- exceptions/errors;
+- observable semantics.
 
 Then establish:
 
-> **Cada elemento que hacemos parte de la superficie crea una nueva forma en que código externo puede depender de la biblioteca.**
+> **Cada elemento que hacemos parte de la superficie crea una nueva forma en que código externo puede depender de la
+> biblioteca.**
 
-This anticipates, without teaching yet, the “minimal useful API” principle in Lesson 1C. The official Kotlin library-author guidelines similarly treat API clarity, predictability, and backward compatibility as core library-design concerns. ([Kotlin][4])
+This anticipates, without teaching yet, the “minimal useful API” principle in Lesson 1C. The official Kotlin
+library-author guidelines similarly treat API clarity, predictability, and backward compatibility as core library-design
+concerns. ([Kotlin][4])
 
 I would avoid talking about ABI mechanics here.
 
@@ -210,9 +230,7 @@ Rather than:
 
 emphasize:
 
-[
-\text{API surface} \neq \text{contract}
-]
+[ \text{API surface} \neq \text{contract} ]
 
 The **surface** answers:
 
@@ -232,11 +250,11 @@ The surface tells us there is a function with a particular signature.
 
 The contract additionally includes questions such as:
 
-* what does `null` mean?
-* can the function perform I/O?
-* can it fail?
-* what constitutes the same user?
-* are repeated calls expected to observe updated state?
+- what does `null` mean?
+- can the function perform I/O?
+- can it fail?
+- what constitutes the same user?
+- are repeated calls expected to observe updated state?
 
 No need to answer these questions yet. Their purpose is to show that **syntax is only part of an API contract**.
 
@@ -250,15 +268,10 @@ This is the most important new conceptual relationship.
 
 Present:
 
-[
-\text{library boundary}
-=======================
+# [ \text{library boundary}
 
-\begin{cases}
-\text{exposed contract} \
-\text{hidden implementation}
-\end{cases}
-]
+\begin{cases} \text{exposed contract}\
+\text{hidden implementation} \end{cases} ]
 
 Then state:
 
@@ -266,9 +279,12 @@ Then state:
 
 The implementation should remain free to change where consumers cannot observe or depend on those choices.
 
-This connects directly to information hiding. Parnas' classic modularity argument is especially appropriate as a foundational reference: modules should hide design decisions likely to change rather than merely correspond to steps in processing. ([ACM Digital Library][5])
+This connects directly to information hiding. Parnas' classic modularity argument is especially appropriate as a
+foundational reference: modules should hide design decisions likely to change rather than merely correspond to steps in
+processing. ([ACM Digital Library][5])
 
-Do **not** repeat Lesson 1C's material about protecting domain invariants. Lesson 1B should establish encapsulation as **boundary management**; Lesson 1C can later teach how that boundary is designed well. ([DIBS][3])
+Do **not** repeat Lesson 1C's material about protecting domain invariants. Lesson 1B should establish encapsulation as
+**boundary management**; Lesson 1C can later teach how that boundary is designed well. ([DIBS][3])
 
 ---
 
@@ -288,11 +304,13 @@ cambiarla tiene un costo
 
 The key statement should be:
 
-> **Lo interno puede cambiar mientras preserve el contrato observable; lo expuesto debe evolucionar considerando las dependencias que ya existen.**
+> **Lo interno puede cambiar mientras preserve el contrato observable; lo expuesto debe evolucionar considerando las
+> dependencias que ya existen.**
 
 This is the conceptual seed for Lesson 1D on API evolution.
 
-Kotlin's current library-author guidance explicitly treats backward compatibility as a central concern because consumers compile and write source code against published APIs. ([Kotlin][6])
+Kotlin's current library-author guidance explicitly treats backward compatibility as a central concern because consumers
+compile and write source code against published APIs. ([Kotlin][6])
 
 Again, stop before teaching source/binary/behavioral compatibility in detail.
 
@@ -302,11 +320,14 @@ Again, stop before teaching source/binary/behavioral compatibility in detail.
 
 This should synthesize the change requested:
 
-> **Para quien implementa, una biblioteca contiene archivos, algoritmos, estructuras de datos y decisiones internas. Para quien la consume, esas decisiones son irrelevantes mientras no atraviesen la frontera de la API. Lo que puede conocer, usar y depender de la biblioteca es aquello que esta expone.**
+> **Para quien implementa, una biblioteca contiene archivos, algoritmos, estructuras de datos y decisiones internas.
+> Para quien la consume, esas decisiones son irrelevantes mientras no atraviesen la frontera de la API. Lo que puede
+> conocer, usar y depender de la biblioteca es aquello que esta expone.**
 
 Then add the crucial qualification:
 
-> This does **not** mean implementation quality is irrelevant. It means implementation details do not form part of the consumer-facing identity **unless they become observable through the contract**.
+> This does **not** mean implementation quality is irrelevant. It means implementation details do not form part of the
+> consumer-facing identity **unless they become observable through the contract**.
 
 That avoids teaching an excessively strong version of “a library is only its API.”
 
@@ -316,14 +337,15 @@ That avoids teaching an excessively strong version of “a library is only its A
 
 The current lesson is fairly broad. After the API discussion it spends substantial space on:
 
-* why libraries exist;
-* open-source libraries;
-* proprietary libraries;
-* build versus adopt;
-* categories of libraries;
-* popular library examples. ([DIBS][1])
+- why libraries exist;
+- open-source libraries;
+- proprietary libraries;
+- build versus adopt;
+- categories of libraries;
+- popular library examples. ([DIBS][1])
 
-Most of that is reasonable information, but it weakens Lesson 1B's new role as **the conceptual bridge from taxonomy to API design**.
+Most of that is reasonable information, but it weakens Lesson 1B's new role as **the conceptual bridge from taxonomy to
+API design**.
 
 I would therefore refactor it.
 
@@ -335,10 +357,10 @@ Keep as a short motivation section.
 
 Retain:
 
-* reuse;
-* shared maintenance;
-* interoperability;
-* abstraction of reusable capabilities.
+- reuse;
+- shared maintenance;
+- interoperability;
+- abstraction of reusable capabilities.
 
 Reduce it to roughly half its current size.
 
@@ -346,7 +368,8 @@ Reduce it to roughly half its current size.
 
 Keep as a short callout rather than a major subsection.
 
-This is useful course philosophy, especially given DIBS's preference to reuse mature dependencies instead of reinventing infrastructure.
+This is useful course philosophy, especially given DIBS's preference to reuse mature dependencies instead of reinventing
+infrastructure.
 
 ---
 
@@ -356,7 +379,8 @@ This is useful course philosophy, especially given DIBS's preference to reuse ma
 
 ### `Software propietario`
 
-Their essential teaching point—**public/private distribution does not alter the consumer-contract model**—can be reduced to one paragraph near the definition.
+Their essential teaching point—**public/private distribution does not alter the consumer-contract model**—can be reduced
+to one paragraph near the definition.
 
 The organizational governance material is useful, but not essential to Lesson 1B's conceptual objective.
 
@@ -364,13 +388,15 @@ The organizational governance material is useful, but not essential to Lesson 1B
 
 I would **remove this section from 1B**.
 
-Lesson 1A has already taught taxonomy and distribution dimensions extensively, including package versus artifact role. ([DIBS][2]) Reintroducing another taxonomy immediately afterward adds repetition without advancing the conceptual model.
+Lesson 1A has already taught taxonomy and distribution dimensions extensively, including package versus artifact role.
+([DIBS][2]) Reintroducing another taxonomy immediately afterward adds repetition without advancing the conceptual model.
 
 Static/dynamic linkage can return later when packaging/JVM/native distribution makes it operationally relevant.
 
 ### `Ejemplos de bibliotecas populares`
 
-Either remove it or reduce it to a compact comparative table of 3–4 libraries used to illustrate **different API surfaces**, not ecosystem trivia.
+Either remove it or reduce it to a compact comparative table of 3–4 libraries used to illustrate **different API
+surfaces**, not ecosystem trivia.
 
 For example:
 
@@ -387,7 +413,8 @@ The question becomes **“what does this library expose?”**, which reinforces 
 
 # Phase 5 — Rebuild the conclusion around one causal chain
 
-The current conclusion already says that library value depends on the clarity, coherence, and stability of its contract. ([DIBS][1]) I would make it much tighter.
+The current conclusion already says that library value depends on the clarity, coherence, and stability of its contract.
+([DIBS][1]) I would make it much tighter.
 
 The closing mental model should be:
 
@@ -407,15 +434,16 @@ and consumer dependencies create pressure for stability
 
 Then reduce `Puntos clave` to approximately five statements:
 
-* **Biblioteca = implementación + API consumida externamente.**
-* **La API es la superficie a través de la cual otro código integra la biblioteca.**
-* **El contrato incluye tanto la forma de esa superficie como su comportamiento observable.**
-* **Encapsular significa mantener decisiones internas fuera de aquello de lo que los consumidores pueden depender.**
-* **Exponer una decisión crea dependencias y, por tanto, compromisos de estabilidad.**
+- **Biblioteca = implementación + API consumida externamente.**
+- **La API es la superficie a través de la cual otro código integra la biblioteca.**
+- **El contrato incluye tanto la forma de esa superficie como su comportamiento observable.**
+- **Encapsular significa mantener decisiones internas fuera de aquello de lo que los consumidores pueden depender.**
+- **Exponer una decisión crea dependencias y, por tanto, compromisos de estabilidad.**
 
 The closing reflection can then point directly to Lesson 1C:
 
-> **Si la API define aquello de lo que otras personas pueden depender, la siguiente pregunta es inevitable: ¿qué deberíamos exponer y cómo deberíamos diseñarlo?**
+> **Si la API define aquello de lo que otras personas pueden depender, la siguiente pregunta es inevitable: ¿qué
+> deberíamos exponer y cómo deberíamos diseñarlo?**
 
 That is almost a perfect handoff to `Diseñar la API de una biblioteca desde el dominio`. ([DIBS][3])
 
@@ -427,41 +455,42 @@ I would implement the changes in this order:
 
 1. **Freeze the conceptual boundary** between 1A, 1B, and 1C:
 
-   * 1A = *what kind of artifact are we building?*
-   * 1B = *what makes a library's consumer-facing boundary special?*
-   * 1C = *how do we design that boundary well?*
+   - 1A = _what kind of artifact are we building?_
+   - 1B = _what makes a library's consumer-facing boundary special?_
+   - 1C = _how do we design that boundary well?_
 
 2. Rewrite the **abstract and opening** around `implementation → API → consumer`.
 
-3. Introduce the six concepts in causal order:
-   **consumer → surface → contract → encapsulation → dependency → stability**.
+3. Introduce the six concepts in causal order: **consumer → surface → contract → encapsulation → dependency →
+   stability**.
 
 4. Move/compress the broad ecosystem material so it does not interrupt that argument.
 
 5. Rewrite the conclusion to mirror the same causal chain.
 
-6. Review 1C afterward only for **duplication**, especially its current introductory statement that “a library is an API.” Do not move its domain modeling/minimality/usability material backward into 1B. ([DIBS][3])
+6. Review 1C afterward only for **duplication**, especially its current introductory statement that “a library is an
+   API.” Do not move its domain modeling/minimality/usability material backward into 1B. ([DIBS][3])
 
 7. Expand the bibliography with at least:
 
-   * Parnas for information hiding/modular boundaries; ([ACM Digital Library][5])
-   * Kotlin's current Library Authors' Guidelines for modern API-design concerns; ([Kotlin][4])
-   * Kotlin's compatibility guidance as the forward reference for the stability argument. ([Kotlin][6])
+   - Parnas for information hiding/modular boundaries; ([ACM Digital Library][5])
+   - Kotlin's current Library Authors' Guidelines for modern API-design concerns; ([Kotlin][4])
+   - Kotlin's compatibility guidance as the forward reference for the stability argument. ([Kotlin][6])
 
 ## Explicit non-goals
 
 I would **not** add these to Lesson 1B:
 
-* detailed Kotlin visibility rules;
-* `public`/`internal`/`private` mechanics;
-* JVM ABI;
-* source vs. binary compatibility details;
-* SemVer mechanics;
-* API testing;
-* domain modeling techniques;
-* value classes, sealed types, variance, extensions, or other Kotlin-specific API mechanisms;
-* package publication;
-* Gradle.
+- detailed Kotlin visibility rules;
+- `public`/`internal`/`private` mechanics;
+- JVM ABI;
+- source vs. binary compatibility details;
+- SemVer mechanics;
+- API testing;
+- domain modeling techniques;
+- value classes, sealed types, variance, extensions, or other Kotlin-specific API mechanisms;
+- package publication;
+- Gradle.
 
 Those all have better places later in DIBS.
 
@@ -469,16 +498,12 @@ Those all have better places later in DIBS.
 
 After the refactor, the first three lessons form a much cleaner argument:
 
-[
-\boxed{
-\begin{aligned}
-\text{1A:}&\quad \text{What artifact are we building?}\
+[ \boxed{ \begin{aligned} \text{1A:}&\quad \text{What artifact are we building?}\
 \text{1B:}&\quad \text{What does a library expose, hide, and promise?}\
-\text{1C:}&\quad \text{How should we design what it exposes?}
-\end{aligned}}
-]
+\text{1C:}&\quad \text{How should we design what it exposes?} \end{aligned}} ]
 
-That is the change I would prioritize most: **1B stops being primarily a broad introduction to libraries and becomes the conceptual lesson about the library boundary.**
+That is the change I would prioritize most: **1B stops being primarily a broad introduction to libraries and becomes the
+conceptual lesson about the library boundary.**
 
 [1]: https://dibs.ravenhill.cl/notes/software-libraries/what-is/ "La biblioteca como artefacto de software | DIBS"
 [2]: https://dibs.ravenhill.cl/notes/software-libraries/artifacts-taxonomy/ "Taxonomía básica de artefactos de software | DIBS"

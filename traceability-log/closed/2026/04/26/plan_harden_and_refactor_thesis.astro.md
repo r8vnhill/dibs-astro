@@ -13,39 +13,33 @@ Implemented in this cycle.
 
 ## Summary
 
-Refactor `Thesis.astro` in small TDD cycles so runtime policies move out of
-the template, invalid reference metadata fails deterministically, and the
-component becomes easier to test without changing its public API.
+Refactor `Thesis.astro` in small TDD cycles so runtime policies move out of the template, invalid reference metadata
+fails deterministically, and the component becomes easier to test without changing its public API.
 
 The public API remains stable:
 
 - props: `title`, `url`, `institution`, `institutionUrl`, `author`
 - slots: `title`, `institution`, `author`, `description`
 
-This cycle is intentionally limited to `Thesis.astro` and the minimum shared
-helpers needed to make the refactor safe. Broader migration of the reference
-family is a follow-up, not part of this plan.
+This cycle is intentionally limited to `Thesis.astro` and the minimum shared helpers needed to make the refactor safe.
+Broader migration of the reference family is a follow-up, not part of this plan.
 
 ## Goals
 
 - Fix the `institutionUrl` contract so slot-backed institution markup is valid.
 - Validate `url` at runtime, not only through TypeScript props.
 - Remove DEV-only validation for metadata that should fail in build/test.
-- Move runtime policy into a pure resolver that can be tested without Astro
-  rendering.
+- Move runtime policy into a pure resolver that can be tested without Astro rendering.
 - Keep the `.astro` template focused on structure.
-- Prepare reusable rendering abstractions without forcing premature migration
-  across all reference components.
+- Prepare reusable rendering abstractions without forcing premature migration across all reference components.
 
 ## Non-goals
 
 - Do not change the public component API.
-- Do not migrate `Video`, `WebPage`, `ScholarlyArticle`, or other references in
-  this cycle.
+- Do not migrate `Video`, `WebPage`, `ScholarlyArticle`, or other references in this cycle.
 - Do not introduce `fast-check` or a new test dependency yet.
 - Do not replace the current slot-first content model.
-- Do not remove `set:html` unless the slot resolution design changes
-  substantially.
+- Do not remove `set:html` unless the slot resolution design changes substantially.
 
 ## Design Direction
 
@@ -169,8 +163,7 @@ export function assertLinkedFallbackHasLabel(input: {
 
 ### Shared external link attributes
 
-Move external link attributes to a shared reference UI module only when the first
-`Thesis` refactor needs them.
+Move external link attributes to a shared reference UI module only when the first `Thesis` refactor needs them.
 
 ```ts
 import type { HTMLAttributes } from "astro/types";
@@ -186,8 +179,7 @@ This keeps the shared constant type-checked without changing rendering behavior.
 
 ### Slot HTML trust boundary
 
-Keep `set:html`, but avoid letting arbitrary strings look equivalent to
-rendered slot HTML.
+Keep `set:html`, but avoid letting arbitrary strings look equivalent to rendered slot HTML.
 
 If the field model is touched, introduce a branded or wrapper type:
 
@@ -207,8 +199,8 @@ Then slot-backed fields should carry:
 }
 ```
 
-Do not introduce this wrapper if it causes a large cross-component refactor.
-It is valuable, but optional for this cycle.
+Do not introduce this wrapper if it causes a large cross-component refactor. It is valuable, but optional for this
+cycle.
 
 ## TDD Cycles
 
@@ -285,8 +277,8 @@ describe("Thesis required URL contract", () => {
 
 - Add `resolveRequiredHref(...)`.
 - Use the normalized URL in the title anchor.
-- Keep the helper in the UI references layer, not in the domain layer, unless
-  URL validation is already a domain-wide reference invariant.
+- Keep the helper in the UI references layer, not in the domain layer, unless URL validation is already a domain-wide
+  reference invariant.
 
 #### Gate
 
@@ -380,8 +372,7 @@ reference.author;
 reference.description;
 ```
 
-Do not extract render subcomponents yet unless the template remains hard to read
-after the resolver extraction.
+Do not extract render subcomponents yet unless the template remains hard to read after the resolver extraction.
 
 #### Render tests
 
@@ -412,8 +403,7 @@ This cycle is complete when:
 Add or update render assertions so external links consistently include:
 
 ```html
-target="_blank"
-rel="noopener noreferrer"
+target="_blank" rel="noopener noreferrer"
 ```
 
 #### Implementation
@@ -434,9 +424,8 @@ This cycle is complete when:
 
 This cycle is conditional.
 
-Do this only if the branch pattern is still repeated enough to justify the
-abstraction, or if another reference component is migrated immediately after
-`Thesis`.
+Do this only if the branch pattern is still repeated enough to justify the abstraction, or if another reference
+component is migrated immediately after `Thesis`.
 
 Potential components:
 
@@ -452,9 +441,8 @@ Suggested extraction order:
 2. `ReferenceMetaField.astro`
 3. `ReferenceDescription.astro`, only if it removes meaningful duplication
 
-Do not introduce these components just because they are theoretically reusable.
-They should make `Thesis.astro` simpler now or make the next component migration
-substantially safer.
+Do not introduce these components just because they are theoretically reusable. They should make `Thesis.astro` simpler
+now or make the next component migration substantially safer.
 
 #### Gate
 
@@ -497,8 +485,7 @@ Keep explicit tests for special cases:
 
 Do not add PBT in this cycle.
 
-Reconsider `fast-check` later only if shared normalization helpers become a
-small library with invariants such as:
+Reconsider `fast-check` later only if shared normalization helpers become a small library with invariants such as:
 
 - blank-like input always resolves to missing;
 - non-blank normalized text is stable;
@@ -535,8 +522,7 @@ pnpm run check
 ## Acceptance Criteria
 
 - `institutionUrl` with meaningful slot-backed `institution` is valid.
-- `institutionUrl` without any meaningful institution label throws
-  `ReferenceContractError`.
+- `institutionUrl` without any meaningful institution label throws `ReferenceContractError`.
 - `url: ""` and `url: "   "` throw `ReferenceContractError`.
 - Valid `url` values are trimmed before rendering.
 - Slots still take precedence over prop fallbacks.
@@ -550,21 +536,18 @@ pnpm run check
 ## Assumptions
 
 - Invalid metadata should fail in tests/build, not only during development.
-- Slot-rendered HTML is trusted because it comes from caller-authored Astro
-  markup, but the trust boundary should remain explicit.
-- The resolver belongs near the UI reference components unless the same
-  invariant is later needed by non-UI bibliography code.
-- This cycle improves `Thesis.astro` first; other reference components migrate
-  later, one at a time.
+- Slot-rendered HTML is trusted because it comes from caller-authored Astro markup, but the trust boundary should remain
+  explicit.
+- The resolver belongs near the UI reference components unless the same invariant is later needed by non-UI bibliography
+  code.
+- This cycle improves `Thesis.astro` first; other reference components migrate later, one at a time.
 
 ## Follow-up Work
 
 After this plan lands, consider a second refactor cycle for the reference family:
 
 1. Move `Video`, `WebPage`, and `ScholarlyArticle` to the same resolver pattern.
-2. Generalize repeated metadata rendering only after two or more components share
-   the same shape.
+2. Generalize repeated metadata rendering only after two or more components share the same shape.
 3. Add PBT for shared normalization helpers if they become central enough.
-4. Review whether `$domain/reference-content` is truly domain logic or whether
-   rendered slot/content resolution should live entirely in the UI reference
-   layer.
+4. Review whether `$domain/reference-content` is truly domain logic or whether rendered slot/content resolution should
+   live entirely in the UI reference layer.

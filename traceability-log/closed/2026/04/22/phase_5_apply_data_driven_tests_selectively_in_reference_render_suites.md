@@ -4,9 +4,11 @@ Status: implemented on 2026-04-22
 
 ## Summary
 
-Introduce `test.each(...)` only where a suite already expresses a genuine contract matrix with the same setup and assertion shape across multiple cases. Keep singular or domain-specific behaviors as explicitly named tests.
+Introduce `test.each(...)` only where a suite already expresses a genuine contract matrix with the same setup and
+assertion shape across multiple cases. Keep singular or domain-specific behaviors as explicitly named tests.
 
-This phase is a readability and maintainability pass, not a behavior change. The goal is to remove low-value duplication in the reference render suites while preserving scan-ability, precise failure output, and suite-local intent.
+This phase is a readability and maintainability pass, not a behavior change. The goal is to remove low-value duplication
+in the reference render suites while preserving scan-ability, precise failure output, and suite-local intent.
 
 ## Objectives
 
@@ -43,7 +45,8 @@ Prefer standalone tests when any of the following apply:
 Use DDT when there are:
 
 - at least 3 rows with the same setup and assertion shape; or
-- 2 rows only when the duplication is obvious, the row names are strong, and the table is clearly shorter than separate tests.
+- 2 rows only when the duplication is obvious, the row names are strong, and the table is clearly shorter than separate
+  tests.
 
 ## Refactoring Strategy
 
@@ -71,7 +74,8 @@ Parameterize precedence tests only when each row expresses the same rule:
 
 Apply this selectively:
 
-- `Thesis`: table `title` and `author`; keep `institution` standalone because it also carries the “not auto-wrapped as link” nuance.
+- `Thesis`: table `title` and `author`; keep `institution` standalone because it also carries the “not auto-wrapped as
+  link” nuance.
 - `ScholarlyArticle`: table `title`, `publication`, and `author`.
 - `Video`: table `title`, `platform`, and `author`.
 - `WebPage`: only table precedence cases if the final matrix remains immediately readable.

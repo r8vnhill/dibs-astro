@@ -2,11 +2,11 @@
 
 ## Summary
 
-Reduce root-level clutter under `scripts/lib/bibliography/` by moving implementation files into focused
-subdirectories while preserving the existing public facade imports.
+Reduce root-level clutter under `scripts/lib/bibliography/` by moving implementation files into focused subdirectories
+while preserving the existing public facade imports.
 
-This is a layout-only refactor. It should improve discoverability, clarify architectural boundaries,
-and make future bibliography-builder work easier without changing catalog behavior.
+This is a layout-only refactor. It should improve discoverability, clarify architectural boundaries, and make future
+bibliography-builder work easier without changing catalog behavior.
 
 The orchestration entrypoint remains:
 
@@ -29,7 +29,8 @@ scripts/lib/bibliography-catalog-builder.validation.mjs
 - Separate orchestration, reader normalization, graph construction, and shared constants.
 - Preserve the current public import surface.
 - Keep the refactor mechanical and low-risk.
-- Avoid behavior changes in validation, normalization, URL handling, integer parsing, duplicate handling, and pending-revision logic.
+- Avoid behavior changes in validation, normalization, URL handling, integer parsing, duplicate handling, and
+  pending-revision logic.
 - Make internal module boundaries easier to understand.
 - Keep tests focused on public facades unless they intentionally verify internal implementation details.
 - Preserve Phase 4 reader-facade changes instead of reverting or rewriting them.
@@ -180,8 +181,8 @@ Re-export record/reader low-level APIs from:
 ./bibliography/reader/records.mjs
 ```
 
-If existing tests or scripts import compacting helpers through this facade, keep those exports too.
-Otherwise, do not widen the public surface.
+If existing tests or scripts import compacting helpers through this facade, keep those exports too. Otherwise, do not
+widen the public surface.
 
 ### `bibliography-catalog-builder.graph.mjs`
 
@@ -207,8 +208,8 @@ Re-export validation helpers from:
 ./bibliography/reader/validation.mjs
 ```
 
-If graph-level validation later deserves its own module, split that in a future phase. For this
-phase, preserve the current public behavior.
+If graph-level validation later deserves its own module, split that in a future phase. For this phase, preserve the
+current public behavior.
 
 ## Implementation Plan
 
@@ -331,8 +332,8 @@ import { ... } from "./pending-revision.mjs";
 import { ... } from "../shared/constants.mjs";
 ```
 
-Avoid importing from root-level public facades inside implementation modules. Internal modules should
-depend on nearby implementation paths, not compatibility facades.
+Avoid importing from root-level public facades inside implementation modules. Internal modules should depend on nearby
+implementation paths, not compatibility facades.
 
 ### 5. Update `catalog-builder.mjs`
 
@@ -346,8 +347,8 @@ import { collectPendingRevisionState } from "./graph/pending-revision.mjs";
 import { ... } from "./shared/constants.mjs";
 ```
 
-Preserve the orchestration role of this file. Do not use the layout refactor as an opportunity to
-change builder behavior.
+Preserve the orchestration role of this file. Do not use the layout refactor as an opportunity to change builder
+behavior.
 
 ### 6. Update Public Facades
 
@@ -396,20 +397,20 @@ Suggested test:
 
 ```js
 describe("bibliography public facades", () => {
-  it("exports the catalog builder facade", async () => {
-    const module = await import("../lib/bibliography-catalog-builder.mjs");
-    expect(module).toHaveProperty("buildCatalogArtifactFromTurtle");
-  });
+    it("exports the catalog builder facade", async () => {
+        const module = await import("../lib/bibliography-catalog-builder.mjs");
+        expect(module).toHaveProperty("buildCatalogArtifactFromTurtle");
+    });
 
-  it("exports the records facade", async () => {
-    const module = await import("../lib/bibliography-catalog-builder.records.mjs");
-    expect(module).toHaveProperty("createRecord");
-  });
+    it("exports the records facade", async () => {
+        const module = await import("../lib/bibliography-catalog-builder.records.mjs");
+        expect(module).toHaveProperty("createRecord");
+    });
 
-  it("exports the graph facade", async () => {
-    const module = await import("../lib/bibliography-catalog-builder.graph.mjs");
-    expect(module).toHaveProperty("buildReferenceNode");
-  });
+    it("exports the graph facade", async () => {
+        const module = await import("../lib/bibliography-catalog-builder.graph.mjs");
+        expect(module).toHaveProperty("buildReferenceNode");
+    });
 });
 ```
 
@@ -429,8 +430,8 @@ graph/   - catalog graph-node construction and relation validation
 shared/  - constants shared by reader, graph, and orchestration
 ```
 
-Also document that root-level `bibliography-catalog-builder*.mjs` files are compatibility/public
-facades and should remain the preferred import path for most script consumers.
+Also document that root-level `bibliography-catalog-builder*.mjs` files are compatibility/public facades and should
+remain the preferred import path for most script consumers.
 
 ## Import Rules After the Refactor
 
@@ -441,8 +442,8 @@ Use these rules to keep the layout clean.
 Implementation modules may import nearby implementation modules:
 
 ```js
-import { compactId } from "./compact.mjs";
 import { DIBS } from "../shared/constants.mjs";
+import { compactId } from "./compact.mjs";
 import { buildReferenceNode } from "./nodes.mjs";
 ```
 
@@ -537,17 +538,14 @@ This phase is complete when:
 
 ## Implementation Notes
 
-- Moved implementation modules into `reader/`, `graph/`, and `shared/`, leaving
-  `catalog-builder.mjs` as the only root-level implementation file under `scripts/lib/bibliography/`.
+- Moved implementation modules into `reader/`, `graph/`, and `shared/`, leaving `catalog-builder.mjs` as the only
+  root-level implementation file under `scripts/lib/bibliography/`.
 - Updated public facades so existing `bibliography-catalog-builder*.mjs` imports continue to work.
-- Updated internal implementation imports to use the new nearby paths instead of compatibility
-  facades.
-- Updated implementation-focused tests that import internals, while preserving existing facade
-  imports in behavior-oriented tests.
-- Added `scripts/__tests__/bibliography-public-facades.test.ts` to lock the public facade import
-  surface.
-- Updated `src/data/bibliography/README.md` with the new `reader/`, `graph/`, and `shared/`
-  responsibilities.
+- Updated internal implementation imports to use the new nearby paths instead of compatibility facades.
+- Updated implementation-focused tests that import internals, while preserving existing facade imports in
+  behavior-oriented tests.
+- Added `scripts/__tests__/bibliography-public-facades.test.ts` to lock the public facade import surface.
+- Updated `src/data/bibliography/README.md` with the new `reader/`, `graph/`, and `shared/` responsibilities.
 
 ## Verification
 
@@ -569,8 +567,8 @@ rg 'from "\./(constants|catalog-reader|graph|graph\.nodes|graph\.support|graph\.
 rg 'from "\.\./(records|compact|validation|constants|catalog-reader|graph|graph\.nodes|graph\.support|graph\.usage|pending-revision)\.mjs"' scripts/lib/bibliography
 ```
 
-Both searches returned no matches. `Get-ChildItem scripts/lib/bibliography -File` shows only
-`catalog-builder.mjs` at the implementation root.
+Both searches returned no matches. `Get-ChildItem scripts/lib/bibliography -File` shows only `catalog-builder.mjs` at
+the implementation root.
 
 ## Risks and Mitigations
 
@@ -580,23 +578,22 @@ Mitigation: keep root-level facade files and add import smoke tests for each fac
 
 ### Risk: Internal modules accidentally import public facades
 
-Mitigation: use `rg` checks and document import rules. Implementation modules should import nearby
-implementation files directly.
+Mitigation: use `rg` checks and document import rules. Implementation modules should import nearby implementation files
+directly.
 
 ### Risk: The refactor mixes layout changes with behavior changes
 
-Mitigation: keep commits small and mechanical. Move files, update imports, run tests. Avoid changing
-logic unless required by the move.
+Mitigation: keep commits small and mechanical. Move files, update imports, run tests. Avoid changing logic unless
+required by the move.
 
 ### Risk: Test imports become inconsistent
 
-Mitigation: use public facades for behaviour-oriented tests and internal paths only for
-implementation-focused tests.
+Mitigation: use public facades for behaviour-oriented tests and internal paths only for implementation-focused tests.
 
 ### Risk: Relative paths become hard to maintain
 
-Mitigation: keep the directory depth shallow. Do not introduce additional nested folders unless a
-clear new boundary appears.
+Mitigation: keep the directory depth shallow. Do not introduce additional nested folders unless a clear new boundary
+appears.
 
 ## Suggested Commit Breakdown
 

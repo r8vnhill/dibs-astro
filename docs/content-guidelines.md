@@ -17,15 +17,15 @@ rather than let "curso universitario" stand on its own.
 ## Development status stays out of primary navigation
 
 Learner-facing primary navigation and information architecture (the homepage, section headings, CTAs) describe the
-**course**, not the **website's** implementation progress. Roadmap or work-in-progress framing ("en construcción",
-"en evolución", "próximamente" describing the *site* rather than a *course resource*) does not belong in that
-surface. It is fine elsewhere (issue trackers, traceability logs, internal docs) — just not in what a learner reads
-to understand the course.
+**course**, not the **website's** implementation progress. Roadmap or work-in-progress framing ("en construcción", "en
+evolución", "próximamente" describing the _site_ rather than a _course resource_) does not belong in that surface. It is
+fine elsewhere (issue trackers, traceability logs, internal docs) — just not in what a learner reads to understand the
+course.
 
 ## Unavailable resources are never presented as navigation
 
-If a destination doesn't exist yet (no route, no published content), it must not look interactive: no `href`, no
-click handler, no disabled `<button>`. Represent it as status text, e.g.:
+If a destination doesn't exist yet (no route, no published content), it must not look interactive: no `href`, no click
+handler, no disabled `<button>`. Represent it as status text, e.g.:
 
 ```html
 <span aria-label="Temario, próximamente">
@@ -38,8 +38,8 @@ itself.
 
 ## Reference architectures are contextual, not universal rules
 
-When learner-facing content describes the site's own architecture (layers, patterns), frame it as one example, not
-a prescription every library must follow. Prefer:
+When learner-facing content describes the site's own architecture (layers, patterns), frame it as one example, not a
+prescription every library must follow. Prefer:
 
 > "El sitio DIBS usa esta organización como arquitectura de referencia."
 
@@ -49,6 +49,6 @@ over:
 
 ## Consistent terminology
 
-Learner-facing Spanish terminology should stay consistent across pages — the same course concept should read the
-same way wherever it appears (e.g. "Apuntes" always means the notes surface, not "Clases" or "Lecciones" used
-interchangeably for the same thing).
+Learner-facing Spanish terminology should stay consistent across pages — the same course concept should read the same
+way wherever it appears (e.g. "Apuntes" always means the notes surface, not "Clases" or "Lecciones" used interchangeably
+for the same thing).

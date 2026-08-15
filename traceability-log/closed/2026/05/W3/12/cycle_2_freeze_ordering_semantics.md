@@ -2,18 +2,19 @@
 
 ## Summary
 
-Freeze the ordering contract for `selectExportEntries(manifest, selection)` in `scripts/lib/pdf-export-cli.mjs` after valid selection modes have already been characterized.
+Freeze the ordering contract for `selectExportEntries(manifest, selection)` in `scripts/lib/pdf-export-cli.mjs` after
+valid selection modes have already been characterized.
 
-Status: implemented as ordering characterization tests in `scripts/__tests__/pdf-export-cli.test.ts`. No production
-code was changed in this cycle.
+Status: implemented as ordering characterization tests in `scripts/__tests__/pdf-export-cli.test.ts`. No production code
+was changed in this cycle.
 
 This cycle is **test-first and behaviour-preserving**. It focuses only on observable ordering:
 
-* `kind: "all"` returns selected entries in manifest order.
-* `kind: "subtree"` returns matching entries in manifest order.
-* `kind: "route"` remains a single-entry contract.
-* subtree selection does not leak into similarly named sibling routes.
-* selection returns a fresh result array and does not mutate the manifest fixture.
+- `kind: "all"` returns selected entries in manifest order.
+- `kind: "subtree"` returns matching entries in manifest order.
+- `kind: "route"` remains a single-entry contract.
+- subtree selection does not leak into similarly named sibling routes.
+- selection returns a fresh result array and does not mutate the manifest fixture.
 
 Failure semantics are out of scope for this cycle.
 
@@ -23,23 +24,23 @@ Failure semantics are out of scope for this cycle.
 
 ### In scope
 
-* Ordering for `all` selection.
-* Ordering for subtree selection.
-* Single-entry exact route behaviour.
-* Sibling-boundary protection for subtree matching.
-* Fresh result array checks.
-* Manifest fixture immutability checks.
+- Ordering for `all` selection.
+- Ordering for subtree selection.
+- Single-entry exact route behaviour.
+- Sibling-boundary protection for subtree matching.
+- Fresh result array checks.
+- Manifest fixture immutability checks.
 
 ### Out of scope
 
-* Missing exact routes.
-* Missing subtree prefixes.
-* Empty CLI selection.
-* Parser conflict handling.
-* Mixed valid/invalid selections.
-* Multi-route request ordering, unless the current helper already supports it.
-* Batch execution.
-* Production refactor.
+- Missing exact routes.
+- Missing subtree prefixes.
+- Empty CLI selection.
+- Parser conflict handling.
+- Mixed valid/invalid selections.
+- Multi-route request ordering, unless the current helper already supports it.
+- Batch execution.
+- Production refactor.
 
 ---
 
@@ -63,12 +64,13 @@ const manifest = [
 
 The important properties are:
 
-* `/notes/build-systems/` appears before the software-libraries subtree;
-* software-libraries descendants are not alphabetical;
-* `/notes/software-libraries-extra/` is a sibling false-positive candidate;
-* the fixture order is the expected output order.
+- `/notes/build-systems/` appears before the software-libraries subtree;
+- software-libraries descendants are not alphabetical;
+- `/notes/software-libraries-extra/` is a sibling false-positive candidate;
+- the fixture order is the expected output order.
 
-Keep the fixture minimal. Add non-exportable entries only if Cycle 1 established that `selectExportEntries()` itself owns exportable filtering.
+Keep the fixture minimal. Add non-exportable entries only if Cycle 1 established that `selectExportEntries()` itself
+owns exportable filtering.
 
 ---
 
@@ -146,7 +148,8 @@ expect(selected.map((entry) => entry.route)).not.toContain(
 );
 ```
 
-This belongs in Cycle 2 because sibling leakage would usually be caused by naïve prefix matching, and prefix matching directly affects the selected ordered set.
+This belongs in Cycle 2 because sibling leakage would usually be caused by naïve prefix matching, and prefix matching
+directly affects the selected ordered set.
 
 ---
 
@@ -175,7 +178,8 @@ Also assert:
 expect(selected).not.toBe(manifest);
 ```
 
-Do **not** add multi-route ordering tests unless the current selection shape actually supports multiple route values. This cycle should not invent future batch semantics.
+Do **not** add multi-route ordering tests unless the current selection shape actually supports multiple route values.
+This cycle should not invent future batch semantics.
 
 ---
 
@@ -193,7 +197,8 @@ After each selection mode, assert:
 expect(manifest).toEqual(originalManifest);
 ```
 
-If the project does not use `structuredClone()` in tests, use the existing cloning convention, such as JSON serialization or a local fixture factory that returns a fresh manifest for each test.
+If the project does not use `structuredClone()` in tests, use the existing cloning convention, such as JSON
+serialization or a local fixture factory that returns a fresh manifest for each test.
 
 Prefer a fresh fixture per test if that matches the suite style:
 
@@ -223,7 +228,8 @@ describe("selectExportEntries ordering", () => {
 });
 ```
 
-A compact alternative is to combine freshness and immutability assertions inside each selection-mode test, but separate tests usually make failures easier to diagnose.
+A compact alternative is to combine freshness and immutability assertions inside each selection-mode test, but separate
+tests usually make failures easier to diagnose.
 
 ---
 
@@ -237,24 +243,24 @@ pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts
 
 Confirm that:
 
-* `all` selection preserves manifest order;
-* subtree selection preserves manifest order;
-* subtree selection excludes sibling routes;
-* exact route selection remains single-entry;
-* selected arrays are not the same object as the manifest;
-* the manifest fixture is unchanged after selection.
+- `all` selection preserves manifest order;
+- subtree selection preserves manifest order;
+- subtree selection excludes sibling routes;
+- exact route selection remains single-entry;
+- selected arrays are not the same object as the manifest;
+- the manifest fixture is unchanged after selection.
 
 ---
 
 # Decisions
 
-* Cycle 2 is test-only.
-* No production refactor belongs here.
-* Manifest order is the only ordering guarantee being pinned.
-* Exact route selection remains a single-entry contract.
-* Multi-route ordering is out of scope unless already supported.
-* Sibling-prefix false positives are included because subtree ordering depends on correct prefix boundaries.
-* Failure semantics belong to a later cycle.
+- Cycle 2 is test-only.
+- No production refactor belongs here.
+- Manifest order is the only ordering guarantee being pinned.
+- Exact route selection remains a single-entry contract.
+- Multi-route ordering is out of scope unless already supported.
+- Sibling-prefix false positives are included because subtree ordering depends on correct prefix boundaries.
+- Failure semantics belong to a later cycle.
 
 ---
 
@@ -268,12 +274,12 @@ Freeze observable ordering for valid selections.
 
 Add or reshape `pdf-export-cli` tests for:
 
-* `all` selection order;
-* subtree selection order;
-* subtree sibling-boundary exclusion;
-* exact route single-entry behaviour;
-* result array freshness;
-* manifest fixture immutability.
+- `all` selection order;
+- subtree selection order;
+- subtree sibling-boundary exclusion;
+- exact route single-entry behaviour;
+- result array freshness;
+- manifest fixture immutability.
 
 ## Smallest move
 
@@ -295,12 +301,12 @@ pnpm test:unit -- scripts/__tests__/pdf-export-cli.test.ts
 
 Cycle 2 is complete when:
 
-* `all` selection has an explicit manifest-order test;
-* subtree selection has an explicit manifest-order test;
-* subtree selection excludes similarly named sibling routes;
-* exact route selection is tested only as a single-entry result;
-* no unsupported multi-route semantics are introduced;
-* selected results are fresh arrays;
-* manifest fixtures are not mutated;
-* no production code is changed;
-* the focused CLI test suite passes.
+- `all` selection has an explicit manifest-order test;
+- subtree selection has an explicit manifest-order test;
+- subtree selection excludes similarly named sibling routes;
+- exact route selection is tested only as a single-entry result;
+- no unsupported multi-route semantics are introduced;
+- selected results are fresh arrays;
+- manifest fixtures are not mutated;
+- no production code is changed;
+- the focused CLI test suite passes.

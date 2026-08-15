@@ -4,7 +4,8 @@
 
 ## Summary
 
-Completed Phase 5 by converting `@ravenhill/shiki-core` validation from "package builds in the workspace" to "package behaves correctly when installed as an external dependency".
+Completed Phase 5 by converting `@ravenhill/shiki-core` validation from "package builds in the workspace" to "package
+behaves correctly when installed as an external dependency".
 
 The validation now proves three things:
 
@@ -17,6 +18,7 @@ The validation now proves three things:
 ### Scripts Implemented
 
 **`packages/shiki-core/scripts/assert-pack-files.mjs`**
+
 - Resolves package root correctly from script location
 - Runs `pnpm pack --dry-run --json` and parses machine-readable output
 - Validates required files: dist/index.js, dist/index.d.ts, README.md, package.json
@@ -24,6 +26,7 @@ The validation now proves three things:
 - Validates package metadata: name, version, type: "module", exports (root-only), main, types, files
 
 **`packages/shiki-core/scripts/validate-packed-consumer.mjs`**
+
 - Creates temp root with subdirectories for tarballs and consumer
 - Builds package and packs to temp directory with `pnpm pack --pack-destination --json`
 - Creates clean consumer project outside workspace
@@ -38,6 +41,7 @@ The validation now proves three things:
 ### Package.json Scripts
 
 Already configured (no changes needed):
+
 ```json
 {
     "scripts": {
@@ -54,6 +58,7 @@ Root workspace already includes `check:shiki-core` in check script.
 ### Documentation Updated
 
 **`packages/shiki-core/AGENTS.md`**
+
 - Added "Package Validation" section
 - Documented pack validation (pack:check)
 - Documented consumer validation (consumer:check)
@@ -64,16 +69,11 @@ Root workspace already includes `check:shiki-core` in check script.
 
 All acceptance criteria met:
 
-✅ `pack:check` resolves paths from package root
-✅ `pack:check` validates tarball contents using `pnpm pack --dry-run --json`
-✅ `consumer:check` builds and installs tarball into clean temp project
-✅ Runtime ESM import validation works
-✅ TypeScript declaration validation works
-✅ Internal subpaths properly blocked
-✅ Temp directories cleaned up safely
-✅ Root check includes packed-consumer validation
-✅ Public API unchanged; no subpath exports added
-✅ Generator pattern works with or without SHIKI_CORE_KEEP_CONSUMER_TEMP
+✅ `pack:check` resolves paths from package root ✅ `pack:check` validates tarball contents using
+`pnpm pack --dry-run --json` ✅ `consumer:check` builds and installs tarball into clean temp project ✅ Runtime ESM
+import validation works ✅ TypeScript declaration validation works ✅ Internal subpaths properly blocked ✅ Temp
+directories cleaned up safely ✅ Root check includes packed-consumer validation ✅ Public API unchanged; no subpath
+exports added ✅ Generator pattern works with or without SHIKI_CORE_KEEP_CONSUMER_TEMP
 
 ## Workflow
 

@@ -1,6 +1,7 @@
 Una biblioteca para **definir, transformar y ejecutar pipelines de procesamiento de datos**.
 
-Este plan comienza **después del cierre efectivo de la unidad 1**. Para esta reorganización, se asume que la unidad 1 ya instaló una base en:
+Este plan comienza **después del cierre efectivo de la unidad 1**. Para esta reorganización, se asume que la unidad 1 ya
+instaló una base en:
 
 - bibliotecas de software;
 - automatización de tareas;
@@ -13,7 +14,9 @@ En cambio, **no** se asumen como ya cubiertos los siguientes temas, aunque apare
 - lógica de negocio vs. lógica de aplicación;
 - modelos de dominio.
 
-Esos contenidos pasan a formar parte explícita del plan que sigue. El caso de estudio mantiene **Kotlin + Gradle** como camino principal para mostrar cómo evoluciona una biblioteca real, con comparaciones puntuales a otros ecosistemas cuando ayuden a aclarar el diseño.
+Esos contenidos pasan a formar parte explícita del plan que sigue. El caso de estudio mantiene **Kotlin + Gradle** como
+camino principal para mostrar cómo evoluciona una biblioteca real, con comparaciones puntuales a otros ecosistemas
+cuando ayuden a aclarar el diseño.
 
 ## Caso de estudio
 
@@ -28,13 +31,15 @@ data
   .collect()
 ```
 
-Este caso permite introducir abstracciones, tooling y testing cuando el diseño los vuelve necesarios, no como bloques aislados.
+Este caso permite introducir abstracciones, tooling y testing cuando el diseño los vuelve necesarios, no como bloques
+aislados.
 
 ## Plan en unidades temáticas
 
 ### Unidad 2. Diseño del problema y límites del dominio
 
-**Foco:** formalizar el problema de la biblioteca desde una mirada DDD, identificando lenguaje, límites y decisiones de modelado antes de bajar a detalles de implementación.
+**Foco:** formalizar el problema de la biblioteca desde una mirada DDD, identificando lenguaje, límites y decisiones de
+modelado antes de bajar a detalles de implementación.
 
 **Temas principales:**
 
@@ -55,14 +60,19 @@ Este caso permite introducir abstracciones, tooling y testing cuando el diseño 
 
 - el estudiantado identifica reglas de negocio, flujos de aplicación y efectos externos sin mezclarlos;
 - el caso de estudio adquiere un lenguaje ubicuo estable para hablar de entidades, capacidades e invariantes;
-- el modelado del dominio empieza a expresarse con tipos que hagan visibles alternativas, estados y combinaciones válidas;
-- las relaciones entre capacidades, roles y comportamiento compartido pueden discutirse como decisiones de modelado, no solo de implementación;
-- queda definido un núcleo conceptual y una estructura inicial de proyecto sobre los que luego se construyen API, ejecución y extensibilidad.
+- el modelado del dominio empieza a expresarse con tipos que hagan visibles alternativas, estados y combinaciones
+  válidas;
+- las relaciones entre capacidades, roles y comportamiento compartido pueden discutirse como decisiones de modelado, no
+  solo de implementación;
+- queda definido un núcleo conceptual y una estructura inicial de proyecto sobre los que luego se construyen API,
+  ejecución y extensibilidad.
 
 **Tooling y testing que entran naturalmente aquí:**
 
-- Gradle en su versión mínima, no todavía como tema de automatización avanzada sino como soporte para hacer visible la separación del proyecto;
-- BDD para formular comportamiento esperado, lenguaje del dominio y ejemplos ejecutables antes de bajar a tests más técnicos;
+- Gradle en su versión mínima, no todavía como tema de automatización avanzada sino como soporte para hacer visible la
+  separación del proyecto;
+- BDD para formular comportamiento esperado, lenguaje del dominio y ejemplos ejecutables antes de bajar a tests más
+  técnicos;
 - primeros escenarios que distingan reglas del dominio, coordinación y efectos externos.
 
 **Piezas del caso de estudio que conviene introducir aquí:**
@@ -91,19 +101,24 @@ Este caso permite introducir abstracciones, tooling y testing cuando el diseño 
 
 **Resultados pedagógicos esperados:**
 
-- la biblioteca ya cuenta con un núcleo funcional y un vocabulario más claro para separar dominio, aplicación e infraestructura;
-- el estudiantado trabaja con contratos explícitos para representar responsabilidades, transformaciones y composición básica;
+- la biblioteca ya cuenta con un núcleo funcional y un vocabulario más claro para separar dominio, aplicación e
+  infraestructura;
+- el estudiantado trabaja con contratos explícitos para representar responsabilidades, transformaciones y composición
+  básica;
 - el diseño expresa con claridad qué pertenece al dominio, qué coordina casos de uso y qué se delega a adaptadores;
-- la distinción entre núcleo puro y shell imperativo deja de ser solo conceptual y se vuelve visible en la organización del proyecto.
+- la distinción entre núcleo puro y shell imperativo deja de ser solo conceptual y se vuelve visible en la organización
+  del proyecto.
 
 **Tooling y testing que entran naturalmente aquí:**
 
-- Gradle básico: wrapper, estructura del proyecto, primeros pasos hacia multi-módulo y tareas como `{sh} build`, `{sh} test` y `{sh} check`;
+- Gradle básico: wrapper, estructura del proyecto, primeros pasos hacia multi-módulo y tareas como `{sh} build`,
+  `{sh} test` y `{sh} check`;
 - DDT sobre invariantes, contratos pequeños y tablas de casos, construyendo sobre escenarios ya expresados con BDD.
 
 ### Unidad 4. Composición funcional y leyes de transformación
 
-**Foco:** enriquecer el núcleo con mecanismos de composición que preserven el modelo del dominio y hagan explícitas sus propiedades.
+**Foco:** enriquecer el núcleo con mecanismos de composición que preserven el modelo del dominio y hagan explícitas sus
+propiedades.
 
 **Temas principales:**
 
@@ -130,7 +145,8 @@ Este caso permite introducir abstracciones, tooling y testing cuando el diseño 
 
 ### Unidad 5. Diseño de APIs expresivas
 
-**Foco:** mejorar la ergonomía de uso de la biblioteca y discutir cómo una API comunica intención, restricciones y fluidez.
+**Foco:** mejorar la ergonomía de uso de la biblioteca y discutir cómo una API comunica intención, restricciones y
+fluidez.
 
 **Temas principales:**
 
@@ -166,8 +182,10 @@ fun Pipeline<T>.toJson(): String
 
 - el estudiantado diseña interfaces que favorecen expresividad y mantenibilidad;
 - el proyecto deja ver que una biblioteca no solo resuelve problemas, también guía a quienes la usan;
-- las funciones de extensión permiten introducir composición orientada a ergonomía antes de llegar a abstracciones implícitas;
-- los context parameters aparecen como una extensión natural de esa idea cuando hace falta inyectar capacidades de forma declarativa;
+- las funciones de extensión permiten introducir composición orientada a ergonomía antes de llegar a abstracciones
+  implícitas;
+- los context parameters aparecen como una extensión natural de esa idea cuando hace falta inyectar capacidades de forma
+  declarativa;
 - el diseño del DSL se apoya en las abstracciones ya construidas, en vez de reemplazarlas.
 
 **Tooling y testing que entran naturalmente aquí:**
@@ -177,7 +195,8 @@ fun Pipeline<T>.toJson(): String
 
 ### Unidad 6. Publicación, versionado y estabilidad de APIs
 
-**Foco:** entender qué cambia cuando una biblioteca pasa a tener una interfaz pública, distribuible y consumida por otras personas o equipos.
+**Foco:** entender qué cambia cuando una biblioteca pasa a tener una interfaz pública, distribuible y consumida por
+otras personas o equipos.
 
 **Temas principales:**
 
@@ -190,7 +209,8 @@ fun Pipeline<T>.toJson(): String
 
 **Resultados pedagógicos esperados:**
 
-- el estudiantado comprende que publicar una biblioteca obliga a pensar en compatibilidad, versionado y costo de ruptura;
+- el estudiantado comprende que publicar una biblioteca obliga a pensar en compatibilidad, versionado y costo de
+  ruptura;
 - la noción de API pública deja de ser solo de diseño y pasa a tener consecuencias de mantenimiento y distribución;
 - el sistema de build se entiende como soporte para empaquetado, publicación y consumo.
 
@@ -201,7 +221,8 @@ fun Pipeline<T>.toJson(): String
 
 ### Unidad 7. Ejecución, extensibilidad y evolución del ecosistema
 
-**Foco:** estudiar cómo la biblioteca ejecuta trabajo real, se integra con otros componentes y crece mediante mecanismos de extensión.
+**Foco:** estudiar cómo la biblioteca ejecuta trabajo real, se integra con otros componentes y crece mediante mecanismos
+de extensión.
 
 **Temas principales:**
 
@@ -257,7 +278,9 @@ Gradle aparece de manera incremental y siempre ligado a una necesidad visible de
 4. automatización y distribución cuando existan varios módulos o integraciones;
 5. publicación realista de artefactos cuando la biblioteca ya deba circular como producto reusable.
 
-La idea no es enseñar Gradle como una lista de comandos, sino como una herramienta para sostener evolución, mantenimiento y distribución. En otros ecosistemas, esta conversación puede espejarse con CMake, MSBuild o Cargo sin cambiar el problema de fondo.
+La idea no es enseñar Gradle como una lista de comandos, sino como una herramienta para sostener evolución,
+mantenimiento y distribución. En otros ecosistemas, esta conversación puede espejarse con CMake, MSBuild o Cargo sin
+cambiar el problema de fondo.
 
 ### Testing como progresión de aseguramiento
 
@@ -272,7 +295,8 @@ El testing también debe aparecer como progresión y no como inventario de técn
 7. contract testing cuando existan puntos de extensión o integraciones externas;
 8. mutation testing cuando ya exista una base madura y valga la pena discutir la fortaleza real de la suite.
 
-La premisa es que no hace falta reintroducir unit testing desde cero: se toma como base previa, se organiza primero el comportamiento con BDD y, a partir de ahí, se amplía el repertorio cuando el diseño lo exige.
+La premisa es que no hace falta reintroducir unit testing desde cero: se toma como base previa, se organiza primero el
+comportamiento con BDD y, a partir de ahí, se amplía el repertorio cuando el diseño lo exige.
 
 ## Ventajas de este caso de estudio
 
@@ -288,4 +312,5 @@ La premisa es que no hace falta reintroducir unit testing desde cero: se toma co
 - El foco principal sigue siendo diseño e implementación de bibliotecas, no enseñar tooling por separado.
 - Build systems se tratan como soporte al crecimiento de la biblioteca, no como un bloque aislado de comandos.
 - Testing aparece como respuesta a problemas concretos de correctitud, integración y mantenimiento.
-- La progresión esperada del curso es: delimitación del problema, construcción del núcleo, composición, ergonomía de API, ejecución y extensibilidad.
+- La progresión esperada del curso es: delimitación del problema, construcción del núcleo, composición, ergonomía de
+  API, ejecución y extensibilidad.

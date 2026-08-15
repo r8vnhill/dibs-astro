@@ -2,9 +2,12 @@
 
 ## Summary
 
-Strengthen the existing `LessonHref` into the single domain value object for lesson-route canonicalization, then remove duplicated path normalization from navigation and lesson-metadata lookup code. This cycle should establish one shared route contract before any broader domain extraction happens.
+Strengthen the existing `LessonHref` into the single domain value object for lesson-route canonicalization, then remove
+duplicated path normalization from navigation and lesson-metadata lookup code. This cycle should establish one shared
+route contract before any broader domain extraction happens.
 
-Chosen default: **expand `LessonHref`** so it accepts both canonical lesson href input and lookup variants such as extra whitespace, repeated slashes, query strings, and hash fragments.
+Chosen default: **expand `LessonHref`** so it accepts both canonical lesson href input and lookup variants such as extra
+whitespace, repeated slashes, query strings, and hash fragments.
 
 ## Implementation Changes
 
@@ -32,8 +35,10 @@ Chosen default: **expand `LessonHref`** so it accepts both canonical lesson href
 
 - **Refactor current consumers**
   - Update `LessonCatalogAdapter` to replace its private `normalizePath()` logic with `LessonHref.create(...).value`.
-  - Update `src/utils/navigation.ts` to route all `href` normalization through `LessonHref` instead of its local `normalizeHref`.
-  - Update `src/utils/lesson-metadata.ts` so `normalizeLessonPathname()` delegates to `LessonHref` for the shared route rules, keeping only the “strip full origin URL” step locally if needed.
+  - Update `src/utils/navigation.ts` to route all `href` normalization through `LessonHref` instead of its local
+    `normalizeHref`.
+  - Update `src/utils/lesson-metadata.ts` so `normalizeLessonPathname()` delegates to `LessonHref` for the shared route
+    rules, keeping only the “strip full origin URL” step locally if needed.
   - Remove duplicated normalization branches that become dead after the refactor.
 
 - **Preserve current public behavior**
@@ -62,4 +67,5 @@ Chosen default: **expand `LessonHref`** so it accepts both canonical lesson href
 
 - `LessonHref` is the domain home for canonical lesson-route semantics in this phase.
 - Canonicalization includes query/hash stripping because current adapter behavior already depends on that for lookup.
-- Full URL origin stripping remains outside `LessonHref` unless implementation proves it is cleaner to support it there without widening the value object beyond lesson-route concerns.
+- Full URL origin stripping remains outside `LessonHref` unless implementation proves it is cleaner to support it there
+  without widening the value object beyond lesson-route concerns.

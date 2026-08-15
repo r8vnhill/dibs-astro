@@ -4,12 +4,12 @@ Status: completed on 2026-04-25.
 
 Implemented the classification-driven evaluator and switched runtime defaults to the Cycle 2 rule matrix:
 
-* `scripts/lib/layer-boundary-rule-evaluation.mjs`
-* `scripts/lib/layer-boundary-rules.mjs`
-* `scripts/lib/layer-boundary-checker.mjs`
-* `scripts/__tests__/layer-boundary-rule-evaluation.test.ts`
-* `scripts/__tests__/layer-boundary-rules.test.ts`
-* `scripts/__tests__/layer-boundary-checker.test.ts`
+- `scripts/lib/layer-boundary-rule-evaluation.mjs`
+- `scripts/lib/layer-boundary-rules.mjs`
+- `scripts/lib/layer-boundary-checker.mjs`
+- `scripts/__tests__/layer-boundary-rule-evaluation.test.ts`
+- `scripts/__tests__/layer-boundary-rules.test.ts`
+- `scripts/__tests__/layer-boundary-checker.test.ts`
 
 Observed focused gate:
 
@@ -25,21 +25,23 @@ Test files: 6 passed
 Tests: 110 passed
 ```
 
-Verification used the direct Vitest command because `pnpm test:unit -- ...` forwarded a literal `--` to Vitest in this environment and ran the broader suite, which hit an unrelated Shiki timeout.
+Verification used the direct Vitest command because `pnpm test:unit -- ...` forwarded a literal `--` to Vitest in this
+environment and ran the broader suite, which hit an unrelated Shiki timeout.
 
 ## Summary
 
 Migrate boundary evaluation from legacy path-glob matching to the Cycle 2 classification-driven rule matrix.
 
-This step switches runtime evaluation from `legacyInitialBoundaryRules` to `boundaryRules`, evaluates imports through the classification helpers introduced in Step 2, and preserves the public checker/formatter contract for callers.
+This step switches runtime evaluation from `legacyInitialBoundaryRules` to `boundaryRules`, evaluates imports through
+the classification helpers introduced in Step 2, and preserves the public checker/formatter contract for callers.
 
 The result of this phase should be:
 
-* `initialBoundaryRules === boundaryRules`;
-* `evaluateBoundaryRules(...)` understands source-layer and target-category rules;
-* `checkLayerBoundaries(...)` still returns the same public violation shape expected by callers;
-* `formatViolations(...)` remains stable and does not display skipped exceptions;
-* legacy path-glob matching is no longer used for rule evaluation.
+- `initialBoundaryRules === boundaryRules`;
+- `evaluateBoundaryRules(...)` understands source-layer and target-category rules;
+- `checkLayerBoundaries(...)` still returns the same public violation shape expected by callers;
+- `formatViolations(...)` remains stable and does not display skipped exceptions;
+- legacy path-glob matching is no longer used for rule evaluation.
 
 ## Design Correction
 
@@ -61,23 +63,26 @@ export const initialBoundaryRules = boundaryRules;
 export const allowedExceptions = [];
 ```
 
-Classification and evaluation belong in an evaluator module because they are behaviour, not rule data. Keeping ESM modules small and explicit also keeps imports/exports understandable and testable; Node’s ESM model is built around explicit `import` / `export` declarations for reusable modules. ([Node.js][1])
+Classification and evaluation belong in an evaluator module because they are behaviour, not rule data. Keeping ESM
+modules small and explicit also keeps imports/exports understandable and testable; Node’s ESM model is built around
+explicit `import` / `export` declarations for reusable modules. ([Node.js][1])
 
 ## Files to Change
 
 ### Production
 
-* `scripts/lib/layer-boundary-rules.mjs`
-* `scripts/lib/layer-boundary-checker.mjs`
-* preferably add `scripts/lib/layer-boundary-rule-evaluation.mjs`
+- `scripts/lib/layer-boundary-rules.mjs`
+- `scripts/lib/layer-boundary-checker.mjs`
+- preferably add `scripts/lib/layer-boundary-rule-evaluation.mjs`
 
 ### Tests
 
-* `scripts/__tests__/layer-boundary-rules.test.ts`
-* add `scripts/__tests__/layer-boundary-rule-evaluation.test.ts`
-* update `scripts/__tests__/layer-boundary-checker.test.ts`
+- `scripts/__tests__/layer-boundary-rules.test.ts`
+- add `scripts/__tests__/layer-boundary-rule-evaluation.test.ts`
+- update `scripts/__tests__/layer-boundary-checker.test.ts`
 
-Keeping evaluator tests separate from rule-data tests is cleaner than placing direct evaluator tests inside `layer-boundary-rules.test.ts`.
+Keeping evaluator tests separate from rule-data tests is cleaner than placing direct evaluator tests inside
+`layer-boundary-rules.test.ts`.
 
 ## Recommended Module Split
 
@@ -114,15 +119,9 @@ If no test uses it after Step 4, delete it.
 Owns generic evaluation:
 
 ```js
-import {
-    classifyImport,
-    classifySourcePath,
-} from "./layer-boundary-classification.mjs";
+import { classifyImport, classifySourcePath } from "./layer-boundary-classification.mjs";
 
-import {
-    allowedExceptions,
-    initialBoundaryRules,
-} from "./layer-boundary-rules.mjs";
+import { allowedExceptions, initialBoundaryRules } from "./layer-boundary-rules.mjs";
 
 export function evaluateBoundaryRules(
     sourceFile,
@@ -135,13 +134,15 @@ export function evaluateBoundaryRules(
 }
 ```
 
-This separation gives you a focused unit-test target for evaluation without coupling rule-data tests to checker orchestration.
+This separation gives you a focused unit-test target for evaluation without coupling rule-data tests to checker
+orchestration.
 
 ## Public Behaviour Contract
 
 `checkLayerBoundaries(...)` should still expose only violations.
 
-That means `evaluateBoundaryRules(...)` may return richer internal results, but `checkLayerBoundaries(...)` should continue to push only violation payloads into the public array.
+That means `evaluateBoundaryRules(...)` may return richer internal results, but `checkLayerBoundaries(...)` should
+continue to push only violation payloads into the public array.
 
 ```js
 const result = evaluateBoundaryRules(
@@ -157,10 +158,10 @@ if (result.status === "violation") {
 
 `formatViolations(...)` should not need to know about:
 
-* allowed imports;
-* skipped imports;
-* exception metadata;
-* classification details beyond fields already attached to violations.
+- allowed imports;
+- skipped imports;
+- exception metadata;
+- classification details beyond fields already attached to violations.
 
 ## Evaluation Result Shape
 
@@ -309,7 +310,8 @@ Use explicit precedence when an import could match more than one rule condition:
 2. forbidden target;
 3. not-allowed target.
 
-This gives clearer diagnostics. For example, a domain file importing `react` should report a forbidden package violation even if the import is also classified as external or unknown.
+This gives clearer diagnostics. For example, a domain file importing `react` should report a forbidden package violation
+even if the import is also classified as external or unknown.
 
 ## Classification Rules
 
@@ -322,14 +324,14 @@ const classifiedImport = classifyImport(importRecord, resolvedTarget?.resolvedPa
 
 Expected classification behaviour:
 
-* source `unknown` means allowed;
-* target `unknown` means allowed unless explicitly forbidden;
-* unknown packages are allowed unless `packageName` matches `forbiddenPackages`;
-* package checks apply only when `classifiedImport.packageName` exists;
-* target checks apply against `classifiedImport.target`;
-* type-only imports are evaluated like value imports;
-* unresolved imports are evaluated through package classification when possible;
-* unresolved non-package imports are allowed unless classification gives a forbidden target.
+- source `unknown` means allowed;
+- target `unknown` means allowed unless explicitly forbidden;
+- unknown packages are allowed unless `packageName` matches `forbiddenPackages`;
+- package checks apply only when `classifiedImport.packageName` exists;
+- target checks apply against `classifiedImport.target`;
+- type-only imports are evaluated like value imports;
+- unresolved imports are evaluated through package classification when possible;
+- unresolved non-package imports are allowed unless classification gives a forbidden target.
 
 ## Exception Model for Step 4
 
@@ -347,8 +349,8 @@ Suggested temporary shape:
 
 Where `importTarget` matches either:
 
-* the raw import path, for package imports;
-* the normalized resolved project path, for resolved project imports.
+- the raw import path, for package imports;
+- the normalized resolved project path, for resolved project imports.
 
 Do **not** add glob exceptions in Step 4. That belongs in a later exception-hardening step.
 
@@ -360,8 +362,8 @@ function matchesException(sourcePath, classifiedImport, exceptions) {
     const importTarget = exceptionImportTarget(classifiedImport);
 
     return exceptions.find((exception) =>
-        exception.sourcePath === normalizedSource &&
-        exception.importTarget === importTarget
+        exception.sourcePath === normalizedSource
+        && exception.importTarget === importTarget
     );
 }
 ```
@@ -450,12 +452,12 @@ Update `scripts/__tests__/layer-boundary-rules.test.ts`.
 
 Required assertions:
 
-* `boundaryRules` still contains the five Cycle 2 rules in order;
-* `initialBoundaryRules === boundaryRules`;
-* `allowedExceptions` is still empty by default;
-* rule ids remain stable;
-* rule sources remain unique;
-* every rule still has `message` and `suggestion`.
+- `boundaryRules` still contains the five Cycle 2 rules in order;
+- `initialBoundaryRules === boundaryRules`;
+- `allowedExceptions` is still empty by default;
+- rule ids remain stable;
+- rule sources remain unique;
+- every rule still has `message` and `suggestion`.
 
 ### 2. Evaluator tests
 
@@ -487,7 +489,8 @@ suite("evaluateBoundaryRules", () => {
 });
 ```
 
-Vitest supports running focused test files from the CLI, which is useful here because this migration touches several seams but should still be testable in small slices. ([Vitest][2])
+Vitest supports running focused test files from the CLI, which is useful here because this migration touches several
+seams but should still be testable in small slices. ([Vitest][2])
 
 ### 3. Required evaluator cases
 
@@ -515,7 +518,7 @@ expect(result.violation.target).toBe("application");
 Example:
 
 ```ts
-importPath: "react"
+importPath: "react";
 ```
 
 Expected:
@@ -574,12 +577,12 @@ Update `scripts/__tests__/layer-boundary-checker.test.ts`.
 
 Keep the tests focused on public integration behaviour:
 
-* `checkLayerBoundaries(...)` returns only violations;
-* skipped exceptions are not returned as violations;
-* violations preserve formatter-facing fields;
-* `formatViolations(...)` still produces usable output;
-* Cycle 2 rule ids appear where expected;
-* UI-to-infrastructure violations now use `ui-boundary`.
+- `checkLayerBoundaries(...)` returns only violations;
+- skipped exceptions are not returned as violations;
+- violations preserve formatter-facing fields;
+- `formatViolations(...)` still produces usable output;
+- Cycle 2 rule ids appear where expected;
+- UI-to-infrastructure violations now use `ui-boundary`.
 
 Do not duplicate the full matrix here. The checker test should prove integration, not every rule combination.
 
@@ -594,7 +597,8 @@ expect(formatViolations([violation])).toContain(violation.message);
 expect(formatViolations([violation])).toContain(violation.suggestion);
 ```
 
-Avoid snapshot tests for the whole output unless the project already uses them. Structural assertions are easier to maintain.
+Avoid snapshot tests for the whole output unless the project already uses them. Structural assertions are easier to
+maintain.
 
 ## Suggested DDT Tables
 
@@ -669,12 +673,12 @@ Update the Step 3 compatibility test.
 
 Replace picomatch-based logic with:
 
-* source classification;
-* import classification;
-* rule lookup;
-* package checks;
-* target checks;
-* exception check.
+- source classification;
+- import classification;
+- rule lookup;
+- package checks;
+- target checks;
+- exception check.
 
 ### Step 4.4: Adapt `checkLayerBoundaries(...)`
 
@@ -694,11 +698,12 @@ Do not update formatter output unless a failing test proves a necessary field wa
 
 Remove or stop using:
 
-* `matchesAny(...)`;
-* evaluator-local `picomatch` usage;
-* legacy source/target glob matching.
+- `matchesAny(...)`;
+- evaluator-local `picomatch` usage;
+- legacy source/target glob matching.
 
-If `picomatch` is still used elsewhere, keep the dependency. If not, defer dependency removal to a cleanup step unless this repository already has dependency hygiene checks.
+If `picomatch` is still used elsewhere, keep the dependency. If not, defer dependency removal to a cleanup step unless
+this repository already has dependency hygiene checks.
 
 ## Verification Command
 
@@ -708,7 +713,9 @@ Run the focused gate:
 pnpm test:unit -- scripts/__tests__/layer-boundary-rules.test.ts scripts/__tests__/layer-boundary-rule-evaluation.test.ts scripts/__tests__/layer-boundary-classification.test.ts scripts/__tests__/layer-boundary-checker.test.ts scripts/__tests__/layer-boundary-paths.test.ts scripts/__tests__/layer-boundary-imports.test.ts
 ```
 
-If the package script forwards file arguments incorrectly, use the direct Vitest command already established in earlier steps. Vitest’s CLI accepts file-name filters as additional arguments, so direct invocation is a valid fallback for focused gates. ([Vitest][3])
+If the package script forwards file arguments incorrectly, use the direct Vitest command already established in earlier
+steps. Vitest’s CLI accepts file-name filters as additional arguments, so direct invocation is a valid fallback for
+focused gates. ([Vitest][3])
 
 Example fallback:
 
@@ -720,54 +727,54 @@ node ./node_modules/vitest/vitest.mjs run scripts/__tests__/layer-boundary-rules
 
 Step 4 does not include:
 
-* full layer-matrix DDT coverage;
-* repository-wide import audit;
-* real import refactors;
-* package script rewiring;
-* formatter redesign;
-* broad exception language with globs;
-* allowlist expansion;
-* new rule ids;
-* new architectural policy decisions;
-* changing type-only import semantics;
-* changing import extraction.
+- full layer-matrix DDT coverage;
+- repository-wide import audit;
+- real import refactors;
+- package script rewiring;
+- formatter redesign;
+- broad exception language with globs;
+- allowlist expansion;
+- new rule ids;
+- new architectural policy decisions;
+- changing type-only import semantics;
+- changing import extraction.
 
 ## Acceptance Criteria
 
 Step 4 is complete when:
 
-* `initialBoundaryRules === boundaryRules`;
-* `evaluateBoundaryRules(...)` uses classification, not path globs;
-* source rules are selected through `classifySourcePath(...)`;
-* imports are evaluated through `classifyImport(...)`;
-* forbidden packages are detected;
-* forbidden targets are detected;
-* not-allowed targets are detected;
-* unknown sources are allowed;
-* unknown targets are allowed unless explicitly forbidden;
-* injected exact exceptions produce `status: "skipped-by-exception"`;
-* `checkLayerBoundaries(...)` returns only violations;
-* public violation fields remain formatter-compatible;
-* `formatViolations(...)` still works;
-* the focused Step 4 test gate passes.
+- `initialBoundaryRules === boundaryRules`;
+- `evaluateBoundaryRules(...)` uses classification, not path globs;
+- source rules are selected through `classifySourcePath(...)`;
+- imports are evaluated through `classifyImport(...)`;
+- forbidden packages are detected;
+- forbidden targets are detected;
+- not-allowed targets are detected;
+- unknown sources are allowed;
+- unknown targets are allowed unless explicitly forbidden;
+- injected exact exceptions produce `status: "skipped-by-exception"`;
+- `checkLayerBoundaries(...)` returns only violations;
+- public violation fields remain formatter-compatible;
+- `formatViolations(...)` still works;
+- the focused Step 4 test gate passes.
 
 ## Step 5 / Step 6 Handoff
 
 Step 5 should refine exception handling and violation metadata if needed:
 
-* exact path/package exceptions;
-* optional reason fields;
-* possible expiry or owner fields;
-* reporting skipped exceptions separately if useful.
+- exact path/package exceptions;
+- optional reason fields;
+- possible expiry or owner fields;
+- reporting skipped exceptions separately if useful.
 
 Step 6 should add broad matrix coverage:
 
-* DDT table for every source layer × target category;
-* package restriction matrix;
-* unknown/asset/style/utils cases;
-* public regression tests for representative real imports.
+- DDT table for every source layer × target category;
+- package restriction matrix;
+- unknown/asset/style/utils cases;
+- public regression tests for representative real imports.
 
-----
+---
 
 [1]: https://nodejs.org/api/esm.html?utm_source=chatgpt.com "ECMAScript modules | Node.js v25.9.0 Documentation"
 [2]: https://vitest.dev/guide/filtering?utm_source=chatgpt.com "Test Filtering | Guide"

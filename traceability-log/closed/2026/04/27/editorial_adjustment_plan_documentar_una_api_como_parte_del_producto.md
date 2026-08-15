@@ -2,9 +2,13 @@
 
 ## Summary
 
-Revise the lesson so it works as the closing piece of the current API-design sequence. The lesson should connect directly with API evolution and compatibility: once an API is published, it creates commitments; documentation is the public surface where those commitments become understandable, usable, testable, and maintainable.
+Revise the lesson so it works as the closing piece of the current API-design sequence. The lesson should connect
+directly with API evolution and compatibility: once an API is published, it creates commitments; documentation is the
+public surface where those commitments become understandable, usable, testable, and maintainable.
 
-The change should remain editorial and focused. Do not split the lesson, introduce a new page, or redesign the course structure. The goal is to reduce visible cognitive load, clarify the internal progression, and close the unit explicitly.
+The change should remain editorial and focused. Do not split the lesson, introduce a new page, or redesign the course
+structure. The goal is to reduce visible cognitive load, clarify the internal progression, and close the unit
+explicitly.
 
 ## Editorial Goals
 
@@ -26,7 +30,8 @@ The change should remain editorial and focused. Do not split the lesson, introdu
 - Do not create a separate lesson for project documentation.
 - Do not expand the bibliography unless suitable references already exist in the active catalog.
 - Do not introduce new course-navigation changes unless strictly required.
-- Do not make inclusive language a detached ethical appendix; keep it tied to API clarity, accessibility, and user experience.
+- Do not make inclusive language a detached ethical appendix; keep it tied to API clarity, accessibility, and user
+  experience.
 
 ## Key Changes
 
@@ -38,12 +43,17 @@ It should communicate that:
 
 - a published API creates expectations and commitments;
 - documentation is where those commitments become visible;
-- good documentation describes observable behaviour, constraints, examples, migration paths, and maintenance expectations;
+- good documentation describes observable behaviour, constraints, examples, migration paths, and maintenance
+  expectations;
 - the lesson closes the API-design sequence by treating documentation as part of the product.
 
 Suggested direction:
 
-> Una API publicada no solo expone funciones, tipos o rutas: también crea compromisos. Esta lección estudia la documentación como el lugar donde esos compromisos se vuelven legibles para quienes usan la biblioteca. El foco estará en documentar el contrato observable, escribir ejemplos útiles y verificables, explicar cambios y migraciones, mantener la documentación junto con la API, usar lenguaje inclusivo y diseñar páginas que respondan a la forma real en que las personas leen documentación técnica.
+> Una API publicada no solo expone funciones, tipos o rutas: también crea compromisos. Esta lección estudia la
+> documentación como el lugar donde esos compromisos se vuelven legibles para quienes usan la biblioteca. El foco estará
+> en documentar el contrato observable, escribir ejemplos útiles y verificables, explicar cambios y migraciones,
+> mantener la documentación junto con la API, usar lenguaje inclusivo y diseñar páginas que respondan a la forma real en
+> que las personas leen documentación técnica.
 
 ### 2. Clarify the internal structure
 
@@ -79,8 +89,8 @@ Recommended order:
    - Keep the focus on scanning, anchors, search, examples, errors, and stable links.
 
 8. **Closing reflection**
-   - Close the whole API-design sequence:
-     artefacts → libraries as APIs → API design → evolution and compatibility → documentation.
+   - Close the whole API-design sequence: artefacts → libraries as APIs → API design → evolution and compatibility →
+     documentation.
 
 ### 3. Move secondary material into `More`
 
@@ -99,8 +109,8 @@ Move to `More`:
 Evaluate:
 
 - **Inclusive-language replacement list**
-  - Keep the core criterion visible:
-    prefer precise, neutral, respectful terms that reduce unnecessary exclusion or ambiguity.
+  - Keep the core criterion visible: prefer precise, neutral, respectful terms that reduce unnecessary exclusion or
+    ambiguity.
   - Move the long replacement table to `More` if it interrupts the lesson flow.
   - Keep a few representative examples visible if they directly support the explanation.
 
@@ -111,13 +121,15 @@ Add short transition paragraphs between major blocks so the lesson feels cumulat
 Useful transition points:
 
 - From contract to rubric:
-  - “If documentation is part of the public contract, then the reference must answer the questions that affect correct use.”
+  - “If documentation is part of the public contract, then the reference must answer the questions that affect correct
+    use.”
 
 - From rubric to document types:
   - “Not every reader problem belongs in the API reference; different document types distribute the explanatory load.”
 
 - From examples to maintenance:
-  - “Examples are useful only while they remain true; documentation therefore needs the same maintenance discipline as code.”
+  - “Examples are useful only while they remain true; documentation therefore needs the same maintenance discipline as
+    code.”
 
 - From maintenance to reading experience:
   - “Even accurate documentation can fail if readers cannot find the relevant promise at the moment they need it.”
@@ -182,8 +194,8 @@ Verify that:
 
 - The visible lesson path is shorter and easier to scan.
 - The central thesis is clear: documentation is part of the public API contract.
-- The section order follows a coherent progression:
-  contract → reference rubric → document types → executable examples → maintenance → inclusive language → real reading.
+- The section order follows a coherent progression: contract → reference rubric → document types → executable examples →
+  maintenance → inclusive language → real reading.
 - Secondary project-documentation material is preserved but moved out of the main flow.
 - `closing-reflection` closes the current API-design block explicitly.
 - Existing render and structure tests pass.

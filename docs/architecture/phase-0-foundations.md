@@ -2,16 +2,20 @@
 
 ## What Phase 0 Produced
 
-Phase 0 established a shared baseline for the refactor: a domain-area map, evidence-backed hotspots, prioritized use cases, a target layered architecture, and measurable gates. It also narrowed the pilot scope for Phase 1 so implementation can start without waiting for all open decisions.
+Phase 0 established a shared baseline for the refactor: a domain-area map, evidence-backed hotspots, prioritized use
+cases, a target layered architecture, and measurable gates. It also narrowed the pilot scope for Phase 1 so
+implementation can start without waiting for all open decisions.
 
 ## 1. Current Domain Areas
 
 ### Area: Content and Navigation
 
-- Elements: `src/data/course-structure.ts`, `src/layouts/NotesLayout.astro`, `src/components/navigation/*`, `src/utils/navigation.ts`.
+- Elements: `src/data/course-structure.ts`, `src/layouts/NotesLayout.astro`, `src/components/navigation/*`,
+  `src/utils/navigation.ts`.
 - Couplings: data shape, navigation rules, and rendering concerns are co-located.
 - Risk: navigation behavior changes can accidentally break UI composition and vice versa.
-- Refactor direction: move navigation rules to `application`, keep static catalog access in `infrastructure`, and keep layout rendering in `presentation`.
+- Refactor direction: move navigation rules to `application`, keep static catalog access in `infrastructure`, and keep
+  layout rendering in `presentation`.
 - Boundary candidates:
   - Domain: `Lesson`, `LessonId`, `NavigationPlan`, path normalization rules.
   - Application: `resolveLessonNavigation`.
@@ -35,7 +39,8 @@ Phase 0 established a shared baseline for the refactor: a domain-area map, evide
 - Elements: `src/lib/shiki/*`, `src/components/ui/code/*`.
 - Couplings: code components know highlighter details, aliases, and styling responsibilities.
 - Risk: replacing Shiki or changing formatting rules requires edits across presentation.
-- Refactor direction: define a highlighting port in `application/ports` and keep Shiki implementation in `infrastructure`.
+- Refactor direction: define a highlighting port in `application/ports` and keep Shiki implementation in
+  `infrastructure`.
 - Boundary candidates:
   - Domain: code block intent and supported variants.
   - Application: formatting flow and fallback policy.
@@ -70,7 +75,8 @@ Phase 0 established a shared baseline for the refactor: a domain-area map, evide
 
 - `src/layouts/NotesLayout.astro`
   - Symptom: imports `courseStructure` and resolves navigation directly in the layout.
-  - Layer violation cause: presentation depends on data source and navigation rule execution instead of application output.
+  - Layer violation cause: presentation depends on data source and navigation rule execution instead of application
+    output.
 - `src/components/navigation/LessonTree.tsx`
   - Symptom: reads/writes `localStorage` directly for expand/collapse state.
   - Layer violation cause: presentation owns persistence, which should be infrastructure behind a port.
@@ -188,7 +194,8 @@ Phase 0 established a shared baseline for the refactor: a domain-area map, evide
 ### Additional testing targets
 
 - Behavior-focused tests:
-  - minimum 6 application tests for navigation (first item, last item, missing path, container nodes, normalized path, duplicated slash normalization).
+  - minimum 6 application tests for navigation (first item, last item, missing path, container nodes, normalized path,
+    duplicated slash normalization).
 - PBT target:
   - at least 1 property-based test for a pure rule (navigation ordering or path normalization).
 

@@ -4,15 +4,19 @@ Status: Implemented on 2026-04-29.
 
 ## Summary
 
-Strengthen `scripts/__tests__/layer-boundary-checker.test.ts` as an integration-level contract for the public layer-boundary checker API.
+Strengthen `scripts/__tests__/layer-boundary-checker.test.ts` as an integration-level contract for the public
+layer-boundary checker API.
 
-Keep the current BDD/DDT style, but replace weak count-only assertions with behaviour-level expectations, add high-value integration edge cases, and tighten report-format assertions. Production behaviour should remain unchanged unless the new tests expose an existing correctness gap.
+Keep the current BDD/DDT style, but replace weak count-only assertions with behaviour-level expectations, add high-value
+integration edge cases, and tighten report-format assertions. Production behaviour should remain unchanged unless the
+new tests expose an existing correctness gap.
 
-This refactor should not turn the integration test into a full parser/rule-engine test suite. Helper-level suites remain the primary home for detailed import extraction, path resolution, classification, and rule-policy coverage.
+This refactor should not turn the integration test into a full parser/rule-engine test suite. Helper-level suites remain
+the primary home for detailed import extraction, path resolution, classification, and rule-policy coverage.
 
 ## Goals
 
-- Make checker-level tests assert *what* boundary finding is reported, not only *how many* findings are reported.
+- Make checker-level tests assert _what_ boundary finding is reported, not only _how many_ findings are reported.
 - Preserve the public API focus of `checkLayerBoundaries`, the report formatter, and `runBoundaryCheck`.
 - Increase confidence around real-world import forms used by TypeScript and Astro files.
 - Keep test data readable, table-driven, and easy to extend.
@@ -29,7 +33,8 @@ This refactor should not turn the integration test into a full parser/rule-engin
 
 ### 1. Replace Count-Only Matrix Assertions
 
-Convert the main `test.each` matrix from tuple-based cases with `expectedCount` into object-based DDT cases with structured expectations.
+Convert the main `test.each` matrix from tuple-based cases with `expectedCount` into object-based DDT cases with
+structured expectations.
 
 Introduce a local case type:
 
@@ -37,10 +42,10 @@ Introduce a local case type:
 type BoundaryFinding = Awaited<ReturnType<typeof checkLayerBoundaries>>[number];
 
 type BoundaryCase = {
-  readonly name: string;
-  readonly path: string;
-  readonly text: string;
-  readonly expectedFindings: readonly Partial<BoundaryFinding>[];
+    readonly name: string;
+    readonly path: string;
+    readonly text: string;
+    readonly expectedFindings: readonly Partial<BoundaryFinding>[];
 };
 ```
 
@@ -70,11 +75,11 @@ Derive test option types from public functions instead of relying on implicit ob
 
 ```ts
 type BoundaryCheckOptions = NonNullable<
-  Parameters<typeof checkLayerBoundaries>[1]
+    Parameters<typeof checkLayerBoundaries>[1]
 >;
 
 const cleanOptions = {
-  tsconfig: { config: {} },
+    tsconfig: { config: {} },
 } satisfies BoundaryCheckOptions;
 ```
 
@@ -82,7 +87,7 @@ If `runBoundaryCheck` accepts a wider option shape, derive a separate type only 
 
 ```ts
 type RunBoundaryCheckOptions = NonNullable<
-  Parameters<typeof runBoundaryCheck>[1]
+    Parameters<typeof runBoundaryCheck>[1]
 >;
 ```
 
@@ -94,9 +99,9 @@ Add minimal helpers to reduce repetition without hiding test intent.
 const sourceFile = (path: string, text: string) => ({ path, text });
 
 const checkSingleFile = (
-  path: string,
-  text: string,
-  options: BoundaryCheckOptions = cleanOptions,
+    path: string,
+    text: string,
+    options: BoundaryCheckOptions = cleanOptions,
 ) => checkLayerBoundaries([sourceFile(path, text)], options);
 ```
 
@@ -128,7 +133,8 @@ Prefer exact assertions for small outputs:
 expect(formatBoundaryFindings([])).toBe("No layer boundary findings found.");
 ```
 
-For longer outputs, use a local `output` variable and assert important lines/segments rather than fragile full snapshots.
+For longer outputs, use a local `output` variable and assert important lines/segments rather than fragile full
+snapshots.
 
 ## Test Additions
 
@@ -181,20 +187,20 @@ Example:
 
 ```ts
 test("reports domain imports of infrastructure through relative paths", async () => {
-  const findings = await checkSingleFile(
-    "src/domain/entity.ts",
-    'import { Adapter } from "../infrastructure/adapters/LessonCatalogAdapter";',
-  );
+    const findings = await checkSingleFile(
+        "src/domain/entity.ts",
+        "import { Adapter } from \"../infrastructure/adapters/LessonCatalogAdapter\";",
+    );
 
-  expect(findings).toMatchObject([
-    {
-      ruleId: "domain-boundary",
-      sourceLayer: "domain",
-      target: "infrastructure",
-      importKind: "value",
-      reason: "forbidden-target",
-    },
-  ]);
+    expect(findings).toMatchObject([
+        {
+            ruleId: "domain-boundary",
+            sourceLayer: "domain",
+            target: "infrastructure",
+            importKind: "value",
+            reason: "forbidden-target",
+        },
+    ]);
 });
 ```
 
@@ -214,25 +220,26 @@ Examples:
 
 ```ts
 test("ignores import-looking text inside comments", async () => {
-  const findings = await checkSingleFile(
-    "src/domain/entity.ts",
-    '// import { Adapter } from "$infrastructure/adapters/Adapter";',
-  );
+    const findings = await checkSingleFile(
+        "src/domain/entity.ts",
+        "// import { Adapter } from \"$infrastructure/adapters/Adapter\";",
+    );
 
-  expect(findings).toEqual([]);
+    expect(findings).toEqual([]);
 });
 
 test("ignores import-looking text outside Astro frontmatter", async () => {
-  const findings = await checkSingleFile(
-    "src/components/Card.astro",
-    '<p>import { Adapter } from "$infrastructure/adapters/Adapter";</p>',
-  );
+    const findings = await checkSingleFile(
+        "src/components/Card.astro",
+        "<p>import { Adapter } from \"$infrastructure/adapters/Adapter\";</p>",
+    );
 
-  expect(findings).toEqual([]);
+    expect(findings).toEqual([]);
 });
 ```
 
-If fallback parsing intentionally scans raw text after parser failure, constrain the test to a syntactically valid file so it validates normal parser-first behaviour.
+If fallback parsing intentionally scans raw text after parser failure, constrain the test to a syntactically valid file
+so it validates normal parser-first behaviour.
 
 ### Cycle 5: Path Portability
 
@@ -240,24 +247,24 @@ Add one checker-level case for Windows-style source paths:
 
 ```ts
 test("normalizes Windows-style source paths before layer detection", async () => {
-  const findings = await checkLayerBoundaries(
-    [
-      sourceFile(
-        "src\\components\\navigation\\Nav.astro",
-        '---\nimport { Adapter } from "$infrastructure/adapters/LessonCatalogAdapter";\n---',
-      ),
-    ],
-    cleanOptions,
-  );
+    const findings = await checkLayerBoundaries(
+        [
+            sourceFile(
+                "src\\components\\navigation\\Nav.astro",
+                "---\nimport { Adapter } from \"$infrastructure/adapters/LessonCatalogAdapter\";\n---",
+            ),
+        ],
+        cleanOptions,
+    );
 
-  expect(findings).toMatchObject([
-    {
-      ruleId: "ui-boundary",
-      sourceLayer: "ui",
-      target: "infrastructure",
-      reason: "forbidden-target",
-    },
-  ]);
+    expect(findings).toMatchObject([
+        {
+            ruleId: "ui-boundary",
+            sourceLayer: "ui",
+            target: "infrastructure",
+            reason: "forbidden-target",
+        },
+    ]);
 });
 ```
 
@@ -276,22 +283,22 @@ Example:
 
 ```ts
 test("does not apply exceptions to different source files", async () => {
-  const findings = await checkSingleFile(
-    "src/domain/other.ts",
-    'import { z } from "zod";',
-    {
-      ...cleanOptions,
-      exceptions: [
+    const findings = await checkSingleFile(
+        "src/domain/other.ts",
+        "import { z } from \"zod\";",
         {
-          sourcePath: "src/domain/entity.ts",
-          importTarget: "zod",
-          reason: "Temporary migration exception",
+            ...cleanOptions,
+            exceptions: [
+                {
+                    sourcePath: "src/domain/entity.ts",
+                    importTarget: "zod",
+                    reason: "Temporary migration exception",
+                },
+            ],
         },
-      ],
-    },
-  );
+    );
 
-  expect(findings).toHaveLength(1);
+    expect(findings).toHaveLength(1);
 });
 ```
 
@@ -314,24 +321,24 @@ Example:
 
 ```ts
 test("returns findings in deterministic order", async () => {
-  const findings = await checkLayerBoundaries(
-    [
-      sourceFile(
-        "src/components/B.astro",
-        '---\nimport { B } from "$infrastructure/B";\n---',
-      ),
-      sourceFile(
-        "src/components/A.astro",
-        '---\nimport { A } from "$infrastructure/A";\n---',
-      ),
-    ],
-    cleanOptions,
-  );
+    const findings = await checkLayerBoundaries(
+        [
+            sourceFile(
+                "src/components/B.astro",
+                "---\nimport { B } from \"$infrastructure/B\";\n---",
+            ),
+            sourceFile(
+                "src/components/A.astro",
+                "---\nimport { A } from \"$infrastructure/A\";\n---",
+            ),
+        ],
+        cleanOptions,
+    );
 
-  expect(findings.map((finding) => finding.sourceFile)).toEqual([
-    "src/components/A.astro",
-    "src/components/B.astro",
-  ]);
+    expect(findings.map((finding) => finding.sourceFile)).toEqual([
+        "src/components/A.astro",
+        "src/components/B.astro",
+    ]);
 });
 ```
 
@@ -341,7 +348,8 @@ Add small public API edge cases:
 
 - empty file list returns no findings;
 - empty file text returns no findings;
-- checker-level parse fallback smoke case only if helper-level import extraction tests do not already cover the path from malformed text to public API behaviour.
+- checker-level parse fallback smoke case only if helper-level import extraction tests do not already cover the path
+  from malformed text to public API behaviour.
 
 Avoid duplicating every parser fallback case here.
 
@@ -353,9 +361,9 @@ If ordering is unstable, sort once inside `checkLayerBoundaries` before returnin
 
 ```ts
 findings.sort((left, right) =>
-  left.sourceFile.localeCompare(right.sourceFile)
-  || left.importTarget.localeCompare(right.importTarget)
-  || left.ruleId.localeCompare(right.ruleId)
+    left.sourceFile.localeCompare(right.sourceFile)
+    || left.importTarget.localeCompare(right.importTarget)
+    || left.ruleId.localeCompare(right.ruleId)
 );
 ```
 
@@ -370,7 +378,8 @@ Add helper-level tests in the classification suite before adjusting production c
 
 ### Relative Import Misclassification
 
-If relative imports are missed or classified incorrectly, fix the path resolution/classification layer rather than adding checker-level special cases.
+If relative imports are missed or classified incorrectly, fix the path resolution/classification layer rather than
+adding checker-level special cases.
 
 Likely locations:
 
@@ -402,11 +411,11 @@ Later, move further toward a config-driven policy model:
 type Layer = "domain" | "application" | "infrastructure" | "presentation" | "ui";
 
 type BoundaryRule = {
-  readonly id: string;
-  readonly source: Layer;
-  readonly forbiddenTargets: readonly Layer[];
-  readonly message: string;
-  readonly suggestion: string;
+    readonly id: string;
+    readonly source: Layer;
+    readonly forbiddenTargets: readonly Layer[];
+    readonly message: string;
+    readonly suggestion: string;
 };
 ```
 
@@ -454,8 +463,10 @@ pnpm exec tsc --noEmit
 - Existing helper-level suites remain focused and are not duplicated wholesale in the integration test.
 - No new dependencies are introduced.
 - Production code changes, if any, are minimal and directly justified by failing tests.
-- Focused boundary suites pass. Implemented verification: 6 checker-specific test files and 205 tests passed on 2026-04-29.
-- Full unit suite passes if production code changed. Implemented verification: `pnpm test:unit` passed with 56 test files and 920 tests on 2026-04-29.
+- Focused boundary suites pass. Implemented verification: 6 checker-specific test files and 205 tests passed on
+  2026-04-29.
+- Full unit suite passes if production code changed. Implemented verification: `pnpm test:unit` passed with 56 test
+  files and 920 tests on 2026-04-29.
 
 ## Assumptions
 

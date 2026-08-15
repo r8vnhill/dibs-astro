@@ -1,5 +1,5 @@
-import { normalizePropAsString } from "./utils";
 import type { HighlightCallOptions } from "./types";
+import { normalizePropAsString } from "./utils";
 
 /**
  * Default transformer used by the site. Mirrors the previous single-file

@@ -2,7 +2,9 @@
 
 > **Status:** Completed | **Date:** 2026-02-28 | **Methodology:** TDD
 >
-> **Historical note:** This file records the Phase 1 checkpoint only. Current architecture boundaries are documented in `docs/architecture/layer-separation.md`. Some items below intentionally reflect the pre-Phase-2 state and are no longer current.
+> **Historical note:** This file records the Phase 1 checkpoint only. Current architecture boundaries are documented in
+> `docs/architecture/layer-separation.md`. Some items below intentionally reflect the pre-Phase-2 state and are no
+> longer current.
 
 ---
 
@@ -27,6 +29,7 @@
 - [x] `tsconfig.json` updated with 4 new aliases (`$domain`, `$application`, `$infrastructure`, `$presentation`)
 
 **Validation:**
+
 ```bash
 npx tsc --noEmit  # Should compile without errors
 ```
@@ -108,10 +111,10 @@ npx tsc --noEmit  # Should compile without errors
 
 **Total:** 4 tests
 
-**Grand Total:** 9 tests
-**Status:** ✅ ALL PASSING (9/9)
+**Grand Total:** 9 tests **Status:** ✅ ALL PASSING (9/9)
 
 **Validation command:**
+
 ```bash
 pnpm test:unit -- --include "**/NavigationServiceImpl.test.ts" --include "**/LessonCatalogAdapter.test.ts"
 ```
@@ -196,8 +199,8 @@ pnpm astro check
 
 ## Acceptance criteria met
 
-| Criterion               | Expected                                                  | Actual          | Status |
-| ----------------------- | --------------------------------------------------------- | --------------- | ------ |
+| Criterion               | Expected                                                  | Actual           | Status  |
+| ----------------------- | --------------------------------------------------------- | ---------------- | ------- |
 | 4-layer structure       | `domain`, `application`, `infrastructure`, `presentation` | ✅ All created   | ✅ PASS |
 | Minimum aliases         | 4 in `tsconfig.json`                                      | ✅ 4 added       | ✅ PASS |
 | Ports/contracts         | 2 defined                                                 | ✅ 2 defined     | ✅ PASS |
@@ -213,13 +216,16 @@ pnpm astro check
 ## Blocker status
 
 **Phase 1 blockers:**
+
 - ✅ None detected
 
 **For Phase 1 continuation (integration):**
+
 - ⏳ Connect NotesLayout (bridge pattern)
 - ⏳ Create DI container if needed
 
 **For Phase 2 (domain isolation):**
+
 - ⏳ Define entities in `src/domain`
 - ⏳ Extract pure business logic
 

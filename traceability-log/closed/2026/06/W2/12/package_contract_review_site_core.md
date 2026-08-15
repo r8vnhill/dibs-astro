@@ -190,8 +190,8 @@ this cycle unless the existing behavior is clearly unintended and covered by tes
 - The root import has no CSS or style imports, global object mutation, prototype mutation, process/environment mutation,
   runtime registration, or filesystem, network, DOM, or other host interaction during import.
 - The `SITE_CORE_VERSION` export uses package metadata as module data; it does not read host state at import time.
-- `packages/site-core/src/__tests__/root-api-side-effects.test.ts` records the decision by checking the manifest flag and
-  guarding common host state during root import.
+- `packages/site-core/src/__tests__/root-api-side-effects.test.ts` records the decision by checking the manifest flag
+  and guarding common host state during root import.
 - `packages/site-core/README.md` documents the passive import contract.
 
 ## Cycle 4: Make `tsup.config.ts` Intentional [DONE]

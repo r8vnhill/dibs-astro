@@ -2,34 +2,40 @@
 
 ## Summary
 
-Phase 2 will refactor `records.mjs` so all exported readers are built on a shared internal reader pipeline while preserving the existing public accessor API.
+Phase 2 will refactor `records.mjs` so all exported readers are built on a shared internal reader pipeline while
+preserving the existing public accessor API.
 
 ## Implementation Notes
 
-The implemented Phase 2 shape should favor a private shared pipeline inside `records.mjs` rather than introducing the builder-facing facade early.
+The implemented Phase 2 shape should favor a private shared pipeline inside `records.mjs` rather than introducing the
+builder-facing facade early.
 
 - Keep `optionalOne(...)` and `many(...)` as the internal composition points used by exported readers.
 - Keep selectors, term validation, mapping, and dedupe as separate small helpers.
-- Implement duplicate removal now in the shared many-reader path so the prior Phase 1 duplicate-policy tests become normal passing assertions.
+- Implement duplicate removal now in the shared many-reader path so the prior Phase 1 duplicate-policy tests become
+  normal passing assertions.
 - Keep URL semantics and integer lexical semantics unchanged in this phase.
 - Update the reader contract suite to remove red-by-design duplicate cases once implementation lands.
 
-This phase should do more than just remove duplication. It should establish a small internal architecture for record reading that is:
+This phase should do more than just remove duplication. It should establish a small internal architecture for record
+reading that is:
 
-* composable
-* easy to test in isolation
-* explicit about cardinality and term-type constraints
-* reusable for future readers without requiring bespoke helpers each time
+- composable
+- easy to test in isolation
+- explicit about cardinality and term-type constraints
+- reusable for future readers without requiring bespoke helpers each time
 
 The direction for this phase is:
 
-* implement duplicate removal now, so the Phase 1 duplicate cases become regular passing tests;
-* unify all readers behind a single internal reader pipeline with well-separated responsibilities;
-* expose that pipeline through small internal primitives for scalar and many-valued access;
-* keep public exports stable;
-* fix the current type-unsound narrowing in `expectTermType` without turning this phase into a full type-system redesign.
+- implement duplicate removal now, so the Phase 1 duplicate cases become regular passing tests;
+- unify all readers behind a single internal reader pipeline with well-separated responsibilities;
+- expose that pipeline through small internal primitives for scalar and many-valued access;
+- keep public exports stable;
+- fix the current type-unsound narrowing in `expectTermType` without turning this phase into a full type-system
+  redesign.
 
-If the refactor remains manageable, prefer a slightly more general internal model now over a narrowly specialized one that will need to be rewritten in Phase 3.
+If the refactor remains manageable, prefer a slightly more general internal model now over a narrowly specialized one
+that will need to be rewritten in Phase 3.
 
 ---
 
@@ -37,25 +43,25 @@ If the refactor remains manageable, prefer a slightly more general internal mode
 
 ### Primary goals
 
-* Preserve the current public reader API.
-* Centralize shared reader behavior.
-* Make incorrect data fail early and consistently.
-* Eliminate ad hoc validation and deduplication paths.
-* Keep helpers short, pure, and easy to test.
-* Keep the internal design open to future extensions such as:
+- Preserve the current public reader API.
+- Centralize shared reader behavior.
+- Make incorrect data fail early and consistently.
+- Eliminate ad hoc validation and deduplication paths.
+- Keep helpers short, pure, and easy to test.
+- Keep the internal design open to future extensions such as:
 
-  * required scalar readers
-  * non-deduping many readers
-  * richer mapping/normalization policies
-  * URL validation
-  * schema-driven readers
+  - required scalar readers
+  - non-deduping many readers
+  - richer mapping/normalization policies
+  - URL validation
+  - schema-driven readers
 
 ### Non-goals
 
-* Do not redesign the builder-facing facade yet.
-* Do not introduce URL semantic changes in this phase.
-* Do not change integer lexical rules.
-* Do not add a full schema/type-definition layer unless it clearly reduces complexity now.
+- Do not redesign the builder-facing facade yet.
+- Do not introduce URL semantic changes in this phase.
+- Do not change integer lexical rules.
+- Do not add a full schema/type-definition layer unless it clearly reduces complexity now.
 
 ---
 
@@ -65,31 +71,32 @@ If the refactor remains manageable, prefer a slightly more general internal mode
 
 Refactor the internals around four small responsibilities:
 
-* **value selection**
+- **value selection**
 
-  * fetch raw RDF terms for a predicate
-  * handle missing vs present values
-  * enforce cardinality rules
+  - fetch raw RDF terms for a predicate
+  - handle missing vs present values
+  - enforce cardinality rules
 
-* **term-type validation**
+- **term-type validation**
 
-  * ensure selected terms match the expected RDF term kind
-  * produce properly narrowed values for downstream mapping
+  - ensure selected terms match the expected RDF term kind
+  - produce properly narrowed values for downstream mapping
 
-* **value mapping**
+- **value mapping**
 
-  * convert validated terms into exported domain values
+  - convert validated terms into exported domain values
 
-* **post-processing**
+- **post-processing**
 
-  * dedupe if configured
-  * apply required/non-empty rules where appropriate
+  - dedupe if configured
+  - apply required/non-empty rules where appropriate
 
 This is more robust than baking some of these concerns into `optionalOne` and `many` directly.
 
 ### 2. Build the exported readers on top of internal reader descriptors
 
-Rather than hard-coding behaviour separately per export, define a small internal configuration shape used by the shared pipeline.
+Rather than hard-coding behaviour separately per export, define a small internal configuration shape used by the shared
+pipeline.
 
 Suggested internal config shape:
 
@@ -105,8 +112,8 @@ Suggested internal config shape:
 
 Then keep these internal convenience wrappers:
 
-* `optionalOne(record, predicate, config, sourceLabel)`
-* `many(record, predicate, config, sourceLabel)`
+- `optionalOne(record, predicate, config, sourceLabel)`
+- `many(record, predicate, config, sourceLabel)`
 
 These should remain thin wrappers over the lower-level pipeline, not the real centre of the design.
 
@@ -118,17 +125,18 @@ Treat cardinality as a first-class concern, not as an incidental side effect of 
 
 Recommended internal selector responsibilities:
 
-* `selectOptionalOne`
+- `selectOptionalOne`
 
-  * returns `undefined` when missing
-  * throws on more than one value
+  - returns `undefined` when missing
+  - throws on more than one value
 
-* `selectMany`
+- `selectMany`
 
-  * returns `[]` when missing
-  * preserves source order
+  - returns `[]` when missing
+  - preserves source order
 
-Avoid a design where mapping or validation happens before cardinality is resolved. That would make error paths harder to reason about.
+Avoid a design where mapping or validation happens before cardinality is resolved. That would make error paths harder to
+reason about.
 
 ### 4. Keep dedupe centralized and configurable
 
@@ -136,10 +144,10 @@ Implement duplicate handling only once, in the shared many-reader path.
 
 Policy for this phase:
 
-* dedupe after mapping
-* preserve first-seen order
-* use `Set` semantics on mapped values
-* keep dedupe opt-in
+- dedupe after mapping
+- preserve first-seen order
+- use `Set` semantics on mapped values
+- keep dedupe opt-in
 
 This is the right tradeoff because exported readers care about their mapped values, not raw RDF identity.
 
@@ -149,21 +157,22 @@ This is the right tradeoff because exported readers care about their mapped valu
 
 ## 1. Refactor `records.mjs` around a shared reader core
 
-Refactor the module so exported readers are assembled from a shared internal reader core instead of bespoke per-reader helpers.
+Refactor the module so exported readers are assembled from a shared internal reader core instead of bespoke per-reader
+helpers.
 
 Minimum internal pieces:
 
-* `selectOptionalOne`
-* `selectMany`
-* `expectTermType`
-* `applyDedupe`
-* `optionalOne`
-* `many`
+- `selectOptionalOne`
+- `selectMany`
+- `expectTermType`
+- `applyDedupe`
+- `optionalOne`
+- `many`
 
 Preferred if the module is getting large:
 
-* move the internal pipeline to a private sibling module such as `records.internal.mjs` or `records_core.mjs`
-* keep `records.mjs` as the stable public facade
+- move the internal pipeline to a private sibling module such as `records.internal.mjs` or `records_core.mjs`
+- keep `records.mjs` as the stable public facade
 
 That larger refactor is worth considering if it meaningfully improves file size, testability, and cohesion.
 
@@ -171,59 +180,59 @@ That larger refactor is worth considering if it meaningfully improves file size,
 
 Keep the exported reader API unchanged:
 
-* `scalarLiteral`
-* `scalarUrlLiteral`
-* `scalarUrlRef`
-* `scalarInteger`
-* `namedRefs`
-* `getNodeTypes`
-* `getUsageTagLiterals`
+- `scalarLiteral`
+- `scalarUrlLiteral`
+- `scalarUrlRef`
+- `scalarInteger`
+- `namedRefs`
+- `getNodeTypes`
+- `getUsageTagLiterals`
 
 Target behaviour:
 
-* `scalarLiteral`
+- `scalarLiteral`
 
-  * `optionalOne`
-  * `Literal`
-  * map to `.value`
+  - `optionalOne`
+  - `Literal`
+  - map to `.value`
 
-* `scalarUrlLiteral`
+- `scalarUrlLiteral`
 
-  * same as `scalarLiteral` in this phase
-  * no URL validation change yet
+  - same as `scalarLiteral` in this phase
+  - no URL validation change yet
 
-* `scalarUrlRef`
+- `scalarUrlRef`
 
-  * `optionalOne`
-  * `NamedNode`
-  * map through `compactUrl`
+  - `optionalOne`
+  - `NamedNode`
+  - map through `compactUrl`
 
-* `scalarInteger`
+- `scalarInteger`
 
-  * keep current integer semantics
-  * reuse the literal-reading path instead of revalidating separately
+  - keep current integer semantics
+  - reuse the literal-reading path instead of revalidating separately
 
-* `namedRefs`
+- `namedRefs`
 
-  * `many`
-  * `NamedNode`
-  * map through `compactId`
-  * dedupe enabled
+  - `many`
+  - `NamedNode`
+  - map through `compactId`
+  - dedupe enabled
 
-* `getNodeTypes`
+- `getNodeTypes`
 
-  * `many`
-  * `NamedNode`
-  * map through `compactType`
-  * dedupe enabled
-  * preserve the existing required-non-empty rule after reading
+  - `many`
+  - `NamedNode`
+  - map through `compactType`
+  - dedupe enabled
+  - preserve the existing required-non-empty rule after reading
 
-* `getUsageTagLiterals`
+- `getUsageTagLiterals`
 
-  * `many`
-  * `Literal`
-  * map to `.value`
-  * dedupe enabled
+  - `many`
+  - `Literal`
+  - map to `.value`
+  - dedupe enabled
 
 ## 3. Fix type narrowing in a way that scales
 
@@ -231,14 +240,14 @@ Repair `expectTermType` so it performs real narrowing rather than relying on an 
 
 Minimum acceptable outcome:
 
-* remove the invalid cast
-* return a correctly narrowed local type for supported RDF term kinds
-* keep mapper callbacks editor-safe and JSDoc-friendly
+- remove the invalid cast
+- return a correctly narrowed local type for supported RDF term kinds
+- keep mapper callbacks editor-safe and JSDoc-friendly
 
 Preferred outcome if it stays small:
 
-* define a tiny internal mapping from term-type string to concrete RDF/JSDoc type
-* let the mapper type depend on that narrowed result
+- define a tiny internal mapping from term-type string to concrete RDF/JSDoc type
+- let the mapper type depend on that narrowed result
 
 That gives you a cleaner basis for future readers without requiring a full schema typing layer today.
 
@@ -246,13 +255,14 @@ That gives you a cleaner basis for future readers without requiring a full schem
 
 Aim for helpers that each do one thing and stay short:
 
-* selectors only select
-* validators only validate/narrow
-* mappers only transform
-* dedupe only dedupes
-* public exports only compose policies
+- selectors only select
+- validators only validate/narrow
+- mappers only transform
+- dedupe only dedupes
+- public exports only compose policies
 
-Avoid helpers that both select, validate, map, and enforce reader-specific postconditions in one block. That makes error handling and tests harder to isolate.
+Avoid helpers that both select, validate, map, and enforce reader-specific postconditions in one block. That makes error
+handling and tests harder to isolate.
 
 ---
 
@@ -260,26 +270,27 @@ Avoid helpers that both select, validate, map, and enforce reader-specific postc
 
 If you are willing to accept a somewhat broader Phase 2 refactor, I would seriously consider this structure:
 
-* `records.mjs`
+- `records.mjs`
 
-  * public reader exports only
+  - public reader exports only
 
-* `records_core.mjs`
+- `records_core.mjs`
 
-  * `selectOptionalOne`
-  * `selectMany`
-  * `expectTermType`
-  * `optionalOne`
-  * `many`
-  * `applyDedupe`
+  - `selectOptionalOne`
+  - `selectMany`
+  - `expectTermType`
+  - `optionalOne`
+  - `many`
+  - `applyDedupe`
 
-* `records_errors.mjs`
+- `records_errors.mjs`
 
-  * shared error factories / message builders
+  - shared error factories / message builders
 
 This is not required, but it would improve separation of concerns and make the core easier to test directly.
 
-It also helps keep functions short and reduces the tendency for `records.mjs` to become a “miscellaneous reader logic” file.
+It also helps keep functions short and reduces the tendency for `records.mjs` to become a “miscellaneous reader logic”
+file.
 
 ---
 
@@ -289,15 +300,15 @@ Keep error behaviour consistent and centralized.
 
 Recommended rules:
 
-* wrong term types fail fast
-* scalar multi-value predicates fail fast
-* missing optional scalar values return `undefined`
-* many-readers return `[]` unless a reader explicitly applies a required-non-empty rule afterward
-* error messages should include:
+- wrong term types fail fast
+- scalar multi-value predicates fail fast
+- missing optional scalar values return `undefined`
+- many-readers return `[]` unless a reader explicitly applies a required-non-empty rule afterward
+- error messages should include:
 
-  * predicate
-  * expected term type or cardinality
-  * source label
+  - predicate
+  - expected term type or cardinality
+  - source label
 
 Do not scatter message formatting across exported readers.
 
@@ -313,17 +324,18 @@ Use BDD-style suite/test naming throughout.
 
 Prefer three layers of tests:
 
-* **core pipeline tests**
+- **core pipeline tests**
 
-  * exercise `selectOptionalOne`, `selectMany`, `expectTermType`, `optionalOne`, and `many` in isolation if these are testable without breaking encapsulation too hard
+  - exercise `selectOptionalOne`, `selectMany`, `expectTermType`, `optionalOne`, and `many` in isolation if these are
+    testable without breaking encapsulation too hard
 
-* **public reader contract tests**
+- **public reader contract tests**
 
-  * preserve the current exported-reader behaviour
+  - preserve the current exported-reader behaviour
 
-* **consumer regression tests**
+- **consumer regression tests**
 
-  * verify bibliography graph/catalog code still behaves correctly
+  - verify bibliography graph/catalog code still behaves correctly
 
 This separation makes failures more local and easier to diagnose.
 
@@ -331,29 +343,29 @@ This separation makes failures more local and easier to diagnose.
 
 Expected Phase 2 outcome:
 
-* all currently passing tests stay green
-* duplicate-policy tests become normal passing tests
-* no URL semantic change
-* no integer lexical change
+- all currently passing tests stay green
+- duplicate-policy tests become normal passing tests
+- no URL semantic change
+- no integer lexical change
 
 Specific required scenarios:
 
-* missing optional scalar returns `undefined`
-* scalar multi-value predicates throw
-* wrong RDF term types throw with contextual errors
-* `scalarInteger` preserves existing parsing behaviour
-* `namedRefs` deduplicates repeated IDs while preserving first-seen order
-* `getNodeTypes` deduplicates repeated compacted types while preserving first-seen order
-* `getUsageTagLiterals` deduplicates repeated mapped tags while preserving first-seen order
-* many-readers still fail on invalid mixed-term collections
+- missing optional scalar returns `undefined`
+- scalar multi-value predicates throw
+- wrong RDF term types throw with contextual errors
+- `scalarInteger` preserves existing parsing behaviour
+- `namedRefs` deduplicates repeated IDs while preserving first-seen order
+- `getNodeTypes` deduplicates repeated compacted types while preserving first-seen order
+- `getUsageTagLiterals` deduplicates repeated mapped tags while preserving first-seen order
+- many-readers still fail on invalid mixed-term collections
 
 ## Add DDT where it reduces repetition
 
 Use DDT for repeated matrices such as:
 
-* wrong term type for each reader family
-* dedupe-preserving-order scenarios
-* missing / one / many cardinality cases
+- wrong term type for each reader family
+- dedupe-preserving-order scenarios
+- missing / one / many cardinality cases
 
 This is especially useful when the assertion shape is the same and only the reader configuration differs.
 
@@ -363,22 +375,25 @@ This phase is a good candidate for light PBT, especially for the shared many-rea
 
 Good properties:
 
-* dedupe preserves first-seen order
-* dedupe output contains no repeated mapped values
-* mapping followed by dedupe behaves consistently for arbitrary repeated input sequences
-* invalid mixed term collections never pass term-type validation
+- dedupe preserves first-seen order
+- dedupe output contains no repeated mapped values
+- mapping followed by dedupe behaves consistently for arbitrary repeated input sequences
+- invalid mixed term collections never pass term-type validation
 
-A practical choice here would be `fast-check` if your current JS test stack already makes third-party test deps acceptable. It is widely used and well-suited to these invariants. I would only add it if you expect continued use in later phases; otherwise, keep Phase 2 dependency-free.
+A practical choice here would be `fast-check` if your current JS test stack already makes third-party test deps
+acceptable. It is widely used and well-suited to these invariants. I would only add it if you expect continued use in
+later phases; otherwise, keep Phase 2 dependency-free.
 
 ## Regression verification
 
 Run at least:
 
-* the reader contract suite
-* bibliography graph tests
-* catalog/builder tests consuming the readers
+- the reader contract suite
+- bibliography graph tests
+- catalog/builder tests consuming the readers
 
-The goal is to confirm that internal unification did not alter caller-visible semantics beyond the intended duplicate policy.
+The goal is to confirm that internal unification did not alter caller-visible semantics beyond the intended duplicate
+policy.
 
 ---
 
@@ -386,24 +401,24 @@ The goal is to confirm that internal unification did not alter caller-visible se
 
 Phase 2 is complete when all of the following are true:
 
-* all exported readers are implemented through the shared internal reader core
-* exported reader names and call signatures are unchanged
-* `getUsageTagLiterals` no longer uses an ad hoc path
-* duplicate handling exists in one central many-reader policy
-* dedupe happens after mapping and preserves first-seen order
-* the unsound cast in `expectTermType` is removed
-* type narrowing is good enough that mapper callbacks remain editor-safe
-* Phase 1 duplicate tests now pass normally
-* regression suites consuming readers remain green
+- all exported readers are implemented through the shared internal reader core
+- exported reader names and call signatures are unchanged
+- `getUsageTagLiterals` no longer uses an ad hoc path
+- duplicate handling exists in one central many-reader policy
+- dedupe happens after mapping and preserves first-seen order
+- the unsound cast in `expectTermType` is removed
+- type narrowing is good enough that mapper callbacks remain editor-safe
+- Phase 1 duplicate tests now pass normally
+- regression suites consuming readers remain green
 
 ---
 
 ## Assumptions
 
-* URL semantics remain unchanged in Phase 2
-* integer lexical policy remains unchanged in Phase 2
-* duplicate removal is already a chosen contract and should now be implemented centrally
-* builder-facing redesign remains out of scope until Phase 3
+- URL semantics remain unchanged in Phase 2
+- integer lexical policy remains unchanged in Phase 2
+- duplicate removal is already a chosen contract and should now be implemented centrally
+- builder-facing redesign remains out of scope until Phase 3
 
 ---
 
@@ -415,16 +430,16 @@ No new production dependency is needed for the implementation itself.
 
 ### Worth considering for tests
 
-* `fast-check`
+- `fast-check`
 
-  * good fit for dedupe and mapping invariants
-  * only add it if you expect continued property testing in later phases
+  - good fit for dedupe and mapping invariants
+  - only add it if you expect continued property testing in later phases
 
 ### Not recommended in this phase
 
-* runtime schema libraries
-* large RDF abstraction layers
-* type-heavy validation frameworks
+- runtime schema libraries
+- large RDF abstraction layers
+- type-heavy validation frameworks
 
 Those would likely add more complexity than value right now.
 
@@ -434,11 +449,12 @@ Those would likely add more complexity than value right now.
 
 Because this is modern JavaScript in `.mjs`, a few things are worth considering, but cautiously:
 
-* private internal helpers and module-level composition are preferable to clever class hierarchies here
-* keep JSDoc-based type narrowing if the project is already editor-checked that way
-* avoid overcommitting to experimental runtime features unless your toolchain already guarantees them
+- private internal helpers and module-level composition are preferable to clever class hierarchies here
+- keep JSDoc-based type narrowing if the project is already editor-checked that way
+- avoid overcommitting to experimental runtime features unless your toolchain already guarantees them
 
-If the project already uses TypeScript checking over JS, this phase is a good place to tighten JSDoc generics a bit. But I would not escalate this phase into a `.ts` migration unless that migration is already planned.
+If the project already uses TypeScript checking over JS, this phase is a good place to tighten JSDoc generics a bit. But
+I would not escalate this phase into a `.ts` migration unless that migration is already planned.
 
 ---
 
@@ -448,21 +464,23 @@ If the project already uses TypeScript checking over JS, this phase is a good pl
 
 ## Summary
 
-Refactor `records.mjs` so all exported readers are implemented through a shared internal reader core while preserving the current public API.
+Refactor `records.mjs` so all exported readers are implemented through a shared internal reader core while preserving
+the current public API.
 
 This phase will:
 
-* implement duplicate removal centrally in the many-reader path
-* introduce a shared internal pipeline for selection, validation, mapping, and post-processing
-* expose that pipeline through small internal primitives:
+- implement duplicate removal centrally in the many-reader path
+- introduce a shared internal pipeline for selection, validation, mapping, and post-processing
+- expose that pipeline through small internal primitives:
 
-  * `optionalOne(record, predicate, config, sourceLabel)`
-  * `many(record, predicate, config, sourceLabel)`
-* remove the unsound cast in `expectTermType`
-* keep URL and integer semantics unchanged
-* keep the builder-facing facade out of scope
+  - `optionalOne(record, predicate, config, sourceLabel)`
+  - `many(record, predicate, config, sourceLabel)`
+- remove the unsound cast in `expectTermType`
+- keep URL and integer semantics unchanged
+- keep the builder-facing facade out of scope
 
-The design should favour reuse and extension over reader-specific specialization, so later reader additions can be expressed as small configurations rather than new bespoke helpers.
+The design should favour reuse and extension over reader-specific specialization, so later reader additions can be
+expressed as small configurations rather than new bespoke helpers.
 
 ## Key Changes
 
@@ -470,12 +488,12 @@ The design should favour reuse and extension over reader-specific specialization
 
 Refactor the reader internals around these small responsibilities:
 
-* `selectOptionalOne`
-* `selectMany`
-* `expectTermType`
-* `applyDedupe`
-* `optionalOne`
-* `many`
+- `selectOptionalOne`
+- `selectMany`
+- `expectTermType`
+- `applyDedupe`
+- `optionalOne`
+- `many`
 
 Where practical, each helper should remain small and single-purpose.
 
@@ -483,11 +501,11 @@ Where practical, each helper should remain small and single-purpose.
 
 Model each reader internally as:
 
-* cardinality policy
-* expected RDF term type
-* mapping function
-* optional dedupe policy
-* optional required/non-empty postcondition
+- cardinality policy
+- expected RDF term type
+- mapping function
+- optional dedupe policy
+- optional required/non-empty postcondition
 
 This lets exported readers reuse one internal mechanism instead of encoding policy ad hoc.
 
@@ -495,13 +513,13 @@ This lets exported readers reuse one internal mechanism instead of encoding poli
 
 Keep the exported API unchanged:
 
-* `scalarLiteral`
-* `scalarUrlLiteral`
-* `scalarUrlRef`
-* `scalarInteger`
-* `namedRefs`
-* `getNodeTypes`
-* `getUsageTagLiterals`
+- `scalarLiteral`
+- `scalarUrlLiteral`
+- `scalarUrlRef`
+- `scalarInteger`
+- `namedRefs`
+- `getNodeTypes`
+- `getUsageTagLiterals`
 
 Each should become a thin composition of shared pipeline pieces.
 
@@ -511,10 +529,10 @@ Implement dedupe once in the shared many-reader path.
 
 Rules:
 
-* dedupe after mapping
-* preserve first-seen order
-* compare mapped values via `Set`
-* keep dedupe opt-in
+- dedupe after mapping
+- preserve first-seen order
+- compare mapped values via `Set`
+- keep dedupe opt-in
 
 ### 5. Repair type narrowing
 
@@ -534,35 +552,35 @@ Convert duplicate-policy tests into normal passing behaviour.
 
 Verify that:
 
-* missing optional scalar returns `undefined`
-* scalar multi-value predicates fail fast
-* wrong term types fail fast with contextual errors
-* `scalarInteger` preserves existing parsing behaviour
-* `namedRefs` deduplicates while preserving first-seen order
-* `getNodeTypes` deduplicates while preserving first-seen order
-* `getUsageTagLiterals` deduplicates while preserving first-seen order
-* mixed invalid term collections fail for many-readers
+- missing optional scalar returns `undefined`
+- scalar multi-value predicates fail fast
+- wrong term types fail fast with contextual errors
+- `scalarInteger` preserves existing parsing behaviour
+- `namedRefs` deduplicates while preserving first-seen order
+- `getNodeTypes` deduplicates while preserving first-seen order
+- `getUsageTagLiterals` deduplicates while preserving first-seen order
+- mixed invalid term collections fail for many-readers
 
 ### Test structure
 
-* use BDD-style suite/test naming
-* use DDT for repeated reader matrices
-* consider PBT for dedupe/order invariants if adding `fast-check` is acceptable
+- use BDD-style suite/test naming
+- use DDT for repeated reader matrices
+- consider PBT for dedupe/order invariants if adding `fast-check` is acceptable
 
 ### Regression verification
 
 Run:
 
-* reader contract tests
-* bibliography graph tests
-* catalog/builder tests consuming readers
+- reader contract tests
+- bibliography graph tests
+- catalog/builder tests consuming readers
 
 ## Acceptance Criteria
 
-* all exported readers are built on the shared internal reader core
-* duplicate removal is centralized in the many-reader path
-* `getUsageTagLiterals` no longer uses a bespoke validation path
-* `expectTermType` no longer relies on the unsound cast
-* exported names and call signatures remain unchanged
-* duplicate-policy tests now pass as normal behaviour
-* consumer regression suites remain green
+- all exported readers are built on the shared internal reader core
+- duplicate removal is centralized in the many-reader path
+- `getUsageTagLiterals` no longer uses a bespoke validation path
+- `expectTermType` no longer relies on the unsound cast
+- exported names and call signatures remain unchanged
+- duplicate-policy tests now pass as normal behaviour
+- consumer regression suites remain green

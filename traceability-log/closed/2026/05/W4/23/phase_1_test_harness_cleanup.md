@@ -1,43 +1,45 @@
 # [DONE] Phase 1: Test Harness Cleanup
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Summary
 
 Clean up `filters.test.ts` test scaffolding without changing production behaviour.
 
-This phase is a **green refactor phase**: it should only improve fixture isolation, reduce duplication, and make route assertions easier to read. No new filtering semantics should be introduced yet.
+This phase is a **green refactor phase**: it should only improve fixture isolation, reduce duplication, and make route
+assertions easier to read. No new filtering semantics should be introduced yet.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Goals
 
-* Remove shared mutable test fixture state.
-* Make each test create its own manifest.
-* Reduce repeated entry-construction boilerplate.
-* Make route-list assertions concise and intention-revealing.
-* Preserve all current behaviour expectations.
+- Remove shared mutable test fixture state.
+- Make each test create its own manifest.
+- Reduce repeated entry-construction boilerplate.
+- Make route-list assertions concise and intention-revealing.
+- Preserve all current behaviour expectations.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Non-Goals
 
-* Do not change `src/filters.ts`.
-* Do not add subtree boundary tests.
-* Do not add empty-result tests.
-* Do not introduce DDT yet.
-* Do not introduce PBT.
-* Do not change public API types.
-* Do not touch generated `dist/` files.
-* Do not update the changelog.
+- Do not change `src/filters.ts`.
+- Do not add subtree boundary tests.
+- Do not add empty-result tests.
+- Do not introduce DDT yet.
+- Do not introduce PBT.
+- Do not change public API types.
+- Do not touch generated `dist/` files.
+- Do not update the changelog.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Key Changes
 
 ### 1. Add `createEntry`
 
-Add a local helper in `filters.test.ts` that builds one manifest entry through the same public helpers already used by the fixture:
+Add a local helper in `filters.test.ts` that builds one manifest entry through the same public helpers already used by
+the fixture:
 
 ```ts
 const createEntry = (
@@ -53,7 +55,8 @@ const createEntry = (
 });
 ```
 
-Use the actual exported entry type name if one is already available. If not, rely on inference through the manifest fixture rather than introducing a new annotation.
+Use the actual exported entry type name if one is already available. If not, rely on inference through the manifest
+fixture rather than introducing a new annotation.
 
 ### 2. Add `createManifest`
 
@@ -78,8 +81,7 @@ Keep the same three logical entries used by the current tests.
 Add a small assertion helper:
 
 ```ts
-const routesOf = (manifest: LessonExportManifest) =>
-    manifest.entries.map((entry) => entry.route);
+const routesOf = (manifest: LessonExportManifest) => manifest.entries.map((entry) => entry.route);
 ```
 
 Use it anywhere the test only cares about route order.
@@ -128,7 +130,7 @@ expect(filtered.entries).toEqual(manifest.entries);
 
 This keeps value coverage while avoiding a public contract around object identity.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Expected Final Test Shape
 
@@ -172,7 +174,7 @@ describe("given manifest filtering", () => {
 });
 ```
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Implementation Order
 
@@ -186,7 +188,7 @@ describe("given manifest filtering", () => {
 8. Run tests.
 9. Confirm no production files changed.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Test Plan
 
@@ -204,34 +206,34 @@ pnpm test
 
 Expected result:
 
-* all tests pass;
-* no production code changes;
-* no behavioural expectations change;
-* diff is limited to `filters.test.ts`.
+- all tests pass;
+- no production code changes;
+- no behavioural expectations change;
+- diff is limited to `filters.test.ts`.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Stop Criteria
 
 Stop Phase 1 once:
 
-* every existing test passes;
-* `filters.test.ts` no longer has a top-level shared manifest fixture;
-* each test creates its own manifest;
-* route assertions use `routesOf`;
-* no new filtering behaviour has been added.
+- every existing test passes;
+- `filters.test.ts` no longer has a top-level shared manifest fixture;
+- each test creates its own manifest;
+- route assertions use `routesOf`;
+- no new filtering behaviour has been added.
 
-------------------------------------------------------------------------------------------------------------------------
+---
 
 ## Implementation Notes
 
 Implemented in `packages/lesson-export-core/tests/filters.test.ts`.
 
-* Added `createEntry` to centralize manifest entry construction through the public route and output-path helpers.
-* Replaced the shared top-level manifest fixture with `createManifest`, so each test owns its fixture state.
-* Added `routesOf` for route-order assertions.
-* Replaced the entry identity assertion with value equality over the manifest entries.
-* Left production source files, generated `dist/` files, and changelog files unchanged.
+- Added `createEntry` to centralize manifest entry construction through the public route and output-path helpers.
+- Replaced the shared top-level manifest fixture with `createManifest`, so each test owns its fixture state.
+- Added `routesOf` for route-order assertions.
+- Replaced the entry identity assertion with value equality over the manifest entries.
+- Left production source files, generated `dist/` files, and changelog files unchanged.
 
 ## Validation
 

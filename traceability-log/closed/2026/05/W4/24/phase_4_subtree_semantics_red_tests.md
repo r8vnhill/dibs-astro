@@ -8,9 +8,9 @@ A subtree filter should return **descendant routes only**. It should not include
 This phase intentionally goes red against the current implementation if subtree matching currently uses normalized
 `startsWith` semantics that include the root route.
 
-Implemented in `packages/lesson-export-core/tests/filters.test.ts` with descendant-only subtree coverage, a
-root-only empty-result case, and a sibling-prefix boundary guard. The suite is expected to stay red until the later
-implementation phase updates `src/filters.ts`.
+Implemented in `packages/lesson-export-core/tests/filters.test.ts` with descendant-only subtree coverage, a root-only
+empty-result case, and a sibling-prefix boundary guard. The suite is expected to stay red until the later implementation
+phase updates `src/filters.ts`.
 
 Keep the public API unchanged:
 

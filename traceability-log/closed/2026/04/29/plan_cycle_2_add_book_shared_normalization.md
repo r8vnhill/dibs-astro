@@ -4,16 +4,19 @@ Status: Implemented on 2026-04-29.
 
 ## Summary
 
-Introduce the first shared normalization path for `Book` references while preserving current `parseBibliography` and `loadBibliographyCatalog` behaviour.
+Introduce the first shared normalization path for `Book` references while preserving current `parseBibliography` and
+`loadBibliographyCatalog` behaviour.
 
-This cycle should move only the final `Book` object construction into the shared normalization core. Source-specific extraction and policy remain in their current modules:
+This cycle should move only the final `Book` object construction into the shared normalization core. Source-specific
+extraction and policy remain in their current modules:
 
 - ItemList validation and strict/non-strict handling stay in `normalize-jsonld.ts`.
 - Catalog graph lookup, linked-node resolution, and pending-only tolerance stay in `catalog-core.mjs`.
 - Author, publisher, page, and parent-work extraction remain source-specific for now.
 - Non-`Book` reference branches remain unchanged.
 
-The existing equivalence suite provides the behavioural safety net, while the new shared-normalizer suite locks the `Book` normalization contract directly.
+The existing equivalence suite provides the behavioural safety net, while the new shared-normalizer suite locks the
+`Book` normalization contract directly.
 
 ## Goals
 
@@ -84,7 +87,8 @@ type BookNormalizationInput = {
 };
 ```
 
-If current `NormalizedBookReference` uses structured authors rather than strings, match the existing shape exactly. Do not redesign author representation in this cycle.
+If current `NormalizedBookReference` uses structured authors rather than strings, match the existing shape exactly. Do
+not redesign author representation in this cycle.
 
 ## Output Contract
 
@@ -114,7 +118,8 @@ Preserve current omission behaviour:
 
 - optional missing values should remain absent;
 - blank filtering should happen before calling the normalizer if that is how current callers behave;
-- the normalizer should not introduce empty strings, empty arrays, or default values unless current behaviour already does.
+- the normalizer should not introduce empty strings, empty arrays, or default values unless current behaviour already
+  does.
 
 ## Dispatcher Contract
 
@@ -140,7 +145,8 @@ Suggested message:
 Unsupported reference normalization kind: <kind>
 ```
 
-Add one direct test for unsupported kind only if it does not require unsafe test gymnastics. Otherwise defer unsupported-kind tests until the union contains more than one supported type.
+Add one direct test for unsupported kind only if it does not require unsafe test gymnastics. Otherwise defer
+unsupported-kind tests until the union contains more than one supported type.
 
 ---
 
@@ -191,7 +197,8 @@ export declare function normalizeReference(
 ): NormalizedReference;
 ```
 
-If declaration files feel too heavy for this cycle, use JSDoc typedefs in `.mjs`, but the preferred option is a `.d.ts` because downstream TypeScript tests and facades will depend on this API.
+If declaration files feel too heavy for this cycle, use JSDoc typedefs in `.mjs`, but the preferred option is a `.d.ts`
+because downstream TypeScript tests and facades will depend on this API.
 
 ---
 
@@ -218,7 +225,8 @@ Book-specific final object literal
   -> normalizeBookReference(...)
 ```
 
-Prefer `normalizeBookReference` over `normalizeReference` in the caller during this cycle. It makes the migration explicit and avoids pretending the generic dispatcher is fully mature.
+Prefer `normalizeBookReference` over `normalizeReference` in the caller during this cycle. It makes the migration
+explicit and avoids pretending the generic dispatcher is fully mature.
 
 ### Catalog Path: `catalog-core.mjs`
 
@@ -472,8 +480,10 @@ No generated bibliography artifact changes.
 
 ## Implementation Notes
 
-- Added `src/lib/bibliography/normalize/normalize-reference.mjs` with `normalizeBookReference` and the initial `normalizeReference` dispatcher.
-- Added `src/lib/bibliography/normalize/normalize-reference-types.ts` for TypeScript-facing input and function contracts.
+- Added `src/lib/bibliography/normalize/normalize-reference.mjs` with `normalizeBookReference` and the initial
+  `normalizeReference` dispatcher.
+- Added `src/lib/bibliography/normalize/normalize-reference-types.ts` for TypeScript-facing input and function
+  contracts.
 - Added `src/lib/bibliography/__tests__/normalize-reference.test.ts` for the direct `Book` normalization contract.
 - Refactored only the final `Book` object construction in `normalize-jsonld.ts` and `catalog-core.mjs`.
 

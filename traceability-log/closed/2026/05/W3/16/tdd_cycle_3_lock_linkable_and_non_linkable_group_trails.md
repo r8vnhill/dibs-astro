@@ -21,8 +21,8 @@ Implemented and verified.
 
 - Added focused linkable/non-linkable group trail coverage in
   `src/infrastructure/adapters/__tests__/LessonCatalogAdapter.behavior.test.ts`.
-- Confirmed the existing `LessonCatalogAdapter.findTrailByHref()` implementation already preserves authored group
-  hrefs, omits hrefs from plain group labels, and resolves lessons below non-linkable groups.
+- Confirmed the existing `LessonCatalogAdapter.findTrailByHref()` implementation already preserves authored group hrefs,
+  omits hrefs from plain group labels, and resolves lessons below non-linkable groups.
 - Left production adapter code unchanged.
 - Verified with:
 

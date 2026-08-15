@@ -447,7 +447,7 @@ This keeps the fast marker contract and the slow end-to-end workflow aligned.
 - Preserve pure tests and Astro render tests as the primary regression net.
 - Treat any move from advisory to blocking as a CI policy change.
 - Store smoke artifacts under `tmp/pdf-export-smoke/` so manual and CI runs can retain them without affecting the main
-    export output.
+  export output.
 
 ## Acceptance Criteria
 

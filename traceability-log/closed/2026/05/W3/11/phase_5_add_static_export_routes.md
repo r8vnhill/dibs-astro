@@ -374,10 +374,13 @@ Phase 5 is complete when:
 
 The implemented route wrapper keeps the source lesson page intact and only shifts the render context for PDF export.
 
-- `src/pages/exports/pdf/notes/[...path].astro` resolves the export manifest and forwards the canonical lesson route through `Astro.locals.lessonRoute`.
-- `src/layouts/NotesLayout.astro` forwards `renderMode` and `exportMode` to the document layout so PDF export behavior can be activated explicitly from the wrapper.
+- `src/pages/exports/pdf/notes/[...path].astro` resolves the export manifest and forwards the canonical lesson route
+  through `Astro.locals.lessonRoute`.
+- `src/layouts/NotesLayout.astro` forwards `renderMode` and `exportMode` to the document layout so PDF export behavior
+  can be activated explicitly from the wrapper.
 - `src/layouts/BaseLayout.astro` adds `noindex, nofollow` only when the request-scoped lesson render mode is `pdf`.
-- `src/infrastructure/adapters/lesson-export-manifest.ts` keeps manifest validation local to the app boundary while reusing the shared `@ravenhill/lesson-export-core` route and output-path helpers.
+- `src/infrastructure/adapters/lesson-export-manifest.ts` keeps manifest validation local to the app boundary while
+  reusing the shared `@ravenhill/lesson-export-core` route and output-path helpers.
 
 [1]: https://docs.astro.build/en/guides/routing/?utm_source=chatgpt.com "Routing - Astro Docs"
 [2]: https://docs.astro.build/en/guides/imports/?utm_source=chatgpt.com "Imports reference - Astro Docs"

@@ -2,16 +2,16 @@
 
 ## Summary
 
-Refactored `src/presentation/adapters/__tests__/lesson-metadata-bridge.test.ts` from broad smoke coverage into a
-sharper presentation-boundary contract suite.
+Refactored `src/presentation/adapters/__tests__/lesson-metadata-bridge.test.ts` from broad smoke coverage into a sharper
+presentation-boundary contract suite.
 
-This pass was test-only. It did not introduce a resolver factory, change route normalization, change generated
-metadata, or move metadata projection logic.
+This pass was test-only. It did not introduce a resolver factory, change route normalization, change generated metadata,
+or move metadata projection logic.
 
 ## Implemented Changes
 
-- Added `expectFoundMetadata` to fail directly when a route does not resolve to `found` and to narrow metadata for
-  later assertions.
+- Added `expectFoundMetadata` to fail directly when a route does not resolve to `found` and to narrow metadata for later
+  assertions.
 - Replaced conditional assertions such as `result.kind === "found" ? ... : ...`.
 - Grouped scenarios with BDD-style `describe` / `test` structure:
   - known route resolution;
@@ -27,8 +27,8 @@ metadata, or move metadata projection logic.
   - no top-level metadata fields outside `authors`, `changes`, and `lastModified` are exposed;
   - each change exposes only `author`, `date`, `hash`, and `subject`;
   - `sourceFile` is not exposed.
-- Kept missing-route assertions as `toMatchObject({ kind: "missing" })`, because missing results may include extra
-  data such as `href`.
+- Kept missing-route assertions as `toMatchObject({ kind: "missing" })`, because missing results may include extra data
+  such as `href`.
 
 ## Verification
 

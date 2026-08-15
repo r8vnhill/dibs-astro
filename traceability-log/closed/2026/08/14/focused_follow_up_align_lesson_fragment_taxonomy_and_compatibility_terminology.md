@@ -2,8 +2,8 @@
 
 ## Close-out — 14 August 2026
 
-Completed with `h3-observable-change` as the canonical target. The subsection remains nested below
-`h2-encapsulation`, renders an H3 heading, and retains its ordered exercise and closed disclosure.
+Completed with `h3-observable-change` as the canonical target. The subsection remains nested below `h2-encapsulation`,
+renders an H3 heading, and retains its ordered exercise and closed disclosure.
 
 The current repository had two references to the former ID: the lesson definition and its focused render test; both were
 migrated. Repository search found no current inbound links.

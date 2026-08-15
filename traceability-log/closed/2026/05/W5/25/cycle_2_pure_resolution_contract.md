@@ -366,18 +366,18 @@ pnpm --filter @ravenhill/shiki-core test
 
 - Added `ResolvedLanguageLoadRequest` and `resolveLoadableLanguage` in
   `packages/shiki-core/src/highlighter/language-loader.ts`.
-- Routed `ensureLanguageLoaded` through the pure resolver while preserving the Cycle 1/Cycle 2
-  `LanguageLoadResult` shape.
+- Routed `ensureLanguageLoaded` through the pure resolver while preserving the Cycle 1/Cycle 2 `LanguageLoadResult`
+  shape.
 - Added focused resolver and loader tests in `packages/shiki-core/tests/highlighter-language-loader.test.ts`.
-- Added `ts -> typescript` to the central language alias map because the Cycle 2 contract requires canonical
-  TypeScript resolution.
+- Added `ts -> typescript` to the central language alias map because the Cycle 2 contract requires canonical TypeScript
+  resolution.
 - Updated language-resolution tests to pin the new `ts` alias.
 - Left `service.ts`, `src/index.ts`, and `LanguageLoadResult` unchanged.
 
 ## Verification Results
 
 - `pnpm --filter @ravenhill/shiki-core test -- highlighter-language-loader`
-  - Passed. The package script forwarded the argument in a way that ran the full shiki-core Vitest suite:
-    9 files and 201 tests passed.
+  - Passed. The package script forwarded the argument in a way that ran the full shiki-core Vitest suite: 9 files and
+    201 tests passed.
 - `pnpm --filter @ravenhill/shiki-core typecheck`
   - Passed.
