@@ -101,11 +101,7 @@ export {
 export { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME, SHIKI_DEFAULT_THEMES } from "./themes/defaults";
 
 // Fallback HTML rendering for unavailable syntax highlighting.
-export {
-    escapeHtmlAttribute,
-    escapeHtmlText,
-    renderFallbackCodeHtml,
-} from "./fallback/html";
+export { escapeHtmlAttribute, escapeHtmlText, renderFallbackCodeHtml } from "./fallback/html";
 
 // HTML class-token utilities for transformer development.
 export {

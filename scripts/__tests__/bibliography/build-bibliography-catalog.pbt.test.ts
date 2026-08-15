@@ -29,18 +29,21 @@ describe("buildCatalogArtifactFromTurtle property-based invariants", () => {
             .length - 1;
 
         await fc.assert(
-            fc.asyncProperty(fc.shuffledSubarray(
-                Array.from({ length: bodyStatementCount }, (_, index) => index),
-                { minLength: bodyStatementCount, maxLength: bodyStatementCount },
-            ), async (permutation) => {
-                const baseArtifact = buildArtifact(validBaseFixture, "statement-order-base.ttl");
-                const shuffledArtifact = buildArtifact(
-                    shuffleStatements(validBaseFixture, permutation),
-                    "statement-order-shuffled.ttl",
-                );
+            fc.asyncProperty(
+                fc.shuffledSubarray(
+                    Array.from({ length: bodyStatementCount }, (_, index) => index),
+                    { minLength: bodyStatementCount, maxLength: bodyStatementCount },
+                ),
+                async (permutation) => {
+                    const baseArtifact = buildArtifact(validBaseFixture, "statement-order-base.ttl");
+                    const shuffledArtifact = buildArtifact(
+                        shuffleStatements(validBaseFixture, permutation),
+                        "statement-order-shuffled.ttl",
+                    );
 
-                expect(semanticGraph(shuffledArtifact)).toEqual(semanticGraph(baseArtifact));
-            }),
+                    expect(semanticGraph(shuffledArtifact)).toEqual(semanticGraph(baseArtifact));
+                },
+            ),
         );
     });
 

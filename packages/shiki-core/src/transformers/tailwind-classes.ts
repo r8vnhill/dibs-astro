@@ -7,12 +7,7 @@
  */
 
 import type { ShikiTransformer } from "shiki";
-import {
-    assignMergedClassName,
-    type ClassableNode,
-    type ClassValue,
-    toClassTokens,
-} from "./class-tokens";
+import { assignMergedClassName, type ClassableNode, type ClassValue, toClassTokens } from "./class-tokens";
 
 /**
  * Options for {@link createTailwindClassTransformer}.

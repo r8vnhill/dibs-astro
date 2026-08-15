@@ -14,7 +14,7 @@ suite("given the supported platform declaration", () => {
                 packageManifest,
                 nodeVersion: "24.11.0",
                 pnpmVersion: "11.8.0",
-            }),
+            })
         ).not.toThrow();
     });
 
@@ -24,7 +24,7 @@ suite("given the supported platform declaration", () => {
                 packageManifest,
                 nodeVersion: "26.7.0",
                 pnpmVersion: "11.8.0",
-            }),
+            })
         ).not.toThrow();
     });
 
@@ -34,7 +34,7 @@ suite("given the supported platform declaration", () => {
                 packageManifest,
                 nodeVersion: "27.0.0",
                 pnpmVersion: "11.8.0",
-            }),
+            })
         ).toThrow("does not satisfy engines.node");
     });
 
@@ -44,7 +44,7 @@ suite("given the supported platform declaration", () => {
                 packageManifest,
                 nodeVersion: "24.11.0",
                 pnpmVersion: "11.9.0",
-            }),
+            })
         ).toThrow("does not match packageManager");
     });
 

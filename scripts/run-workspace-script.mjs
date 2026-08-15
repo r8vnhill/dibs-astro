@@ -1,6 +1,6 @@
+import { spawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { spawn } from "node:child_process";
 
 const [workspaceDirectory, scriptName] = process.argv.slice(2);
 

@@ -12,7 +12,10 @@ export const candidateMetadataSchema = z.object({
     revision: z.string().regex(revisionPattern, "revision must be a full Git revision"),
     version: z.string().regex(semverPattern, "version must be a valid project version"),
     source: z.string().regex(sourcePattern, "source must be an HTTPS repository URL"),
-    platform: z.string().regex(/^[a-z0-9][a-z0-9.-]*\/[a-z0-9][a-z0-9.-]*$/, "platform must use os/architecture syntax"),
+    platform: z.string().regex(
+        /^[a-z0-9][a-z0-9.-]*\/[a-z0-9][a-z0-9.-]*$/,
+        "platform must use os/architecture syntax",
+    ),
 }).strict();
 
 export function parseCandidateMetadata(value) {

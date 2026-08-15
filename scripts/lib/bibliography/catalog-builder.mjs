@@ -1,5 +1,4 @@
 import { Parser } from "n3";
-import { collectPendingRevisionState } from "./graph/pending-revision.mjs";
 import {
     buildCreativeWorkNode,
     buildLearningResourceNode,
@@ -9,6 +8,7 @@ import {
     buildUsageNode,
     sortGraphNodes,
 } from "./graph/index.mjs";
+import { collectPendingRevisionState } from "./graph/pending-revision.mjs";
 import { createCatalogReader } from "./reader/catalog-reader.mjs";
 import { createRecord } from "./reader/records.mjs";
 import { abortValidation, ensureNodeCategory } from "./reader/validation.mjs";

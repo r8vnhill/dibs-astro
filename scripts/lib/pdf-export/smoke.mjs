@@ -56,7 +56,9 @@ export function assertPdfSmokeReport(report, expectedEntry) {
         throw new Error(`PDF smoke report selection did not match ${expectedEntry.route}.`);
     }
 
-    if (!report.summary || report.summary.selected !== 1 || report.summary.exported !== 1 || report.summary.failed !== 0) {
+    if (
+        !report.summary || report.summary.selected !== 1 || report.summary.exported !== 1 || report.summary.failed !== 0
+    ) {
         throw new Error("PDF smoke report summary did not record one exported entry.");
     }
 

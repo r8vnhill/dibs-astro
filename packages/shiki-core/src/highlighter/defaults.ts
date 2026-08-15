@@ -2,8 +2,8 @@
  * Default theme and language configuration for @ravenhill/shiki-core.
  */
 
-import { SHIKI_DEFAULT_THEMES } from "../themes/defaults";
 import { availableLanguages } from "../languages/resolution";
+import { SHIKI_DEFAULT_THEMES } from "../themes/defaults";
 
 /**
  * Default theme pair used across the project.

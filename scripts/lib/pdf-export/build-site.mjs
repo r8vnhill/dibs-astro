@@ -24,7 +24,11 @@ async function runPackageCommand({ projectRoot, args, logPrefix }) {
         });
 
         childProcess.on("error", (error) => {
-            reject(new Error(`${logPrefix} Failed to start build: ${error instanceof Error ? error.message : String(error)}`));
+            reject(
+                new Error(
+                    `${logPrefix} Failed to start build: ${error instanceof Error ? error.message : String(error)}`,
+                ),
+            );
         });
 
         childProcess.on("exit", (code, signal) => {

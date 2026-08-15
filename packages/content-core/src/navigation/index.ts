@@ -3,7 +3,7 @@
  *
  * Internal barrel for the `lesson-navigation` submodule.
  *
- * This module gathers the lesson-navigation model behind a single local boundary. It exists to keep the submodule easy 
+ * This module gathers the lesson-navigation model behind a single local boundary. It exists to keep the submodule easy
  * to consume from the package entry point while preserving freedom to reorganize the internal file layout.
  *
  * It re-exports:
@@ -16,10 +16,10 @@
  * - repository contracts that isolate core navigation logic from host-side data;
  * - navigation DTOs and result shapes used by application adapters.
  *
- * The navigation layer is intentionally host-agnostic. It models lesson order, links, trails, and lookup results 
+ * The navigation layer is intentionally host-agnostic. It models lesson order, links, trails, and lookup results
  * without depending on Astro, generated JSON, UI components, routing APIs, or a specific content source.
  *
- * Prefer importing from `@ravenhill/content-core` in application code. Importing from this internal path couples 
+ * Prefer importing from `@ravenhill/content-core` in application code. Importing from this internal path couples
  * consumers to the current package layout and makes future refactors harder.
  *
  * @example

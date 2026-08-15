@@ -44,7 +44,9 @@ export async function waitForPreview(baseUrl, timeoutMs) {
     }
 
     const message = lastError instanceof Error ? lastError.message : String(lastError ?? "Unknown error");
-    throw new Error(`Preview server at ${normalizedBaseUrl} did not become ready within ${timeoutMs}ms. Last error: ${message}`);
+    throw new Error(
+        `Preview server at ${normalizedBaseUrl} did not become ready within ${timeoutMs}ms. Last error: ${message}`,
+    );
 }
 
 export function stopPreviewServer(childProcess) {

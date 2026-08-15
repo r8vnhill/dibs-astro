@@ -1,6 +1,5 @@
 import { DataFactory } from "n3";
 import { describe, expect, it } from "vitest";
-import { DIBS, SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 import {
     buildCreativeWorkNode,
     buildLearningResourceNode,
@@ -9,14 +8,10 @@ import {
     buildUsageNode,
     sortGraphNodes,
 } from "../../lib/bibliography/graph/index.mjs";
-import {
-    createRecord,
-} from "../../lib/bibliography/reader/records.mjs";
-import {
-    abortValidation,
-    ensureNodeCategory,
-} from "../../lib/bibliography/reader/validation.mjs";
 import { createCatalogReader } from "../../lib/bibliography/reader/catalog-reader.mjs";
+import { createRecord } from "../../lib/bibliography/reader/records.mjs";
+import { abortValidation, ensureNodeCategory } from "../../lib/bibliography/reader/validation.mjs";
+import { DIBS, SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 
 const { literal, namedNode } = DataFactory;
 

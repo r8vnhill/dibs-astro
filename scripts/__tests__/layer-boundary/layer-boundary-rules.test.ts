@@ -538,7 +538,9 @@ describe("Cycle 2 rule matrix", () => {
         const uiRule = ruleById("ui-boundary");
 
         expect(uiRule.allowedTargets).not.toEqual(expect.arrayContaining(["domain", "application"]));
-        expect(uiRule.allowedTargets).toEqual(expect.arrayContaining(["presentation-adapter", "presentation", "utils"]));
+        expect(uiRule.allowedTargets).toEqual(
+            expect.arrayContaining(["presentation-adapter", "presentation", "utils"]),
+        );
         expect(uiRule.forbiddenTargets).toEqual(["domain", "application", "infrastructure"]);
     });
 

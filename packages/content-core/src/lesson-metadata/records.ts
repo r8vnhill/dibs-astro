@@ -58,10 +58,10 @@ export type LessonMetadataChange = Readonly<{
 /**
  * Trusted metadata record for a single lesson.
  *
- * This is the normalized domain-facing record returned by metadata lookup and resolution. Raw generated metadata 
+ * This is the normalized domain-facing record returned by metadata lookup and resolution. Raw generated metadata
  * should be converted into this shape only after all semantic fields have passed through the branded-value parsers.
  *
- * The `changes` array is expected to preserve the ordering provided by the metadata source, typically newest-first 
+ * The `changes` array is expected to preserve the ordering provided by the metadata source, typically newest-first
  * when derived from git log output.
  */
 export type LessonMetadataRecord = Readonly<{
@@ -74,7 +74,7 @@ export type LessonMetadataRecord = Readonly<{
     /**
      * Optional most-recent modification date.
      *
-     * This may differ from the first change date when the change list is filtered, truncated, or generated from a 
+     * This may differ from the first change date when the change list is filtered, truncated, or generated from a
      * source that computes the latest date separately.
      */
     lastModified?: IsoShortDate;

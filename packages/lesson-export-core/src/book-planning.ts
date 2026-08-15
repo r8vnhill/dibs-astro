@@ -280,7 +280,8 @@ function createDuplicateManifestRouteFinding(normalizedRoute: string, duplicateR
     return {
         code: "duplicate-manifest-route",
         severity: "warning",
-        message: `Manifest route "${duplicateRoute}" duplicates normalized route "${normalizedRoute}". The first entry is used.`,
+        message:
+            `Manifest route "${duplicateRoute}" duplicates normalized route "${normalizedRoute}". The first entry is used.`,
         route: duplicateRoute,
     };
 }

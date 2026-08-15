@@ -12,7 +12,7 @@
  */
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -64,16 +64,16 @@ export async function assembleTurtleFiles(sourcesDir, outputFile) {
                 // Remove leading/trailing empty lines from this section
                 let firstNonEmpty = 0;
                 while (
-                    firstNonEmpty < tripleLines.length &&
-                    tripleLines[firstNonEmpty].trim() === ""
+                    firstNonEmpty < tripleLines.length
+                    && tripleLines[firstNonEmpty].trim() === ""
                 ) {
                     firstNonEmpty++;
                 }
 
                 let lastNonEmpty = tripleLines.length - 1;
                 while (
-                    lastNonEmpty >= 0 &&
-                    tripleLines[lastNonEmpty].trim() === ""
+                    lastNonEmpty >= 0
+                    && tripleLines[lastNonEmpty].trim() === ""
                 ) {
                     lastNonEmpty--;
                 }
@@ -110,12 +110,10 @@ export async function assembleTurtleFiles(sourcesDir, outputFile) {
  * Command-line usage: node assemble-ttl.mjs <sourcesDir> <outputFile>
  */
 if (import.meta.url === `file://${process.argv[1]}`) {
-    const sourcesDir =
-        process.argv[2] ||
-        join(__dirname, "../../../src/data/bibliography/sources");
-    const outputFile =
-        process.argv[3] ||
-        join(
+    const sourcesDir = process.argv[2]
+        || join(__dirname, "../../../src/data/bibliography/sources");
+    const outputFile = process.argv[3]
+        || join(
             __dirname,
             "../../../src/data/bibliography/catalog.graph.generated.ttl",
         );

@@ -488,9 +488,7 @@ describe("evaluateBoundaryRules", () => {
             { importPath: null, kind: "static-import" },
             { importPath: 42, kind: "static-import" },
         ])("throws when the import record is malformed: %#", (record) => {
-            expect(() =>
-                evaluateBoundaryRules("src/domain/model.ts", record, undefined),
-            ).toThrow(TypeError);
+            expect(() => evaluateBoundaryRules("src/domain/model.ts", record, undefined)).toThrow(TypeError);
         });
 
         test("currently allows an empty import path because the classifier treats it as an external package", () => {

@@ -1,11 +1,11 @@
 /**
  * @file Internal repository export surface.
  *
- * This module gathers the repository-related primitives used by the package root. It exists to keep `src/index.ts` 
+ * This module gathers the repository-related primitives used by the package root. It exists to keep `src/index.ts`
  * focused while preserving a single public import path for consumers.
  *
  * @remarks
- * This barrel is an implementation detail. Consumers should not import from this module or from any other package 
+ * This barrel is an implementation detail. Consumers should not import from this module or from any other package
  * subpath.
  *
  * Prefer:

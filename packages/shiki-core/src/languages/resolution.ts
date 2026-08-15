@@ -7,7 +7,7 @@ import type { BundledLanguage } from "shiki";
 import { languageAliases } from "./aliases";
 
 // Re-export for public API
-export { languageAliases, isKnownShikiAlias } from "./aliases";
+export { isKnownShikiAlias, languageAliases } from "./aliases";
 
 /**
  * Compact array of bundled Shiki languages actually used by this package.

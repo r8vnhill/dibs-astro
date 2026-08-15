@@ -16,4 +16,3 @@ export function resolvePublicationAliases({ branch, tag, version }, candidate) {
 
     return [...new Set(aliases)];
 }
-

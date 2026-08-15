@@ -16,11 +16,11 @@
  */
 
 import { execSync } from "child_process";
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from "fs";
-import { join, resolve } from "path";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
-import { fileURLToPath } from "url";
+import { join, resolve } from "path";
 import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const packageRoot = resolve(scriptDir, "..");
@@ -46,7 +46,7 @@ try {
     // Step 2: Create tarball in temp directory with JSON output
     console.log("\n2️⃣  Creating tarball in temp directory...");
     mkdirSync(tarbalsDir, { recursive: true });
-    
+
     const packOutput = execSync(
         `pnpm pack --pack-destination "${tarbalsDir}" --json`,
         {
@@ -59,16 +59,16 @@ try {
     try {
         const packResult = JSON.parse(packOutput);
         let tarballFileName = packResult.filename || packResult[0]?.filename;
-        
+
         if (!tarballFileName) {
             throw new Error("Could not determine tarball filename from pack output");
         }
-        
+
         // pnpm may return the full path, so we just want the filename
         if (tarballFileName.includes("\\") || tarballFileName.includes("/")) {
             tarballFileName = tarballFileName.split(/[/\\]/).pop();
         }
-        
+
         tarballPath = join(tarbalsDir, tarballFileName);
     } catch (parseError) {
         throw new Error(

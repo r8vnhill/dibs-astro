@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-    createLineTextColorTransformer,
-    transformerNotationLineTextColor,
-    getMetaKey,
-    sanitizeCssColor,
-    parseInlineLineColorDirective,
     appendInlineStyle,
+    createLineTextColorTransformer,
+    getMetaKey,
+    parseInlineLineColorDirective,
+    sanitizeCssColor,
+    transformerNotationLineTextColor,
 } from "../src/transformers/line-text-color";
 
 /**

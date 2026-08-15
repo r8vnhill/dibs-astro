@@ -14,14 +14,19 @@ export function createRegistryClient({ registry, username, password }) {
     };
 
     async function requestManifest(image, reference) {
-        const response = await request(image, `/v2/${image.repository}/manifests/${encodeURIComponent(reference)}`, "GET", {
-            Accept: [
-                "application/vnd.oci.image.index.v1+json",
-                "application/vnd.docker.distribution.manifest.list.v2+json",
-                "application/vnd.oci.image.manifest.v1+json",
-                "application/vnd.docker.distribution.manifest.v2+json",
-            ].join(", "),
-        });
+        const response = await request(
+            image,
+            `/v2/${image.repository}/manifests/${encodeURIComponent(reference)}`,
+            "GET",
+            {
+                Accept: [
+                    "application/vnd.oci.image.index.v1+json",
+                    "application/vnd.docker.distribution.manifest.list.v2+json",
+                    "application/vnd.oci.image.manifest.v1+json",
+                    "application/vnd.docker.distribution.manifest.v2+json",
+                ].join(", "),
+            },
+        );
         if (!response.ok) throw new Error(`Could not read OCI manifest (${response.status}).`);
         return {
             body: Buffer.from(await response.arrayBuffer()),
@@ -31,9 +36,15 @@ export function createRegistryClient({ registry, username, password }) {
     }
 
     async function putManifest(image, reference, body, contentType) {
-        const response = await request(image, `/v2/${image.repository}/manifests/${encodeURIComponent(reference)}`, "PUT", {
-            "Content-Type": contentType,
-        }, body);
+        const response = await request(
+            image,
+            `/v2/${image.repository}/manifests/${encodeURIComponent(reference)}`,
+            "PUT",
+            {
+                "Content-Type": contentType,
+            },
+            body,
+        );
         if (!response.ok) throw new Error(`Could not publish ${reference} (${response.status}).`);
         return response;
     }
@@ -49,10 +60,17 @@ export function createRegistryClient({ registry, username, password }) {
 
         const challenge = initial.headers.get("www-authenticate");
         if (!challenge) return initial;
-        const params = Object.fromEntries([...challenge.matchAll(/(realm|service|scope)="([^"]*)"/g)].map((match) => [match[1], match[2]]));
-        const tokenResponse = await fetch(`${params.realm}?service=${encodeURIComponent(params.service)}&scope=${encodeURIComponent(params.scope ?? `repository:${image.repository}:pull,push`)}`, {
-            headers: { Authorization: basic },
-        });
+        const params = Object.fromEntries(
+            [...challenge.matchAll(/(realm|service|scope)="([^"]*)"/g)].map((match) => [match[1], match[2]]),
+        );
+        const tokenResponse = await fetch(
+            `${params.realm}?service=${encodeURIComponent(params.service)}&scope=${
+                encodeURIComponent(params.scope ?? `repository:${image.repository}:pull,push`)
+            }`,
+            {
+                headers: { Authorization: basic },
+            },
+        );
         if (!tokenResponse.ok) throw new Error(`Could not obtain registry authorization (${tokenResponse.status}).`);
         const token = (await tokenResponse.json()).token;
         return fetch(`https://${image.registry}${path}`, {
@@ -62,4 +80,3 @@ export function createRegistryClient({ registry, username, password }) {
         });
     }
 }
-

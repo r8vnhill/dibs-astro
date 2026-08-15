@@ -1,10 +1,6 @@
 import fc from "fast-check";
 import { expect, suite, test } from "vitest";
-import {
-    escapeHtmlAttribute,
-    escapeHtmlText,
-    renderFallbackCodeHtml,
-} from "../src/fallback/html";
+import { escapeHtmlAttribute, escapeHtmlText, renderFallbackCodeHtml } from "../src/fallback/html";
 
 function extractRenderedCodeText(html: string): string {
     const match = html.match(/<code(?: class="[^"]*")?>([\s\S]*)<\/code>/u);
@@ -25,7 +21,6 @@ function extractCodeClass(html: string): string | undefined {
  * Contract tests for fallback HTML rendering.
  */
 suite("given fallback HTML rendering", () => {
-
     test.each([
         ["ampersand", "Kaiser & Alliance", "Kaiser &amp; Alliance"],
         ["less-than", "level < master", "level &lt; master"],
@@ -123,7 +118,6 @@ suite("given fallback HTML rendering", () => {
         expect(renderFallbackCodeHtml("", [], [])).toBe("<pre class=\"shiki\"><code></code></pre>");
         expect(renderFallbackCodeHtml("line1\n", [], [])).toContain("line1\n");
     });
-
 
     test("then rendered code text never contains raw angle brackets", () => {
         fc.assert(

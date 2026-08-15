@@ -5,7 +5,7 @@ import { buildPlatformArtifactManifest } from "./lib/platform-artifact-manifest.
 
 const argumentsByName = new Map(
     process.argv.slice(2).flatMap((argument, index, argumentsList) =>
-        argument.startsWith("--") ? [[argument, argumentsList[index + 1]]] : [],
+        argument.startsWith("--") ? [[argument, argumentsList[index + 1]]] : []
     ),
 );
 const outDir = path.resolve(argumentsByName.get("--dist") ?? "dist");

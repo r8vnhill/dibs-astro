@@ -106,8 +106,7 @@ function normalizeSeverity(value) {
 }
 
 function formatDomFindingMessage(kind, element) {
-    const label =
-        element.getAttribute("aria-label") ?? excerptText(element.textContent);
+    const label = element.getAttribute("aria-label") ?? excerptText(element.textContent);
 
     return label ? `${kind}: ${label}` : kind;
 }
@@ -118,9 +117,11 @@ function describeElement(element) {
         ?.getAttribute("data-export-role");
 
     if (exportRole) {
-        return `[data-export-role="${exportRole}"] [data-export-finding="${element.getAttribute(
-            "data-export-finding",
-        )}"]`;
+        return `[data-export-role="${exportRole}"] [data-export-finding="${
+            element.getAttribute(
+                "data-export-finding",
+            )
+        }"]`;
     }
 
     const testId = element.getAttribute("data-testid");

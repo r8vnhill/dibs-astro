@@ -78,8 +78,7 @@ export const presentationAdapterBoundaryRule = {
     forbiddenPackages: [],
     message:
         "Presentation adapters should compose application and infrastructure services, but must not import UI components, layouts, or pages.",
-    suggestion:
-        "Keep adapters as data/service bridges and let UI surfaces consume the adapter output.",
+    suggestion: "Keep adapters as data/service bridges and let UI surfaces consume the adapter output.",
 };
 
 export const uiBoundaryRule = {
@@ -122,8 +121,7 @@ export const contentCoreBoundaryRule = {
     // The package's own runtime contract is dependency-free. Its root-api tests intentionally consume the package
     // through its own published root specifier, and its tests need a test runner and property-based testing library.
     allowedPackages: ["@ravenhill/content-core", "vitest", "fast-check"],
-    message:
-        "@ravenhill/content-core must remain host-agnostic and independent from app-local layers.",
+    message: "@ravenhill/content-core must remain host-agnostic and independent from app-local layers.",
     suggestion:
         "Keep generated data, validation, Astro, UI, and app adapters in src, and expose only pure content contracts from the package.",
 };
@@ -150,8 +148,7 @@ export const siteCoreBoundaryRule = {
     // The package's own runtime contract is dependency-free. Its root-api tests intentionally consume the package
     // through its own published root specifier, and its tests need a test runner and property-based testing library.
     allowedPackages: ["@ravenhill/site-core", "vitest", "fast-check"],
-    message:
-        "@ravenhill/site-core must remain framework-free and independent from app-local layers.",
+    message: "@ravenhill/site-core must remain framework-free and independent from app-local layers.",
     suggestion:
         "Keep concrete site configuration, generated data, Astro, UI, and app adapters in src, and expose only pure site/repository primitives from the package.",
 };
@@ -204,10 +201,8 @@ export const legacyInitialBoundaryRules = [
             "src/presentation/**",
         ],
         forbiddenPackages: ["astro", "react", "zod"],
-        message:
-            "Domain code must not import application, infrastructure, presentation, or UI framework dependencies.",
-        suggestion:
-            "Move the dependency behind a domain contract or invert the dependency direction.",
+        message: "Domain code must not import application, infrastructure, presentation, or UI framework dependencies.",
+        suggestion: "Move the dependency behind a domain contract or invert the dependency direction.",
     },
     {
         id: "ui-must-not-import-infrastructure",

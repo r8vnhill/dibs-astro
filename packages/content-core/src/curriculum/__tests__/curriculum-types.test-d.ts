@@ -1,5 +1,5 @@
-import type { CurriculumConcept, CurriculumFacets, CurriculumUnit } from "../types";
 import { assertType, expectTypeOf, test } from "vitest";
+import type { CurriculumConcept, CurriculumFacets, CurriculumUnit } from "../types";
 
 test.each([
     { level: ["advanced"], format: ["lecture"], track: ["theory"] },

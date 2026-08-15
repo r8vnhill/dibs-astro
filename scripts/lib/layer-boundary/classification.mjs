@@ -64,9 +64,7 @@ function isPresentationAdapterSource(pathValue) {
 }
 
 function isUiSource(pathValue) {
-    return ["src/components", "src/layouts", "src/pages"].some((prefix) =>
-        isUnder(pathValue, prefix)
-    );
+    return ["src/components", "src/layouts", "src/pages"].some((prefix) => isUnder(pathValue, prefix));
 }
 
 function isContentCoreSource(pathValue) {
@@ -98,9 +96,7 @@ function isPresentationTarget(pathValue) {
 }
 
 function isUiTarget(pathValue) {
-    return ["src/components", "src/layouts", "src/pages"].some((prefix) =>
-        isUnder(pathValue, prefix)
-    );
+    return ["src/components", "src/layouts", "src/pages"].some((prefix) => isUnder(pathValue, prefix));
 }
 
 function isGeneratedDataTarget(pathValue) {

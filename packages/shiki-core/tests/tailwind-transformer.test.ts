@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
+import type { ClassableNode } from "../src/transformers/class-tokens";
 import {
-    createTailwindClassTransformer,
     applyTailwindClasses,
+    createTailwindClassTransformer,
     type TailwindClassTransformerOptions,
 } from "../src/transformers/tailwind-classes";
-import type { ClassableNode } from "../src/transformers/class-tokens";
 
 /**
  * Contract tests for Tailwind class transformer.
@@ -46,7 +46,7 @@ describe("tailwind class transformer", () => {
         it("is an alias for createTailwindClassTransformer", () => {
             const transformer1 = applyTailwindClasses({ pre: "rounded" });
             const transformer2 = createTailwindClassTransformer({ pre: "rounded" });
-            
+
             expect(transformer1.name).toBe(transformer2.name);
             expect(transformer1.name).toBe("tailwind-class-injector");
         });

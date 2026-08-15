@@ -1,10 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-    buildBibliographyReport,
-    formatBibliographyReportCsv,
-} from "./lib/bibliography/report-read-model.mjs";
+import { buildBibliographyReport, formatBibliographyReportCsv } from "./lib/bibliography/report-read-model.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,8 +11,7 @@ const outputDir = path.join(projectRoot, "reports");
 const outputJson = path.join(outputDir, "bibliography-report.json");
 const outputCsv = path.join(outputDir, "bibliography-report.csv");
 
-const relativeProjectPath = (filePath) =>
-    path.relative(projectRoot, filePath).replaceAll("\\", "/");
+const relativeProjectPath = (filePath) => path.relative(projectRoot, filePath).replaceAll("\\", "/");
 
 const raw = await readFile(catalogPath, "utf8");
 const report = buildBibliographyReport(raw, {

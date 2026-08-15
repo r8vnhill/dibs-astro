@@ -27,10 +27,10 @@
  * - equivalent normalized targets produce equivalent results.
  */
 
-import { LessonSequenceService } from "../lesson-sequence-service";
-import type { NavigationNode } from "../types";
 import fc from "fast-check";
 import { describe, expect, suite, test } from "vitest";
+import { LessonSequenceService } from "../lesson-sequence-service";
+import type { NavigationNode } from "../types";
 
 suite("LessonSequenceService", () => {
     /**
@@ -71,8 +71,7 @@ suite("LessonSequenceService", () => {
     /**
      * Normalizer that lowercases the path and collapses repeated slashes.
      */
-    const normalizeCaseAndSlashes = (href: string) =>
-        href.toLowerCase().replace(/\/{2,}/g, "/");
+    const normalizeCaseAndSlashes = (href: string) => href.toLowerCase().replace(/\/{2,}/g, "/");
 
     describe("given a canonical lesson sequence", () => {
         test.each([
@@ -244,8 +243,7 @@ suite("LessonSequenceService properties", () => {
      * It lowers case, collapses repeated slashes, and trims surrounding whitespace so properties
      * can reason about normalized path equivalence.
      */
-    const normalize = (href: string) =>
-        href.toLowerCase().replace(/\/{2,}/g, "/").trim();
+    const normalize = (href: string) => href.toLowerCase().replace(/\/{2,}/g, "/").trim();
 
     /**
      * Arbitrary slug generator restricted to path-safe characters.

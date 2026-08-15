@@ -95,7 +95,7 @@ suite("given a Shiki highlighter service", () => {
                 "const moon = 'Khonshu';",
                 expect.objectContaining({ lang: "typescript" }),
             );
-            expect(html).toContain('data-lang="typescript"');
+            expect(html).toContain("data-lang=\"typescript\"");
         });
     });
 
@@ -120,7 +120,7 @@ suite("given a Shiki highlighter service", () => {
                     "plain text",
                     expect.objectContaining({ lang: "text" }),
                 );
-                expect(html).toContain('data-lang="text"');
+                expect(html).toContain("data-lang=\"text\"");
             },
         );
     });
@@ -176,8 +176,8 @@ suite("given a Shiki highlighter service", () => {
             const [firstHtml, secondHtml] = await Promise.all([firstRender, secondRender]);
 
             // Assert
-            expect(firstHtml).toContain('data-lang="typescript"');
-            expect(secondHtml).toContain('data-lang="typescript"');
+            expect(firstHtml).toContain("data-lang=\"typescript\"");
+            expect(secondHtml).toContain("data-lang=\"typescript\"");
         });
 
         test("then aliases with the same canonical language share one load", async () => {
@@ -208,8 +208,8 @@ suite("given a Shiki highlighter service", () => {
             const [aliasHtml, canonicalHtml] = await Promise.all([aliasRender, canonicalRender]);
 
             // Assert
-            expect(aliasHtml).toContain('data-lang="typescript"');
-            expect(canonicalHtml).toContain('data-lang="typescript"');
+            expect(aliasHtml).toContain("data-lang=\"typescript\"");
+            expect(canonicalHtml).toContain("data-lang=\"typescript\"");
         });
 
         test("then failed in-flight loads are removed so later calls can retry", async () => {
@@ -236,8 +236,8 @@ suite("given a Shiki highlighter service", () => {
             expect(mockHighlighter.loadLanguage).toHaveBeenCalledTimes(2);
             expect(mockHighlighter.loadLanguage).toHaveBeenNthCalledWith(1, "typescript");
             expect(mockHighlighter.loadLanguage).toHaveBeenNthCalledWith(2, "typescript");
-            expect(fallbackHtml).toContain('class="shiki"');
-            expect(retryHtml).toContain('data-lang="typescript"');
+            expect(fallbackHtml).toContain("class=\"shiki\"");
+            expect(retryHtml).toContain("data-lang=\"typescript\"");
             expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("could not be loaded"));
         });
     });
@@ -258,7 +258,7 @@ suite("given a Shiki highlighter service", () => {
 
             // Assert
             expect(html).toContain("some code");
-            expect(html).toContain('class="shiki"');
+            expect(html).toContain("class=\"shiki\"");
             expect(mockHighlighter.loadLanguage).not.toHaveBeenCalled();
             expect(mockHighlighter.codeToHtml).not.toHaveBeenCalled();
             expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("not recognized"));
@@ -308,7 +308,7 @@ suite("given a Shiki highlighter service", () => {
             expect(mockHighlighter.loadLanguage).toHaveBeenCalledExactlyOnceWith("python");
             expect(mockHighlighter.codeToHtml).not.toHaveBeenCalled();
             expect(html).toContain("code");
-            expect(html).toContain('class="shiki"');
+            expect(html).toContain("class=\"shiki\"");
             expect(warnFn).toHaveBeenCalledWith(expect.stringContaining("could not be loaded"));
         });
     });

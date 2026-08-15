@@ -149,10 +149,9 @@ export function selectExportEntries(manifest, selection) {
         return [...manifest.entries];
     }
 
-    const filter =
-        selection.kind === "route"
-            ? { kind: "exact-route", route: selection.value }
-            : { kind: "subtree", routePrefix: selection.value };
+    const filter = selection.kind === "route"
+        ? { kind: "exact-route", route: selection.value }
+        : { kind: "subtree", routePrefix: selection.value };
 
     const filtered = filterManifest(manifest, filter);
     if (filtered.entries.length === 0) {
@@ -211,9 +210,9 @@ function normalizeRelativePath(value) {
     }
 
     if (
-        /^[A-Za-z]:/u.test(trimmed) ||
-        trimmed.startsWith("/") ||
-        trimmed.startsWith("..")
+        /^[A-Za-z]:/u.test(trimmed)
+        || trimmed.startsWith("/")
+        || trimmed.startsWith("..")
     ) {
         throw new Error(`Path must be relative: ${value}`);
     }

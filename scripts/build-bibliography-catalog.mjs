@@ -1,8 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { buildCatalogArtifactFromTurtle } from "./lib/bibliography/catalog-builder.mjs";
 import { assembleTurtleFiles } from "./lib/bibliography/assemble-ttl.mjs";
+import { buildCatalogArtifactFromTurtle } from "./lib/bibliography/catalog-builder.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,7 +43,9 @@ if (currentContent === nextContent) {
 await mkdir(path.dirname(outputPath), { recursive: true });
 await writeFile(outputPath, nextContent, "utf8");
 console.log(
-    `Bibliography catalog generated: ${path
-        .relative(projectRoot, outputPath)
-        .replaceAll("\\", "/")}`,
+    `Bibliography catalog generated: ${
+        path
+            .relative(projectRoot, outputPath)
+            .replaceAll("\\", "/")
+    }`,
 );

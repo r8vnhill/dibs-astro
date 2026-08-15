@@ -88,8 +88,8 @@ suite("given the @ravenhill/shiki-core public API", () => {
         expect(shikiCore.escapeHtmlAttribute("'quoted'")).toBe("&#39;quoted&#39;");
 
         const html = shikiCore.renderFallbackCodeHtml("code", ["pre-class"], ["code-class"]);
-        expect(html).toContain('<pre class="shiki pre-class">');
-        expect(html).toContain('<code class="code-class">');
+        expect(html).toContain("<pre class=\"shiki pre-class\">");
+        expect(html).toContain("<code class=\"code-class\">");
         expect(html).toContain("code</code></pre>");
     });
 

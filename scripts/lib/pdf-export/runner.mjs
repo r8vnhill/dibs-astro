@@ -7,11 +7,7 @@ import { chromium as defaultChromium } from "playwright";
 import { buildSite } from "./build-site.mjs";
 import { resolveExportTargets, selectExportEntries } from "./cli.mjs";
 import { buildLessonPdfExportManifest } from "./manifest.mjs";
-import {
-    startPreviewServer,
-    stopPreviewServer,
-    waitForPreview,
-} from "./preview-server.mjs";
+import { startPreviewServer, stopPreviewServer, waitForPreview } from "./preview-server.mjs";
 import {
     collectExportFindings,
     createExportReport,
@@ -21,8 +17,8 @@ import {
 } from "./report.mjs";
 
 const exportDomSelectors = {
-    document: '[data-export-role="document"]',
-    body: '[data-export-role="body"]',
+    document: "[data-export-role=\"document\"]",
+    body: "[data-export-role=\"body\"]",
 };
 
 const defaultDependencies = {
@@ -381,9 +377,7 @@ function toFailedExportEntry(result) {
 
 function mergeExportFindings(entry, domFindings = []) {
     return [
-        ...(entry.findings ?? []).map((finding) =>
-            withFindingSource(finding, "manifest"),
-        ),
+        ...(entry.findings ?? []).map((finding) => withFindingSource(finding, "manifest")),
         ...domFindings.map((finding) => withFindingSource(finding, "dom")),
     ];
 }

@@ -1,12 +1,12 @@
 export { discoverSourceFiles } from "./files.mjs";
 export { extractImports } from "./imports.mjs";
-export { evaluateBoundaryRules } from "./rule-evaluation.mjs";
 export { resolveImportTarget } from "./paths.mjs";
+export { evaluateBoundaryRules } from "./rule-evaluation.mjs";
 
 import { discoverSourceFiles } from "./files.mjs";
 import { extractImports } from "./imports.mjs";
-import { evaluateBoundaryRules } from "./rule-evaluation.mjs";
 import { resolveImportTarget } from "./paths.mjs";
+import { evaluateBoundaryRules } from "./rule-evaluation.mjs";
 import { initialBoundaryRules } from "./rules.mjs";
 
 export async function checkLayerBoundaries(files, options = {}) {

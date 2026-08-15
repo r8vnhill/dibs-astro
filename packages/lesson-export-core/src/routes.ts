@@ -1,19 +1,19 @@
 /**
  * @file Route normalization and export-route derivation for lesson exports.
  *
- * This module owns route-shaped values used by the lesson export planning package. It intentionally handles only 
+ * This module owns route-shaped values used by the lesson export planning package. It intentionally handles only
  * site-relative route syntax:
  *
  * - {@link normalizeLessonRoute} canonicalizes route-shaped input to `/segment/segment/` form.
  * - {@link normalizeExportRoutePrefix} canonicalizes an export prefix such as `/exports/pdf`.
  * - {@link deriveExportRoute} combines both values into an export route.
  *
- * A {@link LessonRoute} means “a validated canonical route-shaped value used by lesson export planning”. It does not 
+ * A {@link LessonRoute} means “a validated canonical route-shaped value used by lesson export planning”. It does not
  * mean the route is already part of the supported course lesson route family, such as `/notes/**`. That higher-level
  * policy belongs to manifest validation.
  *
- * Routes must be site-relative. They must not contain absolute URL schemes, control characters, raw query strings, raw 
- * fragments, or relative path segments. Encoded query and fragment markers, such as `%3F` and `%23`, remain valid path 
+ * Routes must be site-relative. They must not contain absolute URL schemes, control characters, raw query strings, raw
+ * fragments, or relative path segments. Encoded query and fragment markers, such as `%3F` and `%23`, remain valid path
  * text.
  */
 
@@ -55,7 +55,7 @@ const DEFAULT_EXPORT_ROUTE_PREFIX = "/exports/pdf";
  * - contain no control characters;
  * - not be an absolute URL.
  *
- * When the input ends in `/index/`, the suffix is collapsed into the parent route. For example, `/notes/setup/index/` 
+ * When the input ends in `/index/`, the suffix is collapsed into the parent route. For example, `/notes/setup/index/`
  * becomes `/notes/setup/`.
  *
  * This function does not enforce the `/notes/**` route family. That validation is handled by manifest-oriented code.
@@ -109,7 +109,7 @@ export function deriveExportRoute(route: string, options: DeriveExportRouteOptio
 /**
  * Canonicalizes an export route prefix.
  *
- * Export prefixes are site-relative base routes used to derive export pages. Unlike canonical route values, the 
+ * Export prefixes are site-relative base routes used to derive export pages. Unlike canonical route values, the
  * returned prefix intentionally has no trailing slash so it can be joined with a normalized route suffix.
  *
  * A valid prefix:
@@ -193,7 +193,7 @@ function normalizeRouteLike(route: string, options: NormalizeRouteLikeOptions): 
 /**
  * Joins a normalized export prefix and lesson-export route.
  *
- * The prefix must not end with `/`; the route must start with `/`. Keeping this invariant in one helper prevents 
+ * The prefix must not end with `/`; the route must start with `/`. Keeping this invariant in one helper prevents
  * accidental double slashes or missing separators when export-route assembly changes later.
  *
  * @param prefix Canonical export prefix without a trailing slash.
@@ -259,7 +259,7 @@ function assertCanonicalRouteShape(route: string): void {
 /**
  * Asserts that runtime input is a string.
  *
- * Although TypeScript callers should already satisfy this statically, runtime checks keep the package safe when 
+ * Although TypeScript callers should already satisfy this statically, runtime checks keep the package safe when
  * consumed from JavaScript.
  *
  * @param route Runtime route input.
@@ -286,7 +286,7 @@ function assertNonEmpty(route: string): void {
 /**
  * Rejects absolute or protocol-like URL input.
  *
- * Route values in this package are site-relative paths. URL-looking values are rejected before duplicate slashes are 
+ * Route values in this package are site-relative paths. URL-looking values are rejected before duplicate slashes are
  * collapsed so inputs such as `https://example.com/x` are not distorted into path-like strings.
  *
  * @param route Trimmed route input.
@@ -313,7 +313,7 @@ function assertNoControlCharacters(route: string): void {
 /**
  * Rejects raw query strings and raw fragments.
  *
- * Literal `?` and `#` are not allowed in route-shaped values. Encoded markers such as `%3F` and `%23` are treated as 
+ * Literal `?` and `#` are not allowed in route-shaped values. Encoded markers such as `%3F` and `%23` are treated as
  * normal path text and remain allowed.
  *
  * @param route Trimmed route input.
@@ -382,7 +382,7 @@ function assertNoRelativeSegments(route: string): void {
 /**
  * Removes the trailing slash from a canonical route.
  *
- * This helper is intended for export prefixes, which are stored without their trailing slash so they can be joined 
+ * This helper is intended for export prefixes, which are stored without their trailing slash so they can be joined
  * directly with normalized routes.
  *
  * @param route Canonical route with a trailing slash.

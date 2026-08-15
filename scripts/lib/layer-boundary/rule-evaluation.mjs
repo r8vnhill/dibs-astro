@@ -1,13 +1,6 @@
-import {
-    classifyImport,
-    classifySourcePath,
-} from "./classification.mjs";
+import { classifyImport, classifySourcePath } from "./classification.mjs";
 import { normalizeProjectPath } from "./paths.mjs";
-import {
-    allowedExceptions,
-    initialBoundaryRules,
-    rootOnlyWorkspacePackages,
-} from "./rules.mjs";
+import { allowedExceptions, initialBoundaryRules, rootOnlyWorkspacePackages } from "./rules.mjs";
 
 function importPathFrom(importRecord) {
     return importRecord.importPath ?? importRecord.target;

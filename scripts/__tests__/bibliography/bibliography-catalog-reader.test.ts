@@ -2,7 +2,6 @@ import fc from "fast-check";
 import { DataFactory } from "n3";
 import { describe, expect, it } from "vitest";
 import { createCatalogReader } from "../../lib/bibliography/reader/catalog-reader.mjs";
-import { SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 import {
     createRecord,
     getNodeTypes,
@@ -12,6 +11,7 @@ import {
     scalarLiteral,
     scalarUrlLiteral,
 } from "../../lib/bibliography/reader/records.mjs";
+import { SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 
 const { literal, namedNode } = DataFactory;
 

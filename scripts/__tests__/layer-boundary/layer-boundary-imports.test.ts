@@ -78,7 +78,7 @@ import type { Lesson } from "$domain/lesson";
 
     it("ignores Astro template content when frontmatter is absent", async () => {
         const records = await extractImports(
-            '<p>import { Adapter } from "$infrastructure/adapters/Adapter";</p>',
+            "<p>import { Adapter } from \"$infrastructure/adapters/Adapter\";</p>",
             "src/components/Card.astro",
         );
 

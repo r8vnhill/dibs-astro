@@ -2,7 +2,6 @@ import fc from "fast-check";
 import { DataFactory } from "n3";
 import { describe, expect, it } from "vitest";
 import { compactId, compactType } from "../../lib/bibliography/reader/compact.mjs";
-import { DIBS, RDF_TYPE, SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 import {
     createRecord,
     getNodeTypes,
@@ -13,6 +12,7 @@ import {
     scalarUrlLiteral,
     scalarUrlRef,
 } from "../../lib/bibliography/reader/records.mjs";
+import { DIBS, RDF_TYPE, SCHEMA } from "../../lib/bibliography/shared/constants.mjs";
 
 const { literal, namedNode } = DataFactory;
 
@@ -293,26 +293,34 @@ describe("bibliography-catalog-builder.records", () => {
                         firstSeen(iris).map((iri) => compactId(iri)),
                     );
                 }),
-                { examples: [[[
-                    "https://dibs.ravenhill.cl/bibliography/person/ada",
-                    "https://dibs.ravenhill.cl/bibliography/person/ada",
-                    "https://dibs.ravenhill.cl/bibliography/org/acme",
-                ]]] },
+                {
+                    examples: [[[
+                        "https://dibs.ravenhill.cl/bibliography/person/ada",
+                        "https://dibs.ravenhill.cl/bibliography/person/ada",
+                        "https://dibs.ravenhill.cl/bibliography/org/acme",
+                    ]]],
+                },
             );
         });
 
         it("fails when a generated sequence includes a non-named-node value", () => {
             fc.assert(
                 fc.property(
-                    fc.array(fc.constantFrom(
-                        "https://dibs.ravenhill.cl/bibliography/person/ada",
-                        "https://dibs.ravenhill.cl/bibliography/org/acme",
-                    ), { minLength: 0, maxLength: 4 }),
+                    fc.array(
+                        fc.constantFrom(
+                            "https://dibs.ravenhill.cl/bibliography/person/ada",
+                            "https://dibs.ravenhill.cl/bibliography/org/acme",
+                        ),
+                        { minLength: 0, maxLength: 4 },
+                    ),
                     fc.string({ minLength: 1, maxLength: 12 }),
-                    fc.array(fc.constantFrom(
-                        "https://dibs.ravenhill.cl/bibliography/person/grace",
-                        "https://dibs.ravenhill.cl/bibliography/org/omega",
-                    ), { minLength: 0, maxLength: 4 }),
+                    fc.array(
+                        fc.constantFrom(
+                            "https://dibs.ravenhill.cl/bibliography/person/grace",
+                            "https://dibs.ravenhill.cl/bibliography/org/omega",
+                        ),
+                        { minLength: 0, maxLength: 4 },
+                    ),
                     (prefix, invalidLiteral, suffix) => {
                         const record = recordWith(
                             `${SCHEMA}author`,
@@ -387,11 +395,13 @@ describe("bibliography-catalog-builder.records", () => {
                         firstSeen(iris).map((iri) => compactType(iri)),
                     );
                 }),
-                { examples: [[[
-                    `${SCHEMA}Book`,
-                    `${SCHEMA}Book`,
-                    "https://dibs.ravenhill.cl/vocab#ReferenceUsage",
-                ]]] },
+                {
+                    examples: [[[
+                        `${SCHEMA}Book`,
+                        `${SCHEMA}Book`,
+                        "https://dibs.ravenhill.cl/vocab#ReferenceUsage",
+                    ]]],
+                },
             );
         });
     });

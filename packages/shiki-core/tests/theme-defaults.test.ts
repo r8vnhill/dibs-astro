@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-    DEFAULT_DARK_THEME,
-    DEFAULT_LIGHT_THEME,
-    SHIKI_DEFAULT_THEMES,
-} from "../src/themes/defaults";
+import { DEFAULT_DARK_THEME, DEFAULT_LIGHT_THEME, SHIKI_DEFAULT_THEMES } from "../src/themes/defaults";
 
 /**
  * Contract tests for theme defaults.

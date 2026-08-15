@@ -17,8 +17,7 @@ import { assignMergedClassName } from "./class-tokens";
  *
  * The directive can be preceded by a comment marker (`#`, `//`, `;`, or `--`) and trailing whitespace.
  */
-const inlineLineColorPattern =
-    /^(?<content>.*?)(?:\s+(?:#|\/\/|;|--)\s*)?\[!code\s+color:(?<color>[^\]]+)\]\s*$/u;
+const inlineLineColorPattern = /^(?<content>.*?)(?:\s+(?:#|\/\/|;|--)\s*)?\[!code\s+color:(?<color>[^\]]+)\]\s*$/u;
 
 /**
  * Conservative pattern for validating CSS color values.
@@ -63,8 +62,7 @@ export interface ParsedLineColorDirective {
  * @param meta the metadata value from Shiki
  * @returns a stable object suitable for use as a WeakMap key
  */
-export const getMetaKey = (meta: unknown): object =>
-    typeof meta === "object" && meta !== null ? meta : fallbackMetaKey;
+export const getMetaKey = (meta: unknown): object => typeof meta === "object" && meta !== null ? meta : fallbackMetaKey;
 
 /**
  * Sanitizes a CSS color value to prevent injection attacks.

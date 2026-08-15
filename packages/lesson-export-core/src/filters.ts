@@ -1,4 +1,4 @@
-import type { LessonExportManifest, LessonExportEntry, LessonRoute } from "./manifest";
+import type { LessonExportEntry, LessonExportManifest, LessonRoute } from "./manifest";
 import { normalizeLessonRoute } from "./routes";
 
 /**

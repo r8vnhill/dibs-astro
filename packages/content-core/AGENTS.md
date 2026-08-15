@@ -12,10 +12,10 @@ Context and essential rules for agents working in this package.
 
 ## Package Shape
 
-- `@ravenhill/content-core` is a host-agnostic workspace package under the Astro site that now has a pilot
-  publication path.
-- It contains extracted host-agnostic navigation and lesson metadata core logic, plus a minimal host-agnostic
-  curriculum data contract.
+- `@ravenhill/content-core` is a host-agnostic workspace package under the Astro site that now has a pilot publication
+  path.
+- It contains extracted host-agnostic navigation and lesson metadata core logic, plus a minimal host-agnostic curriculum
+  data contract.
 - It builds from `src/index.ts` to `dist/index.js` and `dist/index.d.ts` through `tsup`.
 - The stabilized root API uses `NavigationService`, `LessonMetadataService`, `NavigationServiceContract`, and
   `LessonMetadataServiceContract`.

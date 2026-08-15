@@ -58,11 +58,13 @@ export const usageNode = (
 usage:${id} a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl${lessonId}> ;
   dibs:reference ${referenceId} ;
-${[]
-    .concat(tags)
-    .map((tag) => `  dibs:tag "${tag}" ;`)
-    .join("\n")
-    .replace(/;$/, ".")}
+${
+    []
+        .concat(tags)
+        .map((tag) => `  dibs:tag "${tag}" ;`)
+        .join("\n")
+        .replace(/;$/, ".")
+}
 `;
 
 export const validBaseFixture = `
@@ -79,8 +81,7 @@ ${usageNode("lesson-a-video-1", "/notes/lesson-a/", "ref:video-1", "additional")
 export const buildArtifact = (ttl: string, sourceLabel = "test-catalog.ttl"): CatalogArtifact =>
     buildCatalogArtifactFromTurtle(ttl, { sourceLabel }) as CatalogArtifact;
 
-export const graphOf = (ttl: string, sourceLabel?: string): GraphNode[] =>
-    buildArtifact(ttl, sourceLabel)["@graph"];
+export const graphOf = (ttl: string, sourceLabel?: string): GraphNode[] => buildArtifact(ttl, sourceLabel)["@graph"];
 
 export const idsOf = (artifactOrGraph: CatalogArtifact | GraphNode[]): string[] => {
     const graph = Array.isArray(artifactOrGraph)

@@ -53,8 +53,8 @@
  * declarations are unavailable or too broad.
  */
 
-import { compactId, compactType, compactUrl } from "./compact.mjs";
 import { DIBS, RDF_TYPE } from "../shared/constants.mjs";
+import { compactId, compactType, compactUrl } from "./compact.mjs";
 import { fail } from "./validation.mjs";
 
 /**
@@ -178,8 +178,7 @@ export const createRecord = (iri) => ({
  * @param {string} predicate Predicate IRI.
  * @returns {RdfTerm[]} Predicate values in source order.
  */
-const getPredicateValues = (record, predicate) =>
-    record.predicates.get(predicate) ?? [];
+const getPredicateValues = (record, predicate) => record.predicates.get(predicate) ?? [];
 
 /**
  * Selects an optional scalar value from a predicate that may appear at most once.
@@ -221,7 +220,7 @@ const selectMany = (record, predicate) => getPredicateValues(record, predicate);
 /**
  * Validates that an RDF term has the expected supported term kind.
  *
- * On success, the returned value is narrowed to the concrete term shape associated with `expectedTermType`. On 
+ * On success, the returned value is narrowed to the concrete term shape associated with `expectedTermType`. On
  * failure, catalog construction stops with a source-labelled diagnostic.
  *
  * @template {SupportedTermType} TTermType
@@ -230,7 +229,7 @@ const selectMany = (record, predicate) => getPredicateValues(record, predicate);
  * @param {RdfTerm} value RDF term to validate.
  * @param {TTermType} expectedTermType Expected RDF term kind.
  * @param {string} sourceLabel Human-readable source label for diagnostics.
- * @param {(record: BibliographyRecord, predicate: string) => string} [invalidTermMessage] Optional custom diagnostic 
+ * @param {(record: BibliographyRecord, predicate: string) => string} [invalidTermMessage] Optional custom diagnostic
  *   used when `value.termType` does not match `expectedTermType`.
  * @returns {NarrowedRdfTerm<TTermType>} The same term narrowed to the expected shape.
  */
@@ -279,7 +278,7 @@ const applyDedupe = (values) => Array.from(new Set(values));
 /**
  * Reads an optional single RDF term and optionally maps it.
  *
- * This is the shared implementation behind scalar readers. It enforces optional scalar cardinality, validates the 
+ * This is the shared implementation behind scalar readers. It enforces optional scalar cardinality, validates the
  * selected term kind, and then applies the configured mapper when present.
  *
  * @template {SupportedTermType} TTermType
@@ -291,7 +290,7 @@ const applyDedupe = (values) => Array.from(new Set(values));
  *   map?: (term: NarrowedRdfTerm<TTermType>) => TMapped;
  * }} config Reader pipeline configuration.
  * @param {string} sourceLabel Human-readable source label for diagnostics.
- * @returns {TMapped | NarrowedRdfTerm<TTermType> | undefined} Mapped value, narrowed term, or `undefined` when the 
+ * @returns {TMapped | NarrowedRdfTerm<TTermType> | undefined} Mapped value, narrowed term, or `undefined` when the
  *   predicate is absent.
  */
 function optionalOne(record, predicate, config, sourceLabel) {
@@ -312,7 +311,7 @@ function optionalOne(record, predicate, config, sourceLabel) {
 /**
  * Reads zero or more RDF terms and optionally maps/deduplicates them.
  *
- * This is the shared implementation behind many-valued readers. It preserves source order before mapping and, when 
+ * This is the shared implementation behind many-valued readers. It preserves source order before mapping and, when
  * requested, preserves first-seen order after deduplication.
  *
  * @template {SupportedTermType} TTermType
@@ -335,7 +334,7 @@ function many(record, predicate, config, sourceLabel) {
             config.termType,
             sourceLabel,
             config.invalidTermMessage,
-        ),
+        )
     );
     const mapped = config.map ? applyMap(terms, config.map) : terms;
     return config.dedupe ? applyDedupe(mapped) : mapped;
@@ -344,7 +343,7 @@ function many(record, predicate, config, sourceLabel) {
 /**
  * Reads an optional single literal as a string.
  *
- * Missing predicates return `undefined`. Multi-valued predicates and non-literal terms fail with a source-labelled 
+ * Missing predicates return `undefined`. Multi-valued predicates and non-literal terms fail with a source-labelled
  * validation error.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -366,10 +365,10 @@ export const scalarLiteral = (record, predicate, sourceLabel) =>
 /**
  * Reads an optional URL-valued literal as a string.
  *
- * This accessor intentionally does not validate or normalize URL syntax. It exists to make URL-like scalar reads 
+ * This accessor intentionally does not validate or normalize URL syntax. It exists to make URL-like scalar reads
  * explicit while preserving the current catalog policy.
  *
- * Missing predicates return `undefined`. Multi-valued predicates and non-literal terms fail with a source-labelled 
+ * Missing predicates return `undefined`. Multi-valued predicates and non-literal terms fail with a source-labelled
  * validation error.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -391,7 +390,7 @@ export const scalarUrlLiteral = (record, predicate, sourceLabel) =>
 /**
  * Reads an optional named-node URL reference and compacts it for catalog output.
  *
- * Use this for URL-like values represented as RDF named nodes rather than literals. Missing predicates return 
+ * Use this for URL-like values represented as RDF named nodes rather than literals. Missing predicates return
  * `undefined`. Multi-valued predicates and non-named-node terms fail with a source-labelled validation error.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -413,8 +412,8 @@ export const scalarUrlRef = (record, predicate, sourceLabel) =>
 /**
  * Reads an optional single literal and parses it as an exact safe integer.
  *
- * The accepted lexical form is an optional leading minus sign followed by decimal digits. Values such as floats, 
- * scientific notation, empty strings, unsafe integers, multi-valued predicates, and non-literal terms fail at the 
+ * The accepted lexical form is an optional leading minus sign followed by decimal digits. Values such as floats,
+ * scientific notation, empty strings, unsafe integers, multi-valued predicates, and non-literal terms fail at the
  * normalization boundary.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -448,7 +447,7 @@ export function scalarInteger(record, predicate, sourceLabel) {
 /**
  * Reads zero or more named-node references as compact IDs.
  *
- * Duplicate compact IDs are removed after mapping while preserving first occurrence order. Missing predicates return 
+ * Duplicate compact IDs are removed after mapping while preserving first occurrence order. Missing predicates return
  * an empty array. Non-named-node terms fail with a source-labelled validation error.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -471,7 +470,7 @@ export const namedRefs = (record, predicate, sourceLabel) =>
 /**
  * Reads required RDF types as compact type names.
  *
- * Missing `rdf:type` is invalid for catalog records because top-level dispatch and relation validation depend on this 
+ * Missing `rdf:type` is invalid for catalog records because top-level dispatch and relation validation depend on this
  * normalized type set. Duplicate compact type names are removed while preserving first occurrence order.
  *
  * @param {BibliographyRecord} record Record to read from.
@@ -500,7 +499,7 @@ export function getNodeTypes(record, sourceLabel) {
 /**
  * Reads usage tags as literal strings.
  *
- * Tags are read from `dibs:tag`, deduplicated in first-seen order, and returned as plain strings. Missing tags return 
+ * Tags are read from `dibs:tag`, deduplicated in first-seen order, and returned as plain strings. Missing tags return
  * an empty array; requiredness is enforced by the usage builder, not by this low-level reader.
  *
  * @param {BibliographyRecord} record Usage record to read from.
@@ -515,8 +514,7 @@ export const getUsageTagLiterals = (record, sourceLabel) =>
             termType: "Literal",
             map: (term) => term.value,
             dedupe: true,
-            invalidTermMessage: (usageRecord) =>
-                `usage "${usageRecord.id}" has a non-literal dibs:tag.`,
+            invalidTermMessage: (usageRecord) => `usage "${usageRecord.id}" has a non-literal dibs:tag.`,
         },
         sourceLabel,
     );

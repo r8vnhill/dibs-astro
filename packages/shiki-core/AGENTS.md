@@ -6,7 +6,8 @@ Context and essential rules for agents working in this package.
 
 - Never make product, architecture, pedagogy, content-order, or style-policy decisions on your own.
 - When a choice is required, present viable alternatives with their tradeoffs and wait for confirmation from the user.
-- You may proceed with low-risk mechanical changes only when the existing repository pattern makes the decision unambiguous.
+- You may proceed with low-risk mechanical changes only when the existing repository pattern makes the decision
+  unambiguous.
 - If an instruction conflicts with project patterns, stop and ask before changing direction.
 
 ## Package Shape
@@ -52,7 +53,8 @@ Internal subpath imports (e.g., `@ravenhill/shiki-core/src/index.js`) are not su
 - Validate this package with `pnpm check:shiki-core` from `astro-website`.
 - The package exports built files from `dist`; keep `src/index.ts` as the only public source entry.
 - Treat `dist/` as generated output. Do not edit it manually or rely on it for source changes.
-- Keep `package.json` publication-ready. For the pilot release, `private` should be `false` and the registry metadata should match the GitLab project publish endpoint.
+- Keep `package.json` publication-ready. For the pilot release, `private` should be `false` and the registry metadata
+  should match the GitLab project publish endpoint.
 - Do not modify changelogs unless the user explicitly asks for changelog updates.
 
 ## Package Validation
@@ -73,7 +75,8 @@ Runs `scripts/assert-pack-files.mjs`. This script validates that the tarball wou
 - Reading `package.json` and verifying metadata (name, version, type, exports, main, types, files).
 - Running `pnpm pack --dry-run --json` and parsing the file manifest.
 - Asserting required distributable files are present: `dist/index.js`, `dist/index.d.ts`, `README.md`, `package.json`.
-- Asserting implementation and test files are excluded: `src/`, `tests/`, `scripts/`, `vitest.config.*`, `tsup.config.*`.
+- Asserting implementation and test files are excluded: `src/`, `tests/`, `scripts/`, `vitest.config.*`,
+  `tsup.config.*`.
 
 ### Consumer Validation (`consumer:check`)
 
@@ -105,9 +108,12 @@ The consumer validation proves that:
 - Keep styling and UI concerns in the Astro app; this package owns highlighting infrastructure only.
 - All public API must be exported from the root `src/index.ts` only.
 - Do not add package subpath exports.
-- Follow the inclusive documentation guidance from the root project: prefer precise, clear, respectful terminology over loaded metaphors.
-- Avoid terms such as `violation` or `violations` in new public types, docs, and tests when a more descriptive alternative works.
-- Do not rename exported API terms mechanically. If compatibility is involved, propose aliases or a migration path first.
+- Follow the inclusive documentation guidance from the root project: prefer precise, clear, respectful terminology over
+  loaded metaphors.
+- Avoid terms such as `violation` or `violations` in new public types, docs, and tests when a more descriptive
+  alternative works.
+- Do not rename exported API terms mechanically. If compatibility is involved, propose aliases or a migration path
+  first.
 
 ## Tests
 

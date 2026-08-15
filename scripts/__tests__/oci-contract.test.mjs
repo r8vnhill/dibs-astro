@@ -1,7 +1,7 @@
 import { expect, suite, test } from "vitest";
 import { parseCandidateMetadata } from "../lib/oci/candidate-metadata.mjs";
-import { resolvePublicationAliases } from "../lib/oci/release-policy.mjs";
 import { digestBytes } from "../lib/oci/registry-client.mjs";
+import { resolvePublicationAliases } from "../lib/oci/release-policy.mjs";
 
 const candidate = {
     schemaVersion: 1,
@@ -31,7 +31,9 @@ suite("given candidate OCI metadata", () => {
 
 suite("given a verified candidate and release context", () => {
     test("then main publishes only the full revision alias", () => {
-        expect(resolvePublicationAliases({ branch: "main", version: candidate.version }, candidate)).toEqual([candidate.revision]);
+        expect(resolvePublicationAliases({ branch: "main", version: candidate.version }, candidate)).toEqual([
+            candidate.revision,
+        ]);
     });
 
     test("then a matching version tag publishes the revision and version aliases", () => {

@@ -4,9 +4,9 @@
  * Validates immutability, trail building, and properties.
  */
 
+import { describe, expect, it } from "vitest";
 import { LessonTrail } from "../lesson-trail";
 import type { TrailNode } from "../types";
-import { describe, expect, it } from "vitest";
 
 describe("LessonTrail entity", () => {
     it("should be immutable (Object.frozen)", () => {

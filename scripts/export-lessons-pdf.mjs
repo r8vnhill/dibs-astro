@@ -3,10 +3,10 @@
 /**
  * Process entry point for the lesson PDF exporter.
  *
- * This executable is intentionally thin. It only resolves the project root, parses process arguments, delegates export 
+ * This executable is intentionally thin. It only resolves the project root, parses process arguments, delegates export
  * orchestration, and translates unexpected failures into a non-zero process exit code.
  *
- * CLI parsing and export behavior live under `scripts/lib/pdf-export` so they can be tested without invoking Node 
+ * CLI parsing and export behavior live under `scripts/lib/pdf-export` so they can be tested without invoking Node
  * process globals such as `process.argv`, `console.error`, or `process.exitCode`.
  */
 

@@ -4,9 +4,9 @@
  * Validates immutability, empty state, and proper construction.
  */
 
+import { describe, expect, it } from "vitest";
 import { AdjacentLessons } from "../adjacent-lessons";
 import type { NavigationNode } from "../types";
-import { describe, expect, it } from "vitest";
 
 describe("AdjacentLessons value object", () => {
     it("must be immutable after construction", () => {

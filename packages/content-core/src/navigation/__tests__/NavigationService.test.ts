@@ -1,8 +1,8 @@
+import { beforeEach, describe, expect, it } from "vitest";
 import { AdjacentLessons } from "../adjacent-lessons";
 import { LessonHref } from "../lesson-href";
 import { NavigationService } from "../navigation-service";
 import type { LessonNavigationRepository } from "../repositories";
-import { beforeEach, describe, expect, it } from "vitest";
 
 /**
  * Tests para NavigationService.

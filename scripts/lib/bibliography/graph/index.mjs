@@ -30,10 +30,10 @@ export { buildUsageNode } from "./usage.mjs";
 /**
  * Returns a deterministically sorted copy of graph nodes.
  *
- * Nodes are ordered first by the configured catalog category order and then by `@id`. Unknown categories are placed 
+ * Nodes are ordered first by the configured catalog category order and then by `@id`. Unknown categories are placed
  * after known categories while still being sorted deterministically by identifier.
  *
- * The input array is never mutated. This keeps the helper safe for tests, snapshot comparisons, and callers that need 
+ * The input array is never mutated. This keeps the helper safe for tests, snapshot comparisons, and callers that need
  * to preserve pre-sort state.
  *
  * @param {Array<Record<string, unknown> & {

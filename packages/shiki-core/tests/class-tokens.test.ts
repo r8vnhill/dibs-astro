@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
-    type ClassValue,
-    type ClassableNode,
-    splitClassTokens,
-    toClassTokens,
     appendUniqueClasses,
     assignMergedClassName,
+    type ClassableNode,
+    type ClassValue,
+    splitClassTokens,
+    toClassTokens,
 } from "../src/transformers/class-tokens";
 
 /**

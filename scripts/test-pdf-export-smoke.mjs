@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { spawn } from "node:child_process";
+import { mkdir, readFile, rm, stat } from "node:fs/promises";
 import net from "node:net";
 import path from "node:path";
-import { mkdir, readFile, rm, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { buildLessonPdfExportManifest } from "./lib/pdf-export/manifest.mjs";

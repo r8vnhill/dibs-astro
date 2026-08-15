@@ -30,8 +30,7 @@ export interface ClassableNode {
  * @param value the raw class string or undefined
  * @returns an array of trimmed, non-empty class tokens
  */
-export const splitClassTokens = (value: string | undefined): string[] =>
-    value?.split(/\s+/u).filter(Boolean) ?? [];
+export const splitClassTokens = (value: string | undefined): string[] => value?.split(/\s+/u).filter(Boolean) ?? [];
 
 /**
  * Normalizes class values of various input types into a consistent token array.

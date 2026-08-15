@@ -38,10 +38,10 @@ suite("given static Astro output", () => {
 async function createFixtureDirectory() {
     const fixtureDir = path.join(os.tmpdir(), `dibs-platform-artifacts-${process.pid}`);
     await mkdir(path.join(fixtureDir, "notes", "example"), { recursive: true });
-    await writeFile(path.join(fixtureDir, "index.html"), '<h1 id="home">Home</h1><a href="#home">Home</a>');
+    await writeFile(path.join(fixtureDir, "index.html"), "<h1 id=\"home\">Home</h1><a href=\"#home\">Home</a>");
     await writeFile(
         path.join(fixtureDir, "notes", "example", "index.html"),
-        '<h2 id="contract">Contract</h2><a href="/notes/example/#contract">Contract</a><astro-island component-url="/_astro/Example.js" client="visible"></astro-island>',
+        "<h2 id=\"contract\">Contract</h2><a href=\"/notes/example/#contract\">Contract</a><astro-island component-url=\"/_astro/Example.js\" client=\"visible\"></astro-island>",
     );
     return fixtureDir;
 }

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
+    availableLanguages,
     isKnownShikiAlias,
+    languageAliases,
     normalizeShikiLanguage,
     resolveShikiLanguage,
-    availableLanguages,
-    languageAliases,
 } from "../src/languages/resolution";
 
 /**
