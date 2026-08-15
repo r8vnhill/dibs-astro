@@ -4,7 +4,6 @@ import { defineConfig, sharpImageService } from "astro/config";
 import { readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { devServerFileWatcher } from "./config/integrations/dev-server-file-watcher";
-import { generateIconsIntegration } from "./config/integrations/generate-icons";
 import "./config/shiki-warn-tracker";
 
 import react from "@astrojs/react";
@@ -78,7 +77,6 @@ export default defineConfig({
     },
 
     integrations: [
-        generateIconsIntegration(),
         ...(
             isVitestRun
                 ? []

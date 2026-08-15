@@ -23,7 +23,6 @@
         "check:lesson-export-core": "pnpm --filter @ravenhill/lesson-export-core check",
         "check:site-core": "pnpm --dir=packages/site-core run check",
         "check:shiki-core": "pnpm --dir=packages/shiki-core run check",
-        "generate-icons": "node generate-icons-index.js",
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",
         "generate:lesson-metadata": "node scripts/generate-lesson-metadata.mjs",
         "generate:platform-artifact-manifest": "node scripts/generate-platform-artifact-manifest.mjs --out tmp/platform-artifact-manifest.json",
