@@ -426,6 +426,19 @@ ref:nushell-pipelines
   schema:datePublished "2026-01-27" ;
   schema:publisher org:nushell .
 
+ref:nushell-loading-data
+  a schema:WebPage ;
+  schema:name "Loading Data" ;
+  schema:url "https://www.nushell.sh/book/loading_data.html" ;
+  schema:publisher org:nushell .
+
+ref:nushell-v0-114-0-blog
+  a schema:WebPage ;
+  schema:name "Nushell 0.114.0" ;
+  schema:url "https://www.nushell.sh/blog/2026-07-04-nushell_v0_114_0.html" ;
+  schema:datePublished "2026-07-04" ;
+  schema:publisher org:nushell .
+
 ref:snover-windows-powershell-unplugged-2015
   a schema:VideoObject ;
   schema:name "Windows PowerShell Unplugged" ;

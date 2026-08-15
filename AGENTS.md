@@ -23,7 +23,7 @@ Context and essential rules for agents collaborating in this repository.
 
 ## Project Shape
 
-- Public DIBS course site built with Astro 5, Tailwind CSS v4, Markdoc, and React islands.
+- Public DIBS course site built with Astro 7, Tailwind CSS v4, Markdoc, and React islands.
 - Deployment is static on Cloudflare Workers; do not introduce SSR or server endpoints.
 - Application code lives in `src/`; reusable workspace packages live in `packages/*`.
 - `packages/content-core` is a private, host-agnostic package consumed as `@ravenhill/content-core`.

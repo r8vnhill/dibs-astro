@@ -21,12 +21,12 @@ build time and served as static assets.
 
 ## Technology choices
 
-- **Astro 5** — the site framework. `astro.config.ts` sets `output: "static"` and `trailingSlash: "always"`; there is
+- **Astro 7** — the site framework. `astro.config.ts` sets `output: "static"` and `trailingSlash: "always"`; there is
   a standing rule not to introduce SSR or server endpoints.
 - **Tailwind CSS v4** — styling.
 - **Markdoc** — authoring format for lesson content, via `@astrojs/markdoc`.
 - **React islands** — used selectively for interactive components; most of the site is plain Astro/HTML.
-- **TypeScript** — application logic under `src/domain`, `src/application`, `src/infrastructure`, and
+- **TypeScript 6** — application logic under `src/domain`, `src/application`, `src/infrastructure`, and
   `src/presentation` is typed and layered (see below).
 - **pnpm workspaces** — the root app and `packages/*` are managed as one workspace.
 - **Vitest** — unit tests (`test:unit`, jsdom) and Astro component render tests (`test:astro`).
@@ -128,9 +128,13 @@ regression is caught from the root gate, not only when working inside that packa
 
 ## Deployment
 
-The production build is a static Astro output (`dist/`), served by Cloudflare Workers Static Assets through
-`wrangler.toml`'s `[assets]` configuration. `pnpm deploy` runs the release build and deploys with Wrangler. There is
-no server runtime to reason about at request time — every routing and rendering decision is resolved at build time.
+The production build is a static Astro output (`dist/`). That same artifact can be served by Cloudflare Workers Static
+Assets through `wrangler.toml` or packaged into an unprivileged NGINX OCI image. `pnpm deploy` continues to build and
+deploy with Wrangler; Docker is an alternate delivery target, not an application runtime.
+
+The container contract is intentionally small: NGINX listens on port 8080, serves generated route directories and
+`404.html`, and runs with a read-only root filesystem plus `/tmp` as temporary storage. `pnpm test:container` probes
+the generated HTTP contract without becoming part of the default unit/test command.
 
 ## Change management
 

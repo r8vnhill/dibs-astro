@@ -1,7 +1,7 @@
 /*
- * Some build tools still need TypeScript's programmatic API. TypeScript 7 deliberately omits that
- * API, so this bridge redirects only an isolated tool process to the documented TypeScript 6
- * compatibility package. Project `tsc` commands continue to resolve TypeScript 7.
+ * Astro's checker still needs TypeScript's programmatic API. The project keeps TypeScript 6 as
+ * the supported compiler boundary, and this bridge makes Astro resolve the explicit compatibility
+ * package instead of depending on package-manager hoisting or a transitive workspace dependency.
  */
 const Module = require("node:module");
 

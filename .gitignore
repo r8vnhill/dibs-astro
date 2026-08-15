@@ -98,6 +98,9 @@ $RECYCLE.BIN/
 ### Cloudflare Wrangler ###
 .wrangler/
 
+### Local GitLab Runner ###
+config.toml
+
 ### Playwright ###
 test-results/
 playwright-report/

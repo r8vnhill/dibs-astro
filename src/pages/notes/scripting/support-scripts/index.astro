@@ -5,7 +5,7 @@ import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Explanation, Tip } from "~/components/ui/callouts";
 import { BashBlock, BashInline, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { B, Dash, I, Mono } from "~/components/ui/font";
-import { DibsSourceLink, PythonLink } from "~/components/ui/links";
+import { DibsSourceLink, NushellLink, PythonLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -485,6 +485,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <LinksLayout title="Comparativas y otros ecosistemas">
         <PythonLink />
+        <NushellLink />
     </LinksLayout>
 
     <ReferencesFromCatalog lessonId="/notes/scripting/support-scripts/">

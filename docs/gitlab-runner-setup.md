@@ -21,6 +21,9 @@ Docker Desktop + WSL2 runs the Linux containers used by CI jobs.
 
 This project uses a **project runner** installed as a **Windows service** with the **Docker executor**.
 
+The canonical project toolchain is Node.js `24.11.0` and pnpm `11.8.0`. Any older Node 20 examples in this historical
+runbook must be updated before they are used for a live runner.
+
 Required runner tags:
 
 ```text
@@ -81,7 +84,7 @@ docker run --rm alpine:3.20 uname -a
 The runner itself is a Windows process. The job containers are Linux containers managed by Docker Desktop.
 
 Do not use the `docker-windows` executor for this setup. `docker-windows` is for Windows containers. This project uses
-Linux Node images such as `node:20-alpine`, so the executor should be `docker`.
+Linux Node images such as `node:24.11.0-alpine`, so the executor should be `docker`.
 
 ## Service Account Choice
 
@@ -148,7 +151,7 @@ On the Windows machine that hosts the runner:
 - Docker can run Linux containers.
 
   ```powershell
-  docker run --rm node:20-alpine node --version
+  docker run --rm node:24.11.0-alpine node --version
   ```
 
 - The Windows machine can reach GitLab over HTTPS.
@@ -241,7 +244,7 @@ gitlab-runner register `
     --url "https://gitlab.com/" `
     --token "$Token" `
     --executor "docker" `
-    --docker-image "node:20-alpine" `
+    --docker-image "node:24.11.0-alpine" `
     --description "dibs-local-windows-docker-runner"
 
 Remove-Variable Token
@@ -291,7 +294,7 @@ check_interval = 0
 
   [runners.docker]
     host = "npipe:////./pipe/docker_engine"
-    image = "node:20-alpine"
+    image = "node:24.11.0-alpine"
     privileged = false
     disable_entrypoint_overwrite = false
     oom_kill_disable = false
@@ -439,13 +442,36 @@ For example:
 ```yaml
 build:
   stage: build
-  image: node:20-alpine
+  image: node:24.11.0-alpine
   script:
     - apk add --no-cache git
     - pnpm build
 ```
 
 A job without matching tags can remain stuck even when the runner appears online.
+
+## Rootless BuildKit and container jobs
+
+The static OCI image is built by a dedicated `moby/buildkit:rootless` job with `privileged = false`; it does not use
+Docker-in-Docker or a Docker socket. The job pushes a pipeline-scoped candidate image to the GitLab Container Registry,
+and the following contract job consumes that exact candidate through a GitLab service alias.
+
+Configure the runner or project with registry authentication available to private service images through
+`DOCKER_AUTH_CONFIG`. Do not place registry passwords in `.gitlab-ci.yml`.
+
+The build creates a temporary npm configuration from the GitLab job token and mounts it as a BuildKit secret. It is
+removed at the end of the job and never becomes a Dockerfile `ARG`, `ENV`, layer, or runtime file. Local container builds
+use the same boundary:
+
+```powershell
+$env:NPM_CONFIG_USERCONFIG = "C:\path\to\authenticated.npmrc"
+pnpm test:container
+Remove-Item Env:NPM_CONFIG_USERCONFIG
+```
+
+The contract job checks the candidate at `http://dibs:8080`; it does not mount `/var/run/docker.sock`. This keeps the
+runner daemonless while still testing the image that was built. The runtime image is expected to operate as an
+unprivileged NGINX process with a read-only filesystem and a writable `/tmp` tmpfs.
 
 ## CI Variable: Cloudflare API Token
 
@@ -486,7 +512,7 @@ Get-Service gitlab-runner
 ```powershell
 docker version
 docker info --format '{{.OSType}}'
-docker run --rm node:20-alpine node --version
+docker run --rm node:24.11.0-alpine node --version
 ```
 
 Expected Docker OS type:
@@ -618,7 +644,7 @@ Common fixes:
 
 ### Docker Reports `OSType` as `windows`
 
-This runner is expected to run Linux images such as `node:20-alpine`.
+This runner is expected to run Linux images such as `node:24.11.0-alpine`.
 
 If this command returns `windows`:
 
@@ -629,16 +655,16 @@ docker info --format '{{.OSType}}'
 switch Docker Desktop back to Linux containers, then verify:
 
 ```powershell
-docker run --rm node:20-alpine node --version
+docker run --rm node:24.11.0-alpine node --version
 ```
 
-### Job Fails Pulling or Starting `node:20-alpine`
+### Job Fails Pulling or Starting `node:24.11.0-alpine`
 
 Check whether Docker can run the image outside GitLab Runner:
 
 ```powershell
-docker pull node:20-alpine
-docker run --rm node:20-alpine node --version
+docker pull node:24.11.0-alpine
+docker run --rm node:24.11.0-alpine node --version
 ```
 
 If that fails, fix Docker Desktop or WSL2 before troubleshooting GitLab Runner.
@@ -758,7 +784,7 @@ docker info
 Inside a Linux container, check memory:
 
 ```powershell
-docker run --rm node:20-alpine sh -lc "free -h && df -h /"
+docker run --rm node:24.11.0-alpine sh -lc "free -h && df -h /"
 ```
 
 If memory is tight, either lower the Node memory setting in `.gitlab-ci.yml` or increase Docker Desktop / WSL2 memory.
@@ -842,7 +868,7 @@ Get-WinEvent -ProviderName gitlab-runner -MaxEvents 80 |
 Section "DOCKER"
 docker version
 docker info --format 'OSType={{.OSType}} ServerVersion={{.ServerVersion}}'
-docker run --rm node:20-alpine node --version
+docker run --rm node:24.11.0-alpine node --version
 
 Section "NET"
 Invoke-WebRequest -Uri "https://gitlab.com/help" -Method Head -TimeoutSec 5

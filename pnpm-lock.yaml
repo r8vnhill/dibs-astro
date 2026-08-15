@@ -120,6 +120,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@typescript/typescript6':
+        specifier: ^6.0.2
+        version: 6.0.2
       cheerio:
         specifier: ^1.2.0
         version: 1.2.0

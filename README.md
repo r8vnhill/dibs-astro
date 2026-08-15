@@ -43,6 +43,7 @@ pnpm dev
 | `pnpm test`                          | Runs both unit tests and Astro render tests.                             |
 | `pnpm test:unit`                     | Runs the Vitest unit suite.                                              |
 | `pnpm test:astro`                    | Runs Astro render/component tests with `vitest.astro.config.ts`.         |
+| `pnpm test:container`                | Builds and probes the optional unprivileged static-site container.       |
 | `pnpm export:pdf`                    | Exports selected lesson PDFs from the static export routes.              |
 | `pnpm export:pdf:all`                | Exports every lesson PDF-capable route.                                  |
 | `pnpm export:pdf:smoke`              | Exports one representative lesson PDF for a quick local smoke run.      |
@@ -113,9 +114,8 @@ pnpm build
 `pnpm check` begins by confirming that the active Node and pnpm versions match the supported toolchain contract. Run
 `pnpm check:toolchain` alone when diagnosing a local or CI bootstrap mismatch.
 
-The project compiler is TypeScript 7. `astro check` and declaration emit are temporarily launched through a narrow
-TypeScript 6 bridge because their current tooling still requires TypeScript's programmatic API; the bridge can be
-removed once those tools support the native TypeScript 7 compiler API.
+The project uses TypeScript 6 because Astro's current checker and declaration tooling require its programmatic API.
+`scripts/astro-check-typescript6-bridge.cjs` keeps that compatibility boundary explicit.
 
 Use `pnpm check` as the standard local quality gate before pushing larger changes. During focused development, prefer
 the narrowest relevant test command first; use `pnpm check:architecture` when debugging layer-boundary findings. The
@@ -125,11 +125,19 @@ browser-backed exporter path. It removes its temporary workspace after a success
 
 ## Deployment
 
-The project is generated as a static Astro build and deployed to Cloudflare Workers Static Assets.
+The project is generated as a static Astro build and can be delivered either through Cloudflare Workers Static Assets
+or as an unprivileged NGINX OCI image. Both targets consume the same `dist/` artifact contract.
 
 - `pnpm build` creates the production output in `dist/`.
 - `wrangler.toml` serves `./dist` through the `[assets]` configuration.
 - `pnpm deploy` runs the release build and deploys with Wrangler.
+- `docker build --secret id=npmrc,src="$NPM_CONFIG_USERCONFIG" -t dibs-astro:local .` builds the OCI target.
+- `docker run --rm --read-only --tmpfs /tmp -p 8080:8080 dibs-astro:local` runs it locally.
+- `pnpm test:container` performs the opt-in HTTP and runtime-policy checks; it requires Docker and an authenticated npm
+  config supplied through `NPM_CONFIG_USERCONFIG`.
+
+GitLab publishes temporary pipeline images, SHA-addressable `main` images, and version/tag aliases for releases. The
+container build uses rootless BuildKit and does not replace the Cloudflare deployment.
 
 ## Troubleshooting
 

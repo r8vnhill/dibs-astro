@@ -898,6 +898,41 @@ usage:support-scripts-kotlin-custom-scripting-tutorial-recommended
   dibs:reference ref:kotlin-custom-scripting-tutorial ;
   dibs:tag "recommended" .
 
+<https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/>
+  a schema:LearningResource ;
+  schema:name "Scripts de apoyo reusables en Nushell" ;
+  schema:url "/notes/scripting/support-scripts/nushell/" .
+
+usage:support-scripts-nushell-nushell-navigating-structured-data-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/> ;
+  dibs:reference ref:nushell-navigating-structured-data ;
+  dibs:tag "recommended" .
+
+usage:support-scripts-nushell-nushell-pipelines-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/> ;
+  dibs:reference ref:nushell-pipelines ;
+  dibs:tag "recommended" .
+
+usage:support-scripts-nushell-nushell-loading-data-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/> ;
+  dibs:reference ref:nushell-loading-data ;
+  dibs:tag "recommended" .
+
+usage:support-scripts-nushell-nushell-open-command-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/> ;
+  dibs:reference ref:nushell-open-command ;
+  dibs:tag "recommended" .
+
+usage:support-scripts-nushell-nushell-v0-114-0-blog-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/support-scripts/nushell/> ;
+  dibs:reference ref:nushell-v0-114-0-blog ;
+  dibs:tag "recommended" .
+
 <https://dibs.ravenhill.cl/notes/scripting/tasks-as-abstractions/>
   a schema:LearningResource ;
   schema:name "Tareas como abstracciones de acciones repetibles" ;

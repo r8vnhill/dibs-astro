@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14T10:29:39.993Z",
+  "generatedAt": "2026-08-15T13:00:18.189Z",
   "totalLessons": 52,
   "changesLimit": 5,
   "entries": {
@@ -1851,6 +1851,18 @@
       "lastModified": "2026-08-14",
       "changes": [
         {
+          "hash": "f441621c9c8b1e9a45b510c7d6abb97b3712c2ce",
+          "date": "2026-08-14",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "feat: add LessonReadingsAdapter for lesson readings data retrieval"
+        },
+        {
+          "hash": "cb4bd9b9bad4b83ab4b95c1ee52940c1c4a6aada",
+          "date": "2026-08-14",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🚀 feat(tests+docs): Add README contract tests and improve lesson clarity"
+        },
+        {
           "hash": "0ed27267e65923bddda51c13b5cff620c7d33aa0",
           "date": "2026-08-14",
           "author": "Ignacio Slater-Muñoz",
@@ -1867,18 +1879,6 @@
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🎨 tests(release/lessons): Add render-contract tests & consolidate lesson authoring"
-        },
-        {
-          "hash": "5947017cfa3407a0cb6a307bf1dde5fdabbbb418",
-          "date": "2026-08-13",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "💡 refactor(reading-time): Replace React with static Astro-based implementation"
-        },
-        {
-          "hash": "6ddce307a53c0335fc2dfd3242aa0c6edb15e241",
-          "date": "2026-08-13",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🚀 feat(ci): Restore deterministic and hermetic release path for `@ravenhill/astro-icons`"
         }
       ]
     },
