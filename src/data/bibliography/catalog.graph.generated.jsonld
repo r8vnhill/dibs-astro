@@ -1873,6 +1873,15 @@
       }
     },
     {
+      "@id": "ref:nushell-loading-data",
+      "@type": "WebPage",
+      "name": "Loading Data",
+      "url": "https://www.nushell.sh/book/loading_data.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
       "@id": "ref:nushell-navigating-structured-data",
       "@type": "WebPage",
       "name": "Navigating and Accessing Structured Data",
@@ -1992,6 +2001,16 @@
       "@type": "WebPage",
       "name": "Use",
       "url": "https://www.nushell.sh/commands/docs/use.html",
+      "publisher": {
+        "@id": "org:nushell"
+      }
+    },
+    {
+      "@id": "ref:nushell-v0-114-0-blog",
+      "@type": "WebPage",
+      "name": "Nushell 0.114.0",
+      "url": "https://www.nushell.sh/blog/2026-07-04-nushell_v0_114_0.html",
+      "datePublished": "2026-07-04",
       "publisher": {
         "@id": "org:nushell"
       }
@@ -2471,6 +2490,12 @@
       "@type": "LearningResource",
       "name": "Scripts de apoyo como software reusable",
       "url": "/notes/scripting/support-scripts/"
+    },
+    {
+      "@id": "/notes/scripting/support-scripts/nushell/",
+      "@type": "LearningResource",
+      "name": "Scripts de apoyo reusables en Nushell",
+      "url": "/notes/scripting/support-scripts/nushell/"
     },
     {
       "@id": "/notes/scripting/tasks-as-abstractions/",
@@ -4258,6 +4283,71 @@
       },
       "dibs:reference": {
         "@id": "ref:kotlin-custom-scripting-tutorial"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:support-scripts-nushell-nushell-loading-data-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/support-scripts/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-loading-data"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:support-scripts-nushell-nushell-navigating-structured-data-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/support-scripts/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-navigating-structured-data"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:support-scripts-nushell-nushell-open-command-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/support-scripts/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-open-command"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:support-scripts-nushell-nushell-pipelines-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/support-scripts/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-pipelines"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:support-scripts-nushell-nushell-v0-114-0-blog-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/support-scripts/nushell/"
+      },
+      "dibs:reference": {
+        "@id": "ref:nushell-v0-114-0-blog"
       },
       "dibs:tags": [
         "recommended"

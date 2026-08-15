@@ -475,6 +475,12 @@ and layer metadata independently. Neither job mounts `/var/run/docker.sock`. Thi
 still testing the image that was built. The runtime image is expected to operate as an unprivileged NGINX process with
 a read-only filesystem and a writable `/tmp` tmpfs.
 
+The provenance job also checks the candidate's OCI labels against the candidate metadata and requires the BuildKit
+attestation-bearing index. Publication is a separate manifest-only operation: it recomputes the candidate digest,
+promotes only the aliases allowed by the release policy, and resolves every alias afterward. A release tag must equal
+the exact `package.json.version` value. The job does not rebuild the image, and no registry credential is written to
+the repository or printed in diagnostics.
+
 ## CI Variable: Cloudflare API Token
 
 The deploy job calls `wrangler deploy`, which requires a Cloudflare API token.

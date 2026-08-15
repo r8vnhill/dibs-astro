@@ -26,12 +26,13 @@ FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5
 
 ARG SOURCE_REVISION=unknown
 ARG IMAGE_VERSION=unknown
+ARG SOURCE_URL=https://gitlab.com/r8vnhill/dibs-astro-website
 
 LABEL org.opencontainers.image.title="DIBS static website" \
       org.opencontainers.image.description="Static DIBS course website" \
       org.opencontainers.image.version="${IMAGE_VERSION}" \
       org.opencontainers.image.revision="${SOURCE_REVISION}" \
-      org.opencontainers.image.source="https://github.com/r8vnhill/dibs-astro" \
+      org.opencontainers.image.source="${SOURCE_URL}" \
       org.opencontainers.image.licenses="BSD-2-Clause"
 
 COPY --from=build /app/dist/ /usr/share/nginx/html/

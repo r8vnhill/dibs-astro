@@ -59,19 +59,17 @@ To build the image locally you need:
 The npm configuration is passed to BuildKit as a temporary secret. Registry credentials must not be passed through
 Docker `ARG`, `ENV`, or committed configuration files.
 
-### Build the image
+### Build and run with Docker Compose
 
-Set `NPM_CONFIG_USERCONFIG` to an npm configuration that can access the required GitLab packages.
+Set `NPM_CONFIG_USERCONFIG` to an npm configuration that can access the required GitLab packages, then build and start
+the `website` service defined in [`docker-compose.yml`](./docker-compose.yml).
 
 #### PowerShell
 
 ```powershell
 $env:NPM_CONFIG_USERCONFIG = "$HOME\.npmrc"
 
-docker build `
-    --secret "id=npmrc,src=$env:NPM_CONFIG_USERCONFIG" `
-    --tag dibs-astro:local `
-    .
+docker compose up --build
 ```
 
 #### POSIX shell
@@ -79,29 +77,23 @@ docker build `
 ```sh
 export NPM_CONFIG_USERCONFIG="$HOME/.npmrc"
 
-docker build \
-    --secret id=npmrc,src="$NPM_CONFIG_USERCONFIG" \
-    --tag dibs-astro:local \
-    .
-```
-
-### Run the container
-
-```sh
-docker run \
-    --rm \
-    --read-only \
-    --tmpfs /tmp \
-    --publish 8080:8080 \
-    dibs-astro:local
+docker compose up --build
 ```
 
 Open:
 
 http://localhost:8080
 
-The container runs without root privileges. Its root filesystem is read-only, with `/tmp` provided explicitly for the
-temporary state required by NGINX.
+The compose service builds the same image as a direct `docker build` and runs it the same way the production runtime
+does: without root privileges, with a read-only root filesystem, and with `/tmp` mounted as a tmpfs for the temporary
+state NGINX requires. The `npmrc` build secret is passed through Compose's `secrets` mechanism, not through `ARG`,
+`ENV`, or a committed file.
+
+Override the published port with `WEBSITE_PORT` (defaults to `8080`), and stop the service with:
+
+```sh
+docker compose down
+```
 
 ### Verify the production container
 
@@ -353,10 +345,11 @@ flowchart TD
     e2e[Browser tests]
     build[Static production build]
 
-    candidate[OCI candidate]
+    candidate[OCI candidate + digest]
     http[HTTP contract]
     browser[Container browser contract]
     policy[OCI/runtime policy]
+    provenance[Provenance + SBOM]
 
     publish[Verified image publication]
 
@@ -374,16 +367,25 @@ flowchart TD
     candidate --> http
     candidate --> browser
     candidate --> policy
+    candidate --> provenance
 
     http --> publish
     browser --> publish
     policy --> publish
+    provenance --> publish
 ```
 
 The OCI pipeline uses rootless BuildKit. It does not require Docker-in-Docker, privileged execution, or a mounted host
 Docker socket.
 
 Package-registry credentials are supplied temporarily during the build and must not be persisted into the image.
+
+The candidate metadata is a versioned handoff containing the image reference, manifest digest, full Git revision,
+project version, canonical GitLab source URL, and target platform. `container:publish` reads that artifact and performs
+manifest-only promotion: it re-computes the candidate digest, publishes the approved SHA/version aliases, then fetches
+each alias again to prove that it resolves to the same digest. It never rebuilds the application. Release tags must
+match `package.json.version` exactly; `latest` is not published. BuildKit provenance and SBOM attestations remain tied
+to the candidate subject digest that those aliases reference.
 
 Operational details for the self-hosted GitLab Runner are documented in:
 

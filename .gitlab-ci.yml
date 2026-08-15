@@ -132,13 +132,16 @@ container:build:
         - trap 'rm -f /tmp/dibs.npmrc /tmp/registry-auth "${HOME}/.docker/config.json"' EXIT
         - |
             CANDIDATE_IMAGE="${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}"
+            PACKAGE_VERSION="$(sed -n 's/^[[:space:]]*\"version\":[[:space:]]*\"\([^\"]*\)\",[[:space:]]*$/\1/p' package.json | head -n 1)"
+            test -n "${PACKAGE_VERSION}"
             buildctl-daemonless.sh build \
                 --frontend dockerfile.v0 \
                 --local context=. \
                 --local dockerfile=. \
                 --opt filename=Dockerfile \
                 --opt build-arg:SOURCE_REVISION="${CI_COMMIT_SHA}" \
-                --opt build-arg:IMAGE_VERSION="${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}" \
+                --opt build-arg:SOURCE_URL="${CI_PROJECT_URL}" \
+                --opt build-arg:IMAGE_VERSION="${PACKAGE_VERSION}" \
                 --secret id=npmrc,src=/tmp/dibs.npmrc \
                 --export-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
                 --import-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
@@ -146,11 +149,12 @@ container:build:
                 --metadata-file /tmp/build-metadata.json \
                 --attest type=provenance,mode=max \
                 --attest type=sbom
-            DIGEST="$(sed -n 's/.*\"containerimage.digest\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p' /tmp/build-metadata.json)"
-            test -n "${DIGEST}"
+            test -s /tmp/build-metadata.json
             mkdir -p tmp
-            printf '{\n  "schemaVersion": 1,\n  "image": "%s",\n  "digest": "%s",\n  "revision": "%s",\n  "platform": "linux/amd64"\n}\n' \
-                "${CANDIDATE_IMAGE}" "${DIGEST}" "${CI_COMMIT_SHA}" > tmp/oci-candidate.json
+            DIGEST="$(sed -n 's/.*\"containerimage.digest\"[[:space:]]*:[[:space:]]*\"\(sha256:[0-9a-f]\{64\}\)\".*/\1/p' /tmp/build-metadata.json)"
+            test -n "${DIGEST}"
+            printf '{\n  "schemaVersion": 1,\n  "image": "%s",\n  "digest": "%s",\n  "revision": "%s",\n  "version": "%s",\n  "source": "%s",\n  "platform": "linux/amd64"\n}\n' \
+                "${CANDIDATE_IMAGE}" "${DIGEST}" "${CI_COMMIT_SHA}" "${PACKAGE_VERSION}" "${CI_PROJECT_URL}" > tmp/oci-candidate.json
     artifacts:
         paths:
             - tmp/oci-candidate.json
@@ -164,6 +168,15 @@ container:oci-policy:
           artifacts: true
     script:
         - node scripts/verify-oci-image-policy.mjs tmp/oci-candidate.json
+
+container:provenance:
+    stage: container
+    image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
+    needs:
+        - job: container:build
+          artifacts: true
+    script:
+        - node scripts/verify-oci-provenance.mjs tmp/oci-candidate.json
 
 container:http-contract:
     stage: container
@@ -202,6 +215,7 @@ container:publish:
         - job: container:http-contract
         - job: container:browser-contract
         - job: container:oci-policy
+        - job: container:provenance
         - job: build
         - job: test:check
         - job: test:unit
