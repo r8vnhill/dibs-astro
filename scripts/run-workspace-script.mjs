@@ -18,17 +18,13 @@ if (typeof command !== "string") {
 }
 
 const rootBinDirectory = path.resolve("node_modules/.bin");
-const compatibilityBridge = path.resolve("scripts/astro-check-typescript6-bridge.cjs");
-const requiresProgrammaticTypeScript = command.includes("tsup");
 const result = await new Promise((resolve, reject) => {
     const child = spawn(command, {
         cwd: workspacePath,
         env: {
             ...process.env,
             PATH: `${rootBinDirectory}${path.delimiter}${process.env.PATH ?? ""}`,
-            NODE_OPTIONS: requiresProgrammaticTypeScript
-                ? `${process.env.NODE_OPTIONS ?? ""} --require ${compatibilityBridge}`.trim()
-                : process.env.NODE_OPTIONS,
+            NODE_OPTIONS: process.env.NODE_OPTIONS,
         },
         shell: true,
         stdio: "inherit",

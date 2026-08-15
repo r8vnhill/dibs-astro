@@ -39,6 +39,12 @@ variables:
         - pnpm --version
         - pnpm install --frozen-lockfile --reporter=append-only
 
+.container-job:
+    rules:
+        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+        - if: '$CI_COMMIT_BRANCH'
+        - if: '$CI_COMMIT_TAG'
+
 deps:
     stage: prepare
     extends: .node-job
@@ -113,6 +119,7 @@ test:e2e:
 
 container:build:
     stage: container
+    extends: .container-job
     image:
         name: moby/buildkit:rootless@sha256:504731e577c20559c00f968f33219f30115e70be29ab96728d1d06e963fc494b
         entrypoint: [""]
@@ -162,6 +169,7 @@ container:build:
 
 container:oci-policy:
     stage: container
+    extends: .container-job
     image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
     needs:
         - job: container:build
@@ -171,6 +179,7 @@ container:oci-policy:
 
 container:provenance:
     stage: container
+    extends: .container-job
     image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
     needs:
         - job: container:build
@@ -180,6 +189,7 @@ container:provenance:
 
 container:http-contract:
     stage: container
+    extends: .container-job
     image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
     services:
         - name: ${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}

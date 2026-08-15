@@ -2,7 +2,17 @@ import type { BibliographyCatalog, NormalizedReference } from "~/lib/bibliograph
 
 export type ReferenceId = string & { readonly __referenceId: unique symbol };
 
+export type ReadingType = "Conceptual" | "Aplicada" | "Fuente primaria" | "Referencia técnica";
+export type ReadingDifficulty = "Introductoria" | "Intermedia" | "Avanzada";
+export type ReadingExtent = "Corta" | "Media" | "Secciones seleccionadas";
+
 export type LessonReadingDiagnostic =
+    | {
+          readonly code: "invalid-reference-id";
+          readonly lessonPath: string;
+          readonly section: string;
+          readonly configuredId: string;
+      }
     | {
           readonly code: "missing-reference";
           readonly lessonPath: string;
@@ -32,9 +42,9 @@ export type ResolvedLessonReadingsSection = Readonly<{
 }>;
 
 export type LessonReadingGuide = Readonly<{
-    type: string;
-    difficulty: string;
-    extent: string;
+    type: ReadingType;
+    difficulty: ReadingDifficulty;
+    extent: ReadingExtent;
     why: string;
     focus: string;
     afterReading: string;
@@ -89,7 +99,13 @@ export function resolveLessonReadings(
             try {
                 canonicalId = normalizeReferenceId(reading.referenceId);
             } catch {
-                canonicalId = `${REFERENCE_PREFIX}${reading.referenceId.trim()}` as ReferenceId;
+                diagnostics.push({
+                    code: "invalid-reference-id",
+                    lessonPath: configuration.lessonPath,
+                    section: section.title,
+                    configuredId: reading.referenceId,
+                });
+                continue;
             }
 
             if (seen.has(canonicalId)) {
@@ -136,6 +152,9 @@ export function resolveLessonReadings(
 export function formatLessonReadingsDiagnostics(diagnostics: readonly LessonReadingDiagnostic[]): string {
     return diagnostics
         .map((diagnostic) => {
+            if (diagnostic.code === "invalid-reference-id") {
+                return `Invalid bibliography reference ID — ${diagnostic.section}: ${diagnostic.configuredId}`;
+            }
             const detail = `${diagnostic.section}: ${diagnostic.configuredId} (${diagnostic.canonicalId})`;
             return diagnostic.code === "missing-reference" ? `Missing catalog reference — ${detail}` : `Duplicate catalog reference — ${detail}`;
         })

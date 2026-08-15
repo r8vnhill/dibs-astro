@@ -1,8 +1,10 @@
+import type { ReadingDifficulty, ReadingExtent, ReadingType } from "~/lib/readings/lesson-readings-contract";
+
 export type LessonReading = Readonly<{
     referenceId: string;
-    type: "Conceptual" | "Aplicada" | "Fuente primaria" | "Referencia técnica";
-    difficulty: "Introductoria" | "Intermedia" | "Avanzada";
-    extent: "Corta" | "Media" | "Secciones seleccionadas";
+    type: ReadingType;
+    difficulty: ReadingDifficulty;
+    extent: ReadingExtent;
     why: string;
     focus: string;
     afterReading: string;
@@ -17,7 +19,7 @@ export type LessonReadings = Readonly<{
     deeper: readonly LessonReading[];
 }>;
 
-export const libraryWhatIsReadings = {
+export const libraryWhatIsReadings: LessonReadings = {
     lessonPath: "/notes/software-libraries/what-is/",
     title: "La biblioteca como artefacto de software",
     essential: [
@@ -126,6 +128,6 @@ export const libraryWhatIsReadings = {
                 "Deberías poder buscar una definición normativa cuando una evolución afecta a consumidores compilados.",
         },
     ],
-} satisfies LessonReadings;
+};
 
 export const publishedReadings = [libraryWhatIsReadings] as const;

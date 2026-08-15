@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import { resolvePlaywrightTarget } from "./tests/e2e/playwright-target";
+
+const target = resolvePlaywrightTarget(process.env.CONTAINER_BASE_URL, Boolean(process.env.CI));
 
 /**
  * General-purpose Playwright UI regression harness, scoped to the lesson TOC's real-browser
@@ -21,7 +24,7 @@ export default defineConfig({
     reporter: process.env.CI ? "dot" : "list",
 
     use: {
-        baseURL: "http://127.0.0.1:4321",
+        baseURL: target.baseURL,
         trace: "on-first-retry",
     },
 
@@ -42,14 +45,5 @@ export default defineConfig({
         },
     ],
 
-    ...(process.env.CONTAINER_BASE_URL
-        ? {}
-        : {
-            webServer: {
-                command: "node ./node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4321",
-                url: "http://127.0.0.1:4321",
-                reuseExistingServer: !process.env.CI,
-                timeout: 120_000,
-            },
-        }),
+    ...(target.webServer ? { webServer: target.webServer } : {}),
 });

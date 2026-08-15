@@ -49,4 +49,23 @@ suite("given a lesson readings configuration", () => {
             ]);
         }
     });
+
+    test("then reports malformed IDs without querying or branding them", () => {
+        const result = resolveLessonReadings({
+            ...configuration,
+            essential: [{ ...guide, referenceId: "not valid" }],
+        }, catalog);
+
+        expect(result).toMatchObject({ ok: false });
+        if (!result.ok) {
+            expect(result.diagnostics).toEqual([
+                {
+                    code: "invalid-reference-id",
+                    lessonPath: "/notes/example/",
+                    section: "Lecturas esenciales",
+                    configuredId: "not valid",
+                },
+            ]);
+        }
+    });
 });
