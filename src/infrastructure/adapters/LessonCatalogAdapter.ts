@@ -1,9 +1,9 @@
 import {
+    type AdjacentLessons,
     LessonHref,
+    type LessonNavigationRepository,
     LessonSequenceService,
     LessonTrail,
-    type AdjacentLessons,
-    type LessonNavigationRepository,
     type TrailNode,
 } from "@ravenhill/content-core";
 import {

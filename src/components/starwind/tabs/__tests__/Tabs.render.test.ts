@@ -4,9 +4,9 @@
  * Render tests for Starwind Tabs components across web and PDF export modes.
  */
 
+import TabsExportFixture from "$components/starwind/tabs/__tests__/fixtures/TabsExportFixture.astro";
 import Tabs from "$components/starwind/tabs/Tabs.astro";
 import TabsContent from "$components/starwind/tabs/TabsContent.astro";
-import TabsExportFixture from "$components/starwind/tabs/__tests__/fixtures/TabsExportFixture.astro";
 import TabsList from "$components/starwind/tabs/TabsList.astro";
 import { createAstroRenderer } from "$test-utils/astro-render";
 import { JSDOM } from "jsdom";

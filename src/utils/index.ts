@@ -70,10 +70,4 @@ export { site } from "./site";
 export type { default as StyledComponent } from "./styled-component";
 
 // Theme detection and application
-export {
-    applyTheme,
-    getColorSchemeMediaQuery,
-    isDarkModePreferred,
-    type Theme,
-    theme,
-} from "./theme";
+export { applyTheme, getColorSchemeMediaQuery, isDarkModePreferred, type Theme, theme } from "./theme";

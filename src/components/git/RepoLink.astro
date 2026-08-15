@@ -121,10 +121,9 @@ const platformName = REPO_PLATFORM_LABEL[platform];
  *
  * If `label` is omitted, the helper derives a sensible default.
  */
-const linkTextOptions =
-    label === undefined
-        ? { showPlatform }
-        : { label, showPlatform };
+const linkTextOptions = label === undefined
+    ? { showPlatform }
+    : { label, showPlatform };
 
 /**
  * Visible link label.
@@ -156,10 +155,8 @@ const Icon = platform === "github" ? Icons.GithubLogo : Icons.GitlabLogo;
 ---
 
 <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={ariaLabel}
+    {href} target="_blank"
+    rel="noopener noreferrer" aria-label={ariaLabel}
     title={tooltip}
     class:list={[
         "inline-flex",
@@ -171,6 +168,9 @@ const Icon = platform === "github" ? Icons.GithubLogo : Icons.GitlabLogo;
         "text-sm",
     ]}
 >
-    <Icon class="h-4 w-4 shrink-0" aria-hidden="true" focusable="false" />
+    <Icon
+        class="h-4 w-4 shrink-0" aria-hidden="true"
+        focusable="false"
+    />
     <span class="truncate">{linkText}</span>
 </a>

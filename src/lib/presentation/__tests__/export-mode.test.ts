@@ -4,12 +4,12 @@
  * Unit tests for the lesson export-mode resolver.
  */
 
+import { describe, expect, test } from "vitest";
 import {
     getLessonExportRootAttributes,
-    resolveLessonExportContext,
     type LessonExportContext,
+    resolveLessonExportContext,
 } from "~/lib/presentation/export-mode";
-import { describe, expect, test } from "vitest";
 
 describe("resolveLessonExportContext", () => {
     describe("when no render mode is specified", () => {

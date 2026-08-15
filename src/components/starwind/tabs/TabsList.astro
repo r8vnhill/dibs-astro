@@ -12,10 +12,10 @@
  * deterministic PDF output. Interactive tab controls are not meaningful in static export mode.
  */
 
-import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
-import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
+import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 
 /**
  * Props for the TabsList component.
@@ -34,8 +34,7 @@ interface Props extends Omit<HTMLAttributes<"div">, "role"> {
  * Allows further extension if variants are added in the future.
  */
 const tabsList = tv({
-    base:
-        "inline-flex w-full items-center justify-center rounded-md bg-muted p-1 text-muted-foreground gap-1",
+    base: "inline-flex w-full items-center justify-center rounded-md bg-muted p-1 text-muted-foreground gap-1",
     variants: {
         size: {
             sm: "text-sm gap-1",
@@ -76,8 +75,7 @@ const exportContext = resolveLessonExportContext({
                 orientation: ariaOrientation ?? undefined,
             })}
             data-tabs-list
-            role="tablist"
-            aria-orientation={ariaOrientation}
+            role="tablist" aria-orientation={ariaOrientation}
             {...rest}
         >
             <slot />

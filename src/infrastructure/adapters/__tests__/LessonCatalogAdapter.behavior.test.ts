@@ -502,8 +502,7 @@ const makeTopLevelLessonFixture = (options: {
  *
  * @returns A {@link LessonCatalogAdapter} configured for grouped-section traversal scenarios.
  */
-const adapterForGroupedSections = (): LessonCatalogAdapter =>
-    new LessonCatalogAdapter(makeGroupedSectionsFixture());
+const adapterForGroupedSections = (): LessonCatalogAdapter => new LessonCatalogAdapter(makeGroupedSectionsFixture());
 
 /**
  * Creates an adapter backed by the authored nested trail fixture.
@@ -527,8 +526,7 @@ const adapterForLinkableAndNonLinkableGroups = (): LessonCatalogAdapter =>
  * @returns A {@link LessonCatalogAdapter} configured for nested traversal, root inclusion, and href-normalization
  *   scenarios.
  */
-const adapterForDeepNesting = (): LessonCatalogAdapter =>
-    new LessonCatalogAdapter(makeDeepNestingFixture());
+const adapterForDeepNesting = (): LessonCatalogAdapter => new LessonCatalogAdapter(makeDeepNestingFixture());
 
 /**
  * Creates an adapter backed by the top-level-lesson fixture.

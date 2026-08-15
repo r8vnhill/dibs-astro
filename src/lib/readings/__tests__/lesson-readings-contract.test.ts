@@ -1,13 +1,26 @@
 import { expect, suite, test } from "vitest";
 import type { BibliographyCatalog, NormalizedReference } from "~/lib/bibliography";
-import {
-    normalizeReferenceId,
-    resolveLessonReadings,
-} from "../lesson-readings-contract";
+import { normalizeReferenceId, resolveLessonReadings } from "../lesson-readings-contract";
 
-const reference = { id: "ref:known", type: "WebPage", rawType: "WebPage", title: "Known", authors: [], keywords: [], url: "https://example.com" } as NormalizedReference;
+const reference = {
+    id: "ref:known",
+    type: "WebPage",
+    rawType: "WebPage",
+    title: "Known",
+    authors: [],
+    keywords: [],
+    url: "https://example.com",
+} as NormalizedReference;
 const catalog = { referencesById: new Map([[reference.id, reference]]) } as unknown as BibliographyCatalog;
-const guide = { referenceId: "known", type: "Conceptual", difficulty: "Introductoria", extent: "Corta", why: "why", focus: "focus", afterReading: "after" } as const;
+const guide = {
+    referenceId: "known",
+    type: "Conceptual",
+    difficulty: "Introductoria",
+    extent: "Corta",
+    why: "why",
+    focus: "focus",
+    afterReading: "after",
+} as const;
 
 suite("given lesson reading identities", () => {
     test.each([

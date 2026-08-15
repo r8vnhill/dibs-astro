@@ -19,11 +19,7 @@
  * covered by `src/layouts/__tests__/NotesLayout.render.test.ts`.
  */
 import { describe, expect, test } from "vitest";
-import {
-    normalizeNavigation,
-    normalizePreviousNavigation,
-    type NavigationLinkInput,
-} from "../navigation";
+import { type NavigationLinkInput, normalizeNavigation, normalizePreviousNavigation } from "../navigation";
 
 const firstPrevious: NavigationLinkInput = {
     title: "PowerShell",

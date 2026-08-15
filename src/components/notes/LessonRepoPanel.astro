@@ -27,8 +27,8 @@
  * - The repository reference is provided as a {@link RepoRef}, ensuring consistency across the
  *   codebase.
  */
-import RepoLink from "~/components/git/RepoLink.astro";
 import { normalizePlatforms, type RepoRef } from "@ravenhill/site-core";
+import RepoLink from "~/components/git/RepoLink.astro";
 
 /**
  * Props accepted by {@link LessonRepoPanel}.
@@ -100,13 +100,11 @@ const panelHeadingId = "lesson-repo-panel-heading";
         ]}
     >
         {
-            repositories.flatMap((repo) =>
-                selectedPlatforms.map((platform) => (
+            repositories.flatMap((repo) => selectedPlatforms.map((platform) => (
                 <li>
                     <RepoLink {...repo} {platform} />
                 </li>
-            ))
-            )
+            )))
         }
     </ul>
 </section>

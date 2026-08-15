@@ -2,11 +2,8 @@
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { getLibraryWhatIsReadings } from "$presentation/adapters/lesson-readings";
 import GuidedReferenceEntry from "~/components/ui/references/GuidedReferenceEntry.astro";
-import {
-    formatLessonReadingsDiagnostics,
-    resolveLessonReadings,
-} from "~/lib/readings/lesson-readings-contract";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import { formatLessonReadingsDiagnostics, resolveLessonReadings } from "~/lib/readings/lesson-readings-contract";
 
 const libraryWhatIsReadings = getLibraryWhatIsReadings();
 const resolution = resolveLessonReadings(libraryWhatIsReadings, getDefaultBibliographyCatalog());

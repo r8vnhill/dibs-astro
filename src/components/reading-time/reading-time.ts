@@ -58,9 +58,10 @@ export type ReadingTimeEstimate = Readonly<{
     minutes: number;
 }>;
 
-const hasExcludedClass = (node: ReadableHtmlNode): boolean => node.attribs?.class
-    ?.split(/\s+/)
-    .includes(READING_TIME_EXCLUDE_SELECTOR.slice(1)) ?? false;
+const hasExcludedClass = (node: ReadableHtmlNode): boolean =>
+    node.attribs?.class
+        ?.split(/\s+/)
+        .includes(READING_TIME_EXCLUDE_SELECTOR.slice(1)) ?? false;
 
 const isOpenDetails = (node: ReadableHtmlNode): boolean => Object.hasOwn(node.attribs ?? {}, "open");
 

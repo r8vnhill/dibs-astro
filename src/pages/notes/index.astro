@@ -2,19 +2,12 @@
 import * as icons from "$icons";
 import { Package, TerminalWindow, TreeStructure } from "$icons";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHeader,
-    TableRow,
-} from "~/components/starwind/table";
+import { Table, TableBody, TableCaption, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import { Important, More, Note } from "~/components/ui/callouts";
 import { BashScript } from "~/components/ui/code";
 import { PowerShellBlock } from "~/components/ui/code";
-import { InlineBash, KotlinInline, InlinePowerShell } from "~/components/ui/code";
+import { InlineBash, InlinePowerShell, KotlinInline } from "~/components/ui/code";
 import ShellBlock from "~/components/ui/code/ShellBlock.astro";
 import List from "~/components/ui/list/List.astro";
 import ListItem from "~/components/ui/list/ListItem.astro";
@@ -27,14 +20,13 @@ const title = "¿Cómo usar este apunte?";
 <NotesLayout {title}>
     <Fragment slot="abstract">
         <p>
-            Este apunte es una guía de referencia rápida y un complemento a las clases, pensado para
-            que puedas profundizar en los temas cuando lo necesites.
+            Este apunte es una guía de referencia rápida y un complemento a las clases, pensado para que puedas
+            profundizar en los temas cuando lo necesites.
         </p>
         <p>
-            Incluye explicaciones detalladas, ejemplos ilustrativos y problemas prácticos para
-            facilitar tu aprendizaje. Aunque las clases (diapositivas) suelen ser suficientes para
-            comprender los conceptos, este apunte ofrece una mirada más profunda para reforzar y
-            aplicar lo aprendido.
+            Incluye explicaciones detalladas, ejemplos ilustrativos y problemas prácticos para facilitar tu aprendizaje.
+            Aunque las clases (diapositivas) suelen ser suficientes para comprender los conceptos, este apunte ofrece
+            una mirada más profunda para reforzar y aplicar lo aprendido.
         </p>
     </Fragment>
 
@@ -51,9 +43,8 @@ const title = "¿Cómo usar este apunte?";
         </Heading>
 
         <p class="mb-4">
-            Cada unidad se organiza en lecciones que desarrollan un tema específico de manera
-            gradual y práctica. Estas lecciones pueden incluir distintas secciones, pensadas para
-            apoyar diversos estilos de aprendizaje:
+            Cada unidad se organiza en lecciones que desarrollan un tema específico de manera gradual y práctica. Estas
+            lecciones pueden incluir distintas secciones, pensadas para apoyar diversos estilos de aprendizaje:
         </p>
 
         <Table>
@@ -109,8 +100,8 @@ const title = "¿Cómo usar este apunte?";
         </Table>
 
         <Note>
-            No todas las secciones aparecerán en todas las lecciones; el contenido se adapta a las
-            necesidades de cada tema.
+            No todas las secciones aparecerán en todas las lecciones; el contenido se adapta a las necesidades de cada
+            tema.
         </Note>
     </NotesSection>
 
@@ -139,16 +130,15 @@ const title = "¿Cómo usar este apunte?";
         </Heading>
 
         <p>
-            En estos apuntes encontrarás scripts que podrían parecer innecesarios frente a unos
-            pocos comandos en la terminal. Los usamos por razones
-            <strong> didácticas y prácticas</strong>: facilitan repetir procesos, reducen errores y
-            sirven como punto de partida para flujos más complejos.
+            En estos apuntes encontrarás scripts que podrían parecer innecesarios frente a unos pocos comandos en la
+            terminal. Los usamos por razones
+            <strong> didácticas y prácticas</strong>: facilitan repetir procesos, reducen errores y sirven como punto de
+            partida para flujos más complejos.
         </p>
 
         <Important>
-            Por simplicidad, los scripts no implementan todas las mejores prácticas de producción.
-            Aun así, son lo bastante robustos para ilustrar conceptos clave y evolucionar hacia
-            casos de uso reales.
+            Por simplicidad, los scripts no implementan todas las mejores prácticas de producción. Aun así, son lo
+            bastante robustos para ilustrar conceptos clave y evolucionar hacia casos de uso reales.
         </Important>
 
         <NotesSection id="didactic-value">
@@ -175,11 +165,8 @@ const title = "¿Cómo usar este apunte?";
                             />, etc.).
                         </ListItem>
                         <ListItem icon={icons.WarningCircle}>
-                            Manejo de errores con <InlinePowerShell code="try" />/<InlinePowerShell
-                                code="catch"
-                            /> en PowerShell o <InlineBash code="set -e" />, <InlineBash
-                                code="trap"
-                            /> en Bash.
+                            Manejo de errores con <InlinePowerShell code="try" />/<InlinePowerShell code="catch" /> en
+                            PowerShell o <InlineBash code="set -e" />, <InlineBash code="trap" /> en Bash.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -199,24 +186,24 @@ const title = "¿Cómo usar este apunte?";
             </Heading>
 
             <p>
-                En el desarrollo de bibliotecas reutilizables, especialmente cuando se integran
-                múltiples herramientas, es común enfrentar
+                En el desarrollo de bibliotecas reutilizables, especialmente cuando se integran múltiples herramientas,
+                es común enfrentar
                 <strong>casos no cubiertos por los sistemas de construcción</strong>
                 (como Gradle o npm). En esos casos, los scripts permiten:
             </p>
 
             <List>
                 <ListItem icon={icons.Sliders}>
-                    <strong>Personalizar el proceso de construcción</strong> según las necesidades
-                    específicas del proyecto.
+                    <strong>Personalizar el proceso de construcción</strong> según las necesidades específicas del
+                    proyecto.
                 </ListItem>
                 <ListItem icon={icons.PlugsConnected}>
-                    <strong>Integrar herramientas externas</strong> que no están directamente
-                    soportadas por el sistema de construcción principal.
+                    <strong>Integrar herramientas externas</strong> que no están directamente soportadas por el sistema
+                    de construcción principal.
                 </ListItem>
                 <ListItem icon={icons.GearSix}>
-                    <strong>Automatizar tareas auxiliares</strong>, como validaciones previas,
-                    configuraciones iniciales o pasos de instalación personalizados.
+                    <strong>Automatizar tareas auxiliares</strong>, como validaciones previas, configuraciones iniciales
+                    o pasos de instalación personalizados.
                 </ListItem>
                 <ListItem icon={icons.Repeat}>
                     <strong>Hacer los procesos reproducibles</strong> y fáciles de seguir.
@@ -237,20 +224,17 @@ const title = "¿Cómo usar este apunte?";
 
             <p>Esta tarea puede hacerse en la terminal en unas pocas líneas:</p>
 
-            <ShellBlock
-                code={`
+            <ShellBlock code={`
           mkdir my-lib
           cd my-lib
           gradle init
-        `}
-                lang="bash"
-            >
+        `} lang="bash">
                 <Fragment slot="title">Desde la terminal</Fragment>
             </ShellBlock>
 
             <p class="mb-4">
-                Sin embargo, encapsular esta lógica en un script permite añadir validaciones,
-                mensajes claros y manejo de errores:
+                Sin embargo, encapsular esta lógica en un script permite añadir validaciones, mensajes claros y manejo
+                de errores:
             </p>
 
             <Tabs defaultValue="powershell">
@@ -322,9 +306,8 @@ const title = "¿Cómo usar este apunte?";
             </Tabs>
 
             <p class="mt-4">
-                Así, incluso para tareas simples, se enseña <strong>scripting real</strong>,
-                validación de parámetros y prácticas seguras que facilitan la evolución del
-                proyecto.
+                Así, incluso para tareas simples, se enseña <strong>scripting real</strong>, validación de parámetros y
+                prácticas seguras que facilitan la evolución del proyecto.
             </p>
         </NotesSection>
     </NotesSection>
@@ -338,17 +321,16 @@ const title = "¿Cómo usar este apunte?";
         </Heading>
 
         <p>
-            La <strong>lectura diagonal</strong> es una técnica rápida para obtener una visión
-            general del contenido sin leer cada palabra. Consiste en mover los ojos en diagonal por
-            la página, prestando atención a <strong>títulos</strong>,
+            La <strong>lectura diagonal</strong> es una técnica rápida para obtener una visión general del contenido sin
+            leer cada palabra. Consiste en mover los ojos en diagonal por la página, prestando atención a <strong
+            >títulos</strong>,
             <strong>palabras en negrita</strong>, <strong>listas</strong> y frases destacadas.
         </p>
 
         <p>
-            Esta estrategia te ayuda a identificar las ideas principales, entender la estructura del
-            texto y decidir en qué partes profundizar. Es especialmente útil para <strong>revisar
-                materiales extensos</strong>, <strong>buscar información puntual</strong> o <strong
-            >prepararte para una lectura más detallada</strong>.
+            Esta estrategia te ayuda a identificar las ideas principales, entender la estructura del texto y decidir en
+            qué partes profundizar. Es especialmente útil para <strong>revisar materiales extensos</strong>, <strong
+            >buscar información puntual</strong> o <strong>prepararte para una lectura más detallada</strong>.
         </p>
 
         <NotesSection id="diagonal-reading">
@@ -361,16 +343,14 @@ const title = "¿Cómo usar este apunte?";
 
             <List>
                 <ListItem icon={icons.TextAa}>
-                    <strong>1. Lee títulos y subtítulos</strong> para obtener una visión general de
-                    la estructura.
+                    <strong>1. Lee títulos y subtítulos</strong> para obtener una visión general de la estructura.
                 </ListItem>
                 <ListItem icon={icons.Paragraph}>
-                    <strong>2. Revisa los primeros párrafos</strong>, donde suele estar el mensaje
-                    clave de cada sección.
+                    <strong>2. Revisa los primeros párrafos</strong>, donde suele estar el mensaje clave de cada
+                    sección.
                 </ListItem>
                 <ListItem icon={icons.Target}>
-                    <strong>3. Ve a la conclusión</strong> para anticipar los puntos clave antes de
-                    leer en detalle.
+                    <strong>3. Ve a la conclusión</strong> para anticipar los puntos clave antes de leer en detalle.
                 </ListItem>
                 <ListItem icon={icons.HighlighterCircle}>
                     <strong>4. Escanea elementos destacados</strong> como listas, texto en
@@ -392,20 +372,20 @@ const title = "¿Cómo usar este apunte?";
 
         <List>
             <ListItem icon={icons.ClockCountdown}>
-                <strong>Organiza tu tiempo</strong>: estudia en sesiones cortas y regulares. Por
-                ejemplo, 30 minutos al día son más efectivos que tres horas seguidas.
+                <strong>Organiza tu tiempo</strong>: estudia en sesiones cortas y regulares. Por ejemplo, 30 minutos al
+                día son más efectivos que tres horas seguidas.
             </ListItem>
             <ListItem icon={icons.Flask}>
-                <strong>Practica de forma activa</strong>: realiza ejercicios y resuelve problemas,
-                en lugar de limitarte a leer teoría.
+                <strong>Practica de forma activa</strong>: realiza ejercicios y resuelve problemas, en lugar de
+                limitarte a leer teoría.
             </ListItem>
             <ListItem icon={icons.ChalkboardTeacher}>
-                <strong>Enseña lo que aprendes</strong>: explicar conceptos a otra persona refuerza
-                tu comprensión y te ayuda a detectar vacíos.
+                <strong>Enseña lo que aprendes</strong>: explicar conceptos a otra persona refuerza tu comprensión y te
+                ayuda a detectar vacíos.
             </ListItem>
             <ListItem icon={icons.Coffee}>
-                <strong>Toma descansos</strong>: las pausas entre sesiones facilitan que tu cerebro
-                procese y consolide la información.
+                <strong>Toma descansos</strong>: las pausas entre sesiones facilitan que tu cerebro procese y consolide
+                la información.
             </ListItem>
         </List>
     </NotesSection>
@@ -419,13 +399,12 @@ const title = "¿Cómo usar este apunte?";
         </Heading>
 
         <p>
-            Cada lección incluye una estimación de tiempo para ayudarte a organizar tu estudio. Esta
-            puede variar según tu experiencia y conocimientos previos.
+            Cada lección incluye una estimación de tiempo para ayudarte a organizar tu estudio. Esta puede variar según
+            tu experiencia y conocimientos previos.
         </p>
         <p>
-            No pasa nada si tardas más: lo importante es comprender los conceptos y poder aplicarlos
-            correctamente. Muchas estimaciones incluyen margen, así que también podrías terminar
-            antes.
+            No pasa nada si tardas más: lo importante es comprender los conceptos y poder aplicarlos correctamente.
+            Muchas estimaciones incluyen margen, así que también podrías terminar antes.
         </p>
     </NotesSection>
 

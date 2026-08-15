@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { LessonHref } from "@ravenhill/content-core";
+import { describe, expect, it } from "vitest";
 import { LessonCatalogAdapter } from "../LessonCatalogAdapter";
 
 const adapter = new LessonCatalogAdapter();

@@ -1,16 +1,8 @@
 ---
 import * as icons from "$icons";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Danger,
-    Exercise,
-    Explanation,
-    Hints,
-    Note,
-    Solution,
-    Tip,
-} from "~/components/ui/callouts";
-import { KotlinInline, InlineRust, KotlinBlock, RustBlock } from "~/components/ui/code";
+import { Danger, Exercise, Explanation, Hints, Note, Solution, Tip } from "~/components/ui/callouts";
+import { InlineRust, KotlinBlock, KotlinInline, RustBlock } from "~/components/ui/code";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -28,13 +20,12 @@ const title = "Declaración de variables";
 >
     <Fragment slot="abstract">
         <p>
-            En la mayoría de los lenguajes las variables son simples contenedores de datos. En
-            Kotlin, en cambio, son <strong>propiedades</strong> que pueden incluir lógica de acceso,
-            validación y encapsulamiento.
+            En la mayoría de los lenguajes las variables son simples contenedores de datos. En Kotlin, en cambio, son
+            <strong>propiedades</strong> que pueden incluir lógica de acceso, validación y encapsulamiento.
         </p>
         <p>
-            Este enfoque convierte incluso a las declaraciones más simples en <strong>herramientas
-                poderosas de diseño</strong>, especialmente al crear bibliotecas reutilizables.
+            Este enfoque convierte incluso a las declaraciones más simples en <strong>herramientas poderosas de
+                diseño</strong>, especialmente al crear bibliotecas reutilizables.
         </p>
         <p>En esta lección aprenderás a:</p>
         <List>
@@ -44,18 +35,15 @@ const title = "Declaración de variables";
                 <strong>referencias inmutables</strong> y <strong>mutables</strong>.
             </ListItem>
             <ListItem icon={icons.Lock}>
-                Encapsular el acceso a los datos mediante <strong>getters y setters
-                    personalizados</strong>.
+                Encapsular el acceso a los datos mediante <strong>getters y setters personalizados</strong>.
             </ListItem>
             <ListItem icon={icons.ShieldCheck}>
-                Proteger las invariantes internas de tus estructuras sin perder expresividad hacia
-                quienes usan tu API.
+                Proteger las invariantes internas de tus estructuras sin perder expresividad hacia quienes usan tu API.
             </ListItem>
         </List>
         <p>
             Lo harás con un enfoque práctico, apoyado en
-            <strong>buenas prácticas de diseño</strong>, para escribir código claro, seguro y
-            mantenible.
+            <strong>buenas prácticas de diseño</strong>, para escribir código claro, seguro y mantenible.
         </p>
     </Fragment>
     <NotesSection id="variable-declaration">
@@ -67,18 +55,17 @@ const title = "Declaración de variables";
         </Heading>
 
         <p>
-            En Kotlin existen dos formas principales de declarar variables, según necesites
-            inmutabilidad o mutabilidad:
+            En Kotlin existen dos formas principales de declarar variables, según necesites inmutabilidad o mutabilidad:
         </p>
 
         <List>
             <ListItem icon={icons.LockSimple}>
-                <KotlinInline code="val" />→ <strong>referencia inmutable</strong>: su valor no
-                puede reasignarse una vez inicializado.
+                <KotlinInline code="val" />→ <strong>referencia inmutable</strong>: su valor no puede reasignarse una
+                vez inicializado.
             </ListItem>
             <ListItem icon={icons.PencilSimple}>
-                <KotlinInline code="var" />→ <strong>referencia mutable</strong>: su valor puede
-                cambiar después de la declaración.
+                <KotlinInline code="var" />→ <strong>referencia mutable</strong>: su valor puede cambiar después de la
+                declaración.
             </ListItem>
         </List>
 
@@ -98,16 +85,15 @@ const title = "Declaración de variables";
             <Fragment slot="title">Inferencia de tipos</Fragment>
 
             <p>
-                En variables locales o privadas puedes omitir el tipo si el compilador lo infiere a
-                partir del valor asignado. Esto mejora la legibilidad sin perder seguridad de tipos.
+                En variables locales o privadas puedes omitir el tipo si el compilador lo infiere a partir del valor
+                asignado. Esto mejora la legibilidad sin perder seguridad de tipos.
             </p>
             <p>
-                En propiedades y funciones <strong>públicas</strong> de una biblioteca, en cambio,
-                es <Link
+                En propiedades y funciones <strong>públicas</strong> de una biblioteca, en cambio, es <Link
                     href="https://kotlinlang.org/docs/coding-conventions.html#coding-conventions-for-libraries"
                     content="recomendable declarar explícitamente el tipo"
-                />: hace más clara la API, reduce la fragilidad frente a cambios y facilita el
-                mantenimiento a largo plazo.
+                />: hace más clara la API, reduce la fragilidad frente a cambios y facilita el mantenimiento a largo
+                plazo.
             </p>
         </Tip>
 
@@ -120,9 +106,8 @@ const title = "Declaración de variables";
             </Heading>
 
             <p>
-                Usa <KotlinInline code="val" /> cuando <strong>la referencia</strong> de la variable
-                no cambiará después de su asignación. Una vez inicializada, no podrás volver a
-                asignarle otro valor.
+                Usa <KotlinInline code="val" /> cuando <strong>la referencia</strong> de la variable no cambiará después
+                de su asignación. Una vez inicializada, no podrás volver a asignarle otro valor.
             </p>
 
             <KotlinBlock
@@ -144,8 +129,7 @@ const title = "Declaración de variables";
                 <List>
                     <ListItem icon={icons.XCircle}>
                         <strong><KotlinInline code="hero" /></strong> se declara con
-                        <KotlinInline code="val" /> e inicia de inmediato. Reasignarla provoca un
-                        error de compilación.
+                        <KotlinInline code="val" /> e inicia de inmediato. Reasignarla provoca un error de compilación.
                     </ListItem>
                     <ListItem icon={icons.CheckCircle}>
                         <strong><KotlinInline code="sidekick" /></strong> también es una
@@ -156,16 +140,15 @@ const title = "Declaración de variables";
             </Explanation>
 
             <p>
-                Estas variables son <strong>referencias inmutables</strong> o <strong>propiedades de
-                    solo lectura</strong>: su referencia no puede cambiar una vez asignada. Sin
-                embargo, el valor al que apuntan puede ser mutable (por ejemplo, una lista
-                modificable).
+                Estas variables son <strong>referencias inmutables</strong> o <strong>propiedades de solo
+                    lectura</strong>: su referencia no puede cambiar una vez asignada. Sin embargo, el valor al que
+                apuntan puede ser mutable (por ejemplo, una lista modificable).
             </p>
 
             <p>
                 Más adelante veremos las <strong>constantes en tiempo de compilación</strong>
-                declaradas con <KotlinInline code="const val" />, que deben conocerse en
-                compilación. Por ahora, basta con distinguir entre
+                declaradas con <KotlinInline code="const val" />, que deben conocerse en compilación. Por ahora, basta
+                con distinguir entre
                 <KotlinInline code="var" /> y <KotlinInline code="val" />.
             </p>
         </NotesSection>
@@ -179,8 +162,8 @@ const title = "Declaración de variables";
             </Heading>
 
             <p>
-                Usa <KotlinInline code="var" /> cuando necesites <strong>cambiar el valor o
-                    reasignar la referencia</strong> de una variable después de declararla.
+                Usa <KotlinInline code="var" /> cuando necesites <strong>cambiar el valor o reasignar la
+                    referencia</strong> de una variable después de declararla.
             </p>
 
             <KotlinBlock
@@ -204,14 +187,14 @@ const title = "Declaración de variables";
             <Explanation>
                 <List>
                     <ListItem icon={icons.ArrowsClockwise}>
-                        <KotlinInline code="codename" /> es <strong>mutable</strong>: puedes
-                        reasignar la referencia a otro valor del mismo tipo.
+                        <KotlinInline code="codename" /> es <strong>mutable</strong>: puedes reasignar la referencia a
+                        otro valor del mismo tipo.
                     </ListItem>
                     <ListItem icon={icons.PlusMinus}>
-                        <KotlinInline code="energy" /> muestra distintas formas de actualizar
-                        números: reasignación directa, operadores compuestos (<KotlinInline
-                            code="+="
-                        />) e incremento (<KotlinInline code="++" />).
+                        <KotlinInline code="energy" /> muestra distintas formas de actualizar números: reasignación
+                        directa, operadores compuestos (<KotlinInline code="+=" />) e incremento (<KotlinInline
+                            code="++"
+                        />).
                     </ListItem>
                     <ListItem icon={icons.Stack}>
                         En <KotlinInline code="gadgets" />, la <strong>referencia</strong>
@@ -221,14 +204,13 @@ const title = "Declaración de variables";
             </Explanation>
 
             <Danger headingLevel="h4">
-                <Fragment slot="title"
-                >Inmutabilidad referencial ≠ inmutabilidad del objeto</Fragment>
+                <Fragment slot="title">Inmutabilidad referencial ≠ inmutabilidad del objeto</Fragment>
 
                 <p>
                     En Kotlin, declarar una variable con <KotlinInline code="val" />
-                    <strong>no garantiza</strong> que el <em>contenido</em> sea inmutable: significa
-                    que <strong>la referencia no puede cambiar</strong>. Si el objeto apuntado es
-                    mutable, <strong>puedes modificar su estado</strong>.
+                    <strong>no garantiza</strong> que el <em>contenido</em> sea inmutable: significa que <strong>la
+                        referencia no puede cambiar</strong>. Si el objeto apuntado es mutable, <strong>puedes modificar
+                        su estado</strong>.
                 </p>
 
                 <KotlinBlock
@@ -246,14 +228,13 @@ const title = "Declaración de variables";
           `}
                 >
                     <Fragment slot="title">
-                        Kotlin: <KotlinInline code="val" /> fija la referencia, no necesariamente el
-                        estado interno
+                        Kotlin: <KotlinInline code="val" /> fija la referencia, no necesariamente el estado interno
                     </Fragment>
                 </KotlinBlock>
 
                 <p>
-                    En lenguajes como <strong>Rust</strong>, la inmutabilidad por defecto <strong>sí
-                        aplica al valor</strong>; para mutar necesitas declarar explícitamente con
+                    En lenguajes como <strong>Rust</strong>, la inmutabilidad por defecto <strong>sí aplica al
+                        valor</strong>; para mutar necesitas declarar explícitamente con
                     <InlineRust code="mut" />:
                 </p>
 
@@ -272,15 +253,14 @@ const title = "Declaración de variables";
             </Danger>
 
             <Tip headingLevel="h4">
-                <Fragment slot="title"
-                >Prefiere <KotlinInline code="val" /> siempre que sea posible</Fragment>
+                <Fragment slot="title">Prefiere <KotlinInline code="val" /> siempre que sea posible</Fragment>
 
                 <p>
                     Siempre que puedas, <strong>usa <KotlinInline code="val" /> en lugar de
-                        <KotlinInline code="var" /></strong>. La inmutabilidad mejora la
-                    legibilidad, facilita el mantenimiento del código y
-                    <strong>hace más sencillo el razonamiento formal</strong> sobre su
-                    comportamiento. Recurre a <KotlinInline code="var" /> solo cuando el valor deba
+                        <KotlinInline code="var" /></strong>. La inmutabilidad mejora la legibilidad, facilita el
+                    mantenimiento del código y
+                    <strong>hace más sencillo el razonamiento formal</strong> sobre su comportamiento. Recurre a
+                    <KotlinInline code="var" /> solo cuando el valor deba
                     <strong>cambiar con el tiempo</strong>.
                 </p>
 
@@ -304,9 +284,8 @@ const title = "Declaración de variables";
                 </KotlinBlock>
 
                 <p>
-                    En el primer caso, <KotlinInline code="total" /> es un resultado fijo y
-                    predecible. En el segundo, el uso de <KotlinInline code="var" /> puede dar la
-                    impresión de que
+                    En el primer caso, <KotlinInline code="total" /> es un resultado fijo y predecible. En el segundo,
+                    el uso de <KotlinInline code="var" /> puede dar la impresión de que
                     <KotlinInline code="total" />
                     <strong>seguirá cambiando</strong>, aunque no sea así.
                 </p>
@@ -319,26 +298,24 @@ const title = "Declaración de variables";
                 slot="heading"
             >¿Cuándo usar <KotlinInline code="var" />?</Heading>
             <p>
-                Aunque <strong><KotlinInline code="val" /> debería ser tu primera opción</strong>,
-                hay casos donde <KotlinInline code="var" /> resulta más apropiado:
+                Aunque <strong><KotlinInline code="val" /> debería ser tu primera opción</strong>, hay casos donde
+                <KotlinInline code="var" /> resulta más apropiado:
             </p>
 
             <List>
                 <ListItem icon={icons.ArrowsClockwise}>
-                    Cuando una <strong>variable representa el estado interno mutable</strong> de una
-                    clase.
+                    Cuando una <strong>variable representa el estado interno mutable</strong> de una clase.
                 </ListItem>
                 <ListItem icon={icons.PlusCircle}>
-                    Cuando necesitas <strong>acumular resultados de forma incremental</strong> en un
-                    bucle o función.
+                    Cuando necesitas <strong>acumular resultados de forma incremental</strong> en un bucle o función.
                 </ListItem>
                 <ListItem icon={icons.Gear}>
-                    Cuando implementas <strong>algoritmos imperativos</strong> donde el cambio de
-                    estado es más natural y legible.
+                    Cuando implementas <strong>algoritmos imperativos</strong> donde el cambio de estado es más natural
+                    y legible.
                 </ListItem>
                 <ListItem icon={icons.Flask}>
-                    Cuando escribes <strong>tests o scripts</strong> en los que la simplicidad y
-                    claridad pesan más que la inmutabilidad.
+                    Cuando escribes <strong>tests o scripts</strong> en los que la simplicidad y claridad pesan más que
+                    la inmutabilidad.
                 </ListItem>
             </List>
         </NotesSection>
@@ -353,9 +330,9 @@ const title = "Declaración de variables";
         </Heading>
 
         <p>
-            En Kotlin, <KotlinInline code="val" /> y <KotlinInline code="var" /> van más allá de
-            declarar simples campos: definen <strong>propiedades</strong> con acceso controlado
-            mediante <strong>getters y setters</strong>.
+            En Kotlin, <KotlinInline code="val" /> y <KotlinInline code="var" /> van más allá de declarar simples
+            campos: definen <strong>propiedades</strong> con acceso controlado mediante <strong>getters y
+                setters</strong>.
         </p>
 
         <p>Esto permite encapsular lógica sin perder expresividad:</p>
@@ -381,24 +358,24 @@ const title = "Declaración de variables";
         <Explanation>
             <List>
                 <ListItem icon={icons.LockSimple}>
-                    <KotlinInline code="val" /> genera solo un <strong>getter</strong>, lo que
-                    impide modificar la propiedad desde fuera.
+                    <KotlinInline code="val" /> genera solo un <strong>getter</strong>, lo que impide modificar la
+                    propiedad desde fuera.
                 </ListItem>
                 <ListItem icon={icons.PencilSimple}>
-                    <KotlinInline code="var" /> genera <strong>getter y setter</strong>, permitiendo
-                    tanto lectura como escritura controlada.
+                    <KotlinInline code="var" /> genera <strong>getter y setter</strong>, permitiendo tanto lectura como
+                    escritura controlada.
                 </ListItem>
                 <ListItem icon={icons.Wrench}>
-                    Puedes <strong>personalizar</strong> los métodos para añadir validación,
-                    transformación u otros efectos colaterales.
+                    Puedes <strong>personalizar</strong> los métodos para añadir validación, transformación u otros
+                    efectos colaterales.
                 </ListItem>
             </List>
         </Explanation>
 
         <p>
-            En el contexto de <strong>bibliotecas</strong>, esto permite exponer APIs seguras que
-            muestran información de forma controlada, mientras el diseño interno conserva la
-            flexibilidad necesaria para evolucionar o proteger invariantes.
+            En el contexto de <strong>bibliotecas</strong>, esto permite exponer APIs seguras que muestran información
+            de forma controlada, mientras el diseño interno conserva la flexibilidad necesaria para evolucionar o
+            proteger invariantes.
         </p>
 
         <NotesSection>
@@ -411,8 +388,8 @@ const title = "Declaración de variables";
 
             <p>
                 Al diseñar una biblioteca, es común tener estructuras internas mutables que
-                <strong>no deben exponerse directamente</strong>. En Kotlin, esto se resuelve
-                fácilmente mediante un <strong>campo de respaldo</strong> con convención de prefijo
+                <strong>no deben exponerse directamente</strong>. En Kotlin, esto se resuelve fácilmente mediante un
+                <strong>campo de respaldo</strong> con convención de prefijo
                 <KotlinInline code="_" />:
             </p>
 
@@ -440,16 +417,16 @@ const title = "Declaración de variables";
             <Explanation>
                 <List>
                     <ListItem icon={icons.FolderSimpleLock}>
-                        <KotlinInline code="_party" /> es el campo de respaldo: privado, almacena
-                        los datos reales y permite modificaciones internas.
+                        <KotlinInline code="_party" /> es el campo de respaldo: privado, almacena los datos reales y
+                        permite modificaciones internas.
                     </ListItem>
                     <ListItem icon={icons.Eye}>
-                        <KotlinInline code="party" /> es la propiedad pública de solo lectura que
-                        expone <strong>una vista inmutable</strong>.
+                        <KotlinInline code="party" /> es la propiedad pública de solo lectura que expone <strong>una
+                            vista inmutable</strong>.
                     </ListItem>
                     <ListItem icon={icons.HandPalm}>
-                        Al devolver <KotlinInline code="List<String>" />, evitamos que otras
-                        personas modifiquen el contenido desde fuera de la biblioteca.
+                        Al devolver <KotlinInline code="List<String>" />, evitamos que otras personas modifiquen el
+                        contenido desde fuera de la biblioteca.
                     </ListItem>
                     <ListItem icon={icons.ShieldCheck}>
                         Este patrón garantiza que la API pública sea segura y predecible.
@@ -458,9 +435,8 @@ const title = "Declaración de variables";
             </Explanation>
 
             <p>
-                Es una práctica común en bibliotecas bien diseñadas: <strong>exponer lo mínimo
-                    necesario</strong> mientras se <strong>protegen las invariantes
-                    internas</strong>.
+                Es una práctica común en bibliotecas bien diseñadas: <strong>exponer lo mínimo necesario</strong>
+                mientras se <strong>protegen las invariantes internas</strong>.
             </p>
         </NotesSection>
         <NotesSection>
@@ -472,9 +448,9 @@ const title = "Declaración de variables";
             </Heading>
 
             <p>
-                Cuando diseñamos una biblioteca, puede ser necesario que ciertos valores no se
-                asignen directamente, sino que pasen por validaciones o transformaciones. Esto se
-                logra mediante un <em>setter</em> personalizado.
+                Cuando diseñamos una biblioteca, puede ser necesario que ciertos valores no se asignen directamente,
+                sino que pasen por validaciones o transformaciones. Esto se logra mediante un <em>setter</em>
+                personalizado.
             </p>
             <KotlinBlock
                 code={`
@@ -501,27 +477,24 @@ const title = "Declaración de variables";
             <Explanation>
                 <List>
                     <ListItem icon={icons.MagicWand}>
-                        <KotlinInline code="version" /> aplica <strong>normalización</strong> (trim)
-                        y <strong>validación</strong> en su <em>setter</em>.
+                        <KotlinInline code="version" /> aplica <strong>normalización</strong> (trim) y <strong
+                        >validación</strong> en su <em>setter</em>.
                     </ListItem>
                     <ListItem icon={icons.BracketsCurly}>
                         El patrón <KotlinInline code="semverRegex" /> se <strong>precompila</strong>
-                        y requiere <KotlinInline code="X.Y.Z" /> con enteros. <KotlinInline
-                            code="^"
-                        /> y <KotlinInline code="$" /> aseguran que toda la cadena coincida (inicio
-                        y fin respectivamente).
+                        y requiere <KotlinInline code="X.Y.Z" /> con enteros. <KotlinInline code="^" /> y <KotlinInline
+                            code="$"
+                        /> aseguran que toda la cadena coincida (inicio y fin respectivamente).
                     </ListItem>
                     <ListItem icon={icons.ShieldCheck}>
-                        <KotlinInline code="require(...)" /> lanza <KotlinInline
-                            code="IllegalArgumentException"
-                        />
+                        <KotlinInline code="require(...)" /> lanza <KotlinInline code="IllegalArgumentException" />
                         si el valor no es válido.
                     </ListItem>
                 </List>
             </Explanation>
             <p>
-                Este patrón permite crear APIs <strong>intuitivas pero seguras</strong>, combinando
-                accesibilidad con control sobre las invariantes internas.
+                Este patrón permite crear APIs <strong>intuitivas pero seguras</strong>, combinando accesibilidad con
+                control sobre las invariantes internas.
             </p>
             <Note>
                 <Fragment slot="title">
@@ -532,15 +505,13 @@ const title = "Declaración de variables";
                 <List>
                     <ListItem icon={icons.SignIn}>
                         <KotlinInline code="require(Boolean, () -> Any): Unit" /> — valida
-                        <strong>argumentos de entrada</strong>. Lanza <KotlinInline
-                            code="IllegalArgumentException"
-                        />. El mensaje <em>solo se calcula si falla</em>.
+                        <strong>argumentos de entrada</strong>. Lanza <KotlinInline code="IllegalArgumentException" />.
+                        El mensaje <em>solo se calcula si falla</em>.
                     </ListItem>
                     <ListItem icon={icons.Gear}>
-                        <KotlinInline code="check(Boolean, () -> Any): Unit" /> — valida el <strong
-                        >estado interno</strong>. Lanza <KotlinInline
-                            code="IllegalStateException"
-                        /> (evaluación diferida del mensaje).
+                        <KotlinInline code="check(Boolean, () -> Any): Unit" /> — valida el <strong>estado
+                            interno</strong>. Lanza <KotlinInline code="IllegalStateException" /> (evaluación diferida
+                        del mensaje).
                     </ListItem>
                     <ListItem icon={icons.WarningCircle}>
                         <KotlinInline code="error(Any): Nothing" /> — lanza incondicionalmente
@@ -553,10 +524,9 @@ const title = "Declaración de variables";
                 <Fragment slot="title">Setter privado</Fragment>
 
                 <p>
-                    Una propiedad puede tener un <em>getter público</em> y un <em>setter
-                        privado</em>. Esto permite que el valor se lea desde fuera, pero solo se
-                    modifique dentro del mismo contexto (<em>clase, objeto, interfaz o nivel
-                        superior</em>).
+                    Una propiedad puede tener un <em>getter público</em> y un <em>setter privado</em>. Esto permite que
+                    el valor se lea desde fuera, pero solo se modifique dentro del mismo contexto (<em>clase, objeto,
+                        interfaz o nivel superior</em>).
                 </p>
                 <KotlinBlock
                     code={`
@@ -574,24 +544,23 @@ const title = "Declaración de variables";
 
         <p>
             Supón que estás diseñando una biblioteca para un motor de juego. Quieres exponer el
-            <strong>nivel de dificultad actual</strong> para que otras personas puedan consultarlo,
-            pero <strong>solo el motor</strong> debe poder modificarlo.
+            <strong>nivel de dificultad actual</strong> para que otras personas puedan consultarlo, pero <strong>solo el
+                motor</strong> debe poder modificarlo.
         </p>
         <p>Declara una propiedad <KotlinInline code="difficultyLevel" /> que:</p>
         <List>
             <ListItem icon={null}>Sea de tipo <KotlinInline code="String" />.</ListItem>
             <ListItem icon={null}
-            >Permita valores como <KotlinInline code={`"easy"`} />, <KotlinInline
-                    code={`"normal"`}
-                /> o <KotlinInline code={`"hard"`} />.</ListItem>
+            >Permita valores como <KotlinInline code={`"easy"`} />, <KotlinInline code={`"normal"`} /> o <KotlinInline
+                    code={`"hard"`}
+                />.</ListItem>
             <ListItem icon={null}>Pueda leerse públicamente desde cualquier parte.</ListItem>
             <ListItem icon={null}
-            >Solo pueda modificarse <strong>desde dentro del módulo</strong>, y con
-                validación.</ListItem>
+            >Solo pueda modificarse <strong>desde dentro del módulo</strong>, y con validación.</ListItem>
         </List>
         <Hints>
-            Puedes usar el operador <KotlinInline code="in" /> para verificar que un valor se
-            encuentre dentro de un conjunto de la forma <KotlinInline code="x in setOf(...)" />.
+            Puedes usar el operador <KotlinInline code="in" /> para verificar que un valor se encuentre dentro de un
+            conjunto de la forma <KotlinInline code="x in setOf(...)" />.
         </Hints>
         <Solution>
             <KotlinBlock

@@ -51,8 +51,8 @@
      * Appears as a floating box with transition animations and responsive visibility.
      */
     .mobile-nav-list {
-        @apply bg-header-fill fixed inset-x-4 top-20 z-50 transform rounded-md border p-4 shadow-lg
-            transition-all duration-300 sm:hidden;
+        @apply bg-header-fill fixed inset-x-4 top-20 z-50 transform rounded-md border p-4 shadow-lg transition-all
+            duration-300 sm:hidden;
     }
 
     /*
@@ -68,7 +68,7 @@
      * Visible only on small screens, with focus and hover accessibility styles.
      */
     .toggle-button {
-        @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border
-            border-transparent p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
+        @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border border-transparent
+            p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
     }
 }

@@ -1,28 +1,12 @@
 ---
 import * as icons from "$icons";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHeader,
-    TableRow,
-} from "~/components/starwind/table";
+import { Table, TableBody, TableCaption, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/starwind/tooltip";
-import {
-    Exercise,
-    Explanation,
-    Info,
-    More,
-    Note,
-    Solution,
-    Tip,
-    Warning,
-} from "~/components/ui/callouts";
+import { Exercise, Explanation, Info, More, Note, Solution, Tip, Warning } from "~/components/ui/callouts";
 import Danger from "~/components/ui/callouts/Danger.astro";
-import { CodeBlock, InlineCode, KotlinInline, KotlinBlock } from "~/components/ui/code";
+import { CodeBlock, InlineCode, KotlinBlock, KotlinInline } from "~/components/ui/code";
 import LangLink from "~/components/ui/links/LangLink.astro";
 import { List, ListItem } from "~/components/ui/list";
 import { OfficialDocs, References, WebPage } from "~/components/ui/references";
@@ -43,23 +27,23 @@ const title = "Declaración de funciones";
 >
     <Fragment slot="abstract">
         <p>
-            Las funciones son una herramienta esencial para construir software reutilizable, legible
-            y organizado. Kotlin facilita su declaración mediante una sintaxis concisa y expresiva,
-            que incorpora características como parámetros con valores por defecto, funciones de una
-            sola expresión e inferencia de tipos.
+            Las funciones son una herramienta esencial para construir software reutilizable, legible y organizado.
+            Kotlin facilita su declaración mediante una sintaxis concisa y expresiva, que incorpora características como
+            parámetros con valores por defecto, funciones de una sola expresión e inferencia de tipos.
         </p>
         <p>
             En esta lección aprenderás a declarar funciones en Kotlin, comprender cómo utilizar
-            <InlineCode code="vararg" lang="kotlin" /> para aceptar múltiples argumentos y cuándo
-            conviene especificar tipos de retorno. También explorarás funciones estándar como
+            <InlineCode code="vararg" lang="kotlin" /> para aceptar múltiples argumentos y cuándo conviene especificar
+            tipos de retorno. También explorarás funciones estándar como
             <InlineCode code="map" lang="kotlin" /> y
-            <InlineCode code="fold" lang="kotlin" />, y conocerás las diferencias entre colecciones
-            como <InlineCode code="Array" lang="kotlin" /> y
+            <InlineCode code="fold" lang="kotlin" />, y conocerás las diferencias entre colecciones como <InlineCode
+                code="Array" lang="kotlin"
+            /> y
             <InlineCode code="List" lang="kotlin" />.
         </p>
         <p>
-            No es necesario dominar todos los detalles desde el principio: a medida que avancemos en
-            el curso, retomaremos y profundizaremos los conceptos más relevantes.
+            No es necesario dominar todos los detalles desde el principio: a medida que avancemos en el curso,
+            retomaremos y profundizaremos los conceptos más relevantes.
         </p>
     </Fragment>
     <NotesSection>
@@ -71,8 +55,8 @@ const title = "Declaración de funciones";
         </Heading>
 
         <p>
-            Una <strong>función</strong> en Kotlin es un bloque de código reutilizable que encapsula
-            una tarea específica. Su sintaxis básica es la siguiente:
+            Una <strong>función</strong> en Kotlin es un bloque de código reutilizable que encapsula una tarea
+            específica. Su sintaxis básica es la siguiente:
         </p>
 
         <CodeBlock
@@ -92,40 +76,34 @@ const title = "Declaración de funciones";
             <Fragment slot="title">Explicación de la sintaxis</Fragment>
             <List>
                 <ListItem icon={icons.CodeSimple}>
-                    <InlineCode code="fun" lang="kotlin" />: Palabra clave para declarar una
-                    función.
+                    <InlineCode code="fun" lang="kotlin" />: Palabra clave para declarar una función.
                 </ListItem>
                 <ListItem icon={icons.TextAa}>
-                    <InlineCode code="functionName" lang="kotlin" />: Nombre que identifica a la
-                    función; debe ser claro y representativo de su propósito.
+                    <InlineCode code="functionName" lang="kotlin" />: Nombre que identifica a la función; debe ser claro
+                    y representativo de su propósito.
                 </ListItem>
                 <ListItem icon={icons.BracketsCurly}>
                     <strong>Parámetros (<InlineCode code="param1" lang="kotlin" />, <InlineCode
                             code="param2" lang="kotlin"
                         />)</strong>: Lista de argumentos con sus respectivos tipos.
                     <List>
-                        <ListItem icon={icons.Empty}
-                        >Una función puede no tener parámetros.</ListItem>
+                        <ListItem icon={icons.Empty}>Una función puede no tener parámetros.</ListItem>
                         <ListItem icon={icons.SlidersHorizontal}>
-                            Es posible asignar valores por defecto, lo que permite omitir argumentos
-                            al llamarla.
+                            Es posible asignar valores por defecto, lo que permite omitir argumentos al llamarla.
                         </ListItem>
                     </List>
                 </ListItem>
                 <ListItem icon={icons.ArrowElbowRight}>
-                    <InlineCode code="ReturnType" lang="kotlin" />: Tipo del valor que retorna la
-                    función.
+                    <InlineCode code="ReturnType" lang="kotlin" />: Tipo del valor que retorna la función.
                     <List>
                         <ListItem icon={icons.DotOutline}>
-                            Si no devuelve un valor significativo, se utiliza <InlineCode
-                                code="Unit" lang="kotlin"
-                            />, aunque puede omitirse por ser implícito.
+                            Si no devuelve un valor significativo, se utiliza <InlineCode code="Unit" lang="kotlin" />,
+                            aunque puede omitirse por ser implícito.
                         </ListItem>
                     </List>
                 </ListItem>
                 <ListItem icon={icons.AlignLeft}>
-                    <strong>Cuerpo de la función</strong>: Conjunto de instrucciones que se ejecutan
-                    cuando se llama.
+                    <strong>Cuerpo de la función</strong>: Conjunto de instrucciones que se ejecutan cuando se llama.
                 </ListItem>
             </List>
         </Explanation>
@@ -139,8 +117,7 @@ const title = "Declaración de funciones";
             </Heading>
 
             <p>
-                Supongamos que queremos crear una función que sume dos números enteros. La
-                declaración básica sería:
+                Supongamos que queremos crear una función que sume dos números enteros. La declaración básica sería:
             </p>
 
             <CodeBlock
@@ -159,8 +136,8 @@ const title = "Declaración de funciones";
             </CodeBlock>
 
             <p>
-                Si la función contiene solo una expresión, puedes escribirla de forma más concisa
-                utilizando <strong>asignación directa</strong>:
+                Si la función contiene solo una expresión, puedes escribirla de forma más concisa utilizando <strong
+                >asignación directa</strong>:
             </p>
 
             <CodeBlock
@@ -192,46 +169,43 @@ const title = "Declaración de funciones";
             </CodeBlock>
 
             <p>
-                Este estilo hace que el código sea más breve, pero conviene usarlo con moderación:
-                puede dificultar la lectura si el tipo de retorno no es evidente, y volver el código
-                más frágil frente a cambios accidentales.
+                Este estilo hace que el código sea más breve, pero conviene usarlo con moderación: puede dificultar la
+                lectura si el tipo de retorno no es evidente, y volver el código más frágil frente a cambios
+                accidentales.
             </p>
 
             <More>
                 <Fragment slot="title">Si vienes de Scala...</Fragment>
 
                 <p>
-                    En Kotlin, <strong>la palabra clave <KotlinInline code="return" /> es
-                        obligatoria</strong>
-                    cuando utilizas el bloque clásico <KotlinInline code="{ ... }" />. Esto
-                    contrasta con Scala, donde <strong>la última expresión de una función se retorna
-                        automáticamente</strong>
+                    En Kotlin, <strong>la palabra clave <KotlinInline code="return" /> es obligatoria</strong>
+                    cuando utilizas el bloque clásico <KotlinInline code="{ ... }" />. Esto contrasta con Scala, donde
+                    <strong>la última expresión de una función se retorna automáticamente</strong>
                     sin necesidad de usar <KotlinInline code="return" />.
                 </p>
 
                 <p>
-                    En Kotlin, ese comportamiento implícito <strong>solo se aplica</strong> cuando
-                    se utiliza la sintaxis de una sola expresión (<KotlinInline code="= ..." />).
+                    En Kotlin, ese comportamiento implícito <strong>solo se aplica</strong> cuando se utiliza la
+                    sintaxis de una sola expresión (<KotlinInline code="= ..." />).
                 </p>
             </More>
 
             <Info>
                 <Fragment slot="title">Inferencia de tipos</Fragment>
                 <p>
-                    Kotlin es un lenguaje con <strong>inferencia de tipos</strong>, lo que significa
-                    que el compilador puede deducir el tipo de una variable o expresión a partir del
-                    contexto. En el ejemplo anterior, dado que la función contiene una sola
-                    expresión, <strong>el tipo de retorno se infiere automáticamente</strong>.
+                    Kotlin es un lenguaje con <strong>inferencia de tipos</strong>, lo que significa que el compilador
+                    puede deducir el tipo de una variable o expresión a partir del contexto. En el ejemplo anterior,
+                    dado que la función contiene una sola expresión, <strong>el tipo de retorno se infiere
+                        automáticamente</strong>.
                 </p>
                 <Warning>
                     <Fragment slot="title">No abuses de la inferencia</Fragment>
                     <p>
-                        Aunque la inferencia puede hacer el código más limpio y conciso, <strong>no
-                            siempre es recomendable omitir los tipos</strong>. En funciones <strong
-                        >públicas</strong>, con lógica <strong>compleja</strong> o que formen parte
-                        de una <strong>API</strong>, declarar el tipo explícitamente mejora la
-                        <strong>legibilidad</strong>, actúa como <strong>documentación
-                            autoexplicativa</strong>
+                        Aunque la inferencia puede hacer el código más limpio y conciso, <strong>no siempre es
+                            recomendable omitir los tipos</strong>. En funciones <strong>públicas</strong>, con lógica
+                        <strong>compleja</strong> o que formen parte de una <strong>API</strong>, declarar el tipo
+                        explícitamente mejora la
+                        <strong>legibilidad</strong>, actúa como <strong>documentación autoexplicativa</strong>
                         y facilita la <strong>evolución del código</strong> a largo plazo.
                     </p>
                 </Warning>
@@ -241,10 +215,8 @@ const title = "Declaración de funciones";
                 <Fragment slot="title">Estilo de nombres</Fragment>
 
                 <p>
-                    En Kotlin, <strong>las funciones y variables deben nombrarse usando la
-                        convención
-                        <span class="font-mono font-bold">camelCase</span></strong>. Esto implica lo
-                    siguiente:
+                    En Kotlin, <strong>las funciones y variables deben nombrarse usando la convención
+                        <span class="font-mono font-bold">camelCase</span></strong>. Esto implica lo siguiente:
                 </p>
 
                 <ul class="list-disc pl-6">
@@ -252,8 +224,7 @@ const title = "Declaración de funciones";
                         El nombre comienza con una <strong>letra minúscula</strong>.
                     </li>
                     <li>
-                        Cada palabra siguiente se escribe <strong>sin espacios</strong>, iniciando
-                        con
+                        Cada palabra siguiente se escribe <strong>sin espacios</strong>, iniciando con
                         <strong>mayúscula</strong>.
                     </li>
                 </ul>
@@ -275,9 +246,8 @@ const title = "Declaración de funciones";
                 </List>
 
                 <p>
-                    Usar un estilo de nombres consistente <strong>mejora la legibilidad</strong> y
-                    asegura que tu código esté alineado con las <strong>prácticas idiomáticas de
-                        Kotlin</strong>.
+                    Usar un estilo de nombres consistente <strong>mejora la legibilidad</strong> y asegura que tu código
+                    esté alineado con las <strong>prácticas idiomáticas de Kotlin</strong>.
                 </p>
 
                 <Danger>
@@ -289,12 +259,12 @@ const title = "Declaración de funciones";
 
                     <List>
                         <ListItem icon={icons.X}>
-                            <KotlinInline code="CalculateTotal" /> — <strong>PascalCase</strong>,
-                            reservado para <strong>clases</strong> y <strong>tipos</strong>.
+                            <KotlinInline code="CalculateTotal" /> — <strong>PascalCase</strong>, reservado para <strong
+                            >clases</strong> y <strong>tipos</strong>.
                         </ListItem>
                         <ListItem icon={icons.X}>
-                            <KotlinInline code="calculate_total" /> — <strong>snake_case</strong>,
-                            típico en Python, <strong>no se utiliza</strong> en Kotlin.
+                            <KotlinInline code="calculate_total" /> — <strong>snake_case</strong>, típico en Python,
+                            <strong>no se utiliza</strong> en Kotlin.
                         </ListItem>
                         <ListItem icon={icons.X}>
                             <KotlinInline code="calculate-total" /> — <strong>kebab-case</strong>,
@@ -302,8 +272,7 @@ const title = "Declaración de funciones";
                         </ListItem>
                         <ListItem icon={icons.X}>
                             <KotlinInline code="CALCULATE_TOTAL" /> —
-                            <strong>UPPER_SNAKE_CASE</strong>, reservado para <strong
-                            >constantes</strong> y
+                            <strong>UPPER_SNAKE_CASE</strong>, reservado para <strong>constantes</strong> y
                             <strong>valores inmutables en tiempo de compilación</strong>.
                         </ListItem>
                     </List>
@@ -320,11 +289,10 @@ const title = "Declaración de funciones";
             </Heading>
 
             <p>
-                En Kotlin, si el <strong>último parámetro</strong> de una función es otra función
-                (un <em>function type</em>), puedes pasar la lambda <strong>fuera de los
-                    paréntesis</strong>. Si además es el <em>único</em> parámetro, puedes <strong
-                >omitir los paréntesis</strong>. Esto mejora la legibilidad, especialmente con
-                operaciones sobre colecciones y DSLs.
+                En Kotlin, si el <strong>último parámetro</strong> de una función es otra función (un <em>function
+                    type</em>), puedes pasar la lambda <strong>fuera de los paréntesis</strong>. Si además es el <em
+                >único</em> parámetro, puedes <strong>omitir los paréntesis</strong>. Esto mejora la legibilidad,
+                especialmente con operaciones sobre colecciones y DSLs.
             </p>
 
             <KotlinBlock
@@ -349,9 +317,7 @@ const title = "Declaración de funciones";
                         <KotlinInline code="(...)" />.
                     </ListItem>
                     <ListItem icon={icons.MinusCircle}>
-                        <strong>Único parámetro</strong> → puedes omitir por completo <KotlinInline
-                            code="(...)"
-                        />.
+                        <strong>Único parámetro</strong> → puedes omitir por completo <KotlinInline code="(...)" />.
                     </ListItem>
                     <ListItem icon={icons.SlidersHorizontal}>
                         Útil en <KotlinInline code="map" />, <KotlinInline code="filter" />,
@@ -363,15 +329,16 @@ const title = "Declaración de funciones";
 
             <Tip>
                 <Fragment slot="title">Lectura fluida</Fragment>
-                Prefiere trailing lambdas cuando la <strong>acción principal</strong> es la lambda:
-                p.ej., <KotlinInline code="list.map { ... }" /> introduce menos "ruido visual" que
+                Prefiere trailing lambdas cuando la <strong>acción principal</strong> es la lambda: p.ej., <KotlinInline
+                    code="list.map { ... }"
+                /> introduce menos "ruido visual" que
                 <KotlinInline code="list.map({ ... })" />.
             </Tip>
 
             <Warning>
                 <Fragment slot="title">Ambigüedades y sobrecargas</Fragment>
-                Si una función tiene varias sobrecargas o parámetros con valores por defecto, el
-                trailing lambda puede volver <em>ambigua</em> la llamada. En esos casos, añade
+                Si una función tiene varias sobrecargas o parámetros con valores por defecto, el trailing lambda puede
+                volver <em>ambigua</em> la llamada. En esos casos, añade
                 <strong>parámetros con nombre</strong> o vuelve a poner la lambda dentro de
                 <KotlinInline code="(...)" />.
             </Warning>
@@ -380,8 +347,8 @@ const title = "Declaración de funciones";
                 <Fragment slot="title">Retornos desde lambdas</Fragment>
                 <p>
                     Dentro de una lambda, <KotlinInline code="return" /> intenta salir de la
-                    <em>función envolvente</em> (no de la lambda) en lambdas en línea. Para volver
-                    desde la propia lambda, usa <KotlinInline code="return@nombre" />:
+                    <em>función envolvente</em> (no de la lambda) en lambdas en línea. Para volver desde la propia
+                    lambda, usa <KotlinInline code="return@nombre" />:
                 </p>
                 <KotlinBlock
                     code={`
@@ -403,19 +370,18 @@ const title = "Declaración de funciones";
             </Heading>
 
             <p>
-                En Kotlin puedes definir funciones que aceptan una <strong>cantidad variable de
-                    argumentos</strong> usando la palabra clave <KotlinInline code="vararg" />. Esto
-                permite invocar la función con <strong>cero, uno o más valores</strong> del mismo
-                tipo, de manera similar a <InlineCode code="*args" lang="python" /> en Python o
+                En Kotlin puedes definir funciones que aceptan una <strong>cantidad variable de argumentos</strong>
+                usando la palabra clave <KotlinInline code="vararg" />. Esto permite invocar la función con <strong
+                >cero, uno o más valores</strong> del mismo tipo, de manera similar a <InlineCode
+                    code="*args" lang="python"
+                /> en Python o
                 <InlineCode code="...args" lang="javascript" /> en JavaScript.
             </p>
 
-            <KotlinBlock
-                code={`
+            <KotlinBlock code={`
           fun sumAll(vararg nums: Int): Int =
               nums.sum()
-        `}
-            >
+        `}>
                 <Fragment slot="title">Ejemplo: sumar múltiples números</Fragment>
                 <Fragment slot="source">
                     functions/src/main/kotlin/cl/ravenhill/math/sum.kt
@@ -428,8 +394,7 @@ const title = "Declaración de funciones";
                 <p>
                     La función
                     <a
-                        href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/sum.html"
-                        target="_blank"
+                        href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/sum.html" target="_blank"
                         rel="noopener noreferrer"
                     >
                         <KotlinInline code="sum()" />
@@ -467,22 +432,20 @@ const title = "Declaración de funciones";
                         <Tooltip>
                             <TooltipTrigger>
                                 <span>
-                                    <KotlinInline code="Array<out T>" /> es una colección
-                                    covariante, lo que significa que puedes pasar cualquier subtipo
-                                    de
+                                    <KotlinInline code="Array<out T>" /> es una colección covariante, lo que significa
+                                    que puedes pasar cualquier subtipo de
                                     <KotlinInline code="T" /> sin modificar la colección.
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>
-                                    El principio <em>get-put</em> establece que un tipo covariante
-                                    puede utilizarse como tipo de retorno (<KotlinInline
-                                        code="out"
-                                    />) pero no como tipo de entrada (<KotlinInline code="in" />).
+                                    El principio <em>get-put</em> establece que un tipo covariante puede utilizarse como
+                                    tipo de retorno (<KotlinInline code="out" />) pero no como tipo de entrada
+                                    (<KotlinInline code="in" />).
                                 </p>
                                 <p>
-                                    En este caso, <KotlinInline code="out" /> indica que el arreglo
-                                    solo se emplea para obtener valores, no para insertarlos.
+                                    En este caso, <KotlinInline code="out" /> indica que el arreglo solo se emplea para
+                                    obtener valores, no para insertarlos.
                                 </p>
                             </TooltipContent>
                         </Tooltip>
@@ -508,8 +471,7 @@ const title = "Declaración de funciones";
             </KotlinBlock>
 
             <p>
-                Si ya tienes un arreglo existente, puedes <strong>desempaquetar sus
-                    elementos</strong>
+                Si ya tienes un arreglo existente, puedes <strong>desempaquetar sus elementos</strong>
                 usando el prefijo <KotlinInline code="*" /> al pasarlo como argumento:
             </p>
 
@@ -531,9 +493,9 @@ const title = "Declaración de funciones";
                 </Fragment>
 
                 <p>
-                    El operador <KotlinInline code="*" /> para desempaquetar argumentos funciona
-                    exclusivamente con arreglos (<KotlinInline code="Array" /> o tipos primitivos
-                    como <KotlinInline code="IntArray" />). Si tienes una
+                    El operador <KotlinInline code="*" /> para desempaquetar argumentos funciona exclusivamente con
+                    arreglos (<KotlinInline code="Array" /> o tipos primitivos como <KotlinInline code="IntArray" />).
+                    Si tienes una
                     <KotlinInline code="List" />, primero debes convertirla a un arreglo usando
                     <KotlinInline code="list.toTypedArray()" />:
                 </p>
@@ -546,10 +508,9 @@ const title = "Declaración de funciones";
                 />
 
                 <p>
-                    Ten en cuenta que <KotlinInline code="toTypedArray()" /> crea una copia completa
-                    de la lista en memoria. En colecciones grandes, esto implica una asignación y
-                    recorrido adicionales, lo que puede afectar el rendimiento y el consumo de
-                    memoria.
+                    Ten en cuenta que <KotlinInline code="toTypedArray()" /> crea una copia completa de la lista en
+                    memoria. En colecciones grandes, esto implica una asignación y recorrido adicionales, lo que puede
+                    afectar el rendimiento y el consumo de memoria.
                 </p>
             </Note>
 
@@ -557,15 +518,13 @@ const title = "Declaración de funciones";
                 <Fragment slot="title">Hack: Uno o más argumentos</Fragment>
 
                 <p>
-                    Si necesitas que una función reciba <strong>al menos un argumento
-                        obligatorio</strong>, declara ese argumento como un parámetro normal y
-                    colócalo antes de un
+                    Si necesitas que una función reciba <strong>al menos un argumento obligatorio</strong>, declara ese
+                    argumento como un parámetro normal y colócalo antes de un
                     <KotlinInline code="vararg" />.
                 </p>
 
                 <p>
-                    Una forma sencilla de recordarlo es compararlo con las <strong>expresiones
-                        regulares</strong>:
+                    Una forma sencilla de recordarlo es compararlo con las <strong>expresiones regulares</strong>:
                 </p>
 
                 <List>
@@ -615,8 +574,8 @@ const title = "Declaración de funciones";
                         >
                             <KotlinInline code="fold()" />
                         </a>
-                        es una extensión que aplica una operación acumulativa sobre los elementos de
-                        una colección, comenzando desde un valor inicial.
+                        es una extensión que aplica una operación acumulativa sobre los elementos de una colección,
+                        comenzando desde un valor inicial.
                     </p>
 
                     <p>En este caso, para <KotlinInline code="IntArray" />:</p>
@@ -646,9 +605,7 @@ const title = "Declaración de funciones";
                             Arreglos genéricos (<KotlinInline code="Array<T>" />)
                         </ListItem>
                         <ListItem icon={icons.Stack}>
-                            Colecciones (<KotlinInline code="List<T>" />, <KotlinInline
-                                code="Set<T>"
-                            />, etc.)
+                            Colecciones (<KotlinInline code="List<T>" />, <KotlinInline code="Set<T>" />, etc.)
                         </ListItem>
                     </List>
 
@@ -683,20 +640,18 @@ const title = "Declaración de funciones";
                 </KotlinBlock>
 
                 <p>
-                    Este patrón también sirve para funciones con dos o más parámetros obligatorios,
-                    seguidos por una cantidad variable de argumentos opcionales.
+                    Este patrón también sirve para funciones con dos o más parámetros obligatorios, seguidos por una
+                    cantidad variable de argumentos opcionales.
                 </p>
             </Tip>
 
             <Info headingLevel="h4">
-                <Fragment slot="title"><KotlinInline code="vararg" /> vs. <KotlinInline
-                        code="Array"
-                    /></Fragment>
+                <Fragment slot="title"><KotlinInline code="vararg" /> vs. <KotlinInline code="Array" /></Fragment>
                 <p>
-                    En Kotlin, <KotlinInline code="vararg" /> es una forma conveniente de permitir
-                    que una función reciba <strong>una cantidad variable de argumentos</strong>.
-                    Internamente, el compilador convierte esos argumentos en un arreglo
-                    (<KotlinInline code="Array<T>" />, <KotlinInline code="IntArray" />, etc.).
+                    En Kotlin, <KotlinInline code="vararg" /> es una forma conveniente de permitir que una función
+                    reciba <strong>una cantidad variable de argumentos</strong>. Internamente, el compilador convierte
+                    esos argumentos en un arreglo (<KotlinInline code="Array<T>" />, <KotlinInline code="IntArray" />,
+                    etc.).
                 </p>
                 <p>
                     <h5>Esto significa que:</h5>
@@ -707,16 +662,15 @@ const title = "Declaración de funciones";
                                     <span><strong>azúcar sintáctico</strong><sup>[*]</sup></span>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    Se llama <strong>azúcar sintáctica</strong> (<em>syntactic
-                                        sugar</em>) a una forma más conveniente o legible de
-                                    escribir algo que, en realidad, se traduce a una forma más
-                                    básica del lenguaje.
+                                    Se llama <strong>azúcar sintáctica</strong> (<em>syntactic sugar</em>) a una forma
+                                    más conveniente o legible de escribir algo que, en realidad, se traduce a una forma
+                                    más básica del lenguaje.
                                 </TooltipContent>
                             </Tooltip> sobre una función que acepta un arreglo.
                         </ListItem>
                         <ListItem icon={icons.Asterisk}>
-                            Puedes seguir llamando a la función con un arreglo existente usando el
-                            operador <KotlinInline code="*" /> para desempaquetarlo.
+                            Puedes seguir llamando a la función con un arreglo existente usando el operador
+                            <KotlinInline code="*" /> para desempaquetarlo.
                         </ListItem>
                     </List>
                 </p>
@@ -728,23 +682,18 @@ const title = "Declaración de funciones";
             sumAll(*valores)  // ✅ correcto: desempaquetado con *            
           `}
                 >
-                    <Fragment slot="title"
-                    >Usando <KotlinInline code="vararg" /> vs. pasando un arreglo</Fragment>
+                    <Fragment slot="title">Usando <KotlinInline code="vararg" /> vs. pasando un arreglo</Fragment>
                     <Fragment slot="source">
                         functions/src/main/kotlin/cl/ravenhill/math/sum.kt
                     </Fragment>
                 </KotlinBlock>
                 <p>
-                    Kotlin optimiza los tipos primitivos (<KotlinInline code="Int" />, <KotlinInline
-                        code="Double"
-                    />, etc.) usando <KotlinInline code="IntArray" />, <KotlinInline
-                        code="DoubleArray"
-                    />, etc., en lugar de <KotlinInline code="Array<Int>" /> o <KotlinInline
-                        code="Array<Double>"
-                    />. Esto mejora el rendimiento y evita el
+                    Kotlin optimiza los tipos primitivos (<KotlinInline code="Int" />, <KotlinInline code="Double" />,
+                    etc.) usando <KotlinInline code="IntArray" />, <KotlinInline code="DoubleArray" />, etc., en lugar
+                    de <KotlinInline code="Array<Int>" /> o <KotlinInline code="Array<Double>" />. Esto mejora el
+                    rendimiento y evita el
                     <strong><a
-                            href="https://en.wikipedia.org/wiki/Boxing_(computer_programming)"
-                            target="_blank"
+                            href="https://en.wikipedia.org/wiki/Boxing_(computer_programming)" target="_blank"
                             rel="noopener noreferrer"
                         >boxing</a>
                         innecesario</strong>.
@@ -759,23 +708,22 @@ const title = "Declaración de funciones";
                 <p>
                     Tanto <KotlinInline code="Array<T>" /> como <KotlinInline code="List<T>" />
                     representan <strong>colecciones de tamaño fijo</strong> e
-                    <strong> inmutables en cuanto a estructura</strong> (no puedes agregar ni quitar
-                    elementos). Sin embargo, tienen <strong>propósitos diferentes</strong>: un
-                    <KotlinInline code="Array<T>" /> es mutable en sus elementos y está más
-                    orientado a la eficiencia y la interoperabilidad con Java, mientras que
-                    <KotlinInline code="List<T>" /> es más expresiva y está pensada para un estilo
-                    idiomático y funcional.
+                    <strong> inmutables en cuanto a estructura</strong> (no puedes agregar ni quitar elementos). Sin
+                    embargo, tienen <strong>propósitos diferentes</strong>: un
+                    <KotlinInline code="Array<T>" /> es mutable en sus elementos y está más orientado a la eficiencia y
+                    la interoperabilidad con Java, mientras que
+                    <KotlinInline code="List<T>" /> es más expresiva y está pensada para un estilo idiomático y
+                    funcional.
                 </p>
 
                 <List>
                     <ListItem icon={icons.Cpu}>
-                        <KotlinInline code="Array<T>" /> es una <strong>estructura de bajo
-                            nivel</strong>, más cercana al funcionamiento de los arreglos en
-                        lenguajes como Java.
+                        <KotlinInline code="Array<T>" /> es una <strong>estructura de bajo nivel</strong>, más cercana
+                        al funcionamiento de los arreglos en lenguajes como Java.
                     </ListItem>
                     <ListItem icon={icons.FlowArrow}>
-                        <KotlinInline code="List<T>" /> es parte de la API de colecciones de Kotlin,
-                        más expresiva y flexible para la programación funcional.
+                        <KotlinInline code="List<T>" /> es parte de la API de colecciones de Kotlin, más expresiva y
+                        flexible para la programación funcional.
                     </ListItem>
                 </List>
 
@@ -805,9 +753,7 @@ const title = "Declaración de funciones";
                             <TableCell>Tamaño fijo</TableCell>
                             <TableCell>Sí</TableCell>
                             <TableCell>
-                                Sí (<KotlinInline code="List" />, no en <KotlinInline
-                                    code="MutableList"
-                                />)
+                                Sí (<KotlinInline code="List" />, no en <KotlinInline code="MutableList" />)
                             </TableCell>
                         </TableRow>
                         <TableRow>
@@ -845,14 +791,13 @@ const title = "Declaración de funciones";
                     <Fragment slot="title">En resumen</Fragment>
                     <List>
                         <ListItem icon={icons.FlowArrow}>
-                            Usa <KotlinInline code="List<T>" /> para la mayoría de los casos,
-                            especialmente si buscas <strong>inmutabilidad lógica</strong> y una API
-                            más rica y expresiva para manipulación de datos.
+                            Usa <KotlinInline code="List<T>" /> para la mayoría de los casos, especialmente si buscas
+                            <strong>inmutabilidad lógica</strong> y una API más rica y expresiva para manipulación de
+                            datos.
                         </ListItem>
                         <ListItem icon={icons.Cpu}>
-                            Usa <KotlinInline code="Array<T>" /> cuando necesites interoperar con
-                            código Java o cuando el rendimiento en acceso/modificación por índice
-                            sea crítico.
+                            Usa <KotlinInline code="Array<T>" /> cuando necesites interoperar con código Java o cuando
+                            el rendimiento en acceso/modificación por índice sea crítico.
                         </ListItem>
                     </List>
                 </Tip>
@@ -862,14 +807,13 @@ const title = "Declaración de funciones";
     <Exercise headingLevel="h2">
         <Fragment slot="title">Duplicar niveles de poder</Fragment>
         <p>
-            Vamos a practicar la declaración de funciones en Kotlin aplicando una transformación
-            sobre una lista. Supón que tienes una lista de niveles de poder (<KotlinInline
-                code="Int"
-            />) y quieres duplicar cada uno de ellos usando <KotlinInline code="map()" />.
+            Vamos a practicar la declaración de funciones en Kotlin aplicando una transformación sobre una lista. Supón
+            que tienes una lista de niveles de poder (<KotlinInline code="Int" />) y quieres duplicar cada uno de ellos
+            usando <KotlinInline code="map()" />.
         </p>
         <p>
-            Como recordatorio, <KotlinInline code="map()" /> aplica una función a cada elemento de
-            una colección y devuelve una nueva colección con los resultados:
+            Como recordatorio, <KotlinInline code="map()" /> aplica una función a cada elemento de una colección y
+            devuelve una nueva colección con los resultados:
         </p>
         <KotlinBlock
             code={`
@@ -880,19 +824,17 @@ const title = "Declaración de funciones";
             <Fragment slot="title">Firma de <KotlinInline code="map()" /></Fragment>
         </KotlinBlock>
         <p>
-            Tu tarea es definir una función llamada <KotlinInline code="doublePowers" /> que reciba
-            una lista de enteros (<KotlinInline code="List<Int>" />) o bien una cantidad variable de
-            argumentos (<KotlinInline code="vararg" />) y devuelva una nueva lista con cada valor
-            duplicado.
+            Tu tarea es definir una función llamada <KotlinInline code="doublePowers" /> que reciba una lista de enteros
+            (<KotlinInline code="List<Int>" />) o bien una cantidad variable de argumentos (<KotlinInline
+                code="vararg"
+            />) y devuelva una nueva lista con cada valor duplicado.
         </p>
         <More>
             <Fragment slot="title">Ejemplos de uso</Fragment>
             <Tabs defaultValue="Lista" syncKey="exercise">
                 <TabsList>
                     <TabsTrigger value="Lista">Input como lista</TabsTrigger>
-                    <TabsTrigger value="Vararg">Input como <KotlinInline
-                            code="vararg"
-                        /></TabsTrigger>
+                    <TabsTrigger value="Vararg">Input como <KotlinInline code="vararg" /></TabsTrigger>
                 </TabsList>
                 <TabsContent value="Lista">
                     <KotlinBlock
@@ -913,24 +855,20 @@ const title = "Declaración de funciones";
               // devuelve: [10, 20, 30]
             `}
                     >
-                        <Fragment slot="title">Ejemplo de uso como <KotlinInline
-                                code="vararg"
-                            /></Fragment>
+                        <Fragment slot="title">Ejemplo de uso como <KotlinInline code="vararg" /></Fragment>
                     </KotlinBlock>
                 </TabsContent>
             </Tabs>
         </More>
         <p class="mt-4">
-            Ambas versiones son equivalentes en funcionalidad, pero difieren en cómo se pasan los
-            argumentos al invocar la función.
+            Ambas versiones son equivalentes en funcionalidad, pero difieren en cómo se pasan los argumentos al invocar
+            la función.
         </p>
         <Solution>
             <Tabs defaultValue="Lista" syncKey="exercise">
                 <TabsList>
                     <TabsTrigger value="Lista">Input como lista</TabsTrigger>
-                    <TabsTrigger value="Vararg">Input como <KotlinInline
-                            code="vararg"
-                        /></TabsTrigger>
+                    <TabsTrigger value="Vararg">Input como <KotlinInline code="vararg" /></TabsTrigger>
                 </TabsList>
                 <TabsContent value="Lista">
                     <KotlinBlock
@@ -952,9 +890,7 @@ const title = "Declaración de funciones";
                   powers.map { it * 2 }
             `}
                     >
-                        <Fragment slot="title">Solución: Input como <KotlinInline
-                                code="vararg"
-                            /></Fragment>
+                        <Fragment slot="title">Solución: Input como <KotlinInline code="vararg" /></Fragment>
                         <Fragment slot="source">
                             functions/src/main/kotlin/cl/ravenhill/math/doublePowers.kt
                         </Fragment>
@@ -966,10 +902,9 @@ const title = "Declaración de funciones";
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            En esta lección aprendimos la sintaxis básica para declarar funciones en Kotlin, un
-            componente esencial para escribir código <strong>reutilizable</strong>,
-            <strong>expresivo</strong> y <strong>mantenible</strong>. También exploramos variantes
-            idiomáticas como la
+            En esta lección aprendimos la sintaxis básica para declarar funciones en Kotlin, un componente esencial para
+            escribir código <strong>reutilizable</strong>,
+            <strong>expresivo</strong> y <strong>mantenible</strong>. También exploramos variantes idiomáticas como la
             <strong>inferencia de tipos</strong>, las <strong>funciones variádicas</strong>
             y las diferencias clave entre colecciones como
             <KotlinInline code="Array<T>" /> y <KotlinInline code="List<T>" />.
@@ -981,20 +916,20 @@ const title = "Declaración de funciones";
                 y pueden tener <strong>parámetros con valores por defecto</strong>.
             </ListItem>
             <ListItem icon={icons.MagicWand}>
-                El tipo de retorno puede <strong>inferirse automáticamente</strong> si la función se
-                reduce a una sola expresión.
+                El tipo de retorno puede <strong>inferirse automáticamente</strong> si la función se reduce a una sola
+                expresión.
             </ListItem>
             <ListItem icon={icons.DotsThree}>
                 <KotlinInline code="vararg" /> permite definir funciones que aceptan una
                 <strong>cantidad variable de argumentos</strong>.
             </ListItem>
             <ListItem icon={icons.HandPointing}>
-                Es posible requerir al menos un argumento junto a <KotlinInline code="vararg" />,
-                combinándolos en la firma.
+                Es posible requerir al menos un argumento junto a <KotlinInline code="vararg" />, combinándolos en la
+                firma.
             </ListItem>
             <ListItem icon={icons.SquaresFour}>
-                <KotlinInline code="Array<T>" /> y <KotlinInline code="List<T>" /> parecen
-                similares, pero tienen <strong>diferencias clave en mutabilidad y uso</strong>.
+                <KotlinInline code="Array<T>" /> y <KotlinInline code="List<T>" /> parecen similares, pero tienen
+                <strong>diferencias clave en mutabilidad y uso</strong>.
             </ListItem>
             <ListItem icon={icons.PencilLine}>
                 Kotlin favorece un estilo conciso, pero también
@@ -1004,16 +939,14 @@ const title = "Declaración de funciones";
 
         <Fragment slot="closing-reflection">
             <p>
-                Esta lección fue tu <strong>primer paso</strong> en el sistema de funciones de
-                Kotlin.
+                Esta lección fue tu <strong>primer paso</strong> en el sistema de funciones de Kotlin.
             </p>
             <p>
                 No es necesario memorizar cada detalle ahora: usa este material como
                 <strong>referencia rápida</strong> cuando lo necesites.
             </p>
             <p>
-                Retomaremos estos conceptos más adelante, profundizando según lo requiera cada
-                unidad.
+                Retomaremos estos conceptos más adelante, profundizando según lo requiera cada unidad.
             </p>
         </Fragment>
     </ConclusionsLayout>
@@ -1031,17 +964,16 @@ const title = "Declaración de funciones";
             <WebPage title="Functions" url="https://kotlinlang.org/docs/functions.html">
                 <OfficialDocs slot="location">Kotlin docs</OfficialDocs>
                 <Fragment slot="description">
-                    Esta documentación ofrece una guía exhaustiva sobre la declaración y uso de
-                    funciones en Kotlin. Aborda desde conceptos básicos como la sintaxis con
-                    <KotlinInline code="fun" />, el uso de parámetros con tipo explícito y valores
-                    por defecto, hasta temas más avanzados como funciones variádicas (<KotlinInline
-                        code="vararg"
-                    />), argumentos nombrados, funciones de una sola expresión, inferencia de tipos,
-                    funciones infijas (<KotlinInline code="infix" />), genéricas y recursivas de
-                    cola (<KotlinInline code="tailrec" />). También detalla cómo declarar funciones
-                    a nivel superior, funciones locales, de miembro y de extensión, promoviendo un
-                    estilo conciso, idiomático y expresivo. Es una fuente esencial para comprender
-                    el modelo funcional y flexible de funciones en Kotlin.
+                    Esta documentación ofrece una guía exhaustiva sobre la declaración y uso de funciones en Kotlin.
+                    Aborda desde conceptos básicos como la sintaxis con
+                    <KotlinInline code="fun" />, el uso de parámetros con tipo explícito y valores por defecto, hasta
+                    temas más avanzados como funciones variádicas (<KotlinInline code="vararg" />), argumentos
+                    nombrados, funciones de una sola expresión, inferencia de tipos, funciones infijas (<KotlinInline
+                        code="infix"
+                    />), genéricas y recursivas de cola (<KotlinInline code="tailrec" />). También detalla cómo declarar
+                    funciones a nivel superior, funciones locales, de miembro y de extensión, promoviendo un estilo
+                    conciso, idiomático y expresivo. Es una fuente esencial para comprender el modelo funcional y
+                    flexible de funciones en Kotlin.
                 </Fragment>
             </WebPage>
         </Fragment>

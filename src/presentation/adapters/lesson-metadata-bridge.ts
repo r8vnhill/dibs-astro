@@ -6,12 +6,12 @@
  * the bridge wires the application service to the infrastructure adapter and returns only the
  * serializable values the UI needs.
  */
+import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAdapter";
 import {
-    LessonMetadataService,
     type LessonMetadataResolutionResult,
+    LessonMetadataService,
     type LessonMetadataServiceContract,
 } from "@ravenhill/content-core";
-import { LessonMetadataAdapter } from "$infrastructure/adapters/LessonMetadataAdapter";
 
 /**
  * Minimal metadata result consumed by lesson layouts and metadata panels.

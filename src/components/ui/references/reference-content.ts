@@ -2,11 +2,11 @@ import {
     classifyRenderedContent,
     isMeaningfulSlotContent,
     type ResolvedInlineField,
+    type ResolvedLinkedInlineField,
     type ResolvedSlotContent,
     resolveInlineField,
     resolveLinkedInlineField,
     resolveRequiredInlineField,
-    type ResolvedLinkedInlineField,
 } from "$presentation/adapters/reference-content";
 import { MissingReferenceTitleError } from "./ReferenceContractError";
 

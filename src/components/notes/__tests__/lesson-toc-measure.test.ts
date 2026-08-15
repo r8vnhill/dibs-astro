@@ -42,13 +42,15 @@ suite("given real browser geometry for a TOC entry and its scroll container", ()
     });
 
     describe("when container geometry, scroll, and item position vary together", () => {
-        test.each([
-            ["unscrolled, borderless", 100, 0, 0, 140, 40],
-            ["scrolled, borderless", 100, 0, 50, 140, 90],
-            ["scrolled, bordered", 100, 2, 50, 140, 88],
-            ["scrolled, bordered, item above container top", 100, 2, 50, 80, 28],
-            ["larger offsets throughout", 250, 4, 125, 254, 125],
-        ] satisfies ReadonlyArray<[string, number, number, number, number, number]>)(
+        test.each(
+            [
+                ["unscrolled, borderless", 100, 0, 0, 140, 40],
+                ["scrolled, borderless", 100, 0, 50, 140, 90],
+                ["scrolled, bordered", 100, 2, 50, 140, 88],
+                ["scrolled, bordered, item above container top", 100, 2, 50, 80, 28],
+                ["larger offsets throughout", 250, 4, 125, 254, 125],
+            ] satisfies ReadonlyArray<[string, number, number, number, number, number]>,
+        )(
             "then %s produces the expected content-space top",
             (_label, containerTop, clientTop, scrollTop, itemTop, expected) => {
                 const container = stubContainer(containerTop, clientTop, scrollTop);
@@ -60,11 +62,14 @@ suite("given real browser geometry for a TOC entry and its scroll container", ()
     });
 
     describe("when the item's own height varies", () => {
-        test.each([0, 1, 24, 400])("then the measured offsetHeight passes through unchanged for height %i", (height) => {
-            const container = stubContainer(0, 0, 0);
-            const item = stubItem(0, height);
+        test.each([0, 1, 24, 400])(
+            "then the measured offsetHeight passes through unchanged for height %i",
+            (height) => {
+                const container = stubContainer(0, 0, 0);
+                const item = stubItem(0, height);
 
-            expect(measureTocEntry(container, item).offsetHeight).toBe(height);
-        });
+                expect(measureTocEntry(container, item).offsetHeight).toBe(height);
+            },
+        );
     });
 });

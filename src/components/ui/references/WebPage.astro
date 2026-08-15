@@ -10,10 +10,10 @@ import * as icons from "$icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
-    resolveOptionalSlots,
-    resolveRequiredTitleField,
     resolveInlineField,
     resolveLinkedInlineField,
+    resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 import { ReferenceContractError } from "./ReferenceContractError";
@@ -66,7 +66,10 @@ if (import.meta.env.DEV && locationUrl && !location) {
 }
 ---
 
-<ListItem id={id} icon={icons.Globe} class="scroll-mt-24">
+<ListItem
+    {id} icon={icons.Globe}
+    class="scroll-mt-24"
+>
     <Enquote type="english-double">
         <a href={url} {...externalLinkAttrs}>
             {
@@ -80,9 +83,7 @@ if (import.meta.env.DEV && locationUrl && !location) {
     {
         resolvedLocation.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
                 {
                     resolvedLocation.kind === "slot"
                         ? <span set:html={resolvedLocation.html} />
@@ -101,9 +102,7 @@ if (import.meta.env.DEV && locationUrl && !location) {
     {
         resolvedAuthor.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
                 {
                     resolvedAuthor.kind === "slot"
                         ? <span set:html={resolvedAuthor.html} />

@@ -1,14 +1,14 @@
 /**
  * @file Public entrypoint for the bibliography subsystem.
  *
- * This module exposes the stable bibliography API for consumers that depend on the subsystem as a whole. It 
+ * This module exposes the stable bibliography API for consumers that depend on the subsystem as a whole. It
  * intentionally re-exports three API slices with different responsibilities:
  *
  * - catalog access for pre-built bibliography graphs;
  * - page-reference parsing and formatting;
  * - JSON-LD normalization for flexible external inputs.
  *
- * Prefer importing from this file when application or presentation code needs bibliography functionality without 
+ * Prefer importing from this file when application or presentation code needs bibliography functionality without
  * depending on internal file structure. Lower-level bibliography modules may still import leaf modules directly when
  * doing so avoids circular dependencies or keeps local helper usage explicit.
  *
@@ -23,7 +23,7 @@
  * - computing reference statistics;
  * - resolving tags, usages, and citation metadata.
  *
- * This API is best suited for read-heavy paths where bibliography data is generated ahead of time and changes 
+ * This API is best suited for read-heavy paths where bibliography data is generated ahead of time and changes
  * infrequently.
  *
  * ## Page-reference API
@@ -53,7 +53,7 @@
  * - `ScholarlyArticle`;
  * - `Thesis`.
  *
- * This API is useful for external, ad hoc, or test-local bibliography data that should not go through the generated 
+ * This API is useful for external, ad hoc, or test-local bibliography data that should not go through the generated
  * catalog pipeline.
  */
 export {

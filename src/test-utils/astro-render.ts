@@ -66,9 +66,9 @@
  * Tests get strong typing on props while keeping the implementation generic.
  */
 
+import { getContainerRenderer as getReactContainerRenderer } from "@astrojs/react/container-renderer";
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { loadRenderers } from "astro:container";
-import { getContainerRenderer as getReactContainerRenderer } from "@astrojs/react/container-renderer";
 
 /**
  * Extracts the component parameter type accepted by `AstroContainer.renderToString`.

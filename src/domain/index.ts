@@ -3,7 +3,7 @@
  *
  * Domain-layer public barrel.
  *
- * This module defines the stable import boundary for domain concepts. Application, infrastructure, and presentation 
+ * This module defines the stable import boundary for domain concepts. Application, infrastructure, and presentation
  * code should import domain exports from this file instead of reaching into internal folders such as `entities/`,
  * `value-objects/`, or `reference-content/`.
  *
@@ -17,10 +17,10 @@
  *
  * - lesson entities, represented by {@link Lesson};
  * - lesson value objects, represented by {@link LessonId}, {@link LessonSlug}, and {@link LessonTitle};
- * - reference-content utilities for classifying, normalizing, and resolving inline content used by reference-rendering 
+ * - reference-content utilities for classifying, normalizing, and resolving inline content used by reference-rendering
  *   workflows.
  *
- * Reference-content helpers live in the domain layer because they encode pure content semantics: meaningful text 
+ * Reference-content helpers live in the domain layer because they encode pure content semantics: meaningful text
  * detection, HTML comment/tag stripping, whitespace normalization, fallback resolution, and link normalization. They do
  * not depend on Astro, DOM APIs, UI components, generated data, or host-specific infrastructure.
  */

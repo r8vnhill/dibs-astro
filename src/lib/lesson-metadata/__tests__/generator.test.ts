@@ -53,12 +53,7 @@
 
 import fc from "fast-check";
 import { describe, expect, test } from "vitest";
-import {
-    buildOutput,
-    getChanges,
-    readAuthorsByPath,
-    readGeneratorConfig,
-} from "../generator.js";
+import { buildOutput, getChanges, readAuthorsByPath, readGeneratorConfig } from "../generator.js";
 
 /**
  * Captures warnings emitted by helpers that accept `{ts} warnFn`.

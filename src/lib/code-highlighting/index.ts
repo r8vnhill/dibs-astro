@@ -1,14 +1,14 @@
 /**
  * @file App-level public API for Shiki code highlighting.
  *
- * This module is the production entry point for the app's configured Shiki highlighting service. It adapts the 
+ * This module is the production entry point for the app's configured Shiki highlighting service. It adapts the
  * host-agnostic `@ravenhill/shiki-core` package to app-specific runtime concerns:
  *
  * - dev-transport retry behavior for transient development failures;
  * - shared highlighter reuse through the app cache;
  * - one configured service boundary for components, content patches, and highlighting utilities.
  *
- * Import from this barrel when production app code needs the configured highlighter service. Do not import directly 
+ * Import from this barrel when production app code needs the configured highlighter service. Do not import directly
  * from lower-level service or cache modules unless a local implementation detail explicitly requires it.
  *
  * ## Production imports
@@ -22,7 +22,7 @@
  *
  * ## Test-only cache controls
  *
- * This barrel intentionally does not export test helpers. Tests that need to mutate the shared cache should import the 
+ * This barrel intentionally does not export test helpers. Tests that need to mutate the shared cache should import the
  * testing adapter directly:
  *
  * ```ts
@@ -50,6 +50,6 @@
  *     rendering, Markdown/Astro integration, app-specific presentation.
  * ```
  */
-export { appShikiService, createAppHighlighterService, highlightToHtml } from "./service";
 export { getHighlighter } from "./cache";
 export type { HighlighterPromise } from "./cache";
+export { appShikiService, createAppHighlighterService, highlightToHtml } from "./service";

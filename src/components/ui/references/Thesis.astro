@@ -2,7 +2,7 @@
 /**
  * @file Renders a thesis reference in the shared bibliography list.
  *
- * `Thesis` is a thin rendering component. It delegates slot/prop precedence, runtime validation, and link resolution 
+ * `Thesis` is a thin rendering component. It delegates slot/prop precedence, runtime validation, and link resolution
  * to `resolveThesisReference(...)`, then renders the resulting view model.
  *
  * Content resolution follows the reference-family contract:
@@ -29,7 +29,7 @@ import { resolveThesisReference, THESIS_REFERENCE_SLOTS } from "./thesis-referen
 /**
  * Props for rendering a thesis reference.
  *
- * Named slots can override the textual fallbacks for `title`, `institution`, `author`, and `description`. Prefer 
+ * Named slots can override the textual fallbacks for `title`, `institution`, `author`, and `description`. Prefer
  * slots when the rendered content needs custom markup; prefer props for plain text metadata.
  */
 type Props = {
@@ -37,7 +37,7 @@ type Props = {
     /**
      * Plain-text fallback thesis title.
      *
-     * Used only when the `title` slot is absent or does not contain meaningful content. The resolved title is always 
+     * Used only when the `title` slot is absent or does not contain meaningful content. The resolved title is always
      * rendered as the primary thesis link.
      */
     title?: string;
@@ -52,7 +52,7 @@ type Props = {
     /**
      * Plain-text fallback institution name.
      *
-     * Used only when the `institution` slot is absent or empty. When `institutionUrl` is also provided, this 
+     * Used only when the `institution` slot is absent or empty. When `institutionUrl` is also provided, this
      * prop-backed text is rendered as a link.
      */
     institution?: string;
@@ -60,7 +60,7 @@ type Props = {
     /**
      * Optional external URL for prop-backed institution text.
      *
-     * This value is ignored when the institution is provided through a slot, because slot content is treated as 
+     * This value is ignored when the institution is provided through a slot, because slot content is treated as
      * already-authored markup.
      */
     institutionUrl?: string;
@@ -77,12 +77,15 @@ const slots = await resolveOptionalSlots(Astro.slots, THESIS_REFERENCE_SLOTS);
 const reference = resolveThesisReference(Astro.props, slots);
 ---
 
-<ListItem id={Astro.props.id} icon={icons.Student} class="scroll-mt-24">
+<ListItem
+    id={Astro.props.id} icon={icons.Student}
+    class="scroll-mt-24"
+>
     <Enquote type="english-double">
         <a href={reference.url} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
             {
                 /*
-                 * Slot-backed fields contain rendered Astro slot HTML. They are treated as trusted caller-authored 
+                 * Slot-backed fields contain rendered Astro slot HTML. They are treated as trusted caller-authored
                  * markup by the reference content resolver.
                  */
                 reference.title.kind === "slot"

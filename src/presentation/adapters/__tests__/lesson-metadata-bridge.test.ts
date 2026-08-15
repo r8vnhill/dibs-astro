@@ -1,7 +1,7 @@
 /**
  * @file Contract tests for the presentation metadata bridge consumed by `NotesLayout`.
  *
- * These tests exercise the real bridge composition and generated metadata as an integration sentinel. Lower-level 
+ * These tests exercise the real bridge composition and generated metadata as an integration sentinel. Lower-level
  * rules, such as route normalization, DTO projection, and repository parsing, remain covered by `content-core` and
  * infrastructure suites.
  *
@@ -22,7 +22,7 @@ type LessonMetadataResult = Awaited<ReturnType<typeof resolveLessonMetadata>>;
 /**
  * Stable fixture route used as an integration sentinel.
  *
- * The route should point to a real generated lesson with authors and change metadata so the bridge contract can be 
+ * The route should point to a real generated lesson with authors and change metadata so the bridge contract can be
  * verified without mocking the composition root.
  */
 const knownLessonPath = "/notes/scripting/support-scripts/";
@@ -30,7 +30,7 @@ const knownLessonPath = "/notes/scripting/support-scripts/";
 /**
  * Presentation-safe metadata fields exposed by the bridge.
  *
- * `lastModified` is intentionally allowed but not required because some lessons may not have enough source information 
+ * `lastModified` is intentionally allowed but not required because some lessons may not have enough source information
  * to derive it.
  */
 const allowedMetadataKeys = ["authors", "changes", "lastModified"].toSorted();

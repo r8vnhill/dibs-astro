@@ -45,7 +45,10 @@ const {
 } = await resolveOptionalSlots(Astro.slots, ["chapter", "bookTitle", "authors", "description"]);
 ---
 
-<ListItem id={id} icon={icons.Book} class="space-y-1 scroll-mt-24">
+<ListItem
+    {id} icon={icons.Book}
+    class="space-y-1 scroll-mt-24"
+>
     <div class="flex flex-wrap items-baseline gap-x-1.5">
         <Enquote type={quoteType}>
             {chapterSlot.kind === "meaningful" ? <slot name="chapter" /> : chapter}

@@ -2,11 +2,8 @@
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
 import GuidedReferenceEntry from "~/components/ui/references/GuidedReferenceEntry.astro";
-import {
-    formatLessonReadingsDiagnostics,
-    resolveLessonReadings,
-} from "~/lib/readings/lesson-readings-contract";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import { formatLessonReadingsDiagnostics, resolveLessonReadings } from "~/lib/readings/lesson-readings-contract";
 
 const supportScriptsNushellReadings = getSupportScriptsNushellReadings();
 const resolution = resolveLessonReadings(supportScriptsNushellReadings, getDefaultBibliographyCatalog());
@@ -26,10 +23,10 @@ const { sections } = resolution.value;
         <aside class="mt-8 rounded-lg border border-base-border bg-base-surface p-5" aria-labelledby="route-heading">
             <h2 id="route-heading" class="text-xl font-semibold">Cómo usar estas lecturas</h2>
             <p class="mt-3">
-                No necesitas leer todas estas fuentes. Comienza por Greenberg et al. y Sippel y Schirmeier para
-                situar el argumento central de la lección; después, revisa la documentación oficial de Nushell citada
-                en la sección de práctica; deja Handa et al. y Sorva para cuando quieras profundizar en el modelo de
-                dataflow o en la pedagogía de los modelos de ejecución.
+                No necesitas leer todas estas fuentes. Comienza por Greenberg et al. y Sippel y Schirmeier para situar
+                el argumento central de la lección; después, revisa la documentación oficial de Nushell citada en la
+                sección de práctica; deja Handa et al. y Sorva para cuando quieras profundizar en el modelo de dataflow
+                o en la pedagogía de los modelos de ejecución.
             </p>
         </aside>
 

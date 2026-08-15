@@ -17,10 +17,7 @@ const { title = "Notas", class: className = "" } = Astro.props as Props;
 reset();
 ---
 
-<section
-    class={`footnotes mt-10 border-t border-base-border pt-6 ${className}`}
-    aria-labelledby="fn-label"
->
+<section class={`footnotes mt-10 border-t border-base-border pt-6 ${className}`} aria-labelledby="fn-label">
     <h2 id="fn-label" class="sr-only">{title}</h2>
     <ol class="list-decimal pl-6 space-y-3">
         <slot />

@@ -27,9 +27,9 @@ describe("BaseLayout export contract", () => {
         expect(doc.querySelectorAll(EXPORT_HIDDEN_SELECTOR)).toHaveLength(2);
         expect(doc.querySelector("header")?.getAttribute("data-export-hidden")).toBe("true");
         expect(doc.querySelector("footer")?.getAttribute("data-export-hidden")).toBe("true");
-        expect(html).toContain('name="robots" content="noindex, nofollow"');
-        expect(html).not.toContain('class="w-full pt-16"');
-        expect(html).toContain('id="main-content"');
+        expect(html).toContain("name=\"robots\" content=\"noindex, nofollow\"");
+        expect(html).not.toContain("class=\"w-full pt-16\"");
+        expect(html).toContain("id=\"main-content\"");
 
         expect(doc.querySelector("main#main-content")?.className).not.toContain("pt-16");
     });
@@ -45,8 +45,8 @@ describe("BaseLayout export contract", () => {
             },
         );
 
-        expect(html).toContain('class="w-full pt-16"');
-        expect(html).not.toContain('data-export-hidden="true"');
-        expect(html).not.toContain('noindex, nofollow');
+        expect(html).toContain("class=\"w-full pt-16\"");
+        expect(html).not.toContain("data-export-hidden=\"true\"");
+        expect(html).not.toContain("noindex, nofollow");
     });
 });

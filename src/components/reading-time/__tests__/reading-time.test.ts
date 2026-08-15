@@ -89,7 +89,7 @@ suite("given rendered lesson HTML", () => {
             const preservationCorpus = [
                 "<p>Una biblioteca reutilizable</p><p>mantiene una API.</p>",
                 "<p>API <strong>estable</strong> &amp; explícita</p>",
-                '<pre>public fun greet() = "hola"</pre>',
+                "<pre>public fun greet() = \"hola\"</pre>",
                 "<details><summary>Contexto</summary><p>Oculto</p></details>",
                 "<details open><summary>Contexto</summary><p>Visible</p></details>",
                 "<p>Visible</p><aside class=\"exclude-from-reading-time\">No contar</aside>",

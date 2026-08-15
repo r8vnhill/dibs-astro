@@ -22,21 +22,19 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 >
     <Fragment slot="abstract">
         <P>
-            En PowerShell, manejar errores no consiste solo en capturar excepciones, sino en definir
-            explícitamente qué significa fallar dentro de un flujo de elementos. En el contexto del
-            <I>pipeline</I>, esta decisión es especialmente relevante: un error puede <B>afectar
-                únicamente al elemento actual</B> o <B>invalidar todo el procesamiento</B>.
-            Comprender la diferencia entre errores terminantes y no terminantes permite diseñar
-            herramientas más resilientes y reutilizables.
+            En PowerShell, manejar errores no consiste solo en capturar excepciones, sino en definir explícitamente qué
+            significa fallar dentro de un flujo de elementos. En el contexto del
+            <I>pipeline</I>, esta decisión es especialmente relevante: un error puede <B>afectar únicamente al elemento
+                actual</B> o <B>invalidar todo el procesamiento</B>. Comprender la diferencia entre errores terminantes
+            y no terminantes permite diseñar herramientas más resilientes y reutilizables.
         </P>
 
         <P>
             Esta lección explora cómo delegar la política de fallo mediante
-            <PowerShellInline>-ErrorAction</PowerShellInline> y cómo auditar errores sin interrumpir
-            el flujo usando <PowerShellInline>-ErrorVariable</PowerShellInline>. A través de
-            ejemplos y un ejercicio por lotes, se muestra cómo separar el procesamiento de datos de
-            la política de error, permitiendo decidir si se privilegia la continuidad, la atomicidad
-            o la medición de fallos.
+            <PowerShellInline>-ErrorAction</PowerShellInline> y cómo auditar errores sin interrumpir el flujo usando
+            <PowerShellInline>-ErrorVariable</PowerShellInline>. A través de ejemplos y un ejercicio por lotes, se
+            muestra cómo separar el procesamiento de datos de la política de error, permitiendo decidir si se privilegia
+            la continuidad, la atomicidad o la medición de fallos.
         </P>
     </Fragment>
 
@@ -46,37 +44,33 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            En automatización, <Enquote>manejar errores</Enquote> no es solo capturar excepciones:
-            es decidir <B>qué significa fallar</B> para tu tarea. A veces, un error debe detenerlo
-            todo (para evitar estados inconsistentes). Otras veces, conviene seguir (para procesar
-            lo que sí sirve y reportar lo que no). PowerShell hace explícita esa decisión y, en gran
-            medida, la delega a quien programa.
+            En automatización, <Enquote>manejar errores</Enquote> no es solo capturar excepciones: es decidir <B>qué
+                significa fallar</B> para tu tarea. A veces, un error debe detenerlo todo (para evitar estados
+            inconsistentes). Otras veces, conviene seguir (para procesar lo que sí sirve y reportar lo que no).
+            PowerShell hace explícita esa decisión y, en gran medida, la delega a quien programa.
         </P>
 
         <P>
-            Esa delegación importa especialmente en el <I>pipeline</I>: en vez de pensar el programa
-            como <Enquote>una función que devuelve un único resultado,</Enquote> PowerShell suele
-            trabajar con <B>flujos de elementos</B>. Por eso distingue entre errores <B>no
-                terminantes</B> (falla un elemento, el flujo sigue) y <B>terminantes</B> (se detiene
-            el procesamiento del flujo completo).
+            Esa delegación importa especialmente en el <I>pipeline</I>: en vez de pensar el programa como <Enquote>una
+                función que devuelve un único resultado,</Enquote> PowerShell suele trabajar con <B>flujos de
+                elementos</B>. Por eso distingue entre errores <B>no terminantes</B> (falla un elemento, el flujo sigue)
+            y <B>terminantes</B> (se detiene el procesamiento del flujo completo).
         </P>
 
         <More headingLevel="h3">
             <span slot="title">¿Por qué este modelo de errores?</span>
 
             <P>
-                En automatización es frecuente encontrar entradas parcialmente malas (archivos
-                corruptos, permisos incompletos, datos ausentes), pero aun así resulta útil procesar
-                lo demás. Por defecto, PowerShell prefiere <B>no perder progreso</B>: continúa
-                procesando, registra cada fallo, y deja que quien programa decida si lo trata como
-                advertencia, métrica o condición de falla. Esta mentalidad favorece la resiliencia
-                en tareas como auditorías, limpiezas masivas y herramientas reutilizables.
+                En automatización es frecuente encontrar entradas parcialmente malas (archivos corruptos, permisos
+                incompletos, datos ausentes), pero aun así resulta útil procesar lo demás. Por defecto, PowerShell
+                prefiere <B>no perder progreso</B>: continúa procesando, registra cada fallo, y deja que quien programa
+                decida si lo trata como advertencia, métrica o condición de falla. Esta mentalidad favorece la
+                resiliencia en tareas como auditorías, limpiezas masivas y herramientas reutilizables.
             </P>
 
             <P>
-                Sin embargo, continuar tras errores puede producir resultados incompletos o
-                inconsistentes si tu tarea requiere atomicidad. En esos casos, tiene sentido
-                promover a error terminante y cortar temprano.
+                Sin embargo, continuar tras errores puede producir resultados incompletos o inconsistentes si tu tarea
+                requiere atomicidad. En esos casos, tiene sentido promover a error terminante y cortar temprano.
             </P>
         </More>
 
@@ -89,9 +83,9 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <P>
                 <B>¿Debe un elemento inválido invalidar el resto de los elementos?</B>
-                No existe una única respuesta correcta: depende del objetivo, del costo de fallar,
-                del costo de continuar y del tipo de salida que quieres ofrecer a otras personas (o
-                a tus futuros scripts) que consuman tu pipeline.
+                No existe una única respuesta correcta: depende del objetivo, del costo de fallar, del costo de
+                continuar y del tipo de salida que quieres ofrecer a otras personas (o a tus futuros scripts) que
+                consuman tu pipeline.
             </P>
         </Tip>
     </NotesSection>
@@ -103,18 +97,16 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            Cuando defines un cmdlet con <PowerShellInline>[CmdletBinding()]</PowerShellInline>,
-            PowerShell agrega automáticamente parámetros comunes como <PowerShellInline
-            >-ErrorAction</PowerShellInline>. Esto significa que quien consume tu función puede
-            decidir si un error debe continuar o detener el flujo, <B>sin que tú tengas que
-                modificar la implementación</B>.
+            Cuando defines un cmdlet con <PowerShellInline>[CmdletBinding()]</PowerShellInline>, PowerShell agrega
+            automáticamente parámetros comunes como <PowerShellInline>-ErrorAction</PowerShellInline>. Esto significa
+            que quien consume tu función puede decidir si un error debe continuar o detener el flujo, <B>sin que tú
+                tengas que modificar la implementación</B>.
         </P>
 
         <P>
-            Este parámetro no cambia tu lógica interna: cambia cómo PowerShell interpreta los
-            errores
-            <B>no terminantes</B> que tu función emite. En un pipeline, eso es una diferencia
-            crítica: la política puede ser <Enquote>tolerante por elemento</Enquote> o
+            Este parámetro no cambia tu lógica interna: cambia cómo PowerShell interpreta los errores
+            <B>no terminantes</B> que tu función emite. En un pipeline, eso es una diferencia crítica: la política puede
+            ser <Enquote>tolerante por elemento</Enquote> o
             <Enquote>falla fuerte</Enquote> según el contexto.
         </P>
 
@@ -187,82 +179,75 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <Explanation headingLevel="h3">
             <P>
-                Este cmdlet genera una <Enquote>huella digital</Enquote> de archivos: calcula su
-                hash SHA256, tamaño y fecha de modificación. El diseño permite procesar lotes de
-                archivos por pipeline, reportando errores <B>por elemento</B> sin detener toda la
-                operación. La clave está en usar <PowerShellInline
+                Este cmdlet genera una <Enquote>huella digital</Enquote> de archivos: calcula su hash SHA256, tamaño y
+                fecha de modificación. El diseño permite procesar lotes de archivos por pipeline, reportando errores <B
+                >por elemento</B> sin detener toda la operación. La clave está en usar <PowerShellInline
                     code="-ErrorAction SilentlyContinue"
-                /> para operaciones internas y <PowerShellInline>Write-Error</PowerShellInline> para
-                delegar la política de fallo a quien consume la función.
+                /> para operaciones internas y <PowerShellInline>Write-Error</PowerShellInline> para delegar la política
+                de fallo a quien consume la función.
             </P>
 
             <List>
                 <ListItem icon={icons.Pipe}>
-                    <B>Pipeline flexible por valor y propiedad.</B> <PowerShellInline
-                    >$Path</PowerShellInline> combina <PowerShellInline
-                    >ValueFromPipeline</PowerShellInline> (acepta strings directos) y
-                    <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> (enlaza con
-                    propiedades <Mono>Path</Mono>, <Mono>FullName</Mono> o <Mono>LiteralPath</Mono>
+                    <B>Pipeline flexible por valor y propiedad.</B> <PowerShellInline>$Path</PowerShellInline> combina
+                    <PowerShellInline>ValueFromPipeline</PowerShellInline> (acepta strings directos) y
+                    <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> (enlaza con propiedades <Mono
+                    >Path</Mono>, <Mono>FullName</Mono> o <Mono>LiteralPath</Mono>
                     de objetos). Esto permite tanto <PowerShellInline>'archivo.txt' |
-                        Get-FileFingerprint</PowerShellInline> como <PowerShellInline>Get-ChildItem
-                        | Get-FileFingerprint</PowerShellInline>.
+                        Get-FileFingerprint</PowerShellInline> como <PowerShellInline>Get-ChildItem |
+                        Get-FileFingerprint</PowerShellInline>.
                 </ListItem>
 
                 <ListItem icon={icons.ShieldCheck}>
-                    <B>Supresión interna con <PowerShellInline>-ErrorAction
-                            Ignore</PowerShellInline>.</B> Las llamadas a <PowerShellInline
-                    >Get-Item</PowerShellInline> y <PowerShellInline>Get-FileHash</PowerShellInline>
-                    usan <Mono>Ignore</Mono> para evitar que sus errores lleguen al stream.
-                    Verificamos el resultado (<PowerShellInline code="$null -eq $item" />) y
-                    emitimos <I>nuestro</I> error con <PowerShellInline
-                    >Write-Error</PowerShellInline>: mensaje claro, categoría semántica y ErrorId
-                    estructurado.
+                    <B>Supresión interna con <PowerShellInline>-ErrorAction Ignore</PowerShellInline>.</B> Las llamadas
+                    a <PowerShellInline>Get-Item</PowerShellInline> y <PowerShellInline>Get-FileHash</PowerShellInline>
+                    usan <Mono>Ignore</Mono> para evitar que sus errores lleguen al stream. Verificamos el resultado
+                    (<PowerShellInline code="$null -eq $item" />) y emitimos <I>nuestro</I> error con <PowerShellInline
+                    >Write-Error</PowerShellInline>: mensaje claro, categoría semántica y ErrorId estructurado.
                 </ListItem>
 
                 <ListItem icon={icons.Tag}>
                     <B>Parámetros de <PowerShellInline>Write-Error</PowerShellInline>:</B>
                     <List>
                         <ListItem icon={icons.ChatText}>
-                            <PowerShellInline>-Message</PowerShellInline> — texto descriptivo del
-                            error (orientado a humanos).
+                            <PowerShellInline>-Message</PowerShellInline> — texto descriptivo del error (orientado a
+                            humanos).
                         </ListItem>
                         <ListItem icon={icons.FolderOpen}>
-                            <PowerShellInline>-Category</PowerShellInline> — clasificación semántica
-                            (debe ser un valor de la enumeración <PowerShellInline
-                            >[System.Management.Automation.ErrorCategory]</PowerShellInline><FootnoteRef
-                                index={1}
-                            />). Ayuda a scripts que filtran errores por tipo.
+                            <PowerShellInline>-Category</PowerShellInline> — clasificación semántica (debe ser un valor
+                            de la enumeración <PowerShellInline
+                            >[System.Management.Automation.ErrorCategory]</PowerShellInline><FootnoteRef index={1} />).
+                            Ayuda a scripts que filtran errores por tipo.
                         </ListItem>
                         <ListItem icon={icons.Target}>
-                            <PowerShellInline>-TargetObject</PowerShellInline> — el objeto que causó
-                            el error (aquí: la ruta). Útil para logs estructurados.
+                            <PowerShellInline>-TargetObject</PowerShellInline> — el objeto que causó el error (aquí: la
+                            ruta). Útil para logs estructurados.
                         </ListItem>
                         <ListItem icon={icons.Hash}>
-                            <PowerShellInline>-ErrorId</PowerShellInline> — identificador único con
-                            formato <Mono>FunctionName.ErrorReason</Mono>. Permite automatización
-                            que distingue errores específicos (ej: reintentar solo
+                            <PowerShellInline>-ErrorId</PowerShellInline> — identificador único con formato <Mono
+                            >FunctionName.ErrorReason</Mono>. Permite automatización que distingue errores específicos
+                            (ej: reintentar solo
                             <Mono>ItemNotFound</Mono>, no <Mono>HashFailed</Mono>).
                         </ListItem>
                     </List>
                 </ListItem>
 
                 <ListItem icon={icons.Folder}>
-                    <B><PowerShellInline>$item.PSIsContainer</PowerShellInline></B> — propiedad
-                    booleana que diferencia archivos de directorios. Rechazamos directorios porque
-                    no tienen hash de <I>contenido</I> en el sentido de archivo único.
+                    <B><PowerShellInline>$item.PSIsContainer</PowerShellInline></B> — propiedad booleana que diferencia
+                    archivos de directorios. Rechazamos directorios porque no tienen hash de <I>contenido</I> en el
+                    sentido de archivo único.
                 </ListItem>
 
                 <ListItem icon={icons.Clock}>
-                    <B><PowerShellInline>$item.LastWriteTimeUtc</PowerShellInline></B> — timestamp
-                    UTC de última modificación. Incluirlo en la salida permite detectar cambios sin
-                    recalcular hash (más rápido para auditorías incrementales).
+                    <B><PowerShellInline>$item.LastWriteTimeUtc</PowerShellInline></B> — timestamp UTC de última
+                    modificación. Incluirlo en la salida permite detectar cambios sin recalcular hash (más rápido para
+                    auditorías incrementales).
                 </ListItem>
             </List>
         </Explanation>
 
         <More headingLevel="h3">
-            <span slot="title">Valores posibles para <PowerShellInline
-                >-ErrorAction</PowerShellInline></span>
+            <span slot="title">Valores posibles para <PowerShellInline>-ErrorAction</PowerShellInline></span>
 
             <Table>
                 <TableHeader>
@@ -277,8 +262,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                             <PowerShellInline>Continue</PowerShellInline>
                         </TableCell>
                         <TableCell wrap="normal">
-                            <B>Por defecto.</B> El error se registra en el stream de error, pero el
-                            pipeline continúa procesando elementos posteriores.
+                            <B>Por defecto.</B> El error se registra en el stream de error, pero el pipeline continúa
+                            procesando elementos posteriores.
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -286,8 +271,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                             <PowerShellInline>Stop</PowerShellInline>
                         </TableCell>
                         <TableCell wrap="normal">
-                            El error se convierte en terminante. El elemento actual falla y se
-                            detiene el procesamiento de elementos posteriores; el bloque
+                            El error se convierte en terminante. El elemento actual falla y se detiene el procesamiento
+                            de elementos posteriores; el bloque
                             <PowerShellInline>process</PowerShellInline> se interrumpe.
                         </TableCell>
                     </TableRow>
@@ -296,9 +281,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                             <PowerShellInline>SilentlyContinue</PowerShellInline>
                         </TableCell>
                         <TableCell wrap="normal">
-                            El error se suprime: no se registra en el stream de error, el pipeline
-                            continúa silenciosamente. Peligroso porque es fácil pasar por alto
-                            problemas.
+                            El error se suprime: no se registra en el stream de error, el pipeline continúa
+                            silenciosamente. Peligroso porque es fácil pasar por alto problemas.
                         </TableCell>
                     </TableRow>
                     <TableRow>
@@ -307,8 +291,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                         </TableCell>
                         <TableCell wrap="normal">
                             PowerShell pausa y pregunta al usuario: <Enquote>¿Continuar?</Enquote>
-                            (muestra opciones: sí/sí a todo/detener/suspender). Rara vez se usa en
-                            scripts, más común en modo interactivo.
+                            (muestra opciones: sí/sí a todo/detener/suspender). Rara vez se usa en scripts, más común en
+                            modo interactivo.
                         </TableCell>
                     </TableRow>
                 </TableBody>
@@ -364,21 +348,19 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 `}
             >
                 <span slot="footer"
-                >En el primer caso, el error afecta únicamente al elemento actual y el flujo
-                    continúa. En el segundo caso, el error se convierte en terminante y detiene el
-                    bloque process: los elementos que aún no han sido evaluados nunca llegan a
-                    procesarse.</span>
+                >En el primer caso, el error afecta únicamente al elemento actual y el flujo continúa. En el segundo
+                    caso, el error se convierte en terminante y detiene el bloque process: los elementos que aún no han
+                    sido evaluados nunca llegan a procesarse.</span>
             </OutputBlock>
 
             <Tip headingLevel="h3">
                 <span slot="title">Conexión con la pregunta guía</span>
 
                 <P>
-                    Con <PowerShellInline>-ErrorAction</PowerShellInline>, quien consume tu función
-                    decide si <Enquote>un elemento inválido invalida el resto</Enquote> (modo
-                    estricto) o si cada elemento se trata como independiente (modo tolerante). Tu
-                    función expone ambos comportamientos sin duplicar lógica ni forzar una única
-                    política.
+                    Con <PowerShellInline>-ErrorAction</PowerShellInline>, quien consume tu función decide si <Enquote
+                    >un elemento inválido invalida el resto</Enquote> (modo estricto) o si cada elemento se trata como
+                    independiente (modo tolerante). Tu función expone ambos comportamientos sin duplicar lógica ni
+                    forzar una única política.
                 </P>
             </Tip>
         </NotesSection>
@@ -387,22 +369,20 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             <span slot="title"><PowerShellInline>$ErrorActionPreference</PowerShellInline></span>
 
             <P>
-                <PowerShellInline>$ErrorActionPreference</PowerShellInline> define la política de
-                error <B>global</B> para la sesión. Afecta a cmdlets que emiten errores no
-                terminantes y puede usarse para evitar repetir <PowerShellInline
-                >-ErrorAction</PowerShellInline> en cada llamada.
+                <PowerShellInline>$ErrorActionPreference</PowerShellInline> define la política de error <B>global</B>
+                para la sesión. Afecta a cmdlets que emiten errores no terminantes y puede usarse para evitar repetir
+                <PowerShellInline>-ErrorAction</PowerShellInline> en cada llamada.
             </P>
 
             <List>
                 <ListItem icon={icons.SlidersHorizontal}>
-                    <B>Prefiere <PowerShellInline>-ErrorAction</PowerShellInline></B> para
-                    decisiones locales y funciones reutilizables (no sorprende a quien consume tu
-                    código).
+                    <B>Prefiere <PowerShellInline>-ErrorAction</PowerShellInline></B> para decisiones locales y
+                    funciones reutilizables (no sorprende a quien consume tu código).
                 </ListItem>
 
                 <ListItem icon={icons.Gear}>
-                    <B>Usa <PowerShellInline>$ErrorActionPreference</PowerShellInline></B> en
-                    scripts ejecutables cuando quieres una política consistente (p. ej., fail-fast).
+                    <B>Usa <PowerShellInline>$ErrorActionPreference</PowerShellInline></B> en scripts ejecutables cuando
+                    quieres una política consistente (p. ej., fail-fast).
                 </ListItem>
             </List>
 
@@ -425,21 +405,20 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
     <NotesSection id="h2-errorvariable">
         <Heading headingLevel="h2" Icon={icons.ListMagnifyingGlass}>
-            Auditar fallos sin romper el pipeline con <PowerShellInline
-            >-ErrorVariable</PowerShellInline>
+            Auditar fallos sin romper el pipeline con <PowerShellInline>-ErrorVariable</PowerShellInline>
         </Heading>
 
         <P>
-            A diferencia de <PowerShellInline>-ErrorAction</PowerShellInline>, que decide si un
-            error debe detener el flujo, <PowerShellInline>-ErrorVariable</PowerShellInline> sirve
-            para <B>capturar errores no terminantes</B> en una variable. Esto te permite procesar
-            todos los elementos posibles y, al final, inspeccionar qué falló (y por qué).
+            A diferencia de <PowerShellInline>-ErrorAction</PowerShellInline>, que decide si un error debe detener el
+            flujo, <PowerShellInline>-ErrorVariable</PowerShellInline> sirve para <B>capturar errores no terminantes</B>
+            en una variable. Esto te permite procesar todos los elementos posibles y, al final, inspeccionar qué falló
+            (y por qué).
         </P>
 
         <P>
             Igual que <PowerShellInline>-ErrorAction</PowerShellInline>, <PowerShellInline
-            >-ErrorVariable</PowerShellInline> es un <B>parámetro común</B>: aparece automáticamente
-            cuando la función se declara con <PowerShellInline>[CmdletBinding()]</PowerShellInline>.
+            >-ErrorVariable</PowerShellInline> es un <B>parámetro común</B>: aparece automáticamente cuando la función
+            se declara con <PowerShellInline>[CmdletBinding()]</PowerShellInline>.
         </P>
 
         <Info headingLevel="h3">
@@ -451,19 +430,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <List>
                 <ListItem icon={icons.Equals}>
-                    <B>Asignación simple</B> — Si usas <PowerShellInline
-                        code="-ErrorVariable variable"
-                    />, PowerShell asigna en la variable los errores de <B>esa invocación</B> del
-                    comando. Si el comando emite varios errores en una sola ejecución, la variable
-                    puede contener varios <PowerShellInline>[ErrorRecord]</PowerShellInline>. Si no
-                    limpias la variable antes de invocar de nuevo, podrías leer estado anterior.
+                    <B>Asignación simple</B> — Si usas <PowerShellInline code="-ErrorVariable variable" />, PowerShell
+                    asigna en la variable los errores de <B>esa invocación</B> del comando. Si el comando emite varios
+                    errores en una sola ejecución, la variable puede contener varios <PowerShellInline
+                    >[ErrorRecord]</PowerShellInline>. Si no limpias la variable antes de invocar de nuevo, podrías leer
+                    estado anterior.
                 </ListItem>
 
                 <ListItem icon={icons.Plus}>
-                    <B>Asignación acumulativa</B> — Si usas <PowerShellInline
-                        code="-ErrorVariable +variable"
-                    />, PowerShell acumula errores en la misma variable, agregando cada nuevo error
-                    al final de la colección.
+                    <B>Asignación acumulativa</B> — Si usas <PowerShellInline code="-ErrorVariable +variable" />,
+                    PowerShell acumula errores en la misma variable, agregando cada nuevo error al final de la
+                    colección.
                 </ListItem>
             </List>
         </Info>
@@ -490,40 +467,33 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <Explanation headingLevel="h3">
             <P>
-                En este ejemplo, el pipeline sigue procesando todos los elementos y los errores se
-                guardan en <PowerShellInline>$errs</PowerShellInline>. Esto permite separar dos
-                preocupaciones:
-                <B>producir resultados útiles</B> (los archivos válidos) y <B>auditar fallos</B> al
-                final.
+                En este ejemplo, el pipeline sigue procesando todos los elementos y los errores se guardan en
+                <PowerShellInline>$errs</PowerShellInline>. Esto permite separar dos preocupaciones:
+                <B>producir resultados útiles</B> (los archivos válidos) y <B>auditar fallos</B> al final.
             </P>
 
             <List>
                 <ListItem icon={icons.EyeSlash}>
                     <B><PowerShellInline code="-ErrorAction SilentlyContinue" /></B>
-                    suprime la impresión de errores en pantalla, pero <B>no elimina</B> el error:
-                    igual puede ser capturado con <PowerShellInline
-                    >-ErrorVariable</PowerShellInline>.
+                    suprime la impresión de errores en pantalla, pero <B>no elimina</B> el error: igual puede ser
+                    capturado con <PowerShellInline>-ErrorVariable</PowerShellInline>.
                 </ListItem>
 
                 <ListItem icon={icons.Plus}>
-                    <B><PowerShellInline code="-ErrorVariable +errs" /></B> usa el modo acumulativo:
-                    PowerShell agrega cada error como un <PowerShellInline
-                    >[ErrorRecord]</PowerShellInline> al arreglo <PowerShellInline
+                    <B><PowerShellInline code="-ErrorVariable +errs" /></B> usa el modo acumulativo: PowerShell agrega
+                    cada error como un <PowerShellInline>[ErrorRecord]</PowerShellInline> al arreglo <PowerShellInline
                     >$errs</PowerShellInline>.
                 </ListItem>
 
                 <ListItem icon={icons.Target}>
-                    <B><PowerShellInline>$_.TargetObject</PowerShellInline></B> suele contener el
-                    objeto que causó el error (lo que hicimos con <PowerShellInline
-                        code="TargetObject = $Path"
-                    /> en <Mono>Get-FileFingerprint.ps1</Mono>). Es útil para enlazar el mensaje a
-                    la entrada que falló.
+                    <B><PowerShellInline>$_.TargetObject</PowerShellInline></B> suele contener el objeto que causó el
+                    error (lo que hicimos con <PowerShellInline code="TargetObject = $Path" /> en <Mono
+                    >Get-FileFingerprint.ps1</Mono>). Es útil para enlazar el mensaje a la entrada que falló.
                 </ListItem>
 
                 <ListItem icon={icons.Bug}>
-                    <B><PowerShellInline>$_.Exception.Message</PowerShellInline></B> entrega una
-                    descripción humana del problema (p. ej., ruta inexistente), útil para logs o
-                    resumen final.
+                    <B><PowerShellInline>$_.Exception.Message</PowerShellInline></B> entrega una descripción humana del
+                    problema (p. ej., ruta inexistente), útil para logs o resumen final.
                 </ListItem>
             </List>
         </Explanation>
@@ -532,12 +502,10 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             <span slot="title">Evita mezclar políticas contradictorias</span>
 
             <P>
-                Si ejecutas con <PowerShellInline code="-ErrorAction Stop" />, el pipeline cortará
-                temprano y <PowerShellInline code="-ErrorVariable errs" /> no tendrá una vista
-                completa de los errores. Si tu objetivo es auditoría, suele ser mejor
-                <PowerShellInline code="-ErrorAction Continue" /> + <PowerShellInline
-                    code="-ErrorVariable +errs"
-                />.
+                Si ejecutas con <PowerShellInline code="-ErrorAction Stop" />, el pipeline cortará temprano y
+                <PowerShellInline code="-ErrorVariable errs" /> no tendrá una vista completa de los errores. Si tu
+                objetivo es auditoría, suele ser mejor
+                <PowerShellInline code="-ErrorAction Continue" /> + <PowerShellInline code="-ErrorVariable +errs" />.
             </P>
         </Warning>
 
@@ -546,9 +514,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <P>
                 <PowerShellInline code="-ErrorVariable errs" /> encaja cuando la respuesta es:
-                <Enquote>no, un elemento inválido no debe invalidar el resto</Enquote>, pero aun así
-                necesitas <B>medir</B> y <B>reportar</B> los fallos para decidir si la ejecución fue
-                aceptable.
+                <Enquote>no, un elemento inválido no debe invalidar el resto</Enquote>, pero aun así necesitas <B
+                >medir</B> y <B>reportar</B> los fallos para decidir si la ejecución fue aceptable.
             </P>
         </Tip>
     </NotesSection>
@@ -568,8 +535,7 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                     <B>Contexto.</B> Vas a procesar <B>lotes</B> de rutas. Te importa saber:
                     <List>
                         <ListItem icon={icons.XCircle}>
-                            si <B>un lote</B> falló (da lo mismo cuántos elementos fallaron dentro),
-                            y
+                            si <B>un lote</B> falló (da lo mismo cuántos elementos fallaron dentro), y
                         </ListItem>
                         <ListItem icon={icons.ListMagnifyingGlass}>
                             cuántos <B>lotes</B> fallaron en total en un pipeline mayor.
@@ -578,38 +544,33 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 </ListItem>
 
                 <ListItem icon={icons.NumberCircleTwo}>
-                    <B>Parte 1 — Script por lote.</B> Implementa <Mono
-                    >pipeline/Invoke-BatchFingerprint.ps1</Mono>.
+                    <B>Parte 1 — Script por lote.</B> Implementa <Mono>pipeline/Invoke-BatchFingerprint.ps1</Mono>.
                     <List>
                         <ListItem icon={icons.Pipe}>
                             Recibe dos parámetros: <PowerShellInline code="[string] $BatchId" /> y
                             <PowerShellInline code="[string[]] $Paths" /> (ambos requeridos).
-                            <B>No</B> procesa elementos uno a uno por pipeline: cada batch se
-                            procesa completo en una invocación.
+                            <B>No</B> procesa elementos uno a uno por pipeline: cada batch se procesa completo en una
+                            invocación.
                         </ListItem>
 
                         <ListItem icon={icons.Equals}>
                             Invoca <Mono>./pipeline/Get-FileFingerprint.ps1</Mono> sobre
-                            <PowerShellInline code="$Paths" />. Ten en cuenta que una invocación
-                            podría generar múltiples errores.
+                            <PowerShellInline code="$Paths" />. Ten en cuenta que una invocación podría generar
+                            múltiples errores.
                         </ListItem>
 
                         <ListItem icon={icons.Table}>
                             Emite un objeto resumen con: <PowerShellInline code="BatchId" />,
-                            <PowerShellInline code="Total" />, <PowerShellInline
-                                code="Succeeded"
-                            />, <PowerShellInline code="Failed" /> y <PowerShellInline
-                                code="BatchFailed"
-                            /> (bool).
+                            <PowerShellInline code="Total" />, <PowerShellInline code="Succeeded" />, <PowerShellInline
+                                code="Failed"
+                            /> y <PowerShellInline code="BatchFailed" /> (bool).
                         </ListItem>
 
                         <ListItem icon={icons.WarningCircle}>
-                            Si ocurrieron errores, emite un error (uno por batch) indicando que el
-                            batch falló. Usa <PowerShellInline
-                                code="InvokeBatchFingerprint.BatchFailed"
-                            /> como <PowerShellInline code="ErrorId" /> y el <PowerShellInline
-                                code="$BatchId"
-                            /> como <PowerShellInline code="TargetObject" />.
+                            Si ocurrieron errores, emite un error (uno por batch) indicando que el batch falló. Usa
+                            <PowerShellInline code="InvokeBatchFingerprint.BatchFailed" /> como <PowerShellInline
+                                code="ErrorId"
+                            /> y el <PowerShellInline code="$BatchId" /> como <PowerShellInline code="TargetObject" />.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -619,19 +580,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                     <List>
                         <ListItem icon={icons.ListBullets}>
                             Construya al menos <B>3 batches</B> con IDs (p. ej. <Mono>B1</Mono>,
-                            <Mono>B2</Mono>, <Mono>B3</Mono>) donde algunos contengan rutas
-                            inválidas a propósito.
+                            <Mono>B2</Mono>, <Mono>B3</Mono>) donde algunos contengan rutas inválidas a propósito.
                         </ListItem>
 
                         <ListItem icon={icons.Plus}>
-                            Use <PowerShellInline code="-ErrorVariable +batchErrs" /> (modo
-                            acumulativo) al invocar el script por cada batch, para acumular errores
+                            Use <PowerShellInline code="-ErrorVariable +batchErrs" /> (modo acumulativo) al invocar el
+                            script por cada batch, para acumular errores
                             <B>por batch fallido</B>.
                         </ListItem>
 
                         <ListItem icon={icons.ArrowCounterClockwise}>
-                            Al final imprima los <PowerShellInline code="TargetObject" /> (IDs) de
-                            cada batch que falló.
+                            Al final imprima los <PowerShellInline code="TargetObject" /> (IDs) de cada batch que falló.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -660,16 +619,13 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         <Fragment slot="hints">
             <List>
                 <ListItem icon={icons.Equals}>
-                    Dentro del script, limpia <PowerShellInline>$batchErr</PowerShellInline> antes
-                    de cada invocación y evalúa <PowerShellInline
-                        code="@($batchErr).Count -gt 0"
-                    />.
+                    Dentro del script, limpia <PowerShellInline>$batchErr</PowerShellInline> antes de cada invocación y
+                    evalúa <PowerShellInline code="@($batchErr).Count -gt 0" />.
                 </ListItem>
                 <ListItem icon={icons.Funnel}>
-                    En la Parte 2, usa <PowerShellInline>Where-Object</PowerShellInline> para
-                    quedarte solo con errores de batch. Toma el prefijo con
-                    <PowerShellInline code="($_.FullyQualifiedErrorId -split ',')[0]" /> y compáralo
-                    contra
+                    En la Parte 2, usa <PowerShellInline>Where-Object</PowerShellInline> para quedarte solo con errores
+                    de batch. Toma el prefijo con
+                    <PowerShellInline code="($_.FullyQualifiedErrorId -split ',')[0]" /> y compáralo contra
                     <PowerShellInline code="'InvokeBatchFingerprint.BatchFailed'" />. Ejemplo:
                     <PowerShellInline
                         code="$allErrs | Where-Object { ($_.FullyQualifiedErrorId -split ',')[0] -eq 'InvokeBatchFingerprint.BatchFailed' }"
@@ -770,19 +726,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                El modelo de errores de PowerShell está diseñado para trabajar con flujos, no con
-                resultados únicos. Por eso distingue entre fallos que afectan a un elemento y fallos
-                que deben detener todo el proceso. Elegir entre continuar o detener no es una
-                decisión técnica aislada: depende del objetivo de la automatización y del contrato
-                que tu herramienta ofrece a quien la consume.
+                El modelo de errores de PowerShell está diseñado para trabajar con flujos, no con resultados únicos. Por
+                eso distingue entre fallos que afectan a un elemento y fallos que deben detener todo el proceso. Elegir
+                entre continuar o detener no es una decisión técnica aislada: depende del objetivo de la automatización
+                y del contrato que tu herramienta ofrece a quien la consume.
             </P>
 
             <P>
-                <PowerShellInline>-ErrorAction</PowerShellInline> permite delegar la política de
-                fallo, mientras que <PowerShellInline>-ErrorVariable</PowerShellInline> habilita
-                auditorías posteriores sin perder progreso. Juntas, estas herramientas permiten
-                construir pipelines expresivos, controlados y semánticamente claros, tanto a nivel
-                de elemento como de lote.
+                <PowerShellInline>-ErrorAction</PowerShellInline> permite delegar la política de fallo, mientras que
+                <PowerShellInline>-ErrorVariable</PowerShellInline> habilita auditorías posteriores sin perder progreso.
+                Juntas, estas herramientas permiten construir pipelines expresivos, controlados y semánticamente claros,
+                tanto a nivel de elemento como de lote.
             </P>
         </Fragment>
 
@@ -792,26 +746,24 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             </ListItem>
 
             <ListItem icon={icons.SlidersHorizontal}>
-                <PowerShellInline>-ErrorAction</PowerShellInline> delega la política de fallo a
-                quien consume la función.
+                <PowerShellInline>-ErrorAction</PowerShellInline> delega la política de fallo a quien consume la
+                función.
             </ListItem>
 
             <ListItem icon={icons.ListMagnifyingGlass}>
-                <PowerShellInline>-ErrorVariable</PowerShellInline> permite capturar y analizar
-                errores sin interrumpir el flujo.
+                <PowerShellInline>-ErrorVariable</PowerShellInline> permite capturar y analizar errores sin interrumpir
+                el flujo.
             </ListItem>
 
             <ListItem icon={icons.PuzzlePiece}>
-                Separar el procesamiento de datos de la política de error mejora la reutilización y
-                claridad.
+                Separar el procesamiento de datos de la política de error mejora la reutilización y claridad.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            Diseñar pipelines robustos implica decidir conscientemente cuándo fallar y cuándo
-            continuar. No existe una única política correcta: lo importante es que la decisión sea
-            explícita, coherente con el objetivo del script y visible para quien lo reutilice en
-            otros contextos.
+            Diseñar pipelines robustos implica decidir conscientemente cuándo fallar y cuándo continuar. No existe una
+            única política correcta: lo importante es que la decisión sea explícita, coherente con el objetivo del
+            script y visible para quien lo reutilice en otros contextos.
         </Fragment>
     </ConclusionsLayout>
 
@@ -825,17 +777,16 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <AuthorList slot="authors" authors={[{ firstName: "Dave", lastName: "Wyatt" }]} />
 
                 <Fragment slot="description">
-                    Este capítulo repasa las herramientas principales de PowerShell para controlar y
-                    registrar errores: variables automáticas como <PowerShellInline
-                    >$Error</PowerShellInline>, parámetros comunes como <PowerShellInline
-                    >-ErrorAction</PowerShellInline> y <PowerShellInline
-                    >-ErrorVariable</PowerShellInline>, y estructuras para manejar errores
-                    terminantes (<PowerShellInline>try</PowerShellInline>/<PowerShellInline
+                    Este capítulo repasa las herramientas principales de PowerShell para controlar y registrar errores:
+                    variables automáticas como <PowerShellInline>$Error</PowerShellInline>, parámetros comunes como
+                    <PowerShellInline>-ErrorAction</PowerShellInline> y <PowerShellInline
+                    >-ErrorVariable</PowerShellInline>, y estructuras para manejar errores terminantes
+                    (<PowerShellInline>try</PowerShellInline>/<PowerShellInline
                     >catch</PowerShellInline>/<PowerShellInline>finally</PowerShellInline>,
-                    <PowerShellInline>trap</PowerShellInline>). También explica cómo interpretar
-                    códigos de salida y el estado del último comando (<PowerShellInline
-                    >$LASTEXITCODE</PowerShellInline>, <PowerShellInline>$?</PowerShellInline>), con
-                    consejos sobre cuándo usar cada mecanismo y qué limitaciones considerar.
+                    <PowerShellInline>trap</PowerShellInline>). También explica cómo interpretar códigos de salida y el
+                    estado del último comando (<PowerShellInline>$LASTEXITCODE</PowerShellInline>, <PowerShellInline
+                    >$?</PowerShellInline>), con consejos sobre cuándo usar cada mecanismo y qué limitaciones
+                    considerar.
                 </Fragment>
             </Book>
         </Fragment>

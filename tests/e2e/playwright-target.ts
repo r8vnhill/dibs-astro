@@ -1,11 +1,13 @@
 export type PlaywrightTarget = Readonly<{
     baseURL: string;
-    webServer: Readonly<{
-        command: string;
-        url: string;
-        reuseExistingServer: boolean;
-        timeout: number;
-    }> | undefined;
+    webServer:
+        | Readonly<{
+            command: string;
+            url: string;
+            reuseExistingServer: boolean;
+            timeout: number;
+        }>
+        | undefined;
 }>;
 
 const localTarget = {

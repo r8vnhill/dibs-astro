@@ -47,12 +47,9 @@ const resolvedAriaLabel = ariaLabel ?? `Fuente (${isExplicitRef ? resolvedRef : 
 ---
 
 <a
-    href={sourceUrl.href}
-    class:list={["dibs-source-link"]}
-    target="_blank"
-    rel="noopener noreferrer"
-    data-has-ref={isExplicitRef ? "true" : "false"}
-    aria-label={resolvedAriaLabel}
+    href={sourceUrl.href} class:list={["dibs-source-link"]}
+    target="_blank" rel="noopener noreferrer"
+    data-has-ref={isExplicitRef ? "true" : "false"} aria-label={resolvedAriaLabel}
 >
     <slot>{title ?? `${repo}/${file}`}</slot>
     {isExplicitRef && <small class="ref-hint" aria-hidden="true">{shortRef}</small>}
@@ -78,14 +75,7 @@ const resolvedAriaLabel = ariaLabel ?? `Fuente (${isExplicitRef ? resolvedRef : 
 
     /* Mini hint monoespaciado, con colores derivados del primary */
     .ref-hint {
-        font:
-            0.75em ui-monospace,
-            SFMono-Regular,
-            Menlo,
-            Monaco,
-            Consolas,
-            "Liberation Mono",
-            monospace;
+        font: 0.75em ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
         line-height: 1;
         padding: 0.1rem 0.3rem;
         border-radius: 0.25rem;

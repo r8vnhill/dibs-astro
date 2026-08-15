@@ -110,8 +110,7 @@ export const normalizePath = (value) => path.posix.normalize(String(value).repla
  * @returns {string | undefined}
  *   The path without `.astro`, or `undefined` when the suffix is not present.
  */
-const stripAstroExt = (value) =>
-    value.endsWith(".astro") ? value.slice(0, -".astro".length) : undefined;
+const stripAstroExt = (value) => value.endsWith(".astro") ? value.slice(0, -".astro".length) : undefined;
 
 /**
  * Collapses “index routes” according to Astro conventions.

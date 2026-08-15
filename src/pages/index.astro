@@ -63,7 +63,8 @@ const architectureLayers = [
     {
         icon: "Browsers",
         name: "Presentación",
-        role: "Adapta datos ya resueltos para la interfaz; consume aplicación e infraestructura sin exponer sus detalles.",
+        role:
+            "Adapta datos ya resueltos para la interfaz; consume aplicación e infraestructura sin exponer sus detalles.",
         core: false,
     },
     {
@@ -116,13 +117,11 @@ const techStack = [
 
 const sectionContainer = "mx-auto max-w-7xl px-6 sm:px-10 lg:px-12";
 const sectionKicker = "text-sm font-semibold uppercase tracking-[0.14em] text-primary";
-const sectionTitle =
-    "mt-3 text-3xl font-semibold tracking-tight text-balance text-base-text sm:text-4xl";
+const sectionTitle = "mt-3 text-3xl font-semibold tracking-tight text-balance text-base-text sm:text-4xl";
 const surfaceCard = "rounded-2xl border border-base-border bg-base-background shadow-sm";
 const focusRing =
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-base-background";
-const interactiveHover =
-    "transition hover:border-primary/30 hover:bg-primary/4 hover:[&_h3]:text-primary";
+const interactiveHover = "transition hover:border-primary/30 hover:bg-primary/4 hover:[&_h3]:text-primary";
 const interactiveCard =
     `group rounded-2xl border border-base-border bg-base-background shadow-sm ${interactiveHover} ${focusRing}`;
 const unavailableChip =
@@ -147,9 +146,8 @@ const unavailableChip =
                     </h1>
 
                     <p class="mt-6 max-w-2xl text-lg leading-8 text-base-subtle sm:text-xl">
-                        Aprende a diseñar bibliotecas de software robustas, reutilizables,
-                        verificables y capaces de evolucionar sin romper a quienes dependen de
-                        ellas.
+                        Aprende a diseñar bibliotecas de software robustas, reutilizables, verificables y capaces de
+                        evolucionar sin romper a quienes dependen de ellas.
                     </p>
 
                     <div class="mt-8 flex flex-wrap items-center gap-4">
@@ -178,8 +176,8 @@ const unavailableChip =
                     </div>
                     <p class="mt-3 text-2xl font-semibold text-base-text">Apuntes técnicos</p>
                     <p class="mt-2 text-sm leading-6 text-base-subtle">
-                        El material más desarrollado del curso: notas, ejemplos y progresión por
-                        unidades, listos para estudiar de forma autónoma.
+                        El material más desarrollado del curso: notas, ejemplos y progresión por unidades, listos para
+                        estudiar de forma autónoma.
                     </p>
                 </article>
             </div>
@@ -193,10 +191,9 @@ const unavailableChip =
                 Un curso online de nivel universitario para el estudio autónomo
             </h2>
             <p class="mt-4 leading-7 text-base-subtle">
-                DIBS es un curso a tu propio ritmo, con la profundidad de un curso de nivel
-                universitario, sin implicar matrícula ni una institución formal detrás. Los apuntes combinan
-                explicaciones conceptuales con ejemplos prácticos pensados para volver sobre ellos
-                más de una vez.
+                DIBS es un curso a tu propio ritmo, con la profundidad de un curso de nivel universitario, sin implicar
+                matrícula ni una institución formal detrás. Los apuntes combinan explicaciones conceptuales con ejemplos
+                prácticos pensados para volver sobre ellos más de una vez.
             </p>
         </div>
 
@@ -214,16 +211,16 @@ const unavailableChip =
                 learningPillars.map((pillar) => {
                     const Icon = icons[pillar.icon];
                     return (
-                        <li class="list-none">
-                            <article class:list={[surfaceCard, "p-6"]}>
-                                <Icon class="size-6 text-primary" aria-hidden="true" />
-                                <h3 class="mt-4 text-lg font-semibold text-base-text">
-                                    {pillar.title}
-                                </h3>
-                                <p class="mt-3 leading-7 text-base-subtle">{pillar.body}</p>
-                            </article>
-                        </li>
-                    );
+                    <li class="list-none">
+                        <article class:list={[surfaceCard, "p-6"]}>
+                            <Icon class="size-6 text-primary" aria-hidden="true" />
+                            <h3 class="mt-4 text-lg font-semibold text-base-text">
+                                {pillar.title}
+                            </h3>
+                            <p class="mt-3 leading-7 text-base-subtle">{pillar.body}</p>
+                        </article>
+                    </li>
+                );
                 })
             }
         </ul>
@@ -237,11 +234,10 @@ const unavailableChip =
                     El sitio DIBS también es una implementación de referencia
                 </h2>
                 <p class="mt-4 leading-7 text-base-subtle">
-                    El sitio DIBS usa esta organización en capas como arquitectura de referencia
-                    para las ideas del curso, no como una regla universal que toda biblioteca deba
-                    seguir. La Presentación depende de la Aplicación, que depende del Dominio; la
-                    Infraestructura, en cambio, implementa los contratos que el Dominio y la
-                    Aplicación declaran, sin que el Dominio dependa de ella.
+                    El sitio DIBS usa esta organización en capas como arquitectura de referencia para las ideas del
+                    curso, no como una regla universal que toda biblioteca deba seguir. La Presentación depende de la
+                    Aplicación, que depende del Dominio; la Infraestructura, en cambio, implementa los contratos que el
+                    Dominio y la Aplicación declaran, sin que el Dominio dependa de ella.
                 </p>
             </div>
 
@@ -250,38 +246,40 @@ const unavailableChip =
                     architectureLayers.map((layer) => {
                         const Icon = icons[layer.icon];
                         return (
-                            <li class="list-none">
-                                <article
-                                    class:list={[
-                                        "h-full rounded-2xl border p-6 shadow-sm",
-                                        layer.core
-                                            ? "border-primary/40 bg-base-background"
-                                            : "border-base-border bg-base-background/80",
-                                    ]}
-                                >
-                                    <div class="flex items-center justify-between gap-2">
-                                        <Icon
-                                            class:list={[
-                                                "size-6",
-                                                layer.core ? "text-primary" : "text-base-subtle",
-                                            ]}
-                                            aria-hidden="true"
-                                        />
-                                        {
-                                            layer.core && (
-                                                <span class="rounded-full bg-primary/12 px-2.5 py-1 text-xs font-medium text-primary">
-                                                    Núcleo conceptual
-                                                </span>
-                                            )
-                                        }
-                                    </div>
-                                    <h3 class="mt-4 text-lg font-semibold text-base-text">
-                                        {layer.name}
-                                    </h3>
-                                    <p class="mt-3 leading-7 text-base-subtle">{layer.role}</p>
-                                </article>
-                            </li>
-                        );
+                        <li class="list-none">
+                            <article
+                                class:list={[
+                                    "h-full rounded-2xl border p-6 shadow-sm",
+                                    layer.core
+                                        ? "border-primary/40 bg-base-background"
+                                        : "border-base-border bg-base-background/80",
+                                ]}
+                            >
+                                <div class="flex items-center justify-between gap-2">
+                                    <Icon
+                                        class:list={[
+                                            "size-6",
+                                            layer.core ? "text-primary" : "text-base-subtle",
+                                        ]}
+                                        aria-hidden="true"
+                                    />
+                                    {
+                                        layer.core && (
+                                            <span
+                                                class="rounded-full bg-primary/12 px-2.5 py-1 text-xs font-medium text-primary"
+                                            >
+                                                Núcleo conceptual
+                                            </span>
+                                        )
+                                    }
+                                </div>
+                                <h3 class="mt-4 text-lg font-semibold text-base-text">
+                                    {layer.name}
+                                </h3>
+                                <p class="mt-3 leading-7 text-base-subtle">{layer.role}</p>
+                            </article>
+                        </li>
+                    );
                     })
                 }
             </ul>
@@ -295,8 +293,7 @@ const unavailableChip =
                 Tecnologías detrás de la implementación de referencia
             </h2>
             <p class="mt-4 leading-7 text-base-subtle">
-                Las herramientas concretas que usa el sitio para construir esa arquitectura de
-                referencia.
+                Las herramientas concretas que usa el sitio para construir esa arquitectura de referencia.
             </p>
         </div>
 
@@ -305,14 +302,14 @@ const unavailableChip =
                 techStack.map((item) => {
                     const Icon = icons[item.icon];
                     return (
-                        <li class="list-none">
-                            <article class:list={[surfaceCard, "h-full p-5"]}>
-                                <Icon class="size-6 text-primary" aria-hidden="true" />
-                                <p class="mt-3 font-semibold text-base-text">{item.name}</p>
-                                <p class="mt-2 text-sm leading-6 text-base-subtle">{item.role}</p>
-                            </article>
-                        </li>
-                    );
+                    <li class="list-none">
+                        <article class:list={[surfaceCard, "h-full p-5"]}>
+                            <Icon class="size-6 text-primary" aria-hidden="true" />
+                            <p class="mt-3 font-semibold text-base-text">{item.name}</p>
+                            <p class="mt-2 text-sm leading-6 text-base-subtle">{item.role}</p>
+                        </article>
+                    </li>
+                );
                 })
             }
         </ul>
@@ -332,8 +329,7 @@ const unavailableChip =
                 >
                     <div class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                         <icons.ArrowCircleRight
-                            class="size-5 transition group-hover:translate-x-0.5"
-                            aria-hidden="true"
+                            class="size-5 transition group-hover:translate-x-0.5" aria-hidden="true"
                         />
                     </div>
                     <div>

@@ -3,13 +3,15 @@ import { shouldRevealActiveEntry } from "../lesson-toc-active-section";
 
 suite("given the previous and current active TOC section ids", () => {
     describe("when deciding whether to auto-reveal the active entry", () => {
-        test.each([
-            ["no previous section and none becomes active", null, null, false],
-            ["no previous section and one becomes active", null, "a", true],
-            ["the active section is unchanged", "a", "a", false],
-            ["the active section changes to another one", "a", "b", true],
-            ["the active section is cleared", "a", null, false],
-        ] satisfies ReadonlyArray<[string, string | null, string | null, boolean]>)(
+        test.each(
+            [
+                ["no previous section and none becomes active", null, null, false],
+                ["no previous section and one becomes active", null, "a", true],
+                ["the active section is unchanged", "a", "a", false],
+                ["the active section changes to another one", "a", "b", true],
+                ["the active section is cleared", "a", null, false],
+            ] satisfies ReadonlyArray<[string, string | null, string | null, boolean]>,
+        )(
             "then when %s, reveal is %s",
             (_label, previousActiveId, activeId, expected) => {
                 expect(shouldRevealActiveEntry(previousActiveId, activeId)).toBe(expected);

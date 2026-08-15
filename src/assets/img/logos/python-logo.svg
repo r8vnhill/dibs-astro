@@ -175,8 +175,7 @@
         <radialGradient
             inkscape:collect="always" xlink:href="#linearGradient2795"
             id="radialGradient1480" gradientUnits="userSpaceOnUse"
-            gradientTransform="matrix(1.7490565e-8,-0.23994696,1.054668,3.7915457e-7,-83.7008,142.46201)"
-            cx="61.518883"
+            gradientTransform="matrix(1.7490565e-8,-0.23994696,1.054668,3.7915457e-7,-83.7008,142.46201)" cx="61.518883"
             cy="132.28575" fx="61.518883"
             fy="132.28575" r="29.036913"
         />

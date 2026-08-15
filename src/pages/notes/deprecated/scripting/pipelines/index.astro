@@ -2,21 +2,8 @@
 import * as icons from "$icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Definition,
-    Exercise,
-    Explanation,
-    Important,
-    Info,
-    More,
-} from "~/components/ui/callouts";
-import {
-    CodeBlock,
-    OutputBlock,
-    PowerShellBlock,
-    PowerShellInline,
-    SqlInline,
-} from "~/components/ui/code";
+import { Definition, Exercise, Explanation, Important, Info, More } from "~/components/ui/callouts";
+import { CodeBlock, OutputBlock, PowerShellBlock, PowerShellInline, SqlInline } from "~/components/ui/code";
 import { Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -36,13 +23,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <P>
-            En PowerShell, el <B>pipeline</B> es un modelo de trabajo orientado a objetos: cada
-            cmdlet recibe datos estructurados, los procesa y entrega resultados al siguiente paso.
+            En PowerShell, el <B>pipeline</B> es un modelo de trabajo orientado a objetos: cada cmdlet recibe datos
+            estructurados, los procesa y entrega resultados al siguiente paso.
         </P>
         <P>
             En esta lección practicarás cómo componer pipelines <I>declarativos</I> para
-            <B>filtrar</B>, <B>proyectar</B> y <B>transformar</B> datos, manteniendo el foco en el
-            flujo de objetos desde la fuente hasta la salida.
+            <B>filtrar</B>, <B>proyectar</B> y <B>transformar</B> datos, manteniendo el foco en el flujo de objetos
+            desde la fuente hasta la salida.
         </P>
     </Fragment>
 
@@ -52,18 +39,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Antes de hablar del <B>pipeline</B>, observemos cómo procesamos colecciones en otros
-            paradigmas. En muchos lenguajes (funcionales, orientados a objetos o incluso SQL),
-            aplicamos una secuencia de transformaciones: <I>filtrar</I>, <I>transformar</I> y
+            Antes de hablar del <B>pipeline</B>, observemos cómo procesamos colecciones en otros paradigmas. En muchos
+            lenguajes (funcionales, orientados a objetos o incluso SQL), aplicamos una secuencia de transformaciones: <I
+            >filtrar</I>, <I>transformar</I> y
             <I>limitar</I>.
         </P>
 
         <Definition>
             <Fragment slot="title">Transformaciones encadenadas</Fragment>
             <P>
-                Una <B>transformación</B> recibe una entrada y produce una salida. Al encadenarlas,
-                describes <I>qué</I> quieres hacer con los datos (flujo), no <I>cómo</I> recorrerlos
-                (bucle).
+                Una <B>transformación</B> recibe una entrada y produce una salida. Al encadenarlas, describes <I>qué</I>
+                quieres hacer con los datos (flujo), no <I>cómo</I> recorrerlos (bucle).
             </P>
         </Definition>
 
@@ -102,8 +88,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     ) # <class 'list'>
                 `}
             >
-                <Fragment slot="title"
-                >Colecciones con funciones de orden superior (Python)</Fragment>
+                <Fragment slot="title">Colecciones con funciones de orden superior (Python)</Fragment>
             </CodeBlock>
 
             <CodeBlock
@@ -120,9 +105,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Info>
 
         <P>
-            Algunos lenguajes hacen estas transformaciones más explícitas y legibles que otros. En
-            este ejemplo, Python mantiene el mismo modelo mental, pero con una carga sintáctica
-            mayor.
+            Algunos lenguajes hacen estas transformaciones más explícitas y legibles que otros. En este ejemplo, Python
+            mantiene el mismo modelo mental, pero con una carga sintáctica mayor.
         </P>
 
         <P>
@@ -156,8 +140,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">¿Dónde entra PowerShell?</span>
 
             <P>
-                El <B>pipeline de PowerShell</B> expresa exactamente la misma idea, pero en lugar de
-                encadenar métodos o funciones, <B>conecta comandos que procesan objetos</B>.
+                El <B>pipeline de PowerShell</B> expresa exactamente la misma idea, pero en lugar de encadenar métodos o
+                funciones, <B>conecta comandos que procesan objetos</B>.
             </P>
 
             <P>
@@ -166,12 +150,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.Cube}>
-                    <B>Streaming:</B> cada objeto fluye hacia el siguiente comando <B>en cuanto está
-                        disponible</B> (no espera a evaluar toda la colección).
+                    <B>Streaming:</B> cada objeto fluye hacia el siguiente comando <B>en cuanto está disponible</B> (no
+                    espera a evaluar toda la colección).
                 </ListItem>
                 <ListItem icon={icons.Pipe}>
-                    <B>Operador <PowerShellInline>|</PowerShellInline>:</B> conecta la salida de un
-                    cmdlet con la entrada del siguiente.
+                    <B>Operador <PowerShellInline>|</PowerShellInline>:</B> conecta la salida de un cmdlet con la
+                    entrada del siguiente.
                 </ListItem>
             </List>
         </Important>
@@ -199,12 +183,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>objetos tipados</B> los que fluyen entre comandos.
                 </ListItem>
                 <ListItem icon={icons.Funnel}>
-                    <B>Filtrar temprano:</B> igual que en SQL o FP, reduces trabajo en los pasos
-                    siguientes del pipeline.
+                    <B>Filtrar temprano:</B> igual que en SQL o FP, reduces trabajo en los pasos siguientes del
+                    pipeline.
                 </ListItem>
                 <ListItem icon={icons.Stack}>
-                    <B>Procesamiento incremental:</B> PowerShell no necesita cargar todo en memoria
-                    para empezar a trabajar.
+                    <B>Procesamiento incremental:</B> PowerShell no necesita cargar todo en memoria para empezar a
+                    trabajar.
                 </ListItem>
                 <ListItem icon={icons.FileText}>
                     <B>El último comando decide cómo se muestran los resultados.</B>
@@ -219,14 +203,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Una vez que entiendes el pipeline como una secuencia de transformaciones, el siguiente
-            paso es conocer los <B>cmdlets más comunes</B> que aparecen en casi cualquier flujo de
-            PowerShell.
+            Una vez que entiendes el pipeline como una secuencia de transformaciones, el siguiente paso es conocer los
+            <B>cmdlets más comunes</B> que aparecen en casi cualquier flujo de PowerShell.
         </P>
 
         <P>
-            No se trata de memorizar comandos, sino de reconocer <B>roles</B>: filtrar, transformar,
-            ordenar, limitar y proyectar datos.
+            No se trata de memorizar comandos, sino de reconocer <B>roles</B>: filtrar, transformar, ordenar, limitar y
+            proyectar datos.
         </P>
 
         <NotesSection id="h3-filtering">
@@ -237,47 +220,43 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Filtrar objetos
             </Heading>
 
-            <PowerShellBlock
-                code={`
+            <PowerShellBlock code={`
                     Get-Process | Where-Object { $_.CPU -gt 100 }
-                `}
-            >
+                `}>
                 <span slot="title">Filtrar por condición</span>
                 <span slot="footer"
-                >Nota: la propiedad <PowerShellInline>CPU</PowerShellInline> representa el tiempo
-                    total de CPU consumido por el proceso (en segundos), no un porcentaje de
-                    uso.</span>
+                >Nota: la propiedad <PowerShellInline>CPU</PowerShellInline> representa el tiempo total de CPU consumido
+                    por el proceso (en segundos), no un porcentaje de uso.</span>
             </PowerShellBlock>
 
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.Database}>
                         <PowerShellInline>Get-Process</PowerShellInline> es un cmdlet de <B>origen
-                        </B>: consulta al sistema operativo y produce un flujo de <B>objetos</B>,
-                        uno por cada proceso en ejecución.
+                        </B>: consulta al sistema operativo y produce un flujo de <B>objetos</B>, uno por cada proceso
+                        en ejecución.
                     </ListItem>
 
                     <ListItem icon={icons.Funnel}>
-                        <PowerShellInline>Where-Object</PowerShellInline> recibe los objetos del
-                        pipeline uno a uno y evalúa una condición booleana para cada uno.
-                        <PowerShellInline>Where-Object</PowerShellInline> no modifica los objetos:
-                        decide cuáles continúan en el pipeline y cuáles se descartan.
+                        <PowerShellInline>Where-Object</PowerShellInline> recibe los objetos del pipeline uno a uno y
+                        evalúa una condición booleana para cada uno.
+                        <PowerShellInline>Where-Object</PowerShellInline> no modifica los objetos: decide cuáles
+                        continúan en el pipeline y cuáles se descartan.
                     </ListItem>
 
                     <ListItem icon={icons.Cube}>
-                        Dentro del bloque <PowerShellInline code="{ ... }" />, la variable
-                        automática <PowerShellInline>$_</PowerShellInline> representa <B>el objeto
-                            actual que está pasando por el pipeline</B>. En este ejemplo,
+                        Dentro del bloque <PowerShellInline code="{ ... }" />, la variable automática <PowerShellInline
+                        >$_</PowerShellInline> representa <B>el objeto actual que está pasando por el pipeline</B>. En
+                        este ejemplo,
                         <PowerShellInline>$_</PowerShellInline> es un objeto de tipo
                         <PowerShellInline>[System.Diagnostics.Process]</PowerShellInline>.
                     </ListItem>
                 </List>
 
                 <P>
-                    Conceptualmente, este paso equivale a un <Mono>filter</Mono> en programación
-                    funcional o a una cláusula <SqlInline>WHERE</SqlInline> en SQL: describe <I
-                    >qué</I> procesos te interesan, no <I>cómo</I> recorrer la colección de procesos
-                    manualmente.
+                    Conceptualmente, este paso equivale a un <Mono>filter</Mono> en programación funcional o a una
+                    cláusula <SqlInline>WHERE</SqlInline> en SQL: describe <I>qué</I> procesos te interesan, no <I
+                    >cómo</I> recorrer la colección de procesos manualmente.
                 </P>
             </Explanation>
         </NotesSection>
@@ -302,33 +281,29 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <List>
                     <ListItem icon={icons.Database}>
                         <PowerShellInline>Get-Service</PowerShellInline> es un cmdlet de <B>origen
-                        </B> que consulta al sistema operativo y produce un flujo de objetos, uno
-                        por cada servicio.
+                        </B> que consulta al sistema operativo y produce un flujo de objetos, uno por cada servicio.
                     </ListItem>
 
                     <ListItem icon={icons.CursorText}>
-                        <PowerShellInline>Select-Object</PowerShellInline> es el cmdlet principal
-                        para <B>proyectar</B> datos en el pipeline: permite elegir qué propiedades
-                        de cada objeto se mantienen en el resultado que continúa fluyendo en el
-                        pipeline.
+                        <PowerShellInline>Select-Object</PowerShellInline> es el cmdlet principal para <B>proyectar</B>
+                        datos en el pipeline: permite elegir qué propiedades de cada objeto se mantienen en el resultado
+                        que continúa fluyendo en el pipeline.
 
                         <List>
                             <ListItem icon={icons.Tag}>
                                 La opción <PowerShellInline code={`-Property Name, Status`} />
-                                indica que solo nos interesan esas dos propiedades. El resultado no
-                                es el objeto original, sino un <B>nuevo objeto</B> que contiene
-                                únicamente esas propiedades. En la mayoría de los casos, PowerShell
-                                crea un objeto de tipo <PowerShellInline
+                                indica que solo nos interesan esas dos propiedades. El resultado no es el objeto
+                                original, sino un <B>nuevo objeto</B> que contiene únicamente esas propiedades. En la
+                                mayoría de los casos, PowerShell crea un objeto de tipo <PowerShellInline
                                 >[PSCustomObject]</PowerShellInline>.
                             </ListItem>
 
                             <ListItem icon={icons.ArrowDown}>
-                                La opción <PowerShellInline code="-First 10" /> limita el número de
-                                objetos que continúan fluyendo en el pipeline. Una vez alcanzado ese
-                                límite, el pipeline deja de producir más objetos. Esto es
-                                equivalente a un <SqlInline>LIMIT</SqlInline> en SQL. Limitar
-                                resultados temprano en el pipeline puede reducir el trabajo de los
-                                comandos siguientes.
+                                La opción <PowerShellInline code="-First 10" /> limita el número de objetos que
+                                continúan fluyendo en el pipeline. Una vez alcanzado ese límite, el pipeline deja de
+                                producir más objetos. Esto es equivalente a un <SqlInline>LIMIT</SqlInline> en SQL.
+                                Limitar resultados temprano en el pipeline puede reducir el trabajo de los comandos
+                                siguientes.
                             </ListItem>
                         </List>
                     </ListItem>
@@ -337,9 +312,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <P>
                     Conceptualmente, este paso equivale a: <SqlInline
                         code="SELECT Name, Status FROM services LIMIT 10"
-                    /> en SQL, o a un <Mono>map</Mono> que extrae solo ciertas propiedades de cada
-                    objeto en programación funcional. De nuevo, describes <I>qué</I> quieres obtener
-                    de cada objeto, no <I>cómo</I> recorrer la colección manualmente.
+                    /> en SQL, o a un <Mono>map</Mono> que extrae solo ciertas propiedades de cada objeto en
+                    programación funcional. De nuevo, describes <I>qué</I> quieres obtener de cada objeto, no <I
+                    >cómo</I> recorrer la colección manualmente.
                 </P>
             </Explanation>
 
@@ -347,19 +322,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <Fragment slot="title">Proyectar vs expandir propiedades</Fragment>
 
                 <P>
-                    <PowerShellInline>Select-Object</PowerShellInline> no solo cambia cómo se
-                    muestran los datos: también puede transformar la estructura del objeto que
-                    continúa fluyendo en el pipeline.
+                    <PowerShellInline>Select-Object</PowerShellInline> no solo cambia cómo se muestran los datos:
+                    también puede transformar la estructura del objeto que continúa fluyendo en el pipeline.
                 </P>
 
                 <List>
                     <ListItem icon={icons.Tag}>
-                        <PowerShellInline code={`Select-Object -Property Name`} /> mantiene un
-                        objeto proyectado con la propiedad seleccionada.
+                        <PowerShellInline code={`Select-Object -Property Name`} /> mantiene un objeto proyectado con la
+                        propiedad seleccionada.
                     </ListItem>
                     <ListItem icon={icons.ArrowRight}>
-                        <PowerShellInline code={`Select-Object -ExpandProperty Name`} /> expande la
-                        propiedad y emite su valor directamente.
+                        <PowerShellInline code={`Select-Object -ExpandProperty Name`} /> expande la propiedad y emite su
+                        valor directamente.
                     </ListItem>
                 </List>
 
@@ -401,10 +375,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     />
 
                     <P>
-                        En el primer caso, el pipeline sigue transportando <B>objetos</B> con una
-                        propiedad <PowerShellInline>Name</PowerShellInline>. En el segundo caso, el
-                        pipeline emite directamente los <B>valores de esa propiedad</B> (cadenas de
-                        texto).
+                        En el primer caso, el pipeline sigue transportando <B>objetos</B> con una propiedad
+                        <PowerShellInline>Name</PowerShellInline>. En el segundo caso, el pipeline emite directamente
+                        los <B>valores de esa propiedad</B> (cadenas de texto).
                     </P>
                 </Info>
             </More>
@@ -419,8 +392,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                Mientras <PowerShellInline>Select-Object</PowerShellInline> solo elige o expande
-                propiedades existentes, <PowerShellInline>ForEach-Object</PowerShellInline>permite
+                Mientras <PowerShellInline>Select-Object</PowerShellInline> solo elige o expande propiedades existentes,
+                <PowerShellInline>ForEach-Object</PowerShellInline>permite
                 <B>crear nuevos datos</B> a partir de cada objeto (similar a <Mono>map</Mono>).
             </P>
 
@@ -443,41 +416,38 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.FolderOpen}>
-                        <PowerShellInline>Get-ChildItem</PowerShellInline> produce un flujo de
-                        objetos del sistema de archivos (como instancias de <PowerShellInline
-                        >[FileInfo]</PowerShellInline>). Aquí limitamos a archivos con
-                        <PowerShellInline>-File</PowerShellInline> y al patrón <PowerShellInline
-                        >-Filter *.mp4</PowerShellInline>.
+                        <PowerShellInline>Get-ChildItem</PowerShellInline> produce un flujo de objetos del sistema de
+                        archivos (como instancias de <PowerShellInline>[FileInfo]</PowerShellInline>). Aquí limitamos a
+                        archivos con
+                        <PowerShellInline>-File</PowerShellInline> y al patrón <PowerShellInline>-Filter
+                            *.mp4</PowerShellInline>.
                     </ListItem>
 
                     <ListItem icon={icons.MagicWand}>
-                        <PowerShellInline>ForEach-Object</PowerShellInline> aplica un bloque a cada
-                        objeto del pipeline. Conceptualmente, se parece a <Mono>map</Mono> en
-                        programación funcional: por cada objeto que entra al pipeline, el bloque
-                        produce un resultado que continúa fluyendo. PowerShell ejecuta este bloque a
-                        medida que los objetos van llegando al pipeline; no necesita esperar a que
-                        toda la colección esté disponible.
+                        <PowerShellInline>ForEach-Object</PowerShellInline> aplica un bloque a cada objeto del pipeline.
+                        Conceptualmente, se parece a <Mono>map</Mono> en programación funcional: por cada objeto que
+                        entra al pipeline, el bloque produce un resultado que continúa fluyendo. PowerShell ejecuta este
+                        bloque a medida que los objetos van llegando al pipeline; no necesita esperar a que toda la
+                        colección esté disponible.
                     </ListItem>
 
                     <ListItem icon={icons.Cube}>
-                        Dentro del bloque, <PowerShellInline>$_</PowerShellInline> vuelve a
-                        representar el <B>objeto actual</B> (en este caso, un archivo). Usamos sus
-                        propiedades <PowerShellInline>Name</PowerShellInline> y <PowerShellInline
-                        >Length</PowerShellInline> para calcular el tamaño en
-                        <PowerShellInline>KB</PowerShellInline> y construir una representación más
-                        útil del archivo.
+                        Dentro del bloque, <PowerShellInline>$_</PowerShellInline> vuelve a representar el <B>objeto
+                            actual</B> (en este caso, un archivo). Usamos sus propiedades <PowerShellInline
+                        >Name</PowerShellInline> y <PowerShellInline>Length</PowerShellInline> para calcular el tamaño
+                        en
+                        <PowerShellInline>KB</PowerShellInline> y construir una representación más útil del archivo.
                     </ListItem>
 
                     <ListItem icon={icons.Tag}>
-                        El bloque devuelve un <PowerShellInline>[PSCustomObject]</PowerShellInline>,
-                        es decir, un objeto nuevo con propiedades explícitas. Esto mantiene el
-                        pipeline <B>estructurado</B>: los comandos siguientes reciben objetos con
-                        propiedades claras, en lugar de tener que interpretar texto.
+                        El bloque devuelve un <PowerShellInline>[PSCustomObject]</PowerShellInline>, es decir, un objeto
+                        nuevo con propiedades explícitas. Esto mantiene el pipeline <B>estructurado</B>: los comandos
+                        siguientes reciben objetos con propiedades claras, en lugar de tener que interpretar texto.
                     </ListItem>
 
                     <ListItem icon={icons.SortDescending}>
-                        <B>Composición:</B> observa cómo el pipeline fluye de la transformación
-                        hacia el ordenamiento y finalmente a la limitación.
+                        <B>Composición:</B> observa cómo el pipeline fluye de la transformación hacia el ordenamiento y
+                        finalmente a la limitación.
                     </ListItem>
                 </List>
             </Explanation>
@@ -491,23 +461,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="requirements">
             <P>
-                Un uso común de PowerShell es el procesamiento y análisis de datos, especialmente en
-                tareas de exploración y análisis de datos. Para eso necesitas poder <B>leer</B> y
-                <B>escribir</B> objetos (serialización) en formatos estándar como JSON, CSV o XML.
-                PowerShell incluye cmdlets que serializan y deserializan datos y que se integran
-                naturalmente con el pipeline.
+                Un uso común de PowerShell es el procesamiento y análisis de datos, especialmente en tareas de
+                exploración y análisis de datos. Para eso necesitas poder <B>leer</B> y
+                <B>escribir</B> objetos (serialización) en formatos estándar como JSON, CSV o XML. PowerShell incluye
+                cmdlets que serializan y deserializan datos y que se integran naturalmente con el pipeline.
             </P>
 
             <P>
                 En este ejercicio practicarás un flujo típico:
-                <Enquote>texto → objetos → transformaciones → texto</Enquote>. La regla es simple:
-                trabaja con <B>objetos</B> hasta el último paso y solo convierte a texto cuando
-                necesites escribir o exportar datos.
+                <Enquote>texto → objetos → transformaciones → texto</Enquote>. La regla es simple: trabaja con <B
+                >objetos</B> hasta el último paso y solo convierte a texto cuando necesites escribir o exportar datos.
             </P>
 
             <P>
-                Supón que tienes un archivo <Mono>users.json</Mono> con una lista de usuarios con
-                esta estructura:
+                Supón que tienes un archivo <Mono>users.json</Mono> con una lista de usuarios con esta estructura:
             </P>
 
             <CodeBlock
@@ -529,8 +496,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     Filtrar solo los usuarios con <Mono>active</Mono> en <B>true</B>.
                 </ListItem>
                 <ListItem icon={icons.MagicWand}>
-                    Transformar cada usuario a un objeto con solo <Mono>name</Mono> y <Mono
-                    >email</Mono>, ambos en mayúsculas.
+                    Transformar cada usuario a un objeto con solo <Mono>name</Mono> y <Mono>email</Mono>, ambos en
+                    mayúsculas.
                 </ListItem>
                 <ListItem icon={icons.FloppyDisk}>
                     Guardar el resultado en un nuevo archivo <Mono>active-users.json</Mono>.
@@ -541,17 +508,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Fragment slot="notes">
             <List>
                 <ListItem icon={icons.Cube}>
-                    <B><PowerShellInline>ConvertFrom-Json</PowerShellInline></B> toma texto JSON y
-                    lo convierte en objetos de PowerShell con propiedades accesibles.
+                    <B><PowerShellInline>ConvertFrom-Json</PowerShellInline></B> toma texto JSON y lo convierte en
+                    objetos de PowerShell con propiedades accesibles.
                 </ListItem>
                 <ListItem icon={icons.FileText}>
-                    <B><PowerShellInline>ConvertTo-Json</PowerShellInline></B> serializa objetos de
-                    PowerShell y produce texto JSON. En estructuras anidadas puede ser necesario
-                    aumentar la profundidad con <PowerShellInline>-Depth</PowerShellInline>.
+                    <B><PowerShellInline>ConvertTo-Json</PowerShellInline></B> serializa objetos de PowerShell y produce
+                    texto JSON. En estructuras anidadas puede ser necesario aumentar la profundidad con
+                    <PowerShellInline>-Depth</PowerShellInline>.
                 </ListItem>
                 <ListItem icon={icons.PencilSimpleLine}>
-                    <B><PowerShellInline>Set-Content</PowerShellInline></B> escribe texto en un
-                    archivo (creándolo o reemplazándolo).
+                    <B><PowerShellInline>Set-Content</PowerShellInline></B> escribe texto en un archivo (creándolo o
+                    reemplazándolo).
                 </ListItem>
             </List>
         </Fragment>
@@ -588,10 +555,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             />
 
             <P>
-                Este pipeline lee el archivo como texto, lo convierte a objetos, aplica filtrado y
-                transformación, vuelve a serializar a JSON, y finalmente guarda el resultado. El
-                flujo principal es <B>filtrar → transformar → serializar</B>. El trabajo principal
-                ocurre sobre <B>objetos</B>, no sobre strings.
+                Este pipeline lee el archivo como texto, lo convierte a objetos, aplica filtrado y transformación,
+                vuelve a serializar a JSON, y finalmente guarda el resultado. El flujo principal es <B>filtrar →
+                    transformar → serializar</B>. El trabajo principal ocurre sobre <B>objetos</B>, no sobre strings.
             </P>
         </Fragment>
     </Exercise>
@@ -599,15 +565,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                El pipeline de PowerShell no es solo sintaxis: es una forma de diseñar soluciones
-                basada en <B>etapas de transformación</B>. Cada etapa toma objetos con propiedades
-                claras y produce nuevos resultados que continúan fluyendo.
+                El pipeline de PowerShell no es solo sintaxis: es una forma de diseñar soluciones basada en <B>etapas de
+                    transformación</B>. Cada etapa toma objetos con propiedades claras y produce nuevos resultados que
+                continúan fluyendo.
             </P>
 
             <P>
-                Pensar en <I>roles</I> (filtrar, proyectar, transformar, ordenar y limitar) ayuda a
-                separar intención y mecanismo: primero defines <I>qué</I> resultado necesitas, luego
-                dejas que el pipeline resuelva <I>cómo</I> recorrer los datos.
+                Pensar en <I>roles</I> (filtrar, proyectar, transformar, ordenar y limitar) ayuda a separar intención y
+                mecanismo: primero defines <I>qué</I> resultado necesitas, luego dejas que el pipeline resuelva <I
+                >cómo</I> recorrer los datos.
             </P>
         </Fragment>
 
@@ -616,16 +582,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 El pipeline transporta <B>objetos tipados</B>, no texto.
             </ListItem>
             <ListItem icon={icons.Funnel}>
-                Filtra temprano con <PowerShellInline>Where-Object</PowerShellInline> para reducir
-                el trabajo en los pasos siguientes.
+                Filtra temprano con <PowerShellInline>Where-Object</PowerShellInline> para reducir el trabajo en los
+                pasos siguientes.
             </ListItem>
             <ListItem icon={icons.CursorText}>
-                Proyecta lo necesario con <PowerShellInline>Select-Object</PowerShellInline> y
-                limita con <PowerShellInline>-First</PowerShellInline> cuando puedas.
+                Proyecta lo necesario con <PowerShellInline>Select-Object</PowerShellInline> y limita con
+                <PowerShellInline>-First</PowerShellInline> cuando puedas.
             </ListItem>
             <ListItem icon={icons.MagicWand}>
-                Transforma con <PowerShellInline>ForEach-Object</PowerShellInline> para construir
-                objetos derivados a partir de cada entrada.
+                Transforma con <PowerShellInline>ForEach-Object</PowerShellInline> para construir objetos derivados a
+                partir de cada entrada.
             </ListItem>
             <ListItem icon={icons.FileText}>
                 Decide el formato <I>al final</I>: exporta/serializa solo en la última etapa.
@@ -634,14 +600,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Fragment slot="closing-reflection">
             <P>
-                Diseñar pipelines claros mejora la calidad técnica del trabajo: facilita leer,
-                mantener y validar cada etapa de procesamiento.
+                Diseñar pipelines claros mejora la calidad técnica del trabajo: facilita leer, mantener y validar cada
+                etapa de procesamiento.
             </P>
 
             <P>
                 Como criterio práctico, conserva la regla central de la lección: trabaja con
-                <B>objetos</B> durante el pipeline y convierte a texto solo cuando necesites
-                serializar o exportar resultados.
+                <B>objetos</B> durante el pipeline y convierte a texto solo cuando necesites serializar o exportar
+                resultados.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -652,19 +618,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <ReferencesFromCatalog>
         <Fragment slot="description-ref:pipeline-connecting-commands">
-            Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets, por qué
-            el flujo de objetos es distinto al de shells tradicionales, y cómo exportar resultados a
-            CSV/JSON/XML. Incluye ejemplos prácticos con <PowerShellInline
-            >Get-Process</PowerShellInline>, conceptos de conversión y exportación, y ejercicios
-            guiados para afianzar el uso del pipeline.
+            Capítulo introductorio sobre el pipeline de PowerShell: cómo encadenar cmdlets, por qué el flujo de objetos
+            es distinto al de shells tradicionales, y cómo exportar resultados a CSV/JSON/XML. Incluye ejemplos
+            prácticos con <PowerShellInline>Get-Process</PowerShellInline>, conceptos de conversión y exportación, y
+            ejercicios guiados para afianzar el uso del pipeline.
         </Fragment>
 
         <Fragment slot="description-ref:collection-pipeline-fowler">
-            Artículo fundacional sobre el patrón Collection Pipeline: cómo encadenar operaciones
-            declarativas (<Mono>map</Mono>, <Mono>filter</Mono>, <Mono>reduce</Mono>, <Mono
-            >group-by</Mono>) para transformar colecciones. Compara sintaxis en múltiples lenguajes
-            (Ruby, Clojure, Smalltalk), explora alternativas (loops, comprehensions), y discute
-            temas avanzados como laziness, paralelismo e inmutabilidad. Incluye un catálogo
+            Artículo fundacional sobre el patrón Collection Pipeline: cómo encadenar operaciones declarativas (<Mono
+            >map</Mono>, <Mono>filter</Mono>, <Mono>reduce</Mono>, <Mono>group-by</Mono>) para transformar colecciones.
+            Compara sintaxis en múltiples lenguajes (Ruby, Clojure, Smalltalk), explora alternativas (loops,
+            comprehensions), y discute temas avanzados como laziness, paralelismo e inmutabilidad. Incluye un catálogo
             detallado de operaciones comunes con ejemplos visuales.
         </Fragment>
     </ReferencesFromCatalog>

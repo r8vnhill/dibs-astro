@@ -1,6 +1,6 @@
+import type { RepoRef } from "@ravenhill/site-core";
 import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, test } from "vitest";
-import type { RepoRef } from "@ravenhill/site-core";
 import { type AstroRender, createAstroRenderer } from "../../../test-utils/astro-render";
 import LessonRepoPanel from "../LessonRepoPanel.astro";
 
@@ -28,14 +28,10 @@ describe.concurrent("LessonRepoPanel.astro render", () => {
 
         expect(links.length).toBe(2);
         expect(
-            links.some((link) =>
-                link.getAttribute("href")?.includes("gitlab.com/r8vnhill/dibs-scripts")
-            ),
+            links.some((link) => link.getAttribute("href")?.includes("gitlab.com/r8vnhill/dibs-scripts")),
         ).toBe(true);
         expect(
-            links.some((link) =>
-                link.getAttribute("href")?.includes("github.com/r8vnhill/dibs-scripts")
-            ),
+            links.some((link) => link.getAttribute("href")?.includes("github.com/r8vnhill/dibs-scripts")),
         ).toBe(true);
     });
 

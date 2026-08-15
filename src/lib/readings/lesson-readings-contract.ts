@@ -8,25 +8,25 @@ export type ReadingExtent = "Corta" | "Media" | "Secciones seleccionadas";
 
 export type LessonReadingDiagnostic =
     | {
-          readonly code: "invalid-reference-id";
-          readonly lessonPath: string;
-          readonly section: string;
-          readonly configuredId: string;
-      }
+        readonly code: "invalid-reference-id";
+        readonly lessonPath: string;
+        readonly section: string;
+        readonly configuredId: string;
+    }
     | {
-          readonly code: "missing-reference";
-          readonly lessonPath: string;
-          readonly section: string;
-          readonly configuredId: string;
-          readonly canonicalId: ReferenceId;
-      }
+        readonly code: "missing-reference";
+        readonly lessonPath: string;
+        readonly section: string;
+        readonly configuredId: string;
+        readonly canonicalId: ReferenceId;
+    }
     | {
-          readonly code: "duplicate-reference";
-          readonly lessonPath: string;
-          readonly section: string;
-          readonly configuredId: string;
-          readonly canonicalId: ReferenceId;
-      };
+        readonly code: "duplicate-reference";
+        readonly lessonPath: string;
+        readonly section: string;
+        readonly configuredId: string;
+        readonly canonicalId: ReferenceId;
+    };
 
 export type ResolvedLessonReading = Readonly<{
     referenceId: ReferenceId;
@@ -52,7 +52,19 @@ export type LessonReadingGuide = Readonly<{
 }>;
 
 export type LessonReadingsResolution =
-    | Readonly<{ ok: true; value: Readonly<{ lessonPath: string; readingsPath: string; title: string; sections: readonly ResolvedLessonReadingsSection[] }> }>
+    | Readonly<
+        {
+            ok: true;
+            value: Readonly<
+                {
+                    lessonPath: string;
+                    readingsPath: string;
+                    title: string;
+                    sections: readonly ResolvedLessonReadingsSection[];
+                }
+            >;
+        }
+    >
     | Readonly<{ ok: false; diagnostics: readonly LessonReadingDiagnostic[] }>;
 
 const REFERENCE_PREFIX = "ref:";
@@ -132,7 +144,12 @@ export function resolveLessonReadings(
                 continue;
             }
 
-            readings.push({ referenceId: canonicalId, reference, guide: reading, anchorId: `ref-${canonicalId.slice(4)}` });
+            readings.push({
+                referenceId: canonicalId,
+                reference,
+                guide: reading,
+                anchorId: `ref-${canonicalId.slice(4)}`,
+            });
         }
         return { ...section, readings };
     });
@@ -156,7 +173,9 @@ export function formatLessonReadingsDiagnostics(diagnostics: readonly LessonRead
                 return `Invalid bibliography reference ID — ${diagnostic.section}: ${diagnostic.configuredId}`;
             }
             const detail = `${diagnostic.section}: ${diagnostic.configuredId} (${diagnostic.canonicalId})`;
-            return diagnostic.code === "missing-reference" ? `Missing catalog reference — ${detail}` : `Duplicate catalog reference — ${detail}`;
+            return diagnostic.code === "missing-reference"
+                ? `Missing catalog reference — ${detail}`
+                : `Duplicate catalog reference — ${detail}`;
         })
         .join("\n");
 }

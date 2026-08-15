@@ -7,10 +7,10 @@
  * of always wiring `<span slot="title">` and an explicit `headingLevel="h3"`.
  */
 
-import { JSDOM } from "jsdom";
-import { suite, beforeAll, describe, expect, test } from "vitest";
-import { createAstroRenderer } from "$test-utils/astro-render";
 import { Important, Tip, Warning } from "$callouts";
+import { createAstroRenderer } from "$test-utils/astro-render";
+import { JSDOM } from "jsdom";
+import { beforeAll, describe, expect, suite, test } from "vitest";
 
 type CalloutProps = {
     title?: string;

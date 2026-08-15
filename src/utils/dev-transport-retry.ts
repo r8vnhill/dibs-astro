@@ -6,10 +6,6 @@
  * existing path or from `~/utils`.
  */
 
-export type {
-    DevTransportRetryContext,
-    DevTransportRetryOptions,
-    RetryEvent,
-} from "./dev-transport-retry/types";
 export { isRetryableDevTransportError } from "./dev-transport-retry/classifier";
 export { runWithDevTransportRetry } from "./dev-transport-retry/runWithDevTransportRetry";
+export type { DevTransportRetryContext, DevTransportRetryOptions, RetryEvent } from "./dev-transport-retry/types";

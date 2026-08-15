@@ -13,10 +13,10 @@
  * The TabsList and tab script are omitted in export mode; content is rendered as static sections.
  */
 
-import { resolveLessonExportContext } from "~/lib/presentation/export-mode";
-import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
+import { resolveLessonExportContext } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 
 /**
  * Props accepted by the Tabs component.
@@ -98,12 +98,9 @@ const exportContext = resolveLessonExportContext({
     ]}
 >
     <div
-        class={tabs({ class: className })}
-        data-default-value={defaultValue}
-        data-sync-key={syncKey}
-        aria-orientation={orientation}
-        data-export-role={exportContext.isPdfExport ? "tabs" : undefined}
-        {...rest}
+        class={tabs({ class: className })} data-default-value={defaultValue}
+        data-sync-key={syncKey} aria-orientation={orientation}
+        data-export-role={exportContext.isPdfExport ? "tabs" : undefined} {...rest}
     >
         <slot />
     </div>
@@ -114,16 +111,16 @@ const exportContext = resolveLessonExportContext({
         <script>
             import { initStarwindTabs } from "~/utils/tabs";
 
-            if (typeof window !== "undefined") {
-                // Initializes **all** instances (including nested ones),
-                // but each one scoped to its own root.
-                initStarwindTabs();
+    if (typeof window !== "undefined") {
+        // Initializes **all** instances (including nested ones),
+        // but each one scoped to its own root.
+        initStarwindTabs();
 
-                const controller = new AbortController();
-                document.addEventListener("astro:after-swap", initStarwindTabs, {
-                    signal: controller.signal,
-                });
-            }
+        const controller = new AbortController();
+        document.addEventListener("astro:after-swap", initStarwindTabs, {
+            signal: controller.signal,
+        });
+    }
         </script>
     )
 }

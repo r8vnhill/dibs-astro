@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { courseStructure } from "~/data/course-structure";
 import { getLessonMetadataDataset } from "~/utils/lesson-metadata";
-import { buildLessonPageRegistry, getLessonPageRegistry } from "../lesson-page-registry";
 import {
     assertValidPdfLessonExportManifest,
     buildPdfLessonExportEntries,
     getPdfLessonExportEntries,
     getPdfLessonExportManifest,
 } from "../lesson-export-manifest";
+import { buildLessonPageRegistry, getLessonPageRegistry } from "../lesson-page-registry";
 
 describe("given the PDF lesson export manifest", () => {
     test("then courseStructure lessons are exported in stable order", () => {
@@ -36,7 +36,9 @@ describe("given the PDF lesson export manifest", () => {
         const dataset = {
             ...getLessonMetadataDataset(),
             entries: Object.fromEntries(
-                Object.entries(getLessonMetadataDataset().entries).filter(([route]) => route !== "/notes/installation/"),
+                Object.entries(getLessonMetadataDataset().entries).filter(([route]) =>
+                    route !== "/notes/installation/"
+                ),
             ),
         };
 
@@ -58,10 +60,12 @@ describe("given the PDF lesson export manifest", () => {
     });
 
     test("then invalid manifests fail with errors only", () => {
-        expect(() => assertValidPdfLessonExportManifest({
-            generatedAt: "not-a-date",
-            entries: [],
-        })).toThrow(/PDF lesson export manifest is invalid/u);
+        expect(() =>
+            assertValidPdfLessonExportManifest({
+                generatedAt: "not-a-date",
+                entries: [],
+            })
+        ).toThrow(/PDF lesson export manifest is invalid/u);
     });
 
     test("then skipped non-note lessons never enter the manifest", () => {

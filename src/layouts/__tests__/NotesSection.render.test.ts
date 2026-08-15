@@ -7,10 +7,10 @@
  * unmigrated call sites.
  */
 
-import { JSDOM } from "jsdom";
-import { suite, beforeAll, describe, expect, test } from "vitest";
-import { createAstroRenderer } from "$test-utils/astro-render";
 import NotesSection from "$layouts/NotesSection.astro";
+import { createAstroRenderer } from "$test-utils/astro-render";
+import { JSDOM } from "jsdom";
+import { beforeAll, describe, expect, suite, test } from "vitest";
 
 type NotesSectionProps = {
     id?: string;

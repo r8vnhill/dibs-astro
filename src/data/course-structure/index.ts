@@ -43,5 +43,5 @@ const lessons = new LessonTreeBuilder()
  * The array order defines sidebar order and the pre-order traversal used by navigation helpers.
  */
 export const courseStructure = [
-    ...lessons
+    ...lessons,
 ] as const satisfies readonly Lesson[];

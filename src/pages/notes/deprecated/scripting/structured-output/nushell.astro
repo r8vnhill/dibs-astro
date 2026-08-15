@@ -30,15 +30,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <P>
-            Nushell permite producir datos estructurados desde el comienzo mediante <I>records</I> y
-            listas. Al igual que PowerShell, en vez de construir texto y luego reinterpretarlo,
-            puedes trabajar directamente con valores que conservan su forma.
+            Nushell permite producir datos estructurados desde el comienzo mediante <I>records</I> y listas. Al igual
+            que PowerShell, en vez de construir texto y luego reinterpretarlo, puedes trabajar directamente con valores
+            que conservan su forma.
         </P>
 
         <P>
             El objetivo de esta lección es distinguir entre un <I>record</I> y una lista de
-            <I>records</I>, y entender por qué ambos pueden verse como tabla sin dejar de ser datos
-            estructurados.
+            <I>records</I>, y entender por qué ambos pueden verse como tabla sin dejar de ser datos estructurados.
         </P>
     </Fragment>
 
@@ -51,12 +50,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En la lección de PowerShell, el recorrido iba desde <PowerShellInline
-            >[hashtable]</PowerShellInline> hacia <PowerShellInline
-            >[PSCustomObject]</PowerShellInline>. En Nushell, ese paso aparece antes: un <I
-            >record</I> ya representa desde el inicio un valor estructurado con campos nombrados. No
-            es lo mismo que <PowerShellInline>[PSCustomObject]</PowerShellInline>, pero cumple un
-            rol similar al preservar la forma de los datos sin reducirlos a texto.
+            En la lección de PowerShell, el recorrido iba desde <PowerShellInline>[hashtable]</PowerShellInline> hacia
+            <PowerShellInline>[PSCustomObject]</PowerShellInline>. En Nushell, ese paso aparece antes: un <I>record</I>
+            ya representa desde el inicio un valor estructurado con campos nombrados. No es lo mismo que
+            <PowerShellInline>[PSCustomObject]</PowerShellInline>, pero cumple un rol similar al preservar la forma de
+            los datos sin reducirlos a texto.
         </P>
 
         <NushellBlock
@@ -82,8 +80,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </NushellBlock>
 
         <Explanation headingLevel="h3">
-            <B><NushellInline code="{ k: v }" /></B> crea un <I>record</I> <Dash kind="em" /> un
-            valor compuesto por campos nombrados. Luego puedes acceder a sus propiedades como:
+            <B><NushellInline code="{ k: v }" /></B> crea un <I>record</I> <Dash kind="em" /> un valor compuesto por
+            campos nombrados. Luego puedes acceder a sus propiedades como:
             <NushellInline>$record.key</NushellInline>.
         </Explanation>
 
@@ -113,9 +111,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             />
 
             <P>
-                Aunque Nushell lo muestre con una disposición tabular, el resultado sigue siendo un
-                único valor estructurado con campos nombrados. Esa visualización no lo convierte en
-                tabla como tipo de dato aparte.
+                Aunque Nushell lo muestre con una disposición tabular, el resultado sigue siendo un único valor
+                estructurado con campos nombrados. Esa visualización no lo convierte en tabla como tipo de dato aparte.
             </P>
         </Info>
     </NotesSection>
@@ -127,14 +124,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >Listas de <I>records</I> y visualización tabular</Heading>
 
         <P>
-            Un <I>record</I> representa una entidad. Una lista de <I>records</I> representa varias
-            entidades con la misma estructura.
+            Un <I>record</I> representa una entidad. Una lista de <I>records</I> representa varias entidades con la
+            misma estructura.
         </P>
 
         <P>
-            Cuando la consola recibe una lista de <I>records</I> con la misma forma, puede mostrarla
-            como tabla. Esa tabla es una visualización de los datos, no un tipo distinto ni una
-            transformación de su forma subyacente.
+            Cuando la consola recibe una lista de <I>records</I> con la misma forma, puede mostrarla como tabla. Esa
+            tabla es una visualización de los datos, no un tipo distinto ni una transformación de su forma subyacente.
         </P>
 
         <NushellBlock
@@ -152,8 +148,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 Módulo que exporta una lista homogénea de <I>records</I><FootnoteRef index={2} />
             </span>
             <span slot="footer">
-                La tabla emerge de la forma del dato devuelto por el comando exportado: una lista
-                cuyos elementos comparten las mismas columnas.
+                La tabla emerge de la forma del dato devuelto por el comando exportado: una lista cuyos elementos
+                comparten las mismas columnas.
             </span>
             <DibsSourceLink
                 slot="source" file="structured-output/exploration-module.nu"
@@ -162,8 +158,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </NushellBlock>
 
         <Explanation headingLevel="h3">
-            <B><NushellInline code="[ ... ]" />:</B> crea una lista que puede contener múltiples
-            valores; aquí, múltiples <I>records</I>.
+            <B><NushellInline code="[ ... ]" />:</B> crea una lista que puede contener múltiples valores; aquí,
+            múltiples <I>records</I>.
         </Explanation>
 
         <Info headingLevel="h3" icon={icons.PlayCircle}>
@@ -197,8 +193,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            Un <I>record</I> y una lista de <I>records</I> no son lo mismo, aunque ambos puedan
-            mostrarse de forma tabular. Lo importante es reconocer qué valor estás produciendo.
+            Un <I>record</I> y una lista de <I>records</I> no son lo mismo, aunque ambos puedan mostrarse de forma
+            tabular. Lo importante es reconocer qué valor estás produciendo.
         </Fragment>
 
         <Fragment slot="key-points">
@@ -214,23 +210,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            La lección de fondo no es solo que Nushell pueda mostrar tablas, sino que permite
-            conservar la forma de los datos desde el origen. Cuando esa forma se entiende bien, la
-            salida deja de ser un detalle visual y pasa a ser una base real para reutilizar,
-            inspeccionar y componer comandos.
+            La lección de fondo no es solo que Nushell pueda mostrar tablas, sino que permite conservar la forma de los
+            datos desde el origen. Cuando esa forma se entiende bien, la salida deja de ser un detalle visual y pasa a
+            ser una base real para reutilizar, inspeccionar y componer comandos.
         </Fragment>
     </ConclusionsLayout>
 
     <ReferencesFromCatalog>
         <Fragment slot="description-ref:nushell-working-with-records">
-            Explica cómo Nushell trata los <I>records</I> como valores estructurados equivalentes,
-            en la práctica, a una fila individual de una tabla. Recorre su sintaxis de creación, la
-            forma en que se muestran en consola y varias operaciones básicas para trabajar con ellos
-            sin perder su estructura. También muestra cómo agregar o actualizar campos, combinar <I
-            >records</I>, recorrer sus pares clave-valor e identificar qué comandos de tablas
-            también se aplican a este tipo de dato. Es una buena lectura si quieres profundizar en
-            el modelo mental detrás de los <I>records</I> más allá de los ejemplos introductorios de
-            esta lección.
+            Explica cómo Nushell trata los <I>records</I> como valores estructurados equivalentes, en la práctica, a una
+            fila individual de una tabla. Recorre su sintaxis de creación, la forma en que se muestran en consola y
+            varias operaciones básicas para trabajar con ellos sin perder su estructura. También muestra cómo agregar o
+            actualizar campos, combinar <I>records</I>, recorrer sus pares clave-valor e identificar qué comandos de
+            tablas también se aplican a este tipo de dato. Es una buena lectura si quieres profundizar en el modelo
+            mental detrás de los <I>records</I> más allá de los ejemplos introductorios de esta lección.
         </Fragment>
     </ReferencesFromCatalog>
 
@@ -239,8 +232,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Ejemplo inspirado en <I href="https://www.imdb.com/title/tt1740707/">Trolljegeren</I>.
         </Footnote>
         <Footnote index={2}>
-            Ejemplo inspirado en <I href="https://myanimelist.net/anime/32979/Flip_Flappers"
-            >Flip Flappers</I>.
+            Ejemplo inspirado en <I href="https://myanimelist.net/anime/32979/Flip_Flappers">Flip Flappers</I>.
         </Footnote>
     </Footnotes>
 </NotesLayout>

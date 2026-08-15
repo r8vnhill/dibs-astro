@@ -24,10 +24,10 @@
  * - Capture props for contract verification.
  */
 
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import fc from "fast-check";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import LessonSidebar from "../LessonSidebar";
 
 /**

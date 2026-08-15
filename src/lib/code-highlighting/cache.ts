@@ -4,7 +4,7 @@
  * This module exposes production-safe access to the shared app highlighter. Cache ownership remains inside
  * {@link appShikiService}; this file only delegates to that service and does not expose cache mutation operations.
  *
- * Test-only cache controls live in `cache.testing.ts` and are intentionally not exported from this module. Production 
+ * Test-only cache controls live in `cache.testing.ts` and are intentionally not exported from this module. Production
  * code should never import the testing adapter.
  *
  * ## Design
@@ -22,7 +22,7 @@ import { appShikiService } from "./service";
 /**
  * Promise for the app's shared Shiki highlighter.
  *
- * The underlying service memoizes this promise so concurrent and repeated callers share the same highlighter 
+ * The underlying service memoizes this promise so concurrent and repeated callers share the same highlighter
  * initialization path instead of creating duplicate Shiki instances.
  *
  * @example
@@ -40,8 +40,8 @@ export type HighlighterPromise = Promise<Highlighter>;
 /**
  * Returns the shared app Shiki highlighter.
  *
- * Use this only when code needs direct access to the Shiki highlighter API. Most consumers should prefer 
- * `highlightToHtml()` from `~/lib/code-highlighting`, which keeps rendering behavior behind the configured app service 
+ * Use this only when code needs direct access to the Shiki highlighter API. Most consumers should prefer
+ * `highlightToHtml()` from `~/lib/code-highlighting`, which keeps rendering behavior behind the configured app service
  * boundary.
  *
  * The highlighter is created lazily by {@link appShikiService} and reused through the service-managed cache.

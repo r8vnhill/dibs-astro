@@ -14,9 +14,9 @@
  * - UI rendering code stays in src/components/ui/code
  */
 
-import { describe, it, expect } from "vitest";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { describe, expect, it } from "vitest";
 
 /**
  * Simple regex-based scanner to find forbidden imports in a file.
@@ -28,8 +28,7 @@ function scanFile(
     if (!fs.existsSync(filePath)) return [];
     const content = fs.readFileSync(filePath, "utf-8");
     const lines = content.split("\n");
-    const findings: Array<{ lineNum: number; content: string; type: string }> =
-        [];
+    const findings: Array<{ lineNum: number; content: string; type: string }> = [];
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
@@ -134,7 +133,9 @@ describe("Phase 6: Shiki import boundaries", () => {
         }
 
         expect(findings, {
-            message: `Found imports from deprecated ~/lib/shiki:\n${findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")}`,
+            message: `Found imports from deprecated ~/lib/shiki:\n${
+                findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")
+            }`,
         }).toHaveLength(0);
     });
 
@@ -161,7 +162,9 @@ describe("Phase 6: Shiki import boundaries", () => {
         }
 
         expect(findings, {
-            message: `Found imports from deprecated src/lib/shiki:\n${findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")}`,
+            message: `Found imports from deprecated src/lib/shiki:\n${
+                findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")
+            }`,
         }).toHaveLength(0);
     });
 
@@ -193,7 +196,9 @@ describe("Phase 6: Shiki import boundaries", () => {
         }
 
         expect(findings, {
-            message: `Found @ravenhill/shiki-core subpath imports:\n${findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")}`,
+            message: `Found @ravenhill/shiki-core subpath imports:\n${
+                findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")
+            }`,
         }).toHaveLength(0);
     });
 
@@ -235,8 +240,9 @@ describe("Phase 6: Shiki import boundaries", () => {
         }
 
         expect(findings, {
-            message: `Found production code importing test-only (.testing) modules:\n${findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")}`,
+            message: `Found production code importing test-only (.testing) modules:\n${
+                findings.map((f) => `  ${f.file}:${f.lineNum}: ${f.content}`).join("\n")
+            }`,
         }).toHaveLength(0);
     });
 });
-

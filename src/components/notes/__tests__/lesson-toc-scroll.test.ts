@@ -55,10 +55,12 @@ suite("given an active TOC entry and its scrollable container", () => {
     });
 
     describe("when the entry's edges land one unit outside the visible range", () => {
-        test.each([
-            ["one unit above", { scrollTop: 100, clientHeight: 200 }, { offsetTop: 99, offsetHeight: 50 }, 99],
-            ["one unit below", { scrollTop: 100, clientHeight: 200 }, { offsetTop: 251, offsetHeight: 50 }, 101],
-        ] satisfies ReadonlyArray<[string, TocScrollContainer, TocScrollItem, number]>)(
+        test.each(
+            [
+                ["one unit above", { scrollTop: 100, clientHeight: 200 }, { offsetTop: 99, offsetHeight: 50 }, 99],
+                ["one unit below", { scrollTop: 100, clientHeight: 200 }, { offsetTop: 251, offsetHeight: 50 }, 101],
+            ] satisfies ReadonlyArray<[string, TocScrollContainer, TocScrollItem, number]>,
+        )(
             "then %s the container scrolls by the minimal amount",
             (_label, container, item, expected) => {
                 expect(computeTocScrollTop(container, item)).toBe(expected);
@@ -67,10 +69,12 @@ suite("given an active TOC entry and its scrollable container", () => {
     });
 
     describe("when the entry is fully above or fully below the container", () => {
-        test.each([
-            ["fully above", { scrollTop: 500, clientHeight: 200 }, { offsetTop: 0, offsetHeight: 40 }, 0],
-            ["fully below", { scrollTop: 0, clientHeight: 200 }, { offsetTop: 900, offsetHeight: 40 }, 740],
-        ] satisfies ReadonlyArray<[string, TocScrollContainer, TocScrollItem, number]>)(
+        test.each(
+            [
+                ["fully above", { scrollTop: 500, clientHeight: 200 }, { offsetTop: 0, offsetHeight: 40 }, 0],
+                ["fully below", { scrollTop: 0, clientHeight: 200 }, { offsetTop: 900, offsetHeight: 40 }, 740],
+            ] satisfies ReadonlyArray<[string, TocScrollContainer, TocScrollItem, number]>,
+        )(
             "then %s the container scrolls directly to the entry",
             (_label, container, item, expected) => {
                 expect(computeTocScrollTop(container, item)).toBe(expected);

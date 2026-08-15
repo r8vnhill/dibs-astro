@@ -13,6 +13,7 @@
  * - Export markers for PDF selectors and print styling.
  */
 
+import { classifyRenderedContent, isMeaningfulSlotContent } from "$presentation/adapters/reference-content";
 import { availableLanguages, createLineTextColorTransformer } from "@ravenhill/shiki-core";
 import { transformerColorizedBrackets } from "@shikijs/colorized-brackets";
 import {
@@ -23,10 +24,6 @@ import {
 } from "@shikijs/transformers";
 import type { ShikiTransformer } from "shiki";
 import { transformerColorHighlight } from "shiki-transformer-color-highlight";
-import {
-    classifyRenderedContent,
-    isMeaningfulSlotContent,
-} from "$presentation/adapters/reference-content";
 import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
 import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { AstroComponentFactory } from "~/types/astro-component";
@@ -141,9 +138,10 @@ const normalizedCode = normalizeIndentation(code);
 // Title and source are content-sensitive: a forwarding wrapper can expose an empty slot even
 // though `Astro.slots.has()` is true. Capture each one once, classify it with the shared rule,
 // and reuse that capture below. Footer is presence-sensitive and therefore renders normally.
-const renderContentSlot = async (name: "title" | "source") => Astro.slots.has(name)
-    ? classifyRenderedContent(await Astro.slots.render(name))
-    : classifyRenderedContent("");
+const renderContentSlot = async (name: "title" | "source") =>
+    Astro.slots.has(name)
+        ? classifyRenderedContent(await Astro.slots.render(name))
+        : classifyRenderedContent("");
 const titleSlot = await renderContentSlot("title");
 const sourceSlot = await renderContentSlot("source");
 const titleSlotHtml = isMeaningfulSlotContent(titleSlot) ? titleSlot.html : undefined;
@@ -170,9 +168,9 @@ const commonTransformers = [
             <div class:list={[...baseTitleClasses, compact ? "px-3 py-1.5 text-xs" : "", titleClasses]}>
                 {Icon && <Icon class:list={["h-5", "w-5", "shrink-0"]} />}
                 {
-                    titleSlotHtml ? (
-                        <div class="truncate" set:html={titleSlotHtml} />
-                    ) : <span class="truncate">{title}</span>
+                    titleSlotHtml ? <div class="truncate" set:html={titleSlotHtml} /> : (
+                        <span class="truncate">{title}</span>
+                    )
                 }
                 {
                     (sourceSlotHtml || source) && (

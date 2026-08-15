@@ -16,8 +16,7 @@ const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell
     {variant} {title}
-    {icon}
-    {...rest}
+    {icon} {...rest}
 >
     {hasTitleSlot && <slot name="title" slot="title" />}
     <slot />

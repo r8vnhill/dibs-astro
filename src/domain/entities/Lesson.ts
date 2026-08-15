@@ -1,7 +1,7 @@
-import { LessonHref } from "@ravenhill/content-core";
 import type { LessonId } from "$domain/value-objects/LessonId";
 import type { LessonSlug } from "$domain/value-objects/LessonSlug";
 import type { LessonTitle } from "$domain/value-objects/LessonTitle";
+import { LessonHref } from "@ravenhill/content-core";
 
 /**
  * Validated inputs required to build a {@link Lesson}.

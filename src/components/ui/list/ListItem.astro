@@ -2,14 +2,14 @@
 /**
  * @fileoverview Renders a semantic list item with an optional decorative icon.
  *
- * `ListItem` is a small layout primitive for content that should appear inside a parent `<ul>` or `<ol>`. It renders a 
+ * `ListItem` is a small layout primitive for content that should appear inside a parent `<ul>` or `<ol>`. It renders a
  * root `<li>` with a horizontal flex layout, an optional left-aligned icon, and a content wrapper that can shrink
  * safely when the slotted content is long.
  *
- * The icon is decorative by default and is marked `aria-hidden="true"`. The slotted content remains the only 
+ * The icon is decorative by default and is marked `aria-hidden="true"`. The slotted content remains the only
  * meaningful content exposed by the component.
  *
- * Native `<li>` attributes are forwarded to the root element, while `class` is reintroduced as an explicit prop so 
+ * Native `<li>` attributes are forwarded to the root element, while `class` is reintroduced as an explicit prop so
  * callers can extend the root styling without changing the component contract.
  */
 import type { HTMLAttributes } from "astro/types";
@@ -18,13 +18,13 @@ import type { AstroComponentFactory } from "~/types/astro-component";
 /**
  * Props accepted by {@link ListItem}.
  *
- * This type composes native `<li>` attributes with a small set of custom props for icon rendering. The slot content is 
+ * This type composes native `<li>` attributes with a small set of custom props for icon rendering. The slot content is
  * the primary payload of the list item; the icon is optional and decorative.
  *
  * ## Notes:
  *
  * - Native `<li>` attributes such as `id`, `role`, `aria-*`, `data-*`, and `style` are forwarded to the root element.
- * - `class` is omitted from {@link HTMLAttributes} and reintroduced here as a dedicated prop so the component can 
+ * - `class` is omitted from {@link HTMLAttributes} and reintroduced here as a dedicated prop so the component can
  *   merge caller-supplied classes with its own layout classes.
  */
 type ListItemProps = Omit<HTMLAttributes<"li">, "class"> & {
@@ -48,7 +48,7 @@ type ListItemProps = Omit<HTMLAttributes<"li">, "class"> & {
     /**
      * Text color applied to the icon wrapper.
      *
-     * The default value is the literal CSS keyword `currentColor`, so the icon inherits the computed text color of the 
+     * The default value is the literal CSS keyword `currentColor`, so the icon inherits the computed text color of the
      * surrounding list item unless a different color is supplied explicitly.
      *
      * @defaultValue `"currentColor"`
@@ -72,7 +72,7 @@ const {
 /**
  * Inline styles owned by the icon wrapper.
  *
- * `lineHeight: 1` keeps the icon box compact and avoids introducing extra vertical space through inherited line-height 
+ * `lineHeight: 1` keeps the icon box compact and avoids introducing extra vertical space through inherited line-height
  * values.
  */
 const iconStyle = {

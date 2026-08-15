@@ -1,6 +1,7 @@
 # Starwind Table Components
 
-A small, composable table kit built with Astro + Tailwind Variants. It provides thin wrappers around semantic table tags with consistent styling, strong typing, and a few practical affordances like density control and header sorting.
+A small, composable table kit built with Astro + Tailwind Variants. It provides thin wrappers around semantic table tags
+with consistent styling, strong typing, and a few practical affordances like density control and header sorting.
 
 - Components: `Table`, `TableHeader`, `TableHead`, `TableBody`, `TableRow`, `TableCell`, `TableFoot`, `TableCaption`
 - Helpers: variant builders in `table-variants.ts`, and `buildTableHeadState()` for testing header behaviors.
@@ -120,7 +121,8 @@ import Table from "~/components/starwind/table/Table.astro";
 
 ### `TableCaption.astro`
 
-- Variants: `align: 'left' | 'center' | 'right'` (default `center`), `tone: 'default' | 'muted' | 'emphasis'` (default `muted`)
+- Variants: `align: 'left' | 'center' | 'right'` (default `center`), `tone: 'default' | 'muted' | 'emphasis'` (default
+  `muted`)
 
 ## Patterns and Recipes
 
@@ -180,7 +182,8 @@ You can still override per-row: `<TableRow density="spacious" />`.
 
 - Use `<TableCaption>` for a short, descriptive caption.
 - Header cells default `scope` to `col`. For row headers, pass `scope="row"`.
-- When a column is sorted, `TableHead sort` sets `aria-sort` and inserts screen-reader-only text. You can customize the label with `sortLabel`.
+- When a column is sorted, `TableHead sort` sets `aria-sort` and inserts screen-reader-only text. You can customize the
+  label with `sortLabel`.
 
 ## Testing
 
@@ -205,7 +208,9 @@ expect(s.ariaSort).toBe("desc");
 
 ## Data Attributes
 
-All components emit `data-table-*` attributes (e.g., `data-table`, `data-table-header`, `data-table-head`, `data-table-body`, `data-table-row`, `data-table-foot`, `data-table-caption`). These are handy for targeted tests and UI hooks without over-coupling to class names.
+All components emit `data-table-*` attributes (e.g., `data-table`, `data-table-header`, `data-table-head`,
+`data-table-body`, `data-table-row`, `data-table-foot`, `data-table-caption`). These are handy for targeted tests and UI
+hooks without over-coupling to class names.
 
 ## Imports
 

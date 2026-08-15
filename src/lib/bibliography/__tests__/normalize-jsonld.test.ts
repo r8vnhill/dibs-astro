@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-    normalizeScholarlyArticleReference,
-    normalizeWebPageReference,
-} from "../normalize/normalize-reference.mjs";
 import { extractFallbackTitles, parseBibliography } from "../normalize-jsonld";
+import { normalizeScholarlyArticleReference, normalizeWebPageReference } from "../normalize/normalize-reference.mjs";
 import { parsePageReference } from "../pages";
 
 const articlePages = parsePageReference(1, 22);

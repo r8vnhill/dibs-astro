@@ -9,9 +9,9 @@
  * - Comportamiento correcto del servicio nuevo vía adaptador
  */
 
+import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
 import { describe, expect, it } from "vitest";
-import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 
 /**
  * Estructura de curso simplificada para testing.

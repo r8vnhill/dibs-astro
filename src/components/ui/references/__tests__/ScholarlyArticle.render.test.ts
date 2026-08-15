@@ -75,8 +75,7 @@ suite.concurrent("ScholarlyArticle.astro", () => {
                     url: "https://example.com/fated-article",
                 },
                 slots: {
-                    title:
-                        "<strong data-slot=\"title\">The Crimson Thread of Our Last Promise</strong>",
+                    title: "<strong data-slot=\"title\">The Crimson Thread of Our Last Promise</strong>",
                 },
                 slotSelector: "strong[data-slot='title']",
                 slotText: "The Crimson Thread of Our Last Promise",
@@ -229,8 +228,7 @@ suite.concurrent("ScholarlyArticle.astro", () => {
                 },
                 {
                     slots: {
-                        description:
-                            "A fictional archival note on bloodlines, memory, and promises "
+                        description: "A fictional archival note on bloodlines, memory, and promises "
                             + "that outlive the people who made them.",
                     },
                 },

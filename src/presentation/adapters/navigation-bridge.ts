@@ -34,15 +34,8 @@
  *   reading from global state.
  */
 
-import {
-    NavigationService,
-    type AutoNavigationNode,
-    type NavigationServiceContract,
-} from "@ravenhill/content-core";
-import {
-    type CourseLesson,
-    LessonCatalogAdapter,
-} from "$infrastructure/adapters/LessonCatalogAdapter";
+import { type CourseLesson, LessonCatalogAdapter } from "$infrastructure/adapters/LessonCatalogAdapter";
+import { type AutoNavigationNode, NavigationService, type NavigationServiceContract } from "@ravenhill/content-core";
 import { getCourseNavigationTree } from "./course-navigation";
 
 /**

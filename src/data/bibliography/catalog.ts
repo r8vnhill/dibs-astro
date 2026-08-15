@@ -1,5 +1,5 @@
+import { type BibliographyCatalog, loadBibliographyCatalog } from "~/lib/bibliography";
 import bibliographyCatalogRaw from "./catalog.graph.generated.jsonld?raw";
-import { loadBibliographyCatalog, type BibliographyCatalog } from "~/lib/bibliography";
 
 const bibliographyCatalogJson = JSON.parse(bibliographyCatalogRaw) as Record<string, unknown>;
 

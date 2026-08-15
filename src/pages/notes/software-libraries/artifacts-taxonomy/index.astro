@@ -20,16 +20,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <P>
-            Esta lección abre la unidad con una pregunta previa a cualquier decisión de diseño: <B
-            >qué artefacto estamos construyendo y para quién</B>. Antes de profundizar en la
-            biblioteca, conviene distinguir el mapa más amplio en el que también aparecen
-            aplicaciones, scripts, herramientas, plugins y paquetes.
+            Esta lección abre la unidad con una pregunta previa a cualquier decisión de diseño: <B>qué artefacto estamos
+                construyendo y para quién</B>. Antes de profundizar en la biblioteca, conviene distinguir el mapa más
+            amplio en el que también aparecen aplicaciones, scripts, herramientas, plugins y paquetes.
         </P>
 
         <P>
-            La meta no es memorizar etiquetas, sino incorporar un criterio práctico para el resto
-            del curso. Al distinguir relación de uso, contrato y distribución, se vuelve más claro
-            qué vuelve particular a la biblioteca y por qué no se diseña igual que otros artefactos.
+            La meta no es memorizar etiquetas, sino incorporar un criterio práctico para el resto del curso. Al
+            distinguir relación de uso, contrato y distribución, se vuelve más claro qué vuelve particular a la
+            biblioteca y por qué no se diseña igual que otros artefactos.
         </P>
     </Fragment>
 
@@ -42,23 +41,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Antes de distinguir entre biblioteca, aplicación, script, herramienta o paquete,
-            conviene partir por el concepto más amplio que las reúne. Todas esas categorías son
-            tipos de <B>artefacto de software</B>, no etiquetas aisladas.
+            Antes de distinguir entre biblioteca, aplicación, script, herramienta o paquete, conviene partir por el
+            concepto más amplio que las reúne. Todas esas categorías son tipos de <B>artefacto de software</B>, no
+            etiquetas aisladas.
         </P>
 
         <P>
-            Un <B class="text-primary">artefacto de software</B> es una unidad de software diseñada
-            para ser creada, distribuida y usada dentro de un ecosistema técnico. No se define solo
-            por su implementación, sino también por su <B>propósito</B>, su <B>forma de uso</B> y el
-            tipo de <B>consumo</B> que habilita para personas, programas u otras herramientas.
+            Un <B class="text-primary">artefacto de software</B> es una unidad de software diseñada para ser creada,
+            distribuida y usada dentro de un ecosistema técnico. No se define solo por su implementación, sino también
+            por su <B>propósito</B>, su <B>forma de uso</B> y el tipo de <B>consumo</B> que habilita para personas,
+            programas u otras herramientas.
         </P>
 
         <P>
-            Por eso, al diseñar software, no basta con preguntarse cómo construirlo. También hay que
-            preguntarse <I>qué artefacto estamos creando, quién lo va a usar y de qué manera</I>.
-            Esa distinción influye en decisiones de diseño, automatización, publicación y
-            mantenimiento.
+            Por eso, al diseñar software, no basta con preguntarse cómo construirlo. También hay que preguntarse <I>qué
+                artefacto estamos creando, quién lo va a usar y de qué manera</I>. Esa distinción influye en decisiones
+            de diseño, automatización, publicación y mantenimiento.
         </P>
     </NotesSection>
 
@@ -68,39 +66,37 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En conversaciones técnicas es común usar palabras como <I>biblioteca</I>, <I
-            >herramienta</I> o <I>script</I> como si fueran casi sinónimos. Sin embargo, cada una
-            describe una relación de uso distinta: cambia quién consume el artefacto, cómo lo hace,
-            qué estabilidad espera y qué contrato debe ofrecerse.
+            En conversaciones técnicas es común usar palabras como <I>biblioteca</I>, <I>herramienta</I> o <I>script</I>
+            como si fueran casi sinónimos. Sin embargo, cada una describe una relación de uso distinta: cambia quién
+            consume el artefacto, cómo lo hace, qué estabilidad espera y qué contrato debe ofrecerse.
         </P>
 
         <P>
-            Esa diferencia importa porque el diseño no depende solo de la funcionalidad interna,
-            sino también de la forma de uso que se expone hacia afuera. Una biblioteca se evalúa por
-            la claridad y estabilidad de su API; una aplicación, por la experiencia de uso final; un
-            script, por resolver una tarea concreta con la menor fricción posible.
+            Esa diferencia importa porque el diseño no depende solo de la funcionalidad interna, sino también de la
+            forma de uso que se expone hacia afuera. Una biblioteca se evalúa por la claridad y estabilidad de su API;
+            una aplicación, por la experiencia de uso final; un script, por resolver una tarea concreta con la menor
+            fricción posible.
         </P>
 
         <Info headingLevel="h3">
             <span slot="title">Misma implementación, distinto artefacto</span>
 
             <P>
-                Dos soluciones pueden compartir gran parte del mismo código y aun así ser artefactos
-                distintos. Lo decisivo no es solo la lógica interna, sino cómo se consumen y qué
-                contrato prometen hacia afuera.
+                Dos soluciones pueden compartir gran parte del mismo código y aun así ser artefactos distintos. Lo
+                decisivo no es solo la lógica interna, sino cómo se consumen y qué contrato prometen hacia afuera.
             </P>
         </Info>
 
         <P>
-            Por ejemplo, una misma lógica podría reutilizarse como biblioteca, exponerse como
-            herramienta de línea de comandos o envolverse en un script de automatización. En cada
-            caso cambian las decisiones de distribución, documentación, validación y mantenimiento.
+            Por ejemplo, una misma lógica podría reutilizarse como biblioteca, exponerse como herramienta de línea de
+            comandos o envolverse en un script de automatización. En cada caso cambian las decisiones de distribución,
+            documentación, validación y mantenimiento.
         </P>
 
         <P>
-            Hacer esta distinción desde el comienzo evita mezclar preguntas diferentes. No es lo
-            mismo automatizar una tarea local, empaquetar una herramienta para un equipo o publicar
-            una biblioteca para que otras personas la integren en sus programas.
+            Hacer esta distinción desde el comienzo evita mezclar preguntas diferentes. No es lo mismo automatizar una
+            tarea local, empaquetar una herramienta para un equipo o publicar una biblioteca para que otras personas la
+            integren en sus programas.
         </P>
     </NotesSection>
 
@@ -110,11 +106,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En esta lección, la distinción base se organiza alrededor de formas de uso: biblioteca,
-            aplicación, script y herramienta. La diferencia entre <B>aplicación</B> y <B
-            >herramienta</B> es de enfoque: mientras una aplicación prioriza la experiencia de uso
-            final, una herramienta prioriza la operación técnica clara y repetible. Además, se
-            incorporan dos <I>dimensiones complementarias</I>: <B>plugin</B>, como extensión de un
+            En esta lección, la distinción base se organiza alrededor de formas de uso: biblioteca, aplicación, script y
+            herramienta. La diferencia entre <B>aplicación</B> y <B>herramienta</B> es de enfoque: mientras una
+            aplicación prioriza la experiencia de uso final, una herramienta prioriza la operación técnica clara y
+            repetible. Además, se incorporan dos <I>dimensiones complementarias</I>: <B>plugin</B>, como extensión de un
             anfitrión, y <B>paquete</B>, como unidad de distribución.
         </P>
 
@@ -122,13 +117,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Biblioteca</span>
 
             <P>
-                Una <B>biblioteca</B> está diseñada para ser integrada desde código de otro programa
-                mediante una API. Su foco no es la operación directa, sino la reutilización
-                programática. Ejemplos claros son <Mono
+                Una <B>biblioteca</B> está diseñada para ser integrada desde código de otro programa mediante una API.
+                Su foco no es la operación directa, sino la reutilización programática. Ejemplos claros son <Mono
                     href="https://github.com/Kotlin/kotlinx.coroutines"
                 >kotlinx.coroutines</Mono>
-                en el ecosistema Kotlin, o <I href="https://github.com/psf/requests">Requests</I>,
-                biblioteca HTTP de Python.
+                en el ecosistema Kotlin, o <I href="https://github.com/psf/requests">Requests</I>, biblioteca HTTP de
+                Python.
             </P>
         </Definition>
 
@@ -136,10 +130,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Aplicación</span>
 
             <P>
-                Una <B>aplicación</B> está orientada al uso directo por parte de personas usuarias
-                finales. A diferencia de una biblioteca, su contrato principal es la experiencia de
-                uso final, no la API para integración. Una app Android escrita en Kotlin o <I>Visual
-                    Studio Code</I> son ejemplos de artefactos que se evalúan como producto final.
+                Una <B>aplicación</B> está orientada al uso directo por parte de personas usuarias finales. A diferencia
+                de una biblioteca, su contrato principal es la experiencia de uso final, no la API para integración. Una
+                app Android escrita en Kotlin o <I>Visual Studio Code</I> son ejemplos de artefactos que se evalúan como
+                producto final.
             </P>
         </Definition>
 
@@ -147,10 +141,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Script</span>
 
             <P>
-                Un <B>script</B> suele orientarse a automatizar una tarea concreta en un contexto
-                local o acotado. Su rasgo principal no es el lenguaje en que está escrito, sino el
-                hecho de priorizar rapidez y bajo costo de arranque por sobre un contrato público
-                estable para terceros. <Mono>build.gradle.kts</Mono> es un ejemplo típico de script.
+                Un <B>script</B> suele orientarse a automatizar una tarea concreta en un contexto local o acotado. Su
+                rasgo principal no es el lenguaje en que está escrito, sino el hecho de priorizar rapidez y bajo costo
+                de arranque por sobre un contrato público estable para terceros. <Mono>build.gradle.kts</Mono> es un
+                ejemplo típico de script.
             </P>
         </Definition>
 
@@ -158,14 +152,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Herramienta</span>
 
             <P>
-                Una <B>herramienta</B> es un artefacto pensado para uso técnico directo por parte de
-                otras personas o equipos. Suele ofrecer una interfaz operable y repetible <Dash
-                    kind="em"
-                /> por ejemplo, una CLI, un linter o un generador <Dash kind="em" /> y por eso exige
-                instalación, documentación y comportamiento estable. <I
-                    href="https://github.com/pinterest/ktlint"
-                >ktlint</I> y <I href="https://detekt.dev">detekt</I> son ejemplos del ecosistema
-                Kotlin.
+                Una <B>herramienta</B> es un artefacto pensado para uso técnico directo por parte de otras personas o
+                equipos. Suele ofrecer una interfaz operable y repetible <Dash kind="em" /> por ejemplo, una CLI, un
+                linter o un generador <Dash kind="em" /> y por eso exige instalación, documentación y comportamiento
+                estable. <I href="https://github.com/pinterest/ktlint">ktlint</I> y <I href="https://detekt.dev"
+                >detekt</I> son ejemplos del ecosistema Kotlin.
             </P>
         </Definition>
 
@@ -173,12 +164,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Plugin</span>
 
             <P>
-                Un <B>plugin</B> extiende el comportamiento de un artefacto anfitrión mediante
-                puntos de extensión definidos por ese anfitrión. Se integra dentro del ciclo de vida
-                de la plataforma que lo carga, no arbitrariamente desde código. Un plugin de <I
-                    href="https://plugins.gradle.org/"
-                >Gradle</I> o de <I href="https://plugins.jetbrains.com/">IntelliJ IDEA</I> son
-                ejemplos típicos.
+                Un <B>plugin</B> extiende el comportamiento de un artefacto anfitrión mediante puntos de extensión
+                definidos por ese anfitrión. Se integra dentro del ciclo de vida de la plataforma que lo carga, no
+                arbitrariamente desde código. Un plugin de <I href="https://plugins.gradle.org/">Gradle</I> o de <I
+                    href="https://plugins.jetbrains.com/"
+                >IntelliJ IDEA</I> son ejemplos típicos.
             </P>
         </Definition>
 
@@ -186,13 +176,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Paquete</span>
 
             <P>
-                Un <B>paquete</B> es una unidad de distribución dentro de un ecosistema. No describe
-                primero cómo se usa el software, sino cómo se publica, instala y versiona. Un
-                paquete puede contener una biblioteca, una herramienta, una aplicación o una
-                combinación de ellas. Los artefactos publicados en <I
+                Un <B>paquete</B> es una unidad de distribución dentro de un ecosistema. No describe primero cómo se usa
+                el software, sino cómo se publica, instala y versiona. Un paquete puede contener una biblioteca, una
+                herramienta, una aplicación o una combinación de ellas. Los artefactos publicados en <I
                     href="https://central.sonatype.com"
-                >Maven Central</I> o los crates de <I href="https://doc.rust-lang.org/cargo/"
-                >Cargo</I> son ejemplos.
+                >Maven Central</I> o los crates de <I href="https://doc.rust-lang.org/cargo/">Cargo</I> son ejemplos.
             </P>
         </Definition>
 
@@ -200,9 +188,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">Estas categorías no son excluyentes</span>
 
             <P>
-                Un mismo proyecto puede combinar varias de estas dimensiones. Por ejemplo, un
-                paquete puede distribuir una biblioteca y, además, incluir una herramienta de línea
-                de comandos apoyada en esa misma biblioteca.
+                Un mismo proyecto puede combinar varias de estas dimensiones. Por ejemplo, un paquete puede distribuir
+                una biblioteca y, además, incluir una herramienta de línea de comandos apoyada en esa misma biblioteca.
             </P>
         </Important>
     </NotesSection>
@@ -213,16 +200,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Una vez instalado <I>artefacto</I> como marco conceptual, una forma útil de comparar sus
-            variantes es mirar siempre los mismos ejes. Así la distinción no depende solo de
-            intuiciones vagas, del tamaño del proyecto o de detalles accidentales de la
-            implementación.
+            Una vez instalado <I>artefacto</I> como marco conceptual, una forma útil de comparar sus variantes es mirar
+            siempre los mismos ejes. Así la distinción no depende solo de intuiciones vagas, del tamaño del proyecto o
+            de detalles accidentales de la implementación.
         </P>
 
         <Note headingLevel="h3">
-            No todos estos ejes tienen igual peso en todas las situaciones; algunos importan más
-            para ciertos artefactos que para otros. Estos ejes no producen categorías rígidas, pero
-            ayudan a ver qué tipo de contrato y mantenimiento exige cada artefacto.
+            No todos estos ejes tienen igual peso en todas las situaciones; algunos importan más para ciertos artefactos
+            que para otros. Estos ejes no producen categorías rígidas, pero ayudan a ver qué tipo de contrato y
+            mantenimiento exige cada artefacto.
         </Note>
 
         <NotesSection id="h3-main-recipient">
@@ -244,8 +230,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Script</B>: quien automatiza una tarea local o de equipo.
                 </ListItem>
                 <ListItem icon={icons.Wrench}>
-                    <B>Herramienta</B>: otras personas o equipos que necesitan operar una capacidad
-                    concreta.
+                    <B>Herramienta</B>: otras personas o equipos que necesitan operar una capacidad concreta.
                 </ListItem>
             </List>
         </NotesSection>
@@ -260,23 +245,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.Code}>
-                    <B>Biblioteca</B>: integración desde código, importación o uso de una API
-                    pública.
+                    <B>Biblioteca</B>: integración desde código, importación o uso de una API pública.
                 </ListItem>
                 <ListItem icon={icons.PuzzlePiece}>
                     <B>Plugin</B>: carga por un anfitrión mediante puntos de extensión definidos.
                 </ListItem>
                 <ListItem icon={icons.AppWindow}>
-                    <B>Aplicación</B>: interfaz gráfica, web, móvil o consola interactiva; el foco
-                    está en la experiencia de uso final, no en la operación técnica.
+                    <B>Aplicación</B>: interfaz gráfica, web, móvil o consola interactiva; el foco está en la
+                    experiencia de uso final, no en la operación técnica.
                 </ListItem>
                 <ListItem icon={icons.Terminal}>
-                    <B>Script</B>: ejecución acotada, normalmente desde terminal, CI, scheduler o
-                    hook; automatización de una tarea concreta en un contexto local o de equipo.
+                    <B>Script</B>: ejecución acotada, normalmente desde terminal, CI, scheduler o hook; automatización
+                    de una tarea concreta en un contexto local o de equipo.
                 </ListItem>
                 <ListItem icon={icons.Wrench}>
-                    <B>Herramienta</B>: comandos, flags, archivos de entrada y salida o flujos
-                    operacionales definidos.
+                    <B>Herramienta</B>: comandos, flags, archivos de entrada y salida o flujos operacionales definidos.
                 </ListItem>
             </List>
         </NotesSection>
@@ -290,9 +273,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                El contrato cambia según el ejemplo: en <Mono>kotlinx.serialization</Mono> se espera
-                estabilidad de API; en <Mono>ktlint</Mono> o <Mono>detekt</Mono> se espera operación
-                consistente, opciones claras y salida interpretable.
+                El contrato cambia según el ejemplo: en <Mono>kotlinx.serialization</Mono> se espera estabilidad de API;
+                en <Mono>ktlint</Mono> o <Mono>detekt</Mono> se espera operación consistente, opciones claras y salida
+                interpretable.
             </P>
 
             <List>
@@ -300,20 +283,18 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Biblioteca</B>: nombres, tipos, semántica, errores, compatibilidad.
                 </ListItem>
                 <ListItem icon={icons.PuzzlePiece}>
-                    <B>Plugin</B>: compatibilidad con la API de extensión del anfitrión y su ciclo
-                    de vida.
+                    <B>Plugin</B>: compatibilidad con la API de extensión del anfitrión y su ciclo de vida.
                 </ListItem>
                 <ListItem icon={icons.Eye}>
-                    <B>Aplicación</B>: comportamiento visible, experiencia de uso y resultados
-                    funcionales.
+                    <B>Aplicación</B>: comportamiento visible, experiencia de uso y resultados funcionales.
                 </ListItem>
                 <ListItem icon={icons.Lightning}>
-                    <B>Script</B>: entradas conocidas, tarea clara y comportamiento predecible
-                    dentro de su contexto acotado.
+                    <B>Script</B>: entradas conocidas, tarea clara y comportamiento predecible dentro de su contexto
+                    acotado.
                 </ListItem>
                 <ListItem icon={icons.NotePencil}>
-                    <B>Herramienta</B>: interfaz de uso, documentación, instalación, mensajes de
-                    error y comportamiento repetible.
+                    <B>Herramienta</B>: interfaz de uso, documentación, instalación, mensajes de error y comportamiento
+                    repetible.
                 </ListItem>
             </List>
         </NotesSection>
@@ -334,23 +315,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
             <List>
                 <ListItem icon={icons.ShieldCheck}>
-                    <B>Biblioteca</B>: alta; cambios controlados, versionado y cuidado de
-                    compatibilidad.
+                    <B>Biblioteca</B>: alta; cambios controlados, versionado y cuidado de compatibilidad.
                 </ListItem>
                 <ListItem icon={icons.TrendUp}>
-                    <B>Aplicación</B>: puede cambiar internamente sin exponer cada detalle como
-                    contrato programático.
+                    <B>Aplicación</B>: puede cambiar internamente sin exponer cada detalle como contrato programático.
                 </ListItem>
                 <ListItem icon={icons.Lightning}>
                     <B>Script</B>: baja; alcance local y menor presión por estabilidad pública.
                 </ListItem>
                 <ListItem icon={icons.GearSix}>
-                    <B>Herramienta</B>: alta; ya circula entre personas distintas y exige operación
-                    repetible por terceros.
+                    <B>Herramienta</B>: alta; ya circula entre personas distintas y exige operación repetible por
+                    terceros.
                 </ListItem>
                 <ListItem icon={icons.ShieldCheck}>
-                    <B>Plugin</B>: media a alta; depende del contrato de extensión definido por el
-                    anfitrión y de su ciclo de vida.
+                    <B>Plugin</B>: media a alta; depende del contrato de extensión definido por el anfitrión y de su
+                    ciclo de vida.
                 </ListItem>
             </List>
         </NotesSection>
@@ -364,30 +343,26 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                Este eje se entiende rápido al contrastar una biblioteca distribuida por <I>Maven
-                    Central</I> con una aplicación descargable mediante instalador o tienda.
+                Este eje se entiende rápido al contrastar una biblioteca distribuida por <I>Maven Central</I> con una
+                aplicación descargable mediante instalador o tienda.
             </P>
 
             <List>
                 <ListItem icon={icons.Package}>
-                    <B>Biblioteca</B>: suele viajar dentro de paquetes o repositorios de
-                    dependencias.
+                    <B>Biblioteca</B>: suele viajar dentro de paquetes o repositorios de dependencias.
                 </ListItem>
                 <ListItem icon={icons.Archive}>
-                    <B>Aplicación</B>: instaladores, despliegues o publicación como producto listo
-                    para usarse.
+                    <B>Aplicación</B>: instaladores, despliegues o publicación como producto listo para usarse.
                 </ListItem>
                 <ListItem icon={icons.FileCode}>
-                    <B>Script</B>: archivo o conjunto pequeño de archivos compartidos de forma
-                    acotada.
+                    <B>Script</B>: archivo o conjunto pequeño de archivos compartidos de forma acotada.
                 </ListItem>
                 <ListItem icon={icons.Truck}>
-                    <B>Herramienta</B>: binarios, paquetes, repositorios internos o canales de
-                    instalación compartidos.
+                    <B>Herramienta</B>: binarios, paquetes, repositorios internos o canales de instalación compartidos.
                 </ListItem>
                 <ListItem icon={icons.Package}>
-                    <B>Plugin</B>: repositorios o portales del ecosistema anfitrión, junto con
-                    metadatos que permiten su carga automática o descubrimiento.
+                    <B>Plugin</B>: repositorios o portales del ecosistema anfitrión, junto con metadatos que permiten su
+                    carga automática o descubrimiento.
                 </ListItem>
             </List>
         </NotesSection>
@@ -396,24 +371,21 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <span slot="title">El paquete cruza a las otras categorías</span>
 
             <P>
-                Biblioteca, aplicación, script y herramienta describen principalmente una relación
-                de uso. En cambio, <I>paquete</I> describe sobre todo una forma de distribución. En
-                el ecosistema JVM, un artefacto publicado en <I>Maven Central</I> puede distribuir
-                una biblioteca, y un plugin publicado en el <I href="https://plugins.gradle.org/"
+                Biblioteca, aplicación, script y herramienta describen principalmente una relación de uso. En cambio, <I
+                >paquete</I> describe sobre todo una forma de distribución. En el ecosistema JVM, un artefacto publicado
+                en <I>Maven Central</I> puede distribuir una biblioteca, y un plugin publicado en el <I
+                    href="https://plugins.gradle.org/"
                 >Gradle Plugin Portal</I> puede circular como paquete. En ese caso, <I>plugin</I>
-                nombra la relación de extensión con su anfitrión; <I>paquete</I>, su forma de
-                distribución.
+                nombra la relación de extensión con su anfitrión; <I>paquete</I>, su forma de distribución.
             </P>
         </Info>
 
         <P>
-            Un ejemplo que integra varios ejes: un proyecto Kotlin/JVM puede publicar una <B
-            >biblioteca</B> en <I>Maven Central</I> como <B>paquete</B> (distribución + consumo
-            programático), incluir un <B>plugin de Gradle</B> (extensión + distribución en portal) e
-            incluir una <B>herramienta CLI</B> también empaquetada (operación técnica + binario
-            compartido). Cada uno de estos artefactos ocupa una fila distinta en los ejes, pero
-            conviven en el mismo proyecto porque responden a necesidades diferentes de quien los
-            consume.
+            Un ejemplo que integra varios ejes: un proyecto Kotlin/JVM puede publicar una <B>biblioteca</B> en <I>Maven
+                Central</I> como <B>paquete</B> (distribución + consumo programático), incluir un <B>plugin de
+                Gradle</B> (extensión + distribución en portal) e incluir una <B>herramienta CLI</B> también empaquetada
+            (operación técnica + binario compartido). Cada uno de estos artefactos ocupa una fila distinta en los ejes,
+            pero conviven en el mismo proyecto porque responden a necesidades diferentes de quien los consume.
         </P>
     </NotesSection>
 
@@ -428,26 +400,24 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                Imagina un script que renombra archivos para una necesidad puntual local. Mientras
-                solo lo use quien lo escribió, puede bastar con que funcione en su máquina y con
-                algunos supuestos implícitos sobre rutas, nombres o permisos, porque todavía no
-                existe un contrato de uso para otras personas.
+                Imagina un script que renombra archivos para una necesidad puntual local. Mientras solo lo use quien lo
+                escribió, puede bastar con que funcione en su máquina y con algunos supuestos implícitos sobre rutas,
+                nombres o permisos, porque todavía no existe un contrato de uso para otras personas.
             </P>
 
             <P>
-                La situación cambia cuando otras personas del equipo empiezan a depender de esa
-                misma automatización. En ese momento ya no basta con que funcione: hace falta pensar
-                en instalación, mensajes de error, parámetros claros, comportamiento repetible,
-                compatibilidad del entorno y documentación de uso. La lógica puede seguir siendo
-                parecida, pero el artefacto ya no se evalúa como script local, sino como una <B
-                >herramienta</B> compartida.
+                La situación cambia cuando otras personas del equipo empiezan a depender de esa misma automatización. En
+                ese momento ya no basta con que funcione: hace falta pensar en instalación, mensajes de error,
+                parámetros claros, comportamiento repetible, compatibilidad del entorno y documentación de uso. La
+                lógica puede seguir siendo parecida, pero el artefacto ya no se evalúa como script local, sino como una
+                <B>herramienta</B> compartida.
             </P>
 
             <P>
-                El cambio importante no es de tamaño, sino de contrato. La pregunta ya no es solo si
-                automatiza algo útil, sino si otra persona puede usarlo con confianza sin necesitar
-                conocer la implementación. A partir de ahí, ya no basta con que la automatización
-                exista: su uso también tiene que ser claro, repetible y predecible.
+                El cambio importante no es de tamaño, sino de contrato. La pregunta ya no es solo si automatiza algo
+                útil, sino si otra persona puede usarlo con confianza sin necesitar conocer la implementación. A partir
+                de ahí, ya no basta con que la automatización exista: su uso también tiene que ser claro, repetible y
+                predecible.
             </P>
         </NotesSection>
 
@@ -457,60 +427,54 @@ import NotesSection from "~/layouts/NotesSection.astro";
             </Heading>
 
             <P>
-                Considera <Mono>kotlinx.serialization</Mono> como una biblioteca reutilizable. Su
-                API está pensada para otras personas que desarrollan software, así que importan
-                nombres claros, tipos coherentes y comportamiento estable.
+                Considera <Mono>kotlinx.serialization</Mono> como una biblioteca reutilizable. Su API está pensada para
+                otras personas que desarrollan software, así que importan nombres claros, tipos coherentes y
+                comportamiento estable.
             </P>
 
             <P>
-                Para circular en el ecosistema, esa biblioteca puede publicarse como paquete en <I
-                >Maven Central</I>. El paquete no reemplaza a la biblioteca ni redefine su
-                propósito: define su forma de distribución dentro del ecosistema, con versión,
-                metadatos y dependencias. Luego, una <B>aplicación</B> <Dash kind="em" /> por
-                ejemplo, una app Android en Kotlin <Dash kind="em" /> puede declarar esa dependencia
-                y usar la biblioteca internamente para ofrecer una capacidad a sus personas
-                usuarias.
+                Para circular en el ecosistema, esa biblioteca puede publicarse como paquete en <I>Maven Central</I>. El
+                paquete no reemplaza a la biblioteca ni redefine su propósito: define su forma de distribución dentro
+                del ecosistema, con versión, metadatos y dependencias. Luego, una <B>aplicación</B> <Dash kind="em" />
+                por ejemplo, una app Android en Kotlin <Dash kind="em" /> puede declarar esa dependencia y usar la
+                biblioteca internamente para ofrecer una capacidad a sus personas usuarias.
             </P>
 
             <P>
-                Aquí conviven tres niveles distintos: la <B>biblioteca</B> define el contrato
-                programático, el <B>paquete</B> define la forma de distribución y la <B
-                >aplicación</B> organiza la experiencia de uso final. Distinguirlos evita mezclar
-                decisiones de API, distribución y uso, incluso cuando estos niveles participan en
-                una misma solución.
+                Aquí conviven tres niveles distintos: la <B>biblioteca</B> define el contrato programático, el <B
+                >paquete</B> define la forma de distribución y la <B>aplicación</B> organiza la experiencia de uso
+                final. Distinguirlos evita mezclar decisiones de API, distribución y uso, incluso cuando estos niveles
+                participan en una misma solución.
             </P>
         </NotesSection>
 
         <NotesSection id="h3-gradle-script-package">
             <Heading headingLevel="h3" Icon={icons.GearSix}>
-                Gradle como herramienta, <Mono>build.gradle.kts</Mono> como script y plugin como
-                extensión
+                Gradle como herramienta, <Mono>build.gradle.kts</Mono> como script y plugin como extensión
             </Heading>
 
             <P>
-                En un proyecto Kotlin/JVM, <I>Gradle</I> funciona como una <B>herramienta</B> de
-                automatización: se usa mediante comandos y coordina tareas de compilación, pruebas,
-                empaquetado y publicación.
+                En un proyecto Kotlin/JVM, <I>Gradle</I> funciona como una <B>herramienta</B> de automatización: se usa
+                mediante comandos y coordina tareas de compilación, pruebas, empaquetado y publicación.
             </P>
 
             <P>
-                Dentro de esa herramienta, <Mono>build.gradle.kts</Mono> actúa como <B>script</B>:
-                define reglas de build y automatización para el proyecto o módulo actual, aunque
-                parte de esa lógica pueda migrar después a convenciones más compartidas.
+                Dentro de esa herramienta, <Mono>build.gradle.kts</Mono> actúa como <B>script</B>: define reglas de
+                build y automatización para el proyecto o módulo actual, aunque parte de esa lógica pueda migrar después
+                a convenciones más compartidas.
             </P>
 
             <P>
-                Un <B>plugin</B>, en cambio, es una <B>extensión</B> del anfitrión. En este caso,
-                amplía Gradle a través de puntos de extensión definidos por la propia herramienta.
-                Si ese plugin se publica en el <I>Gradle Plugin Portal</I>, sigue siendo un <B
-                >plugin</B>; lo que cambia es su distribución como <B>paquete</B>.
+                Un <B>plugin</B>, en cambio, es una <B>extensión</B> del anfitrión. En este caso, amplía Gradle a través
+                de puntos de extensión definidos por la propia herramienta. Si ese plugin se publica en el <I>Gradle
+                    Plugin Portal</I>, sigue siendo un <B>plugin</B>; lo que cambia es su distribución como <B
+                >paquete</B>.
             </P>
 
             <P>
-                Del mismo modo, una biblioteca publicada en <I>Maven Central</I> sigue siendo una <B
-                >biblioteca</B>, aunque Gradle la descargue e integre en el build. Este ejemplo
-                muestra que en un mismo ecosistema pueden convivir herramienta, script, plugin y
-                paquete, cada uno con un papel distinto.
+                Del mismo modo, una biblioteca publicada en <I>Maven Central</I> sigue siendo una <B>biblioteca</B>,
+                aunque Gradle la descargue e integre en el build. Este ejemplo muestra que en un mismo ecosistema pueden
+                convivir herramienta, script, plugin y paquete, cada uno con un papel distinto.
             </P>
         </NotesSection>
     </NotesSection>
@@ -521,97 +485,91 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Desde aquí conviene usar una pregunta simple como filtro de diseño: <B
-                class="text-primary"
-            >¿qué artefacto estamos construyendo y para quién?</B> Esa pregunta ayuda a ordenar las
-            decisiones que aparecen a lo largo del curso.
+            Desde aquí conviene usar una pregunta simple como filtro de diseño: <B class="text-primary"
+            >¿qué artefacto estamos construyendo y para quién?</B> Esa pregunta ayuda a ordenar las decisiones que
+            aparecen a lo largo del curso.
         </P>
 
         <List>
             <ListItem icon={icons.Plugs}>
-                Si estamos diseñando una <B>biblioteca</B>, el foco debe ponerse en la API, la
-                claridad, la composición y la estabilidad para otras personas desarrolladoras.
+                Si estamos diseñando una <B>biblioteca</B>, el foco debe ponerse en la API, la claridad, la composición
+                y la estabilidad para otras personas desarrolladoras.
             </ListItem>
 
             <ListItem icon={icons.Terminal}>
-                Si estamos resolviendo una automatización puntual, probablemente partimos con un <B
-                >script</B> y luego evaluamos si debe convertirse en una herramienta compartida.
+                Si estamos resolviendo una automatización puntual, probablemente partimos con un <B>script</B> y luego
+                evaluamos si debe convertirse en una herramienta compartida.
             </ListItem>
 
             <ListItem icon={icons.Package}>
-                Si discutimos publicación, registros o instalación, muchas veces el concepto clave
-                ya no es la forma de uso, sino el <B>paquete</B> como unidad de distribución.
+                Si discutimos publicación, registros o instalación, muchas veces el concepto clave ya no es la forma de
+                uso, sino el <B>paquete</B> como unidad de distribución.
             </ListItem>
 
             <ListItem icon={icons.Hammer}>
-                Si pensamos en build y automatización, importa identificar qué artefacto se está
-                sosteniendo, porque no todos exigen el mismo proceso ni el mismo nivel de contrato.
+                Si pensamos en build y automatización, importa identificar qué artefacto se está sosteniendo, porque no
+                todos exigen el mismo proceso ni el mismo nivel de contrato.
             </ListItem>
         </List>
 
         <P>
-            Este criterio no distingue artefactos por tamaño o complejidad, sino por la relación de
-            uso que establecen y por las exigencias de diseño que esa relación trae consigo.
+            Este criterio no distingue artefactos por tamaño o complejidad, sino por la relación de uso que establecen y
+            por las exigencias de diseño que esa relación trae consigo.
         </P>
     </NotesSection>
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                <B>Biblioteca</B>, <B>aplicación</B>, <B>script</B>, <B>herramienta</B>, <B
-                >plugin</B> y <B>paquete</B> no nombran lo mismo. Cada término destaca una relación
-                distinta de uso, extensión o distribución, y con ella expectativas diferentes sobre
-                interfaz, estabilidad, documentación y mantenimiento.
+                <B>Biblioteca</B>, <B>aplicación</B>, <B>script</B>, <B>herramienta</B>, <B>plugin</B> y <B>paquete</B>
+                no nombran lo mismo. Cada término destaca una relación distinta de uso, extensión o distribución, y con
+                ella expectativas diferentes sobre interfaz, estabilidad, documentación y mantenimiento.
             </P>
 
             <P>
-                Distinguir estos artefactos desde el comienzo evita mezclar preguntas de diseño que
-                conviene separar. Aunque distintos artefactos puedan compartir código, no establecen
-                el mismo contrato hacia afuera ni se evalúan con los mismos criterios.
+                Distinguir estos artefactos desde el comienzo evita mezclar preguntas de diseño que conviene separar.
+                Aunque distintos artefactos puedan compartir código, no establecen el mismo contrato hacia afuera ni se
+                evalúan con los mismos criterios.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Plugs}>
-                Una <B>biblioteca</B> se diseña para integración programática; una <B
-                >aplicación</B>, para uso final directo.
+                Una <B>biblioteca</B> se diseña para integración programática; una <B>aplicación</B>, para uso final
+                directo.
             </ListItem>
             <ListItem icon={icons.Terminal}>
                 Un <B>script</B> suele resolver una automatización acotada; una <B>herramienta</B>
                 exige una interfaz de uso más estable para terceros.
             </ListItem>
             <ListItem icon={icons.PuzzlePiece}>
-                Un <B>plugin</B> se define por extender a un anfitrión mediante puntos de extensión
-                predefinidos.
+                Un <B>plugin</B> se define por extender a un anfitrión mediante puntos de extensión predefinidos.
             </ListItem>
             <ListItem icon={icons.Package}>
-                Un <B>paquete</B> es una unidad de distribución y puede transportar distintos tipos
-                de artefacto.
+                Un <B>paquete</B> es una unidad de distribución y puede transportar distintos tipos de artefacto.
             </ListItem>
             <ListItem icon={icons.GitBranch}>
                 Estas categorías no son excluyentes: un mismo proyecto puede combinar varias.
             </ListItem>
             <ListItem icon={icons.Question}>
-                La pregunta <I>qué artefacto estamos diseñando y para quién</I> organiza mejor las
-                decisiones de API, automatización, distribución y build.
+                La pregunta <I>qué artefacto estamos diseñando y para quién</I> organiza mejor las decisiones de API,
+                automatización, distribución y build.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            Con este mapa general ya instalado, el curso puede concentrarse en la biblioteca como
-            caso particular. La pregunta que sigue ya no es qué es un artefacto de software en
-            general, sino qué exige diseñar una biblioteca reusable para otras personas
-            desarrolladoras.
+            Con este mapa general ya instalado, el curso puede concentrarse en la biblioteca como caso particular. La
+            pregunta que sigue ya no es qué es un artefacto de software en general, sino qué exige diseñar una
+            biblioteca reusable para otras personas desarrolladoras.
         </Fragment>
     </ConclusionsLayout>
 
     <ReferencesFromCatalog lessonId="/notes/software-libraries/artifacts-taxonomy/">
         <Fragment slot="description-ref:jfrog-what-are-software-artifacts">
-            Te puede interesar si quieres ampliar la noción de artefacto más allá de biblioteca,
-            paquete o binario aislado. El texto conecta artefactos con su papel en la cadena de
-            suministro de software, su almacenamiento, su trazabilidad y su circulación en
-            repositorios, lo que ayuda a entender por qué la pregunta por el artefacto no es solo
-            terminológica, sino también operativa.
+            Te puede interesar si quieres ampliar la noción de artefacto más allá de biblioteca, paquete o binario
+            aislado. El texto conecta artefactos con su papel en la cadena de suministro de software, su almacenamiento,
+            su trazabilidad y su circulación en repositorios, lo que ayuda a entender por qué la pregunta por el
+            artefacto no es solo terminológica, sino también operativa.
         </Fragment>
     </ReferencesFromCatalog>
 </NotesLayout>

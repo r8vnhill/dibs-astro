@@ -24,14 +24,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <P>
-            Este laboratorio conecta lo aprendido sobre <I>pipeline-awareness</I> y <B>manejo de
-                errores</B> en un caso real: coordinar tareas sobre múltiples repositorios
-            versionados de forma independiente mediante un repositorio índice con submódulos.
+            Este laboratorio conecta lo aprendido sobre <I>pipeline-awareness</I> y <B>manejo de errores</B> en un caso
+            real: coordinar tareas sobre múltiples repositorios versionados de forma independiente mediante un
+            repositorio índice con submódulos.
         </P>
         <P>
-            Al finalizar, contarás con un flujo reproducible para crear, inspeccionar, actualizar y
-            publicar ese índice en GitLab, reutilizando scripts de laboratorios previos y
-            manteniendo contratos explícitos de entrada, salida y política de fallos.
+            Al finalizar, contarás con un flujo reproducible para crear, inspeccionar, actualizar y publicar ese índice
+            en GitLab, reutilizando scripts de laboratorios previos y manteniendo contratos explícitos de entrada,
+            salida y política de fallos.
         </P>
     </Fragment>
 
@@ -41,8 +41,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En esta unidad ya trabajaste con scripts reutilizables y con decisiones explícitas de
-            error en pipelines. Este laboratorio agrega una dificultad habitual en automatización:
+            En esta unidad ya trabajaste con scripts reutilizables y con decisiones explícitas de error en pipelines.
+            Este laboratorio agrega una dificultad habitual en automatización:
             <B>coordinar tareas sobre varios repositorios versionados de forma independiente</B>
             sin perder trazabilidad.
         </P>
@@ -50,11 +50,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Definition headingLevel="h3">
             <span slot="title">Repositorio índice de proyectos</span>
             <P>
-                Un <B>submódulo</B> es un repositorio Git referenciado desde otro mediante un commit
-                específico. Un <B>repositorio índice</B> es el repositorio principal que organiza
-                esos submódulos: no implementa la aplicación, sino que fija versiones concretas de
-                varios proyectos externos para asegurar reproducibilidad y coordinar entre piezas
-                autónomas versionadas de forma independiente.
+                Un <B>submódulo</B> es un repositorio Git referenciado desde otro mediante un commit específico. Un <B
+                >repositorio índice</B> es el repositorio principal que organiza esos submódulos: no implementa la
+                aplicación, sino que fija versiones concretas de varios proyectos externos para asegurar
+                reproducibilidad y coordinar entre piezas autónomas versionadas de forma independiente.
             </P>
             <P>
                 En este laboratorio, el índice organiza proyectos del curso como
@@ -65,10 +64,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Important headingLevel="h3">
             <span slot="title">Alcance didáctico de este laboratorio</span>
             <P>
-                Los submódulos son un <B>medio</B>, no el fin. El foco está en practicar a orquestar
-                múltiples proyectos con contratos claros: entrada estructurada, salida tipada,
-                política de errores configurable y observabilidad de fallos. No siempre son la mejor
-                solución; en algunos contextos un monorepo es más simple.
+                Los submódulos son un <B>medio</B>, no el fin. El foco está en practicar a orquestar múltiples proyectos
+                con contratos claros: entrada estructurada, salida tipada, política de errores configurable y
+                observabilidad de fallos. No siempre son la mejor solución; en algunos contextos un monorepo es más
+                simple.
             </P>
         </Important>
     </NotesSection>
@@ -79,16 +78,15 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En este laboratorio vamos a trabajar con un <B>repositorio índice</B>: un repositorio
-            “contenedor” cuya responsabilidad no es implementar una aplicación, sino <B>fijar
-                versiones</B>
+            En este laboratorio vamos a trabajar con un <B>repositorio índice</B>: un repositorio “contenedor” cuya
+            responsabilidad no es implementar una aplicación, sino <B>fijar versiones</B>
             de varios repositorios del curso en una estructura reproducible.
         </P>
 
         <P>
-            La idea clave es que el script sea <B>pipeline-aware</B>: en lugar de iterar manualmente
-            sobre una lista de repositorios, <B>recibe objetos por pipeline</B> (cada uno describe
-            un submódulo), y ejecuta la misma acción de manera uniforme.
+            La idea clave es que el script sea <B>pipeline-aware</B>: en lugar de iterar manualmente sobre una lista de
+            repositorios, <B>recibe objetos por pipeline</B> (cada uno describe un submódulo), y ejecuta la misma acción
+            de manera uniforme.
         </P>
 
         <PowerShellBlock
@@ -172,8 +170,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <P>
                 Este script sigue la estructura natural de un pipeline en PowerShell:
-                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
-                >process</PowerShellInline> y <PowerShellInline>end</PowerShellInline>.
+                <PowerShellInline>begin</PowerShellInline>, <PowerShellInline>process</PowerShellInline> y
+                <PowerShellInline>end</PowerShellInline>.
             </P>
 
             <List>
@@ -181,26 +179,25 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <B>Bloque <PowerShellInline>begin</PowerShellInline> — preparación global:</B>
                     <P>
                         Se crea e inicializa el repositorio índice. La llamada a
-                        <PowerShellInline>GetUnresolvedProviderPathFromPSPath</PowerShellInline> es
-                        importante porque la ruta podría no existir todavía. Aquí usamos
-                        <PowerShellInline code="-ErrorAction Stop" /> porque si no podemos
-                        inicializar el índice, el resto del pipeline pierde sentido.
+                        <PowerShellInline>GetUnresolvedProviderPathFromPSPath</PowerShellInline> es importante porque la
+                        ruta podría no existir todavía. Aquí usamos
+                        <PowerShellInline code="-ErrorAction Stop" /> porque si no podemos inicializar el índice, el
+                        resto del pipeline pierde sentido.
                     </P>
                 </ListItem>
 
                 <ListItem icon={icons.ArrowsClockwise}>
-                    <B>Bloque <PowerShellInline>process</PowerShellInline> — ejecución por
-                        elemento</B>
+                    <B>Bloque <PowerShellInline>process</PowerShellInline> — ejecución por elemento</B>
                     <P>
-                        No hay iteración explícita. PowerShell invoca este bloque una vez por cada
-                        objeto que llega por pipeline, enlazando
-                        <PowerShellInline>RemoteName</PowerShellInline> y <PowerShellInline
-                        >LocalName</PowerShellInline> mediante
+                        No hay iteración explícita. PowerShell invoca este bloque una vez por cada objeto que llega por
+                        pipeline, enlazando
+                        <PowerShellInline>RemoteName</PowerShellInline> y <PowerShellInline>LocalName</PowerShellInline>
+                        mediante
                         <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>.
                     </P>
                     <P>
-                        La operación central es <PowerShellInline>git submodule
-                            add</PowerShellInline>, que registra el submódulo y además <B>clona</B>
+                        La operación central es <PowerShellInline>git submodule add</PowerShellInline>, que registra el
+                        submódulo y además <B>clona</B>
                         el repositorio remoto dentro del directorio indicado.
                     </P>
                 </ListItem>
@@ -208,9 +205,9 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.ShieldWarning}>
                     <B>Semántica de errores en el pipeline</B>
                     <P>
-                        En <PowerShellInline>process</PowerShellInline> se emiten errores no
-                        terminantes con <PowerShellInline>Write-Error</PowerShellInline>,
-                        permitiendo continuar con los siguientes submódulos.
+                        En <PowerShellInline>process</PowerShellInline> se emiten errores no terminantes con
+                        <PowerShellInline>Write-Error</PowerShellInline>, permitiendo continuar con los siguientes
+                        submódulos.
                     </P>
                     <P>
                         En cambio, los errores en <PowerShellInline>begin</PowerShellInline> y
@@ -222,9 +219,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.CheckCircle}>
                     <B>Bloque <PowerShellInline>end</PowerShellInline> — evidencia final</B>
                     <P>
-                        Se ejecuta <PowerShellInline code="git submodule status" /> para mostrar el
-                        estado consolidado. Esto actúa como verificación observable del resultado
-                        del pipeline.
+                        Se ejecuta <PowerShellInline code="git submodule status" /> para mostrar el estado consolidado.
+                        Esto actúa como verificación observable del resultado del pipeline.
                     </P>
                 </ListItem>
             </List>
@@ -267,14 +263,13 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <p><B>Desde <Mono>dibs/</Mono></B></p>
                 <p>
                     Si has seguido las lecciones principales, deberías tener el repositorio
-                    <Mono>dibs-scripts</Mono>. Si además realizaste las lecciones opcionales de
-                    Python, también deberías contar con <Mono>dibs-scripts-py</Mono>.
+                    <Mono>dibs-scripts</Mono>. Si además realizaste las lecciones opcionales de Python, también deberías
+                    contar con <Mono>dibs-scripts-py</Mono>.
                 </p>
                 <p>
                     El repositorio <Mono>dibs-astro-website</Mono> <B>no debería existir</B>
-                    en tu entorno: corresponde al código fuente de las propias lecciones y no forma
-                    parte de los repositorios que has creado. Aquí se utiliza únicamente como
-                    ejemplo de repositorio no disponible.
+                    en tu entorno: corresponde al código fuente de las propias lecciones y no forma parte de los
+                    repositorios que has creado. Aquí se utiliza únicamente como ejemplo de repositorio no disponible.
                 </p>
             </span>
         </PowerShellBlock>
@@ -286,9 +281,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En este caso, cada elemento del pipeline representa un submódulo y cada salida es un
-            objeto con estado, listo para ser consumido por otras etapas (por ejemplo, filtrado,
-            agrupación o reporte).
+            En este caso, cada elemento del pipeline representa un submódulo y cada salida es un objeto con estado,
+            listo para ser consumido por otras etapas (por ejemplo, filtrado, agrupación o reporte).
         </P>
 
         <PowerShellBlock
@@ -403,20 +397,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
                     <P>
                         Cada objeto emitido por <PowerShellInline>Get-ChildItem</PowerShellInline>
                         incluye propiedades con nombres compatibles con los parámetros del cmdlet:
-                        <PowerShellInline>Name</PowerShellInline> alimenta <PowerShellInline
-                        >-Name</PowerShellInline>, y <PowerShellInline>FullName</PowerShellInline>
+                        <PowerShellInline>Name</PowerShellInline> alimenta <PowerShellInline>-Name</PowerShellInline>, y
+                        <PowerShellInline>FullName</PowerShellInline>
                         (alias de <PowerShellInline>Path</PowerShellInline>) alimenta
-                        <PowerShellInline>-Path</PowerShellInline>. Este patrón permite encadenar
-                        comandos sin construir manualmente argumentos por cada elemento.
+                        <PowerShellInline>-Path</PowerShellInline>. Este patrón permite encadenar comandos sin construir
+                        manualmente argumentos por cada elemento.
                     </P>
                 </ListItem>
 
                 <ListItem icon={icons.GitBranch}>
                     <B>Qué hace cada comando de Git</B>
                     <P>
-                        <PowerShellInline code="git fetch --all --prune" /> sincroniza referencias
-                        remotas y elimina referencias obsoletas (<PowerShellInline
-                        >--prune</PowerShellInline>) en el repositorio del submódulo. Luego,{" "}
+                        <PowerShellInline code="git fetch --all --prune" /> sincroniza referencias remotas y elimina
+                        referencias obsoletas (<PowerShellInline>--prune</PowerShellInline>) en el repositorio del
+                        submódulo. Luego,{" "}
                         <PowerShellInline code="git submodule update --remote -- <submodule>" />
                         mueve el submódulo al commit más reciente de la rama remota configurada en
                         <PowerShellInline>.gitmodules</PowerShellInline>.
@@ -426,10 +420,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.MagnifyingGlass}>
                     <B>Cómo se calcula el estado</B>
                     <P>
-                        <PowerShellInline code="git status --porcelain=v1 -z" /> emite un formato
-                        “estable para máquinas”: si la salida tiene contenido, el repositorio está
-                        <PowerShellInline>DirtyOrPending</PowerShellInline>; si está vacía, se
-                        considera <PowerShellInline>Clean</PowerShellInline>. Usar
+                        <PowerShellInline code="git status --porcelain=v1 -z" /> emite un formato “estable para
+                        máquinas”: si la salida tiene contenido, el repositorio está
+                        <PowerShellInline>DirtyOrPending</PowerShellInline>; si está vacía, se considera
+                        <PowerShellInline>Clean</PowerShellInline>. Usar
                         <PowerShellInline>-z</PowerShellInline> reduce ambigüedades en el parseo.
                     </P>
                 </ListItem>
@@ -437,13 +431,12 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 <ListItem icon={icons.SlidersHorizontal}>
                     <B>Salida compuesta, lista para etapas posteriores</B>
                     <P>
-                        El cmdlet devuelve un objeto con <PowerShellInline
-                        >Submodule</PowerShellInline>, <PowerShellInline>Path</PowerShellInline>,
-                        <PowerShellInline>Action</PowerShellInline>, <PowerShellInline
-                        >Status</PowerShellInline>, <PowerShellInline>Mode</PowerShellInline> y
-                        <PowerShellInline>Reason</PowerShellInline>. Esto permite, por ejemplo,
-                        filtrar submódulos sucios, resumir por estado o formatear tablas sin volver
-                        a invocar Git.
+                        El cmdlet devuelve un objeto con <PowerShellInline>Submodule</PowerShellInline>,
+                        <PowerShellInline>Path</PowerShellInline>,
+                        <PowerShellInline>Action</PowerShellInline>, <PowerShellInline>Status</PowerShellInline>,
+                        <PowerShellInline>Mode</PowerShellInline> y
+                        <PowerShellInline>Reason</PowerShellInline>. Esto permite, por ejemplo, filtrar submódulos
+                        sucios, resumir por estado o formatear tablas sin volver a invocar Git.
                     </P>
                 </ListItem>
             </List>
@@ -456,10 +449,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            Una vez que el índice ya contiene submódulos, el siguiente paso es publicarlo como
-            repositorio remoto. Aquí no conviene reinventar lógica: puedes reutilizar el script
-            <Mono>Publish-GitRepository.ps1</Mono> del Lab 1 para crear el proyecto en GitLab y
-            configurar el remoto local en una sola operación.
+            Una vez que el índice ya contiene submódulos, el siguiente paso es publicarlo como repositorio remoto. Aquí
+            no conviene reinventar lógica: puedes reutilizar el script
+            <Mono>Publish-GitRepository.ps1</Mono> del Lab 1 para crear el proyecto en GitLab y configurar el remoto
+            local en una sola operación.
         </P>
 
         <PowerShellBlock
@@ -473,12 +466,11 @@ import NotesSection from "~/layouts/NotesSection.astro";
                 $publishResult | Format-List
             `}
         >
-            <span slot="title"
-            >Publicar el repositorio índice reutilizando Publish-GitRepository</span>
+            <span slot="title">Publicar el repositorio índice reutilizando Publish-GitRepository</span>
             <span slot="footer">
-                Desde <Mono>dibs/</Mono>. Este flujo prepara el remoto, pero no hace <Mono
-                >commit</Mono> ni <Mono>push</Mono>. Si el resultado es correcto, puedes ejecutar
-                sin <PowerShellInline>-WhatIf</PowerShellInline>.
+                Desde <Mono>dibs/</Mono>. Este flujo prepara el remoto, pero no hace <Mono>commit</Mono> ni <Mono
+                >push</Mono>. Si el resultado es correcto, puedes ejecutar sin <PowerShellInline
+                >-WhatIf</PowerShellInline>.
             </span>
         </PowerShellBlock>
 
@@ -493,8 +485,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </OutputBlock>
 
         <P>
-            Con ese resultado, ya puedes revisar el estado local y decidir explícitamente cuándo
-            publicar contenido:
+            Con ese resultado, ya puedes revisar el estado local y decidir explícitamente cuándo publicar contenido:
         </P>
 
         <PowerShellBlock
@@ -514,44 +505,37 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Trabajar con submódulos en este laboratorio permitió trasladar los conceptos de
-                pipeline a un escenario de automatización multi-repo: cada submódulo se modela como
-                objeto, cada etapa produce salida estructurada y cada decisión de error se hace
-                explícita según su impacto local o global.
+                Trabajar con submódulos en este laboratorio permitió trasladar los conceptos de pipeline a un escenario
+                de automatización multi-repo: cada submódulo se modela como objeto, cada etapa produce salida
+                estructurada y cada decisión de error se hace explícita según su impacto local o global.
             </P>
             <P>
-                El punto clave no es Git por sí mismo, sino el patrón de diseño: scripts
-                componibles, observables e idempotentes que pueden encadenarse para orquestar
-                sistemas distribuidos sin perder trazabilidad.
+                El punto clave no es Git por sí mismo, sino el patrón de diseño: scripts componibles, observables e
+                idempotentes que pueden encadenarse para orquestar sistemas distribuidos sin perder trazabilidad.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.TreeStructure}>
-                Modelar submódulos como objetos de pipeline simplifica el procesamiento uniforme por
-                elemento.
+                Modelar submódulos como objetos de pipeline simplifica el procesamiento uniforme por elemento.
             </ListItem>
             <ListItem icon={icons.ShieldWarning}>
-                Separar errores terminantes y no terminantes permite mantener continuidad sin
-                ocultar fallos.
+                Separar errores terminantes y no terminantes permite mantener continuidad sin ocultar fallos.
             </ListItem>
             <ListItem icon={icons.GitlabLogo}>
-                Publicar el índice en GitLab puede resolverse por composición, reutilizando scripts
-                del Lab 1.
+                Publicar el índice en GitLab puede resolverse por composición, reutilizando scripts del Lab 1.
             </ListItem>
             <ListItem icon={icons.ShieldCheck}>
-                <PowerShellInline>-WhatIf</PowerShellInline>/<PowerShellInline
-                >-Confirm</PowerShellInline> mantiene control operativo antes de afectar entorno
-                local o remoto.
+                <PowerShellInline>-WhatIf</PowerShellInline>/<PowerShellInline>-Confirm</PowerShellInline> mantiene
+                control operativo antes de afectar entorno local o remoto.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                Si piensas el índice como una interfaz de coordinación entre repositorios, el
-                aprendizaje se vuelve transferible: el mismo enfoque te servirá para bootstrap de
-                entornos, mantenimiento periódico o publicación en lote, siempre priorizando
-                contratos claros y comportamiento determinista.
+                Si piensas el índice como una interfaz de coordinación entre repositorios, el aprendizaje se vuelve
+                transferible: el mismo enfoque te servirá para bootstrap de entornos, mantenimiento periódico o
+                publicación en lote, siempre priorizando contratos claros y comportamiento determinista.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -559,16 +543,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <References>
         <Fragment slot="recommended">
             <WebPage
-                title="Git Tools—Submodules"
-                url="https://git-scm.com/book/en/v2/Git-Tools-Submodules"
+                title="Git Tools—Submodules" url="https://git-scm.com/book/en/v2/Git-Tools-Submodules"
                 location="Git Book"
             >
                 <Fragment slot="description">
-                    Referencia completa sobre submódulos: qué son, cómo agregarlos, clonarlos e
-                    integrarlos en flujos colaborativos. Cubre el modelo de sincronización remota,
-                    manejo de cambios locales y estrategias de merge/rebase. Esencial para entender
-                    cómo Git fija versiones específicas de repositorios externos y mantener
-                    reproducibilidad en proyectos multi-repo.
+                    Referencia completa sobre submódulos: qué son, cómo agregarlos, clonarlos e integrarlos en flujos
+                    colaborativos. Cubre el modelo de sincronización remota, manejo de cambios locales y estrategias de
+                    merge/rebase. Esencial para entender cómo Git fija versiones específicas de repositorios externos y
+                    mantener reproducibilidad en proyectos multi-repo.
                 </Fragment>
             </WebPage>
         </Fragment>

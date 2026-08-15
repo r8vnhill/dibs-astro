@@ -28,45 +28,55 @@ describe("resolveDibsProjectPath", () => {
 
 describe("buildGitLabSourceUrl", () => {
     test("builds a legacy source URL with main as the default ref", () => {
-        expect(buildGitLabSourceUrl({
-            projectPath: "r8vnhill/dibs-scripts",
-            file: "scripts/check.main.kts",
-        }).href).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts");
+        expect(
+            buildGitLabSourceUrl({
+                projectPath: "r8vnhill/dibs-scripts",
+                file: "scripts/check.main.kts",
+            }).href,
+        ).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts");
     });
 
     test("builds a migrated source URL with nested file paths", () => {
-        expect(buildGitLabSourceUrl({
-            projectPath: "dibs-course/kotlin-companion",
-            file: "scripts/check-library-layout.main.kts",
-        }).href).toBe(
+        expect(
+            buildGitLabSourceUrl({
+                projectPath: "dibs-course/kotlin-companion",
+                file: "scripts/check-library-layout.main.kts",
+            }).href,
+        ).toBe(
             "https://gitlab.com/dibs-course/kotlin-companion/-/blob/main/scripts/check-library-layout.main.kts",
         );
     });
 
     test("uses a custom ref when provided", () => {
-        expect(buildGitLabSourceUrl({
-            projectPath: "r8vnhill/dibs-scripts",
-            file: "scripts/check.main.kts",
-            ref: "feature/source-links",
-        }).href).toBe(
+        expect(
+            buildGitLabSourceUrl({
+                projectPath: "r8vnhill/dibs-scripts",
+                file: "scripts/check.main.kts",
+                ref: "feature/source-links",
+            }).href,
+        ).toBe(
             "https://gitlab.com/r8vnhill/dibs-scripts/-/blob/feature/source-links/scripts/check.main.kts",
         );
     });
 
     test("preserves the existing single-line fragment format", () => {
-        expect(buildGitLabSourceUrl({
-            projectPath: "r8vnhill/dibs-scripts",
-            file: "scripts/check.main.kts",
-            line: 10,
-        }).href).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts#L10");
+        expect(
+            buildGitLabSourceUrl({
+                projectPath: "r8vnhill/dibs-scripts",
+                file: "scripts/check.main.kts",
+                line: 10,
+            }).href,
+        ).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts#L10");
     });
 
     test("preserves the existing line-range fragment format", () => {
-        expect(buildGitLabSourceUrl({
-            projectPath: "r8vnhill/dibs-scripts",
-            file: "scripts/check.main.kts",
-            line: 10,
-            endLine: 20,
-        }).href).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts#L10-20");
+        expect(
+            buildGitLabSourceUrl({
+                projectPath: "r8vnhill/dibs-scripts",
+                file: "scripts/check.main.kts",
+                line: 10,
+                endLine: 20,
+            }).href,
+        ).toBe("https://gitlab.com/r8vnhill/dibs-scripts/-/blob/main/scripts/check.main.kts#L10-20");
     });
 });

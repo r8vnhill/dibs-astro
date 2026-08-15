@@ -1,7 +1,7 @@
 /**
  * Presentation-facing bridge for the default bibliography catalog.
  *
- * This module is the approved import surface for presentation code that needs access to bibliography entries. It 
+ * This module is the approved import surface for presentation code that needs access to bibliography entries. It
  * centralizes the wiring to the concrete infrastructure adapter so components do not import catalog data, loaders, or
  * infrastructure modules directly.
  *

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15T17:12:11.683Z",
+  "generatedAt": "2026-08-15T18:19:41.263Z",
   "totalLessons": 53,
   "changesLimit": 5,
   "entries": {
@@ -1599,6 +1599,12 @@
       ],
       "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "e1b593e4da5e222e5b003f0ecf77a7ef0f5bc543",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "feat: Implement research-grounded revisions for the Nushell comparative lesson"
+        },
         {
           "hash": "dab6142d5e34ce6f95777eac3c14eecd25a3f336",
           "date": "2026-08-15",

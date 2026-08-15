@@ -17,16 +17,20 @@ describe("given the lesson page registry", () => {
     });
 
     test("then duplicate routes are rejected", () => {
-        expect(() => buildLessonPageRegistry({
-            "../../pages/notes/foo.astro": { default: {} },
-            "../../pages/notes/foo/index.astro": { default: {} },
-        })).toThrow(/Multiple lesson pages map to \/notes\/foo\//u);
+        expect(() =>
+            buildLessonPageRegistry({
+                "../../pages/notes/foo.astro": { default: {} },
+                "../../pages/notes/foo/index.astro": { default: {} },
+            })
+        ).toThrow(/Multiple lesson pages map to \/notes\/foo\//u);
     });
 
     test("then missing default exports are rejected", () => {
-        expect(() => buildLessonPageRegistry({
-            "../../pages/notes/foo.astro": {},
-        })).toThrow(/Missing default export for src\/pages\/notes\/foo\.astro/u);
+        expect(() =>
+            buildLessonPageRegistry({
+                "../../pages/notes/foo.astro": {},
+            })
+        ).toThrow(/Missing default export for src\/pages\/notes\/foo\.astro/u);
     });
 
     test("then missing routes fail clearly", () => {

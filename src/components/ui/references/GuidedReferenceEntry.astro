@@ -12,8 +12,6 @@ interface Props {
 const { reference, reading } = Astro.props;
 ---
 
-<ReferenceEntry
-    {reference} preparedSlots={{}}
->
+<ReferenceEntry {reference} preparedSlots={{}}>
     <Fragment slot="editorial"><LessonReadingGuide guide={reading} /></Fragment>
 </ReferenceEntry>

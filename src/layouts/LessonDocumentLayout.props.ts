@@ -8,8 +8,8 @@
  */
 
 import type { LessonMetaPanelMetadata } from "$presentation/adapters/lesson-metadata-panel";
-import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { RepoRef } from "@ravenhill/site-core";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 
 /**
  * Props for the extracted lesson document layout.

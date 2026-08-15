@@ -289,9 +289,9 @@ export function validateCourseStructure(
             seenHrefs.add(normalizedHref);
 
             if (
-                parentHref &&
-                normalizedHref !== parentHref &&
-                !normalizedHref.startsWith(parentHref)
+                parentHref
+                && normalizedHref !== parentHref
+                && !normalizedHref.startsWith(parentHref)
             ) {
                 throw new Error(
                     `Lesson "${lesson.id}" href "${lesson.href}" must be nested under parent href "${parentHref}".`,

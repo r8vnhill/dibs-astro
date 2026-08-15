@@ -1,9 +1,6 @@
 import { describe, expect, test } from "vitest";
+import { getLessonPdfExportEntries, type LessonExportManifestEntry } from "~/presentation/adapters/lesson-pdf-export";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
-import {
-    getLessonPdfExportEntries,
-    type LessonExportManifestEntry,
-} from "~/presentation/adapters/lesson-pdf-export";
 import ExportNotesPage from "../[...path].astro";
 
 describe("given the PDF export wrapper route", () => {
@@ -22,12 +19,12 @@ describe("given the PDF export wrapper route", () => {
             },
         );
 
-        expect(html).toContain('meta name="robots" content="noindex, nofollow"');
-        expect(html).toContain('data-export-role="document"');
-        expect(html).toContain('data-export-mode="pdf"');
-        expect(html).toContain('data-export-role="metadata"');
-        expect(html).toContain('data-export-role="body"');
-        expect(html).toContain('Herramientas necesarias y recomendadas');
-        expect(html).not.toContain('client:load');
+        expect(html).toContain("meta name=\"robots\" content=\"noindex, nofollow\"");
+        expect(html).toContain("data-export-role=\"document\"");
+        expect(html).toContain("data-export-mode=\"pdf\"");
+        expect(html).toContain("data-export-role=\"metadata\"");
+        expect(html).toContain("data-export-role=\"body\"");
+        expect(html).toContain("Herramientas necesarias y recomendadas");
+        expect(html).not.toContain("client:load");
     });
 });

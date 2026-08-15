@@ -1,9 +1,6 @@
+import { getNotFoundMessagePool, getRareNotFoundMessage } from "$presentation/adapters/static-ui-data";
 import clsx from "clsx";
 import { type JSX, useLayoutEffect, useState } from "react";
-import {
-    getNotFoundMessagePool,
-    getRareNotFoundMessage,
-} from "$presentation/adapters/static-ui-data";
 import { pickRandom, type StyledComponent } from "~/utils";
 
 /**

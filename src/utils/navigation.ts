@@ -1,10 +1,10 @@
 /**
  * @file Deprecated compatibility wrapper for navigation normalization.
  *
- * This module exists only to preserve older imports while navigation normalization is moved behind the 
+ * This module exists only to preserve older imports while navigation normalization is moved behind the
  * presentation layer. New code should import from `$presentation/adapters/navigation-normalization` directly.
  *
- * Do not add behavior here. This file must remain a thin re-export of the presentation-owned implementation so there 
+ * Do not add behavior here. This file must remain a thin re-export of the presentation-owned implementation so there
  * is a single source of truth for navigation shaping.
  *
  * ## Maintainer notes:

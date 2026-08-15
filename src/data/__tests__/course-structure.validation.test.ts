@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-    courseStructure,
-    flattenLessons,
-    type Lesson,
-    validateCourseStructure,
-} from "../course-structure";
+import { courseStructure, flattenLessons, type Lesson, validateCourseStructure } from "../course-structure";
 import { group, link } from "./course-structure.test-support";
 
 describe("course-structure validation", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 import {
+    type NavigationLinkInput,
     normalizeNavigation,
     normalizePreviousNavigation,
-    type NavigationLinkInput,
 } from "../navigation-normalization";
 
 const firstPrevious: NavigationLinkInput = {

@@ -9,10 +9,10 @@ import * as icons from "$icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
-    resolveOptionalSlots,
-    resolveRequiredTitleField,
     resolveInlineField,
     resolveLinkedInlineField,
+    resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 import { ReferenceContractError } from "./ReferenceContractError";
@@ -50,7 +50,10 @@ if (import.meta.env.DEV && platformUrl && !platform) {
 }
 ---
 
-<ListItem id={id} icon={icons.PlayCircle} class="scroll-mt-24">
+<ListItem
+    {id} icon={icons.PlayCircle}
+    class="scroll-mt-24"
+>
     <Enquote type="english-double">
         <a href={url} {...externalLinkAttrs}>
             {

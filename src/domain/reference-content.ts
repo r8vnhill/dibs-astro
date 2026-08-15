@@ -52,8 +52,7 @@ export const stripHtmlComments = (html: string): string => html.replace(/<!--[\s
 
 export const stripHtmlTags = (html: string): string => html.replace(/<[^>]+>/g, "");
 
-export const decodeHtmlWhitespaceEntities = (text: string): string =>
-    text.replace(/&(nbsp|#160|#xA0);/gi, " ");
+export const decodeHtmlWhitespaceEntities = (text: string): string => text.replace(/&(nbsp|#160|#xA0);/gi, " ");
 
 export const normalizeInlineWhitespace = (text: string): string => text.replace(/\s+/g, " ").trim();
 

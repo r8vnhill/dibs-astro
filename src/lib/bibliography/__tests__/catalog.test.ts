@@ -1,11 +1,6 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import {
-    getMostCitedBooks,
-    getReferencesForLesson,
-    getReferenceStats,
-    loadBibliographyCatalog,
-} from "../catalog";
+import { getMostCitedBooks, getReferencesForLesson, getReferenceStats, loadBibliographyCatalog } from "../catalog";
 
 const CATALOG = {
     "@context": "https://schema.org",

@@ -26,12 +26,11 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
     }}
 >
     <Fragment slot="abstract">
-        Esta lección introduce la construcción de un primer script en Python con interfaz de línea
-        de comandos, poniendo el foco en la validación explícita de parámetros, el manejo básico de
-        logging y la organización de un punto de entrada claro. A través de comparaciones con
-        PowerShell, se destaca cómo Python traslada responsabilidades que en otros lenguajes están
-        integradas al lenguaje hacia su biblioteca estándar, manteniendo la sintaxis del lenguaje
-        simple a cambio de más trabajo manual en la definición del contrato del script.
+        Esta lección introduce la construcción de un primer script en Python con interfaz de línea de comandos, poniendo
+        el foco en la validación explícita de parámetros, el manejo básico de logging y la organización de un punto de
+        entrada claro. A través de comparaciones con PowerShell, se destaca cómo Python traslada responsabilidades que
+        en otros lenguajes están integradas al lenguaje hacia su biblioteca estándar, manteniendo la sintaxis del
+        lenguaje simple a cambio de más trabajo manual en la definición del contrato del script.
     </Fragment>
 
     <NotesSection id="h2-python-argparse-validated-directory">
@@ -43,30 +42,25 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            En PowerShell, buena parte del <Enquote>contrato</Enquote> del script (parámetros
-            obligatorios, validaciones, errores) está integrado en el lenguaje mediante atributos
-            como
-            <PowerShellInline code="[Parameter(Mandatory)]" /> o <PowerShellInline
-                code="[ValidateScript(...)]"
-            />. Python, si bien es un lenguaje conocido por proveer una amplia gama de
-            funcionalidades <I>out-of-the-box</I>, incorpora estas funcionalidades mediante su
-            biblioteca estándar y no como características del lenguaje. Esto significa que escribir
-            el contrato que deseamos requerirá más <Enquote>pegamento</Enquote> manual; aquí es
-            donde cobra protagonismo <PythonInline code={`argparse`} />.
+            En PowerShell, buena parte del <Enquote>contrato</Enquote> del script (parámetros obligatorios,
+            validaciones, errores) está integrado en el lenguaje mediante atributos como
+            <PowerShellInline code="[Parameter(Mandatory)]" /> o <PowerShellInline code="[ValidateScript(...)]" />.
+            Python, si bien es un lenguaje conocido por proveer una amplia gama de funcionalidades <I
+            >out-of-the-box</I>, incorpora estas funcionalidades mediante su biblioteca estándar y no como
+            características del lenguaje. Esto significa que escribir el contrato que deseamos requerirá más <Enquote
+            >pegamento</Enquote> manual; aquí es donde cobra protagonismo <PythonInline code={`argparse`} />.
         </P>
 
         <P>
-            A través de <PythonInline code={`argparse`} /> podemos declarar argumentos posicionales
-            y opcionales, marcar algunos como obligatorios, asignarles valores por defecto,
-            documentarlos automáticamente en la ayuda (<Mono>--help</Mono>) y validar su forma
-            básica (por ejemplo, si son enteros, strings o rutas).
+            A través de <PythonInline code={`argparse`} /> podemos declarar argumentos posicionales y opcionales, marcar
+            algunos como obligatorios, asignarles valores por defecto, documentarlos automáticamente en la ayuda (<Mono
+            >--help</Mono>) y validar su forma básica (por ejemplo, si son enteros, strings o rutas).
         </P>
 
         <P>
-            Para empezar, construiremos un bloque reutilizable: un validador que recibe un string y
-            lo convierte a un <PythonInline code={`Path`} />, fallando con un error entendible si la
-            ruta no es un directorio. La idea es que luego podamos usarlo en el parser como <Mono
-            >type=validated_directory</Mono>.
+            Para empezar, construiremos un bloque reutilizable: un validador que recibe un string y lo convierte a un
+            <PythonInline code={`Path`} />, fallando con un error entendible si la ruta no es un directorio. La idea es
+            que luego podamos usarlo en el parser como <Mono>type=validated_directory</Mono>.
         </P>
 
         <PythonBlock
@@ -92,31 +86,26 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.TextT}>
-                    <B>Type hints:</B> <PythonInline code={`value: str`} /> indica que esperamos un
-                    string, y <PythonInline code={`-> Path`} /> que devolvemos un <PythonInline
-                        code={`Path`}
-                    />. En Python esto es una anotación para herramientas (IDE, linters, mypy), no
-                    una restricción obligatoria en runtime.
+                    <B>Type hints:</B> <PythonInline code={`value: str`} /> indica que esperamos un string, y
+                    <PythonInline code={`-> Path`} /> que devolvemos un <PythonInline code={`Path`} />. En Python esto
+                    es una anotación para herramientas (IDE, linters, mypy), no una restricción obligatoria en runtime.
                 </ListItem>
 
                 <ListItem icon={icons.Path}>
-                    <B><PythonInline code={`Path(value)`} />:</B> convierte el texto recibido (por
-                    ejemplo <Mono>"./scripts"</Mono>) en un objeto de ruta multiplataforma, evitando
-                    manipular strings manualmente.
+                    <B><PythonInline code={`Path(value)`} />:</B> convierte el texto recibido (por ejemplo <Mono
+                    >"./scripts"</Mono>) en un objeto de ruta multiplataforma, evitando manipular strings manualmente.
                 </ListItem>
 
                 <ListItem icon={icons.FolderOpen}>
-                    <B><PythonInline code={`p.is_dir()`} />:</B> verifica si la ruta existe y
-                    corresponde a un directorio (no a un archivo). Si quieres permitir rutas
-                    inexistentes que se crearán después, este chequeo sería distinto.
+                    <B><PythonInline code={`p.is_dir()`} />:</B> verifica si la ruta existe y corresponde a un
+                    directorio (no a un archivo). Si quieres permitir rutas inexistentes que se crearán después, este
+                    chequeo sería distinto.
                 </ListItem>
 
                 <ListItem icon={icons.WarningCircle}>
-                    <B><PythonInline code={`raise argparse.ArgumentTypeError`} />:</B> es la
-                    excepción <Enquote>oficial</Enquote> para validadores de tipo en <PythonInline
-                        code={`argparse`}
-                    />. Hace que el parser muestre el mensaje de error y termine con un output de
-                    uso consistente.
+                    <B><PythonInline code={`raise argparse.ArgumentTypeError`} />:</B> es la excepción <Enquote
+                    >oficial</Enquote> para validadores de tipo en <PythonInline code={`argparse`} />. Hace que el
+                    parser muestre el mensaje de error y termine con un output de uso consistente.
                 </ListItem>
             </List>
         </Explanation>
@@ -132,11 +121,11 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <P>
             Ahora que ya contamos con un bloque reutilizable para validar directorios (nuestro
-            <PythonInline code={`validated_directory()`} />), el siguiente paso es construir el <I
-            >parser</I> de la línea de comandos. En PowerShell, este tipo de contrato suele quedar
-            <Enquote>pegado</Enquote> al propio script vía atributos. En Python lo expresamos
-            configurando un objeto que describe: qué banderas existen, qué tipo de datos aceptan,
-            qué valores por defecto usan y qué errores deben mostrarse si la invocación es inválida.
+            <PythonInline code={`validated_directory()`} />), el siguiente paso es construir el <I>parser</I> de la
+            línea de comandos. En PowerShell, este tipo de contrato suele quedar
+            <Enquote>pegado</Enquote> al propio script vía atributos. En Python lo expresamos configurando un objeto que
+            describe: qué banderas existen, qué tipo de datos aceptan, qué valores por defecto usan y qué errores deben
+            mostrarse si la invocación es inválida.
         </P>
 
         <P>
@@ -148,18 +137,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 Un nombre obligatorio (<Mono>--name</Mono>) para personalizar el contenido.
             </ListItem>
             <ListItem icon={icons.Megaphone}>
-                Un modo verboso (<Mono>-v</Mono>/<Mono>--verbose</Mono>) para imprimir información
-                extra.
+                Un modo verboso (<Mono>-v</Mono>/<Mono>--verbose</Mono>) para imprimir información extra.
             </ListItem>
             <ListItem icon={icons.FolderOpen}>
-                Un directorio de salida opcional (<Mono>-o</Mono>/<Mono>--out_dir</Mono>), validado
-                como directorio.
+                Un directorio de salida opcional (<Mono>-o</Mono>/<Mono>--out_dir</Mono>), validado como directorio.
             </ListItem>
         </List>
 
         <P>
-            Todo esto se declara en una función <PythonInline code={`build_parser()`} />, que
-            devuelve un <PythonInline code={`ArgumentParser`} /> ya configurado.
+            Todo esto se declara en una función <PythonInline code={`build_parser()`} />, que devuelve un <PythonInline
+                code={`ArgumentParser`}
+            /> ya configurado.
         </P>
 
         <PythonBlock
@@ -208,15 +196,14 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <Explanation headingLevel="h3">
             <P>
-                <PythonInline code={`ArgumentParser()`} /> crea el objeto que concentra toda la
-                definición de nuestra interfaz de línea de comandos. Al inicializarlo, podemos
-                ajustar detalles como:
+                <PythonInline code={`ArgumentParser()`} /> crea el objeto que concentra toda la definición de nuestra
+                interfaz de línea de comandos. Al inicializarlo, podemos ajustar detalles como:
             </P>
 
             <List>
                 <ListItem icon={icons.Terminal}>
-                    <PythonInline code={`prog`} />: el nombre que aparecerá en el texto de ayuda
-                    (útil si el script se ejecuta como comando).
+                    <PythonInline code={`prog`} />: el nombre que aparecerá en el texto de ayuda (útil si el script se
+                    ejecuta como comando).
                 </ListItem>
                 <ListItem icon={icons.Info}>
                     <PythonInline code={`description`} />: un resumen que se muestra al usar
@@ -225,39 +212,37 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             </List>
 
             <P>
-                La función clave es <PythonInline code={`add_argument()`} />: cada llamada registra
-                un argumento. Lo interesante es que varios parámetros de <PythonInline
-                    code={`add_argument()`}
-                /> equivalen a partes del <Enquote>contrato</Enquote>:
+                La función clave es <PythonInline code={`add_argument()`} />: cada llamada registra un argumento. Lo
+                interesante es que varios parámetros de <PythonInline code={`add_argument()`} /> equivalen a partes del
+                <Enquote>contrato</Enquote>:
             </P>
 
             <List>
                 <ListItem icon={icons.WarningCircle}>
                     <PythonInline code={`required=True`} />: el argumento es obligatorio. Si falta,
-                    <PythonInline code={`argparse`} /> imprime un error, muestra la ayuda y termina
-                    el programa con un código de salida de error.
+                    <PythonInline code={`argparse`} /> imprime un error, muestra la ayuda y termina el programa con un
+                    código de salida de error.
                 </ListItem>
                 <ListItem icon={icons.ToggleRight}>
-                    <PythonInline code={`action="store_true"`} />: convierte una bandera en un
-                    booleano. Si la bandera aparece, el valor será <PythonInline code={`True`} />;
-                    si no aparece, será <PythonInline code={`False`} /> . Esto es ideal para flags
-                    como <PowerShellInline code={`--verbose`} />.
+                    <PythonInline code={`action="store_true"`} />: convierte una bandera en un booleano. Si la bandera
+                    aparece, el valor será <PythonInline code={`True`} />; si no aparece, será <PythonInline
+                        code={`False`}
+                    /> . Esto es ideal para flags como <PowerShellInline code={`--verbose`} />.
                 </ListItem>
 
                 <ListItem icon={icons.ArrowsDownUp}>
-                    <PythonInline code={`type=...`} /> define cómo convertir el texto recibido a un
-                    tipo útil. Aquí usamos <PythonInline code={`validated_directory`} />, que
-                    transforma un string en <PythonInline code={`Path`} /> y falla con un error
-                    claro si no es un directorio válido. Es importante notar que pasamos la función
-                    <I>sin paréntesis</I>: no la ejecutamos aquí, sino que entregamos una referencia
-                    para que <PythonInline code={`argparse`} /> la invoque al procesar los
-                    argumentos.
+                    <PythonInline code={`type=...`} /> define cómo convertir el texto recibido a un tipo útil. Aquí
+                    usamos <PythonInline code={`validated_directory`} />, que transforma un string en <PythonInline
+                        code={`Path`}
+                    /> y falla con un error claro si no es un directorio válido. Es importante notar que pasamos la
+                    función
+                    <I>sin paréntesis</I>: no la ejecutamos aquí, sino que entregamos una referencia para que
+                    <PythonInline code={`argparse`} /> la invoque al procesar los argumentos.
                 </ListItem>
 
                 <ListItem icon={icons.ArrowCounterClockwise}>
-                    <PythonInline code={`default="."`} />: valor por defecto cuando el usuario no
-                    entrega el argumento. En este ejemplo, el directorio de salida será el
-                    directorio actual.
+                    <PythonInline code={`default="."`} />: valor por defecto cuando el usuario no entrega el argumento.
+                    En este ejemplo, el directorio de salida será el directorio actual.
                 </ListItem>
             </List>
         </Explanation>
@@ -273,19 +258,16 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <P>
             En PowerShell es común escribir mensajes para depurar o diagnosticar usando
-            <PowerShellInline code={`Write-Verbose`} />, <PowerShellInline
-                code={`Write-Warning`}
-            />, o <PowerShellInline code={`Write-Error`} />. Python ofrece algo similar (aunque con
-            diferencias sutiles)<FootnoteRef index={1} /> a través del módulo estándar <PythonInline
-                code={`logging`}
-            />: una forma centralizada de emitir mensajes con distintos niveles (<Mono>DEBUG</Mono>,
-            <Mono>INFO</Mono>, <Mono>WARNING</Mono>, etc.) y decidir cuáles se muestran según el
-            modo de ejecución.
+            <PowerShellInline code={`Write-Verbose`} />, <PowerShellInline code={`Write-Warning`} />, o
+            <PowerShellInline code={`Write-Error`} />. Python ofrece algo similar (aunque con diferencias
+            sutiles)<FootnoteRef index={1} /> a través del módulo estándar <PythonInline code={`logging`} />: una forma
+            centralizada de emitir mensajes con distintos niveles (<Mono>DEBUG</Mono>,
+            <Mono>INFO</Mono>, <Mono>WARNING</Mono>, etc.) y decidir cuáles se muestran según el modo de ejecución.
         </P>
 
         <P>
-            La idea es simple: si se activa <PowerShellInline code={`--verbose`} />, mostramos
-            detalles de depuración; si no, dejamos solo advertencias (o mensajes más importantes).
+            La idea es simple: si se activa <PowerShellInline code={`--verbose`} />, mostramos detalles de depuración;
+            si no, dejamos solo advertencias (o mensajes más importantes).
         </P>
 
         <PythonBlock
@@ -315,31 +297,27 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <ListItem icon={icons.Gauge}>
                     <PythonInline code={`level = ...`} /> selecciona el nivel global. Cuando
                     <PythonInline code="verbose == True" />
-                    usamos <PythonInline>logging.DEBUG</PythonInline> (mensajes detallados); si no,
-                    usamos <PythonInline>logging.WARNING</PythonInline> (solo advertencias y más
-                    graves).
+                    usamos <PythonInline>logging.DEBUG</PythonInline> (mensajes detallados); si no, usamos <PythonInline
+                    >logging.WARNING</PythonInline> (solo advertencias y más graves).
                 </ListItem>
 
                 <ListItem icon={icons.SlidersHorizontal}>
-                    <PythonInline>logging.basicConfig(...)</PythonInline> aplica una configuración
-                    base. Aquí fijamos: <PythonInline>level</PythonInline> para filtrar mensajes y
-                    <PythonInline>format="%(message)s"</PythonInline> para imprimir solo el
-                    contenido del mensaje (sin prefijos como fecha, nombre del logger, etc.). La
-                    sintaxis de <PythonInline>format</PythonInline> corresponde al sistema de
-                    <Link
-                        href="https://docs.python.org/3/library/logging.html#logrecord-attributes"
-                    >
+                    <PythonInline>logging.basicConfig(...)</PythonInline> aplica una configuración base. Aquí fijamos:
+                    <PythonInline>level</PythonInline> para filtrar mensajes y
+                    <PythonInline>format="%(message)s"</PythonInline> para imprimir solo el contenido del mensaje (sin
+                    prefijos como fecha, nombre del logger, etc.). La sintaxis de <PythonInline>format</PythonInline>
+                    corresponde al sistema de
+                    <Link href="https://docs.python.org/3/library/logging.html#logrecord-attributes">
                         atributos de <Mono>LogRecord</Mono>
                     </Link>.
                 </ListItem>
 
                 <ListItem icon={icons.Tag}>
-                    <PythonInline>logging.getLogger(__name__)</PythonInline> entrega un logger <I
-                    >nombrado</I>. <PythonInline>__name__</PythonInline> es una variable especial de
-                    Python que contiene el nombre del módulo actual (por ejemplo, <Mono
-                    >readme_gen.app_logging</Mono>). Esto permite que los mensajes indiquen <I>de
-                        qué parte</I> del programa vienen si luego cambiamos el formato, o si
-                    configuramos distintos niveles por módulo.
+                    <PythonInline>logging.getLogger(__name__)</PythonInline> entrega un logger <I>nombrado</I>.
+                    <PythonInline>__name__</PythonInline> es una variable especial de Python que contiene el nombre del
+                    módulo actual (por ejemplo, <Mono>readme_gen.app_logging</Mono>). Esto permite que los mensajes
+                    indiquen <I>de qué parte</I> del programa vienen si luego cambiamos el formato, o si configuramos
+                    distintos niveles por módulo.
                 </ListItem>
             </List>
         </Explanation>
@@ -354,18 +332,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            Ya tenemos las piezas principales: un parser (<PythonInline code={`argparse`} />) y una
-            configuración de logging (<PythonInline code={`logging`} />). Ahora toca unir todo en un
-            script ejecutable: parseamos argumentos, generamos el contenido y lo escribimos en
+            Ya tenemos las piezas principales: un parser (<PythonInline code={`argparse`} />) y una configuración de
+            logging (<PythonInline code={`logging`} />). Ahora toca unir todo en un script ejecutable: parseamos
+            argumentos, generamos el contenido y lo escribimos en
             <Mono>README.md</Mono>.
         </P>
 
         <P>
-            En PowerShell, normalmente devolveríamos un string y dejaríamos que quien consume el
-            script decida si lo redirige a un archivo, a la salida estándar o a otro destino
-            mediante el pipeline. En Python, lograr exactamente ese mismo estilo de composición es
-            menos directo, así que aquí optaremos por un enfoque simple: escribir directamente a un
-            archivo en el directorio de salida.
+            En PowerShell, normalmente devolveríamos un string y dejaríamos que quien consume el script decida si lo
+            redirige a un archivo, a la salida estándar o a otro destino mediante el pipeline. En Python, lograr
+            exactamente ese mismo estilo de composición es menos directo, así que aquí optaremos por un enfoque simple:
+            escribir directamente a un archivo en el directorio de salida.
         </P>
 
         <PythonBlock
@@ -406,8 +383,7 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         >
             <Fragment slot="title">Uniendo todo en un script ejecutable</Fragment>
             <span slot="footer">
-                Parseo de argumentos → logging → generación de contenido → escritura a <Mono
-                >README.md</Mono>.
+                Parseo de argumentos → logging → generación de contenido → escritura a <Mono>README.md</Mono>.
             </span>
             <DibsSourceLink
                 slot="source" file="readme_gen/new_readme.py"
@@ -422,55 +398,50 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <List>
                 <ListItem icon={icons.FolderSimple}>
-                    <PythonInline code="mkdir(parents=True, exist_ok=True)" /> crea el directorio de
-                    salida si no existe. Con <PythonInline>parents=True</PythonInline>
-                    se crean también directorios intermedios, y con <PythonInline
-                    >exist_ok=True</PythonInline> no falla si ya existía.
+                    <PythonInline code="mkdir(parents=True, exist_ok=True)" /> crea el directorio de salida si no
+                    existe. Con <PythonInline>parents=True</PythonInline>
+                    se crean también directorios intermedios, y con <PythonInline>exist_ok=True</PythonInline> no falla
+                    si ya existía.
                 </ListItem>
 
                 <ListItem icon={icons.LockKey}>
-                    <PythonInline code="with target.open(...) as f:" /> abre el archivo de forma
-                    segura: al salir del bloque se cierra automáticamente, incluso si ocurre un
-                    error.
+                    <PythonInline code="with target.open(...) as f:" /> abre el archivo de forma segura: al salir del
+                    bloque se cierra automáticamente, incluso si ocurre un error.
                 </ListItem>
 
                 <ListItem icon={icons.PencilLine}>
-                    <PythonInline>f.write(content)</PythonInline> escribe el string completo al
-                    archivo.
+                    <PythonInline>f.write(content)</PythonInline> escribe el string completo al archivo.
                 </ListItem>
 
                 <ListItem icon={icons.MagnifyingGlass}>
-                    <PythonInline>parse_args(argv)</PythonInline> toma la lista de strings (sin el
-                    nombre del programa) y la convierte en un objeto con atributos (<PythonInline
-                    >args.name</PythonInline>,
+                    <PythonInline>parse_args(argv)</PythonInline> toma la lista de strings (sin el nombre del programa)
+                    y la convierte en un objeto con atributos (<PythonInline>args.name</PythonInline>,
                     <PythonInline>args.out_dir</PythonInline>, etc.).
                 </ListItem>
 
                 <ListItem icon={icons.ChatCircleText}>
-                    <PythonInline>logger.info(...)</PythonInline> emite un mensaje de diagnóstico.
-                    Si <PythonInline>--verbose</PythonInline>
+                    <PythonInline>logger.info(...)</PythonInline> emite un mensaje de diagnóstico. Si <PythonInline
+                    >--verbose</PythonInline>
                     no está activo, este mensaje no se muestra (porque el nivel queda en
                     <PythonInline>WARNING</PythonInline>).
                 </ListItem>
 
                 <ListItem icon={icons.TextT}>
-                    El bloque <PythonInline>(f"...")</PythonInline> concatena strings de manera
-                    legible: cada línea es un literal separado, pero Python los une en un solo
-                    string final.
+                    El bloque <PythonInline>(f"...")</PythonInline> concatena strings de manera legible: cada línea es
+                    un literal separado, pero Python los une en un solo string final.
                 </ListItem>
 
                 <ListItem icon={icons.ArrowSquareOut}>
                     <PythonInline code="return 0" /> y <PythonInline code="sys.exit(...)" />
-                    establecen el código de salida del proceso. Esto es importante para
-                    automatización (CI, scripts, tareas): <PythonInline>0</PythonInline>
+                    establecen el código de salida del proceso. Esto es importante para automatización (CI, scripts,
+                    tareas): <PythonInline>0</PythonInline>
                     suele indicar éxito, y otros valores indican fallas.
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
-                    <PythonInline code='if __name__ == "__main__":' /> hace que el archivo se pueda
-                    ejecutar como script sin que <PythonInline>main</PythonInline> corra al
-                    importarlo como módulo. Además, <PythonInline>sys.argv[1:]</PythonInline> omite
-                    el primer argumento (el nombre del programa).
+                    <PythonInline code='if __name__ == "__main__":' /> hace que el archivo se pueda ejecutar como script
+                    sin que <PythonInline>main</PythonInline> corra al importarlo como módulo. Además, <PythonInline
+                    >sys.argv[1:]</PythonInline> omite el primer argumento (el nombre del programa).
                 </ListItem>
             </List>
         </Explanation>
@@ -478,10 +449,10 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         <Info headingLevel="h3">
             <span slot="title">Uso</span>
 
-            La opción <PowerShellInline>-m</PowerShellInline> le indica a Python que ejecute un <I
-            >módulo</I> (o submódulo) usando el sistema de importaciones, en lugar de un archivo
-            <Mono>.py</Mono> directo. Esto asegura que los imports funcionen correctamente dentro
-            del paquete (<Mono>readme_gen</Mono>) y que el punto de entrada sea el bloque
+            La opción <PowerShellInline>-m</PowerShellInline> le indica a Python que ejecute un <I>módulo</I> (o
+            submódulo) usando el sistema de importaciones, en lugar de un archivo
+            <Mono>.py</Mono> directo. Esto asegura que los imports funcionen correctamente dentro del paquete (<Mono
+            >readme_gen</Mono>) y que el punto de entrada sea el bloque
             <PythonInline code='if __name__ == "__main__"' />.
 
             <PowerShellBlock
@@ -501,62 +472,58 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                En esta lección construimos un script completo en Python desde cero, recorriendo el
-                camino habitual de una herramienta de línea de comandos: definición del contrato,
-                validación de entradas, diagnóstico controlado y ejecución con un punto de entrada
-                explícito.
+                En esta lección construimos un script completo en Python desde cero, recorriendo el camino habitual de
+                una herramienta de línea de comandos: definición del contrato, validación de entradas, diagnóstico
+                controlado y ejecución con un punto de entrada explícito.
             </P>
 
             <P>
-                A diferencia de PowerShell, donde muchas de estas decisiones están integradas en el
-                propio lenguaje y su modelo de pipeline, Python delega estas responsabilidades en
-                módulos bien definidos de su biblioteca estándar, lo que lleva a más <Enquote>código
-                    pegamento</Enquote> explícito.
+                A diferencia de PowerShell, donde muchas de estas decisiones están integradas en el propio lenguaje y su
+                modelo de pipeline, Python delega estas responsabilidades en módulos bien definidos de su biblioteca
+                estándar, lo que lleva a más <Enquote>código pegamento</Enquote> explícito.
             </P>
 
             <P>
-                El resultado no es solo un script funcional, sino una estructura que puede crecer:
-                validadores reutilizables, parsers testeables, logging configurable y un flujo de
-                ejecución claro.
+                El resultado no es solo un script funcional, sino una estructura que puede crecer: validadores
+                reutilizables, parsers testeables, logging configurable y un flujo de ejecución claro.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <List>
                 <ListItem icon={icons.FolderOpen}>
-                    <PythonInline>argparse</PythonInline> permite declarar y validar el contrato de
-                    un script de forma explícita.
+                    <PythonInline>argparse</PythonInline> permite declarar y validar el contrato de un script de forma
+                    explícita.
                 </ListItem>
 
                 <ListItem icon={icons.ArrowsDownUp}>
-                    Los validadores personalizados convierten texto en tipos útiles antes de que la
-                    lógica principal se ejecute.
+                    Los validadores personalizados convierten texto en tipos útiles antes de que la lógica principal se
+                    ejecute.
                 </ListItem>
 
                 <ListItem icon={icons.Bug}>
-                    <PythonInline>logging</PythonInline> separa los mensajes de diagnóstico del
-                    flujo principal del programa.
+                    <PythonInline>logging</PythonInline> separa los mensajes de diagnóstico del flujo principal del
+                    programa.
                 </ListItem>
 
                 <ListItem icon={icons.Play}>
-                    El patrón <PythonInline code='if __name__ == "__main__"' /> define un punto de
-                    entrada claro y reusable.
+                    El patrón <PythonInline code='if __name__ == "__main__"' /> define un punto de entrada claro y
+                    reusable.
                 </ListItem>
             </List>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                Más allá de la sintaxis, esta lección busca dejar una idea central: escribir scripts
-                no es solo <I>hacer que algo funcione</I>, sino definir contratos claros entre quien
-                escribe la herramienta y quien la usa.
+                Más allá de la sintaxis, esta lección busca dejar una idea central: escribir scripts no es solo <I>hacer
+                    que algo funcione</I>, sino definir contratos claros entre quien escribe la herramienta y quien la
+                usa.
             </P>
 
             <P>
-                Python no ofrece un pipeline de objetos como PowerShell, pero compensa esa ausencia
-                con una biblioteca estándar rica y coherente. Aprender a combinar estas piezas
-                —parsers, validadores, logging y puntos de entrada— es clave para escribir
-                herramientas pequeñas, pero bien diseñadas.
+                Python no ofrece un pipeline de objetos como PowerShell, pero compensa esa ausencia con una biblioteca
+                estándar rica y coherente. Aprender a combinar estas piezas —parsers, validadores, logging y puntos de
+                entrada— es clave para escribir herramientas pequeñas, pero bien diseñadas.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -577,12 +544,11 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 />
 
                 <Fragment slot="description">
-                    Cubre los fundamentos de entrada y salida en Python, incluyendo manipulación de
-                    archivos, flujos estándar (stdin/stdout/stderr) y la construcción de interfaces
-                    de línea de comandos. Útil para entender cómo Python gestiona los datos de
-                    entrada/salida y la interacción con el sistema, conceptos clave al trabajar con
-                    <PythonInline>argparse</PythonInline> y <PythonInline>logging</PythonInline> en
-                    scripts.
+                    Cubre los fundamentos de entrada y salida en Python, incluyendo manipulación de archivos, flujos
+                    estándar (stdin/stdout/stderr) y la construcción de interfaces de línea de comandos. Útil para
+                    entender cómo Python gestiona los datos de entrada/salida y la interacción con el sistema, conceptos
+                    clave al trabajar con
+                    <PythonInline>argparse</PythonInline> y <PythonInline>logging</PythonInline> en scripts.
                 </Fragment>
             </Book>
         </Fragment>
@@ -591,10 +557,10 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
     <Footnotes>
         <Footnote index={1}>
             A diferencia de PowerShell, donde los cmdlets <PowerShellInline code={`Write-_`} />
-            envían <I>objetos</I> a distintos canales del pipeline (verbose, warning, error, etc.),
-            el módulo <PythonInline code={`logging`} /> se limita a emitir <I>mensajes de texto</I>
-            con distintos niveles de severidad. El control fino no ocurre en el flujo de datos, sino
-            en la configuración del logger (niveles, handlers y formato).
+            envían <I>objetos</I> a distintos canales del pipeline (verbose, warning, error, etc.), el módulo
+            <PythonInline code={`logging`} /> se limita a emitir <I>mensajes de texto</I>
+            con distintos niveles de severidad. El control fino no ocurre en el flujo de datos, sino en la configuración
+            del logger (niveles, handlers y formato).
         </Footnote>
     </Footnotes>
 </NotesLayout>

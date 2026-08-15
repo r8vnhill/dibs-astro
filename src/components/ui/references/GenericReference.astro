@@ -45,9 +45,9 @@ import * as icons from "$icons";
 import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import {
+    resolveInlineField,
     resolveOptionalSlots,
     resolveRequiredTitleField,
-    resolveInlineField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 
@@ -142,9 +142,7 @@ const resolvedAuthor = resolveInlineField(authorSlot, author);
     {
         resolvedLocation.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
                 {
                     resolvedLocation.kind === "slot"
                         ? <span set:html={resolvedLocation.html} />
@@ -157,9 +155,7 @@ const resolvedAuthor = resolveInlineField(authorSlot, author);
     {
         resolvedAuthor.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
                 {
                     resolvedAuthor.kind === "slot"
                         ? <span set:html={resolvedAuthor.html} />

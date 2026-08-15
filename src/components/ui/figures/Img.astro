@@ -60,10 +60,7 @@ const imgBaseClasses = [
         }
     </div>
 
-    <figcaption
-        id={resolvedCapId}
-        class="mt-3 max-w-prose text-sm leading-relaxed text-zinc-600 dark:text-zinc-400"
-    >
+    <figcaption id={resolvedCapId} class="mt-3 max-w-prose text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
         <slot name="caption">
             {caption && <span set:html={caption} />}
         </slot>

@@ -21,21 +21,17 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 >
     <Fragment slot="abstract">
         <P>
-            Esta lección introduce las herramientas de <B>autodescubrimiento</B> de PowerShell: cómo
-            usar
-            <PowerShellInline code="Get-Command" /> para explorar el entorno y <PowerShellInline
-                code="Get-Help"
-            /> para aprender directamente desde la terminal. Con estos comandos podrás encontrar
-            cmdlets, entender sus parámetros y acceder a ejemplos sin depender de documentación
-            externa.
+            Esta lección introduce las herramientas de <B>autodescubrimiento</B> de PowerShell: cómo usar
+            <PowerShellInline code="Get-Command" /> para explorar el entorno y <PowerShellInline code="Get-Help" /> para
+            aprender directamente desde la terminal. Con estos comandos podrás encontrar cmdlets, entender sus
+            parámetros y acceder a ejemplos sin depender de documentación externa.
         </P>
 
         <P>
-            También aprenderás a reconocer patrones en la convención <I>Verbo-Sustantivo</I> y a
-            consultar temas conceptuales <Mono>about_*</Mono>, que explican conceptos clave del
-            lenguaje y del entorno. Estas prácticas te permitirán navegar y ampliar el ecosistema de
-            PowerShell con autonomía, adoptando una mentalidad exploratoria centrada en descubrir
-            antes que memorizar.
+            También aprenderás a reconocer patrones en la convención <I>Verbo-Sustantivo</I> y a consultar temas
+            conceptuales <Mono>about_*</Mono>, que explican conceptos clave del lenguaje y del entorno. Estas prácticas
+            te permitirán navegar y ampliar el ecosistema de PowerShell con autonomía, adoptando una mentalidad
+            exploratoria centrada en descubrir antes que memorizar.
         </P>
     </Fragment>
 
@@ -48,13 +44,11 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            <PowerShellInline code="Get-Command" /> sirve para <I>descubrir qué existe</I> en tu
-            entorno PowerShell: cmdlets, funciones, scripts o alias. Puedes filtrar por <B>nombre,
-                verbo o sustantivo</B>, usar comodines y explorar las acciones disponibles sin
-            recordar nombres exactos. Devuelve objetos <PowerShellInline code="[CommandInfo]" /> (y
-            derivados como <PowerShellInline code="[CmdletInfo]" />, <PowerShellInline
-                code="[FunctionInfo]"
-            />
+            <PowerShellInline code="Get-Command" /> sirve para <I>descubrir qué existe</I> en tu entorno PowerShell:
+            cmdlets, funciones, scripts o alias. Puedes filtrar por <B>nombre, verbo o sustantivo</B>, usar comodines y
+            explorar las acciones disponibles sin recordar nombres exactos. Devuelve objetos <PowerShellInline
+                code="[CommandInfo]"
+            /> (y derivados como <PowerShellInline code="[CmdletInfo]" />, <PowerShellInline code="[FunctionInfo]" />
             o <PowerShellInline code="[ApplicationInfo]" />) que puedes inspeccionar.
         </P>
 
@@ -96,72 +90,61 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             <List>
                 <ListItem icon={icons.Terminal}>
                     <PowerShellInline code="Get-Command -Name Get-Command" /> devuelve un objeto
-                    <PowerShellInline code="[CommandInfo]" />, que puedes inspeccionar para conocer
-                    sus propiedades. Por ejemplo, <PowerShellInline
-                        code="(Get-Command -Name Get-Command).Parameters.Keys"
-                    /> lista sus parámetros.
+                    <PowerShellInline code="[CommandInfo]" />, que puedes inspeccionar para conocer sus propiedades. Por
+                    ejemplo, <PowerShellInline code="(Get-Command -Name Get-Command).Parameters.Keys" /> lista sus
+                    parámetros.
                 </ListItem>
 
                 <ListItem icon={icons.BracketsCurly}>
-                    <PowerShellInline code="Get-Member" /> muestra los <I>miembros</I> (propiedades
-                    y métodos) del objeto devuelto. Si haces <PowerShellInline
-                        code="Get-Member -InputObject $cmd"
-                    />, verás a qué tipo pertenece (<PowerShellInline code="[FunctionInfo]" /> o
-                    <PowerShellInline code="[CmdletInfo]" />) y propiedades como <PowerShellInline
-                        code="Name"
-                    />, <PowerShellInline code="ModuleName" /> o
+                    <PowerShellInline code="Get-Member" /> muestra los <I>miembros</I> (propiedades y métodos) del
+                    objeto devuelto. Si haces <PowerShellInline code="Get-Member -InputObject $cmd" />, verás a qué tipo
+                    pertenece (<PowerShellInline code="[FunctionInfo]" /> o
+                    <PowerShellInline code="[CmdletInfo]" />) y propiedades como <PowerShellInline code="Name" />,
+                    <PowerShellInline code="ModuleName" /> o
                     <PowerShellInline code="Definition" />.
                 </ListItem>
 
                 <ListItem icon={icons.Funnel}>
                     <B>Filtrado por verbo y sustantivo</B>
-                    (<PowerShellInline code="-Verb" /> / <PowerShellInline code="-Noun" />).
-                    PowerShell nombra cmdlets como <I>Verbo-Sustantivo</I>
-                    (<PowerShellInline code="Get-Item" />, <PowerShellInline
-                        code="Push-Location"
-                    />, etc.).
+                    (<PowerShellInline code="-Verb" /> / <PowerShellInline code="-Noun" />). PowerShell nombra cmdlets
+                    como <I>Verbo-Sustantivo</I>
+                    (<PowerShellInline code="Get-Item" />, <PowerShellInline code="Push-Location" />, etc.).
                     <PowerShellInline code="-Verb" /> lista acciones (“qué hace”) y
                     <PowerShellInline code="-Noun" /> el “sobre qué”. Ejemplos:
                     <PowerShellInline code="Get-Command -Verb Push" /> o
                     <PowerShellInline code="Get-Command -Noun *Item" />. Además, usa
-                    <PowerShellInline code="-CommandType" /> (<Mono>Cmdlet</Mono>/<Mono
-                    >Function</Mono>/<Mono>Alias</Mono>/<Mono>Application</Mono>/<Mono
-                    >ExternalScript</Mono>) y <PowerShellInline code="-Module" /> para acotar por
-                    origen o tipo.
+                    <PowerShellInline code="-CommandType" /> (<Mono>Cmdlet</Mono>/<Mono>Function</Mono>/<Mono
+                    >Alias</Mono>/<Mono>Application</Mono>/<Mono>ExternalScript</Mono>) y <PowerShellInline
+                        code="-Module"
+                    /> para acotar por origen o tipo.
                 </ListItem>
 
                 <ListItem icon={icons.Asterisk}>
-                    <B>Comodines</B>: usa <PowerShellInline code="*" /> para buscar sin recordar el
-                    nombre exacto.
+                    <B>Comodines</B>: usa <PowerShellInline code="*" /> para buscar sin recordar el nombre exacto.
                     <PowerShellInline code="Get-Command *location*" /> encuentra
                     <PowerShellInline code="Get-Location" />,
                     <PowerShellInline code="Set-Location" />,
-                    <PowerShellInline code="Push-Location" />, etc. Es insensible a mayúsculas y
-                    puedes combinar filtros, por ejemplo:
+                    <PowerShellInline code="Push-Location" />, etc. Es insensible a mayúsculas y puedes combinar
+                    filtros, por ejemplo:
                     <PowerShellInline
                         code="Get-Command *item* -CommandType Cmdlet -Module Microsoft.PowerShell.Management"
-                    />. Combínalo con <PowerShellInline code="-CommandType" />/<PowerShellInline
-                        code="-Module"
-                    /> y usa búsquedas explícitas con <PowerShellInline code="-Name" /> y combina
+                    />. Combínalo con <PowerShellInline code="-CommandType" />/<PowerShellInline code="-Module" /> y usa
+                    búsquedas explícitas con <PowerShellInline code="-Name" /> y combina
                     <PowerShellInline code="-CommandType" />/<PowerShellInline code="-Module" />
                     para salidas más legibles.
                 </ListItem>
 
                 <ListItem icon={icons.SlidersHorizontal}>
-                    <B>Buscar por parámetros</B> — cuando recuerdas un parámetro pero no el cmdlet,
-                    prueba
-                    <PowerShellInline code="-ParameterName" /> o <PowerShellInline
-                        code="-ParameterType"
-                    /> (por ejemplo,
-                    <PowerShellInline code="[switch]" /> o <PowerShellInline
-                        code="SwitchParameter"
-                    />) para localizar candidatos.
+                    <B>Buscar por parámetros</B> — cuando recuerdas un parámetro pero no el cmdlet, prueba
+                    <PowerShellInline code="-ParameterName" /> o <PowerShellInline code="-ParameterType" /> (por
+                    ejemplo,
+                    <PowerShellInline code="[switch]" /> o <PowerShellInline code="SwitchParameter" />) para localizar
+                    candidatos.
                 </ListItem>
 
                 <ListItem icon={icons.BracketsCurly}>
-                    <B>Ver uso rápido</B> — <PowerShellInline code="-Syntax" /> muestra las firmas
-                    del comando sin abrir la ayuda completa; útil para recordar parámetros
-                    posicionales y combinaciones rápidas.
+                    <B>Ver uso rápido</B> — <PowerShellInline code="-Syntax" /> muestra las firmas del comando sin abrir
+                    la ayuda completa; útil para recordar parámetros posicionales y combinaciones rápidas.
                 </ListItem>
             </List>
         </Explanation>
@@ -185,19 +168,18 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </Heading>
 
         <P>
-            <PowerShellInline code="Get-Help" /> muestra la documentación integrada de cualquier
-            comando. Es la herramienta principal para <B>entender cómo usar un cmdlet</B>, con sus
-            <I>parámetros, ejemplos y vínculos a la documentación en línea</I>. También incluye
-            capítulos conceptuales llamados <Mono>about_*</Mono>, que explican temas generales del
-            lenguaje y del entorno de PowerShell (por ejemplo, <Mono>about_Arrays</Mono>, <Mono
-            >about_Operators</Mono> o <Mono>about_Execution_Policies</Mono>).
+            <PowerShellInline code="Get-Help" /> muestra la documentación integrada de cualquier comando. Es la
+            herramienta principal para <B>entender cómo usar un cmdlet</B>, con sus
+            <I>parámetros, ejemplos y vínculos a la documentación en línea</I>. También incluye capítulos conceptuales
+            llamados <Mono>about_*</Mono>, que explican temas generales del lenguaje y del entorno de PowerShell (por
+            ejemplo, <Mono>about_Arrays</Mono>, <Mono>about_Operators</Mono> o <Mono>about_Execution_Policies</Mono>).
         </P>
 
         <Info>
             <Fragment slot="title">Antes de comenzar</Fragment>
             <P>
-                Si es la primera vez que usas PowerShell, puede que necesites descargar o actualizar
-                la ayuda local con <PowerShellInline code="Update-Help" />. Esto permite usar
+                Si es la primera vez que usas PowerShell, puede que necesites descargar o actualizar la ayuda local con
+                <PowerShellInline code="Update-Help" />. Esto permite usar
                 <PowerShellInline code="Get-Help" /> sin conexión.
             </P>
 
@@ -211,10 +193,10 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             <Warning>
                 <Fragment slot="title">Idiomas disponibles</Fragment>
                 <P>
-                    Usamos <Mono>en-US</Mono> porque es el idioma por defecto de PowerShell. Puedes
-                    cambiarlo a otro idioma (por ejemplo, <Mono>es-ES</Mono>), pero ten en cuenta
-                    que no todos los módulos ofrecen traducción. Si intentas actualizar toda la
-                    ayuda en español, es común que algunos módulos fallen o queden en inglés.
+                    Usamos <Mono>en-US</Mono> porque es el idioma por defecto de PowerShell. Puedes cambiarlo a otro
+                    idioma (por ejemplo, <Mono>es-ES</Mono>), pero ten en cuenta que no todos los módulos ofrecen
+                    traducción. Si intentas actualizar toda la ayuda en español, es común que algunos módulos fallen o
+                    queden en inglés.
                 </P>
             </Warning>
         </Info>
@@ -244,60 +226,55 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         <Explanation>
             <List>
                 <ListItem icon={icons.FileText}>
-                    <PowerShellInline code="Get-Help -Name Get-Help" /> — Muestra la ayuda del
-                    propio cmdlet <PowerShellInline code="Get-Help" />: estructura de la salida,
-                    parámetros disponibles y cómo profundizar (por ejemplo, con <PowerShellInline
-                        code="-Examples"
-                    /> o <PowerShellInline code="-Full" />).
+                    <PowerShellInline code="Get-Help -Name Get-Help" /> — Muestra la ayuda del propio cmdlet
+                    <PowerShellInline code="Get-Help" />: estructura de la salida, parámetros disponibles y cómo
+                    profundizar (por ejemplo, con <PowerShellInline code="-Examples" /> o <PowerShellInline
+                        code="-Full"
+                    />).
 
                     <List>
                         <ListItem icon={icons.TerminalWindow}>
-                            <PowerShellInline code="-Examples" /> - Presenta solo los ejemplos
-                            prácticos del comando. Es la forma más rápida de ver usos reales sin
-                            tener que leer toda la documentación.
+                            <PowerShellInline code="-Examples" /> - Presenta solo los ejemplos prácticos del comando. Es
+                            la forma más rápida de ver usos reales sin tener que leer toda la documentación.
                         </ListItem>
 
                         <ListItem icon={icons.BookOpenText}>
-                            <PowerShellInline code="-Full" /> — Muestra la documentación completa:
-                            descripción, sintaxis, parámetros (con tipos y validaciones),
-                            entradas/salidas y notas adicionales.
+                            <PowerShellInline code="-Full" /> — Muestra la documentación completa: descripción,
+                            sintaxis, parámetros (con tipos y validaciones), entradas/salidas y notas adicionales.
                         </ListItem>
 
                         <ListItem icon={icons.GlobeHemisphereWest}>
-                            <PowerShellInline code="-Online" /> - Abre el artículo correspondiente
-                            en Microsoft Learn o Docs en el navegador, útil cuando quieres ver
-                            formato enriquecido o notas actualizadas.
+                            <PowerShellInline code="-Online" /> - Abre el artículo correspondiente en Microsoft Learn o
+                            Docs en el navegador, útil cuando quieres ver formato enriquecido o notas actualizadas.
                         </ListItem>
                     </List>
                 </ListItem>
 
                 <ListItem icon={icons.Bookmark}>
-                    <Mono>about_*</Mono> — Temas conceptuales del lenguaje y la plataforma
-                    (pipeline, operadores, alias, etc.).
+                    <Mono>about_*</Mono> — Temas conceptuales del lenguaje y la plataforma (pipeline, operadores, alias,
+                    etc.).
                 </ListItem>
 
                 <ListItem icon={icons.MagnifyingGlass}>
-                    <B>Comodines</B> - Cuando no recuerdes el nombre exacto, usa <PowerShellInline
-                        code="*"
-                    /> para buscar candidatos.
+                    <B>Comodines</B> - Cuando no recuerdes el nombre exacto, usa <PowerShellInline code="*" /> para
+                    buscar candidatos.
                 </ListItem>
 
                 <ListItem icon={icons.Terminal}>
-                    <PowerShellInline code="<Comando> -?" /> - Muestra la ayuda rápida de cualquier
-                    comando (parámetros y sintaxis principales).
+                    <PowerShellInline code="<Comando> -?" /> - Muestra la ayuda rápida de cualquier comando (parámetros
+                    y sintaxis principales).
                 </ListItem>
 
                 <ListItem icon={icons.FileText}>
-                    <PowerShellInline code="Get-Help <Comando> -Parameter <Nombre>" /> - Para ir
-                    directo a parámetros específicos.
+                    <PowerShellInline code="Get-Help <Comando> -Parameter <Nombre>" /> - Para ir directo a parámetros
+                    específicos.
                 </ListItem>
             </List>
         </Explanation>
 
         <Note>
-            En este apunte no documentaremos formalmente los scripts: priorizaremos explicaciones en
-            línea y ejemplos prácticos. Si quieres aprender a incluir documentación interna en tus
-            propios scripts, revisa la sección
+            En este apunte no documentaremos formalmente los scripts: priorizaremos explicaciones en línea y ejemplos
+            prácticos. Si quieres aprender a incluir documentación interna en tus propios scripts, revisa la sección
             <I>Comment-Based Help</I> más abajo.
         </Note>
 
@@ -343,18 +320,15 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <Tip>
                 <P>
-                    Añadir ayuda a tus scripts no solo facilita su uso futuro, también permite a
-                    otras personas usar
-                    <PowerShellInline code="Get-Help" /> directamente sobre tus archivos sin abrir
-                    el código.
+                    Añadir ayuda a tus scripts no solo facilita su uso futuro, también permite a otras personas usar
+                    <PowerShellInline code="Get-Help" /> directamente sobre tus archivos sin abrir el código.
                 </P>
             </Tip>
         </More>
     </NotesSection>
 
     <Question>
-        Encuentra tres cmdlets que empiecen con <Mono>Get-</Mono> y tengan <I>Noun</I> <Mono
-        >Item</Mono>. Usa
+        Encuentra tres cmdlets que empiecen con <Mono>Get-</Mono> y tengan <I>Noun</I> <Mono>Item</Mono>. Usa
         <PowerShellInline code="Get-Help" /> para ver sus ejemplos de uso.
     </Question>
 
@@ -366,39 +340,37 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
     <ConclusionsLayout>
         <Fragment slot="conclusions">
-            En esta lección aprendiste a <B>autodescubrir PowerShell desde la terminal</B>.
-            Comprendiste cómo <PowerShellInline code="Get-Command" /> te permite explorar los
-            cmdlets disponibles, filtrar por verbo o sustantivo e inspeccionar sus propiedades.
-            También viste cómo <PowerShellInline code="Get-Help" /> ofrece documentación integrada,
-            ejemplos y temas conceptuales <Mono>about_*</Mono> para profundizar sin salir del
+            En esta lección aprendiste a <B>autodescubrir PowerShell desde la terminal</B>. Comprendiste cómo
+            <PowerShellInline code="Get-Command" /> te permite explorar los cmdlets disponibles, filtrar por verbo o
+            sustantivo e inspeccionar sus propiedades. También viste cómo <PowerShellInline code="Get-Help" /> ofrece
+            documentación integrada, ejemplos y temas conceptuales <Mono>about_*</Mono> para profundizar sin salir del
             entorno.
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.MagnifyingGlass}>
-                <PowerShellInline code="Get-Command" /> descubre qué comandos existen y te permite
-                filtrarlos por nombre, verbo o sustantivo.
+                <PowerShellInline code="Get-Command" /> descubre qué comandos existen y te permite filtrarlos por
+                nombre, verbo o sustantivo.
             </ListItem>
 
             <ListItem icon={icons.BookOpen}>
-                <PowerShellInline code="Get-Help" /> explica cómo usar cada comando, muestra
-                ejemplos y puede abrir documentación en línea.
+                <PowerShellInline code="Get-Help" /> explica cómo usar cada comando, muestra ejemplos y puede abrir
+                documentación en línea.
             </ListItem>
 
             <ListItem icon={icons.Bookmark}>
-                Los temas <Mono>about_*</Mono> contienen guías conceptuales sobre operadores, alias,
-                pipeline y otros fundamentos.
+                Los temas <Mono>about_*</Mono> contienen guías conceptuales sobre operadores, alias, pipeline y otros
+                fundamentos.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            PowerShell está diseñado para el <I>descubrimiento progresivo</I>: cada herramienta
-            revela pistas sobre la siguiente. Conocer y usar <PowerShellInline code="Get-Command" />
-            y <PowerShellInline code="Get-Help" /> no solo te hace más independiente, sino que te
-            enseña a aprender desde la propia terminal. En lugar de memorizar comandos, adoptas una
-            mentalidad exploratoria, apoyada en documentación viva y accesible. A partir de aquí,
-            puedes seguir usando estas herramientas para explorar nuevos módulos y comandos que
-            vayas encontrando en tu entorno.
+            PowerShell está diseñado para el <I>descubrimiento progresivo</I>: cada herramienta revela pistas sobre la
+            siguiente. Conocer y usar <PowerShellInline code="Get-Command" />
+            y <PowerShellInline code="Get-Help" /> no solo te hace más independiente, sino que te enseña a aprender
+            desde la propia terminal. En lugar de memorizar comandos, adoptas una mentalidad exploratoria, apoyada en
+            documentación viva y accesible. A partir de aquí, puedes seguir usando estas herramientas para explorar
+            nuevos módulos y comandos que vayas encontrando en tu entorno.
         </Fragment>
     </ConclusionsLayout>
 
@@ -416,24 +388,20 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
                 <Fragment slot="description">
-                    Presenta el sistema de ayuda de PowerShell como la clave de su <I
-                    >descubribilidad</I>. Explica cómo
+                    Presenta el sistema de ayuda de PowerShell como la clave de su <I>descubribilidad</I>. Explica cómo
                     <B>actualizar la ayuda</B> (<PowerShellInline code={`Update-Help`} />,
                     <PowerShellInline code={`Save-Help`} />), las diferencias entre
                     <PowerShellInline code={`Help`} /> y <PowerShellInline code={`Get-Help`} />
-                    (incluido el paginado y <PowerShellInline code={`-Online`} />), y cómo usar
-                    comodines para <B>encontrar comandos</B> desde la propia terminal. Enseña a <B
-                    >interpretar la ayuda</B>: <I>parameter sets</I>, parámetros <B
-                    >obligatorios/opcionales</B>, <B>posicionales</B>, tipos y arrays, y <B
-                    >switches</B> como <PowerShellInline code={`-Force`} />. Muestra cómo extraer <B
-                    >ejemplos</B> con
+                    (incluido el paginado y <PowerShellInline code={`-Online`} />), y cómo usar comodines para <B
+                    >encontrar comandos</B> desde la propia terminal. Enseña a <B>interpretar la ayuda</B>: <I>parameter
+                        sets</I>, parámetros <B>obligatorios/opcionales</B>, <B>posicionales</B>, tipos y arrays, y <B
+                    >switches</B> como <PowerShellInline code={`-Force`} />. Muestra cómo extraer <B>ejemplos</B> con
                     <PowerShellInline code={`-Examples`} /> y cómo consultar temas conceptuales
-                    <Mono>about_</Mono> (por ejemplo, <Mono>about_CommonParameters</Mono>). Cierra
-                    con ejercicios prácticos que te obligan a resolver tareas usando la ayuda,
-                    reforzando la idea de <I>aprender a aprender</I> dentro de PowerShell en lugar
-                    de memorizar comandos o depender del buscador. Ideal si quieres ganar autonomía
-                    para descubrir cmdlets, entender su sintaxis real y documentarte sin salir de la
-                    terminal.
+                    <Mono>about_</Mono> (por ejemplo, <Mono>about_CommonParameters</Mono>). Cierra con ejercicios
+                    prácticos que te obligan a resolver tareas usando la ayuda, reforzando la idea de <I>aprender a
+                        aprender</I> dentro de PowerShell en lugar de memorizar comandos o depender del buscador. Ideal
+                    si quieres ganar autonomía para descubrir cmdlets, entender su sintaxis real y documentarte sin
+                    salir de la terminal.
                 </Fragment>
             </Book>
         </Fragment>
@@ -449,19 +417,16 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <Fragment slot="description">
                     <P>
                         Capítulo introductorio que defiende que <B>dominar el sistema de ayuda</B>
-                        es clave en PowerShell: las personas expertas no memorizan, <I>descubren y
-                            aprenden en el momento</I>. Presenta los tres cmdlets nucleares para el
-                        descubrimiento: <PowerShellInline code={`Get-Help`} />, <PowerShellInline
-                            code={`Get-Command`}
-                        /> y <PowerShellInline code={`Get-Member`} />.
+                        es clave en PowerShell: las personas expertas no memorizan, <I>descubren y aprenden en el
+                            momento</I>. Presenta los tres cmdlets nucleares para el descubrimiento: <PowerShellInline
+                            code={`Get-Help`}
+                        />, <PowerShellInline code={`Get-Command`} /> y <PowerShellInline code={`Get-Member`} />.
                     </P>
 
                     <P>
-                        Resume cómo usar <PowerShellInline code={`Get-Help`} /> (<PowerShellInline
-                            code={`-Full`}
-                        />, <PowerShellInline code={`-Examples`} />, <PowerShellInline
-                            code={`-Online`}
-                        />, <PowerShellInline code={`-Parameter`} />) y la descarga inicial con
+                        Resume cómo usar <PowerShellInline code={`Get-Help`} /> (<PowerShellInline code={`-Full`} />,
+                        <PowerShellInline code={`-Examples`} />, <PowerShellInline code={`-Online`} />,
+                        <PowerShellInline code={`-Parameter`} />) y la descarga inicial con
                         <PowerShellInline code={`Update-Help`} />; cómo interpretar la
                         <I>sintaxis</I> y los <I>parameter sets</I> (posicionalidad y switches).
                     </P>

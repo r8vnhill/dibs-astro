@@ -28,10 +28,10 @@ import {
     parsePageReferenceInput,
 } from "~/lib/bibliography";
 import {
-    resolveOptionalSlots,
-    resolveRequiredTitleField,
     resolveInlineField,
     resolveLinkedInlineField,
+    resolveOptionalSlots,
+    resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
 import { ReferenceContractError } from "./ReferenceContractError";
@@ -90,7 +90,10 @@ if (import.meta.env.DEV && publicationUrl && !publication) {
 }
 ---
 
-<ListItem id={id} icon={icons.FileText} class="scroll-mt-24">
+<ListItem
+    {id} icon={icons.FileText}
+    class="scroll-mt-24"
+>
     <Enquote type="english-double">
         <a href={url} {...externalLinkAttrs}>
             {
@@ -112,9 +115,7 @@ if (import.meta.env.DEV && publicationUrl && !publication) {
     {
         resolvedPublication.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
                 <cite class="not-italic">
                     {
                         resolvedPublication.kind === "slot"
@@ -135,9 +136,7 @@ if (import.meta.env.DEV && publicationUrl && !publication) {
     {
         resolvedAuthor.kind !== "missing" ? (
             <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{
-                    " "
-                }
+                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
                 {
                     resolvedAuthor.kind === "slot"
                         ? <span set:html={resolvedAuthor.html} />

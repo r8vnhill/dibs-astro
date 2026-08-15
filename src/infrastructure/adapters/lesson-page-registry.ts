@@ -1,4 +1,4 @@
-import { normalizeLessonRoute, type LessonRoute } from "@ravenhill/lesson-export-core";
+import { type LessonRoute, normalizeLessonRoute } from "@ravenhill/lesson-export-core";
 
 type LessonPageModule = Readonly<{
     default?: unknown;

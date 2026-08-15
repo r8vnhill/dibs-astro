@@ -33,17 +33,17 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <P>
-            Si en la lección base PowerShell mostraba cómo producir objetos listos para consola y
-            pipeline, aquí cambia el criterio de diseño de la salida estructurada. En Python, suele
-            pensarse menos como algo que el shell presenta automáticamente y más como un dato
-            explícito que luego otra parte del programa, un archivo o una API puede consumir.
+            Si en la lección base PowerShell mostraba cómo producir objetos listos para consola y pipeline, aquí cambia
+            el criterio de diseño de la salida estructurada. En Python, suele pensarse menos como algo que el shell
+            presenta automáticamente y más como un dato explícito que luego otra parte del programa, un archivo o una
+            API puede consumir.
         </P>
 
         <P>
-            Por eso esta comparación se apoya en dos movimientos frecuentes: serializar datos a JSON
-            para intercambiarlos con otras herramientas y usar <PythonInline code="@dataclass" />
-            cuando esa información deja de ser ocasional y conviene modelarla como parte explícita
-            de la interfaz del programa.
+            Por eso esta comparación se apoya en dos movimientos frecuentes: serializar datos a JSON para
+            intercambiarlos con otras herramientas y usar <PythonInline code="@dataclass" />
+            cuando esa información deja de ser ocasional y conviene modelarla como parte explícita de la interfaz del
+            programa.
         </P>
     </Fragment>
 
@@ -53,17 +53,16 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En la comparación con PowerShell aparece una diferencia importante de foco. En
-            PowerShell, la salida estructurada suele pensarse para <I>consumo inmediato</I>: verla
-            en consola, filtrarla, proyectarla o encadenarla en el pipeline. En Python, en cambio,
-            muchas veces la estructura se prepara para <I>consumo externo</I>: guardarla en un
-            archivo, enviarla por una API o compartirla con otro sistema.
+            En la comparación con PowerShell aparece una diferencia importante de foco. En PowerShell, la salida
+            estructurada suele pensarse para <I>consumo inmediato</I>: verla en consola, filtrarla, proyectarla o
+            encadenarla en el pipeline. En Python, en cambio, muchas veces la estructura se prepara para <I>consumo
+                externo</I>: guardarla en un archivo, enviarla por una API o compartirla con otro sistema.
         </P>
 
         <P>
-            JSON encaja bien en ese escenario porque ofrece un formato textual simple, portable y
-            fácil de leer desde muchos lenguajes. Por eso es común construir una estructura en
-            memoria y luego convertirla en una representación JSON estable.
+            JSON encaja bien en ese escenario porque ofrece un formato textual simple, portable y fácil de leer desde
+            muchos lenguajes. Por eso es común construir una estructura en memoria y luego convertirla en una
+            representación JSON estable.
         </P>
 
         <PythonBlock
@@ -94,8 +93,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <span slot="title">Guardar una estructura Python como JSON</span>
             <span slot="footer">
-                Aquí la estructura ya no está pensada solo para inspección inmediata, sino también
-                para persistencia e intercambio con otros programas.
+                Aquí la estructura ya no está pensada solo para inspección inmediata, sino también para persistencia e
+                intercambio con otros programas.
             </span>
             <DibsSourceLink
                 slot="source" file="structured-output/json_utils.py"
@@ -106,32 +105,28 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Tag}>
-                    <B><PythonInline code="TypeAlias" /></B> permite dar nombre a un tipo complejo.
-                    En este caso, <PythonInline code="JSONValue" /> describe los valores que pueden
-                    aparecer en un JSON: objetos, listas, strings, números, booleanos y
+                    <B><PythonInline code="TypeAlias" /></B> permite dar nombre a un tipo complejo. En este caso,
+                    <PythonInline code="JSONValue" /> describe los valores que pueden aparecer en un JSON: objetos,
+                    listas, strings, números, booleanos y
                     <PythonInline code="None" />.
                 </ListItem>
                 <ListItem icon={icons.ArrowCounterClockwise}>
-                    El alias es <B>recursivo</B> porque un objeto JSON puede contener otros objetos
-                    JSON o listas de valores JSON dentro de sí. Por eso el tipo se define en
-                    términos de sí mismo en <PythonInline code={`dict[str, "JSONValue"]`} /> y
-                    <PythonInline code={`list["JSONValue"]`} /> (nota que el tipo va entre comillas
-                    ya que se refiere a un tipo que aún no está completamente definido a esas
-                    alturas).
+                    El alias es <B>recursivo</B> porque un objeto JSON puede contener otros objetos JSON o listas de
+                    valores JSON dentro de sí. Por eso el tipo se define en términos de sí mismo en <PythonInline
+                        code={`dict[str, "JSONValue"]`}
+                    /> y
+                    <PythonInline code={`list["JSONValue"]`} /> (nota que el tipo va entre comillas ya que se refiere a
+                    un tipo que aún no está completamente definido a esas alturas).
                 </ListItem>
                 <ListItem icon={icons.ArrowFatLineDown}>
-                    <B><PythonInline code="json.dump" /></B> escribe la estructura directamente en
-                    un archivo abierto. No devuelve un string: toma el dato Python y lo serializa en
-                    el flujo de salida.
+                    <B><PythonInline code="json.dump" /></B> escribe la estructura directamente en un archivo abierto.
+                    No devuelve un string: toma el dato Python y lo serializa en el flujo de salida.
                 </ListItem>
                 <ListItem icon={icons.SlidersHorizontal}>
-                    Las opciones elegidas controlan el formato del archivo: <PythonInline
-                        code="indent=4"
-                    /> agrega sangría para hacerlo legible, <PythonInline
-                        code="ensure_ascii=False"
-                    /> preserva caracteres no ASCII sin escapar innecesariamente, y <PythonInline
-                        code="sort_keys=True"
-                    /> ordena las claves para obtener una salida más estable y fácil de comparar.
+                    Las opciones elegidas controlan el formato del archivo: <PythonInline code="indent=4" /> agrega
+                    sangría para hacerlo legible, <PythonInline code="ensure_ascii=False" /> preserva caracteres no
+                    ASCII sin escapar innecesariamente, y <PythonInline code="sort_keys=True" /> ordena las claves para
+                    obtener una salida más estable y fácil de comparar.
                 </ListItem>
             </List>
         </Explanation>
@@ -143,22 +138,20 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <P>
-            En la lección base, <PowerShellInline code="[PSCustomObject]" /> marcaba el momento en
-            que la salida dejaba de ser solo un contenedor clave-valor y pasaba a tener una forma
-            más explícita.
+            En la lección base, <PowerShellInline code="[PSCustomObject]" /> marcaba el momento en que la salida dejaba
+            de ser solo un contenedor clave-valor y pasaba a tener una forma más explícita.
         </P>
 
         <P>
             Python no ofrece un equivalente directo con la misma integración de consola. Aun así,
-            <PythonInline code="@dataclass" /> suele marcar un cambio parecido: dejamos de usar un
-            contenedor genérico y pasamos a modelar una estructura con significado más claro y más
-            estable.
+            <PythonInline code="@dataclass" /> suele marcar un cambio parecido: dejamos de usar un contenedor genérico y
+            pasamos a modelar una estructura con significado más claro y más estable.
         </P>
 
         <P>
-            Ese cambio se vuelve útil cuando la forma del dato deja de ser accidental: conviene
-            nombrarla, acceder a sus campos como atributos y tratarla como parte de una interfaz que
-            otras partes del programa pueden asumir y reutilizar.
+            Ese cambio se vuelve útil cuando la forma del dato deja de ser accidental: conviene nombrarla, acceder a sus
+            campos como atributos y tratarla como parte de una interfaz que otras partes del programa pueden asumir y
+            reutilizar.
         </P>
 
         <PythonBlock
@@ -188,8 +181,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             <span slot="title">Convertir entre JSON y una estructura explícita</span>
             <span slot="footer">
-                Aquí la ganancia principal no es una tabla automática, sino un modelo más claro y
-                más estable como contrato para quien lee y mantiene el código.
+                Aquí la ganancia principal no es una tabla automática, sino un modelo más claro y más estable como
+                contrato para quien lee y mantiene el código.
             </span>
             <DibsSourceLink
                 slot="source" file="structured-output/comics.py"
@@ -198,44 +191,41 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </PythonBlock>
 
         <P>
-            Además de volver más explícita la intención del modelo, <PythonInline
-                code="@dataclass"
-            /> genera automáticamente un constructor y una representación textual útil para
-            depuración. La diferencia importante no es solo cómo se imprime el valor, sino que ahora
-            la estructura tiene nombre y puede formar parte explícita de la interfaz del programa.
+            Además de volver más explícita la intención del modelo, <PythonInline code="@dataclass" /> genera
+            automáticamente un constructor y una representación textual útil para depuración. La diferencia importante
+            no es solo cómo se imprime el valor, sino que ahora la estructura tiene nombre y puede formar parte
+            explícita de la interfaz del programa.
         </P>
 
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.Table}>
-                    <B><PythonInline code="@dataclass" /></B> genera una clase pensada para
-                    representar datos. En este caso, deja explícito que un <PythonInline
-                    >Comic</PythonInline> tiene título, escritor y año de publicación.
+                    <B><PythonInline code="@dataclass" /></B> genera una clase pensada para representar datos. En este
+                    caso, deja explícito que un <PythonInline>Comic</PythonInline> tiene título, escritor y año de
+                    publicación.
                 </ListItem>
                 <ListItem icon={icons.Lock}>
-                    Con <B><PythonInline code="frozen=True" /></B>, la instancia se vuelve
-                    esencialmente inmutable: una vez creada, no deberías cambiar sus campos. Para
-                    este tipo de modelo eso suele ser útil porque reduce cambios accidentales y hace
-                    más claro su uso.
+                    Con <B><PythonInline code="frozen=True" /></B>, la instancia se vuelve esencialmente inmutable: una
+                    vez creada, no deberías cambiar sus campos. Para este tipo de modelo eso suele ser útil porque
+                    reduce cambios accidentales y hace más claro su uso.
                 </ListItem>
                 <ListItem icon={icons.BracketsCurly}>
                     El método <B><PythonInline code="to_json_serializable" /></B> devuelve
-                    <PythonInline code="self.__dict__" />, es decir, el diccionario de atributos de
-                    la instancia. Aquí funciona bien porque todos los campos ya son valores simples
-                    serializables a JSON. En un caso real, si hubiera fechas, enums u otros objetos
-                    más complejos, habría que convertirlos explícitamente antes de serializar.
+                    <PythonInline code="self.__dict__" />, es decir, el diccionario de atributos de la instancia. Aquí
+                    funciona bien porque todos los campos ya son valores simples serializables a JSON. En un caso real,
+                    si hubiera fechas, enums u otros objetos más complejos, habría que convertirlos explícitamente antes
+                    de serializar.
                 </ListItem>
                 <ListItem icon={icons.Download}>
                     <B><PythonInline code="json.load" /></B> hace la operación inversa a
-                    <PythonInline code="json.dump" />: lee el contenido del archivo y lo convierte
-                    en una estructura Python, en este caso un <PythonInline code="dict" />.
+                    <PythonInline code="json.dump" />: lee el contenido del archivo y lo convierte en una estructura
+                    Python, en este caso un <PythonInline code="dict" />.
                 </ListItem>
                 <ListItem icon={icons.ArrowsLeftRight}>
-                    Luego, <B><PythonInline code="Comic(**data)" /></B> usa <I>unpacking</I> de
-                    diccionario para mapear cada clave del JSON a un parámetro del constructor. Esto
-                    supone que el archivo tiene exactamente la forma esperada. Aquí no hay
-                    validación explícita: el ejemplo asume que el JSON ya viene bien formado y con
-                    las claves correctas.
+                    Luego, <B><PythonInline code="Comic(**data)" /></B> usa <I>unpacking</I> de diccionario para mapear
+                    cada clave del JSON a un parámetro del constructor. Esto supone que el archivo tiene exactamente la
+                    forma esperada. Aquí no hay validación explícita: el ejemplo asume que el JSON ya viene bien formado
+                    y con las claves correctas.
                 </ListItem>
             </List>
         </Explanation>
@@ -243,8 +233,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
         <Info headingLevel="h3">
             <span slot="title">Uso</span>
 
-            Para probarlo, se puede usar el siguiente JSON de ejemplo, guardado en un archivo
-            llamado <Mono>comic.json</Mono>:
+            Para probarlo, se puede usar el siguiente JSON de ejemplo, guardado en un archivo llamado <Mono
+            >comic.json</Mono>:
 
             <JsonBlock
                 code={`
@@ -270,59 +260,54 @@ import NotesSection from "~/layouts/NotesSection.astro";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                La idea central de esta lección no es que Python replique el modelo de salida de
-                PowerShell, sino que organiza la salida estructurada con otras prioridades. Mientras
-                PowerShell destaca cuando quieres objetos listos para consola y pipeline, Python
-                suele sobresalir cuando necesitas datos explícitos que luego persistes, intercambias
-                o entregas a otras partes del programa.
+                La idea central de esta lección no es que Python replique el modelo de salida de PowerShell, sino que
+                organiza la salida estructurada con otras prioridades. Mientras PowerShell destaca cuando quieres
+                objetos listos para consola y pipeline, Python suele sobresalir cuando necesitas datos explícitos que
+                luego persistes, intercambias o entregas a otras partes del programa.
             </P>
 
             <P>
-                En ese recorrido, JSON funciona como uno de los puentes más visibles: una estructura
-                en memoria puede guardarse en un archivo, viajar hacia otra herramienta y volver a
-                levantarse como dato dentro de Python. Cuando esa estructura deja de ser un
-                diccionario ocasional y pasa a tener una forma conocida, <PythonInline
-                    code="@dataclass"
-                /> ayuda a nombrarla y tratarla como un modelo más claro y reusable.
+                En ese recorrido, JSON funciona como uno de los puentes más visibles: una estructura en memoria puede
+                guardarse en un archivo, viajar hacia otra herramienta y volver a levantarse como dato dentro de Python.
+                Cuando esa estructura deja de ser un diccionario ocasional y pasa a tener una forma conocida,
+                <PythonInline code="@dataclass" /> ayuda a nombrarla y tratarla como un modelo más claro y reusable.
             </P>
 
             <P>
-                La lección propone, entonces, otro criterio de diseño para la salida estructurada:
-                en Python, muchas veces importa más que el dato sea fácil de intercambiar,
-                serializar y reutilizar que presentarlo automáticamente en terminal. La decisión
-                importante no es solo cómo mostrar la salida, sino cuándo basta un contenedor
-                flexible y cuándo conviene declarar un modelo explícito.
+                La lección propone, entonces, otro criterio de diseño para la salida estructurada: en Python, muchas
+                veces importa más que el dato sea fácil de intercambiar, serializar y reutilizar que presentarlo
+                automáticamente en terminal. La decisión importante no es solo cómo mostrar la salida, sino cuándo basta
+                un contenedor flexible y cuándo conviene declarar un modelo explícito.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.ArrowsLeftRight}>
-                En Python, la salida estructurada suele pensarse menos para inspección inmediata en
-                consola y más para persistencia, interoperabilidad e intercambio con otros sistemas.
+                En Python, la salida estructurada suele pensarse menos para inspección inmediata en consola y más para
+                persistencia, interoperabilidad e intercambio con otros sistemas.
             </ListItem>
             <ListItem icon={icons.BracketsCurly}>
-                JSON ofrece un formato textual portable y estable para mover estructuras Python
-                fuera del programa.
+                JSON ofrece un formato textual portable y estable para mover estructuras Python fuera del programa.
             </ListItem>
             <ListItem icon={icons.SlidersHorizontal}>
-                Un <PythonInline code="dict" /> sirve bien como contenedor flexible, pero se vuelve
-                un contrato débil cuando la forma del dato ya debería ser conocida y estable.
+                Un <PythonInline code="dict" /> sirve bien como contenedor flexible, pero se vuelve un contrato débil
+                cuando la forma del dato ya debería ser conocida y estable.
             </ListItem>
             <ListItem icon={icons.Table}>
-                <PythonInline code="@dataclass" /> permite nombrar esa estructura, acceder a sus
-                campos como atributos y modelarla como parte explícita de la interfaz del programa.
+                <PythonInline code="@dataclass" /> permite nombrar esa estructura, acceder a sus campos como atributos y
+                modelarla como parte explícita de la interfaz del programa.
             </ListItem>
             <ListItem icon={icons.Download}>
-                Convertir entre JSON y un modelo explícito hace más claro qué datos espera y produce
-                el programa, aunque en ejemplos simples todavía no haya validación formal.
+                Convertir entre JSON y un modelo explícito hace más claro qué datos espera y produce el programa, aunque
+                en ejemplos simples todavía no haya validación formal.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
-            Más que imitar la ergonomía de PowerShell, Python invita a pensar la salida estructurada
-            como dato interoperable. Una buena regla práctica es esta: usa un contenedor flexible
-            cuando la estructura sea transitoria, pero da el paso hacia un modelo explícito cuando
-            esa forma ya empiece a comportarse como parte estable de tu programa.
+            Más que imitar la ergonomía de PowerShell, Python invita a pensar la salida estructurada como dato
+            interoperable. Una buena regla práctica es esta: usa un contenedor flexible cuando la estructura sea
+            transitoria, pero da el paso hacia un modelo explícito cuando esa forma ya empiece a comportarse como parte
+            estable de tu programa.
         </Fragment>
     </ConclusionsLayout>
 

@@ -10,6 +10,7 @@
  * so no raw-source title extraction is needed.
  */
 
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import {
     type BibliographyCatalog,
     getReferencesForLesson,
@@ -17,7 +18,6 @@ import {
     type LoadBibliographyCatalogOptions,
     type ReferenceTag,
 } from "~/lib/bibliography";
-import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { prepareSlotsForReferences } from "./reference-content";
 import ReferenceEntry from "./ReferenceEntry.astro";
 import References from "./References.astro";
@@ -91,8 +91,7 @@ const referencesProps = {
                 {
                     grouped.recommended.map((entry) => (
                         <ReferenceEntry
-                            reference={entry.reference}
-                            preparedSlots={preparedSlots[entry.reference.id] || {}}
+                            reference={entry.reference} preparedSlots={preparedSlots[entry.reference.id] || {}}
                         />
                     ))
                 }
@@ -106,8 +105,7 @@ const referencesProps = {
                 {
                     grouped.additional.map((entry) => (
                         <ReferenceEntry
-                            reference={entry.reference}
-                            preparedSlots={preparedSlots[entry.reference.id] || {}}
+                            reference={entry.reference} preparedSlots={preparedSlots[entry.reference.id] || {}}
                         />
                     ))
                 }

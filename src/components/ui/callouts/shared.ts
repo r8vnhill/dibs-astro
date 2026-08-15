@@ -99,8 +99,7 @@ export interface BaseCalloutProps {
 /**
  * Tailwind Typography helpers for callout bodies; applied when the `prose` flag is enabled.
  */
-export const proseClasses =
-    "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed";
+export const proseClasses = "prose prose-neutral dark:prose-invert max-w-none prose-p:my-0 prose-p:leading-relaxed";
 
 /**
  * Baseline utility classes shared by every callout wrapper.

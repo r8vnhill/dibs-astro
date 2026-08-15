@@ -20,7 +20,7 @@ import type { HighlighterPromise } from "./cache";
  * works reliably in Astro/Vite test contexts.
  */
 type ShikiGlobalCache = typeof globalThis & {
-	[highlighterCacheKey]?: HighlighterPromise;
+    [highlighterCacheKey]?: HighlighterPromise;
 };
 
 /**
@@ -50,16 +50,16 @@ const getGlobalCache = (): ShikiGlobalCache => globalThis as ShikiGlobalCache;
  * @param value - Fake highlighter, highlighter promise, or `null` to clear the override
  */
 export function setHighlighterForTests(
-	value: HighlighterPromise | Highlighter | null,
+    value: HighlighterPromise | Highlighter | null,
 ): void {
-	const cache = getGlobalCache();
+    const cache = getGlobalCache();
 
-	if (value === null) {
-		delete cache[highlighterCacheKey];
-		return;
-	}
+    if (value === null) {
+        delete cache[highlighterCacheKey];
+        return;
+    }
 
-	cache[highlighterCacheKey] = Promise.resolve(value);
+    cache[highlighterCacheKey] = Promise.resolve(value);
 }
 
 /**
@@ -76,14 +76,14 @@ export function setHighlighterForTests(
  * @returns Promise that resolves when cleanup is complete
  */
 export async function resetHighlighterCacheForTests(): Promise<void> {
-	const cache = getGlobalCache();
-	const previous = cache[highlighterCacheKey];
+    const cache = getGlobalCache();
+    const previous = cache[highlighterCacheKey];
 
-	// Delete the cache slot before awaiting cleanup to prevent stale state from surviving reset
-	delete cache[highlighterCacheKey];
+    // Delete the cache slot before awaiting cleanup to prevent stale state from surviving reset
+    delete cache[highlighterCacheKey];
 
-	// Await the previous promise and dispose the highlighter if it resolved successfully
-	// Ignore rejected promises during cleanup so reset is safe in afterEach
-	const highlighter = await previous?.catch(() => undefined);
-	highlighter?.dispose();
+    // Await the previous promise and dispose the highlighter if it resolved successfully
+    // Ignore rejected promises during cleanup so reset is safe in afterEach
+    const highlighter = await previous?.catch(() => undefined);
+    highlighter?.dispose();
 }

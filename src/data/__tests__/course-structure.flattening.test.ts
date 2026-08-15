@@ -20,11 +20,7 @@
  * public behavior.
  */
 import { describe, expect, it } from "vitest";
-import {
-    flattenLessons,
-    type FlattenedLesson,
-    type Lesson,
-} from "../course-structure";
+import { type FlattenedLesson, flattenLessons, type Lesson } from "../course-structure";
 import { group, link } from "./course-structure.test-support";
 
 /**

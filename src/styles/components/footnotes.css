@@ -24,8 +24,7 @@
 
 /* backref (volver a la cita) */
 .footnotes .footnote-backref {
-    @apply ml-2 inline-flex items-center gap-1 text-muted-foreground hover:text-foreground
-        transition-colors;
+    @apply ml-2 inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors;
 }
 
 /* modo oscuro suave */

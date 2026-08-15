@@ -122,8 +122,7 @@ const zebraVariants = {
  *
  * This avoids repeating padding utilities across cells and centralizes spacing logic.
  */
-const densityVars = (px: string, py: string): string =>
-    `[--table-cell-px:${px}] [--table-cell-py:${py}]`;
+const densityVars = (px: string, py: string): string => `[--table-cell-px:${px}] [--table-cell-py:${py}]`;
 
 /**
  * Density variants that adjust cell padding.

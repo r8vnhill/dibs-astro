@@ -101,7 +101,7 @@ export interface InlineCodeClassOptions {
  * ```
  *
  * ### Example 3: Append custom classes
- * 
+ *
  * ```ts
  * const classes = buildInlineCodeClassList({
  *   className: "text-red-500 underline",

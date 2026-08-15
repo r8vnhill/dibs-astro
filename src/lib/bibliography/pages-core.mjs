@@ -1,7 +1,7 @@
 /**
  * @file Core runtime implementation for numeric page references.
  *
- * This module provides the dependency-light JavaScript implementation shared by bibliography catalog loading, JSON-LD 
+ * This module provides the dependency-light JavaScript implementation shared by bibliography catalog loading, JSON-LD
  * normalization, and the typed TypeScript facade in `pages.ts`.
  *
  * A valid page number is a positive safe integer. A valid page reference is either:
@@ -9,7 +9,7 @@
  * - a single page: `{ start: 5 }`;
  * - a normalized range: `{ start: 5, end: 10 }`.
  *
- * The parser accepts untrusted boundary values and returns `undefined` when a valid reference cannot be produced. The 
+ * The parser accepts untrusted boundary values and returns `undefined` when a valid reference cannot be produced. The
  * guard validates already-normalized values and rejects reversed ranges.
  *
  * Important semantic distinction:
@@ -17,18 +17,18 @@
  * - `parsePageReference(10, 5)` normalizes the input to `{ start: 5, end: 10 }`;
  * - `isPageReference({ start: 10, end: 5 })` returns `false`.
  *
- * Single-page references may omit `end`, but equal-bound ranges are preserved by the parser when both bounds are 
- * provided. For example, `parsePageReference(5)` returns `{ start: 5 }`, while `parsePageReference(5, 5)` returns 
+ * Single-page references may omit `end`, but equal-bound ranges are preserved by the parser when both bounds are
+ * provided. For example, `parsePageReference(5)` returns `{ start: 5 }`, while `parsePageReference(5, 5)` returns
  * `{ start: 5, end: 5 }`.
  *
- * `formatPageReference` assumes a trusted page reference. It does not validate, reorder, or repair arbitrary objects. 
+ * `formatPageReference` assumes a trusted page reference. It does not validate, reorder, or repair arbitrary objects.
  * Use `parsePageReference`, `parsePageReferenceInput`, or `isPageReference` at untrusted boundaries before formatting.
  */
 
 /**
  * Default presentation options for numeric page references.
  *
- * The defaults follow the common citation convention where single pages use `"p."`, page ranges use `"pp."`, and 
+ * The defaults follow the common citation convention where single pages use `"p."`, page ranges use `"pp."`, and
  * ranges are separated by an en dash.
  *
  * @type {Readonly<{
@@ -51,20 +51,18 @@ export const DEFAULT_PAGE_FORMAT = Object.freeze({
  * @param {unknown} value Value to inspect.
  * @returns {value is Record<PropertyKey, unknown>} `true` when `value` is a non-null, non-array object.
  */
-export const isRecord = (value) =>
-    typeof value === "object" && value !== null && !Array.isArray(value);
+export const isRecord = (value) => typeof value === "object" && value !== null && !Array.isArray(value);
 
 /**
  * Checks whether a value is a valid numeric page number.
  *
- * Valid page numbers are positive safe integers. This rejects zero, negative numbers, floats, `NaN`, infinities, 
+ * Valid page numbers are positive safe integers. This rejects zero, negative numbers, floats, `NaN`, infinities,
  * non-numeric values, and integers outside JavaScript's safe integer range.
  *
  * @param {unknown} value Value to validate.
  * @returns {value is number} `true` when `value` is a valid page number.
  */
-export const isValidPageNumber = (value) =>
-    typeof value === "number" && Number.isSafeInteger(value) && value > 0;
+export const isValidPageNumber = (value) => typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 
 /**
  * Parses a value as a numeric page number.
@@ -72,13 +70,12 @@ export const isValidPageNumber = (value) =>
  * @param {unknown} value Value to parse.
  * @returns {number | undefined} The validated page number, or `undefined` when invalid.
  */
-export const parsePageNumber = (value) =>
-    isValidPageNumber(value) ? value : undefined;
+export const parsePageNumber = (value) => isValidPageNumber(value) ? value : undefined;
 
 /**
  * Creates a page-reference object from validated bounds.
  *
- * This helper assumes its inputs have already been validated. It preserves `end` whenever it is provided, including 
+ * This helper assumes its inputs have already been validated. It preserves `end` whenever it is provided, including
  * equal-bound ranges such as `{ start: 5, end: 5 }`.
  *
  * @param {number} start Valid start page.
@@ -107,7 +104,7 @@ export const createOrderedPageReference = (first, second) =>
 /**
  * Resolves page-format options by merging partial overrides with defaults.
  *
- * Non-object options are ignored at runtime so callers at untrusted boundaries fall back to the default format instead 
+ * Non-object options are ignored at runtime so callers at untrusted boundaries fall back to the default format instead
  * of producing incomplete labels.
  *
  * @param {unknown} [options={}] Partial format options.
@@ -125,7 +122,7 @@ export const resolvePageFormat = (options = {}) => ({
 /**
  * Validates whether an unknown value is an already-normalized page reference.
  *
- * Unlike `parsePageReference`, this guard does not reorder values. A range with `start > end` is invalid because 
+ * Unlike `parsePageReference`, this guard does not reorder values. A range with `start > end` is invalid because
  * guards should validate trusted shape, not repair input.
  *
  * @param {unknown} value Value to validate.
@@ -152,7 +149,7 @@ export function isPageReference(value) {
 /**
  * Parses numeric page bounds into a validated page reference.
  *
- * The `start` value is required. The `end` value is optional. When both values are valid, reversed bounds are 
+ * The `start` value is required. The `end` value is optional. When both values are valid, reversed bounds are
  * normalized into ascending order.
  *
  * @param {unknown} start Candidate start page.
@@ -174,7 +171,7 @@ export function parsePageReference(start, end) {
 /**
  * Parses an object-shaped boundary value into a validated page reference.
  *
- * This function is intended for loose data from frontmatter, JSON-LD, generated catalog input, or other untrusted 
+ * This function is intended for loose data from frontmatter, JSON-LD, generated catalog input, or other untrusted
  * sources. Non-record inputs, arrays, missing `start` values, and invalid page numbers return `undefined`.
  *
  * @param {unknown} input Candidate object containing `start` and optional `end`.
@@ -189,10 +186,10 @@ export function parsePageReferenceInput(input) {
 /**
  * Formats a trusted page reference for presentation.
  *
- * Single pages use `singleLabel`; ranges use `rangeLabel` and `separator`. Partial format options are merged over 
+ * Single pages use `singleLabel`; ranges use `rangeLabel` and `separator`. Partial format options are merged over
  * `DEFAULT_PAGE_FORMAT`.
  *
- * This function assumes `pages` is already trusted. It intentionally does not validate, reorder, or repair malformed 
+ * This function assumes `pages` is already trusted. It intentionally does not validate, reorder, or repair malformed
  * objects.
  *
  * @param {{ start: number, end?: number } | undefined | null} pages Trusted page reference to format.

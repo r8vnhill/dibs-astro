@@ -2,7 +2,7 @@
 import * as icons from "$icons";
 import Heading from "~/components/semantics/Heading.astro";
 import { Explanation, Note, Tip } from "~/components/ui/callouts";
-import { KotlinInline, KotlinBlock } from "~/components/ui/code";
+import { KotlinBlock, KotlinInline } from "~/components/ui/code";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ToDo from "~/components/utils/ToDo";
@@ -11,7 +11,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Principios de Diseño de Bibliotecas de Software">
-
     <Note>
         <ToDo
             client:only="react"
@@ -31,24 +30,24 @@ import NotesSection from "~/layouts/NotesSection.astro";
         >
             Modelar el Problema Correctamente
         </Heading>
-        
+
         <p>
-            Una API bien diseñada debe proporcionar una <strong>abstracción clara y
-                efectiva</strong> del problema que resuelve.
+            Una API bien diseñada debe proporcionar una <strong>abstracción clara y efectiva</strong> del problema que
+            resuelve.
         </p>
 
         <List>
             <ListItem icon={icons.Target}>
-                <strong>Propósito claro</strong> → Cada función, clase y variable debe tener una
-                intención explícita y única.
+                <strong>Propósito claro</strong> → Cada función, clase y variable debe tener una intención explícita y
+                única.
             </ListItem>
             <ListItem icon={icons.Rows}>
-                <strong>Consistencia</strong> → Nombres, estructuras y convenciones uniformes
-                reducen la carga cognitiva.
+                <strong>Consistencia</strong> → Nombres, estructuras y convenciones uniformes reducen la carga
+                cognitiva.
             </ListItem>
             <ListItem icon={icons.BracketsCurly}>
-                <strong>Tipos primero</strong> → Prefiere <em>tipos de dominio</em> por sobre
-                primitivas para evitar ambigüedades.
+                <strong>Tipos primero</strong> → Prefiere <em>tipos de dominio</em> por sobre primitivas para evitar
+                ambigüedades.
             </ListItem>
         </List>
 
@@ -58,17 +57,14 @@ import NotesSection from "~/layouts/NotesSection.astro";
         val localDateTime: LocalDateTime = now.toLocalDateTime(TimeZone.UTC)
       `}
         >
-            <Fragment slot="title">Ejemplo real: <Link
-                    href="https://github.com/Kotlin/kotlinx-datetime"
+            <Fragment slot="title">Ejemplo real: <Link href="https://github.com/Kotlin/kotlinx-datetime"
                 >kotlinx-datetime (Kotlin)</Link></Fragment>
         </KotlinBlock>
         <Explanation>
-            <KotlinInline code="Instant" />, <KotlinInline code="LocalDateTime" /> y <KotlinInline
-                code="TimeZone"
-            /> son tipos distintos que reflejan conceptos diferentes del tiempo. Esto evita
-            ambigüedades comunes como mezclar milisegundos, fechas locales o zonas horarias en un
-            mismo valor. La API ya viene diseñada para guiar al usuario hacia un modelo correcto del
-            problema.
+            <KotlinInline code="Instant" />, <KotlinInline code="LocalDateTime" /> y <KotlinInline code="TimeZone" />
+            son tipos distintos que reflejan conceptos diferentes del tiempo. Esto evita ambigüedades comunes como
+            mezclar milisegundos, fechas locales o zonas horarias en un mismo valor. La API ya viene diseñada para guiar
+            al usuario hacia un modelo correcto del problema.
         </Explanation>
         <Tip>
             <Fragment slot="title">Resultado</Fragment>
@@ -95,23 +91,22 @@ import NotesSection from "~/layouts/NotesSection.astro";
         </Heading>
 
         <p>
-            Una API debe <strong>esconder los detalles internos</strong>, de modo que pueda
-            evolucionar o modificarse sin afectar a quienes la consumen. Esto reduce la complejidad
-            percibida y aumenta la estabilidad de su uso.
+            Una API debe <strong>esconder los detalles internos</strong>, de modo que pueda evolucionar o modificarse
+            sin afectar a quienes la consumen. Esto reduce la complejidad percibida y aumenta la estabilidad de su uso.
         </p>
 
         <List>
             <ListItem icon={icons.Lock}>
-                <strong>Encapsulamiento</strong> → Expone solo lo necesario mediante métodos
-                públicos y protege la lógica interna.
+                <strong>Encapsulamiento</strong> → Expone solo lo necesario mediante métodos públicos y protege la
+                lógica interna.
             </ListItem>
             <ListItem icon={icons.Plug}>
-                <strong>Interfaz clara</strong> → Facilita la interacción sin que el usuario deba
-                conocer la implementación interna.
+                <strong>Interfaz clara</strong> → Facilita la interacción sin que el usuario deba conocer la
+                implementación interna.
             </ListItem>
             <ListItem icon={icons.Folders}>
-                <strong>Separación de preocupaciones</strong> → Divide la API en módulos bien
-                definidos, lo que facilita su comprensión y mantenimiento.
+                <strong>Separación de preocupaciones</strong> → Divide la API en módulos bien definidos, lo que facilita
+                su comprensión y mantenimiento.
             </ListItem>
         </List>
 
@@ -134,11 +129,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
         <Explanation>
             La API de <code>kotlinx.coroutines</code> ofrece primitivas simples como
-            <KotlinInline code="launch { ... }" /> y <KotlinInline code="async { ... }" /> que
-            abstraen toda la complejidad de la planificación de tareas y la gestión de hilos. Quien
-            usa la biblioteca no necesita conocer los mecanismos internos de colas, despachadores o
-            cooperatividad, lo que le permite concentrarse en el problema a resolver y no en la
-            infraestructura.
+            <KotlinInline code="launch { ... }" /> y <KotlinInline code="async { ... }" /> que abstraen toda la
+            complejidad de la planificación de tareas y la gestión de hilos. Quien usa la biblioteca no necesita conocer
+            los mecanismos internos de colas, despachadores o cooperatividad, lo que le permite concentrarse en el
+            problema a resolver y no en la infraestructura.
         </Explanation>
 
         <Tip>

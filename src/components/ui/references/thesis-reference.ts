@@ -2,9 +2,9 @@ import {
     type ResolvedInlineField,
     type ResolvedLinkedInlineField,
     type ResolvedSlotContent,
+    type ResolvedSlotContent as UiResolvedSlotContent,
     resolveInlineField,
     resolveLinkedInlineField,
-    type ResolvedSlotContent as UiResolvedSlotContent,
     resolveRequiredTitleField,
 } from "./reference-content";
 import { resolveRequiredHref } from "./reference-links";

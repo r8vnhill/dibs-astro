@@ -27,7 +27,9 @@ import { runWithDevTransportRetry } from "~/utils";
  * @param options - Optional service configuration (theme, language defaults, etc.)
  * @returns Configured Shiki highlighter service
  */
-export function createAppHighlighterService(options?: Omit<ShikiHighlighterServiceOptions, "retry">): ShikiHighlighterService {
+export function createAppHighlighterService(
+    options?: Omit<ShikiHighlighterServiceOptions, "retry">,
+): ShikiHighlighterService {
     return createShikiHighlighterService({
         ...options,
         retry: (operation, context) =>

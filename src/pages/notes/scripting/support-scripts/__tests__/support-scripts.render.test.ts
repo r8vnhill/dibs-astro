@@ -28,7 +28,7 @@ describe.concurrent("support scripts lesson render", () => {
 
         const document = new JSDOM(html).window.document;
         const sourceLink = document.querySelector<HTMLAnchorElement>(
-            'a[href*="dibs-course/kotlin-companion"]',
+            "a[href*=\"dibs-course/kotlin-companion\"]",
         );
         expect(sourceLink?.href).toContain("scripts/check-library-layout.main.kts");
         expect(sourceLink?.textContent).toContain("scripts/check-library-layout.main.kts");

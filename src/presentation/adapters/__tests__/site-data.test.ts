@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import type { RepoPlatform } from "@ravenhill/site-core";
+import { describe, expect, it } from "vitest";
 import * as siteData from "../site-data";
 
 describe("site data presentation adapter", () => {

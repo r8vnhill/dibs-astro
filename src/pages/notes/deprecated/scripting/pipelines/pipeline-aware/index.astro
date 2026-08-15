@@ -2,23 +2,8 @@
 import * as icons from "$icons";
 import { Enquote, P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import {
-    Definition,
-    Exercise,
-    Explanation,
-    Important,
-    More,
-    Note,
-    Tip,
-} from "~/components/ui/callouts";
-import {
-    CsvBlock,
-    JsonBlock,
-    OutputBlock,
-    PowerShellBlock,
-    PowerShellInline,
-    XmlBlock,
-} from "~/components/ui/code";
+import { Definition, Exercise, Explanation, Important, More, Note, Tip } from "~/components/ui/callouts";
+import { CsvBlock, JsonBlock, OutputBlock, PowerShellBlock, PowerShellInline, XmlBlock } from "~/components/ui/code";
 import { Arrow, Dash, Mono } from "~/components/ui/font";
 import B from "~/components/ui/font/B.astro";
 import I from "~/components/ui/font/I.astro";
@@ -43,17 +28,15 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 >
     <Fragment slot="abstract">
         <P>
-            En esta lección aprenderás a escribir código <I>pipeline-aware</I> que se comporta como
-            cmdlets reales: reciben objetos desde el pipeline, procesan cada entrada de forma
-            incremental y emiten resultados que siguen siendo componibles. Esto aplica a scripts,
-            funciones, filtros personalizados y cualquier componente que participar en
-            automatización.
+            En esta lección aprenderás a escribir código <I>pipeline-aware</I> que se comporta como cmdlets reales:
+            reciben objetos desde el pipeline, procesan cada entrada de forma incremental y emiten resultados que siguen
+            siendo componibles. Esto aplica a scripts, funciones, filtros personalizados y cualquier componente que
+            participar en automatización.
         </P>
         <P>
-            Trabajarás con <PowerShellInline>begin</PowerShellInline>, <PowerShellInline
-            >process</PowerShellInline> y <PowerShellInline>end</PowerShellInline>, además de
-            estrategias de <I>binding</I> por valor y por nombre de propiedad para conectar
-            productores distintos sin romper el flujo de objetos.
+            Trabajarás con <PowerShellInline>begin</PowerShellInline>, <PowerShellInline>process</PowerShellInline> y
+            <PowerShellInline>end</PowerShellInline>, además de estrategias de <I>binding</I> por valor y por nombre de
+            propiedad para conectar productores distintos sin romper el flujo de objetos.
         </P>
     </Fragment>
 
@@ -65,73 +48,64 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         <Definition>
             <span slot="title">Pipeline-awareness</span>
 
-            Denominaremos <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de
-            procesar objetos <B>mientras llegan</B> en lugar de acumularlos primero. Un componente
-            <I>pipeline-aware</I> responde a cada elemento en streaming, emitiendo resultados que
-            otros comandos pueden captar y transformar inmediatamente, sin esperar a que se
-            recopilen todos los datos.
+            Denominaremos <B>pipeline-awareness</B><FootnoteRef index={1} /> a la capacidad de procesar objetos <B
+            >mientras llegan</B> en lugar de acumularlos primero. Un componente
+            <I>pipeline-aware</I> responde a cada elemento en streaming, emitiendo resultados que otros comandos pueden
+            captar y transformar inmediatamente, sin esperar a que se recopilen todos los datos.
         </Definition>
 
         <P>
-            En PowerShell, se logra con tres bloques: uno para inicialización (si es necesaria),
-            otro para procesar cada objeto que llega, y otro para limpieza final (si es necesaria).
+            En PowerShell, se logra con tres bloques: uno para inicialización (si es necesaria), otro para procesar cada
+            objeto que llega, y otro para limpieza final (si es necesaria).
         </P>
 
         <List>
             <ListItem icon={icons.PlayCircle}>
-                <PowerShellInline code="begin" />: se ejecuta <B>una sola vez</B> al inicio. Úsalo
-                solo si necesitas inicializar recursos costosos (una conexión, un contador, una
-                colección). Si no hay setup, omítelo.
+                <PowerShellInline code="begin" />: se ejecuta <B>una sola vez</B> al inicio. Úsalo solo si necesitas
+                inicializar recursos costosos (una conexión, un contador, una colección). Si no hay setup, omítelo.
             </ListItem>
 
             <ListItem icon={icons.Cpu}>
-                <PowerShellInline code="process" />: <B>el corazón</B>. Se invoca para cada objeto
-                que llega por el pipeline. Aquí transformas, validas, o calculas; y emites un objeto
-                que sigue fluyendo.
+                <PowerShellInline code="process" />: <B>el corazón</B>. Se invoca para cada objeto que llega por el
+                pipeline. Aquí transformas, validas, o calculas; y emites un objeto que sigue fluyendo.
             </ListItem>
 
             <ListItem icon={icons.FlagCheckered}>
-                <PowerShellInline code="end" />: se ejecuta <B>una sola vez</B> al cierre. Úsalo
-                para liberar recursos o generar un resumen final. Si no hay cleanup, omítelo.
+                <PowerShellInline code="end" />: se ejecuta <B>una sola vez</B> al cierre. Úsalo para liberar recursos o
+                generar un resumen final. Si no hay cleanup, omítelo.
             </ListItem>
         </List>
 
         <Important headingLevel="h3">
             <span slot="title">Punto clave</span>
 
-            Muchos componentes <I>pipeline-aware</I> solo necesitan <PowerShellInline
-                code="process"
-            /> <Dash kind="em" /> los bloques <PowerShellInline code="begin" /> y <PowerShellInline
-                code="end"
-            /> son opcionales.
+            Muchos componentes <I>pipeline-aware</I> solo necesitan <PowerShellInline code="process" /> <Dash
+                kind="em"
+            /> los bloques <PowerShellInline code="begin" /> y <PowerShellInline code="end" /> son opcionales.
         </Important>
 
         <Tip headingLevel="h3">
             Tres reglas fundamentales para mantener el flujo:
             <List>
                 <ListItem icon={icons.Cube}>
-                    <B>Emite objetos, no texto:</B> usa <PowerShellInline
-                    >[PSCustomObject]</PowerShellInline> o instancias de clases, no
-                    <PowerShellInline>Write-Host</PowerShellInline> ni formatos. El objeto que
-                    emites sigue fluyendo hacia el siguiente cmdlet.
+                    <B>Emite objetos, no texto:</B> usa <PowerShellInline>[PSCustomObject]</PowerShellInline> o
+                    instancias de clases, no
+                    <PowerShellInline>Write-Host</PowerShellInline> ni formatos. El objeto que emites sigue fluyendo
+                    hacia el siguiente cmdlet.
                 </ListItem>
                 <ListItem icon={icons.WarningCircle}>
-                    <B>Serializa solo al final:</B> formatea (JSON, tablas, CSV) <B>después</B> de
-                    procesar todo el pipeline, nunca en el medio. Early formatting rompe la
-                    capacidad de composición.
+                    <B>Serializa solo al final:</B> formatea (JSON, tablas, CSV) <B>después</B> de procesar todo el
+                    pipeline, nunca en el medio. Early formatting rompe la capacidad de composición.
                 </ListItem>
                 <ListItem icon={icons.Pipe}>
-                    <B>Procesa incrementalmente:</B> cada invocación de <PowerShellInline
-                        code="process"
-                    /> maneja <B>un objeto</B>, permitiendo streaming de datos enormes sin llenar
-                    memoria.
+                    <B>Procesa incrementalmente:</B> cada invocación de <PowerShellInline code="process" /> maneja <B>un
+                        objeto</B>, permitiendo streaming de datos enormes sin llenar memoria.
                 </ListItem>
             </List>
         </Tip>
 
         <P>
-            Para ver esto en acción, veamos un ejemplo mínimo. El siguiente script cuenta objetos
-            mientras llegan:
+            Para ver esto en acción, veamos un ejemplo mínimo. El siguiente script cuenta objetos mientras llegan:
         </P>
 
         <PowerShellBlock
@@ -152,10 +126,9 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
         </PowerShellBlock>
 
         <P>
-            Al ejecutar <PowerShellInline code="1..5 | ./Get-Count.ps1" />, el script recibe cinco
-            números uno a uno en <PowerShellInline code="process" />, suma el contador en cada
-            invocación, y al final emite un objeto con propiedades nombradas. Nota que el resultado
-            es <B>estructurado y reutilizable</B>, no texto sin formato.
+            Al ejecutar <PowerShellInline code="1..5 | ./Get-Count.ps1" />, el script recibe cinco números uno a uno en
+            <PowerShellInline code="process" />, suma el contador en cada invocación, y al final emite un objeto con
+            propiedades nombradas. Nota que el resultado es <B>estructurado y reutilizable</B>, no texto sin formato.
         </P>
 
         <NotesSection id="h3-pipeline-aware-example-doubling">
@@ -167,9 +140,9 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             </Heading>
 
             <P>
-                Veamos un ejemplo sencillo de enlace <Mono>ByValue</Mono>. Este script recibe
-                números desde el pipeline, los duplica y usa <PowerShellInline
-                >Write-Verbose</PowerShellInline> para mostrar cuándo se ejecuta cada bloque.
+                Veamos un ejemplo sencillo de enlace <Mono>ByValue</Mono>. Este script recibe números desde el pipeline,
+                los duplica y usa <PowerShellInline>Write-Verbose</PowerShellInline> para mostrar cuándo se ejecuta cada
+                bloque.
             </P>
 
             <PowerShellBlock
@@ -208,30 +181,29 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             <Explanation headingLevel="h4">
                 <List>
                     <ListItem icon={icons.ArrowRight}>
-                        <B><PowerShellInline>ValueFromPipeline</PowerShellInline>:</B> indica que el
-                        parámetro <PowerShellInline>$Number</PowerShellInline> puede recibir valores
-                        que vienen desde el pipeline. En este caso, el valor entrante se enlaza
-                        <B>directamente</B> a <PowerShellInline>$Number</PowerShellInline> porque
-                        PowerShell puede asociarlo o convertirlo al tipo <PowerShellInline
-                        >[int]</PowerShellInline>. A esto se le llama enlace (o <I>binding</I>) <I
-                        >by value</I>. Antes de cada ejecución de <PowerShellInline
-                        >process</PowerShellInline>, PowerShell intenta realizar ese enlace para el
-                        objeto entrante. Eso permite escribir
-                        <PowerShellInline code="1..5 | ./Get-DoubledNumber.ps1" /> sin construir
-                        listas ni llamar manualmente al script para cada elemento.
+                        <B><PowerShellInline>ValueFromPipeline</PowerShellInline>:</B> indica que el parámetro
+                        <PowerShellInline>$Number</PowerShellInline> puede recibir valores que vienen desde el pipeline.
+                        En este caso, el valor entrante se enlaza
+                        <B>directamente</B> a <PowerShellInline>$Number</PowerShellInline> porque PowerShell puede
+                        asociarlo o convertirlo al tipo <PowerShellInline>[int]</PowerShellInline>. A esto se le llama
+                        enlace (o <I>binding</I>) <I>by value</I>. Antes de cada ejecución de <PowerShellInline
+                        >process</PowerShellInline>, PowerShell intenta realizar ese enlace para el objeto entrante. Eso
+                        permite escribir
+                        <PowerShellInline code="1..5 | ./Get-DoubledNumber.ps1" /> sin construir listas ni llamar
+                        manualmente al script para cada elemento.
                     </ListItem>
 
                     <ListItem icon={icons.Cube}>
                         <B>Emisión de objetos en <PowerShellInline>process</PowerShellInline>:</B>
                         la última expresión del bloque <PowerShellInline>process</PowerShellInline>
-                        emite un <PowerShellInline>[PSCustomObject]</PowerShellInline> con las
-                        propiedades <PowerShellInline>Original</PowerShellInline> y
-                        <PowerShellInline>Doubled</PowerShellInline>. Ese objeto sigue fluyendo por
-                        el pipeline y puede ser filtrado, ordenado, exportado o serializado.
-                        <PowerShellInline>Write-Verbose</PowerShellInline> no emite ese objeto: sus
-                        mensajes viajan por el <I>verbose stream</I>, mientras que
-                        <PowerShellInline>Where-Object</PowerShellInline> trabaja sobre el <I>output
-                            stream</I> que contiene los objetos reales.
+                        emite un <PowerShellInline>[PSCustomObject]</PowerShellInline> con las propiedades
+                        <PowerShellInline>Original</PowerShellInline> y
+                        <PowerShellInline>Doubled</PowerShellInline>. Ese objeto sigue fluyendo por el pipeline y puede
+                        ser filtrado, ordenado, exportado o serializado.
+                        <PowerShellInline>Write-Verbose</PowerShellInline> no emite ese objeto: sus mensajes viajan por
+                        el <I>verbose stream</I>, mientras que
+                        <PowerShellInline>Where-Object</PowerShellInline> trabaja sobre el <I>output stream</I> que
+                        contiene los objetos reales.
                     </ListItem>
                 </List>
             </Explanation>
@@ -263,15 +235,12 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             />
 
             <P>
-                En la salida se observan los mensajes <Mono>VERBOSE</Mono> (diagnóstico del ciclo de
-                ejecución) y, debajo, el resultado real: objetos con propiedades <Mono
-                >Original</Mono> y <Mono>Doubled</Mono>. La opción <PowerShellInline
-                >-Verbose</PowerShellInline> es solo ilustrativa: <PowerShellInline
-                >Write-Verbose</PowerShellInline> escribe en el <I>verbose stream</I>, no en el
-                mismo flujo que los objetos emitidos por <PowerShellInline
-                >process</PowerShellInline>. Por eso <PowerShellInline
-                >Where-Object</PowerShellInline> filtra los objetos del pipeline y no los mensajes
-                de diagnóstico.
+                En la salida se observan los mensajes <Mono>VERBOSE</Mono> (diagnóstico del ciclo de ejecución) y,
+                debajo, el resultado real: objetos con propiedades <Mono>Original</Mono> y <Mono>Doubled</Mono>. La
+                opción <PowerShellInline>-Verbose</PowerShellInline> es solo ilustrativa: <PowerShellInline
+                >Write-Verbose</PowerShellInline> escribe en el <I>verbose stream</I>, no en el mismo flujo que los
+                objetos emitidos por <PowerShellInline>process</PowerShellInline>. Por eso <PowerShellInline
+                >Where-Object</PowerShellInline> filtra los objetos del pipeline y no los mensajes de diagnóstico.
             </P>
         </NotesSection>
 
@@ -284,35 +253,33 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
             </Heading>
 
             <P>
-                <PowerShellInline>ValueFromPipeline</PowerShellInline> funciona cuando PowerShell
-                puede enlazar directamente el valor u objeto entrante al parámetro.
-                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> entra en juego
-                cuando no quieres enlazar el objeto completo, sino <B>extraer propiedades
-                    concretas</B> del objeto entrante.
+                <PowerShellInline>ValueFromPipeline</PowerShellInline> funciona cuando PowerShell puede enlazar
+                directamente el valor u objeto entrante al parámetro.
+                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> entra en juego cuando no quieres
+                enlazar el objeto completo, sino <B>extraer propiedades concretas</B> del objeto entrante.
             </P>
 
             <P>
                 A diferencia del ejemplo anterior, aquí lo importante no es el valor en sí, sino
-                <B>cómo se llaman las propiedades</B> del objeto que entra al pipeline. En cada
-                iteración, PowerShell toma <B>un único objeto entrante</B> y trata de rellenar los
-                parámetros buscando nombres compatibles en ese objeto. No combina propiedades de
-                productores distintos automáticamente.
+                <B>cómo se llaman las propiedades</B> del objeto que entra al pipeline. En cada iteración, PowerShell
+                toma <B>un único objeto entrante</B> y trata de rellenar los parámetros buscando nombres compatibles en
+                ese objeto. No combina propiedades de productores distintos automáticamente.
             </P>
 
             <List>
                 <ListItem icon={icons.ArrowRight}>
-                    <B><Mono>ByValue</Mono>:</B> PowerShell intenta enlazar directamente el objeto o
-                    valor entrante al parámetro.
+                    <B><Mono>ByValue</Mono>:</B> PowerShell intenta enlazar directamente el objeto o valor entrante al
+                    parámetro.
                 </ListItem>
                 <ListItem icon={icons.Tag}>
-                    <B><Mono>ByPropertyName</Mono>:</B> PowerShell intenta rellenar el parámetro
-                    buscando una propiedad compatible en el objeto entrante.
+                    <B><Mono>ByPropertyName</Mono>:</B> PowerShell intenta rellenar el parámetro buscando una propiedad
+                    compatible en el objeto entrante.
                 </ListItem>
             </List>
 
             <P>
-                Ejemplo: validar integridad de archivos. Recibiremos objetos que expongan una ruta
-                y, opcionalmente, un hash esperado, usando nombres de propiedad compatibles.
+                Ejemplo: validar integridad de archivos. Recibiremos objetos que expongan una ruta y, opcionalmente, un
+                hash esperado, usando nombres de propiedad compatibles.
             </P>
 
             <PowerShellBlock
@@ -360,12 +327,12 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
             <List>
                 <ListItem icon={icons.Signpost}>
-                    <Mono>path</Mono>, <Mono>Path</Mono>, <Mono>FullName</Mono> o <Mono
-                    >LiteralPath</Mono> <Arrow direction="right" /> <Mono>Path</Mono>
+                    <Mono>path</Mono>, <Mono>Path</Mono>, <Mono>FullName</Mono> o <Mono>LiteralPath</Mono> <Arrow
+                        direction="right"
+                    /> <Mono>Path</Mono>
                 </ListItem>
                 <ListItem icon={icons.Signpost}>
-                    <Mono>hash</Mono> o <Mono>Hash</Mono> <Arrow direction="right" /> <Mono
-                    >ExpectedHash</Mono>
+                    <Mono>hash</Mono> o <Mono>Hash</Mono> <Arrow direction="right" /> <Mono>ExpectedHash</Mono>
                 </ListItem>
             </List>
 
@@ -373,28 +340,26 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <List>
                     <ListItem icon={icons.Tag}>
                         <B><PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>:</B>
-                        indica que PowerShell debe rellenar el parámetro buscando una <B
-                        >propiedad</B> en el objeto que llega por el pipeline. En este cmdlet, <Mono
-                        >Path</Mono> y <Mono>ExpectedHash</Mono> pueden obtenerse directamente desde
-                        propiedades del productor, sin consumir el objeto completo ni escribir
-                        <Enquote>adaptadores</Enquote> con <PowerShellInline
-                        >Select-Object</PowerShellInline>.
+                        indica que PowerShell debe rellenar el parámetro buscando una <B>propiedad</B> en el objeto que
+                        llega por el pipeline. En este cmdlet, <Mono>Path</Mono> y <Mono>ExpectedHash</Mono> pueden
+                        obtenerse directamente desde propiedades del productor, sin consumir el objeto completo ni
+                        escribir
+                        <Enquote>adaptadores</Enquote> con <PowerShellInline>Select-Object</PowerShellInline>.
                     </ListItem>
 
                     <ListItem icon={icons.Signpost}>
-                        <B><PowerShellInline>Alias()</PowerShellInline>:</B> permite declarar <B
-                        >nombres alternativos</B> que PowerShell acepta para el <I>binding</I> por
-                        propiedad. Por ejemplo, si el productor entrega <Mono>FullName</Mono> (como
-                        <PowerShellInline>[FileInfo]</PowerShellInline>) o <Mono>LiteralPath</Mono>,
-                        el parámetro <Mono>Path</Mono> igual se rellena. De forma análoga, <Mono
-                        >ExpectedHash</Mono> puede venir como <Mono>Hash</Mono> sin necesidad de
-                        renombrar el productor.
+                        <B><PowerShellInline>Alias()</PowerShellInline>:</B> permite declarar <B>nombres
+                            alternativos</B> que PowerShell acepta para el <I>binding</I> por propiedad. Por ejemplo, si
+                        el productor entrega <Mono>FullName</Mono> (como
+                        <PowerShellInline>[FileInfo]</PowerShellInline>) o <Mono>LiteralPath</Mono>, el parámetro <Mono
+                        >Path</Mono> igual se rellena. De forma análoga, <Mono>ExpectedHash</Mono> puede venir como
+                        <Mono>Hash</Mono> sin necesidad de renombrar el productor.
                     </ListItem>
 
                     <ListItem icon={icons.Hash}>
                         <B><PowerShellInline code="(Get-FileHash ...).Hash" />:</B>
-                        <PowerShellInline>Get-FileHash</PowerShellInline> devuelve un objeto. Al
-                        acceder a la propiedad <PowerShellInline>.Hash</PowerShellInline>
+                        <PowerShellInline>Get-FileHash</PowerShellInline> devuelve un objeto. Al acceder a la propiedad
+                        <PowerShellInline>.Hash</PowerShellInline>
                         extraemos solo el valor del hash como string, que luego se compara con
                         <PowerShellInline>ExpectedHash</PowerShellInline> para calcular
                         <PowerShellInline>Match</PowerShellInline>.
@@ -403,16 +368,15 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
                 <P>
                     Lo importante es que la salida se mantiene como <B>objetos estructurados</B>
-                    (<Mono>Path</Mono>, <Mono>ActualHash</Mono>, <Mono>ExpectedHash</Mono>, <Mono
-                    >Match</Mono>), lo que permite seguir componiendo el pipeline: filtrar por <Mono
-                    >Match</Mono>, ordenar, exportar a JSON/CSV, etc.
+                    (<Mono>Path</Mono>, <Mono>ActualHash</Mono>, <Mono>ExpectedHash</Mono>, <Mono>Match</Mono>), lo que
+                    permite seguir componiendo el pipeline: filtrar por <Mono>Match</Mono>, ordenar, exportar a
+                    JSON/CSV, etc.
                 </P>
 
                 <P>
                     Si el objeto entrante no trae una propiedad compatible con <PowerShellInline
                     >ExpectedHash</PowerShellInline>, el parámetro queda sin valor y
-                    <PowerShellInline>Match</PowerShellInline> se emite como <PowerShellInline
-                    >$null</PowerShellInline>.
+                    <PowerShellInline>Match</PowerShellInline> se emite como <PowerShellInline>$null</PowerShellInline>.
                 </P>
             </Explanation>
 
@@ -425,17 +389,15 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 </Heading>
 
                 <P>
-                    La ventaja de <PowerShellInline
-                    >ValueFromPipelineByPropertyName</PowerShellInline> es que el comando no queda
-                    amarrado a un único productor. Puede recibir objetos de orígenes distintos,
-                    siempre que cada objeto tenga propiedades con nombres compatibles (o aliases
-                    compatibles).
+                    La ventaja de <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline> es que el comando
+                    no queda amarrado a un único productor. Puede recibir objetos de orígenes distintos, siempre que
+                    cada objeto tenga propiedades con nombres compatibles (o aliases compatibles).
                 </P>
 
                 <P>
-                    En este ejemplo, el productor entrega una ruta y (opcionalmente) un hash
-                    esperado. Como <Mono>ExpectedHash</Mono> <B>no</B> es obligatorio, el comando
-                    también puede usarse solo para calcular hashes. La idea central aquí es mostrar
+                    En este ejemplo, el productor entrega una ruta y (opcionalmente) un hash esperado. Como <Mono
+                    >ExpectedHash</Mono> <B>no</B> es obligatorio, el comando también puede usarse solo para calcular
+                    hashes. La idea central aquí es mostrar
                     <B>dos fuentes de objetos distintas</B>: JSON y CLIXML.
                 </P>
 
@@ -450,8 +412,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                     `}
                 >
                     <span slot="title"
-                    >Uso 1: JSON + <PowerShellInline>ConvertFrom-Json</PowerShellInline> (binding
-                        desde <Mono>path</Mono> y <Mono>hash</Mono>)</span>
+                    >Uso 1: JSON + <PowerShellInline>ConvertFrom-Json</PowerShellInline> (binding desde <Mono
+                        >path</Mono> y <Mono>hash</Mono>)</span>
                     <span slot="footer">Desde la raíz del proyecto</span>
                 </PowerShellBlock>
 
@@ -460,8 +422,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
                     <P>
                         En JSON basta con exponer propiedades compatibles (<Mono>path</Mono> y
-                        <Mono>hash</Mono>) para que el <I>binding</I> por nombre funcione sin
-                        adaptadores. Puedes revisar ejemplos completos en el <Link
+                        <Mono>hash</Mono>) para que el <I>binding</I> por nombre funcione sin adaptadores. Puedes
+                        revisar ejemplos completos en el <Link
                             href="https://gitlab.com/r8vnhill/dibs-scripts/-/tree/main/tests"
                         >repositorio de scripts de DIBS</Link>.
                     </P>
@@ -481,21 +443,19 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                         (binding desde propiedades exportadas)
                     </span>
                     <span slot="footer">
-                        CLIXML preserva objetos y nombres de propiedades. El cmdlet encaja por
-                        nombre (y alias) sin necesidad de renombrar ni reconstruir cada objeto
-                        manualmente.
+                        CLIXML preserva objetos y nombres de propiedades. El cmdlet encaja por nombre (y alias) sin
+                        necesidad de renombrar ni reconstruir cada objeto manualmente.
                     </span>
                 </PowerShellBlock>
 
                 <More headingLevel="h5"><span slot="title">¿Qué es CLIXML?</span>
 
                     <P>
-                        CLIXML (<Enquote><Link
-                                href="https://en.wikipedia.org/wiki/Common_Language_Infrastructure"
-                            >Common Language Infrastructure</Link> XML</Enquote>) es el formato que
-                        PowerShell (y otros lenguajes de .NET) usa para serializar y deserializar
-                        objetos manteniendo su <B>estructura</B> (propiedades) de forma confiable.
-                        Típicamente se genera con <PowerShellInline>Export-CliXml</PowerShellInline>
+                        CLIXML (<Enquote><Link href="https://en.wikipedia.org/wiki/Common_Language_Infrastructure"
+                            >Common Language Infrastructure</Link> XML</Enquote>) es el formato que PowerShell (y otros
+                        lenguajes de .NET) usa para serializar y deserializar objetos manteniendo su <B>estructura</B>
+                        (propiedades) de forma confiable. Típicamente se genera con <PowerShellInline
+                        >Export-CliXml</PowerShellInline>
                         y se lee con <PowerShellInline>Import-CliXml</PowerShellInline>.
                     </P>
 
@@ -534,9 +494,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 </More>
 
                 <P>
-                    Como <Mono>ExpectedHash</Mono> es opcional, el mismo comando también puede
-                    usarse solo para calcular hashes y seguir procesando esos resultados en el
-                    pipeline.
+                    Como <Mono>ExpectedHash</Mono> es opcional, el mismo comando también puede usarse solo para calcular
+                    hashes y seguir procesando esos resultados en el pipeline.
                 </P>
             </NotesSection>
 
@@ -550,17 +509,15 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
                 <List>
                     <ListItem icon={icons.NumberCircleOne}>
-                        <B>Coincidencia exacta</B> con el nombre del parámetro (por ejemplo, <Mono
-                        >Path</Mono>).
+                        <B>Coincidencia exacta</B> con el nombre del parámetro (por ejemplo, <Mono>Path</Mono>).
                     </ListItem>
                     <ListItem icon={icons.NumberCircleTwo}>
-                        <B>Coincidencia con algún alias</B> declarado con <PowerShellInline
-                        >Alias()</PowerShellInline>
+                        <B>Coincidencia con algún alias</B> declarado con <PowerShellInline>Alias()</PowerShellInline>
                         (por ejemplo, <Mono>FullName</Mono> o <Mono>path</Mono>).
                     </ListItem>
                     <ListItem icon={icons.Warning}>
-                        Si existe <B>ambigüedad</B> (más de un parámetro podría recibir la misma
-                        propiedad), PowerShell lanza un error de <I>binding</I>.
+                        Si existe <B>ambigüedad</B> (más de un parámetro podría recibir la misma propiedad), PowerShell
+                        lanza un error de <I>binding</I>.
                     </ListItem>
                 </List>
 
@@ -579,15 +536,13 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <Fragment slot="requirements">
             <P>
-                En entornos reales, la “línea base” de configuración suele almacenarse en distintos
-                formatos según el origen: APIs exportan JSON, mientras que equipos operativos muchas
-                veces mantienen planillas CSV.
+                En entornos reales, la “línea base” de configuración suele almacenarse en distintos formatos según el
+                origen: APIs exportan JSON, mientras que equipos operativos muchas veces mantienen planillas CSV.
             </P>
 
             <P>
-                El objetivo no es solo validar servicios, sino demostrar que un mismo cmdlet puede
-                integrarse con productores distintos gracias a <PowerShellInline
-                >ValueFromPipelineByPropertyName</PowerShellInline>.
+                El objetivo no es solo validar servicios, sino demostrar que un mismo cmdlet puede integrarse con
+                productores distintos gracias a <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>.
             </P>
 
             <P>
@@ -617,17 +572,16 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                             Filtre solo los incumplimientos.
                         </ListItem>
                         <ListItem icon={icons.WarningCircle}>
-                            Distinga en el reporte entre <B>servicio ausente</B> y <B>servicio
-                                presente con estado incorrecto</B>.
+                            Distinga en el reporte entre <B>servicio ausente</B> y <B>servicio presente con estado
+                                incorrecto</B>.
                         </ListItem>
                         <ListItem icon={icons.ArrowsClockwise}>
-                            Si <PowerShellInline code="Get-Service -Name $Name" /> devuelve
-                            múltiples coincidencias, emita <B>un resultado por cada servicio</B>.
+                            Si <PowerShellInline code="Get-Service -Name $Name" /> devuelve múltiples coincidencias,
+                            emita <B>un resultado por cada servicio</B>.
                         </ListItem>
                         <ListItem icon={icons.Signpost}>
-                            Intente resolver el ejercicio <B>sin</B> adaptadores intermedios de
-                            renombrado (por ejemplo, sin <PowerShellInline
-                            >Select-Object</PowerShellInline> antes del cmdlet).
+                            Intente resolver el ejercicio <B>sin</B> adaptadores intermedios de renombrado (por ejemplo,
+                            sin <PowerShellInline>Select-Object</PowerShellInline> antes del cmdlet).
                         </ListItem>
                     </List>
                 </ListItem>
@@ -638,8 +592,8 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                             Genere un reporte final en JSON.
                         </ListItem>
                         <ListItem icon={icons.CheckCircle}>
-                            La salida debe mantener el <B>mismo esquema</B> tanto para entrada JSON
-                            como para entrada CSV.
+                            La salida debe mantener el <B>mismo esquema</B> tanto para entrada JSON como para entrada
+                            CSV.
                         </ListItem>
                     </List>
                 </ListItem>
@@ -698,20 +652,18 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
 
         <Fragment slot="notes">
             <P>
-                <B><PowerShellInline>Import-Csv</PowerShellInline>:</B> lee un archivo CSV y
-                convierte cada fila en un <B>objeto</B> donde los encabezados de columna se
-                transforman en <B>propiedades</B>.
+                <B><PowerShellInline>Import-Csv</PowerShellInline>:</B> lee un archivo CSV y convierte cada fila en un
+                <B>objeto</B> donde los encabezados de columna se transforman en <B>propiedades</B>.
             </P>
             <P>
-                <B>Legible por máquina:</B> mantén el flujo como <B>objetos</B> mientras procesas.
-                Usa <PowerShellInline>ConvertTo-Json</PowerShellInline> solo al final, cuando vayas
-                a guardar o exportar el reporte.
+                <B>Legible por máquina:</B> mantén el flujo como <B>objetos</B> mientras procesas. Usa <PowerShellInline
+                >ConvertTo-Json</PowerShellInline> solo al final, cuando vayas a guardar o exportar el reporte.
             </P>
             <P>
                 Puedes consultar el estado de un servicio con: <PowerShellInline
                     code="Get-Service -Name $Name -ErrorAction SilentlyContinue"
-                />. Esto devuelve una matriz de servicios (si el nombre es ambiguo), uno solo (si
-                existe) o <PowerShellInline code={`$null`} /> (si no existe).
+                />. Esto devuelve una matriz de servicios (si el nombre es ambiguo), uno solo (si existe) o
+                <PowerShellInline code={`$null`} /> (si no existe).
             </P>
         </Fragment>
 
@@ -746,12 +698,12 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                     <PowerShellInline>ConvertTo-Json</PowerShellInline> solo al cierre del pipeline.
                 </ListItem>
                 <ListItem icon={icons.WarningCircle}>
-                    Asegúrate de que tu objeto emita claramente si es "MissingService" o
-                    "WrongStatus" para que quien consume el reporte entienda por qué falló.
+                    Asegúrate de que tu objeto emita claramente si es "MissingService" o "WrongStatus" para que quien
+                    consume el reporte entienda por qué falló.
                 </ListItem>
                 <ListItem icon={icons.ArrowsClockwise}>
-                    <PowerShellInline code={`ForEach-Object`} /> es útil para servicios ambiguos (0,
-                    1, o múltiples coincidencias).
+                    <PowerShellInline code={`ForEach-Object`} /> es útil para servicios ambiguos (0, 1, o múltiples
+                    coincidencias).
                 </ListItem>
             </List>
         </Fragment>
@@ -824,39 +776,37 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                La esencia de <I>pipeline-awareness</I> es <B>procesar datos en streaming</B>: cada
-                objeto que llega se transforma y emite inmediatamente, sin acumular. Esto requiere
-                tres disciplinas:
+                La esencia de <I>pipeline-awareness</I> es <B>procesar datos en streaming</B>: cada objeto que llega se
+                transforma y emite inmediatamente, sin acumular. Esto requiere tres disciplinas:
             </P>
 
             <List>
                 <ListItem icon={icons.Pipe}>
-                    <B>Emitir objetos, no texto:</B> mantén datos estructurados dentro del pipeline
-                    para que otros comandos puedan componerse.
+                    <B>Emitir objetos, no texto:</B> mantén datos estructurados dentro del pipeline para que otros
+                    comandos puedan componerse.
                 </ListItem>
                 <ListItem icon={icons.Clock}>
-                    <B>Serializar al final:</B> formatea (JSON, tablas) solo después de haber
-                    procesado todo, no en el medio del flujo.
+                    <B>Serializar al final:</B> formatea (JSON, tablas) solo después de haber procesado todo, no en el
+                    medio del flujo.
                 </ListItem>
                 <ListItem icon={icons.Plug}>
-                    <B>Reutilizar por contrato:</B> define parámetros con aliases para que el cmdlet
-                    funcione con múltiples productores sin adaptadores intermedios.
+                    <B>Reutilizar por contrato:</B> define parámetros con aliases para que el cmdlet funcione con
+                    múltiples productores sin adaptadores intermedios.
                 </ListItem>
             </List>
 
             <P>
                 Cuando combinas <PowerShellInline>ValueFromPipeline</PowerShellInline> y
-                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>, tu mismo
-                cmdlet se vuelve agnóstico respecto al origen de datos. Eso es lo que hace que
-                PowerShell escale: pequeños comandos que cooperan a través de objetos bien
-                definidos.
+                <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>, tu mismo cmdlet se vuelve
+                agnóstico respecto al origen de datos. Eso es lo que hace que PowerShell escale: pequeños comandos que
+                cooperan a través de objetos bien definidos.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
             <ListItem icon={icons.Pipe}>
-                <PowerShellInline>process</PowerShellInline> es el corazón; <PowerShellInline
-                >begin</PowerShellInline> y <PowerShellInline>end</PowerShellInline> son opcionales.
+                <PowerShellInline>process</PowerShellInline> es el corazón; <PowerShellInline>begin</PowerShellInline> y
+                <PowerShellInline>end</PowerShellInline> son opcionales.
             </ListItem>
             <ListItem icon={icons.Cube}>
                 Emite <B>objetos</B>, no strings formateados.
@@ -865,22 +815,20 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 Serializa solo al final del pipeline, nunca en el medio.
             </ListItem>
             <ListItem icon={icons.Tag}>
-                Usa aliases en parámetros para que <PowerShellInline
-                >ValueFromPipelineByPropertyName</PowerShellInline> funcione con múltiples
-                productores.
+                Usa aliases en parámetros para que <PowerShellInline>ValueFromPipelineByPropertyName</PowerShellInline>
+                funcione con múltiples productores.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                Pipeline-awareness transforma tus scripts de herramientas aisladas a componentes que
-                cooperan. Pensar en streaming, en objetos reutilizables y en contratos claros entre
-                productor y consumidor permite construir automatizaciones más consistentes, más
-                fáciles de combinar y más sencillas de extender sin reescribir cada etapa del flujo.
+                Pipeline-awareness transforma tus scripts de herramientas aisladas a componentes que cooperan. Pensar en
+                streaming, en objetos reutilizables y en contratos claros entre productor y consumidor permite construir
+                automatizaciones más consistentes, más fáciles de combinar y más sencillas de extender sin reescribir
+                cada etapa del flujo.
             </P>
             <P>
-                La clave es pensar en <B>contratos reutilizables</B> entre componentes, no en casos
-                específicos.
+                La clave es pensar en <B>contratos reutilizables</B> entre componentes, no en casos específicos.
             </P>
         </Fragment>
     </ConclusionsLayout>
@@ -895,11 +843,10 @@ import { parsePageReferenceInput } from "~/lib/bibliography/pages";
                 <AuthorList slot="authors" authors={[{ firstName: "Travis", lastName: "Plunk" }]} />
 
                 <Fragment slot="description"
-                >El capítulo explica cómo PowerShell liga objetos en el pipeline tanto por valor
-                    como por nombre de propiedad, muestra adaptadores con <PowerShellInline
-                    >Select-Object</PowerShellInline> o paréntesis y contiene ejemplos (hashes,
-                    servicios, módulos, Azure) para que quien lee evalúe si necesita dominar estos
-                    patrones antes de invertir tiempo en la lectura.</Fragment>
+                >El capítulo explica cómo PowerShell liga objetos en el pipeline tanto por valor como por nombre de
+                    propiedad, muestra adaptadores con <PowerShellInline>Select-Object</PowerShellInline> o paréntesis y
+                    contiene ejemplos (hashes, servicios, módulos, Azure) para que quien lee evalúe si necesita dominar
+                    estos patrones antes de invertir tiempo en la lectura.</Fragment>
             </Book>
         </Fragment>
     </References>

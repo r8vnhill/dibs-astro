@@ -32,11 +32,7 @@
  * helpers. When `strict` is `false`, those helpers may recover more permissively.
  */
 
-import {
-    extractFallbackTitles,
-    parseBibliography,
-    resolveReferenceGroups,
-} from "~/lib/bibliography";
+import { extractFallbackTitles, parseBibliography, resolveReferenceGroups } from "~/lib/bibliography";
 import type { BibliographyJsonLd } from "~/lib/bibliography";
 import { prepareSlotsForReferences } from "./reference-content";
 import ReferenceEntry from "./ReferenceEntry.astro";

@@ -13,10 +13,10 @@
  * before the content; if no label is provided, the tab `value` is used as a fallback.
  */
 
-import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
-import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 import type { HTMLAttributes } from "astro/types";
 import { tv } from "tailwind-variants";
+import { resolveLessonExportContext, type ResolveLessonExportContextInput } from "~/lib/presentation/export-mode";
+import type { LessonRenderMode } from "~/lib/presentation/export-mode";
 
 /**
  * Props accepted by the TabsContent component.
@@ -73,14 +73,10 @@ const exportContext = resolveLessonExportContext({
         </section>
     ) : (
         <div
-            class={tabsContent({ class: className })}
-            data-tabs-content
-            data-value={value}
-            data-state="inactive"
-            role="tabpanel"
-            tabindex="0"
-            hidden
-            {...rest}
+            class={tabsContent({ class: className })} data-tabs-content
+            data-value={value} data-state="inactive"
+            role="tabpanel" tabindex="0"
+            hidden {...rest}
         >
             <slot />
         </div>

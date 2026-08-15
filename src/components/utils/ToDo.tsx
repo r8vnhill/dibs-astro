@@ -1,5 +1,5 @@
-import { type JSX, useEffect, useId, useMemo } from "react";
 import { getPlaceholderImagePool } from "$presentation/adapters/static-ui-data";
+import { type JSX, useEffect, useId, useMemo } from "react";
 import { pickRandom } from "~/utils";
 
 /**

@@ -1,16 +1,16 @@
 ---
 import * as icons from "$icons";
+import { getLibraryWhatIsReadings } from "$presentation/adapters/lesson-readings";
 import { P } from "~/components/semantics";
 import { Important, More, Question, Tip, Warning } from "~/components/ui/callouts";
 import { KotlinBlock, KotlinInline, NimBlock, NimInline } from "~/components/ui/code";
 import { B, I } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
-import { getLibraryWhatIsReadings } from "$presentation/adapters/lesson-readings";
-import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 
 const libraryWhatIsReadings = getLibraryWhatIsReadings();
 const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReadings.lessonPath) } as const;
