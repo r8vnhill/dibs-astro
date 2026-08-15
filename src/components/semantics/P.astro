@@ -1,9 +1,9 @@
 ---
-type Props = {
-    class?: string;
-};
+import type { HTMLAttributes } from "astro/types";
 
-const { class: className = "", ...rest } = Astro.props as Props & Record<string, any>;
+type Props = HTMLAttributes<"p">;
+
+const { class: className, ...rest } = Astro.props as Props;
 ---
 
 <p class:list={["my-2", className]} {...rest}>

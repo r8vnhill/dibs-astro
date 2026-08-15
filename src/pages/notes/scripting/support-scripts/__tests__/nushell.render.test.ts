@@ -8,9 +8,9 @@
 
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
+import { nushellDiagramSpecs } from "~/lib/diagrams/nushell-examples";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import NushellPage from "../nushell.astro";
-import { nushellDiagramSpecs } from "~/lib/diagrams/nushell-examples";
 
 function parseHtml(html: string): Document {
     return new JSDOM(html).window.document;
@@ -33,7 +33,7 @@ suite("given the Nushell comparative lesson", () => {
 
         expect(html).toContain("Del pipe de Unix al pipeline estructurado");
         expect(html).toContain("La misma composición con representaciones distintas");
-        expect(html).toContain("bytes / texto");
+        expect(html).toContain("bytes o texto");
         expect(html).toContain("valor estructurado");
     });
 
@@ -42,7 +42,49 @@ suite("given the Nushell comparative lesson", () => {
 
         expect(html).toContain("Un modelo mental para esta lección");
         expect(html).toContain("La frontera entre el pipeline interno y un proceso externo");
-        expect(html).toContain("stdin / stdout: bytes o texto");
+        expect(html).toContain("interpretarla explícitamente según el formato de salida");
+        expect(html).toContain("from json");
+        expect(html).toContain("from csv");
+        expect(html).toContain("parse");
+    });
+
+    test("then it distinguishes stdout re-entry from explicit structured interpretation", async () => {
+        const { doc } = await renderLesson();
+        const section = doc.querySelector("#h2-mental-model-for-this-lesson");
+        const text = section?.textContent ?? "";
+
+        expect(text).toContain("stdout");
+        expect(text).toContain("datos del proceso externo");
+        expect(text).toContain("interpretación explícita");
+        expect(text).not.toContain("stdout llega como un valor Nushell");
+    });
+
+    test("then the execution-boundary diagram uses channels and notes as its visual grammar", async () => {
+        const { doc } = await renderLesson();
+        const figure = doc.querySelector("figure[data-diagram-id=\"internal-and-external-boundary\"]");
+        const svgText = figure?.querySelector("svg")?.textContent ?? "";
+
+        expect(svgText).toContain("Nushell (interno)");
+        expect(svgText).toContain("Proceso externo");
+        expect(svgText).toContain("stdin: representación");
+        expect(svgText).toContain("stdout: datos del proceso externo");
+        expect(svgText).toContain("interpretación explícita");
+        expect(svgText).not.toContain("parseo");
+        expect(svgText).not.toContain("comando interno (valor");
+        expect(svgText).not.toContain("Note over Externo");
+    });
+
+    test("then stdin and stdout use the same connector style, not a request/response distinction", async () => {
+        const { doc } = await renderLesson();
+        const figure = doc.querySelector("figure[data-diagram-id=\"internal-and-external-boundary\"]");
+        const messages = Array.from(figure?.querySelectorAll("svg g.message") ?? []);
+        const stdinMessage = messages.find((message) => message.getAttribute("data-label")?.startsWith("stdin"));
+        const stdoutMessage = messages.find((message) => message.getAttribute("data-label")?.startsWith("stdout"));
+
+        expect(stdinMessage).not.toBeUndefined();
+        expect(stdoutMessage).not.toBeUndefined();
+        expect(stdinMessage?.getAttribute("data-line-style")).toBe(stdoutMessage?.getAttribute("data-line-style"));
+        expect(stdinMessage?.getAttribute("data-arrow-head")).toBe(stdoutMessage?.getAttribute("data-arrow-head"));
     });
 
     test.each(nushellDiagramSpecs)(

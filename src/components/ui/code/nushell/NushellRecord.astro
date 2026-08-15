@@ -1,0 +1,11 @@
+---
+import { I } from "~/components/ui/font";
+
+type Props = {
+    plural?: boolean;
+};
+
+const { plural = false } = Astro.props as Props;
+---
+
+<I>{plural ? "records" : "record"}</I>

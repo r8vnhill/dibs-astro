@@ -3,22 +3,24 @@ import * as icons from "$icons";
 import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Info } from "~/components/ui/callouts";
-import { JsonBlock, NushellBlock, NushellInline, OutputBlock } from "~/components/ui/code";
+import { Definition, Explanation, Info, Warning } from "~/components/ui/callouts";
+import More from "~/components/ui/callouts/More.astro";
+import { JsonBlock, NushellBlock, NushellInline, NushellRecord, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, Dash, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
-import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import {
     internalAndExternalBoundary,
     persistedRepresentationToRuntimeValue,
     runPipelineStageProgression,
     unixAndNushellComposition,
 } from "~/lib/diagrams/nushell-examples";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 
 const supportScriptsNushellReadings = getSupportScriptsNushellReadings();
 const citationContext = {
@@ -69,34 +71,22 @@ const citationContext = {
                         <Mono>README.md</Mono>
                     </ListItem>
 
-                    <ListItem icon={icons.FileText}>
+                    <ListItem icon={icons.Copyright}>
                         <Mono>LICENSE</Mono>
                     </ListItem>
 
-                    <ListItem icon={icons.FileText}>
+                    <ListItem icon={icons.UsersThree}>
                         <Mono>CODE_OF_CONDUCT.md</Mono>
                     </ListItem>
 
-                    <ListItem icon={icons.FileText}>
+                    <ListItem icon={icons.MusicNote}>
                         <Mono>album.json</Mono>
                     </ListItem>
                 </List>
             </ListItem>
         </List>
 
-        <OutputBlock
-            code={`
-                powerslave/
-                ├── README.md
-                ├── LICENSE
-                ├── CODE_OF_CONDUCT.md
-                └── album.json
-            `}
-        >
-            <span slot="title">Proyecto de ejemplo: <Mono>powerslave/</Mono></span>
-        </OutputBlock>
-
-        <Definition headingLevel="h3" icon={icons.Target}>
+        <Definition headingLevel="h3" icon={icons.PushPin}>
             <span slot="title">Lo que no cambia</span>
 
             <P>
@@ -169,9 +159,11 @@ const citationContext = {
 
         <P>
             Cuando el pipeline cruza hacia un proceso externo <Dash kind="em" />un ejecutable compilado o un comando del
-            sistema<Dash kind="em" />, el modelo cambia: el valor debe convertirse antes de entregarse por
-            <Mono>stdin</Mono>, y lo que vuelve por <Mono>stdout</Mono> llega como bytes o texto, no como un valor
-            Nushell.
+            sistema<Dash kind="em" />, el valor debe transformarse en una representación que pueda entregarse por <Mono
+            >stdin</Mono>. Lo que vuelve por <Mono>stdout</Mono> cruza nuevamente esa frontera como datos del proceso
+            externo, no como la estructura Nushell original. Si queremos recuperar una estructura concreta, debemos
+            interpretarla explícitamente según el formato de salida, por ejemplo con <NushellInline code="from json" />,
+            <NushellInline code="from csv" /> o <NushellInline code="parse" />.
         </P>
 
         <MermaidDiagram spec={internalAndExternalBoundary} />
@@ -179,8 +171,9 @@ const citationContext = {
         <Explanation headingLevel="h3">
             <P>
                 Retendremos estos dos modelos durante toda la lección: dentro de comandos internos, Nushell entrega y
-                recibe valores directamente; al cruzar hacia un proceso externo, ese valor se convierte a bytes o texto
-                y hay que reconstruirlo explícitamente si se necesita estructura de nuevo.
+                recibe valores estructurados directamente; al cruzar hacia un proceso externo, ese valor se transforma
+                en una representación para <Mono>stdin</Mono>, y los datos de <Mono>stdout</Mono> solo vuelven a ser
+                estructura mediante una interpretación explícita y dependiente del formato.
             </P>
         </Explanation>
     </NotesSection>
@@ -195,7 +188,7 @@ const citationContext = {
 
         <P>
             En Nushell, listar el contenido de un directorio no produce texto para interpretar línea por línea: produce
-            una lista de <I>records</I>, cada uno con campos con nombre propio.
+            una lista de <NushellRecord plural />, cada uno con campos con nombre propio.
         </P>
 
         <NushellBlock code="ls">
@@ -220,14 +213,14 @@ const citationContext = {
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.BracketsCurly}>
-                    Cada fila es un <I>record</I> con campos <NushellInline code="name" />, <NushellInline
+                    Cada fila es un <NushellRecord /> con campos <NushellInline code="name" />, <NushellInline
                         code="type"
                     />, <NushellInline code="size" /> y <NushellInline code="modified" />. No estamos leyendo una
                     representación textual de <NushellInline code="ls" />: estamos manipulando esos campos directamente.
                 </ListItem>
 
                 <ListItem icon={icons.Table}>
-                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <I>records</I> con la misma
+                    La disposición en tabla es solo una forma de <I>mostrar</I> una lista de <NushellRecord plural /> con la misma
                     forma. <B>Datos estructurados ≠ tabla dibujada en la terminal.</B>
                 </ListItem>
             </List>
@@ -239,48 +232,65 @@ const citationContext = {
             headingLevel="h2" Icon={icons.Funnel}
             slot="heading"
         >
-            Filtrar sin convertir todo en texto
+            Filtrar valores sin convertirlos en texto
         </Heading>
 
         <P>
-            El siguiente paso reproduce el mismo contrato operativo de la lección base<Dash kind="em" />comprobar qué
-            archivos esperados faltan<Dash kind="em" />, pero como una cadena de transformaciones sobre valores
-            estructurados en lugar de un ciclo que revisa cada ruta una por una.
+            El siguiente paso conserva el mismo contrato observable de la lección base<Dash kind="em" />determinar qué
+            archivos esperados faltan<Dash kind="em" />, pero cambia cómo se calcula el resultado. En lugar de recorrer
+            cada ruta y construir texto durante el proceso, Nushell transforma colecciones de valores y produce un
+            <NushellRecord /> estructurado solo al final.
         </P>
 
         <NushellBlock
             code={`
-                let expected_paths = [README.md LICENSE CODE_OF_CONDUCT.md]
+            let expected_paths = [
+                "README.md"
+                "LICENSE"
+                "CODE_OF_CONDUCT.md"
+            ]
 
-                let present_paths = (
-                    ls
-                    | get name
-                    | path basename
-                )
+            let present_paths = (
+                ls
+                | get name
+                | path basename
+            )
 
-                let missing_paths = (
-                    $expected_paths
-                    | where {|expected| $expected not-in $present_paths}
-                )
+            let missing_paths = (
+                $expected_paths
+                | where {|expected| $expected not-in $present_paths}
+            )
 
-                {
-                    project: "powerslave"
-                    complete: ($missing_paths | is-empty)
-                    missing: $missing_paths
-                }
-            `}
+            {
+                project: "powerslave"
+                complete: ($missing_paths | is-empty)
+                missing: $missing_paths
+            }
+        `}
         >
-            <span slot="title">Comprobar los archivos esperados como pipeline</span>
+            <span slot="title">Calcular los archivos faltantes como datos</span>
+            <DibsSourceLink
+                slot="source" file="check-expected-files.nu"
+                repo="nushell-companion"
+            />
+        </NushellBlock>
+        <P>
+            Guarda el ejemplo como <Mono>check-expected-files.nu</Mono> y ejecútalo desde el directorio
+            <Mono>powerslave/</Mono>, para que <NushellInline code="ls" /> observe los archivos del proyecto:
+        </P>
+
+        <NushellBlock code={`nu check-expected-files.nu`}>
+            <span slot="title">Ejecutar el script</span>
         </NushellBlock>
 
         <OutputBlock
             code={`
-                ╭──────────┬────────────╮
-                │ project  │ powerslave │
-                │ complete │ true       │
-                │ missing  │ []         │
-                ╰──────────┴────────────╯
-            `}
+            ╭──────────┬────────────╮
+            │ project  │ powerslave │
+            │ complete │ true       │
+            │ missing  │ []         │
+            ╰──────────┴────────────╯
+        `}
         >
             <span slot="title">Resultado sobre <Mono>powerslave/</Mono></span>
         </OutputBlock>
@@ -288,20 +298,29 @@ const citationContext = {
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.ListChecks}>
-                    <NushellInline code="ls | get name" /> extrae solo el campo <NushellInline code="name" /> de cada
-                    <I>record</I>, y <NushellInline code="path basename" /> lo normaliza como nombre de archivo.
+                    <NushellInline code="ls" /> produce registros con información sobre las entradas del directorio.
+                    <NushellInline code="get name" /> proyecta el campo <NushellInline code="name" /> y produce una
+                    lista de rutas; luego, <NushellInline code="path basename" /> conserva solamente el nombre final de
+                    cada archivo.
                 </ListItem>
 
                 <ListItem icon={icons.Funnel}>
-                    <NushellInline code="where {|expected| $expected not-in $present_paths}" /> filtra la lista de
-                    archivos esperados, quedándose solo con los que no aparecen entre los presentes. La presentación
-                    ocurre después de calcular ese resultado, no antes.
+                    <NushellInline code="where {|expected| $expected not-in $present_paths}" /> recibe la lista de
+                    archivos esperados y conserva únicamente aquellos que no están presentes. Hasta este punto seguimos
+                    operando sobre valores de Nushell: no fue necesario construir líneas de texto para decidir qué
+                    elementos faltan.
                 </ListItem>
 
                 <ListItem icon={icons.BracketsCurly}>
-                    El bloque final construye un nuevo <I>record</I> con los campos <NushellInline code="project" />,
-                    <NushellInline code="complete" /> y <NushellInline code="missing" />: el mismo tipo de informe que
-                    el script en Kotlin comunicaba por texto, pero conservado como datos.
+                    El bloque final construye un <NushellRecord /> con los campos <NushellInline code="project" />,
+                    <NushellInline code="complete" /> y <NushellInline code="missing" />. Contiene la misma información
+                    lógica que el informe de la versión imperativa, pero la mantiene como datos estructurados.
+                </ListItem>
+
+                <ListItem icon={icons.ArrowRight}>
+                    Ese resultado todavía puede entrar en otro pipeline. Por ejemplo, otra etapa podría seleccionar
+                    campos, filtrar proyectos incompletos o convertir el <NushellRecord /> a JSON recién en el límite donde
+                    realmente se necesite una representación textual.
                 </ListItem>
             </List>
         </Explanation>
@@ -369,9 +388,9 @@ const citationContext = {
         <OutputBlock
             code={`
                 ╭───┬──────────────────────────────┬───────────────────╮
-                │ # │             title             │ duration_seconds  │
+                │ # │             title            │ duration_seconds  │
                 ├───┼──────────────────────────────┼───────────────────┤
-                │ 0 │ Rime of the Ancient Mariner   │ 825               │
+                │ 0 │ Rime of the Ancient Mariner  │ 825               │
                 ╰───┴──────────────────────────────┴───────────────────╯
             `}
         >
@@ -381,8 +400,9 @@ const citationContext = {
         <Explanation headingLevel="h3">
             <List>
                 <ListItem icon={icons.FileCode}>
-                    <NushellInline code="open album.json" /> reconoce la extensión <Mono>.json</Mono> y devuelve un
-                    <I>record</I> Nushell nativo: la representación de archivo, el archivo JSON, y el valor de Nushell
+                    <NushellInline code="open album.json" /> reconoce la extensión <Mono>.json</Mono> y devuelve un{
+                        " "
+                    }<NushellRecord /> Nushell nativo: la representación de archivo, el archivo JSON, y el valor de Nushell
                     son dos capas distintas, aunque <NushellInline code="open" /> las conecte sin que tengamos que
                     escribir el paso intermedio.
                 </ListItem>
@@ -395,7 +415,7 @@ const citationContext = {
             </List>
         </Explanation>
 
-        <Info headingLevel="h3" icon={icons.WarningCircle}>
+        <More headingLevel="h3">
             <span slot="title">¿Y NUON?</span>
 
             <P>
@@ -407,9 +427,9 @@ const citationContext = {
                 apoyo <Mono>album.json</Mono> podría ser consumido más adelante por Kotlin, Python, JavaScript u otra
                 herramienta, sin depender de un formato específico de un shell.
             </P>
-        </Info>
+        </More>
 
-        <Info headingLevel="h3" icon={icons.WarningCircle}>
+        <Warning headingLevel="h3">
             <span slot="title">Conveniencia, no capacidad exclusiva</span>
 
             <P>
@@ -417,7 +437,7 @@ const citationContext = {
                 biblioteca de deserialización adecuada para el formato elegido. En Nushell, abrir un formato reconocido
                 es parte del flujo ordinario del shell, no una dependencia adicional del proyecto.
             </P>
-        </Info>
+        </Warning>
     </NotesSection>
 
     <NotesSection id="h2-pipeline-type-contracts">
@@ -480,9 +500,9 @@ const citationContext = {
             <List>
                 <ListItem icon={icons.CheckCircle}>
                     <NushellInline code="album-title" /> declara <NushellInline code="record -> string" />: espera un
-                    <I>record</I> por pipeline y produce un <Mono>string</Mono>. <NushellInline
+                    <NushellRecord /> por pipeline y produce un <Mono>string</Mono>. <NushellInline
                         code="open album.json"
-                    /> produce exactamente ese <I>record</I>, así que la composición es válida.
+                    /> produce exactamente ese <NushellRecord />, así que la composición es válida.
                 </ListItem>
 
                 <ListItem icon={icons.XCircle}>
@@ -555,7 +575,7 @@ const citationContext = {
         <P>
             Igual que <NushellInline code="album-title" />, este script declara <NushellInline
                 code="record -> record"
-            />: recibe un <I>record</I> de pipeline y produce otro. Con <NushellInline code="run" />, puede participar
+            />: recibe un <NushellRecord /> de pipeline y produce otro. Con <NushellInline code="run" />, puede participar
             directamente como etapa dentro de un pipeline mayor:
         </P>
 
@@ -590,7 +610,7 @@ const citationContext = {
 
                 <ListItem icon={icons.Funnel}>
                     <NushellInline code="where not complete" /> sigue trabajando sobre los campos del resultado devuelto
-                    por el script, exactamente como lo haría con cualquier otro <I>record</I>.
+                    por el script, exactamente como lo haría con cualquier otro <NushellRecord />.
                 </ListItem>
             </List>
         </Explanation>
@@ -625,7 +645,7 @@ const citationContext = {
             hacia un proceso externo<Dash kind="em" />por ejemplo, un ejecutable compilado o un comando del sistema<Dash
                 kind="em"
             />, esa frontera deja de ser transparente: la salida estándar del proceso llega como texto o bytes, no como
-            un <I>record</I> o una tabla.
+            un <NushellRecord /> o una tabla.
         </P>
 
         <NushellBlock code={`

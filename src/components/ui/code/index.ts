@@ -26,6 +26,7 @@ export { default as NimBlock } from "./nim/NimBlock.astro";
 export { default as NimInline } from "./nim/NimInline.astro";
 export { default as NushellBlock } from "./nushell/NushellBlock.astro";
 export { default as NushellInline } from "./nushell/NushellInline.astro";
+export { default as NushellRecord } from "./nushell/NushellRecord.astro";
 export { default as InlinePowerShell, default as PowerShellInline } from "./ps1/InlinePowerShell.astro";
 export { default as PowerShellBlock } from "./ps1/PowerShellBlock.astro";
 export { default as PowerShellTerminal } from "./ps1/PowerShellTerminal.astro";
