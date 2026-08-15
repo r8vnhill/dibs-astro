@@ -10,6 +10,7 @@ import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import NushellPage from "../nushell.astro";
+import { nushellDiagramSpecs } from "~/lib/diagrams/nushell-examples";
 
 function parseHtml(html: string): Document {
     return new JSDOM(html).window.document;
@@ -31,17 +32,39 @@ suite("given the Nushell comparative lesson", () => {
         const { html } = await renderLesson();
 
         expect(html).toContain("Del pipe de Unix al pipeline estructurado");
-        expect(html).toContain("Unix:");
-        expect(html).toContain("bytes/texto");
-        expect(html).toContain("valores estructurados");
+        expect(html).toContain("La misma composición con representaciones distintas");
+        expect(html).toContain("bytes / texto");
+        expect(html).toContain("valor estructurado");
     });
 
     test("then it makes the execution model explicit before syntax-heavy examples", async () => {
         const { html } = await renderLesson();
 
         expect(html).toContain("Un modelo mental para esta lección");
-        expect(html).toContain("Pipeline interno de Nushell");
-        expect(html).toContain("Pipeline mixto");
+        expect(html).toContain("La frontera entre el pipeline interno y un proceso externo");
+        expect(html).toContain("stdin / stdout: bytes o texto");
+    });
+
+    test.each(nushellDiagramSpecs)(
+        "then it renders the conceptual diagram $id as accessible inline SVG",
+        async (spec) => {
+            const { doc } = await renderLesson();
+            const figure = doc.querySelector(`figure[data-diagram-id="${spec.id}"]`);
+
+            expect(figure).not.toBeNull();
+            expect(figure?.querySelector("svg")).not.toBeNull();
+            expect(figure?.textContent).toContain(spec.title);
+            expect(figure?.textContent).toContain(spec.description);
+        },
+    );
+
+    test("then it keeps representative terminal output as text", async () => {
+        const { doc } = await renderLesson();
+        const outputBlocks = Array.from(doc.querySelectorAll("pre"));
+
+        expect(outputBlocks.some((block) => block.textContent?.includes("CODE_OF_CONDUCT.md"))).toBe(true);
+        expect(outputBlocks.some((block) => block.textContent?.includes("Rime of the Ancient Mariner"))).toBe(true);
+        expect(outputBlocks.some((block) => block.textContent?.includes("nu::parser::input_type_mismatch"))).toBe(true);
     });
 
     test("then it cites Greenberg et al. (2021) and Sippel and Schirmeier (2023)", async () => {
@@ -78,9 +101,9 @@ suite("given the Nushell comparative lesson", () => {
         const { html, doc } = await renderLesson();
 
         expect(html).toContain("como culminación");
-        expect(html).toContain("structured values");
-        expect(html).toContain("typed pipeline contracts");
-        expect(html).toContain("reusable script as pipeline stage");
+        expect(html).toContain("Valores estructurados");
+        expect(html).toContain("Contratos de pipeline tipados");
+        expect(html).toContain("run como etapa del pipeline");
 
         const typeContractsIndex = html.indexOf("El pipeline también tiene contratos de tipo");
         const runSectionIndex = html.indexOf("como culminación");
@@ -99,7 +122,9 @@ suite("given the Nushell comparative lesson", () => {
     test("then the final section states the closing conceptual chain and links to the readings route", async () => {
         const { doc } = await renderLesson();
 
-        expect(doc.body.textContent).toMatch(/composici[oó]n\s*→\s*representaci[oó]n\s*→\s*contratos de tipo\s*→\s*frontera de proceso/);
+        expect(doc.body.textContent).toMatch(
+            /composici[oó]n\s*→\s*representaci[oó]n\s*→\s*contratos de tipo\s*→\s*frontera de proceso/,
+        );
 
         const readingsLink = Array.from(doc.querySelectorAll("a")).find((link) =>
             link.getAttribute("href") === "/readings/scripting/support-scripts/nushell/"

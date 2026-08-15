@@ -5,6 +5,7 @@ import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Explanation, Info } from "~/components/ui/callouts";
 import { JsonBlock, NushellBlock, NushellInline, OutputBlock } from "~/components/ui/code";
+import { MermaidDiagram } from "~/components/ui/figures";
 import { B, Dash, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
@@ -12,6 +13,12 @@ import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
+import {
+    internalAndExternalBoundary,
+    persistedRepresentationToRuntimeValue,
+    runPipelineStageProgression,
+    unixAndNushellComposition,
+} from "~/lib/diagrams/nushell-examples";
 
 const supportScriptsNushellReadings = getSupportScriptsNushellReadings();
 const citationContext = {
@@ -52,6 +59,30 @@ const citationContext = {
             Iron Maiden. El script sigue teniendo la misma responsabilidad: recibir un directorio de proyecto y
             comprobar si contiene los archivos esperados de una biblioteca.
         </P>
+
+        <List id="list-fs">
+            <ListItem icon={icons.FolderOpen}>
+                <Mono>powerslave/</Mono>
+
+                <List id="sublist-powerslave-dir">
+                    <ListItem icon={icons.FileText}>
+                        <Mono>README.md</Mono>
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        <Mono>LICENSE</Mono>
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        <Mono>CODE_OF_CONDUCT.md</Mono>
+                    </ListItem>
+
+                    <ListItem icon={icons.FileText}>
+                        <Mono>album.json</Mono>
+                    </ListItem>
+                </List>
+            </ListItem>
+        </List>
 
         <OutputBlock
             code={`
@@ -95,17 +126,7 @@ const citationContext = {
             >Greenberg et al. (2021)</ReferenceCitation>.
         </P>
 
-        <OutputBlock
-            code={`
-                Unix:
-                programa → bytes/texto → programa
-
-                Nushell, entre comandos internos:
-                comando → valores estructurados → comando
-            `}
-        >
-            <span slot="title">Lo que se hereda y lo que cambia</span>
-        </OutputBlock>
+        <MermaidDiagram spec={unixAndNushellComposition} />
 
         <P>
             La idea de composición se hereda de Unix; lo que cambia es la representación que se compone. Nushell no es
@@ -146,24 +167,6 @@ const citationContext = {
             conviene <I>pensar</I> sobre él mientras aprendemos.
         </P>
 
-        <OutputBlock
-            code={`
-                Pipeline interno de Nushell
-
-                Value
-                  ↓
-                command A
-                  ↓
-                Value
-                  ↓
-                command B
-                  ↓
-                Value
-            `}
-        >
-            <span slot="title">Modelo mental: comandos internos</span>
-        </OutputBlock>
-
         <P>
             Cuando el pipeline cruza hacia un proceso externo <Dash kind="em" />un ejecutable compilado o un comando del
             sistema<Dash kind="em" />, el modelo cambia: el valor debe convertirse antes de entregarse por
@@ -171,27 +174,7 @@ const citationContext = {
             Nushell.
         </P>
 
-        <OutputBlock
-            code={`
-                Pipeline mixto
-
-                Nu Value
-                  ↓
-                serialización
-                  ↓
-                stdin / stdout
-                  ↓
-                proceso externo
-                  ↓
-                bytes / texto
-                  ↓
-                parseo explícito
-                  ↓
-                Nu Value
-            `}
-        >
-            <span slot="title">Modelo mental: proceso externo en el medio</span>
-        </OutputBlock>
+        <MermaidDiagram spec={internalAndExternalBoundary} />
 
         <Explanation headingLevel="h3">
             <P>
@@ -370,19 +353,7 @@ const citationContext = {
             invocar ese paso de decodificación nosotros mismos.
         </P>
 
-        <OutputBlock
-            code={`
-                album.json
-                    ↓ open
-                JSON representation is parsed
-                    ↓
-                Nushell record/list values
-                    ↓
-                get / where / select
-            `}
-        >
-            <span slot="title">De la representación persistida al valor de Nushell</span>
-        </OutputBlock>
+        <MermaidDiagram spec={persistedRepresentationToRuntimeValue} />
 
         <NushellBlock
             code={`
@@ -551,16 +522,7 @@ const citationContext = {
             contratos de tipo declarados y ahora un script reusable que participa del pipeline como una etapa más.
         </P>
 
-        <OutputBlock
-            code={`
-                structured values
-                → typed pipeline contracts
-                → reusable script
-                → reusable script as pipeline stage
-            `}
-        >
-            <span slot="title">La progresión que llega a <NushellInline code="run" /></span>
-        </OutputBlock>
+        <MermaidDiagram spec={runPipelineStageProgression} />
 
         <NushellBlock
             code={`
