@@ -11,7 +11,6 @@ suite("given the Nushell support-scripts readings catalog", () => {
 
         expect(html).toContain("Unix shell programming: the next 50 years");
         expect(html).toContain("Process Composition with Typed Unix Pipes");
-        expect(html).toContain("Notional machines and introductory programming education");
         expect(html).not.toContain("<ul class=\"mt-6 space-y-5\"></ul>");
     });
 
@@ -20,9 +19,11 @@ suite("given the Nushell support-scripts readings catalog", () => {
         const html = await renderPage({});
 
         expect(html).toContain("Cómo usar estas lecturas");
-        expect(html).toContain("Lecturas esenciales");
-        expect(html).toContain("De la idea a la práctica");
-        expect(html).toContain("Para profundizar");
-        expect(html).toContain("Por qué leerlo");
+        expect(html).toContain("Empieza aquí");
+        expect(html).toContain("Entender la idea");
+        expect(html).toContain("Si quieres profundizar");
+        expect(html).toContain("Qué buscar");
+        expect(html).toContain("Idea que deberías llevarte");
+        expect(html).not.toContain("Notional machines and introductory programming education");
     });
 });

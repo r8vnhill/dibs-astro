@@ -11,6 +11,11 @@ if (!resolution.ok) {
     throw new Error(`Lesson readings resolution failed:\n${formatLessonReadingsDiagnostics(resolution.diagnostics)}`);
 }
 const { sections } = resolution.value;
+const sectionTitles = new Map([
+    ["essential-heading", "Empieza aquí"],
+    ["practice-heading", "Entender la idea"],
+    ["deeper-heading", "Si quieres profundizar"],
+]);
 ---
 
 <BaseLayout pageTitle={`Lecturas · ${supportScriptsNushellReadings.title}`}>
@@ -23,26 +28,64 @@ const { sections } = resolution.value;
         <aside class="mt-8 rounded-lg border border-base-border bg-base-surface p-5" aria-labelledby="route-heading">
             <h2 id="route-heading" class="text-xl font-semibold">Cómo usar estas lecturas</h2>
             <p class="mt-3">
-                No necesitas leer todas estas fuentes. Comienza por Greenberg et al. y Sippel y Schirmeier para situar
-                el argumento central de la lección; después, revisa la documentación oficial de Nushell citada en la
-                sección de práctica; deja Handa et al. y Sorva para cuando quieras profundizar en el modelo de dataflow
-                o en la pedagogía de los modelos de ejecución.
+                No necesitas leer todo. Elige una ruta según cuánto quieras profundizar:
+            </p>
+            <ul class="mt-3 list-disc space-y-2 pl-5">
+                <li>
+                    <strong>Para repasar la lección:</strong> comienza por <em>Pipelines</em> y <em>Loading Data</em>.
+                    Úsalos para confirmar cómo circulan los valores por un pipeline y qué hace <code>open</code> con
+                    formatos estructurados.
+                </li>
+                <li>
+                    <strong>Para entender por qué este modelo importa:</strong> continúa con Greenberg et al. y Sippel y
+                    Schirmeier. El primero conecta Nushell con la tradición del shell Unix; el segundo muestra qué
+                    ganamos cuando las etapas de un pipeline hacen explícitos sus tipos.
+                </li>
+                <li>
+                    <strong>Para profundizar:</strong> consulta la nota de Nushell 0.114.0 si te interesa cómo
+                    evolucionó la verificación de tipos. Handa et al. amplía la idea de pipelines como composición de
+                    etapas.
+                </li>
+            </ul>
+            <p class="mt-3">
+                No intentes comprender cada detalle de las fuentes avanzadas. En cada lectura encontrarás una pregunta
+                guía que indica qué idea conviene rescatar.
             </p>
         </aside>
 
         {
             sections.map(({ id, title, readings }) => (
                 <section class="mt-12" aria-labelledby={id}>
-                    <h2 {id}>{title}</h2>
+                    <h2 {id}>{sectionTitles.get(id) ?? title}</h2>
                     <ul class="mt-6 space-y-5">
                         {
                             readings.map((reading) => (
-                                <GuidedReferenceEntry reference={reading.reference} reading={reading.guide} />
+                                <GuidedReferenceEntry
+                                    reference={reading.reference} reading={reading.guide}
+                                    compact
+                                />
                             ))
                         }
                     </ul>
                 </section>
             ))
         }
+
+        <section class="mt-12" aria-labelledby="self-check-heading">
+            <h2 id="self-check-heading">Antes de volver a la lección</h2>
+            <p class="mt-3">Si estas lecturas te ayudaron, deberías poder responder con tus propias palabras:</p>
+            <ol class="mt-3 list-decimal space-y-2 pl-5">
+                <li>¿Qué conserva Nushell del modelo de composición del shell Unix?</li>
+                <li>¿Qué diferencia hay entre transportar bytes y transportar valores estructurados?</li>
+                <li>
+                    ¿Por qué conocer los tipos de entrada y salida permite detectar algunas composiciones incompatibles?
+                </li>
+                <li>¿Qué frontera aparece cuando un pipeline de Nushell interactúa con un programa externo?</li>
+            </ol>
+            <p class="mt-3">
+                No necesitas usar la terminología exacta de las fuentes. Lo importante es que puedas aplicar estas ideas
+                a un pipeline nuevo.
+            </p>
+        </section>
     </main>
 </BaseLayout>

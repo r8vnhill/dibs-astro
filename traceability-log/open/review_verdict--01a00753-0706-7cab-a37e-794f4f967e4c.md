@@ -387,7 +387,7 @@ Those would add abstraction without a demonstrated requirement.
 
 ---
 
-# Milestone 3 — Establish a correct GitLab registry topology
+# Milestone 3 — Establish a correct GitLab registry topology [DONE]
 
 This is a **required architectural step**, not release polish.
 
