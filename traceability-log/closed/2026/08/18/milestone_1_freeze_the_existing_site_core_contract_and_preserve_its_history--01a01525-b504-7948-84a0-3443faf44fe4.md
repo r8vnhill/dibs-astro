@@ -703,7 +703,7 @@ match a sibling repository, and no publication occurred in this phase.
 
 ---
 
-# Phase 5 — Perform the history-preserving extraction
+# Phase 5 — Perform the history-preserving extraction [DONE]
 
 ## Goal
 
@@ -838,6 +838,67 @@ exist yet in Milestone 1.
 - author/date/message information remains meaningful;
 - final extracted tree equals the frozen source tree;
 - the extracted repository has no remote GitLab project yet.
+
+## Phase 5 evidence — completed 2026-08-18
+
+No production source, public package metadata, or build configuration was changed during this phase. The extraction is
+recorded in the machine-readable manifest at `packages/site-core/migration/extraction-history-manifest.json`. Current
+`astro-website` `HEAD` has advanced past the Phase 1 freeze commit (Phase 2/3/4 evidence commits), so this extraction
+deliberately originates from the recorded freeze commit `67e80789e7117479a32301961f56267d946c4205`, not from current
+`HEAD`.
+
+### TDD cycle 1 — Historical path audit
+
+`git log --follow --name-status -M` on `package.json`, `src/index.ts`, and `src/repositories/repo-links.ts` was run
+against the full history up to the freeze commit. `src/index.ts` and `src/repositories/repo-links.ts` show no history
+before their introduction at `76228da`. `package.json` reported a `--follow` content-similarity match against
+`packages/content-core/package.json` (introduced at `cfaeb71`), but `packages/content-core` is a distinct package that
+still exists at `HEAD` (`@ravenhill/content-core`, "Content abstraction layer for reusable documentation and learning
+systems") — `git show --name-status -M` on the actual introducing commit (`76228da`) lists every
+`packages/site-core/**` file as a pure add (`A`), never a rename (`R`). This is a `--follow` false positive, not a real
+historical rename. The extraction path set is therefore exactly `packages/site-core/`, with no additional historical
+paths or renames required.
+
+### TDD cycle 2 — Extraction from a fresh clone
+
+A fresh clone was made outside the ordinary DIBS working copy (`git clone --no-local --single-branch --branch dev/qa
+--no-tags`), then reset to the freeze commit before filtering (the local branch and its `origin` tracking ref were
+both moved to `67e8078` so the safety checks in `git-filter-repo` still treated the clone as filterable, without
+`--force`). Extraction command:
+
+```text
+git filter-repo --path packages/site-core/ --path-rename packages/site-core/:
+```
+
+Result: 7 commits retained (of 473 parsed), tree rooted at the package contents (`README.md`, `AGENTS.md`,
+`package.json`, `scripts/`, `src/`, `tsconfig.json`, `tsup.config.ts`, `vitest.config.ts`). The extracted repository
+was placed at `e:/teaching/DIBS/projects/site-core` — a sibling directory outside `astro-website`, matching the
+convention already used for `astro-icons`/`astro-semantics`/`shiki-core` — and has no remote configured.
+
+### TDD cycle 3 — Differential history verification
+
+All 7 mapped commits (oldest: `76228da`→`0bc2200`; newest: `837f9de`→`1330a67`; full mapping in the manifest) were
+checked for: author name/email, author date, commit message, tracked path listing (after normalizing the
+`packages/site-core/` prefix), file mode listing, and blob object-id set (byte-identical content). All 7 passed every
+check. Commit hashes differ, as expected from a history rewrite. Chronological order of the 7 package-affecting
+commits is preserved (`2026-05-08` → `2026-05-11` → `2026-06-12` → `2026-08-14` ×2 → `2026-08-15` ×2).
+
+### TDD cycle 4 — Final-tree identity
+
+Compared the frozen source tree (`packages/site-core/` at `67e8078`) against the extracted repository `HEAD`
+(`1330a67`) after normalizing the prefix: path listing diff, blob-content diff, and file-mode diff were all empty —
+the trees match exactly, with no unexpected files.
+
+### Acceptance criteria check
+
+- extraction originates from `67e80789e7117479a32301961f56267d946c4205`, the exact recorded freeze commit — met;
+- `packages/site-core/` content is rooted at the extracted repository's root — met;
+- no unrelated DIBS history/content is present (7 commits, all package-touching; tree contains only package files) —
+  met;
+- every one of the 7 mapped package trees is equivalent (TDD cycle 3) — met;
+- author/date/message history remains meaningful and chronologically ordered — met;
+- final extracted tree equals the frozen source tree (TDD cycle 4) — met;
+- the extracted repository (`e:/teaching/DIBS/projects/site-core`) has no remote configured — met.
 
 ---
 
