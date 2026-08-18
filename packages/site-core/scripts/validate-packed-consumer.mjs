@@ -195,7 +195,11 @@ const runtimeConsumerSource = String.raw`import {
     buildCommitUrl,
     buildRepoLinkText,
     buildRepoUrl,
+    DEFAULT_REPO_PLATFORMS,
+    isRepoPlatform,
     normalizePlatforms,
+    REPO_PLATFORM_HOST,
+    REPO_PLATFORM_LABEL,
     SITE_CORE_PACKAGE_NAME,
     SITE_CORE_VERSION,
 } from "@ravenhill/site-core";
@@ -206,6 +210,22 @@ if (SITE_CORE_PACKAGE_NAME !== "@ravenhill/site-core") {
 
 if (!/^\d+\.\d+\.\d+$/u.test(SITE_CORE_VERSION)) {
     throw new Error("Unexpected package version: " + SITE_CORE_VERSION);
+}
+
+if (DEFAULT_REPO_PLATFORMS.join(",") !== "gitlab,github") {
+    throw new Error("Unexpected default repository platforms.");
+}
+
+if (REPO_PLATFORM_HOST.github !== "github.com" || REPO_PLATFORM_HOST.gitlab !== "gitlab.com") {
+    throw new Error("Unexpected repository platform hosts.");
+}
+
+if (REPO_PLATFORM_LABEL.github !== "GitHub" || REPO_PLATFORM_LABEL.gitlab !== "GitLab") {
+    throw new Error("Unexpected repository platform labels.");
+}
+
+if (!isRepoPlatform("github") || isRepoPlatform("codeberg")) {
+    throw new Error("isRepoPlatform returned an unexpected result.");
 }
 
 const repo = { user: "octocat", repo: "hello-world" };
@@ -250,25 +270,54 @@ for (const specifier of blockedSubpaths) {
 
 const typeConsumerSource = String.raw`import {
     buildCommitUrl,
+    buildRepoLinkText,
     buildRepoUrl,
+    DEFAULT_REPO_PLATFORMS,
+    isRepoPlatform,
     normalizePlatforms,
+    REPO_PLATFORM_HOST,
+    REPO_PLATFORM_LABEL,
+    type BuildCommitUrlOptions,
+    type BuildRepoLinkTextOptions,
+    type BuildRepoUrlOptions,
     type RepoPlatform,
     type RepoRef,
 } from "@ravenhill/site-core";
 
 const repo: RepoRef = { user: "octocat", repo: "hello-world" };
 const platform: RepoPlatform = "github";
+const repoUrlOptions: BuildRepoUrlOptions = { path: "tree/main" };
+const commitUrlOptions: BuildCommitUrlOptions = { path: "README.md" };
+const linkTextOptions: BuildRepoLinkTextOptions = { label: "Source", showPlatform: true };
 const platforms: RepoPlatform[] = normalizePlatforms(["gitlab", "github"]);
-const url: string = buildRepoUrl(repo, platform);
-const commitUrl: string = buildCommitUrl(repo, "gitlab", "abc1234");
+const defaultPlatforms: readonly RepoPlatform[] = DEFAULT_REPO_PLATFORMS;
+const hosts: Record<RepoPlatform, string> = REPO_PLATFORM_HOST;
+const labels: Record<RepoPlatform, string> = REPO_PLATFORM_LABEL;
+const url: string = buildRepoUrl(repo, platform, repoUrlOptions);
+const commitUrl: string = buildCommitUrl(repo, "gitlab", "abc1234", commitUrlOptions);
+const linkText: string = buildRepoLinkText(repo, platform, linkTextOptions);
+const candidate: unknown = "github";
 
+if (isRepoPlatform(candidate)) {
+    const narrowedPlatform: RepoPlatform = candidate;
+    void narrowedPlatform;
+}
+
+void defaultPlatforms;
+void hosts;
+void labels;
 void platforms;
 void url;
 void commitUrl;
+void linkText;
 `;
 
 const subpathTypeConsumerSource = String.raw`// @ts-expect-error Subpath imports are intentionally unsupported.
 import("@ravenhill/site-core/repositories");
+// @ts-expect-error Source files are intentionally unsupported subpaths.
+import("@ravenhill/site-core/src/index.js");
+// @ts-expect-error Distribution files are intentionally unsupported subpaths.
+import("@ravenhill/site-core/dist/index.js");
 `;
 
 await main();

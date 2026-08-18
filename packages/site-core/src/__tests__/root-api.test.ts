@@ -18,14 +18,32 @@ describe("site-core root API values", () => {
         expect(SITE_CORE_VERSION).toMatch(/^\d+\.\d+\.\d+$/u);
     });
 
-    test("exposes repository value symbols and helpers", () => {
+    test("exposes repository platform metadata", () => {
         expect(DEFAULT_REPO_PLATFORMS).toEqual(["gitlab", "github"]);
-        expect(REPO_PLATFORM_HOST.gitlab).toBe("gitlab.com");
-        expect(REPO_PLATFORM_LABEL.github).toBe("GitHub");
-        expect(buildRepoUrl).toBeTypeOf("function");
-        expect(buildRepoLinkText).toBeTypeOf("function");
-        expect(buildCommitUrl).toBeTypeOf("function");
-        expect(isRepoPlatform).toBeTypeOf("function");
-        expect(normalizePlatforms).toBeTypeOf("function");
+        expect(REPO_PLATFORM_HOST).toEqual({
+            github: "github.com",
+            gitlab: "gitlab.com",
+        });
+        expect(REPO_PLATFORM_LABEL).toEqual({
+            github: "GitHub",
+            gitlab: "GitLab",
+        });
+    });
+
+    test("validates and normalizes platforms through the root import", () => {
+        expect(isRepoPlatform("github")).toBe(true);
+        expect(isRepoPlatform("codeberg")).toBe(false);
+        expect(normalizePlatforms(["github", "invalid", "github"])).toEqual(["github"]);
+    });
+
+    test("builds repository URLs and link text through the root import", () => {
+        const repo = { user: "octocat", repo: "hello-world" };
+
+        expect(buildRepoUrl(repo, "github", { path: "tree/main" }))
+            .toBe("https://github.com/octocat/hello-world/tree/main");
+        expect(buildCommitUrl(repo, "gitlab", "abc1234"))
+            .toBe("https://gitlab.com/octocat/hello-world/-/commit/abc1234");
+        expect(buildRepoLinkText(repo, "github", { showPlatform: true }))
+            .toBe("octocat/hello-world (GitHub)");
     });
 });
