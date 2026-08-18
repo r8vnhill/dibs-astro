@@ -183,7 +183,7 @@ Do not yet:
 
 ---
 
-# Milestone 2 — Establish the standalone package and migrate its tooling
+# Milestone 2 — Establish the standalone package and migrate its tooling [DONE]
 
 ## Goal
 
@@ -409,6 +409,19 @@ repository toolchain.
 - candidate SHA-256 is recorded;
 - internal repository files do not enter the package;
 - a clean external fixture consumes the candidate successfully.
+
+## Completion evidence — 2026-08-18
+
+The standalone implementation and its documentation are recorded in the dedicated Milestone 2 traceability entry and
+in `site-core/docs/evidence/milestone-2-completion.md`. The final candidate is
+`ravenhill-site-core-0.1.0.tgz` with SHA-256
+`e41e8240f67b8e9d22d8cb0fef3c6eaffaf239419855c7ca3914356cfda78718`, generated at standalone commit
+`5ac2f393d988a6d39de3d4d1522a3abf504bc739`.
+
+The standalone CI definition at `site-core/.gitlab-ci.yml` verifies, packages, and hands the exact `release/` artifact
+to a clean consumer. Local reproduction passed `bun run check`, the tsup/tsdown differential check, the packed-file
+contract check, strict `publint`, and exact-tarball consumer validation. Publication credentials, registry writes, and
+DIBS dependency cutover remain deferred to later milestones; no remote GitLab runner was invoked from this checkout.
 
 ---
 

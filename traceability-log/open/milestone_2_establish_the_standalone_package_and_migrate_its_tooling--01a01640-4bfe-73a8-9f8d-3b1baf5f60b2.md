@@ -606,7 +606,7 @@ Reuse the same blocked-subpath matrix between runtime and type consumers.
 
 ---
 
-# Phase 5 — Add standalone CI with artifact handoff
+# Phase 5 — Add standalone CI with artifact handoff [DONE]
 
 ## Goal
 
@@ -686,7 +686,7 @@ locked dependency graph.
 
 ---
 
-# Phase 6 — Update standalone documentation and evidence
+# Phase 6 — Update standalone documentation and evidence [DONE]
 
 ## Goal
 
@@ -766,6 +766,20 @@ Do not preserve generated build output merely for documentation if a digest and 
 
 Update the parent DIBS traceability entry with Milestone 2 completion evidence, but do not change DIBS architecture or
 consumer documentation yet.
+
+## Completion evidence — 2026-08-18
+
+- `site-core/README.md` identifies the package as unpublished and documents the supported root-only ESM and TypeScript
+  surface without presenting the canonical registry package as installable.
+- `site-core/AGENTS.md`, `docs/maintenance.md`, and `docs/release-process.md` describe the owned Bun, dprint, tsdown,
+  Vitest, candidate, artifact-handoff, and deferred-publication workflows.
+- `site-core/docs/evidence/milestone-2-completion.md` records the tsup baseline identity, tsdown differential result,
+  selected tool versions, configuration decisions, package file contract, candidate digest, commands, commit, and CI
+  definition.
+- Final implementation commit: `5ac2f393d988a6d39de3d4d1522a3abf504bc739`.
+- Final candidate SHA-256: `e41e8240f67b8e9d22d8cb0fef3c6eaffaf239419855c7ca3914356cfda78718`.
+- Pipeline definition: `site-core/.gitlab-ci.yml`, with `verify → package → consumer` artifact handoff. No registry
+  publication or credentials were added; remote runner execution remains a CI follow-up.
 
 ---
 
