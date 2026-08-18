@@ -597,7 +597,7 @@ Toolchain used for this baseline: `node v26.7.0`, `pnpm 11.8.0` (consistent with
 
 ---
 
-# Phase 4 — Record standalone-environment gaps and licensing
+# Phase 4 — Record standalone-environment gaps and licensing [DONE]
 
 ## Goal
 
@@ -665,6 +665,41 @@ Do not add a different license merely to imitate sibling repositories.
 - none is accidentally frozen as public API;
 - the source licensing context is recorded;
 - the standalone-license decision is resolved before any publication milestone.
+
+## Phase 4 evidence — completed 2026-08-18
+
+No production source, public package metadata, build configuration, or consumer behavior was changed during this
+phase. The audit is recorded in the machine-readable manifest at
+`packages/site-core/migration/standalone-environment-audit.json`.
+
+### TDD cycle 1 — Standalone dependency audit
+
+The audit distinguishes dependencies that are already owned by `packages/site-core/package.json` from dependencies that
+are supplied only by the current monorepo environment:
+
+| Standalone dependency | Current evidence | Classification | Milestone 2 disposition |
+| --------------------- | ---------------- | -------------- | ----------------------- |
+| `astro/tsconfigs/strictest` | `tsconfig.json` extends the Astro config | should be replaced during Bun/tsdown migration | Replace it with an explicit package-owned TypeScript configuration |
+| React JSX configuration | `jsx`/`jsxImportSource` are configured, but the package has no JSX source | can be removed entirely | Remove the unused settings and their root-level React type resolution |
+| `tsup` CLI resolution | the packed-consumer validator addresses the monorepo root `node_modules` directly | must become package-local in Milestone 2 | Resolve the tool from the standalone installation before the tsdown migration removes `tsup` |
+| TypeScript CLI resolution | the packed-consumer validator addresses the monorepo root `node_modules` directly | must become package-local in Milestone 2 | Resolve the compiler from the standalone installation |
+| pnpm/workspace execution | package scripts and root orchestration assume pnpm and the workspace | should be replaced during Bun/tsdown migration | Give the standalone repository its own scripts and lockfile |
+| hoisted workspace installation | the current workspace uses `nodeLinker: hoisted` | can be removed entirely | Install the manifest's development dependencies in the standalone repository |
+
+The manifest already declares `@types/node`, `fast-check`, `publint`, `tsup`, `typescript`, and `vitest` as development
+dependencies. Their current physical hoisting is operational metadata; it is not a consumer dependency or a public API
+contract. Every audit item is explicitly marked `publicApi: false` in the machine-readable record.
+
+### TDD cycle 2 — License decision
+
+The authoritative source is the enclosing `astro-website/LICENSE`, whose BSD-2-Clause text is attributed to Ignacio
+Slater-Muñoz. `packages/site-core` currently has neither a package-local `LICENSE` nor a `license` field in its
+manifest, and the Phase 3 packed-file list consequently contains neither artifact.
+
+The resolved decision is to retain the current DIBS BSD-2-Clause terms for both the future standalone repository and
+the published package. Milestone 2 must add the root `LICENSE`, add `"license": "BSD-2-Clause"` to `package.json`, and
+verify that the applicable license is present in the published tarball. No alternate license was introduced merely to
+match a sibling repository, and no publication occurred in this phase.
 
 ---
 
