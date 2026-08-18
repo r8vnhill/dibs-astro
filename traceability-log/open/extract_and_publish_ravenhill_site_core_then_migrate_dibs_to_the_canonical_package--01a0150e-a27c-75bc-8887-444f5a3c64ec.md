@@ -51,7 +51,7 @@ The migration must preserve these contracts:
 
 ---
 
-# Milestone 1 — Freeze the existing `site-core` contract and preserve its history
+# Milestone 1 — Freeze the existing `site-core` contract and preserve its history [DONE]
 
 ## Goal
 
