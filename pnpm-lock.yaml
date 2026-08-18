@@ -1677,7 +1677,7 @@ packages:
     engines: {node: '>=18'}
 
   '@ravenhill/astro-icons@0.2.0':
-    resolution: {integrity: sha1-QXMkhlBivgCAx6SVosWxdk8opQU=, tarball: https://gitlab.com/api/v4/projects/r8vnhill%2Fnpm-packages/packages/npm/@ravenhill/astro-icons/-/@ravenhill/astro-icons-0.2.0.tgz}
+    resolution: {integrity: sha1-QXMkhlBivgCAx6SVosWxdk8opQU=, tarball: https://gitlab.com/api/v4/projects/85449745/packages/npm/@ravenhill/astro-icons/-/@ravenhill/astro-icons-0.2.0.tgz}
     peerDependencies:
       astro: '>=5.14.0 <8'
 

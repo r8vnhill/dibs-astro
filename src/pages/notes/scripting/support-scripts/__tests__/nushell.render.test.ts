@@ -129,6 +129,15 @@ suite("given the Nushell comparative lesson", () => {
         expect(html).toMatch(/incompatib/);
     });
 
+    test("then the runnable examples keep their declared contracts", async () => {
+        const { html } = await renderLesson();
+
+        expect(html).toContain("$expected_paths");
+        expect(html).not.toContain("$expected_pathsh");
+        expect(html).toContain("está definida para recibir un");
+        expect(html).toContain("record -&gt; string");
+    });
+
     test("then the compatible pipeline's result renders as a neutral output, not a diagnostic", async () => {
         const { doc } = await renderLesson();
         const resultBlocks = Array.from(doc.querySelectorAll("pre")).filter((pre) =>

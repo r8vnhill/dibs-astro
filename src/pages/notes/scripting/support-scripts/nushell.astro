@@ -1,9 +1,10 @@
 ---
-import * as icons from "$icons";
+import * as icons from "@ravenhill/astro-icons";
 import { getSupportScriptsNushellReadings } from "$presentation/adapters/lesson-readings";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Important, Info, Warning } from "~/components/ui/callouts";
+import { Tip } from "~/components/ui/callouts";
+import { Explanation, Info, Warning } from "~/components/ui/callouts";
 import More from "~/components/ui/callouts/More.astro";
 import { JsonBlock, NushellBlock, NushellInline, NushellRecord, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
@@ -86,7 +87,7 @@ const citationContext = {
             </ListItem>
         </List>
 
-        <Definition headingLevel="h3" icon={icons.PushPin}>
+        <Tip headingLevel="h3" icon={icons.PushPin}>
             <span slot="title">Lo que no cambia</span>
 
             <P>
@@ -95,7 +96,7 @@ const citationContext = {
                 >Path</Mono> y consultarlo explícitamente. En Nushell, buena parte de esa información ya llega como
                 datos.
             </P>
-        </Definition>
+        </Tip>
     </NotesSection>
 
     <NotesSection id="h2-unix-pipe-to-structured-pipeline">
@@ -513,10 +514,10 @@ const citationContext = {
         </OutputBlock>
 
         <P>
-            <NushellInline code="album-title" /> está definida para ejecutarse sin entrada de pipeline. Al escribir
-            {" "}<NushellInline code={`"Powerslave" | album-title`} />, el pipeline intenta entregar un{" "}
-            <Mono>string</Mono> a un comando cuya firma no lo acepta. Nushell puede detectar esta incompatibilidad
-            antes de la ejecución normal del pipeline.
+            <NushellInline code="album-title" /> está definida para recibir un <NushellRecord /> como entrada de
+            pipeline. Al escribir{" "}<NushellInline code={`"Powerslave" | album-title`} />, el pipeline intenta
+            entregar un <Mono>string</Mono> donde la firma declara que espera un <NushellRecord />. Nushell puede
+            detectar esta incompatibilidad antes de la ejecución normal del pipeline.
         </P>
 
         <Explanation headingLevel="h3">
@@ -570,7 +571,7 @@ const citationContext = {
                     )
 
                     let missing_paths = (
-                        $expected_pathsh
+                        $expected_paths
                         | where {|expected| $expected not-in $present_paths}
                     )
 
