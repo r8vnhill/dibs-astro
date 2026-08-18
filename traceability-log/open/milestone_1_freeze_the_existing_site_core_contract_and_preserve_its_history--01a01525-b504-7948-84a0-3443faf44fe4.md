@@ -273,7 +273,7 @@ Package-touching commit history (`git log --oneline -- packages/site-core`, olde
 
 ---
 
-# Phase 2 — Strengthen the executable consumer contract
+# Phase 2 — Strengthen the executable consumer contract [DONE]
 
 ## Goal
 
@@ -381,7 +381,7 @@ Add new PBT only if the inventory reveals an uncharacterized invariant. Do not e
 
 ---
 
-# Phase 3 — Capture the pre-extraction package baseline
+# Phase 3 — Capture the pre-extraction package baseline [DONE]
 
 ## Goal
 
@@ -494,6 +494,106 @@ standalone-tooling work.
 - a clean temporary project consumes the tarball successfully;
 - the evidence distinguishes consumer/distribution contracts from operational metadata;
 - no registry publication occurs.
+
+## Phase 3 evidence — completed 2026-08-18
+
+No production behavior or package metadata was changed while gathering this evidence. Only one baseline `.tgz` was
+built (via a single `npm pack --json` invocation against one `tsup` build); it was hashed and then discarded — it is
+not committed to the repository. The full verification pipeline (`pnpm --dir packages/site-core run check`) was also
+run once end-to-end as the Red/Green gate; that script performs its own separate, ephemeral packs for
+`pack:check`/`consumer:check` as pre-existing behavior and was not modified.
+
+A machine-readable baseline manifest recording all of the values below lives at
+`packages/site-core/migration/baseline-manifest.json`.
+
+### Source identity for this baseline
+
+```text
+sourceCommit (baseline build)   fc75f126ee229dc75169cf689effe5d8870d1949
+extractionFreezeCommit (Phase 1) 67e80789e7117479a32301961f56267d946c4205
+```
+
+These are recorded separately on purpose: `fc75f12` is the workspace `HEAD` used to build this baseline, one commit
+after the Phase 2 root-API contract tests landed. `67e8078` remains the Phase 1 source-identity freeze that Phase 5's
+history-preserving extraction will originate from. The two differ only by test additions (package test category, not
+production behavior or package metadata), so this does not change what Phase 1 froze.
+
+### TDD cycle 1 — Package artifact contract
+
+`pnpm --dir packages/site-core run check` passed in full:
+
+```text
+build       tsup emitted dist/index.js (3.12 KB), dist/index.js.map (11.21 KB), dist/index.d.ts (4.53 KB)
+typecheck   tsc --noEmit passed
+Vitest      4 test files, 37 tests, all passed
+publint     publint --strict → "All good!"
+pack        pack:check (scripts/assert-pack-files.mjs --pack) → packed set matches the allowlist exactly
+consumer    consumer:check (scripts/validate-packed-consumer.mjs) → passed (see TDD cycle 2)
+```
+
+Baseline tarball (built once, `npm pack --json`, then hashed and discarded):
+
+```text
+archive               ravenhill-site-core-0.1.0.tgz
+sha256                1c2503bf57af9c2ffdddcdc61814c400e383806bb9527ecf09e36e125ca5c642
+npm shasum (sha1)     74c6c2942309c6226ba2d3c443d74c6a181837ba
+size / unpackedSize   6424 bytes / 23844 bytes
+```
+
+Sorted packed-file list (identical to the Milestone 1 allowlist):
+
+```text
+README.md
+dist/index.d.ts
+dist/index.js
+dist/index.js.map
+package.json
+```
+
+Package metadata recorded from `package.json`:
+
+```text
+main          ./dist/index.js
+types         ./dist/index.d.ts
+exports       { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } }
+files         ["dist"]
+sideEffects   false
+```
+
+Build contract recorded from `tsup.config.ts` (unchanged from the Contract taxonomy section above):
+
+```text
+entry       src/index.ts
+format      esm
+dts         true
+sourcemap   true
+target      es2022
+platform    neutral
+outDir      dist
+splitting   false
+minify      false
+```
+
+### TDD cycle 2 — Packed-consumer baseline
+
+`scripts/validate-packed-consumer.mjs` (run as part of `pnpm run check`, and independently confirmed) built a fresh
+tarball, installed it into a temporary ESM project outside the repository (`os.tmpdir()`, not under the repo root),
+and verified:
+
+```text
+ESM root import                  passed — named runtime exports import successfully
+representative runtime behavior  passed — buildRepoUrl / buildCommitUrl / buildRepoLinkText / normalizePlatforms /
+                                  isRepoPlatform checks against expected values
+package identity/version         passed — SITE_CORE_PACKAGE_NAME and SITE_CORE_VERSION match package.json
+TypeScript declaration resolution passed — tsc -p tsconfig.json against a type-consumer fixture using every
+                                  exported type (RepoRef, RepoPlatform, BuildRepoUrlOptions, BuildCommitUrlOptions,
+                                  BuildRepoLinkTextOptions)
+blocked runtime subpaths         passed — @ravenhill/site-core/repositories, /src/index.js, /dist/index.js all
+                                  reject at runtime (ERR_PACKAGE_PATH_NOT_EXPORTED / ERR_MODULE_NOT_FOUND)
+blocked type subpaths            passed — same three subpaths rejected at the type level (@ts-expect-error fixture)
+```
+
+Toolchain used for this baseline: `node v26.7.0`, `pnpm 11.8.0` (consistent with the Phase 1 freeze).
 
 ---
 
