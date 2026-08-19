@@ -75,8 +75,10 @@ components rather than HTML strings. Run the focused readings tests and `pnpm ch
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation
   adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
 - Internal routes use trailing slashes, for example `/notes/foo/`.
-- Reusable icons come from the GitLab registry package `@ravenhill/astro-icons`; DIBS-specific language marks live in
-  `src/assets/icons/languages/` and are re-exported through `$icons`.
+- Import reusable icons directly from the GitLab registry package `@ravenhill/astro-icons` (Phosphor icons) or
+  `@ravenhill/astro-icons/brands` (brand/language logos). Only the handful of DIBS-specific language marks that have
+  no upstream equivalent (`Bash`, `Csv`, `NushellLogo`, `Powershell`, `Xml`, living in `src/assets/icons/languages/`)
+  still go through the `$icons` facade.
 - The Shiki highlighting infrastructure is being extracted to `packages/shiki-core` for reuse. As of Phase 4:
   - `packages/shiki-core` provides host-agnostic language resolution, transformers, and service orchestration; import
     only from the root entry point (no subpaths).

@@ -1,4 +1,4 @@
-import { Check, Copy } from "phosphor-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
 type CopyButtonProps = {

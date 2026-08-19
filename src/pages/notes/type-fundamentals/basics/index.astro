@@ -1,5 +1,6 @@
 ---
-import * as Icons from "$icons";
+import * as Icons from "@ravenhill/astro-icons";
+import * as IconsBrands from "@ravenhill/astro-icons/brands";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCaption, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
@@ -499,7 +500,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                 />):
             </p>
             <CodeBlock
-                icon={Icons.Kotlin}
+                icon={IconsBrands.Kotlin}
                 code={`
           val name = "Leif"
           val hp = 24
@@ -560,7 +561,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                 </p>
                 <p>Por ejemplo, esta interpolación:</p>
                 <CodeBlock
-                    icon={Icons.Kotlin}
+                    icon={IconsBrands.Kotlin}
                     code={`
             val name = "Leif"
             val status = "active"
@@ -570,7 +571,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
                 ><span slot="title">Interpolación de cadenas</span></CodeBlock>
                 <p>Se traduce internamente a algo similar a esto:</p>
                 <CodeBlock
-                    icon={Icons.Kotlin}
+                    icon={IconsBrands.Kotlin}
                     code={`
             val name = "Leif"
             val status = "active"
@@ -711,7 +712,7 @@ const title = "Kotlin: Un lenguaje pragmático y moderno";
             }
           `}
                     lang="kotlin"
-                    icon={Icons.Kotlin}
+                    icon={IconsBrands.Kotlin}
                 >
                     <a
                         slot="source"

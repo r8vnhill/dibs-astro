@@ -25,7 +25,9 @@ import {
 
 import { CodeBlock, InlineCode, InlinePython, PythonBlock } from "~/components/ui/code";
 
-import * as icons from "$icons";
+import * as icons from "@ravenhill/astro-icons";
+import * as iconsBrands from "@ravenhill/astro-icons/brands";
+import { Bash } from "$icons";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import ToDo from "~/components/utils/ToDo";
@@ -639,7 +641,7 @@ print(group_by(palabras, key=lambda s: s[0]))
             </Explanation>
 
             <CodeBlock
-              icon={icons.Python}
+              icon={iconsBrands.Python}
               lang="python"
               code={`# Python: comprensiones y expresiones generadoras
 nums = [1, 2, 3, 4, 5]
@@ -672,7 +674,7 @@ total   = sum(n*n for n in nums)           # generador (lazy)
         </Heading>
 
         <CodeBlock
-            icon={icons.Python} lang="python"
+            icon={iconsBrands.Python} lang="python"
             code={`# Python: duck typing con Protocol (subtyping estructural)
 from typing import Protocol
 
@@ -693,7 +695,7 @@ welcome(ConsoleGreeter())  # OK sin herencia explícita
         </CodeBlock>
 
         <CodeBlock
-            icon={icons.Python} lang="python"
+            icon={iconsBrands.Python} lang="python"
             code={`# Python: "sobrecarga" mediante despacho por tipo del 1er argumento
 from functools import singledispatch
 
@@ -735,7 +737,7 @@ def _(value: str):
         </Heading>
 
         <CodeBlock
-            icon={icons.Python} lang="python"
+            icon={iconsBrands.Python} lang="python"
             code={`# Python: IO concurrente con asyncio (no paralelo por CPU)
 import asyncio
 import httpx
@@ -833,7 +835,7 @@ asyncio.run(main())
         </Table>
 
         <CodeBlock
-            icon={icons.Bash} lang="bash"
+            icon={Bash} lang="bash"
             code={`# Proyecto Python mínimo
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\\Scripts\\activate

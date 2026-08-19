@@ -1,5 +1,6 @@
 ---
-import * as icons from "$icons";
+import * as icons from "@ravenhill/astro-icons";
+import * as iconsBrands from "@ravenhill/astro-icons/brands";
 import Heading from "~/components/semantics/Heading.astro";
 import { Table, TableBody, TableCaption, TableCell, TableHeader, TableRow } from "~/components/starwind/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/starwind/tabs";
@@ -67,7 +68,7 @@ const title = "Declaración de funciones";
         }
       `}
             lang="kotlin"
-            icon={icons.Kotlin}
+            icon={iconsBrands.Kotlin}
         >
             <Fragment slot="title">Estructura general</Fragment>
         </CodeBlock>
@@ -127,7 +128,7 @@ const title = "Declaración de funciones";
           }
         `}
                 lang="kotlin"
-                icon={icons.Kotlin}
+                icon={iconsBrands.Kotlin}
             >
                 <Fragment slot="title">Versión con cuerpo de bloque</Fragment>
                 <Fragment slot="source">
@@ -144,7 +145,7 @@ const title = "Declaración de funciones";
                 code={`
           fun add(a: Int, b: Int): Int = a + b
         `} lang="kotlin"
-                icon={icons.Kotlin}
+                icon={iconsBrands.Kotlin}
             >
                 <Fragment slot="title">Versión con asignación directa y tipo explícito</Fragment>
                 <Fragment slot="source">
@@ -160,7 +161,7 @@ const title = "Declaración de funciones";
                 code={`
           fun add(a: Int, b: Int) = a + b
         `} lang="kotlin"
-                icon={icons.Kotlin}
+                icon={iconsBrands.Kotlin}
             >
                 <Fragment slot="title">Versión con inferencia de tipo de retorno</Fragment>
                 <Fragment slot="source">

@@ -1,6 +1,6 @@
 import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import clsx from "clsx";
-import { CaretDown, CaretRight } from "phosphor-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
 
 /**
@@ -114,8 +114,8 @@ export const LessonTree = memo(
                     className="flex-none w-5 h-5 grid place-items-center rounded hover:bg-base-border/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-base-text/60 hover:text-base-text transition-all"
                 >
                     {isOpen
-                        ? <CaretDown size={14} weight="bold" />
-                        : <CaretRight size={14} weight="bold" />}
+                        ? <ChevronDown size={14} strokeWidth={3} />
+                        : <ChevronRight size={14} strokeWidth={3} />}
                 </button>
             );
         }

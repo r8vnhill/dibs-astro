@@ -1,4 +1,4 @@
-import { Monitor, Moon, Sun } from "phosphor-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Theme } from "~/utils";
 

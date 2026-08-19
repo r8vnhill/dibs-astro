@@ -1,4 +1,4 @@
-import { List, X } from "phosphor-react";
+import { Menu, X } from "lucide-react";
 import type { JSX } from "react";
 
 type ToggleButtonProps = {
@@ -17,7 +17,7 @@ export function ToggleButton({ isOpen, toggle }: ToggleButtonProps): JSX.Element
             onClick={toggle}
             className="toggle-button"
         >
-            {isOpen ? <X width={24} height={24} /> : <List width={24} height={24} />}
+            {isOpen ? <X width={24} height={24} /> : <Menu width={24} height={24} />}
         </button>
     );
 }
