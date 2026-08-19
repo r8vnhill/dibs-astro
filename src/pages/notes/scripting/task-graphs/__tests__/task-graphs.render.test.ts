@@ -31,15 +31,14 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
 
         expect(normalizedHtml).toContain("De tareas a grafos: cómo coordinar un proceso de construcción");
         expect(normalizedHtml).toContain("/notes/scripting/tasks-as-abstractions/");
-        expect(normalizedHtml).toContain("Ahora aparece una pregunta nueva");
-        expect(normalizedHtml).toContain("Cuando una tarea necesita de otra");
+        expect(normalizedHtml).toContain("Dependencias entre tareas");
         expect(normalizedHtml).toContain("Sistema de construcción");
         expect(normalizedHtml).toContain("Grafo dirigido y acíclico");
         expect(normalizedHtml).toContain("Grafo de tareas");
         expect(normalizedHtml).toContain("generateReport");
         expect(normalizedHtml).toContain("prepareCatalog");
-        expect(normalizedHtml).toContain("tarea requerida → tarea dependiente");
-        expect(normalizedHtml).not.toContain("tarea → tarea requerida");
+        expect(normalizedHtml).toContain("tarea requerida -> tarea dependiente");
+        expect(normalizedHtml).not.toContain("tarea -> tarea requerida");
     });
 
     test.each(taskGraphDiagramSpecs)(
@@ -83,10 +82,10 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("Orden topológico");
         expect(normalizedHtml).toContain("no necesariamente una secuencia única de ejecución");
         expect(normalizedHtml).toContain(
-            "prepareCatalog → generateReport → packageReport → verifyReport",
+            "prepareCatalog -> generateReport -> packageReport -> verifyReport",
         );
         expect(normalizedHtml).toContain(
-            "prepareCatalog → generateReport → verifyReport → packageReport",
+            "prepareCatalog -> generateReport -> verifyReport -> packageReport",
         );
     });
 
