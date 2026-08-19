@@ -1,6 +1,9 @@
 import { getPlaceholderImagePool } from "$presentation/adapters/static-ui-data";
 import { type JSX, useEffect, useId, useMemo } from "react";
 import { pickRandom } from "~/utils";
+import { DEFAULT_TODO_REPORT_EVENT, type ToDoMetadata, type ToDoReportPayload } from "./todo-report";
+
+export type { ToDoReportPayload } from "./todo-report";
 
 /**
  * Props for the <ToDo /> component.
@@ -10,7 +13,7 @@ export interface ToDoProps {
      * Optional debug metadata (e.g., title, tasks, etc.).
      * This is not rendered in the UI but can help with debugging.
      */
-    metadata?: Record<string, unknown>;
+    metadata?: ToDoMetadata;
 
     /**
      * Optional message to display below the image.
@@ -31,15 +34,8 @@ export interface ToDoProps {
      * Custom DOM event name to dispatch on `window` with the reporting payload.
      * Defaults to `"dibs:placeholder"` when omitted or set to `undefined`. Set to `null` to disable event dispatch.
      */
-    reportEventName?: string | null;
+    reportEventName?: string | null | undefined;
 }
-
-export type ToDoReportPayload = {
-    message: string;
-    imageSrc: string | null;
-    metadata?: Record<string, unknown>;
-    timestamp: string;
-};
 
 /**
  * <ToDo /> is a visual placeholder component indicating that content is under construction.
@@ -58,7 +54,7 @@ export default function ToDo({
     message = "TODO: Estamos (estoy) trabajando para ustedes c:",
     altText = "Meme",
     onReport,
-    reportEventName = "dibs:placeholder",
+    reportEventName = DEFAULT_TODO_REPORT_EVENT,
 }: ToDoProps): JSX.Element {
     // Stable identifier for the figcaption association
     const messageId = useId();
