@@ -556,6 +556,42 @@ ref:gradle-introduction-to-plugins
   schema:url "https://docs.gradle.org/current/userguide/plugins.html" ;
   schema:publisher org:gradle-docs .
 
+ref:gradle-build-lifecycle
+  a schema:WebPage ;
+  schema:name "Build Lifecycle" ;
+  schema:url "https://docs.gradle.org/current/userguide/build_lifecycle.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-controlling-task-execution
+  a schema:WebPage ;
+  schema:name "Controlling Task Execution" ;
+  schema:url "https://docs.gradle.org/current/userguide/controlling_task_execution.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:gradle-command-line-interface
+  a schema:WebPage ;
+  schema:name "Command-Line Interface" ;
+  schema:url "https://docs.gradle.org/current/userguide/command_line_interface.html" ;
+  schema:publisher org:gradle-docs .
+
+ref:build-systems-a-la-carte-2018
+  a schema:ScholarlyArticle ;
+  schema:name "Build systems à la carte" ;
+  schema:url "https://doi.org/10.1145/3236774" ;
+  schema:datePublished "2018-07-30" ;
+  schema:pageStart 1 ;
+  schema:pageEnd 29 ;
+  schema:author person:andrey-mokhov, person:neil-mitchell, person:simon-peyton-jones ;
+  schema:isPartOf work:proc-acm-program-lang-icfp-2018 ;
+  schema:publisher org:acm .
+
+ref:build-scripts-perfect-dependencies-2020
+  a schema:ScholarlyArticle ;
+  schema:name "Build Scripts with Perfect Dependencies" ;
+  schema:url "https://arxiv.org/abs/2007.12737" ;
+  schema:datePublished "2020-07-24" ;
+  schema:author person:sarah-spall, person:neil-mitchell, person:sam-tobin-hochstadt .
+
 ref:kotlin-evolution-principles
   a schema:WebPage ;
   schema:name "Kotlin evolution principles | Kotlin" ;

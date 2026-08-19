@@ -333,3 +333,28 @@ person:d-l-parnas
   a schema:Person ;
   schema:givenName "D. L." ;
   schema:familyName "Parnas" .
+
+person:andrey-mokhov
+  a schema:Person ;
+  schema:givenName "Andrey" ;
+  schema:familyName "Mokhov" .
+
+person:neil-mitchell
+  a schema:Person ;
+  schema:givenName "Neil" ;
+  schema:familyName "Mitchell" .
+
+person:simon-peyton-jones
+  a schema:Person ;
+  schema:givenName "Simon" ;
+  schema:familyName "Peyton Jones" .
+
+person:sarah-spall
+  a schema:Person ;
+  schema:givenName "Sarah" ;
+  schema:familyName "Spall" .
+
+person:sam-tobin-hochstadt
+  a schema:Person ;
+  schema:givenName "Sam" ;
+  schema:familyName "Tobin-Hochstadt" .

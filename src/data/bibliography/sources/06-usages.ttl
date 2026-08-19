@@ -943,3 +943,38 @@ usage:tasks-as-abstractions-kotlin-coding-conventions-recommended
   dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/tasks-as-abstractions/> ;
   dibs:reference ref:kotlin-coding-conventions ;
   dibs:tag "recommended" .
+
+<https://dibs.ravenhill.cl/notes/scripting/task-graphs/>
+  a schema:LearningResource ;
+  schema:name "De tareas a grafos: cómo coordinar un proceso de construcción" ;
+  schema:url "/notes/scripting/task-graphs/" .
+
+usage:task-graphs-gradle-build-lifecycle-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:gradle-build-lifecycle ;
+  dibs:tag "recommended" .
+
+usage:task-graphs-gradle-controlling-task-execution-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:gradle-controlling-task-execution ;
+  dibs:tag "recommended" .
+
+usage:task-graphs-gradle-command-line-interface-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:gradle-command-line-interface ;
+  dibs:tag "recommended" .
+
+usage:task-graphs-build-systems-a-la-carte-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:build-systems-a-la-carte-2018 ;
+  dibs:tag "additional" .
+
+usage:task-graphs-build-scripts-perfect-dependencies-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:build-scripts-perfect-dependencies-2020 ;
+  dibs:tag "additional" .

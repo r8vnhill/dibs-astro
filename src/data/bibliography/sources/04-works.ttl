@@ -138,3 +138,8 @@ work:acm-toce
   a schema:CreativeWork ;
   schema:name "ACM Transactions on Computing Education" ;
   schema:publisher org:acm .
+
+work:proc-acm-program-lang-icfp-2018
+  a schema:CreativeWork ;
+  schema:name "Proceedings of the ACM on Programming Languages, ICFP 2018" ;
+  schema:publisher org:acm .

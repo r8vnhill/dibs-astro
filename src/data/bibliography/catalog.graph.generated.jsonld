@@ -13,6 +13,12 @@
       "familyName": "Prasad"
     },
     {
+      "@id": "person:andrey-mokhov",
+      "@type": "Person",
+      "givenName": "Andrey",
+      "familyName": "Mokhov"
+    },
+    {
       "@id": "person:arjen-tebbenhof",
       "@type": "Person",
       "givenName": "Arjen",
@@ -272,6 +278,12 @@
       "familyName": "Godfrey"
     },
     {
+      "@id": "person:neil-mitchell",
+      "@type": "Person",
+      "givenName": "Neil",
+      "familyName": "Mitchell"
+    },
+    {
       "@id": "person:nikos-vasilakis",
       "@type": "Person",
       "givenName": "Nikos",
@@ -321,6 +333,18 @@
       "familyName": "Elizarov"
     },
     {
+      "@id": "person:sam-tobin-hochstadt",
+      "@type": "Person",
+      "givenName": "Sam",
+      "familyName": "Tobin-Hochstadt"
+    },
+    {
+      "@id": "person:sarah-spall",
+      "@type": "Person",
+      "givenName": "Sarah",
+      "familyName": "Spall"
+    },
+    {
       "@id": "person:sdwheeler",
       "@type": "Person",
       "familyName": "sdwheeler"
@@ -336,6 +360,12 @@
       "@type": "Person",
       "givenName": "Shivam",
       "familyName": "Handa"
+    },
+    {
+      "@id": "person:simon-peyton-jones",
+      "@type": "Person",
+      "givenName": "Simon",
+      "familyName": "Peyton Jones"
     },
     {
       "@id": "person:steve-zdancewic",
@@ -898,6 +928,14 @@
       }
     },
     {
+      "@id": "work:proc-acm-program-lang-icfp-2018",
+      "@type": "CreativeWork",
+      "name": "Proceedings of the ACM on Programming Languages, ICFP 2018",
+      "publisher": {
+        "@id": "org:acm"
+      }
+    },
+    {
       "@id": "work:python-distilled",
       "@type": "CreativeWork",
       "name": "Python Distilled",
@@ -986,6 +1024,50 @@
       },
       "isPartOf": {
         "@id": "work:oopsla-2006-companion"
+      }
+    },
+    {
+      "@id": "ref:build-scripts-perfect-dependencies-2020",
+      "@type": "ScholarlyArticle",
+      "name": "Build Scripts with Perfect Dependencies",
+      "url": "https://arxiv.org/abs/2007.12737",
+      "datePublished": "2020-07-24",
+      "author": [
+        {
+          "@id": "person:sarah-spall"
+        },
+        {
+          "@id": "person:neil-mitchell"
+        },
+        {
+          "@id": "person:sam-tobin-hochstadt"
+        }
+      ]
+    },
+    {
+      "@id": "ref:build-systems-a-la-carte-2018",
+      "@type": "ScholarlyArticle",
+      "name": "Build systems à la carte",
+      "url": "https://doi.org/10.1145/3236774",
+      "datePublished": "2018-07-30",
+      "pageStart": 1,
+      "pageEnd": 29,
+      "author": [
+        {
+          "@id": "person:andrey-mokhov"
+        },
+        {
+          "@id": "person:neil-mitchell"
+        },
+        {
+          "@id": "person:simon-peyton-jones"
+        }
+      ],
+      "publisher": {
+        "@id": "org:acm"
+      },
+      "isPartOf": {
+        "@id": "work:proc-acm-program-lang-icfp-2018"
       }
     },
     {
@@ -1208,6 +1290,33 @@
       ],
       "publisher": {
         "@id": "org:manning"
+      }
+    },
+    {
+      "@id": "ref:gradle-build-lifecycle",
+      "@type": "WebPage",
+      "name": "Build Lifecycle",
+      "url": "https://docs.gradle.org/current/userguide/build_lifecycle.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-command-line-interface",
+      "@type": "WebPage",
+      "name": "Command-Line Interface",
+      "url": "https://docs.gradle.org/current/userguide/command_line_interface.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
+      "@id": "ref:gradle-controlling-task-execution",
+      "@type": "WebPage",
+      "name": "Controlling Task Execution",
+      "url": "https://docs.gradle.org/current/userguide/controlling_task_execution.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
       }
     },
     {
@@ -2613,6 +2722,12 @@
       "@type": "LearningResource",
       "name": "Scripts de apoyo reusables en Nushell",
       "url": "/notes/scripting/support-scripts/nushell/"
+    },
+    {
+      "@id": "/notes/scripting/task-graphs/",
+      "@type": "LearningResource",
+      "name": "De tareas a grafos: cómo coordinar un proceso de construcción",
+      "url": "/notes/scripting/task-graphs/"
     },
     {
       "@id": "/notes/scripting/tasks-as-abstractions/",
@@ -4465,6 +4580,71 @@
       },
       "dibs:reference": {
         "@id": "ref:nushell-v0-114-0-blog"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-build-scripts-perfect-dependencies-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:build-scripts-perfect-dependencies-2020"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-build-systems-a-la-carte-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:build-systems-a-la-carte-2018"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-gradle-build-lifecycle-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-build-lifecycle"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-gradle-command-line-interface-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-command-line-interface"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-gradle-controlling-task-execution-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-controlling-task-execution"
       },
       "dibs:tags": [
         "recommended"

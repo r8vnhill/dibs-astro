@@ -2,15 +2,19 @@
 import * as icons from "$icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation } from "~/components/ui/callouts";
-import { BashBlock, KotlinBlock, OutputBlock } from "~/components/ui/code";
+import { Definition, Exercise, Explanation } from "~/components/ui/callouts";
+import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
-import { Link } from "~/components/ui/links";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import { ReferencesFromCatalog } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 import {
     cyclicDependencyCounterexample,
+    extendedTaskGraphWithFinalize,
     packageReportSelectedGraph,
     taskDependencyGraph,
     verifyReportSelectedGraph,
@@ -18,8 +22,8 @@ import {
 ---
 
 <NotesLayout
-    title="De tareas a grafos: cómo coordinar un proceso de construcción"
-    description="Relaciona tareas mediante dependencias y construye un modelo para coordinar el trabajo solicitado."
+    title="Grafos de tareas y sistemas de construcción"
+    description="..."
 >
     <Fragment slot="abstract">
         <P>
@@ -326,6 +330,12 @@ import {
             `}
         >
             <span slot="title">build.gradle.kts (fragmento)</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="gradle/task-graph/build.gradle.kts"
+            >
+                gradle/task-graph/build.gradle.kts
+            </DibsSourceLink>
         </KotlinBlock>
 
         <Explanation headingLevel="h3">
@@ -379,4 +389,223 @@ import {
             mediante complementos es contenido de la siguiente lección.
         </P>
     </NotesSection>
+
+    <Exercise headingLevel="h2">
+        <Fragment slot="title">Extender un grafo sin perder sus dependencias</Fragment>
+
+        <Fragment slot="requirements">
+            <P>
+                Extiende el build de Gradle con una nueva tarea llamada <Mono>finalizeReport</Mono>, que depende tanto
+                de <Mono>packageReport</Mono> como de <Mono>verifyReport</Mono>:
+            </P>
+
+            <MermaidDiagram spec={extendedTaskGraphWithFinalize} />
+
+            <List>
+                <ListItem icon={icons.Tag}>
+                    Registra <Mono>finalizeReport</Mono> con <KotlinInline>tasks.register(...)</KotlinInline>.
+                </ListItem>
+                <ListItem icon={icons.GitBranch}>
+                    Declara sus dos dependencias con <KotlinInline
+                    code={`dependsOn("packageReport", "verifyReport")`}
+                    />.
+                </ListItem>
+                <ListItem icon={icons.ListChecks}>
+                    Antes de ejecutar nada, predice qué tareas selecciona <Mono>./gradlew finalizeReport
+                    --task-graph</Mono>.
+                </ListItem>
+                <ListItem icon={icons.ListChecks}>
+                    Predice también qué tareas selecciona <Mono>./gradlew packageReport --task-graph</Mono> una vez que
+                    <Mono>finalizeReport</Mono> existe en el build.
+                </ListItem>
+                <ListItem icon={icons.CheckCircle}>
+                    Verifica ambas predicciones ejecutando <Mono>--task-graph</Mono> y compara la salida con lo que
+                    anticipaste.
+                </ListItem>
+                <ListItem icon={icons.ArrowsClockwise}>
+                    Explica por qué solicitar <Mono>packageReport</Mono> sigue sin ejecutar <Mono>verifyReport</Mono>, y
+                    por qué el grafo resultante se mantiene acíclico.
+                </ListItem>
+            </List>
+        </Fragment>
+
+        <Fragment slot="notes">
+            <P>
+                El ejercicio evalúa el modelo conceptual, no la sintaxis de Gradle: lo importante es predecir el grafo
+                <I>antes</I> de ejecutar el comando, y usar <Mono>--task-graph</Mono> como evidencia para confirmar o
+                corregir esa predicción, no como el primer paso.
+            </P>
+        </Fragment>
+
+        <Fragment slot="use">
+            <BashBlock code={`./gradlew finalizeReport --task-graph`}>
+                <span slot="title">Grafo de tareas seleccionado para finalizeReport</span>
+            </BashBlock>
+
+            <OutputBlock
+                code={`
+                    :prepareCatalog
+                    :generateReport
+                    :packageReport
+                    :verifyReport
+                    :finalizeReport
+                `}
+            />
+        </Fragment>
+
+        <Fragment slot="hints">
+            <List>
+                <ListItem icon={icons.Lightbulb}>
+                    <KotlinInline>dependsOn</KotlinInline> acepta más de una tarea a la vez; no necesitas dos llamadas
+                    separadas.
+                </ListItem>
+                <ListItem icon={icons.Lightbulb}>
+                    <Mono>packageReport</Mono> no cambia: sigue dependiendo únicamente de <Mono>generateReport</Mono>.
+                    Agregar <Mono>finalizeReport</Mono> no modifica las dependencias de las tareas que ya existían.
+                </ListItem>
+                <ListItem icon={icons.Lightbulb}>
+                    Para comprobar la aciclicidad, sigue las flechas desde <Mono>finalizeReport</Mono> hacia atrás:
+                    si nunca vuelves a <Mono>finalizeReport</Mono>, el grafo sigue siendo válido.
+                </ListItem>
+            </List>
+        </Fragment>
+
+        <Fragment slot="solution">
+            <P>
+                <Mono>finalizeReport</Mono> se agrega igual que las demás tareas, declarando sus dos dependencias en una
+                sola llamada:
+            </P>
+
+            <KotlinBlock
+                code={`
+                    tasks.register("finalizeReport") {
+                        dependsOn("packageReport", "verifyReport")
+                        doLast { println("Finalizing report...") }
+                    }
+                `}
+            >
+                <span slot="title">build.gradle.kts (fragmento extendido)</span>
+                <DibsSourceLink
+                    slot="source" repo="kotlin-companion"
+                    file="gradle/task-graph/build.gradle.kts"
+                >
+                    gradle/task-graph/build.gradle.kts
+                </DibsSourceLink>
+            </KotlinBlock>
+
+            <P>
+                Solicitar <Mono>finalizeReport</Mono> selecciona las cinco tareas del grafo mostrado arriba, porque
+                <Mono>finalizeReport</Mono> depende de <Mono>packageReport</Mono> y de <Mono>verifyReport</Mono>, y
+                ambas comparten a <Mono>generateReport</Mono> y <Mono>prepareCatalog</Mono> como dependencias.
+            </P>
+
+            <P>
+                En cambio, solicitar <Mono>packageReport</Mono> sigue seleccionando solo <Mono>prepareCatalog</Mono>,
+                <Mono>generateReport</Mono> y <Mono>packageReport</Mono>. Agregar <Mono>finalizeReport</Mono> introduce
+                una tarea nueva que depende de <Mono>packageReport</Mono>, pero no una dependencia nueva
+                <I>de</I> <Mono>packageReport</Mono>: nada en su declaración cambió, así que su grafo seleccionado
+                tampoco cambia.
+            </P>
+
+            <P>
+                El grafo extendido se mantiene acíclico porque cada dependencia nueva apunta hacia
+                <Mono>finalizeReport</Mono> desde una tarea que ya existía; siguiendo las flechas desde
+                <Mono>finalizeReport</Mono> se llega siempre a <Mono>generateReport</Mono> y luego a
+                <Mono>prepareCatalog</Mono>, sin que ningún camino regrese a <Mono>finalizeReport</Mono>.
+            </P>
+
+            <P>
+                <B>Extensión opcional:</B> si <Mono>prepareCatalog</Mono> pasara a depender de
+                <Mono>finalizeReport</Mono>, el grafo dejaría de ser acíclico. Siguiendo las flechas desde
+                <Mono>finalizeReport</Mono> se llegaría de vuelta a <Mono>finalizeReport</Mono> a través de
+                <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono> y <Mono>packageReport</Mono> (o
+                <Mono>verifyReport</Mono>): un ciclo, exactamente como el contraejemplo que vimos antes de introducir
+                Gradle. Gradle detecta esta situación y rechaza el build antes de ejecutar cualquier tarea.
+            </P>
+        </Fragment>
+    </Exercise>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Una colección de tareas nombradas se convierte en un sistema de construcción cuando también podemos
+                expresar qué tareas necesita cada resultado. Esas relaciones forman un grafo: las tareas son nodos y
+                una flecha <Mono>A → B</Mono> significa que <Mono>B</Mono> depende de <Mono>A</Mono>.
+            </P>
+
+            <P>
+                Cuando el grafo es dirigido y acíclico, el sistema puede organizar un orden de preparación válido. La
+                ejecución concreta depende de la tarea solicitada: el grafo de tareas incluye ese objetivo y solo las
+                dependencias que necesita. Gradle hace observable este modelo al construir el grafo antes de ejecutar
+                sus tareas.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Gear}>
+                Un <B>sistema de construcción</B> coordina unidades de trabajo, dependencias y resultados solicitados.
+            </ListItem>
+            <ListItem icon={icons.TreeStructure}>
+                Un <B>DAG</B> es un grafo dirigido y acíclico: sus conexiones tienen dirección y no forman ciclos.
+            </ListItem>
+            <ListItem icon={icons.GitBranch}>
+                Un <B>grafo de tareas</B> representa las tareas y dependencias necesarias para una invocación concreta.
+            </ListItem>
+            <ListItem icon={icons.Target}>
+                Solicitar <Mono>packageReport</Mono> no selecciona <Mono>verifyReport</Mono> porque esa tarea no es una
+                dependencia del resultado solicitado.
+            </ListItem>
+            <ListItem icon={icons.Wrench}>
+                Gradle confirma el modelo: <Mono>dependsOn</Mono> declara relaciones y <Mono>--task-graph</Mono> permite
+                observar el subconjunto seleccionado.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                Ya podemos describir <I>qué tareas</I> deben coordinarse y <I>en qué relación</I> se encuentran. La
+                dependencia entre tareas abre otra pregunta: <B>¿qué datos explican esa dependencia?</B> ¿Qué
+                información necesita una tarea, qué resultados produce y cómo puede el sistema saber si una tarea está
+                actualizada?
+            </P>
+
+            <P>
+                Esa pregunta nos lleva a estudiar <B>inputs y outputs</B>, sin abandonar el grafo que acabamos de
+                construir.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <ReferencesFromCatalog lessonId="/notes/scripting/task-graphs/">
+        <Fragment slot="description-ref:gradle-build-lifecycle">
+            <P>
+                Es la referencia principal para relacionar el ciclo de vida de Gradle con la construcción del grafo de
+                tareas antes de la ejecución.
+            </P>
+        </Fragment>
+        <Fragment slot="description-ref:gradle-controlling-task-execution">
+            <P>
+                Consulta esta guía para profundizar en cómo <Mono>dependsOn</Mono> expresa dependencias entre tareas y
+                cómo esas relaciones afectan la ejecución seleccionada.
+            </P>
+        </Fragment>
+        <Fragment slot="description-ref:gradle-command-line-interface">
+            <P>
+                Documenta la invocación de tareas desde la línea de comandos y las opciones que permiten inspeccionar un
+                grafo antes de ejecutar el trabajo.
+            </P>
+        </Fragment>
+        <Fragment slot="description-ref:build-systems-a-la-carte-2018">
+            <P>
+                Lectura adicional para comparar distintas ideas de diseño de sistemas de construcción sin convertir su
+                modelo formal en un requisito de esta lección.
+            </P>
+        </Fragment>
+        <Fragment slot="description-ref:build-scripts-perfect-dependencies-2020">
+            <P>
+                Lectura adicional sobre cómo dependencias incompletas o excesivas pueden producir resultados incorrectos,
+                trabajo innecesario y menos paralelismo.
+            </P>
+        </Fragment>
+    </ReferencesFromCatalog>
 </NotesLayout>

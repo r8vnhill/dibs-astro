@@ -1,8 +1,11 @@
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
+import { getReferencesForLesson } from "~/lib/bibliography";
 import {
     cyclicDependencyCounterexample,
+    extendedTaskGraphWithFinalize,
     packageReportSelectedGraph,
     taskDependencyGraph,
     taskGraphDiagramSpecs,
@@ -110,6 +113,38 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("./gradlew verifyReport --task-graph");
     });
 
+    test("then its catalog references keep Gradle sources essential and research sources additional", () => {
+        const grouped = getReferencesForLesson(
+            getDefaultBibliographyCatalog(),
+            "/notes/scripting/task-graphs/",
+        );
+
+        expect(new Set(grouped.recommended.map((entry) => entry.reference.id))).toEqual(
+            new Set([
+                "ref:gradle-build-lifecycle",
+                "ref:gradle-controlling-task-execution",
+                "ref:gradle-command-line-interface",
+            ]),
+        );
+        expect(new Set(grouped.additional.map((entry) => entry.reference.id))).toEqual(
+            new Set([
+                "ref:build-systems-a-la-carte-2018",
+                "ref:build-scripts-perfect-dependencies-2020",
+            ]),
+        );
+    });
+
+    test("then it renders catalog-backed references and the next conceptual step", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).toContain("Referencias recomendadas");
+        expect(normalizedHtml).toContain("Build Lifecycle");
+        expect(normalizedHtml).toContain("Build systems à la carte");
+        expect(normalizedHtml).toContain("inputs y outputs");
+        expect(normalizedHtml).toContain("¿qué datos explican esa dependencia?");
+    });
+
     test("then the Gradle realization keeps advanced build concepts out of the main path", async () => {
         const { doc } = await renderLesson();
         const article = doc.querySelector("article")?.textContent ?? "";
@@ -120,5 +155,42 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(article).not.toContain("outputs.");
         expect(article).not.toContain("sourceSets");
         expect(article).not.toContain("variant");
+    });
+
+    test("then it links the Gradle code blocks to the companion project", async () => {
+        const { doc } = await renderLesson();
+        const sourceLinks = Array.from(doc.querySelectorAll("a.dibs-source-link"))
+            .map((a) => a.getAttribute("href") ?? "");
+
+        expect(sourceLinks.some((href) => href.includes("kotlin-companion") &&
+            href.includes("gradle/task-graph/build.gradle.kts"))).toBe(true);
+    });
+
+    test("then the exercise asks students to extend the graph with finalizeReport", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).toContain("Extender un grafo sin perder sus dependencias");
+        expect(normalizedHtml).toContain("finalizeReport");
+        expect(normalizedHtml).toContain("./gradlew finalizeReport --task-graph");
+        expect(normalizedHtml).toContain(extendedTaskGraphWithFinalize.description);
+    });
+
+    test("then the exercise explains why packageReport still excludes verifyReport and why the graph stays acyclic", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).toContain("sigue seleccionando solo");
+        expect(normalizedHtml).toContain("se mantiene acíclico");
+    });
+
+    test("then the exercise's extended graph diagram renders once as accessible inline SVG", async () => {
+        const { doc } = await renderLesson();
+        const figures = doc.querySelectorAll(
+            `figure[data-diagram-id="${extendedTaskGraphWithFinalize.id}"]`,
+        );
+
+        expect(figures.length).toBe(1);
+        expect(figures[0]?.querySelector("svg")).not.toBeNull();
     });
 });
