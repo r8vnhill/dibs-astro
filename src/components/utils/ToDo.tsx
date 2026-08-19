@@ -29,7 +29,7 @@ export interface ToDoProps {
 
     /**
      * Custom DOM event name to dispatch on `window` with the reporting payload.
-     * Defaults to `"dibs:placeholder"`. Set to `null`/`undefined` to disable event dispatch.
+     * Defaults to `"dibs:placeholder"` when omitted or set to `undefined`. Set to `null` to disable event dispatch.
      */
     reportEventName?: string | null;
 }
