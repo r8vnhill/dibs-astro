@@ -3,10 +3,18 @@ import * as icons from "$icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Explanation } from "~/components/ui/callouts";
+import { BashBlock, KotlinBlock, OutputBlock } from "~/components/ui/code";
+import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
 import { Link } from "~/components/ui/links";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
+import {
+    cyclicDependencyCounterexample,
+    packageReportSelectedGraph,
+    taskDependencyGraph,
+    verifyReportSelectedGraph,
+} from "~/lib/diagrams/task-graph-examples";
 ---
 
 <NotesLayout
@@ -141,6 +149,234 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Estas definiciones establecen el vocabulario que usaremos a continuación: una tarea puede ser un nodo, una
             dependencia puede ser una conexión dirigida y el conjunto debe mantener una forma acíclica para que exista
             un orden posible de preparación.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-dependency-graph">
+        <Heading
+            headingLevel="h2" Icon={icons.GitBranch}
+            slot="heading"
+        >
+            De una colección de tareas a un grafo
+        </Heading>
+
+        <P>
+            Antes de relacionarlas, <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
+            <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> son solo una colección de tareas nombradas: nada en
+            esa lista dice qué tarea depende de cuál. La dependencia <Mono>prepareCatalog → generateReport</Mono>
+            introducida al inicio de esta lección es la primera conexión entre dos de ellas. Si agregamos las
+            dependencias restantes, el conjunto completo forma un grafo:
+        </P>
+
+        <MermaidDiagram spec={taskDependencyGraph} />
+
+        <Explanation headingLevel="h3">
+            <P>
+                Cada tarea es un <B>nodo</B> del grafo. Cada flecha es una <B>conexión dirigida</B>: la flecha
+                <Mono>A → B</Mono> se lee siempre como <I>B depende de A</I>, nunca al revés. Por eso
+                <Mono>generateReport → packageReport</Mono> significa que <Mono>packageReport</Mono> requiere que
+                <Mono>generateReport</Mono> haya terminado, y no que <Mono>generateReport</Mono> requiera a
+                <Mono>packageReport</Mono>.
+            </P>
+        </Explanation>
+
+        <P>
+            Con esta convención, una colección de tareas nombradas se convierte en un grafo de dependencias en cuanto
+            declaramos al menos una relación <Mono>tarea → tarea requerida</Mono> entre ellas.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-directed-acyclic-shape">
+        <Heading
+            headingLevel="h2" Icon={icons.ArrowsClockwise}
+            slot="heading"
+        >
+            Un grafo dirigido y acíclico
+        </Heading>
+
+        <P>
+            La palabra <B>dirigido</B> ya apareció: <Mono>prepareCatalog → generateReport</Mono> tiene una dirección,
+            y esa dirección no se puede invertir libremente. Que <Mono>generateReport</Mono> dependa de
+            <Mono>prepareCatalog</Mono> no implica que <Mono>prepareCatalog</Mono> dependa de
+            <Mono>generateReport</Mono>.
+        </P>
+
+        <P>
+            La palabra <B>acíclico</B> agrega una condición distinta. Considera este grafo:
+        </P>
+
+        <MermaidDiagram spec={cyclicDependencyCounterexample} />
+
+        <P>
+            Siguiendo las flechas: <Mono>A</Mono> necesita a <Mono>C</Mono>, <Mono>C</Mono> necesita a
+            <Mono>B</Mono> y <Mono>B</Mono> necesita a <Mono>A</Mono>. Ninguna de las tres tareas puede quedar lista
+            primero, porque cada una espera a otra que, a su vez, la espera a ella. Este grafo no puede representar
+            un conjunto de dependencias ejecutable.
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.ArrowsClockwise}>
+            <span slot="title">Acíclico</span>
+
+            <P>
+                Un grafo de dependencias es <B>acíclico</B> cuando seguir sus conexiones dirigidas nunca permite
+                regresar a la tarea de partida.
+            </P>
+        </Definition>
+
+        <Explanation headingLevel="h3">
+            <P>
+                Compara ese ciclo con el grafo de <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
+                <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> que vimos antes: ¿por qué ese grafo sí admite
+                un orden de preparación válido y este no? La diferencia no está en cuántas tareas hay, sino en si es
+                posible seguir las flechas y regresar al punto de partida.
+            </P>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-selected-task-graph">
+        <Heading
+            headingLevel="h2" Icon={icons.Target}
+            slot="heading"
+        >
+            No todas las tareas forman parte de cada ejecución
+        </Heading>
+
+        <P>
+            El grafo de dependencias que vimos antes describe todas las tareas conocidas y sus relaciones. Pero
+            solicitar una tarea en particular no ejecuta ese grafo completo: solo ejecuta la tarea solicitada y las
+            dependencias necesarias para alcanzarla. Solicitar <Mono>packageReport</Mono> selecciona este subconjunto:
+        </P>
+
+        <MermaidDiagram spec={packageReportSelectedGraph} />
+
+        <P>
+            Solicitar <Mono>verifyReport</Mono> selecciona un subconjunto distinto:
+        </P>
+
+        <MermaidDiagram spec={verifyReportSelectedGraph} />
+
+        <P>
+            Ambas ejecuciones comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguna
+            incluye la tarea que la otra solicitó: pedir <Mono>packageReport</Mono> no ejecuta
+            <Mono>verifyReport</Mono>, y pedir <Mono>verifyReport</Mono> no ejecuta <Mono>packageReport</Mono>.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <P>
+                El build puede conocer muchas tareas, pero una ejecución necesita solo la tarea solicitada y las
+                dependencias necesarias para alcanzarla.
+            </P>
+        </Explanation>
+
+        <P>
+            Conviene distinguir tres términos que hasta ahora usamos de forma intercambiable:
+        </P>
+
+        <P>
+            <Mono>descripción del build → todas las tareas conocidas y sus relaciones</Mono>
+        </P>
+
+        <P>
+            <Mono>tarea solicitada → punto de partida de una ejecución</Mono>
+        </P>
+
+        <P>
+            <Mono>grafo de tareas → tarea solicitada + dependencias necesarias</Mono>
+        </P>
+
+        <P>
+            El grafo de tareas no es una propiedad fija del build: depende de qué tarea se solicita en cada
+            ejecución.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-gradle-realization">
+        <Heading
+            headingLevel="h2" Icon={icons.Wrench}
+            slot="heading"
+        >
+            Un grafo de tareas real: Gradle
+        </Heading>
+
+        <P>
+            Todo lo anterior fue un modelo conceptual. Gradle es un sistema de construcción real que registra tareas
+            nombradas y conexiones dirigidas entre ellas con una sintaxis muy cercana a ese modelo:
+        </P>
+
+        <KotlinBlock
+            code={`
+                tasks.register("prepareCatalog") {
+                    doLast { println("Preparing catalog...") }
+                }
+
+                tasks.register("generateReport") {
+                    dependsOn("prepareCatalog")
+                    doLast { println("Generating report...") }
+                }
+
+                tasks.register("packageReport") {
+                    dependsOn("generateReport")
+                    doLast { println("Packaging report...") }
+                }
+
+                tasks.register("verifyReport") {
+                    dependsOn("generateReport")
+                    doLast { println("Verifying report...") }
+                }
+            `}
+        >
+            <span slot="title">build.gradle.kts (fragmento)</span>
+        </KotlinBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                <Mono>tasks.register(...)</Mono> declara un nodo del grafo: una tarea nombrada, igual que
+                <Mono>prepareCatalog</Mono> o <Mono>generateReport</Mono> en los diagramas anteriores.
+                <Mono>dependsOn(...)</Mono> declara una conexión dirigida: <Mono>generateReport</Mono> depende de
+                <Mono>prepareCatalog</Mono> en el código exactamente igual que en el diagrama. La sintaxis de Gradle es
+                secundaria; lo que importa es que reproduce el mismo grafo dirigido y acíclico que ya conocemos.
+            </P>
+        </Explanation>
+
+        <P>
+            Igual que con el modelo conceptual, solicitar una tarea concreta selecciona solo esa tarea y sus
+            dependencias. Solicitar <Mono>packageReport</Mono> selecciona <Mono>prepareCatalog</Mono> y
+            <Mono>generateReport</Mono>, pero no <Mono>verifyReport</Mono>:
+        </P>
+
+        <BashBlock code={`./gradlew packageReport --task-graph`}>
+            <span slot="title">Grafo de tareas seleccionado para packageReport</span>
+        </BashBlock>
+
+        <OutputBlock
+            code={`
+                :prepareCatalog
+                :generateReport
+                :packageReport
+            `}
+        />
+
+        <P>
+            Solicitar <Mono>verifyReport</Mono> selecciona el mismo prefijo compartido, pero termina en una tarea
+            distinta:
+        </P>
+
+        <BashBlock code={`./gradlew verifyReport --task-graph`}>
+            <span slot="title">Grafo de tareas seleccionado para verifyReport</span>
+        </BashBlock>
+
+        <OutputBlock
+            code={`
+                :prepareCatalog
+                :generateReport
+                :verifyReport
+            `}
+        />
+
+        <P>
+            Esta lección se detiene aquí a propósito: <Mono>tasks.register</Mono> y <Mono>dependsOn</Mono> bastan para
+            reproducir el grafo que ya construimos. Cómo una tarea recibe entradas, produce salidas o se organiza
+            mediante complementos es contenido de la siguiente lección.
         </P>
     </NotesSection>
 </NotesLayout>
