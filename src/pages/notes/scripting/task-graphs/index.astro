@@ -4,6 +4,7 @@ import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Exercise, Explanation, Info, Question, Solution } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
+import KotlinInline from "~/components/ui/code/kt/KotlinInline.astro";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink, Link } from "~/components/ui/links";
@@ -57,7 +58,7 @@ import {
         </P>
 
         <P>
-            <Kotlin>prepareCatalog -> generateReport</Kotlin>
+            <KotlinInline>prepareCatalog -> generateReport</KotlinInline>
         </P>
 
         <Explanation headingLevel="h3">
@@ -105,10 +106,10 @@ import {
                 </P>
 
                 <P>
-                    Recuerda la convención: en una relación <Mono>A -> B</Mono>, la tarea <Mono>B</Mono> depende de{
-                        " "
-                    }<Mono>A</Mono>. Una flecha impone una restricción de precedencia; si no existe una relación entre
-                    dos tareas, el grafo no establece un orden entre ellas.
+                    Recuerda la convención: <B>en una relación <Mono>A -> B</Mono>, la tarea <Mono>B</Mono> depende de{
+                            " "
+                        }<Mono>A</Mono></B>. Una flecha impone una restricción de precedencia; si no existe una relación
+                    entre dos tareas, el grafo no establece un orden entre ellas.
                 </P>
             </Solution>
         </Question>
