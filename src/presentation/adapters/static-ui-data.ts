@@ -4,14 +4,8 @@ import {
     getUltraRareNotFoundMessage,
 } from "$infrastructure/adapters/StaticUiDataAdapter";
 
-export function getNotFoundMessagePool(): readonly string[] {
-    return getNotFoundMessages();
-}
+export const getNotFoundMessagePool = (): readonly string[] => getNotFoundMessages();
 
-export function getRareNotFoundMessage(): string {
-    return getUltraRareNotFoundMessage();
-}
+export const getRareNotFoundMessage = (): string => getUltraRareNotFoundMessage();
 
-export function getPlaceholderImagePool(): readonly string[] {
-    return getTodoImages();
-}
+export const getPlaceholderImagePool = (): readonly string[] => getTodoImages();
