@@ -1,7 +1,6 @@
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
-import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
-import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import { getReferencesForLesson } from "~/lib/bibliography";
 import {
     cyclicDependencyCounterexample,
@@ -11,6 +10,7 @@ import {
     taskGraphDiagramSpecs,
     verifyReportSelectedGraph,
 } from "~/lib/diagrams/task-graph-examples";
+import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import TaskGraphsPage from "../index.astro";
 
 async function renderLesson(): Promise<{ html: string; doc: Document }> {
@@ -29,9 +29,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain(
-            "De tareas a grafos: cómo coordinar un proceso de construcción",
-        );
+        expect(normalizedHtml).toContain("De tareas a grafos: cómo coordinar un proceso de construcción");
         expect(normalizedHtml).toContain("/notes/scripting/tasks-as-abstractions/");
         expect(normalizedHtml).toContain("Ahora aparece una pregunta nueva");
         expect(normalizedHtml).toContain("Cuando una tarea necesita de otra");
@@ -40,6 +38,8 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("Grafo de tareas");
         expect(normalizedHtml).toContain("generateReport");
         expect(normalizedHtml).toContain("prepareCatalog");
+        expect(normalizedHtml).toContain("tarea requerida → tarea dependiente");
+        expect(normalizedHtml).not.toContain("tarea → tarea requerida");
     });
 
     test.each(taskGraphDiagramSpecs)(
@@ -75,6 +75,21 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain(cyclicDependencyCounterexample.description);
     });
 
+    test("then the DAG is presented as precedence constraints with multiple valid topological orders", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).toContain("Un DAG admite órdenes válidos");
+        expect(normalizedHtml).toContain("Orden topológico");
+        expect(normalizedHtml).toContain("no necesariamente una secuencia única de ejecución");
+        expect(normalizedHtml).toContain(
+            "prepareCatalog → generateReport → packageReport → verifyReport",
+        );
+        expect(normalizedHtml).toContain(
+            "prepareCatalog → generateReport → verifyReport → packageReport",
+        );
+    });
+
     test("then requesting packageReport and verifyReport selects two different task graphs", async () => {
         const { doc } = await renderLesson();
         const packageFigure = doc.querySelector(
@@ -101,6 +116,15 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain(
             "El build puede conocer muchas tareas, pero una ejecución necesita solo la tarea solicitada",
         );
+    });
+
+    test("then it distinguishes the task graph from an execution trace", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).toContain("Grafo ≠ traza de ejecución");
+        expect(normalizedHtml).toContain("qué tareas se ejecutaron realmente y cuándo");
+        expect(normalizedHtml).toContain("ejecutarlo en paralelo");
     });
 
     test("then it realizes the task graph as a minimal Gradle build", async () => {
@@ -162,8 +186,10 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const sourceLinks = Array.from(doc.querySelectorAll("a.dibs-source-link"))
             .map((a) => a.getAttribute("href") ?? "");
 
-        expect(sourceLinks.some((href) => href.includes("kotlin-companion") &&
-            href.includes("gradle/task-graph/build.gradle.kts"))).toBe(true);
+        expect(sourceLinks.some((href) =>
+            href.includes("kotlin-companion")
+            && href.includes("gradle/task-graph/build.gradle.kts")
+        )).toBe(true);
     });
 
     test("then the exercise asks students to extend the graph with finalizeReport", async () => {

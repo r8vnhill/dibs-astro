@@ -1,8 +1,8 @@
 ---
-import * as icons from "$icons";
+import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Exercise, Explanation } from "~/components/ui/callouts";
+import { Definition, Exercise, Explanation, Info, Question, Solution } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
@@ -21,64 +21,97 @@ import {
 } from "~/lib/diagrams/task-graph-examples";
 ---
 
-<NotesLayout
-    title="Grafos de tareas y sistemas de construcción"
-    description="..."
->
-    <Fragment slot="abstract">
-        <P>
-            La lección <Link href="/notes/scripting/tasks-as-abstractions/"
-            >Tareas como abstracciones de acciones repetibles</Link> mostró cómo nombrar unidades de trabajo y cómo un
-            despachador puede elegir una tarea para ejecutarla. Ahora aparece una pregunta nueva: ¿qué ocurre cuando una
-            tarea necesita que otra haya terminado antes?
-        </P>
+<NotesLayout title="Grafos de tareas y sistemas de construcción" description="...">
+    <!--
+        <Fragment slot="abstract">
 
-        <P>
-            En esta lección construiremos el modelo conceptual que permite responderla: un sistema de construcción
-            coordina tareas relacionadas, un <B>grafo dirigido y acíclico</B> representa sus dependencias y un
-            <B>grafo de tareas</B> describe el trabajo necesario para una ejecución concreta.
-        </P>
-    </Fragment>
+        </Fragment>
+    -->
 
     <NotesSection id="h2-task-dependencies">
         <Heading
             headingLevel="h2" Icon={icons.ArrowsLeftRight}
             slot="heading"
         >
-            Cuando una tarea necesita de otra
+            Dependencias entre tareas
         </Heading>
 
         <P>
-            Imagina cuatro tareas nombradas: <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
-            <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>. El despachador de la lección anterior podía
-            responder a una relación de este tipo:
+            Imagina que nuestro proyecto tiene varias tareas: <Mono>prepareCatalog</Mono>,
+            <Mono>generateReport</Mono>, <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>. En la lección anterior,
+            el despachador podía encontrar una tarea a partir de su nombre:
         </P>
 
         <P>
-            <Mono>nombre de tarea → tarea</Mono>
+            <KotlinInline code="nombre de tarea -> tarea" />
         </P>
 
         <P>
-            Pero si <Mono>generateReport</Mono> solo tiene sentido después de <Mono>prepareCatalog</Mono>, también
-            necesitamos expresar una relación entre tareas:
+            Eso es suficiente mientras cada tarea pueda ejecutarse de manera independiente. Pero supongamos que <Mono
+            >generateReport</Mono> necesita que el catálogo ya haya sido preparado. Entonces <B class="text-primary"
+            >conocer las tareas disponibles ya no basta:</B> también necesitamos representar la relación entre ellas.
         </P>
 
         <P>
-            <Mono>prepareCatalog → generateReport</Mono>
+            Podemos expresar esa relación así:
+        </P>
+
+        <P>
+            <Kotlin>prepareCatalog -> generateReport</Kotlin>
         </P>
 
         <Explanation headingLevel="h3">
             <P>
-                En este modelo, la flecha se lee como una dependencia: <Mono>generateReport</Mono> requiere que
-                <Mono>prepareCatalog</Mono> haya terminado. La flecha no representa simplemente el orden en que aparecen
-                los nombres; representa una condición que el sistema debe respetar.
+                En esta lección leeremos una flecha <Mono>A -> B</Mono> como:
+                <strong> B depende de A</strong>.
+            </P>
+
+            <P>
+                Por lo tanto, <Mono>prepareCatalog -> generateReport</Mono> significa que <Mono>generateReport</Mono>
+                solo puede ejecutarse después de que <Mono>prepareCatalog</Mono> haya terminado.
+            </P>
+
+            <P>
+                La flecha no describe el orden en que escribimos las tareas en un archivo. Describe una
+                <strong> condición que debe cumplirse</strong> para poder ejecutar otra tarea.
             </P>
         </Explanation>
 
         <P>
-            Una colección de tareas nombradas puede ser suficiente para un despachador simple. Cuando las tareas tienen
-            dependencias, necesitamos además un modelo que permita conocer qué trabajo prepara a qué otro trabajo.
+            Ahora nuestro modelo contiene dos tipos de información: <I>qué tareas existen</I> y <I>cuáles necesitan
+                trabajo realizado por otras tareas</I>. Cuando aparecen varias relaciones de este tipo, una simple
+            colección de tareas comienza a convertirse en una estructura más interesante.
         </P>
+
+        <Question headingLevel="h3">
+            <P>
+                Si tenemos las relaciones
+                <KotlinInline code="prepareCatalog -> generateReport" /> y
+                <KotlinInline code="prepareMetadata -> generateReport" />, ¿cuáles tareas dependen de qué otras? ¿Cuáles
+                deben completarse primero? ¿Cuáles pueden ejecutarse en paralelo?
+            </P>
+
+            <Solution headingLevel="h4">
+                <P>
+                    <Mono>generateReport</Mono> depende tanto de <Mono>prepareCatalog</Mono> como de <Mono
+                    >prepareMetadata</Mono>. Por lo tanto, ambas tareas deben completarse antes de que <Mono
+                    >generateReport</Mono> pueda ejecutarse.
+                </P>
+
+                <P>
+                    En cambio, no existe una dependencia entre <Mono>prepareCatalog</Mono> y <Mono
+                    >prepareMetadata</Mono>. El grafo no exige que una se ejecute antes que la otra, por lo que pueden
+                    ejecutarse en paralelo.
+                </P>
+
+                <P>
+                    Recuerda la convención: en una relación <Mono>A -> B</Mono>, la tarea <Mono>B</Mono> depende de{
+                        " "
+                    }<Mono>A</Mono>. Una flecha impone una restricción de precedencia; si no existe una relación entre
+                    dos tareas, el grafo no establece un orden entre ellas.
+                </P>
+            </Solution>
+        </Question>
     </NotesSection>
 
     <NotesSection id="h2-build-system">
@@ -109,11 +142,11 @@ import {
         </P>
 
         <P>
-            <Mono>despachador: nombre solicitado → una tarea</Mono>
+            <Mono>despachador: nombre solicitado -> una tarea</Mono>
         </P>
 
         <P>
-            <Mono>sistema de construcción: resultado solicitado → tareas necesarias y sus dependencias</Mono>
+            <Mono>sistema de construcción: resultado solicitado -> tareas necesarias y sus dependencias</Mono>
         </P>
 
         <P>
@@ -167,7 +200,7 @@ import {
         <P>
             Antes de relacionarlas, <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
             <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> son solo una colección de tareas nombradas: nada en
-            esa lista dice qué tarea depende de cuál. La dependencia <Mono>prepareCatalog → generateReport</Mono>
+            esa lista dice qué tarea depende de cuál. La dependencia <Mono>prepareCatalog -> generateReport</Mono>
             introducida al inicio de esta lección es la primera conexión entre dos de ellas. Si agregamos las
             dependencias restantes, el conjunto completo forma un grafo:
         </P>
@@ -177,8 +210,8 @@ import {
         <Explanation headingLevel="h3">
             <P>
                 Cada tarea es un <B>nodo</B> del grafo. Cada flecha es una <B>conexión dirigida</B>: la flecha
-                <Mono>A → B</Mono> se lee siempre como <I>B depende de A</I>, nunca al revés. Por eso
-                <Mono>generateReport → packageReport</Mono> significa que <Mono>packageReport</Mono> requiere que
+                <Mono>A -> B</Mono> se lee siempre como <I>B depende de A</I>, nunca al revés. Por eso
+                <Mono>generateReport -> packageReport</Mono> significa que <Mono>packageReport</Mono> requiere que
                 <Mono>generateReport</Mono> haya terminado, y no que <Mono>generateReport</Mono> requiera a
                 <Mono>packageReport</Mono>.
             </P>
@@ -186,7 +219,7 @@ import {
 
         <P>
             Con esta convención, una colección de tareas nombradas se convierte en un grafo de dependencias en cuanto
-            declaramos al menos una relación <Mono>tarea → tarea requerida</Mono> entre ellas.
+            declaramos al menos una relación <Mono>tarea requerida -> tarea dependiente</Mono> entre ellas.
         </P>
     </NotesSection>
 
@@ -199,8 +232,8 @@ import {
         </Heading>
 
         <P>
-            La palabra <B>dirigido</B> ya apareció: <Mono>prepareCatalog → generateReport</Mono> tiene una dirección,
-            y esa dirección no se puede invertir libremente. Que <Mono>generateReport</Mono> dependa de
+            La palabra <B>dirigido</B> ya apareció: <Mono>prepareCatalog -> generateReport</Mono> tiene una dirección, y
+            esa dirección no se puede invertir libremente. Que <Mono>generateReport</Mono> dependa de
             <Mono>prepareCatalog</Mono> no implica que <Mono>prepareCatalog</Mono> dependa de
             <Mono>generateReport</Mono>.
         </P>
@@ -214,8 +247,8 @@ import {
         <P>
             Siguiendo las flechas: <Mono>A</Mono> necesita a <Mono>C</Mono>, <Mono>C</Mono> necesita a
             <Mono>B</Mono> y <Mono>B</Mono> necesita a <Mono>A</Mono>. Ninguna de las tres tareas puede quedar lista
-            primero, porque cada una espera a otra que, a su vez, la espera a ella. Este grafo no puede representar
-            un conjunto de dependencias ejecutable.
+            primero, porque cada una espera a otra que, a su vez, la espera a ella. Este grafo no puede representar un
+            conjunto de dependencias ejecutable.
         </P>
 
         <Definition headingLevel="h3" icon={icons.ArrowsClockwise}>
@@ -230,11 +263,50 @@ import {
         <Explanation headingLevel="h3">
             <P>
                 Compara ese ciclo con el grafo de <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
-                <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> que vimos antes: ¿por qué ese grafo sí admite
-                un orden de preparación válido y este no? La diferencia no está en cuántas tareas hay, sino en si es
+                <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> que vimos antes: ¿por qué ese grafo sí admite un
+                orden de preparación válido y este no? La diferencia no está en cuántas tareas hay, sino en si es
                 posible seguir las flechas y regresar al punto de partida.
             </P>
         </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-topological-orders">
+        <Heading
+            headingLevel="h2" Icon={icons.ListChecks}
+            slot="heading"
+        >
+            Un DAG admite órdenes válidos
+        </Heading>
+
+        <P>
+            Un grafo dirigido y acíclico no dicta una única secuencia. Solo impone las precedencias que sus flechas
+            expresan: <Mono>prepareCatalog</Mono> debe preceder a <Mono>generateReport</Mono>, y
+            <Mono>generateReport</Mono> debe preceder tanto a <Mono>packageReport</Mono> como a
+            <Mono>verifyReport</Mono>.
+        </P>
+
+        <P>
+            Como no hay una flecha entre <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>, ambas tareas no tienen
+            una relación de precedencia entre sí. Por eso son válidos, por ejemplo, estos dos órdenes:
+        </P>
+
+        <P>
+            <Mono>prepareCatalog -> generateReport -> packageReport -> verifyReport</Mono>
+        </P>
+
+        <P>
+            <Mono>prepareCatalog -> generateReport -> verifyReport -> packageReport</Mono>
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.ListChecks}>
+            <span slot="title">Orden topológico</span>
+
+            <P>
+                Un <B>orden topológico</B> coloca cada tarea requerida antes de cualquier tarea que dependa de ella. El
+                DAG define así restricciones de precedencia —un orden parcial—, no necesariamente una secuencia única de
+                ejecución.
+            </P>
+        </Definition>
     </NotesSection>
 
     <NotesSection id="h2-selected-task-graph">
@@ -260,8 +332,8 @@ import {
         <MermaidDiagram spec={verifyReportSelectedGraph} />
 
         <P>
-            Ambas ejecuciones comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguna
-            incluye la tarea que la otra solicitó: pedir <Mono>packageReport</Mono> no ejecuta
+            Ambas ejecuciones comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguna incluye
+            la tarea que la otra solicitó: pedir <Mono>packageReport</Mono> no ejecuta
             <Mono>verifyReport</Mono>, y pedir <Mono>verifyReport</Mono> no ejecuta <Mono>packageReport</Mono>.
         </P>
 
@@ -277,21 +349,29 @@ import {
         </P>
 
         <P>
-            <Mono>descripción del build → todas las tareas conocidas y sus relaciones</Mono>
+            <Mono>descripción del build -> todas las tareas conocidas y sus relaciones</Mono>
         </P>
 
         <P>
-            <Mono>tarea solicitada → punto de partida de una ejecución</Mono>
+            <Mono>tarea solicitada -> punto de partida de una ejecución</Mono>
         </P>
 
         <P>
-            <Mono>grafo de tareas → tarea solicitada + dependencias necesarias</Mono>
+            <Mono>grafo de tareas -> tarea solicitada + dependencias necesarias</Mono>
         </P>
 
         <P>
-            El grafo de tareas no es una propiedad fija del build: depende de qué tarea se solicita en cada
-            ejecución.
+            El grafo de tareas no es una propiedad fija del build: depende de qué tarea se solicita en cada ejecución.
         </P>
+
+        <Explanation headingLevel="h3">
+            <P>
+                <B>Grafo ≠ traza de ejecución.</B> El grafo responde qué depende de qué. Una traza de ejecución responde
+                qué tareas se ejecutaron realmente y cuándo. Una ejecución puede escoger cualquier orden compatible con
+                las dependencias y, si hay trabajo independiente, ejecutarlo en paralelo; el grafo por sí solo no
+                registra esa secuencia observada.
+            </P>
+        </Explanation>
     </NotesSection>
 
     <NotesSection id="h2-gradle-realization">
@@ -407,12 +487,12 @@ import {
                 </ListItem>
                 <ListItem icon={icons.GitBranch}>
                     Declara sus dos dependencias con <KotlinInline
-                    code={`dependsOn("packageReport", "verifyReport")`}
+                        code={`dependsOn("packageReport", "verifyReport")`}
                     />.
                 </ListItem>
                 <ListItem icon={icons.ListChecks}>
                     Antes de ejecutar nada, predice qué tareas selecciona <Mono>./gradlew finalizeReport
-                    --task-graph</Mono>.
+                        --task-graph</Mono>.
                 </ListItem>
                 <ListItem icon={icons.ListChecks}>
                     Predice también qué tareas selecciona <Mono>./gradlew packageReport --task-graph</Mono> una vez que
@@ -464,8 +544,9 @@ import {
                     Agregar <Mono>finalizeReport</Mono> no modifica las dependencias de las tareas que ya existían.
                 </ListItem>
                 <ListItem icon={icons.Lightbulb}>
-                    Para comprobar la aciclicidad, sigue las flechas desde <Mono>finalizeReport</Mono> hacia atrás:
-                    si nunca vuelves a <Mono>finalizeReport</Mono>, el grafo sigue siendo válido.
+                    Para comprobar la aciclicidad, observa que <Mono>finalizeReport</Mono> no tiene flechas salientes:
+                    las nuevas flechas llegan a él desde <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>, así que
+                    no pueden cerrar un camino que regrese a sus predecesoras.
                 </ListItem>
             </List>
         </Fragment>
@@ -509,9 +590,8 @@ import {
 
             <P>
                 El grafo extendido se mantiene acíclico porque cada dependencia nueva apunta hacia
-                <Mono>finalizeReport</Mono> desde una tarea que ya existía; siguiendo las flechas desde
-                <Mono>finalizeReport</Mono> se llega siempre a <Mono>generateReport</Mono> y luego a
-                <Mono>prepareCatalog</Mono>, sin que ningún camino regrese a <Mono>finalizeReport</Mono>.
+                <Mono>finalizeReport</Mono> desde una tarea que ya existía. Como <Mono>finalizeReport</Mono> no tiene
+                flechas salientes, no existe un camino dirigido que salga de él y regrese a él.
             </P>
 
             <P>
@@ -529,8 +609,8 @@ import {
         <Fragment slot="conclusions">
             <P>
                 Una colección de tareas nombradas se convierte en un sistema de construcción cuando también podemos
-                expresar qué tareas necesita cada resultado. Esas relaciones forman un grafo: las tareas son nodos y
-                una flecha <Mono>A → B</Mono> significa que <Mono>B</Mono> depende de <Mono>A</Mono>.
+                expresar qué tareas necesita cada resultado. Esas relaciones forman un grafo: las tareas son nodos y una
+                flecha <Mono>A -> B</Mono> significa que <Mono>B</Mono> depende de <Mono>A</Mono>.
             </P>
 
             <P>
@@ -603,8 +683,8 @@ import {
         </Fragment>
         <Fragment slot="description-ref:build-scripts-perfect-dependencies-2020">
             <P>
-                Lectura adicional sobre cómo dependencias incompletas o excesivas pueden producir resultados incorrectos,
-                trabajo innecesario y menos paralelismo.
+                Lectura adicional sobre cómo dependencias incompletas o excesivas pueden producir resultados
+                incorrectos, trabajo innecesario y menos paralelismo.
             </P>
         </Fragment>
     </ReferencesFromCatalog>
