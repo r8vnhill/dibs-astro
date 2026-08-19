@@ -63,18 +63,17 @@ import {
 
         <Explanation headingLevel="h3">
             <P>
-                En esta lección leeremos una flecha <Mono>A -> B</Mono> como:
-                <strong> B depende de A</strong>.
+                En esta lección leeremos una flecha <KotlinInline>A -> B</KotlinInline> como: <B> B depende de A</B>.
             </P>
 
             <P>
-                Por lo tanto, <Mono>prepareCatalog -> generateReport</Mono> significa que <Mono>generateReport</Mono>
-                solo puede ejecutarse después de que <Mono>prepareCatalog</Mono> haya terminado.
+                Por lo tanto, <KotlinInline>prepareCatalog -> generateReport</KotlinInline> significa que <Mono
+                >generateReport</Mono> solo puede ejecutarse después de que <Mono>prepareCatalog</Mono> haya terminado.
             </P>
 
             <P>
-                La flecha no describe el orden en que escribimos las tareas en un archivo. Describe una
-                <strong> condición que debe cumplirse</strong> para poder ejecutar otra tarea.
+                La flecha no describe el orden en que escribimos las tareas en un archivo. Describe una <B>condición que
+                    debe cumplirse</B> para poder ejecutar otra tarea.
             </P>
         </Explanation>
 
@@ -106,7 +105,7 @@ import {
                 </P>
 
                 <P>
-                    Recuerda la convención: <B>en una relación <Mono>A -> B</Mono>, la tarea <Mono>B</Mono> depende de{
+                    Recuerda la convención: <B>en una relación <Ko>A -> B</Ko>, la tarea <Mono>B</Mono> depende de{
                             " "
                         }<Mono>A</Mono></B>. Una flecha impone una restricción de precedencia; si no existe una relación
                     entre dos tareas, el grafo no establece un orden entre ellas.
