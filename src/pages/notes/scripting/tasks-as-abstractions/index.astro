@@ -5,7 +5,7 @@ import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Exercise, Explanation, Info, More } from "~/components/ui/callouts";
 import { BashBlock, BashInline, JavaScriptInline, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
-import { DibsSourceLink } from "~/components/ui/links";
+import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { ReferencesFromCatalog } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
@@ -713,7 +713,10 @@ import NotesSection from "~/layouts/NotesSection.astro";
             <P>
                 Esta separación es pequeña, pero prepara una idea central para el siguiente paso conceptual: cuando las
                 tareas empiezan a crecer, relacionarse entre sí y repetirse dentro de un flujo de desarrollo, conviene
-                usar un sistema de construcción para coordinarlas.
+                usar un sistema de construcción para coordinarlas. La siguiente lección, <Link
+                    href="/notes/scripting/task-graphs/"
+                >De tareas a grafos: cómo coordinar un proceso de construcción</Link>, mostrará cómo representar esas
+                relaciones mediante dependencias y grafos.
             </P>
         </Fragment>
 

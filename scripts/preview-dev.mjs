@@ -12,7 +12,8 @@ const astroCli = path.resolve(
     "..",
     "node_modules",
     "astro",
-    "astro.js",
+    "bin",
+    "astro.mjs",
 );
 
 function run(command, args) {

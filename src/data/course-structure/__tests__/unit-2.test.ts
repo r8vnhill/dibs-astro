@@ -19,4 +19,13 @@ describe("unit2Lessons", () => {
             href: "/notes/scripting/tasks-as-abstractions/",
         });
     });
+
+    test("places task graphs after task abstractions", () => {
+        expect(unit2Lessons[2]).toMatchObject({
+            kind: "link",
+            id: "task-graphs",
+            title: "De tareas a grafos: cómo coordinar un proceso de construcción",
+            href: "/notes/scripting/task-graphs/",
+        });
+    });
 });

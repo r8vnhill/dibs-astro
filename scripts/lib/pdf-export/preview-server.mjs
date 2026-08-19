@@ -6,9 +6,11 @@ const astroCli = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
     "..",
     "..",
+    "..",
     "node_modules",
     "astro",
-    "astro.js",
+    "bin",
+    "astro.mjs",
 );
 
 export function startPreviewServer({ projectRoot, host = "127.0.0.1", port = 4321 }) {

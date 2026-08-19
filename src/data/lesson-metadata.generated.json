@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-15T18:19:41.263Z",
-  "totalLessons": 53,
+  "generatedAt": "2026-08-19T10:41:34.571Z",
+  "totalLessons": 54,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -10,8 +10,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-13",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "c5b83474e9bdf674cce6517412b887cfeab66baa",
           "date": "2026-08-13",
@@ -35,12 +41,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -51,8 +51,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -76,12 +82,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -92,8 +92,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -117,12 +123,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "42cdbfc0a44fc329f4bb816df943ea6c1a9ac8f6",
-          "date": "2025-09-21",
-          "author": "r8vnhill",
-          "subject": "feat: add new scripting notes and footnotes styling"
         }
       ]
     },
@@ -133,8 +133,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -158,12 +164,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -174,8 +174,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -199,12 +205,6 @@
           "date": "2026-04-05",
           "author": "R8V",
           "subject": "feat: add design principles section and update lesson metadata"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -256,8 +256,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -281,12 +287,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -297,8 +297,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -322,12 +328,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "be5315edb7bd5628703b2799089bcd2601333eaf",
-          "date": "2025-10-29",
-          "author": "r8vnhill",
-          "subject": "✨🧹 feat(ci): add dprint formatting, Husky + lint-staged pre-commit, and language-link helpers"
         }
       ]
     },
@@ -338,8 +338,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -363,12 +369,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-          "date": "2025-10-24",
-          "author": "r8vnhill",
-          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
         }
       ]
     },
@@ -420,8 +420,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -445,12 +451,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "229fa5120a63c8443fb7ec6e099a35bd230135e2",
-          "date": "2025-10-24",
-          "author": "r8vnhill",
-          "subject": "✨🧭♿️🎨 feat(scripting): split basic patterns into sub-lessons; support nav containers; a11y/UI polish"
         }
       ]
     },
@@ -461,8 +461,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -486,12 +492,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -572,8 +572,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -597,12 +603,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -613,8 +613,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -638,12 +644,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "4aaafb3e029e3434b7adcfcb0d1a31cad9fdf7f3",
-          "date": "2026-03-19",
-          "author": "r8vnhill",
-          "subject": ":sparkles: feat(nushell): restructure structured output lesson flow"
         }
       ]
     },
@@ -654,8 +654,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -679,12 +685,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -695,8 +695,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -720,12 +726,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -736,8 +736,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -761,12 +767,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
-          "date": "2026-04-05",
-          "author": "r8vnhill",
-          "subject": "Add Node.js CLI discovery and help documentation"
         }
       ]
     },
@@ -777,8 +777,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -802,12 +808,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -818,8 +818,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -843,12 +849,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "5e5ff1aea03dadd72f6248d04eca0a2daea5fa3e",
-          "date": "2026-04-05",
-          "author": "r8vnhill",
-          "subject": "Add Node.js CLI discovery and help documentation"
         }
       ]
     },
@@ -859,8 +859,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -884,12 +890,6 @@
           "date": "2026-04-05",
           "author": "r8vnhill",
           "subject": "Add Node.js CLI discovery and help documentation"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -900,8 +900,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -925,12 +931,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -941,8 +941,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -966,12 +972,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -982,8 +982,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1007,12 +1013,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -1023,8 +1023,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1048,12 +1054,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1064,8 +1064,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -1089,12 +1095,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1105,8 +1105,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1130,12 +1136,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -1146,8 +1146,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1171,12 +1177,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1187,8 +1187,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1212,12 +1218,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -1228,8 +1228,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1253,12 +1259,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
-          "date": "2026-02-17",
-          "author": "r8vnhill",
-          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
         }
       ]
     },
@@ -1269,8 +1269,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1294,12 +1300,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1310,8 +1310,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -1335,12 +1341,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -1351,8 +1351,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -1376,12 +1382,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "0b7190dcbf7a6a72852bd2c8ee69d05efdef5fc0",
-          "date": "2026-03-26",
-          "author": "r8vnhill",
-          "subject": "📚🐛 feat(scripting): add Nushell pipelines lesson and unblock checks"
         }
       ]
     },
@@ -1392,8 +1392,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -1417,12 +1423,6 @@
           "date": "2026-03-28",
           "author": "r8vnhill",
           "subject": "📚 feat(bibliography): add Python structured-output catalog references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1433,8 +1433,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1458,12 +1464,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1515,8 +1515,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -1540,12 +1546,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "7927415af10d73509f943835aa4eebbaca3f251b",
-          "date": "2026-04-01",
-          "author": "r8vnhill",
-          "subject": "🌐🐟 feat(home): add editorial landing and fish scripting entry"
         }
       ]
     },
@@ -1597,19 +1597,37 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-15",
+      "lastModified": "2026-08-18",
       "changes": [
         {
-          "hash": "e1b593e4da5e222e5b003f0ecf77a7ef0f5bc543",
-          "date": "2026-08-15",
+          "hash": "67e80789e7117479a32301961f56267d946c4205",
+          "date": "2026-08-18",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "feat: Implement research-grounded revisions for the Nushell comparative lesson"
+          "subject": "feat(migration): implement Milestone 4 - Migrate DIBS to published @ravenhill/astro-semantics@0.1.0"
         },
         {
-          "hash": "dab6142d5e34ce6f95777eac3c14eecd25a3f336",
+          "hash": "9e35ddd55131b6d2fe3ac99f7c5e9910133cd294",
           "date": "2026-08-15",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "feat: Add Dockerization plan for DIBS as a reproducible delivery target"
+          "subject": "feat: mark Milestone 3 as DONE and add detailed documentation for establishing the canonical @ravenhill GitLab npm registry"
+        },
+        {
+          "hash": "837f9ded1b134e74e4014abeba43cf68a5d34b40",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🪐 feat(astro-semantics): Introduce Paragraph component, CI setup, and npm registry support"
+        },
+        {
+          "hash": "60f4f84c8e032ace213fc5558b0446bcdbb028e4",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "Refactor Nushell execution boundary diagram and review verdict for P.astro extraction"
+        },
+        {
+          "hash": "dec3324ca015ab10cce8d54ecbf19f13ff912f55",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📝 docs(nushell): replace ASCII process models with SVG diagrams"
         }
       ]
     },
@@ -1654,6 +1672,15 @@
         }
       ]
     },
+    "/notes/scripting/task-graphs/": {
+      "sourceFile": "src/pages/notes/scripting/task-graphs/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "changes": []
+    },
     "/notes/scripting/tasks-as-abstractions/": {
       "sourceFile": "src/pages/notes/scripting/tasks-as-abstractions/index.astro",
       "authors": [
@@ -1661,8 +1688,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1686,12 +1719,6 @@
           "date": "2026-05-14",
           "author": "r8vnhill",
           "subject": "🚀 lesson(scripting): Expand on tasks as abstractions"
-        },
-        {
-          "hash": "5474db3194558837ad6720b03dc387994068a32c",
-          "date": "2026-05-14",
-          "author": "r8vnhill",
-          "subject": "💡 refactor(imports): Extract and modularize import classification helpers"
         }
       ]
     },
@@ -1784,8 +1811,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1813,8 +1846,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1836,8 +1875,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1871,8 +1916,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-14",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "f441621c9c8b1e9a45b510c7d6abb97b3712c2ce",
           "date": "2026-08-14",
@@ -1896,12 +1947,6 @@
           "date": "2026-08-13",
           "author": "Ignacio Slater-Muñoz",
           "subject": "Add improvement plans for student-oriented readings and redesign readings workspace"
-        },
-        {
-          "hash": "a31463052c6d42fdc363205c6787d6597708ca9a",
-          "date": "2026-08-13",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🎨 tests(release/lessons): Add render-contract tests & consolidate lesson authoring"
         }
       ]
     },
@@ -1941,8 +1986,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -1966,12 +2017,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -1982,8 +2027,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -2007,12 +2058,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -2064,8 +2109,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-06-19",
+      "lastModified": "2026-08-15",
       "changes": [
+        {
+          "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
+          "date": "2026-08-15",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "✨ refactor(site): batch application and test updates"
+        },
         {
           "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
           "date": "2026-06-19",
@@ -2089,12 +2140,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "7189a7a0062e3a1fe34a3e92cdc3981a5949c9ae",
-          "date": "2025-09-14",
-          "author": "r8vnhill",
-          "subject": "✨📚 Update generated icons index timestamp; remove unused imports in various files"
         }
       ]
     }

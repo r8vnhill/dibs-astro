@@ -13,4 +13,9 @@ export const unit2Lessons: readonly Lesson[] = new LessonTreeBuilder()
         "Tareas como abstracciones de acciones repetibles",
         `${coursePaths.scriptingLibraries.tasksAsAbstractions}/`,
     )
+    .link(
+        "task-graphs",
+        "De tareas a grafos: cómo coordinar un proceso de construcción",
+        `${coursePaths.scriptingLibraries.taskGraphs}/`,
+    )
     .build();

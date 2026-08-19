@@ -1,0 +1,146 @@
+---
+import * as icons from "$icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Definition, Explanation } from "~/components/ui/callouts";
+import { B, I, Mono } from "~/components/ui/font";
+import { Link } from "~/components/ui/links";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+---
+
+<NotesLayout
+    title="De tareas a grafos: cómo coordinar un proceso de construcción"
+    description="Relaciona tareas mediante dependencias y construye un modelo para coordinar el trabajo solicitado."
+>
+    <Fragment slot="abstract">
+        <P>
+            La lección <Link href="/notes/scripting/tasks-as-abstractions/"
+            >Tareas como abstracciones de acciones repetibles</Link> mostró cómo nombrar unidades de trabajo y cómo un
+            despachador puede elegir una tarea para ejecutarla. Ahora aparece una pregunta nueva: ¿qué ocurre cuando una
+            tarea necesita que otra haya terminado antes?
+        </P>
+
+        <P>
+            En esta lección construiremos el modelo conceptual que permite responderla: un sistema de construcción
+            coordina tareas relacionadas, un <B>grafo dirigido y acíclico</B> representa sus dependencias y un
+            <B>grafo de tareas</B> describe el trabajo necesario para una ejecución concreta.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-task-dependencies">
+        <Heading
+            headingLevel="h2" Icon={icons.ArrowsLeftRight}
+            slot="heading"
+        >
+            Cuando una tarea necesita de otra
+        </Heading>
+
+        <P>
+            Imagina cuatro tareas nombradas: <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
+            <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>. El despachador de la lección anterior podía
+            responder a una relación de este tipo:
+        </P>
+
+        <P>
+            <Mono>nombre de tarea → tarea</Mono>
+        </P>
+
+        <P>
+            Pero si <Mono>generateReport</Mono> solo tiene sentido después de <Mono>prepareCatalog</Mono>, también
+            necesitamos expresar una relación entre tareas:
+        </P>
+
+        <P>
+            <Mono>prepareCatalog → generateReport</Mono>
+        </P>
+
+        <Explanation headingLevel="h3">
+            <P>
+                En este modelo, la flecha se lee como una dependencia: <Mono>generateReport</Mono> requiere que
+                <Mono>prepareCatalog</Mono> haya terminado. La flecha no representa simplemente el orden en que aparecen
+                los nombres; representa una condición que el sistema debe respetar.
+            </P>
+        </Explanation>
+
+        <P>
+            Una colección de tareas nombradas puede ser suficiente para un despachador simple. Cuando las tareas tienen
+            dependencias, necesitamos además un modelo que permita conocer qué trabajo prepara a qué otro trabajo.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-build-system">
+        <Heading
+            headingLevel="h2" Icon={icons.Gear}
+            slot="heading"
+        >
+            Cuando el despachador ya no basta
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.Gear}>
+            <span slot="title">Sistema de construcción</span>
+
+            <P>
+                Un <B>sistema de construcción</B> coordina unidades de trabajo y sus dependencias para producir los
+                resultados solicitados.
+            </P>
+        </Definition>
+
+        <P>
+            La palabra <B>construcción</B> no significa únicamente compilar código. Las unidades de trabajo pueden
+            preparar datos, generar documentación, ejecutar pruebas, empaquetar archivos o validar un resultado. Lo
+            importante es que el sistema pueda relacionar esas tareas y decidir cuáles necesita ejecutar.
+        </P>
+
+        <P>
+            Por eso existe una diferencia entre ambos modelos:
+        </P>
+
+        <P>
+            <Mono>despachador: nombre solicitado → una tarea</Mono>
+        </P>
+
+        <P>
+            <Mono>sistema de construcción: resultado solicitado → tareas necesarias y sus dependencias</Mono>
+        </P>
+
+        <P>
+            El sistema de construcción no reemplaza la idea de tarea. La amplía: además de saber qué trabajo representa
+            cada tarea, debe poder razonar sobre las relaciones que permiten realizarlo correctamente.
+        </P>
+    </NotesSection>
+
+    <NotesSection id="h2-graph-contract">
+        <Heading
+            headingLevel="h2" Icon={icons.TreeStructure}
+            slot="heading"
+        >
+            El contrato conceptual de esta lección
+        </Heading>
+
+        <Definition headingLevel="h3" icon={icons.TreeStructure}>
+            <span slot="title">Grafo dirigido y acíclico</span>
+
+            <P>
+                Un <B>grafo dirigido y acíclico</B>, o <B>DAG</B> por <I>Directed Acyclic Graph</I>, representa
+                elementos relacionados mediante conexiones con dirección y no permite que, siguiendo esas conexiones, se
+                regrese finalmente al mismo elemento.
+            </P>
+        </Definition>
+
+        <Definition headingLevel="h3" icon={icons.ListChecks}>
+            <span slot="title">Grafo de tareas</span>
+
+            <P>
+                Un <B>grafo de tareas</B> representa tareas como nodos y sus dependencias como conexiones dirigidas. En
+                una ejecución concreta, permite distinguir el trabajo solicitado de las tareas que debe completar antes.
+            </P>
+        </Definition>
+
+        <P>
+            Estas definiciones establecen el vocabulario que usaremos a continuación: una tarea puede ser un nodo, una
+            dependencia puede ser una conexión dirigida y el conjunto debe mantener una forma acíclica para que exista
+            un orden posible de preparación.
+        </P>
+    </NotesSection>
+</NotesLayout>

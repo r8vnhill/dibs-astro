@@ -74,6 +74,7 @@ export const coursePaths = {
         root: scripting,
         supportScripts: joinPath(scripting, "support-scripts"),
         tasksAsAbstractions: joinPath(scripting, "tasks-as-abstractions"),
+        taskGraphs: joinPath(scripting, "task-graphs"),
     },
 } as const;
 

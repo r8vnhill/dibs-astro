@@ -9,7 +9,8 @@ const astroCli = path.resolve(
     "..",
     "node_modules",
     "astro",
-    "astro.js",
+    "bin",
+    "astro.mjs",
 );
 
 const child = spawn(process.execPath, [astroCli, "dev", ...process.argv.slice(2)], {
