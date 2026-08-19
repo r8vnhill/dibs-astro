@@ -3,18 +3,26 @@ import CalloutShell from "./CalloutShell.astro";
 import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
 
+export type SolutionProps = BaseCalloutProps & {
+    /**
+     * Marks this Solution as nested inside another callout (typically a `Question`) instead of a
+     * standalone card. Standalone solutions keep their existing prominent green treatment;
+     * embedded solutions render as a compact disclosure that shares the parent's geometry.
+     */
+    embedded?: boolean;
+};
+
 const variant = "solution" as const;
 const variantConfig = calloutVariants[variant];
 
-const { title = variantConfig.title, icon = variantConfig.icon, ...rest } = Astro.props as
-    & BaseCalloutProps
-    & Record<string, any>;
+const { title = variantConfig.title, icon = variantConfig.icon, embedded = false, ...rest } =
+    Astro.props as SolutionProps & Record<string, any>;
 const hasTitleSlot = Astro.slots.has("title");
 ---
 <CalloutShell
     {variant} {title}
     {icon} bodyClass="mt-3"
-    collapsible {...rest}
+    collapsible {embedded} {...rest}
 >
     {hasTitleSlot && <slot name="title" slot="title" />}
     <slot />

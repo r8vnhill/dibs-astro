@@ -1,5 +1,5 @@
 ---
-import * as icons from "$icons";
+import * as icons from "@ravenhill/astro-icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import CalloutHeading from "./CalloutHeading.astro";
 import {
@@ -21,6 +21,12 @@ export interface CalloutShellProps extends BaseCalloutProps {
     collapsible?: boolean;
     defaultOpen?: boolean;
     showChevron?: boolean;
+    /**
+     * Presents the callout as nested inside another callout (e.g. a `Solution` embedded in a
+     * `Question`) instead of as an independent card: no outer shadow/margin, a quieter background,
+     * and a narrower accent border.
+     */
+    embedded?: boolean;
 }
 
 const {
@@ -42,6 +48,7 @@ const {
     collapsible = false,
     defaultOpen = false,
     showChevron = true,
+    embedded = false,
     id,
     ...rest
 } = Astro.props as CalloutShellProps & Record<string, any>;
@@ -59,8 +66,8 @@ const resolvedHeadingId = headingId ?? `${sectionId}__title`;
 
 const passthrough = filterSectionAttrs(rest);
 const sectionClassList = [
-    ...calloutBaseClasses,
-    compact ? "px-4 py-3" : "px-5 py-4",
+    ...(embedded ? ["callout", "relative", "rounded-md", "callout--embedded"] : calloutBaseClasses),
+    embedded ? "px-3 py-2" : (compact ? "px-4 py-3" : "px-5 py-4"),
     className,
 ];
 const bodyClassList = ["callout__body", prose && proseClasses, bodyClass];
@@ -72,6 +79,7 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
     id={sectionId} class:list={sectionClassList}
     role="region" aria-labelledby={resolvedHeadingId}
     data-callout data-variant={variant}
+    {...(embedded ? { "data-embedded": "true" } : {})}
     style={{
         "--callout-bg-color": `var(--${variant}__bg-color, ${colors.bg})`,
         "--callout-border-color": `var(--${variant}__border-color, ${colors.border})`,
@@ -162,5 +170,20 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
        targeted globally from the scoped body wrapper. */
     .callout__body :global(:where(strong, b)) {
         color: var(--callout-title-color);
+    }
+
+    /* Embedded callouts (e.g. a Solution nested inside a Question) read as one pedagogical unit
+       with their parent rather than as an independent card: no shadow/margin, a much quieter
+       background, and a narrower accent border. Declared after `.callout` so it wins at equal
+       specificity. */
+    .callout--embedded {
+        background-color: color-mix(in srgb, var(--callout-border-color) 10%, transparent);
+        border-left-width: 2px;
+        box-shadow: none;
+        margin-block: 0;
+    }
+
+    :global([data-theme="dark"]) :where(.callout--embedded) {
+        background-color: color-mix(in srgb, var(--callout-border-color-dark) 12%, transparent);
     }
 </style>

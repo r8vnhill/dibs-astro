@@ -1,5 +1,5 @@
-import * as icons from "$icons";
-import { Brain, Note, Star } from "$icons";
+import * as icons from "@ravenhill/astro-icons";
+import { Brain, Note, Star } from "@ravenhill/astro-icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
 import { semanticColors } from "../shared/semanticColors";
