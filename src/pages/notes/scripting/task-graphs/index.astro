@@ -3,19 +3,18 @@ import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Exercise, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
+import { Definition, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink, Link } from "~/components/ui/links";
-import { List, ListItem } from "~/components/ui/list";
+import { ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 import {
     cyclicDependencyCounterexample,
-    extendedTaskGraphWithFinalize,
     packageReportSelectedGraph,
     taskDependencyGraph,
     verifyReportSelectedGraph,
@@ -105,7 +104,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 <P>
                     En cambio, no existe una dependencia entre <Mono>prepareCatalog</Mono> y <Mono
                     >prepareMetadata</Mono>. El grafo no exige que una se ejecute antes que la otra, por lo que pueden
-                    ejecutarse en paralelo.
+                    el grafo permite que se ejecuten en paralelo, aunque no garantiza que comiencen al mismo tiempo.
                 </P>
 
                 <P>
@@ -277,6 +276,28 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 posible seguir las flechas y regresar al punto de partida.
             </P>
         </Explanation>
+
+        <Question headingLevel="h3">
+            <P>
+                Si un ciclo tuviera las relaciones <KotlinInline code="prepareCatalog -> generateReport" />,
+                <KotlinInline code="generateReport -> packageReport" /> y
+                <KotlinInline code="packageReport -> prepareCatalog" />, ¿por qué no podría proporcionar un orden de
+                ejecución válido?
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    <Mono>prepareCatalog</Mono> tendría que esperar a <Mono>packageReport</Mono>, que a su vez tendría
+                    que esperar a <Mono>generateReport</Mono>, y <Mono>generateReport</Mono> tendría que esperar a
+                    <Mono>prepareCatalog</Mono>.
+                </P>
+
+                <P>
+                    Por eso ninguna tarea del ciclo puede quedar lista primero: cada una espera una condición que solo
+                    podría cumplirse después de que ella misma avanzara.
+                </P>
+            </Solution>
+        </Question>
     </NotesSection>
 
     <NotesSection id="h2-topological-orders">
@@ -316,6 +337,26 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 ejecución.
             </P>
         </Definition>
+
+        <Question headingLevel="h3">
+            <P>
+                Una vez terminado <Mono>generateReport</Mono>, ¿<Mono>packageReport</Mono> debe ejecutarse antes que
+                <Mono>verifyReport</Mono>, o puede ocurrir al revés?
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    Puede ocurrir cualquiera de las dos cosas. No hay una flecha entre <Mono>packageReport</Mono> y
+                    <Mono>verifyReport</Mono>, así que ninguna depende de la otra.
+                </P>
+
+                <P>
+                    Por lo tanto, tanto <Mono>packageReport</Mono> antes de <Mono>verifyReport</Mono> como
+                    <Mono>verifyReport</Mono> antes de <Mono>packageReport</Mono> son órdenes compatibles. El DAG
+                    establece restricciones de precedencia, no necesariamente una única secuencia total.
+                </P>
+            </Solution>
+        </Question>
     </NotesSection>
 
     <NotesSection id="h2-selected-task-graph">
@@ -353,6 +394,27 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </P>
         </Explanation>
 
+        <Question headingLevel="h3">
+            <P>
+                Si solicitamos <Mono>packageReport</Mono> en el grafo completo, ¿qué tareas pertenecen al grafo
+                seleccionado y cuál queda fuera? Explica por qué <Mono>verifyReport</Mono> no es necesaria.
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    El grafo seleccionado incluye <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono> y
+                    <Mono>packageReport</Mono>. En este modelo, el objetivo solicitado y todas sus dependencias forman
+                    el subconjunto que debe prepararse.
+                </P>
+
+                <P>
+                    <Mono>verifyReport</Mono> queda fuera porque depende de <Mono>generateReport</Mono>, pero
+                    <Mono>packageReport</Mono> no depende de <Mono>verifyReport</Mono>. Una dependencia compartida no
+                    convierte en dependientes entre sí a las dos tareas que la necesitan.
+                </P>
+            </Solution>
+        </Question>
+
         <P>
             Conviene distinguir tres términos que hasta ahora usamos de forma intercambiable:
         </P>
@@ -377,8 +439,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             <P>
                 <B>Grafo ≠ traza de ejecución.</B> El grafo responde qué depende de qué. Una traza de ejecución responde
                 qué tareas se ejecutaron realmente y cuándo. Una ejecución puede escoger cualquier orden compatible con
-                las dependencias y, si hay trabajo independiente, ejecutarlo en paralelo; el grafo por sí solo no
-                registra esa secuencia observada.
+                las dependencias y, si hay trabajo independiente, permitir que el sistema lo programe en paralelo; el
+                grafo por sí solo no registra esa secuencia observada.
             </P>
         </Explanation>
     </NotesSection>
@@ -511,6 +573,27 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </P>
         </Explanation>
 
+        <Question headingLevel="h3">
+            <P>
+                ¿Qué nos permite verificar la salida de <Mono>./gradlew packageReport --task-graph</Mono>? ¿Muestra una
+                traza de ejecución o la estructura de dependencias seleccionada para esta invocación?
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    La salida permite comprobar la predicción del grafo seleccionado: muestra
+                    <Mono>packageReport</Mono> y las dependencias que necesita, como <Mono>generateReport</Mono> y
+                    <Mono>prepareCatalog</Mono>.
+                </P>
+
+                <P>
+                    No muestra una traza de ejecución. <Mono>--task-graph</Mono> describe la estructura de dependencias
+                    que Gradle prepararía para esa invocación; no ejecuta las acciones ni registra qué tarea ocurrió
+                    primero o en qué momento.
+                </P>
+            </Solution>
+        </Question>
+
         <P>
             Esta lección se detiene aquí a propósito: <Mono>tasks.register</Mono> y <Mono>dependsOn</Mono> bastan para
             reproducir el grafo que ya construimos. Cómo una tarea recibe entradas, produce salidas o se organiza
@@ -524,8 +607,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 La idea no es exclusiva de Gradle. En un monorepo, <Link
                     href="https://nx.dev/docs/concepts/task-pipeline-configuration"
                 >Nx</Link> combina el grafo de proyectos con la configuración de pipelines para decidir el orden de las
-                tareas; los proyectos sin dependencias entre sí pueden avanzar en paralelo. El concepto es el mismo que
-                acabamos de estudiar, aunque la configuración y la terminología cambien.
+                tareas; los proyectos sin dependencias entre sí pueden quedar habilitados para avanzar en paralelo. El
+                concepto es el mismo que acabamos de estudiar, aunque la configuración y la terminología cambien.
             </P>
 
             <P>
@@ -558,163 +641,18 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         </More>
     </NotesSection>
 
-    <Exercise headingLevel="h2">
-        <Fragment slot="title">Extender un grafo sin perder sus dependencias</Fragment>
-
-        <Fragment slot="requirements">
-            <P>
-                Extiende el build de Gradle con una nueva tarea llamada <Mono>finalizeReport</Mono>, que depende tanto
-                de <Mono>packageReport</Mono> como de <Mono>verifyReport</Mono>:
-            </P>
-
-            <MermaidDiagram spec={extendedTaskGraphWithFinalize} />
-
-            <List>
-                <ListItem icon={icons.Tag}>
-                    Registra <Mono>finalizeReport</Mono> con <KotlinInline>tasks.register(...)</KotlinInline>.
-                </ListItem>
-                <ListItem icon={icons.GitBranch}>
-                    Declara sus dos dependencias con <KotlinInline code={`dependsOn(packageReport, verifyReport)`} />,
-                    usando las referencias que ya devolvió <Mono>tasks.register(...)</Mono> para esas tareas.
-                </ListItem>
-                <ListItem icon={icons.ListChecks}>
-                    Antes de ejecutar nada, predice qué tareas selecciona <Mono>./gradlew finalizeReport
-                        --task-graph</Mono>.
-                </ListItem>
-                <ListItem icon={icons.ListChecks}>
-                    Predice también qué tareas selecciona <Mono>./gradlew packageReport --task-graph</Mono> una vez que
-                    <Mono>finalizeReport</Mono> existe en el build.
-                </ListItem>
-                <ListItem icon={icons.CheckCircle}>
-                    Verifica ambas predicciones ejecutando <Mono>--task-graph</Mono> y compara la salida con lo que
-                    anticipaste.
-                </ListItem>
-                <ListItem icon={icons.ArrowsClockwise}>
-                    Explica por qué solicitar <Mono>packageReport</Mono> sigue sin ejecutar <Mono>verifyReport</Mono>, y
-                    por qué el grafo resultante se mantiene acíclico.
-                </ListItem>
-            </List>
-        </Fragment>
-
-        <Fragment slot="notes">
-            <P>
-                El ejercicio evalúa el modelo conceptual, no la sintaxis de Gradle: lo importante es predecir el grafo
-                <I>antes</I> de ejecutar el comando, y usar <Mono>--task-graph</Mono> como evidencia para confirmar o
-                corregir esa predicción, no como el primer paso.
-            </P>
-        </Fragment>
-
-        <Fragment slot="use">
-            <BashBlock code={`./gradlew finalizeReport --task-graph`}>
-                <span slot="title">Grafo de tareas seleccionado para finalizeReport</span>
-            </BashBlock>
-
-            <OutputBlock
-                code={`
-                    Tasks graph for: finalizeReport
-                    \\--- :finalizeReport (org.gradle.api.DefaultTask)
-                         +--- :packageReport (org.gradle.api.DefaultTask)
-                         |    \\--- :generateReport (org.gradle.api.DefaultTask)
-                         |         \\--- :prepareCatalog (org.gradle.api.DefaultTask)
-                         \\--- :verifyReport (org.gradle.api.DefaultTask)
-                              \\--- :generateReport (*)
-
-                    (*) - details omitted (listed previously)
-                `}
-            />
-        </Fragment>
-
-        <Fragment slot="hints">
-            <List>
-                <ListItem icon={icons.Lightbulb}>
-                    <KotlinInline>dependsOn</KotlinInline> acepta más de una tarea a la vez; no necesitas dos llamadas
-                    separadas.
-                </ListItem>
-                <ListItem icon={icons.Lightbulb}>
-                    El <Mono>(*)</Mono> en la salida de <Mono>--task-graph</Mono> no es una tarea nueva: Gradle omite
-                    repetir un subárbol que ya mostró antes, porque <Mono>generateReport</Mono> es compartido por
-                    <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>.
-                </ListItem>
-                <ListItem icon={icons.Lightbulb}>
-                    <Mono>packageReport</Mono> no cambia: sigue dependiendo únicamente de <Mono>generateReport</Mono>.
-                    Agregar <Mono>finalizeReport</Mono> no modifica las dependencias de las tareas que ya existían.
-                </ListItem>
-                <ListItem icon={icons.Lightbulb}>
-                    Para comprobar la aciclicidad, observa que <Mono>finalizeReport</Mono> no tiene flechas salientes:
-                    las nuevas flechas llegan a él desde <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>, así que
-                    no pueden cerrar un camino que regrese a sus predecesoras.
-                </ListItem>
-            </List>
-        </Fragment>
-
-        <Fragment slot="solution">
-            <P>
-                <Mono>finalizeReport</Mono> se agrega igual que las demás tareas, declarando sus dos dependencias en una
-                sola llamada y reutilizando las referencias que <Mono>packageReport</Mono> y
-                <Mono>verifyReport</Mono> ya devolvieron al registrarse:
-            </P>
-
-            <KotlinBlock
-                code={`
-                    tasks.register("finalizeReport") {
-                        dependsOn(packageReport, verifyReport)
-                        doLast { println("Finalizing report...") }
-                    }
-                `}
-            >
-                <span slot="title">build.gradle.kts (fragmento extendido)</span>
-                <DibsSourceLink
-                    slot="source" repo="kotlin-companion"
-                    file="gradle/task-graph/build.gradle.kts"
-                >
-                    gradle/task-graph/build.gradle.kts
-                </DibsSourceLink>
-            </KotlinBlock>
-
-            <P>
-                Solicitar <Mono>finalizeReport</Mono> selecciona las cinco tareas del grafo mostrado arriba, porque
-                <Mono>finalizeReport</Mono> depende de <Mono>packageReport</Mono> y de <Mono>verifyReport</Mono>, y
-                ambas comparten a <Mono>generateReport</Mono> y <Mono>prepareCatalog</Mono> como dependencias.
-            </P>
-
-            <P>
-                En cambio, solicitar <Mono>packageReport</Mono> sigue seleccionando solo <Mono>prepareCatalog</Mono>,
-                <Mono>generateReport</Mono> y <Mono>packageReport</Mono>. Agregar <Mono>finalizeReport</Mono> introduce
-                una tarea nueva que depende de <Mono>packageReport</Mono>, pero no una dependencia nueva
-                <I>de</I> <Mono>packageReport</Mono>: nada en su declaración cambió, así que su grafo seleccionado
-                tampoco cambia.
-            </P>
-
-            <P>
-                El grafo extendido se mantiene acíclico porque cada dependencia nueva apunta hacia
-                <Mono>finalizeReport</Mono> desde una tarea que ya existía. Como <Mono>finalizeReport</Mono> no tiene
-                flechas salientes, no existe un camino dirigido que salga de él y regrese a él.
-            </P>
-
-            <P>
-                <B>Extensión opcional:</B> si <Mono>prepareCatalog</Mono> pasara a depender de
-                <Mono>finalizeReport</Mono>, el grafo dejaría de ser acíclico. Siguiendo las flechas desde
-                <Mono>finalizeReport</Mono> se llegaría de vuelta a <Mono>finalizeReport</Mono> a través de
-                <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono> y <Mono>packageReport</Mono> (o
-                <Mono>verifyReport</Mono>): un ciclo, exactamente como el contraejemplo que vimos antes de introducir
-                Gradle. Gradle detecta esta situación y rechaza el build antes de ejecutar cualquier tarea.
-            </P>
-        </Fragment>
-    </Exercise>
-
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                Una colección de tareas nombradas se convierte en un sistema de construcción cuando también podemos
-                expresar qué tareas necesita cada resultado. Esas relaciones forman un grafo: las tareas son nodos y una
-                flecha <Mono>A -> B</Mono> significa que <Mono>B</Mono> depende de <Mono>A</Mono>.
+                El recorrido de esta lección va desde la <B>tarea</B> y su <B>dependencia</B> hasta un <B>DAG</B>: sus
+                flechas expresan restricciones de ejecución y permiten construir un orden compatible. Cuando solicitamos
+                una tarea concreta, esas restricciones forman un <B>grafo seleccionado</B> con el objetivo y las
+                dependencias que necesita.
             </P>
 
             <P>
-                Cuando el grafo es dirigido y acíclico, el sistema puede organizar un orden de preparación válido. La
-                ejecución concreta depende de la tarea solicitada: el grafo de tareas incluye ese objetivo y solo las
-                dependencias que necesita. Gradle hace observable este modelo al construir el grafo antes de ejecutar
-                sus tareas.
+                Gradle vuelve observable este modelo: <Mono>--task-graph</Mono> muestra la estructura seleccionada antes
+                de ejecutar las acciones. Todavía no hemos explicado de dónde provienen esas dependencias.
             </P>
         </Fragment>
 
@@ -740,15 +678,15 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <Fragment slot="closing-reflection">
             <P>
-                Ya podemos describir <I>qué tareas</I> deben coordinarse y <I>en qué relación</I> se encuentran. La
-                dependencia entre tareas abre otra pregunta: <B>¿qué datos explican esa dependencia?</B> ¿Qué
-                información necesita una tarea, qué resultados produce y cómo puede el sistema saber si una tarea está
-                actualizada?
+                <B>¿De dónde provienen esas dependencias?</B> Una relación puede surgir del flujo de datos: la salida de
+                una tarea productora se convierte en la entrada de una tarea consumidora.
             </P>
 
             <P>
-                Esa pregunta nos lleva a estudiar <B>inputs y outputs</B>, sin abandonar el grafo que acabamos de
-                construir.
+                El grafo actual nos dice qué trabajo depende de qué otro trabajo, pero todavía no qué datos fluyen entre
+                tareas, qué cambios invalidan un resultado ni qué resultados pueden reutilizarse. La próxima lección
+                estudiará <B>inputs</B>, <B>outputs</B>, dependencias inferidas, incrementalidad y caché, sin abandonar
+                el grafo que acabamos de construir.
             </P>
         </Fragment>
     </ConclusionsLayout>

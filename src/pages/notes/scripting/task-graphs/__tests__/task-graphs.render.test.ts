@@ -4,7 +4,6 @@ import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
 import {
     cyclicDependencyCounterexample,
-    extendedTaskGraphWithFinalize,
     packageReportSelectedGraph,
     taskDependencyGraph,
     taskGraphDiagramSpecs,
@@ -124,7 +123,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
 
         expect(normalizedHtml).toContain("Grafo ≠ traza de ejecución");
         expect(normalizedHtml).toContain("qué tareas se ejecutaron realmente y cuándo");
-        expect(normalizedHtml).toContain("ejecutarlo en paralelo");
+        expect(normalizedHtml).toContain("permitir que el sistema lo programe en paralelo");
     });
 
     test("then it realizes the task graph as a minimal Gradle build", async () => {
@@ -146,6 +145,33 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(solution?.getAttribute("data-embedded")).toBe("true");
         expect(solution?.querySelector("h4")).not.toBeNull();
         expect(solution?.querySelector(".callout__body")?.classList.contains("mt-3")).toBe(false);
+    });
+
+    test("then each graph concept is followed by its own embedded question and solution", async () => {
+        const { doc } = await renderLesson();
+        const contracts = [
+            ["h2-task-dependencies", "¿cuáles tareas dependen de qué otras?"],
+            ["h2-directed-acyclic-shape", "¿por qué no podría proporcionar un orden"],
+            ["h2-topological-orders", "¿packagereport debe ejecutarse antes"],
+            ["h2-selected-task-graph", "¿qué tareas pertenecen al grafo"],
+            ["h2-gradle-realization", "¿qué nos permite verificar la salida"],
+        ] as const;
+        const questions = doc.querySelectorAll("[data-callout][data-variant=\"question\"]");
+
+        expect(questions.length).toBe(5);
+
+        for (const [sectionId, questionMarker] of contracts) {
+            const section = doc.querySelector(`#${sectionId}`);
+            const question = section?.querySelector("[data-callout][data-variant=\"question\"]");
+            const solution = question?.querySelector(
+                "[data-callout][data-variant=\"solution\"][data-embedded=\"true\"]",
+            );
+
+            expect(question).not.toBeNull();
+            expect(question?.textContent?.toLowerCase()).toContain(questionMarker);
+            expect(solution).not.toBeNull();
+            expect(solution?.querySelector("h4")).not.toBeNull();
+        }
     });
 
     test("then it labels explicit dependsOn wiring as pedagogical and previews dataflow practice", async () => {
@@ -200,15 +226,19 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         );
     });
 
-    test("then it renders catalog-backed references and the next conceptual step", async () => {
+    test("then it renders catalog-backed citations and the next conceptual step", async () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain("Referencias recomendadas");
-        expect(normalizedHtml).toContain("Build Lifecycle");
-        expect(normalizedHtml).toContain("Build systems à la carte");
+        expect(normalizedHtml).toContain("Gradle, Inc. (s. f.)");
+        expect(normalizedHtml).toContain("Mokhov et al. (2018)");
+        expect(normalizedHtml).toContain("tarea");
+        expect(normalizedHtml).toContain("dependencia");
+        expect(normalizedHtml).toContain("restricciones de ejecución");
+        expect(normalizedHtml).toContain("grafo seleccionado");
         expect(normalizedHtml).toContain("inputs y outputs");
-        expect(normalizedHtml).toContain("¿qué datos explican esa dependencia?");
+        expect(normalizedHtml).toContain("¿De dónde provienen esas dependencias?");
+        expect(normalizedHtml).toContain("salida de una tarea productora");
     });
 
     test("then the Gradle realization keeps advanced build concepts out of the main path", async () => {
@@ -234,31 +264,9 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         )).toBe(true);
     });
 
-    test("then the exercise asks students to extend the graph with finalizeReport", async () => {
+    test("then the old exercise corpus is no longer rendered", async () => {
         const { html } = await renderLesson();
-        const normalizedHtml = html.replace(/\s+/g, " ");
-
-        expect(normalizedHtml).toContain("Extender un grafo sin perder sus dependencias");
-        expect(normalizedHtml).toContain("finalizeReport");
-        expect(normalizedHtml).toContain("./gradlew finalizeReport --task-graph");
-        expect(normalizedHtml).toContain(extendedTaskGraphWithFinalize.description);
-    });
-
-    test("then the exercise explains why packageReport still excludes verifyReport and why the graph stays acyclic", async () => {
-        const { html } = await renderLesson();
-        const normalizedHtml = html.replace(/\s+/g, " ");
-
-        expect(normalizedHtml).toContain("sigue seleccionando solo");
-        expect(normalizedHtml).toContain("se mantiene acíclico");
-    });
-
-    test("then the exercise's extended graph diagram renders once as accessible inline SVG", async () => {
-        const { doc } = await renderLesson();
-        const figures = doc.querySelectorAll(
-            `figure[data-diagram-id="${extendedTaskGraphWithFinalize.id}"]`,
-        );
-
-        expect(figures.length).toBe(1);
-        expect(figures[0]?.querySelector("svg")).not.toBeNull();
+        expect(html).not.toContain("finalizeReport");
+        expect(html).not.toContain("extended-task-graph-with-finalize");
     });
 });

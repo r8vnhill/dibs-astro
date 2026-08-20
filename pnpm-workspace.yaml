@@ -1,13 +1,37 @@
+# Workspace packages maintained in this repository.
+#
+# pnpm always includes the workspace root, so only additional local packages need to be listed here. Packages absent
+# from this list are not linked as workspace packages and resolve through their normal dependency source.
+#
+# In particular, @ravenhill/site-core is intentionally not a workspace package. DIBS consumes its published registry
+# artifact so that development, CI, and production validate the same public package used by consumers.
 packages:
-    - .
     - packages/content-core
     - packages/lesson-export-core
     - packages/shiki-core
-    - packages/site-core
 
+# Dependency-installation behavior shared by the entire workspace.
+#
+# Install missing, non-optional peer dependencies automatically. pnpm does not choose automatically when peer
+# requirements conflict; contributors must resolve those cases explicitly.
 autoInstallPeers: true
+
+# Use a flat node_modules layout rather than pnpm's default symlinked layout. This is an intentional compatibility
+# choice for the repository's Astro toolchain and existing workspace commands. Do not change it without running the
+# complete install, check, build, and browser test suite.
 nodeLinker: hoisted
 
+# Dependency build-script policy.
+#
+# Only packages explicitly approved here may run install/build scripts. When adding or upgrading a dependency that
+# requests such scripts:
+#
+# 1. determine why the script is required;
+# 2. review the package and the script it executes;
+# 3. approve it here only when execution is expected and trusted.
+#
+# Keep this list narrow. A new dependency requesting build permission should be reviewed rather than added
+# automatically.
 allowBuilds:
     "@tailwindcss/oxide": true
     dprint: true
@@ -15,6 +39,13 @@ allowBuilds:
     sharp: true
     workerd: true
 
+# Explicit exceptions to the minimum-release-age policy.
+#
+# These entries allow only the listed package versions to bypass the normal waiting period for newly published
+# releases. Add an exception deliberately when the repository must adopt a release before that period expires.
+#
+# Remove stale exceptions once they are no longer required or the corresponding version is no longer part of the
+# resolved dependency graph.
 minimumReleaseAgeExclude:
     - astro@7.2.2
     - "@ravenhill/astro-icons@0.2.0"

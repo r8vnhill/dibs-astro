@@ -40,23 +40,9 @@ export const verifyReportSelectedGraph: DiagramSpec = {
         prepareCatalog --> generateReport --> verifyReport`,
 };
 
-export const extendedTaskGraphWithFinalize: DiagramSpec = {
-    id: "extended-task-graph-with-finalize",
-    title: "El grafo extendido con finalizeReport",
-    description:
-        "finalizeReport depende tanto de packageReport como de verifyReport, así que solicitarlo selecciona las cinco tareas del grafo.",
-    source: `flowchart LR
-        prepareCatalog --> generateReport
-        generateReport --> packageReport
-        generateReport --> verifyReport
-        packageReport --> finalizeReport
-        verifyReport --> finalizeReport`,
-};
-
 export const taskGraphDiagramSpecs = [
     taskDependencyGraph,
     cyclicDependencyCounterexample,
     packageReportSelectedGraph,
     verifyReportSelectedGraph,
-    extendedTaskGraphWithFinalize,
 ] as const;
