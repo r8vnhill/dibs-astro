@@ -146,11 +146,15 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
     .callout {
         background-color: var(--callout-bg-color);
         border-left: 4px solid var(--callout-border-color);
+        --callout-inline-code-bg-color: color-mix(in srgb, var(--callout-border-color) 6%, transparent);
+        --callout-inline-code-border-color: color-mix(in srgb, var(--callout-border-color) 30%, transparent);
     }
 
     :global([data-theme="dark"]) :where(.callout) {
         background-color: var(--callout-bg-color-dark);
         border-left-color: var(--callout-border-color-dark);
+        --callout-inline-code-bg-color: color-mix(in srgb, var(--callout-border-color-dark) 10%, transparent);
+        --callout-inline-code-border-color: color-mix(in srgb, var(--callout-border-color-dark) 36%, transparent);
     }
 
     .callout__body :where(p:first-child) {
@@ -158,6 +162,15 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
     }
     .callout__body :where(p:last-child) {
         margin-bottom: 0;
+    }
+
+    /* Inline identifiers remain monospace and bounded, but their article-level badge treatment is
+       too prominent when several appear inside an already colored callout. Target only inline
+       code roots: nested Shiki code and block-code descendants are left to their own styles. */
+    .callout__body :global(code:not(pre code):not(code code)) {
+        background-color: var(--callout-inline-code-bg-color);
+        border-color: var(--callout-inline-code-border-color);
+        box-shadow: none;
     }
 
     /* Automatically apply callout accent color to list item icons */
