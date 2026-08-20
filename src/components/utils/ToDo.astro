@@ -42,6 +42,7 @@ const resolvedReportEventName = reportEventName === null ? null : (reportEventNa
 
 <dibs-todo
     data-alt-text={altText}
+    data-message={message}
     data-metadata={metadata ? JSON.stringify(metadata) : undefined}
     {...resolvedReportEventName ? { "data-report-event-name": resolvedReportEventName } : {}}
 >
@@ -64,3 +65,55 @@ const resolvedReportEventName = reportEventName === null ? null : (reportEventNa
         </figcaption>
     </figure>
 </dibs-todo>
+
+<script>
+    import { getPlaceholderImagePool } from "$presentation/adapters/static-ui-data";
+    import { pickRandom } from "~/utils";
+    import { type ToDoMetadata, type ToDoReportPayload } from "./todo-report";
+
+    class DibsTodo extends HTMLElement {
+        connectedCallback() {
+            if (this.dataset.todoInitialized === "true") return;
+            this.dataset.todoInitialized = "true";
+
+            const imageSrc = pickRandom([...getPlaceholderImagePool()]) ?? null;
+            const imageRegion = this.querySelector<HTMLElement>("[data-todo-image]");
+
+            if (imageRegion && imageSrc) {
+                const image = document.createElement("img");
+                image.src = imageSrc;
+                image.alt = this.dataset.altText ?? "Meme";
+                image.className = "w-full max-w-xs rounded shadow";
+                imageRegion.replaceChildren(image);
+            }
+
+            let metadata: ToDoMetadata | undefined;
+            if (this.dataset.metadata) {
+                try {
+                    metadata = JSON.parse(this.dataset.metadata) as ToDoMetadata;
+                } catch {
+                    metadata = undefined;
+                }
+            }
+
+            const payload: ToDoReportPayload = {
+                message: this.dataset.message ?? "",
+                imageSrc,
+                ...(metadata ? { metadata } : {}),
+                timestamp: new Date().toISOString(),
+            };
+
+            console.warn(
+                "⚠️ [ToDo]: This component is a placeholder. Replace it with real content.",
+                metadata,
+            );
+
+            const eventName = this.dataset.reportEventName;
+            if (eventName) {
+                window.dispatchEvent(new CustomEvent(eventName, { detail: payload }));
+            }
+        }
+    }
+
+    customElements.define("dibs-todo", DibsTodo);
+</script>

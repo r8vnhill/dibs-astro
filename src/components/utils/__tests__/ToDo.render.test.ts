@@ -2,7 +2,8 @@
  * @file Locks the Phase 3 server-rendered structure of the native `ToDo.astro` component (see
  * `traceability-log` migration plan for moving `ToDo` from React to Astro): a `<dibs-todo>` wrapper
  * around a `<figure>`/`<figcaption>` pair, rendered without hydration and with no `astro-island`.
- * Client-side image selection and reporting are introduced separately in Phase 4.
+ * Client-side image selection and reporting (Phase 4) run in a browser custom element and are not
+ * exercised by this server-render suite.
  */
 
 import { createAstroRenderer } from "$test-utils/astro-render";
