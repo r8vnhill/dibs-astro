@@ -76,10 +76,22 @@
       "familyName": "Tashian"
     },
     {
+      "@id": "person:charles-e-leiserson",
+      "@type": "Person",
+      "givenName": "Charles E.",
+      "familyName": "Leiserson"
+    },
+    {
       "@id": "person:chengnian-sun",
       "@type": "Person",
       "givenName": "Chengnian",
       "familyName": "Sun"
+    },
+    {
+      "@id": "person:clifford-stein",
+      "@type": "Person",
+      "givenName": "Clifford",
+      "familyName": "Stein"
     },
     {
       "@id": "person:coraline-ada-ehmke",
@@ -333,6 +345,12 @@
       "familyName": "Elizarov"
     },
     {
+      "@id": "person:ronald-l-rivest",
+      "@type": "Person",
+      "givenName": "Ronald L.",
+      "familyName": "Rivest"
+    },
+    {
       "@id": "person:sam-tobin-hochstadt",
       "@type": "Person",
       "givenName": "Sam",
@@ -378,6 +396,12 @@
       "@type": "Person",
       "givenName": "Svetlana",
       "familyName": "Isakova"
+    },
+    {
+      "@id": "person:thomas-h-cormen",
+      "@type": "Person",
+      "givenName": "Thomas H.",
+      "familyName": "Cormen"
     },
     {
       "@id": "person:tim-bray",
@@ -563,6 +587,12 @@
       "@type": "Organization",
       "name": "Microsoft Learn",
       "url": "https://learn.microsoft.com/"
+    },
+    {
+      "@id": "org:mit-press",
+      "@type": "Organization",
+      "name": "The MIT Press",
+      "url": "https://mitpress.mit.edu/"
     },
     {
       "@id": "org:morgan-kaufmann",
@@ -837,6 +867,28 @@
       "name": "IEEE Transactions on Software Engineering",
       "publisher": {
         "@id": "org:ieee"
+      }
+    },
+    {
+      "@id": "work:introduction-to-algorithms-4e",
+      "@type": "CreativeWork",
+      "name": "Introduction to algorithms (4th ed.)",
+      "author": [
+        {
+          "@id": "person:thomas-h-cormen"
+        },
+        {
+          "@id": "person:charles-e-leiserson"
+        },
+        {
+          "@id": "person:ronald-l-rivest"
+        },
+        {
+          "@id": "person:clifford-stein"
+        }
+      ],
+      "publisher": {
+        "@id": "org:mit-press"
       }
     },
     {
@@ -1499,6 +1551,30 @@
       "url": "https://plugins.jetbrains.com/docs/intellij/welcome.html",
       "publisher": {
         "@id": "org:intellij-platform-plugin-sdk-help"
+      }
+    },
+    {
+      "@id": "ref:introduction-to-algorithms-2022",
+      "@type": "Book",
+      "name": "Introduction to algorithms",
+      "url": "https://www.studylib.net/doc/26283787/num01-introduction.to.algorithms.4th.edition",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@id": "person:thomas-h-cormen"
+        },
+        {
+          "@id": "person:charles-e-leiserson"
+        },
+        {
+          "@id": "person:ronald-l-rivest"
+        },
+        {
+          "@id": "person:clifford-stein"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:introduction-to-algorithms-4e"
       }
     },
     {
@@ -4648,6 +4724,19 @@
       },
       "dibs:tags": [
         "recommended"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-introduction-to-algorithms-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:introduction-to-algorithms-2022"
+      },
+      "dibs:tags": [
+        "additional"
       ]
     },
     {

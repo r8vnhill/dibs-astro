@@ -972,3 +972,11 @@ ref:kotlin-coding-conventions
   schema:author org:jetbrains ;
   schema:isPartOf site:kotlin-docs ;
   schema:publisher org:jetbrains .
+
+ref:introduction-to-algorithms-2022
+  a schema:Book ;
+  schema:name "Introduction to algorithms" ;
+  schema:url "https://www.studylib.net/doc/26283787/num01-introduction.to.algorithms.4th.edition" ;
+  schema:datePublished "2022" ;
+  schema:author person:thomas-h-cormen, person:charles-e-leiserson, person:ronald-l-rivest, person:clifford-stein ;
+  schema:isPartOf work:introduction-to-algorithms-4e .

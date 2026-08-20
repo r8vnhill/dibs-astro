@@ -358,3 +358,23 @@ person:sam-tobin-hochstadt
   a schema:Person ;
   schema:givenName "Sam" ;
   schema:familyName "Tobin-Hochstadt" .
+
+person:thomas-h-cormen
+  a schema:Person ;
+  schema:givenName "Thomas H." ;
+  schema:familyName "Cormen" .
+
+person:charles-e-leiserson
+  a schema:Person ;
+  schema:givenName "Charles E." ;
+  schema:familyName "Leiserson" .
+
+person:ronald-l-rivest
+  a schema:Person ;
+  schema:givenName "Ronald L." ;
+  schema:familyName "Rivest" .
+
+person:clifford-stein
+  a schema:Person ;
+  schema:givenName "Clifford" ;
+  schema:familyName "Stein" .

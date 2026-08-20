@@ -252,3 +252,8 @@ org:spdx-project
   a schema:Organization ;
   schema:name "SPDX Project" ;
   schema:url "https://spdx.dev/" .
+
+org:mit-press
+  a schema:Organization ;
+  schema:name "The MIT Press" ;
+  schema:url "https://mitpress.mit.edu/" .

@@ -228,7 +228,10 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
             ]),
         );
         expect(new Set(resolution.value.sections[1]?.readings.map((reading) => reading.referenceId))).toEqual(
-            new Set(["ref:build-systems-a-la-carte-2018"]),
+            new Set([
+                "ref:build-systems-a-la-carte-2018",
+                "ref:introduction-to-algorithms-2022",
+            ]),
         );
         expect(new Set(resolution.value.sections[2]?.readings.map((reading) => reading.referenceId))).toEqual(
             new Set(["ref:build-scripts-perfect-dependencies-2020"]),
@@ -241,13 +244,15 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
 
         expect(normalizedHtml).toContain("Gradle, Inc. (s. f.)");
         expect(normalizedHtml).toContain("Mokhov et al. (2018)");
+        expect(normalizedHtml).toContain("Cormen et al. (2022, cap. 20, §20.1)");
+        expect(normalizedHtml).toContain("arista dirigida");
         expect(normalizedHtml).toContain("tarea");
         expect(normalizedHtml).toContain("dependencia");
-        expect(normalizedHtml).toContain("restricciones de ejecución");
+        expect(normalizedHtml).toContain("restricciones de precedencia");
         expect(normalizedHtml).toContain("grafo seleccionado");
         expect(normalizedHtml).toContain("inputs y outputs");
-        expect(normalizedHtml).toContain("¿De dónde provienen esas dependencias?");
-        expect(normalizedHtml).toContain("salida de una tarea productora");
+        expect(normalizedHtml).toContain("por qué existe esa dependencia");
+        expect(normalizedHtml).toContain("resultado producido por otra");
     });
 
     test("then the Gradle realization keeps advanced build concepts out of the main path", async () => {

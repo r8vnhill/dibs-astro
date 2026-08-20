@@ -68,6 +68,16 @@ export const taskGraphsReadings: LessonReadings = {
                 "Deberías poder explicar por qué un sistema de construcción es más que una lista de comandos.",
             guidingQuestion: "¿Qué decisiones del diseño de un build quedan representadas en su grafo?",
         },
+        {
+            referenceId: "introduction-to-algorithms-2022",
+            type: "Fuente primaria",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Presenta el vocabulario de grafos dirigidos y la relación entre DAGs y órdenes topológicos.",
+            focus: "Lee el capítulo 20, §§20.1 y 20.4, y concéntrate en las definiciones y el resultado conceptual.",
+            afterReading: "Deberías poder explicar por qué un DAG admite un orden que respeta sus dependencias.",
+            guidingQuestion: "¿Qué propiedad del grafo permite ordenar sus nodos respetando las aristas dirigidas?",
+        },
     ],
     deeper: [
         {

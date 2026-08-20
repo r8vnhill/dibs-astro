@@ -3,7 +3,7 @@ import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
+import { Definition, Explanation, Info, More, Question, Solution, Warning } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, Dash, I, Mono } from "~/components/ui/font";
@@ -38,9 +38,9 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <P>
             Finalmente, usaremos Gradle para observar el mismo modelo en un sistema de construcción real y
-            distinguiremos entre el <B>grafo de tareas</B><Dash>qué depende de qué</Dash>y una <B>traza de
-                ejecución</B><Dash kind="em" />qué ocurrió realmente y cuándo. El objetivo no es aprender Gradle, sino
-            usarlo como una realización concreta de las ideas estudiadas.
+            distinguiremos entre el <B>grafo de dependencias de tareas</B><Dash>qué depende de qué</Dash>y una <B>traza
+                de ejecución</B><Dash kind="em" />qué ocurrió realmente y cuándo. El objetivo no es aprender Gradle,
+            sino usarlo como una realización concreta de las ideas estudiadas.
         </P>
     </Fragment>
 
@@ -142,22 +142,29 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             <span slot="title">Sistema de construcción</span>
 
             <P>
-                Un <B>sistema de construcción</B> (también llamado <I>build system</I> o <I>build engine</I>) coordina
-                unidades de trabajo y sus dependencias para producir los resultados solicitados. Esta perspectiva
-                también aparece al comparar distintos diseños de sistemas de construcción en <ReferenceCitation
+                Un <B>sistema de construcción</B> (<I>build system</I>) coordina unidades de trabajo y sus dependencias
+                para producir o actualizar los resultados solicitados. Distintos sistemas pueden representar y descubrir
+                esas dependencias de maneras diferentes (<ReferenceCitation
                     {...citationContext} referenceId="build-systems-a-la-carte-2018"
-                >Mokhov et al. (2018)</ReferenceCitation>.
+                >
+                    Mokhov et al. (2018)
+                </ReferenceCitation>).
             </P>
         </Definition>
 
         <P>
-            La palabra <B>construcción</B> no significa únicamente compilar código. Las unidades de trabajo pueden
-            preparar datos, generar documentación, ejecutar pruebas, empaquetar archivos o validar un resultado. Lo
-            importante es que el sistema pueda relacionar esas tareas y decidir cuáles necesita ejecutar.
+            Aunque hablamos de <B>construir</B> software, ese trabajo no se limita a compilar código. Una tarea puede
+            ejecutar pruebas, generar documentación, empaquetar archivos, preparar datos o publicar un artefacto. En
+            Gradle, por ejemplo, todas estas actividades pueden representarse como tareas (<ReferenceCitation
+                {...citationContext} referenceId="gradle-build-lifecycle"
+            >
+                Gradle, Inc. (s. f.)
+            </ReferenceCitation>).
         </P>
 
         <P>
-            Por eso existe una diferencia entre ambos modelos:
+            Podemos comparar las dos abstracciones preguntando <B>qué necesita saber cada una para responder a una
+                solicitud</B>:
         </P>
 
         <List>
@@ -165,11 +172,11 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 <B>Despachador de tareas:</B>
                 <List>
                     <ListItem icon={icons.SignIn}>
-                        <B>Input:</B> nombre de tarea
+                        recibe el nombre de una tarea;
                     </ListItem>
 
                     <ListItem icon={icons.SignOut}>
-                        <B>Output:</B> tarea
+                        encuentra y ejecuta esa tarea.
                     </ListItem>
                 </List>
             </ListItem>
@@ -178,19 +185,50 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 <B>Sistema de construcción:</B>
                 <List>
                     <ListItem icon={icons.SignIn}>
-                        <B>Input:</B> resultado solicitado
+                        recibe un objetivo que queremos producir o actualizar;
+                    </ListItem>
+
+                    <ListItem icon={icons.TreeStructure}>
+                        determina qué trabajo necesita ese objetivo y cómo se relaciona;
                     </ListItem>
 
                     <ListItem icon={icons.SignOut}>
-                        <B>Output:</B> tareas necesarias y sus dependencias
+                        coordina ese trabajo respetando sus dependencias.
                     </ListItem>
                 </List>
             </ListItem>
         </List>
 
         <P>
-            El sistema de construcción no reemplaza la idea de tarea. La amplía: además de saber qué trabajo representa
-            cada tarea, debe poder razonar sobre las relaciones que permiten realizarlo correctamente.
+            Por ejemplo, si solicitamos <Mono>generateReport</Mono>, un despachador podría limitarse a encontrar esa
+            tarea. Un sistema de construcción necesita considerar además que <Mono>generateReport</Mono> depende de
+            <Mono>prepareCatalog</Mono>: no puede tratar ambas tareas como acciones independientes.
+        </P>
+
+        <Info headingLevel="h3">
+            <Fragment slot="title">Las dependencias son parte de la correctitud</Fragment>
+
+            <P>
+                Una dependencia no sirve solamente para encontrar un orden conveniente. Si omitimos una tarea que
+                realmente necesita nuestro resultado, podemos producir un resultado incorrecto. Si declaramos
+                dependencias innecesarias, en cambio, podemos realizar trabajo adicional y limitar oportunidades de
+                ejecución en paralelo (<ReferenceCitation
+                    {...citationContext} referenceId="build-scripts-perfect-dependencies-2020"
+                >
+                    Spall et al. (2020)
+                </ReferenceCitation>).
+            </P>
+        </Info>
+
+        <P>
+            El sistema de construcción, por lo tanto, no reemplaza la abstracción de <B>tarea</B>: agrega información
+            que permite relacionar varias tareas y razonar sobre el trabajo necesario para alcanzar un objetivo.
+        </P>
+
+        <P>
+            En esta lección nos concentraremos en una parte de ese problema: <B>qué tareas dependen de cuáles y qué
+                restricciones de precedencia surgen de esas dependencias</B>. Más adelante agregaremos otra pregunta:
+            cuándo una tarea realmente necesita volver a ejecutarse.
         </P>
     </NotesSection>
 
@@ -199,33 +237,124 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             headingLevel="h2" Icon={icons.TreeStructure}
             slot="heading"
         >
-            El contrato conceptual de esta lección
+            El modelo que usaremos
         </Heading>
+
+        <Definition headingLevel="h3" icon={icons.GitBranch}>
+            <span slot="title">Grafo dirigido</span>
+
+            <P>
+                Un <B>grafo dirigido</B> está formado por <B>nodos</B> y <B>aristas dirigidas</B>. Una arista conecta
+                dos nodos y tiene una dirección determinada (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >Cormen et al. (2022, cap. 20, §20.1)</ReferenceCitation>).
+            </P>
+
+            <P>
+                En esta lección, cada nodo representará una tarea y cada arista representará una dependencia. Por
+                nuestra convención, una arista <KotlinInline code="A -> B" /> indica que <Mono>A</Mono> es trabajo
+                requerido por <Mono>B</Mono>.
+            </P>
+        </Definition>
+
+        <P>
+            La dirección de la arista importa: <KotlinInline code="A -> B" /> y <KotlinInline code="B -> A" /> no
+            describen la misma relación. Invertir la flecha cambia cuál tarea depende de cuál.
+        </P>
+
+        <P>
+            Ahora considera qué ocurriría si siguiéramos varias dependencias y termináramos regresando a la tarea desde
+            la que comenzamos. Esa secuencia formaría un <B>ciclo dirigido</B>.
+        </P>
 
         <Definition headingLevel="h3" icon={icons.TreeStructure}>
             <span slot="title">Grafo dirigido y acíclico</span>
 
             <P>
-                Un <B>grafo dirigido y acíclico</B>, o <B>DAG</B> por <I>Directed Acyclic Graph</I>, representa
-                elementos relacionados mediante conexiones con dirección y no permite que, siguiendo esas conexiones, se
-                regrese finalmente al mismo elemento.
-            </P>
-        </Definition>
-
-        <Definition headingLevel="h3" icon={icons.ListChecks}>
-            <span slot="title">Grafo de tareas</span>
-
-            <P>
-                Un <B>grafo de tareas</B> representa tareas como nodos y sus dependencias como conexiones dirigidas. En
-                una ejecución concreta, permite distinguir el trabajo solicitado de las tareas que debe completar antes.
+                Un <B>grafo dirigido y acíclico</B>, o <B>DAG</B> por <I>Directed Acyclic Graph</I>, es un grafo
+                dirigido que no contiene ciclos dirigidos: no podemos partir desde un nodo, seguir la dirección de las
+                aristas y regresar finalmente al mismo nodo (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >
+                    Cormen et al. (2022, cap. 20, §20.4)
+                </ReferenceCitation>).
             </P>
         </Definition>
 
         <P>
-            Estas definiciones establecen el vocabulario que usaremos a continuación: una tarea puede ser un nodo, una
-            dependencia puede ser una conexión dirigida y el conjunto debe mantener una forma acíclica para que exista
-            un orden posible de preparación.
+            La ausencia de ciclos tiene una consecuencia importante para nuestras tareas: existe al menos una forma de
+            ordenarlas respetando todas sus dependencias. Si <Mono>B</Mono> depende de <Mono>A</Mono>, ese orden coloca
+            <Mono>A</Mono> antes que <Mono>B</Mono>. Más adelante llamaremos <B>orden topológico</B> a un orden que
+            cumple esta propiedad (<ReferenceCitation
+                {...citationContext} referenceId="introduction-to-algorithms-2022"
+            >
+                Cormen et al. (2022, cap. 20, §20.4)
+            </ReferenceCitation>).
         </P>
+
+        <Definition headingLevel="h3" icon={icons.ListChecks}>
+            <span slot="title">Grafo de dependencias de tareas</span>
+
+            <P>
+                Un <B>grafo de dependencias de tareas</B> aplica estas ideas a un sistema de construcción: cada nodo
+                representa una tarea y cada arista dirigida representa una dependencia entre tareas.
+            </P>
+        </Definition>
+
+        <P>
+            El build puede conocer muchas tareas, pero una invocación concreta no necesita necesariamente todas ellas.
+            Cuando solicitamos un objetivo, el sistema selecciona ese objetivo y las dependencias necesarias para
+            alcanzarlo. Llamaremos <B>grafo de tareas seleccionado</B> a ese subconjunto.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <Fragment slot="title">El grafo expresa restricciones, no una secuencia completa</Fragment>
+
+            <P>
+                Una arista <KotlinInline code="A -> B" /> obliga a que <Mono>A</Mono> preceda a <Mono>B</Mono>, pero no
+                dice nada sobre el orden relativo de otras tareas que no dependen entre sí.
+            </P>
+
+            <P>
+                Por eso conviene pensar en el DAG como un conjunto de <B>restricciones de precedencia</B>. Puede haber
+                más de un orden compatible con el mismo grafo y, cuando dos tareas son independientes, el grafo incluso
+                puede permitir que se ejecuten en paralelo.
+            </P>
+        </Explanation>
+
+        <P>
+            Gradle utiliza este mismo modelo. Durante la configuración construye un grafo de tareas y, durante la
+            ejecución, utiliza ese grafo para determinar qué tareas seleccionadas debe ejecutar y en qué orden
+            (<ReferenceCitation {...citationContext} referenceId="gradle-build-lifecycle"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>).
+        </P>
+
+        <P>
+            Podemos resumir el vocabulario que necesitaremos durante el resto de la lección:
+        </P>
+
+        <List>
+            <ListItem icon={icons.GitBranch}>
+                una <B>tarea</B> será un nodo;
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsLeftRight}>
+                una <B>dependencia</B> será una arista dirigida desde la tarea requerida hacia la tarea dependiente;
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsClockwise}>
+                un <B>ciclo</B> aparecería si pudiéramos seguir dependencias y regresar a la tarea de partida;
+            </ListItem>
+
+            <ListItem icon={icons.TreeStructure}>
+                un <B>DAG</B> será un grafo de dependencias sin esos ciclos;
+            </ListItem>
+
+            <ListItem icon={icons.Target}>
+                y una invocación concreta utilizará solo el <B>grafo seleccionado</B> necesario para alcanzar el
+                objetivo solicitado.
+            </ListItem>
+        </List>
     </NotesSection>
 
     <NotesSection id="h2-dependency-graph">
@@ -248,7 +377,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <Explanation headingLevel="h3">
             <P>
-                Cada tarea es un <B>nodo</B> del grafo. Cada flecha es una <B>conexión dirigida</B>: la flecha
+                Cada tarea es un <B>nodo</B> del grafo. Cada flecha es una <B>arista dirigida</B>: la flecha
                 <Mono>A -> B</Mono> se lee siempre como <I>B depende de A</I>, nunca al revés. Por eso
                 <Mono>generateReport -> packageReport</Mono> significa que <Mono>packageReport</Mono> requiere que
                 <Mono>generateReport</Mono> haya terminado, y no que <Mono>generateReport</Mono> requiera a
@@ -294,8 +423,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             <span slot="title">Acíclico</span>
 
             <P>
-                Un grafo de dependencias es <B>acíclico</B> cuando seguir sus conexiones dirigidas nunca permite
-                regresar a la tarea de partida.
+                Un grafo de dependencias es <B>acíclico</B> cuando seguir sus aristas dirigidas nunca permite regresar a
+                la tarea de partida.
             </P>
         </Definition>
 
@@ -459,11 +588,12 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         </P>
 
         <P>
-            <Mono>grafo de tareas -> tarea solicitada + dependencias necesarias</Mono>
+            <Mono>grafo de tareas seleccionado -> tarea solicitada + dependencias necesarias</Mono>
         </P>
 
         <P>
-            El grafo de tareas no es una propiedad fija del build: depende de qué tarea se solicita en cada ejecución.
+            El grafo de tareas seleccionado no es una propiedad fija del build: depende de qué tarea se solicita en cada
+            ejecución.
         </P>
 
         <Explanation headingLevel="h3">
@@ -481,7 +611,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             headingLevel="h2" Icon={icons.Wrench}
             slot="heading"
         >
-            Un grafo de tareas real: Gradle
+            Un grafo de dependencias real: Gradle
         </Heading>
 
         <P>
@@ -717,8 +847,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </ListItem>
 
             <ListItem icon={icons.Wrench}>
-                Un <B>grafo de tareas</B> describe dependencias; una <B>traza de ejecución</B> describe qué ocurrió
-                realmente.
+                Un <B>grafo de dependencias de tareas</B> describe dependencias; una <B>traza de ejecución</B> describe
+                qué ocurrió realmente.
                 <Mono>--task-graph</Mono> nos permite observar lo primero sin ejecutar las acciones.
             </ListItem>
         </Fragment>

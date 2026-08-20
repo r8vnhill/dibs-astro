@@ -33,6 +33,12 @@ work:windows-powershell-in-action-3e
   schema:name "Windows PowerShell in Action, Third Edition" ;
   schema:author person:bruce-payette, person:richard-siddaway .
 
+work:introduction-to-algorithms-4e
+  a schema:CreativeWork ;
+  schema:name "Introduction to algorithms (4th ed.)" ;
+  schema:author person:thomas-h-cormen, person:charles-e-leiserson, person:ronald-l-rivest, person:clifford-stein ;
+  schema:publisher org:mit-press .
+
 work:acm-tosem
   a schema:CreativeWork ;
   schema:name "ACM Transactions on Software Engineering and Methodology" ;
