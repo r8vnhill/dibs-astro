@@ -1,4 +1,5 @@
 ---
+import * as icons from "@ravenhill/astro-icons";
 import { Heading } from "~/components/semantics";
 import ToDo from "~/components/utils/ToDo.tsx";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -16,7 +17,7 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
     <NotesSection id="h2-dry-run">
         <Heading
-            headingLevel="h2" Icon={null}
+            headingLevel="h2" Icon={icons.ShieldCheck}
             slot="heading"
         >
             ...

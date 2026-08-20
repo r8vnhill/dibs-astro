@@ -1,3 +1,5 @@
+import { architecturalPackages } from "./classification.mjs";
+
 export const domainBoundaryRule = {
     id: "domain-boundary",
     source: "domain",
@@ -126,53 +128,21 @@ export const contentCoreBoundaryRule = {
         "Keep generated data, validation, Astro, UI, and app adapters in src, and expose only pure content contracts from the package.",
 };
 
-export const siteCoreBoundaryRule = {
-    id: "site-core-boundary",
-    source: "site-core",
-    allowedTargets: ["site-core"],
-    forbiddenTargets: [
-        "domain",
-        "application",
-        "infrastructure",
-        "presentation-adapter",
-        "presentation",
-        "ui",
-        "generated-data",
-        "data",
-        "utils",
-        "assets",
-        "styles",
-        "content-core",
-    ],
-    forbiddenPackages: ["astro", "react", "react-dom", "zod", "@ravenhill/content-core"],
-    // The package's own runtime contract is dependency-free. Its root-api tests intentionally consume the package
-    // through its own published root specifier, and its tests need a test runner and property-based testing library.
-    allowedPackages: ["@ravenhill/site-core", "vitest", "fast-check"],
-    message: "@ravenhill/site-core must remain framework-free and independent from app-local layers.",
-    suggestion:
-        "Keep concrete site configuration, generated data, Astro, UI, and app adapters in src, and expose only pure site/repository primitives from the package.",
-};
-
 /**
- * Reusable workspace packages that must be consumed through their root entry point only.
+ * Architectural packages that must be consumed through their root entry point only.
  *
  * This is a data-driven allowlist of packages, rather than a one-off "isForbiddenXSubpath" function per package: a
- * future extracted package gains root-only enforcement by adding an entry here, not by extending the evaluator.
+ * future architectural package gains root-only enforcement by adding its import surface to the package mapping, not by
+ * extending the evaluator.
  */
-export const rootOnlyWorkspacePackages = [
-    {
-        packageName: "@ravenhill/content-core",
-        id: "content-core-root-import",
-        message: "@ravenhill/content-core must be consumed through its root entry point.",
-        suggestion: "Import from @ravenhill/content-core instead of a package subpath.",
-    },
-    {
-        packageName: "@ravenhill/site-core",
-        id: "site-core-root-import",
-        message: "@ravenhill/site-core must be consumed through its root entry point.",
-        suggestion: "Import from @ravenhill/site-core instead of a package subpath.",
-    },
-];
+export const rootOnlyPackages = architecturalPackages
+    .filter((entry) => entry.importSurface === "root-only")
+    .map((entry) => ({
+        packageName: entry.packageName,
+        id: `${entry.semanticTarget}-root-import`,
+        message: `${entry.packageName} must be consumed through its root entry point.`,
+        suggestion: `Import from ${entry.packageName} instead of a package subpath.`,
+    }));
 
 export const boundaryRules = [
     domainBoundaryRule,
@@ -181,7 +151,6 @@ export const boundaryRules = [
     presentationAdapterBoundaryRule,
     uiBoundaryRule,
     contentCoreBoundaryRule,
-    siteCoreBoundaryRule,
 ];
 
 /**

@@ -946,7 +946,7 @@ usage:tasks-as-abstractions-kotlin-coding-conventions-recommended
 
 <https://dibs.ravenhill.cl/notes/scripting/task-graphs/>
   a schema:LearningResource ;
-  schema:name "De tareas a grafos: cómo coordinar un proceso de construcción" ;
+  schema:name "Grafos de tareas y sistemas de construcción
   schema:url "/notes/scripting/task-graphs/" .
 
 usage:task-graphs-gradle-build-lifecycle-recommended

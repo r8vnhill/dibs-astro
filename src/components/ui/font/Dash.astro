@@ -18,12 +18,14 @@ const dashByKind: Record<DashKind, string> = {
 };
 
 const {
-    kind = "en",
+    kind: requestedKind,
     length = 1,
     class: className,
     ariaLabel,
 } = Astro.props as Props;
 
+const hasDefaultSlot = Astro.slots.has("default");
+const kind = requestedKind ?? (hasDefaultSlot ? "em" : "en");
 const normalizedLength = Math.max(1, Math.trunc(length));
 const content = dashByKind[kind].repeat(normalizedLength);
 const inlineTextProps = {
@@ -33,4 +35,6 @@ const inlineTextProps = {
 };
 ---
 
-<InlineText {...inlineTextProps}>{content}</InlineText>
+<InlineText {...inlineTextProps}>
+    {content}{hasDefaultSlot && <slot />}{hasDefaultSlot && content}
+</InlineText>

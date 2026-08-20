@@ -30,7 +30,7 @@ describe.concurrent("tasks as abstractions lesson render", () => {
         expect(normalizedHtml).toContain("sistema de construcción");
         expect(normalizedHtml).toContain("/notes/scripting/task-graphs/");
         expect(normalizedHtml).toContain(
-            "De tareas a grafos: cómo coordinar un proceso de construcción",
+            "Grafos de tareas y sistemas de construcción",
         );
         expect(normalizedHtml).toContain("Coding conventions");
         expect(normalizedHtml.indexOf("agregaremos una tercera tarea:")).toBeGreaterThan(

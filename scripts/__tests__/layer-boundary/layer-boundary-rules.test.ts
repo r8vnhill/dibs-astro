@@ -6,7 +6,7 @@ import {
     allowedExceptions,
     boundaryRules,
     initialBoundaryRules,
-    rootOnlyWorkspacePackages,
+    rootOnlyPackages,
 } from "../../lib/layer-boundary/rules.mjs";
 
 const expectedRuleOrder = [
@@ -16,7 +16,6 @@ const expectedRuleOrder = [
     "presentation-adapter-boundary",
     "ui-boundary",
     "content-core-boundary",
-    "site-core-boundary",
 ];
 
 const expectedSources = [
@@ -26,7 +25,6 @@ const expectedSources = [
     ["presentation-adapter-boundary", "presentation-adapter"],
     ["ui-boundary", "ui"],
     ["content-core-boundary", "content-core"],
-    ["site-core-boundary", "site-core"],
 ];
 
 function ruleById(id) {
@@ -477,6 +475,38 @@ describe("Cycle 2 rule matrix", () => {
         ]);
     });
 
+    test.each([
+        ["src/domain/model.ts", "domain-boundary"],
+        ["src/application/use-case.ts", "application-boundary"],
+        ["src/infrastructure/repository.ts", "infrastructure-boundary"],
+        ["src/presentation/adapters/navigation.ts", "presentation-adapter-boundary"],
+        ["src/components/Panel.astro", "ui-boundary"],
+    ])("allows %s to consume the semantic site-core package", (sourcePath, ruleId) => {
+        const result = evaluateBoundaryRules(
+            sourcePath,
+            importRecord("@ravenhill/site-core"),
+            undefined,
+        );
+
+        expect(result).toEqual({ status: "allowed" });
+        expect(ruleById(ruleId).allowedTargets).toContain("site-core");
+    });
+
+    test("does not allow content-core to acquire site-core", () => {
+        const result = evaluateBoundaryRules(
+            "packages/content-core/src/index.ts",
+            importRecord("@ravenhill/site-core"),
+            undefined,
+        );
+
+        expect(result.status).toBe("violation");
+        expect(result.violation).toMatchObject({
+            ruleId: "content-core-boundary",
+            sourceLayer: "content-core",
+            target: "site-core",
+        });
+    });
+
     test("domain and application forbid framework packages", () => {
         expect(ruleById("domain-boundary").forbiddenPackages).toEqual([
             "astro",
@@ -517,7 +547,6 @@ describe("Cycle 2 rule matrix", () => {
 
     test.each([
         "content-core-boundary",
-        "site-core-boundary",
     ])("%s declares a package allowlist rather than relying on the denylist alone", (id) => {
         const rule = ruleById(id);
 
@@ -827,9 +856,9 @@ describe("Cycle 2 exact exceptions", () => {
     });
 });
 
-describe("rootOnlyWorkspacePackages", () => {
-    test("is a data-driven registry covering the reusable workspace packages", () => {
-        expect(rootOnlyWorkspacePackages.map((entry) => entry.packageName)).toEqual([
+describe("rootOnlyPackages", () => {
+    test("is a data-driven registry covering the architectural packages", () => {
+        expect(rootOnlyPackages.map((entry) => entry.packageName)).toEqual([
             "@ravenhill/content-core",
             "@ravenhill/site-core",
         ]);

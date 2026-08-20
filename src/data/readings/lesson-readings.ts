@@ -21,7 +21,7 @@ export type LessonReadings = Readonly<{
 
 export const taskGraphsReadings: LessonReadings = {
     lessonPath: "/notes/scripting/task-graphs/",
-    title: "De tareas a grafos: cómo coordinar un proceso de construcción",
+    title: "Grafos de tareas y sistemas de construcción",
     essential: [
         {
             referenceId: "gradle-build-lifecycle",

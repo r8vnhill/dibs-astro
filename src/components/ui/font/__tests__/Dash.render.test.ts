@@ -23,6 +23,19 @@ async function renderDash(props: DashProps): Promise<Element> {
     return span;
 }
 
+async function renderWrappedDash(text: string, props: DashProps = {}): Promise<Element> {
+    const render = await createAstroRenderer<DashProps>(Dash);
+    const html = await render(props, { slots: { default: text } });
+    const document = new JSDOM(html).window.document;
+    const span = document.querySelector("span");
+
+    if (!span) {
+        throw new Error("Dash did not render a span element");
+    }
+
+    return span;
+}
+
 describe("Dash.astro render", () => {
     test("renders an en dash by default", async () => {
         const element = await renderDash({});
@@ -32,6 +45,11 @@ describe("Dash.astro render", () => {
     test("repeats the selected dash according to length", async () => {
         const element = await renderDash({ length: 2 });
         expect(element.textContent).toBe("––");
+    });
+
+    test("wraps slotted text in em dashes", async () => {
+        const element = await renderWrappedDash("qué depende de qué");
+        expect(element.textContent).toBe("—qué depende de qué—");
     });
 
     test.each([

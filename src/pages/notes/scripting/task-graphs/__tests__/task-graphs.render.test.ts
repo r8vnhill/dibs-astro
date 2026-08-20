@@ -29,7 +29,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain("De tareas a grafos: cómo coordinar un proceso de construcción");
+        expect(normalizedHtml).toContain("Grafos de tareas y sistemas de construcción");
         expect(normalizedHtml).toContain("/notes/scripting/tasks-as-abstractions/");
         expect(normalizedHtml).toContain("Dependencias entre tareas");
         expect(normalizedHtml).toContain("Sistema de construcción");
@@ -39,6 +39,15 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("prepareCatalog");
         expect(normalizedHtml).toContain("tarea requerida -> tarea dependiente");
         expect(normalizedHtml).not.toContain("tarea -> tarea requerida");
+    });
+
+    test("then the task lookup notation is centered", async () => {
+        const { doc } = await renderLesson();
+        const notation = Array.from(doc.querySelectorAll("p.text-center")).find((paragraph) =>
+            paragraph.textContent?.includes("nombre de tarea -> tarea")
+        );
+
+        expect(notation).not.toBeUndefined();
     });
 
     test.each(taskGraphDiagramSpecs)(

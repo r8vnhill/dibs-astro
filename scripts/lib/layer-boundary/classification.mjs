@@ -1,7 +1,7 @@
 import {
     classifyImportKind,
-    classifyPackageImport,
-    classifyUnresolvedImport,
+    classifyPackageImport as classifyExternalPackageImport,
+    classifyUnresolvedImport as classifyExternalUnresolvedImport,
     extractImportPath,
 } from "./import-specifiers.mjs";
 import { normalizeProjectPath } from "./paths.mjs";
@@ -14,7 +14,6 @@ import { normalizeProjectPath } from "./paths.mjs";
  *   | "presentation-adapter"
  *   | "ui"
  *   | "content-core"
- *   | "site-core"
  *   | "unknown"
  * } SourceLayer
  */
@@ -71,10 +70,6 @@ function isContentCoreSource(pathValue) {
     return isUnder(pathValue, "packages/content-core/src");
 }
 
-function isSiteCoreSource(pathValue) {
-    return isUnder(pathValue, "packages/site-core/src");
-}
-
 function isDomainTarget(pathValue) {
     return isUnder(pathValue, "src/domain");
 }
@@ -124,10 +119,6 @@ function isContentCoreTarget(pathValue) {
     return isUnder(pathValue, "packages/content-core/src");
 }
 
-function isSiteCoreTarget(pathValue) {
-    return isUnder(pathValue, "packages/site-core/src");
-}
-
 const SOURCE_LAYERS = Object.freeze([
     ["domain", isDomainSource],
     ["application", isApplicationSource],
@@ -135,7 +126,6 @@ const SOURCE_LAYERS = Object.freeze([
     ["presentation-adapter", isPresentationAdapterSource],
     ["ui", isUiSource],
     ["content-core", isContentCoreSource],
-    ["site-core", isSiteCoreSource],
 ]);
 
 const TARGETS = Object.freeze([
@@ -151,8 +141,52 @@ const TARGETS = Object.freeze([
     ["assets", isAssetsTarget],
     ["styles", isStylesTarget],
     ["content-core", isContentCoreTarget],
-    ["site-core", isSiteCoreTarget],
 ]);
+
+/**
+ * Architectural packages retain their dependency role independently from the source ownership of their files.
+ *
+ * `site-core` is published and external to this repository, while `content-core` remains a local package.
+ * Both packages are still architectural targets and expose only their package roots to consumers.
+ */
+export const architecturalPackages = Object.freeze([
+    Object.freeze({
+        packageName: "@ravenhill/content-core",
+        semanticTarget: "content-core",
+        sourceOwnership: "local",
+        importSurface: "root-only",
+    }),
+    Object.freeze({
+        packageName: "@ravenhill/site-core",
+        semanticTarget: "site-core",
+        sourceOwnership: "external",
+        importSurface: "root-only",
+    }),
+]);
+
+function architecturalPackageFor(packageName) {
+    return architecturalPackages.find((entry) => entry.packageName === packageName);
+}
+
+function classifyArchitecturalPackage(genericClassification) {
+    if (genericClassification.target !== "external-package") {
+        return genericClassification;
+    }
+
+    const architecturalPackage = architecturalPackageFor(genericClassification.packageName);
+
+    return architecturalPackage
+        ? { ...genericClassification, target: architecturalPackage.semanticTarget }
+        : genericClassification;
+}
+
+export function classifyPackageImport(importPath) {
+    return classifyArchitecturalPackage(classifyExternalPackageImport(importPath));
+}
+
+export function classifyUnresolvedImport(importPath) {
+    return classifyArchitecturalPackage(classifyExternalUnresolvedImport(importPath));
+}
 
 /**
  * @param {string} sourcePath
@@ -179,7 +213,7 @@ export function classifyResolvedTarget(resolvedPath) {
     return match?.[0] ?? "unknown";
 }
 
-export { classifyImportKind, classifyPackageImport, classifyUnresolvedImport, extractImportPath };
+export { classifyImportKind, extractImportPath };
 
 /**
  * @param {{ importPath?: string; target?: string; kind: string }} importRecord
@@ -198,11 +232,21 @@ export function classifyImport(importRecord, resolvedPath) {
 
     if (resolvedPath) {
         const normalizedPath = normalizeProjectPath(resolvedPath);
+        const resolvedTarget = classifyResolvedTarget(normalizedPath);
+        const packageClassification = classifyUnresolvedImport(importPath);
+        const architecturalPackage = architecturalPackageFor(packageClassification.packageName);
+        const target = resolvedTarget === "unknown" && architecturalPackage
+            ? architecturalPackage.semanticTarget
+            : resolvedTarget;
+
         return {
             importPath,
             importKind,
             resolvedPath: normalizedPath,
-            target: classifyResolvedTarget(normalizedPath),
+            ...(target === architecturalPackage?.semanticTarget && architecturalPackage
+                ? { packageName: architecturalPackage.packageName }
+                : {}),
+            target,
         };
     }
 

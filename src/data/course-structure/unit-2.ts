@@ -15,7 +15,7 @@ export const unit2Lessons: readonly Lesson[] = new LessonTreeBuilder()
     )
     .link(
         "task-graphs",
-        "De tareas a grafos: cómo coordinar un proceso de construcción",
+        "Grafos de tareas y sistemas de construcción",
         `${coursePaths.scriptingLibraries.taskGraphs}/`,
     )
     .build();

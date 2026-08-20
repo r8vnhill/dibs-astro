@@ -549,13 +549,13 @@ const title = "Declaración de variables";
         </p>
         <p>Declara una propiedad <KotlinInline code="difficultyLevel" /> que:</p>
         <List>
-            <ListItem icon={null}>Sea de tipo <KotlinInline code="String" />.</ListItem>
-            <ListItem icon={null}
+            <ListItem icon={icons.BracketsCurly}>Sea de tipo <KotlinInline code="String" />.</ListItem>
+            <ListItem icon={icons.ListChecks}
             >Permita valores como <KotlinInline code={`"easy"`} />, <KotlinInline code={`"normal"`} /> o <KotlinInline
                     code={`"hard"`}
                 />.</ListItem>
-            <ListItem icon={null}>Pueda leerse públicamente desde cualquier parte.</ListItem>
-            <ListItem icon={null}
+            <ListItem icon={icons.Eye}>Pueda leerse públicamente desde cualquier parte.</ListItem>
+            <ListItem icon={icons.ShieldCheck}
             >Solo pueda modificarse <strong>desde dentro del módulo</strong>, y con validación.</ListItem>
         </List>
         <Hints>

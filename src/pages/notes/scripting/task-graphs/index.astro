@@ -6,9 +6,9 @@ import Heading from "~/components/semantics/Heading.astro";
 import { Definition, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
-import { B, I, Mono } from "~/components/ui/font";
+import { B, Dash, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink, Link } from "~/components/ui/links";
-import { ListItem } from "~/components/ui/list";
+import { List, ListItem } from "~/components/ui/list";
 import { ReferenceCitation } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
@@ -25,12 +25,24 @@ const taskGraphsReadings = getTaskGraphsReadings();
 const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.lessonPath) } as const;
 ---
 
-<NotesLayout title="Grafos de tareas y sistemas de construcción" description="...">
-    <!--
-        <Fragment slot="abstract">
+<NotesLayout
+    title="Grafos de tareas y sistemas de construcción"
+    description="Introduce dependencias entre tareas, DAGs, órdenes topológicos y grafos seleccionados, usando Gradle como realización concreta de estos conceptos."
+>
+    <Fragment slot="abstract">
+        <P>
+            Esta lección extiende la abstracción de tarea introduciendo <B>dependencias entre tareas</B>. A partir de
+            ellas construiremos grafos dirigidos y acíclicos, estudiaremos qué órdenes de ejecución son compatibles con
+            sus restricciones y veremos cómo una tarea solicitada selecciona solo una parte del grafo completo.
+        </P>
 
-        </Fragment>
-    -->
+        <P>
+            Finalmente, usaremos Gradle para observar el mismo modelo en un sistema de construcción real y
+            distinguiremos entre el <B>grafo de tareas</B><Dash>qué depende de qué</Dash>y una <B>traza de
+                ejecución</B><Dash kind="em" />qué ocurrió realmente y cuándo. El objetivo no es aprender Gradle, sino
+            usarlo como una realización concreta de las ideas estudiadas.
+        </P>
+    </Fragment>
 
     <NotesSection id="h2-task-dependencies">
         <Heading
@@ -41,12 +53,13 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         </Heading>
 
         <P>
-            Imagina que nuestro proyecto tiene varias tareas: <Mono>prepareCatalog</Mono>,
-            <Mono>generateReport</Mono>, <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>. En la lección anterior,
-            el despachador podía encontrar una tarea a partir de su nombre:
+            Imagina que nuestro proyecto tiene varias tareas: <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,{
+                " "
+            }<Mono>packageReport</Mono> y <Mono>verifyReport</Mono>. En la lección anterior, el despachador podía
+            encontrar una tarea a partir de su nombre:
         </P>
 
-        <P>
+        <P class="text-center">
             <KotlinInline code="nombre de tarea -> tarea" />
         </P>
 
@@ -60,17 +73,17 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             Podemos expresar esa relación así:
         </P>
 
-        <P>
-            <KotlinInline>prepareCatalog -> generateReport</KotlinInline>
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport" />
         </P>
 
         <Explanation headingLevel="h3">
             <P>
-                En esta lección leeremos una flecha <KotlinInline>A -> B</KotlinInline> como: <B> B depende de A</B>.
+                En esta lección leeremos una flecha <KotlinInline code="A -> B" /> como: <B> B depende de A</B>.
             </P>
 
             <P>
-                Por lo tanto, <KotlinInline>prepareCatalog -> generateReport</KotlinInline> significa que <Mono
+                Por lo tanto, <KotlinInline code="prepareCatalog -> generateReport" /> significa que <Mono
                 >generateReport</Mono> solo puede ejecutarse después de que <Mono>prepareCatalog</Mono> haya terminado.
             </P>
 
@@ -88,10 +101,10 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <Question headingLevel="h3">
             <P>
-                Si tenemos las relaciones
-                <KotlinInline code="prepareCatalog -> generateReport" /> y
-                <KotlinInline code="prepareMetadata -> generateReport" />, ¿cuáles tareas dependen de qué otras? ¿Cuáles
-                deben completarse primero? ¿Cuáles pueden ejecutarse en paralelo?
+                Si tenemos las relaciones <KotlinInline code="prepareCatalog -> generateReport" /> y <KotlinInline
+                    code="prepareMetadata -> generateReport"
+                />, ¿cuáles tareas dependen de qué otras? ¿Cuáles deben completarse primero? ¿Cuáles pueden ejecutarse
+                en paralelo?
             </P>
 
             <Solution embedded headingLevel="h4">
@@ -104,7 +117,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                 <P>
                     En cambio, no existe una dependencia entre <Mono>prepareCatalog</Mono> y <Mono
                     >prepareMetadata</Mono>. El grafo no exige que una se ejecute antes que la otra, por lo que pueden
-                    el grafo permite que se ejecuten en paralelo, aunque no garantiza que comiencen al mismo tiempo.
+                    ejecutarse en paralelo, aunque no hay garantía de que comiencen al mismo tiempo.
                 </P>
 
                 <P>
@@ -147,15 +160,33 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             Por eso existe una diferencia entre ambos modelos:
         </P>
 
-        <P>
-            <KotlinInline code="despachador: nombre solicitado -> una tarea" />
-        </P>
+        <List>
+            <ListItem icon={icons.Signpost}>
+                <B>Despachador de tareas:</B>
+                <List>
+                    <ListItem icon={icons.SignIn}>
+                        <B>Input:</B> nombre de tarea
+                    </ListItem>
 
-        <P>
-            <KotlinInline
-                code="sistema de construcción: resultado solicitado -> tareas necesarias y sus dependencias"
-            />
-        </P>
+                    <ListItem icon={icons.SignOut}>
+                        <B>Output:</B> tarea
+                    </ListItem>
+                </List>
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsSplit}>
+                <B>Sistema de construcción:</B>
+                <List>
+                    <ListItem icon={icons.SignIn}>
+                        <B>Input:</B> resultado solicitado
+                    </ListItem>
+
+                    <ListItem icon={icons.SignOut}>
+                        <B>Output:</B> tareas necesarias y sus dependencias
+                    </ListItem>
+                </List>
+            </ListItem>
+        </List>
 
         <P>
             El sistema de construcción no reemplaza la idea de tarea. La amplía: además de saber qué trabajo representa
@@ -644,49 +675,74 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
     <ConclusionsLayout>
         <Fragment slot="conclusions">
             <P>
-                El recorrido de esta lección va desde la <B>tarea</B> y su <B>dependencia</B> hasta un <B>DAG</B>: sus
-                flechas expresan restricciones de ejecución y permiten construir un orden compatible. Cuando solicitamos
-                una tarea concreta, esas restricciones forman un <B>grafo seleccionado</B> con el objetivo y las
-                dependencias que necesita.
+                Partimos con tareas independientes y agregamos una relación sencilla:
+                <KotlinInline code="A -> B" /> significa que <Mono>B</Mono> depende de <Mono>A</Mono>. Al combinar
+                varias relaciones de este tipo obtenemos un <B>grafo de dependencias</B>.
             </P>
 
             <P>
-                Gradle vuelve observable este modelo: <Mono>--task-graph</Mono> muestra la estructura seleccionada antes
-                de ejecutar las acciones. Todavía no hemos explicado de dónde provienen esas dependencias.
+                Para que esas dependencias admitan algún orden válido, el grafo debe ser acíclico. Un DAG no prescribe
+                necesariamente una secuencia única: expresa un <B>orden parcial</B>, es decir, las precedencias que
+                deben respetarse y también las tareas entre las que no existe una restricción de orden.
+            </P>
+
+            <P>
+                Además, conocer el grafo completo no significa ejecutar todas sus tareas. Una invocación parte desde un
+                objetivo concreto y selecciona únicamente ese objetivo y las dependencias necesarias para alcanzarlo.
+                Gradle nos permitió observar esta selección con <Mono>--task-graph</Mono>, sin confundirla con una
+                ejecución real de las tareas.
             </P>
         </Fragment>
 
         <Fragment slot="key-points">
-            <ListItem icon={icons.Gear}>
-                Un <B>sistema de construcción</B> coordina unidades de trabajo, dependencias y resultados solicitados.
+            <ListItem icon={icons.ArrowsLeftRight}>
+                En una dependencia <KotlinInline code="A -> B" />, <Mono>B</Mono> depende de <Mono>A</Mono>: la flecha
+                expresa una
+                <B> restricción de precedencia</B>.
             </ListItem>
+
             <ListItem icon={icons.TreeStructure}>
-                Un <B>DAG</B> es un grafo dirigido y acíclico: sus conexiones tienen dirección y no forman ciclos.
+                Un <B>DAG</B> combina conexiones dirigidas sin ciclos, de modo que sus dependencias admiten al menos un
+                orden topológico.
             </ListItem>
-            <ListItem icon={icons.GitBranch}>
-                Un <B>grafo de tareas</B> representa las tareas y dependencias necesarias para una invocación concreta.
+
+            <ListItem icon={icons.ListChecks}>
+                Un DAG define un <B>orden parcial</B>, no necesariamente una secuencia única: tareas sin una dependencia
+                entre ellas pueden aparecer en distintos órdenes compatibles.
             </ListItem>
+
             <ListItem icon={icons.Target}>
-                Solicitar <Mono>packageReport</Mono> no selecciona <Mono>verifyReport</Mono> porque esa tarea no es una
-                dependencia del resultado solicitado.
+                El <B>grafo seleccionado</B> para una invocación contiene la tarea solicitada y las dependencias
+                necesarias para alcanzarla, no todas las tareas conocidas por el build.
             </ListItem>
+
             <ListItem icon={icons.Wrench}>
-                Gradle confirma el modelo: <Mono>dependsOn</Mono> declara relaciones y <Mono>--task-graph</Mono> permite
-                observar el subconjunto seleccionado.
+                Un <B>grafo de tareas</B> describe dependencias; una <B>traza de ejecución</B> describe qué ocurrió
+                realmente.
+                <Mono>--task-graph</Mono> nos permite observar lo primero sin ejecutar las acciones.
             </ListItem>
         </Fragment>
 
         <Fragment slot="closing-reflection">
             <P>
-                <B>¿De dónde provienen esas dependencias?</B> Una relación puede surgir del flujo de datos: la salida de
-                una tarea productora se convierte en la entrada de una tarea consumidora.
+                Hasta ahora hemos tratado cada dependencia como una arista que alguien declara explícitamente. Eso nos
+                permite responder <I>qué debe estar listo antes de qué</I>, pero todavía no explica <B>por qué existe
+                    esa dependencia</B>.
             </P>
 
             <P>
-                El grafo actual nos dice qué trabajo depende de qué otro trabajo, pero todavía no qué datos fluyen entre
-                tareas, qué cambios invalidan un resultado ni qué resultados pueden reutilizarse. La próxima lección
-                estudiará <B>inputs</B>, <B>outputs</B>, dependencias inferidas, incrementalidad y caché, sin abandonar
-                el grafo que acabamos de construir.
+                El siguiente paso será enriquecer el modelo con información sobre los datos que atraviesan esas aristas.
+                Si una tarea produce un resultado que otra necesita, podemos describir la relación como:
+            </P>
+
+            <P>
+                <KotlinInline code="output del productor -> input del consumidor" />
+            </P>
+
+            <P>
+                Con ese cambio, la pregunta deja de ser solamente <I>«¿qué tarea debe ejecutarse antes?»</I> y pasa a
+                ser <B>«¿qué produce cada tarea y quién necesita ese resultado?»</B>. Esa perspectiva permitirá conectar
+                el grafo con inputs, outputs, dependencias inferidas, incrementalidad y reutilización de resultados.
             </P>
         </Fragment>
     </ConclusionsLayout>

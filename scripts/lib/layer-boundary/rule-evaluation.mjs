@@ -1,6 +1,6 @@
 import { classifyImport, classifySourcePath } from "./classification.mjs";
 import { normalizeProjectPath } from "./paths.mjs";
-import { allowedExceptions, initialBoundaryRules, rootOnlyWorkspacePackages } from "./rules.mjs";
+import { allowedExceptions, initialBoundaryRules, rootOnlyPackages } from "./rules.mjs";
 
 function importPathFrom(importRecord) {
     return importRecord.importPath ?? importRecord.target;
@@ -59,12 +59,12 @@ function isNotAllowedTarget(rule, classifiedImport) {
 }
 
 /**
- * Finds a root-only workspace package whose subpath was imported directly, if any.
+ * Finds a root-only architectural package whose subpath was imported directly, if any.
  *
  * Data-driven replacement for a per-package "isForbiddenXSubpath" function: adding a new reusable package to
- * `rootOnlyWorkspacePackages` extends this check without touching the evaluator.
+ * `rootOnlyPackages` extends this check without touching the evaluator.
  */
-function forbiddenWorkspacePackageSubpath(classifiedImport, registry) {
+function forbiddenPackageSubpath(classifiedImport, registry) {
     return registry.find((entry) =>
         classifiedImport.packageName === entry.packageName && classifiedImport.importPath !== entry.packageName
     );
@@ -138,14 +138,14 @@ export function evaluateBoundaryRules(
         );
     }
 
-    const workspaceSubpathEntry = forbiddenWorkspacePackageSubpath(classifiedImport, rootOnlyWorkspacePackages);
+    const packageSubpathEntry = forbiddenPackageSubpath(classifiedImport, rootOnlyPackages);
 
-    if (workspaceSubpathEntry) {
+    if (packageSubpathEntry) {
         return toViolation(
             importRecord,
             classifiedSource,
             classifiedImport,
-            workspaceSubpathEntry,
+            packageSubpathEntry,
             "forbidden-package-subpath",
         );
     }

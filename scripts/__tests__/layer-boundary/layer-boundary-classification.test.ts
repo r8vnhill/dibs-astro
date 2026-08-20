@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import {
+    architecturalPackages,
     classifyImport,
     classifyPackageImport,
     classifyResolvedTarget,
@@ -16,7 +17,6 @@ const sourceLayerCases = [
     ["src/layouts/BaseLayout.astro", "ui"],
     ["src/pages/index.astro", "ui"],
     ["packages/content-core/src/index.ts", "content-core"],
-    ["packages/site-core/src/index.ts", "site-core"],
     ["scripts/check-layer-boundaries.mjs", "unknown"],
 ] as const;
 
@@ -36,7 +36,6 @@ const resolvedTargetCases = [
     ["src/assets/logo.svg", "assets"],
     ["src/styles/global.css", "styles"],
     ["packages/content-core/src/index.ts", "content-core"],
-    ["packages/site-core/src/index.ts", "site-core"],
     ["scripts/utility.mjs", "unknown"],
 ] as const;
 
@@ -69,6 +68,32 @@ describe("classifySourcePath", () => {
             layer: "unknown",
         });
     });
+
+    test("does not treat published site-core source as a maintained layer", () => {
+        expect(classifySourcePath("packages/site-core/src/index.ts")).toEqual({
+            path: "packages/site-core/src/index.ts",
+            layer: "unknown",
+        });
+    });
+});
+
+describe("architecturalPackages", () => {
+    test("separates semantic role from physical ownership", () => {
+        expect(architecturalPackages).toEqual([
+            {
+                packageName: "@ravenhill/content-core",
+                semanticTarget: "content-core",
+                sourceOwnership: "local",
+                importSurface: "root-only",
+            },
+            {
+                packageName: "@ravenhill/site-core",
+                semanticTarget: "site-core",
+                sourceOwnership: "external",
+                importSurface: "root-only",
+            },
+        ]);
+    });
 });
 
 describe("classifyResolvedTarget", () => {
@@ -97,6 +122,10 @@ describe("classifyResolvedTarget", () => {
     ])("treats sibling path %s as unknown", (resolvedPath) => {
         expect(classifyResolvedTarget(resolvedPath)).toBe("unknown");
     });
+
+    test("does not treat published site-core source as a maintained target", () => {
+        expect(classifyResolvedTarget("packages/site-core/src/index.ts")).toBe("unknown");
+    });
 });
 
 describe("classifyPackageImport", () => {
@@ -113,6 +142,17 @@ describe("classifyPackageImport", () => {
     ])("normalizes %s to %s", (importPath, packageName) => {
         expect(classifyPackageImport(importPath)).toEqual({
             target: "external-package",
+            packageName,
+        });
+    });
+
+    test.each([
+        ["@ravenhill/content-core", "content-core", "@ravenhill/content-core"],
+        ["@ravenhill/site-core", "site-core", "@ravenhill/site-core"],
+        ["@ravenhill/site-core/repositories", "site-core", "@ravenhill/site-core"],
+    ])("classifies architectural package %s as %s", (importPath, target, packageName) => {
+        expect(classifyPackageImport(importPath)).toEqual({
+            target,
             packageName,
         });
     });
@@ -144,6 +184,21 @@ describe("classifyImport", () => {
             importKind: "value",
             resolvedPath: "src/utils/react-shim.ts",
             target: "utils",
+        });
+    });
+
+    test("retains site-core semantics when its installed path is unresolved", () => {
+        expect(
+            classifyImport(
+                { importPath: "@ravenhill/site-core", kind: "static-import" },
+                "node_modules/@ravenhill/site-core/dist/index.js",
+            ),
+        ).toEqual({
+            importPath: "@ravenhill/site-core",
+            importKind: "value",
+            resolvedPath: "node_modules/@ravenhill/site-core/dist/index.js",
+            packageName: "@ravenhill/site-core",
+            target: "site-core",
         });
     });
 

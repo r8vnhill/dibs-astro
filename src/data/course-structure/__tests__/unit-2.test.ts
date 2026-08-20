@@ -24,7 +24,7 @@ describe("unit2Lessons", () => {
         expect(unit2Lessons[2]).toMatchObject({
             kind: "link",
             id: "task-graphs",
-            title: "De tareas a grafos: cómo coordinar un proceso de construcción",
+            title: "Grafos de tareas y sistemas de construcción",
             href: "/notes/scripting/task-graphs/",
         });
     });
