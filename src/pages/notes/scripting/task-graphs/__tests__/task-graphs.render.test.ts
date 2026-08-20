@@ -1,7 +1,7 @@
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
+import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
-import { getReferencesForLesson } from "~/lib/bibliography";
 import {
     cyclicDependencyCounterexample,
     extendedTaskGraphWithFinalize,
@@ -10,6 +10,7 @@ import {
     taskGraphDiagramSpecs,
     verifyReportSelectedGraph,
 } from "~/lib/diagrams/task-graph-examples";
+import { resolveLessonReadings } from "~/lib/readings/lesson-readings-contract";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import TaskGraphsPage from "../index.astro";
 
@@ -178,24 +179,24 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
             .not.toBeNull();
     });
 
-    test("then its catalog references keep Gradle sources essential and research sources additional", () => {
-        const grouped = getReferencesForLesson(
-            getDefaultBibliographyCatalog(),
-            "/notes/scripting/task-graphs/",
-        );
+    test("then its readings keep Gradle sources essential and research sources in deeper sections", () => {
+        const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
 
-        expect(new Set(grouped.recommended.map((entry) => entry.reference.id))).toEqual(
+        expect(resolution.ok).toBe(true);
+        if (!resolution.ok) return;
+
+        expect(new Set(resolution.value.sections[0]?.readings.map((reading) => reading.referenceId))).toEqual(
             new Set([
                 "ref:gradle-build-lifecycle",
                 "ref:gradle-controlling-task-execution",
                 "ref:gradle-command-line-interface",
             ]),
         );
-        expect(new Set(grouped.additional.map((entry) => entry.reference.id))).toEqual(
-            new Set([
-                "ref:build-systems-a-la-carte-2018",
-                "ref:build-scripts-perfect-dependencies-2020",
-            ]),
+        expect(new Set(resolution.value.sections[1]?.readings.map((reading) => reading.referenceId))).toEqual(
+            new Set(["ref:build-systems-a-la-carte-2018"]),
+        );
+        expect(new Set(resolution.value.sections[2]?.readings.map((reading) => reading.referenceId))).toEqual(
+            new Set(["ref:build-scripts-perfect-dependencies-2020"]),
         );
     });
 

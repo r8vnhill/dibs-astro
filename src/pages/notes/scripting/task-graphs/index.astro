@@ -1,4 +1,5 @@
 ---
+import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
@@ -8,7 +9,7 @@ import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import { ReferencesFromCatalog } from "~/components/ui/references";
+import { ReferenceCitation } from "~/components/ui/references";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -19,6 +20,10 @@ import {
     taskDependencyGraph,
     verifyReportSelectedGraph,
 } from "~/lib/diagrams/task-graph-examples";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
+
+const taskGraphsReadings = getTaskGraphsReadings();
+const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.lessonPath) } as const;
 ---
 
 <NotesLayout title="Grafos de tareas y sistemas de construcción" description="...">
@@ -126,7 +131,10 @@ import {
 
             <P>
                 Un <B>sistema de construcción</B> (también llamado <I>build system</I> o <I>build engine</I>) coordina
-                unidades de trabajo y sus dependencias para producir los resultados solicitados.
+                unidades de trabajo y sus dependencias para producir los resultados solicitados. Esta perspectiva
+                también aparece al comparar distintos diseños de sistemas de construcción en <ReferenceCitation
+                    {...citationContext} referenceId="build-systems-a-la-carte-2018"
+                >Mokhov et al. (2018)</ReferenceCitation>.
             </P>
         </Definition>
 
@@ -385,7 +393,9 @@ import {
 
         <P>
             Todo lo anterior fue un modelo conceptual. Gradle es un sistema de construcción real que registra tareas
-            nombradas y conexiones dirigidas entre ellas con una sintaxis muy cercana a ese modelo:
+            nombradas y conexiones dirigidas entre ellas con una sintaxis muy cercana a ese modelo, como documenta
+            <ReferenceCitation {...citationContext} referenceId="gradle-build-lifecycle"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>:
         </P>
 
         <KotlinBlock
@@ -428,7 +438,10 @@ import {
                 <Mono>dependsOn(generateReport)</Mono> declara la misma conexión dirigida que
                 <Mono>prepareCatalog -> generateReport</Mono> en el diagrama, pero el compilador puede verificar que esa
                 tarea existe. La sintaxis de Gradle es secundaria; lo que importa es que reproduce el mismo grafo
-                dirigido y acíclico que ya conocemos.
+                dirigido y acíclico que ya conocemos. La guía de Gradle sobre el control de la ejecución describe esta
+                relación con más detalle (<ReferenceCitation
+                    {...citationContext} referenceId="gradle-controlling-task-execution"
+                >Gradle, Inc. (s. f.)</ReferenceCitation>).
             </P>
         </Explanation>
 
@@ -438,7 +451,10 @@ import {
                 moderno, una tarea con acciones debería declarar sus <B>inputs y outputs</B>: cuando una tarea consume
                 un resultado producido por otra, esa relación productor–consumidor permite que Gradle derive parte de la
                 dependencia y entienda qué datos necesita. Aquí mantenemos <Mono>dependsOn</Mono> porque el objetivo es
-                leer la topología antes de estudiar el flujo de datos. Consulta las{" "}
+                leer la topología antes de estudiar el flujo de datos. Esta precisión sobre dependencias necesarias
+                también motiva el trabajo de <ReferenceCitation
+                    {...citationContext} referenceId="build-scripts-perfect-dependencies-2020"
+                >Spall et al. (2020)</ReferenceCitation>. Consulta las{" "}
                 <Link href="https://docs.gradle.org/current/userguide/best_practices_tasks.html">
                     buenas prácticas de Gradle para tareas
                 </Link>.
@@ -448,7 +464,10 @@ import {
         <P>
             Igual que con el modelo conceptual, solicitar una tarea concreta selecciona solo esa tarea y sus
             dependencias. Solicitar <Mono>packageReport</Mono> selecciona <Mono>prepareCatalog</Mono> y
-            <Mono>generateReport</Mono>, pero no <Mono>verifyReport</Mono>:
+            <Mono>generateReport</Mono>, pero no <Mono>verifyReport</Mono>. La interfaz de línea de comandos de Gradle
+            documenta esta forma de solicitar e inspeccionar tareas (<ReferenceCitation
+                {...citationContext} referenceId="gradle-command-line-interface"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>):
         </P>
 
         <BashBlock code={`./gradlew packageReport --task-graph`}>
@@ -733,37 +752,4 @@ import {
             </P>
         </Fragment>
     </ConclusionsLayout>
-
-    <ReferencesFromCatalog lessonId="/notes/scripting/task-graphs/">
-        <Fragment slot="description-ref:gradle-build-lifecycle">
-            <P>
-                Es la referencia principal para relacionar el ciclo de vida de Gradle con la construcción del grafo de
-                tareas antes de la ejecución.
-            </P>
-        </Fragment>
-        <Fragment slot="description-ref:gradle-controlling-task-execution">
-            <P>
-                Consulta esta guía para profundizar en cómo <Mono>dependsOn</Mono> expresa dependencias entre tareas y
-                cómo esas relaciones afectan la ejecución seleccionada.
-            </P>
-        </Fragment>
-        <Fragment slot="description-ref:gradle-command-line-interface">
-            <P>
-                Documenta la invocación de tareas desde la línea de comandos y las opciones que permiten inspeccionar un
-                grafo antes de ejecutar el trabajo.
-            </P>
-        </Fragment>
-        <Fragment slot="description-ref:build-systems-a-la-carte-2018">
-            <P>
-                Lectura adicional para comparar distintas ideas de diseño de sistemas de construcción sin convertir su
-                modelo formal en un requisito de esta lección.
-            </P>
-        </Fragment>
-        <Fragment slot="description-ref:build-scripts-perfect-dependencies-2020">
-            <P>
-                Lectura adicional sobre cómo dependencias incompletas o excesivas pueden producir resultados
-                incorrectos, trabajo innecesario y menos paralelismo.
-            </P>
-        </Fragment>
-    </ReferencesFromCatalog>
 </NotesLayout>

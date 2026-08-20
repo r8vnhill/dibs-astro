@@ -14,4 +14,5 @@ export {
     getLibraryWhatIsReadings,
     getPublishedReadings,
     getSupportScriptsNushellReadings,
+    getTaskGraphsReadings,
 } from "$infrastructure/adapters/LessonReadingsAdapter";

@@ -19,6 +19,73 @@ export type LessonReadings = Readonly<{
     deeper: readonly LessonReading[];
 }>;
 
+export const taskGraphsReadings: LessonReadings = {
+    lessonPath: "/notes/scripting/task-graphs/",
+    title: "De tareas a grafos: cómo coordinar un proceso de construcción",
+    essential: [
+        {
+            referenceId: "gradle-build-lifecycle",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Corta",
+            why: "Conecta el ciclo de vida de Gradle con la construcción del grafo de tareas antes de la ejecución.",
+            focus: "Observa cómo Gradle configura el build, identifica las tareas y prepara la ejecución solicitada.",
+            afterReading: "Deberías poder ubicar el grafo de tareas dentro del ciclo de vida de un build de Gradle.",
+            guidingQuestion: "¿En qué momento necesita Gradle conocer las tareas y sus dependencias?",
+        },
+        {
+            referenceId: "gradle-controlling-task-execution",
+            type: "Referencia técnica",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Explica cómo las dependencias entre tareas controlan qué trabajo puede ejecutarse y en qué condiciones.",
+            focus:
+                "Busca la relación entre dependsOn, las tareas solicitadas y las dependencias que Gradle selecciona.",
+            afterReading: "Deberías poder relacionar una arista del grafo con una dependencia declarada en Gradle.",
+            guidingQuestion: "¿Qué tareas selecciona Gradle cuando una tarea solicitada depende de otras?",
+        },
+        {
+            referenceId: "gradle-command-line-interface",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Corta",
+            why: "Documenta la invocación de tareas desde la línea de comandos y las opciones para inspeccionar un build.",
+            focus: "Relaciona la tarea solicitada en la terminal con el subconjunto del grafo que se prepara.",
+            afterReading:
+                "Deberías poder distinguir el objetivo de una invocación de las tareas que ese objetivo requiere.",
+            guidingQuestion: "¿Qué evidencia aporta una inspección del grafo antes de ejecutar las tareas?",
+        },
+    ],
+    practice: [
+        {
+            referenceId: "build-systems-a-la-carte-2018",
+            type: "Fuente primaria",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Compara distintas ideas de diseño de sistemas de construcción y amplía el modelo de tareas y dependencias.",
+            focus: "Lee la introducción y observa qué capacidades puede combinar un sistema de construcción.",
+            afterReading:
+                "Deberías poder explicar por qué un sistema de construcción es más que una lista de comandos.",
+            guidingQuestion: "¿Qué decisiones del diseño de un build quedan representadas en su grafo?",
+        },
+    ],
+    deeper: [
+        {
+            referenceId: "build-scripts-perfect-dependencies-2020",
+            type: "Fuente primaria",
+            difficulty: "Avanzada",
+            extent: "Secciones seleccionadas",
+            why: "Profundiza en cómo dependencias incompletas o excesivas afectan la corrección y el paralelismo de un build.",
+            focus:
+                "Concéntrate en la relación entre dependencias declaradas, resultados correctos y trabajo innecesario.",
+            afterReading:
+                "Deberías poder identificar por qué el grafo debe representar las dependencias relevantes sin agregar restricciones arbitrarias.",
+            guidingQuestion:
+                "¿Qué puede salir mal si una dependencia real falta del grafo o si se agrega una que no existe?",
+        },
+    ],
+};
+
 export const libraryWhatIsReadings: LessonReadings = {
     lessonPath: "/notes/software-libraries/what-is/",
     title: "La biblioteca como artefacto de software",
@@ -219,4 +286,4 @@ export const supportScriptsNushellReadings: LessonReadings = {
     ],
 };
 
-export const publishedReadings = [libraryWhatIsReadings, supportScriptsNushellReadings] as const;
+export const publishedReadings = [libraryWhatIsReadings, supportScriptsNushellReadings, taskGraphsReadings] as const;
