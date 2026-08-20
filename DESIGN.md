@@ -65,7 +65,7 @@ UI (layouts, components, pages)
   → presentation adapters (composition root)
     → application (orchestration, ports)
       → domain (pure business rules)
-    → content-core / site-core (workspace packages)
+    → content-core (workspace package) / site-core (published package)
   ← infrastructure adapters implement domain/application contracts
 ```
 
@@ -121,9 +121,10 @@ pnpm test    # unit + Astro render tests
 pnpm build   # regenerates data, builds the static site into dist/
 ```
 
-`pnpm check` also fans out into each workspace package's own check script (`check:content-core`, `check:site-core`,
-`check:shiki-core`, `check:lesson-export-core`, `check:astro-icons`), so a package-local regression is caught from the
-root gate, not only when working inside that package.
+`pnpm check` also fans out into the maintained workspace packages' own check scripts (`check:content-core`,
+`check:shiki-core`, and `check:lesson-export-core`), so a package-local regression is caught from the root gate, not
+only when working inside that package. The published `site-core` package is resolved through the normal dependency
+installation and is not built or checked by the DIBS root orchestration.
 
 ## Deployment
 
