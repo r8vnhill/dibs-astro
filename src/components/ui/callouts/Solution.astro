@@ -15,14 +15,23 @@ export type SolutionProps = BaseCalloutProps & {
 const variant = "solution" as const;
 const variantConfig = calloutVariants[variant];
 
-const { title = variantConfig.title, icon = variantConfig.icon, embedded = false, ...rest } =
-    Astro.props as SolutionProps & Record<string, any>;
+const { title, icon = variantConfig.icon, embedded = false, headingLevel, ...rest } = Astro.props as
+    & SolutionProps
+    & Record<string, any>;
 const hasTitleSlot = Astro.slots.has("title");
+
+// An embedded solution is a disclosure the reader has not opened yet: naming the action
+// ("Ver solución") describes what clicking it does, whereas a standalone Solution is already
+// content the reader chose to view, so it keeps the plain noun title.
+const resolvedTitle = title ?? (embedded ? "Ver solución" : variantConfig.title);
+const resolvedHeadingLevel = headingLevel ?? (embedded ? "h4" : "h3");
+const resolvedBodyClass = embedded ? "" : "mt-3";
 ---
 <CalloutShell
-    {variant} {title}
-    {icon} bodyClass="mt-3"
-    collapsible {embedded} {...rest}
+    {variant} title={resolvedTitle}
+    headingLevel={resolvedHeadingLevel} {icon}
+    bodyClass={resolvedBodyClass} collapsible
+    {embedded} {...rest}
 >
     {hasTitleSlot && <slot name="title" slot="title" />}
     <slot />

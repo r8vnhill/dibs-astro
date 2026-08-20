@@ -11,6 +11,7 @@
         "i18n:compile": "node ./node_modules/@inlang/paraglide-js/bin/run.js compile --project ./project.inlang --outdir ./src/generated/i18n --emit-ts-declarations",
         "check:architecture": "node scripts/check-layer-boundaries.mjs",
         "check:toolchain": "node scripts/check-toolchain.mjs",
+        "check:published-package-resolution": "node scripts/check-published-package-resolution.mjs",
         "build:content-core": "node scripts/run-workspace-script.mjs packages/content-core build",
         "build:lesson-export-core": "node scripts/run-workspace-script.mjs packages/lesson-export-core build",
         "build:site-core": "node scripts/run-workspace-script.mjs packages/site-core build",

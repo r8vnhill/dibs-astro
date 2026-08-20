@@ -460,14 +460,11 @@ candidate. The publish job runs only after those checks and promotes the recorde
 Configure the runner or project with registry authentication available to private service images through
 `DOCKER_AUTH_CONFIG`. Do not place registry passwords in `.gitlab-ci.yml`.
 
-The build creates a temporary npm configuration from the GitLab job token and mounts it as a BuildKit secret. It is
-removed at the end of the job and never becomes a Dockerfile `ARG`, `ENV`, layer, or runtime file. Local container
-builds use the same boundary:
+The `@ravenhill` packages install from the canonical GitLab npm registry, which is configured for public reads in the
+committed `.npmrc`, so the build requires no registry credentials. Local container builds use the same image:
 
 ```powershell
-$env:NPM_CONFIG_USERCONFIG = "C:\path\to\authenticated.npmrc"
 pnpm test:container
-Remove-Item Env:NPM_CONFIG_USERCONFIG
 ```
 
 The contract job checks the candidate at `http://dibs:8080`; the OCI policy job reads the registry

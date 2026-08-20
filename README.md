@@ -50,33 +50,15 @@ flowchart LR
 
 ### Requirements
 
-To build the image locally you need:
-
-- Docker with BuildKit support;
-- access to the GitLab npm registry used by the `@ravenhill` packages;
-- an authenticated npm configuration stored **outside this repository**.
-
-The npm configuration is passed to BuildKit as a temporary secret. Registry credentials must not be passed through
-Docker `ARG`, `ENV`, or committed configuration files.
+To build the image locally you need Docker with BuildKit support. The `@ravenhill` packages are installed from the
+canonical GitLab npm registry, which is configured for public reads in the committed [`.npmrc`](./.npmrc) — no
+registry credentials are required.
 
 ### Build and run with Docker Compose
 
-Set `NPM_CONFIG_USERCONFIG` to an npm configuration that can access the required GitLab packages, then build and start
-the `website` service defined in [`docker-compose.yml`](./docker-compose.yml).
-
-#### PowerShell
-
-```powershell
-$env:NPM_CONFIG_USERCONFIG = "$HOME\.npmrc"
-
-docker compose up --build
-```
-
-#### POSIX shell
+Build and start the `website` service defined in [`docker-compose.yml`](./docker-compose.yml):
 
 ```sh
-export NPM_CONFIG_USERCONFIG="$HOME/.npmrc"
-
 docker compose up --build
 ```
 
@@ -86,8 +68,7 @@ http://localhost:8080
 
 The compose service builds the same image as a direct `docker build` and runs it the same way the production runtime
 does: without root privileges, with a read-only root filesystem, and with `/tmp` mounted as a tmpfs for the temporary
-state NGINX requires. The `npmrc` build secret is passed through Compose's `secrets` mechanism, not through `ARG`,
-`ENV`, or a committed file.
+state NGINX requires.
 
 Override the published port with `WEBSITE_PORT` (defaults to `8080`), and stop the service with:
 
@@ -102,8 +83,6 @@ The repository includes a container contract that builds and checks the producti
 ```sh
 node scripts/test-container.mjs
 ```
-
-`NPM_CONFIG_USERCONFIG` must be configured as described above.
 
 The contract checks representative production behavior, including:
 

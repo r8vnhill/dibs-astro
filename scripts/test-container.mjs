@@ -1,13 +1,10 @@
 import { execFile } from "node:child_process";
-import { access } from "node:fs/promises";
-import path from "node:path";
 import { promisify } from "node:util";
 
 const exec = promisify(execFile);
 const repositoryRoot = process.cwd();
 const imageTag = `dibs-astro:test-${process.pid}`;
 const containerName = `dibs-astro-test-${process.pid}`;
-const npmConfig = process.env.NPM_CONFIG_USERCONFIG ?? process.env.npm_config_userconfig;
 
 if (process.env.CONTAINER_BASE_URL) {
     await waitForHttp(process.env.CONTAINER_BASE_URL);
@@ -16,20 +13,10 @@ if (process.env.CONTAINER_BASE_URL) {
     process.exit(0);
 }
 
-if (!npmConfig) {
-    throw new Error(
-        "Container builds require NPM_CONFIG_USERCONFIG pointing to an npm config with GitLab registry authentication.",
-    );
-}
-
-await access(path.resolve(npmConfig));
-
 try {
     await runDocker([
         "build",
         "--progress=plain",
-        "--secret",
-        `id=npmrc,src=${path.resolve(npmConfig)}`,
         "--build-arg",
         `SOURCE_REVISION=${process.env.GIT_COMMIT_SHA ?? "local"}`,
         "--build-arg",

@@ -14,7 +14,6 @@ COPY packages/shiki-core/package.json packages/shiki-core/package.json
 COPY packages/site-core/package.json packages/site-core/package.json
 
 RUN --mount=type=cache,id=dibs-pnpm-store,target=/pnpm/store \
-    --mount=type=secret,id=npmrc,target=/root/.npmrc,required=true \
     pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile
 
 COPY . .

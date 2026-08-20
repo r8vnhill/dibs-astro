@@ -136,6 +136,48 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("./gradlew verifyReport --task-graph");
     });
 
+    test("then its question and solution render as one typography hierarchy", async () => {
+        const { doc } = await renderLesson();
+        const question = doc.querySelector("[data-callout][data-variant=question]");
+        const solution = question?.querySelector("[data-callout][data-variant=solution]");
+
+        expect(question?.querySelector("h3")).not.toBeNull();
+        expect(solution?.getAttribute("data-embedded")).toBe("true");
+        expect(solution?.querySelector("h4")).not.toBeNull();
+        expect(solution?.querySelector(".callout__body")?.classList.contains("mt-3")).toBe(false);
+    });
+
+    test("then it labels explicit dependsOn wiring as pedagogical and previews dataflow practice", async () => {
+        const { doc } = await renderLesson();
+        const warning = doc.querySelector("[data-callout][data-variant=\"warning\"]");
+        const warningText = warning?.textContent ?? "";
+
+        expect(warningText).toContain("simplificación pedagógica");
+        expect(warningText).toContain("inputs y outputs");
+        expect(
+            warning?.querySelector("a[href=\"https://docs.gradle.org/current/userguide/best_practices_tasks.html\"]"),
+        )
+            .not.toBeNull();
+    });
+
+    test("then modern task-graph context is optional and linked to primary sources", async () => {
+        const { doc } = await renderLesson();
+        const moreCallouts = doc.querySelectorAll("[data-callout][data-variant=\"more\"]");
+        const moreText = Array.from(moreCallouts).map((callout) => callout.textContent ?? "").join(" ");
+
+        expect(moreCallouts.length).toBe(2);
+        expect(moreText).toContain("Grafo de tareas más allá de Gradle");
+        expect(moreText).toContain("El grafo también tiene un costo");
+        expect(moreText).toContain("incubating");
+        expect(doc.querySelector("a[href=\"https://nx.dev/docs/concepts/task-pipeline-configuration\"]"))
+            .not.toBeNull();
+        expect(doc.querySelector("a[href=\"https://bazel.build/reference/glossary\"]")).not.toBeNull();
+        expect(doc.querySelector("a[href=\"https://docs.gradle.org/current/userguide/configuration_cache.html\"]"))
+            .not.toBeNull();
+        expect(doc.querySelector("a[href=\"https://docs.gradle.org/current/userguide/isolated_projects.html\"]"))
+            .not.toBeNull();
+    });
+
     test("then its catalog references keep Gradle sources essential and research sources additional", () => {
         const grouped = getReferencesForLesson(
             getDefaultBibliographyCatalog(),

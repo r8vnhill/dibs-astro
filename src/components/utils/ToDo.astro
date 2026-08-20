@@ -1,0 +1,66 @@
+---
+import { DEFAULT_TODO_REPORT_EVENT, type ToDoMetadata } from "./todo-report";
+
+export interface Props {
+    /**
+     * Optional debug metadata (e.g., title, tasks, etc.).
+     * This is not rendered in the UI but can help with debugging.
+     */
+    metadata?: ToDoMetadata;
+
+    /**
+     * Optional message to display below the image.
+     * Defaults to a friendly placeholder note.
+     */
+    message?: string;
+
+    /**
+     * Alternative text for the image.
+     * Defaults to "Meme".
+     */
+    altText?: string;
+
+    /**
+     * Custom DOM event name to dispatch on `window` with the reporting payload.
+     * Defaults to `"dibs:placeholder"` when omitted or set to `undefined`. Set to `null` to disable event dispatch.
+     */
+    reportEventName?: string | null | undefined;
+}
+
+const {
+    metadata,
+    message = "TODO: Estamos (estoy) trabajando para ustedes c:",
+    altText = "Meme",
+    reportEventName,
+} = Astro.props;
+
+const messageId = `todo-message__${crypto.randomUUID()}`;
+
+// `undefined` (or the prop being omitted) resolves to the default event; `null` disables dispatch entirely.
+const resolvedReportEventName = reportEventName === null ? null : (reportEventName ?? DEFAULT_TODO_REPORT_EVENT);
+---
+
+<dibs-todo
+    data-alt-text={altText}
+    data-metadata={metadata ? JSON.stringify(metadata) : undefined}
+    {...resolvedReportEventName ? { "data-report-event-name": resolvedReportEventName } : {}}
+>
+    <figure
+        aria-describedby={messageId}
+        class="flex flex-col items-center gap-4 rounded border border-dashed border-primary p-4"
+    >
+        <div data-todo-image class="w-full max-w-xs">
+            <div class="text-sm text-red-600">
+                ⚠️ Imagen no disponible
+            </div>
+        </div>
+
+        <figcaption
+            id={messageId}
+            class="text-center text-sm italic"
+        >
+            {message}
+            <br />Esta sección podría estar incompleta :0
+        </figcaption>
+    </figure>
+</dibs-todo>

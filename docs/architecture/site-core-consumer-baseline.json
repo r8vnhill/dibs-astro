@@ -1,0 +1,112 @@
+{
+    "schemaVersion": 1,
+    "phase": "5.0",
+    "capturedAt": "2026-08-19",
+    "consumerRepository": {
+        "name": "astro-website",
+        "sourceCommit": "2f74100a346bc854ed09a4a07fb4474ca5aa1e6f",
+        "workingTree": {
+            "dirty": true,
+            "scopeNote": "The baseline commands ran against the current checkout. Existing changes are outside the site-core consumer paths and are intentionally not included in this phase; the build also regenerated src/data/lesson-metadata.generated.json."
+        }
+    },
+    "package": {
+        "name": "@ravenhill/site-core",
+        "workspaceVersion": "0.1.0",
+        "publishedVersionToPreserve": "0.1.0",
+        "publicImport": "@ravenhill/site-core",
+        "activeSubpathImports": []
+    },
+    "consumerInventory": {
+        "rootImports": [
+            { "path": "src/components/git/RepoLink.astro", "classification": "runtime consumer" },
+            { "path": "src/components/notes/LessonRepoPanel.astro", "classification": "runtime consumer" },
+            { "path": "src/components/notes/LessonMetaPanel.astro", "classification": "type-only consumer" },
+            { "path": "src/data/site.ts", "classification": "type-only consumer" },
+            { "path": "src/infrastructure/adapters/site-data-adapter.ts", "classification": "type-only consumer" },
+            { "path": "src/layouts/LessonDocumentLayout.props.ts", "classification": "type-only consumer" },
+            { "path": "src/layouts/NotesLayout.props.ts", "classification": "type-only consumer" },
+            { "path": "src/layouts/NotesLayout.astro", "classification": "type-only consumer" },
+            { "path": "src/presentation/adapters/lesson-metadata-panel.ts", "classification": "runtime consumer" },
+            { "path": "src/components/notes/__tests__/LessonMetaPanel.render.test.ts", "classification": "test" },
+            { "path": "src/components/notes/__tests__/LessonRepoPanel.render.test.ts", "classification": "test" },
+            { "path": "src/presentation/adapters/__tests__/site-data.test.ts", "classification": "test" }
+        ],
+        "architectureRules": [
+            "scripts/lib/layer-boundary/rules.mjs",
+            "scripts/__tests__/layer-boundary/layer-boundary-rules.test.ts"
+        ],
+        "workspaceAndBuildIntegration": [
+            "package.json",
+            "pnpm-workspace.yaml",
+            "pnpm-lock.yaml",
+            "Dockerfile"
+        ],
+        "documentation": [
+            "AGENTS.md",
+            "docs/architecture/layer-separation.md"
+        ],
+        "intentionalPackageContractReferences": [
+            "packages/site-core/README.md",
+            "packages/site-core/src/index.ts",
+            "packages/site-core/src/repositories/index.ts",
+            "packages/site-core/src/__tests__/root-api.subpaths.test-d.ts",
+            "packages/site-core/scripts/validate-packed-consumer.mjs"
+        ]
+    },
+    "dependencyTopology": {
+        "packageSpecifier": "workspace:*",
+        "lockfileSpecifier": "workspace:*",
+        "lockfileResolution": "link:packages/site-core",
+        "installedPackage": {
+            "path": "node_modules/@ravenhill/site-core",
+            "name": "@ravenhill/site-core",
+            "version": "0.1.0",
+            "linkType": "SymbolicLink",
+            "target": "packages/site-core"
+        },
+        "consumerRegistry": "https://gitlab.com/api/v4/projects/85449745/packages/npm/"
+    },
+    "representativeOutputs": {
+        "repoUrl": "https://gitlab.com/r8vnhill/dibs-scripts",
+        "repoPathUrl": "https://github.com/r8vnhill/dibs-scripts/tree/main",
+        "commitUrl": "https://github.com/org/web/commit/abc1234fff000",
+        "repoLinkText": "r8vnhill/dibs-scripts (GitLab)",
+        "normalizedPlatforms": ["gitlab"],
+        "lessonRepoPanel": {
+            "defaultRepository": { "user": "r8vnhill", "repo": "dibs-scripts" },
+            "hrefs": [
+                "https://gitlab.com/r8vnhill/dibs-scripts",
+                "https://github.com/r8vnhill/dibs-scripts"
+            ]
+        },
+        "lessonMetaPanel": {
+            "commitHref": "https://github.com/org/web/commit/abc1234fff000",
+            "commitLabel": "GitHub"
+        }
+    },
+    "verification": {
+        "commands": [
+            {
+                "command": "pnpm exec vitest run src/presentation/adapters/__tests__/site-data.test.ts",
+                "result": "passed",
+                "tests": 6
+            },
+            {
+                "command": "pnpm exec vitest run --config vitest.astro.config.ts src/components/notes/__tests__/LessonRepoPanel.render.test.ts src/components/notes/__tests__/LessonMetaPanel.render.test.ts",
+                "result": "passed",
+                "tests": 8
+            },
+            {
+                "command": "pnpm run check:architecture",
+                "result": "passed",
+                "summary": "No layer boundary findings found."
+            },
+            {
+                "command": "pnpm build",
+                "result": "passed",
+                "summary": "Static build completed; 71 pages built."
+            }
+        ]
+    }
+}

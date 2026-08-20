@@ -20,12 +20,6 @@ variables:
     NODE_OPTIONS: --max-old-space-size=3072
     ASTRO_TELEMETRY_DISABLED: "1"
     SKIP_ICON_GENERATION: "true"
-    # Canonical GitLab npm registry project for every @ravenhill/* package (r8vnhill/npm-packages,
-    # numeric project id). Must be the numeric id, not the URL-encoded path slug: GitLab's package
-    # metadata reports tarball URLs using the numeric id, and pnpm's supply-chain policy check
-    # rejects a lockfile whose tarball URL doesn't match that published metadata exactly.
-    # Kept as a single variable so the project identity isn't independently hardcoded per job.
-    RAVENHILL_NPM_REGISTRY_PATH: "85449745"
 
 .node-job:
     image: node:${NODE_VERSION}-alpine
@@ -40,7 +34,6 @@ variables:
         - corepack enable
         - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
         - pnpm config set store-dir ${PNPM_STORE_DIR}
-        - pnpm config set //gitlab.com/api/v4/projects/${RAVENHILL_NPM_REGISTRY_PATH}/packages/npm/:_authToken ${CI_JOB_TOKEN}
         - node --version
         - pnpm --version
         - pnpm install --frozen-lockfile --reporter=append-only
@@ -141,8 +134,7 @@ container:build:
         - mkdir -p "${HOME}/.docker"
         - printf '%s:%s' "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n' > /tmp/registry-auth
         - printf '{"auths":{"%s":{"auth":"%s"}}}' "${CI_REGISTRY}" "$(cat /tmp/registry-auth)" > "${HOME}/.docker/config.json"
-        - printf '%s\n//gitlab.com/api/v4/projects/%s/packages/npm/:_authToken=%s\n' "$(cat .npmrc)" "${RAVENHILL_NPM_REGISTRY_PATH}" "${CI_JOB_TOKEN}" > /tmp/dibs.npmrc
-        - trap 'rm -f /tmp/dibs.npmrc /tmp/registry-auth "${HOME}/.docker/config.json"' EXIT
+        - trap 'rm -f /tmp/registry-auth "${HOME}/.docker/config.json"' EXIT
         - |
               CANDIDATE_IMAGE="${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}"
               PACKAGE_VERSION="$(sed -n 's/^[[:space:]]*\"version\":[[:space:]]*\"\([^\"]*\)\",[[:space:]]*$/\1/p' package.json | head -n 1)"
@@ -155,7 +147,6 @@ container:build:
                   --opt build-arg:SOURCE_REVISION="${CI_COMMIT_SHA}" \
                   --opt build-arg:SOURCE_URL="${CI_PROJECT_URL}" \
                   --opt build-arg:IMAGE_VERSION="${PACKAGE_VERSION}" \
-                  --secret id=npmrc,src=/tmp/dibs.npmrc \
                   --export-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
                   --import-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
                   --output type=image,"name=${CANDIDATE_IMAGE}",push=true \

@@ -2,9 +2,8 @@
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Exercise, Explanation, Info, Question, Solution } from "~/components/ui/callouts";
+import { Definition, Exercise, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
 import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
-import KotlinInline from "~/components/ui/code/kt/KotlinInline.astro";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink, Link } from "~/components/ui/links";
@@ -91,7 +90,7 @@ import {
                 deben completarse primero? ¿Cuáles pueden ejecutarse en paralelo?
             </P>
 
-            <Solution headingLevel="h4">
+            <Solution embedded headingLevel="h4">
                 <P>
                     <Mono>generateReport</Mono> depende tanto de <Mono>prepareCatalog</Mono> como de <Mono
                     >prepareMetadata</Mono>. Por lo tanto, ambas tareas deben completarse antes de que <Mono
@@ -122,12 +121,12 @@ import {
             Cuando el despachador ya no basta
         </Heading>
 
-        <Definition headingLevel="h3" icon={icons.Gear}>
+        <Definition headingLevel="h3">
             <span slot="title">Sistema de construcción</span>
 
             <P>
-                Un <B>sistema de construcción</B> coordina unidades de trabajo y sus dependencias para producir los
-                resultados solicitados.
+                Un <B>sistema de construcción</B> (también llamado <I>build system</I> o <I>build engine</I>) coordina
+                unidades de trabajo y sus dependencias para producir los resultados solicitados.
             </P>
         </Definition>
 
@@ -142,11 +141,13 @@ import {
         </P>
 
         <P>
-            <Mono>despachador: nombre solicitado -> una tarea</Mono>
+            <KotlinInline code="despachador: nombre solicitado -> una tarea" />
         </P>
 
         <P>
-            <Mono>sistema de construcción: resultado solicitado -> tareas necesarias y sus dependencias</Mono>
+            <KotlinInline
+                code="sistema de construcción: resultado solicitado -> tareas necesarias y sus dependencias"
+            />
         </P>
 
         <P>
@@ -389,22 +390,22 @@ import {
 
         <KotlinBlock
             code={`
-                tasks.register("prepareCatalog") {
+                val prepareCatalog = tasks.register("prepareCatalog") {
                     doLast { println("Preparing catalog...") }
                 }
 
-                tasks.register("generateReport") {
-                    dependsOn("prepareCatalog")
+                val generateReport = tasks.register("generateReport") {
+                    dependsOn(prepareCatalog)
                     doLast { println("Generating report...") }
                 }
 
-                tasks.register("packageReport") {
-                    dependsOn("generateReport")
+                val packageReport = tasks.register("packageReport") {
+                    dependsOn(generateReport)
                     doLast { println("Packaging report...") }
                 }
 
-                tasks.register("verifyReport") {
-                    dependsOn("generateReport")
+                val verifyReport = tasks.register("verifyReport") {
+                    dependsOn(generateReport)
                     doLast { println("Verifying report...") }
                 }
             `}
@@ -421,12 +422,28 @@ import {
         <Explanation headingLevel="h3">
             <P>
                 <Mono>tasks.register(...)</Mono> declara un nodo del grafo: una tarea nombrada, igual que
-                <Mono>prepareCatalog</Mono> o <Mono>generateReport</Mono> en los diagramas anteriores.
-                <Mono>dependsOn(...)</Mono> declara una conexión dirigida: <Mono>generateReport</Mono> depende de
-                <Mono>prepareCatalog</Mono> en el código exactamente igual que en el diagrama. La sintaxis de Gradle es
-                secundaria; lo que importa es que reproduce el mismo grafo dirigido y acíclico que ya conocemos.
+                <Mono>prepareCatalog</Mono> o <Mono>generateReport</Mono> en los diagramas anteriores. En vez de nombrar
+                cada dependencia con un <Mono>String</Mono>, guardamos el resultado de{" "}
+                <Mono>register(...)</Mono> en una variable y se la pasamos directamente a <Mono>dependsOn(...)</Mono>.
+                <Mono>dependsOn(generateReport)</Mono> declara la misma conexión dirigida que
+                <Mono>prepareCatalog -> generateReport</Mono> en el diagrama, pero el compilador puede verificar que esa
+                tarea existe. La sintaxis de Gradle es secundaria; lo que importa es que reproduce el mismo grafo
+                dirigido y acíclico que ya conocemos.
             </P>
         </Explanation>
+
+        <Warning headingLevel="h3" title="Esta relación explícita es una simplificación pedagógica">
+            <P>
+                En esta lección usamos <Mono>dependsOn</Mono> para hacer visible cada arista del grafo. En un build
+                moderno, una tarea con acciones debería declarar sus <B>inputs y outputs</B>: cuando una tarea consume
+                un resultado producido por otra, esa relación productor–consumidor permite que Gradle derive parte de la
+                dependencia y entienda qué datos necesita. Aquí mantenemos <Mono>dependsOn</Mono> porque el objetivo es
+                leer la topología antes de estudiar el flujo de datos. Consulta las{" "}
+                <Link href="https://docs.gradle.org/current/userguide/best_practices_tasks.html">
+                    buenas prácticas de Gradle para tareas
+                </Link>.
+            </P>
+        </Warning>
 
         <P>
             Igual que con el modelo conceptual, solicitar una tarea concreta selecciona solo esa tarea y sus
@@ -440,9 +457,10 @@ import {
 
         <OutputBlock
             code={`
-                :prepareCatalog
-                :generateReport
-                :packageReport
+                Tasks graph for: packageReport
+                \\--- :packageReport (org.gradle.api.DefaultTask)
+                     \\--- :generateReport (org.gradle.api.DefaultTask)
+                          \\--- :prepareCatalog (org.gradle.api.DefaultTask)
             `}
         />
 
@@ -457,17 +475,68 @@ import {
 
         <OutputBlock
             code={`
-                :prepareCatalog
-                :generateReport
-                :verifyReport
+                Tasks graph for: verifyReport
+                \\--- :verifyReport (org.gradle.api.DefaultTask)
+                     \\--- :generateReport (org.gradle.api.DefaultTask)
+                          \\--- :prepareCatalog (org.gradle.api.DefaultTask)
             `}
         />
+
+        <Explanation headingLevel="h3">
+            <P>
+                El árbol de <Mono>--task-graph</Mono> se lee desde la tarea solicitada hacia sus dependencias: la
+                primera línea es <Mono>packageReport</Mono> y cada nivel indentado es lo que esa tarea necesita.
+                Nuestros diagramas hacen el recorrido visual opuesto: una flecha <Mono>A -> B</Mono> va desde la tarea
+                requerida hacia la tarea dependiente. Ambas formas describen la misma relación de dependencia; solo
+                cambia la dirección en la que se dibuja.
+            </P>
+        </Explanation>
 
         <P>
             Esta lección se detiene aquí a propósito: <Mono>tasks.register</Mono> y <Mono>dependsOn</Mono> bastan para
             reproducir el grafo que ya construimos. Cómo una tarea recibe entradas, produce salidas o se organiza
             mediante complementos es contenido de la siguiente lección.
         </P>
+
+        <More headingLevel="h3" icon={icons.GitBranch}>
+            <Fragment slot="title">Grafo de tareas más allá de Gradle</Fragment>
+
+            <P>
+                La idea no es exclusiva de Gradle. En un monorepo, <Link
+                    href="https://nx.dev/docs/concepts/task-pipeline-configuration"
+                >Nx</Link> combina el grafo de proyectos con la configuración de pipelines para decidir el orden de las
+                tareas; los proyectos sin dependencias entre sí pueden avanzar en paralelo. El concepto es el mismo que
+                acabamos de estudiar, aunque la configuración y la terminología cambien.
+            </P>
+
+            <P>
+                <Link href="https://bazel.build/reference/glossary">Bazel</Link> ofrece otra distinción útil: un
+                objetivo que solicitamos no es necesariamente la unidad más pequeña que ejecuta el sistema. El grafo de
+                acciones relaciona acciones y artefactos de nivel más bajo. No necesitamos aprender esa representación
+                para usar el grafo pequeño de esta lección; basta reconocer que distintos sistemas pueden exponer capas
+                distintas del mismo problema.
+            </P>
+        </More>
+
+        <More headingLevel="h3" icon={icons.Gauge}>
+            <Fragment slot="title">El grafo también tiene un costo</Fragment>
+
+            <P>
+                Construir y configurar un grafo también requiere trabajo. La{" "}
+                <Link href="https://docs.gradle.org/current/userguide/configuration_cache.html">
+                    Configuration Cache de Gradle
+                </Link> conserva el resultado de la fase de configuración para poder reutilizarlo en invocaciones
+                posteriores; no es lo mismo que reutilizar los outputs de una tarea mediante el Build Cache.
+            </P>
+
+            <P>
+                Gradle 9.7 presenta <Link href="https://docs.gradle.org/current/userguide/isolated_projects.html">
+                    Isolated Projects
+                </Link> como una función <B>incubating</B>: busca aislar la configuración de proyectos para mejorar la
+                escalabilidad de builds grandes, pero sus APIs y comportamiento todavía pueden cambiar. La dejamos fuera
+                del ejemplo y no la proponemos como requisito para producir artefactos.
+            </P>
+        </More>
     </NotesSection>
 
     <Exercise headingLevel="h2">
@@ -486,9 +555,8 @@ import {
                     Registra <Mono>finalizeReport</Mono> con <KotlinInline>tasks.register(...)</KotlinInline>.
                 </ListItem>
                 <ListItem icon={icons.GitBranch}>
-                    Declara sus dos dependencias con <KotlinInline
-                        code={`dependsOn("packageReport", "verifyReport")`}
-                    />.
+                    Declara sus dos dependencias con <KotlinInline code={`dependsOn(packageReport, verifyReport)`} />,
+                    usando las referencias que ya devolvió <Mono>tasks.register(...)</Mono> para esas tareas.
                 </ListItem>
                 <ListItem icon={icons.ListChecks}>
                     Antes de ejecutar nada, predice qué tareas selecciona <Mono>./gradlew finalizeReport
@@ -524,11 +592,15 @@ import {
 
             <OutputBlock
                 code={`
-                    :prepareCatalog
-                    :generateReport
-                    :packageReport
-                    :verifyReport
-                    :finalizeReport
+                    Tasks graph for: finalizeReport
+                    \\--- :finalizeReport (org.gradle.api.DefaultTask)
+                         +--- :packageReport (org.gradle.api.DefaultTask)
+                         |    \\--- :generateReport (org.gradle.api.DefaultTask)
+                         |         \\--- :prepareCatalog (org.gradle.api.DefaultTask)
+                         \\--- :verifyReport (org.gradle.api.DefaultTask)
+                              \\--- :generateReport (*)
+
+                    (*) - details omitted (listed previously)
                 `}
             />
         </Fragment>
@@ -538,6 +610,11 @@ import {
                 <ListItem icon={icons.Lightbulb}>
                     <KotlinInline>dependsOn</KotlinInline> acepta más de una tarea a la vez; no necesitas dos llamadas
                     separadas.
+                </ListItem>
+                <ListItem icon={icons.Lightbulb}>
+                    El <Mono>(*)</Mono> en la salida de <Mono>--task-graph</Mono> no es una tarea nueva: Gradle omite
+                    repetir un subárbol que ya mostró antes, porque <Mono>generateReport</Mono> es compartido por
+                    <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>.
                 </ListItem>
                 <ListItem icon={icons.Lightbulb}>
                     <Mono>packageReport</Mono> no cambia: sigue dependiendo únicamente de <Mono>generateReport</Mono>.
@@ -554,13 +631,14 @@ import {
         <Fragment slot="solution">
             <P>
                 <Mono>finalizeReport</Mono> se agrega igual que las demás tareas, declarando sus dos dependencias en una
-                sola llamada:
+                sola llamada y reutilizando las referencias que <Mono>packageReport</Mono> y
+                <Mono>verifyReport</Mono> ya devolvieron al registrarse:
             </P>
 
             <KotlinBlock
                 code={`
                     tasks.register("finalizeReport") {
-                        dependsOn("packageReport", "verifyReport")
+                        dependsOn(packageReport, verifyReport)
                         doLast { println("Finalizing report...") }
                     }
                 `}
