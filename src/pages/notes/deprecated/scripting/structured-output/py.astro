@@ -8,7 +8,7 @@ import { B, I, Mono } from "~/components/ui/font";
 import { DibsSourceLink } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
 import { LessonReferencesFromCatalog } from "~/components/ui/references";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -312,7 +312,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
     </ConclusionsLayout>
 
     <ToDo
-        client:only="react"
         metadata={{
             tasks: [
                 "Agregar referencias recomendadas",

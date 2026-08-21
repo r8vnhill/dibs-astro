@@ -5,7 +5,7 @@ import { Explanation, Note, Tip } from "~/components/ui/callouts";
 import { KotlinBlock, KotlinInline } from "~/components/ui/code";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -13,7 +13,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
 <NotesLayout title="Principios de Diseño de Bibliotecas de Software">
     <Note>
         <ToDo
-            client:only="react"
             metadata={{
                 tasks: [
                     "No es una lista exhaustiva ni son reglas rígidas; son herramientas para analizar y mejorar el diseño.",
@@ -159,7 +158,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Diseño Basado en la Simplicidad
         </Heading>
         <ToDo
-            client:only="react"
             metadata={{
                 title: "Diseño Basado en la Simplicidad",
             }}
@@ -174,7 +172,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Fácil de Usar y Difícil de Usar Incorrectamente
         </Heading>
         <ToDo
-            client:only="react"
             metadata={{
                 title: "Fácil de Usar y Difícil de Usar Incorrectamente",
             }}
@@ -189,7 +186,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Cohesión Alta y Bajo Acoplamiento
         </Heading>
         <ToDo
-            client:only="react"
             metadata={{
                 title: "Cohesión Alta y Bajo Acoplamiento",
             }}
@@ -204,7 +200,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
             Estabilidad, Documentación y Pruebas
         </Heading>
         <ToDo
-            client:only="react"
             metadata={{
                 title: "Estabilidad, Documentación y Pruebas",
             }}

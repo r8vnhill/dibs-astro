@@ -15,7 +15,7 @@ import Cons from "~/components/ui/procons/Cons.astro";
 import ProCons from "~/components/ui/procons/ProCons.astro";
 import Pros from "~/components/ui/procons/Pros.astro";
 import { References, WebPage } from "~/components/ui/references";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -23,7 +23,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
 
 <NotesLayout title="Laboratorio 1: GitLab — crear repos y remotos" description="...">
     <ToDo
-        client:only="react"
         metadata={{
             tasks: [
                 "- [ ] Descripción para SE",

@@ -7,14 +7,14 @@ import { Footnote, FootnoteRef } from "~/components/ui/footnotes";
 import Footnotes from "~/components/ui/footnotes/Footnotes.astro";
 import { DibsSourceLink, Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo.tsx";
+import ToDo from "~/components/utils/ToDo.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
 
 <NotesLayout title="Veritas Ep. 1: Tu primer proyecto con Gradle">
     <Fragment slot="abstract">
-        <ToDo client:only="react" />
+        <ToDo />
     </Fragment>
 
     <NotesSection id="veritas-intro">

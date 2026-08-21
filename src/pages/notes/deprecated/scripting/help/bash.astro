@@ -6,7 +6,7 @@ import Question from "~/components/ui/callouts/Question.astro";
 import { BashBlock, OutputBlock } from "~/components/ui/code";
 import { B, I, Mono } from "~/components/ui/font";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
@@ -18,7 +18,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
 >
     <Fragment slot="abstract">
         <ToDo
-            client:only="react"
             metadata={{
                 tasks: [
                     "...",

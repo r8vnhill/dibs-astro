@@ -1,7 +1,7 @@
 ---
 import * as icons from "@ravenhill/astro-icons";
 import Heading from "~/components/semantics/Heading.astro";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import { NotesSection } from "~/layouts";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
@@ -12,7 +12,6 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
 >
     <Fragment slot="abstract">
         <ToDo
-            client:only="react"
             metadata={{
                 tasks: [
                     `Ya viste que, en <Mono>PowerShell</Mono>, la gran pregunta es <B>cuándo</B> convertir
@@ -36,7 +35,6 @@ import NotesLayout from "~/layouts/NotesLayout.astro";
     </NotesSection>
 
     <ToDo
-        client:only="react"
         metadata={{
             tasks: [
                 "...",

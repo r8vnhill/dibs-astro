@@ -41,8 +41,7 @@ const resolvedReportEventName = reportEventName === null ? null : (reportEventNa
 ---
 
 <dibs-todo
-    data-alt-text={altText}
-    data-message={message}
+    data-alt-text={altText} data-message={message}
     data-metadata={metadata ? JSON.stringify(metadata) : undefined}
     {...resolvedReportEventName ? { "data-report-event-name": resolvedReportEventName } : {}}
 >
@@ -56,10 +55,7 @@ const resolvedReportEventName = reportEventName === null ? null : (reportEventNa
             </div>
         </div>
 
-        <figcaption
-            id={messageId}
-            class="text-center text-sm italic"
-        >
+        <figcaption id={messageId} class="text-center text-sm italic">
             {message}
             <br />Esta sección podría estar incompleta :0
         </figcaption>

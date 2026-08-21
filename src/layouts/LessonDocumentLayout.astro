@@ -30,7 +30,7 @@
 import LessonMetaPanel from "~/components/notes/LessonMetaPanel.astro";
 import LessonRepoPanel from "~/components/notes/LessonRepoPanel.astro";
 import { Abstract } from "~/components/ui/callouts";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
 import { getLessonExportRootAttributes, resolveLessonExportContext } from "~/lib/presentation/export-mode";
 
@@ -76,7 +76,6 @@ const documentAttributes = getLessonExportRootAttributes(exportContext);
                             </aside>
                         ) : (
                             <ToDo
-                                client:only="react"
                                 metadata={{
                                     tasks: [
                                         "Agregar abstract",

@@ -30,7 +30,7 @@ import * as iconsBrands from "@ravenhill/astro-icons/brands";
 import { Bash } from "$icons";
 import { Link } from "~/components/ui/links";
 import { List, ListItem } from "~/components/ui/list";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 
 const title = "Declaración de funciones en Python";
 ---
@@ -491,7 +491,7 @@ const title = "Declaración de funciones en Python";
                 TODO: completar esta sección
             </Heading>
 
-            <ToDo client:only="react" />
+            <ToDo />
 
             <PythonBlock
                 code={`

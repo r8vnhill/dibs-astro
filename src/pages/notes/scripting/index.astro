@@ -1,11 +1,10 @@
 ---
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 ---
 
 <NotesLayout title="Unidad 2 - Bibliotecas de scripting y automatización de tareas" description="...">
     <ToDo
-        client:only="react"
         metadata={{
             tasks: [
                 "...",

@@ -1,7 +1,7 @@
 ---
 import * as icons from "@ravenhill/astro-icons";
 import Heading from "~/components/semantics/Heading.astro";
-import ToDo from "~/components/utils/ToDo";
+import ToDo from "~/components/utils/ToDo.astro";
 import NotesLayout from "~/layouts/NotesLayout.astro";
 import NotesSection from "~/layouts/NotesSection.astro";
 ---
@@ -27,7 +27,6 @@ import NotesSection from "~/layouts/NotesSection.astro";
         operativo:
 
         <ToDo
-            client:only="react"
             metadata={{
                 tasks: [
                     "Definir id",
