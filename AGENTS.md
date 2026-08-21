@@ -33,10 +33,15 @@ Context and essential rules for agents collaborating in this repository.
 
 - Public DIBS course site built with Astro 7, Tailwind CSS v4, Markdoc, and React islands.
 - Deployment is static on Cloudflare Workers; do not introduce SSR or server endpoints.
-- Application code lives in `src/`; reusable workspace packages live in `packages/*`.
-- `packages/content-core` is a private, host-agnostic package consumed as `@ravenhill/content-core`.
-- `packages/site-core` is a private, host-agnostic package consumed as `@ravenhill/site-core`.
-- `packages/shiki-core` is a private, host-agnostic package consumed as `@ravenhill/shiki-core`.
+- Application code lives in `src/`; maintained reusable workspace packages live in `packages/*`.
+- `packages/content-core` is a local, host-agnostic package consumed as `@ravenhill/content-core`.
+- `packages/lesson-export-core` is a local, host-agnostic package consumed as `@ravenhill/lesson-export-core`.
+- `packages/shiki-core` is a local, host-agnostic package consumed as `@ravenhill/shiki-core`.
+- `@ravenhill/site-core` is a published external, host-agnostic architectural dependency. It is not maintained under
+  `packages/` in this repository and is consumed only through its package root.
+- The committed `.npmrc` configures the canonical public-read `@ravenhill` registry endpoint
+  (`https://gitlab.com/api/v4/projects/85449745/packages/npm/`); consumer installs do not require package-registry
+  credentials.
 - TypeScript logic is layered under `src/domain`, `src/application`, `src/infrastructure`, and `src/presentation`.
 - Course pages live under `src/pages/notes`; shared lesson fragments live under `src/fragments`.
 
@@ -74,14 +79,16 @@ components rather than HTML strings. Run the focused readings tests and `pnpm ch
   `$presentation/*`, and `$test-utils/*`.
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation
   adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
+- Consume `@ravenhill/site-core` through its root import only. Make reusable `site-core` changes in its standalone
+  repository; upgrade DIBS only through an explicit dependency-version change in this repository.
 - Internal routes use trailing slashes, for example `/notes/foo/`.
 - Import reusable icons directly from the GitLab registry package `@ravenhill/astro-icons` (Phosphor icons) or
-  `@ravenhill/astro-icons/brands` (brand/language logos). Only the handful of DIBS-specific language marks that have
-  no upstream equivalent (`Bash`, `Csv`, `NushellLogo`, `Powershell`, `Xml`, living in `src/assets/icons/languages/`)
-  still go through the `$icons` facade.
-- The Shiki highlighting infrastructure is being extracted to `packages/shiki-core` for reuse. As of Phase 4:
-  - `packages/shiki-core` provides host-agnostic language resolution, transformers, and service orchestration; import
-    only from the root entry point (no subpaths).
+  `@ravenhill/astro-icons/brands` (brand/language logos). Only the handful of DIBS-specific language marks that have no
+  upstream equivalent (`Bash`, `Csv`, `NushellLogo`, `Powershell`, `Xml`, living in `src/assets/icons/languages/`) still
+  go through the `$icons` facade.
+- `packages/shiki-core` provides reusable highlighting infrastructure:
+  - It provides host-agnostic language resolution, transformers, and service orchestration; import only from the root
+    entry point (no subpaths).
   - `src/lib/code-highlighting` is the app-local boundary that wraps `@ravenhill/shiki-core` with dev-transport retry,
     cache management, and test helpers; components and Markdown patching depend on this boundary.
   - `src/lib/shiki/*` is a one-release-cycle deprecated compatibility bridge; existing code still imports from here but

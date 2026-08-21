@@ -10,8 +10,9 @@ the authoritative description of the current boundaries when they conflict with 
 
 - **Domain**: Pure business rules and use-case logic, free of frameworks and I/O.
 - **Application**: Orchestration layer that composes domain entities and ports, returning DTOs to callers.
-- **Content core**: Workspace package with host-agnostic navigation and lesson metadata contracts shared by the app.
-- **Site core**: Workspace package with host-agnostic repository and site-link primitives shared by the app.
+- **Content core**: Local workspace package with host-agnostic navigation and lesson metadata contracts shared by the
+  app.
+- **Site core**: Published external package with host-agnostic repository and site-link primitives shared by the app.
 - **Infrastructure**: Concrete data-source implementations and external service adapters.
 - **Presentation adapters**: Local composition root for UI use cases; bridges application services to UI-safe payloads.
 - **UI surfaces**: Astro layouts, React components, and pages that render presentation DTOs.
@@ -26,10 +27,11 @@ The repo uses a layered structure inside `src/`:
   - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local
     aliases.
 
-- `packages/site-core`
-  - Owns extracted pure repository references, supported hosting platforms, platform normalization, and
-    repository/commit URL builders.
-  - Contains no Astro imports, generated data, DIBS-specific site configuration, UI components, or content-core imports.
+- `@ravenhill/site-core`
+  - Provides the published pure repository references, supported hosting platforms, platform normalization, and
+    repository/commit URL builders consumed by DIBS.
+  - Is external to this repository; its reusable implementation is maintained in the standalone `site-core` repository.
+    DIBS consumes the package root only.
 
 - `src/domain`
   - Owns app-local domain models and reference-content resolution rules that have not been extracted.
@@ -59,9 +61,9 @@ The repo uses a layered structure inside `src/`:
 
 The main content seams are now present in code:
 
-- Navigation rules and lesson metadata helpers are centered in `packages/content-core` and consumed through
+- Navigation rules and lesson metadata helpers are centered in local `packages/content-core` and consumed through
   repository/service boundaries.
-- Repository hosting primitives are centered in `packages/site-core` and consumed through the package root.
+- Repository hosting primitives are provided by published `@ravenhill/site-core` and consumed through the package root.
 - Reference-content business rules live in `src/domain/reference-content.ts`.
 - The generated lesson metadata dataset boundary remains app-local in `src/utils/lesson-metadata.ts`.
 - Presentation composition for lesson navigation and lesson metadata lives in:
@@ -89,15 +91,14 @@ These paths are locked with high-value test suites:
 
 ## Layer Rules
 
-| Source layer                                          | Allowed targets                                                                                               | Forbidden targets/packages                                                                                 | Notes                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/content-core/src/**`                        | `content-core`                                                                                                | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod`    | Host-agnostic content core.             |
-| `packages/site-core/src/**`                           | `site-core`                                                                                                   | app-local layers, data, generated data, utilities, assets, styles, `content-core`, `astro`, `react`, `zod` | Host-agnostic repository primitives.    |
-| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                             | Pure app-local business rules only.     |
-| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`                  | App-local orchestration and ports only. |
-| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core` | `presentation`, `ui`                                                                                       | Concrete data-source implementations.   |
-| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`           | `ui`, `components`, `layouts`, `pages`                                                                     | Local composition root.                 |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`   | `domain`, `application`, `infrastructure`                                                                  | Rendering surface.                      |
+| Source layer                                          | Allowed targets                                                                                               | Forbidden targets/packages                                                                              | Notes                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `packages/content-core/src/**`                        | `content-core`                                                                                                | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic content core.             |
+| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
+| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
+| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core` | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
+| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`           | `ui`, `components`, `layouts`, `pages`                                                                  | Local composition root.                 |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`   | `domain`, `application`, `infrastructure`                                                               | Rendering surface.                      |
 
 **Implementation notes:**
 
@@ -105,6 +106,9 @@ These paths are locked with high-value test suites:
 - Package subpaths are normalized: `react/jsx-runtime` → `react`, `zod/v4` → `zod`.
 - `@ravenhill/content-core` must be consumed through the package root; package subpath imports are not allowed.
 - `@ravenhill/site-core` must be consumed through the package root; package subpath imports are not allowed.
+- `site-core` is an external architectural target, not a source layer maintained under `packages/` in this repository.
+- The `@ravenhill` scope uses the canonical public-read registry endpoint configured in `.npmrc`; consumer installs do
+  not require package-registry credentials.
 - Generated data: `src/data/**/*.generated.json` and `src/data/**/*.generated.jsonld` are classified as
   `generated-data`.
 - Astro support scans only frontmatter imports, not template text.
@@ -119,16 +123,22 @@ graph TD
     PA["Presentation adapters<br/>(composition root)"]
     APP["Application<br/>(orchestration & ports)"]
     DOMAIN["Domain<br/>(pure business rules)"]
-    CORE["Content core<br/>(workspace package)"]
+    CONTENT["Content core<br/>(local workspace package)"]
+    SITE["Site core<br/>(published external package, root-only)"]
     INFRA["Infrastructure adapters<br/>(data sources)"]
     CONTRACTS["Domain/Application contracts"]
     
     UI -->|renders| PA
     PA -->|consumes| APP
     APP -->|uses| DOMAIN
-    APP -->|uses| CORE
-    PA -->|uses| CORE
-    INFRA -->|implements| CORE
+    APP -->|uses| CONTENT
+    PA -->|uses| CONTENT
+    DOMAIN -->|may use| SITE
+    APP -->|may use| SITE
+    INFRA -->|may use| SITE
+    PA -->|may use| SITE
+    UI -->|may use| SITE
+    INFRA -->|implements| CONTENT
     PA -->|composes| INFRA
     INFRA -->|implements| CONTRACTS
     CONTRACTS -.->|defines| DOMAIN
@@ -217,7 +227,9 @@ as a compatibility alias. New code should read `findings`; the alias will be rem
 When adding new source files:
 
 - Put reusable host-agnostic navigation and lesson metadata core in `packages/content-core/src/`.
-- Put reusable host-agnostic repository primitives in `packages/site-core/src/`.
+- Consume reusable host-agnostic repository primitives from `@ravenhill/site-core` through its package root. Make
+  changes to that implementation in the standalone `site-core` repository, then upgrade this repository through an
+  explicit dependency-version change.
 - Put app-local pure business rules and domain logic in `src/domain/`.
 - Put app-local use-case orchestration and port contracts in `src/application/`.
 - Put data-source mapping and external adapters in `src/infrastructure/adapters/`.

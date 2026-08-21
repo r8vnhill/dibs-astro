@@ -3,7 +3,7 @@ import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
-import { Definition, Explanation, Info, More, Question, Solution, Warning } from "~/components/ui/callouts";
+import { Definition, Explanation, Info, Question, Solution, Warning } from "~/components/ui/callouts";
 import { KotlinInline } from "~/components/ui/code";
 import { MermaidDiagram } from "~/components/ui/figures";
 import { B, I, Mono } from "~/components/ui/font";
@@ -21,14 +21,22 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 ---
 
 <NotesLayout
-    title="Dependencias y grafos de tareas"
-    description="Introduce dependencias entre tareas, grafos dirigidos y acíclicos, caminos y órdenes topológicos."
+    title="Grafos de tareas"
+    description="Introduce dependencias entre tareas, grafos dirigidos y acíclicos, caminos y órdenes topológicos para razonar sobre las restricciones de precedencia de un sistema de construcción."
 >
     <Fragment slot="abstract">
         <P>
-            Esta lección extiende la abstracción de tarea introduciendo <B>dependencias entre tareas</B>. A partir de
-            ellas construiremos grafos dirigidos y acíclicos, estudiaremos qué órdenes de ejecución son compatibles con
-            sus restricciones y compararemos distintos órdenes topológicos compatibles con ellas.
+            Cuando una tarea necesita el trabajo de otra, una colección de tareas independientes deja de ser suficiente:
+            también necesitamos representar sus <B>dependencias</B>. En esta lección modelaremos esas relaciones
+            mediante grafos dirigidos y estudiaremos cómo sus caminos permiten expresar requisitos directos e
+            indirectos.
+        </P>
+
+        <P>
+            A partir de ese modelo distinguiremos ciclos y DAGs, y veremos cómo un grafo acíclico establece <B
+            >restricciones de precedencia</B> sin imponer necesariamente una única secuencia. Esto nos permitirá
+            introducir los órdenes topológicos y reconocer cuándo distintas tareas pueden avanzar de manera
+            independiente.
         </P>
     </Fragment>
 
@@ -643,66 +651,63 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             Un DAG, entonces, no describe necesariamente una receta con un único paso siguiente. Describe <B>qué debe
                 preceder a qué</B> y deja libertad allí donde las dependencias no imponen una relación.
         </P>
-
-        <P>
-            Con esto termina la pregunta conceptual de esta lección: ya sabemos qué restricciones impone el DAG, pero
-            todavía no hemos decidido qué parte de ese grafo necesita una invocación concreta. La siguiente lección
-            parte de esa pregunta para introducir el <Link href="/notes/scripting/selected-task-graphs/"
-            >grafo seleccionado</Link>.
-        </P>
     </NotesSection>
 
     <ConclusionsLayout>
-        <Fragment slot="conclusions">
+        <section slot="conclusions">
             <P>
-                Partimos de tareas independientes y agregamos una relación sencilla:
-                <KotlinInline code="A -> B" /> significa que <Mono>B</Mono> depende de <Mono>A</Mono>. Al combinar
-                varias relaciones obtenemos un <B>grafo de dependencias</B>: las tareas son nodos y las dependencias,
-                aristas dirigidas. Al seguirlas formamos caminos que revelan dependencias directas e indirectas.
+                Las dependencias permiten expresar más que una colección de tareas nombradas. Al representar cada tarea
+                como un nodo y cada dependencia como una arista dirigida, obtenemos un grafo en el que los caminos
+                revelan tanto dependencias directas como indirectas.
             </P>
 
             <P>
-                Para que esas dependencias admitan algún orden válido, el grafo debe ser acíclico. Un DAG expresa un
-                <B>orden parcial</B>: las precedencias que deben respetarse y también las tareas entre las que no existe
-                una restricción de orden.
+                Los ciclos hacen imposible satisfacer simultáneamente todas las restricciones de precedencia. Por eso
+                nos interesan los <B>grafos dirigidos y acíclicos</B>: un DAG admite al menos un orden topológico
+                compatible con sus dependencias, aunque ese orden no tiene por qué ser único.
             </P>
+        </section>
 
-            <P>
-                La siguiente lección parte de este grafo completo para estudiar qué tareas necesita una invocación
-                concreta. Allí veremos el <Link href="/notes/scripting/selected-task-graphs/">grafo seleccionado</Link>
-                y su realización en Gradle.
-            </P>
-        </Fragment>
-
-        <Fragment slot="key-points">
+        <List slot="key-points">
             <ListItem icon={icons.ArrowsLeftRight}>
-                En una dependencia <KotlinInline code="A -> B" />, <Mono>B</Mono> depende de <Mono>A</Mono>: la flecha
-                expresa una
-                <B> restricción de precedencia</B>.
+                En una relación <KotlinInline code="A -> B" />, <Mono>B</Mono> depende de <Mono>A</Mono>: la flecha
+                expresa una restricción de precedencia.
             </ListItem>
 
-            <ListItem icon={icons.TreeStructure}>
-                Un <B>DAG</B> combina conexiones dirigidas sin ciclos, de modo que sus dependencias admiten al menos un
-                orden topológico.
+            <ListItem icon={icons.GitBranch}>
+                Un camino dirigido permite reconocer dependencias indirectas además de las dependencias representadas
+                por una sola arista.
+            </ListItem>
+
+            <ListItem icon={icons.ArrowsClockwise}>
+                Un ciclo dirigido hace incompatibles las restricciones de precedencia; un <B>DAG</B> excluye esos
+                ciclos.
             </ListItem>
 
             <ListItem icon={icons.ListChecks}>
-                Un DAG define un <B>orden parcial</B>, no necesariamente una secuencia única: tareas sin una dependencia
-                entre ellas pueden aparecer en distintos órdenes compatibles.
+                Un orden topológico dispone las tareas respetando sus dependencias, pero un mismo DAG puede admitir
+                varios órdenes válidos.
             </ListItem>
-        </Fragment>
 
-        <Fragment slot="closing-reflection">
+            <ListItem icon={icons.ArrowsSplit}>
+                Las tareas incomparables no tienen una precedencia impuesta entre sí, por lo que el grafo puede permitir
+                distintas secuencias e incluso trabajo concurrente.
+            </ListItem>
+        </List>
+
+        <section slot="closing-reflection">
             <P>
-                Ya podemos responder <I>qué debe estar listo antes de qué</I>, pero todavía no hemos preguntado cuánto
-                trabajo necesita una invocación concreta.
+                Poder ordenar correctamente las tareas todavía no responde una pregunta práctica importante:
+                <B>¿necesitamos considerar todo el grafo cada vez que solicitamos un resultado?</B>
             </P>
 
             <P>
-                En la siguiente lección usaremos el concepto de alcanzabilidad para seleccionar solo las dependencias
-                necesarias para un objetivo solicitado.
+                En una ejecución real solemos partir de un objetivo concreto. La siguiente lección estudiará cómo ese
+                objetivo determina qué tareas y dependencias son relevantes, y cómo podemos observar ese
+                <Link href="/notes/scripting/selected-task-graphs/">grafo seleccionado</Link> en un sistema de
+                construcción como Gradle.
             </P>
-        </Fragment>
+        </section>
     </ConclusionsLayout>
 
     <NotesSection

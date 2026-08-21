@@ -28,7 +28,8 @@ time and served as static assets.
 - **React islands** — used selectively for interactive components; most of the site is plain Astro/HTML.
 - **TypeScript 6** — application logic under `src/domain`, `src/application`, `src/infrastructure`, and
   `src/presentation` is typed and layered (see below).
-- **pnpm workspaces** — the root app and `packages/*` are managed as one workspace.
+- **pnpm workspaces** — the root app and the maintained packages listed in `pnpm-workspace.yaml` are managed as one
+  workspace.
 - **Vitest** — unit tests (`test:unit`, jsdom) and Astro component render tests (`test:astro`).
 - **dprint** — the single formatter for the repository (`pnpm fmt`); there is no separate linter layered on top for
   formatting concerns.
@@ -41,17 +42,19 @@ dibs-astro (root app)
 ├── src/            application code: domain, application, infrastructure, presentation, UI
 └── packages/
     ├── content-core       host-agnostic lesson-navigation and lesson-metadata contracts
-    ├── site-core          host-agnostic repository/hosting-platform primitives
-    ├── shiki-core         host-agnostic Shiki syntax-highlighting infrastructure
     ├── lesson-export-core host-agnostic lesson-export (PDF) planning primitives
-    └── astro-icons        SVG icon components for Astro (Phosphor-based)
+    └── shiki-core         host-agnostic Shiki syntax-highlighting infrastructure
 ```
 
-Each `packages/*` entry is published under restricted access to a private GitLab npm registry
-(`publishConfig.access: "restricted"`), for reuse across Ravenhill projects beyond just this site — not merely an
-internal folder convention. Each is framework-agnostic: no Astro imports, no generated JSON, no app-local aliases. The
-boundary checker (`pnpm check:architecture`) enforces this from the app side: application code may depend on a package's
-root export, but the package itself may not depend back on `src/`.
+The entries shown above are local workspace packages. They are framework-agnostic and expose reusable contracts without
+depending on the app's `src/` tree. The site also consumes published external packages such as `@ravenhill/site-core`
+for host-agnostic repository/hosting-platform primitives and `@ravenhill/astro-icons` for icon components. The
+`@ravenhill` scope resolves through the public-read GitLab npm endpoint configured in [`.npmrc`](./.npmrc):
+`https://gitlab.com/api/v4/projects/85449745/packages/npm/`.
+
+The boundary checker (`pnpm check:architecture`) enforces the app-side dependency rules. Application code may depend on
+an architectural package's root export, while published package implementation changes belong in the package's
+standalone repository.
 
 Each package carries its own `AGENTS.md` and `README.md`, scoped to that package's contract; consult those before
 changing a package's public surface.
@@ -65,7 +68,7 @@ UI (layouts, components, pages)
   → presentation adapters (composition root)
     → application (orchestration, ports)
       → domain (pure business rules)
-    → content-core (workspace package) / site-core (published package)
+    → content-core (local workspace package) / site-core (published external package)
   ← infrastructure adapters implement domain/application contracts
 ```
 
@@ -92,11 +95,12 @@ never be hand-edited:
 | ------------------------------------------------------------ | ----------------------------------------------------- | ------------------------------------ |
 | `src/data/lesson-metadata.generated.json`                    | lesson frontmatter                                    | `pnpm generate:lesson-metadata`      |
 | `src/data/bibliography/catalog.graph.generated.{ttl,jsonld}` | Turtle sources under `src/data/bibliography/sources/` | `pnpm generate:bibliography-catalog` |
-| `@ravenhill/astro-icons` and `$icons` facade                 | GitLab registry icons plus local language marks       | `pnpm install --frozen-lockfile`    |
+| `@ravenhill/astro-icons` and `$icons` facade                 | GitLab registry icons plus local language marks       | `pnpm install --frozen-lockfile`     |
 
 `pnpm dev`, `pnpm build`, and `pnpm deploy` all regenerate these first (`predev`/`prebuild`/`predeploy` also build
-`content-core`, `lesson-export-core`, `site-core`, and `shiki-core`, since the app imports their built output).
-`pnpm check` re-validates freshness so a stale generated file fails CI instead of silently drifting from its source.
+`content-core`, `lesson-export-core`, and `shiki-core`, since the app imports their built output). The published
+`site-core` package is installed as a normal external dependency and is not built by DIBS. `pnpm check` re-validates
+freshness so a stale generated file fails CI instead of silently drifting from its source.
 
 Lesson PDF export (`pnpm export:pdf*`) is a separate, opt-in pipeline built on `@ravenhill/lesson-export-core` and
 Playwright/Chromium; it renders selected lesson routes to PDF and reports per-lesson success/failure rather than failing
@@ -148,10 +152,10 @@ outcome unambiguous.
 
 ## Where to go next
 
-| Question                                                    | Read                                                                               |
-| ----------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| How do I run/build/test this locally?                       | [`README.md`](./README.md)                                                         |
-| What are the agent-specific rules for working in this repo? | [`AGENTS.md`](./AGENTS.md)                                                         |
-| What exactly can import what, and how is it enforced?       | [`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md) |
-| What's the licensing/attribution story for bundled assets?  | [`docs/third-party-assets.md`](./docs/third-party-assets.md)                       |
-| What does package X provide and what may depend on it?      | `packages/X/README.md` and `packages/X/AGENTS.md`                                  |
+| Question                                                          | Read                                                                               |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| How do I run/build/test this locally?                             | [`README.md`](./README.md)                                                         |
+| What are the agent-specific rules for working in this repo?       | [`AGENTS.md`](./AGENTS.md)                                                         |
+| What exactly can import what, and how is it enforced?             | [`docs/architecture/layer-separation.md`](./docs/architecture/layer-separation.md) |
+| What's the licensing/attribution story for bundled assets?        | [`docs/third-party-assets.md`](./docs/third-party-assets.md)                       |
+| What does a maintained package provide and what may depend on it? | `packages/X/README.md` and `packages/X/AGENTS.md`                                  |

@@ -50,9 +50,9 @@ flowchart LR
 
 ### Requirements
 
-To build the image locally you need Docker with BuildKit support. The `@ravenhill` packages are installed from the
-canonical GitLab npm registry, which is configured for public reads in the committed [`.npmrc`](./.npmrc) — no registry
-credentials are required.
+To build the image locally you need Docker with BuildKit support. The `@ravenhill` scope uses the canonical GitLab npm
+registry at `https://gitlab.com/api/v4/projects/85449745/packages/npm/`. The committed [`.npmrc`](./.npmrc) configures
+public package reads, so consumer installs do not require registry credentials.
 
 ### Build and run with Docker Compose
 
@@ -119,8 +119,8 @@ corepack enable
 corepack prepare pnpm@11.8.0 --activate
 ```
 
-The project also depends on packages from the `@ravenhill` GitLab npm registry, so dependency installation requires
-appropriate registry authentication.
+The committed [`.npmrc`](./.npmrc) configures the canonical public-read endpoint for the `@ravenhill` scope, so consumer
+dependency installation does not require registry credentials.
 
 Install dependencies using the committed lockfile:
 
@@ -180,7 +180,7 @@ Run the container contract as well when modifying:
 - container-related CI.
 
 The container contract is intentionally separate from the default test suite because it requires a local container
-runtime and authenticated package-registry access.
+runtime. Its dependency installation uses the same public-read registry configuration as an ordinary local install.
 
 ## Architecture
 
@@ -193,7 +193,7 @@ flowchart TD
     content[Course content]
     app[Application code]
     metadata[Generated metadata]
-    workspaces[Internal workspace packages]
+    workspaces[Maintained workspace packages]
     astro[Astro static build]
     dist[dist/]
 
@@ -223,7 +223,7 @@ The project currently uses:
 - TypeScript 6;
 - Vitest for unit and Astro-render testing;
 - Playwright for browser-level testing;
-- pnpm workspaces for reusable internal packages.
+- pnpm workspaces for the maintained reusable packages in `packages/`.
 
 Architectural dependency rules are documented in:
 
@@ -243,8 +243,10 @@ src/
 packages/
 ├── content-core/        content-domain functionality
 ├── lesson-export-core/  lesson export functionality
-├── shiki-core/          syntax-highlighting functionality
-└── site-core/           reusable site functionality
+└── shiki-core/          syntax-highlighting functionality
+
+External `@ravenhill` packages, including `@ravenhill/site-core` and `@ravenhill/astro-icons`, are installed from the
+canonical registry; they are not maintained under `packages/` in this repository.
 
 docker/
 └── default.conf     static NGINX serving configuration
@@ -282,7 +284,7 @@ The build stage contains:
 - Node.js;
 - pnpm;
 - source code;
-- workspace packages;
+- maintained workspace packages;
 - build dependencies.
 
 It installs dependencies using the frozen lockfile and runs the canonical `pnpm build` path. The published `@ravenhill`
@@ -357,7 +359,9 @@ flowchart TD
 The OCI pipeline uses rootless BuildKit. It does not require Docker-in-Docker, privileged execution, or a mounted host
 Docker socket.
 
-Package-registry credentials are supplied temporarily during the build and must not be persisted into the image.
+The build reads public `@ravenhill` packages through the canonical endpoint configured in [`.npmrc`](./.npmrc); no
+package-read credential is required. Publication credentials belong to the package-publishing repositories, not to DIBS
+consumer builds.
 
 The candidate metadata is a versioned handoff containing the image reference, manifest digest, full Git revision,
 project version, canonical GitLab source URL, and target platform. `container:publish` reads that artifact and performs
