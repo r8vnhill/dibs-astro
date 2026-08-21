@@ -1,0 +1,419 @@
+---
+import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
+import * as icons from "@ravenhill/astro-icons";
+import { P } from "~/components/semantics";
+import Heading from "~/components/semantics/Heading.astro";
+import { Definition, Explanation, More, Question, Solution, Warning } from "~/components/ui/callouts";
+import { BashBlock, KotlinBlock, KotlinInline, OutputBlock } from "~/components/ui/code";
+import { MermaidDiagram } from "~/components/ui/figures";
+import { B, I, Mono } from "~/components/ui/font";
+import { DibsSourceLink, Link } from "~/components/ui/links";
+import { List, ListItem } from "~/components/ui/list";
+import { ReferenceCitation } from "~/components/ui/references";
+import ConclusionsLayout from "~/layouts/ConclusionsLayout.astro";
+import NotesLayout from "~/layouts/NotesLayout.astro";
+import NotesSection from "~/layouts/NotesSection.astro";
+import { packageReportSelectedGraph, verifyReportSelectedGraph } from "~/lib/diagrams/task-graph-examples";
+import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
+
+const taskGraphsReadings = getTaskGraphsReadings();
+const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.lessonPath) } as const;
+const gradleExample = [
+    "val prepareCatalog = tasks.register(\"prepareCatalog\") {",
+    "    doLast { println(\"Preparing catalog...\") }",
+    "}",
+    "",
+    "val generateReport = tasks.register(\"generateReport\") {",
+    "    dependsOn(prepareCatalog)",
+    "    doLast { println(\"Generating report...\") }",
+    "}",
+    "",
+    "val packageReport = tasks.register(\"packageReport\") {",
+    "    dependsOn(generateReport)",
+    "    doLast { println(\"Packaging report...\") }",
+    "}",
+    "",
+    "val verifyReport = tasks.register(\"verifyReport\") {",
+    "    dependsOn(generateReport)",
+    "    doLast { println(\"Verifying report...\") }",
+    "}",
+].join("\n");
+const packageReportOutput = [
+    "Tasks graph for: packageReport",
+    "\\--- :packageReport (org.gradle.api.DefaultTask)",
+    "     \\--- :generateReport (org.gradle.api.DefaultTask)",
+    "          \\--- :prepareCatalog (org.gradle.api.DefaultTask)",
+].join("\n");
+const verifyReportOutput = [
+    "Tasks graph for: verifyReport",
+    "\\--- :verifyReport (org.gradle.api.DefaultTask)",
+    "     \\--- :generateReport (org.gradle.api.DefaultTask)",
+    "          \\--- :prepareCatalog (org.gradle.api.DefaultTask)",
+].join("\n");
+---
+
+<NotesLayout
+    title="Grafo seleccionado y Gradle"
+    description="Explica qué parte del grafo de tareas necesita una invocación concreta y observa esa selección en Gradle."
+>
+    <Fragment slot="abstract">
+        <P>
+            En la lección anterior representamos las tareas y sus dependencias como un DAG. Ahora partiremos de ese
+            modelo completo para preguntar <B>qué parte necesita una invocación concreta</B>: la tarea solicitada y sus
+            dependencias directas e indirectas.
+        </P>
+
+        <P>
+            Después observaremos la misma selección en Gradle. El objetivo sigue siendo conceptual: leeremos
+            <Mono>tasks.register</Mono>, <Mono>dependsOn</Mono> y <Mono>--task-graph</Mono> como una realización del
+            modelo, sin convertir la sintaxis de Gradle en el tema principal.
+        </P>
+    </Fragment>
+
+    <NotesSection id="h2-selected-task-graph">
+        <Heading
+            headingLevel="h2" Icon={icons.Target}
+            slot="heading"
+        >
+            Una invocación selecciona solo parte del grafo
+        </Heading>
+
+        <P>
+            El grafo de dependencias describe todas las tareas conocidas y sus relaciones. Pero solicitar una tarea en
+            particular no requiere preparar ese grafo completo: el sistema necesita determinar qué trabajo es necesario
+            para alcanzar el objetivo solicitado.
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.Target}>
+            <span slot="title">Grafo seleccionado</span>
+
+            <P>
+                Para una tarea solicitada, llamamos <B>grafo seleccionado</B> al subgrafo formado por esa tarea y toda
+                tarea desde la que existe un camino dirigido hacia ella: sus dependencias directas e indirectas.
+            </P>
+
+            <P>
+                Los planificadores topológicos de sistemas de construcción parten de esta misma idea: antes de calcular
+                un orden, primero identifican las dependencias alcanzables desde el resultado solicitado
+                (<ReferenceCitation {...citationContext} referenceId="build-systems-a-la-carte-2018"
+                >Mokhov et al. (2018, §4.1.1)</ReferenceCitation>).
+            </P>
+        </Definition>
+
+        <P>
+            Solicitar <Mono>packageReport</Mono> selecciona este subgrafo:
+        </P>
+
+        <MermaidDiagram spec={packageReportSelectedGraph} />
+
+        <P>
+            Solicitar <Mono>verifyReport</Mono> selecciona un subgrafo distinto:
+        </P>
+
+        <MermaidDiagram spec={verifyReportSelectedGraph} />
+
+        <P>
+            Ambos subgrafos comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguno incluye la
+            tarea que el otro solicitó: pedir <Mono>packageReport</Mono> no selecciona
+            <Mono>verifyReport</Mono>, y pedir <Mono>verifyReport</Mono> no selecciona <Mono>packageReport</Mono>.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <Fragment slot="title">Cómo decidir qué tareas pertenecen al grafo seleccionado</Fragment>
+
+            <P>
+                Una tarea pertenece al grafo seleccionado si es el objetivo solicitado o si existe un camino dirigido
+                desde esa tarea hasta el objetivo.
+            </P>
+
+            <P>
+                <Mono>prepareCatalog</Mono> pertenece al grafo seleccionado de <Mono>packageReport</Mono> porque existe
+                el camino <Mono>prepareCatalog -&gt; generateReport -&gt; packageReport</Mono>, aunque
+                <Mono>prepareCatalog</Mono> no sea su dependencia directa. En cambio, no existe un camino dirigido desde
+                <Mono>verifyReport</Mono> hasta <Mono>packageReport</Mono>: que ambas tareas dependan de
+                <Mono>generateReport</Mono> no hace que una dependa de la otra.
+            </P>
+        </Explanation>
+
+        <Question headingLevel="h3">
+            <P>
+                Si solicitamos <Mono>packageReport</Mono> en el grafo completo, ¿qué tareas pertenecen al grafo
+                seleccionado y cuál queda fuera? Explica por qué <Mono>verifyReport</Mono> no es necesaria.
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    El grafo seleccionado incluye <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono> y
+                    <Mono>packageReport</Mono>: existe un camino dirigido desde cada una de las dos primeras hasta el
+                    objetivo solicitado.
+                </P>
+
+                <P>
+                    <Mono>verifyReport</Mono> queda fuera porque no existe un camino dirigido desde
+                    <Mono>verifyReport</Mono> hasta <Mono>packageReport</Mono>. Ambas dependen de
+                    <Mono>generateReport</Mono>, pero una dependencia compartida no convierte en dependientes entre sí a
+                    las dos tareas que la necesitan.
+                </P>
+            </Solution>
+        </Question>
+
+        <P>
+            Conviene distinguir tres conceptos:
+        </P>
+
+        <List>
+            <ListItem icon={icons.TreeStructure}>
+                <B>Descripción del build:</B> todas las tareas conocidas y sus relaciones.
+            </ListItem>
+
+            <ListItem icon={icons.Target}>
+                <B>Tarea solicitada:</B> el objetivo que queremos alcanzar en una invocación concreta.
+            </ListItem>
+
+            <ListItem icon={icons.ListChecks}>
+                <B>Grafo seleccionado:</B> la tarea solicitada y las dependencias necesarias para alcanzarla.
+            </ListItem>
+        </List>
+
+        <P>
+            El grafo seleccionado no es una propiedad fija del build: depende de qué tarea se solicita en cada
+            invocación.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <P>
+                <B>Grafo seleccionado ≠ traza de ejecución.</B> El grafo seleccionado describe qué depende de qué para
+                la tarea solicitada; no describe qué ocurrió realmente. Una tarea puede pertenecer al grafo seleccionado
+                y, aun así, no volver a ejecutar sus acciones si el sistema determina que su resultado ya está
+                disponible.
+            </P>
+        </Explanation>
+    </NotesSection>
+
+    <NotesSection id="h2-gradle-realization">
+        <Heading
+            headingLevel="h2" Icon={icons.Wrench}
+            slot="heading"
+        >
+            Un grafo de dependencias real: Gradle
+        </Heading>
+
+        <P>
+            Gradle es un sistema de construcción real que registra tareas nombradas y conexiones dirigidas entre ellas
+            con una sintaxis cercana al modelo que acabamos de usar, como documenta
+            <ReferenceCitation {...citationContext} referenceId="gradle-build-lifecycle"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>:
+        </P>
+
+        <KotlinBlock code={gradleExample}>
+            <span slot="title">build.gradle.kts (fragmento)</span>
+            <DibsSourceLink
+                slot="source" repo="kotlin-companion"
+                file="gradle/task-graph/build.gradle.kts"
+            >
+                gradle/task-graph/build.gradle.kts
+            </DibsSourceLink>
+        </KotlinBlock>
+
+        <Explanation headingLevel="h3">
+            <P>
+                <Mono>tasks.register(...)</Mono> declara un nodo del grafo: una tarea nombrada. Guardamos el resultado
+                de <Mono>register(...)</Mono> en una variable y se la pasamos directamente a
+                <Mono>dependsOn(...)</Mono>. Por ejemplo, <Mono>dependsOn(generateReport)</Mono> declara la misma
+                conexión dirigida que <Mono>generateReport -&gt; packageReport</Mono> en el diagrama. La sintaxis de
+                Gradle es secundaria; lo importante es que reproduce el grafo dirigido y acíclico que ya conocemos. La
+                guía de Gradle sobre el control de la ejecución describe esta relación con más detalle
+                (<ReferenceCitation {...citationContext} referenceId="gradle-controlling-task-execution"
+                >Gradle, Inc. (s. f.)</ReferenceCitation>).
+            </P>
+        </Explanation>
+
+        <Warning headingLevel="h3" title="Esta relación explícita es una simplificación pedagógica">
+            <P>
+                En esta lección usamos <Mono>dependsOn</Mono> para hacer visible cada arista del grafo. En un build
+                moderno, una tarea con acciones debería declarar sus <B>inputs y outputs</B>: cuando una tarea consume
+                un resultado producido por otra, esa relación productor–consumidor permite que Gradle derive parte de la
+                dependencia y entienda qué datos necesita. Aquí mantenemos <Mono>dependsOn</Mono> porque el objetivo es
+                leer la topología antes de estudiar el flujo de datos. Esta precisión sobre dependencias necesarias
+                también motiva el trabajo de <ReferenceCitation
+                    {...citationContext} referenceId="build-scripts-perfect-dependencies-2020"
+                >Spall et al. (2020)</ReferenceCitation>. Consulta las{" "}
+                <Link href="https://docs.gradle.org/current/userguide/best_practices_tasks.html">
+                    buenas prácticas de Gradle para tareas
+                </Link>.
+            </P>
+        </Warning>
+
+        <P>
+            Igual que en el modelo conceptual, solicitar una tarea concreta selecciona solo esa tarea y sus
+            dependencias. Solicitar <Mono>packageReport</Mono> selecciona <Mono>prepareCatalog</Mono> y
+            <Mono>generateReport</Mono>, pero no <Mono>verifyReport</Mono>. La interfaz de línea de comandos de Gradle
+            documenta esta forma de solicitar e inspeccionar tareas (<ReferenceCitation
+                {...citationContext} referenceId="gradle-command-line-interface"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>).
+        </P>
+
+        <P>
+            Primero podemos predecir el grafo seleccionado y después compararlo con la observación de Gradle:
+        </P>
+
+        <BashBlock code={"./gradlew packageReport --task-graph"}>
+            <span slot="title">Grafo de tareas seleccionado para packageReport</span>
+        </BashBlock>
+
+        <OutputBlock code={packageReportOutput} />
+
+        <P>
+            Solicitar <Mono>verifyReport</Mono> selecciona el mismo prefijo compartido, pero termina en una tarea
+            distinta:
+        </P>
+
+        <BashBlock code={"./gradlew verifyReport --task-graph"}>
+            <span slot="title">Grafo de tareas seleccionado para verifyReport</span>
+        </BashBlock>
+
+        <OutputBlock code={verifyReportOutput} />
+
+        <Explanation headingLevel="h3">
+            <P>
+                El árbol de <Mono>--task-graph</Mono> se lee desde la tarea solicitada hacia sus dependencias: la
+                primera línea es <Mono>packageReport</Mono> y cada nivel indentado es lo que esa tarea necesita.
+                Nuestros diagramas hacen el recorrido visual opuesto: una flecha <Mono>A -&gt; B</Mono> va desde la
+                tarea requerida hacia la tarea dependiente. Ambas formas describen la misma relación; solo cambia la
+                dirección en la que se dibuja.
+            </P>
+        </Explanation>
+
+        <Question headingLevel="h3">
+            <P>
+                ¿Qué nos permite verificar la salida de <Mono>./gradlew packageReport --task-graph</Mono>? ¿Muestra una
+                traza de ejecución o la estructura de dependencias seleccionada para esta invocación?
+            </P>
+
+            <Solution embedded headingLevel="h4">
+                <P>
+                    La salida permite comprobar la predicción del grafo seleccionado: muestra
+                    <Mono>packageReport</Mono> y las dependencias que necesita, como <Mono>generateReport</Mono> y
+                    <Mono>prepareCatalog</Mono>.
+                </P>
+
+                <P>
+                    No muestra una traza de ejecución. <Mono>--task-graph</Mono> describe la estructura de dependencias
+                    que Gradle prepararía para esa invocación; no ejecuta las acciones ni registra qué tarea ocurrió
+                    primero o en qué momento.
+                </P>
+            </Solution>
+        </Question>
+
+        <More headingLevel="h3" icon={icons.GitBranch}>
+            <Fragment slot="title">Grafo de tareas más allá de Gradle</Fragment>
+
+            <P>
+                La idea no es exclusiva de Gradle. En un monorepo, <Link
+                    href="https://nx.dev/docs/concepts/task-pipeline-configuration"
+                >Nx</Link> combina el grafo de proyectos con la configuración de pipelines para decidir el orden de las
+                tareas; los proyectos sin dependencias entre sí pueden quedar habilitados para avanzar en paralelo. El
+                concepto es el mismo que acabamos de estudiar, aunque la configuración y la terminología cambien.
+            </P>
+
+            <P>
+                <Link href="https://bazel.build/reference/glossary">Bazel</Link> ofrece otra distinción útil: un
+                objetivo que solicitamos no es necesariamente la unidad más pequeña que ejecuta el sistema. El grafo de
+                acciones relaciona acciones y artefactos de nivel más bajo. No necesitamos aprender esa representación
+                para usar el grafo pequeño de esta lección; basta reconocer que distintos sistemas pueden exponer capas
+                distintas del mismo problema.
+            </P>
+        </More>
+
+        <More headingLevel="h3" icon={icons.Gauge}>
+            <Fragment slot="title">El grafo también tiene un costo</Fragment>
+
+            <P>
+                Construir y configurar un grafo también requiere trabajo. La{" "}
+                <Link href="https://docs.gradle.org/current/userguide/configuration_cache.html">
+                    Configuration Cache de Gradle
+                </Link> conserva el resultado de la fase de configuración para poder reutilizarlo en invocaciones
+                posteriores; no es lo mismo que reutilizar los outputs de una tarea mediante el Build Cache.
+            </P>
+
+            <P>
+                Gradle 9.7 presenta <Link href="https://docs.gradle.org/current/userguide/isolated_projects.html">
+                    Isolated Projects
+                </Link> como una función <B>incubating</B>: busca aislar la configuración de proyectos para mejorar la
+                escalabilidad de builds grandes, pero sus APIs y comportamiento todavía pueden cambiar. La dejamos fuera
+                del ejemplo y no la proponemos como requisito para producir artefactos.
+            </P>
+        </More>
+    </NotesSection>
+
+    <ConclusionsLayout>
+        <Fragment slot="conclusions">
+            <P>
+                Una invocación no necesita todas las tareas conocidas por el build. Parte de un objetivo concreto y
+                selecciona ese objetivo junto con sus dependencias directas e indirectas.
+            </P>
+
+            <P>
+                Gradle realiza la misma selección: <Mono>tasks.register</Mono> nombra tareas,
+                <Mono>dependsOn</Mono> hace visibles sus conexiones y <Mono>--task-graph</Mono> permite observar el
+                subgrafo preparado para una invocación sin confundirlo con una ejecución real.
+            </P>
+        </Fragment>
+
+        <Fragment slot="key-points">
+            <ListItem icon={icons.Target}>
+                El <B>grafo seleccionado</B> contiene la tarea solicitada y las dependencias necesarias para alcanzarla,
+                no todas las tareas conocidas por el build.
+            </ListItem>
+
+            <ListItem icon={icons.TreeStructure}>
+                Una dependencia indirecta se incluye cuando existe un camino dirigido desde ella hasta el objetivo.
+            </ListItem>
+
+            <ListItem icon={icons.Wrench}>
+                Un <B>grafo de dependencias</B> describe relaciones; una <B>traza de ejecución</B> describe qué ocurrió
+                realmente. <Mono>--task-graph</Mono> permite observar lo primero sin ejecutar las acciones.
+            </ListItem>
+        </Fragment>
+
+        <Fragment slot="closing-reflection">
+            <P>
+                <Mono>dependsOn</Mono> hace explícita la topología, pero todavía no explica <B>por qué existe cada
+                    dependencia</B>.
+            </P>
+
+            <P>
+                El siguiente paso será enriquecer el modelo con información sobre los datos que atraviesan esas aristas.
+                Si una tarea produce un resultado que otra necesita, podemos describir la relación como:
+            </P>
+
+            <P>
+                <KotlinInline code="output del productor -> input del consumidor" />
+            </P>
+
+            <P>
+                Con ese cambio, la pregunta deja de ser solamente <I>«¿qué tarea debe estar lista antes?»</I> y pasa a
+                ser <B>«¿qué produce cada tarea y quién necesita ese resultado?»</B>.
+            </P>
+        </Fragment>
+    </ConclusionsLayout>
+
+    <NotesSection
+        id="continue-reading" title="Continúa explorando"
+        Icon={icons.BookOpen}
+    >
+        <P>
+            Si quieres profundizar, puedes explorar las lecturas complementarias sobre grafos de tareas y sistemas de
+            construcción.
+        </P>
+        <p class="mt-5">
+            <a
+                href={lessonReadingsRoute(taskGraphsReadings.lessonPath)}
+                class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
+            >
+                Ver lecturas complementarias
+                <icons.ArrowRight class="ml-2 size-5" aria-hidden="true" />
+            </a>
+        </p>
+    </NotesSection>
+</NotesLayout>
