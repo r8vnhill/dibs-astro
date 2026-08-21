@@ -2,8 +2,8 @@
 /**
  * Header component for the site.
  *
- * Displays a site title, main navigation, a theme switcher, and optional links to GitLab and GitHub
- * repositories.
+ * Displays the themed DIBS logo, main navigation, a theme switcher, and optional links to GitLab and
+ * GitHub repositories.
  *
  * @property title - The site title displayed as a link to the homepage.
  * @property gitlab - Optional GitLab username and repo.
@@ -13,6 +13,7 @@
 import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
 import { m } from "~/generated/i18n/messages";
 import type { LocalizedString } from "~/generated/i18n/messages";
+import { site } from "~/utils";
 import GitHubLink from "./GitHubLink.astro";
 import GitLabLink from "./GitLabLink.astro";
 import HeaderNav from "./nav/HeaderNav";
@@ -74,10 +75,20 @@ const navItems = [
     >
         <!-- Left section: title and nav links -->
         <div class:list={["flex", "items-center", "gap-6"]}>
-            <!-- Site title linking to homepage -->
-            <a href="/" class:list={["text-xl", "font-bold", "text-primary"]}>
+            <!-- Site logo linking to homepage -->
+            <a
+                href="/" class="inline-flex items-center"
+                aria-label={m.header_home_aria()}
+            >
                 <span class="sr-only">{m.header_home_aria()}</span>
-                {title}
+                <img
+                    src={site.HEAD.LOGO_LIGHT_PATH} alt={title}
+                    class="h-8 w-auto dark:hidden"
+                />
+                <img
+                    src={site.HEAD.LOGO_DARK_PATH} alt=""
+                    aria-hidden="true" class="hidden h-8 w-auto dark:block"
+                />
             </a>
 
             <!-- Main navigation component -->

@@ -11,7 +11,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml project.inlang .npmrc ./
 COPY packages/content-core/package.json packages/content-core/package.json
 COPY packages/lesson-export-core/package.json packages/lesson-export-core/package.json
 COPY packages/shiki-core/package.json packages/shiki-core/package.json
-COPY packages/site-core/package.json packages/site-core/package.json
 
 RUN --mount=type=cache,id=dibs-pnpm-store,target=/pnpm/store \
     pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile

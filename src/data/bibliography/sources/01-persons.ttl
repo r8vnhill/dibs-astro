@@ -378,3 +378,18 @@ person:clifford-stein
   a schema:Person ;
   schema:givenName "Clifford" ;
   schema:familyName "Stein" .
+
+person:eric-lehman
+  a schema:Person ;
+  schema:givenName "Eric" ;
+  schema:familyName "Lehman" .
+
+person:f-thomson-leighton
+  a schema:Person ;
+  schema:givenName "F. Thomson" ;
+  schema:familyName "Leighton" .
+
+person:albert-r-meyer
+  a schema:Person ;
+  schema:givenName "Albert R." ;
+  schema:familyName "Meyer" .

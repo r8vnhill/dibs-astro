@@ -562,6 +562,12 @@ ref:gradle-build-lifecycle
   schema:url "https://docs.gradle.org/current/userguide/build_lifecycle.html" ;
   schema:publisher org:gradle-docs .
 
+ref:gradle-task-configuration-avoidance
+  a schema:WebPage ;
+  schema:name "Avoiding Unnecessary Task Configuration" ;
+  schema:url "https://docs.gradle.org/current/userguide/task_configuration_avoidance.html" ;
+  schema:publisher org:gradle-docs .
+
 ref:gradle-controlling-task-execution
   a schema:WebPage ;
   schema:name "Controlling Task Execution" ;
@@ -980,3 +986,11 @@ ref:introduction-to-algorithms-2022
   schema:datePublished "2022" ;
   schema:author person:thomas-h-cormen, person:charles-e-leiserson, person:ronald-l-rivest, person:clifford-stein ;
   schema:isPartOf work:introduction-to-algorithms-4e .
+
+ref:mathematics-for-computer-science-2018
+  a schema:Book ;
+  schema:name "Mathematics for computer science" ;
+  schema:url "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf" ;
+  schema:datePublished "2018" ;
+  schema:author person:eric-lehman, person:f-thomson-leighton, person:albert-r-meyer ;
+  schema:isPartOf work:mathematics-for-computer-science .

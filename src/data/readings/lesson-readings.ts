@@ -34,6 +34,19 @@ export const taskGraphsReadings: LessonReadings = {
             guidingQuestion: "¿En qué momento necesita Gradle conocer las tareas y sus dependencias?",
         },
         {
+            referenceId: "gradle-task-configuration-avoidance",
+            type: "Referencia técnica",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Explica cómo Gradle sigue las dependencias fuertes entre tareas al construir el conjunto de trabajo requerido.",
+            focus:
+                "Busca la relación entre dependsOn, el grafo de tareas y el recorrido transitivo de sus dependencias.",
+            afterReading:
+                "Deberías poder explicar por qué una dependencia indirecta también forma parte del trabajo requerido.",
+            guidingQuestion:
+                "¿Qué tareas debe considerar Gradle cuando una tarea depende de otra que, a su vez, tiene dependencias?",
+        },
+        {
             referenceId: "gradle-controlling-task-execution",
             type: "Referencia técnica",
             difficulty: "Intermedia",
@@ -77,6 +90,19 @@ export const taskGraphsReadings: LessonReadings = {
             focus: "Lee el capítulo 20, §§20.1 y 20.4, y concéntrate en las definiciones y el resultado conceptual.",
             afterReading: "Deberías poder explicar por qué un DAG admite un orden que respeta sus dependencias.",
             guidingQuestion: "¿Qué propiedad del grafo permite ordenar sus nodos respetando las aristas dirigidas?",
+        },
+        {
+            referenceId: "mathematics-for-computer-science-2018",
+            type: "Fuente primaria",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Conecta el scheduling de DAGs con órdenes parciales, elementos incomparables y linealizaciones.",
+            focus:
+                "Lee el capítulo 10, especialmente §§10.5–10.8, y distingue las restricciones parciales de una secuencia lineal que las respeta.",
+            afterReading:
+                "Deberías poder explicar por qué dos tareas pueden ser incomparables y aun así aparecer en cualquier orden compatible.",
+            guidingQuestion:
+                "¿Qué diferencia hay entre que dos tareas no tengan una arista directa y que no exista un camino entre ellas en ningún sentido?",
         },
     ],
     deeper: [

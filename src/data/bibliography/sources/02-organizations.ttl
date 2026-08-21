@@ -257,3 +257,8 @@ org:mit-press
   a schema:Organization ;
   schema:name "The MIT Press" ;
   schema:url "https://mitpress.mit.edu/" .
+
+org:mit
+  a schema:CollegeOrUniversity ;
+  schema:name "Massachusetts Institute of Technology" ;
+  schema:url "https://www.mit.edu/" .

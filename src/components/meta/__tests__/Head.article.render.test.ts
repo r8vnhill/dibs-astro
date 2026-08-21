@@ -15,8 +15,7 @@ import {
     DC_TYPE_JOURNAL_ARTICLE,
     DC_TYPE_WEBPAGE,
     extractJsonLd,
-    FAVICON_ICO_PATH,
-    FAVICON_PNG_PATH,
+    FAVICON_PATH,
     getMetaContentByName,
     getMetaContentByProperty,
     JSONLD_CONTEXT,
@@ -129,7 +128,7 @@ describe.concurrent("Head.astro article metadata render", () => {
         expect(extractJsonLd(html)).toBeUndefined();
     });
 
-    test("renders browser icon links with conventional ico and png fallbacks", async () => {
+    test("renders the shared DIBS site icon", async () => {
         const html = await renderHead({
             title: WEBSITE_TITLE,
             description: WEBSITE_DESCRIPTION,
@@ -137,10 +136,7 @@ describe.concurrent("Head.astro article metadata render", () => {
         });
 
         expect(
-            countElements(html, `link[rel="icon"][href="${FAVICON_ICO_PATH}"][type="image/x-icon"]`),
-        ).toBe(1);
-        expect(
-            countElements(html, `link[rel="icon"][href="${FAVICON_PNG_PATH}"][type="image/png"]`),
+            countElements(html, `link[rel="icon"][href="${FAVICON_PATH}"][type="image/png"]`),
         ).toBe(1);
     });
 

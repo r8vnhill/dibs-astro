@@ -39,6 +39,12 @@ work:introduction-to-algorithms-4e
   schema:author person:thomas-h-cormen, person:charles-e-leiserson, person:ronald-l-rivest, person:clifford-stein ;
   schema:publisher org:mit-press .
 
+work:mathematics-for-computer-science
+  a schema:CreativeWork ;
+  schema:name "Mathematics for computer science" ;
+  schema:author person:eric-lehman, person:f-thomson-leighton, person:albert-r-meyer ;
+  schema:publisher org:mit .
+
 work:acm-tosem
   a schema:CreativeWork ;
   schema:name "ACM Transactions on Software Engineering and Methodology" ;

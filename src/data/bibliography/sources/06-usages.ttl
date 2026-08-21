@@ -955,6 +955,12 @@ usage:task-graphs-gradle-build-lifecycle-recommended
   dibs:reference ref:gradle-build-lifecycle ;
   dibs:tag "recommended" .
 
+usage:task-graphs-gradle-task-configuration-avoidance-recommended
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:gradle-task-configuration-avoidance ;
+  dibs:tag "recommended" .
+
 usage:task-graphs-gradle-controlling-task-execution-recommended
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
@@ -983,4 +989,10 @@ usage:task-graphs-introduction-to-algorithms-additional
   a dibs:ReferenceUsage ;
   dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
   dibs:reference ref:introduction-to-algorithms-2022 ;
+  dibs:tag "additional" .
+
+usage:task-graphs-mathematics-for-computer-science-additional
+  a dibs:ReferenceUsage ;
+  dibs:lesson <https://dibs.ravenhill.cl/notes/scripting/task-graphs/> ;
+  dibs:reference ref:mathematics-for-computer-science-2018 ;
   dibs:tag "additional" .

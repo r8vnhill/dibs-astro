@@ -37,7 +37,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("Grafo de tareas");
         expect(normalizedHtml).toContain("generateReport");
         expect(normalizedHtml).toContain("prepareCatalog");
-        expect(normalizedHtml).toContain("tarea requerida -> tarea dependiente");
+        expect(normalizedHtml).toContain("modelar las tareas y sus relaciones explícitamente");
         expect(normalizedHtml).not.toContain("tarea -> tarea requerida");
     });
 
@@ -74,28 +74,31 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(svgText).toContain("verifyReport");
     });
 
-    test("then the cyclic counterexample is explained as not representing a valid task order", async () => {
+    test("then the cyclic counterexample is explained as incompatible precedence constraints", async () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain("Ninguna de las tres tareas puede quedar lista");
-        expect(normalizedHtml).toContain("Acíclico");
+        expect(normalizedHtml).toContain("No existe una primera tarea que permita satisfacer las tres condiciones");
+        expect(normalizedHtml).toContain("Ciclo dirigido");
         expect(normalizedHtml).toContain(cyclicDependencyCounterexample.description);
     });
 
     test("then the DAG is presented as precedence constraints with multiple valid topological orders", async () => {
-        const { html } = await renderLesson();
+        const { html, doc } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
+        const topologicalSectionText = doc.querySelector("#h2-topological-orders")?.textContent ?? "";
 
-        expect(normalizedHtml).toContain("Un DAG admite órdenes válidos");
+        expect(normalizedHtml).toContain("Un DAG puede admitir más de un orden válido");
         expect(normalizedHtml).toContain("Orden topológico");
-        expect(normalizedHtml).toContain("no necesariamente una secuencia única de ejecución");
-        expect(normalizedHtml).toContain(
-            "prepareCatalog -> generateReport -> packageReport -> verifyReport",
-        );
-        expect(normalizedHtml).toContain(
-            "prepareCatalog -> generateReport -> verifyReport -> packageReport",
-        );
+        expect(normalizedHtml).toContain("Tareas incomparables");
+        expect(normalizedHtml).toContain("No basta con buscar una flecha directa");
+        expect(normalizedHtml).toContain("Orden topológico ≠ orden observado de ejecución");
+        expect(normalizedHtml).toContain("no existe un camino dirigido");
+        expect(normalizedHtml).toContain("ejecuten en paralelo");
+        expect(topologicalSectionText).toContain("prepareCatalog");
+        expect(topologicalSectionText).toContain("generateReport");
+        expect(topologicalSectionText).toContain("packageReport");
+        expect(topologicalSectionText).toContain("verifyReport");
     });
 
     test("then requesting packageReport and verifyReport selects two different task graphs", async () => {
@@ -160,8 +163,8 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const { doc } = await renderLesson();
         const contracts = [
             ["h2-task-dependencies", "¿cuáles tareas dependen de qué otras?"],
-            ["h2-directed-acyclic-shape", "¿por qué no podría proporcionar un orden"],
-            ["h2-topological-orders", "¿packagereport debe ejecutarse antes"],
+            ["h2-directed-acyclic-shape", "¿por qué no existe un orden"],
+            ["h2-topological-orders", "¿debe ejecutarse"],
             ["h2-selected-task-graph", "¿qué tareas pertenecen al grafo"],
             ["h2-gradle-realization", "¿qué nos permite verificar la salida"],
         ] as const;
@@ -185,7 +188,9 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
 
     test("then it labels explicit dependsOn wiring as pedagogical and previews dataflow practice", async () => {
         const { doc } = await renderLesson();
-        const warning = doc.querySelector("[data-callout][data-variant=\"warning\"]");
+        const warning = Array.from(doc.querySelectorAll("[data-callout][data-variant=\"warning\"]")).find((callout) =>
+            callout.querySelector("a[href=\"https://docs.gradle.org/current/userguide/best_practices_tasks.html\"]")
+        );
         const warningText = warning?.textContent ?? "";
 
         expect(warningText).toContain("simplificación pedagógica");
@@ -223,6 +228,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(new Set(resolution.value.sections[0]?.readings.map((reading) => reading.referenceId))).toEqual(
             new Set([
                 "ref:gradle-build-lifecycle",
+                "ref:gradle-task-configuration-avoidance",
                 "ref:gradle-controlling-task-execution",
                 "ref:gradle-command-line-interface",
             ]),
@@ -231,6 +237,7 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
             new Set([
                 "ref:build-systems-a-la-carte-2018",
                 "ref:introduction-to-algorithms-2022",
+                "ref:mathematics-for-computer-science-2018",
             ]),
         );
         expect(new Set(resolution.value.sections[2]?.readings.map((reading) => reading.referenceId))).toEqual(
@@ -248,11 +255,25 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(normalizedHtml).toContain("arista dirigida");
         expect(normalizedHtml).toContain("tarea");
         expect(normalizedHtml).toContain("dependencia");
+        expect(normalizedHtml).toContain("incomparables");
+        expect(normalizedHtml).toContain("orden parcial");
+        expect(normalizedHtml).toContain("directamente");
+        expect(normalizedHtml).toContain("indirectamente");
+        expect(normalizedHtml).toContain("Durante esta lección usaremos siempre la misma convención");
         expect(normalizedHtml).toContain("restricciones de precedencia");
         expect(normalizedHtml).toContain("grafo seleccionado");
         expect(normalizedHtml).toContain("inputs y outputs");
         expect(normalizedHtml).toContain("por qué existe esa dependencia");
         expect(normalizedHtml).toContain("resultado producido por otra");
+    });
+
+    test("then it links to the lesson-specific readings page", async () => {
+        const { doc } = await renderLesson();
+        const readingsPath = "/readings/scripting/task-graphs/";
+        const readingsLink = doc.querySelector(`a[href="${readingsPath}"]`);
+
+        expect(readingsLink).not.toBeNull();
+        expect(readingsLink?.textContent).toContain("Ver lecturas complementarias");
     });
 
     test("then the Gradle realization keeps advanced build concepts out of the main path", async () => {

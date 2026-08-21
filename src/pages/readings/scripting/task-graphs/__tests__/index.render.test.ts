@@ -16,7 +16,7 @@ suite("given the task-graphs readings catalog", () => {
         if (!resolution.ok) return;
 
         const readings = resolution.value.sections.flatMap((section) => section.readings);
-        expect(readings).toHaveLength(5);
+        expect(readings).toHaveLength(8);
         expect(new Set(readings.map((reading) => reading.referenceId)).size).toBe(readings.length);
         expect(new Set(readings.map((reading) => reading.anchorId)).size).toBe(readings.length);
         expect(readings.map((reading) => reading.anchorId)).toEqual(
@@ -36,8 +36,8 @@ suite("given the task-graphs readings catalog", () => {
         expect(html).toContain("Lecturas esenciales");
         expect(html).toContain("De la idea a la práctica");
         expect(html).toContain("Para profundizar");
-        expect(html).toContain("Qué buscar");
-        expect(html).toContain("Idea que deberías llevarte");
-        expect(doc.querySelectorAll("[id^=\"ref-\"]")).toHaveLength(5);
+        expect(html).toContain("En qué enfocarse");
+        expect(html).toContain("Después de leer");
+        expect(doc.querySelectorAll("[id^=\"ref-\"]")).toHaveLength(8);
     });
 });

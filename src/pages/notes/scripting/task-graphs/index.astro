@@ -366,28 +366,100 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         </Heading>
 
         <P>
-            Antes de relacionarlas, <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
-            <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> son solo una colección de tareas nombradas: nada en
-            esa lista dice qué tarea depende de cuál. La dependencia <Mono>prepareCatalog -> generateReport</Mono>
-            introducida al inicio de esta lección es la primera conexión entre dos de ellas. Si agregamos las
-            dependencias restantes, el conjunto completo forma un grafo:
+            Una lista de nombres puede decirnos <B>qué tareas existen</B>, pero no cómo se relacionan. Por ejemplo,
+            podemos conocer <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>, <Mono>packageReport</Mono> y <Mono
+            >verifyReport</Mono> sin saber todavía si alguna necesita el trabajo realizado por otra.
+        </P>
+
+        <P>
+            Para representar esas relaciones cambiaremos de modelo: trataremos cada tarea como un <B>nodo</B> y cada
+            dependencia como una <B>arista dirigida</B>. Esta es la representación habitual de un grafo dirigido
+            (<ReferenceCitation {...citationContext} referenceId="introduction-to-algorithms-2022">
+                Cormen et al. (2022, cap. 20, §20.1)
+            </ReferenceCitation>).
         </P>
 
         <MermaidDiagram spec={taskDependencyGraph} />
 
         <Explanation headingLevel="h3">
+            <Fragment slot="title">Cómo leer las flechas</Fragment>
+
             <P>
-                Cada tarea es un <B>nodo</B> del grafo. Cada flecha es una <B>arista dirigida</B>: la flecha
-                <Mono>A -> B</Mono> se lee siempre como <I>B depende de A</I>, nunca al revés. Por eso
-                <Mono>generateReport -> packageReport</Mono> significa que <Mono>packageReport</Mono> requiere que
-                <Mono>generateReport</Mono> haya terminado, y no que <Mono>generateReport</Mono> requiera a
-                <Mono>packageReport</Mono>.
+                Durante esta lección usaremos siempre la misma convención: <KotlinInline code="A -> B" /> significa que{
+                    " "
+                }<Mono>B</Mono> depende de <Mono>A</Mono>. La flecha parte desde la tarea requerida y apunta hacia la
+                tarea que la necesita.
+            </P>
+            <P>
+                Por ejemplo, <KotlinInline code="generateReport -> packageReport" /> significa que <Mono
+                >packageReport</Mono> necesita que <Mono>generateReport</Mono> haya terminado. No significa lo
+                contrario.
+            </P>
+        </Explanation>
+
+        <P>Las aristas también pueden combinarse. Observa una parte del grafo:</P>
+
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport -> packageReport" />
+        </P>
+
+        <P>
+            Aquí <Mono>packageReport</Mono> depende <B>directamente</B> de <Mono>generateReport</Mono>, porque existe
+            una arista entre ambas tareas. Pero también depende <B>indirectamente</B> de <Mono>prepareCatalog</Mono>:
+            para llegar a <Mono>packageReport</Mono> podemos seguir un camino de dependencias que pasa primero por <Mono
+            >generateReport</Mono>.
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.GitBranch}>
+            <span slot="title">Camino dirigido</span>
+
+            <P>
+                Un <B>camino dirigido</B> es una secuencia de nodos conectados siguiendo la dirección de las aristas
+                (<ReferenceCitation {...citationContext} referenceId="introduction-to-algorithms-2022">
+                    Cormen et al. (2022, cap. 20)
+                </ReferenceCitation>).
+            </P>
+
+            <P>
+                En un grafo de dependencias, un camino permite descubrir requisitos indirectos. Si existe
+                <KotlinInline code="A -> B -> C" />, entonces <Mono>C</Mono> necesita indirectamente el trabajo de <Mono
+                >A</Mono>, aunque no exista una arista directa <KotlinInline code="A -> C" />.
+            </P>
+        </Definition>
+
+        <P>
+            Esta transitividad es importante en un sistema de construcción. Si solicitamos una tarea, no basta con mirar
+            sus dependencias inmediatas: también debemos considerar las dependencias de esas dependencias. Gradle
+            realiza este recorrido de manera transitiva al construir el conjunto de tareas requerido por una relación
+            fuerte como <KotlinInline code="dependsOn()" /> (<ReferenceCitation
+                {...citationContext} referenceId="gradle-task-configuration-avoidance"
+            >Gradle, Inc. (s. f.)</ReferenceCitation>).
+        </P>
+
+        <Explanation headingLevel="h3">
+            <Fragment slot="title">No todas las tareas necesitan una arista</Fragment>
+
+            <P>
+                Una tarea puede existir aunque no dependa de ninguna otra. En ese caso sigue siendo un nodo del grafo,
+                pero puede aparecer sin aristas que la conecten con los demás.
+            </P>
+
+            <P>
+                Por lo tanto, no es la primera dependencia la que «convierte» la colección en un grafo. El cambio
+                importante consiste en <B>modelar las tareas y sus relaciones explícitamente</B>: los nodos representan
+                el trabajo y las aristas describen las dependencias que conocemos.
             </P>
         </Explanation>
 
         <P>
-            Con esta convención, una colección de tareas nombradas se convierte en un grafo de dependencias en cuanto
-            declaramos al menos una relación <Mono>tarea requerida -> tarea dependiente</Mono> entre ellas.
+            Ahora el modelo contiene más información que una simple colección de nombres. Podemos distinguir
+            dependencias directas, seguir caminos para encontrar dependencias indirectas y razonar sobre cómo varias
+            tareas se relacionan entre sí.
+        </P>
+
+        <P>
+            El siguiente paso será estudiar una propiedad especialmente importante de estos caminos: <B>qué ocurre si,
+                siguiendo las flechas, podemos regresar al nodo desde el que comenzamos</B>.
         </P>
     </NotesSection>
 
@@ -396,68 +468,149 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             headingLevel="h2" Icon={icons.ArrowsClockwise}
             slot="heading"
         >
-            Un grafo dirigido y acíclico
+            Qué ocurre cuando aparece un ciclo
         </Heading>
 
         <P>
-            La palabra <B>dirigido</B> ya apareció: <Mono>prepareCatalog -> generateReport</Mono> tiene una dirección, y
-            esa dirección no se puede invertir libremente. Que <Mono>generateReport</Mono> dependa de
-            <Mono>prepareCatalog</Mono> no implica que <Mono>prepareCatalog</Mono> dependa de
-            <Mono>generateReport</Mono>.
+            Hasta ahora, cada flecha agrega una restricción de precedencia. Por ejemplo, <KotlinInline
+                code="prepareCatalog -> generateReport"
+            /> significa que <Mono>prepareCatalog</Mono> debe completarse antes de que <Mono>generateReport</Mono> pueda
+            hacerlo.
         </P>
 
         <P>
-            La palabra <B>acíclico</B> agrega una condición distinta. Considera este grafo:
+            Si agregamos varias dependencias, todas esas restricciones deben poder cumplirse al mismo tiempo. Considera
+            qué ocurre si partimos de esta cadena:
+        </P>
+
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport -> packageReport" />
+        </P>
+
+        <P>
+            y agregamos una dependencia más:
+        </P>
+
+        <P class="text-center">
+            <KotlinInline code="packageReport -> prepareCatalog" />
+        </P>
+
+        <P>
+            El resultado contiene un ciclo:
         </P>
 
         <MermaidDiagram spec={cyclicDependencyCounterexample} />
 
         <P>
-            Siguiendo las flechas: <Mono>A</Mono> necesita a <Mono>C</Mono>, <Mono>C</Mono> necesita a
-            <Mono>B</Mono> y <Mono>B</Mono> necesita a <Mono>A</Mono>. Ninguna de las tres tareas puede quedar lista
-            primero, porque cada una espera a otra que, a su vez, la espera a ella. Este grafo no puede representar un
-            conjunto de dependencias ejecutable.
+            En nuestro ejemplo, seguir las flechas produce este recorrido:
+        </P>
+
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport -> packageReport -> prepareCatalog" />
         </P>
 
         <Definition headingLevel="h3" icon={icons.ArrowsClockwise}>
-            <span slot="title">Acíclico</span>
+            <span slot="title">Ciclo dirigido</span>
 
             <P>
-                Un grafo de dependencias es <B>acíclico</B> cuando seguir sus aristas dirigidas nunca permite regresar a
-                la tarea de partida.
+                Un <B>ciclo dirigido</B> aparece cuando podemos comenzar en un nodo, seguir la dirección de una o más
+                aristas y regresar finalmente al nodo de partida (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >
+                    Cormen et al. (2022, cap. 20, §20.4)
+                </ReferenceCitation>).
             </P>
         </Definition>
 
+        <P>
+            El problema se vuelve más claro si leemos cada flecha como una condición:
+        </P>
+
+        <List>
+            <ListItem icon={icons.ArrowRight}>
+                <Mono>prepareCatalog</Mono> debe completarse antes de <Mono>generateReport</Mono>;
+            </ListItem>
+
+            <ListItem icon={icons.ArrowRight}>
+                <Mono>generateReport</Mono> debe completarse antes de <Mono>packageReport</Mono>;
+            </ListItem>
+
+            <ListItem icon={icons.ArrowRight}>
+                <Mono>packageReport</Mono> debe completarse antes de <Mono>prepareCatalog</Mono>.
+            </ListItem>
+        </List>
+
+        <P>
+            No existe una primera tarea que permita satisfacer las tres condiciones. Si comenzamos con <Mono
+            >prepareCatalog</Mono>, necesitaríamos haber terminado antes <Mono>packageReport</Mono>; pero <Mono
+            >packageReport</Mono> necesita a <Mono>generateReport</Mono>, que a su vez necesita a <Mono
+            >prepareCatalog</Mono>.
+        </P>
+
         <Explanation headingLevel="h3">
+            <Fragment slot="title">El problema es el conjunto de restricciones</Fragment>
+
             <P>
-                Compara ese ciclo con el grafo de <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono>,
-                <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> que vimos antes: ¿por qué ese grafo sí admite un
-                orden de preparación válido y este no? La diferencia no está en cuántas tareas hay, sino en si es
-                posible seguir las flechas y regresar al punto de partida.
+                Un ciclo no es simplemente una flecha «dibujada de más». Hace que las restricciones de precedencia sean
+                incompatibles: cada tarea del ciclo tendría que aparecer antes que otra hasta terminar exigiendo,
+                indirectamente, que una tarea aparezca antes que ella misma.
+            </P>
+
+            <P>
+                Por eso un grafo con un ciclo dirigido no admite un <B>orden topológico</B>. En cambio, todo DAG admite
+                al menos un orden que respeta la dirección de sus aristas (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >
+                    Cormen et al. (2022, cap. 20, §20.4)
+                </ReferenceCitation>).
             </P>
         </Explanation>
 
+        <P>
+            Esta propiedad no es exclusiva de nuestro ejemplo. Los sistemas de construcción que usan un planificador
+            topológico necesitan trabajar sobre dependencias acíclicas para producir un orden que respete sus requisitos
+            (<ReferenceCitation {...citationContext} referenceId="build-systems-a-la-carte-2018">
+                Mokhov et al. (2018, §4.1.1)
+            </ReferenceCitation>).
+        </P>
+
+        <P>
+            Gradle utiliza precisamente este modelo: construye su grafo de tareas antes de ejecutar las acciones y
+            describe las tareas del build como un DAG (<ReferenceCitation
+                {...citationContext} referenceId="gradle-build-lifecycle"
+            >
+                Gradle, Inc. (s. f.)
+            </ReferenceCitation>).
+        </P>
+
         <Question headingLevel="h3">
             <P>
-                Si un ciclo tuviera las relaciones <KotlinInline code="prepareCatalog -> generateReport" />,
-                <KotlinInline code="generateReport -> packageReport" /> y
-                <KotlinInline code="packageReport -> prepareCatalog" />, ¿por qué no podría proporcionar un orden de
-                ejecución válido?
+                Considera nuevamente las dependencias <KotlinInline code="prepareCatalog -> generateReport" />,{
+                    "  "
+                }<KotlinInline code="generateReport -> packageReport" /> y <KotlinInline
+                    code="packageReport -> prepareCatalog"
+                />. ¿Por qué no existe un orden de las tres tareas que respete todas las dependencias?
             </P>
 
             <Solution embedded headingLevel="h4">
                 <P>
-                    <Mono>prepareCatalog</Mono> tendría que esperar a <Mono>packageReport</Mono>, que a su vez tendría
-                    que esperar a <Mono>generateReport</Mono>, y <Mono>generateReport</Mono> tendría que esperar a
-                    <Mono>prepareCatalog</Mono>.
+                    Las tres relaciones exigen simultáneamente que <Mono>prepareCatalog</Mono> aparezca antes de <Mono
+                    >generateReport</Mono>, que <Mono>generateReport</Mono> aparezca antes de <Mono>packageReport</Mono>
+                    y que <Mono>packageReport</Mono> aparezca antes de <Mono>prepareCatalog</Mono>.
                 </P>
 
                 <P>
-                    Por eso ninguna tarea del ciclo puede quedar lista primero: cada una espera una condición que solo
-                    podría cumplirse después de que ella misma avanzara.
+                    Cualquier tarea que intentemos colocar primero necesita que otra del mismo ciclo ya se haya
+                    completado. Por eso no existe un orden que satisfaga las tres restricciones: las dependencias forman
+                    un ciclo dirigido y el grafo deja de ser un DAG.
                 </P>
             </Solution>
         </Question>
+
+        <P>
+            Evitar ciclos no nos dice todavía <B>cuál</B> será el orden de ejecución. Solo garantiza que existe al menos
+            uno compatible con las dependencias. Esa será la pregunta de la siguiente sección.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-topological-orders">
@@ -465,58 +618,159 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             headingLevel="h2" Icon={icons.ListChecks}
             slot="heading"
         >
-            Un DAG admite órdenes válidos
+            Un DAG puede admitir más de un orden válido
         </Heading>
 
         <P>
-            Un grafo dirigido y acíclico no dicta una única secuencia. Solo impone las precedencias que sus flechas
-            expresan: <Mono>prepareCatalog</Mono> debe preceder a <Mono>generateReport</Mono>, y
-            <Mono>generateReport</Mono> debe preceder tanto a <Mono>packageReport</Mono> como a
-            <Mono>verifyReport</Mono>.
-        </P>
-
-        <P>
-            Como no hay una flecha entre <Mono>packageReport</Mono> y <Mono>verifyReport</Mono>, ambas tareas no tienen
-            una relación de precedencia entre sí. Por eso son válidos, por ejemplo, estos dos órdenes:
-        </P>
-
-        <P>
-            <Mono>prepareCatalog -> generateReport -> packageReport -> verifyReport</Mono>
-        </P>
-
-        <P>
-            <Mono>prepareCatalog -> generateReport -> verifyReport -> packageReport</Mono>
+            Ya vimos por qué un ciclo impide satisfacer todas las dependencias. En un DAG ocurre lo contrario: podemos
+            ordenar sus tareas de manera que cada una aparezca después de todo el trabajo que necesita.
         </P>
 
         <Definition headingLevel="h3" icon={icons.ListChecks}>
             <span slot="title">Orden topológico</span>
 
             <P>
-                Un <B>orden topológico</B> coloca cada tarea requerida antes de cualquier tarea que dependa de ella. El
-                DAG define así restricciones de precedencia —un orden parcial—, no necesariamente una secuencia única de
-                ejecución.
+                Un <B>orden topológico</B> es una secuencia lineal de los nodos de un DAG en la que, para cada arista{
+                    " "
+                }<KotlinInline code="A -> B" />, <Mono>A</Mono> aparece antes que <Mono>B</Mono> (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >Cormen et al. (2022, cap. 20, §20.4)</ReferenceCitation>).
             </P>
         </Definition>
 
+        <P>
+            En nuestro grafo, por ejemplo, <Mono>prepareCatalog</Mono> debe aparecer antes que <Mono
+            >generateReport</Mono>, y <Mono>generateReport</Mono> debe aparecer antes que <Mono>packageReport</Mono> y{
+                " "
+            }<Mono>verifyReport</Mono>.
+        </P>
+
+        <P>
+            Estas restricciones también se transmiten a través de los caminos del grafo. Aunque no exista una arista
+            directa <KotlinInline code="prepareCatalog -> packageReport" />, sí existe el camino
+            <KotlinInline code="prepareCatalog -> generateReport -> packageReport" />. Por lo tanto,
+            <Mono>prepareCatalog</Mono> también debe aparecer antes que <Mono>packageReport</Mono>.
+        </P>
+
+        <Explanation headingLevel="h3">
+            <Fragment slot="title">No basta con buscar una flecha directa</Fragment>
+
+            <P>
+                Para saber si dos tareas están ordenadas por las dependencias, debemos preguntarnos si existe un <B
+                >camino dirigido</B> entre ellas.
+            </P>
+
+            <P>
+                Si podemos llegar desde <Mono>A</Mono> hasta <Mono>B</Mono> siguiendo las flechas, entonces <Mono
+                >A</Mono> debe preceder a <Mono>B</Mono>, aunque no estén conectadas directamente.
+            </P>
+        </Explanation>
+
+        <P>
+            Ahora compara <Mono>packageReport</Mono> con <Mono>verifyReport</Mono>. Desde <Mono>packageReport</Mono> no
+            existe un camino hacia <Mono>verifyReport</Mono>, ni desde <Mono>verifyReport</Mono> hacia <Mono
+            >packageReport</Mono>. Ninguna de las dos depende, directa o indirectamente, de la otra.
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.ArrowsLeftRight}>
+            <span slot="title">Tareas incomparables</span>
+
+            <P>
+                Dos tareas son <B>incomparables</B> respecto de las dependencias cuando ninguna debe preceder a la otra.
+                En términos del grafo, no existe un camino dirigido desde una hasta la otra en ninguno de los dos
+                sentidos.
+            </P>
+
+            <P>
+                Esta idea conecta los DAG con los <B>órdenes parciales</B>: algunas parejas de elementos tienen una
+                relación de precedencia y otras no (<ReferenceCitation
+                    {...citationContext} referenceId="mathematics-for-computer-science-2018"
+                >
+                    Lehman et al. (2018, cap. 10, §§10.5–10.8)
+                </ReferenceCitation>).
+            </P>
+        </Definition>
+
+        <P>
+            Como <Mono>packageReport</Mono> y <Mono>verifyReport</Mono> son incomparables, el grafo no obliga a elegir
+            cuál debe aparecer primero. Por eso, entre otros, estos dos órdenes son válidos:
+        </P>
+
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport -> packageReport -> verifyReport" />
+        </P>
+
+        <P class="text-center">
+            <KotlinInline code="prepareCatalog -> generateReport -> verifyReport -> packageReport" />
+        </P>
+
+        <P>
+            Ambos respetan todas las dependencias. El orden topológico transforma las restricciones parciales del DAG en
+            una secuencia completa, pero el DAG puede admitir más de una secuencia de este tipo.
+        </P>
+
+        <Warning headingLevel="h3">
+            <Fragment slot="title">Orden topológico ≠ orden observado de ejecución</Fragment>
+
+            <P>
+                Un orden topológico representa <B>una manera válida de serializar</B> las tareas. No significa que un
+                sistema de construcción deba ejecutar siempre las tareas exactamente una después de otra siguiendo esa
+                secuencia.
+            </P>
+
+            <P>
+                Cuando varias tareas ya tienen todas sus dependencias satisfechas y no están ordenadas entre sí, el
+                grafo permite que un planificador las ejecute concurrentemente. Mokhov et al. describen esta posibilidad
+                para planificadores topológicos de sistemas de construcción (<ReferenceCitation
+                    {...citationContext} referenceId="build-systems-a-la-carte-2018"
+                >
+                    Mokhov et al. (2018, §6.2)
+                </ReferenceCitation>).
+            </P>
+
+            <P>
+                Gradle también puede ejecutar trabajo independiente en paralelo; el grafo establece qué precedencias
+                debe respetar, mientras que el planificador decide cómo realizar el trabajo compatible con esas
+                restricciones (<ReferenceCitation {...citationContext} referenceId="gradle-build-lifecycle">
+                    Gradle, Inc. (s. f.)
+                </ReferenceCitation>).
+            </P>
+        </Warning>
+
         <Question headingLevel="h3">
             <P>
-                Una vez terminado <Mono>generateReport</Mono>, ¿<Mono>packageReport</Mono> debe ejecutarse antes que
-                <Mono>verifyReport</Mono>, o puede ocurrir al revés?
+                Una vez terminado <Mono>generateReport</Mono>, ¿debe ejecutarse <Mono>packageReport</Mono> antes que{
+                    " "
+                }<Mono>verifyReport</Mono>, o puede ocurrir al revés?
             </P>
 
             <Solution embedded headingLevel="h4">
                 <P>
-                    Puede ocurrir cualquiera de las dos cosas. No hay una flecha entre <Mono>packageReport</Mono> y
-                    <Mono>verifyReport</Mono>, así que ninguna depende de la otra.
+                    Puede ocurrir cualquiera de las dos cosas. No existe un camino dirigido desde <Mono
+                    >packageReport</Mono> hasta <Mono>verifyReport</Mono>, ni desde <Mono>verifyReport</Mono> hasta{
+                        " "
+                    }<Mono>packageReport</Mono>. Por lo tanto, ninguna depende de la otra.
                 </P>
 
                 <P>
-                    Por lo tanto, tanto <Mono>packageReport</Mono> antes de <Mono>verifyReport</Mono> como
-                    <Mono>verifyReport</Mono> antes de <Mono>packageReport</Mono> son órdenes compatibles. El DAG
-                    establece restricciones de precedencia, no necesariamente una única secuencia total.
+                    Ambas tareas son <B>incomparables</B> respecto del orden parcial definido por las dependencias. Por
+                    eso un orden topológico puede colocar primero a cualquiera de ellas.
+                </P>
+
+                <P>
+                    El grafo también permite que se ejecuten en paralelo una vez satisfechas sus dependencias, aunque
+                    eso no garantiza que una ejecución concreta vaya a hacerlo: esa decisión corresponde al
+                    planificador.
                 </P>
             </Solution>
         </Question>
+
+        <P>
+            Un DAG, entonces, no describe necesariamente una receta con un único paso siguiente. Describe <B>qué debe
+                preceder a qué</B> y deja libertad allí donde las dependencias no imponen una relación. En la siguiente
+            sección usaremos esa misma idea para distinguir el grafo completo del subconjunto necesario cuando
+            solicitamos una tarea concreta.
+        </P>
     </NotesSection>
 
     <NotesSection id="h2-selected-task-graph">
@@ -876,4 +1130,23 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </P>
         </Fragment>
     </ConclusionsLayout>
+
+    <NotesSection
+        id="continue-reading" title="Continúa explorando"
+        Icon={icons.BookOpen}
+    >
+        <P>
+            Si quieres profundizar, puedes explorar las lecturas complementarias sobre grafos de tareas y sistemas de
+            construcción.
+        </P>
+        <p class="mt-5">
+            <a
+                href={lessonReadingsRoute(taskGraphsReadings.lessonPath)}
+                class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
+            >
+                Ver lecturas complementarias
+                <icons.ArrowRight class="ml-2 size-5" aria-hidden="true" />
+            </a>
+        </p>
+    </NotesSection>
 </NotesLayout>

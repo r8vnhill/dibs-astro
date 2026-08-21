@@ -51,8 +51,8 @@ flowchart LR
 ### Requirements
 
 To build the image locally you need Docker with BuildKit support. The `@ravenhill` packages are installed from the
-canonical GitLab npm registry, which is configured for public reads in the committed [`.npmrc`](./.npmrc) — no
-registry credentials are required.
+canonical GitLab npm registry, which is configured for public reads in the committed [`.npmrc`](./.npmrc) — no registry
+credentials are required.
 
 ### Build and run with Docker Compose
 
@@ -285,9 +285,9 @@ The build stage contains:
 - workspace packages;
 - build dependencies.
 
-It installs dependencies using the frozen lockfile and runs the canonical `pnpm build` path.
-
-Private npm authentication is available only during dependency installation through a BuildKit secret mount.
+It installs dependencies using the frozen lockfile and runs the canonical `pnpm build` path. The published `@ravenhill`
+packages are read from the public registry configured in [`.npmrc`](./.npmrc), so the OCI build does not require an npm
+credential secret.
 
 ### Runtime stage
 

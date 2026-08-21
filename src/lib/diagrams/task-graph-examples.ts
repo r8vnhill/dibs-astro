@@ -13,13 +13,13 @@ export const taskDependencyGraph: DiagramSpec = {
 
 export const cyclicDependencyCounterexample: DiagramSpec = {
     id: "cyclic-dependency-counterexample",
-    title: "Un ciclo no es un grafo de dependencias válido",
+    title: "Ciclo dirigido en el grafo de dependencias",
     description:
-        "A depende de C, C depende de B y B depende de A: siguiendo las flechas se regresa a A, así que ninguna tarea puede quedar lista primero.",
+        "prepareCatalog precede a generateReport, generateReport precede a packageReport y packageReport precede a prepareCatalog: siguiendo las flechas se regresa a prepareCatalog.",
     source: `flowchart LR
-        A --> B
-        B --> C
-        C --> A`,
+        prepareCatalog --> generateReport
+        generateReport --> packageReport
+        packageReport --> prepareCatalog`,
 };
 
 export const packageReportSelectedGraph: DiagramSpec = {

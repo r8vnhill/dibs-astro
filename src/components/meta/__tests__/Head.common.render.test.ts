@@ -5,8 +5,7 @@ import {
     DEFAULT_CANONICAL_URL,
     DEFAULT_DESCRIPTION,
     DEFAULT_TITLE,
-    FAVICON_ICO_PATH,
-    FAVICON_PNG_PATH,
+    FAVICON_PATH,
     getLinkAttribute,
     getMetaContentByName,
     getMetaContentByProperty,
@@ -45,14 +44,11 @@ describe.concurrent("Head.astro common metadata render", () => {
             expect(getMetaContentByProperty(html, "og:url")).toBe(DEFAULT_CANONICAL_URL);
         });
 
-        test("renders favicon, sitemap, generator, and viewport tags for every page", async () => {
+        test("renders the site icon, sitemap, generator, and viewport tags for every page", async () => {
             const html = await renderHead({});
 
             expect(
-                countElements(html, `link[rel="icon"][href="${FAVICON_ICO_PATH}"][type="image/x-icon"]`),
-            ).toBe(1);
-            expect(
-                countElements(html, `link[rel="icon"][href="${FAVICON_PNG_PATH}"][type="image/png"]`),
+                countElements(html, `link[rel="icon"][href="${FAVICON_PATH}"][type="image/png"]`),
             ).toBe(1);
             expect(
                 countElements(html, `link[rel="sitemap"][href="${SITEMAP_PATH}"]`),

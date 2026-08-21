@@ -13,6 +13,12 @@
       "familyName": "Prasad"
     },
     {
+      "@id": "person:albert-r-meyer",
+      "@type": "Person",
+      "givenName": "Albert R.",
+      "familyName": "Meyer"
+    },
+    {
       "@id": "person:andrey-mokhov",
       "@type": "Person",
       "givenName": "Andrey",
@@ -138,10 +144,22 @@
       "familyName": "Jemerov"
     },
     {
+      "@id": "person:eric-lehman",
+      "@type": "Person",
+      "givenName": "Eric",
+      "familyName": "Lehman"
+    },
+    {
       "@id": "person:eva-parish",
       "@type": "Person",
       "givenName": "Eva",
       "familyName": "Parish"
+    },
+    {
+      "@id": "person:f-thomson-leighton",
+      "@type": "Person",
+      "givenName": "F. Thomson",
+      "familyName": "Leighton"
     },
     {
       "@id": "person:filippo-schiavio",
@@ -589,6 +607,12 @@
       "url": "https://learn.microsoft.com/"
     },
     {
+      "@id": "org:mit",
+      "@type": "CollegeOrUniversity",
+      "name": "Massachusetts Institute of Technology",
+      "url": "https://www.mit.edu/"
+    },
+    {
       "@id": "org:mit-press",
       "@type": "Organization",
       "name": "The MIT Press",
@@ -920,6 +944,25 @@
           "@id": "person:travis-plunk"
         }
       ]
+    },
+    {
+      "@id": "work:mathematics-for-computer-science",
+      "@type": "CreativeWork",
+      "name": "Mathematics for computer science",
+      "author": [
+        {
+          "@id": "person:eric-lehman"
+        },
+        {
+          "@id": "person:f-thomson-leighton"
+        },
+        {
+          "@id": "person:albert-r-meyer"
+        }
+      ],
+      "publisher": {
+        "@id": "org:mit"
+      }
     },
     {
       "@id": "work:nodejs-design-patterns-4e",
@@ -1399,6 +1442,15 @@
       }
     },
     {
+      "@id": "ref:gradle-task-configuration-avoidance",
+      "@type": "WebPage",
+      "name": "Avoiding Unnecessary Task Configuration",
+      "url": "https://docs.gradle.org/current/userguide/task_configuration_avoidance.html",
+      "publisher": {
+        "@id": "org:gradle-docs"
+      }
+    },
+    {
       "@id": "ref:gradle-user-manual",
       "@type": "WebPage",
       "name": "Gradle User Manual",
@@ -1836,6 +1888,27 @@
       ],
       "isPartOf": {
         "@id": "work:clean-code-collection"
+      }
+    },
+    {
+      "@id": "ref:mathematics-for-computer-science-2018",
+      "@type": "Book",
+      "name": "Mathematics for computer science",
+      "url": "https://courses.csail.mit.edu/6.042/spring18/mcs.pdf",
+      "datePublished": "2018",
+      "author": [
+        {
+          "@id": "person:eric-lehman"
+        },
+        {
+          "@id": "person:f-thomson-leighton"
+        },
+        {
+          "@id": "person:albert-r-meyer"
+        }
+      ],
+      "isPartOf": {
+        "@id": "work:mathematics-for-computer-science"
       }
     },
     {
@@ -4727,6 +4800,19 @@
       ]
     },
     {
+      "@id": "usage:task-graphs-gradle-task-configuration-avoidance-recommended",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:gradle-task-configuration-avoidance"
+      },
+      "dibs:tags": [
+        "recommended"
+      ]
+    },
+    {
       "@id": "usage:task-graphs-introduction-to-algorithms-additional",
       "@type": "dibs:ReferenceUsage",
       "dibs:lesson": {
@@ -4734,6 +4820,19 @@
       },
       "dibs:reference": {
         "@id": "ref:introduction-to-algorithms-2022"
+      },
+      "dibs:tags": [
+        "additional"
+      ]
+    },
+    {
+      "@id": "usage:task-graphs-mathematics-for-computer-science-additional",
+      "@type": "dibs:ReferenceUsage",
+      "dibs:lesson": {
+        "@id": "/notes/scripting/task-graphs/"
+      },
+      "dibs:reference": {
+        "@id": "ref:mathematics-for-computer-science-2018"
       },
       "dibs:tags": [
         "additional"
