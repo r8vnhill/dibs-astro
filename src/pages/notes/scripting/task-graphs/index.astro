@@ -778,33 +778,63 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             headingLevel="h2" Icon={icons.Target}
             slot="heading"
         >
-            No todas las tareas forman parte de cada ejecución
+            Una invocación selecciona solo parte del grafo
         </Heading>
 
         <P>
             El grafo de dependencias que vimos antes describe todas las tareas conocidas y sus relaciones. Pero
-            solicitar una tarea en particular no ejecuta ese grafo completo: solo ejecuta la tarea solicitada y las
-            dependencias necesarias para alcanzarla. Solicitar <Mono>packageReport</Mono> selecciona este subconjunto:
+            solicitar una tarea en particular no requiere preparar ese grafo completo: el sistema primero necesita
+            determinar qué trabajo es necesario para alcanzar el objetivo solicitado.
+        </P>
+
+        <Definition headingLevel="h3" icon={icons.Target}>
+            <span slot="title">Grafo seleccionado</span>
+
+            <P>
+                Para una tarea solicitada, llamamos <B>grafo seleccionado</B> al subgrafo formado por esa tarea y toda
+                tarea desde la que existe un camino dirigido hacia ella: sus dependencias directas e indirectas.
+            </P>
+
+            <P>
+                Los planificadores topológicos de sistemas de construcción parten de esta misma idea: antes de calcular
+                un orden, primero identifican las dependencias alcanzables desde el resultado solicitado (<ReferenceCitation
+                    {...citationContext} referenceId="build-systems-a-la-carte-2018"
+                >Mokhov et al. (2018, §4.1.1)</ReferenceCitation>).
+            </P>
+        </Definition>
+
+        <P>
+            Solicitar <Mono>packageReport</Mono> selecciona este subgrafo:
         </P>
 
         <MermaidDiagram spec={packageReportSelectedGraph} />
 
         <P>
-            Solicitar <Mono>verifyReport</Mono> selecciona un subconjunto distinto:
+            Solicitar <Mono>verifyReport</Mono> selecciona un subgrafo distinto:
         </P>
 
         <MermaidDiagram spec={verifyReportSelectedGraph} />
 
         <P>
-            Ambas ejecuciones comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguna incluye
-            la tarea que la otra solicitó: pedir <Mono>packageReport</Mono> no ejecuta
-            <Mono>verifyReport</Mono>, y pedir <Mono>verifyReport</Mono> no ejecuta <Mono>packageReport</Mono>.
+            Ambos subgrafos comparten <Mono>prepareCatalog</Mono> y <Mono>generateReport</Mono>, pero ninguno incluye
+            la tarea que el otro solicitó: pedir <Mono>packageReport</Mono> no selecciona
+            <Mono>verifyReport</Mono>, y pedir <Mono>verifyReport</Mono> no selecciona <Mono>packageReport</Mono>.
         </P>
 
         <Explanation headingLevel="h3">
+            <Fragment slot="title">Cómo decidir qué tareas pertenecen al grafo seleccionado</Fragment>
+
             <P>
-                El build puede conocer muchas tareas, pero una ejecución necesita solo la tarea solicitada y las
-                dependencias necesarias para alcanzarla.
+                Podemos razonar con los caminos que ya conocemos. Una tarea pertenece al grafo seleccionado si es el
+                objetivo solicitado o si existe un camino dirigido desde esa tarea hasta el objetivo.
+            </P>
+
+            <P>
+                <Mono>prepareCatalog</Mono> pertenece al grafo seleccionado de <Mono>packageReport</Mono> porque existe
+                el camino <Mono>prepareCatalog -&gt; generateReport -&gt; packageReport</Mono>, aunque
+                <Mono>prepareCatalog</Mono> no sea su dependencia directa. En cambio, no existe un camino dirigido desde
+                <Mono>verifyReport</Mono> hasta <Mono>packageReport</Mono>: que ambas tareas dependan de
+                <Mono>generateReport</Mono> no hace que una dependa de la otra.
             </P>
         </Explanation>
 
@@ -817,45 +847,48 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             <Solution embedded headingLevel="h4">
                 <P>
                     El grafo seleccionado incluye <Mono>prepareCatalog</Mono>, <Mono>generateReport</Mono> y
-                    <Mono>packageReport</Mono>. En este modelo, el objetivo solicitado y todas sus dependencias forman
-                    el subconjunto que debe prepararse.
+                    <Mono>packageReport</Mono>: existe un camino dirigido desde cada una de las dos primeras hasta el
+                    objetivo solicitado.
                 </P>
 
                 <P>
-                    <Mono>verifyReport</Mono> queda fuera porque depende de <Mono>generateReport</Mono>, pero
-                    <Mono>packageReport</Mono> no depende de <Mono>verifyReport</Mono>. Una dependencia compartida no
-                    convierte en dependientes entre sí a las dos tareas que la necesitan.
+                    <Mono>verifyReport</Mono> queda fuera porque no existe un camino dirigido desde
+                    <Mono>verifyReport</Mono> hasta <Mono>packageReport</Mono>. Ambas dependen de
+                    <Mono>generateReport</Mono>, pero una dependencia compartida no convierte en dependientes entre sí
+                    a las dos tareas que la necesitan.
                 </P>
             </Solution>
         </Question>
 
         <P>
-            Conviene distinguir tres términos que hasta ahora usamos de forma intercambiable:
+            Conviene distinguir tres conceptos que hasta ahora usamos de forma intercambiable:
         </P>
 
-        <P>
-            <Mono>descripción del build -> todas las tareas conocidas y sus relaciones</Mono>
-        </P>
+        <List>
+            <ListItem icon={icons.TreeStructure}>
+                <B>Descripción del build:</B> todas las tareas conocidas y sus relaciones.
+            </ListItem>
+
+            <ListItem icon={icons.Target}>
+                <B>Tarea solicitada:</B> el objetivo que queremos alcanzar en una invocación concreta.
+            </ListItem>
+
+            <ListItem icon={icons.ListChecks}>
+                <B>Grafo seleccionado:</B> la tarea solicitada y las dependencias necesarias para alcanzarla.
+            </ListItem>
+        </List>
 
         <P>
-            <Mono>tarea solicitada -> punto de partida de una ejecución</Mono>
-        </P>
-
-        <P>
-            <Mono>grafo de tareas seleccionado -> tarea solicitada + dependencias necesarias</Mono>
-        </P>
-
-        <P>
-            El grafo de tareas seleccionado no es una propiedad fija del build: depende de qué tarea se solicita en cada
-            ejecución.
+            El grafo seleccionado no es una propiedad fija del build: depende de qué tarea se solicita en cada
+            invocación.
         </P>
 
         <Explanation headingLevel="h3">
             <P>
-                <B>Grafo ≠ traza de ejecución.</B> El grafo responde qué depende de qué. Una traza de ejecución responde
-                qué tareas se ejecutaron realmente y cuándo. Una ejecución puede escoger cualquier orden compatible con
-                las dependencias y, si hay trabajo independiente, permitir que el sistema lo programe en paralelo; el
-                grafo por sí solo no registra esa secuencia observada.
+                <B>Grafo ≠ traza de ejecución.</B> El grafo seleccionado describe qué depende de qué para la tarea
+                solicitada; no describe qué ocurrió realmente. Una tarea puede pertenecer al grafo seleccionado y, aun
+                así, no volver a ejecutar sus acciones si el sistema determina que su resultado ya está disponible.
+                Volveremos sobre esta distinción al observar el grafo con Gradle.
             </P>
         </Explanation>
     </NotesSection>

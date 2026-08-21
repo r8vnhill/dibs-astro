@@ -122,10 +122,10 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain("descripción del build");
-        expect(normalizedHtml).toContain("tarea solicitada");
+        expect(normalizedHtml).toContain("Descripción del build:");
+        expect(normalizedHtml).toContain("Tarea solicitada:");
         expect(normalizedHtml).toContain(
-            "El build puede conocer muchas tareas, pero una ejecución necesita solo la tarea solicitada",
+            "El grafo seleccionado no es una propiedad fija del build",
         );
     });
 
@@ -134,8 +134,10 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const normalizedHtml = html.replace(/\s+/g, " ");
 
         expect(normalizedHtml).toContain("Grafo ≠ traza de ejecución");
-        expect(normalizedHtml).toContain("qué tareas se ejecutaron realmente y cuándo");
-        expect(normalizedHtml).toContain("permitir que el sistema lo programe en paralelo");
+        expect(normalizedHtml).toContain("no describe qué ocurrió realmente");
+        expect(normalizedHtml).toContain(
+            "no volver a ejecutar sus acciones si el sistema determina que su resultado ya está disponible",
+        );
     });
 
     test("then it realizes the task graph as a minimal Gradle build", async () => {
