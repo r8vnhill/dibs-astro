@@ -46,6 +46,16 @@ suite("given the Solution callout", () => {
             expect(section?.classList.contains("callout--embedded")).toBe(false);
         });
 
+        test("then it selects the green semantic accent with a normal standalone surface", async () => {
+            const html = await render({});
+            const doc = parseHtml(html);
+
+            const section = doc.querySelector("[data-callout]");
+            expect(section?.getAttribute("data-accent")).toBe("green");
+            expect(section?.getAttribute("data-surface")).toBe("normal");
+            expect(section?.getAttribute("data-context")).toBe("standalone");
+        });
+
         test("then it remains a native disclosure that defaults closed", async () => {
             const html = await render({});
             const doc = parseHtml(html);
@@ -76,6 +86,16 @@ suite("given the Solution callout", () => {
             expect(section?.classList.contains("callout--embedded")).toBe(true);
             expect(section?.classList.contains("shadow-sm")).toBe(false);
             expect(section?.classList.contains("my-4")).toBe(false);
+        });
+
+        test("then it keeps the green accent while reducing the surface intensity", async () => {
+            const html = await render({ embedded: true });
+            const doc = parseHtml(html);
+
+            const section = doc.querySelector("[data-callout]");
+            expect(section?.getAttribute("data-accent")).toBe("green");
+            expect(section?.getAttribute("data-surface")).toBe("subtle");
+            expect(section?.getAttribute("data-context")).toBe("embedded");
         });
 
         test("then it remains collapsible and defaults closed", async () => {

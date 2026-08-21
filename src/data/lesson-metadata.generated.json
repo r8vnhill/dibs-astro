@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T19:12:21.091Z",
+  "generatedAt": "2026-08-21T22:08:40.666Z",
   "totalLessons": 55,
   "changesLimit": 5,
   "entries": {
@@ -1565,6 +1565,12 @@
       "lastModified": "2026-08-21",
       "changes": [
         {
+          "hash": "7d2263c57544fc959032df2299405c0c4b341bb3",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(callouts): Add \"Closing Reflection\" as new lesson feature"
+        },
+        {
           "hash": "b42f92037cffe7043e9d3bca031370d1743a9c88",
           "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
@@ -1626,8 +1632,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-18",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "7d2263c57544fc959032df2299405c0c4b341bb3",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(callouts): Add \"Closing Reflection\" as new lesson feature"
+        },
         {
           "hash": "67e80789e7117479a32301961f56267d946c4205",
           "date": "2026-08-18",
@@ -1651,12 +1663,6 @@
           "date": "2026-08-15",
           "author": "Ignacio Slater-Muñoz",
           "subject": "Refactor Nushell execution boundary diagram and review verdict for P.astro extraction"
-        },
-        {
-          "hash": "dec3324ca015ab10cce8d54ecbf19f13ff912f55",
-          "date": "2026-08-15",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "📝 docs(nushell): replace ASCII process models with SVG diagrams"
         }
       ]
     },
@@ -1711,6 +1717,12 @@
       "lastModified": "2026-08-21",
       "changes": [
         {
+          "hash": "7d2263c57544fc959032df2299405c0c4b341bb3",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(callouts): Add \"Closing Reflection\" as new lesson feature"
+        },
+        {
           "hash": "4ffcf615b72ac9d2ba6a200b4fb9ef5511d8303c",
           "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
@@ -1733,12 +1745,6 @@
           "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🗑️ rm(lessons): Remove unused migration artefacts from `site-core`"
-        },
-        {
-          "hash": "168abf9b7308cfa578ec705d16c5b5055d4bf57d",
-          "date": "2026-08-21",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "📚 feat(lesson): Expand \"Task Graphs\" with references and examples"
         }
       ]
     },
@@ -1989,8 +1995,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "7d2263c57544fc959032df2299405c0c4b341bb3",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(callouts): Add \"Closing Reflection\" as new lesson feature"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -2014,12 +2026,6 @@
           "date": "2026-08-14",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🚀 feat(tests+docs): Add README contract tests and improve lesson clarity"
-        },
-        {
-          "hash": "0ed27267e65923bddda51c13b5cff620c7d33aa0",
-          "date": "2026-08-14",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🚀 feat(tests+readings): Add functionality tests and integrate reading contract system"
         }
       ]
     },

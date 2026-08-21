@@ -2,7 +2,6 @@ import * as icons from "@ravenhill/astro-icons";
 import { Brain, Note, Star } from "@ravenhill/astro-icons";
 import type { AstroComponentFactory } from "~/types/astro-component";
 import type { HeadingLevel } from "~/utils";
-import { semanticColors } from "../shared/semanticColors";
 
 /**
  * Shared public API surface for "callout" / admonition-style components (e.g., Abstract, Important,
@@ -133,169 +132,43 @@ export type CalloutVariant =
     | "tip"
     | "warning";
 
+export type CalloutAccent = "blue" | "cyan" | "gray" | "green" | "orange" | "purple" | "red" | "yellow";
+export type CalloutSurfaceIntensity = "normal" | "subtle" | "strong";
+
 /**
  * Shape for per-variant defaults used when rendering a callout.
  */
 export interface CalloutVariantConfig {
     title: string;
     icon: AstroComponentFactory;
+    accent: CalloutAccent;
+    surface: CalloutSurfaceIntensity;
 }
 
 /**
  * Default headings and icons for each callout variant. Consumers can still override per instance.
  */
 export const calloutVariants: Record<CalloutVariant, CalloutVariantConfig> = {
-    abstract: { title: "Resumen", icon: Brain },
-    "closing-reflection": { title: "Reflexión de cierre", icon: icons.FlagCheckered },
-    danger: { title: "Peligro", icon: icons.Skull },
-    definition: { title: "Definición", icon: icons.BookOpen },
-    exercise: { title: "Ejercicio", icon: icons.PencilLine },
-    explanation: { title: "Detalles clave", icon: icons.ChatCircleText },
-    hints: { title: "Hints", icon: icons.Compass },
-    important: { title: "Importante", icon: Star },
-    info: { title: "Información", icon: icons.Info },
-    more: { title: "Más información", icon: icons.DotsThreeOutline },
-    note: { title: "Nota", icon: Note },
-    question: { title: "Piensa rápido", icon: icons.Question },
-    solution: { title: "Solución", icon: icons.CheckCircle },
-    tip: { title: "Tip", icon: icons.Lightbulb },
-    warning: { title: "Cuidado", icon: icons.Warning },
-};
-
-/**
- * Theme colors for light/dark modes, used to style the callout container and heading text.
- */
-export const calloutColors: Record<
-    CalloutVariant,
-    {
-        bg: string;
-        border: string;
-        title: string;
-        bgDark?: string;
-        borderDark?: string;
-        titleDark?: string;
-    }
-> = {
-    abstract: {
-        bg: "#f5f3ff",
-        border: "#8b5cf6",
-        title: "#5b21b6",
-        bgDark: "#211b32",
-        borderDark: "#c4b5fd",
-        titleDark: "#ddd6fe",
-    },
+    abstract: { title: "Resumen", icon: Brain, accent: "purple", surface: "normal" },
     "closing-reflection": {
-        bg: "#f5f3ff",
-        border: "#8b5cf6",
-        title: "#5b21b6",
-        bgDark: "#211b32",
-        borderDark: "#c4b5fd",
-        titleDark: "#ddd6fe",
+        title: "Reflexión de cierre",
+        icon: icons.FlagCheckered,
+        accent: "purple",
+        surface: "subtle",
     },
-    danger: {
-        bg: "#fff5f5",
-        border: semanticColors.error.light.border,
-        title: semanticColors.error.light.foreground,
-        bgDark: "#3b0d0c",
-        borderDark: semanticColors.error.dark.border,
-        titleDark: semanticColors.error.dark.foreground,
-    },
-    definition: {
-        bg: "#f8fafc",
-        border: "#0ea5e9",
-        title: "#0369a1",
-        bgDark: "#0f172a",
-        borderDark: "#38bdf8",
-        titleDark: "#7dd3fc",
-    },
-    exercise: {
-        bg: "#e8f0fe",
-        border: "#4285f4",
-        title: "#1a73e8",
-        bgDark: "#1a2a3f",
-        borderDark: "#5a9bff",
-        titleDark: "#aecbfa",
-    },
-    explanation: {
-        bg: "#e3f2fd",
-        border: "#2196f3",
-        title: "#0d47a1",
-        bgDark: "#102a43",
-        borderDark: "#2ec4b6",
-        titleDark: "#aefeff",
-    },
-    hints: {
-        bg: "#f3e8ff",
-        border: "#a855f7",
-        title: "#6b21a8",
-        bgDark: "#2a0e36",
-        borderDark: "#c084fc",
-        titleDark: "#e9d5ff",
-    },
-    important: {
-        bg: "#fff7f3",
-        border: "#f97316",
-        title: "#7c2d12",
-        bgDark: "#431407",
-        borderDark: "#fb923c",
-        titleDark: "#ffedd5",
-    },
-    info: {
-        bg: "#eef6fc",
-        border: "#3b82f6",
-        title: "#1e3a8a",
-        bgDark: "#0f172a",
-        borderDark: "#60a5fa",
-        titleDark: "#bfdbfe",
-    },
-    more: {
-        bg: "#f5f5f5",
-        border: "#cccccc",
-        title: "#333333",
-        bgDark: "#1e1e1e",
-        borderDark: "#444444",
-        titleDark: "#e0e0e0",
-    },
-    note: {
-        bg: "#f1f5f9",
-        border: "#0ea5e9",
-        title: "#0f172a",
-        bgDark: "#1e293b",
-        borderDark: "#38bdf8",
-        titleDark: "#f1f5f9",
-    },
-    question: {
-        bg: "#f5f3ff",
-        border: "#8b5cf6",
-        title: "#5b21b6",
-        bgDark: "#2e1065",
-        borderDark: "#c084fc",
-        titleDark: "#ede9fe",
-    },
-    solution: {
-        bg: "#e0f2f1",
-        border: "#26a69a",
-        title: "#004d40",
-        bgDark: "#004d40",
-        borderDark: "#26a69a",
-        titleDark: "#b2dfdb",
-    },
-    tip: {
-        bg: "#e6f4ea",
-        border: "#66bb6a",
-        title: "#2e7d32",
-        bgDark: "#1b3527",
-        borderDark: "#81c784",
-        titleDark: "#c8e6c9",
-    },
-    warning: {
-        bg: "#fff8e1",
-        border: "#fbc02d",
-        title: "#e65100",
-        bgDark: "#3a2e1f",
-        borderDark: "#ffb300",
-        titleDark: "#ffe57f",
-    },
+    danger: { title: "Peligro", icon: icons.Skull, accent: "red", surface: "normal" },
+    definition: { title: "Definición", icon: icons.BookOpen, accent: "cyan", surface: "subtle" },
+    exercise: { title: "Ejercicio", icon: icons.PencilLine, accent: "blue", surface: "normal" },
+    explanation: { title: "Detalles clave", icon: icons.ChatCircleText, accent: "cyan", surface: "normal" },
+    hints: { title: "Hints", icon: icons.Compass, accent: "purple", surface: "normal" },
+    important: { title: "Importante", icon: Star, accent: "orange", surface: "normal" },
+    info: { title: "Información", icon: icons.Info, accent: "blue", surface: "subtle" },
+    more: { title: "Más información", icon: icons.DotsThreeOutline, accent: "gray", surface: "subtle" },
+    note: { title: "Nota", icon: Note, accent: "cyan", surface: "subtle" },
+    question: { title: "Piensa rápido", icon: icons.Question, accent: "purple", surface: "subtle" },
+    solution: { title: "Solución", icon: icons.CheckCircle, accent: "green", surface: "normal" },
+    tip: { title: "Tip", icon: icons.Lightbulb, accent: "green", surface: "normal" },
+    warning: { title: "Cuidado", icon: icons.Warning, accent: "yellow", surface: "normal" },
 };
 
 /**

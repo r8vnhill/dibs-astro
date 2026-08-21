@@ -53,6 +53,16 @@ suite("given the Question callout", () => {
     });
 
     describe("when rendered standalone", () => {
+        test("then it selects the purple semantic accent with a subtle surface", async () => {
+            const html = await render({});
+            const doc = parseHtml(html);
+
+            const section = doc.querySelector("[data-callout]");
+            expect(section?.getAttribute("data-accent")).toBe("purple");
+            expect(section?.getAttribute("data-surface")).toBe("subtle");
+            expect(section?.getAttribute("data-context")).toBe("standalone");
+        });
+
         test("then it keeps its independent-card shadow and margin", async () => {
             const html = await render({});
             const doc = parseHtml(html);
