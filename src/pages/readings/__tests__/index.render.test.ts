@@ -1,4 +1,5 @@
 import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
+import { getSelectedTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import { expect, suite, test } from "vitest";
 import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 import { createAstroRenderer } from "../../../test-utils/astro-render";
@@ -12,5 +13,7 @@ suite("given the published readings index", () => {
 
         expect(html.match(new RegExp(route.replaceAll("/", "\\/"), "gu"))).toHaveLength(1);
         expect(html).toContain(getTaskGraphsReadings().title);
+        expect(html).toContain(getSelectedTaskGraphsReadings().title);
+        expect(html).toContain("/readings/scripting/selected-task-graphs/");
     });
 });

@@ -24,8 +24,17 @@ describe("unit2Lessons", () => {
         expect(unit2Lessons[2]).toMatchObject({
             kind: "link",
             id: "task-graphs",
-            title: "Grafos de tareas y sistemas de construcción",
+            title: "Dependencias y grafos de tareas",
             href: "/notes/scripting/task-graphs/",
+        });
+    });
+
+    test("places selected task graphs after the conceptual graph lesson", () => {
+        expect(unit2Lessons[3]).toMatchObject({
+            kind: "link",
+            id: "selected-task-graphs",
+            title: "Grafo seleccionado y Gradle",
+            href: "/notes/scripting/selected-task-graphs/",
         });
     });
 });

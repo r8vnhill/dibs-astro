@@ -15,7 +15,12 @@ export const unit2Lessons: readonly Lesson[] = new LessonTreeBuilder()
     )
     .link(
         "task-graphs",
-        "Grafos de tareas y sistemas de construcción",
+        "Dependencias y grafos de tareas",
         `${coursePaths.scriptingLibraries.taskGraphs}/`,
+    )
+    .link(
+        "selected-task-graphs",
+        "Grafo seleccionado y Gradle",
+        `${coursePaths.scriptingLibraries.selectedTaskGraphs}/`,
     )
     .build();

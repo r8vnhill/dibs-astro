@@ -143,11 +143,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         <P>
             Aunque hablamos de <B>construir</B> software, ese trabajo no se limita a compilar código. Una tarea puede
             ejecutar pruebas, generar documentación, empaquetar archivos, preparar datos o publicar un artefacto. En
-            Gradle, por ejemplo, todas estas actividades pueden representarse como tareas (<ReferenceCitation
-                {...citationContext} referenceId="gradle-build-lifecycle"
-            >
-                Gradle, Inc. (s. f.)
-            </ReferenceCitation>).
+            Gradle, por ejemplo, todas estas actividades pueden representarse como tareas.
         </P>
 
         <P>
@@ -215,123 +211,10 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <P>
             En esta lección nos concentraremos en una parte de ese problema: <B>qué tareas dependen de cuáles y qué
-                restricciones de precedencia surgen de esas dependencias</B>. Más adelante agregaremos otra pregunta:
-            cuándo una tarea realmente necesita volver a ejecutarse.
+                restricciones de precedencia surgen de esas dependencias</B>. Una dependencia entre dos tareas es fácil
+            de leer en aislamiento; cuando se acumulan, necesitamos una estructura que permita razonar sobre ellas en
+            conjunto.
         </P>
-    </NotesSection>
-
-    <NotesSection id="h2-graph-contract">
-        <Heading
-            headingLevel="h2" Icon={icons.TreeStructure}
-            slot="heading"
-        >
-            El modelo que usaremos
-        </Heading>
-
-        <Definition headingLevel="h3" icon={icons.GitBranch}>
-            <span slot="title">Grafo dirigido</span>
-
-            <P>
-                Un <B>grafo dirigido</B> está formado por <B>nodos</B> y <B>aristas dirigidas</B>. Una arista conecta
-                dos nodos y tiene una dirección determinada (<ReferenceCitation
-                    {...citationContext} referenceId="introduction-to-algorithms-2022"
-                >Cormen et al. (2022, cap. 20, §20.1)</ReferenceCitation>).
-            </P>
-
-            <P>
-                En esta lección, cada nodo representará una tarea y cada arista representará una dependencia. Por
-                nuestra convención, una arista <KotlinInline code="A -> B" /> indica que <Mono>A</Mono> es trabajo
-                requerido por <Mono>B</Mono>.
-            </P>
-        </Definition>
-
-        <P>
-            La dirección de la arista importa: <KotlinInline code="A -> B" /> y <KotlinInline code="B -> A" /> no
-            describen la misma relación. Invertir la flecha cambia cuál tarea depende de cuál.
-        </P>
-
-        <P>
-            Ahora considera qué ocurriría si siguiéramos varias dependencias y termináramos regresando a la tarea desde
-            la que comenzamos. Esa secuencia formaría un <B>ciclo dirigido</B>.
-        </P>
-
-        <Definition headingLevel="h3" icon={icons.TreeStructure}>
-            <span slot="title">Grafo dirigido y acíclico</span>
-
-            <P>
-                Un <B>grafo dirigido y acíclico</B>, o <B>DAG</B> por <I>Directed Acyclic Graph</I>, es un grafo
-                dirigido que no contiene ciclos dirigidos: no podemos partir desde un nodo, seguir la dirección de las
-                aristas y regresar finalmente al mismo nodo (<ReferenceCitation
-                    {...citationContext} referenceId="introduction-to-algorithms-2022"
-                >
-                    Cormen et al. (2022, cap. 20, §20.4)
-                </ReferenceCitation>).
-            </P>
-        </Definition>
-
-        <P>
-            La ausencia de ciclos tiene una consecuencia importante para nuestras tareas: existe al menos una forma de
-            ordenarlas respetando todas sus dependencias. Si <Mono>B</Mono> depende de <Mono>A</Mono>, ese orden coloca
-            <Mono>A</Mono> antes que <Mono>B</Mono>. Más adelante llamaremos <B>orden topológico</B> a un orden que
-            cumple esta propiedad (<ReferenceCitation
-                {...citationContext} referenceId="introduction-to-algorithms-2022"
-            >
-                Cormen et al. (2022, cap. 20, §20.4)
-            </ReferenceCitation>).
-        </P>
-
-        <Definition headingLevel="h3" icon={icons.ListChecks}>
-            <span slot="title">Grafo de dependencias de tareas</span>
-
-            <P>
-                Un <B>grafo de dependencias de tareas</B> aplica estas ideas a un sistema de construcción: cada nodo
-                representa una tarea y cada arista dirigida representa una dependencia entre tareas.
-            </P>
-        </Definition>
-
-        <Explanation headingLevel="h3">
-            <Fragment slot="title">El grafo expresa restricciones, no una secuencia completa</Fragment>
-
-            <P>
-                Una arista <KotlinInline code="A -> B" /> obliga a que <Mono>A</Mono> preceda a <Mono>B</Mono>, pero no
-                dice nada sobre el orden relativo de otras tareas que no dependen entre sí.
-            </P>
-
-            <P>
-                Por eso conviene pensar en el DAG como un conjunto de <B>restricciones de precedencia</B>. Puede haber
-                más de un orden compatible con el mismo grafo y, cuando dos tareas son independientes, el grafo incluso
-                puede permitir que se ejecuten en paralelo.
-            </P>
-        </Explanation>
-
-        <P>
-            Gradle utiliza este mismo modelo. Durante la configuración construye un grafo de tareas y, durante la
-            ejecución, utiliza ese grafo para coordinar trabajo que respeta sus dependencias (<ReferenceCitation
-                {...citationContext} referenceId="gradle-build-lifecycle"
-            >Gradle, Inc. (s. f.)</ReferenceCitation>).
-        </P>
-
-        <P>
-            Podemos resumir el vocabulario que necesitaremos durante el resto de la lección:
-        </P>
-
-        <List>
-            <ListItem icon={icons.GitBranch}>
-                una <B>tarea</B> será un nodo;
-            </ListItem>
-
-            <ListItem icon={icons.ArrowsLeftRight}>
-                una <B>dependencia</B> será una arista dirigida desde la tarea requerida hacia la tarea dependiente;
-            </ListItem>
-
-            <ListItem icon={icons.ArrowsClockwise}>
-                un <B>ciclo</B> aparecería si pudiéramos seguir dependencias y regresar a la tarea de partida;
-            </ListItem>
-
-            <ListItem icon={icons.TreeStructure}>
-                un <B>DAG</B> será un grafo de dependencias sin esos ciclos;
-            </ListItem>
-        </List>
     </NotesSection>
 
     <NotesSection id="h2-dependency-graph">
@@ -348,13 +231,22 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             >verifyReport</Mono> sin saber todavía si alguna necesita el trabajo realizado por otra.
         </P>
 
-        <P>
-            Para representar esas relaciones cambiaremos de modelo: trataremos cada tarea como un <B>nodo</B> y cada
-            dependencia como una <B>arista dirigida</B>. Esta es la representación habitual de un grafo dirigido
-            (<ReferenceCitation {...citationContext} referenceId="introduction-to-algorithms-2022">
-                Cormen et al. (2022, cap. 20, §20.1)
-            </ReferenceCitation>).
-        </P>
+        <Definition headingLevel="h3" icon={icons.GitBranch}>
+            <span slot="title">Grafo dirigido</span>
+
+            <P>
+                Un <B>grafo dirigido</B> está formado por <B>nodos</B> y <B>aristas dirigidas</B>. Una arista conecta
+                dos nodos y tiene una dirección determinada (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >Cormen et al. (2022, cap. 20, §20.1)</ReferenceCitation>).
+            </P>
+
+            <P>
+                En un grafo de dependencias de tareas, cada nodo representa una tarea. Una arista representa una
+                dependencia: por nuestra convención, <KotlinInline code="A -> B" /> indica que <Mono>B</Mono> necesita
+                el trabajo de <Mono>A</Mono>.
+            </P>
+        </Definition>
 
         <MermaidDiagram spec={taskDependencyGraph} />
 
@@ -405,12 +297,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
         </Definition>
 
         <P>
-            Esta transitividad es importante en un sistema de construcción. Si solicitamos una tarea, no basta con mirar
-            sus dependencias inmediatas: también debemos considerar las dependencias de esas dependencias. Gradle
-            realiza este recorrido de manera transitiva al construir el conjunto de tareas requerido por una relación
-            fuerte como <KotlinInline code="dependsOn()" /> (<ReferenceCitation
-                {...citationContext} referenceId="gradle-task-configuration-avoidance"
-            >Gradle, Inc. (s. f.)</ReferenceCitation>).
+            Esta transitividad importa en un sistema de construcción. Si solicitamos una tarea, no basta con mirar sus
+            dependencias inmediatas: también debemos considerar las dependencias de esas dependencias.
         </P>
 
         <Explanation headingLevel="h3">
@@ -499,6 +387,18 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </P>
         </Definition>
 
+        <Definition headingLevel="h3" icon={icons.TreeStructure}>
+            <span slot="title">Grafo dirigido y acíclico</span>
+
+            <P>
+                Un <B>grafo dirigido y acíclico</B>, o <B>DAG</B> por <I>Directed Acyclic Graph</I>, es un grafo
+                dirigido que no contiene ciclos dirigidos: no podemos partir desde un nodo, seguir la dirección de las
+                aristas y regresar finalmente al mismo nodo (<ReferenceCitation
+                    {...citationContext} referenceId="introduction-to-algorithms-2022"
+                >Cormen et al. (2022, cap. 20, §20.4)</ReferenceCitation>).
+            </P>
+        </Definition>
+
         <P>
             El problema se vuelve más claro si leemos cada flecha como una condición:
         </P>
@@ -551,15 +451,6 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             </ReferenceCitation>).
         </P>
 
-        <P>
-            Gradle utiliza precisamente este modelo: construye su grafo de tareas antes de ejecutar las acciones y
-            describe las tareas del build como un DAG (<ReferenceCitation
-                {...citationContext} referenceId="gradle-build-lifecycle"
-            >
-                Gradle, Inc. (s. f.)
-            </ReferenceCitation>).
-        </P>
-
         <Question headingLevel="h3">
             <P>
                 Considera nuevamente las dependencias <KotlinInline code="prepareCatalog -> generateReport" />,{
@@ -602,6 +493,20 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             Ya vimos por qué un ciclo impide satisfacer todas las dependencias. En un DAG ocurre lo contrario: podemos
             ordenar sus tareas de manera que cada una aparezca después de todo el trabajo que necesita.
         </P>
+
+        <Explanation headingLevel="h3">
+            <Fragment slot="title">El grafo expresa restricciones, no una secuencia completa</Fragment>
+
+            <P>
+                Una arista <KotlinInline code="A -> B" /> obliga a que <Mono>A</Mono> preceda a <Mono>B</Mono>, pero no
+                dice nada sobre el orden relativo de otras tareas que no dependen entre sí.
+            </P>
+
+            <P>
+                Por eso un DAG expresa un conjunto de <B>restricciones de precedencia</B>. Puede haber más de un orden
+                compatible con el mismo grafo.
+            </P>
+        </Explanation>
 
         <Definition headingLevel="h3" icon={icons.ListChecks}>
             <span slot="title">Orden topológico</span>
@@ -704,14 +609,6 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
                     Mokhov et al. (2018, §6.2)
                 </ReferenceCitation>).
             </P>
-
-            <P>
-                Gradle también puede ejecutar trabajo independiente en paralelo; el grafo establece qué precedencias
-                debe respetar, mientras que el planificador decide cómo realizar el trabajo compatible con esas
-                restricciones (<ReferenceCitation {...citationContext} referenceId="gradle-build-lifecycle">
-                    Gradle, Inc. (s. f.)
-                </ReferenceCitation>).
-            </P>
         </Warning>
 
         <Question headingLevel="h3">
@@ -744,9 +641,14 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
 
         <P>
             Un DAG, entonces, no describe necesariamente una receta con un único paso siguiente. Describe <B>qué debe
-                preceder a qué</B> y deja libertad allí donde las dependencias no imponen una relación. En la siguiente
-            sección enlaza con la siguiente lección, donde usaremos esa misma idea para distinguir el grafo completo del
-            subconjunto necesario cuando solicitamos una tarea concreta.
+                preceder a qué</B> y deja libertad allí donde las dependencias no imponen una relación.
+        </P>
+
+        <P>
+            Con esto termina la pregunta conceptual de esta lección: ya sabemos qué restricciones impone el DAG, pero
+            todavía no hemos decidido qué parte de ese grafo necesita una invocación concreta. La siguiente lección
+            parte de esa pregunta para introducir el <Link href="/notes/scripting/selected-task-graphs/"
+            >grafo seleccionado</Link>.
         </P>
     </NotesSection>
 
@@ -755,7 +657,8 @@ const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.l
             <P>
                 Partimos de tareas independientes y agregamos una relación sencilla:
                 <KotlinInline code="A -> B" /> significa que <Mono>B</Mono> depende de <Mono>A</Mono>. Al combinar
-                varias relaciones obtenemos un <B>grafo de dependencias</B>.
+                varias relaciones obtenemos un <B>grafo de dependencias</B>: las tareas son nodos y las dependencias,
+                aristas dirigidas. Al seguirlas formamos caminos que revelan dependencias directas e indirectas.
             </P>
 
             <P>

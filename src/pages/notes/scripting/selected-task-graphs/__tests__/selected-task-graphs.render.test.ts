@@ -1,6 +1,9 @@
+import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
+import { getSelectedTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
 import { packageReportSelectedGraph, verifyReportSelectedGraph } from "~/lib/diagrams/task-graph-examples";
+import { resolveLessonReadings } from "~/lib/readings/lesson-readings-contract";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import SelectedTaskGraphsPage from "../index.astro";
 
@@ -77,7 +80,7 @@ suite("given the conceptual task graph lesson has established a DAG", () => {
         expect(normalizedHtml).toContain("output del productor -> input del consumidor");
         expect(normalizedHtml).toContain("qué produce cada tarea y quién necesita ese resultado");
         expect(normalizedHtml).toContain("Grafo de tareas más allá de Gradle");
-        expect(normalizedHtml).toContain("El grafo también tiene un costo");
+        expect(normalizedHtml).not.toContain("El grafo también tiene un costo");
     });
 
     test("then the Gradle code remains linked to the companion project", async () => {
@@ -89,5 +92,25 @@ suite("given the conceptual task graph lesson has established a DAG", () => {
             href.includes("kotlin-companion")
             && href.includes("gradle/task-graph/build.gradle.kts")
         )).toBe(true);
+    });
+
+    test("then it links to the selected-task-graphs readings page", async () => {
+        const { doc } = await renderLesson();
+        const readingsLink = doc.querySelector("a[href=\"/readings/scripting/selected-task-graphs/\"]");
+
+        expect(readingsLink).not.toBeNull();
+        expect(readingsLink?.textContent).toContain("Ver lecturas complementarias");
+    });
+
+    test("then its citations resolve against the selected lesson guide", () => {
+        const resolution = resolveLessonReadings(
+            getSelectedTaskGraphsReadings(),
+            getDefaultBibliographyCatalog(),
+        );
+
+        expect(resolution.ok).toBe(true);
+        if (!resolution.ok) return;
+
+        expect(resolution.value.sections.flatMap((section) => section.readings)).toHaveLength(4);
     });
 });

@@ -112,7 +112,31 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         expect(doc.querySelector("#h2-gradle-realization")).toBeNull();
     });
 
-    test("then its readings keep Gradle sources essential and research sources in deeper sections", () => {
+    test("then graph definitions appear beside the reasoning that uses them", async () => {
+        const { doc, html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(doc.querySelector("#h2-graph-contract")).toBeNull();
+        expect(normalizedHtml).not.toContain("El modelo que usaremos");
+        expect(doc.querySelector("#h2-dependency-graph [data-callout][data-variant=\"definition\"]"))
+            .not.toBeNull();
+        expect(doc.querySelector("#h2-directed-acyclic-shape [data-callout][data-variant=\"definition\"]"))
+            .not.toBeNull();
+        expect(doc.querySelector("#h2-topological-orders [data-callout][data-variant=\"definition\"]"))
+            .not.toBeNull();
+    });
+
+    test("then the conceptual lesson leaves Gradle implementation for the next lesson", async () => {
+        const { html } = await renderLesson();
+        const normalizedHtml = html.replace(/\s+/g, " ");
+
+        expect(normalizedHtml).not.toContain("tasks.register");
+        expect(normalizedHtml).not.toContain("dependsOn");
+        expect(normalizedHtml).not.toContain("--task-graph");
+        expect(normalizedHtml).toContain("realización en Gradle");
+    });
+
+    test("then its readings keep graph theory and build-system research on this lesson", () => {
         const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
 
         expect(resolution.ok).toBe(true);
@@ -120,16 +144,12 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
 
         expect(new Set(resolution.value.sections[0]?.readings.map((reading) => reading.referenceId))).toEqual(
             new Set([
-                "ref:gradle-build-lifecycle",
-                "ref:gradle-task-configuration-avoidance",
-                "ref:gradle-controlling-task-execution",
-                "ref:gradle-command-line-interface",
+                "ref:introduction-to-algorithms-2022",
             ]),
         );
         expect(new Set(resolution.value.sections[1]?.readings.map((reading) => reading.referenceId))).toEqual(
             new Set([
                 "ref:build-systems-a-la-carte-2018",
-                "ref:introduction-to-algorithms-2022",
                 "ref:mathematics-for-computer-science-2018",
             ]),
         );
@@ -142,7 +162,6 @@ suite("given the task-abstraction lesson has introduced named tasks", () => {
         const { html } = await renderLesson();
         const normalizedHtml = html.replace(/\s+/g, " ");
 
-        expect(normalizedHtml).toContain("Gradle, Inc. (s. f.)");
         expect(normalizedHtml).toContain("Mokhov et al. (2018)");
         expect(normalizedHtml).toContain("Cormen et al. (2022, cap. 20, §20.1)");
         expect(normalizedHtml).toContain("arista dirigida");

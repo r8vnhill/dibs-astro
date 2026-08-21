@@ -11,7 +11,8 @@
 
 import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, suite, test } from "vitest";
+import { courseStructure } from "~/data/course-structure";
 
 /**
  * Estructura de curso simplificada para testing.
@@ -123,6 +124,28 @@ describe("navigation-bridge", () => {
             });
             expect(result.previous).not.toHaveProperty("slug");
             expect(result.next).not.toHaveProperty("slug");
+        });
+    });
+});
+
+suite("given the production task-graph sequence", () => {
+    test("then the conceptual and Gradle lessons point to each other", async () => {
+        const conceptual = await resolveAutoNav(
+            "/notes/scripting/task-graphs/",
+            courseStructure,
+        );
+        const selected = await resolveAutoNav(
+            "/notes/scripting/selected-task-graphs/",
+            courseStructure,
+        );
+
+        expect(conceptual.next).toEqual({
+            title: "Grafo seleccionado y Gradle",
+            href: "/notes/scripting/selected-task-graphs/",
+        });
+        expect(selected.previous).toEqual({
+            title: "Dependencias y grafos de tareas",
+            href: "/notes/scripting/task-graphs/",
         });
     });
 });

@@ -1,5 +1,5 @@
 ---
-import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
+import { getSelectedTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import Heading from "~/components/semantics/Heading.astro";
@@ -16,8 +16,8 @@ import NotesSection from "~/layouts/NotesSection.astro";
 import { packageReportSelectedGraph, verifyReportSelectedGraph } from "~/lib/diagrams/task-graph-examples";
 import { lessonReadingsRoute } from "~/lib/readings/lesson-readings-contract";
 
-const taskGraphsReadings = getTaskGraphsReadings();
-const citationContext = { readingsPath: lessonReadingsRoute(taskGraphsReadings.lessonPath) } as const;
+const selectedTaskGraphsReadings = getSelectedTaskGraphsReadings();
+const citationContext = { readingsPath: lessonReadingsRoute(selectedTaskGraphsReadings.lessonPath) } as const;
 const gradleExample = [
     "val prepareCatalog = tasks.register(\"prepareCatalog\") {",
     "    doLast { println(\"Preparing catalog...\") }",
@@ -94,9 +94,7 @@ const verifyReportOutput = [
 
             <P>
                 Los planificadores topológicos de sistemas de construcción parten de esta misma idea: antes de calcular
-                un orden, primero identifican las dependencias alcanzables desde el resultado solicitado
-                (<ReferenceCitation {...citationContext} referenceId="build-systems-a-la-carte-2018"
-                >Mokhov et al. (2018, §4.1.1)</ReferenceCitation>).
+                un orden, primero identifican las dependencias alcanzables desde el resultado solicitado.
             </P>
         </Definition>
 
@@ -235,9 +233,7 @@ const verifyReportOutput = [
                 un resultado producido por otra, esa relación productor–consumidor permite que Gradle derive parte de la
                 dependencia y entienda qué datos necesita. Aquí mantenemos <Mono>dependsOn</Mono> porque el objetivo es
                 leer la topología antes de estudiar el flujo de datos. Esta precisión sobre dependencias necesarias
-                también motiva el trabajo de <ReferenceCitation
-                    {...citationContext} referenceId="build-scripts-perfect-dependencies-2020"
-                >Spall et al. (2020)</ReferenceCitation>. Consulta las{" "}
+                Consulta las{" "}
                 <Link href="https://docs.gradle.org/current/userguide/best_practices_tasks.html">
                     buenas prácticas de Gradle para tareas
                 </Link>.
@@ -324,26 +320,6 @@ const verifyReportOutput = [
                 distintas del mismo problema.
             </P>
         </More>
-
-        <More headingLevel="h3" icon={icons.Gauge}>
-            <Fragment slot="title">El grafo también tiene un costo</Fragment>
-
-            <P>
-                Construir y configurar un grafo también requiere trabajo. La{" "}
-                <Link href="https://docs.gradle.org/current/userguide/configuration_cache.html">
-                    Configuration Cache de Gradle
-                </Link> conserva el resultado de la fase de configuración para poder reutilizarlo en invocaciones
-                posteriores; no es lo mismo que reutilizar los outputs de una tarea mediante el Build Cache.
-            </P>
-
-            <P>
-                Gradle 9.7 presenta <Link href="https://docs.gradle.org/current/userguide/isolated_projects.html">
-                    Isolated Projects
-                </Link> como una función <B>incubating</B>: busca aislar la configuración de proyectos para mejorar la
-                escalabilidad de builds grandes, pero sus APIs y comportamiento todavía pueden cambiar. La dejamos fuera
-                del ejemplo y no la proponemos como requisito para producir artefactos.
-            </P>
-        </More>
     </NotesSection>
 
     <ConclusionsLayout>
@@ -408,7 +384,7 @@ const verifyReportOutput = [
         </P>
         <p class="mt-5">
             <a
-                href={lessonReadingsRoute(taskGraphsReadings.lessonPath)}
+                href={lessonReadingsRoute(selectedTaskGraphsReadings.lessonPath)}
                 class="inline-flex min-h-11 items-center rounded-md border border-primary/50 px-4 py-2 font-semibold text-primary no-underline transition-colors hover:bg-primary/10"
             >
                 Ver lecturas complementarias

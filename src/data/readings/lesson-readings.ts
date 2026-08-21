@@ -21,52 +21,17 @@ export type LessonReadings = Readonly<{
 
 export const taskGraphsReadings: LessonReadings = {
     lessonPath: "/notes/scripting/task-graphs/",
-    title: "Grafos de tareas y sistemas de construcción",
+    title: "Dependencias y grafos de tareas",
     essential: [
         {
-            referenceId: "gradle-build-lifecycle",
-            type: "Referencia técnica",
-            difficulty: "Introductoria",
-            extent: "Corta",
-            why: "Conecta el ciclo de vida de Gradle con la construcción del grafo de tareas antes de la ejecución.",
-            focus: "Observa cómo Gradle configura el build, identifica las tareas y prepara la ejecución solicitada.",
-            afterReading: "Deberías poder ubicar el grafo de tareas dentro del ciclo de vida de un build de Gradle.",
-            guidingQuestion: "¿En qué momento necesita Gradle conocer las tareas y sus dependencias?",
-        },
-        {
-            referenceId: "gradle-task-configuration-avoidance",
-            type: "Referencia técnica",
+            referenceId: "introduction-to-algorithms-2022",
+            type: "Fuente primaria",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
-            why: "Explica cómo Gradle sigue las dependencias fuertes entre tareas al construir el conjunto de trabajo requerido.",
-            focus:
-                "Busca la relación entre dependsOn, el grafo de tareas y el recorrido transitivo de sus dependencias.",
-            afterReading:
-                "Deberías poder explicar por qué una dependencia indirecta también forma parte del trabajo requerido.",
-            guidingQuestion:
-                "¿Qué tareas debe considerar Gradle cuando una tarea depende de otra que, a su vez, tiene dependencias?",
-        },
-        {
-            referenceId: "gradle-controlling-task-execution",
-            type: "Referencia técnica",
-            difficulty: "Intermedia",
-            extent: "Secciones seleccionadas",
-            why: "Explica cómo las dependencias entre tareas controlan qué trabajo puede ejecutarse y en qué condiciones.",
-            focus:
-                "Busca la relación entre dependsOn, las tareas solicitadas y las dependencias que Gradle selecciona.",
-            afterReading: "Deberías poder relacionar una arista del grafo con una dependencia declarada en Gradle.",
-            guidingQuestion: "¿Qué tareas selecciona Gradle cuando una tarea solicitada depende de otras?",
-        },
-        {
-            referenceId: "gradle-command-line-interface",
-            type: "Referencia técnica",
-            difficulty: "Introductoria",
-            extent: "Corta",
-            why: "Documenta la invocación de tareas desde la línea de comandos y las opciones para inspeccionar un build.",
-            focus: "Relaciona la tarea solicitada en la terminal con el subconjunto del grafo que se prepara.",
-            afterReading:
-                "Deberías poder distinguir el objetivo de una invocación de las tareas que ese objetivo requiere.",
-            guidingQuestion: "¿Qué evidencia aporta una inspección del grafo antes de ejecutar las tareas?",
+            why: "Presenta el vocabulario de grafos dirigidos y la relación entre DAGs y órdenes topológicos.",
+            focus: "Lee el capítulo 20, §§20.1 y 20.4, y concéntrate en las definiciones y el resultado conceptual.",
+            afterReading: "Deberías poder explicar por qué un DAG admite un orden que respeta sus dependencias.",
+            guidingQuestion: "¿Qué propiedad del grafo permite ordenar sus nodos respetando las aristas dirigidas?",
         },
     ],
     practice: [
@@ -80,16 +45,6 @@ export const taskGraphsReadings: LessonReadings = {
             afterReading:
                 "Deberías poder explicar por qué un sistema de construcción es más que una lista de comandos.",
             guidingQuestion: "¿Qué decisiones del diseño de un build quedan representadas en su grafo?",
-        },
-        {
-            referenceId: "introduction-to-algorithms-2022",
-            type: "Fuente primaria",
-            difficulty: "Intermedia",
-            extent: "Secciones seleccionadas",
-            why: "Presenta el vocabulario de grafos dirigidos y la relación entre DAGs y órdenes topológicos.",
-            focus: "Lee el capítulo 20, §§20.1 y 20.4, y concéntrate en las definiciones y el resultado conceptual.",
-            afterReading: "Deberías poder explicar por qué un DAG admite un orden que respeta sus dependencias.",
-            guidingQuestion: "¿Qué propiedad del grafo permite ordenar sus nodos respetando las aristas dirigidas?",
         },
         {
             referenceId: "mathematics-for-computer-science-2018",
@@ -118,6 +73,62 @@ export const taskGraphsReadings: LessonReadings = {
                 "Deberías poder identificar por qué el grafo debe representar las dependencias relevantes sin agregar restricciones arbitrarias.",
             guidingQuestion:
                 "¿Qué puede salir mal si una dependencia real falta del grafo o si se agrega una que no existe?",
+        },
+    ],
+};
+
+export const selectedTaskGraphsReadings: LessonReadings = {
+    lessonPath: "/notes/scripting/selected-task-graphs/",
+    title: "Grafo seleccionado y Gradle",
+    essential: [
+        {
+            referenceId: "gradle-build-lifecycle",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Corta",
+            why: "Conecta el ciclo de vida de Gradle con la construcción del grafo de tareas antes de la ejecución.",
+            focus: "Observa cómo Gradle configura el build, identifica las tareas y prepara la ejecución solicitada.",
+            afterReading: "Deberías poder ubicar el grafo de tareas dentro del ciclo de vida de un build de Gradle.",
+            guidingQuestion: "¿En qué momento necesita Gradle conocer las tareas y sus dependencias?",
+        },
+        {
+            referenceId: "gradle-command-line-interface",
+            type: "Referencia técnica",
+            difficulty: "Introductoria",
+            extent: "Corta",
+            why: "Documenta la invocación de tareas desde la línea de comandos y las opciones para inspeccionar un build.",
+            focus: "Relaciona la tarea solicitada en la terminal con el subconjunto del grafo que se prepara.",
+            afterReading:
+                "Deberías poder distinguir el objetivo de una invocación de las tareas que ese objetivo requiere.",
+            guidingQuestion: "¿Qué evidencia aporta una inspección del grafo antes de ejecutar las tareas?",
+        },
+    ],
+    practice: [
+        {
+            referenceId: "gradle-task-configuration-avoidance",
+            type: "Referencia técnica",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Explica cómo Gradle sigue las dependencias fuertes entre tareas al construir el conjunto de trabajo requerido.",
+            focus:
+                "Busca la relación entre dependsOn, el grafo de tareas y el recorrido transitivo de sus dependencias.",
+            afterReading:
+                "Deberías poder explicar por qué una dependencia indirecta también forma parte del trabajo requerido.",
+            guidingQuestion:
+                "¿Qué tareas debe considerar Gradle cuando una tarea depende de otra que, a su vez, tiene dependencias?",
+        },
+    ],
+    deeper: [
+        {
+            referenceId: "gradle-controlling-task-execution",
+            type: "Referencia técnica",
+            difficulty: "Intermedia",
+            extent: "Secciones seleccionadas",
+            why: "Explica cómo las dependencias entre tareas controlan qué trabajo puede ejecutarse y en qué condiciones.",
+            focus:
+                "Busca la relación entre dependsOn, las tareas solicitadas y las dependencias que Gradle selecciona.",
+            afterReading: "Deberías poder relacionar una arista del grafo con una dependencia declarada en Gradle.",
+            guidingQuestion: "¿Qué tareas selecciona Gradle cuando una tarea solicitada depende de otras?",
         },
     ],
 };
@@ -322,4 +333,9 @@ export const supportScriptsNushellReadings: LessonReadings = {
     ],
 };
 
-export const publishedReadings = [libraryWhatIsReadings, supportScriptsNushellReadings, taskGraphsReadings] as const;
+export const publishedReadings = [
+    libraryWhatIsReadings,
+    supportScriptsNushellReadings,
+    taskGraphsReadings,
+    selectedTaskGraphsReadings,
+] as const;

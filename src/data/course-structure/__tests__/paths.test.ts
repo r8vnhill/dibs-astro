@@ -65,6 +65,9 @@ describe("coursePaths", () => {
             expect(coursePaths.scriptingLibraries.taskGraphs).toBe(
                 "/notes/scripting/task-graphs",
             );
+            expect(coursePaths.scriptingLibraries.selectedTaskGraphs).toBe(
+                "/notes/scripting/selected-task-graphs",
+            );
         });
 
         it("allows internal consumers to read the expected nested paths", () => {
@@ -145,6 +148,7 @@ describe("coursePaths", () => {
                 "/notes/scripting/tasks-as-abstractions",
             ],
             ["scriptingLibraries.taskGraphs", "/notes/scripting/task-graphs"],
+            ["scriptingLibraries.selectedTaskGraphs", "/notes/scripting/selected-task-graphs"],
         ] as const;
 
         it.each(mappingTests)("resolves %s to %s", (path, expectedUrl) => {

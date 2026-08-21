@@ -13,6 +13,7 @@
 export {
     getLibraryWhatIsReadings,
     getPublishedReadings,
+    getSelectedTaskGraphsReadings,
     getSupportScriptsNushellReadings,
     getTaskGraphsReadings,
 } from "$infrastructure/adapters/LessonReadingsAdapter";
