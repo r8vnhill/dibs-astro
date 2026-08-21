@@ -354,7 +354,7 @@ describe("NotesLayout.astro render", () => {
     });
 
     describe("lesson metadata", () => {
-        test("renders recommended dedication region below the title and above metadata", async () => {
+        test("renders compact reading time in the metadata region below the title", async () => {
             const html = await renderNotes(
                 { title: "Introducción a PowerShell" },
                 { pathname: "/notes/scripting/" },
@@ -363,26 +363,23 @@ describe("NotesLayout.astro render", () => {
             const doc = parseHtml(html);
             const article = queryRequired<HTMLElement>(doc, "#lesson-content");
             const title = queryRequired<HTMLHeadingElement>(article, "h1");
-            const readingTimeRegion = queryRequired<HTMLElement>(
-                article,
-                "h1 + [data-export-hidden='true']",
-            );
             const metadata = queryRequired<HTMLElement>(
                 article,
                 "[data-export-role='metadata']",
             );
 
             expect(title.textContent).toContain("Introducción a PowerShell");
-            expect(article.contains(readingTimeRegion)).toBe(true);
-            expect(readingTimeRegion.querySelector("[data-reading-time]")).not.toBeNull();
-            expect(readingTimeRegion.querySelector("[data-reading-time]")?.textContent).toContain(
-                "Dedicación recomendada",
+            expect(article.querySelector("h1 + [data-export-role='metadata']")).toBe(metadata);
+            expect(metadata.querySelector("[data-reading-time]")).not.toBeNull();
+            expect(metadata.querySelector("[data-reading-time]")?.textContent).toContain(
+                "de lectura",
             );
-            expect(readingTimeRegion.closest("astro-island")).toBeNull();
+            expect(metadata.textContent).not.toContain("Dedicación recomendada");
             expect(article.contains(metadata)).toBe(true);
+            expect(metadata.querySelector("details summary")?.textContent?.trim()).toBe("Historial de cambios");
             expect(
-                Array.from(article.children).indexOf(readingTimeRegion),
-            ).toBeLessThan(Array.from(article.children).indexOf(metadata));
+                article.querySelector("[data-variant='abstract'] .callout__title")?.textContent,
+            ).toContain("Resumen");
         });
 
         test("renders presentation metadata without infrastructure fields", async () => {
@@ -411,7 +408,7 @@ describe("NotesLayout.astro render", () => {
             expect(metadataPanel.textContent).not.toContain("Dedicación recomendada");
         });
 
-        test("keeps recommended dedication region outside the exportable lesson metadata", async () => {
+        test("keeps the compact reading-time item hidden from lesson exports", async () => {
             const html = await renderNotes(
                 { title: "Introducción a PowerShell" },
                 { pathname: "/notes/scripting/" },
@@ -419,12 +416,13 @@ describe("NotesLayout.astro render", () => {
 
             const doc = parseHtml(html);
             const article = queryRequired<HTMLElement>(doc, "#lesson-content");
-            const readingTimeRegion = queryRequired<HTMLElement>(
+            const readingTime = queryRequired<HTMLElement>(
                 article,
-                "h1 + [data-export-hidden='true']",
+                "[data-reading-time]",
             );
 
-            expect(readingTimeRegion.closest("[data-export-role='metadata']")).toBeNull();
+            expect(readingTime.closest("[data-export-role='metadata']")).not.toBeNull();
+            expect(readingTime.closest("[data-export-hidden='true']")).not.toBeNull();
         });
     });
 });

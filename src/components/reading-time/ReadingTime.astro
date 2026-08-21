@@ -12,33 +12,27 @@ type Props = Readonly<{
 const {
     minutes,
     className = "",
-    label = m.reading_time_label(),
+    label,
 } = Astro.props as Props;
 
 const minuteLabel = m.reading_time_minutes({ count: minutes });
+const visibleLabel = label ? `${label}: ${minuteLabel}` : `${minuteLabel} ${m.reading_time_suffix()}`;
 ---
 
-<ExcludeFromReadingTime>
-    <div
+<ExcludeFromReadingTime className="contents" data-export-hidden="true">
+    <span
         data-reading-time
         class:list={[
             "not-prose",
-            "rounded-md",
-            "ring-1",
-            "ring-inset",
-            "ring-white/10",
-            "bg-blue-500/5",
-            "px-4",
-            "py-3",
+            "inline-flex",
+            "items-center",
+            "gap-1.5",
             "text-[var(--rt-fg,inherit)]",
-            "shadow-sm",
             className,
         ]}
+        title={m.reading_time_help()}
     >
-        <p class="mb-1 flex items-center gap-2 font-medium">
-            <span class="text-primary"><icons.Clock class="h-5 w-5" aria-hidden="true" /></span>
-            {label}: {minuteLabel}
-        </p>
-        <p class="m-0 text-sm opacity-80">{m.reading_time_help()}</p>
-    </div>
+        <span class="text-primary"><icons.Clock class="h-4 w-4" aria-hidden="true" /></span>
+        <span>{visibleLabel}</span>
+    </span>
 </ExcludeFromReadingTime>

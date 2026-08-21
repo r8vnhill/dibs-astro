@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-20T00:41:28.223Z",
-  "totalLessons": 54,
+  "generatedAt": "2026-08-21T19:12:21.091Z",
+  "totalLessons": 55,
   "changesLimit": 5,
   "entries": {
     "/notes/": {
@@ -174,8 +174,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -199,12 +205,6 @@
           "date": "2026-04-20",
           "author": "r8vnhill",
           "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
-        },
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
         }
       ]
     },
@@ -379,8 +379,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-05-07",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
           "date": "2026-05-07",
@@ -404,12 +410,6 @@
           "date": "2026-01-01",
           "author": "r8vnhill",
           "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
-        },
-        {
-          "hash": "f2cbb1b95697910fe0aa9e56c61c3583d071cc4b",
-          "date": "2025-10-15",
-          "author": "r8vnhill",
-          "subject": "Add Python scripting notes and comparison with PowerShell"
         }
       ]
     },
@@ -1152,8 +1152,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -1177,12 +1183,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -1193,8 +1193,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -1218,12 +1224,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -1555,6 +1555,29 @@
         }
       ]
     },
+    "/notes/scripting/selected-task-graphs/": {
+      "sourceFile": "src/pages/notes/scripting/selected-task-graphs/index.astro",
+      "authors": [
+        {
+          "name": "Ignacio Slater-Muñoz"
+        }
+      ],
+      "lastModified": "2026-08-21",
+      "changes": [
+        {
+          "hash": "b42f92037cffe7043e9d3bca031370d1743a9c88",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(readings): Add \"Selected Task Graphs\" readings and integrate with lessons"
+        },
+        {
+          "hash": "90eefbc7befda8d0fac1ecb529dd98921ddebdcb",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(lesson): Add \"Selected Task Graphs\" lesson with Gradle examples"
+        }
+      ]
+    },
     "/notes/scripting/support-scripts/": {
       "sourceFile": "src/pages/notes/scripting/support-scripts/index.astro",
       "authors": [
@@ -1685,37 +1708,37 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
         {
-          "hash": "fb8a7c4853dbd8a7bac7cd5ca9b72e976e1e805f",
-          "date": "2026-08-19",
+          "hash": "4ffcf615b72ac9d2ba6a200b4fb9ef5511d8303c",
+          "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "📝 fix(lesson): clarify dependency explanation"
+          "subject": "📚 docs(design): Clarify `site-core` architecture as external package"
         },
         {
-          "hash": "7668b5685c506f4eb9af433847931b72f6a596b9",
-          "date": "2026-08-19",
+          "hash": "b42f92037cffe7043e9d3bca031370d1743a9c88",
+          "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "📝 fix(lesson): align task graph notation"
+          "subject": "📚 feat(readings): Add \"Selected Task Graphs\" readings and integrate with lessons"
         },
         {
-          "hash": "8400e17aa3666467d3ab6c9345de73a884402f4a",
-          "date": "2026-08-19",
+          "hash": "90eefbc7befda8d0fac1ecb529dd98921ddebdcb",
+          "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "🐛 fix(lesson): use inline Kotlin code block"
+          "subject": "📚 feat(lesson): Add \"Selected Task Graphs\" lesson with Gradle examples"
         },
         {
-          "hash": "02479f8d3544246796b0f86dcb9a9fc6ae8a2d04",
-          "date": "2026-08-19",
+          "hash": "1c8602f0509f4f5da6d8e4270dc3e16b51fe083e",
+          "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "📝 feat(lesson): strengthen task-graph foundations"
+          "subject": "🗑️ rm(lessons): Remove unused migration artefacts from `site-core`"
         },
         {
-          "hash": "5378ffc140840658b5f0231183896f05251b424a",
-          "date": "2026-08-19",
+          "hash": "168abf9b7308cfa578ec705d16c5b5055d4bf57d",
+          "date": "2026-08-21",
           "author": "Ignacio Slater-Muñoz",
-          "subject": "🎯 chore(task-graph): Introduce Gradle build example with extended task graph lesson"
+          "subject": "📚 feat(lesson): Expand \"Task Graphs\" with references and examples"
         }
       ]
     },
@@ -1726,8 +1749,20 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "b42f92037cffe7043e9d3bca031370d1743a9c88",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "📚 feat(readings): Add \"Selected Task Graphs\" readings and integrate with lessons"
+        },
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -1745,18 +1780,6 @@
           "date": "2026-08-15",
           "author": "Ignacio Slater-Muñoz",
           "subject": "✨ refactor(site): batch application and test updates"
-        },
-        {
-          "hash": "abc1c1c85529a498fbf723c73e9dbe3763e25298",
-          "date": "2026-06-19",
-          "author": "Ignacio Slater-Muñoz",
-          "subject": "🚚 refactor(icons): rename shared icon package"
-        },
-        {
-          "hash": "e8f2c4cab0832e1b7e67864ee9a77390b3c1936a",
-          "date": "2026-05-15",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): Update description for task abstraction lesson in NotesLayout"
         }
       ]
     },
@@ -2036,8 +2059,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -2061,12 +2090,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "11c4fd1e3c63ae4c3f45d74e45e532299f15e321",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
         }
       ]
     },
@@ -2118,8 +2141,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -2143,12 +2172,6 @@
           "date": "2026-02-17",
           "author": "r8vnhill",
           "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
-        },
-        {
-          "hash": "7aedec6f186ea20423a2f0c73b840ff4f8e1cbb6",
-          "date": "2026-02-16",
-          "author": "r8vnhill",
-          "subject": "✨🧪♻️ feat(lesson-metadata,bibliography): add metadata generation pipeline and strengthen parsing/tests"
         }
       ]
     },
@@ -2159,8 +2182,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-20",
       "changes": [
+        {
+          "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
+          "date": "2026-08-20",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🎨 refactor(architecture): Simplify boundary rules by merging workspace/site-core logic"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -2184,12 +2213,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "✨♻️ feat(notes): add API design fundamentals and modular bibliography catalog"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     }

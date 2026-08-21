@@ -17,7 +17,7 @@
     --content-measure: 72ch;
     --content-reading: 72ch;
     --sidebar-course: 18rem;
-    --sidebar-page: 18rem;
+    --sidebar-page: 20rem;
     --lesson-header-offset: 5.5rem;
     --focus-color: var(--theme-color-primary);
 }

@@ -29,6 +29,11 @@ export interface LessonDocumentLayoutProps {
     metadata?: LessonMetaPanelMetadata;
 
     /**
+     * Compact reading-time estimate rendered in the lesson metadata region.
+     */
+    readingTimeMinutes?: number;
+
+    /**
      * Optional repository references rendered through `LessonRepoPanel`.
      */
     git?: RepoRef | readonly RepoRef[];

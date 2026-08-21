@@ -1,38 +1,65 @@
 ---
 /**
-* A progressively enhanced table of contents for a lesson article.
-*
-* Section headings are supplied through page slots, so they are not available to Astro while this
-* component is rendered. The small inline script derives the links from the semantic sections
-* already present in the article and keeps the active section in sync while scrolling.
-*/
+ * A progressively enhanced table of contents for a lesson article.
+ *
+ * Section headings are supplied through page slots, so they are not available to Astro while this
+ * component is rendered. The small inline script derives the links from the semantic sections
+ * already present in the article and keeps the active section in sync while scrolling.
+ */
+interface Props {
+    variant?: "rail" | "disclosure";
+}
+
+const { variant = "rail" } = Astro.props as Props;
 ---
 
-<aside
-    aria-label="En esta página" class="lesson-toc sticky top-[var(--lesson-header-offset,5.5rem)] self-start"
-    data-export-hidden="true" data-testid="lesson-toc"
->
-    <nav
-        aria-label="En esta página" data-lesson-toc
-        class="flex max-h-[calc(100vh-var(--lesson-header-offset,5.5rem)-1rem)] min-h-0 flex-col border-l border-base-border px-5 py-2"
-    >
-        <p class="text-sm font-semibold text-base-text">En esta página</p>
-        <div class="mt-3 min-h-0 flex-1 overflow-y-auto" data-lesson-toc-scroll>
-            <ol class="space-y-1 text-sm text-base-subtle-text" data-lesson-toc-list></ol>
-        </div>
-    </nav>
-</aside>
+{
+    variant === "disclosure" ? (
+        <details
+            class="lesson-toc-mobile mb-6 rounded border border-base-border p-3" data-export-hidden="true"
+            data-testid="lesson-toc"
+        >
+            <summary class="cursor-pointer font-medium text-base-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                En esta página
+            </summary>
+            <nav
+                aria-label="En esta página" data-lesson-toc
+                class="mt-3"
+            >
+                <ol class="space-y-1 text-sm text-base-subtle-text" data-lesson-toc-list></ol>
+            </nav>
+        </details>
+    ) : (
+        <aside
+            aria-label="En esta página"
+            class="lesson-toc lesson-toc-rail sticky top-[var(--lesson-header-offset)] self-start"
+            data-export-hidden="true" data-testid="lesson-toc"
+        >
+            <nav
+                aria-label="En esta página" data-lesson-toc
+                class="flex max-h-[calc(100vh-var(--lesson-header-offset)-1rem)] min-h-0 flex-col border-l border-base-border px-3 py-2"
+            >
+                <p class="text-sm font-semibold text-base-text">En esta página</p>
+                <div class="mt-3 min-h-0 flex-1 overflow-y-auto" data-lesson-toc-scroll>
+                    <ol class="space-y-1 text-sm text-base-subtle-text" data-lesson-toc-list></ol>
+                </div>
+            </nav>
+        </aside>
+    )
+}
 
-<script>
-    import { shouldRevealActiveEntry } from "./lesson-toc-active-section.ts";
+{
+    variant === "rail" && (
+        <script>
+            import { shouldRevealActiveEntry } from "./lesson-toc-active-section.ts";
     import { measureTocEntry } from "./lesson-toc-measure.ts";
     import { computeTocScrollTop } from "./lesson-toc-scroll.ts";
 
     const article = document.querySelector<HTMLElement>("#lesson-content");
-    const list = document.querySelector<HTMLOListElement>("[data-lesson-toc-list]");
-    const scroller = document.querySelector<HTMLElement>("[data-lesson-toc-scroll]");
+    const lists = [...document.querySelectorAll<HTMLOListElement>("[data-lesson-toc-list]")];
+    const scrollers = [...document.querySelectorAll<HTMLElement>("[data-lesson-toc-scroll]")];
 
-    if (article && list && scroller) {
+    if (article && lists.length > 0) {
         const sections = [...article.querySelectorAll<HTMLElement>("section[data-lesson-section][id]")]
             .map((section) => ({
                 id: section.id,
@@ -40,18 +67,20 @@
             }))
             .filter((section): section is { id: string; heading: HTMLHeadingElement } => Boolean(section.heading));
 
-        const links = sections.map(({ id, heading }) => {
-            const item = document.createElement("li");
-            const link = document.createElement("a");
-            link.href = `#${id}`;
-            link.textContent = heading.textContent?.trim() ?? id;
-            link.setAttribute("data-lesson-toc-entry", "true");
-            link.className =
-                "block rounded px-2 py-1.5 leading-snug no-underline hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
-            item.append(link);
-            list.append(item);
-            return { id, link };
-        });
+        const links = lists.flatMap((list) =>
+            sections.map(({ id, heading }) => {
+                const item = document.createElement("li");
+                const link = document.createElement("a");
+                link.href = `#${id}`;
+                link.textContent = heading.textContent?.trim() ?? id;
+                link.setAttribute("data-lesson-toc-entry", "true");
+                link.className =
+                    "block border-l-2 border-transparent px-1.5 py-1.5 leading-snug no-underline hover:border-primary/50 hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+                item.append(link);
+                list.append(item);
+                return { id, link };
+            })
+        );
 
         let previousActiveId: string | null = null;
 
@@ -62,21 +91,26 @@
 
             links.forEach(({ id, link }) => {
                 const isCurrent = id === activeId;
-                link.toggleAttribute("aria-current", isCurrent);
-                link.classList.toggle("bg-primary/10", isCurrent);
+                if (isCurrent) link.setAttribute("aria-current", "location");
+                else link.removeAttribute("aria-current");
+                link.classList.toggle("border-primary", isCurrent);
+                link.classList.toggle("bg-primary/5", isCurrent);
                 link.classList.toggle("text-primary", isCurrent);
                 link.classList.toggle("font-medium", isCurrent);
             });
 
             if (shouldRevealActiveEntry(previousActiveId, activeId)) {
-                const activeLink = links.find((entry) => entry.id === activeId)?.link;
-                const target = activeLink
-                    ? computeTocScrollTop(
-                        { scrollTop: scroller.scrollTop, clientHeight: scroller.clientHeight },
-                        measureTocEntry(scroller, activeLink),
-                    )
-                    : null;
-                if (target !== null) scroller.scrollTop = target;
+                scrollers.forEach((scroller) => {
+                    const activeLink = links.find((entry) => entry.id === activeId && scroller.contains(entry.link))
+                        ?.link;
+                    const target = activeLink
+                        ? computeTocScrollTop(
+                            { scrollTop: scroller.scrollTop, clientHeight: scroller.clientHeight },
+                            measureTocEntry(scroller, activeLink),
+                        )
+                        : null;
+                    if (target !== null) scroller.scrollTop = target;
+                });
             }
             previousActiveId = activeId;
         };
@@ -84,4 +118,6 @@
         updateCurrentSection();
         document.addEventListener("scroll", updateCurrentSection, { passive: true });
     }
-</script>
+        </script>
+    )
+}

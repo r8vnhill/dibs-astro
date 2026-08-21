@@ -1,6 +1,6 @@
 ---
-import * as icons from "@ravenhill/astro-icons";
 import { getLibraryWhatIsReadings } from "$presentation/adapters/lesson-readings";
+import * as icons from "@ravenhill/astro-icons";
 import { P } from "~/components/semantics";
 import { Important, More, Question, Tip, Warning } from "~/components/ui/callouts";
 import { KotlinBlock, KotlinInline, NimBlock, NimInline } from "~/components/ui/code";
@@ -427,7 +427,7 @@ const citationContext = { readingsPath: lessonReadingsRoute(libraryWhatIsReading
     </ConclusionsLayout>
 
     <NotesSection
-        id="continue-reading" title="Continúa explorando"
+        id="continue-reading" title="Lecturas complementarias"
         Icon={icons.BookOpen}
     >
         <P>

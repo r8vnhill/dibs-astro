@@ -62,7 +62,7 @@ suite.concurrent("given the library 'what-is' lesson", () => {
             "Encapsulación: controlar de qué puede depender el exterior",
             "Estabilidad: las dependencias externas crean compromisos",
             "Conclusiones",
-            "Continúa explorando",
+            "Lecturas complementarias",
         ]);
 
         // Only the migrated main sections (not ConclusionsLayout, which is out of scope here) are

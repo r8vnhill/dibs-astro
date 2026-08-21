@@ -48,6 +48,8 @@ interface Props {
      */
     lessons: readonly CourseNavigationLesson[];
     currentPath?: string;
+    /** Whether the sidebar is rendered inside the responsive course disclosure. */
+    embedded?: boolean;
 }
 
 /**
@@ -56,7 +58,7 @@ interface Props {
  * @param props Component props.
  * @returns Sidebar element containing the {@link LessonTree}.
  */
-function LessonSidebar({ lessons, currentPath }: Props) {
+function LessonSidebar({ lessons, currentPath, embedded = false }: Props) {
     return (
         <aside
             aria-label="Navegación del curso"
@@ -68,7 +70,9 @@ function LessonSidebar({ lessons, currentPath }: Props) {
                 "bg-base-background/98",
                 "backdrop-blur-md",
                 "border-r border-base-border/50",
-                "lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)]",
+                !embedded
+                    && "lg:sticky lg:top-[var(--lesson-header-offset)] lg:h-[calc(100vh-var(--lesson-header-offset))]",
+                embedded && "rounded border border-base-border/50",
                 "overflow-y-auto overflow-x-hidden",
                 "shrink-0 h-full",
             )}

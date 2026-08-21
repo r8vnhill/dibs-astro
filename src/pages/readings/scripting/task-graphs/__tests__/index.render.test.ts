@@ -24,6 +24,33 @@ suite("given the task-graphs readings catalog", () => {
         );
     });
 
+    test("then its taxonomy separates canonical format from the lesson role", () => {
+        const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
+
+        expect(resolution.ok).toBe(true);
+        if (!resolution.ok) return;
+
+        const readings = resolution.value.sections.flatMap((section) => section.readings);
+        expect(readings.map((reading) => reading.guide.role)).toEqual([
+            "Base conceptual",
+            "Sistemas de construcción",
+            "Profundización",
+            "Profundización",
+        ]);
+        expect(readings.map((reading) => reading.reference.type)).toEqual([
+            "Book",
+            "ScholarlyArticle",
+            "Book",
+            "ScholarlyArticle",
+        ]);
+        expect(readings.map((reading) => reading.reference.authors.map((author) => author.lastName))).toEqual([
+            ["Cormen", "Leiserson", "Rivest", "Stein"],
+            ["Mokhov", "Mitchell", "Peyton Jones"],
+            ["Lehman", "Leighton", "Meyer"],
+            ["Spall", "Mitchell", "Tobin-Hochstadt"],
+        ]);
+    });
+
     test("then it renders all three reading sections with guidance and a lesson backlink", async () => {
         const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
         const html = await renderPage({}, {
@@ -36,8 +63,18 @@ suite("given the task-graphs readings catalog", () => {
         expect(html).toContain("Lecturas esenciales");
         expect(html).toContain("De la idea a la práctica");
         expect(html).toContain("Para profundizar");
+        expect(html).toContain("Formato");
+        expect(html).toContain("Rol en esta lección");
+        expect(html).not.toContain("Tipo");
+        expect(html).not.toContain("Fuente primaria");
         expect(html).toContain("En qué enfocarse");
         expect(html).toContain("Después de leer");
+        expect(doc.querySelector("#ref-build-systems-a-la-carte-2018")?.textContent).toContain(
+            "Andrey Mokhov, Neil Mitchell y Simon Peyton Jones",
+        );
+        expect(doc.querySelector("#ref-build-scripts-perfect-dependencies-2020")?.textContent).toContain(
+            "Sarah Spall, Neil Mitchell y Sam Tobin-Hochstadt",
+        );
         expect(doc.querySelectorAll("[id^=\"ref-\"]")).toHaveLength(4);
     });
 });

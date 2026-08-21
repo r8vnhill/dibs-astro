@@ -22,9 +22,11 @@ interface Props {
      * Defaults to "left".
      */
     iconPosition?: "left" | "right";
+    /** Visual hierarchy for previous/next lesson navigation. */
+    emphasis?: "primary" | "secondary";
 }
 
-const { href, label, iconPosition = "left" } = Astro.props;
+const { href, label, iconPosition = "left", emphasis = "secondary" } = Astro.props;
 
 // Set rel attribute for SEO/navigation semantics.
 const rel = iconPosition === "left" ? "prev" : "next";
@@ -49,12 +51,10 @@ const labelText = iconPosition === "left"
         "gap-3", // spacing between icon and text
         "rounded", // border radius
         "border", // border base
-        "border-base-border", // uses theme token
-        "bg-base-background", // background base
+        emphasis === "primary" ? "border-primary/60 bg-primary/5" : "border-base-border bg-base-background",
         "px-6",
         "py-3", // padding
-        "text-base",
-        "font-semibold",
+        emphasis === "primary" ? "text-lg font-semibold" : "text-base font-medium",
         "text-base-text", // text styling
         "transition-colors", // smooth hover transition
         "hover:bg-primary-light/10",

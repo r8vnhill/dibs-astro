@@ -4,6 +4,18 @@ import { describe, expect, test } from "vitest";
 import LessonToc from "../LessonToc.astro";
 
 describe("given the lesson table of contents", () => {
+    test("then the disclosure variant exposes a native expandable navigation", async () => {
+        const renderToc = await createAstroRenderer(LessonToc);
+        const html = await renderToc({ variant: "disclosure" });
+        const document = new JSDOM(html).window.document;
+        const disclosure = document.querySelector<HTMLDetailsElement>("[data-testid='lesson-toc']");
+
+        expect(disclosure?.tagName).toBe("DETAILS");
+        expect(disclosure?.querySelector("summary")?.textContent?.trim()).toBe("En esta página");
+        expect(disclosure?.querySelector("nav")?.getAttribute("aria-label")).toBe("En esta página");
+        expect(html).not.toContain("document.addEventListener");
+    });
+
     test("then it exposes a labelled complementary navigation region", async () => {
         const renderToc = await createAstroRenderer(LessonToc);
         const html = await renderToc({});

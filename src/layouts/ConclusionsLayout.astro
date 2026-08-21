@@ -1,11 +1,12 @@
 ---
 import * as Icons from "@ravenhill/astro-icons";
 import Heading from "~/components/semantics/Heading.astro";
+import { ClosingReflection } from "~/components/ui/callouts";
 import List from "~/components/ui/list/List.astro";
 import NotesSection from "./NotesSection.astro";
 ---
 
-<NotesSection id="conclusions">
+<NotesSection id="conclusions" class="conclusions-root">
     <Heading
         headingLevel="h2" Icon={Icons.SealCheck}
         slot="heading"
@@ -13,20 +14,32 @@ import NotesSection from "./NotesSection.astro";
 
     <slot name="conclusions" />
 
-    <NotesSection id="key-points">
+    <NotesSection id="key-points" class="conclusion-key-points">
         <Heading headingLevel="h3" Icon={Icons.PushPin}>Puntos clave</Heading>
         <List>
             <slot name="key-points" />
         </List>
     </NotesSection>
 
-    <NotesSection id="closing-reflection">
-        <Heading headingLevel="h3" Icon={Icons.ChatCircleText}>Reflexión de cierre</Heading>
-
+    <ClosingReflection id="closing-reflection">
         {
             Astro.slots.has("closing-reflection")
                 ? <slot name="closing-reflection" />
             : <slot name="takeaways" />
         }
-    </NotesSection>
+    </ClosingReflection>
 </NotesSection>
+
+<style is:global>
+    #conclusions.conclusions-root > #key-points.conclusion-key-points {
+        margin-top: 2.25rem;
+    }
+
+    #key-points.conclusion-key-points > ul {
+        margin-block: 0.75rem;
+    }
+
+    #key-points.conclusion-key-points > ul > li + li {
+        margin-top: 0.75rem;
+    }
+</style>

@@ -34,7 +34,7 @@ import ToDo from "~/components/utils/ToDo";
 import type { LessonDocumentLayoutProps } from "~/layouts/LessonDocumentLayout.props";
 import { getLessonExportRootAttributes, resolveLessonExportContext } from "~/lib/presentation/export-mode";
 
-const { title, metadata, git, renderMode, exportMode } = Astro.props as LessonDocumentLayoutProps;
+const { title, metadata, readingTimeMinutes, git, renderMode, exportMode } = Astro.props as LessonDocumentLayoutProps;
 
 // Resolve export context from props and request locals.
 const exportContext = resolveLessonExportContext({
@@ -56,9 +56,9 @@ const documentAttributes = getLessonExportRootAttributes(exportContext);
     <slot name="after-title" />
 
     {
-        metadata && (
+        (metadata || readingTimeMinutes !== undefined) && (
             <section data-export-role="metadata">
-                <LessonMetaPanel {metadata} />
+                <LessonMetaPanel {metadata} {readingTimeMinutes} />
             </section>
         )
     }

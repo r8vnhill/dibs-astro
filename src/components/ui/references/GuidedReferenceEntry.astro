@@ -14,5 +14,8 @@ const { reference, reading, presentation = "full" } = Astro.props;
 ---
 
 <ReferenceEntry {reference} preparedSlots={{}}>
-    <Fragment slot="editorial"><LessonReadingGuide guide={reading} {presentation} /></Fragment>
+    <Fragment slot="editorial"><LessonReadingGuide
+            {reference} guide={reading}
+            {presentation}
+        /></Fragment>
 </ReferenceEntry>

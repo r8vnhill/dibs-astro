@@ -32,6 +32,7 @@ import {
 } from "$presentation/adapters/lesson-metadata-panel";
 import { getWebsiteRepoRefs } from "$presentation/adapters/site-data";
 import { type RepoPlatform, type RepoRef } from "@ravenhill/site-core";
+import ReadingTime from "~/components/reading-time/ReadingTime.astro";
 import type { PartialRecord } from "~/types/records";
 import { Mono } from "../ui/font";
 import { Link } from "../ui/links";
@@ -40,7 +41,12 @@ interface Props {
     /**
      * Parsed lesson metadata for the current page.
      */
-    metadata: LessonMetaPanelMetadata;
+    metadata?: LessonMetaPanelMetadata;
+
+    /**
+     * Compact reading-time estimate shown alongside the lesson provenance metadata.
+     */
+    readingTimeMinutes?: number;
 
     /**
      * Optional override for repository references used to build commit links.
@@ -67,15 +73,14 @@ interface Props {
 
 const {
     metadata,
+    readingTimeMinutes,
     websiteRepoRefs = getWebsiteRepoRefs(),
     platforms,
 } = Astro.props as Props;
 
-const { authorsText, lastModified, recentChanges } = buildLessonMetaPanelViewModel({
-    metadata,
-    websiteRepoRefs,
-    platforms,
-});
+const { authorsText, lastModified, recentChanges } = metadata
+    ? buildLessonMetaPanelViewModel({ metadata, websiteRepoRefs, platforms })
+    : { authorsText: "", lastModified: "", recentChanges: [] };
 
 const sectionHeadingId = "lesson-meta-heading";
 const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
@@ -86,11 +91,11 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
     class:list={[
         "border-l-2",
         "px-3",
-        "py-2",
+        "py-1",
         "text-sm",
         "text-base-subtle-text",
         "border-primary/50",
-        "mt-3",
+        "mt-2",
     ]}
 >
     <h2
@@ -100,58 +105,74 @@ const recentChangesHeadingId = "lesson-meta-recent-changes-heading";
         Metadatos de la lección
     </h2>
 
-    <p>
-        <span data-testid="authors-value">{authorsText || "sin autoría registrada"}</span>
-        <span aria-hidden="true"> · </span>
-        <span>Actualizado <time data-testid="last-updated-value">{lastModified}</time></span>
-    </p>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {readingTimeMinutes !== undefined && <ReadingTime minutes={readingTimeMinutes} />}
 
-    <details class="mt-2">
-        <summary class="cursor-pointer font-medium text-base-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-            Historial de cambios
-        </summary>
-        <div class="mt-2">
-            <h3 id={recentChangesHeadingId} class="sr-only">Cambios recientes</h3>
+        {
+            metadata && authorsText && (
+                <>
+                    {readingTimeMinutes !== undefined && <span aria-hidden="true">·</span>}
+                    <span data-testid="authors-value">{authorsText}</span>
+                </>
+            )
+        }
 
-            {
-                recentChanges.length > 0 ? (
-                    <ul class="list-disc list-inside mt-1" data-testid="changes-list">
-                        {
-                            recentChanges.map((change) => (
-                                <li>
-                                    <Mono>{change.shortHash}</Mono>
-                                    {" · "}
-                                    {change.formattedDate}
-                                    {" · "}
-                                    {change.subject}
-                                    {
-                                        change.links.length > 0 && (
-                                            <span class="ml-1">
-                                                (
-                                                {
-                                                    change.links.map(
-                                                        (link, index) => (
-                                                        <Fragment>
-                                                            {index > 0 && " / "}
-                                                            <Link href={link.href}>{link.label}</Link>
-                                                        </Fragment>
-                                                    ),
-                                                    )
-                                                }
-                                                )
-                                            </span>
-                                        )
-                                    }
-                                </li>
-                            ))
-                        }
-                    </ul>
-                ) : (
-                    <p class="mt-1" data-testid="changes-empty">
-                        No hay cambios registrados.
-                    </p>
-                )
-            }
-        </div>
-    </details>
+        {
+            metadata && (
+                <>
+                    {(readingTimeMinutes !== undefined || Boolean(authorsText)) && <span aria-hidden="true">·</span>}
+                    <span>Actualizado <time data-testid="last-updated-value">{lastModified}</time></span>
+                    <span aria-hidden="true">·</span>
+                    <details class="relative">
+                        <summary class="cursor-pointer font-medium text-base-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                            Historial de cambios
+                        </summary>
+                        <div class="mt-2 min-w-[min(100%,24rem)]">
+                            <h3 id={recentChangesHeadingId} class="sr-only">Cambios recientes</h3>
+
+                            {
+                                recentChanges.length > 0 ? (
+                                    <ul class="list-disc list-inside" data-testid="changes-list">
+                                        {
+                                            recentChanges.map((change) => (
+                                                <li>
+                                                    <Mono>{change.shortHash}</Mono>
+                                                    {" · "}
+                                                    {change.formattedDate}
+                                                    {" · "}
+                                                    {change.subject}
+                                                    {
+                                                        change.links.length > 0 && (
+                                                            <span class="ml-1">
+                                                                (
+                                                                {
+                                                                    change.links.map(
+                                                                        (link, index) => (
+                                                                        <Fragment>
+                                                                            {index > 0 && " / "}
+                                                                            <Link href={link.href}>{link.label}</Link>
+                                                                        </Fragment>
+                                                                    ),
+                                                                    )
+                                                                }
+                                                                )
+                                                            </span>
+                                                        )
+                                                    }
+                                                </li>
+                                            ))
+                                        }
+                                    </ul>
+                                ) : (
+                                    <p data-testid="changes-empty">
+                                        No hay cambios registrados.
+                                    </p>
+                                )
+                            }
+                        </div>
+                    </details>
+                </>
+            )
+        }
+    </div>
 </section>

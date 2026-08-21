@@ -118,6 +118,7 @@ export const calloutBaseClasses = [
  */
 export type CalloutVariant =
     | "abstract"
+    | "closing-reflection"
     | "danger"
     | "definition"
     | "exercise"
@@ -144,7 +145,8 @@ export interface CalloutVariantConfig {
  * Default headings and icons for each callout variant. Consumers can still override per instance.
  */
 export const calloutVariants: Record<CalloutVariant, CalloutVariantConfig> = {
-    abstract: { title: "Abstract", icon: Brain },
+    abstract: { title: "Resumen", icon: Brain },
+    "closing-reflection": { title: "Reflexión de cierre", icon: icons.FlagCheckered },
     danger: { title: "Peligro", icon: icons.Skull },
     definition: { title: "Definición", icon: icons.BookOpen },
     exercise: { title: "Ejercicio", icon: icons.PencilLine },
@@ -175,12 +177,20 @@ export const calloutColors: Record<
     }
 > = {
     abstract: {
-        bg: "#fdf6ec",
-        border: "#f6ad55",
-        title: "#c05621",
-        bgDark: "#2b1a11",
-        borderDark: "#f6ad55",
-        titleDark: "#fbd38d",
+        bg: "#f5f3ff",
+        border: "#8b5cf6",
+        title: "#5b21b6",
+        bgDark: "#211b32",
+        borderDark: "#c4b5fd",
+        titleDark: "#ddd6fe",
+    },
+    "closing-reflection": {
+        bg: "#f5f3ff",
+        border: "#8b5cf6",
+        title: "#5b21b6",
+        bgDark: "#211b32",
+        borderDark: "#c4b5fd",
+        titleDark: "#ddd6fe",
     },
     danger: {
         bg: "#fff5f5",

@@ -222,7 +222,7 @@ const themeLabels = {
             Main content container.
             Padding-top accounts for fixed header spacing.
         -->
-        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-16"]}>
+        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-[var(--lesson-header-offset)]"]}>
             <slot />
         </main>
 

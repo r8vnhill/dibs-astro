@@ -56,7 +56,12 @@ interface LessonMetaPanelProps {
     /**
      * The metadata entry for the current lesson.
      */
-    metadata: LessonMetaPanelMetadata;
+    metadata?: LessonMetaPanelMetadata;
+
+    /**
+     * Optional compact reading-time estimate shown in the metadata row.
+     */
+    readingTimeMinutes?: number;
 
     /**
      * Optional repository references for the website.
@@ -127,13 +132,15 @@ describe.concurrent("LessonMetaPanel.astro render", () => {
         renderPanel = await createAstroRenderer<LessonMetaPanelProps>(LessonMetaPanel);
     });
 
-    test("renders compact provenance with a disclosure for detailed history", async () => {
-        const html = await renderPanel({ metadata: createMetadata() });
+    test("renders compact provenance and reading time with a disclosure for detailed history", async () => {
+        const html = await renderPanel({ metadata: createMetadata(), readingTimeMinutes: 11 });
         const doc = parseHtml(html);
 
         expect(textByTestId(doc, "panel-title")).toBe("Metadatos de la lección");
         expect(doc.querySelector("details summary")?.textContent?.trim()).toBe("Historial de cambios");
         expect(doc.body.textContent).toContain("Actualizado");
+        expect(doc.querySelector("[data-reading-time]")?.textContent).toContain("11 minutos de lectura");
+        expect(doc.body.textContent).not.toContain("Considera contenido visible y relevante");
     });
 
     /**

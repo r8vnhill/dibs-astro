@@ -1,8 +1,15 @@
-import type { ReadingDifficulty, ReadingExtent, ReadingType } from "~/lib/readings/lesson-readings-contract";
+import type {
+    ReadingDifficulty,
+    ReadingExtent,
+    ReadingRole,
+    ReadingType,
+} from "~/lib/readings/lesson-readings-contract";
 
 export type LessonReading = Readonly<{
     referenceId: string;
-    type: ReadingType;
+    /** Legacy taxonomy retained until each reading page adopts lesson-specific roles. */
+    type?: ReadingType;
+    role?: ReadingRole;
     difficulty: ReadingDifficulty;
     extent: ReadingExtent;
     why: string;
@@ -25,7 +32,7 @@ export const taskGraphsReadings: LessonReadings = {
     essential: [
         {
             referenceId: "introduction-to-algorithms-2022",
-            type: "Fuente primaria",
+            role: "Base conceptual",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             why: "Presenta el vocabulario de grafos dirigidos y la relación entre DAGs y órdenes topológicos.",
@@ -37,7 +44,7 @@ export const taskGraphsReadings: LessonReadings = {
     practice: [
         {
             referenceId: "build-systems-a-la-carte-2018",
-            type: "Fuente primaria",
+            role: "Sistemas de construcción",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             why: "Compara distintas ideas de diseño de sistemas de construcción y amplía el modelo de tareas y dependencias.",
@@ -48,7 +55,7 @@ export const taskGraphsReadings: LessonReadings = {
         },
         {
             referenceId: "mathematics-for-computer-science-2018",
-            type: "Fuente primaria",
+            role: "Profundización",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             why: "Conecta el scheduling de DAGs con órdenes parciales, elementos incomparables y linealizaciones.",
@@ -63,7 +70,7 @@ export const taskGraphsReadings: LessonReadings = {
     deeper: [
         {
             referenceId: "build-scripts-perfect-dependencies-2020",
-            type: "Fuente primaria",
+            role: "Profundización",
             difficulty: "Avanzada",
             extent: "Secciones seleccionadas",
             why: "Profundiza en cómo dependencias incompletas o excesivas afectan la corrección y el paralelismo de un build.",

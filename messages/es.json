@@ -21,6 +21,7 @@
             }
         }
     ],
+    "reading_time_suffix": "de lectura",
     "reading_time_help": "Considera contenido visible y relevante; ignora texto colapsado u opcional.",
     "lesson_metadata_unknown_date": "sin fecha registrada"
 }

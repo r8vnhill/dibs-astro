@@ -66,7 +66,7 @@ export const queryRequired = <T extends Element>(
  */
 export const maybeNavigationFrom = (doc: Document): HTMLElement | null =>
     doc.querySelector<HTMLElement>(
-        "nav[aria-label=\"Siguiente o anterior lección\"]",
+        "nav[aria-label=\"Navegación entre lecciones\"]",
     );
 
 /**
@@ -81,7 +81,7 @@ export const maybeNavigationFrom = (doc: Document): HTMLElement | null =>
 export const navigationFrom = (doc: Document): HTMLElement =>
     queryRequired<HTMLElement>(
         doc,
-        "nav[aria-label=\"Siguiente o anterior lección\"]",
+        "nav[aria-label=\"Navegación entre lecciones\"]",
     );
 
 /**

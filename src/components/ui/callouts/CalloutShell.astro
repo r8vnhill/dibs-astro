@@ -207,9 +207,24 @@ const detailProps = collapsible && defaultOpen ? { open: true } : {};
         background-color: color-mix(in srgb, var(--callout-border-color) 8%, var(--color-background));
     }
 
+    /* A closing reflection marks a transition without competing with instructional callouts. */
+    .callout[data-variant="closing-reflection"] {
+        margin-top: 1.5rem;
+        margin-bottom: 0;
+        border-left-width: 2px;
+        background-color: color-mix(in srgb, var(--callout-border-color) 5%, transparent);
+        box-shadow: none;
+        padding: 0.1rem 1.25rem;
+    }
+
     :global(.dark) :where(.callout[data-variant="question"]:not(.callout--embedded)),
     :global([data-theme="dark"]) :where(.callout[data-variant="question"]:not(.callout--embedded)) {
         background-color: color-mix(in srgb, var(--callout-border-color-dark) 14%, var(--color-background));
+    }
+
+    :global(.dark) :where(.callout[data-variant="closing-reflection"]),
+    :global([data-theme="dark"]) :where(.callout[data-variant="closing-reflection"]) {
+        background-color: color-mix(in srgb, var(--callout-border-color-dark) 10%, transparent);
     }
 
     /* Disclosure summary interaction states (rest / hover / keyboard focus). The native <summary>

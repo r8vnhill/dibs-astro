@@ -55,11 +55,11 @@ test.describe("lesson TOC auto-reveal", () => {
     test("the active entry stays fully inside the scrolling viewport across downward and upward traversal", async ({ page }) => {
         await page.goto(LESSON_PATH);
 
-        const entries = page.locator("[data-lesson-toc-entry]");
+        const entries = page.locator(".lesson-toc-rail [data-lesson-toc-entry]");
         const count = await entries.count();
         expect(count).toBeGreaterThan(3);
 
-        const heading = page.locator("[data-lesson-toc]").getByText("En esta página", { exact: true });
+        const heading = page.locator(".lesson-toc-rail [data-lesson-toc]").getByText("En esta página", { exact: true });
         const middleIndex = Math.floor(count / 2);
         // Deliberately not the very last entry: once the article's final section is scrolled to the
         // top of the viewport, the sticky shell's containing block can legitimately end before the
@@ -73,6 +73,7 @@ test.describe("lesson TOC auto-reveal", () => {
             await scrollToEntry(page, entry);
             await expect(heading).toBeVisible();
             expectContained(await measureContainment(entry));
+            await expect(page.locator(".lesson-toc-rail [aria-current='location']")).toHaveCount(1);
         }
 
         for (const index of [...indices].reverse()) {
@@ -85,10 +86,10 @@ test.describe("lesson TOC auto-reveal", () => {
     test("manual TOC scrolling is preserved until the active article section changes", async ({ page }) => {
         await page.goto(LESSON_PATH);
 
-        const entries = page.locator("[data-lesson-toc-entry]");
+        const entries = page.locator(".lesson-toc-rail [data-lesson-toc-entry]");
         const count = await entries.count();
         const middleIndex = Math.floor(count / 2);
-        const scroller = page.locator("[data-lesson-toc-scroll]");
+        const scroller = page.locator(".lesson-toc-rail [data-lesson-toc-scroll]");
 
         await scrollToEntry(page, entries.nth(middleIndex));
 
@@ -114,7 +115,7 @@ test.describe("lesson TOC auto-reveal", () => {
     test("an internal TOC reveal does not move the document viewport", async ({ page }) => {
         await page.goto(LESSON_PATH);
 
-        const entries = page.locator("[data-lesson-toc-entry]");
+        const entries = page.locator(".lesson-toc-rail [data-lesson-toc-entry]");
         const count = await entries.count();
         await scrollToEntry(page, entries.nth(count - 1));
 

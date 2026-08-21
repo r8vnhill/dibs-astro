@@ -170,11 +170,11 @@ export const LessonTree = memo(
                         </div>
                         {hasChildren && isOpen && (
                             <div className="mt-1">
-                                <nav aria-label="Navegación de lecciones" className="lesson-tree">
+                                <div className="lesson-tree">
                                     <ul role="tree" className="space-y-1">
                                         {renderLessons(lesson.children!, level + 1)}
                                     </ul>
-                                </nav>
+                                </div>
                             </div>
                         )}
                     </li>
@@ -183,7 +183,7 @@ export const LessonTree = memo(
         }, [currentPath, toggle, open]);
 
         return (
-            <nav aria-label="Navegación de lecciones" className="lesson-tree">
+            <nav aria-label="Navegación del curso" className="lesson-tree">
                 <ul role="tree" className="space-y-1">
                     {renderLessons(lessons, depth)}
                 </ul>

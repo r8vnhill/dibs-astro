@@ -15,8 +15,8 @@ const LATER_SECTION_IDS = ["h2-contract", "h2-encapsulation", "h2-stability", "c
 
 async function captureDiagnostics(page: Page) {
     return page.evaluate(() => {
-        const aside = document.querySelector<HTMLElement>("[data-testid='lesson-toc']");
-        const nav = document.querySelector<HTMLElement>("[data-lesson-toc]");
+        const aside = document.querySelector<HTMLElement>(".lesson-toc-rail");
+        const nav = aside?.querySelector<HTMLElement>("[data-lesson-toc]");
         const asideRect = aside?.getBoundingClientRect();
         const navRect = nav?.getBoundingClientRect();
         return {
@@ -47,7 +47,7 @@ test.describe("lesson TOC stays pinned throughout long-page scrolling (normal de
     });
 
     test("given a TOC-enabled desktop viewport, the lesson TOC is visible and the lesson exceeds the viewport height", async ({ page }) => {
-        await expect(page.locator("[data-testid='lesson-toc']")).toBeVisible();
+        await expect(page.locator(".lesson-toc-rail")).toBeVisible();
 
         const documentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
         const viewportHeight = page.viewportSize()?.height ?? 0;
@@ -56,8 +56,10 @@ test.describe("lesson TOC stays pinned throughout long-page scrolling (normal de
 
     for (const sectionId of LATER_SECTION_IDS) {
         test(`"En esta página" and the TOC navigation remain visible after scrolling to #${sectionId}`, async ({ page }) => {
-            const tocTitle = page.locator("[data-lesson-toc]").getByText("En esta página", { exact: true });
-            const tocNav = page.locator("[data-lesson-toc]");
+            const tocTitle = page.locator(".lesson-toc-rail [data-lesson-toc]").getByText("En esta página", {
+                exact: true,
+            });
+            const tocNav = page.locator(".lesson-toc-rail [data-lesson-toc]");
 
             await page.locator(`#${sectionId}`).scrollIntoViewIfNeeded();
             await page.waitForTimeout(100);
@@ -73,7 +75,7 @@ test.describe("lesson TOC stays pinned throughout long-page scrolling (normal de
     }
 
     test("once the TOC has entered its sticky state, further document scrolling does not move its viewport top", async ({ page }) => {
-        const tocNav = page.locator("[data-lesson-toc]");
+        const tocNav = page.locator(".lesson-toc-rail [data-lesson-toc]");
 
         await page.locator("#h2-contract").scrollIntoViewIfNeeded();
         await page.waitForTimeout(100);
@@ -101,8 +103,10 @@ test.describe("lesson TOC stays pinned throughout long-page scrolling (short des
     });
 
     test("the TOC heading and shell remain visible after scrolling deep into the lesson", async ({ page }) => {
-        const tocTitle = page.locator("[data-lesson-toc]").getByText("En esta página", { exact: true });
-        const tocShell = page.locator("[data-testid='lesson-toc']");
+        const tocTitle = page.locator(".lesson-toc-rail [data-lesson-toc]").getByText("En esta página", {
+            exact: true,
+        });
+        const tocShell = page.locator(".lesson-toc-rail");
 
         await page.locator("#h2-stability").scrollIntoViewIfNeeded();
         await page.waitForTimeout(100);
@@ -114,8 +118,10 @@ test.describe("lesson TOC stays pinned throughout long-page scrolling (short des
     });
 
     test("given entries exceed the available TOC height, the entry list scrolls independently without moving the heading", async ({ page }) => {
-        const scroller = page.locator("[data-lesson-toc-scroll]");
-        const tocTitle = page.locator("[data-lesson-toc]").getByText("En esta página", { exact: true });
+        const scroller = page.locator(".lesson-toc-rail [data-lesson-toc-scroll]");
+        const tocTitle = page.locator(".lesson-toc-rail [data-lesson-toc]").getByText("En esta página", {
+            exact: true,
+        });
 
         await page.locator("#h2-stability").scrollIntoViewIfNeeded();
         await page.waitForTimeout(100);
@@ -140,8 +146,8 @@ test.describe("manual TOC-list scrolling is independent of the document viewport
     });
 
     test("scrolling the TOC list does not move window.scrollY, and the TOC shell stays pinned once article scrolling resumes", async ({ page }) => {
-        const scroller = page.locator("[data-lesson-toc-scroll]");
-        const tocNav = page.locator("[data-lesson-toc]");
+        const scroller = page.locator(".lesson-toc-rail [data-lesson-toc-scroll]");
+        const tocNav = page.locator(".lesson-toc-rail [data-lesson-toc]");
 
         await page.locator("#h2-stability").scrollIntoViewIfNeeded();
         await page.waitForTimeout(100);

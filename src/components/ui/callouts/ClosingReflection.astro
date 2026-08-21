@@ -1,12 +1,13 @@
 ---
 /**
- * A themed, accessible callout/admonition block for lesson summaries.
+ * Transitional callout used at the end of a lesson to connect its synthesis with the next
+ * question or lesson.
  */
 import CalloutShell from "./CalloutShell.astro";
 import { calloutVariants } from "./shared";
 import type { BaseCalloutProps } from "./shared";
 
-const variant = "abstract" as const;
+const variant = "closing-reflection" as const;
 const variantConfig = calloutVariants[variant];
 
 const { title = variantConfig.title, icon = variantConfig.icon, compact = true, ...rest } = Astro.props as
@@ -14,6 +15,7 @@ const { title = variantConfig.title, icon = variantConfig.icon, compact = true, 
     & Record<string, any>;
 const hasTitleSlot = Astro.slots.has("title");
 ---
+
 <CalloutShell
     {variant} {title}
     {icon} {compact}

@@ -1,7 +1,10 @@
 :root {
-    --abstract__bg-color: #fdf6ec;
-    --abstract__border-color: #f6ad55;
-    --abstract__title-color: #c05621;
+    --abstract__bg-color: #f5f3ff;
+    --abstract__border-color: #8b5cf6;
+    --abstract__title-color: #5b21b6;
+    --closing-reflection__bg-color: #f5f3ff;
+    --closing-reflection__border-color: #8b5cf6;
+    --closing-reflection__title-color: #5b21b6;
     --definition__bg-color: #f8fafc;
     --definition__border-color: #0ea5e9;
     --definition__title-color: #0369a1;
@@ -44,9 +47,12 @@
 }
 
 :root.dark {
-    --abstract__bg-color: #2b1a11;
-    --abstract__border-color: #f6ad55;
-    --abstract__title-color: #fbd38d;
+    --abstract__bg-color: #211b32;
+    --abstract__border-color: #c4b5fd;
+    --abstract__title-color: #ddd6fe;
+    --closing-reflection__bg-color: #211b32;
+    --closing-reflection__border-color: #c4b5fd;
+    --closing-reflection__title-color: #ddd6fe;
     --definition__bg-color: #0f172a;
     --definition__border-color: #38bdf8;
     --definition__title-color: #7dd3fc;
@@ -92,6 +98,10 @@
     --color-abstract-bg: var(--abstract__bg-color);
     --color-abstract-border: var(--abstract__border-color);
     --color-abstract-title: var(--abstract__title-color);
+
+    --color-closing-reflection-bg: var(--closing-reflection__bg-color);
+    --color-closing-reflection-border: var(--closing-reflection__border-color);
+    --color-closing-reflection-title: var(--closing-reflection__title-color);
 
     --color-definition-bg: var(--definition__bg-color);
     --color-definition-border: var(--definition__border-color);

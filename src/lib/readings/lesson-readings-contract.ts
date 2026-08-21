@@ -2,7 +2,9 @@ import type { BibliographyCatalog, NormalizedReference } from "~/lib/bibliograph
 
 export type ReferenceId = string & { readonly __referenceId: unique symbol };
 
+export type ReadingRole = "Base conceptual" | "Sistemas de construcción" | "Profundización";
 export type ReadingType = "Conceptual" | "Aplicada" | "Fuente primaria" | "Referencia técnica";
+export type ReadingFormat = "Libro" | "Artículo de investigación" | "Página web" | "Video" | "Tesis";
 export type ReadingDifficulty = "Introductoria" | "Intermedia" | "Avanzada";
 export type ReadingExtent = "Corta" | "Media" | "Secciones seleccionadas";
 
@@ -42,7 +44,9 @@ export type ResolvedLessonReadingsSection = Readonly<{
 }>;
 
 export type LessonReadingGuide = Readonly<{
-    type: ReadingType;
+    /** Legacy taxonomy retained for reading pages that have not adopted lesson roles yet. */
+    type?: ReadingType;
+    role?: ReadingRole;
     difficulty: ReadingDifficulty;
     extent: ReadingExtent;
     why: string;
@@ -50,6 +54,21 @@ export type LessonReadingGuide = Readonly<{
     afterReading: string;
     guidingQuestion?: string;
 }>;
+
+export function readingFormat(referenceType: NormalizedReference["type"]): ReadingFormat {
+    switch (referenceType) {
+        case "Book":
+            return "Libro";
+        case "ScholarlyArticle":
+            return "Artículo de investigación";
+        case "WebPage":
+            return "Página web";
+        case "VideoObject":
+            return "Video";
+        case "Thesis":
+            return "Tesis";
+    }
+}
 
 export type LessonReadingsResolution =
     | Readonly<

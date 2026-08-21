@@ -33,7 +33,7 @@ export default defineConfig({
             name: "chromium",
             use: {
                 ...devices["Desktop Chrome"],
-                // The lesson TOC panel (`.lesson-toc`) only renders at >=1440px
+                // The lesson TOC rail (`.lesson-toc-rail`) renders at >=1280px
                 // (`src/layouts/NotesLayout.astro`); below that it's `display: none`. The default
                 // "Desktop Chrome" viewport (1280x720) would make every assertion in these specs
                 // vacuously trivial (zero-size rects) instead of exercising real layout. This is the

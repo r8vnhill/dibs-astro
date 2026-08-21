@@ -12,7 +12,6 @@
 import type { CourseNavigationLesson } from "$presentation/adapters/course-navigation";
 import { resolveAutoNav } from "$presentation/adapters/navigation-bridge";
 import { describe, expect, it, suite, test } from "vitest";
-import { courseStructure } from "~/data/course-structure";
 
 /**
  * Estructura de curso simplificada para testing.
@@ -132,11 +131,9 @@ suite("given the production task-graph sequence", () => {
     test("then the conceptual and Gradle lessons point to each other", async () => {
         const conceptual = await resolveAutoNav(
             "/notes/scripting/task-graphs/",
-            courseStructure,
         );
         const selected = await resolveAutoNav(
             "/notes/scripting/selected-task-graphs/",
-            courseStructure,
         );
 
         expect(conceptual.next).toEqual({

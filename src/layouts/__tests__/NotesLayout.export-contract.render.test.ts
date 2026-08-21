@@ -62,7 +62,7 @@ describe("NotesLayout export contract", () => {
             body.textContent?.indexOf("Export body content.") ?? -1,
         );
         expect(body.querySelector("[data-testid='lesson-sidebar-panel']")).toBeNull();
-        expect(body.querySelector("nav[aria-label='Siguiente o anterior lección']")).toBeNull();
+        expect(body.querySelector("nav[aria-label='Navegación entre lecciones']")).toBeNull();
     });
 
     test("marks lesson metadata as export-relevant without exposing infrastructure fields", async () => {
@@ -94,7 +94,7 @@ describe("NotesLayout export contract", () => {
         expect(repoPanel.closest(EXPORT_HIDDEN_SELECTOR)).toBeNull();
     });
 
-    test("preserves document and body markers when optional metadata is missing", async () => {
+    test("preserves document and body markers when provenance metadata is missing", async () => {
         const html = await renderNotes(
             { title: "Unknown export lesson" },
             { pathname: "/notes/not-in-metadata/" },
@@ -103,7 +103,9 @@ describe("NotesLayout export contract", () => {
 
         expect(doc.querySelectorAll(EXPORT_DOCUMENT_SELECTOR)).toHaveLength(1);
         expect(doc.querySelectorAll(EXPORT_BODY_SELECTOR)).toHaveLength(1);
-        expect(doc.querySelector(EXPORT_METADATA_SELECTOR)).toBeNull();
+        expect(doc.querySelector(EXPORT_METADATA_SELECTOR)).not.toBeNull();
+        expect(doc.querySelector(EXPORT_METADATA_SELECTOR)?.querySelector("[data-reading-time]")).not.toBeNull();
+        expect(doc.querySelector(EXPORT_METADATA_SELECTOR)?.querySelector("[data-testid='authors-value']")).toBeNull();
     });
 
     test("marks browser-only chrome as outside the export contract", async () => {
@@ -124,7 +126,7 @@ describe("NotesLayout export contract", () => {
         expect(hiddenRegions.length).toBeGreaterThanOrEqual(3);
         expect(hiddenRegions.some((region) => region.querySelector("[data-testid='lesson-sidebar-panel']"))).toBe(true);
         expect(
-            hiddenRegions.some((region) => region.matches("nav[aria-label='Siguiente o anterior lección']")),
+            hiddenRegions.some((region) => region.matches("nav[aria-label='Navegación entre lecciones']")),
         ).toBe(true);
     });
 
