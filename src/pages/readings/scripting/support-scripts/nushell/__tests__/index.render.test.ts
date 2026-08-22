@@ -22,10 +22,10 @@ suite("given the Nushell support-scripts readings catalog", () => {
         expect(html).toContain("Empieza aquí");
         expect(html).toContain("Entender la idea");
         expect(html).toContain("Si quieres profundizar");
+        expect(html).toContain("Qué leer");
         expect(html).toContain("Qué buscar");
-        expect(html).toContain("Idea que deberías llevarte");
-        expect(html).not.toContain("Por qué leerlo");
-        expect(html).not.toContain("Extensión");
+        expect(html).toContain("Comprueba tu comprensión");
+        expect(html).not.toContain("Después de leer");
         expect(html).not.toContain("Notional machines and introductory programming education");
     });
 });

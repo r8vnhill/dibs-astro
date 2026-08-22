@@ -49,10 +49,12 @@ export type LessonReadingGuide = Readonly<{
     role?: ReadingRole;
     difficulty: ReadingDifficulty;
     extent: ReadingExtent;
+    /** The exact chapter, section, or part the student should read. */
+    whatToRead: string;
     why: string;
     focus: string;
-    afterReading: string;
-    guidingQuestion?: string;
+    /** A single question the student should be able to answer after the reading described above. */
+    guidingQuestion: string;
 }>;
 
 export function readingFormat(referenceType: NormalizedReference["type"]): ReadingFormat {

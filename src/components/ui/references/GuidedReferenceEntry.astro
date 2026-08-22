@@ -7,15 +7,11 @@ import ReferenceEntry from "./ReferenceEntry.astro";
 interface Props {
     reference: NormalizedReference;
     reading: LessonReadingGuideModel;
-    presentation?: "full" | "student";
 }
 
-const { reference, reading, presentation = "full" } = Astro.props;
+const { reference, reading } = Astro.props;
 ---
 
 <ReferenceEntry {reference} preparedSlots={{}}>
-    <Fragment slot="editorial"><LessonReadingGuide
-            {reference} guide={reading}
-            {presentation}
-        /></Fragment>
+    <Fragment slot="editorial"><LessonReadingGuide {reference} guide={reading} /></Fragment>
 </ReferenceEntry>

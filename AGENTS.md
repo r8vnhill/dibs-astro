@@ -28,6 +28,9 @@ Context and essential rules for agents collaborating in this repository.
 - Educational content, user documentation, and visible UI messages are in Spanish.
 - Variable names, function names, and code comments follow the technical English of the ecosystem.
 - Do not edit educational content without checking its immediate pedagogical context.
+- Never reference `traceability-log` entries, or plan milestones/phases/cycles, from source code, comments, tests, or
+  other durable documentation in this repository. That tracking content changes independently and goes stale fast, so
+  citing it creates a maintenance liability.
 
 ## Project Shape
 

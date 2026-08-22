@@ -41,12 +41,12 @@ interface Props {
     /**
      * Parsed lesson metadata for the current page.
      */
-    metadata?: LessonMetaPanelMetadata;
+    metadata?: LessonMetaPanelMetadata | undefined;
 
     /**
      * Compact reading-time estimate shown alongside the lesson provenance metadata.
      */
-    readingTimeMinutes?: number;
+    readingTimeMinutes?: number | undefined;
 
     /**
      * Optional override for repository references used to build commit links.

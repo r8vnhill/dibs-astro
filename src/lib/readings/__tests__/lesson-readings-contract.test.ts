@@ -17,9 +17,10 @@ const guide = {
     type: "Conceptual",
     difficulty: "Introductoria",
     extent: "Corta",
+    whatToRead: "what",
     why: "why",
     focus: "focus",
-    afterReading: "after",
+    guidingQuestion: "question",
 } as const;
 
 suite("given lesson reading identities", () => {

@@ -67,6 +67,16 @@ suite("given the native ToDo component", () => {
                 "dibs:placeholder",
             );
         });
+
+        test("then it reserves an image region with the unavailable-image fallback before hydration", async () => {
+            const html = await render({});
+            const doc = parseHtml(html);
+
+            const imageRegion = doc.querySelector("[data-todo-image]");
+            expect(imageRegion).not.toBeNull();
+            expect(imageRegion?.querySelector("img")).toBeNull();
+            expect(imageRegion?.textContent).toContain("Imagen no disponible");
+        });
     });
 
     describe("when a custom message and altText are provided", () => {

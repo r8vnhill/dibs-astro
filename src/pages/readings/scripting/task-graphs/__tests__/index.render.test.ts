@@ -67,8 +67,10 @@ suite("given the task-graphs readings catalog", () => {
         expect(html).toContain("Rol en esta lección");
         expect(html).not.toContain("Tipo");
         expect(html).not.toContain("Fuente primaria");
-        expect(html).toContain("En qué enfocarse");
-        expect(html).toContain("Después de leer");
+        expect(html).toContain("Qué leer");
+        expect(html).toContain("Qué buscar");
+        expect(html).toContain("Comprueba tu comprensión");
+        expect(html).not.toContain("Después de leer");
         expect(doc.querySelector("#ref-build-systems-a-la-carte-2018")?.textContent).toContain(
             "Andrey Mokhov, Neil Mitchell y Simon Peyton Jones",
         );

@@ -60,10 +60,7 @@ const sectionTitles = new Map([
                     <ul class="mt-6 space-y-5">
                         {
                             readings.map((reading) => (
-                                <GuidedReferenceEntry
-                                    reference={reading.reference} reading={reading.guide}
-                                    presentation="student"
-                                />
+                                <GuidedReferenceEntry reference={reading.reference} reading={reading.guide} />
                             ))
                         }
                     </ul>

@@ -1,0 +1,80 @@
+---
+/**
+ * @fileoverview Browser fixture for the {@link ToDo} component.
+ *
+ * Playwright loads this page at `/dev-fixtures/todo/` to exercise behavior that requires a real browser lifecycle and
+ * is therefore outside the scope of server-render tests.
+ *
+ * The fixture covers:
+ *
+ * - custom-element initialization after connection to the document;
+ * - placeholder-image selection and rendering;
+ * - independent initialization of multiple `<ToDo />` instances;
+ * - `CustomEvent` dispatch, custom event names, and event metadata;
+ * - `reportEventName={null}`, where image initialization still occurs but no report event is dispatched.
+ *
+ * Scenario contract
+ * -----------------
+ *
+ * The three `data-fixture-instance` values are stable, test-facing identifiers:
+ *
+ * - `default` --- default message, image pool, and `dibs:placeholder` event;
+ * - `custom-event` --- custom message, alt text, metadata, and event name;
+ * - `disabled-report` --- image initialization with reporting disabled.
+ *
+ * Treat this fixture and `tests/e2e/todo-placeholder.spec.ts` as one browser-test contract. When adding a distinct
+ * browser scenario, add a descriptively named instance here and its corresponding assertions in the Playwright
+ * specification. Do not overload an existing scenario with unrelated behavior.
+ *
+ * Use `data-fixture-instance` to scope a scenario. Within that scope, prefer user-facing Playwright locators when
+ * the rendered semantics provide an appropriate locator.
+ *
+ * Repository boundary
+ * -------------------
+ *
+ * Keep this page outside `src/pages/notes/**`. It is test infrastructure rather than course content, so it must not
+ * participate in lesson discovery, lesson metadata generation, or curricular navigation.
+ *
+ * Keep `<meta name="robots" content="noindex" />` as a secondary safeguard for deployed previews. It does not replace
+ * the repository boundary above or make this route part of the public lesson surface.
+ *
+ * @see tests/e2e/todo-placeholder.spec.ts
+ */
+
+import ToDo from "~/components/utils/ToDo.astro";
+import "~/styles/global.css";
+---
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex" />
+        <title>ToDo fixture</title>
+    </head>
+    <body>
+        <main class="p-8 flex flex-col gap-8">
+            <div data-fixture-instance="default">
+                <ToDo />
+            </div>
+
+            <div data-fixture-instance="custom-event">
+                <ToDo
+                    message="Mensaje personalizado"
+                    altText="Meme personalizado"
+                    reportEventName="dibs:placeholder-fixture-custom"
+                    metadata={{ instance: "custom-event" }}
+                />
+            </div>
+
+            <div data-fixture-instance="disabled-report">
+                <ToDo
+                    message="Reporte deshabilitado"
+                    reportEventName={null}
+                    metadata={{ instance: "disabled-report" }}
+                />
+            </div>
+        </main>
+    </body>
+</html>
