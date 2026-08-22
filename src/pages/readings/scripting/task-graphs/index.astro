@@ -23,14 +23,34 @@ const { sections } = resolution.value;
         <aside class="mt-8 rounded-lg border border-base-border bg-base-surface p-5" aria-labelledby="route-heading">
             <h2 id="route-heading" class="text-xl font-semibold">Cómo usar estas lecturas</h2>
             <p class="mt-3">
-                Comienza por las referencias sobre grafos dirigidos y órdenes topológicos. Después, usa las lecturas
-                sobre diseño de sistemas de construcción para ampliar la idea de dependencias y razonar sobre corrección
-                y paralelismo.
+                Para seguir la lección, basta con la primera lectura seleccionada. Las demás son rutas opcionales para
+                conectar la teoría con sistemas de construcción o profundizar en aspectos concretos.
             </p>
-            <p class="mt-3">
-                No necesitas leer todo de una vez. Cada entrada indica qué buscar y qué idea conviene llevarse a la
-                lección.
-            </p>
+            <ol class="mt-4 list-decimal space-y-3 pl-5">
+                <li>
+                    <strong>Para esta lección:</strong> lee
+                    <a href="#ref-introduction-to-algorithms-2022">Cormen et al.</a> (2022), capítulo 20, §§20.1 y 20.4,
+                    para repasar grafos dirigidos, DAGs y órdenes topológicos.
+                </li>
+                <li>
+                    <strong>Si quieres conectar la teoría con sistemas de construcción:</strong> consulta la
+                    introducción de <a href="#ref-build-systems-a-la-carte-2018">Mokhov et al.</a> (2018) y observa cómo
+                    el resultado solicitado determina las dependencias que un planificador debe ordenar.
+                </li>
+                <li>
+                    <strong>Para profundizar:</strong> elige una extensión según tu interés:
+                    <ul class="mt-2 list-disc space-y-1 pl-5">
+                        <li>
+                            <a href="#ref-mathematics-for-computer-science-2018">Lehman et al.</a> (2018), §§10.5–10.8,
+                            para explorar órdenes parciales.
+                        </li>
+                        <li>
+                            <a href="#ref-build-scripts-perfect-dependencies-2020">Spall et al.</a> (2020), para
+                            profundizar en la corrección de las dependencias.
+                        </li>
+                    </ul>
+                </li>
+            </ol>
         </aside>
 
         {

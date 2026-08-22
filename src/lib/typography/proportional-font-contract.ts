@@ -1,8 +1,10 @@
 /**
- * Candidate-independent conformance requirements for the future proportional DIBS font.
+ * Candidate-independent conformance requirements for the DIBS proportional typography system.
  *
  * This module describes observable requirements without coupling them to a font family, CSS
- * feature, OpenType table, or browser implementation.
+ * feature, OpenType table, or browser implementation. The canonical ligature/Spanish corpus has
+ * exactly one identity here; body and heading roles each declare which parts of that corpus and
+ * which additional role-specific requirements they must satisfy, instead of duplicating it.
  */
 
 export type LigatureCategory = "common" | "technical";
@@ -22,13 +24,38 @@ export type TypographyState = Readonly<{
 
 export type ConformanceEvidence = "static-metadata" | "browser" | "visual-review" | "license-review";
 
-export type ConformanceRequirement = Readonly<{
+export type TypographyRole = "body" | "heading";
+
+export type RoleRequirement = Readonly<{
     id:
         | "proportional-metrics"
-        | "long-form-readability"
-        | "source-preservation"
         | "spanish-coverage"
+        | "common-ligatures"
+        | "technical-ligatures"
         | "native-styles"
+        | "long-form-readability"
+        | "ui-readability"
+        | "genuine-italic"
+        | "source-preservation"
+        | "heading-readability"
+        | "distinction-from-body"
+        | "heading-wrapping";
+    description: string;
+    evidence: readonly ConformanceEvidence[];
+}>;
+
+export type TypographyRoleProfile = Readonly<{
+    role: TypographyRole;
+    states: readonly TypographyState[];
+    requirements: readonly RoleRequirement[];
+}>;
+
+export type PairRequirement = Readonly<{
+    id:
+        | "distinct-family"
+        | "clear-hierarchy"
+        | "visual-coherence"
+        | "layout-compatibility"
         | "license-compatible-delivery";
     description: string;
     evidence: readonly ConformanceEvidence[];
@@ -38,8 +65,11 @@ export type ProportionalTypographyContract = Readonly<{
     ligatures: readonly LigatureCase[];
     spanishCoverage: readonly string[];
     specimenText: readonly string[];
-    states: readonly TypographyState[];
-    requirements: readonly ConformanceRequirement[];
+    roles: Readonly<{
+        body: TypographyRoleProfile;
+        heading: TypographyRoleProfile;
+    }>;
+    pairRequirements: readonly PairRequirement[];
 }>;
 
 const commonLigatures = [
@@ -61,7 +91,8 @@ const technicalLigatures = [
     { id: "technical-bidirectional", source: "<->", category: "technical" },
 ] as const satisfies readonly LigatureCase[];
 
-const requiredStates = [
+/** All five states remain required for body pending the weight audit in Phase 2. */
+const bodyStates = [
     { weight: 400, style: "normal" },
     { weight: 400, style: "italic" },
     { weight: 500, style: "normal" },
@@ -69,38 +100,138 @@ const requiredStates = [
     { weight: 700, style: "normal" },
 ] as const satisfies readonly TypographyState[];
 
-const conformanceRequirements = [
+/**
+ * Headings currently render at a single native weight/style in production (see the global
+ * `h1`-`h6` rule). No italic heading use case has been identified, so italic is intentionally
+ * excluded here rather than required speculatively. Subject to revision by the Phase 2 audit.
+ */
+const headingStates = [
+    { weight: 600, style: "normal" },
+] as const satisfies readonly TypographyState[];
+
+const bodyRequirements = [
     {
         id: "proportional-metrics",
-        description: "The family uses proportional metrics rather than fixed-width metrics.",
+        description: "The body family uses proportional metrics rather than fixed-width metrics.",
         evidence: ["browser", "visual-review"],
     },
     {
+        id: "spanish-coverage",
+        description: "The body family itself supplies the required Spanish and Latin characters.",
+        evidence: ["static-metadata", "browser"],
+    },
+    {
+        id: "common-ligatures",
+        description: "The body family shapes every canonical common ligature sequence in upright and italic prose.",
+        evidence: ["browser", "visual-review"],
+    },
+    {
+        id: "technical-ligatures",
+        description: "The body family shapes every canonical technical ligature sequence embedded in prose.",
+        evidence: ["browser", "visual-review"],
+    },
+    {
+        id: "native-styles",
+        description:
+            "Required body weights and styles are genuine font instances or variable-axis positions, never a browser-synthesized approximation.",
+        evidence: ["static-metadata", "browser"],
+    },
+    {
         id: "long-form-readability",
-        description: "The family remains suitable for extended university-level lesson prose.",
+        description: "The body family remains suitable for extended university-level lesson prose.",
         evidence: ["visual-review"],
+    },
+    {
+        id: "ui-readability",
+        description: "The body family remains legible at ordinary UI sizes such as labels and metadata.",
+        evidence: ["visual-review"],
+    },
+    {
+        id: "genuine-italic",
+        description: "The body family provides a genuine italic style, not a browser-obliqued synthesis.",
+        evidence: ["static-metadata", "visual-review"],
     },
     {
         id: "source-preservation",
         description: "Ligatures are presentation only; DOM, selection, and copied text preserve the source string.",
         evidence: ["browser"],
     },
+] as const satisfies readonly RoleRequirement[];
+
+const headingRequirements = [
+    {
+        id: "proportional-metrics",
+        description: "The heading family uses proportional metrics rather than fixed-width metrics.",
+        evidence: ["browser", "visual-review"],
+    },
     {
         id: "spanish-coverage",
-        description: "The selected family itself supplies the required Spanish and Latin characters.",
+        description: "The heading family itself supplies the required Spanish and Latin characters.",
         evidence: ["static-metadata", "browser"],
+    },
+    {
+        id: "common-ligatures",
+        description: "The heading family shapes every canonical common ligature sequence at display sizes.",
+        evidence: ["browser", "visual-review"],
+    },
+    {
+        id: "technical-ligatures",
+        description: "The heading family shapes every canonical technical ligature sequence at display sizes.",
+        evidence: ["browser", "visual-review"],
     },
     {
         id: "native-styles",
-        description: "Required weights and styles are genuine font instances or variable-axis positions.",
+        description:
+            "Required heading weights and styles are genuine font instances or variable-axis positions, never a browser-synthesized approximation.",
         evidence: ["static-metadata", "browser"],
     },
     {
+        id: "heading-readability",
+        description: "The heading family remains legible and retains its personality across H1-H4 sizes.",
+        evidence: ["visual-review"],
+    },
+    {
+        id: "distinction-from-body",
+        description: "The heading family is immediately distinguishable from the body family in rendered prose.",
+        evidence: ["visual-review"],
+    },
+    {
+        id: "heading-wrapping",
+        description: "Long Spanish headings wrap acceptably within DIBS layout widths, including constrained regions.",
+        evidence: ["browser", "visual-review"],
+    },
+] as const satisfies readonly RoleRequirement[];
+
+const pairRequirements = [
+    {
+        id: "distinct-family",
+        description:
+            "The body family and heading family are genuinely distinct typefaces, even if they belong to the same larger type system.",
+        evidence: ["static-metadata"],
+    },
+    {
+        id: "clear-hierarchy",
+        description: "The pair produces an immediately visible distinction between headings and body prose.",
+        evidence: ["visual-review"],
+    },
+    {
+        id: "visual-coherence",
+        description: "The body and heading families read as one coherent type system rather than two unrelated choices.",
+        evidence: ["visual-review"],
+    },
+    {
+        id: "layout-compatibility",
+        description:
+            "The pair does not regress existing DIBS layout surfaces, such as navigation, TOC, or the reading column.",
+        evidence: ["browser", "visual-review"],
+    },
+    {
         id: "license-compatible-delivery",
-        description: "The production delivery model permits reproducible webfont use in the repository and site.",
+        description:
+            "The production delivery model for both selected families permits reproducible webfont use in the repository and site.",
         evidence: ["license-review"],
     },
-] as const satisfies readonly ConformanceRequirement[];
+] as const satisfies readonly PairRequirement[];
 
 export const proportionalFontContract = {
     ligatures: [...commonLigatures, ...technicalLigatures],
@@ -133,6 +264,17 @@ export const proportionalFontContract = {
         "En el diagrama, A -> B; result != null; x <= limit; input => output.",
         "La relación A <-> B también puede expresarse con <-, >=, == y ===.",
     ],
-    states: requiredStates,
-    requirements: conformanceRequirements,
+    roles: {
+        body: {
+            role: "body",
+            states: bodyStates,
+            requirements: bodyRequirements,
+        },
+        heading: {
+            role: "heading",
+            states: headingStates,
+            requirements: headingRequirements,
+        },
+    },
+    pairRequirements,
 } as const satisfies ProportionalTypographyContract;

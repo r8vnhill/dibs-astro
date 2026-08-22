@@ -79,4 +79,23 @@ suite("given the task-graphs readings catalog", () => {
         );
         expect(doc.querySelectorAll("[id^=\"ref-\"]")).toHaveLength(4);
     });
+
+    test("then its introduction presents one recommended reading and optional paths", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
+        const html = await renderPage({}, {
+            request: new Request("https://dibs.ravenhill.cl/readings/scripting/task-graphs/"),
+        });
+        const doc = new JSDOM(html).window.document;
+        const routeGuide = doc.querySelector("#route-heading")?.parentElement;
+
+        expect(routeGuide).not.toBeNull();
+        expect(routeGuide?.textContent).toContain("basta con la primera lectura seleccionada");
+        expect(routeGuide?.textContent).toContain("Para esta lección");
+        expect(routeGuide?.textContent).toContain("Si quieres conectar la teoría con sistemas de construcción");
+        expect(routeGuide?.textContent).toContain("Para profundizar");
+        expect(routeGuide?.querySelector("a[href=\"#ref-introduction-to-algorithms-2022\"]")).not.toBeNull();
+        expect(routeGuide?.querySelector("a[href=\"#ref-build-systems-a-la-carte-2018\"]")).not.toBeNull();
+        expect(routeGuide?.querySelector("a[href=\"#ref-mathematics-for-computer-science-2018\"]")).not.toBeNull();
+        expect(routeGuide?.querySelector("a[href=\"#ref-build-scripts-perfect-dependencies-2020\"]")).not.toBeNull();
+    });
 });

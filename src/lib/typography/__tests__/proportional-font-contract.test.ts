@@ -29,7 +29,7 @@ const expectedSpanishCoverage = [
     "»",
 ] as const;
 
-const expectedStates = [
+const expectedBodyStates = [
     { weight: 400, style: "normal" },
     { weight: 400, style: "italic" },
     { weight: 500, style: "normal" },
@@ -37,12 +37,38 @@ const expectedStates = [
     { weight: 700, style: "normal" },
 ] as const;
 
-const expectedRequirements = [
+const expectedHeadingStates = [
+    { weight: 600, style: "normal" },
+] as const;
+
+const expectedBodyRequirements = [
     "proportional-metrics",
-    "long-form-readability",
-    "source-preservation",
     "spanish-coverage",
+    "common-ligatures",
+    "technical-ligatures",
     "native-styles",
+    "long-form-readability",
+    "ui-readability",
+    "genuine-italic",
+    "source-preservation",
+] as const;
+
+const expectedHeadingRequirements = [
+    "proportional-metrics",
+    "spanish-coverage",
+    "common-ligatures",
+    "technical-ligatures",
+    "native-styles",
+    "heading-readability",
+    "distinction-from-body",
+    "heading-wrapping",
+] as const;
+
+const expectedPairRequirements = [
+    "distinct-family",
+    "clear-hierarchy",
+    "visual-coherence",
+    "layout-compatibility",
     "license-compatible-delivery",
 ] as const;
 
@@ -84,19 +110,63 @@ suite("given the proportional typography conformance contract", () => {
         expect(specimen).toContain("«útil»");
     });
 
-    test("then required typography states are explicit and unique", () => {
-        expect(proportionalFontContract.states).toEqual(expectedStates);
+    suite("given the body role profile", () => {
+        test("then it declares the required typography states, explicit and unique", () => {
+            expect(proportionalFontContract.roles.body.states).toEqual(expectedBodyStates);
 
-        const stateKeys = proportionalFontContract.states.map(({ weight, style }) => `${weight}-${style}`);
-        expect(new Set(stateKeys).size).toBe(stateKeys.length);
+            const stateKeys = proportionalFontContract.roles.body.states.map(({ weight, style }) => `${weight}-${style}`);
+            expect(new Set(stateKeys).size).toBe(stateKeys.length);
+        });
+
+        test("then it retains every Milestone 1 requirement plus source preservation and genuine italic", () => {
+            expect(proportionalFontContract.roles.body.requirements.map(({ id }) => id)).toEqual(
+                expectedBodyRequirements,
+            );
+
+            for (const requirement of proportionalFontContract.roles.body.requirements) {
+                expect(requirement.description.length).toBeGreaterThan(0);
+                expect(requirement.evidence.length).toBeGreaterThan(0);
+            }
+        });
     });
 
-    test("then conformance requirements identify their evidence mechanism", () => {
-        expect(proportionalFontContract.requirements.map(({ id }) => id)).toEqual(expectedRequirements);
+    suite("given the heading role profile", () => {
+        test("then it declares a single native, upright weight state pending the Phase 2 weight audit", () => {
+            expect(proportionalFontContract.roles.heading.states).toEqual(expectedHeadingStates);
+        });
 
-        for (const requirement of proportionalFontContract.requirements) {
-            expect(requirement.description.length).toBeGreaterThan(0);
-            expect(requirement.evidence.length).toBeGreaterThan(0);
-        }
+        test("then it does not require italic or source preservation, unlike the body profile", () => {
+            const ids = proportionalFontContract.roles.heading.requirements.map(({ id }) => id);
+
+            expect(ids).toEqual(expectedHeadingRequirements);
+            expect(ids).not.toContain("genuine-italic");
+            expect(ids).not.toContain("source-preservation");
+        });
+
+        test("then every requirement identifies its evidence mechanism", () => {
+            for (const requirement of proportionalFontContract.roles.heading.requirements) {
+                expect(requirement.description.length).toBeGreaterThan(0);
+                expect(requirement.evidence.length).toBeGreaterThan(0);
+            }
+        });
+    });
+
+    suite("given the pair requirements", () => {
+        test("then they identify their evidence mechanism", () => {
+            expect(proportionalFontContract.pairRequirements.map(({ id }) => id)).toEqual(expectedPairRequirements);
+
+            for (const requirement of proportionalFontContract.pairRequirements) {
+                expect(requirement.description.length).toBeGreaterThan(0);
+                expect(requirement.evidence.length).toBeGreaterThan(0);
+            }
+        });
+
+        test("then distinct-family makes the body-family-differs-from-heading-family invariant explicit", () => {
+            const distinctFamily = proportionalFontContract.pairRequirements.find(
+                (requirement) => requirement.id === "distinct-family",
+            );
+
+            expect(distinctFamily).toBeDefined();
+        });
     });
 });
