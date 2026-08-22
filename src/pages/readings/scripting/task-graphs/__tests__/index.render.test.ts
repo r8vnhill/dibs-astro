@@ -60,9 +60,9 @@ suite("given the task-graphs readings catalog", () => {
 
         expect(doc.querySelector("a[href=\"/notes/scripting/task-graphs/\"]")).not.toBeNull();
         expect(doc.querySelectorAll("section[aria-labelledby]")).toHaveLength(3);
-        expect(html).toContain("Lecturas esenciales");
-        expect(html).toContain("De la idea a la práctica");
-        expect(html).toContain("Para profundizar");
+        expect(html).toContain("Para acompañar la lección");
+        expect(html).toContain("Para conectar con sistemas de construcción");
+        expect(html).toContain("Si quieres profundizar");
         expect(html).toContain("Formato");
         expect(html).toContain("Rol en esta lección");
         expect(html).not.toContain("Tipo");

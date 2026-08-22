@@ -45,7 +45,34 @@ suite("given a lesson readings configuration", () => {
         const result = resolveLessonReadings(configuration, catalog);
 
         expect(result.ok).toBe(true);
-        if (result.ok) expect(result.value.sections[0]?.readings).toHaveLength(1);
+        if (result.ok) {
+            expect(result.value.sections.map((section) => section.title)).toEqual([
+                "Lecturas esenciales",
+                "De la idea a la práctica",
+                "Para profundizar",
+            ]);
+            expect(result.value.sections[0]?.readings).toHaveLength(1);
+        }
+    });
+
+    test.each([
+        [
+            {
+                essential: "Para acompañar la lección",
+                practice: "Para conectar con sistemas de construcción",
+                deeper: "Si quieres profundizar",
+            },
+            ["Para acompañar la lección", "Para conectar con sistemas de construcción", "Si quieres profundizar"],
+        ],
+        [
+            { essential: "Lectura principal" },
+            ["Lectura principal", "De la idea a la práctica", "Para profundizar"],
+        ],
+    ])("then resolves configured section headings over the defaults", (sectionHeadings, expectedTitles) => {
+        const result = resolveLessonReadings({ ...configuration, sectionHeadings }, catalog);
+
+        expect(result.ok).toBe(true);
+        if (result.ok) expect(result.value.sections.map((section) => section.title)).toEqual(expectedTitles);
     });
 
     test("then aggregates missing and duplicate entries without partial success", () => {

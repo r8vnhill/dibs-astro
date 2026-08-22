@@ -1,4 +1,5 @@
 import type {
+    LessonReadingSectionHeadings,
     ReadingDifficulty,
     ReadingExtent,
     ReadingRole,
@@ -24,11 +25,17 @@ export type LessonReadings = Readonly<{
     essential: readonly LessonReading[];
     practice: readonly LessonReading[];
     deeper: readonly LessonReading[];
+    sectionHeadings?: LessonReadingSectionHeadings;
 }>;
 
 export const taskGraphsReadings: LessonReadings = {
     lessonPath: "/notes/scripting/task-graphs/",
     title: "Dependencias y grafos de tareas",
+    sectionHeadings: {
+        essential: "Para acompañar la lección",
+        practice: "Para conectar con sistemas de construcción",
+        deeper: "Si quieres profundizar",
+    },
     essential: [
         {
             referenceId: "introduction-to-algorithms-2022",

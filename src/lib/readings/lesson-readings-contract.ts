@@ -7,6 +7,8 @@ export type ReadingType = "Conceptual" | "Aplicada" | "Fuente primaria" | "Refer
 export type ReadingFormat = "Libro" | "Artículo de investigación" | "Página web" | "Video" | "Tesis";
 export type ReadingDifficulty = "Introductoria" | "Intermedia" | "Avanzada";
 export type ReadingExtent = "Corta" | "Media" | "Secciones seleccionadas";
+export type LessonReadingSectionKey = "essential" | "practice" | "deeper";
+export type LessonReadingSectionHeadings = Readonly<Partial<Record<LessonReadingSectionKey, string>>>;
 
 export type LessonReadingDiagnostic =
     | {
@@ -90,6 +92,12 @@ export type LessonReadingsResolution =
 
 const REFERENCE_PREFIX = "ref:";
 
+const defaultSectionHeadings = {
+    essential: "Lecturas esenciales",
+    practice: "De la idea a la práctica",
+    deeper: "Para profundizar",
+} as const;
+
 export function normalizeReferenceId(value: string): ReferenceId {
     const trimmed = value.trim();
     const canonical = trimmed.startsWith(REFERENCE_PREFIX) ? trimmed.slice(REFERENCE_PREFIX.length) : trimmed;
@@ -107,73 +115,101 @@ export function lessonReadingsRoute(lessonPath: string): string {
     return normalized.replace(/^\/notes\//u, "/readings/");
 }
 
+type ConfiguredReading = LessonReadingGuide & { readonly referenceId: string };
+
+export type LessonReadingsConfiguration = Readonly<{
+    lessonPath: string;
+    title: string;
+    essential: readonly ConfiguredReading[];
+    practice: readonly ConfiguredReading[];
+    deeper: readonly ConfiguredReading[];
+    sectionHeadings?: LessonReadingSectionHeadings;
+}>;
+
+type UnresolvedSection = Readonly<{ id: string; title: string; readings: readonly ConfiguredReading[] }>;
+
+function buildSections(configuration: LessonReadingsConfiguration): readonly UnresolvedSection[] {
+    const headings = { ...defaultSectionHeadings, ...configuration.sectionHeadings };
+    return [
+        { id: "essential-heading", title: headings.essential, readings: configuration.essential },
+        { id: "practice-heading", title: headings.practice, readings: configuration.practice },
+        { id: "deeper-heading", title: headings.deeper, readings: configuration.deeper },
+    ];
+}
+
+function resolveReading(
+    lessonPath: string,
+    section: UnresolvedSection,
+    reading: ConfiguredReading,
+    catalog: BibliographyCatalog,
+    seen: Set<string>,
+    diagnostics: LessonReadingDiagnostic[],
+): ResolvedLessonReading | undefined {
+    let canonicalId: ReferenceId;
+    try {
+        canonicalId = normalizeReferenceId(reading.referenceId);
+    } catch {
+        diagnostics.push({
+            code: "invalid-reference-id",
+            lessonPath,
+            section: section.title,
+            configuredId: reading.referenceId,
+        });
+        return undefined;
+    }
+
+    if (seen.has(canonicalId)) {
+        diagnostics.push({
+            code: "duplicate-reference",
+            lessonPath,
+            section: section.title,
+            configuredId: reading.referenceId,
+            canonicalId,
+        });
+        return undefined;
+    }
+    seen.add(canonicalId);
+
+    const reference = catalog.referencesById.get(canonicalId);
+    if (!reference) {
+        diagnostics.push({
+            code: "missing-reference",
+            lessonPath,
+            section: section.title,
+            configuredId: reading.referenceId,
+            canonicalId,
+        });
+        return undefined;
+    }
+
+    return { referenceId: canonicalId, reference, guide: reading, anchorId: `ref-${canonicalId.slice(4)}` };
+}
+
+function resolveSection(
+    lessonPath: string,
+    section: UnresolvedSection,
+    catalog: BibliographyCatalog,
+    seen: Set<string>,
+    diagnostics: LessonReadingDiagnostic[],
+): ResolvedLessonReadingsSection {
+    const readings: ResolvedLessonReading[] = [];
+    for (const reading of section.readings) {
+        const resolved = resolveReading(lessonPath, section, reading, catalog, seen, diagnostics);
+        if (resolved) readings.push(resolved);
+    }
+    return { id: section.id, title: section.title, readings };
+}
+
 export function resolveLessonReadings(
-    configuration: {
-        readonly lessonPath: string;
-        readonly title: string;
-        readonly essential: readonly (LessonReadingGuide & { readonly referenceId: string })[];
-        readonly practice: readonly (LessonReadingGuide & { readonly referenceId: string })[];
-        readonly deeper: readonly (LessonReadingGuide & { readonly referenceId: string })[];
-    },
+    configuration: LessonReadingsConfiguration,
     catalog: BibliographyCatalog,
 ): LessonReadingsResolution {
     const diagnostics: LessonReadingDiagnostic[] = [];
     const seen = new Set<string>();
-    const sections = [
-        { id: "essential-heading", title: "Lecturas esenciales", readings: configuration.essential },
-        { id: "practice-heading", title: "De la idea a la práctica", readings: configuration.practice },
-        { id: "deeper-heading", title: "Para profundizar", readings: configuration.deeper },
-    ] as const;
-
-    const resolvedSections = sections.map((section) => {
-        const readings: ResolvedLessonReading[] = [];
-        for (const reading of section.readings) {
-            let canonicalId: ReferenceId;
-            try {
-                canonicalId = normalizeReferenceId(reading.referenceId);
-            } catch {
-                diagnostics.push({
-                    code: "invalid-reference-id",
-                    lessonPath: configuration.lessonPath,
-                    section: section.title,
-                    configuredId: reading.referenceId,
-                });
-                continue;
-            }
-
-            if (seen.has(canonicalId)) {
-                diagnostics.push({
-                    code: "duplicate-reference",
-                    lessonPath: configuration.lessonPath,
-                    section: section.title,
-                    configuredId: reading.referenceId,
-                    canonicalId,
-                });
-                continue;
-            }
-            seen.add(canonicalId);
-
-            const reference = catalog.referencesById.get(canonicalId);
-            if (!reference) {
-                diagnostics.push({
-                    code: "missing-reference",
-                    lessonPath: configuration.lessonPath,
-                    section: section.title,
-                    configuredId: reading.referenceId,
-                    canonicalId,
-                });
-                continue;
-            }
-
-            readings.push({
-                referenceId: canonicalId,
-                reference,
-                guide: reading,
-                anchorId: `ref-${canonicalId.slice(4)}`,
-            });
-        }
-        return { ...section, readings };
-    });
+    const sections = buildSections(configuration);
+    const resolvedSections = sections.map((section) =>
+        resolveSection(configuration.lessonPath, section, catalog, seen, diagnostics)
+    );
 
     if (diagnostics.length > 0) return { ok: false, diagnostics };
     return {
@@ -187,8 +223,8 @@ export function resolveLessonReadings(
     };
 }
 
-export function formatLessonReadingsDiagnostics(diagnostics: readonly LessonReadingDiagnostic[]): string {
-    return diagnostics
+export const formatLessonReadingsDiagnostics = (diagnostics: readonly LessonReadingDiagnostic[]): string =>
+    diagnostics
         .map((diagnostic) => {
             if (diagnostic.code === "invalid-reference-id") {
                 return `Invalid bibliography reference ID — ${diagnostic.section}: ${diagnostic.configuredId}`;
@@ -199,4 +235,3 @@ export function formatLessonReadingsDiagnostics(diagnostics: readonly LessonRead
                 : `Duplicate catalog reference — ${detail}`;
         })
         .join("\n");
-}
