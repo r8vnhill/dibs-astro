@@ -15,7 +15,7 @@ export type LigatureCase = Readonly<{
     category: LigatureCategory;
 }>;
 
-export type TypographyWeight = 400 | 500 | 600 | 700;
+export type TypographyWeight = 400 | 500 | 700;
 
 export type TypographyState = Readonly<{
     weight: TypographyWeight;
@@ -28,7 +28,8 @@ export type TypographyRole = "body" | "heading";
 
 export type RoleRequirement = Readonly<{
     id:
-        | "proportional-metrics"
+        | "non-monospaced-reading-metrics"
+        | "zero-cost-production"
         | "spanish-coverage"
         | "common-ligatures"
         | "technical-ligatures"
@@ -91,35 +92,69 @@ const technicalLigatures = [
     { id: "technical-bidirectional", source: "<->", category: "technical" },
 ] as const satisfies readonly LigatureCase[];
 
-/** All five states remain required for body pending the weight audit in Phase 2. */
+/**
+ * The audit found no independent semantic requirement for a native 600 state. Strong emphasis can use 700 while
+ * ordinary UI emphasis uses 500, so the candidate must provide only these future body states.
+ */
 const bodyStates = [
     { weight: 400, style: "normal" },
     { weight: 400, style: "italic" },
     { weight: 500, style: "normal" },
-    { weight: 600, style: "normal" },
     { weight: 700, style: "normal" },
 ] as const satisfies readonly TypographyState[];
 
 /**
- * Headings currently render at a single native weight/style in production (see the global
- * `h1`-`h6` rule). No italic heading use case has been identified, so italic is intentionally
- * excluded here rather than required speculatively. Subject to revision by the Phase 2 audit.
+ * The future heading profile uses medium and bold as distinct native hierarchy states. Production still renders its
+ * existing Inter/Space Grotesk stack and global 600 rule.
  */
 const headingStates = [
-    { weight: 600, style: "normal" },
+    { weight: 500, style: "normal" },
+    { weight: 700, style: "normal" },
 ] as const satisfies readonly TypographyState[];
 
-const bodyRequirements = [
-    {
-        id: "proportional-metrics",
-        description: "The body family uses proportional metrics rather than fixed-width metrics.",
+type SharedRequirementId =
+    | "non-monospaced-reading-metrics"
+    | "zero-cost-production"
+    | "spanish-coverage"
+    | "native-styles";
+
+const sharedRequirementTemplates: Record<
+    SharedRequirementId,
+    Readonly<{ describe: (roleLabel: string) => string; evidence: readonly ConformanceEvidence[] }>
+> = {
+    "non-monospaced-reading-metrics": {
+        describe: (roleLabel) =>
+            `The ${roleLabel} family does not impose fixed-width cells on ordinary prose and produces a reading`
+            + " texture suitable for lesson text.",
         evidence: ["browser", "visual-review"],
     },
-    {
-        id: "spanish-coverage",
-        description: "The body family itself supplies the required Spanish and Latin characters.",
+    "zero-cost-production": {
+        describe: (roleLabel) =>
+            `The ${roleLabel} family permits development, deployment, web embedding, and required redistribution`
+            + " without license fees; evaluation-only or development-only licenses do not satisfy this requirement.",
+        evidence: ["license-review"],
+    },
+    "spanish-coverage": {
+        describe: (roleLabel) => `The ${roleLabel} family itself supplies the required Spanish and Latin characters.`,
         evidence: ["static-metadata", "browser"],
     },
+    "native-styles": {
+        describe: (roleLabel) =>
+            `Required ${roleLabel} weights and styles are genuine font instances or variable-axis positions, never`
+            + " a browser-synthesized approximation.",
+        evidence: ["static-metadata", "browser"],
+    },
+};
+
+function sharedRequirement(id: SharedRequirementId, roleLabel: string): RoleRequirement {
+    const template = sharedRequirementTemplates[id];
+    return { id, description: template.describe(roleLabel), evidence: template.evidence };
+}
+
+const bodyRequirements = [
+    sharedRequirement("non-monospaced-reading-metrics", "body"),
+    sharedRequirement("zero-cost-production", "body"),
+    sharedRequirement("spanish-coverage", "body"),
     {
         id: "common-ligatures",
         description: "The body family shapes every canonical common ligature sequence in upright and italic prose.",
@@ -130,12 +165,7 @@ const bodyRequirements = [
         description: "The body family shapes every canonical technical ligature sequence embedded in prose.",
         evidence: ["browser", "visual-review"],
     },
-    {
-        id: "native-styles",
-        description:
-            "Required body weights and styles are genuine font instances or variable-axis positions, never a browser-synthesized approximation.",
-        evidence: ["static-metadata", "browser"],
-    },
+    sharedRequirement("native-styles", "body"),
     {
         id: "long-form-readability",
         description: "The body family remains suitable for extended university-level lesson prose.",
@@ -159,16 +189,9 @@ const bodyRequirements = [
 ] as const satisfies readonly RoleRequirement[];
 
 const headingRequirements = [
-    {
-        id: "proportional-metrics",
-        description: "The heading family uses proportional metrics rather than fixed-width metrics.",
-        evidence: ["browser", "visual-review"],
-    },
-    {
-        id: "spanish-coverage",
-        description: "The heading family itself supplies the required Spanish and Latin characters.",
-        evidence: ["static-metadata", "browser"],
-    },
+    sharedRequirement("non-monospaced-reading-metrics", "heading"),
+    sharedRequirement("zero-cost-production", "heading"),
+    sharedRequirement("spanish-coverage", "heading"),
     {
         id: "common-ligatures",
         description: "The heading family shapes every canonical common ligature sequence at display sizes.",
@@ -179,12 +202,7 @@ const headingRequirements = [
         description: "The heading family shapes every canonical technical ligature sequence at display sizes.",
         evidence: ["browser", "visual-review"],
     },
-    {
-        id: "native-styles",
-        description:
-            "Required heading weights and styles are genuine font instances or variable-axis positions, never a browser-synthesized approximation.",
-        evidence: ["static-metadata", "browser"],
-    },
+    sharedRequirement("native-styles", "heading"),
     {
         id: "heading-readability",
         description: "The heading family remains legible and retains its personality across H1-H4 sizes.",
@@ -206,7 +224,8 @@ const pairRequirements = [
     {
         id: "distinct-family",
         description:
-            "The body family and heading family are genuinely distinct typefaces, even if they belong to the same larger type system.",
+            "The body family and heading family are genuinely distinct typefaces, even if they belong to the"
+            + " same larger type system.",
         evidence: ["static-metadata"],
     },
     {
@@ -216,7 +235,8 @@ const pairRequirements = [
     },
     {
         id: "visual-coherence",
-        description: "The body and heading families read as one coherent type system rather than two unrelated choices.",
+        description:
+            "The body and heading families read as one coherent type system rather than two unrelated choices.",
         evidence: ["visual-review"],
     },
     {
@@ -228,7 +248,8 @@ const pairRequirements = [
     {
         id: "license-compatible-delivery",
         description:
-            "The production delivery model for both selected families permits reproducible webfont use in the repository and site.",
+            "The production delivery model for both selected families permits reproducible webfont use in the"
+            + " repository and site.",
         evidence: ["license-review"],
     },
 ] as const satisfies readonly PairRequirement[];
@@ -260,7 +281,8 @@ export const proportionalFontContract = {
     specimenText: [
         "La afinidad entre un flujo flexible y una configuración difícil de leer merece una explicación clara.",
         "El texto puede incluir palabras como offline sin perder legibilidad en una lectura extensa.",
-        "¿Álvaro explicó la configuración? ¡Sí! La solución requiere precisión, inclusión y revisión: «útil».",
+        "¿Álvaro explicó la configuración? ¡Sí! La solución requiere precisión, inclusión y revisión:"
+            + " «útil».",
         "En el diagrama, A -> B; result != null; x <= limit; input => output.",
         "La relación A <-> B también puede expresarse con <-, >=, == y ===.",
     ],

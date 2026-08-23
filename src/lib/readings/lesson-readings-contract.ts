@@ -57,7 +57,14 @@ export type LessonReadingGuide = Readonly<{
     focus: string;
     /** A single question the student should be able to answer after the reading described above. */
     guidingQuestion: string;
+    /**
+     * Short student-facing statement describing the specific extension
+     * this reading offers within its broader lesson role.
+     */
+    purpose?: string;
 }>;
+
+export type ConfiguredLessonReading = Readonly<LessonReadingGuide & { referenceId: string }>;
 
 export function readingFormat(referenceType: NormalizedReference["type"]): ReadingFormat {
     switch (referenceType) {
@@ -115,18 +122,16 @@ export function lessonReadingsRoute(lessonPath: string): string {
     return normalized.replace(/^\/notes\//u, "/readings/");
 }
 
-type ConfiguredReading = LessonReadingGuide & { readonly referenceId: string };
-
 export type LessonReadingsConfiguration = Readonly<{
     lessonPath: string;
     title: string;
-    essential: readonly ConfiguredReading[];
-    practice: readonly ConfiguredReading[];
-    deeper: readonly ConfiguredReading[];
+    essential: readonly ConfiguredLessonReading[];
+    practice: readonly ConfiguredLessonReading[];
+    deeper: readonly ConfiguredLessonReading[];
     sectionHeadings?: LessonReadingSectionHeadings;
 }>;
 
-type UnresolvedSection = Readonly<{ id: string; title: string; readings: readonly ConfiguredReading[] }>;
+type UnresolvedSection = Readonly<{ id: string; title: string; readings: readonly ConfiguredLessonReading[] }>;
 
 function buildSections(configuration: LessonReadingsConfiguration): readonly UnresolvedSection[] {
     const headings = { ...defaultSectionHeadings, ...configuration.sectionHeadings };
@@ -140,7 +145,7 @@ function buildSections(configuration: LessonReadingsConfiguration): readonly Unr
 function resolveReading(
     lessonPath: string,
     section: UnresolvedSection,
-    reading: ConfiguredReading,
+    reading: ConfiguredLessonReading,
     catalog: BibliographyCatalog,
     seen: Set<string>,
     diagnostics: LessonReadingDiagnostic[],

@@ -91,6 +91,27 @@ suite("given a lesson readings configuration", () => {
         }
     });
 
+    test("then retains an optional purpose unchanged", () => {
+        const result = resolveLessonReadings({
+            ...configuration,
+            essential: [{ ...guide, purpose: "Profundiza en órdenes parciales" }],
+        }, catalog);
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.value.sections[0]?.readings[0]?.guide.purpose).toBe("Profundiza en órdenes parciales");
+        }
+    });
+
+    test("then leaves purpose absent when not configured", () => {
+        const result = resolveLessonReadings(configuration, catalog);
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.value.sections[0]?.readings[0]?.guide.purpose).toBeUndefined();
+        }
+    });
+
     test("then reports malformed IDs without querying or branding them", () => {
         const result = resolveLessonReadings({
             ...configuration,

@@ -33,16 +33,17 @@ const expectedBodyStates = [
     { weight: 400, style: "normal" },
     { weight: 400, style: "italic" },
     { weight: 500, style: "normal" },
-    { weight: 600, style: "normal" },
     { weight: 700, style: "normal" },
 ] as const;
 
 const expectedHeadingStates = [
-    { weight: 600, style: "normal" },
+    { weight: 500, style: "normal" },
+    { weight: 700, style: "normal" },
 ] as const;
 
 const expectedBodyRequirements = [
-    "proportional-metrics",
+    "non-monospaced-reading-metrics",
+    "zero-cost-production",
     "spanish-coverage",
     "common-ligatures",
     "technical-ligatures",
@@ -54,7 +55,8 @@ const expectedBodyRequirements = [
 ] as const;
 
 const expectedHeadingRequirements = [
-    "proportional-metrics",
+    "non-monospaced-reading-metrics",
+    "zero-cost-production",
     "spanish-coverage",
     "common-ligatures",
     "technical-ligatures",
@@ -111,14 +113,17 @@ suite("given the proportional typography conformance contract", () => {
     });
 
     suite("given the body role profile", () => {
-        test("then it declares the required typography states, explicit and unique", () => {
+        test("then it declares the audited native typography states, explicit and unique", () => {
             expect(proportionalFontContract.roles.body.states).toEqual(expectedBodyStates);
+            expect(proportionalFontContract.roles.body.states.map(({ weight }) => weight)).not.toContain(600);
 
-            const stateKeys = proportionalFontContract.roles.body.states.map(({ weight, style }) => `${weight}-${style}`);
+            const stateKeys = proportionalFontContract.roles.body.states.map(({ weight, style }) =>
+                `${weight}-${style}`
+            );
             expect(new Set(stateKeys).size).toBe(stateKeys.length);
         });
 
-        test("then it retains every Milestone 1 requirement plus source preservation and genuine italic", () => {
+        test("then it retains every body requirement plus source preservation and genuine italic", () => {
             expect(proportionalFontContract.roles.body.requirements.map(({ id }) => id)).toEqual(
                 expectedBodyRequirements,
             );
@@ -131,8 +136,9 @@ suite("given the proportional typography conformance contract", () => {
     });
 
     suite("given the heading role profile", () => {
-        test("then it declares a single native, upright weight state pending the Phase 2 weight audit", () => {
+        test("then it declares the audited native, upright hierarchy states", () => {
             expect(proportionalFontContract.roles.heading.states).toEqual(expectedHeadingStates);
+            expect(proportionalFontContract.roles.heading.states.map(({ weight }) => weight)).not.toContain(600);
         });
 
         test("then it does not require italic or source preservation, unlike the body profile", () => {
