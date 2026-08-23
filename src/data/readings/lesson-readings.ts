@@ -39,8 +39,7 @@ export const taskGraphsReadings: LessonReadings = {
             whatToRead: "Capítulo 20, §§20.1 y 20.4.",
             why: "Presenta el vocabulario de grafos dirigidos y la relación entre DAGs y órdenes topológicos.",
             focus: "Cómo se representan los grafos dirigidos y por qué un DAG admite un orden topológico.",
-            guidingQuestion:
-                "¿Por qué la ausencia de ciclos permite ordenar los nodos respetando la dirección de las aristas?",
+            guidingQuestion: "¿Por qué un grafo con un ciclo dirigido no puede tener un orden topológico?",
         },
     ],
     practice: [
@@ -53,8 +52,8 @@ export const taskGraphsReadings: LessonReadings = {
             focus: "Cómo el resultado solicitado determina un grafo acíclico de dependencias alcanzables y cómo ese"
                 + " grafo puede ordenarse topológicamente.",
             guidingQuestion:
-                "Si solicitamos un resultado concreto, ¿qué dependencias necesita considerar un planificador"
-                + " topológico antes de ordenar el trabajo?",
+                "Si solicitamos una tarea concreta, ¿por qué un planificador no necesita considerar necesariamente"
+                + " todas las tareas conocidas?",
         },
     ],
     deeper: [
@@ -67,8 +66,7 @@ export const taskGraphsReadings: LessonReadings = {
             why: "Conecta el scheduling de DAGs con órdenes parciales, elementos incomparables y linealizaciones.",
             focus: "Distingue las restricciones parciales de una secuencia lineal que las respeta.",
             guidingQuestion:
-                "¿Qué diferencia hay entre que dos tareas no tengan una arista directa y que no exista un camino"
-                + " entre ellas en ningún sentido?",
+                "¿Qué significa que dos tareas sean incomparables y qué libertad deja eso al planificador?",
         },
         {
             referenceId: "build-scripts-perfect-dependencies-2020",
@@ -80,7 +78,7 @@ export const taskGraphsReadings: LessonReadings = {
                 + " de un build.",
             focus: "La relación entre dependencias declaradas, resultados correctos y trabajo innecesario.",
             guidingQuestion:
-                "¿Qué puede salir mal si una dependencia real falta del grafo o si se agrega una que no existe?",
+                "¿Qué consecuencias distintas pueden tener una dependencia que falta y una dependencia innecesaria?",
         },
     ],
 };

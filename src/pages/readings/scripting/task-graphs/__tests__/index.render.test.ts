@@ -1,3 +1,9 @@
+/**
+ * Contract and render tests for the task-graphs lesson's readings page (`../index.astro`): the grouping of
+ * `~/data/readings/lesson-readings.ts`'s `taskGraphsReadings` into guided-path sections, its editorial
+ * taxonomy (format/role/author order), and the rendered page itself (intro, sections, and each reading's
+ * retrieval-task question — see `LessonReadingGuide.render.test.ts` for that block's shared markup contract).
+ */
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
 import { JSDOM } from "jsdom";
@@ -7,15 +13,28 @@ import { referenceAnchor } from "~/lib/references/reference-links";
 import { createAstroRenderer } from "../../../../../test-utils/astro-render";
 import ReadingsPage from "../index.astro";
 
+const readingsPageUrl = "https://dibs.ravenhill.cl/readings/scripting/task-graphs/";
+
+// Every test below needs a successful resolution; a failed one is a fixture/contract bug, not a
+// per-test case to assert on, so it fails loudly here instead of repeating an ok-check per test.
+function resolveTaskGraphsReadings() {
+    const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
+    if (!resolution.ok) {
+        throw new Error(`expected task-graphs readings to resolve, got: ${JSON.stringify(resolution)}`);
+    }
+    return resolution.value;
+}
+
+async function renderReadingsPageDocument() {
+    const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
+    const html = await renderPage({}, { request: new Request(readingsPageUrl) });
+    return new JSDOM(html).window.document;
+}
+
 suite("given the task-graphs readings catalog", () => {
     test("then every configured reference resolves to one declared section and anchor", () => {
-        const configuration = getTaskGraphsReadings();
-        const resolution = resolveLessonReadings(configuration, getDefaultBibliographyCatalog());
+        const readings = resolveTaskGraphsReadings().sections.flatMap((section) => section.readings);
 
-        expect(resolution.ok).toBe(true);
-        if (!resolution.ok) return;
-
-        const readings = resolution.value.sections.flatMap((section) => section.readings);
         expect(readings).toHaveLength(4);
         expect(new Set(readings.map((reading) => reading.referenceId)).size).toBe(readings.length);
         expect(new Set(readings.map((reading) => reading.anchorId)).size).toBe(readings.length);
@@ -25,13 +44,10 @@ suite("given the task-graphs readings catalog", () => {
     });
 
     test("then it groups readings into the guided-path sections rather than the shared defaults", () => {
-        const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
-
-        expect(resolution.ok).toBe(true);
-        if (!resolution.ok) return;
+        const { sections } = resolveTaskGraphsReadings();
 
         expect(
-            resolution.value.sections.map((section) => ({
+            sections.map((section) => ({
                 title: section.title,
                 references: section.readings.map((reading) => reading.referenceId),
             })),
@@ -53,13 +69,13 @@ suite("given the task-graphs readings catalog", () => {
             },
         ]);
 
-        const deeperSection = resolution.value.sections.find((section) => section.title === "Si quieres profundizar");
+        const deeperSection = sections.find((section) => section.title === "Si quieres profundizar");
         expect(deeperSection?.readings.map((reading) => reading.guide.purpose)).toEqual([
             "Profundiza en órdenes parciales",
             "Profundiza en la corrección de las dependencias",
         ]);
 
-        const readings = resolution.value.sections.flatMap((section) => section.readings);
+        const readings = sections.flatMap((section) => section.readings);
         const mokhov = readings.find((reading) => reading.referenceId === "ref:build-systems-a-la-carte-2018");
         expect(mokhov?.guide.whatToRead).toBe("§4.1.1, “Topological”.");
         expect(mokhov?.guide.why).toContain("planificador");
@@ -67,12 +83,8 @@ suite("given the task-graphs readings catalog", () => {
     });
 
     test("then its taxonomy separates canonical format from the lesson role", () => {
-        const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
+        const readings = resolveTaskGraphsReadings().sections.flatMap((section) => section.readings);
 
-        expect(resolution.ok).toBe(true);
-        if (!resolution.ok) return;
-
-        const readings = resolution.value.sections.flatMap((section) => section.readings);
         expect(readings.map((reading) => reading.guide.role)).toEqual([
             "Base conceptual",
             "Sistemas de construcción",
@@ -94,11 +106,8 @@ suite("given the task-graphs readings catalog", () => {
     });
 
     test("then it renders all three reading sections with guidance and a lesson backlink", async () => {
-        const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
-        const html = await renderPage({}, {
-            request: new Request("https://dibs.ravenhill.cl/readings/scripting/task-graphs/"),
-        });
-        const doc = new JSDOM(html).window.document;
+        const doc = await renderReadingsPageDocument();
+        const html = doc.documentElement.innerHTML;
 
         expect(doc.querySelector("a[href=\"/notes/scripting/task-graphs/\"]")).not.toBeNull();
         expect(doc.querySelectorAll("section[aria-labelledby]")).toHaveLength(3);
@@ -123,11 +132,7 @@ suite("given the task-graphs readings catalog", () => {
     });
 
     test("then its introduction presents one recommended reading and optional paths", async () => {
-        const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
-        const html = await renderPage({}, {
-            request: new Request("https://dibs.ravenhill.cl/readings/scripting/task-graphs/"),
-        });
-        const doc = new JSDOM(html).window.document;
+        const doc = await renderReadingsPageDocument();
         const routeGuide = doc.querySelector("#route-heading")?.parentElement;
 
         expect(routeGuide).not.toBeNull();
@@ -139,5 +144,30 @@ suite("given the task-graphs readings catalog", () => {
         expect(routeGuide?.querySelector("a[href=\"#ref-build-systems-a-la-carte-2018\"]")).not.toBeNull();
         expect(routeGuide?.querySelector("a[href=\"#ref-mathematics-for-computer-science-2018\"]")).not.toBeNull();
         expect(routeGuide?.querySelector("a[href=\"#ref-build-scripts-perfect-dependencies-2020\"]")).not.toBeNull();
+    });
+
+    test.each([
+        [
+            "introduction-to-algorithms-2022",
+            "¿Por qué un grafo con un ciclo dirigido no puede tener un orden topológico?",
+        ],
+        [
+            "build-systems-a-la-carte-2018",
+            "Si solicitamos una tarea concreta, ¿por qué un planificador no necesita considerar necesariamente"
+            + " todas las tareas conocidas?",
+        ],
+        [
+            "mathematics-for-computer-science-2018",
+            "¿Qué significa que dos tareas sean incomparables y qué libertad deja eso al planificador?",
+        ],
+        [
+            "build-scripts-perfect-dependencies-2020",
+            "¿Qué consecuencias distintas pueden tener una dependencia que falta y una dependencia innecesaria?",
+        ],
+    ])("then %s renders its approved retrieval-task question", (referenceId, expectedQuestion) => {
+        const readings = resolveTaskGraphsReadings().sections.flatMap((section) => section.readings);
+        const reading = readings.find((candidate) => candidate.referenceId === `ref:${referenceId}`);
+
+        expect(reading?.guide.guidingQuestion).toBe(expectedQuestion);
     });
 });

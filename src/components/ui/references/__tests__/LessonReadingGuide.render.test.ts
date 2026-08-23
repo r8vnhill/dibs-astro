@@ -1,3 +1,9 @@
+/**
+ * Render tests for `../LessonReadingGuide.astro`, the shared component every lesson readings page uses to
+ * present one reading's editorial guidance. Covers the estimated-effort line and the guiding-question block's
+ * markup contract; see `LessonReadingGuide.astro`'s own doc comment for the fields it renders.
+ */
+import { JSDOM } from "jsdom";
 import { beforeEach, describe, expect, suite, test } from "vitest";
 import type { NormalizedReference } from "~/lib/bibliography";
 import type { LessonReadingGuide as LessonReadingGuideModel } from "~/lib/readings/lesson-readings-contract";
@@ -37,6 +43,17 @@ const videoReference = {
 
 let render: AstroRender<Props>;
 
+// Shared by both suites below so each test states only the guide/reference it actually varies,
+// instead of repeating the render-then-parse boilerplate.
+async function renderHtml(guide: LessonReadingGuideModel, reference: NormalizedReference = bookReference) {
+    return render({ guide, reference });
+}
+
+async function renderGuideDocument(guide: LessonReadingGuideModel = baseGuide) {
+    const html = await renderHtml(guide);
+    return new JSDOM(html).window.document;
+}
+
 describe.concurrent("LessonReadingGuide.astro render", () => {
     beforeEach(async () => {
         render = await createAstroRenderer<Props>(LessonReadingGuide);
@@ -44,43 +61,74 @@ describe.concurrent("LessonReadingGuide.astro render", () => {
 
     suite("given the effort field", () => {
         test("then a reading without effort evidence renders Esfuerzo estimado: No disponible", async () => {
-            const html = await render({ guide: baseGuide, reference: bookReference });
+            const html = await renderHtml(baseGuide);
 
             expect(html).toContain("Esfuerzo estimado: ");
             expect(html).toContain("No disponible");
         });
 
         test("then a reading with a page count renders the page count", async () => {
-            const html = await render({
-                guide: { ...baseGuide, effort: { pageCount: 12 } },
-                reference: bookReference,
-            });
+            const html = await renderHtml({ ...baseGuide, effort: { pageCount: 12 } });
 
             expect(html).toContain("12 páginas");
         });
 
         test("then a reading with only a word count renders an estimated reading time", async () => {
-            const html = await render({
-                guide: { ...baseGuide, effort: { wordCount: 2_000 } },
-                reference: bookReference,
-            });
+            const html = await renderHtml({ ...baseGuide, effort: { wordCount: 2_000 } });
 
             expect(html).toContain("≈ 8 min");
         });
 
         test("then a video reading with a duration renders the compact duration", async () => {
-            const html = await render({
-                guide: { ...baseGuide, effort: { durationMinutes: 75 } },
-                reference: videoReference,
-            });
+            const html = await renderHtml({ ...baseGuide, effort: { durationMinutes: 75 } }, videoReference);
 
             expect(html).toContain("~ 1h15m");
         });
 
         test("then Extensión no longer appears on the rendered guide", async () => {
-            const html = await render({ guide: baseGuide, reference: bookReference });
+            const html = await renderHtml(baseGuide);
 
             expect(html).not.toContain("Extensión");
+        });
+    });
+
+    // The guiding question renders outside the descriptive `<dl>`, in its own
+    // `[data-reading-guide-question]` block (see LessonReadingGuide.astro), so it reads as a distinct
+    // retrieval task rather than one more descriptive field. These tests pin that observable structure —
+    // not its styling — so the exact visual treatment stays free to change.
+    suite("given the guiding question", () => {
+        test("then Qué leer, Por qué, and Qué buscar remain inside the descriptive dl", async () => {
+            const doc = await renderGuideDocument();
+            const dl = doc.querySelector("dl");
+
+            expect(dl).not.toBeNull();
+            expect(dl?.textContent).toContain("Qué leer");
+            expect(dl?.textContent).toContain("Por qué");
+            expect(dl?.textContent).toContain("Qué buscar");
+        });
+
+        test("then the question is no longer a dt/dd entry inside the dl", async () => {
+            const doc = await renderGuideDocument();
+            const dl = doc.querySelector("dl");
+
+            expect(dl?.textContent).not.toContain("Comprueba tu comprensión");
+            expect(doc.querySelectorAll("dt, dd").length).toBe(dl?.querySelectorAll("dt, dd").length);
+        });
+
+        test("then the question renders inside a dedicated data-reading-guide-question block", async () => {
+            const doc = await renderGuideDocument();
+            const block = doc.querySelector("[data-reading-guide-question]");
+
+            expect(block).not.toBeNull();
+            expect(block?.textContent).toContain("Comprueba tu comprensión");
+            expect(block?.textContent).toContain(baseGuide.guidingQuestion);
+        });
+
+        test("then the retrieval-task block introduces no heading level", async () => {
+            const doc = await renderGuideDocument();
+            const block = doc.querySelector("[data-reading-guide-question]");
+
+            expect(block?.querySelector("h1, h2, h3, h4, h5, h6")).toBeNull();
         });
     });
 });
