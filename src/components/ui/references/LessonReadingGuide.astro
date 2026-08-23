@@ -1,9 +1,20 @@
 ---
+/**
+ * Renders the editorial guidance for a single lesson reading: what to read, why, what to focus on, the guiding
+ * question, and a compact metadata line (format, role/type, difficulty, estimated effort).
+ *
+ * `guide` is the lesson-specific `LessonReadingGuide` authored in `src/data/readings/lesson-readings.ts`;
+ * `reference` is the resolved bibliography entry it points to (see `~/lib/bibliography`). Both are required
+ * because several fields — the reading format label and the estimated effort — depend on the reference's type
+ * (e.g. only a `VideoObject` reference treats `guide.effort.durationMinutes` as duration evidence).
+ */
 import type { NormalizedReference } from "~/lib/bibliography";
 import {
     type LessonReadingGuide as LessonReadingGuideModel,
     readingFormat,
 } from "~/lib/readings/lesson-readings-contract";
+import { resolveReadingEffort } from "~/lib/readings/reading-effort";
+import { formatReadingEffort } from "./format-reading-effort";
 
 interface Props {
     guide: LessonReadingGuideModel;
@@ -12,20 +23,25 @@ interface Props {
 
 const { guide, reference } = Astro.props;
 const format = readingFormat(reference.type);
+const effort = formatReadingEffort(resolveReadingEffort(guide, reference.type));
 
 type SecondaryField = { label: string; value: string };
 
+// `role` (the current lesson-role taxonomy) takes precedence over the legacy `type` field; a guide with
+// neither omits this field entirely rather than rendering an empty one.
 const roleField: SecondaryField | null = guide.role
     ? { label: "Rol en esta lección", value: guide.role }
     : guide.type
     ? { label: "Tipo", value: guide.type }
     : null;
 
+// Rendered below as a single "·"-joined line (e.g. "Intermedia · ≈ 15 min · Libro") rather than separate
+// dt/dd rows, since these are secondary, at-a-glance metadata compared to the guidance above.
 const secondaryFields: SecondaryField[] = [
     { label: "Formato", value: format },
     roleField,
     { label: "Dificultad", value: guide.difficulty },
-    { label: "Extensión", value: guide.extent },
+    { label: "Esfuerzo estimado", value: effort },
 ].filter((field): field is SecondaryField => field !== null);
 ---
 

@@ -16,7 +16,6 @@ const guide = {
     referenceId: "known",
     type: "Conceptual",
     difficulty: "Introductoria",
-    extent: "Corta",
     whatToRead: "what",
     why: "why",
     focus: "focus",
@@ -128,6 +127,56 @@ suite("given a lesson readings configuration", () => {
                     configuredId: "not valid",
                 },
             ]);
+        }
+    });
+
+    test.each([
+        ["a zero page count", { pageCount: 0 }],
+        ["a negative page count", { pageCount: -3 }],
+        ["a fractional word count", { wordCount: 12.5 }],
+        ["a NaN word count", { wordCount: Number.NaN }],
+        ["an infinite duration", { durationMinutes: Number.POSITIVE_INFINITY }],
+    ])("then rejects %s as invalid effort evidence", (_name, effort) => {
+        const result = resolveLessonReadings({
+            ...configuration,
+            essential: [{ ...guide, effort }],
+        }, catalog);
+
+        expect(result).toMatchObject({ ok: false });
+        if (!result.ok) {
+            expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toEqual(["invalid-effort-evidence"]);
+        }
+    });
+
+    test("then rejects duration metadata on a non-video reading", () => {
+        const result = resolveLessonReadings({
+            ...configuration,
+            essential: [{ ...guide, effort: { durationMinutes: 8 } }],
+        }, catalog);
+
+        expect(result).toMatchObject({ ok: false });
+        if (!result.ok) {
+            expect(result.diagnostics).toEqual([
+                {
+                    code: "invalid-effort-evidence",
+                    lessonPath: "/notes/example/",
+                    section: "Lecturas esenciales",
+                    configuredId: "known",
+                    reason: "`durationMinutes` is only valid for a VideoObject reference.",
+                },
+            ]);
+        }
+    });
+
+    test("then accepts a positive whole page count as valid effort evidence", () => {
+        const result = resolveLessonReadings({
+            ...configuration,
+            essential: [{ ...guide, effort: { pageCount: 14 } }],
+        }, catalog);
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+            expect(result.value.sections[0]?.readings[0]?.guide.effort).toEqual({ pageCount: 14 });
         }
     });
 });

@@ -1,6 +1,14 @@
 import { load } from "cheerio";
+import {
+    DEFAULT_WORDS_PER_MINUTE,
+    estimateMinutesFromWordCount,
+} from "~/lib/reading-time/estimate-minutes-from-word-count";
 
-export const DEFAULT_WORDS_PER_MINUTE = 250;
+/**
+ * Re-exported so existing imports of `DEFAULT_WORDS_PER_MINUTE` from this module keep working. The value itself
+ * lives in `~/lib/reading-time`, shared with the lesson-reading effort resolver (`~/lib/readings/reading-effort`).
+ */
+export { DEFAULT_WORDS_PER_MINUTE };
 export const DEFAULT_TIME_MULTIPLIER = 1.5;
 export const READING_TIME_EXCLUDE_SELECTOR = ".exclude-from-reading-time";
 
@@ -100,13 +108,17 @@ export function extractReadableText(html: string): string {
     return fragments.join("").replace(/\s+/g, " ").trim();
 }
 
-/** Estimate minutes using the site's existing word-count and rounding model. */
+/**
+ * Estimate minutes using the site's existing word-count and rounding model. Delegates the raw words → minutes
+ * conversion to {@link estimateMinutesFromWordCount}, then applies a 1-minute floor and the optional multiplier
+ * on top — page reading time should never display "0 min" for a page that has any content.
+ */
 export function estimateReadingTime(
     text: string,
     { wordsPerMinute = DEFAULT_WORDS_PER_MINUTE, timeMultiplier = 1 }: ReadingTimeOptions = {},
 ): ReadingTimeEstimate {
     const words = text.trim().split(/\s+/).filter(Boolean).length;
-    const rawMinutes = Math.max(1, Math.ceil(words / wordsPerMinute));
+    const rawMinutes = Math.max(1, estimateMinutesFromWordCount(words, wordsPerMinute));
     return {
         words,
         minutes: Math.ceil(rawMinutes * timeMultiplier),
