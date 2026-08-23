@@ -1,0 +1,14 @@
+{
+    "buildPlanRevision": null,
+    "commit": "ca3ad8e280e2f0b614a5a7721b047daaf023713d",
+    "license": "OFL-1.1",
+    "licenseUrl": "https://github.com/be5invis/Iosevka/blob/v34.8.0/LICENSE.md",
+    "project": "Iosevka",
+    "sourceArchive": {
+        "sha256": "0bfae2829d6bbbfcf34a59714ffc6c62654a614fb9b051640384129f82267e87",
+        "url": "https://github.com/be5invis/Iosevka/archive/refs/tags/v34.8.0.tar.gz"
+    },
+    "tag": "v34.8.0",
+    "upstreamRepository": "https://github.com/be5invis/Iosevka",
+    "version": "34.8.0"
+}

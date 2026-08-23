@@ -1,0 +1,3 @@
+# DIBS Sans and DIBS Slab build plans are defined against the pinned Iosevka release recorded in
+# upstream.json. This file intentionally has no build plans yet; adding them updates
+# upstream.json's `buildPlanRevision` to match.
