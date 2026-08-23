@@ -1,5 +1,5 @@
 {
-    "buildPlanRevision": null,
+    "buildPlanRevision": "sha256:1c89cdbe3087fc1c570427d75e5b7616093e3c283188508b7dc90ffee8454a39",
     "commit": "ca3ad8e280e2f0b614a5a7721b047daaf023713d",
     "license": "OFL-1.1",
     "licenseUrl": "https://github.com/be5invis/Iosevka/blob/v34.8.0/LICENSE.md",

@@ -1,3 +1,64 @@
-# DIBS Sans and DIBS Slab build plans are defined against the pinned Iosevka release recorded in
-# upstream.json. This file intentionally has no build plans yet; adding them updates
-# upstream.json's `buildPlanRevision` to match.
+# Custom build plans for the two proportional-text candidates. The source release is pinned in
+# upstream.json; keep these plans together so their shared Iosevka design space remains explicit.
+# Plan identifiers are stable tooling inputs; `family` supplies the generated font family name.
+
+# Body/UI candidate: the sans-serif branch of the quasi-proportional design space.
+# Its dimensions cover the body contract's regular, italic, medium, and bold states without oblique slopes.
+[buildPlans.dibs-sans]
+exportGlyphNames = false
+family = "DIBS Sans"
+serifs = "sans"
+spacing = "quasi-proportional"
+webfontFormats = ["WOFF2"]
+
+[buildPlans.dibs-sans.weights.Regular]
+css = 400
+menu = 400
+shape = 400
+
+[buildPlans.dibs-sans.weights.Medium]
+css = 500
+menu = 500
+shape = 500
+
+[buildPlans.dibs-sans.weights.Bold]
+css = 700
+menu = 700
+shape = 700
+
+[buildPlans.dibs-sans.slopes.Upright]
+angle = 0
+css = "normal"
+menu = "upright"
+shape = "upright"
+
+[buildPlans.dibs-sans.slopes.Italic]
+angle = 9.4
+css = "italic"
+menu = "italic"
+shape = "italic"
+
+# Heading candidate: the slab-serif branch of the same quasi-proportional design space.
+# Headings require only medium and bold upright states, so no italic or oblique slope is declared.
+[buildPlans.dibs-slab]
+exportGlyphNames = false
+family = "DIBS Slab"
+serifs = "slab"
+spacing = "quasi-proportional"
+webfontFormats = ["WOFF2"]
+
+[buildPlans.dibs-slab.weights.Medium]
+css = 500
+menu = 500
+shape = 500
+
+[buildPlans.dibs-slab.weights.Bold]
+css = 700
+menu = 700
+shape = 700
+
+[buildPlans.dibs-slab.slopes.Upright]
+angle = 0
+css = "normal"
+menu = "upright"
+shape = "upright"

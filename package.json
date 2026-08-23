@@ -112,6 +112,7 @@
         "shiki": "^4.4.3",
         "shiki-transformer-color-highlight": "^1.1.0",
         "shiki-transformer-copy-button": "^0.0.5",
+        "smol-toml": "^1.8.0",
         "tailwindcss": "^4.3.3",
         "tsup": "^8.5.1",
         "typescript": "^6.0.3",
