@@ -30,6 +30,13 @@ const secondaryFields: SecondaryField[] = [
 ---
 
 <div class="mt-3 text-sm text-base-subtle-text">
+    {
+        guide.purpose && (
+            <p class="mb-3 font-semibold text-base-text">
+                {guide.purpose}
+            </p>
+        )
+    }
     <dl class="space-y-2">
         <div>
             <dt class="font-semibold text-base-text">Qué leer</dt>

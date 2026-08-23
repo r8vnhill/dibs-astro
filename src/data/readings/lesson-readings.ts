@@ -1,23 +1,6 @@
-import type {
-    LessonReadingSectionHeadings,
-    ReadingDifficulty,
-    ReadingExtent,
-    ReadingRole,
-    ReadingType,
-} from "~/lib/readings/lesson-readings-contract";
+import type { ConfiguredLessonReading, LessonReadingSectionHeadings } from "~/lib/readings/lesson-readings-contract";
 
-export type LessonReading = Readonly<{
-    referenceId: string;
-    /** Legacy taxonomy retained until each reading page adopts lesson-specific roles. */
-    type?: ReadingType;
-    role?: ReadingRole;
-    difficulty: ReadingDifficulty;
-    extent: ReadingExtent;
-    whatToRead: string;
-    why: string;
-    focus: string;
-    guidingQuestion: string;
-}>;
+export type LessonReading = ConfiguredLessonReading;
 
 export type LessonReadings = Readonly<{
     lessonPath: string;
@@ -55,31 +38,40 @@ export const taskGraphsReadings: LessonReadings = {
             role: "Sistemas de construcción",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
-            whatToRead: "La introducción.",
-            why: "Compara distintas ideas de diseño de sistemas de construcción y amplía el modelo de tareas y dependencias.",
-            focus: "Qué capacidades puede combinar un sistema de construcción.",
-            guidingQuestion: "¿Qué decisiones del diseño de un build quedan representadas en su grafo?",
+            whatToRead: "§4.1.1, “Topological”.",
+            why: "Conecta el modelo de DAG de la lección con un planificador de un sistema de construcción.",
+            focus:
+                "Cómo el resultado solicitado determina un grafo acíclico de dependencias alcanzables y cómo ese"
+                + " grafo puede ordenarse topológicamente.",
+            guidingQuestion:
+                "Si solicitamos un resultado concreto, ¿qué dependencias necesita considerar un planificador"
+                + " topológico antes de ordenar el trabajo?",
         },
+    ],
+    deeper: [
         {
             referenceId: "mathematics-for-computer-science-2018",
             role: "Profundización",
+            purpose: "Profundiza en órdenes parciales",
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             whatToRead: "Capítulo 10, especialmente §§10.5–10.8.",
             why: "Conecta el scheduling de DAGs con órdenes parciales, elementos incomparables y linealizaciones.",
             focus: "Distingue las restricciones parciales de una secuencia lineal que las respeta.",
             guidingQuestion:
-                "¿Qué diferencia hay entre que dos tareas no tengan una arista directa y que no exista un camino entre ellas en ningún sentido?",
+                "¿Qué diferencia hay entre que dos tareas no tengan una arista directa y que no exista un camino"
+                + " entre ellas en ningún sentido?",
         },
-    ],
-    deeper: [
         {
             referenceId: "build-scripts-perfect-dependencies-2020",
             role: "Profundización",
+            purpose: "Profundiza en la corrección de las dependencias",
             difficulty: "Avanzada",
             extent: "Secciones seleccionadas",
             whatToRead: "Las secciones sobre corrección de dependencias y trabajo innecesario.",
-            why: "Profundiza en cómo dependencias incompletas o excesivas afectan la corrección y el paralelismo de un build.",
+            why:
+                "Profundiza en cómo dependencias incompletas o excesivas afectan la corrección y el paralelismo"
+                + " de un build.",
             focus: "La relación entre dependencias declaradas, resultados correctos y trabajo innecesario.",
             guidingQuestion:
                 "¿Qué puede salir mal si una dependencia real falta del grafo o si se agrega una que no existe?",
@@ -107,7 +99,9 @@ export const selectedTaskGraphsReadings: LessonReadings = {
             difficulty: "Introductoria",
             extent: "Corta",
             whatToRead: "La documentación de la interfaz de línea de comandos (Command-Line Interface), completa.",
-            why: "Documenta la invocación de tareas desde la línea de comandos y las opciones para inspeccionar un build.",
+            why:
+                "Documenta la invocación de tareas desde la línea de comandos y las opciones para inspeccionar"
+                + " un build.",
             focus: "Cómo se relaciona la tarea solicitada en la terminal con el subconjunto del grafo que se prepara.",
             guidingQuestion: "¿Qué evidencia aporta una inspección del grafo antes de ejecutar las tareas?",
         },
@@ -119,10 +113,13 @@ export const selectedTaskGraphsReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             whatToRead: "Las secciones sobre `dependsOn` y la evitación de configuración de tareas.",
-            why: "Explica cómo Gradle sigue las dependencias fuertes entre tareas al construir el conjunto de trabajo requerido.",
+            why:
+                "Explica cómo Gradle sigue las dependencias fuertes entre tareas al construir el conjunto de"
+                + " trabajo requerido.",
             focus: "La relación entre `dependsOn`, el grafo de tareas y el recorrido transitivo de sus dependencias.",
             guidingQuestion:
-                "¿Qué tareas debe considerar Gradle cuando una tarea depende de otra que, a su vez, tiene dependencias?",
+                "¿Qué tareas debe considerar Gradle cuando una tarea depende de otra que, a su vez, tiene"
+                + " dependencias?",
         },
     ],
     deeper: [
@@ -133,7 +130,9 @@ export const selectedTaskGraphsReadings: LessonReadings = {
             extent: "Secciones seleccionadas",
             whatToRead:
                 "Las secciones sobre control de la ejecución de tareas (`dependsOn` y selección de dependencias).",
-            why: "Explica cómo las dependencias entre tareas controlan qué trabajo puede ejecutarse y en qué condiciones.",
+            why:
+                "Explica cómo las dependencias entre tareas controlan qué trabajo puede ejecutarse y en qué"
+                + " condiciones.",
             focus: "La relación entre `dependsOn`, las tareas solicitadas y las dependencias que Gradle selecciona.",
             guidingQuestion: "¿Qué tareas selecciona Gradle cuando una tarea solicitada depende de otras?",
         },
@@ -150,10 +149,13 @@ export const libraryWhatIsReadings: LessonReadings = {
             difficulty: "Introductoria",
             extent: "Corta",
             whatToRead: "La introducción de la guía de autoría de bibliotecas de Kotlin, completa.",
-            why: "Conecta la distinción entre implementación, API y contrato con decisiones reales al publicar una biblioteca Kotlin.",
+            why:
+                "Conecta la distinción entre implementación, API y contrato con decisiones reales al publicar"
+                + " una biblioteca Kotlin.",
             focus: "Cómo relaciona el diseño de la API con usabilidad, mantenibilidad y evolución.",
             guidingQuestion:
-                "¿Qué responsabilidades aparecen al pasar de escribir una aplicación a publicar una capacidad para consumidores desconocidos?",
+                "¿Qué responsabilidades aparecen al pasar de escribir una aplicación a publicar una capacidad"
+                + " para consumidores desconocidos?",
         },
         {
             referenceId: "parnas-decomposing-systems-1972",
@@ -163,7 +165,8 @@ export const libraryWhatIsReadings: LessonReadings = {
             whatToRead: "El artículo completo (lectura corta).",
             why: "Presenta la formulación fundacional del ocultamiento de decisiones susceptibles de cambiar.",
             focus:
-                "El criterio que usa Parnas para establecer una frontera modular, comparado con dividir por etapas de procesamiento.",
+                "El criterio que usa Parnas para establecer una frontera modular, comparado con dividir por"
+                + " etapas de procesamiento.",
             guidingQuestion:
                 "¿Qué decisión de nuestra biblioteca ficticia esconderías detrás de la frontera y por qué?",
         },
@@ -173,9 +176,12 @@ export const libraryWhatIsReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             whatToRead: "Capítulos 4 y 5: “Modules Should Be Deep” e “Information Hiding (and Leakage)”.",
-            why: "Los capítulos 4 y 5 ofrecen un puente moderno entre ocultamiento de información y diseño de módulos.",
+            why:
+                "Los capítulos 4 y 5 ofrecen un puente moderno entre ocultamiento de información y diseño de"
+                + " módulos.",
             focus: "Cómo se relaciona una interfaz pequeña con la complejidad que oculta detrás.",
-            guidingQuestion: "¿Qué haría que `detectParasite` fuera una interfaz profunda en el sentido de Ousterhout?",
+            guidingQuestion:
+                "¿Qué haría que `detectParasite` fuera una interfaz profunda en el sentido de Ousterhout?",
         },
         {
             referenceId: "software-engineering-google-hyrums-law",
@@ -183,11 +189,15 @@ export const libraryWhatIsReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Secciones seleccionadas",
             whatToRead:
-                "Los capítulos “Time and Change” y “Hyrum's Law”, incluyendo el ejemplo del orden de los hashes.",
-            why: "Muestra por qué el comportamiento observable puede convertirse en una dependencia aunque nunca se prometa como API.",
+                "Los capítulos “Time and Change” y “Hyrum's Law”, incluyendo el ejemplo del orden de los"
+                + " hashes.",
+            why:
+                "Muestra por qué el comportamiento observable puede convertirse en una dependencia aunque nunca"
+                + " se prometa como API.",
             focus: "Qué hace que un comportamiento no documentado termine funcionando como una dependencia.",
             guidingQuestion:
-                "¿Qué comportamiento de `detectParasite` podría empezar a utilizar alguien aunque nunca lo documentemos?",
+                "¿Qué comportamiento de `detectParasite` podría empezar a utilizar alguien aunque nunca lo"
+                + " documentemos?",
         },
     ],
     practice: [
@@ -200,7 +210,8 @@ export const libraryWhatIsReadings: LessonReadings = {
             why: "Distingue formas de compatibilidad que una biblioteca publicada puede necesitar preservar.",
             focus: "Por qué compatibilidad de fuente y compatibilidad binaria son propiedades diferentes.",
             guidingQuestion:
-                "¿Puede un cambio preservar compatibilidad de fuente y aun así cambiar el comportamiento esperado? Da un ejemplo.",
+                "¿Puede un cambio preservar compatibilidad de fuente y aun así cambiar el comportamiento"
+                + " esperado? Da un ejemplo.",
         },
         {
             referenceId: "bloch-how-to-design-good-api-2006",
@@ -208,11 +219,15 @@ export const libraryWhatIsReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Corta",
             whatToRead: "La charla completa (lectura corta).",
-            why: "Presenta principios prácticos para diseñar APIs pequeñas, comprensibles y difíciles de usar incorrectamente.",
+            why:
+                "Presenta principios prácticos para diseñar APIs pequeñas, comprensibles y difíciles de usar"
+                + " incorrectamente.",
             focus:
-                "Los criterios concretos de diseño del autor para una API pequeña y difícil de usar incorrectamente.",
+                "Los criterios concretos de diseño del autor para una API pequeña y difícil de usar"
+                + " incorrectamente.",
             guidingQuestion:
-                "¿Qué otro criterio, además de la corrección de la implementación, usarías para evaluar una superficie de API?",
+                "¿Qué otro criterio, además de la corrección de la implementación, usarías para evaluar una"
+                + " superficie de API?",
         },
     ],
     deeper: [
@@ -225,7 +240,8 @@ export const libraryWhatIsReadings: LessonReadings = {
             why: "Amplía las decisiones de evolución y compatibilidad del ecosistema Kotlin.",
             focus: "Cómo estos mecanismos comunican y gestionan cambios de una API publicada.",
             guidingQuestion:
-                "¿Qué estrategia usarías para comunicar un cambio incompatible sin romper el código de quienes ya usan la API?",
+                "¿Qué estrategia usarías para comunicar un cambio incompatible sin romper el código de quienes"
+                + " ya usan la API?",
         },
         {
             referenceId: "nim-manual-effect-system",
@@ -233,10 +249,15 @@ export const libraryWhatIsReadings: LessonReadings = {
             difficulty: "Avanzada",
             extent: "Secciones seleccionadas",
             whatToRead: "Las secciones sobre `raises` y `noSideEffect`.",
-            why: "Permite comparar cuánto del contrato puede expresar directamente una declaración en distintos lenguajes.",
-            focus: "Qué parte del contrato queda expresada directamente en la declaración, sin leer la implementación.",
+            why:
+                "Permite comparar cuánto del contrato puede expresar directamente una declaración en distintos"
+                + " lenguajes.",
+            focus:
+                "Qué parte del contrato queda expresada directamente en la declaración, sin leer la"
+                + " implementación.",
             guidingQuestion:
-                "¿Qué información contractual expresan `raises` y `noSideEffect` sin que necesites leer la implementación?",
+                "¿Qué información contractual expresan `raises` y `noSideEffect` sin que necesites leer la"
+                + " implementación?",
         },
         {
             referenceId: "java-language-specification-binary-compatibility",
@@ -262,11 +283,16 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Introductoria",
             extent: "Media",
             whatToRead: "La documentación de pipelines de Nushell, completa (lectura media).",
-            why: "Documenta la mecánica exacta que distingue esta lección: cómo se comportan los pipelines de Nushell entre comandos internos, hacia procesos externos y entre procesos externos.",
+            why:
+                "Documenta la mecánica exacta que distingue esta lección: cómo se comportan los pipelines de"
+                + " Nushell entre comandos internos, hacia procesos externos y entre procesos externos.",
             focus:
-                "Compara qué circula por el pipeline cuando conectamos comandos internos y qué cambia al cruzar la frontera hacia o desde un programa externo. Intenta reconocer dónde seguimos trabajando con valores y dónde aparece una representación textual.",
+                "Compara qué circula por el pipeline cuando conectamos comandos internos y qué cambia al cruzar"
+                + " la frontera hacia o desde un programa externo. Intenta reconocer dónde seguimos trabajando"
+                + " con valores y dónde aparece una representación textual.",
             guidingQuestion:
-                "Si observas dos etapas consecutivas de un pipeline, ¿cómo decidirías si la segunda recibe un valor estructurado o texto?",
+                "Si observas dos etapas consecutivas de un pipeline, ¿cómo decidirías si la segunda recibe un"
+                + " valor estructurado o texto?",
         },
         {
             referenceId: "nushell-loading-data",
@@ -274,11 +300,16 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Introductoria",
             extent: "Media",
             whatToRead: "La documentación sobre carga de datos (`open` y los conversores `from ...`), completa.",
-            why: "Detalla cómo `open` reconoce la extensión de un archivo e invoca el conversor `from ...` correspondiente, la base del ejemplo con `album.json` de esta lección.",
+            why:
+                "Detalla cómo `open` reconoce la extensión de un archivo e invoca el conversor `from ...`"
+                + " correspondiente, la base del ejemplo con `album.json` de esta lección.",
             focus:
-                "Sigue el ejemplo de `open` y observa qué cambia entre abrir un formato que Nushell reconoce y trabajar con uno que no reconoce automáticamente. Relaciónalo con `album.json` de la lección.",
+                "Sigue el ejemplo de `open` y observa qué cambia entre abrir un formato que Nushell reconoce y"
+                + " trabajar con uno que no reconoce automáticamente. Relaciónalo con `album.json` de la"
+                + " lección.",
             guidingQuestion:
-                "¿Qué trabajo hace `open` por nosotros antes de que podamos usar comandos como `get`, `where` o `select`?",
+                "¿Qué trabajo hace `open` por nosotros antes de que podamos usar comandos como `get`, `where`"
+                + " o `select`?",
         },
     ],
     practice: [
@@ -288,11 +319,18 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Corta",
             whatToRead: "El artículo completo (lectura corta).",
-            why: "Ubica la composición de comandos que motiva esta lección dentro de una tradición mucho más antigua que Nushell: la composición universal y el procesamiento por streams del shell Unix.",
+            why:
+                "Ubica la composición de comandos que motiva esta lección dentro de una tradición mucho más"
+                + " antigua que Nushell: la composición universal y el procesamiento por streams del shell"
+                + " Unix.",
             focus:
-                "No leas el artículo pensando todavía en la sintaxis de Nushell. Identifica primero qué hace atractiva la composición del shell Unix: programas pequeños pueden conectarse mediante una interfaz común. Después pregúntate qué limitaciones aparecen cuando esa interfaz solo transporta streams de bytes.",
+                "No leas el artículo pensando todavía en la sintaxis de Nushell. Identifica primero qué hace"
+                + " atractiva la composición del shell Unix: programas pequeños pueden conectarse mediante una"
+                + " interfaz común. Después pregúntate qué limitaciones aparecen cuando esa interfaz solo"
+                + " transporta streams de bytes.",
             guidingQuestion:
-                "¿Qué propiedad del shell Unix sigue siendo la misma en Nushell, y cuál cambia al reemplazar bytes por valores estructurados?",
+                "¿Qué propiedad del shell Unix sigue siendo la misma en Nushell, y cuál cambia al reemplazar"
+                + " bytes por valores estructurados?",
         },
         {
             referenceId: "sippel-process-composition-typed-unix-pipes-2023",
@@ -300,11 +338,17 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Corta",
             whatToRead: "El artículo completo (lectura corta).",
-            why: "Explica por qué un flujo de bytes no comunica por sí mismo qué tipo o representación espera el siguiente comando, motivando la necesidad de contratos de tipo en la composición de pipelines.",
+            why:
+                "Explica por qué un flujo de bytes no comunica por sí mismo qué tipo o representación espera el"
+                + " siguiente comando, motivando la necesidad de contratos de tipo en la composición de"
+                + " pipelines.",
             focus:
-                "Concéntrate en el problema: un stream de bytes no indica por sí mismo qué tipo de entrada espera la siguiente etapa. Observa qué información adicional aparece cuando las etapas declaran tipos de entrada y salida.",
+                "Concéntrate en el problema: un stream de bytes no indica por sí mismo qué tipo de entrada"
+                + " espera la siguiente etapa. Observa qué información adicional aparece cuando las etapas"
+                + " declaran tipos de entrada y salida.",
             guidingQuestion:
-                "¿Qué puede diagnosticar un pipeline tipado antes de ejecutarse que un pipeline de bytes no puede?",
+                "¿Qué puede diagnosticar un pipeline tipado antes de ejecutarse que un pipeline de bytes no"
+                + " puede?",
         },
         {
             referenceId: "nushell-v0-114-0-blog",
@@ -312,11 +356,15 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Intermedia",
             extent: "Media",
             whatToRead: "Las secciones sobre `run` y sobre la inferencia y verificación de tipos en pipelines.",
-            why: "Aporta contexto histórico sobre cómo Nushell ha hecho más explícitas y exigentes las comprobaciones de tipos que observamos en la lección.",
+            why:
+                "Aporta contexto histórico sobre cómo Nushell ha hecho más explícitas y exigentes las"
+                + " comprobaciones de tipos que observamos en la lección.",
             focus:
-                "Qué cambió en la inferencia y verificación de tipos en pipelines; no es necesario revisar todas las novedades de la versión.",
+                "Qué cambió en la inferencia y verificación de tipos en pipelines; no es necesario revisar"
+                + " todas las novedades de la versión.",
             guidingQuestion:
-                "¿Qué comportamiento de la lección depende de las reglas modernas de tipos de pipeline y no solo de la sintaxis de `|`?",
+                "¿Qué comportamiento de la lección depende de las reglas modernas de tipos de pipeline y no"
+                + " solo de la sintaxis de `|`?",
         },
     ],
     deeper: [
@@ -326,11 +374,16 @@ export const supportScriptsNushellReadings: LessonReadings = {
             difficulty: "Avanzada",
             extent: "Secciones seleccionadas",
             whatToRead:
-                "Las secciones que describen el pipeline como composición de etapas (sin el modelo formal completo ni los detalles de paralelización).",
-            why: "Profundiza en un modelo de dataflow para pipelines Unix paralelos; relevante para el tratamiento de pipelines como composición de etapas, aunque el orden de ejecución paralelo excede el alcance de esta lección.",
+                "Las secciones que describen el pipeline como composición de etapas (sin el modelo formal"
+                + " completo ni los detalles de paralelización).",
+            why:
+                "Profundiza en un modelo de dataflow para pipelines Unix paralelos; relevante para el"
+                + " tratamiento de pipelines como composición de etapas, aunque el orden de ejecución paralelo"
+                + " excede el alcance de esta lección.",
             focus: "Qué propiedades deben conservarse cuando cambia la forma de ejecutar las etapas.",
             guidingQuestion:
-                "¿Qué propiedades de una etapa necesitamos conocer para poder razonar sobre su composición con otras etapas?",
+                "¿Qué propiedades de una etapa necesitamos conocer para poder razonar sobre su composición con"
+                + " otras etapas?",
         },
     ],
 };
