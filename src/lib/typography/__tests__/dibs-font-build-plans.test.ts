@@ -24,11 +24,18 @@ type SlopePlan = Readonly<{
     css: "normal" | "italic" | "oblique";
 }>;
 
+type LigationsPlan = Readonly<{
+    inherits?: string;
+    enables?: readonly string[];
+    disables?: readonly string[];
+}>;
+
 type BuildPlan = Readonly<{
     family: string;
     spacing: string;
     serifs: "sans" | "slab";
     noLigation?: boolean;
+    ligations?: LigationsPlan;
     weights: Readonly<Record<string, WeightPlan>>;
     slopes: Readonly<Record<string, SlopePlan>>;
 }>;
@@ -77,6 +84,33 @@ const candidateProfiles = [
     ["dibs-slab", "DIBS Slab", "slab", proportionalFontContract.roles.heading.states],
 ] as const;
 
+const candidatePlanNames = candidateProfiles.map(([planName]) => planName);
+
+/**
+ * Maps each canonical technical ligature to the Iosevka cherry-picked ligation group(s) that
+ * shape it, per Iosevka's custom-build ligation-set documentation. Only these groups may be
+ * enabled: the build plan must not inherit a broader preset that pulls in ungoverned ligatures.
+ */
+const technicalLigationGroups: Readonly<Record<string, readonly string[]>> = {
+    "technical-arrow-right": ["arrow-r-hyphen"],
+    "technical-arrow-left": ["arrow-l-hyphen"],
+    "technical-implies": ["arrow-r-equal"],
+    "technical-less-than-or-equal": ["lteq"],
+    "technical-greater-than-or-equal": ["gteq"],
+    "technical-not-equal": ["exeq"],
+    "technical-equal": ["eqeq"],
+    "technical-strict-equal": ["eqeq"],
+    "technical-bidirectional": ["arrow-lr-hyphen"],
+};
+
+const requiredLigationGroups = [
+    ...new Set(
+        proportionalFontContract.ligatures
+            .filter((ligature) => ligature.category === "technical")
+            .flatMap((ligature) => technicalLigationGroups[ligature.id] ?? []),
+    ),
+].sort();
+
 suite("given the DIBS Iosevka production build plans", () => {
     test("then exactly the two proportional-text candidates are defined", () => {
         expect(Object.keys(buildPlans.buildPlans).sort()).toEqual(["dibs-sans", "dibs-slab"]);
@@ -94,9 +128,19 @@ suite("given the DIBS Iosevka production build plans", () => {
         },
     );
 
-    test.each(["dibs-sans", "dibs-slab"])("then %s does not disable ligations", (planName) => {
+    test.each(candidatePlanNames)("then %s does not disable ligations", (planName) => {
         expect(getBuildPlan(planName).noLigation).not.toBe(true);
     });
+
+    test.each(candidatePlanNames)(
+        "then %s enables exactly the ligation groups required by the canonical technical corpus",
+        (planName) => {
+            const plan = getBuildPlan(planName);
+
+            expect(plan.ligations?.inherits).toBeUndefined();
+            expect([...(plan.ligations?.enables ?? [])].sort()).toEqual(requiredLigationGroups);
+        },
+    );
 
     test("then both candidates use the pinned Iosevka source boundary", () => {
         const candidatePlans = Object.values(buildPlans.buildPlans);

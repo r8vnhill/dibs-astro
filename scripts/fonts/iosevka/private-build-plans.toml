@@ -11,6 +11,21 @@ serifs = "sans"
 spacing = "quasi-proportional"
 webfontFormats = ["WOFF2"]
 
+# Cherry-picks only the calt groups needed for the technical-ligature corpus; no preset is
+# inherited, so nothing beyond this list is enabled. See README.md's "Ligature configuration"
+# section for the sequence-to-group mapping and the fi/fl/ffi/ffl caveat.
+[buildPlans.dibs-sans.ligations]
+enables = [
+  "arrow-l-hyphen",
+  "arrow-lr-hyphen",
+  "arrow-r-equal",
+  "arrow-r-hyphen",
+  "eqeq",
+  "exeq",
+  "gteq",
+  "lteq",
+]
+
 [buildPlans.dibs-sans.weights.Regular]
 css = 400
 menu = 400
@@ -46,6 +61,19 @@ family = "DIBS Slab"
 serifs = "slab"
 spacing = "quasi-proportional"
 webfontFormats = ["WOFF2"]
+
+# Same minimal ligation-group cherry-pick as dibs-sans; see the comment there and README.md.
+[buildPlans.dibs-slab.ligations]
+enables = [
+  "arrow-l-hyphen",
+  "arrow-lr-hyphen",
+  "arrow-r-equal",
+  "arrow-r-hyphen",
+  "eqeq",
+  "exeq",
+  "gteq",
+  "lteq",
+]
 
 [buildPlans.dibs-slab.weights.Medium]
 css = 500
