@@ -1,6 +1,8 @@
 ---
 import { getDefaultBibliographyCatalog } from "$presentation/adapters/bibliography-catalog";
 import { getTaskGraphsReadings } from "$presentation/adapters/lesson-readings";
+import { B } from "~/components/ui/font";
+import { Link } from "~/components/ui/links";
 import GuidedReferenceEntry from "~/components/ui/references/GuidedReferenceEntry.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { formatLessonReadingsDiagnostics, resolveLessonReadings } from "~/lib/readings/lesson-readings-contract";
@@ -15,10 +17,10 @@ const { sections } = resolution.value;
 
 <BaseLayout pageTitle={`Lecturas · ${taskGraphsReadings.title}`}>
     <main class="mx-auto max-w-4xl px-6 py-12">
-        <p><a href="/readings/">← Todas las lecturas</a></p>
+        <p><Link href="/readings/">← Todas las lecturas</Link></p>
         <h1 class="mt-6">{taskGraphsReadings.title}</h1>
         <p class="mt-4">Referencias para profundizar en las dependencias entre tareas y los grafos acíclicos.</p>
-        <p class="mt-2"><a href={taskGraphsReadings.lessonPath}>Volver a la lección</a></p>
+        <p class="mt-2"><Link href={taskGraphsReadings.lessonPath}>Volver a la lección</Link></p>
 
         <aside class="mt-8 rounded-lg border border-base-border bg-base-surface p-5" aria-labelledby="route-heading">
             <h2 id="route-heading" class="text-xl font-semibold">Cómo usar estas lecturas</h2>
@@ -28,24 +30,25 @@ const { sections } = resolution.value;
             </p>
             <ol class="mt-4 list-decimal space-y-3 pl-5">
                 <li>
-                    <strong>Para esta lección:</strong> lee
-                    <a href="#ref-introduction-to-algorithms-2022">Cormen et al.</a> (2022), capítulo 20, §§20.1 y 20.4,
-                    para repasar grafos dirigidos, DAGs y órdenes topológicos.
+                    <B>Para esta lección:</B> lee <Link href="#ref-introduction-to-algorithms-2022"
+                    >Cormen et al.</Link>{" "}(2022), capítulo 20, §§20.1 y 20.4, para repasar grafos dirigidos, DAGs y
+                    órdenes topológicos.
                 </li>
                 <li>
-                    <strong>Si quieres conectar la teoría con sistemas de construcción:</strong> consulta la
-                    introducción de <a href="#ref-build-systems-a-la-carte-2018">Mokhov et al.</a> (2018) y observa cómo
-                    el resultado solicitado determina las dependencias que un planificador debe ordenar.
+                    <B>Si quieres conectar la teoría con sistemas de construcción:</B> consulta la §4.1.1 de
+                    <Link href="#ref-build-systems-a-la-carte-2018">Mokhov et al.</Link> (2018) y observa cómo un
+                    resultado solicitado determina las dependencias alcanzables que un planificador topológico debe
+                    ordenar.
                 </li>
                 <li>
-                    <strong>Para profundizar:</strong> elige una extensión según tu interés:
+                    <B>Para profundizar:</B> elige una extensión según tu interés:
                     <ul class="mt-2 list-disc space-y-1 pl-5">
                         <li>
-                            <a href="#ref-mathematics-for-computer-science-2018">Lehman et al.</a> (2018), §§10.5–10.8,
-                            para explorar órdenes parciales.
+                            <Link href="#ref-mathematics-for-computer-science-2018">Lehman et al.</Link> (2018),
+                            §§10.5–10.8, para explorar órdenes parciales.
                         </li>
                         <li>
-                            <a href="#ref-build-scripts-perfect-dependencies-2020">Spall et al.</a> (2020), para
+                            <Link href="#ref-build-scripts-perfect-dependencies-2020">Spall et al.</Link> (2020), para
                             profundizar en la corrección de las dependencias.
                         </li>
                     </ul>

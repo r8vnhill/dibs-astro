@@ -24,6 +24,48 @@ suite("given the task-graphs readings catalog", () => {
         );
     });
 
+    test("then it groups readings into the guided-path sections rather than the shared defaults", () => {
+        const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
+
+        expect(resolution.ok).toBe(true);
+        if (!resolution.ok) return;
+
+        expect(
+            resolution.value.sections.map((section) => ({
+                title: section.title,
+                references: section.readings.map((reading) => reading.referenceId),
+            })),
+        ).toEqual([
+            {
+                title: "Para acompañar la lección",
+                references: ["ref:introduction-to-algorithms-2022"],
+            },
+            {
+                title: "Para conectar con sistemas de construcción",
+                references: ["ref:build-systems-a-la-carte-2018"],
+            },
+            {
+                title: "Si quieres profundizar",
+                references: [
+                    "ref:mathematics-for-computer-science-2018",
+                    "ref:build-scripts-perfect-dependencies-2020",
+                ],
+            },
+        ]);
+
+        const deeperSection = resolution.value.sections.find((section) => section.title === "Si quieres profundizar");
+        expect(deeperSection?.readings.map((reading) => reading.guide.purpose)).toEqual([
+            "Profundiza en órdenes parciales",
+            "Profundiza en la corrección de las dependencias",
+        ]);
+
+        const readings = resolution.value.sections.flatMap((section) => section.readings);
+        const mokhov = readings.find((reading) => reading.referenceId === "ref:build-systems-a-la-carte-2018");
+        expect(mokhov?.guide.whatToRead).toBe("§4.1.1, “Topological”.");
+        expect(mokhov?.guide.why).toContain("planificador");
+        expect(mokhov?.guide.focus).toContain("acíclico");
+    });
+
     test("then its taxonomy separates canonical format from the lesson role", () => {
         const resolution = resolveLessonReadings(getTaskGraphsReadings(), getDefaultBibliographyCatalog());
 
