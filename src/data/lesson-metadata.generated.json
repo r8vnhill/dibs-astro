@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-21T22:08:40.666Z",
+  "generatedAt": "2026-08-23T21:05:27.645Z",
   "totalLessons": 55,
   "changesLimit": 5,
   "entries": {
@@ -92,8 +92,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -117,12 +123,6 @@
           "date": "2026-04-20",
           "author": "r8vnhill",
           "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
-        },
-        {
-          "hash": "8880728e0f6db68e9a0cfe2ce594c981076f50a6",
-          "date": "2026-03-27",
-          "author": "r8vnhill",
-          "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
         }
       ]
     },
@@ -174,8 +174,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-20",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
           "date": "2026-08-20",
@@ -199,12 +205,6 @@
           "date": "2026-06-19",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🚚 refactor(icons): rename shared icon package"
-        },
-        {
-          "hash": "698574d6c41748d01992425e254be40bfe14d7b0",
-          "date": "2026-04-20",
-          "author": "r8vnhill",
-          "subject": "📝♻️ refactor(unit-1): Refine intro/summary and reorganize legacy lessons"
         }
       ]
     },
@@ -297,8 +297,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -322,12 +328,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -379,8 +379,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-20",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
           "date": "2026-08-20",
@@ -404,12 +410,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -537,8 +537,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -562,12 +568,6 @@
           "date": "2026-03-27",
           "author": "r8vnhill",
           "subject": "✨ feat(notes): add abstract slots and Python structured-output lesson"
-        },
-        {
-          "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
-          "date": "2026-01-01",
-          "author": "r8vnhill",
-          "subject": "✨🎨 feat(site): revamp notes content, UI, and assets"
         }
       ]
     },
@@ -701,8 +701,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -726,12 +732,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -783,8 +783,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -808,12 +814,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -1193,8 +1193,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-20",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
           "date": "2026-08-20",
@@ -1218,12 +1224,6 @@
           "date": "2026-06-19",
           "author": "Ignacio Slater-Muñoz",
           "subject": "🚚 refactor(icons): rename shared icon package"
-        },
-        {
-          "hash": "f90e03b442867c0dd2428ed643482918a7d80a27",
-          "date": "2026-05-07",
-          "author": "r8vnhill",
-          "subject": "🚨 remove(lessons): Retired scripting lesson content"
         }
       ]
     },
@@ -1234,8 +1234,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -1259,12 +1265,6 @@
           "date": "2026-05-07",
           "author": "r8vnhill",
           "subject": "🚨 remove(lessons): Retired scripting lesson content"
-        },
-        {
-          "hash": "db9da58b1e7ee6b25a17cd4a8bdd090b27fe2852",
-          "date": "2026-04-07",
-          "author": "r8vnhill",
-          "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
         }
       ]
     },
@@ -1398,8 +1398,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-19",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "79e0655b80ee859efb6254b41bb2913724a0d94a",
           "date": "2026-08-19",
@@ -1423,12 +1429,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "🚚🔧 refactor(routing): move scripting notes and preserve legacy routes"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -1521,8 +1521,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-15",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "1b9225550989037669901e449a8e4b135cc23fd6",
           "date": "2026-08-15",
@@ -1546,12 +1552,6 @@
           "date": "2026-04-07",
           "author": "r8vnhill",
           "subject": "📝✅ chore(notes): refresh lesson references and align related tests"
-        },
-        {
-          "hash": "a76aa7aae01041ef4bccc6edc65d992d6d9a55d2",
-          "date": "2026-04-02",
-          "author": "r8vnhill",
-          "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
         }
       ]
     },
@@ -2036,8 +2036,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-01-01",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "089be43f8135438dc518fbdabfc199a6d8073043",
           "date": "2026-01-01",
@@ -2147,8 +2153,14 @@
           "name": "Ignacio Slater-Muñoz"
         }
       ],
-      "lastModified": "2026-08-20",
+      "lastModified": "2026-08-21",
       "changes": [
+        {
+          "hash": "03dbcf5d5465a407e259c5903a5bc32686596368",
+          "date": "2026-08-21",
+          "author": "Ignacio Slater-Muñoz",
+          "subject": "🗑️ rm(todo): Remove legacy React-based `ToDo` component and tests"
+        },
         {
           "hash": "84301717045b80ba09de766d0e455fd8e50a96a0",
           "date": "2026-08-20",
@@ -2172,12 +2184,6 @@
           "date": "2026-04-02",
           "author": "r8vnhill",
           "subject": "✨ ♻️ feat(notes): add Node.js scripting lesson and catalog-driven references"
-        },
-        {
-          "hash": "f6dd69ce29131c5da5662c35b6b9d56e0357c079",
-          "date": "2026-02-17",
-          "author": "r8vnhill",
-          "subject": "🐛 fix(notes): resolve Astro compilation issues in Python lessons"
         }
       ]
     },

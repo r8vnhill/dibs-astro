@@ -53,6 +53,11 @@ css = "italic"
 menu = "italic"
 shape = "italic"
 
+[buildPlans.dibs-sans.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"
+
 # Heading candidate: the slab-serif branch of the same quasi-proportional design space.
 # Headings require only medium and bold upright states, so no italic or oblique slope is declared.
 [buildPlans.dibs-slab]
@@ -90,3 +95,8 @@ angle = 0
 css = "normal"
 menu = "upright"
 shape = "upright"
+
+[buildPlans.dibs-slab.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"

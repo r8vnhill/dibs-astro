@@ -1,0 +1,79 @@
+{
+    "schemaVersion": 1,
+    "license": {
+        "name": "SIL Open Font License 1.1",
+        "path": "fonts/LICENSE.txt",
+        "sha256": "sha256:4ba53c7c1cb39279aae5f8d7d22054c485c71169920e5a36ed098b115e2e3c5d",
+        "source": "https://github.com/be5invis/Iosevka/blob/v34.8.0/LICENSE.md"
+    },
+    "upstream": {
+        "project": "Iosevka",
+        "version": "34.8.0",
+        "tag": "v34.8.0",
+        "commit": "ca3ad8e280e2f0b614a5a7721b047daaf023713d",
+        "sourceArchiveSha256": "sha256:0bfae2829d6bbbfcf34a59714ffc6c62654a614fb9b051640384129f82267e87",
+        "buildPlanSha256": "sha256:a6ab60a8047cd61cc11fd4e189f1d1c19633c49736226a7ac5c371bcb782376c",
+        "license": "OFL-1.1"
+    },
+    "generation": {
+        "command": "pnpm fonts:generate",
+        "target": "woff2-unhinted",
+        "source": "Iosevka custom build from the pinned source archive"
+    },
+    "assets": [
+        {
+            "family": "DIBS Sans",
+            "format": "woff2",
+            "path": "fonts/dibs-sans/400-normal.woff2",
+            "sha256": "sha256:35235e26b4583406486c351f5ba444df32715f09d7ac49e327cc205e837c5320",
+            "style": "normal",
+            "weight": 400,
+            "bytes": 992744
+        },
+        {
+            "family": "DIBS Sans",
+            "format": "woff2",
+            "path": "fonts/dibs-sans/400-italic.woff2",
+            "sha256": "sha256:63983c958d0375bb60e9afebba7c2fc5d3f5ef11fa95047461f0167b57d9b569",
+            "style": "italic",
+            "weight": 400,
+            "bytes": 1105816
+        },
+        {
+            "family": "DIBS Sans",
+            "format": "woff2",
+            "path": "fonts/dibs-sans/500-normal.woff2",
+            "sha256": "sha256:f3707f96db8748682702f621021f9a37de4e9a717360334580a9c5e535f8b732",
+            "style": "normal",
+            "weight": 500,
+            "bytes": 991540
+        },
+        {
+            "family": "DIBS Sans",
+            "format": "woff2",
+            "path": "fonts/dibs-sans/700-normal.woff2",
+            "sha256": "sha256:4728dd072b9fe20b8cb32d20303c9bc1ecf809f1cfc7d0a12a9809cf71094503",
+            "style": "normal",
+            "weight": 700,
+            "bytes": 996764
+        },
+        {
+            "family": "DIBS Slab",
+            "format": "woff2",
+            "path": "fonts/dibs-slab/500-normal.woff2",
+            "sha256": "sha256:aa0dfde2c8d6d560404dfb3ee309b47eeb1244c8979670c3bc8270b8747443e7",
+            "style": "normal",
+            "weight": 500,
+            "bytes": 1036980
+        },
+        {
+            "family": "DIBS Slab",
+            "format": "woff2",
+            "path": "fonts/dibs-slab/700-normal.woff2",
+            "sha256": "sha256:520bd901051e92ebf660a18efc3001380ba694c4468510cde8119a5832c3b100",
+            "style": "normal",
+            "weight": 700,
+            "bytes": 1039824
+        }
+    ]
+}

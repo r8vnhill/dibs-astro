@@ -24,6 +24,12 @@ type SlopePlan = Readonly<{
     css: "normal" | "italic" | "oblique";
 }>;
 
+type WidthPlan = Readonly<{
+    shape: number;
+    menu: number;
+    css: "normal" | "condensed" | "expanded";
+}>;
+
 type LigationsPlan = Readonly<{
     inherits?: string;
     enables?: readonly string[];
@@ -38,6 +44,7 @@ type BuildPlan = Readonly<{
     ligations?: LigationsPlan;
     weights: Readonly<Record<string, WeightPlan>>;
     slopes: Readonly<Record<string, SlopePlan>>;
+    widths: Readonly<Record<string, WidthPlan>>;
 }>;
 
 type BuildPlanDocument = Readonly<{
@@ -125,6 +132,7 @@ suite("given the DIBS Iosevka production build plans", () => {
             expect(plan.spacing).toBe("quasi-proportional");
             expect(plan.serifs).toBe(serifs);
             expect(stateDimensions(plan)).toEqual(requiredDimensions(states));
+            expect(Object.values(plan.widths).map(({ css }) => css)).toEqual(["normal"]);
         },
     );
 

@@ -62,6 +62,10 @@ coverage/
 .vscode-test/
 .yarn-integrity
 
+# Explicit font generation caches the pinned upstream archive and disposable build trees here. The generated WOFF2
+# deliverables under public/fonts/ are intentionally committed.
+tmp/fonts/
+
 # TypeScript
 # ----------
 

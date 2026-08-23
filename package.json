@@ -25,6 +25,8 @@
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",
         "generate:lesson-metadata": "node scripts/generate-lesson-metadata.mjs",
         "generate:platform-artifact-manifest": "node scripts/generate-platform-artifact-manifest.mjs --out tmp/platform-artifact-manifest.json",
+        "fonts:generate": "node scripts/fonts/build-dibs-fonts.mjs",
+        "fonts:check": "node scripts/fonts/build-dibs-fonts.mjs --check",
         "predev": "pnpm run i18n:compile && pnpm run build:content-core && pnpm run build:lesson-export-core && pnpm run build:shiki-core && pnpm run generate:bibliography-catalog && pnpm run generate:lesson-metadata",
         "dev": "node scripts/dev.mjs",
         "prebuild": "pnpm run i18n:compile && pnpm run build:content-core && pnpm run build:lesson-export-core && pnpm run build:shiki-core && pnpm run generate:bibliography-catalog && pnpm run generate:lesson-metadata",

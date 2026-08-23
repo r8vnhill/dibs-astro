@@ -25,8 +25,8 @@ names come from each plan's `family` property (`DIBS Sans`, `DIBS Slab`).
 | `dibs-sans` | sans   | Regular, Medium, Bold | Upright and Italic |
 | `dibs-slab` | slab   | Medium, Bold          | Upright only       |
 
-Both use quasi-proportional spacing, request WOFF2 output, and are restricted to exactly the weight/style states the
-DIBS typography contract requires — no unused weights, obliques, or extended widths.
+Both use quasi-proportional spacing, request WOFF2 output, and are restricted to exactly the weight/style/width states
+the DIBS typography contract requires — no unused weights, obliques, or extended widths.
 
 ## Ligature configuration
 
@@ -78,7 +78,21 @@ pin; the archive digest is a convenience check recorded at pin time, since GitHu
 cryptographically guaranteed-stable artifact the way a release-uploaded asset is.
 
 The provenance files are not read by Astro and do not generate fonts during `pnpm dev`, `pnpm test`, or `pnpm build`.
-Font generation remains an explicit tooling operation against the pinned source and the committed build plans.
+Font generation remains an explicit tooling operation against the pinned source and the committed build plans:
+
+```sh
+pnpm fonts:generate
+pnpm fonts:check
+```
+
+`fonts:generate` downloads the pinned archive into the ignored `tmp/fonts/` cache, verifies its SHA-256, runs
+Iosevka's `woff2-unhinted` targets, and publishes only the required WOFF2 files to `public/fonts/`. The command is
+deliberately separate from normal site workflows; the committed assets make a clean checkout usable without the
+Iosevka build toolchain. An already downloaded archive can be supplied for an offline regeneration with
+`pnpm fonts:generate -- --source-archive path/to/iosevka-34.8.0.tar.gz`.
+
+`public/fonts/provenance.json` records the upstream pin, build-plan digest, license digest, and SHA-256 for every
+generated asset. `fonts:check` verifies those records without downloading or compiling anything.
 
 The plan contract can be checked without building Iosevka:
 
