@@ -130,5 +130,29 @@ describe.concurrent("LessonReadingGuide.astro render", () => {
 
             expect(block?.querySelector("h1, h2, h3, h4, h5, h6")).toBeNull();
         });
+
+        test("then actionable guidance, metadata, and the retrieval task are separate regions", async () => {
+            const doc = await renderGuideDocument();
+            const guidance = doc.querySelector("[data-reading-guidance]");
+            const metadata = doc.querySelector("[data-reading-metadata]");
+            const question = doc.querySelector("[data-reading-guide-question]");
+
+            expect(guidance).not.toBeNull();
+            expect(guidance?.textContent).toContain("Qué leer");
+            expect(guidance?.textContent).toContain("Qué buscar");
+            expect(guidance?.textContent).toContain("Por qué");
+            expect(metadata).not.toBeNull();
+            expect(metadata?.querySelectorAll(".sr-only")).not.toHaveLength(0);
+            expect(question).not.toBeNull();
+            expect(guidance?.contains(question as Node)).toBe(false);
+            expect(metadata?.contains(question as Node)).toBe(false);
+        });
+
+        test("then the actionable fields precede the supporting reason", async () => {
+            const doc = await renderGuideDocument();
+            const labels = [...doc.querySelectorAll("[data-reading-guidance] dt")].map((label) => label.textContent);
+
+            expect(labels).toEqual(["Qué leer", "Qué buscar", "Por qué"]);
+        });
     });
 });

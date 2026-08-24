@@ -1,4 +1,10 @@
 ---
+/**
+ * Composes one resolved bibliography reference with its lesson-specific reading guide.
+ *
+ * Contributors should add editorial guidance to the lesson-reading data contract, not this component. Students see
+ * the shared guided presentation: source identity, actionable instructions, compact metadata, and one question.
+ */
 import type { NormalizedReference } from "~/lib/bibliography";
 import type { LessonReadingGuide as LessonReadingGuideModel } from "~/lib/readings/lesson-readings-contract";
 import LessonReadingGuide from "./LessonReadingGuide.astro";
@@ -12,6 +18,9 @@ interface Props {
 const { reference, reading } = Astro.props;
 ---
 
-<ReferenceEntry {reference} preparedSlots={{}}>
+<ReferenceEntry
+    {reference} presentation="guided"
+    preparedSlots={{}}
+>
     <Fragment slot="editorial"><LessonReadingGuide {reference} guide={reading} /></Fragment>
 </ReferenceEntry>

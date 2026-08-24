@@ -4,6 +4,8 @@ import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import { formatPageReference, type PageReference } from "~/lib/bibliography";
 import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
+import { referenceListItemProps, type ReferencePresentation } from "./reference-presentation";
+import ReferenceIdentity from "./ReferenceIdentity.astro";
 
 type Props = {
     id?: string;
@@ -14,6 +16,8 @@ type Props = {
     quoteType?: "latin-double" | "latin-single" | "english-double" | "english-single";
     italicTitle?: boolean;
     locale?: "es" | "en";
+    /** Presentation context forwarded by `ReferenceEntry`; it does not belong to bibliography data. */
+    presentation?: ReferencePresentation;
 };
 
 const {
@@ -25,7 +29,9 @@ const {
     quoteType = "english-double",
     italicTitle = true,
     locale = "es",
+    presentation = "default",
 } = Astro.props as Props;
+const listItemProps = referenceListItemProps(presentation, "space-y-1 scroll-mt-24");
 
 const authorsText = (arr?: string[], loc: "es" | "en" = "es") => {
     if (!arr || arr.length === 0) return null;
@@ -47,9 +53,9 @@ const {
 
 <ListItem
     {id} icon={icons.Book}
-    class="space-y-1 scroll-mt-24"
+    {...listItemProps}
 >
-    <div class="flex flex-wrap items-baseline gap-x-1.5">
+    <ReferenceIdentity {presentation} class="flex flex-wrap items-baseline gap-x-1.5">
         <Enquote type={quoteType}>
             {chapterSlot.kind === "meaningful" ? <slot name="chapter" /> : chapter}
         </Enquote>
@@ -75,7 +81,7 @@ const {
                 ? <span>{authorsInline}</span>
             : (authorsSlot.kind === "meaningful" ? <slot name="authors" /> : null)
         }
-    </div>
+    </ReferenceIdentity>
 
     {
         descriptionSlot.kind === "meaningful" && (

@@ -1,0 +1,35 @@
+---
+/**
+ * Keeps the identity line of each typed reference type-specific while giving guided readings one stable hook.
+ *
+ * Guided mode emits `<header data-reference-identity>`. Default mode emits no wrapper unless the caller supplies
+ * classes required by the existing renderer layout.
+ */
+import type { ReferencePresentation } from "./reference-presentation";
+
+interface Props {
+    /** Rendering context selected by the presentation layer, never by bibliography data. */
+    presentation?: ReferencePresentation;
+    /** Existing layout classes for the identity line. */
+    class?: string;
+}
+
+const { presentation = "default", class: className } = Astro.props;
+const guided = presentation === "guided";
+---
+
+{
+    guided
+        ? (
+        <header data-reference-identity="true" class={className}>
+            <slot />
+        </header>
+    )
+    : className
+    ? (
+        <div class={className}>
+            <slot />
+        </div>
+    )
+    : <Fragment><slot /></Fragment>
+}

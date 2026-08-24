@@ -16,7 +16,9 @@ import {
     resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
+import { referenceListItemProps, type ReferencePresentation } from "./reference-presentation";
 import { ReferenceContractError } from "./ReferenceContractError";
+import ReferenceIdentity from "./ReferenceIdentity.astro";
 
 // Define props and destructure them from Astro.props
 type Props = {
@@ -41,9 +43,12 @@ type Props = {
      * Author or contributor name (if not passed via slot).
      */
     author?: string;
+    /** Presentation context forwarded by `ReferenceEntry`; it does not belong to bibliography data. */
+    presentation?: ReferencePresentation;
 };
 
-const { id, url, title, location, locationUrl, author }: Props = Astro.props;
+const { id, url, title, location, locationUrl, author, presentation = "default" }: Props = Astro.props;
+const listItemProps = referenceListItemProps(presentation, "scroll-mt-24");
 const {
     title: titleSlot,
     location: locationSlot,
@@ -68,49 +73,51 @@ if (import.meta.env.DEV && locationUrl && !location) {
 
 <ListItem
     {id} icon={icons.Globe}
-    class="scroll-mt-24"
+    {...listItemProps}
 >
-    <Enquote type="english-double">
-        <a href={url} {...externalLinkAttrs}>
-            {
-                resolvedTitle.kind === "slot"
-                    ? <span set:html={resolvedTitle.html} />
-                : resolvedTitle.text
-            }
-        </a>
-    </Enquote>
-
-    {
-        resolvedLocation.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
+    <ReferenceIdentity {presentation}>
+        <Enquote type="english-double">
+            <a href={url} {...externalLinkAttrs}>
                 {
-                    resolvedLocation.kind === "slot"
-                        ? <span set:html={resolvedLocation.html} />
-                    : resolvedLocation.kind === "link"
-                    ? (
-                        <a href={resolvedLocation.href} {...externalLinkAttrs}>
-                            {resolvedLocation.text}
-                        </a>
-                    )
-                    : resolvedLocation.text
+                    resolvedTitle.kind === "slot"
+                        ? <span set:html={resolvedTitle.html} />
+                    : resolvedTitle.text
                 }
-            </span>
-        ) : null
-    }
+            </a>
+        </Enquote>
 
-    {
-        resolvedAuthor.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
-                {
-                    resolvedAuthor.kind === "slot"
-                        ? <span set:html={resolvedAuthor.html} />
-                    : resolvedAuthor.text
-                }
-            </span>
-        ) : null
-    }
+        {
+            resolvedLocation.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
+                    {
+                        resolvedLocation.kind === "slot"
+                            ? <span set:html={resolvedLocation.html} />
+                        : resolvedLocation.kind === "link"
+                        ? (
+                            <a href={resolvedLocation.href} {...externalLinkAttrs}>
+                                {resolvedLocation.text}
+                            </a>
+                        )
+                        : resolvedLocation.text
+                    }
+                </span>
+            ) : null
+        }
+
+        {
+            resolvedAuthor.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
+                    {
+                        resolvedAuthor.kind === "slot"
+                            ? <span set:html={resolvedAuthor.html} />
+                        : resolvedAuthor.text
+                    }
+                </span>
+            ) : null
+        }
+    </ReferenceIdentity>
 
     {
         descriptionSlot.kind === "meaningful" ? (

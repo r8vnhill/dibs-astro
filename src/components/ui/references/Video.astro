@@ -15,7 +15,9 @@ import {
     resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
+import { referenceListItemProps, type ReferencePresentation } from "./reference-presentation";
 import { ReferenceContractError } from "./ReferenceContractError";
+import ReferenceIdentity from "./ReferenceIdentity.astro";
 
 type Props = {
     id?: string;
@@ -25,9 +27,12 @@ type Props = {
     platformUrl?: string;
     author?: string;
     date?: string;
+    /** Presentation context forwarded by `ReferenceEntry`; it does not belong to bibliography data. */
+    presentation?: ReferencePresentation;
 };
 
-const { id, title, url, platform, platformUrl, author, date }: Props = Astro.props;
+const { id, title, url, platform, platformUrl, author, date, presentation = "default" }: Props = Astro.props;
+const listItemProps = referenceListItemProps(presentation, "scroll-mt-24");
 const {
     title: titleSlot,
     platform: platformSlot,
@@ -52,55 +57,57 @@ if (import.meta.env.DEV && platformUrl && !platform) {
 
 <ListItem
     {id} icon={icons.PlayCircle}
-    class="scroll-mt-24"
+    {...listItemProps}
 >
-    <Enquote type="english-double">
-        <a href={url} {...externalLinkAttrs}>
-            {
-                resolvedTitle.kind === "slot"
-                    ? <span set:html={resolvedTitle.html} />
-                : resolvedTitle.text
-            }
-        </a>
-    </Enquote>
-
-    {
-        resolvedAuthor.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
-                    resolvedAuthor.kind === "slot"
-                        ? <span set:html={resolvedAuthor.html} />
-                    : resolvedAuthor.text
+    <ReferenceIdentity {presentation}>
+        <Enquote type="english-double">
+            <a href={url} {...externalLinkAttrs}>
+                {
+                    resolvedTitle.kind === "slot"
+                        ? <span set:html={resolvedTitle.html} />
+                    : resolvedTitle.text
                 }
-            </span>
-        ) : null
-    }
+            </a>
+        </Enquote>
 
-    {
-        resolvedPlatform.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
-                    resolvedPlatform.kind === "slot"
-                        ? <span set:html={resolvedPlatform.html} />
-                    : resolvedPlatform.kind === "link"
-                    ? (
-                        <a href={resolvedPlatform.href} {...externalLinkAttrs}>
-                            {resolvedPlatform.text}
-                        </a>
-                    )
-                    : resolvedPlatform.text
-                }
-            </span>
-        ) : null
-    }
+        {
+            resolvedAuthor.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
+                        resolvedAuthor.kind === "slot"
+                            ? <span set:html={resolvedAuthor.html} />
+                        : resolvedAuthor.text
+                    }
+                </span>
+            ) : null
+        }
 
-    {
-        date ? (
-            <span class="text-muted-foreground">
-                {" "}({date})
-            </span>
-        ) : null
-    }
+        {
+            resolvedPlatform.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
+                        resolvedPlatform.kind === "slot"
+                            ? <span set:html={resolvedPlatform.html} />
+                        : resolvedPlatform.kind === "link"
+                        ? (
+                            <a href={resolvedPlatform.href} {...externalLinkAttrs}>
+                                {resolvedPlatform.text}
+                            </a>
+                        )
+                        : resolvedPlatform.text
+                    }
+                </span>
+            ) : null
+        }
+
+        {
+            date ? (
+                <span class="text-muted-foreground">
+                    {" "}({date})
+                </span>
+            ) : null
+        }
+    </ReferenceIdentity>
 
     {
         descriptionSlot.kind === "meaningful" ? (

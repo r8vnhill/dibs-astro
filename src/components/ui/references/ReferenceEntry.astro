@@ -11,6 +11,7 @@
  * - Slot override application with `set:html` trust boundary
  * - Title resolution logic (slot override → fallback → normalized property)
  * - Author and metadata rendering
+ * - Presentation-context forwarding without coupling bibliography data to a page family
  */
 
 import type {
@@ -25,6 +26,7 @@ import { referenceAnchor } from "~/lib/references/reference-links";
 import AuthorList from "./AuthorList.astro";
 import Book from "./Book.astro";
 import type { PreparedReferenceSlots } from "./reference-content";
+import type { ReferencePresentation } from "./reference-presentation";
 import ScholarlyArticle from "./ScholarlyArticle.astro";
 import Thesis from "./Thesis.astro";
 import Video from "./Video.astro";
@@ -43,6 +45,12 @@ interface Props {
     preparedSlots: PreparedReferenceSlots;
 
     /**
+     * Semantic presentation context for the reference's UI composition. `guided` is supplied by
+     * `GuidedReferenceEntry`; omitting it keeps ordinary bibliography rendering unchanged.
+     */
+    presentation?: ReferencePresentation;
+
+    /**
      * Optional fallback title from raw source, used when the reference has no normalized title
      * and no title slot override.
      *
@@ -56,7 +64,7 @@ interface Props {
     editorialNote?: string | undefined;
 }
 
-const { reference: ref, preparedSlots, fallbackTitle, editorialNote } = Astro.props;
+const { reference: ref, preparedSlots, fallbackTitle, editorialNote, presentation = "default" } = Astro.props;
 const hasEditorial = Astro.slots.has("editorial");
 
 /**
@@ -95,7 +103,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
         ? (
         <Book
             id={referenceAnchor(ref.id)} chapter={resolveDisplayTitle(ref)}
-            bookTitle={(ref as NormalizedBookReference).bookTitle}
+            bookTitle={(ref as NormalizedBookReference).bookTitle} {presentation}
             {...((ref as NormalizedBookReference).pages ? { pages: (ref as NormalizedBookReference).pages } : {})}
         >
             {
@@ -118,7 +126,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
     ? (
         <WebPage
             id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
-            url={(ref as NormalizedWebReference).url}
+            url={(ref as NormalizedWebReference).url} {presentation}
             {...((ref as NormalizedWebReference).location
                 ? { location: (ref as NormalizedWebReference).location }
                 : {})}
@@ -149,7 +157,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
     ? (
         <Video
             id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
-            url={(ref as NormalizedVideoReference).url}
+            url={(ref as NormalizedVideoReference).url} {presentation}
             {...((ref as NormalizedVideoReference).platform
                 ? { platform: (ref as NormalizedVideoReference).platform }
                 : {})}
@@ -183,7 +191,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
     ? (
         <ScholarlyArticle
             id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
-            url={(ref as NormalizedArticleReference).url}
+            url={(ref as NormalizedArticleReference).url} {presentation}
             {...((ref as NormalizedArticleReference).publication
                 ? { publication: (ref as NormalizedArticleReference).publication }
                 : {})}
@@ -224,7 +232,7 @@ const getInstitutionOverride = (): string | undefined => preparedSlots.instituti
     : (
         <Thesis
             id={referenceAnchor(ref.id)} title={resolveDisplayTitle(ref)}
-            url={(ref as NormalizedThesisReference).url}
+            url={(ref as NormalizedThesisReference).url} {presentation}
             {...((ref as NormalizedThesisReference).institution
                 ? { institution: (ref as NormalizedThesisReference).institution }
                 : {})}

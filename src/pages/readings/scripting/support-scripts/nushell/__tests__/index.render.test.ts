@@ -28,4 +28,14 @@ suite("given the Nushell support-scripts readings catalog", () => {
         expect(html).not.toContain("Después de leer");
         expect(html).not.toContain("Notional machines and introductory programming education");
     });
+
+    test("then renders guided-reference identity and reading regions", async () => {
+        const renderPage = await createAstroRenderer<Record<string, never>>(ReadingsPage);
+        const html = await renderPage({});
+
+        expect(html).toContain("data-guided-reference=\"true\"");
+        expect(html).toContain("data-reference-identity");
+        expect(html).toContain("data-reading-guidance");
+        expect(html).toContain("data-reading-metadata");
+    });
 });

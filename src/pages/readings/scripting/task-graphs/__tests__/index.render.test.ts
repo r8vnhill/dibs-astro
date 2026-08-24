@@ -131,6 +131,22 @@ suite("given the task-graphs readings catalog", () => {
         expect(doc.querySelectorAll("[id^=\"ref-\"]")).toHaveLength(4);
     });
 
+    test.each([
+        "ref-introduction-to-algorithms-2022",
+        "ref-build-systems-a-la-carte-2018",
+        "ref-mathematics-for-computer-science-2018",
+        "ref-build-scripts-perfect-dependencies-2020",
+    ])("then %s uses the shared guided-reference composition", async (anchorId) => {
+        const doc = await renderReadingsPageDocument();
+        const reference = doc.querySelector(`#${anchorId}`);
+
+        expect(reference?.matches("li[data-guided-reference=\"true\"]")).toBe(true);
+        expect(reference?.querySelector("[data-reference-identity]")).not.toBeNull();
+        expect(reference?.querySelector("[data-reading-guidance]")).not.toBeNull();
+        expect(reference?.querySelector("[data-reading-metadata]")).not.toBeNull();
+        expect(reference?.querySelector("[data-reading-guide-question]")).not.toBeNull();
+    });
+
     test("then its introduction presents one recommended reading and optional paths", async () => {
         const doc = await renderReadingsPageDocument();
         const routeGuide = doc.querySelector("#route-heading")?.parentElement;

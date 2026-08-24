@@ -1,13 +1,16 @@
 ---
 /**
- * Renders the editorial guidance for a single lesson reading: what to read, why, and what to focus on (as a
- * descriptive `<dl>`), the guiding question as a visually distinct retrieval task, and a compact metadata line
- * (format, role/type, difficulty, estimated effort).
+ * Renders the editorial guidance for a single lesson reading as three visual regions: the actionable prescription,
+ * compact secondary metadata, and a visually distinct retrieval task. Data attributes on those regions form a stable
+ * presentation contract for tests and browser-level accessibility checks.
  *
  * `guide` is the lesson-specific `LessonReadingGuide` authored in `src/data/readings/lesson-readings.ts`;
  * `reference` is the resolved bibliography entry it points to (see `~/lib/bibliography`). Both are required
  * because several fields — the reading format label and the estimated effort — depend on the reference's type
  * (e.g. only a `VideoObject` reference treats `guide.effort.durationMinutes` as duration evidence).
+ *
+ * Students encounter the regions in this order: what to read and look for, why it matters, expected effort, and the
+ * question that checks whether the central idea can be retrieved.
  */
 import type { NormalizedReference } from "~/lib/bibliography";
 import {
@@ -46,35 +49,32 @@ const secondaryFields: SecondaryField[] = [
 ].filter((field): field is SecondaryField => field !== null);
 ---
 
-<div class="mt-3 text-sm text-base-subtle-text">
-    {
-        guide.purpose && (
-            <p class="mb-3 font-semibold text-base-text">
-                {guide.purpose}
-            </p>
-        )
-    }
-    <dl class="space-y-2">
-        <div>
-            <dt class="font-semibold text-base-text">Qué leer</dt>
-            <dd>{guide.whatToRead}</dd>
-        </div>
-        <div>
-            <dt class="font-semibold text-base-text">Por qué</dt>
-            <dd>{guide.why}</dd>
-        </div>
-        <div>
-            <dt class="font-semibold text-base-text">Qué buscar</dt>
-            <dd>{guide.focus}</dd>
-        </div>
-    </dl>
-
-    <div data-reading-guide-question class="reading-guide-question mt-3">
-        <p class="font-semibold text-base-text">Comprueba tu comprensión</p>
-        <p>{guide.guidingQuestion}</p>
+<div class="mt-4 text-sm text-base-subtle-text">
+    <div data-reading-guidance>
+        {
+            guide.purpose && (
+                <p class="mb-3 font-semibold text-base-text">
+                    {guide.purpose}
+                </p>
+            )
+        }
+        <dl class="space-y-3">
+            <div>
+                <dt class="font-semibold text-base-text">Qué leer</dt>
+                <dd class="mt-1 text-base-text">{guide.whatToRead}</dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-base-text">Qué buscar</dt>
+                <dd class="mt-1 text-base-text">{guide.focus}</dd>
+            </div>
+            <div class="text-base-subtle-text">
+                <dt class="font-semibold text-base-text">Por qué</dt>
+                <dd class="mt-1">{guide.why}</dd>
+            </div>
+        </dl>
     </div>
 
-    <p class="mt-3 flex flex-wrap items-center gap-x-2 text-xs">
+    <p data-reading-metadata class="mt-4 flex flex-wrap items-center gap-x-2 text-xs">
         {
             secondaryFields.map((field, index) => (
                 <>
@@ -87,6 +87,11 @@ const secondaryFields: SecondaryField[] = [
             ))
         }
     </p>
+
+    <div data-reading-guide-question class="reading-guide-question mt-4">
+        <p class="font-semibold text-base-text">Comprueba tu comprensión</p>
+        <p>{guide.guidingQuestion}</p>
+    </div>
 </div>
 
 <style scoped>

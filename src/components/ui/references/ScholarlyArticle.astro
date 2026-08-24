@@ -34,7 +34,9 @@ import {
     resolveRequiredTitleField,
     SPANISH_REFERENCE_META_LABELS,
 } from "./reference-content";
+import { referenceListItemProps, type ReferencePresentation } from "./reference-presentation";
 import { ReferenceContractError } from "./ReferenceContractError";
+import ReferenceIdentity from "./ReferenceIdentity.astro";
 
 type Props = {
     id?: string;
@@ -55,9 +57,12 @@ type Props = {
 
     /** Fallback author text when the `author` slot is absent or empty. */
     author?: string;
+    /** Presentation context forwarded by `ReferenceEntry`; it does not belong to bibliography data. */
+    presentation?: ReferencePresentation;
 };
 
-const { id, title, url, publication, publicationUrl, pages, author }: Props = Astro.props;
+const { id, title, url, publication, publicationUrl, pages, author, presentation = "default" }: Props = Astro.props;
+const listItemProps = referenceListItemProps(presentation, "scroll-mt-24");
 
 // Resolve optional slots once so the template stays declarative.
 const {
@@ -92,59 +97,61 @@ if (import.meta.env.DEV && publicationUrl && !publication) {
 
 <ListItem
     {id} icon={icons.FileText}
-    class="scroll-mt-24"
+    {...listItemProps}
 >
-    <Enquote type="english-double">
-        <a href={url} {...externalLinkAttrs}>
-            {
-                resolvedTitle.kind === "slot"
-                    ? <span set:html={resolvedTitle.html} />
-                : resolvedTitle.text
-            }
-        </a>
-    </Enquote>
-
-    {
-        pagesLabel ? (
-            <span class="text-muted-foreground">
-                {" "}({pagesLabel})
-            </span>
-        ) : null
-    }
-
-    {
-        resolvedPublication.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
-                <cite class="not-italic">
-                    {
-                        resolvedPublication.kind === "slot"
-                            ? <span set:html={resolvedPublication.html} />
-                        : resolvedPublication.kind === "link"
-                        ? (
-                            <a href={resolvedPublication.href} {...externalLinkAttrs}>
-                                {resolvedPublication.text}
-                            </a>
-                        )
-                        : resolvedPublication.text
-                    }
-                </cite>
-            </span>
-        ) : null
-    }
-
-    {
-        resolvedAuthor.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
+    <ReferenceIdentity {presentation}>
+        <Enquote type="english-double">
+            <a href={url} {...externalLinkAttrs}>
                 {
-                    resolvedAuthor.kind === "slot"
-                        ? <span set:html={resolvedAuthor.html} />
-                    : resolvedAuthor.text
+                    resolvedTitle.kind === "slot"
+                        ? <span set:html={resolvedTitle.html} />
+                    : resolvedTitle.text
                 }
-            </span>
-        ) : null
-    }
+            </a>
+        </Enquote>
+
+        {
+            pagesLabel ? (
+                <span class="text-muted-foreground">
+                    {" "}({pagesLabel})
+                </span>
+            ) : null
+        }
+
+        {
+            resolvedPublication.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span>{" "}
+                    <cite class="not-italic">
+                        {
+                            resolvedPublication.kind === "slot"
+                                ? <span set:html={resolvedPublication.html} />
+                            : resolvedPublication.kind === "link"
+                            ? (
+                                <a href={resolvedPublication.href} {...externalLinkAttrs}>
+                                    {resolvedPublication.text}
+                                </a>
+                            )
+                            : resolvedPublication.text
+                        }
+                    </cite>
+                </span>
+            ) : null
+        }
+
+        {
+            resolvedAuthor.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span>{" "}
+                    {
+                        resolvedAuthor.kind === "slot"
+                            ? <span set:html={resolvedAuthor.html} />
+                        : resolvedAuthor.text
+                    }
+                </span>
+            ) : null
+        }
+    </ReferenceIdentity>
 
     {
         descriptionSlot.kind === "meaningful" ? (

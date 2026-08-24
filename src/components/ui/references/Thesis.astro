@@ -24,6 +24,8 @@ import { Enquote } from "~/components/semantics";
 import { ListItem } from "~/components/ui/list";
 import { resolveOptionalSlots, SPANISH_REFERENCE_META_LABELS } from "./reference-content";
 import { EXTERNAL_REFERENCE_LINK_ATTRS } from "./reference-links";
+import { referenceListItemProps, type ReferencePresentation } from "./reference-presentation";
+import ReferenceIdentity from "./ReferenceIdentity.astro";
 import { resolveThesisReference, THESIS_REFERENCE_SLOTS } from "./thesis-reference";
 
 /**
@@ -71,59 +73,65 @@ type Props = {
      * Used only when the `author` slot is absent or does not contain meaningful content.
      */
     author?: string;
+    /** Presentation context forwarded by `ReferenceEntry`; it does not belong to bibliography data. */
+    presentation?: ReferencePresentation;
 };
 
 const slots = await resolveOptionalSlots(Astro.slots, THESIS_REFERENCE_SLOTS);
 const reference = resolveThesisReference(Astro.props, slots);
+const presentation = (Astro.props as Props).presentation ?? "default";
+const listItemProps = referenceListItemProps(presentation, "scroll-mt-24");
 ---
 
 <ListItem
     id={Astro.props.id} icon={icons.Student}
-    class="scroll-mt-24"
+    {...listItemProps}
 >
-    <Enquote type="english-double">
-        <a href={reference.url} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
-            {
-                /*
-                 * Slot-backed fields contain rendered Astro slot HTML. They are treated as trusted caller-authored
-                 * markup by the reference content resolver.
-                 */
-                reference.title.kind === "slot"
-                    ? <span set:html={reference.title.html} />
-                : reference.title.text
-            }
-        </a>
-    </Enquote>
-
-    {
-        reference.institution.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
-                    reference.institution.kind === "slot"
-                        ? <span set:html={reference.institution.html} />
-                    : reference.institution.kind === "link"
-                    ? (
-                        <a href={reference.institution.href} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
-                            {reference.institution.text}
-                        </a>
-                    )
-                    : reference.institution.text
+    <ReferenceIdentity {presentation}>
+        <Enquote type="english-double">
+            <a href={reference.url} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
+                {
+                    /*
+                     * Slot-backed fields contain rendered Astro slot HTML. They are treated as trusted caller-authored
+                     * markup by the reference content resolver.
+                     */
+                    reference.title.kind === "slot"
+                        ? <span set:html={reference.title.html} />
+                    : reference.title.text
                 }
-            </span>
-        ) : null
-    }
+            </a>
+        </Enquote>
 
-    {
-        reference.author.kind !== "missing" ? (
-            <span>
-                {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
-                    reference.author.kind === "slot"
-                        ? <span set:html={reference.author.html} />
-                    : reference.author.text
-                }
-            </span>
-        ) : null
-    }
+        {
+            reference.institution.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.in}</span> {
+                        reference.institution.kind === "slot"
+                            ? <span set:html={reference.institution.html} />
+                        : reference.institution.kind === "link"
+                        ? (
+                            <a href={reference.institution.href} {...EXTERNAL_REFERENCE_LINK_ATTRS}>
+                                {reference.institution.text}
+                            </a>
+                        )
+                        : reference.institution.text
+                    }
+                </span>
+            ) : null
+        }
+
+        {
+            reference.author.kind !== "missing" ? (
+                <span>
+                    {" "}<span class="text-muted-foreground">{SPANISH_REFERENCE_META_LABELS.by}</span> {
+                        reference.author.kind === "slot"
+                            ? <span set:html={reference.author.html} />
+                        : reference.author.text
+                    }
+                </span>
+            ) : null
+        }
+    </ReferenceIdentity>
 
     {
         reference.description.kind === "meaningful" ? (
