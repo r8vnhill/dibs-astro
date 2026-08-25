@@ -1,0 +1,19 @@
+---
+/**
+ * PDF-mode browser fixture for the observable BaseLayout contract.
+ *
+ * This route is test infrastructure rather than course content. Keep it outside `src/pages/notes/**` so lesson
+ * discovery and curricular metadata generation do not include it.
+ */
+import BaseLayout from "$layouts/BaseLayout.astro";
+
+Astro.locals.lessonRenderMode = "pdf";
+---
+
+<!-- Minimal browser fixture for the PDF BaseLayout contract. -->
+<BaseLayout pageTitle="Contrato PDF" description="Fixture PDF del contrato de layout">
+    <section data-fixture-content>
+        <h1>Contenido PDF del fixture</h1>
+        <p>Contenido representativo para las pruebas del modo PDF.</p>
+    </section>
+</BaseLayout>

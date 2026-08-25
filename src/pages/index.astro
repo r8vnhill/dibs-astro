@@ -42,20 +42,20 @@ const learningPillars = [
     {
         icon: "PuzzlePiece",
         title: "Diseño modular y abstracción",
-        body:
-            "Separar responsabilidades y ocultar detalles de implementación para que un componente pueda cambiar sin arrastrar al resto del sistema.",
+        body: "Separar responsabilidades y ocultar detalles de implementación para que "
+            + "un componente pueda cambiar sin arrastrar al resto del sistema.",
     },
     {
         icon: "PlugsConnected",
         title: "APIs y contratos explícitos",
-        body:
-            "Diseñar superficies públicas claras, versionadas y predecibles, pensadas para quienes las consumen y no solo para quien las escribe.",
+        body: "Diseñar superficies públicas claras, versionadas y predecibles, pensadas para "
+            + "quienes las consumen y no solo para quien las escribe.",
     },
     {
         icon: "ArrowsClockwise",
         title: "Verificación, mantención y evolución",
-        body:
-            "Construir con pruebas, automatización y disciplina de versionado que permitan que una biblioteca siga siendo confiable a medida que cambia.",
+        body: "Construir con pruebas, automatización y disciplina de versionado que permitan que "
+            + "una biblioteca siga siendo confiable a medida que cambia.",
     },
 ] as const satisfies readonly LearningPillar[];
 
@@ -63,8 +63,8 @@ const architectureLayers = [
     {
         icon: "Browsers",
         name: "Presentación",
-        role:
-            "Adapta datos ya resueltos para la interfaz; consume aplicación e infraestructura sin exponer sus detalles.",
+        role: "Adapta datos ya resueltos para la interfaz; consume aplicación e infraestructura "
+            + "sin exponer sus detalles.",
         core: false,
     },
     {
@@ -119,29 +119,49 @@ const sectionContainer = "mx-auto max-w-7xl px-6 sm:px-10 lg:px-12";
 const sectionKicker = "text-sm font-semibold uppercase tracking-[0.14em] text-primary";
 const sectionTitle = "mt-3 text-3xl font-semibold tracking-tight text-balance text-base-text sm:text-4xl";
 const surfaceCard = "rounded-2xl border border-base-border bg-base-background shadow-sm";
-const focusRing =
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-base-background";
+const focusRing = [
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
+    "focus-visible:ring-offset-2 focus-visible:ring-offset-base-background",
+].join(" ");
 const interactiveHover = "transition hover:border-primary/30 hover:bg-primary/4 hover:[&_h3]:text-primary";
 const interactiveCard =
     `group rounded-2xl border border-base-border bg-base-background shadow-sm ${interactiveHover} ${focusRing}`;
-const unavailableChip =
-    "inline-flex items-center gap-2 rounded-full border border-dashed border-base-border bg-base-background/60 px-3 py-1.5 text-sm text-base-subtle";
+const unavailableChip = [
+    "inline-flex items-center gap-2 rounded-full border border-dashed border-base-border",
+    "bg-base-background/60 px-3 py-1.5 text-sm text-base-subtle",
+].join(" ");
 ---
 
 <BaseLayout pageTitle={title} {description}>
     <section class="relative isolate overflow-hidden border-b border-base-border">
-        <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.16),_transparent_38%),radial-gradient(circle_at_80%_15%,_rgba(56,189,248,0.16),_transparent_30%),linear-gradient(180deg,_rgba(99,102,241,0.08),_transparent_65%)]">
+        <div
+            class="absolute inset-0 -z-10"
+            style="background:
+    radial-gradient(circle at top left, rgba(99, 102, 241, 0.16), transparent 38%),
+    radial-gradient(circle at 80% 15%, rgba(56, 189, 248, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(99, 102, 241, 0.08), transparent 65%)"
+        >
         </div>
 
         <div class:list={[sectionContainer, "pt-20 pb-16 lg:pt-28 lg:pb-24"]}>
             <div class="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
                 <div class="max-w-3xl">
-                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-primary/6 px-3 py-1 text-sm text-primary">
+                    <div
+                        class="
+                            inline-flex items-center gap-2 rounded-full border border-primary/15
+                            bg-primary/6 px-3 py-1 text-sm text-primary
+                        "
+                    >
                         <icons.GraduationCap class="size-4" aria-hidden="true" />
                         <span>Curso online de nivel universitario</span>
                     </div>
 
-                    <h1 class="mt-7 max-w-4xl text-5xl font-semibold tracking-tight text-balance text-base-text sm:text-6xl lg:text-6xl">
+                    <h1
+                        class="
+                            mt-7 max-w-4xl text-5xl font-semibold tracking-tight text-balance text-base-text
+                            sm:text-6xl lg:text-6xl
+                        "
+                    >
                         {site.LONG_TITLE}
                     </h1>
 
@@ -154,7 +174,9 @@ const unavailableChip =
                         <a
                             href="/notes/"
                             class:list={[
-                                "inline-flex items-center justify-center gap-2 rounded-md bg-primary-dark px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-darker",
+                                "inline-flex items-center justify-center gap-2 rounded-md bg-primary-dark px-5 py-3",
+                                "text-sm font-semibold text-primary-foreground shadow-sm transition",
+                                "hover:bg-primary-darker",
                                 focusRing,
                             ]}
                         >
@@ -266,7 +288,10 @@ const unavailableChip =
                                     {
                                         layer.core && (
                                             <span
-                                                class="rounded-full bg-primary/12 px-2.5 py-1 text-xs font-medium text-primary"
+                                                class="
+                                                    rounded-full bg-primary/12 px-2.5 py-1 text-xs font-medium
+                                                    text-primary
+                                                "
                                             >
                                                 Núcleo conceptual
                                             </span>
@@ -327,7 +352,12 @@ const unavailableChip =
                     href="/notes/"
                     class:list={[interactiveCard, "flex min-w-64 flex-1 items-center gap-4 p-5 sm:flex-none"]}
                 >
-                    <div class="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div
+                        class="
+                            inline-flex size-10 shrink-0 items-center justify-center rounded-full
+                            bg-primary/10 text-primary
+                        "
+                    >
                         <icons.ArrowCircleRight
                             class="size-5 transition group-hover:translate-x-0.5" aria-hidden="true"
                         />

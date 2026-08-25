@@ -1,0 +1,17 @@
+---
+/**
+ * Browser fixture for the observable BaseLayout contract.
+ *
+ * This route is test infrastructure rather than course content. Keep it outside `src/pages/notes/**` so lesson
+ * discovery and curricular metadata generation do not include it.
+ */
+import BaseLayout from "$layouts/BaseLayout.astro";
+---
+
+<!-- Minimal browser fixture for the normal BaseLayout contract. -->
+<BaseLayout pageTitle="Contrato de BaseLayout" description="Fixture del contrato de layout">
+    <section data-fixture-content>
+        <h1>Contenido del fixture</h1>
+        <p>Contenido representativo para las pruebas del layout.</p>
+    </section>
+</BaseLayout>

@@ -4,8 +4,8 @@
  *
  * Root layout for all pages in the DIBS site.
  *
- * This component defines the global HTML skeleton and shared UI structure. All content pages are
- * rendered inside the `<slot />` of this layout.
+ * This component defines the global HTML skeleton and shared UI structure. Each page is rendered
+ * once inside the `<main>` slot of this layout.
  *
  * ## Responsibilities
  *
@@ -15,6 +15,7 @@
  * - Loads global styles (Tailwind + CSS variables).
  * - Renders site-wide {@link Header} and {@link Footer}.
  * - Provides accessibility features (skip link).
+ * - Adjusts the main-content offset and chrome visibility for PDF exports.
  *
  * ## Design principles
  *
@@ -22,6 +23,9 @@
  * - Avoid business logic here — only presentation and global concerns.
  * - Centralize metadata and language decisions.
  * - Fail gracefully in restricted environments (e.g. disabled `localStorage`).
+ *
+ * The layout is consumed by every site page, so changes to its rendered structure or export mode
+ * affect both browser navigation and lesson-document generation.
  */
 import { getWebsiteRepoRef } from "$presentation/adapters/site-data";
 import { DEFAULT_LOCALE_PROFILE } from "$presentation/i18n/locale-profile";
@@ -207,7 +211,10 @@ const themeLabels = {
         -->
         <a
             href="#main-content"
-            class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded bg-base-background px-3 py-2"
+            class:list={[
+                "sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded",
+                "bg-base-background px-3 py-2",
+            ]}
         >
             Saltar al contenido principal
         </a>
@@ -222,7 +229,7 @@ const themeLabels = {
             Main content container.
             Padding-top accounts for fixed header spacing.
         -->
-        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-[var(--lesson-header-offset)]"]}>
+        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-(--lesson-header-offset)"]}>
             <slot />
         </main>
 

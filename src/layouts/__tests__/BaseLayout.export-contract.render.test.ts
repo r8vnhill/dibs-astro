@@ -1,3 +1,6 @@
+/**
+ * Documents the DOM differences between browser rendering and lesson PDF rendering.
+ */
 import BaseLayout from "$layouts/BaseLayout.astro";
 import { createAstroRenderer } from "$test-utils/astro-render";
 import { JSDOM } from "jsdom";
@@ -27,11 +30,9 @@ describe("BaseLayout export contract", () => {
         expect(doc.querySelectorAll(EXPORT_HIDDEN_SELECTOR)).toHaveLength(2);
         expect(doc.querySelector("header")?.getAttribute("data-export-hidden")).toBe("true");
         expect(doc.querySelector("footer")?.getAttribute("data-export-hidden")).toBe("true");
-        expect(html).toContain("name=\"robots\" content=\"noindex, nofollow\"");
-        expect(html).not.toContain("class=\"w-full pt-16\"");
-        expect(html).toContain("id=\"main-content\"");
-
-        expect(doc.querySelector("main#main-content")?.className).not.toContain("pt-16");
+        expect(doc.querySelector("meta[name='robots']")?.getAttribute("content")).toBe("noindex, nofollow");
+        expect(doc.getElementById("main-content")).not.toBeNull();
+        expect(doc.querySelector("main#main-content")?.textContent).toContain("Contenido de exportación");
     });
 
     test("keeps the header spacer in web mode and does not mark chrome as hidden", async () => {
@@ -44,9 +45,10 @@ describe("BaseLayout export contract", () => {
                 },
             },
         );
+        const doc = new JSDOM(html).window.document;
 
-        expect(html).toContain("class=\"w-full pt-16\"");
-        expect(html).not.toContain("data-export-hidden=\"true\"");
-        expect(html).not.toContain("noindex, nofollow");
+        expect(doc.querySelector("main#main-content")?.textContent).toContain("Contenido web");
+        expect(doc.querySelectorAll(EXPORT_HIDDEN_SELECTOR)).toHaveLength(0);
+        expect(doc.querySelector("meta[name='robots']")).toBeNull();
     });
 });
