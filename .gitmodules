@@ -1,0 +1,3 @@
+[submodule "vendor/astro-site-shell"]
+	path = vendor/astro-site-shell
+	url = https://gitlab.com/r8vnhill/astro-site-shell.git

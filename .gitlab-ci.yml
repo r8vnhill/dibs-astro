@@ -17,6 +17,7 @@ variables:
     GIT_DEPTH: "20"
     GIT_STRATEGY: fetch
     GIT_CLEAN_FLAGS: -ffdx
+    GIT_SUBMODULE_STRATEGY: normal
     NODE_OPTIONS: --max-old-space-size=3072
     ASTRO_TELEMETRY_DISABLED: "1"
     SKIP_ICON_GENERATION: "true"

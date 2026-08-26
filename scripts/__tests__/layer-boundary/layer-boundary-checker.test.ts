@@ -248,6 +248,34 @@ describe("checkLayerBoundaries", () => {
             }],
         },
         {
+            name: "allows UI imports of the site shell package root",
+            path: "src/layouts/BaseLayout.astro",
+            text: "---\nimport { SiteShell } from \"@ravenhill/astro-site-shell\";\n---",
+            expectedFindings: [],
+        },
+        {
+            name: "reports UI imports from the site shell package source",
+            path: "src/layouts/BaseLayout.astro",
+            text: "---\nimport SiteShell from \"../../vendor/astro-site-shell/src/SiteShell.astro\";\n---",
+            expectedFindings: [{
+                ruleId: "ui-boundary",
+                sourceLayer: "ui",
+                target: "external-source",
+                reason: "forbidden-target",
+            }],
+        },
+        {
+            name: "reports UI imports from a site shell package subpath",
+            path: "src/layouts/BaseLayout.astro",
+            text: "---\nimport SkipLink from \"@ravenhill/astro-site-shell/internal/SkipLink\";\n---",
+            expectedFindings: [{
+                ruleId: "site-shell-root-import",
+                sourceLayer: "ui",
+                target: "site-shell",
+                reason: "forbidden-package-subpath",
+            }],
+        },
+        {
             name: "reports dynamic layout imports of infrastructure code",
             path: "src/layouts/NotesLayout.astro",
             text: "---\nconst module = await import(\"$infrastructure/adapters/LessonCatalogAdapter\");\n---",

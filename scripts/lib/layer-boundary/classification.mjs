@@ -14,6 +14,7 @@ import { normalizeProjectPath } from "./paths.mjs";
  *   | "presentation-adapter"
  *   | "ui"
  *   | "content-core"
+ *   | "site-shell"
  *   | "unknown"
  * } SourceLayer
  */
@@ -33,6 +34,8 @@ import { normalizeProjectPath } from "./paths.mjs";
  *   | "styles"
  *   | "content-core"
  *   | "site-core"
+ *   | "site-shell"
+ *   | "external-source"
  *   | "external-package"
  *   | "unknown"
  * } ImportTarget
@@ -119,6 +122,10 @@ function isContentCoreTarget(pathValue) {
     return isUnder(pathValue, "packages/content-core/src");
 }
 
+function isExternalSourceTarget(pathValue) {
+    return isUnder(pathValue, "vendor");
+}
+
 const SOURCE_LAYERS = Object.freeze([
     ["domain", isDomainSource],
     ["application", isApplicationSource],
@@ -141,6 +148,7 @@ const TARGETS = Object.freeze([
     ["assets", isAssetsTarget],
     ["styles", isStylesTarget],
     ["content-core", isContentCoreTarget],
+    ["external-source", isExternalSourceTarget],
 ]);
 
 /**
@@ -159,6 +167,12 @@ export const architecturalPackages = Object.freeze([
     Object.freeze({
         packageName: "@ravenhill/site-core",
         semanticTarget: "site-core",
+        sourceOwnership: "external",
+        importSurface: "root-only",
+    }),
+    Object.freeze({
+        packageName: "@ravenhill/astro-site-shell",
+        semanticTarget: "site-shell",
         sourceOwnership: "external",
         importSurface: "root-only",
     }),

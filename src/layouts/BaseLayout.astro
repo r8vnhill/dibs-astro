@@ -1,78 +1,28 @@
 ---
 /**
- * @file BaseLayout.astro
+ * DIBS composition adapter over `@ravenhill/astro-site-shell`.
  *
- * Root layout for all pages in the DIBS site.
- *
- * This component defines the global HTML skeleton and shared UI structure. Each page is rendered
- * once inside the `<main>` slot of this layout.
- *
- * ## Responsibilities
- *
- * - Defines the `<html>`, `<head>`, and `<body>` structure.
- * - Delegates SEO and metadata generation to the {@link Head} component.
- * - Applies the persisted theme class early to prevent FOUC (Flash Of Unstyled Content).
- * - Loads global styles (Tailwind + CSS variables).
- * - Renders site-wide {@link Header} and {@link Footer}.
- * - Provides accessibility features (skip link).
- * - Adjusts the main-content offset and chrome visibility for PDF exports.
- *
- * ## Design principles
- *
- * - Keep layout logic minimal and declarative.
- * - Avoid business logic here — only presentation and global concerns.
- * - Centralize metadata and language decisions.
- * - Fail gracefully in restricted environments (e.g. disabled `localStorage`).
- *
- * The layout is consumed by every site page, so changes to its rendered structure or export mode
- * affect both browser navigation and lesson-document generation.
+ * DIBS retains metadata, localization, theme, PDF, styling, navigation, header, and footer policy. The external
+ * package owns only the generic document structure and skip-link/main-landmark relationship.
  */
 import { getWebsiteRepoRef } from "$presentation/adapters/site-data";
 import { DEFAULT_LOCALE_PROFILE } from "$presentation/i18n/locale-profile";
+import { SiteShell, type SiteShellProps, type SkipLinkOptions } from "@ravenhill/astro-site-shell";
 import Footer from "~/components/Footer.astro";
 import Header from "~/components/header/Header.astro";
 import Head from "~/components/meta/Head.astro";
 import { m } from "~/generated/i18n/messages";
-import "~/styles/global.css"; // Tailwind + CSS variables
+import "~/styles/global.css";
 import { site } from "~/utils";
 import type { PageMeta } from "~/utils/page-meta";
 
-/**
- * Props accepted by the layout.
- */
 type Props = {
-    /**
-     * Page-specific title.
-     *
-     * This value is combined with {@link site.SHORT_TITLE} to generate the final `<title>`.
-     */
     pageTitle: string;
-
-    /**
-     * Optional meta description.
-     *
-     * Passed directly to the {@link Head} component.
-     */
     description?: string;
-
-    /**
-     * Optional structured page metadata.
-     *
-     * Used to generate canonical URLs, JSON-LD, and citation metadata.
-     */
     pageMeta?: PageMeta;
-
-    /**
-     * Optional document language (BCP 47 tag).
-     *
-     * If omitted, falls back to:
-     *   1. `pageMeta.language`
-     *   2. `"es"`
-     */
     lang?: string;
 };
 
-// Props passed into the layout
 const { pageTitle, description, pageMeta, lang } = Astro.props as Props;
 
 const githubRef = getWebsiteRepoRef("github");
@@ -92,41 +42,17 @@ const gitlabRepoInfo = gitlabRef
     }
     : undefined;
 
-/**
- * Full page title used in the `<title>` tag.
- *
- * Format:
- *     <Page Title> | <Site Short Title>
- */
 const fullTitle = `${pageTitle} | ${site.SHORT_TITLE}`;
-
-/**
- * Determines the `<html lang="...">` attribute.
- *
- * Priority:
- *   1. Explicit `lang` prop
- *   2. `pageMeta.language`
- *   3. Default "es"
- *
- * Always trimmed and guaranteed non-empty.
- */
 const documentLang = (lang ?? pageMeta?.language ?? DEFAULT_LOCALE_PROFILE.htmlLanguage).trim()
     || DEFAULT_LOCALE_PROFILE.htmlLanguage;
+const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
 
-/**
- * Props passed to the {@link Head} component.
- *
- * `description` and `pageMeta` are only included if defined, to avoid leaking unnecessary
- * `undefined` values.
- */
 const headProps = {
     title: fullTitle,
     url: Astro.url.href,
     ...(description !== undefined ? { description } : {}),
     ...(pageMeta !== undefined ? { pageMeta } : {}),
 };
-
-const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
 
 const headerProps = {
     title: site.SHORT_TITLE,
@@ -141,99 +67,75 @@ const themeLabels = {
     dark: m.theme_dark(),
     auto: m.theme_auto(),
 };
+
+const bodyAttributes: SiteShellProps["bodyAttributes"] = {
+    class: "min-h-screen bg-base-background text-base-text",
+};
+
+const mainAttributes: SiteShellProps["mainAttributes"] = {
+    class: isPdfExport ? "w-full" : "w-full pt-(--lesson-header-offset)",
+};
+
+const skipLink: SkipLinkOptions = {
+    label: "Saltar al contenido principal",
+    attributes: {
+        class:
+            "sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded bg-base-background px-3 py-2",
+    },
+};
 ---
 
-<!--
-    Theme bootstrap script.
+<SiteShell
+    lang={documentLang} mainId="main-content"
+    {bodyAttributes} {mainAttributes}
+    {skipLink}
+>
+    <!-- DIBS theme policy remains before metadata and styles to prevent FOUC. -->
+    <script is:inline slot="head">
+        (() => {
+            const DARK = "dark";
+            const AUTO = "auto";
 
-    Runs before styles load to prevent FOUC (Flash Of Unstyled Content).
+            try {
+                const theme = localStorage.getItem("theme");
 
-    ## Behavior:
+                const prefersDark = typeof window.matchMedia === "function"
+                    && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-    - Reads the persisted "theme" value from localStorage.
-    - Supports "dark" and "auto".
-    - Falls back to system preference if storage access fails.
-    - Applies the "dark" class to <html> accordingly.
+                const isDark = theme === DARK || (theme === AUTO && prefersDark);
 
-    `is:inline` ensures:
-    - The script is embedded directly in the HTML.
-    - It executes immediately without hydration.
--->
-<script is:inline>
-    (() => {
-        const DARK = "dark";
-        const AUTO = "auto";
+                document.documentElement.classList.toggle(DARK, isDark);
+            } catch {
+                const prefersDark = typeof window.matchMedia === "function"
+                    && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-        try {
-            const theme = localStorage.getItem("theme");
+                document.documentElement.classList.toggle(DARK, prefersDark);
+            }
+        })();
+    </script>
 
-            const prefersDark = typeof window.matchMedia === "function"
-                && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    <Head slot="head" {...headProps} />
 
-            const isDark = theme === DARK || (theme === AUTO && prefersDark);
+    {
+        isPdfExport && (
+            <meta
+                slot="head" name="robots"
+                content="noindex, nofollow"
+            />
+        )
+    }
 
-            document.documentElement.classList.toggle(DARK, isDark);
-        } catch {
-            // localStorage may be blocked (privacy mode, sandboxed env, etc.)
-            const prefersDark = typeof window.matchMedia === "function"
-                && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    <meta
+        slot="head" name="color-scheme"
+        content="light dark"
+    />
 
-            document.documentElement.classList.toggle(DARK, prefersDark);
-        }
-    })();
-</script>
+    <Header
+        slot="header" {...headerProps}
+        {themeLabels}
+    />
 
-<html lang={documentLang}>
-    <head>
-        <!--
-            Delegates:
-            - <title>
-            - meta description
-            - canonical URL
-            - JSON-LD (if article)
-            - favicons
-        -->
-        <Head {...headProps} />
+    <slot />
 
-        {isPdfExport && <meta name="robots" content="noindex, nofollow" />}
-
-        <!--
-            Informs the browser that both light and dark color schemes are supported.
-            Helps native UI controls match the current theme.
-        -->
-        <meta name="color-scheme" content="light dark" />
-    </head>
-
-    <body class="min-h-screen bg-base-background text-base-text">
-        <!--
-            Accessibility: Skip link.
-            Allows keyboard users to jump directly to main content.
-        -->
-        <a
-            href="#main-content"
-            class:list={[
-                "sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded",
-                "bg-base-background px-3 py-2",
-            ]}
-        >
-            Saltar al contenido principal
-        </a>
-
-        <!--
-            Global site header.
-            Includes title and repository links.
-        -->
-        <Header {...headerProps} {themeLabels} />
-
-        <!--
-            Main content container.
-            Padding-top accounts for fixed header spacing.
-        -->
-        <main id="main-content" class:list={["w-full", !isPdfExport && "pt-(--lesson-header-offset)"]}>
-            <slot />
-        </main>
-
-        <!-- Global footer -->
-        <Footer />
-    </body>
-</html>
+    <Footer slot="footer" />
+</SiteShell>

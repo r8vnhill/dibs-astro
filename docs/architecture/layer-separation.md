@@ -13,6 +13,8 @@ the authoritative description of the current boundaries when they conflict with 
 - **Content core**: Local workspace package with host-agnostic navigation and lesson metadata contracts shared by the
   app.
 - **Site core**: Published external package with host-agnostic repository and site-link primitives shared by the app.
+- **Site shell**: Published external package with generic document structure and accessibility landmarks composed by the
+  app.
 - **Infrastructure**: Concrete data-source implementations and external service adapters.
 - **Presentation adapters**: Local composition root for UI use cases; bridges application services to UI-safe payloads.
 - **UI surfaces**: Astro layouts, React components, and pages that render presentation DTOs.
@@ -64,6 +66,8 @@ The main content seams are now present in code:
 - Navigation rules and lesson metadata helpers are centered in local `packages/content-core` and consumed through
   repository/service boundaries.
 - Repository hosting primitives are provided by published `@ravenhill/site-core` and consumed through the package root.
+- Generic document structure is provided by `@ravenhill/astro-site-shell` and consumed through the package root by the
+  local `BaseLayout.astro` composition adapter.
 - Reference-content business rules live in `src/domain/reference-content.ts`.
 - The generated lesson metadata dataset boundary remains app-local in `src/utils/lesson-metadata.ts`.
 - Presentation composition for lesson navigation and lesson metadata lives in:
@@ -91,14 +95,14 @@ These paths are locked with high-value test suites:
 
 ## Layer Rules
 
-| Source layer                                          | Allowed targets                                                                                               | Forbidden targets/packages                                                                              | Notes                                   |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/content-core/src/**`                        | `content-core`                                                                                                | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic content core.             |
-| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                         | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
-| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                          | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
-| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core` | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
-| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`           | `ui`, `components`, `layouts`, `pages`                                                                  | Local composition root.                 |
-| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`   | `domain`, `application`, `infrastructure`                                                               | Rendering surface.                      |
+| Source layer                                          | Allowed targets                                                                                                           | Forbidden targets/packages                                                                              | Notes                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `packages/content-core/src/**`                        | `content-core`                                                                                                            | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic content core.             |
+| `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                                     | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
+| `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                                      | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
+| `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core`             | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
+| `src/presentation/adapters/**`                        | `domain`, `application`, `infrastructure`, `presentation`, `utilities`, `content-core`, `site-core`                       | `ui`, `components`, `layouts`, `pages`                                                                  | Local composition root.                 |
+| `src/components/**`, `src/layouts/**`, `src/pages/**` | `presentation/adapters`, `presentation`, `ui`, `assets`, `styles`, `utilities`, `content-core`, `site-core`, `site-shell` | `domain`, `application`, `infrastructure`, `external-source`                                            | Rendering surface.                      |
 
 **Implementation notes:**
 
@@ -106,6 +110,8 @@ These paths are locked with high-value test suites:
 - Package subpaths are normalized: `react/jsx-runtime` → `react`, `zod/v4` → `zod`.
 - `@ravenhill/content-core` must be consumed through the package root; package subpath imports are not allowed.
 - `@ravenhill/site-core` must be consumed through the package root; package subpath imports are not allowed.
+- `@ravenhill/astro-site-shell` must be consumed through the package root; package subpath imports and direct imports
+  from `vendor/astro-site-shell` are not allowed.
 - `site-core` is an external architectural target, not a source layer maintained under `packages/` in this repository.
 - The `@ravenhill` scope uses the canonical public-read registry endpoint configured in `.npmrc`; consumer installs do
   not require package-registry credentials.
@@ -125,6 +131,7 @@ graph TD
     DOMAIN["Domain<br/>(pure business rules)"]
     CONTENT["Content core<br/>(local workspace package)"]
     SITE["Site core<br/>(published external package, root-only)"]
+    SHELL["Site shell<br/>(pinned external package, root-only)"]
     INFRA["Infrastructure adapters<br/>(data sources)"]
     CONTRACTS["Domain/Application contracts"]
     
@@ -138,6 +145,7 @@ graph TD
     INFRA -->|may use| SITE
     PA -->|may use| SITE
     UI -->|may use| SITE
+    UI -->|may use| SHELL
     INFRA -->|implements| CONTENT
     PA -->|composes| INFRA
     INFRA -->|implements| CONTRACTS
@@ -182,10 +190,11 @@ Use the focused boundary gate when debugging architecture findings:
 pnpm check:architecture
 ```
 
-The focused command runs `node scripts/check-layer-boundaries.mjs` and should finish with:
+The focused command runs the layer-boundary and external-source checks and should finish with:
 
 ```txt
 No layer boundary findings found.
+External astro-site-shell source is initialized at the recorded commit.
 ```
 
 Run the checker test suites when changing the checker itself:
@@ -217,7 +226,12 @@ The CLI can also be run directly:
 node scripts/check-layer-boundaries.mjs
 ```
 
-GitLab CI runs `pnpm check`, so architecture boundary findings block the standard CI verification path.
+GitLab CI runs `pnpm check`, so architecture or external-source findings block the standard CI verification path.
+
+The repository also declares `vendor/astro-site-shell` as externally maintained source. Its gitlink is the sole DIBS
+source pin; the architecture check requires the checkout to match that commit and its root manifest to identify
+`@ravenhill/astro-site-shell`. The package is intentionally outside the pnpm workspace. DIBS production source consumes
+it only through the package root, while the gitlink remains the reproducible acquisition pin.
 
 **API note:** `runBoundaryCheck(...)` exposes `findings` as the preferred result field. The older result shape remains
 as a compatibility alias. New code should read `findings`; the alias will be removed after all internal callers migrate.
@@ -251,6 +265,8 @@ Examples:
 - Not allowed: application code imports `astro`, `react`, `zod`, generated data, or UI components.
 - Not allowed: any code imports from `@ravenhill/content-core/*` package subpaths.
 - Not allowed: any code imports from `@ravenhill/site-core/*` package subpaths.
+- Not allowed: any code imports from `@ravenhill/astro-site-shell/*` package subpaths or directly from
+  `vendor/astro-site-shell`.
 
 ## Presentation Adapter Contracts
 

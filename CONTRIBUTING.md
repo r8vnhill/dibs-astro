@@ -9,6 +9,28 @@ welcome!
 2. Follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 3. Fork this repo and submit a pull request.
 
+## Pinned external source
+
+The reusable site shell is maintained in its own repository and is acquired at the exact commit recorded by DIBS:
+
+```sh
+git clone https://gitlab.com/r8vnhill/dibs-astro-website.git
+cd dibs-astro-website
+git submodule update --init vendor/astro-site-shell
+pnpm install --frozen-lockfile
+```
+
+Do not use `git submodule update --remote` for routine setup. To update the dependency:
+
+1. Land and verify the desired commit in `astro-site-shell`.
+2. Check out that exact commit in `vendor/astro-site-shell`.
+3. Stage the resulting gitlink; refresh the lockfile only when package metadata changes.
+4. Run the package-boundary, architecture, type, and render checks.
+5. Review the staged gitlink before submitting the change.
+
+The submodule is a source-acquisition mechanism; the intended durable distribution channel remains the canonical
+`@ravenhill` npm registry.
+
 ## Code formatting: dprint
 
 We use dprint to keep the codebase consistently formatted across contributors and editors. Please format any changed

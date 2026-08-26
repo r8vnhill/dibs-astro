@@ -15,4 +15,12 @@ export const packageResolutionContracts = [
         name: "@ravenhill/astro-icons",
         registryProject: "85449745",
     },
+    {
+        name: "@ravenhill/astro-site-shell",
+        registryProject: "85449745",
+        specifier: "file:./vendor/astro-site-shell",
+        installedVersion: "0.1.0",
+        lockfileSpecifier: "file:./vendor/astro-site-shell",
+        lockfileVersionPrefix: "file:vendor/astro-site-shell",
+    },
 ];

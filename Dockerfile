@@ -11,6 +11,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml project.inlang .npmrc ./
 COPY packages/content-core/package.json packages/content-core/package.json
 COPY packages/lesson-export-core/package.json packages/lesson-export-core/package.json
 COPY packages/shiki-core/package.json packages/shiki-core/package.json
+COPY vendor/astro-site-shell vendor/astro-site-shell
 
 RUN --mount=type=cache,id=dibs-pnpm-store,target=/pnpm/store \
     pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile

@@ -36,6 +36,7 @@ const resolvedTargetCases = [
     ["src/assets/logo.svg", "assets"],
     ["src/styles/global.css", "styles"],
     ["packages/content-core/src/index.ts", "content-core"],
+    ["vendor/astro-site-shell/src/SiteShell.astro", "external-source"],
     ["scripts/utility.mjs", "unknown"],
 ] as const;
 
@@ -89,6 +90,12 @@ describe("architecturalPackages", () => {
             {
                 packageName: "@ravenhill/site-core",
                 semanticTarget: "site-core",
+                sourceOwnership: "external",
+                importSurface: "root-only",
+            },
+            {
+                packageName: "@ravenhill/astro-site-shell",
+                semanticTarget: "site-shell",
                 sourceOwnership: "external",
                 importSurface: "root-only",
             },
@@ -150,6 +157,8 @@ describe("classifyPackageImport", () => {
         ["@ravenhill/content-core", "content-core", "@ravenhill/content-core"],
         ["@ravenhill/site-core", "site-core", "@ravenhill/site-core"],
         ["@ravenhill/site-core/repositories", "site-core", "@ravenhill/site-core"],
+        ["@ravenhill/astro-site-shell", "site-shell", "@ravenhill/astro-site-shell"],
+        ["@ravenhill/astro-site-shell/internal/SkipLink", "site-shell", "@ravenhill/astro-site-shell"],
     ])("classifies architectural package %s as %s", (importPath, target, packageName) => {
         expect(classifyPackageImport(importPath)).toEqual({
             target,

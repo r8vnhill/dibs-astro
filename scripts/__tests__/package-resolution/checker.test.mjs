@@ -9,16 +9,23 @@ import {
     runPackageResolutionCheck,
 } from "../../lib/package-resolution/checker.mjs";
 
-const canonicalNpmrc =
-    "@ravenhill:registry=https://gitlab.com/api/v4/projects/85449745/packages/npm/\n";
-const staleNpmrc =
-    "@ravenhill:registry=https://gitlab.com/api/v4/projects/85350050/packages/npm/\n";
+const canonicalNpmrc = "@ravenhill:registry=https://gitlab.com/api/v4/projects/85449745/packages/npm/\n";
+const staleNpmrc = "@ravenhill:registry=https://gitlab.com/api/v4/projects/85350050/packages/npm/\n";
 
 const siteCoreContract = {
     name: "@ravenhill/site-core",
     exactVersion: "0.1.0",
     registryProject: "85449745",
     forbiddenLocalDir: "packages/site-core",
+};
+
+const siteShellContract = {
+    name: "@ravenhill/astro-site-shell",
+    registryProject: "85449745",
+    specifier: "file:./vendor/astro-site-shell",
+    installedVersion: "0.1.0",
+    lockfileSpecifier: "file:./vendor/astro-site-shell",
+    lockfileVersionPrefix: "file:vendor/astro-site-shell",
 };
 
 let cwd;
@@ -108,6 +115,40 @@ describe("given the site-core resolution contract against a workspace-style inco
 
         const checks = findings.map((finding) => finding.check).sort();
         expect(checks).toEqual(["lockfile", "registry", "specifier"]);
+    });
+});
+
+describe("given the pinned site-shell source-acquisition contract", () => {
+    test("then it accepts the local file specifier and lockfile resolution", async () => {
+        cwd = await mkdtemp(path.join(os.tmpdir(), "package-resolution-checker-"));
+        const dir = path.join(cwd, "node_modules", "@ravenhill", "astro-site-shell");
+        await mkdir(dir, { recursive: true });
+        await writeFile(
+            path.join(dir, "package.json"),
+            JSON.stringify({ name: "@ravenhill/astro-site-shell", version: "0.1.0" }),
+        );
+
+        const lockfileContent = [
+            "importers:",
+            "",
+            "  .:",
+            "    dependencies:",
+            "      '@ravenhill/astro-site-shell':",
+            "        specifier: file:./vendor/astro-site-shell",
+            "        version: file:vendor/astro-site-shell(astro@7.2.2)",
+        ].join("\n");
+
+        const findings = await checkPackageResolutionContract(
+            siteShellContract,
+            {
+                cwd,
+                packageManifest: { dependencies: { "@ravenhill/astro-site-shell": "file:./vendor/astro-site-shell" } },
+                npmrcContent: canonicalNpmrc,
+                lockfileContent,
+            },
+        );
+
+        expect(findings).toEqual([]);
     });
 });
 

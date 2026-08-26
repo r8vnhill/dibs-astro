@@ -9,7 +9,7 @@
     "packageManager": "pnpm@11.8.0",
     "scripts": {
         "i18n:compile": "node ./node_modules/@inlang/paraglide-js/bin/run.js compile --project ./project.inlang --outdir ./src/generated/i18n --emit-ts-declarations",
-        "check:architecture": "node scripts/check-layer-boundaries.mjs",
+        "check:architecture": "node scripts/check-architecture.mjs",
         "check:toolchain": "node scripts/check-toolchain.mjs",
         "check:published-package-resolution": "node scripts/check-published-package-resolution.mjs",
         "build:content-core": "node scripts/run-workspace-script.mjs packages/content-core build",
@@ -56,6 +56,7 @@
         "@inlang/paraglide-js": "2.23.2",
         "@lucide/astro": "^0.536.0",
         "@ravenhill/astro-icons": "0.2.0",
+        "@ravenhill/astro-site-shell": "file:./vendor/astro-site-shell",
         "@ravenhill/content-core": "workspace:*",
         "@ravenhill/lesson-export-core": "workspace:*",
         "@ravenhill/shiki-core": "workspace:*",

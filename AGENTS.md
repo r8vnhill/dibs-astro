@@ -42,6 +42,8 @@ Context and essential rules for agents collaborating in this repository.
 - `packages/shiki-core` is a local, host-agnostic package consumed as `@ravenhill/shiki-core`.
 - `@ravenhill/site-core` is a published external, host-agnostic architectural dependency. It is not maintained under
   `packages/` in this repository and is consumed only through its package root.
+- `@ravenhill/astro-site-shell` is acquired temporarily through the pinned `vendor/astro-site-shell` submodule and is
+  consumed only through its package root. Do not import from the vendor path or package subpaths.
 - The committed `.npmrc` configures the canonical public-read `@ravenhill` registry endpoint
   (`https://gitlab.com/api/v4/projects/85449745/packages/npm/`); consumer installs do not require package-registry
   credentials.

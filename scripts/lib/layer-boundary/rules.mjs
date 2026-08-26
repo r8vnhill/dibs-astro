@@ -12,6 +12,7 @@ export const domainBoundaryRule = {
         "ui",
         "generated-data",
         "data",
+        "external-source",
     ],
     forbiddenPackages: ["astro", "react", "zod"],
     message: "Domain code must stay framework-free and independent from outer layers.",
@@ -30,6 +31,7 @@ export const applicationBoundaryRule = {
         "ui",
         "generated-data",
         "data",
+        "external-source",
     ],
     forbiddenPackages: ["astro", "react", "zod"],
     message:
@@ -55,6 +57,7 @@ export const infrastructureBoundaryRule = {
         "presentation-adapter",
         "presentation",
         "ui",
+        "external-source",
     ],
     forbiddenPackages: [],
     message:
@@ -76,7 +79,7 @@ export const presentationAdapterBoundaryRule = {
         "content-core",
         "site-core",
     ],
-    forbiddenTargets: ["ui"],
+    forbiddenTargets: ["ui", "external-source"],
     forbiddenPackages: [],
     message:
         "Presentation adapters should compose application and infrastructure services, but must not import UI components, layouts, or pages.",
@@ -95,8 +98,9 @@ export const uiBoundaryRule = {
         "utils",
         "content-core",
         "site-core",
+        "site-shell",
     ],
-    forbiddenTargets: ["domain", "application", "infrastructure"],
+    forbiddenTargets: ["domain", "application", "infrastructure", "external-source"],
     forbiddenPackages: [],
     message: "UI code must depend on presentation contracts, not domain/application internals.",
     suggestion: "Move shaping logic behind a presentation adapter, helper, or view model.",
@@ -118,6 +122,7 @@ export const contentCoreBoundaryRule = {
         "utils",
         "assets",
         "styles",
+        "external-source",
     ],
     forbiddenPackages: ["astro", "react", "react-dom", "zod"],
     // The package's own runtime contract is dependency-free. Its root-api tests intentionally consume the package

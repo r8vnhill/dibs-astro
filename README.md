@@ -128,6 +128,16 @@ Install dependencies using the committed lockfile:
 pnpm install --frozen-lockfile
 ```
 
+The reusable site shell is acquired as a top-level Git submodule. After cloning, initialize the recorded source revision
+before running repository checks or installing dependencies:
+
+```sh
+git submodule update --init vendor/astro-site-shell
+```
+
+The submodule is pinned by the DIBS gitlink; do not update it with `--remote` as part of normal setup. Updating the
+dependency is an explicit superproject change that records a new gitlink.
+
 Do not update the lockfile merely to make a local installation succeed. If the frozen installation fails, identify the
 dependency or environment mismatch first.
 
@@ -245,8 +255,14 @@ packages/
 ├── lesson-export-core/  lesson export functionality
 └── shiki-core/          syntax-highlighting functionality
 
+vendor/
+└── astro-site-shell/     externally maintained source acquired at a pinned Git commit
+
 External `@ravenhill` packages, including `@ravenhill/site-core` and `@ravenhill/astro-icons`, are installed from the
 canonical registry; they are not maintained under `packages/` in this repository.
+
+The `vendor/` directory is reserved for externally maintained source temporarily acquired for an explicit repository
+contract. It is not part of the pnpm workspace; DIBS-owned workspace packages belong under `packages/`.
 
 docker/
 └── default.conf     static NGINX serving configuration

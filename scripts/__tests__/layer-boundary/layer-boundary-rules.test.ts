@@ -492,6 +492,17 @@ describe("Cycle 2 rule matrix", () => {
         expect(ruleById(ruleId).allowedTargets).toContain("site-core");
     });
 
+    test("allows UI code to consume the site shell package root", () => {
+        const result = evaluateBoundaryRules(
+            "src/layouts/BaseLayout.astro",
+            importRecord("@ravenhill/astro-site-shell"),
+            undefined,
+        );
+
+        expect(result).toEqual({ status: "allowed" });
+        expect(ruleById("ui-boundary").allowedTargets).toContain("site-shell");
+    });
+
     test("does not allow content-core to acquire site-core", () => {
         const result = evaluateBoundaryRules(
             "packages/content-core/src/index.ts",
@@ -570,7 +581,7 @@ describe("Cycle 2 rule matrix", () => {
         expect(uiRule.allowedTargets).toEqual(
             expect.arrayContaining(["presentation-adapter", "presentation", "utils"]),
         );
-        expect(uiRule.forbiddenTargets).toEqual(["domain", "application", "infrastructure"]);
+        expect(uiRule.forbiddenTargets).toEqual(["domain", "application", "infrastructure", "external-source"]);
     });
 
     test("generated data is blocked from inner layers and allowed from infrastructure", () => {
@@ -580,7 +591,7 @@ describe("Cycle 2 rule matrix", () => {
     });
 
     test("presentation adapters forbid UI targets", () => {
-        expect(ruleById("presentation-adapter-boundary").forbiddenTargets).toEqual(["ui"]);
+        expect(ruleById("presentation-adapter-boundary").forbiddenTargets).toEqual(["ui", "external-source"]);
     });
 });
 
@@ -861,12 +872,14 @@ describe("rootOnlyPackages", () => {
         expect(rootOnlyPackages.map((entry) => entry.packageName)).toEqual([
             "@ravenhill/content-core",
             "@ravenhill/site-core",
+            "@ravenhill/astro-site-shell",
         ]);
     });
 
     test.each([
         ["@ravenhill/content-core", "content-core-root-import"],
         ["@ravenhill/site-core", "site-core-root-import"],
+        ["@ravenhill/astro-site-shell", "site-shell-root-import"],
     ])("rejects a %s subpath import from any source layer", (packageName, expectedRuleId) => {
         const result = evaluateBoundaryRules(
             "src/presentation/adapters/navigation-bridge.ts",
@@ -885,9 +898,10 @@ describe("rootOnlyPackages", () => {
     test.each([
         "@ravenhill/content-core",
         "@ravenhill/site-core",
+        "@ravenhill/astro-site-shell",
     ])("allows importing %s through its root entry point", (packageName) => {
         const result = evaluateBoundaryRules(
-            "src/presentation/adapters/navigation-bridge.ts",
+            "src/layouts/BaseLayout.astro",
             importRecord(packageName),
             undefined,
         );
