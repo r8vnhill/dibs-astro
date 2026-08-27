@@ -46,7 +46,7 @@ Context and essential rules for agents collaborating in this repository.
   consumed only through its package root. Do not import from the vendor path or package subpaths.
 - `@ravenhill/astro-head` is acquired temporarily through the pinned `vendor/astro-head` submodule and is consumed only
   through its package root. DIBS-specific metadata policy belongs in the local adapter, not in the submodule.
-- `@ravenhill/astro-site-header` is acquired temporarily through the pinned `vendor/astro-site-header` submodule and
+- `@ravenhill/astro-site-chrome` is acquired temporarily through the pinned `vendor/astro-site-chrome` submodule and
   is consumed only through its package root. DIBS-specific header policy belongs in the local adapter, not in the
   submodule.
 - The committed `.npmrc` configures the canonical public-read `@ravenhill` registry endpoint

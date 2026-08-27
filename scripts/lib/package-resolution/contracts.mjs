@@ -24,11 +24,11 @@ export const packageResolutionContracts = [
         lockfileVersionPrefix: "file:vendor/astro-site-shell",
     },
     {
-        name: "@ravenhill/astro-site-header",
+        name: "@ravenhill/astro-site-chrome",
         registryProject: "85449745",
-        specifier: "file:./vendor/astro-site-header",
+        specifier: "file:./vendor/astro-site-chrome",
         installedVersion: "0.1.0",
-        lockfileSpecifier: "file:./vendor/astro-site-header",
-        lockfileVersionPrefix: "file:vendor/astro-site-header",
+        lockfileSpecifier: "file:./vendor/astro-site-chrome",
+        lockfileVersionPrefix: "file:vendor/astro-site-chrome",
     },
 ];

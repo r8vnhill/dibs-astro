@@ -183,8 +183,8 @@ export const architecturalPackages = Object.freeze([
         importSurface: "root-only",
     }),
     Object.freeze({
-        packageName: "@ravenhill/astro-site-header",
-        semanticTarget: "astro-site-header",
+        packageName: "@ravenhill/astro-site-chrome",
+        semanticTarget: "astro-site-chrome",
         sourceOwnership: "external",
         importSurface: "root-only",
     }),

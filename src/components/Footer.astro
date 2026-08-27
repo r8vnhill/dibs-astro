@@ -3,6 +3,7 @@
  * Displays author attribution and build tool credit at the bottom of a page.
  */
 
+import { SiteFooter } from "@ravenhill/astro-site-chrome";
 import { site } from "~/utils";
 
 interface FooterProps {
@@ -19,22 +20,24 @@ const {
 } = Astro.props as FooterProps;
 const isPdfExport = Astro.locals.lessonRenderMode === "pdf";
 const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : {};
+const footerAttributes = {
+    ...exportHiddenAttributes,
+    role: "contentinfo",
+    class: [
+        "mt-12",
+        "border-t",
+        "border-base-border",
+        "text-sm",
+        "text-base-subtle",
+        "py-8",
+        "px-4",
+        "text-center",
+    ],
+};
+const contentAttributes = { class: "space-y-2" };
 ---
 
-<footer
-    {...exportHiddenAttributes} role="contentinfo"
-    class:list={[
-        "mt-12", // Add top margin for visual separation from content
-        "border-t", // Draw a top border line
-        "border-base-border", // Theme-adapted border color (light/dark)
-        "text-sm", // Use small font for subtlety
-        "text-base-subtle", // Slightly muted text color based on theme
-        "py-8", // Vertical padding (top and bottom)
-        "px-4", // Horizontal padding
-        "text-center", // Center the text inside the footer
-    ]}
->
-    <div class="space-y-2">
+<SiteFooter {footerAttributes} {contentAttributes}>
         <p class="mt-2">
             © {year}{" "}
             <a
@@ -75,5 +78,4 @@ const exportHiddenAttributes = isPdfExport ? { "data-export-hidden": "true" } : 
                 Simple Icons
             </a>, bajo sus respectivas licencias.
         </p>
-    </div>
-</footer>
+</SiteFooter>

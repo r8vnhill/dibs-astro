@@ -11,16 +11,16 @@ export const ASTRO_SITE_SHELL_PACKAGE = "@ravenhill/astro-site-shell";
 export const ASTRO_HEAD_PATH = "vendor/astro-head";
 export const ASTRO_HEAD_URL = "https://gitlab.com/r8vnhill/astro-head.git";
 export const ASTRO_HEAD_PACKAGE = "@ravenhill/astro-head";
-export const ASTRO_SITE_HEADER_PATH = "vendor/astro-site-header";
-export const ASTRO_SITE_HEADER_URL = "https://gitlab.com/r8vnhill/astro-site-header.git";
-export const ASTRO_SITE_HEADER_PACKAGE = "@ravenhill/astro-site-header";
+export const ASTRO_SITE_CHROME_PATH = "vendor/astro-site-chrome";
+export const ASTRO_SITE_CHROME_URL = "https://gitlab.com/r8vnhill/astro-site-chrome.git";
+export const ASTRO_SITE_CHROME_PACKAGE = "@ravenhill/astro-site-chrome";
 
 export const EXTERNAL_SOURCES = Object.freeze([
     Object.freeze({ path: ASTRO_HEAD_PATH, url: ASTRO_HEAD_URL, packageName: ASTRO_HEAD_PACKAGE }),
     Object.freeze({
-        path: ASTRO_SITE_HEADER_PATH,
-        url: ASTRO_SITE_HEADER_URL,
-        packageName: ASTRO_SITE_HEADER_PACKAGE,
+        path: ASTRO_SITE_CHROME_PATH,
+        url: ASTRO_SITE_CHROME_URL,
+        packageName: ASTRO_SITE_CHROME_PACKAGE,
     }),
     Object.freeze({ path: ASTRO_SITE_SHELL_PATH, url: ASTRO_SITE_SHELL_URL, packageName: ASTRO_SITE_SHELL_PACKAGE }),
 ]);

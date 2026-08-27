@@ -106,8 +106,8 @@ describe("architecturalPackages", () => {
                 importSurface: "root-only",
             },
             {
-                packageName: "@ravenhill/astro-site-header",
-                semanticTarget: "astro-site-header",
+                packageName: "@ravenhill/astro-site-chrome",
+                semanticTarget: "astro-site-chrome",
                 sourceOwnership: "external",
                 importSurface: "root-only",
             },
@@ -173,8 +173,8 @@ describe("classifyPackageImport", () => {
         ["@ravenhill/astro-site-shell/internal/SkipLink", "site-shell", "@ravenhill/astro-site-shell"],
         ["@ravenhill/astro-head", "astro-head", "@ravenhill/astro-head"],
         ["@ravenhill/astro-head/internal", "astro-head", "@ravenhill/astro-head"],
-        ["@ravenhill/astro-site-header", "astro-site-header", "@ravenhill/astro-site-header"],
-        ["@ravenhill/astro-site-header/internal", "astro-site-header", "@ravenhill/astro-site-header"],
+        ["@ravenhill/astro-site-chrome", "astro-site-chrome", "@ravenhill/astro-site-chrome"],
+        ["@ravenhill/astro-site-chrome/internal", "astro-site-chrome", "@ravenhill/astro-site-chrome"],
     ])("classifies architectural package %s as %s", (importPath, target, packageName) => {
         expect(classifyPackageImport(importPath)).toEqual({
             target,
