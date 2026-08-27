@@ -99,6 +99,18 @@ describe("architecturalPackages", () => {
                 sourceOwnership: "external",
                 importSurface: "root-only",
             },
+            {
+                packageName: "@ravenhill/astro-head",
+                semanticTarget: "astro-head",
+                sourceOwnership: "external",
+                importSurface: "root-only",
+            },
+            {
+                packageName: "@ravenhill/astro-site-header",
+                semanticTarget: "astro-site-header",
+                sourceOwnership: "external",
+                importSurface: "root-only",
+            },
         ]);
     });
 });
@@ -159,6 +171,10 @@ describe("classifyPackageImport", () => {
         ["@ravenhill/site-core/repositories", "site-core", "@ravenhill/site-core"],
         ["@ravenhill/astro-site-shell", "site-shell", "@ravenhill/astro-site-shell"],
         ["@ravenhill/astro-site-shell/internal/SkipLink", "site-shell", "@ravenhill/astro-site-shell"],
+        ["@ravenhill/astro-head", "astro-head", "@ravenhill/astro-head"],
+        ["@ravenhill/astro-head/internal", "astro-head", "@ravenhill/astro-head"],
+        ["@ravenhill/astro-site-header", "astro-site-header", "@ravenhill/astro-site-header"],
+        ["@ravenhill/astro-site-header/internal", "astro-site-header", "@ravenhill/astro-site-header"],
     ])("classifies architectural package %s as %s", (importPath, target, packageName) => {
         expect(classifyPackageImport(importPath)).toEqual({
             target,

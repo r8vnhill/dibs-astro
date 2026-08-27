@@ -1,16 +1,12 @@
 ---
 /**
- * Header component for the site.
+ * Adapts DIBS header policy to the host-neutral site-header structure.
  *
- * Displays the themed DIBS logo, main navigation, a theme switcher, and optional links to GitLab and
- * GitHub repositories.
- *
- * @property title - The site title displayed as a link to the homepage.
- * @property gitlab - Optional GitLab username and repo.
- * @property github - Optional GitHub username and repo.
+ * DIBS retains branding, localization, responsive navigation, actions, styling, and PDF/export behavior. The package
+ * supplies only the semantic `<header>` and primary navigation landmark around those consumer-owned fragments.
  */
-
 import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
+import { SiteHeader } from "@ravenhill/astro-site-header";
 import { m } from "~/generated/i18n/messages";
 import type { LocalizedString } from "~/generated/i18n/messages";
 import { site } from "~/utils";
@@ -41,70 +37,47 @@ const navItems = [
     { id: "syllabus", href: "/syllabus/", label: m.nav_syllabus() },
     { id: "assignments", href: "/assignments/", label: m.nav_assignments() },
 ];
+
+const headerAttributes = {
+    ...exportHiddenAttributes,
+    class: "fixed top-0 inset-x-0 z-50 border-b shadow text-header-text bg-header-fill border-header-border",
+};
+const contentAttributes = {
+    class: "container mx-auto flex items-center px-4 py-3 sm:px-8",
+};
+const navigationAttributes = {
+    class: "ml-6 flex items-center gap-6",
+};
 ---
 
-<!-- Header with themed background, border, and shadow -->
-<header
-    {...exportHiddenAttributes}
-    class:list={[
-        "fixed",
-        "top-0",
-        "inset-x-0",
-        "z-50",
-        "border-b",
-        "shadow",
-        "text-header-text",
-        "bg-header-fill",
-        "border-header-border",
-    ]}
+<SiteHeader
+    navigationLabel="Navegación principal" {headerAttributes}
+    {contentAttributes} {navigationAttributes}
 >
-    <!-- Main navigation container -->
-    <nav
-        class:list={[
-            "container", // Responsive container
-            "mx-auto", // Center horizontally
-            "flex", // Flexbox layout
-            "items-center", // Vertically align items
-            "justify-between", // Space between left and right sections
-            "px-4", // Horizontal padding (mobile)
-            "py-3", // Vertical padding
-            "sm:px-8", // More padding on larger screens
-        ]}
-        role="navigation"
-        aria-label="Navegación principal"
-    >
-        <!-- Left section: title and nav links -->
-        <div class:list={["flex", "items-center", "gap-6"]}>
-            <!-- Site logo linking to homepage -->
-            <a
-                href="/" class="inline-flex items-center"
-                aria-label={m.header_home_aria()}
-            >
-                <span class="sr-only">{m.header_home_aria()}</span>
-                <img
-                    src={site.HEAD.LOGO_LIGHT_PATH} alt={title}
-                    class="h-8 w-auto dark:hidden"
-                />
-                <img
-                    src={site.HEAD.LOGO_DARK_PATH} alt=""
-                    aria-hidden="true" class="hidden h-8 w-auto dark:block"
-                />
-            </a>
+    <div slot="brand" class="flex items-center gap-6">
+        <a
+            href="/" class="inline-flex items-center"
+            aria-label={m.header_home_aria()}
+        >
+            <span class="sr-only">{m.header_home_aria()}</span>
+            <img
+                src={site.HEAD.LOGO_LIGHT_PATH} alt={title}
+                class="h-8 w-auto dark:hidden"
+            />
+            <img
+                src={site.HEAD.LOGO_DARK_PATH} alt=""
+                aria-hidden="true" class="hidden h-8 w-auto dark:block"
+            />
+        </a>
+    </div>
 
-            <!-- Main navigation component -->
-            <HeaderNav items={navItems} />
-        </div>
+    <Fragment slot="navigation">
+        <HeaderNav items={navItems} />
+    </Fragment>
 
-        <!-- Right section: theme switcher and repository links -->
-        <div class:list={["flex", "items-center", "gap-4"]}>
-            <!-- Dark/light mode toggle -->
-            <ThemeSwitcher client:load labels={themeLabels} />
-
-            <!-- GitLab repository link (optional) -->
-            {gitlab && <GitLabLink {...gitlab} />}
-
-            <!-- GitHub repository link (optional) -->
-            {github && <GitHubLink {...github} />}
-        </div>
-    </nav>
-</header>
+    <div slot="actions" class="ml-auto flex items-center gap-4">
+        <ThemeSwitcher client:load labels={themeLabels} />
+        {gitlab && <GitLabLink {...gitlab} />}
+        {github && <GitHubLink {...github} />}
+    </div>
+</SiteHeader>

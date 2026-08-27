@@ -56,6 +56,8 @@
         "@inlang/paraglide-js": "2.23.2",
         "@lucide/astro": "^0.536.0",
         "@ravenhill/astro-icons": "0.2.0",
+        "@ravenhill/astro-head": "file:./vendor/astro-head",
+        "@ravenhill/astro-site-header": "file:./vendor/astro-site-header",
         "@ravenhill/astro-site-shell": "file:./vendor/astro-site-shell",
         "@ravenhill/content-core": "workspace:*",
         "@ravenhill/lesson-export-core": "workspace:*",

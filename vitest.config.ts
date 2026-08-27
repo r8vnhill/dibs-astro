@@ -54,6 +54,9 @@ export default getViteConfig({
         clearMocks: true,
         restoreMocks: true,
 
+        // Git-backed fixture tests can exceed Vitest's five-second default on a busy Windows worker.
+        testTimeout: 15_000,
+
         // Don't attempt to transform or load CSS during tests (faster + fewer errors)
         css: false,
 

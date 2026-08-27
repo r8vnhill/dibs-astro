@@ -6,9 +6,7 @@ type NavListProps = {
     isOpen: boolean;
     items: NavItem[];
     onItemSelect?: (item: NavItem) => void;
-    /** Optionally pass the id of the control (e.g., the hamburger button) for aria-controls symmetry */
-    controllerId?: string;
-    /** Optional className to extend styling */
+    /** Optional className to extend styling. */
     className?: string;
 };
 
@@ -53,25 +51,21 @@ export function MobileNavList({
     isOpen,
     items,
     onItemSelect,
-    controllerId,
     className,
 }: NavListProps): JSX.Element | null {
     // Don’t keep focusable links in the tree when closed
     if (!isOpen) return null;
 
     return (
-        <nav
-            aria-label="Mobile navigation"
-            aria-controls={controllerId}
-            className={clsx("md:hidden", className)}
-        >
+        <div className={clsx("md:hidden", className)}>
             <ul
                 id="mainNavMobile"
                 data-state={isOpen ? "open" : "closed"}
                 aria-hidden={!isOpen}
                 className={clsx(
                     // container
-                    "w-full space-y-1 rounded-2xl bg-background/95 p-2 shadow-lg ring-1 ring-border/60 backdrop-blur",
+                    "w-full space-y-1 rounded-2xl bg-background/95 p-2",
+                    "shadow-lg ring-1 ring-border/60 backdrop-blur",
                     // animation
                     "transition-[transform,opacity] duration-200 ease-out",
                     "data-[state=closed]:pointer-events-none data-[state=closed]:-translate-y-2 data-[state=closed]:opacity-0",
@@ -88,6 +82,6 @@ export function MobileNavList({
                     />
                 ))}
             </ul>
-        </nav>
+        </div>
     );
 }

@@ -873,6 +873,8 @@ describe("rootOnlyPackages", () => {
             "@ravenhill/content-core",
             "@ravenhill/site-core",
             "@ravenhill/astro-site-shell",
+            "@ravenhill/astro-head",
+            "@ravenhill/astro-site-header",
         ]);
     });
 
@@ -880,6 +882,8 @@ describe("rootOnlyPackages", () => {
         ["@ravenhill/content-core", "content-core-root-import"],
         ["@ravenhill/site-core", "site-core-root-import"],
         ["@ravenhill/astro-site-shell", "site-shell-root-import"],
+        ["@ravenhill/astro-head", "astro-head-root-import"],
+        ["@ravenhill/astro-site-header", "astro-site-header-root-import"],
     ])("rejects a %s subpath import from any source layer", (packageName, expectedRuleId) => {
         const result = evaluateBoundaryRules(
             "src/presentation/adapters/navigation-bridge.ts",
@@ -899,6 +903,7 @@ describe("rootOnlyPackages", () => {
         "@ravenhill/content-core",
         "@ravenhill/site-core",
         "@ravenhill/astro-site-shell",
+        "@ravenhill/astro-site-header",
     ])("allows importing %s through its root entry point", (packageName) => {
         const result = evaluateBoundaryRules(
             "src/layouts/BaseLayout.astro",

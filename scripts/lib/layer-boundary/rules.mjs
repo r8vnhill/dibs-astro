@@ -99,6 +99,8 @@ export const uiBoundaryRule = {
         "content-core",
         "site-core",
         "site-shell",
+        "astro-head",
+        "astro-site-header",
     ],
     forbiddenTargets: ["domain", "application", "infrastructure", "external-source"],
     forbiddenPackages: [],

@@ -8,6 +8,22 @@ const execFileAsync = promisify(execFile);
 export const ASTRO_SITE_SHELL_PATH = "vendor/astro-site-shell";
 export const ASTRO_SITE_SHELL_URL = "https://gitlab.com/r8vnhill/astro-site-shell.git";
 export const ASTRO_SITE_SHELL_PACKAGE = "@ravenhill/astro-site-shell";
+export const ASTRO_HEAD_PATH = "vendor/astro-head";
+export const ASTRO_HEAD_URL = "https://gitlab.com/r8vnhill/astro-head.git";
+export const ASTRO_HEAD_PACKAGE = "@ravenhill/astro-head";
+export const ASTRO_SITE_HEADER_PATH = "vendor/astro-site-header";
+export const ASTRO_SITE_HEADER_URL = "https://gitlab.com/r8vnhill/astro-site-header.git";
+export const ASTRO_SITE_HEADER_PACKAGE = "@ravenhill/astro-site-header";
+
+export const EXTERNAL_SOURCES = Object.freeze([
+    Object.freeze({ path: ASTRO_HEAD_PATH, url: ASTRO_HEAD_URL, packageName: ASTRO_HEAD_PACKAGE }),
+    Object.freeze({
+        path: ASTRO_SITE_HEADER_PATH,
+        url: ASTRO_SITE_HEADER_URL,
+        packageName: ASTRO_SITE_HEADER_PACKAGE,
+    }),
+    Object.freeze({ path: ASTRO_SITE_SHELL_PATH, url: ASTRO_SITE_SHELL_URL, packageName: ASTRO_SITE_SHELL_PACKAGE }),
+]);
 
 async function runGit(args, cwd) {
     const result = await execFileAsync("git", args, { cwd, encoding: "utf8" });
@@ -127,7 +143,12 @@ async function hasWorkspaceRegistration({ cwd, path }) {
     }
 }
 
-export async function inspectExternalSource({ cwd = process.cwd(), path = ASTRO_SITE_SHELL_PATH } = {}) {
+export async function inspectExternalSource({
+    cwd = process.cwd(),
+    path = ASTRO_SITE_SHELL_PATH,
+    url = ASTRO_SITE_SHELL_URL,
+    packageName = ASTRO_SITE_SHELL_PACKAGE,
+} = {}) {
     const findings = [];
     const gitmodules = await readGitmodules({ cwd });
     const declarations = gitmodules.filter((entry) => entry.path === path);
@@ -137,8 +158,8 @@ export async function inspectExternalSource({ cwd = process.cwd(), path = ASTRO_
         findings.push(`${path} is not declared in .gitmodules with its canonical path.`);
     } else if (declarations.length > 1) {
         findings.push(`${path} has multiple .gitmodules declarations; keep one canonical entry.`);
-    } else if (declaration.url !== ASTRO_SITE_SHELL_URL) {
-        findings.push(`${path} uses ${declaration.url ?? "no URL"}; expected ${ASTRO_SITE_SHELL_URL}.`);
+    } else if (declaration.url !== url) {
+        findings.push(`${path} uses ${declaration.url ?? "no URL"}; expected ${url}.`);
     }
 
     if (declaration?.branch !== undefined) {
@@ -180,13 +201,17 @@ export async function inspectExternalSource({ cwd = process.cwd(), path = ASTRO_
         findings.push(`${path}/package.json cannot be parsed: ${identity.message}`);
     } else if (identity.status === "unreadable") {
         findings.push(`${path}/package.json cannot be read: ${identity.message}`);
-    } else if (identity.manifest.name !== ASTRO_SITE_SHELL_PACKAGE) {
+    } else if (identity.manifest.name !== packageName) {
         findings.push(
             `${path}/package.json identifies ${
                 identity.manifest.name ?? "an unnamed package"
-            }; expected ${ASTRO_SITE_SHELL_PACKAGE}.`,
+            }; expected ${packageName}.`,
         );
     }
 
     return { findings, gitlink, checkout, identity };
+}
+
+export async function inspectExternalSources({ cwd = process.cwd() } = {}) {
+    return Promise.all(EXTERNAL_SOURCES.map((source) => inspectExternalSource({ cwd, ...source })));
 }

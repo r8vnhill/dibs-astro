@@ -1,93 +1,31 @@
 ---
 /**
- * @file Head.astro
+ * DIBS metadata adapter over `@ravenhill/astro-head`.
  *
- * Centralized metadata component for the DIBS site.
- *
- * This component is responsible for generating:
- *
- * - Standard SEO meta tags (`description`, `canonical`, etc.).
- * - Open Graph (OG) metadata for social sharing.
- * - Twitter Card metadata.
- * - Highwire/Zotero citation metadata (for academic indexing).
- * - Schema.org JSON-LD structured data (for articles).
- *
- * It delegates normalization and canonical resolution to {@link buildHeadPageMeta}, ensuring:
- *
- * - Consistent canonical URL logic.
- * - Clean author normalization.
- * - Correct conditional JSON-LD generation.
- *
- * ## Design Principles
- *
- * - Keep metadata generation declarative and centralized.
- * - Avoid duplicating canonical or type logic.
- * - Fail gracefully with sensible defaults.
- * - Only emit article-specific metadata when appropriate.
- *
- * This component is intentionally presentation-focused. Business logic (normalization, trimming,
- * validation) lives in `~/utils/page-meta`.
+ * The package owns generic page metadata: canonical URLs, social cards, citation fields, and
+ * article JSON-LD. DIBS keeps application policy here, including branding links, fonts, sitemap,
+ * locale-profile mapping, and the compatibility mapping from `lastModified` to both date fields.
  */
-
+import {
+    Head as GenericHead,
+    type AcademicMetadataOptions,
+    type HeadProps,
+    type MetadataAuthor,
+    type PageMetadata,
+} from "@ravenhill/astro-head";
 import { getLocaleProfile } from "$presentation/i18n/locale-profile";
 import { site } from "~/utils";
-import { buildHeadPageMeta, type PageMeta } from "~/utils/page-meta";
+import type { PageMeta } from "~/utils/page-meta";
 
-/**
- * Props accepted by the Head component.
- */
 interface Props {
-    /**
-     * Page title.
-     *
-     * Defaults to `site.SHORT_TITLE`.
-     */
     title?: string;
-
-    /**
-     * Page meta description.
-     *
-     * Defaults to `site.LONG_TITLE`.
-     */
     description?: string;
-
-    /**
-     * Absolute page URL.
-     *
-     * Used for canonical resolution and Open Graph URL.
-     */
     url?: string;
-
-    /**
-     * Convenience override for page type.
-     *
-     * If both `type` and `pageMeta.type` are provided, `pageMeta.type` takes precedence.
-     */
     type?: "website" | "article";
-
-    /**
-     * Structured page metadata used for:
-     * - Canonical resolution
-     * - Citation fields
-     * - JSON-LD generation
-     */
     pageMeta?: PageMeta;
-
-    /**
-     * Whether to include the retro 404 font.
-     *
-     * Disabled by default to avoid loading the font globally.
-     */
     include404Font?: boolean;
 }
 
-/**
- * Destructure default metadata values from Astro.props.
- *
- * Defaults are designed to:
- * - Provide valid metadata even if Head is used standalone.
- * - Keep layout components simple.
- */
 const {
     title = site.SHORT_TITLE,
     description = site.LONG_TITLE,
@@ -97,157 +35,61 @@ const {
     include404Font = false,
 } = Astro.props as Props;
 
-/**
- * Merge the explicit `type` prop with `pageMeta`.
- *
- * ## Precedence:
- *
- * 1. `pageMeta.type` (if provided)
- * 2. `type` prop
- */
-const mergedPageMeta: PageMeta = {
-    type,
-    ...(pageMeta ?? {}),
-    ...(pageMeta?.type ? { type: pageMeta.type } : {}),
+const language = pageMeta?.language?.trim() || "es";
+const localeProfile = getLocaleProfile(language);
+const lastModified = pageMeta?.lastModified?.trim();
+const baseFontStylesheet = "https://fonts.googleapis.com/css2?"
+    + "family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700"
+    + "&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
+const authors: MetadataAuthor[] = (pageMeta?.authors ?? []).map(({ name, url: authorUrl }) => ({
+    name,
+    ...(authorUrl !== undefined ? { url: authorUrl } : {}),
+}));
+
+const page: PageMetadata = {
+    title,
+    description,
+    url,
+    language,
+    type: pageMeta?.type ?? type,
+    openGraphLocale: localeProfile.openGraphLocale,
+    ...(pageMeta?.canonicalUrl !== undefined ? { canonicalUrl: pageMeta.canonicalUrl } : {}),
+    ...(authors.length > 0 ? { authors } : {}),
+    ...(lastModified
+        ? { publishedAt: lastModified, modifiedAt: lastModified }
+        : {}),
 };
 
-/**
- * Fully normalized metadata.
- *
- * ## Handles:
- *
- * - Canonical URL resolution
- * - Author normalization
- * - Language defaults
- * - JSON-LD construction
- */
-const resolvedMeta = buildHeadPageMeta({
-    title,
-    url,
-    pageMeta: mergedPageMeta,
-});
+const academic: AcademicMetadataOptions = {
+    highwire: true,
+    dublinCore: true,
+    jsonLd: true,
+};
 
-/**
- * Whether the current page should emit article-specific metadata.
- */
-const isArticle = resolvedMeta.type === "article";
-
-const localeProfile = getLocaleProfile(resolvedMeta.citationLanguage);
-const ogLocale = localeProfile.openGraphLocale;
-const dublinCoreType = isArticle ? "Journal Article" : "Web Page";
+const headProps: HeadProps = {
+    site: {
+        name: site.SHORT_TITLE,
+        socialImage: site.HEAD.DEFAULT_SOCIAL_IMAGE,
+    },
+    page,
+    social: { image: site.HEAD.DEFAULT_SOCIAL_IMAGE },
+    academic,
+};
 ---
 
-<!-- Character encoding -->
-<meta charset="utf-8" />
+<GenericHead {...headProps} />
 
-<!-- Browser tab title -->
-<title>{title}</title>
+<link rel="icon" href={site.HEAD.FAVICON_PATH} type="image/png" />
 
-<!-- SEO description -->
-<meta name="description" content={description} />
-
-<!-- Site icon -->
-<link
-    rel="icon" href={site.HEAD.FAVICON_PATH}
-    type="image/png"
-/>
-
-<!-- Responsive layout -->
-<meta name="viewport" content="width=device-width" />
-
-<!-- Global font loading lives in <head>, not in global.css, to keep Vite's CSS module graph local. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link
-    rel="preconnect" href="https://fonts.gstatic.com"
-    crossorigin="anonymous"
-/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 <link
     rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap"
+    href={baseFontStylesheet}
 />
 
-<!-- Generator metadata -->
-<meta name="generator" content={Astro.generator} />
-
-<!-- Sitemap -->
 <link rel="sitemap" href={site.HEAD.SITEMAP_PATH} />
 
-<!-- Canonical URL -->
-<link rel="canonical" href={resolvedMeta.canonicalUrl} />
-
-<!-- ## Open Graph metadata ## -->
-
-<meta property="og:title" content={title} />
-<meta property="og:type" content={resolvedMeta.type} />
-<meta property="og:url" content={resolvedMeta.canonicalUrl} />
-<meta property="og:description" content={description} />
-<meta property="og:site_name" content={site.SHORT_TITLE} />
-<meta property="og:locale" content={ogLocale} />
-<meta property="og:image" content={site.HEAD.DEFAULT_SOCIAL_IMAGE} />
-
-<!-- ## Twitter Card metadata ## -->
-
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={title} />
-<meta name="twitter:description" content={description} />
-<meta name="twitter:image" content={site.HEAD.DEFAULT_SOCIAL_IMAGE} />
-
-<!-- ## Highwire / Zotero citation fields ## -->
-
-{
-    isArticle && (
-        <>
-            <meta name="citation_title" content={title} />
-
-            {resolvedMeta.citationAuthors.map((author) => <meta name="citation_author" content={author} />)}
-
-            {
-                resolvedMeta.citationDate
-                    && <meta name="citation_date" content={resolvedMeta.citationDate} />
-            }
-
-            {
-                resolvedMeta.citationLastModifiedDate && (
-                    <meta name="citation_last_modified_date" content={resolvedMeta.citationLastModifiedDate} />
-                )
-            }
-
-            <meta name="citation_public_url" content={resolvedMeta.canonicalUrl} />
-
-            <meta name="citation_language" content={resolvedMeta.citationLanguage} />
-        </>
-    )
-}
-
-<!-- ## Dublin Core metadata ## -->
-
-<meta name="DC.title" content={title} />
-
-{resolvedMeta.citationAuthors.map((author) => <meta name="DC.creator" content={author} />)}
-
-{
-    resolvedMeta.citationLastModifiedDate
-        && <meta name="DC.date" content={resolvedMeta.citationLastModifiedDate} />
-}
-
-<meta name="DC.identifier" content={resolvedMeta.canonicalUrl} />
-<meta name="DC.language" content={resolvedMeta.citationLanguage} />
-<meta name="DC.type" content={dublinCoreType} />
-
-<!-- ## Schema.org JSON-LD ## -->
-
-{
-    resolvedMeta.jsonLd && (
-        <script
-            is:inline type="application/ld+json"
-            set:html={JSON.stringify(resolvedMeta.jsonLd)}
-        />
-    )
-}
-
-<!-- Optional 404 retro font -->
-{
-    include404Font && (
-        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-    )
-}
+{include404Font && (
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+)}
