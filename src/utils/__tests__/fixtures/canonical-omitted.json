@@ -1,0 +1,19 @@
+{
+    "title": "Canonical fallback",
+    "url": "https://kaleido-stage.example/notes/current/",
+    "pageMeta": {
+        "type": "article"
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/current/",
+        "language": "es",
+        "authors": [],
+        "articleJsonLd": {
+            "headline": "Canonical fallback",
+            "authors": [],
+            "inLanguage": "es",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/current/"
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "title": "Dated practice notes",
+    "url": "https://kaleido-stage.example/notes/dated/",
+    "pageMeta": {
+        "type": "article",
+        "lastModified": " 2026-03-21 "
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/dated/",
+        "language": "es",
+        "authors": [],
+        "publicationDate": "2026-03-21",
+        "modificationDate": "2026-03-21",
+        "articleJsonLd": {
+            "headline": "Dated practice notes",
+            "authors": [],
+            "inLanguage": "es",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/dated/",
+            "dateModified": "2026-03-21"
+        }
+    }
+}

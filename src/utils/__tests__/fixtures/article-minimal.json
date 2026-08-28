@@ -1,0 +1,19 @@
+{
+    "title": "  Practice Notes  ",
+    "url": "https://kaleido-stage.example/notes/practice/",
+    "pageMeta": {
+        "type": "article"
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/practice/",
+        "language": "es",
+        "authors": [],
+        "articleJsonLd": {
+            "headline": "Practice Notes",
+            "authors": [],
+            "inLanguage": "es",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/practice/"
+        }
+    }
+}

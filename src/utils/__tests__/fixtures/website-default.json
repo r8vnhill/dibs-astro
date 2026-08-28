@@ -1,0 +1,10 @@
+{
+    "title": "Sora Naegino Practice Notes",
+    "url": "https://kaleido-stage.example/",
+    "expected": {
+        "type": "website",
+        "canonicalUrl": "https://kaleido-stage.example/",
+        "language": "es",
+        "authors": []
+    }
+}

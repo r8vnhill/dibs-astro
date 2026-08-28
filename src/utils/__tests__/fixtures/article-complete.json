@@ -1,0 +1,58 @@
+{
+    "title": "  Practice Notes  ",
+    "url": " https://kaleido-stage.example/notes/practice/ ",
+    "pageMeta": {
+        "type": "article",
+        "canonicalUrl": " https://kaleido-stage.example/notes/canonical/ ",
+        "authors": [
+            {
+                "name": "  Sora Naegino  ",
+                "url": " https://kaleido-stage.example/staff/sora-naegino "
+            },
+            {
+                "name": "Layla Hamilton"
+            }
+        ],
+        "lastModified": " 2026-03-21 ",
+        "changes": [
+            {
+                "date": "2026-03-21",
+                "author": "Sora Naegino",
+                "subject": "Practice notes",
+                "hash": "abc123"
+            }
+        ],
+        "language": " en "
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/canonical/",
+        "language": "en",
+        "authors": [
+            {
+                "name": "Sora Naegino",
+                "url": "https://kaleido-stage.example/staff/sora-naegino"
+            },
+            {
+                "name": "Layla Hamilton"
+            }
+        ],
+        "publicationDate": "2026-03-21",
+        "modificationDate": "2026-03-21",
+        "articleJsonLd": {
+            "headline": "Practice Notes",
+            "authors": [
+                {
+                    "name": "Sora Naegino",
+                    "url": "https://kaleido-stage.example/staff/sora-naegino"
+                },
+                {
+                    "name": "Layla Hamilton"
+                }
+            ],
+            "inLanguage": "en",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/canonical/",
+            "dateModified": "2026-03-21"
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "title": "Language fallback",
+    "url": "https://kaleido-stage.example/",
+    "pageMeta": {
+        "type": "website"
+    },
+    "expected": {
+        "type": "website",
+        "canonicalUrl": "https://kaleido-stage.example/",
+        "language": "es",
+        "authors": []
+    }
+}

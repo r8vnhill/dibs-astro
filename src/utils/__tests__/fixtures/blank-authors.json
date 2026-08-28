@@ -1,0 +1,41 @@
+{
+    "title": "Author filtering",
+    "url": "https://kaleido-stage.example/notes/authors/",
+    "pageMeta": {
+        "type": "article",
+        "authors": [
+            {
+                "name": "   "
+            },
+            {
+                "name": "\t"
+            },
+            {
+                "name": "  Sora Naegino  "
+            },
+            {
+                "name": ""
+            }
+        ]
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/authors/",
+        "language": "es",
+        "authors": [
+            {
+                "name": "Sora Naegino"
+            }
+        ],
+        "articleJsonLd": {
+            "headline": "Author filtering",
+            "authors": [
+                {
+                    "name": "Sora Naegino"
+                }
+            ],
+            "inLanguage": "es",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/authors/"
+        }
+    }
+}

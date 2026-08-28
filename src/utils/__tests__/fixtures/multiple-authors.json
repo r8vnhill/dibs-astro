@@ -1,0 +1,57 @@
+{
+    "title": "Multiple authors",
+    "url": "https://kaleido-stage.example/notes/collaboration/",
+    "pageMeta": {
+        "type": "article",
+        "authors": [
+            {
+                "name": "  Sora Naegino  ",
+                "url": " https://example.test/sora "
+            },
+            {
+                "name": "  Layla Hamilton  "
+            },
+            {
+                "name": "Mia Guillem",
+                "url": "https://example.test/mia"
+            }
+        ],
+        "language": "en-GB"
+    },
+    "expected": {
+        "type": "article",
+        "canonicalUrl": "https://kaleido-stage.example/notes/collaboration/",
+        "language": "en-GB",
+        "authors": [
+            {
+                "name": "Sora Naegino",
+                "url": "https://example.test/sora"
+            },
+            {
+                "name": "Layla Hamilton"
+            },
+            {
+                "name": "Mia Guillem",
+                "url": "https://example.test/mia"
+            }
+        ],
+        "articleJsonLd": {
+            "headline": "Multiple authors",
+            "authors": [
+                {
+                    "name": "Sora Naegino",
+                    "url": "https://example.test/sora"
+                },
+                {
+                    "name": "Layla Hamilton"
+                },
+                {
+                    "name": "Mia Guillem",
+                    "url": "https://example.test/mia"
+                }
+            ],
+            "inLanguage": "en-GB",
+            "mainEntityOfPage": "https://kaleido-stage.example/notes/collaboration/"
+        }
+    }
+}
