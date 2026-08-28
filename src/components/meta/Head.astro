@@ -10,10 +10,9 @@ import {
     Head as GenericHead,
     type AcademicMetadataOptions,
     type HeadProps,
-    type MetadataAuthor,
-    type PageMetadata,
 } from "@ravenhill/astro-head";
 import { getLocaleProfile } from "$presentation/i18n/locale-profile";
+import { toDibsPageMetadata } from "~/utils/dibs-page-metadata";
 import { site } from "~/utils";
 import type { PageMeta } from "~/utils/page-meta";
 
@@ -37,28 +36,17 @@ const {
 
 const language = pageMeta?.language?.trim() || "es";
 const localeProfile = getLocaleProfile(language);
-const lastModified = pageMeta?.lastModified?.trim();
 const baseFontStylesheet = "https://fonts.googleapis.com/css2?"
     + "family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700"
     + "&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
-const authors: MetadataAuthor[] = (pageMeta?.authors ?? []).map(({ name, url: authorUrl }) => ({
-    name,
-    ...(authorUrl !== undefined ? { url: authorUrl } : {}),
-}));
-
-const page: PageMetadata = {
+const page = toDibsPageMetadata({
     title,
     description,
     url,
-    language,
-    type: pageMeta?.type ?? type,
+    type,
     openGraphLocale: localeProfile.openGraphLocale,
-    ...(pageMeta?.canonicalUrl !== undefined ? { canonicalUrl: pageMeta.canonicalUrl } : {}),
-    ...(authors.length > 0 ? { authors } : {}),
-    ...(lastModified
-        ? { publishedAt: lastModified, modifiedAt: lastModified }
-        : {}),
-};
+    ...(pageMeta ? { pageMeta } : {}),
+});
 
 const academic: AcademicMetadataOptions = {
     highwire: true,

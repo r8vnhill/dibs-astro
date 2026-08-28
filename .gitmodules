@@ -1,9 +1,6 @@
 [submodule "vendor/astro-site-shell"]
 	path = vendor/astro-site-shell
 	url = https://gitlab.com/r8vnhill/astro-site-shell.git
-[submodule "vendor/astro-head"]
-	path = vendor/astro-head
-	url = https://gitlab.com/r8vnhill/astro-head.git
 [submodule "vendor/astro-site-chrome"]
 	path = vendor/astro-site-chrome
 	url = https://gitlab.com/r8vnhill/astro-site-chrome.git

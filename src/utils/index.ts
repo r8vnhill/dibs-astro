@@ -56,7 +56,7 @@
 export type { HeadingLevel } from "./heading-level";
 
 // Page metadata
-export { buildHeadPageMeta, type PageMeta } from "./page-meta";
+export type { PageMeta } from "./page-meta";
 
 // Cross-cutting runtime utilities
 export {

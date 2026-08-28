@@ -1,5 +1,7 @@
+import { buildHeadPageMeta, type HeadPageMeta } from "@ravenhill/astro-head";
 import { expect, suite, test } from "vitest";
-import { buildHeadPageMeta, type HeadPageMeta, type PageMeta } from "../page-meta";
+import { toDibsPageMetadata } from "../dibs-page-metadata";
+import type { PageMeta } from "../page-meta";
 import articleComplete from "./fixtures/article-complete.json";
 import articleMinimal from "./fixtures/article-minimal.json";
 import blankAuthors from "./fixtures/blank-authors.json";
@@ -55,26 +57,16 @@ const fixtures: ReadonlyArray<{ name: string; fixture: MetadataFixture }> = [
 ];
 
 function projectMetadata(result: HeadPageMeta): MetadataEvidence {
-    const articleJsonLd = result.jsonLd as {
-        headline: string;
-        author: Array<{ name: string; url?: string }>;
-        inLanguage: string;
-        mainEntityOfPage: string;
-        dateModified?: string;
-    } | undefined;
-    const authors = articleJsonLd
-        ? articleJsonLd.author.map(({ name, url }) => ({ name, ...(url ? { url } : {}) }))
-        : result.citationAuthors.map((name) => ({ name }));
+    const authors = result.authors.map(({ name, url }) => ({ name, ...(url ? { url } : {}) }));
+    const articleJsonLd = result.jsonLd;
 
     return {
         type: result.type,
         canonicalUrl: result.canonicalUrl,
-        language: result.citationLanguage,
+        language: result.language,
         authors,
-        ...(result.citationDate ? { publicationDate: result.citationDate } : {}),
-        ...(result.citationLastModifiedDate
-            ? { modificationDate: result.citationLastModifiedDate }
-            : {}),
+        ...(result.publishedAt ? { publicationDate: result.publishedAt } : {}),
+        ...(result.modifiedAt ? { modificationDate: result.modifiedAt } : {}),
         ...(articleJsonLd
             ? {
                 articleJsonLd: {
@@ -95,6 +87,13 @@ suite("given the neutral cross-site metadata fixture matrix", () => {
     test.each(fixtures)("then $name has the frozen normalized semantics", ({ fixture }) => {
         const { expected, ...input } = fixture;
 
-        expect(projectMetadata(buildHeadPageMeta(input))).toEqual(expected);
+        const page = toDibsPageMetadata({
+            title: input.title,
+            description: input.title,
+            url: input.url,
+            ...(input.pageMeta ? { pageMeta: input.pageMeta } : {}),
+        });
+
+        expect(projectMetadata(buildHeadPageMeta(page))).toEqual(expected);
     });
 });
