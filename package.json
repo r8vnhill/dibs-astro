@@ -12,6 +12,7 @@
         "check:architecture": "node scripts/check-architecture.mjs",
         "check:toolchain": "node scripts/check-toolchain.mjs",
         "check:published-package-resolution": "node scripts/check-published-package-resolution.mjs",
+        "qualify:astro-head": "node scripts/qualify-astro-head.mjs",
         "build:content-core": "node scripts/run-workspace-script.mjs packages/content-core build",
         "build:lesson-export-core": "node scripts/run-workspace-script.mjs packages/lesson-export-core build",
         "build:shiki-core": "node scripts/run-workspace-script.mjs packages/shiki-core build",
