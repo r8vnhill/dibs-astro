@@ -153,7 +153,7 @@ const lessonPageMeta = lessonMetadata
         })),
         changes: lessonMetadata.changes,
         ...(lessonMetadata.lastModified
-            ? { lastModified: lessonMetadata.lastModified }
+            ? { modifiedAt: lessonMetadata.lastModified }
             : {}),
     }
     : {};

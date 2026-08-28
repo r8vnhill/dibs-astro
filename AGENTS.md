@@ -44,8 +44,8 @@ Context and essential rules for agents collaborating in this repository.
   `packages/` in this repository and is consumed only through its package root.
 - `@ravenhill/astro-site-shell` is acquired temporarily through the pinned `vendor/astro-site-shell` submodule and is
   consumed only through its package root. Do not import from the vendor path or package subpaths.
-- `@ravenhill/astro-head` is acquired temporarily through the pinned `vendor/astro-head` submodule and is consumed only
-  through its package root. DIBS-specific metadata policy belongs in the local adapter, not in the submodule.
+- `@ravenhill/astro-head` is consumed from the canonical `@ravenhill` registry through its package root. DIBS-specific
+  metadata policy belongs in the local adapter, not in the external package.
 - `@ravenhill/astro-site-chrome` is acquired temporarily through the pinned `vendor/astro-site-chrome` submodule and
   is consumed only through its package root. DIBS-specific header policy belongs in the local adapter, not in the
   submodule.

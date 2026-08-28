@@ -13,7 +13,7 @@ export interface DibsPageMetadataInput {
 /** Maps DIBS content metadata onto the published generic page contract. */
 export function toDibsPageMetadata(input: DibsPageMetadataInput): PageMetadata {
     const language = input.pageMeta?.language?.trim() || "es";
-    const lastModified = input.pageMeta?.lastModified?.trim();
+    const modifiedAt = input.pageMeta?.modifiedAt?.trim();
     const authors = (input.pageMeta?.authors ?? []).map(({ name, url }) => ({
         name,
         ...(url !== undefined ? { url } : {}),
@@ -30,8 +30,6 @@ export function toDibsPageMetadata(input: DibsPageMetadataInput): PageMetadata {
             ? { canonicalUrl: input.pageMeta.canonicalUrl }
             : {}),
         ...(authors.length > 0 ? { authors } : {}),
-        ...(lastModified
-            ? { publishedAt: lastModified, modifiedAt: lastModified }
-            : {}),
+        ...(modifiedAt ? { modifiedAt } : {}),
     };
 }

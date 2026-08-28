@@ -27,7 +27,7 @@ suite("given DIBS content metadata", () => {
                     { name: WEBSITE_PRIMARY_AUTHOR.name },
                     { name: "Proyecto DIBS", url: "https://dibs.ravenhill.cl/" },
                 ],
-                lastModified: "2026-02-17",
+                modifiedAt: "2026-02-17",
                 language: "es",
             },
         });
@@ -40,11 +40,9 @@ suite("given DIBS content metadata", () => {
                 { name: WEBSITE_PRIMARY_AUTHOR.name },
                 { name: "Proyecto DIBS", url: "https://dibs.ravenhill.cl/" },
             ],
-            publishedAt: "2026-02-17",
             modifiedAt: "2026-02-17",
             jsonLd: {
                 headline: "Lección de ejemplo",
-                datePublished: "2026-02-17",
                 dateModified: "2026-02-17",
             },
         });
@@ -70,15 +68,15 @@ suite("given DIBS content metadata", () => {
         expect(buildMetadata({ ...baseInput, pageMeta: { language: "   " } }).language).toBe("es");
     });
 
-    test("then one legacy lastModified value populates both package date fields", () => {
+    test("then one DIBS modification date populates only the package modification field", () => {
         const result = buildMetadata({
             ...baseInput,
-            pageMeta: { type: "article", lastModified: " 2026-02-17 " },
+            pageMeta: { type: "article", modifiedAt: " 2026-02-17 " },
         });
 
-        expect(result.publishedAt).toBe("2026-02-17");
         expect(result.modifiedAt).toBe("2026-02-17");
-        expect(result.jsonLd?.datePublished).toBe("2026-02-17");
+        expect(result.publishedAt).toBeUndefined();
+        expect(result.jsonLd?.datePublished).toBeUndefined();
         expect(result.jsonLd?.dateModified).toBe("2026-02-17");
     });
 
@@ -118,7 +116,7 @@ suite("given DIBS content metadata", () => {
             type: fc.constantFrom<"website" | "article">("website", "article"),
             canonicalUrl: fc.option(fc.string(), { nil: undefined }),
             authors: fc.array(authorArbitrary, { maxLength: 8 }),
-            lastModified: fc.option(fc.string(), { nil: undefined }),
+            modifiedAt: fc.option(fc.string(), { nil: undefined }),
             language: fc.option(fc.string(), { nil: undefined }),
         }), { nil: undefined });
 
@@ -133,8 +131,8 @@ suite("given DIBS content metadata", () => {
                         name: author.name,
                         ...(author.url !== undefined ? { url: author.url } : {}),
                     })),
-                    ...(rawPageMeta.lastModified !== undefined
-                        ? { lastModified: rawPageMeta.lastModified }
+                    ...(rawPageMeta.modifiedAt !== undefined
+                        ? { modifiedAt: rawPageMeta.modifiedAt }
                         : {}),
                     ...(rawPageMeta.language !== undefined ? { language: rawPageMeta.language } : {}),
                 }

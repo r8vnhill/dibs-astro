@@ -11,7 +11,7 @@ import {
     CITATION_PUBLIC_URL_NAME,
     CITATION_TITLE_NAME,
     countElements,
-    DATE_LAST_MODIFIED,
+    DATE_MODIFIED_AT,
     DC_TYPE_JOURNAL_ARTICLE,
     DC_TYPE_WEBPAGE,
     extractJsonLd,
@@ -44,7 +44,7 @@ describe.concurrent("Head.astro article metadata render", () => {
                     { name: WEBSITE_PRIMARY_AUTHOR.name },
                     { name: SECONDARY_AUTHOR },
                 ],
-                lastModified: DATE_LAST_MODIFIED,
+                modifiedAt: DATE_MODIFIED_AT,
                 language: LANGUAGE_ES,
             },
         });
@@ -68,11 +68,9 @@ describe.concurrent("Head.astro article metadata render", () => {
         );
         expect(html).toContain(`<meta name="citation_author" content="${SECONDARY_AUTHOR}">`);
         expect(html.match(new RegExp(CITATION_AUTHOR_NAME, "g"))?.length ?? 0).toBe(2);
+        expect(html).not.toContain(CITATION_DATE_NAME);
         expect(html).toContain(
-            `<meta name="citation_date" content="${DATE_LAST_MODIFIED}">`,
-        );
-        expect(html).toContain(
-            `<meta name="citation_last_modified_date" content="${DATE_LAST_MODIFIED}">`,
+            `<meta name="citation_last_modified_date" content="${DATE_MODIFIED_AT}">`,
         );
         expect(html).toContain(
             `<meta name="citation_public_url" content="${ARTICLE_URL}">`,
@@ -89,7 +87,8 @@ describe.concurrent("Head.astro article metadata render", () => {
         expect(jsonLd).toBeDefined();
         expect(jsonLd?.["@context"]).toBe(JSONLD_CONTEXT);
         expect(jsonLd?.["@type"]).toBe(JSONLD_TYPE_ARTICLE);
-        expect(jsonLd?.dateModified).toBe(DATE_LAST_MODIFIED);
+        expect(jsonLd?.datePublished).toBeUndefined();
+        expect(jsonLd?.dateModified).toBe(DATE_MODIFIED_AT);
         expect(jsonLd?.mainEntityOfPage).toBe(ARTICLE_URL);
     });
 
@@ -156,7 +155,7 @@ describe.concurrent("Head.astro article metadata render", () => {
         const ARTICLE_FIXTURE_DESCRIPTION = "A short article about preparing for a stage audition.";
         const ARTICLE_FIXTURE_URL = "https://kaleido-stage.example/notes/practice/";
         const ARTICLE_FIXTURE_LANGUAGE = "en";
-        const ARTICLE_FIXTURE_LAST_MODIFIED = "2026-03-21";
+        const ARTICLE_FIXTURE_MODIFIED_AT = "2026-03-21";
         const ARTICLE_FIXTURE_AUTHORS = [
             { name: "Junichi Sato", url: "https://kaleido-stage.example/staff/junichi-sato" },
             { name: "Reiko Yoshida", url: "https://kaleido-stage.example/staff/reiko-yoshida" },
@@ -171,7 +170,7 @@ describe.concurrent("Head.astro article metadata render", () => {
                     type: "article",
                     canonicalUrl: ARTICLE_FIXTURE_URL,
                     authors: ARTICLE_FIXTURE_AUTHORS,
-                    lastModified: ARTICLE_FIXTURE_LAST_MODIFIED,
+                    modifiedAt: ARTICLE_FIXTURE_MODIFIED_AT,
                     language: ARTICLE_FIXTURE_LANGUAGE,
                 },
             });
@@ -181,9 +180,9 @@ describe.concurrent("Head.astro article metadata render", () => {
             expect(countElements(html, "meta[name=\"citation_author\"]")).toBe(
                 ARTICLE_FIXTURE_AUTHORS.length,
             );
-            expect(getMetaContentByName(html, "citation_date")).toBe(ARTICLE_FIXTURE_LAST_MODIFIED);
+            expect(getMetaContentByName(html, "citation_date")).toBeUndefined();
             expect(getMetaContentByName(html, "citation_last_modified_date")).toBe(
-                ARTICLE_FIXTURE_LAST_MODIFIED,
+                ARTICLE_FIXTURE_MODIFIED_AT,
             );
             expect(getMetaContentByName(html, "citation_public_url")).toBe(ARTICLE_FIXTURE_URL);
             expect(getMetaContentByName(html, "citation_language")).toBe(ARTICLE_FIXTURE_LANGUAGE);
@@ -193,7 +192,7 @@ describe.concurrent("Head.astro article metadata render", () => {
             expect(countElements(html, "meta[name=\"DC.creator\"]")).toBe(
                 ARTICLE_FIXTURE_AUTHORS.length,
             );
-            expect(getMetaContentByName(html, "DC.date")).toBe(ARTICLE_FIXTURE_LAST_MODIFIED);
+            expect(getMetaContentByName(html, "DC.date")).toBe(ARTICLE_FIXTURE_MODIFIED_AT);
             expect(getMetaContentByName(html, "DC.identifier")).toBe(ARTICLE_FIXTURE_URL);
 
             // ## JSON-LD structured data ##
@@ -202,7 +201,8 @@ describe.concurrent("Head.astro article metadata render", () => {
             expect(jsonLd?.headline).toBe(ARTICLE_FIXTURE_TITLE);
             expect(jsonLd?.inLanguage).toBe(ARTICLE_FIXTURE_LANGUAGE);
             expect(jsonLd?.mainEntityOfPage).toBe(ARTICLE_FIXTURE_URL);
-            expect(jsonLd?.dateModified).toBe(ARTICLE_FIXTURE_LAST_MODIFIED);
+            expect(jsonLd?.datePublished).toBeUndefined();
+            expect(jsonLd?.dateModified).toBe(ARTICLE_FIXTURE_MODIFIED_AT);
         });
 
         test("Head omits article citation tags and JSON-LD for website pages", async () => {
@@ -214,7 +214,7 @@ describe.concurrent("Head.astro article metadata render", () => {
                     type: "website",
                     canonicalUrl: ARTICLE_FIXTURE_URL,
                     authors: ARTICLE_FIXTURE_AUTHORS,
-                    lastModified: ARTICLE_FIXTURE_LAST_MODIFIED,
+                    modifiedAt: ARTICLE_FIXTURE_MODIFIED_AT,
                     language: ARTICLE_FIXTURE_LANGUAGE,
                 },
             });

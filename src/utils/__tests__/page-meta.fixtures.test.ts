@@ -9,7 +9,7 @@ import canonicalInvalid from "./fixtures/canonical-invalid.json";
 import canonicalOmitted from "./fixtures/canonical-omitted.json";
 import canonicalWhitespace from "./fixtures/canonical-whitespace.json";
 import languageOmitted from "./fixtures/language-omitted.json";
-import lastModified from "./fixtures/last-modified.json";
+import modifiedAt from "./fixtures/modified-at.json";
 import multipleAuthors from "./fixtures/multiple-authors.json";
 import websiteDefault from "./fixtures/website-default.json";
 
@@ -23,6 +23,7 @@ interface ArticleJsonLdEvidence {
     authors: AuthorEvidence[];
     inLanguage: string;
     mainEntityOfPage: string;
+    datePublished?: string;
     dateModified?: string;
 }
 
@@ -53,7 +54,7 @@ const fixtures: ReadonlyArray<{ name: string; fixture: MetadataFixture }> = [
     { name: "canonical-invalid.json", fixture: canonicalInvalid as MetadataFixture },
     { name: "canonical-whitespace.json", fixture: canonicalWhitespace as MetadataFixture },
     { name: "language-omitted.json", fixture: languageOmitted as MetadataFixture },
-    { name: "last-modified.json", fixture: lastModified as MetadataFixture },
+    { name: "modified-at.json", fixture: modifiedAt as MetadataFixture },
 ];
 
 function projectMetadata(result: HeadPageMeta): MetadataEvidence {
@@ -65,7 +66,6 @@ function projectMetadata(result: HeadPageMeta): MetadataEvidence {
         canonicalUrl: result.canonicalUrl,
         language: result.language,
         authors,
-        ...(result.publishedAt ? { publicationDate: result.publishedAt } : {}),
         ...(result.modifiedAt ? { modificationDate: result.modifiedAt } : {}),
         ...(articleJsonLd
             ? {
@@ -74,6 +74,9 @@ function projectMetadata(result: HeadPageMeta): MetadataEvidence {
                     authors,
                     inLanguage: articleJsonLd.inLanguage,
                     mainEntityOfPage: articleJsonLd.mainEntityOfPage,
+                    ...(articleJsonLd.datePublished
+                        ? { datePublished: articleJsonLd.datePublished }
+                        : {}),
                     ...(articleJsonLd.dateModified
                         ? { dateModified: articleJsonLd.dateModified }
                         : {}),

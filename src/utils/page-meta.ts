@@ -16,7 +16,7 @@ export interface PageMeta {
     type?: "website" | "article";
     canonicalUrl?: string;
     authors?: PageMetaAuthor[];
-    lastModified?: string;
+    modifiedAt?: string;
     changes?: PageMetaChange[];
     language?: string;
 }

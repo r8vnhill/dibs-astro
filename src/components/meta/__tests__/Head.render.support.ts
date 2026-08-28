@@ -6,7 +6,7 @@ import Head from "../Head.astro";
 
 export const ARTICLE_URL = "https://dibs.ravenhill.cl/notes/example/";
 export const WEBSITE_URL = "https://dibs.ravenhill.cl/";
-export const DATE_LAST_MODIFIED = "2026-02-17";
+export const DATE_MODIFIED_AT = "2026-02-17";
 export const LANGUAGE_ES = "es";
 export const ARTICLE_TITLE = "Lección de ejemplo";
 export const ARTICLE_DESCRIPTION = "Descripción de prueba";
