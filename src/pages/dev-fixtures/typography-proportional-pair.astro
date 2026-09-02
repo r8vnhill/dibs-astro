@@ -15,6 +15,8 @@
  *
  * - `data-fixture-section="body"` --- `DIBS Sans` rendered at every required body state.
  * - `data-fixture-section="heading"` --- `DIBS Slab` rendered at every required heading state.
+ * - `data-fixture-section="ligature-comparison"` --- every canonical sequence rendered with explicit feature-off
+ *   and feature-on modes for every required role state.
  * - `data-fixture-section="combined"` --- a realistic lesson-shaped fragment combining `DIBS Sans`, `DIBS Slab`,
  *   and `Fira Code` to evaluate the three-role system as a whole.
  *
@@ -30,6 +32,13 @@
  */
 
 import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
+import {
+    proportionalFontFeatureModes,
+    proportionalFontFixtureProfiles,
+    typographyLigaturePairKey as pairKey,
+    typographySpecimenStyle as specimenStyle,
+    typographyStateKey,
+} from "~/lib/typography/proportional-font-fixture";
 import "~/styles/global.css";
 
 const { body, heading } = proportionalFontContract.roles;
@@ -94,7 +103,11 @@ const spanishCoverageLine = spanishCoverage.join(" ");
                 font-display: swap;
             }
 
-            [data-typography-role] {
+            [data-typography-specimen="ligature"][data-feature-mode="disabled"] {
+                font-variant-ligatures: none;
+            }
+
+            [data-typography-specimen="ligature"][data-feature-mode="enabled"] {
                 font-variant-ligatures: common-ligatures contextual;
             }
 
@@ -119,16 +132,47 @@ const spanishCoverageLine = spanishCoverage.join(" ");
                 max-width: 72ch;
             }
 
-            .ligature-corpus {
+            .ligature-comparison {
                 display: flex;
-                flex-wrap: wrap;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .ligature-comparison-state {
+                display: flex;
+                flex-direction: column;
                 gap: 0.75rem;
+            }
+
+            .ligature-comparison-header,
+            .ligature-comparison-row {
+                display: grid;
+                grid-template-columns: minmax(5rem, 0.35fr) minmax(0, 1fr) minmax(0, 1fr);
+                gap: 1rem;
+                align-items: baseline;
+            }
+
+            .ligature-comparison-header {
+                font-size: 0.875rem;
+                font-weight: 700;
+            }
+
+            .ligature-comparison-row {
+                border-top: 1px solid currentColor;
+                padding-top: 0.5rem;
+            }
+
+            .ligature-comparison-row > code {
+                font-size: 0.875rem;
             }
         </style>
     </head>
     <body>
         <main>
-            <section data-fixture-section="body" data-typography-role="body" data-font-family="dibs-sans">
+            <section
+                data-fixture-section="body" data-typography-role="body"
+                data-font-family="dibs-sans"
+            >
                 <h2>DIBS Sans &mdash; body conformance</h2>
 
                 {
@@ -146,20 +190,15 @@ const spanishCoverageLine = spanishCoverage.join(" ");
                             {specimenText.map((line) => <p>{line}</p>)}
 
                             <p data-typography-corpus="spanish-coverage">{spanishCoverageLine}</p>
-
-                            <p class="ligature-corpus" data-typography-corpus="ligatures">
-                                {ligatures.map((ligature) => (
-                                    <span data-ligature-id={ligature.id} data-ligature-category={ligature.category}>
-                                        {ligature.source}
-                                    </span>
-                                ))}
-                            </p>
                         </article>
                     ))
                 }
             </section>
 
-            <section data-fixture-section="heading" data-typography-role="heading" data-font-family="dibs-slab">
+            <section
+                data-fixture-section="heading" data-typography-role="heading"
+                data-font-family="dibs-slab"
+            >
                 <h2>DIBS Slab &mdash; heading conformance</h2>
 
                 {
@@ -177,27 +216,93 @@ const spanishCoverageLine = spanishCoverage.join(" ");
                             {specimenText.map((line) => <p>{line}</p>)}
 
                             <p data-typography-corpus="spanish-coverage">{spanishCoverageLine}</p>
-
-                            <p class="ligature-corpus" data-typography-corpus="ligatures">
-                                {ligatures.map((ligature) => (
-                                    <span data-ligature-id={ligature.id} data-ligature-category={ligature.category}>
-                                        {ligature.source}
-                                    </span>
-                                ))}
-                            </p>
                         </article>
                     ))
                 }
             </section>
 
+            <section
+                class="ligature-comparison" data-fixture-section="ligature-comparison"
+                data-visual-review="ligature-comparison"
+            >
+                <h2>Ligature feature comparison</h2>
+                <p>
+                    Las ligaduras pueden unir ciertos pares o grupos de caracteres. Esta tabla conserva el mismo texto
+                    fuente en ambas columnas y cambia solamente las funciones OpenType del navegador: desactivadas o
+                    activadas. Las secuencias comunes y técnicas permiten observar qué aporta cada archivo de fuente.
+                </p>
+
+                {
+                    proportionalFontFixtureProfiles.map((candidate) => (
+                        <section
+                            data-typography-role={candidate.role} data-font-family={candidate.familyId}
+                            data-comparison-family={candidate.familyName}
+                        >
+                            <h3>{candidate.familyName}</h3>
+
+                            {
+                                candidate.states.map((state) => (
+                                    <article
+                                        class="ligature-comparison-state"
+                                        data-typography-state={typographyStateKey(state)}
+                                        data-visual-review-state={state.weight === candidate.states[0].weight
+                                                && state.style === candidate.states[0].style
+                                            ? "representative"
+                                            : undefined}
+                                    >
+                                        <h4>
+                                            {state.weight}
+                                            {" "}
+                                            {state.style}
+                                        </h4>
+
+                                        <div class="ligature-comparison-header" aria-hidden="true">
+                                            <span>Sequence</span>
+                                            {proportionalFontFeatureModes.map((mode) => <span>{mode.label}</span>)}
+                                        </div>
+
+                                        {
+                                            ligatures.map((ligature) => (
+                                                <div
+                                                    class="ligature-comparison-row"
+                                                    data-ligature-pair={pairKey(candidate.role, state, ligature.id)}
+                                                >
+                                                    <code>{ligature.source}</code>
+                                                    {
+                                                        proportionalFontFeatureModes.map((mode) => (
+                                                            <span
+                                                                data-typography-specimen="ligature"
+                                                                data-typography-role={candidate.role}
+                                                                data-font-family={candidate.familyId}
+                                                                data-typography-state={typographyStateKey(state)}
+                                                                data-ligature-id={ligature.id}
+                                                                data-ligature-category={ligature.category}
+                                                                data-feature-mode={mode.id}
+                                                                style={specimenStyle(candidate.diagnosticSize, state)}
+                                                            >
+                                                                {ligature.source}
+                                                            </span>
+                                                        ))
+                                                    }
+                                                </div>
+                                            ))
+                                        }
+                                    </article>
+                                ))
+                            }
+                        </section>
+                    ))
+                }
+            </section>
+
             <section data-fixture-section="combined">
-                <h2 data-font-family="dibs-slab" style="font-weight:700;">DIBS Sans + DIBS Slab + Fira Code</h2>
+                <h2 data-font-family="dibs-slab" style="font-weight: 700">DIBS Sans + DIBS Slab + Fira Code</h2>
 
-                <p data-font-family="dibs-sans" style="font-weight:400;">{specimenText[0]}</p>
+                <p data-font-family="dibs-sans" style="font-weight: 400">{specimenText[0]}</p>
 
-                <p data-font-family="dibs-sans" style="font-weight:400; font-style:italic;">{specimenText[1]}</p>
+                <p data-font-family="dibs-sans" style="font-weight: 400; font-style: italic">{specimenText[1]}</p>
 
-                <p data-font-family="dibs-sans" style="font-weight:500;">{specimenText[2]}</p>
+                <p data-font-family="dibs-sans" style="font-weight: 500">{specimenText[2]}</p>
 
                 <pre data-font-family="fira-code"><code>{specimenText[3]}
 {specimenText[4]}</code></pre>

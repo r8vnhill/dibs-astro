@@ -87,6 +87,13 @@ components rather than HTML strings. Run the focused readings tests and `pnpm ch
 - Use the aliases in `tsconfig.json`: `~/*`, `$components/*`, `$layouts/*`, `$styles/*`, `$utils/*`, `$hooks/*`,
   `$assets/*`, `$icons`, `$semantics`, `$callouts`, `$domain/*`, `$application/*`, `$infrastructure/*`,
   `$presentation/*`, and `$test-utils/*`.
+- Prefer a typed `const` arrow function for a single return expression; use a block-bodied function when multiple
+  statements or control flow are needed:
+
+  ```ts
+  export const typographyStateKey = (state: TypographyState): string =>
+      `${state.weight}-${state.style}`;
+  ```
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation
   adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.
 - Consume `@ravenhill/site-core` through its root import only. Make reusable `site-core` changes in its standalone
