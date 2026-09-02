@@ -7,6 +7,11 @@
 
 import { JSDOM } from "jsdom";
 import { expect, suite, test } from "vitest";
+import {
+    bodyEvaluationFamilies,
+    bodyEvaluationSurfaces,
+    bodyEvaluationText,
+} from "~/lib/typography/body-font-evaluation-fixture";
 import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
 import {
     proportionalFontFeatureModes,
@@ -134,6 +139,85 @@ function assertExistingSections(document: Document): void {
     expect(document.querySelector("[data-font-family=\"fira-code\"]")).not.toBeNull();
 }
 
+function normalizeEvaluationStyle(style: string | null): string {
+    return (style ?? "").replace(/font-family:\"[^\"]+\";/, "");
+}
+
+function assertBodyEvaluationMatrix(document: Document): void {
+    const root = document.querySelector("[data-fixture-section=\"body-evaluation\"]");
+    expect(root).not.toBeNull();
+    expect(root?.querySelectorAll("[data-evaluation-family]")).toHaveLength(bodyEvaluationFamilies.length);
+
+    for (const family of bodyEvaluationFamilies) {
+        const familyRoot = root?.querySelector(`[data-evaluation-family="${family.id}"]`);
+        expect(familyRoot, family.id).not.toBeNull();
+        expect(familyRoot?.getAttribute("data-evaluation-kind"), family.id).toBe(family.kind);
+        expect(familyRoot?.getAttribute("data-evaluation-css-family"), family.id).toBe(family.cssFamily);
+
+        const states = familyRoot?.querySelectorAll("[data-evaluation-state]") ?? [];
+        expect(states, `${family.id}/states`).toHaveLength(family.states.length);
+        expect(familyRoot?.querySelectorAll("[data-evaluation-surface]")).toHaveLength(
+            family.states.length * bodyEvaluationSurfaces.length,
+        );
+
+        for (const state of family.states) {
+            const stateRoot = familyRoot?.querySelector(`[data-evaluation-state="${state.weight}-${state.style}"]`);
+            expect(stateRoot, `${family.id}/${state.weight}-${state.style}`).not.toBeNull();
+            expect(stateRoot?.getAttribute("style"), `${family.id}/${state.weight}-${state.style}/features`).toContain(
+                "font-variant-ligatures:common-ligatures contextual",
+            );
+
+            for (const surface of bodyEvaluationSurfaces) {
+                const surfaceRoot = stateRoot?.querySelector(`[data-evaluation-surface="${surface.id}"]`);
+                expect(surfaceRoot, `${family.id}/${state.weight}-${state.style}/${surface.id}`).not.toBeNull();
+            }
+        }
+    }
+
+    expect(root?.querySelectorAll("[data-evaluation-detail=\"spanish-coverage\"]")).toHaveLength(
+        bodyEvaluationFamilies.length * bodyEvaluationFamilies[0].states.length,
+    );
+    expect(root?.textContent).toContain(bodyEvaluationText.callout.body);
+}
+
+function assertBodyEvaluationParity(document: Document): void {
+    const root = document.querySelector("[data-fixture-section=\"body-evaluation\"]");
+    const families = bodyEvaluationFamilies.map((family) =>
+        root?.querySelector(`[data-evaluation-family="${family.id}"]`)
+    );
+
+    for (let stateIndex = 0; stateIndex < bodyEvaluationFamilies[0].states.length; stateIndex += 1) {
+        const state = bodyEvaluationFamilies[0].states[stateIndex]!;
+        for (const surface of bodyEvaluationSurfaces) {
+            const specimens = families.map((familyRoot) =>
+                familyRoot?.querySelector(
+                    `[data-evaluation-state="${state.weight}-${state.style}"] [data-evaluation-surface="${surface.id}"]`,
+                )
+            );
+
+            expect(specimens[0]?.textContent, `${surface.id}/${state.weight}-${state.style}/text`).toBe(
+                specimens[1]?.textContent,
+            );
+            expect(
+                normalizeEvaluationStyle(
+                    families[0]?.querySelector(`[data-evaluation-state="${state.weight}-${state.style}"]`)
+                        ?.getAttribute(
+                            "style",
+                        ) ?? null,
+                ),
+                `${surface.id}/${state.weight}-${state.style}/style`,
+            ).toBe(
+                normalizeEvaluationStyle(
+                    families[1]?.querySelector(`[data-evaluation-state="${state.weight}-${state.style}"]`)
+                        ?.getAttribute(
+                            "style",
+                        ) ?? null,
+                ),
+            );
+        }
+    }
+}
+
 suite("given the proportional typography fixture", () => {
     test("then every contract role-state-ligature combination has one disabled and one enabled specimen", async () => {
         assertCompleteMatrix(await renderFixture());
@@ -145,5 +229,13 @@ suite("given the proportional typography fixture", () => {
 
     test("then the existing prose, Spanish coverage, and combined-system sections remain present", async () => {
         assertExistingSections(await renderFixture());
+    });
+
+    test("then the body/UI comparison renders every surface for both families and every state", async () => {
+        assertBodyEvaluationMatrix(await renderFixture());
+    });
+
+    test("then candidate and reference surfaces preserve identical source content and typography settings", async () => {
+        assertBodyEvaluationParity(await renderFixture());
     });
 });

@@ -10,6 +10,7 @@ import { packageManagerCommand, runCommand, runPackageScripts } from "./run-pack
 const checks = [
     "check:toolchain",
     "fonts:check",
+    "fonts:reference:check",
     "i18n:compile",
     "check:content-core",
     "check:lesson-export-core",

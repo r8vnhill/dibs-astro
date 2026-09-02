@@ -107,6 +107,8 @@
         "fmt": "dprint fmt",
         "fonts:check": "node scripts/fonts/build-dibs-fonts.mjs --check",
         "fonts:generate": "node scripts/fonts/build-dibs-fonts.mjs",
+        "fonts:reference:check": "node scripts/fonts/reference/inter/build-inter-reference.mjs --check",
+        "fonts:reference:vendor": "node scripts/fonts/reference/inter/build-inter-reference.mjs",
         "generate:bibliography-catalog": "node scripts/build-bibliography-catalog.mjs",
         "generate:lesson-metadata": "node scripts/generate-lesson-metadata.mjs",
         "generate:platform-artifact-manifest": "node scripts/generate-platform-artifact-manifest-default.mjs",
