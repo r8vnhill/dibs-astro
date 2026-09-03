@@ -1,8 +1,16 @@
 /**
- * Static contract checks for the temporary fixture.
+ * Static (no-browser) contract checks for the proportional typography fixture.
  *
- * Browser tests separately verify font loading and raster output; this suite keeps the generated HTML matrix complete
- * before a browser is involved.
+ * The fixture page is only trustworthy evidence if it renders *every* combination the typography
+ * contract requires and renders each candidate/reference pair identically except for the font
+ * family. This suite renders the `.astro` page to HTML with JSDOM and asserts exactly that: the full
+ * ligature matrix, the body and heading comparison matrices, and their content/style parity. The
+ * Playwright suites (`tests/e2e/typography-*.spec.ts`) cover what a DOM cannot: real font loading and
+ * rasterised output.
+ *
+ * For course readers: this is a worked example of testing generated markup structurally instead of
+ * with brittle string snapshots --- every assertion is derived from the shared model modules, so the
+ * test and the page cannot drift apart.
  */
 
 import { JSDOM } from "jsdom";
@@ -12,6 +20,7 @@ import {
     bodyEvaluationSurfaces,
     bodyEvaluationText,
 } from "~/lib/typography/body-font-evaluation-fixture";
+import { headingEvaluationCases, headingEvaluationFamilies } from "~/lib/typography/heading-font-evaluation-fixture";
 import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
 import {
     proportionalFontFeatureModes,
@@ -180,41 +189,90 @@ function assertBodyEvaluationMatrix(document: Document): void {
     expect(root?.textContent).toContain(bodyEvaluationText.callout.body);
 }
 
+type EvaluationState = { weight: number; style: string };
+
+/** Style string of a family's state wrapper, with the (deliberately differing) font-family removed. */
+function stateStyle(familyRoot: Element | null | undefined, stateSelector: string): string {
+    return normalizeEvaluationStyle(familyRoot?.querySelector(stateSelector)?.getAttribute("style") ?? null);
+}
+
+/** Candidate and reference must share every surface's text and every state's non-family style. */
 function assertBodyEvaluationParity(document: Document): void {
     const root = document.querySelector("[data-fixture-section=\"body-evaluation\"]");
-    const families = bodyEvaluationFamilies.map((family) =>
+    const [candidate, reference] = bodyEvaluationFamilies.map((family) =>
         root?.querySelector(`[data-evaluation-family="${family.id}"]`)
     );
 
-    for (let stateIndex = 0; stateIndex < bodyEvaluationFamilies[0].states.length; stateIndex += 1) {
-        const state = bodyEvaluationFamilies[0].states[stateIndex]!;
-        for (const surface of bodyEvaluationSurfaces) {
-            const specimens = families.map((familyRoot) =>
-                familyRoot?.querySelector(
-                    `[data-evaluation-state="${state.weight}-${state.style}"] [data-evaluation-surface="${surface.id}"]`,
-                )
-            );
+    for (const state of bodyEvaluationFamilies[0].states as readonly EvaluationState[]) {
+        const stateSelector = `[data-evaluation-state="${state.weight}-${state.style}"]`;
+        const label = `${state.weight}-${state.style}`;
+        expect(stateStyle(candidate, stateSelector), `${label}/style`).toBe(stateStyle(reference, stateSelector));
 
-            expect(specimens[0]?.textContent, `${surface.id}/${state.weight}-${state.style}/text`).toBe(
-                specimens[1]?.textContent,
-            );
-            expect(
-                normalizeEvaluationStyle(
-                    families[0]?.querySelector(`[data-evaluation-state="${state.weight}-${state.style}"]`)
-                        ?.getAttribute(
-                            "style",
-                        ) ?? null,
-                ),
-                `${surface.id}/${state.weight}-${state.style}/style`,
-            ).toBe(
-                normalizeEvaluationStyle(
-                    families[1]?.querySelector(`[data-evaluation-state="${state.weight}-${state.style}"]`)
-                        ?.getAttribute(
-                            "style",
-                        ) ?? null,
-                ),
+        for (const surface of bodyEvaluationSurfaces) {
+            const surfaceSelector = `${stateSelector} [data-evaluation-surface="${surface.id}"]`;
+            expect(candidate?.querySelector(surfaceSelector)?.textContent, `${surface.id}/${label}/text`).toBe(
+                reference?.querySelector(surfaceSelector)?.textContent,
             );
         }
+    }
+}
+
+type HeadingCase = (typeof headingEvaluationCases)[number];
+type HeadingFamily = (typeof headingEvaluationFamilies)[number];
+
+/** One candidate/reference cell: right element, right text, and synthesis disabled. */
+function assertHeadingSpecimen(
+    caseRoot: Element | null | undefined,
+    evaluationCase: HeadingCase,
+    family: HeadingFamily,
+) {
+    const familyRoot = caseRoot?.querySelector(`[data-heading-family="${family.id}"]`);
+    const specimen = familyRoot?.querySelector<HTMLElement>("[data-heading-specimen]");
+    const id = `${evaluationCase.id}/${family.id}`;
+
+    expect(familyRoot, id).not.toBeNull();
+    expect(familyRoot?.getAttribute("data-heading-state"), id).toBe(`${evaluationCase.representativeWeight}-normal`);
+    expect(specimen?.tagName, `${id}/level`).toBe(evaluationCase.semanticLevel.toUpperCase());
+    expect(specimen?.textContent, `${id}/text`).toBe(evaluationCase.text);
+    expect(specimen?.dataset.headingSource, `${id}/source`).toBe(evaluationCase.text);
+    expect(specimen?.getAttribute("style"), `${id}/synthesis`).toContain("font-style:normal;");
+}
+
+function assertHeadingEvaluationMatrix(document: Document): void {
+    const root = document.querySelector("[data-fixture-section=\"heading-evaluation\"]");
+    expect(root).not.toBeNull();
+    expect(root?.querySelectorAll("[data-heading-case]")).toHaveLength(headingEvaluationCases.length);
+
+    for (const evaluationCase of headingEvaluationCases) {
+        const caseRoot = root?.querySelector(`[data-heading-case="${evaluationCase.id}"]`);
+        expect(caseRoot, evaluationCase.id).not.toBeNull();
+        expect(caseRoot?.getAttribute("data-heading-level"), evaluationCase.id).toBe(evaluationCase.semanticLevel);
+        expect(caseRoot?.getAttribute("data-heading-weight"), evaluationCase.id).toBe(
+            String(evaluationCase.representativeWeight),
+        );
+        expect(caseRoot?.querySelectorAll("[data-heading-family]")).toHaveLength(headingEvaluationFamilies.length);
+
+        for (const family of headingEvaluationFamilies) {
+            assertHeadingSpecimen(caseRoot, evaluationCase, family);
+        }
+    }
+
+    expect(root?.querySelectorAll("[data-heading-state-matrix-entry]")).toHaveLength(
+        headingEvaluationFamilies.length * proportionalFontContract.roles.heading.states.length,
+    );
+}
+
+function assertHeadingLayoutAndToc(document: Document): void {
+    const layout = document.querySelector("[data-heading-layout]");
+    expect(layout).not.toBeNull();
+    expect(layout?.querySelector("[data-heading-reading-column]")).not.toBeNull();
+    expect(layout?.querySelector("[data-heading-toc]")).not.toBeNull();
+
+    const expectedH2Cases = headingEvaluationCases.filter(({ semanticLevel }) => semanticLevel === "h2");
+    expect(layout?.querySelectorAll("[data-heading-toc-entry]")).toHaveLength(expectedH2Cases.length);
+    for (const evaluationCase of expectedH2Cases) {
+        const entry = layout?.querySelector(`[data-heading-toc-case="${evaluationCase.id}"]`);
+        expect(entry?.textContent?.trim(), evaluationCase.id).toBe(evaluationCase.text);
     }
 }
 
@@ -235,7 +293,15 @@ suite("given the proportional typography fixture", () => {
         assertBodyEvaluationMatrix(await renderFixture());
     });
 
-    test("then candidate and reference surfaces preserve identical source content and typography settings", async () => {
+    test("then candidate and reference surfaces keep identical content and typography settings", async () => {
         assertBodyEvaluationParity(await renderFixture());
+    });
+
+    test("then every heading case has paired candidate/reference specimens and native states", async () => {
+        assertHeadingEvaluationMatrix(await renderFixture());
+    });
+
+    test("then heading text is represented in the constrained reading layout and TOC", async () => {
+        assertHeadingLayoutAndToc(await renderFixture());
     });
 });

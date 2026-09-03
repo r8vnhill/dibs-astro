@@ -3,53 +3,47 @@
  * @fileoverview Browser fixture for evaluating the zero-cost DIBS proportional typography pair.
  *
  * Renders `DIBS Sans` (body/UI) and `DIBS Slab` (headings) from the locally generated WOFF2 assets in
- * `public/fonts/`, alongside the unchanged `Fira Code` monospace stack. No Google Fonts, trial stylesheet,
- * account-specific CDN, or other commercial service participates in loading either candidate family: both are
- * declared through local `@font-face` rules pointing at the committed, provenance-tracked WOFF2 files.
+ * `public/fonts/`, alongside the unchanged `Fira Code` monospace stack and two pinned, local-only
+ * reference families (`Inter Reference 4.1`, `Space Grotesk Reference 2.0.0`). No Google Fonts, trial
+ * stylesheet, account-specific CDN, or other commercial service participates in loading any family:
+ * every face is declared through local `@font-face` rules pointing at committed, provenance-tracked
+ * WOFF2 files.
  *
- * All specimen text, Spanish coverage, ligature corpus, and required weight/style states are read directly from
- * {@link proportionalFontContract} rather than invented locally, so this fixture cannot drift from the typography
- * conformance contract it exists to evaluate.
+ * All specimen text, Spanish coverage, ligature corpus, and required weight/style states come from
+ * the typography model modules under `~/lib/typography`, never from values invented in this page, so
+ * the fixture cannot drift from the conformance contract it exists to evaluate.
  *
- * Sections:
+ * Structure --- each `<section>` is one self-contained component in `./_components/`:
  *
- * - `data-fixture-section="body"` --- `DIBS Sans` rendered at every required body state.
- * - `data-fixture-section="heading"` --- `DIBS Slab` rendered at every required heading state.
- * - `data-fixture-section="ligature-comparison"` --- every canonical sequence rendered with explicit feature-off
- *   and feature-on modes for every required role state.
- * - `data-fixture-section="combined"` --- a realistic lesson-shaped fragment combining `DIBS Sans`, `DIBS Slab`,
- *   and `Fira Code` to evaluate the three-role system as a whole.
+ * - {@link RoleConformanceSection} (`body` / `heading`) --- one family at every required state.
+ * - {@link HeadingEvaluationSection} --- `DIBS Slab` vs `Space Grotesk Reference 2.0.0`, stacked.
+ * - {@link HeadingLayoutSection} --- heading text under a real reading-column + TOC layout.
+ * - {@link LigatureComparisonSection} --- every sequence with feature-off and feature-on modes.
+ * - {@link CombinedSystemSection} --- all three roles together in a lesson-shaped fragment.
+ * - {@link BodyEvaluationSection} --- `DIBS Sans` vs `Inter Reference 4.1`, stacked.
  *
- * Repository boundary
- * -------------------
+ * The stylesheet stays here as `<style is:global>` because the section components share these class
+ * and attribute selectors; Astro's default scoped styles would not reach across component
+ * boundaries.
  *
- * Keep this page outside `src/pages/notes/**`. It is a typography-evaluation fixture, not course content, so it
- * must not participate in lesson discovery, lesson metadata generation, or curricular navigation. Production
- * typography (`Inter` / `Space Grotesk` / `Fira Code`) is unaffected: this fixture never touches `Head.astro` or
- * the site-wide typography tokens in `src/styles/theme/typography.css`.
- *
- * Keep `<meta name="robots" content="noindex" />` as a secondary safeguard for deployed previews.
+ * Repository boundary --- keep this page outside `src/pages/notes/**`. It is a typography-evaluation
+ * fixture, not course content, so it must not enter lesson discovery, lesson metadata generation, or
+ * curricular navigation. Production typography (`Inter` / `Space Grotesk` / `Fira Code`) is
+ * unaffected: this fixture never touches `Head.astro` or the site-wide typography tokens in
+ * `src/styles/theme/typography.css`. Keep `<meta name="robots" content="noindex" />` as a secondary
+ * safeguard for deployed previews.
  */
 
-import {
-    bodyEvaluationFamilies,
-    bodyEvaluationSurfaces,
-    bodyEvaluationText,
-} from "~/lib/typography/body-font-evaluation-fixture";
 import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
-import {
-    proportionalFontFeatureModes,
-    proportionalFontFixtureProfiles,
-    typographyLigaturePairKey as pairKey,
-    typographySpecimenStyle as specimenStyle,
-    typographyStateKey,
-} from "~/lib/typography/proportional-font-fixture";
 import "~/styles/global.css";
+import BodyEvaluationSection from "./_components/BodyEvaluationSection.astro";
+import CombinedSystemSection from "./_components/CombinedSystemSection.astro";
+import HeadingEvaluationSection from "./_components/HeadingEvaluationSection.astro";
+import HeadingLayoutSection from "./_components/HeadingLayoutSection.astro";
+import LigatureComparisonSection from "./_components/LigatureComparisonSection.astro";
+import RoleConformanceSection from "./_components/RoleConformanceSection.astro";
 
 const { body, heading } = proportionalFontContract.roles;
-const { ligatures, spanishCoverage, specimenText } = proportionalFontContract;
-
-const spanishCoverageLine = spanishCoverage.join(" ");
 ---
 
 <!DOCTYPE html>
@@ -59,7 +53,7 @@ const spanishCoverageLine = spanishCoverage.join(" ");
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="noindex" />
         <title>DIBS proportional pair fixture</title>
-        <style>
+        <style is:global>
             @font-face {
                 font-family: "DIBS Sans";
                 src: url("/fonts/dibs-sans/400-normal.woff2") format("woff2");
@@ -135,6 +129,22 @@ const spanishCoverageLine = spanishCoverage.join(" ");
             @font-face {
                 font-family: "DIBS Slab";
                 src: url("/fonts/dibs-slab/700-normal.woff2") format("woff2");
+                font-weight: 700;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            @font-face {
+                font-family: "Space Grotesk Reference 2.0.0";
+                src: url("/dev-fixtures/fonts/space-grotesk-2.0.0/500-normal.woff2") format("woff2");
+                font-weight: 500;
+                font-style: normal;
+                font-display: swap;
+            }
+
+            @font-face {
+                font-family: "Space Grotesk Reference 2.0.0";
+                src: url("/dev-fixtures/fonts/space-grotesk-2.0.0/700-normal.woff2") format("woff2");
                 font-weight: 700;
                 font-style: normal;
                 font-display: swap;
@@ -249,7 +259,94 @@ const spanishCoverageLine = spanishCoverage.join(" ");
                 flex-direction: column;
                 gap: 2rem;
                 padding: 2rem;
-                max-width: 72ch;
+                max-width: 100%;
+            }
+
+            .heading-evaluation-review,
+            .heading-evaluation-layout {
+                width: min(100%, 84ch);
+                margin-inline: auto;
+            }
+
+            .heading-evaluation-case {
+                margin-top: 2rem;
+            }
+
+            .heading-evaluation-case-label,
+            .heading-evaluation-family-label,
+            .heading-evaluation-state-label {
+                margin: 0;
+                font-size: 0.875rem;
+                line-height: 1.4;
+            }
+
+            .heading-evaluation-family-label,
+            .heading-evaluation-state-label {
+                color: var(--theme-color-primary);
+                font-weight: 700;
+            }
+
+            .heading-evaluation-pair {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-top: 0.75rem;
+            }
+
+            .heading-evaluation-specimen {
+                margin: 0;
+                font-synthesis: none;
+                font-variant-ligatures: common-ligatures contextual;
+                line-height: 1.3;
+                overflow-wrap: anywhere;
+            }
+
+            .heading-evaluation-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) var(--sidebar-page, 20rem);
+                gap: 2rem;
+                max-width: calc(84ch + var(--sidebar-page, 20rem) + 2rem);
+            }
+
+            .heading-evaluation-reading-column {
+                min-width: 0;
+            }
+
+            .heading-evaluation-toc {
+                align-self: start;
+                min-width: 0;
+                border-inline-start: 1px solid currentColor;
+                padding-inline: 0.75rem;
+            }
+
+            .heading-evaluation-toc ol {
+                margin: 0.75rem 0 0;
+                padding-inline-start: 1.25rem;
+            }
+
+            .heading-evaluation-toc a {
+                display: block;
+                overflow-wrap: anywhere;
+                font-size: 0.875rem;
+                line-height: 1.375;
+            }
+
+            pre {
+                max-width: 100%;
+                overflow-x: auto;
+            }
+
+            @media (max-width: 1279px) {
+                .heading-evaluation-layout {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+
+                .heading-evaluation-toc {
+                    border-inline-start: 0;
+                    border-block-start: 1px solid currentColor;
+                    padding-block-start: 1rem;
+                    padding-inline: 0;
+                }
             }
 
             .ligature-comparison {
@@ -289,326 +386,27 @@ const spanishCoverageLine = spanishCoverage.join(" ");
     </head>
     <body>
         <main>
-            <section
-                data-fixture-section="body" data-typography-role="body"
-                data-font-family="dibs-sans"
-            >
-                <h2>DIBS Sans &mdash; body conformance</h2>
+            <RoleConformanceSection
+                sectionId="body" role="body"
+                fontFamily="dibs-sans" title="DIBS Sans — body conformance"
+                states={body.states}
+            />
 
-                {
-                    body.states.map((state) => (
-                        <article
-                            data-typography-state={`${state.weight}-${state.style}`}
-                            style={`font-weight:${state.weight}; font-style:${state.style};`}
-                        >
-                            <h3>
-                                {state.weight}
-                                {" "}
-                                {state.style}
-                            </h3>
+            <RoleConformanceSection
+                sectionId="heading" role="heading"
+                fontFamily="dibs-slab" title="DIBS Slab — heading conformance"
+                states={heading.states}
+            />
 
-                            {specimenText.map((line) => <p>{line}</p>)}
+            <HeadingEvaluationSection />
 
-                            <p data-typography-corpus="spanish-coverage">{spanishCoverageLine}</p>
-                        </article>
-                    ))
-                }
-            </section>
+            <HeadingLayoutSection />
 
-            <section
-                data-fixture-section="heading" data-typography-role="heading"
-                data-font-family="dibs-slab"
-            >
-                <h2>DIBS Slab &mdash; heading conformance</h2>
+            <LigatureComparisonSection />
 
-                {
-                    heading.states.map((state) => (
-                        <article
-                            data-typography-state={`${state.weight}-${state.style}`}
-                            style={`font-weight:${state.weight}; font-style:${state.style};`}
-                        >
-                            <h3>
-                                {state.weight}
-                                {" "}
-                                {state.style}
-                            </h3>
+            <CombinedSystemSection />
 
-                            {specimenText.map((line) => <p>{line}</p>)}
-
-                            <p data-typography-corpus="spanish-coverage">{spanishCoverageLine}</p>
-                        </article>
-                    ))
-                }
-            </section>
-
-            <section
-                class="ligature-comparison" data-fixture-section="ligature-comparison"
-                data-visual-review="ligature-comparison"
-            >
-                <h2>Ligature feature comparison</h2>
-                <p>
-                    Las ligaduras pueden unir ciertos pares o grupos de caracteres. Esta tabla conserva el mismo texto
-                    fuente en ambas columnas y cambia solamente las funciones OpenType del navegador: desactivadas o
-                    activadas. Las secuencias comunes y técnicas permiten observar qué aporta cada archivo de fuente.
-                </p>
-
-                {
-                    proportionalFontFixtureProfiles.map((candidate) => (
-                        <section
-                            data-typography-role={candidate.role} data-font-family={candidate.familyId}
-                            data-comparison-family={candidate.familyName}
-                        >
-                            <h3>{candidate.familyName}</h3>
-
-                            {
-                                candidate.states.map((state) => (
-                                    <article
-                                        class="ligature-comparison-state"
-                                        data-typography-state={typographyStateKey(state)}
-                                        data-visual-review-state={state.weight === candidate.states[0].weight
-                                                && state.style === candidate.states[0].style
-                                            ? "representative"
-                                            : undefined}
-                                    >
-                                        <h4>
-                                            {state.weight}
-                                            {" "}
-                                            {state.style}
-                                        </h4>
-
-                                        <div class="ligature-comparison-header" aria-hidden="true">
-                                            <span>Sequence</span>
-                                            {proportionalFontFeatureModes.map((mode) => <span>{mode.label}</span>)}
-                                        </div>
-
-                                        {
-                                            ligatures.map((ligature) => (
-                                                <div
-                                                    class="ligature-comparison-row"
-                                                    data-ligature-pair={pairKey(candidate.role, state, ligature.id)}
-                                                >
-                                                    <code>{ligature.source}</code>
-                                                    {
-                                                        proportionalFontFeatureModes.map((mode) => (
-                                                            <span
-                                                                data-typography-specimen="ligature"
-                                                                data-typography-role={candidate.role}
-                                                                data-font-family={candidate.familyId}
-                                                                data-typography-state={typographyStateKey(state)}
-                                                                data-ligature-id={ligature.id}
-                                                                data-ligature-category={ligature.category}
-                                                                data-feature-mode={mode.id}
-                                                                style={specimenStyle(candidate.diagnosticSize, state)}
-                                                            >
-                                                                {ligature.source}
-                                                            </span>
-                                                        ))
-                                                    }
-                                                </div>
-                                            ))
-                                        }
-                                    </article>
-                                ))
-                            }
-                        </section>
-                    ))
-                }
-            </section>
-
-            <section data-fixture-section="combined">
-                <h2 data-font-family="dibs-slab" style="font-weight: 700">DIBS Sans + DIBS Slab + Fira Code</h2>
-
-                <p data-font-family="dibs-sans" style="font-weight: 400">{specimenText[0]}</p>
-
-                <p data-font-family="dibs-sans" style="font-weight: 400; font-style: italic">{specimenText[1]}</p>
-
-                <p data-font-family="dibs-sans" style="font-weight: 500">{specimenText[2]}</p>
-
-                <pre data-font-family="fira-code"><code>{specimenText[3]}
-{specimenText[4]}</code></pre>
-            </section>
-
-            <section
-                data-fixture-section="body-evaluation" data-body-evaluation
-                data-visual-review="body-font-comparison"
-            >
-                <h2>Comparación DIBS Sans / Inter Reference 4.1</h2>
-                <p>
-                    Esta sección conserva el mismo contenido, tamaños, anchos físicos y estados tipográficos para ambas
-                    familias. La referencia local de Inter sirve como benchmark visual y de layout; no es un requisito
-                    que DIBS Sans reproduzca sus métricas.
-                </p>
-
-                {
-                    bodyEvaluationFamilies.map((family) => (
-                        <article
-                            class="body-evaluation-family" data-evaluation-family={family.id}
-                            data-evaluation-kind={family.kind} data-evaluation-css-family={family.cssFamily}
-                        >
-                            <h3>{family.label}</h3>
-
-                            {
-                                family.states.map((state, stateIndex) => (
-                                    <section
-                                        class="body-evaluation-state"
-                                        data-evaluation-state={`${state.weight}-${state.style}`}
-                                        data-evaluation-representative={stateIndex === 0 ? "true" : undefined}
-                                        style={`font-family:"${family.cssFamily}";font-weight:${state.weight};font-style:${state.style};font-variant-ligatures:common-ligatures contextual;`}
-                                    >
-                                        <h4>{state.weight} {state.style}</h4>
-                                        <p class="body-evaluation-weight-sample">
-                                            La lectura mantiene una jerarquía clara entre explicación, énfasis y
-                                            navegación.
-                                        </p>
-
-                                        {
-                                            bodyEvaluationSurfaces.map((surface) => (
-                                                <section
-                                                    class="body-evaluation-surface" data-evaluation-surface={surface.id}
-                                                >
-                                                    <h5>{surface.label}</h5>
-
-                                                    {
-                                                        surface.id === "long-prose" && (
-                                                            <>
-                                                                {
-                                                                    bodyEvaluationText.longProse.map((
-                                                                        paragraph,
-                                                                    ) => (
-                                                                        <p class="body-evaluation-prose">{paragraph}</p>
-                                                                    ))
-                                                                }
-                                                                <p
-                                                                    class="body-evaluation-prose"
-                                                                    data-evaluation-detail="spanish-coverage"
-                                                                >
-                                                                    {bodyEvaluationText.spanishCoverage}
-                                                                </p>
-                                                            </>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "inline-semantics" && (
-                                                            <p class="body-evaluation-prose">
-                                                                {bodyEvaluationText.inlineSemantics.before}
-                                                                <em>{bodyEvaluationText.inlineSemantics.emphasis}</em>
-                                                                {bodyEvaluationText.inlineSemantics.middle}
-                                                                <strong>{
-                                                                    bodyEvaluationText.inlineSemantics.strong
-                                                                }</strong>
-                                                                {bodyEvaluationText.inlineSemantics.after}
-                                                                <a href="/notes/">{
-                                                                    bodyEvaluationText.inlineSemantics.link
-                                                                }</a>
-                                                                {bodyEvaluationText.inlineSemantics.end}
-                                                            </p>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "unordered-list" && (
-                                                            <ul class="body-evaluation-prose body-evaluation-list">
-                                                                {
-                                                                    bodyEvaluationText.unorderedList.map((
-                                                                        item,
-                                                                    ) => <li>{item}</li>)
-                                                                }
-                                                            </ul>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "ordered-list" && (
-                                                            <ol class="body-evaluation-prose body-evaluation-list">
-                                                                {
-                                                                    bodyEvaluationText.orderedList.map((
-                                                                        item,
-                                                                    ) => <li>{item}</li>)
-                                                                }
-                                                            </ol>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "navigation" && (
-                                                            <nav
-                                                                aria-label="Navegación de evaluación"
-                                                                class="body-evaluation-ui"
-                                                            >
-                                                                <div class="body-evaluation-navigation">
-                                                                    {
-                                                                        bodyEvaluationText.navigation.map((
-                                                                            label,
-                                                                        ) => <a href="/notes/">{label}</a>)
-                                                                    }
-                                                                </div>
-                                                            </nav>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "metadata" && (
-                                                            <div class="body-evaluation-ui body-evaluation-metadata">
-                                                                {
-                                                                    bodyEvaluationText.metadata.map((
-                                                                        value,
-                                                                        index,
-                                                                    ) => (
-                                                                        <span data-evaluation-metadata-index={index}>{
-                                                                            value
-                                                                        }</span>
-                                                                    ))
-                                                                }
-                                                            </div>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "callout" && (
-                                                            <aside class="body-evaluation-callout body-evaluation-prose">
-                                                                <h6>{bodyEvaluationText.callout.title}</h6>
-                                                                <p>{bodyEvaluationText.callout.body}</p>
-                                                            </aside>
-                                                        )
-                                                    }
-
-                                                    {
-                                                        surface.id === "technical-prose" && (
-                                                            <>
-                                                                {
-                                                                    bodyEvaluationText.technicalProse.map((
-                                                                        paragraph,
-                                                                    ) => (
-                                                                        <p class="body-evaluation-prose">{paragraph}</p>
-                                                                    ))
-                                                                }
-                                                                <p class="body-evaluation-ui-large">
-                                                                    Secuencias observadas: {
-                                                                        bodyEvaluationText.technicalLigatures
-                                                                            .map((source, index) => (
-                                                                            <span>
-                                                                                {index > 0 && ", "}
-                                                                                <span
-                                                                                    class="body-evaluation-inline-code"
-                                                                                >{source}</span>
-                                                                            </span>
-                                                                        ))
-                                                                    }
-                                                                </p>
-                                                            </>
-                                                        )
-                                                    }
-                                                </section>
-                                            ))
-                                        }
-                                    </section>
-                                ))
-                            }
-                        </article>
-                    ))
-                }
-            </section>
+            <BodyEvaluationSection />
         </main>
     </body>
 </html>

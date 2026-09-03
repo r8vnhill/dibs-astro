@@ -1,0 +1,54 @@
+---
+/**
+ * Heading specimens inside a realistic constrained layout: a reading column next to a sticky
+ * table-of-contents rail. This is where long heading text is pressured by real width limits, so the
+ * e2e suite asserts no specimen or TOC entry overflows its column at either review viewport.
+ *
+ * The reading column shows the H1/H2 cases; the TOC lists the H2 cases and links to them by id.
+ */
+
+import {
+    headingEvaluationCases,
+    headingEvaluationSizeClasses,
+    headingSpecimenStyle,
+} from "~/lib/typography/heading-font-evaluation-fixture";
+
+const readingColumnCases = headingEvaluationCases.filter(
+    ({ semanticLevel }) => semanticLevel === "h1" || semanticLevel === "h2",
+);
+const tocCases = headingEvaluationCases.filter(({ semanticLevel }) => semanticLevel === "h2");
+const specimenClass = `heading-evaluation-specimen ${headingEvaluationSizeClasses.h2}`;
+---
+
+<section class="heading-evaluation-layout" data-heading-layout>
+    <div class="heading-evaluation-reading-column" data-heading-reading-column>
+        <h2>Heading text in the reading column</h2>
+        {
+            readingColumnCases.map((evaluationCase) => (
+                <div data-heading-layout-case={evaluationCase.id}>
+                    <h3 class="heading-evaluation-family-label">{evaluationCase.id}</h3>
+                    <h2
+                        class={specimenClass} data-heading-layout-specimen
+                        style={headingSpecimenStyle("DIBS Slab", evaluationCase.representativeWeight, "normal")}
+                    >
+                        {evaluationCase.text}
+                    </h2>
+                </div>
+            ))
+        }
+    </div>
+    <aside class="heading-evaluation-toc" data-heading-toc>
+        <p class="heading-evaluation-family-label">En esta página</p>
+        <nav aria-label="En esta página">
+            <ol>
+                {
+                    tocCases.map((evaluationCase) => (
+                        <li data-heading-toc-case={evaluationCase.id}>
+                            <a href={`#${evaluationCase.id}`} data-heading-toc-entry>{evaluationCase.text}</a>
+                        </li>
+                    ))
+                }
+            </ol>
+        </nav>
+    </aside>
+</section>

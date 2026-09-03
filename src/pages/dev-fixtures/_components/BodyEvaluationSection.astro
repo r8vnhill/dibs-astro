@@ -1,0 +1,177 @@
+---
+/**
+ * Stacked candidate/reference comparison for the body/UI role.
+ *
+ * Every surface (long prose, inline semantics, lists, navigation, metadata, callout, technical
+ * prose) is rendered for both `DIBS Sans` and the pinned `Inter Reference 4.1`, at each required
+ * body state, with identical source content, sizes, physical widths, and typography settings. Inter
+ * is a visual/layout benchmark only — `DIBS Sans` is not required to match its metrics. The render
+ * tests assert full surface coverage and byte-for-byte content parity between the two families.
+ */
+
+import {
+    bodyEvaluationFamilies,
+    bodyEvaluationSurfaces,
+    bodyEvaluationText,
+} from "~/lib/typography/body-font-evaluation-fixture";
+
+const stateStyle = (cssFamily: string, weight: number, style: string): string =>
+    `font-family:"${cssFamily}";font-weight:${weight};font-style:${style};`
+    + `font-variant-ligatures:common-ligatures contextual;`;
+---
+
+<section
+    data-fixture-section="body-evaluation" data-body-evaluation
+    data-visual-review="body-font-comparison"
+>
+    <h2>Comparación DIBS Sans / Inter Reference 4.1</h2>
+    <p>
+        Esta sección conserva el mismo contenido, tamaños, anchos físicos y estados tipográficos en ambas familias. La
+        referencia local de Inter sirve como benchmark visual y de layout; no es un requisito que DIBS Sans reproduzca
+        sus métricas.
+    </p>
+
+    {
+        bodyEvaluationFamilies.map((family) => (
+            <article
+                class="body-evaluation-family" data-evaluation-family={family.id}
+                data-evaluation-kind={family.kind} data-evaluation-css-family={family.cssFamily}
+            >
+                <h3>{family.label}</h3>
+
+                {
+                    family.states.map((state, stateIndex) => (
+                        <section
+                            class="body-evaluation-state" data-evaluation-state={`${state.weight}-${state.style}`}
+                            data-evaluation-representative={stateIndex === 0 ? "true" : undefined}
+                            style={stateStyle(family.cssFamily, state.weight, state.style)}
+                        >
+                            <h4>{state.weight} {state.style}</h4>
+                            <p class="body-evaluation-weight-sample">
+                                La lectura mantiene una jerarquía clara entre explicación, énfasis y navegación.
+                            </p>
+
+                            {
+                                bodyEvaluationSurfaces.map((surface) => (
+                                    <section class="body-evaluation-surface" data-evaluation-surface={surface.id}>
+                                        <h5>{surface.label}</h5>
+
+                                        {
+                                            surface.id === "long-prose" && (
+                                                <>
+                                                    {
+                                                        bodyEvaluationText.longProse.map((paragraph) => (
+                                                            <p class="body-evaluation-prose">{paragraph}</p>
+                                                        ))
+                                                    }
+                                                    <p
+                                                        class="body-evaluation-prose"
+                                                        data-evaluation-detail="spanish-coverage"
+                                                    >
+                                                        {bodyEvaluationText.spanishCoverage}
+                                                    </p>
+                                                </>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "inline-semantics" && (
+                                                <p class="body-evaluation-prose">
+                                                    {bodyEvaluationText.inlineSemantics.before}
+                                                    <em>{bodyEvaluationText.inlineSemantics.emphasis}</em>
+                                                    {bodyEvaluationText.inlineSemantics.middle}
+                                                    <strong>{bodyEvaluationText.inlineSemantics.strong}</strong>
+                                                    {bodyEvaluationText.inlineSemantics.after}
+                                                    <a href="/notes/">{bodyEvaluationText.inlineSemantics.link}</a>
+                                                    {bodyEvaluationText.inlineSemantics.end}
+                                                </p>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "unordered-list" && (
+                                                <ul class="body-evaluation-prose body-evaluation-list">
+                                                    {bodyEvaluationText.unorderedList.map((item) => <li>{item}</li>)}
+                                                </ul>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "ordered-list" && (
+                                                <ol class="body-evaluation-prose body-evaluation-list">
+                                                    {bodyEvaluationText.orderedList.map((item) => <li>{item}</li>)}
+                                                </ol>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "navigation" && (
+                                                <nav aria-label="Navegación de evaluación" class="body-evaluation-ui">
+                                                    <div class="body-evaluation-navigation">
+                                                        {
+                                                            bodyEvaluationText.navigation.map((label) => (
+                                                                <a href="/notes/">{label}</a>
+                                                            ))
+                                                        }
+                                                    </div>
+                                                </nav>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "metadata" && (
+                                                <div class="body-evaluation-ui body-evaluation-metadata">
+                                                    {
+                                                        bodyEvaluationText.metadata.map((value, index) => (
+                                                            <span data-evaluation-metadata-index={index}>{value}</span>
+                                                        ))
+                                                    }
+                                                </div>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "callout" && (
+                                                <aside class="body-evaluation-callout body-evaluation-prose">
+                                                    <h6>{bodyEvaluationText.callout.title}</h6>
+                                                    <p>{bodyEvaluationText.callout.body}</p>
+                                                </aside>
+                                            )
+                                        }
+
+                                        {
+                                            surface.id === "technical-prose" && (
+                                                <>
+                                                    {
+                                                        bodyEvaluationText.technicalProse.map((paragraph) => (
+                                                            <p class="body-evaluation-prose">{paragraph}</p>
+                                                        ))
+                                                    }
+                                                    <p class="body-evaluation-ui-large">
+                                                        Secuencias observadas: {
+                                                            bodyEvaluationText.technicalLigatures.map((
+                                                                source,
+                                                                index,
+                                                            ) => (
+                                                                <span>
+                                                                    {index > 0 && ", "}
+                                                                    <span class="body-evaluation-inline-code">{
+                                                                        source
+                                                                    }</span>
+                                                                </span>
+                                                            ))
+                                                        }
+                                                    </p>
+                                                </>
+                                            )
+                                        }
+                                    </section>
+                                ))
+                            }
+                        </section>
+                    ))
+                }
+            </article>
+        ))
+    }
+</section>

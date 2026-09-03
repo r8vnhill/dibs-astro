@@ -1,0 +1,26 @@
+---
+/**
+ * A lesson-shaped fragment that puts all three roles on screen at once: `DIBS Sans` prose (upright,
+ * italic, medium), a `DIBS Slab` heading, and a `Fira Code` code block. It is the quickest read on
+ * whether the families cohere as one system rather than three unrelated fonts.
+ *
+ * The `<pre>` is whitespace-sensitive: the newline between the two code lines is intentional.
+ */
+
+import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
+
+const { specimenText } = proportionalFontContract;
+---
+
+<section data-fixture-section="combined">
+    <h2 data-font-family="dibs-slab" style="font-weight: 700">DIBS Sans + DIBS Slab + Fira Code</h2>
+
+    <p data-font-family="dibs-sans" style="font-weight: 400">{specimenText[0]}</p>
+
+    <p data-font-family="dibs-sans" style="font-weight: 400; font-style: italic">{specimenText[1]}</p>
+
+    <p data-font-family="dibs-sans" style="font-weight: 500">{specimenText[2]}</p>
+
+    <pre data-font-family="fira-code"><code>{specimenText[3]}
+{specimenText[4]}</code></pre>
+</section>

@@ -1,0 +1,51 @@
+{
+    "schemaVersion": 1,
+    "family": "Space Grotesk Reference 2.0.0",
+    "evaluationOnly": true,
+    "upstream": {
+        "project": "Space Grotesk",
+        "version": "2.0.0",
+        "tag": "2.0.0",
+        "repository": "https://github.com/floriankarsten/space-grotesk",
+        "releaseUrl": "https://github.com/floriankarsten/space-grotesk/releases/tag/2.0.0",
+        "archive": {
+            "name": "SpaceGrotesk-2.0.0.zip",
+            "url": "https://github.com/floriankarsten/space-grotesk/releases/download/2.0.0/SpaceGrotesk-2.0.0.zip",
+            "sha256": "sha256:53b415577d4139248555300710bea0d268c7a5be67b93de53b716a9736cabffd"
+        },
+        "license": {
+            "name": "SIL Open Font License 1.1",
+            "url": "https://github.com/floriankarsten/space-grotesk/blob/2.0.0/OFL.txt",
+            "sourcePath": "OFL.txt",
+            "sha256": "sha256:564ce565c371c5e5bbf286006565a7c9aa55a9f56e7ca58d56e05d649dd61a72"
+        }
+    },
+    "license": {
+        "name": "SIL Open Font License 1.1",
+        "path": "dev-fixtures/fonts/space-grotesk-2.0.0/LICENSE.txt",
+        "sha256": "sha256:564ce565c371c5e5bbf286006565a7c9aa55a9f56e7ca58d56e05d649dd61a72",
+        "source": "https://github.com/floriankarsten/space-grotesk/blob/2.0.0/OFL.txt"
+    },
+    "assets": [
+        {
+            "family": "Space Grotesk Reference 2.0.0",
+            "format": "woff2",
+            "path": "dev-fixtures/fonts/space-grotesk-2.0.0/500-normal.woff2",
+            "source": "woff2/static/SpaceGrotesk-Medium.woff2",
+            "sha256": "sha256:f20a85be4c8a74ddad94d46fcce503666498855e5a87755d75cd728d801bbe58",
+            "bytes": 42796,
+            "style": "normal",
+            "weight": 500
+        },
+        {
+            "family": "Space Grotesk Reference 2.0.0",
+            "format": "woff2",
+            "path": "dev-fixtures/fonts/space-grotesk-2.0.0/700-normal.woff2",
+            "source": "woff2/static/SpaceGrotesk-Bold.woff2",
+            "sha256": "sha256:06d705cebbab916f0c0fe82b6c6f4cae06aa07fd6f5ee078421206040326ef63",
+            "bytes": 41780,
+            "style": "normal",
+            "weight": 700
+        }
+    ]
+}

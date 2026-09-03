@@ -1,0 +1,95 @@
+---
+/**
+ * Feature-on / feature-off ligature table.
+ *
+ * Every canonical sequence from {@link proportionalFontContract} is rendered twice per role-state:
+ * once with OpenType ligatures disabled and once enabled. The source text is identical in both
+ * columns and only the browser feature changes, so the table isolates exactly what each font file
+ * contributes. The render tests assert the full role × state × sequence × mode matrix is present and
+ * that each disabled/enabled pair shares its text and inline style.
+ */
+
+import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
+import {
+    proportionalFontFeatureModes,
+    proportionalFontFixtureProfiles,
+    typographyLigaturePairKey as pairKey,
+    typographySpecimenStyle as specimenStyle,
+    typographyStateKey,
+} from "~/lib/typography/proportional-font-fixture";
+
+const { ligatures } = proportionalFontContract;
+
+type Profile = (typeof proportionalFontFixtureProfiles)[number];
+
+const isFirstState = (profile: Profile, state: Profile["states"][number]): boolean => {
+    const [first] = profile.states;
+    return state.weight === first.weight && state.style === first.style;
+};
+---
+
+<section
+    class="ligature-comparison" data-fixture-section="ligature-comparison"
+    data-visual-review="ligature-comparison"
+>
+    <h2>Ligature feature comparison</h2>
+    <p>
+        Las ligaduras pueden unir ciertos pares o grupos de caracteres. Esta tabla conserva el mismo texto fuente en
+        ambas columnas y cambia solamente las funciones OpenType del navegador: desactivadas o activadas. Las secuencias
+        comunes y técnicas permiten observar qué aporta cada archivo de fuente.
+    </p>
+
+    {
+        proportionalFontFixtureProfiles.map((candidate) => (
+            <section
+                data-typography-role={candidate.role} data-font-family={candidate.familyId}
+                data-comparison-family={candidate.familyName}
+            >
+                <h3>{candidate.familyName}</h3>
+
+                {
+                    candidate.states.map((state) => (
+                        <article
+                            class="ligature-comparison-state" data-typography-state={typographyStateKey(state)}
+                            data-visual-review-state={isFirstState(candidate, state) ? "representative" : undefined}
+                        >
+                            <h4>{state.weight} {state.style}</h4>
+
+                            <div class="ligature-comparison-header" aria-hidden="true">
+                                <span>Sequence</span>
+                                {proportionalFontFeatureModes.map((mode) => <span>{mode.label}</span>)}
+                            </div>
+
+                            {
+                                ligatures.map((ligature) => (
+                                    <div
+                                        class="ligature-comparison-row"
+                                        data-ligature-pair={pairKey(candidate.role, state, ligature.id)}
+                                    >
+                                        <code>{ligature.source}</code>
+                                        {
+                                            proportionalFontFeatureModes.map((mode) => (
+                                                <span
+                                                    data-typography-specimen="ligature"
+                                                    data-typography-role={candidate.role}
+                                                    data-font-family={candidate.familyId}
+                                                    data-typography-state={typographyStateKey(state)}
+                                                    data-ligature-id={ligature.id}
+                                                    data-ligature-category={ligature.category}
+                                                    data-feature-mode={mode.id}
+                                                    style={specimenStyle(candidate.diagnosticSize, state)}
+                                                >
+                                                    {ligature.source}
+                                                </span>
+                                            ))
+                                        }
+                                    </div>
+                                ))
+                            }
+                        </article>
+                    ))
+                }
+            </section>
+        ))
+    }
+</section>

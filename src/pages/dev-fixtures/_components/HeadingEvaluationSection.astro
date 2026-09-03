@@ -1,0 +1,98 @@
+---
+/**
+ * Stacked candidate/reference comparison for the heading role.
+ *
+ * For every canonical heading case, each family (`DIBS Slab` and the pinned
+ * `Space Grotesk Reference 2.0.0`) renders the same text, at the same semantic level, weight, type
+ * scale, and layout context. Stacking the two makes hierarchy, wrapping, and texture directly
+ * comparable in a screenshot. A trailing matrix repeats one diagnostic string across every native
+ * weight/style state of each family.
+ *
+ * The specimen element is a dynamic tag (`h1`..`h4`) driven by {@link HeadingEvaluationCase.semanticLevel},
+ * so a single markup block covers all four levels instead of one branch per level.
+ */
+
+import {
+    type HeadingEvaluationCase,
+    headingEvaluationCases,
+    headingEvaluationFamilies,
+    headingEvaluationSizeClasses,
+    headingSpecimenStyle,
+    headingStateMatrixSample,
+} from "~/lib/typography/heading-font-evaluation-fixture";
+
+const specimenClass = (level: HeadingEvaluationCase["semanticLevel"]): string =>
+    `heading-evaluation-specimen ${headingEvaluationSizeClasses[level]}`;
+---
+
+<section
+    class="heading-evaluation-review" data-fixture-section="heading-evaluation"
+    data-visual-review="heading-font-comparison"
+>
+    <h2>Comparación DIBS Slab / Space Grotesk Reference 2.0.0</h2>
+    <p>
+        Cada muestra conserva el mismo texto, nivel semántico, peso, tamaño y contexto de layout. La comparación apilada
+        permite revisar directamente la jerarquía, el wrapping y la textura de ambas familias.
+    </p>
+
+    {
+        headingEvaluationCases.map((evaluationCase) => {
+            const Specimen = evaluationCase.semanticLevel;
+            const state = `${evaluationCase.representativeWeight}-normal`;
+            return (
+            <article
+                class="heading-evaluation-case" data-heading-case={evaluationCase.id}
+                data-heading-kind={evaluationCase.kind} data-heading-level={evaluationCase.semanticLevel}
+                data-heading-weight={evaluationCase.representativeWeight}
+            >
+                <p class="heading-evaluation-case-label">{evaluationCase.id}</p>
+                <div class="heading-evaluation-pair">
+                    {
+                        headingEvaluationFamilies.map((family) => (
+                            <div data-heading-family={family.id} data-heading-state={state}>
+                                <p class="heading-evaluation-family-label">{family.label}</p>
+                                <Specimen
+                                    class={specimenClass(evaluationCase.semanticLevel)} data-heading-specimen
+                                    data-heading-source={evaluationCase.text}
+                                    style={headingSpecimenStyle(
+                                        family.cssFamily,
+                                        evaluationCase.representativeWeight,
+                                        "normal",
+                                    )}
+                                >
+                                    {evaluationCase.text}
+                                </Specimen>
+                            </div>
+                        ))
+                    }
+                </div>
+            </article>
+        );
+        })
+    }
+
+    <section data-heading-state-matrix>
+        <h3>Estados nativos del heading role</h3>
+        {
+            headingEvaluationFamilies.map((family) => (
+                <article data-heading-family-matrix={family.id}>
+                    <p class="heading-evaluation-family-label">{family.label}</p>
+                    {
+                        family.states.map((state) => (
+                            <div data-heading-state-matrix-entry={`${family.id}-${state.weight}-${state.style}`}>
+                                <p class="heading-evaluation-state-label">{state.weight} {state.style}</p>
+                                <h2
+                                    class={specimenClass("h2")} data-heading-specimen
+                                    data-heading-source={headingStateMatrixSample.text}
+                                    style={headingSpecimenStyle(family.cssFamily, state.weight, state.style)}
+                                >
+                                    {headingStateMatrixSample.text}
+                                </h2>
+                            </div>
+                        ))
+                    }
+                </article>
+            ))
+        }
+    </section>
+</section>
