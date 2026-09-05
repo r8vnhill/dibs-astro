@@ -6,7 +6,7 @@
 export const packageResolutionContracts = [
     {
         name: "@ravenhill/site-core",
-        exactVersion: "0.1.0",
+        exactVersion: "0.1.1",
         registryProject: "85449745",
         rootOnly: true,
         forbiddenLocalDir: "packages/site-core",

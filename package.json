@@ -11,7 +11,7 @@
         "@ravenhill/content-core": "workspace:*",
         "@ravenhill/lesson-export-core": "workspace:*",
         "@ravenhill/shiki-core": "workspace:*",
-        "@ravenhill/site-core": "0.1.0",
+        "@ravenhill/site-core": "0.1.1",
         "@tabler/icons": "^3.34.1",
         "@tailwindcss/forms": "^0.5.10",
         "@types/hast": "^3.0.4",

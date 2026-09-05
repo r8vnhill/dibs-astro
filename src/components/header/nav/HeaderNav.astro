@@ -1,0 +1,113 @@
+---
+import { Hamburger, X } from "@ravenhill/astro-icons";
+
+interface HeaderNavItem {
+    id: string;
+    href: string;
+    label: string;
+}
+
+interface Props {
+    items: HeaderNavItem[];
+}
+
+const { items } = Astro.props as Props;
+---
+
+<div data-header-nav>
+    <button
+        type="button" class="toggle-button"
+        data-nav-toggle popovertarget="mainNavMobile"
+        popovertargetaction="toggle" aria-controls="mainNavMobile"
+        aria-expanded="false" aria-haspopup="true"
+        aria-label="Abrir menú de navegación"
+    >
+        <span data-menu-icon aria-hidden="true">
+            <Hamburger class="size-6" />
+        </span>
+        <span
+            data-close-icon aria-hidden="true"
+            hidden
+        >
+            <X class="size-6" />
+        </span>
+    </button>
+
+    <ul class="desktop-nav-list" id="mainNavDesktop">
+        {
+            items.map((item) => (
+                <li>
+                    <a href={item.href} class="desktop-nav-item">{item.label}</a>
+                </li>
+            ))
+        }
+    </ul>
+
+    <div
+        id="mainNavMobile" class="mobile-nav-panel"
+        data-nav-panel popover="auto"
+        aria-hidden="true"
+    >
+        <ul class="mobile-nav-list">
+            {
+                items.map((item) => (
+                    <li>
+                        <a href={item.href} class="mobile-nav-item">{item.label}</a>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    const mobileBreakpoint = window.matchMedia("(min-width: 640px)");
+
+    document.querySelectorAll<HTMLElement>("[data-header-nav]").forEach((root) => {
+        const toggle = root.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+        const panel = root.querySelector<HTMLElement>("[data-nav-panel]");
+        const menuIcon = root.querySelector<HTMLElement>("[data-menu-icon]");
+        const closeIcon = root.querySelector<HTMLElement>("[data-close-icon]");
+
+        if (!toggle || !panel || !menuIcon || !closeIcon) return;
+
+        let originalBodyOverflow: string | undefined;
+
+        const isOpen = (): boolean => panel.matches(":popover-open");
+
+        const syncState = () => {
+            const open = isOpen();
+
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute("aria-label", open ? "Cerrar menú de navegación" : "Abrir menú de navegación");
+            panel.setAttribute("aria-hidden", String(!open));
+            root.dataset.state = open ? "open" : "closed";
+            menuIcon.hidden = open;
+            closeIcon.hidden = !open;
+
+            if (open) {
+                originalBodyOverflow ??= document.body.style.overflow;
+                document.body.style.overflow = "hidden";
+            } else if (originalBodyOverflow !== undefined) {
+                document.body.style.overflow = originalBodyOverflow;
+                originalBodyOverflow = undefined;
+            }
+        };
+
+        panel.addEventListener("toggle", () => {
+            const activeElement = document.activeElement;
+            syncState();
+
+            if (!isOpen() && activeElement instanceof HTMLElement && panel.contains(activeElement)) {
+                toggle.focus();
+            }
+        });
+
+        const closeOnDesktop = () => {
+            if (mobileBreakpoint.matches && isOpen()) panel.hidePopover();
+        };
+
+        mobileBreakpoint.addEventListener("change", closeOnDesktop);
+        syncState();
+    });
+</script>
