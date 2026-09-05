@@ -26,9 +26,7 @@ export const packageResolutionContracts = [
     {
         name: "@ravenhill/astro-site-chrome",
         registryProject: "85449745",
-        specifier: "file:./vendor/astro-site-chrome",
-        installedVersion: "0.1.0",
-        lockfileSpecifier: "file:./vendor/astro-site-chrome",
-        lockfileVersionPrefix: "file:vendor/astro-site-chrome",
+        exactVersion: "0.1.0",
+        forbiddenLocalDir: "vendor/astro-site-chrome",
     },
 ];

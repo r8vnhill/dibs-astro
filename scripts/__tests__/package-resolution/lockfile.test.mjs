@@ -69,6 +69,12 @@ describe("given the lockfile contract for @ravenhill/site-core pinned to 0.1.0",
         expect(validateLockfileEntry(publishedLockfile, "@ravenhill/site-core", "0.1.0").valid).toBe(true);
     });
 
+    test("then a published resolution with pnpm peer suffix satisfies it", () => {
+        const peerResolvedLockfile = publishedLockfile.replace("version: 0.1.0\n\n  packages", "version: 0.1.0(astro@7.2.2)\n\n  packages");
+
+        expect(validateLockfileEntry(peerResolvedLockfile, "@ravenhill/site-core", "0.1.0").valid).toBe(true);
+    });
+
     test("then a workspace link resolution is rejected", () => {
         const result = validateLockfileEntry(workspaceLockfile, "@ravenhill/site-core", "0.1.0");
         expect(result.valid).toBe(false);

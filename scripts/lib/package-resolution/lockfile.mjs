@@ -66,8 +66,9 @@ export function findRootImporterDependency(lockfileContent, packageName) {
 
 /**
  * Validates the root importer's lockfile entry for a package against an exact-version contract:
- * the specifier and resolved version must both equal the expected version, and the resolved
- * version must not be a local `link:` target.
+ * the specifier and resolved package version must equal the expected version. pnpm may append a
+ * peer-dependency suffix to the resolved version, and the resolved version must not be a local
+ * `link:` target.
  */
 export function validateLockfileEntry(lockfileContent, packageName, exactVersion) {
     const entry = findRootImporterDependency(lockfileContent, packageName);
@@ -84,7 +85,8 @@ export function validateLockfileEntry(lockfileContent, packageName, exactVersion
         return { valid: false, reason: `lockfile specifier "${entry.specifier}" does not match expected "${exactVersion}"` };
     }
 
-    if (entry.version !== exactVersion) {
+    const resolvedPackageVersion = entry.version?.split("(", 1)[0];
+    if (resolvedPackageVersion !== exactVersion) {
         return { valid: false, reason: `lockfile resolved version "${entry.version}" does not match expected "${exactVersion}"` };
     }
 

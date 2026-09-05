@@ -46,9 +46,8 @@ Context and essential rules for agents collaborating in this repository.
   consumed only through its package root. Do not import from the vendor path or package subpaths.
 - `@ravenhill/astro-head` is consumed from the canonical `@ravenhill` registry through its package root. DIBS-specific
   metadata policy belongs in the local adapter, not in the external package.
-- `@ravenhill/astro-site-chrome` is acquired temporarily through the pinned `vendor/astro-site-chrome` submodule and
-  is consumed only through its package root. DIBS-specific header policy belongs in the local adapter, not in the
-  submodule.
+- `@ravenhill/astro-site-chrome` is consumed from the canonical `@ravenhill` registry through its package root.
+  DIBS-specific header policy belongs in the local adapter, not in the external package.
 - The committed `.npmrc` configures the canonical public-read `@ravenhill` registry endpoint
   (`https://gitlab.com/api/v4/projects/85449745/packages/npm/`); consumer installs do not require package-registry
   credentials.
