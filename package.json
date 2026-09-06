@@ -7,6 +7,7 @@
         "@ravenhill/astro-head": "0.1.0",
         "@ravenhill/astro-icons": "0.2.0",
         "@ravenhill/astro-site-chrome": "0.1.0",
+        "@ravenhill/astro-site-header": "0.1.1",
         "@ravenhill/astro-site-shell": "file:./vendor/astro-site-shell",
         "@ravenhill/content-core": "workspace:*",
         "@ravenhill/lesson-export-core": "workspace:*",

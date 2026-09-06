@@ -32,8 +32,8 @@ suite("given the DIBS header adapter", () => {
         expect($("header nav").attr("aria-label")).toBe("Navegación principal");
         expect(children.map((child) => child.tagName)).toEqual(["div", "nav", "div"]);
         expect($("header nav astro-island")).toHaveLength(0);
-        expect($("header nav .desktop-nav-list a")).toHaveLength(5);
-        expect($("header nav .mobile-nav-list a")).toHaveLength(5);
+        expect($("header nav .site-header-navigation__desktop a")).toHaveLength(5);
+        expect($("header nav .site-header-navigation__panel a")).toHaveLength(5);
     });
 
     test("then PDF export keeps the DIBS export marker on the package header", async () => {

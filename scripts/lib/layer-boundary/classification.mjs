@@ -188,6 +188,12 @@ export const architecturalPackages = Object.freeze([
         sourceOwnership: "external",
         importSurface: "root-only",
     }),
+    Object.freeze({
+        packageName: "@ravenhill/astro-site-header",
+        semanticTarget: "astro-site-header",
+        sourceOwnership: "external",
+        importSurface: "root-only",
+    }),
 ]);
 
 function architecturalPackageFor(packageName) {

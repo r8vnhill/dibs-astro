@@ -2,17 +2,19 @@
 /**
  * Adapts DIBS header policy to the host-neutral site-header structure.
  *
- * DIBS retains branding, localization, responsive navigation, actions, styling, and PDF/export behavior. The package
- * supplies only the semantic `<header>` and primary navigation landmark around those consumer-owned fragments.
+ * DIBS retains branding, localization, actions, styling (through the `--site-header-*` token overrides scoped to
+ * `[data-dibs-header]`), and PDF/export behavior. `@ravenhill/astro-site-chrome` supplies the semantic `<header>` and
+ * primary navigation landmark; `@ravenhill/astro-site-header` supplies the responsive desktop/mobile navigation
+ * mechanism around the DIBS-owned navigation items.
  */
 import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
 import { SiteHeader } from "@ravenhill/astro-site-chrome";
+import { ResponsiveHeaderNav } from "@ravenhill/astro-site-header";
 import { m } from "~/generated/i18n/messages";
 import type { LocalizedString } from "~/generated/i18n/messages";
 import { site } from "~/utils";
 import GitHubLink from "./GitHubLink.astro";
 import GitLabLink from "./GitLabLink.astro";
-import HeaderNav from "./nav/HeaderNav.astro";
 
 type Props = {
     title: string;
@@ -40,6 +42,7 @@ const navItems = [
 
 const headerAttributes = {
     ...exportHiddenAttributes,
+    "data-dibs-header": "true",
     class: "fixed top-0 inset-x-0 z-50 border-b shadow text-header-text bg-header-fill border-header-border",
 };
 const contentAttributes = {
@@ -71,7 +74,10 @@ const navigationAttributes = {
         </a>
     </div>
 
-    <HeaderNav slot="navigation" items={navItems} />
+    <ResponsiveHeaderNav
+        slot="navigation" items={navItems}
+        menuLabels={{ open: m.nav_menu_open(), close: m.nav_menu_close() }} navigationId="dibs-header"
+    />
 
     <div slot="actions" class="ml-auto flex items-center gap-4">
         <ThemeSwitcher client:load labels={themeLabels} />

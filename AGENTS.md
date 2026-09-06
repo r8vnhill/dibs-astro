@@ -48,6 +48,10 @@ Context and essential rules for agents collaborating in this repository.
   metadata policy belongs in the local adapter, not in the external package.
 - `@ravenhill/astro-site-chrome` is consumed from the canonical `@ravenhill` registry through its package root.
   DIBS-specific header policy belongs in the local adapter, not in the external package.
+- `@ravenhill/astro-site-header` is consumed from the canonical `@ravenhill` registry through its package root. DIBS
+  uses its `ResponsiveHeaderNav` for the responsive desktop/mobile navigation mechanism; DIBS-specific header policy
+  (branding, localization, actions, styling through `--site-header-*` token overrides, PDF/export behavior) stays in the
+  local adapter.
 - The committed `.npmrc` configures the canonical public-read `@ravenhill` registry endpoint
   (`https://gitlab.com/api/v4/projects/85449745/packages/npm/`); consumer installs do not require package-registry
   credentials.
@@ -90,8 +94,7 @@ components rather than HTML strings. Run the focused readings tests and `pnpm ch
   statements or control flow are needed:
 
   ```ts
-  export const typographyStateKey = (state: TypographyState): string =>
-      `${state.weight}-${state.style}`;
+  export const typographyStateKey = (state: TypographyState): string => `${state.weight}-${state.style}`;
   ```
 - Keep domain logic independent from Astro and UI; connect it through application, infrastructure, or presentation
   adapters. Use `pnpm check:architecture` only when debugging boundary findings directly.

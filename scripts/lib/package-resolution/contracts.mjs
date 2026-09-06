@@ -29,4 +29,10 @@ export const packageResolutionContracts = [
         exactVersion: "0.1.0",
         forbiddenLocalDir: "vendor/astro-site-chrome",
     },
+    {
+        name: "@ravenhill/astro-site-header",
+        registryProject: "85449745",
+        exactVersion: "0.1.1",
+        forbiddenLocalDir: "vendor/astro-site-header",
+    },
 ];

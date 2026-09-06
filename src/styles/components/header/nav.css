@@ -1,35 +1,13 @@
-@layer components {
-    .desktop-nav-list {
-        @apply hidden items-center gap-4 sm:flex;
-    }
+/* Maps the DIBS header theme onto the navigation tokens read by
+   `@ravenhill/astro-site-header`'s `ResponsiveHeaderNav`.
 
-    .desktop-nav-item {
-        @apply hover:text-primary text-header-text text-base font-medium transition-colors;
-    }
-
-    .mobile-nav-panel {
-        @apply fixed inset-x-4 top-20 z-50 m-0 rounded-2xl border bg-background/95 p-2 shadow-lg ring-1 ring-border/60
-            backdrop-blur sm:hidden;
-        transition: transform 200ms ease-out, opacity 200ms ease-out;
-    }
-
-    .mobile-nav-item {
-        @apply text-header-text hover:bg-muted/60 block rounded-xl px-4 py-3 text-base font-medium transition-colors
-            focus:outline-none focus-visible:ring focus-visible:ring-primary/40;
-    }
-
-    .toggle-button {
-        @apply text-primary hover:bg-primary-light focus:ring-primary-dark block rounded-md border border-transparent
-            p-2 transition-colors focus:ring-2 focus:outline-none sm:hidden;
-    }
-
-    .mobile-nav-panel::backdrop {
-        @apply bg-black/30 backdrop-blur-sm;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .mobile-nav-panel {
-            transition: none;
-        }
-    }
+   The package component owns the navigation structure and its base styles; DIBS supplies only colors and geometry
+   through these custom properties, scoped to the DIBS header via `data-dibs-header`. */
+[data-dibs-header] {
+    --site-header-text: var(--header-text);
+    --site-header-border: var(--header-border);
+    --site-header-panel-background: var(--header-bg);
+    --site-header-accent: var(--theme-color-primary);
+    --site-header-hover: var(--theme-color-primary-lightest);
+    --site-header-height: 4.5rem;
 }
