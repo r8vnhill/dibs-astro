@@ -15,9 +15,8 @@
  *   meaningful sequences such as `preconnect → stylesheet` remain observable;
  * - `jsonLd` — parsed `application/ld+json` blocks, in document order.
  *
- * SYNCED COPY — canonical source: `@ravenhill/astro-head` `tests/helpers/head-evidence.ts`.
- * Do not edit here; change it upstream and re-copy so VerSo, DIBS, and the
- * package share one projection contract.
+ * Canonical source of this file: `@ravenhill/astro-head` — `tests/helpers/head-evidence.ts`.
+ * Consumers (VerSo, DIBS) keep a verbatim copy; edit it here and re-sync.
  */
 import { load } from "cheerio";
 
@@ -26,6 +25,7 @@ export interface HeadLinkEvidence {
     rel: string;
     href: string | undefined;
     type?: string;
+    sizes?: string;
     crossorigin?: string;
 }
 
@@ -98,11 +98,13 @@ export function projectHead(html: string): HeadEvidence {
             return;
         }
         const type = $el.attr("type");
+        const sizes = $el.attr("sizes");
         const crossorigin = $el.attr("crossorigin");
         links.push({
             rel,
             href,
             ...(type !== undefined ? { type } : {}),
+            ...(sizes !== undefined ? { sizes } : {}),
             ...(crossorigin !== undefined ? { crossorigin } : {}),
         });
     });

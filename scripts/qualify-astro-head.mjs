@@ -1,26 +1,24 @@
 import { spawn } from "node:child_process";
-import { createHash } from "node:crypto";
-import { cp, lstat, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, lstat, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+    checkArchiveDigest,
+    checkInstalledCandidateIdentity,
+    loadCandidateManifest,
+    sha256OfFile,
+} from "./lib/astro-head-candidate.mjs";
+
 const root = fileURLToPath(new URL("..", import.meta.url));
-const candidatePath = path.resolve(process.env.ASTRO_HEAD_CANDIDATE ?? "");
-const expectedSha256 = process.env.ASTRO_HEAD_CANDIDATE_SHA256?.toLowerCase();
+const manifestPathInput = process.env.ASTRO_HEAD_CANDIDATE_MANIFEST;
 const keepWorkdir = process.argv.includes("--keep-workdir");
 
-if (!process.env.ASTRO_HEAD_CANDIDATE || !expectedSha256) {
+if (!manifestPathInput) {
     throw new Error(
-        "Set ASTRO_HEAD_CANDIDATE to the packed archive and ASTRO_HEAD_CANDIDATE_SHA256 to its expected digest.",
+        "Set ASTRO_HEAD_CANDIDATE_MANIFEST to the astro-head release/package-manifest.json describing the candidate.",
     );
-}
-
-async function sha256Of(filePath) {
-    const hash = createHash("sha256");
-    const file = await readFile(filePath);
-    hash.update(file);
-    return hash.digest("hex");
 }
 
 function run(command, args, cwd) {
@@ -53,17 +51,37 @@ function isDisposablePath(source) {
     );
 }
 
-const actualSha256 = await sha256Of(candidatePath);
-if (actualSha256 !== expectedSha256) {
-    throw new Error(`Candidate digest mismatch: expected ${expectedSha256}, got ${actualSha256}.`);
+function fail(reason) {
+    throw new Error(reason);
 }
+
+const loaded = await loadCandidateManifest(manifestPathInput);
+if (!loaded.valid) fail(loaded.reason);
+const { manifestPath, candidate, archivePath } = loaded;
+
+let archiveStat;
+try {
+    archiveStat = await stat(archivePath);
+} catch {
+    fail(`Candidate archive not found beside ${manifestPath}: ${archivePath}`);
+}
+if (!archiveStat.isFile()) {
+    fail(`Candidate archive is not a file: ${archivePath}`);
+}
+
+const digestCheck = checkArchiveDigest({
+    expected: candidate.sha256,
+    actual: await sha256OfFile(archivePath),
+    archivePath,
+});
+if (!digestCheck.valid) fail(digestCheck.reason);
 
 const workDir = await mkdtemp(path.join(tmpdir(), "dibs-astro-head-"));
 try {
     await cp(root, workDir, { recursive: true, filter: isDisposablePath });
     const packageJsonPath = path.join(workDir, "package.json");
     const packageJson = JSON.parse(await readFile(packageJsonPath, "utf8"));
-    packageJson.dependencies["@ravenhill/astro-head"] = candidatePath;
+    packageJson.dependencies["@ravenhill/astro-head"] = archivePath;
     await writeFile(packageJsonPath, `${JSON.stringify(packageJson, null, 4)}\n`);
     const userConfig = path.join(workDir, ".qualification.npmrc");
     await writeFile(userConfig, "\n");
@@ -73,14 +91,25 @@ try {
         throw new Error("DIBS installed astro-head as a symlink; qualification must use the packed candidate.");
     }
     const installedPackage = JSON.parse(await readFile(path.join(installedDir, "package.json"), "utf8"));
-    if (installedPackage.name !== "@ravenhill/astro-head" || installedPackage.version !== "0.1.0") {
-        throw new Error(`Unexpected installed package identity: ${installedPackage.name}@${installedPackage.version}`);
-    }
+    const identityCheck = checkInstalledCandidateIdentity({ installed: installedPackage, candidate });
+    if (!identityCheck.valid) fail(identityCheck.reason);
 
     await run("pnpm", ["run", "build:content-core"], workDir);
     await run("pnpm", ["run", "build:lesson-export-core"], workDir);
     await run("pnpm", ["run", "build:shiki-core"], workDir);
     await run("pnpm", ["exec", "vitest", "run", "--config", "vitest.config.ts", "src/utils/__tests__"], workDir);
+    await run(
+        "pnpm",
+        [
+            "exec",
+            "vitest",
+            "run",
+            "--config",
+            "vitest.config.ts",
+            "src/components/meta/__tests__/dibs-head-links.test.ts",
+        ],
+        workDir,
+    );
     await run(
         "pnpm",
         ["exec", "vitest", "run", "--config", "vitest.astro.config.ts", "src/components/meta/__tests__"],
@@ -89,7 +118,7 @@ try {
     await run("pnpm", ["exec", "astro", "check"], workDir);
     await run("pnpm", ["run", "build"], workDir);
 
-    console.log(`DIBS qualified @ravenhill/astro-head@0.1.0 from ${actualSha256}.`);
+    console.log(`DIBS qualified ${candidate.package}@${candidate.version} from ${candidate.sha256}.`);
 } finally {
     if (keepWorkdir) console.log(`Kept qualification worktree at ${workDir}`);
     else await rm(workDir, { recursive: true, force: true });

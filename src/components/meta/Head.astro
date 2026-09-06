@@ -15,6 +15,7 @@ import { getLocaleProfile } from "$presentation/i18n/locale-profile";
 import { toDibsPageMetadata } from "~/utils/dibs-page-metadata";
 import { site } from "~/utils";
 import type { PageMeta } from "~/utils/page-meta";
+import { buildDibsHeadLinks } from "./dibs-head-links";
 
 interface Props {
     title?: string;
@@ -62,16 +63,14 @@ const headProps: HeadProps = {
     page,
     social: { image: site.HEAD.DEFAULT_SOCIAL_IMAGE },
     academic,
+    links: buildDibsHeadLinks({
+        faviconHref: site.HEAD.FAVICON_PATH,
+        baseFontStylesheet,
+    }),
 };
 ---
 
 <GenericHead {...headProps} />
-
-<link rel="icon" href={site.HEAD.FAVICON_PATH} type="image/png" />
-
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-<link rel="stylesheet" href={baseFontStylesheet} />
 
 <link rel="sitemap" href={site.HEAD.SITEMAP_PATH} />
 
