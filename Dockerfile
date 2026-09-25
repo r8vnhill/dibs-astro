@@ -8,7 +8,6 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && corepack prepare pnpm@11.8.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml project.inlang .npmrc ./
-COPY packages/content-core/package.json packages/content-core/package.json
 COPY packages/lesson-export-core/package.json packages/lesson-export-core/package.json
 COPY packages/shiki-core/package.json packages/shiki-core/package.json
 COPY vendor/astro-site-shell vendor/astro-site-shell

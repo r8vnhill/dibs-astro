@@ -41,15 +41,15 @@ time and served as static assets.
 dibs-astro (root app)
 ├── src/            application code: domain, application, infrastructure, presentation, UI
 └── packages/
-    ├── content-core       host-agnostic lesson-navigation and lesson-metadata contracts
     ├── lesson-export-core host-agnostic lesson-export (PDF) planning primitives
     └── shiki-core         host-agnostic Shiki syntax-highlighting infrastructure
 ```
 
 The entries shown above are local workspace packages. They are framework-agnostic and expose reusable contracts without
-depending on the app's `src/` tree. The site also consumes published external packages such as `@ravenhill/site-core`
-for host-agnostic repository/hosting-platform primitives and `@ravenhill/astro-icons` for icon components. The
-`@ravenhill` scope resolves through the public-read GitLab npm endpoint configured in [`.npmrc`](./.npmrc):
+depending on the app's `src/` tree. The site also consumes published external packages such as
+`@ravenhill/content-core` for host-agnostic lesson-navigation and lesson-metadata contracts,
+`@ravenhill/site-core` for repository/hosting-platform primitives, and `@ravenhill/astro-icons` for icon components.
+The `@ravenhill` scope resolves through the public-read GitLab npm endpoint configured in [`.npmrc`](./.npmrc):
 `https://gitlab.com/api/v4/projects/85449745/packages/npm/`.
 
 The boundary checker (`pnpm check:architecture`) enforces the app-side dependency rules. Application code may depend on
@@ -68,7 +68,7 @@ UI (layouts, components, pages)
   → presentation adapters (composition root)
     → application (orchestration, ports)
       → domain (pure business rules)
-    → content-core (local workspace package) / site-core (published external package)
+    → content-core / site-core (published external packages)
   ← infrastructure adapters implement domain/application contracts
 ```
 
@@ -98,8 +98,8 @@ never be hand-edited:
 | `@ravenhill/astro-icons` and `$icons` facade                 | GitLab registry icons plus local language marks       | `pnpm install --frozen-lockfile`     |
 
 `pnpm dev`, `pnpm build`, and `pnpm deploy` all regenerate these first (`predev`/`prebuild`/`predeploy` also build
-`content-core`, `lesson-export-core`, and `shiki-core`, since the app imports their built output). The published
-`site-core` package is installed as a normal external dependency and is not built by DIBS. `pnpm check` re-validates
+`lesson-export-core` and `shiki-core`, since the app imports their built output). The published `content-core` and
+`site-core` packages are installed as normal external dependencies and are not built by DIBS. `pnpm check` re-validates
 freshness so a stale generated file fails CI instead of silently drifting from its source.
 
 Lesson PDF export (`pnpm export:pdf*`) is a separate, opt-in pipeline built on `@ravenhill/lesson-export-core` and
@@ -125,10 +125,10 @@ pnpm test    # unit + Astro render tests
 pnpm build   # regenerates data, builds the static site into dist/
 ```
 
-`pnpm check` also fans out into the maintained workspace packages' own check scripts (`check:content-core`,
-`check:shiki-core`, and `check:lesson-export-core`), so a package-local regression is caught from the root gate, not
-only when working inside that package. The published `site-core` package is resolved through the normal dependency
-installation and is not built or checked by the DIBS root orchestration.
+`pnpm check` also fans out into the maintained workspace packages' own check scripts (`check:shiki-core` and
+`check:lesson-export-core`), so a package-local regression is caught from the root gate, not only when working inside
+that package. The published `content-core` and `site-core` packages are resolved through normal dependency
+installation and are not built or checked by the DIBS root orchestration.
 
 ## Deployment
 

@@ -13,7 +13,6 @@ import { normalizeProjectPath } from "./paths.mjs";
  *   | "infrastructure"
  *   | "presentation-adapter"
  *   | "ui"
- *   | "content-core"
  *   | "site-shell"
  *   | "unknown"
  * } SourceLayer
@@ -69,10 +68,6 @@ function isUiSource(pathValue) {
     return ["src/components", "src/layouts", "src/pages"].some((prefix) => isUnder(pathValue, prefix));
 }
 
-function isContentCoreSource(pathValue) {
-    return isUnder(pathValue, "packages/content-core/src");
-}
-
 function isDomainTarget(pathValue) {
     return isUnder(pathValue, "src/domain");
 }
@@ -118,10 +113,6 @@ function isStylesTarget(pathValue) {
     return isUnder(pathValue, "src/styles");
 }
 
-function isContentCoreTarget(pathValue) {
-    return isUnder(pathValue, "packages/content-core/src");
-}
-
 function isExternalSourceTarget(pathValue) {
     return isUnder(pathValue, "vendor");
 }
@@ -132,7 +123,6 @@ const SOURCE_LAYERS = Object.freeze([
     ["infrastructure", isInfrastructureSource],
     ["presentation-adapter", isPresentationAdapterSource],
     ["ui", isUiSource],
-    ["content-core", isContentCoreSource],
 ]);
 
 const TARGETS = Object.freeze([
@@ -147,21 +137,19 @@ const TARGETS = Object.freeze([
     ["utils", isUtilsTarget],
     ["assets", isAssetsTarget],
     ["styles", isStylesTarget],
-    ["content-core", isContentCoreTarget],
     ["external-source", isExternalSourceTarget],
 ]);
 
 /**
  * Architectural packages retain their dependency role independently from the source ownership of their files.
  *
- * `site-core` is published and external to this repository, while `content-core` remains a local package.
- * Both packages are still architectural targets and expose only their package roots to consumers.
+ * Published architectural packages are external to this repository and expose only their package roots to consumers.
  */
 export const architecturalPackages = Object.freeze([
     Object.freeze({
         packageName: "@ravenhill/content-core",
         semanticTarget: "content-core",
-        sourceOwnership: "local",
+        sourceOwnership: "external",
         importSurface: "root-only",
     }),
     Object.freeze({

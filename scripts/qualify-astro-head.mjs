@@ -94,7 +94,6 @@ try {
     const identityCheck = checkInstalledCandidateIdentity({ installed: installedPackage, candidate });
     if (!identityCheck.valid) fail(identityCheck.reason);
 
-    await run("pnpm", ["run", "build:content-core"], workDir);
     await run("pnpm", ["run", "build:lesson-export-core"], workDir);
     await run("pnpm", ["run", "build:shiki-core"], workDir);
     await run("pnpm", ["exec", "vitest", "run", "--config", "vitest.config.ts", "src/utils/__tests__"], workDir);

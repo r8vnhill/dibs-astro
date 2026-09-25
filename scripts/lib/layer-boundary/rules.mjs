@@ -109,33 +109,6 @@ export const uiBoundaryRule = {
     suggestion: "Move shaping logic behind a presentation adapter, helper, or view model.",
 };
 
-export const contentCoreBoundaryRule = {
-    id: "content-core-boundary",
-    source: "content-core",
-    allowedTargets: ["content-core"],
-    forbiddenTargets: [
-        "domain",
-        "application",
-        "infrastructure",
-        "presentation-adapter",
-        "presentation",
-        "ui",
-        "generated-data",
-        "data",
-        "utils",
-        "assets",
-        "styles",
-        "external-source",
-    ],
-    forbiddenPackages: ["astro", "react", "react-dom", "zod"],
-    // The package's own runtime contract is dependency-free. Its root-api tests intentionally consume the package
-    // through its own published root specifier, and its tests need a test runner and property-based testing library.
-    allowedPackages: ["@ravenhill/content-core", "vitest", "fast-check"],
-    message: "@ravenhill/content-core must remain host-agnostic and independent from app-local layers.",
-    suggestion:
-        "Keep generated data, validation, Astro, UI, and app adapters in src, and expose only pure content contracts from the package.",
-};
-
 /**
  * Architectural packages that must be consumed through their root entry point only.
  *
@@ -158,7 +131,6 @@ export const boundaryRules = [
     infrastructureBoundaryRule,
     presentationAdapterBoundaryRule,
     uiBoundaryRule,
-    contentCoreBoundaryRule,
 ];
 
 /**

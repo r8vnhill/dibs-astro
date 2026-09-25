@@ -74,7 +74,6 @@ test:unit:
     needs:
         - job: deps
     script:
-        - pnpm run build:content-core
         - pnpm exec vitest run --config vitest.config.ts
 
 test:astro-render:
@@ -86,7 +85,6 @@ test:astro-render:
     needs:
         - job: deps
     script:
-        - pnpm run build:content-core
         - pnpm exec vitest run --config vitest.astro.config.ts
 
 test:e2e:
@@ -101,7 +99,6 @@ test:e2e:
     script:
         - pnpm exec playwright install --with-deps chromium
         - pnpm run i18n:compile
-        - pnpm run build:content-core
         - pnpm run build:lesson-export-core
         - pnpm run build:shiki-core
         - pnpm run generate:bibliography-catalog

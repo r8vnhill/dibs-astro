@@ -16,7 +16,16 @@ const siteCoreContract = {
     name: "@ravenhill/site-core",
     exactVersion: "0.1.0",
     registryProject: "85449745",
+    installedVersion: "0.1.0",
     forbiddenLocalDir: "packages/site-core",
+};
+
+const contentCoreContract = {
+    name: "@ravenhill/content-core",
+    exactVersion: "0.2.0",
+    registryProject: "85449745",
+    installedVersion: "0.2.0",
+    forbiddenLocalDir: "packages/content-core",
 };
 
 const siteShellContract = {
@@ -37,20 +46,20 @@ afterEach(async () => {
     }
 });
 
-async function setUpPublishedInstall() {
+async function setUpPublishedInstall(packageName, version) {
     cwd = await mkdtemp(path.join(os.tmpdir(), "package-resolution-checker-"));
-    const dir = path.join(cwd, "node_modules", "@ravenhill", "site-core");
+    const dir = path.join(cwd, "node_modules", ...packageName.split("/"));
     await mkdir(dir, { recursive: true });
     await writeFile(
         path.join(dir, "package.json"),
-        JSON.stringify({ name: "@ravenhill/site-core", version: "0.1.0" }),
+        JSON.stringify({ name: packageName, version }),
     );
     return cwd;
 }
 
 describe("given the site-core resolution contract against the published-package state", () => {
     test("then it reports no findings", async () => {
-        const cwd = await setUpPublishedInstall();
+        const cwd = await setUpPublishedInstall("@ravenhill/site-core", "0.1.0");
         const packageManifest = {
             dependencies: { "@ravenhill/site-core": "0.1.0" },
         };
@@ -69,6 +78,33 @@ describe("given the site-core resolution contract against the published-package 
             {
                 cwd,
                 packageManifest,
+                npmrcContent: canonicalNpmrc,
+                lockfileContent,
+            },
+        );
+
+        expect(findings).toEqual([]);
+    });
+});
+
+describe("given the content-core resolution contract against the published-package state", () => {
+    test("then it requires the exact registry-backed package identity", async () => {
+        const cwd = await setUpPublishedInstall("@ravenhill/content-core", "0.2.0");
+        const lockfileContent = [
+            "importers:",
+            "",
+            "  .:",
+            "    dependencies:",
+            "      '@ravenhill/content-core':",
+            "        specifier: 0.2.0",
+            "        version: 0.2.0",
+        ].join("\n");
+
+        const findings = await checkPackageResolutionContract(
+            contentCoreContract,
+            {
+                cwd,
+                packageManifest: { dependencies: { "@ravenhill/content-core": "0.2.0" } },
                 npmrcContent: canonicalNpmrc,
                 lockfileContent,
             },

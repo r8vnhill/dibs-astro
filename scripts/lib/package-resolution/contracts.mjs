@@ -12,6 +12,14 @@ export const packageResolutionContracts = [
         forbiddenLocalDir: "packages/site-core",
     },
     {
+        name: "@ravenhill/content-core",
+        exactVersion: "0.2.0",
+        registryProject: "85449745",
+        rootOnly: true,
+        installedVersion: "0.2.0",
+        forbiddenLocalDir: "packages/content-core",
+    },
+    {
         name: "@ravenhill/astro-icons",
         registryProject: "85449745",
     },

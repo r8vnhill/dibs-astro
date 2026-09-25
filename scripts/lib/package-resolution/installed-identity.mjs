@@ -1,4 +1,4 @@
-import { readFile, realpath } from "node:fs/promises";
+import { access, readFile, realpath } from "node:fs/promises";
 import path from "node:path";
 
 /**
@@ -31,9 +31,20 @@ export async function checkInstalledPackageIdentity({ cwd, packageName, expected
     }
 
     if (forbiddenLocalDir) {
+        const forbiddenPath = path.join(cwd, forbiddenLocalDir);
+        try {
+            await access(forbiddenPath);
+            return {
+                valid: false,
+                reason: `forbidden local package directory exists: "${forbiddenLocalDir}"`,
+            };
+        } catch {
+            // The published package must not have a local source directory to fall back to.
+        }
+
         const [canonicalPackageDir, canonicalForbiddenDir] = await Promise.all([
             realpath(packageDir),
-            realpath(path.join(cwd, forbiddenLocalDir)).catch(() => undefined),
+            realpath(forbiddenPath).catch(() => undefined),
         ]);
 
         if (canonicalForbiddenDir) {

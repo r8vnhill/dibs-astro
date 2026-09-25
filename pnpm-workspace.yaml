@@ -6,7 +6,6 @@
 # In particular, @ravenhill/site-core is intentionally not a workspace package. DIBS consumes its published registry
 # artifact so that development, CI, and production validate the same public package used by consumers.
 packages:
-    - packages/content-core
     - packages/lesson-export-core
     - packages/shiki-core
 

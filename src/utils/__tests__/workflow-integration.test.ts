@@ -9,8 +9,8 @@
  * ## What this protects
  *
  * - The `generate:lesson-metadata` script remains present and points to the expected entrypoint.
- * - The `predev`, `prebuild`, and `predeploy` hooks call the generator, ensuring metadata is
- *   regenerated consistently.
+ * - The `predev`, `prebuild`, and `predeploy` hooks call the shared prerequisite runner, which
+ *   includes metadata generation.
  * - The generator entrypoint file exists on disk.
  *
  * ## Why an “integration” test?
@@ -144,10 +144,16 @@ describe("lesson metadata workflow integration", () => {
             "scripts/generate-lesson-metadata.mjs",
         );
 
+        const prerequisites = readFileSync(
+            resolve(repoRoot, "scripts/build-prerequisites.mjs"),
+            "utf8",
+        );
+        expect(prerequisites).toContain("generate:lesson-metadata");
+
         // Hooks ensure regeneration happens automatically for the major workflows.
         for (const hook of ["predev", "prebuild", "predeploy"] as const) {
             expect(scripts[hook]).toBeDefined();
-            expect(scripts[hook]).toContain("generate:lesson-metadata");
+            expect(scripts[hook]).toContain("scripts/build-prerequisites.mjs");
         }
 
         // Ensure the script referenced by package.json actually exists.

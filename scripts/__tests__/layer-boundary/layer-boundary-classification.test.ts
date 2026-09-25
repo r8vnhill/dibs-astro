@@ -16,7 +16,6 @@ const sourceLayerCases = [
     ["src/components/Button.astro", "ui"],
     ["src/layouts/BaseLayout.astro", "ui"],
     ["src/pages/index.astro", "ui"],
-    ["packages/content-core/src/index.ts", "content-core"],
     ["scripts/check-layer-boundaries.mjs", "unknown"],
 ] as const;
 
@@ -35,7 +34,6 @@ const resolvedTargetCases = [
     ["src/utils/path.ts", "utils"],
     ["src/assets/logo.svg", "assets"],
     ["src/styles/global.css", "styles"],
-    ["packages/content-core/src/index.ts", "content-core"],
     ["vendor/astro-site-shell/src/SiteShell.astro", "external-source"],
     ["scripts/utility.mjs", "unknown"],
 ] as const;
@@ -62,6 +60,7 @@ describe("classifySourcePath", () => {
         "src/presentation-adapters/foo.ts",
         "src/datax/file.json",
         "packages/site-core-extra/src/index.ts",
+        "packages/content-core/src/index.ts",
         "packages/content-core-extra/src/index.ts",
     ])("treats sibling path %s as unknown", (sourcePath) => {
         expect(classifySourcePath(sourcePath)).toEqual({
@@ -84,7 +83,7 @@ describe("architecturalPackages", () => {
             {
                 packageName: "@ravenhill/content-core",
                 semanticTarget: "content-core",
-                sourceOwnership: "local",
+                sourceOwnership: "external",
                 importSurface: "root-only",
             },
             {
@@ -143,6 +142,7 @@ describe("classifyResolvedTarget", () => {
         "src/datax/file.json",
         "src/presentation-adapters/foo.ts",
         "packages/site-core-extra/src/index.ts",
+        "packages/content-core/src/index.ts",
         "packages/content-core-extra/src/index.ts",
     ])("treats sibling path %s as unknown", (resolvedPath) => {
         expect(classifyResolvedTarget(resolvedPath)).toBe("unknown");

@@ -94,4 +94,23 @@ describe("given an installed package's filesystem identity", () => {
         expect(result.valid).toBe(false);
         expect(result.reason).toContain("packages/site-core");
     });
+
+    test("then an existing forbidden local package directory is rejected", async () => {
+        cwd = await mkdtemp(path.join(os.tmpdir(), "package-resolution-"));
+        await writeInstalledManifest(cwd, "@ravenhill/site-core", {
+            name: "@ravenhill/site-core",
+            version: "0.1.0",
+        });
+        await mkdir(path.join(cwd, "packages", "site-core"), { recursive: true });
+
+        const result = await checkInstalledPackageIdentity({
+            cwd,
+            packageName: "@ravenhill/site-core",
+            expectedVersion: "0.1.0",
+            forbiddenLocalDir: "packages/site-core",
+        });
+
+        expect(result.valid).toBe(false);
+        expect(result.reason).toContain("forbidden local package directory");
+    });
 });

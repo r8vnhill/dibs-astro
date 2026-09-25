@@ -27,7 +27,6 @@ import { describe, expect, test } from "vitest";
 
 import {
     checkLayerBoundaries,
-    discoverSourceFiles,
     formatBoundaryFindings,
     runBoundaryCheck,
 } from "../../lib/layer-boundary/checker.mjs";
@@ -579,15 +578,5 @@ describe("runBoundaryCheck", () => {
 
         expect(result.exitCode).toBe(1);
         expect(result.findings).toHaveLength(1);
-    });
-});
-
-describe("discoverSourceFiles", () => {
-    test("excludes content-core type contract fixtures from architecture scanning", async () => {
-        const files = await discoverSourceFiles();
-
-        expect(files.map((file) => file.path)).not.toContain(
-            "packages/content-core/src/__tests__/root-api.subpaths.test-d.ts",
-        );
     });
 });

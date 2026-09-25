@@ -37,7 +37,8 @@ Context and essential rules for agents collaborating in this repository.
 - Public DIBS course site built with Astro 7, Tailwind CSS v4, Markdoc, and React islands.
 - Deployment is static on Cloudflare Workers; do not introduce SSR or server endpoints.
 - Application code lives in `src/`; maintained reusable workspace packages live in `packages/*`.
-- `packages/content-core` is a local, host-agnostic package consumed as `@ravenhill/content-core`.
+- `@ravenhill/content-core` is a published, host-agnostic package consumed through the canonical registry and package
+  root.
 - `packages/lesson-export-core` is a local, host-agnostic package consumed as `@ravenhill/lesson-export-core`.
 - `packages/shiki-core` is a local, host-agnostic package consumed as `@ravenhill/shiki-core`.
 - `@ravenhill/site-core` is a published external, host-agnostic architectural dependency. It is not maintained under

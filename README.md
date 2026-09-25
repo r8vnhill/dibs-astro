@@ -251,15 +251,15 @@ src/
 └── presentation/    presentation-facing adapters
 
 packages/
-├── content-core/        content-domain functionality
 ├── lesson-export-core/  lesson export functionality
 └── shiki-core/          syntax-highlighting functionality
 
 vendor/
 └── astro-site-shell/     externally maintained source acquired at a pinned Git commit
 
-External `@ravenhill` packages, including `@ravenhill/site-core` and `@ravenhill/astro-icons`, are installed from the
-canonical registry; they are not maintained under `packages/` in this repository.
+External `@ravenhill` packages, including `@ravenhill/content-core`, `@ravenhill/site-core`, and
+`@ravenhill/astro-icons`, are installed from the canonical registry; they are not maintained under `packages/` in this
+repository.
 
 The `vendor/` directory is reserved for externally maintained source temporarily acquired for an explicit repository
 contract. It is not part of the pnpm workspace; DIBS-owned workspace packages belong under `packages/`.

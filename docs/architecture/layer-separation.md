@@ -10,7 +10,7 @@ the authoritative description of the current boundaries when they conflict with 
 
 - **Domain**: Pure business rules and use-case logic, free of frameworks and I/O.
 - **Application**: Orchestration layer that composes domain entities and ports, returning DTOs to callers.
-- **Content core**: Local workspace package with host-agnostic navigation and lesson metadata contracts shared by the
+- **Content core**: Published external package with host-agnostic navigation and lesson metadata contracts shared by the
   app.
 - **Site core**: Published external package with host-agnostic repository and site-link primitives shared by the app.
 - **Site shell**: Published external package with generic document structure and accessibility landmarks composed by the
@@ -23,11 +23,11 @@ the authoritative description of the current boundaries when they conflict with 
 
 The repo uses a layered structure inside `src/`:
 
-- `packages/content-core`
-  - Owns extracted pure lesson-navigation and lesson-metadata contracts, branded value helpers, DTOs, explicit result
-    contracts, repository interfaces, and application services.
-  - Contains no Astro imports, generated JSON imports, Zod schemas, course-structure data, UI components, or app-local
-    aliases.
+- `@ravenhill/content-core`
+  - Provides published pure lesson-navigation and lesson-metadata contracts, branded value helpers, DTOs, explicit
+    result contracts, repository interfaces, and application services.
+  - Is external to this repository, consumed through the package root, and qualified through the exact registry-backed
+    dependency contract.
 
 - `@ravenhill/site-core`
   - Provides the published pure repository references, supported hosting platforms, platform normalization, and
@@ -40,8 +40,7 @@ The repo uses a layered structure inside `src/`:
   - Contains no Astro slot I/O, generated JSON imports, zod schemas, or adapter wiring.
 
 - `src/application`
-  - Remains available for app-local orchestration that has not moved into `@ravenhill/content-core`.
-  - Phase 1 moved lesson navigation and lesson metadata services/contracts into the workspace package.
+  - Remains available for app-local orchestration that is not part of `@ravenhill/content-core`.
 
 - `src/infrastructure/adapters`
   - Owns mapping from concrete data sources into domain-facing repository contracts.
@@ -63,7 +62,7 @@ The repo uses a layered structure inside `src/`:
 
 The main content seams are now present in code:
 
-- Navigation rules and lesson metadata helpers are centered in local `packages/content-core` and consumed through
+- Navigation rules and lesson metadata helpers are provided by published `@ravenhill/content-core` and consumed through
   repository/service boundaries.
 - Repository hosting primitives are provided by published `@ravenhill/site-core` and consumed through the package root.
 - Generic document structure is provided by `@ravenhill/astro-site-shell` and consumed through the package root by the
@@ -97,7 +96,6 @@ These paths are locked with high-value test suites:
 
 | Source layer                                          | Allowed targets                                                                                                           | Forbidden targets/packages                                                                              | Notes                                   |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `packages/content-core/src/**`                        | `content-core`                                                                                                            | app-local layers, data, generated data, utilities, assets, styles, `astro`, `react`, `react-dom`, `zod` | Host-agnostic content core.             |
 | `src/domain/**`                                       | `domain`, `content-core`, `site-core`                                                                                     | `application`, `infrastructure`, `presentation`, `ui`, `astro`, `react`, `zod`                          | Pure app-local business rules only.     |
 | `src/application/**`                                  | `domain`, `application`, `content-core`, `site-core`                                                                      | `infrastructure`, `presentation`, `ui`, `data`, `generated-data`, `astro`, `react`, `zod`               | App-local orchestration and ports only. |
 | `src/infrastructure/**`                               | `domain`, `application`, `infrastructure`, `data`, `generated-data`, `utilities`, `content-core`, `site-core`             | `presentation`, `ui`                                                                                    | Concrete data-source implementations.   |
@@ -129,7 +127,7 @@ graph TD
     PA["Presentation adapters<br/>(composition root)"]
     APP["Application<br/>(orchestration & ports)"]
     DOMAIN["Domain<br/>(pure business rules)"]
-    CONTENT["Content core<br/>(local workspace package)"]
+    CONTENT["Content core<br/>(published external package, root-only)"]
     SITE["Site core<br/>(published external package, root-only)"]
     SHELL["Site shell<br/>(pinned external package, root-only)"]
     INFRA["Infrastructure adapters<br/>(data sources)"]
@@ -161,14 +159,13 @@ In practical terms:
 - UI code should not reach into infrastructure adapters directly
 - UI code should not import domain or application internals directly; use presentation adapters, helpers, or view models
 - UI code should not import raw modules from `src/data/*`; route data access through presentation-facing adapters
-- application and content-core code should not depend on Astro, React, slots, generated JSON modules, or zod validation
-  concerns
+- application code should not depend on Astro, React, slots, generated JSON modules, or zod validation concerns
 - domain code should remain framework-free and I/O-free
 
 ## Boundary Checker
 
-The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/`, plus TypeScript files under
-`packages/content-core/src/`, and evaluates imports against the layer rules above. The checker:
+The boundary checker scans `.ts`, `.tsx`, and `.astro` files under `src/` and evaluates imports against the layer rules
+above. Published architectural packages are represented by data-driven package and root-import contracts. The checker:
 
 - Resolves project aliases from `tsconfig.json`
 - Normalizes relative paths
@@ -240,7 +237,9 @@ as a compatibility alias. New code should read `findings`; the alias will be rem
 
 When adding new source files:
 
-- Put reusable host-agnostic navigation and lesson metadata core in `packages/content-core/src/`.
+- Consume reusable host-agnostic navigation and lesson metadata contracts from the published
+  `@ravenhill/content-core` package root. Make changes to that implementation in its standalone repository, then
+  upgrade this repository through an explicit dependency-version change.
 - Consume reusable host-agnostic repository primitives from `@ravenhill/site-core` through its package root. Make
   changes to that implementation in the standalone `site-core` repository, then upgrade this repository through an
   explicit dependency-version change.
@@ -338,29 +337,9 @@ Some transitional or infrastructure-support files exist by design:
 
 ## Historical Implementation Notes
 
-The checker was developed through the Cycle 2 hardening work, with major milestones:
-
-**Cycle 2 Step 1** locked the baseline checker behavior with tests for imports, paths, and basic functionality.
-
-**Cycle 2 Step 2** added classification helpers that normalize source paths, resolved project targets, bare package
-imports, and import records into the layer vocabulary used by the rule matrix.
-
-**Phase 1 content-core extraction** added `packages/content-core/src/**` as a checked source layer and allowed app
-layers to consume `@ravenhill/content-core` through the package root.
-
-**Site-core extraction** added `packages/site-core/src/**` as a checked source layer and allowed app layers to consume
-`@ravenhill/site-core` through the package root for repository primitives.
-
-**Cycle 2 Step 4** moved rule evaluation into `scripts/lib/layer-boundary-rule-evaluation.mjs` and wired classifiers
-into the rule matrix. Evaluation now checks exact exceptions, forbidden packages, forbidden targets, and allowed-target
-lists, returning public boundary findings and formatted CLI output.
-
-**Cycle 2 Steps 5 and 6** preserved the public CLI/reporting contract and expanded rule matrix tests to cover each
-allowed and forbidden direction, package restrictions, package subpath normalization, generated JSON classification,
-type-only import enforcement, and exact exception behavior.
-
-**Cycle 2 Step 7** consolidated the test suite under `pnpm test:unit` and confirmed high-value integration coverage with
-existing suites.
+The checker is covered by focused tests for import extraction, path and package classification, boundary-rule
+evaluation, package subpath normalization, generated-data classification, type-only imports, exact exceptions, and
+deterministic CLI findings.
 
 **Cycle 2 Step 8** strengthened the integration suite around structured boundary findings, deterministic ordering by
 `sourceFile`, `importTarget`, and `ruleId`, and standardized "Layer boundary finding" terminology. The API now exposes

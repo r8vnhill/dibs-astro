@@ -12,7 +12,6 @@ const checks = [
     "fonts:check",
     "fonts:reference:check",
     "i18n:compile",
-    "check:content-core",
     "check:lesson-export-core",
     "check:shiki-core",
     "generate:bibliography-catalog",

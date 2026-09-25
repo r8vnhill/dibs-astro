@@ -4,7 +4,6 @@ import { runPackageScripts } from "./run-package-commands.mjs";
 
 await runPackageScripts([
     "i18n:compile",
-    "build:content-core",
     "build:lesson-export-core",
     "build:shiki-core",
     "generate:bibliography-catalog",
