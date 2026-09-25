@@ -7,11 +7,11 @@
  * primary navigation landmark; `@ravenhill/astro-site-header` supplies the responsive desktop/mobile navigation
  * mechanism around the DIBS-owned navigation items.
  */
-import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher";
+import type { ThemeLabels } from "$components/ui/theme/theme-labels";
+import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher.astro";
 import { SiteHeader } from "@ravenhill/astro-site-chrome";
 import { ResponsiveHeaderNav } from "@ravenhill/astro-site-header";
 import { m } from "~/generated/i18n/messages";
-import type { LocalizedString } from "~/generated/i18n/messages";
 import { site } from "~/utils";
 import GitHubLink from "./GitHubLink.astro";
 import GitLabLink from "./GitLabLink.astro";
@@ -20,13 +20,7 @@ type Props = {
     title: string;
     gitlab?: { username: string; repo: string };
     github?: { username: string; repo: string };
-    themeLabels: {
-        current: LocalizedString;
-        change: LocalizedString;
-        light: LocalizedString;
-        dark: LocalizedString;
-        auto: LocalizedString;
-    };
+    themeLabels: ThemeLabels;
 };
 
 const { title, gitlab, github, themeLabels } = Astro.props as Props;
@@ -80,7 +74,7 @@ const navigationAttributes = {
     />
 
     <div slot="actions" class="ml-auto flex items-center gap-4">
-        <ThemeSwitcher client:load labels={themeLabels} />
+        <ThemeSwitcher labels={themeLabels} />
         {gitlab && <GitLabLink {...gitlab} />}
         {github && <GitHubLink {...github} />}
     </div>

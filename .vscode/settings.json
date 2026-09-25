@@ -2,7 +2,7 @@
     // Editor settings aligned with dprint configuration
     "editor.defaultFormatter": "dprint.dprint",
     "editor.formatOnSave": true,
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.insertSpaces": true,
     "editor.trimAutoWhitespace": true,
     "editor.rulers": [
@@ -14,68 +14,68 @@
     "files.eol": "\n",
     // Language-specific settings
     "[javascript]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[typescript]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[json]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[jsonc]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[markdown]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120,
+        "editor.wordWrapColumn": 100,
         "editor.trimAutoWhitespace": false
     },
     "[yaml]": {
         "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[toml]": {
         "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[css]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     "[scss]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120
+        "editor.wordWrapColumn": 100
     },
     // Astro-specific settings (enhanced from dprint markup config)
     "[astro]": {
         "editor.wordWrap": "wordWrapColumn",
-        "editor.wordWrapColumn": 120,
+        "editor.wordWrapColumn": 100,
         "editor.rulers": [
             100
         ],
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true
     },
     // Existing workspace customizations

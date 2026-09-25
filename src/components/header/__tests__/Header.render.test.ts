@@ -36,6 +36,18 @@ suite("given the DIBS header adapter", () => {
         expect($("header nav .site-header-navigation__panel a")).toHaveLength(5);
     });
 
+    test("then the theme control is a framework-free custom element with the localized options", async () => {
+        const $ = await renderHeader();
+        const options = $("header theme-switcher [data-theme-value]");
+
+        expect($("header astro-island")).toHaveLength(0);
+        expect($("header theme-switcher")).toHaveLength(1);
+        expect(options.map((_, el) => $(el).attr("data-theme-value")).toArray())
+            .toEqual(["light", "dark", "auto"]);
+        expect(options.map((_, el) => $(el).find("span").text()).toArray())
+            .toEqual(["Light", "Dark", "Automatic"]);
+    });
+
     test("then PDF export keeps the DIBS export marker on the package header", async () => {
         const $ = await renderHeader({ lessonRenderMode: "pdf" });
 

@@ -4,7 +4,7 @@
         "@astrojs/markdoc": "^2.0.6",
         "@inlang/paraglide-js": "2.23.2",
         "@lucide/astro": "^0.536.0",
-        "@ravenhill/astro-head": "0.1.0",
+        "@ravenhill/astro-head": "0.2.0",
         "@ravenhill/astro-icons": "0.2.0",
         "@ravenhill/astro-site-chrome": "0.1.0",
         "@ravenhill/astro-site-header": "0.1.1",

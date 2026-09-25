@@ -1,0 +1,91 @@
+---
+/**
+ * Theme switcher: a disclosure button that reveals the light / dark / automatic choices.
+ *
+ * This component renders every option at server-render time and ships a small bundled script
+ * (`~/utils/theme-switcher-element`) that upgrades the `<theme-switcher>` custom element with the
+ * browser-local behavior: open/close, outside-pointer close, persistence, and system-preference
+ * tracking while `auto` is selected.
+ *
+ * It is intentionally rendered without a `client:*` directive. The first-paint dark-mode decision
+ * stays in the `BaseLayout` head script; this element only synchronizes and mutates the user's
+ * selection after the DOM exists.
+ *
+ * ## Accessibility
+ *
+ * The interaction is a disclosure (a trigger with `aria-expanded` / `aria-controls`) whose panel
+ * is a list of action buttons, one per theme. The active option is marked with `aria-pressed`.
+ */
+import { Monitor, Moon, Sun } from "@ravenhill/astro-icons";
+import { m } from "~/generated/i18n/messages";
+import { theme as themeConstants } from "~/utils";
+import type { ThemeLabels } from "./theme-labels";
+
+type Props = {
+    labels: ThemeLabels;
+};
+
+const { labels } = Astro.props as Props;
+
+const ICON_CLASS = "inline h-4 w-4";
+const OPTIONS_ID = "theme-switcher-options";
+
+const options = [
+    { value: themeConstants.LIGHT, label: labels.light, Icon: Sun },
+    { value: themeConstants.DARK, label: labels.dark, Icon: Moon },
+    { value: themeConstants.AUTO, label: labels.auto, Icon: Monitor },
+] as const;
+---
+
+<theme-switcher class="relative inline-block text-left" data-default={themeConstants.DEFAULT}>
+    <button
+        type="button" data-theme-trigger
+        class="bg-base-background inline-flex items-center gap-1 rounded border px-3 py-1" aria-haspopup="true"
+        aria-expanded="false" aria-controls={OPTIONS_ID}
+        title={labels.change}
+    >
+        <span class="sr-only">{labels.current}</span>
+        {
+            options.map(({ value, label, Icon }) => (
+                <span
+                    data-theme-current={value} hidden={value !== themeConstants.DEFAULT}
+                    class="inline-flex items-center gap-1"
+                >
+                    <Icon
+                        class={ICON_CLASS} aria-hidden="true"
+                        focusable="false"
+                    />
+                    <span>{label}</span>
+                </span>
+            ))
+        }
+    </button>
+
+    <ul
+        id={OPTIONS_ID} data-theme-options
+        hidden class="bg-base-background absolute z-10 mt-1 w-max min-w-36 rounded border shadow-md"
+    >
+        {
+            options.map(({ value, label, Icon }) => (
+                <li>
+                    <button
+                        type="button" data-theme-value={value}
+                        aria-pressed={value === themeConstants.DEFAULT}
+                        class="flex w-full items-center gap-2 rounded px-3 py-1 text-left hover:bg-gray-300 dark:hover:bg-gray-700 aria-pressed:font-semibold"
+                        aria-label={m.theme_change_to({ label })}
+                    >
+                        <Icon
+                            class={ICON_CLASS} aria-hidden="true"
+                            focusable="false"
+                        />
+                        <span>{label}</span>
+                    </button>
+                </li>
+            ))
+        }
+    </ul>
+</theme-switcher>
+
+<script>
+    import "~/utils/theme-switcher-element";
+</script>

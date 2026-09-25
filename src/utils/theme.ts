@@ -46,6 +46,20 @@ export function isDarkModePreferred(): boolean {
 }
 
 /**
+ * Resolves whether dark appearance should be shown for a given theme selection.
+ *
+ * This is the pure core of the theme model: it maps a user *selection*
+ * (`'light' | 'dark' | 'auto'`) plus the current system preference to a *resolved
+ * appearance* boolean, with no access to `localStorage`, `document`, or `matchMedia`.
+ *
+ * @param value - The theme selection.
+ * @param prefersDark - Whether the system currently prefers a dark color scheme.
+ * @returns `true` when dark appearance should be applied.
+ */
+export const resolveDarkMode = (value: Theme, prefersDark: boolean): boolean =>
+    value === theme.DARK || (value === theme.AUTO && prefersDark);
+
+/**
  * Applies and persists the selected theme.
  *
  * This function updates the current theme both visually (by applying the appropriate class to the
@@ -79,7 +93,6 @@ function persistTheme(value: Theme): void {
  * @param value - The selected theme value (`'light'`, `'dark'`, or `'auto'`).
  */
 function applyThemeClass(value: Theme): void {
-    const prefersDark = isDarkModePreferred();
-    const shouldUseDark = value === theme.DARK || (value === theme.AUTO && prefersDark);
+    const shouldUseDark = resolveDarkMode(value, isDarkModePreferred());
     document.documentElement.classList.toggle(theme.DARK, shouldUseDark);
 }
