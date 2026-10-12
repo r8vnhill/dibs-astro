@@ -1,26 +1,133 @@
 ---
 /**
- * A lesson-shaped fragment that puts all three roles on screen at once: `DIBS Sans` prose (upright,
- * italic, medium), a `DIBS Slab` heading, and a `Fira Code` code block. It is the quickest read on
- * whether the families cohere as one system rather than three unrelated fonts.
+ * Compact lesson excerpt for reviewing the DIBS Slab, DIBS Sans, and Fira Code roles together.
+ * The Spanish explanation adapts the Kotlin lesson's “Trailing lambdas (λ al final)” section.
+ * The paired calls preserve its distinction between conventional and trailing-lambda syntax.
  *
- * The `<pre>` is whitespace-sensitive: the newline between the two code lines is intentional.
+ * The parent fixture supplies local DIBS faces and the same Google Fonts stylesheet as production.
+ * The browser spec waits for the stylesheet and faces, checks Chromium's rendered fonts, and
+ * captures this region at desktop and mobile viewports.
  */
 
-import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
-
-const { specimenText } = proportionalFontContract;
+const codeSample = [
+  "// Conventional function arguments",
+  "list",
+  "    .filter({ x -> x > 10 })",
+  "    .map({ x -> x * 2 })",
+  "",
+  "// Trailing lambdas",
+  "list",
+  "    .filter { x -> x > 10 }",
+  "    .map { x -> x * 2 }",
+].join("\n");
 ---
 
-<section data-fixture-section="combined">
-    <h2 data-font-family="dibs-slab" style="font-weight: 700">DIBS Sans + DIBS Slab + Fira Code</h2>
+<section
+  class="three-role-system-review" data-fixture-section="combined"
+  data-visual-review="three-role-system" aria-labelledby="three-role-system-heading"
+>
+  <h2
+    id="three-role-system-heading" data-font-family="dibs-slab"
+    data-typography-role="heading" style="font-weight: 700"
+  >
+    Trailing lambdas (λ al final)
+  </h2>
 
-    <p data-font-family="dibs-sans" style="font-weight: 400">{specimenText[0]}</p>
+  <p
+    data-font-family="dibs-sans" data-typography-role="prose"
+    style="font-weight: 400"
+  >
+    En Kotlin, si el <strong data-font-family="dibs-sans" style="font-weight: 700"
+    >último parámetro</strong> de una función tiene un <em
+      data-font-family="dibs-sans" style="font-weight: 400; font-style: italic"
+    >function type</em>, puedes pasar la lambda fuera de los paréntesis. Esta forma se conoce como{
+      " "
+    }
+    <span
+      data-font-family="dibs-sans" data-typography-state="500-normal"
+      style="font-weight: 500"
+    >trailing lambda</span>
+    {" "}y facilita la lectura de operaciones sobre colecciones.
+  </p>
 
-    <p data-font-family="dibs-sans" style="font-weight: 400; font-style: italic">{specimenText[1]}</p>
+  <p
+    data-font-family="dibs-sans" data-typography-role="prose"
+    style="font-weight: 400"
+  >
+    <strong data-font-family="dibs-sans" style="font-weight: 700"
+    >Si la lambda es el único parámetro, también puedes omitir los paréntesis.</strong>
+    La expresión
+    <code
+      data-font-family="fira-code" data-typography-role="inline-code"
+      style="font-weight: 400; font-style: normal"
+    >x -&gt; x * 2</code> muestra una lambda que duplica su entrada.
+  </p>
 
-    <p data-font-family="dibs-sans" style="font-weight: 500">{specimenText[2]}</p>
+  <h3
+    data-font-family="dibs-slab" data-typography-role="subheading"
+    style="font-weight: 500"
+  >
+    Sintaxis básica
+  </h3>
 
-    <pre data-font-family="fira-code"><code>{specimenText[3]}
-{specimenText[4]}</code></pre>
+  <p
+    data-font-family="dibs-sans" data-typography-role="prose"
+    style="font-weight: 400"
+  >
+    Las dos llamadas aplican la misma transformación; en la segunda, la lambda queda al final de
+    cada llamada:
+  </p>
+
+  <pre
+    data-font-family="fira-code" data-typography-role="code-block"
+    style="font-weight: 400; font-style: normal"
+  ><code data-font-family="fira-code">{codeSample}</code></pre>
 </section>
+
+<style>
+  .three-role-system-review {
+    box-sizing: border-box;
+    width: min(100%, 72ch);
+    margin-inline: auto;
+    padding: 1.25rem;
+    border: 1px solid currentColor;
+    font-synthesis: none;
+  }
+
+  .three-role-system-review h2 {
+    margin: 0 0 1rem;
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+  }
+
+  .three-role-system-review h3 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: var(--text-lg);
+    line-height: 1.35;
+  }
+
+  .three-role-system-review p {
+    margin: 0.75rem 0;
+    font-size: var(--content-font-size);
+    line-height: var(--content-line-height);
+  }
+
+  .three-role-system-review p code {
+    border-radius: 0.25rem;
+    background: color-mix(in srgb, currentColor 10%, transparent);
+    padding: 0.08em 0.28em;
+    white-space: nowrap;
+  }
+
+  .three-role-system-review pre {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0.75rem 0 0;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    white-space: pre;
+    tab-size: 4;
+  }
+</style>

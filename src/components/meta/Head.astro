@@ -6,67 +6,65 @@
  * article JSON-LD. DIBS keeps application policy here, including branding links, fonts, sitemap,
  * locale-profile mapping, and application-owned font, favicon, and sitemap policy.
  */
-import {
-    Head as GenericHead,
-    type AcademicMetadataOptions,
-    type HeadProps,
-} from "@ravenhill/astro-head";
 import { getLocaleProfile } from "$presentation/i18n/locale-profile";
-import { toDibsPageMetadata } from "~/utils/dibs-page-metadata";
+import {
+  type AcademicMetadataOptions,
+  Head as GenericHead,
+  type HeadProps,
+} from "@ravenhill/astro-head";
+import { productionFontStylesheetUrl } from "~/lib/typography/production-font-stylesheet";
 import { site } from "~/utils";
+import { toDibsPageMetadata } from "~/utils/dibs-page-metadata";
 import type { PageMeta } from "~/utils/page-meta";
 import { buildDibsHeadLinks } from "./dibs-head-links";
 
 interface Props {
-    title?: string;
-    description?: string;
-    url?: string;
-    type?: "website" | "article";
-    pageMeta?: PageMeta;
-    include404Font?: boolean;
+  title?: string;
+  description?: string;
+  url?: string;
+  type?: "website" | "article";
+  pageMeta?: PageMeta;
+  include404Font?: boolean;
 }
 
 const {
-    title = site.SHORT_TITLE,
-    description = site.LONG_TITLE,
-    url = "https://dibs.ravenhill.cl",
-    type = "website",
-    pageMeta,
-    include404Font = false,
+  title = site.SHORT_TITLE,
+  description = site.LONG_TITLE,
+  url = "https://dibs.ravenhill.cl",
+  type = "website",
+  pageMeta,
+  include404Font = false,
 } = Astro.props as Props;
 
 const language = pageMeta?.language?.trim() || "es";
 const localeProfile = getLocaleProfile(language);
-const baseFontStylesheet = "https://fonts.googleapis.com/css2?"
-    + "family=Fira+Code&family=Inter:ital,wght@0,400..700;1,400..700"
-    + "&family=Space+Grotesk:ital,wght@0,400..700;1,400..700&display=swap";
 const page = toDibsPageMetadata({
-    title,
-    description,
-    url,
-    type,
-    openGraphLocale: localeProfile.openGraphLocale,
-    ...(pageMeta ? { pageMeta } : {}),
+  title,
+  description,
+  url,
+  type,
+  openGraphLocale: localeProfile.openGraphLocale,
+  ...(pageMeta ? { pageMeta } : {}),
 });
 
 const academic: AcademicMetadataOptions = {
-    highwire: true,
-    dublinCore: true,
-    jsonLd: true,
+  highwire: true,
+  dublinCore: true,
+  jsonLd: true,
 };
 
 const headProps: HeadProps = {
-    site: {
-        name: site.SHORT_TITLE,
-        socialImage: site.HEAD.DEFAULT_SOCIAL_IMAGE,
-    },
-    page,
-    social: { image: site.HEAD.DEFAULT_SOCIAL_IMAGE },
-    academic,
-    links: buildDibsHeadLinks({
-        faviconHref: site.HEAD.FAVICON_PATH,
-        baseFontStylesheet,
-    }),
+  site: {
+    name: site.SHORT_TITLE,
+    socialImage: site.HEAD.DEFAULT_SOCIAL_IMAGE,
+  },
+  page,
+  social: { image: site.HEAD.DEFAULT_SOCIAL_IMAGE },
+  academic,
+  links: buildDibsHeadLinks({
+    faviconHref: site.HEAD.FAVICON_PATH,
+    baseFontStylesheet: productionFontStylesheetUrl,
+  }),
 };
 ---
 
@@ -74,6 +72,10 @@ const headProps: HeadProps = {
 
 <link rel="sitemap" href={site.HEAD.SITEMAP_PATH} />
 
-{include404Font && (
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-)}
+{
+  include404Font && (
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"
+    />
+  )
+}
