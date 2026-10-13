@@ -34,6 +34,21 @@ import TypographyFixture from "../typography-proportional-pair.astro";
 type FixtureSpecimen = HTMLElement;
 type FixtureProfile = (typeof proportionalFontFixtureProfiles)[number];
 type FeatureMode = (typeof proportionalFontFeatureModes)[number]["id"];
+type FixtureState = FixtureProfile["states"][number];
+type SpecimenQuery = {
+  specimens: readonly FixtureSpecimen[];
+  profile: FixtureProfile;
+  state: FixtureState;
+  ligatureId: string;
+  featureMode: FeatureMode;
+};
+type LigatureExpectation = {
+  specimens: readonly FixtureSpecimen[];
+  profile: FixtureProfile;
+  state: FixtureState;
+  ligatureId: string;
+  source: string;
+};
 
 async function renderFixture(): Promise<Document> {
   const render = await createAstroRenderer<Record<string, never>>(TypographyFixture);
@@ -44,8 +59,9 @@ async function renderFixture(): Promise<Document> {
   return new JSDOM(html).window.document;
 }
 
-const getSpecimens = (document: Document): FixtureSpecimen[] =>
-  [...document.querySelectorAll<FixtureSpecimen>("[data-typography-specimen=\"ligature\"]")];
+const getSpecimens = (document: Document): FixtureSpecimen[] => [
+  ...document.querySelectorAll<FixtureSpecimen>("[data-typography-specimen=\"ligature\"]"),
+];
 
 const expectedPairCount = (): number =>
   proportionalFontFixtureProfiles.reduce(
@@ -65,12 +81,9 @@ function specimenIdentity(specimen: FixtureSpecimen, includeMode = true): string
 }
 
 const findSpecimen = (
-  specimens: readonly FixtureSpecimen[],
-  profile: FixtureProfile,
-  state: FixtureProfile["states"][number],
-  ligatureId: string,
-  featureMode: FeatureMode,
-): FixtureSpecimen | undefined => specimens.find((specimen) =>
+  { specimens, profile, state, ligatureId, featureMode }: SpecimenQuery,
+): FixtureSpecimen | undefined =>
+  specimens.find((specimen) =>
     specimen.dataset.typographyRole === profile.role
     && specimen.dataset.fontFamily === profile.familyId
     && specimen.dataset.typographyState === typographyStateKey(state)
@@ -89,21 +102,17 @@ function assertCompleteMatrix(document: Document): void {
   for (const profile of proportionalFontFixtureProfiles) {
     for (const state of profile.states) {
       for (const ligature of proportionalFontContract.ligatures) {
-        assertLigatureModes(specimens, profile, state, ligature.id, ligature.source);
+        assertLigatureModes({ specimens, profile, state, ligatureId: ligature.id, source: ligature.source });
       }
     }
   }
 }
 
 function assertLigatureModes(
-  specimens: readonly FixtureSpecimen[],
-  profile: FixtureProfile,
-  state: FixtureProfile["states"][number],
-  ligatureId: string,
-  source: string,
+  { specimens, profile, state, ligatureId, source }: LigatureExpectation,
 ): void {
   for (const mode of proportionalFontFeatureModes) {
-    const specimen = findSpecimen(specimens, profile, state, ligatureId, mode.id);
+    const specimen = findSpecimen({ specimens, profile, state, ligatureId, featureMode: mode.id });
     const identity = `${profile.role}/${profile.familyId}/${
       typographyStateKey(state)
     }/${ligatureId}/${mode.id}`;
@@ -152,7 +161,21 @@ function assertExistingSections(document: Document): void {
   expect(document.querySelectorAll("[data-typography-corpus=\"spanish-coverage\"]")).toHaveLength(
     6,
   );
+  assertGlyphProbes(document);
   expect(document.querySelector("[data-font-family=\"fira-code\"]")).not.toBeNull();
+}
+
+function assertGlyphProbes(document: Document): void {
+  const corpora = document.querySelectorAll("[data-typography-corpus=\"spanish-coverage\"]");
+  for (const corpus of corpora) {
+    const probes = [...corpus.querySelectorAll<HTMLElement>("[data-spanish-glyph]")];
+    expect(probes.map((probe) => probe.dataset.character)).toEqual(
+      proportionalFontContract.spanishCoverage,
+    );
+    expect(probes.map((probe) => probe.textContent).join("")).toBe(
+      proportionalFontContract.spanishCoverage.join(""),
+    );
+  }
 }
 
 function assertThreeRoleLessonFragment(document: Document): void {
@@ -197,15 +220,23 @@ function assertProseCopy(prose: readonly HTMLParagraphElement[]): void {
 }
 
 function assertProseEmphasis(prose: readonly HTMLParagraphElement[]): void {
-  expect(prose.some((paragraph) => paragraph.querySelector("em")
-    ?.getAttribute("style")?.includes("font-style: italic"))).toBe(true);
-  expect(prose.some((paragraph) => paragraph.querySelector("strong")
-    ?.textContent?.includes("último parámetro"))).toBe(true);
-  expect(prose.some((paragraph) => paragraph.querySelector("strong")
-    ?.getAttribute("style")?.includes("700"))).toBe(true);
-  expect(prose.some((paragraph) => paragraph
-    .querySelector("[data-typography-state=\"500-normal\"]")?.textContent
-    ?.includes("trailing lambda"))).toBe(true);
+  expect(prose.some((paragraph) =>
+    paragraph.querySelector("em")
+      ?.getAttribute("style")?.includes("font-style: italic")
+  )).toBe(true);
+  expect(prose.some((paragraph) =>
+    paragraph.querySelector("strong")
+      ?.textContent?.includes("último parámetro")
+  )).toBe(true);
+  expect(prose.some((paragraph) =>
+    paragraph.querySelector("strong")
+      ?.getAttribute("style")?.includes("700")
+  )).toBe(true);
+  expect(prose.some((paragraph) =>
+    paragraph
+      .querySelector("[data-typography-state=\"500-normal\"]")?.textContent
+      ?.includes("trailing lambda")
+  )).toBe(true);
 }
 
 function assertThreeRoleCode(review: HTMLElement): void {
@@ -389,7 +420,7 @@ function assertHeadingLayoutAndToc(document: Document): void {
   }
 }
 
-suite("given the proportional typography fixture", () => {
+suite("given the proportional typography specimen matrix", () => {
   test(
     "then each contract combination has disabled and enabled specimens",
     async () => assertCompleteMatrix(await renderFixture()),
@@ -409,7 +440,9 @@ suite("given the proportional typography fixture", () => {
     "then the combined system presents the Kotlin excerpt with three-role semantic markup",
     async () => assertThreeRoleLessonFragment(await renderFixture()),
   );
+});
 
+suite("given the proportional typography comparisons", () => {
   test(
     "then the body/UI comparison renders every surface for both families and states",
     async () => assertBodyEvaluationMatrix(await renderFixture()),

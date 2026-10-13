@@ -2,48 +2,60 @@
 /**
  * Renders one typography role (body or heading) at every required weight/style state.
  *
- * Both the `DIBS Sans` body section and the `DIBS Slab` heading section have identical structure, so
- * they share this component: the only differences are the section id, the CSS family hook, the
- * heading text, and which state list from {@link proportionalFontContract} to iterate. Each state
- * gets the shared specimen lines plus the Spanish-coverage corpus line, so a reviewer can confirm
- * every glyph the contract requires actually renders.
+ * The `DIBS Sans` body and `DIBS Slab` heading sections share one structure. That lets learners
+ * compare family and weight changes without changing the sample content. Each state renders the
+ * shared specimens and Spanish coverage corpus from {@link proportionalFontContract}, so learners
+ * and maintainers can verify every required glyph.
  */
 
-import { proportionalFontContract, type TypographyState } from "~/lib/typography/proportional-font-contract";
+import {
+  proportionalFontContract,
+  type TypographyState,
+} from "~/lib/typography/proportional-font-contract";
 
 interface Props {
-    /** `data-fixture-section` value; also the semantic anchor used by the render tests. */
-    sectionId: "body" | "heading";
-    role: "body" | "heading";
-    /** `data-font-family` hook that the fixture stylesheet maps to a local `@font-face` family. */
-    fontFamily: "dibs-sans" | "dibs-slab";
-    title: string;
-    states: readonly TypographyState[];
+  /** `data-fixture-section` value; also the semantic anchor used by the render tests. */
+  sectionId: "body" | "heading";
+  role: "body" | "heading";
+  /** `data-font-family` hook that the fixture stylesheet maps to a local `@font-face` family. */
+  fontFamily: "dibs-sans" | "dibs-slab";
+  title: string;
+  states: readonly TypographyState[];
 }
 
 const { sectionId, role, fontFamily, title, states } = Astro.props;
 const { specimenText, spanishCoverage } = proportionalFontContract;
-const spanishCoverageLine = spanishCoverage.join(" ");
 ---
 
 <section
-    data-fixture-section={sectionId} data-typography-role={role}
-    data-font-family={fontFamily}
+  data-fixture-section={sectionId} data-typography-role={role}
+  data-font-family={fontFamily}
 >
-    <h2>{title}</h2>
+  <h2>{title}</h2>
 
-    {
-        states.map((state) => (
-            <article
-                data-typography-state={`${state.weight}-${state.style}`}
-                style={`font-weight:${state.weight}; font-style:${state.style};`}
-            >
-                <h3>{state.weight} {state.style}</h3>
+  {
+    states.map((state) => (
+      <article
+        data-typography-state={`${state.weight}-${state.style}`}
+        style={`font-weight:${state.weight}; font-style:${state.style};`}
+      >
+        <h3>{state.weight} {state.style}</h3>
 
-                {specimenText.map((line) => <p>{line}</p>)}
+        {specimenText.map((line) => <p>{line}</p>)}
 
-                <p data-typography-corpus="spanish-coverage">{spanishCoverageLine}</p>
-            </article>
-        ))
-    }
+        <p data-typography-corpus="spanish-coverage">
+          {
+            spanishCoverage.map((character, index) => (
+              <span
+                data-spanish-glyph data-character={character}
+                data-glyph-index={index}
+              >
+                {character}
+              </span>
+            ))
+          }
+        </p>
+      </article>
+    ))
+  }
 </section>

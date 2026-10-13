@@ -15,27 +15,39 @@ export type FontFaceState = Readonly<{
 
 export const requiredLocalFaces = [
   {
-    family: "DIBS Sans", style: "normal", weight: "400",
+    family: "DIBS Sans",
+    style: "normal",
+    weight: "400",
     path: "/fonts/dibs-sans/400-normal.woff2",
   },
   {
-    family: "DIBS Sans", style: "italic", weight: "400",
+    family: "DIBS Sans",
+    style: "italic",
+    weight: "400",
     path: "/fonts/dibs-sans/400-italic.woff2",
   },
   {
-    family: "DIBS Sans", style: "normal", weight: "500",
+    family: "DIBS Sans",
+    style: "normal",
+    weight: "500",
     path: "/fonts/dibs-sans/500-normal.woff2",
   },
   {
-    family: "DIBS Sans", style: "normal", weight: "700",
+    family: "DIBS Sans",
+    style: "normal",
+    weight: "700",
     path: "/fonts/dibs-sans/700-normal.woff2",
   },
   {
-    family: "DIBS Slab", style: "normal", weight: "500",
+    family: "DIBS Slab",
+    style: "normal",
+    weight: "500",
     path: "/fonts/dibs-slab/500-normal.woff2",
   },
   {
-    family: "DIBS Slab", style: "normal", weight: "700",
+    family: "DIBS Slab",
+    style: "normal",
+    weight: "700",
     path: "/fonts/dibs-slab/700-normal.woff2",
   },
 ] as const;
@@ -44,27 +56,46 @@ export const requiredRoleStates = [
   { id: "primary-heading", selector: "h2", family: "DIBS Slab", weight: "700", style: "normal" },
   { id: "subheading", selector: "h3", family: "DIBS Slab", weight: "500", style: "normal" },
   {
-    id: "prose", selector: "p[data-typography-role=\"prose\"]",
-    family: "DIBS Sans", weight: "400", style: "normal",
-  },
-  {
-    id: "italic-emphasis", selector: "em", family: "DIBS Sans", weight: "400", style: "italic",
-  },
-  {
-    id: "medium-emphasis", selector: "[data-typography-state=\"500-normal\"]",
-    family: "DIBS Sans", weight: "500", style: "normal",
-  },
-  {
-    id: "strong-emphasis", selector: "strong", family: "DIBS Sans", weight: "700",
+    id: "prose",
+    selector: "p[data-typography-role=\"prose\"]",
+    family: "DIBS Sans",
+    weight: "400",
     style: "normal",
   },
   {
-    id: "inline-code", selector: "code[data-typography-role=\"inline-code\"]",
-    family: "Fira Code", weight: "400", style: "normal",
+    id: "italic-emphasis",
+    selector: "em",
+    family: "DIBS Sans",
+    weight: "400",
+    style: "italic",
   },
   {
-    id: "code-block", selector: "pre[data-typography-role=\"code-block\"] > code",
-    family: "Fira Code", weight: "400", style: "normal",
+    id: "medium-emphasis",
+    selector: "[data-typography-state=\"500-normal\"]",
+    family: "DIBS Sans",
+    weight: "500",
+    style: "normal",
+  },
+  {
+    id: "strong-emphasis",
+    selector: "strong",
+    family: "DIBS Sans",
+    weight: "700",
+    style: "normal",
+  },
+  {
+    id: "inline-code",
+    selector: "code[data-typography-role=\"inline-code\"]",
+    family: "Fira Code",
+    weight: "400",
+    style: "normal",
+  },
+  {
+    id: "code-block",
+    selector: "pre[data-typography-role=\"code-block\"] > code",
+    family: "Fira Code",
+    weight: "400",
+    style: "normal",
   },
 ] as const;
 
@@ -80,7 +111,7 @@ export function watchFontResources(page: Page): FontResourceTracker {
   page.on("response", (response) => recordFontResponse(tracker, response));
   page.on("requestfailed", (request) => recordFailedFontRequest(tracker, request));
   return tracker;
-};
+}
 
 export const loadRequiredFaces = async (page: Page): Promise<FontFaceState[]> =>
   page.evaluate(async (localFaces) => {
@@ -90,8 +121,13 @@ export const loadRequiredFaces = async (page: Page): Promise<FontFaceState[]> =>
     await document.fonts.load("400 16px \"Fira Code\"", "list.filter x -> x * 2");
     await document.fonts.ready;
     return [...document.fonts]
-      .filter((face) => ["DIBS Sans", "DIBS Slab", "Fira Code"].includes(face.family))
-      .map(({ family, style, status, weight }) => ({ family, style, status, weight }));
+      .map(({ family, style, status, weight }) => ({
+        family: family.replace(/^"|"$/g, ""),
+        style,
+        status,
+        weight,
+      }))
+      .filter((face) => ["DIBS Sans", "DIBS Slab", "Fira Code"].includes(face.family));
   }, requiredLocalFaces);
 
 export function assertRequiredFacesLoaded(faces: readonly FontFaceState[]): void {
@@ -118,7 +154,7 @@ function recordFontResponse(tracker: FontResourceTracker, response: Response): v
 }
 
 const recordFailedFontRequest = (tracker: FontResourceTracker, request: Request): number | null =>
-  request.resourceType() === "font" ? tracker.failedRequests.push(request.url()) : null
+  request.resourceType() === "font" ? tracker.failedRequests.push(request.url()) : null;
 
 function assertFaceLoaded(
   faces: readonly FontFaceState[],

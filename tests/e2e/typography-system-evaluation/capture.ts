@@ -12,7 +12,8 @@ type ReviewViewport = (typeof reviewViewports)[number];
 export type ViewportReviewCapture = {
   viewport: ReviewViewport & { deviceScaleFactor: number };
   roles: Awaited<ReturnType<typeof readRoleStyles>>;
-  platformFontUsage: Awaited<ReturnType<typeof readRenderedCodeFonts>>;
+  platformFontUsage: Awaited<ReturnType<typeof readRenderedCodeFonts>> | null;
+  platformFontAttribution: "chromium-cdp" | "computed-style";
   layout: Awaited<ReturnType<typeof readLayout>>;
 };
 
@@ -26,26 +27,37 @@ export async function captureViewportReview(
   page: Page,
   viewport: ReviewViewport,
   testInfo: TestInfo,
+  useChromiumCdp: boolean,
 ): Promise<ViewportReviewCapture> {
   await page.setViewportSize({ width: viewport.width, height: viewport.height });
   await page.evaluate(() => document.fonts.ready);
-  const [roles, platformFontUsage, layout] = await Promise.all([
+  const [roles, layout] = await Promise.all([
     readRoleStyles(page),
-    readRenderedCodeFonts(page),
     readLayout(page),
   ]);
-  assertViewportLayout(layout, viewport.name);
-  assertRoleFontStyles(roles, layout.readingRegion, viewport.name);
-  assertCodeFontAndSource(layout, platformFontUsage.firaGlyphCount, viewport.name);
+  const platformFontUsage = useChromiumCdp ? await readRenderedCodeFonts(page) : null;
+  assertCaptureContract(roles, layout, platformFontUsage, viewport.name);
   await expect(page.locator(reviewSelector)).toBeVisible();
   await captureScreenshot(page, testInfo, viewport.name);
   return {
     viewport: { ...viewport, deviceScaleFactor: layout.deviceScaleFactor },
     roles,
     platformFontUsage,
+    platformFontAttribution: useChromiumCdp ? "chromium-cdp" : "computed-style",
     layout,
   };
-};
+}
+
+function assertCaptureContract(
+  roles: Awaited<ReturnType<typeof readRoleStyles>>,
+  layout: Awaited<ReturnType<typeof readLayout>>,
+  platformFonts: Awaited<ReturnType<typeof readRenderedCodeFonts>> | null,
+  viewportName: string,
+): void {
+  assertViewportLayout(layout, viewportName);
+  assertRoleFontStyles(roles, layout.readingRegion, viewportName);
+  assertCodeFontAndSource(layout, platformFonts?.firaGlyphCount, viewportName);
+}
 
 async function captureScreenshot(
   page: Page,
@@ -92,11 +104,13 @@ function assertRoleFontStyle(
 
 function assertCodeFontAndSource(
   layout: Awaited<ReturnType<typeof readLayout>>,
-  firaGlyphCount: number,
+  firaGlyphCount: number | undefined,
   viewportName: string,
 ): void {
   expect(layout.codeBlock.overflowX, `${viewportName}/code scrolling`).toBe("auto");
-  expect(firaGlyphCount, `${viewportName}/Fira Code glyph count`).toBeGreaterThan(0);
+  if (firaGlyphCount !== undefined) {
+    expect(firaGlyphCount, `${viewportName}/Fira Code glyph count`).toBeGreaterThan(0);
+  }
   expect(layout.sourceText).toBe(expectedSource);
   if (viewportName === "mobile") assertMobileCodeScroll(layout.codeBlock);
 }

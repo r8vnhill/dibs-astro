@@ -27,11 +27,17 @@
  * It reuses the production stylesheet URL without rendering the metadata adapter or changing
  * production `Head.astro` behavior, family tokens, or weights. Keep
  * `<meta name="robots" content="noindex" />` as a secondary safeguard for deployed previews.
+ *
+ * Students can use the theme control to compare the same specimen against both site palettes.
+ * Maintainers can inspect isolated coverage glyphs and browser evidence without changing the
+ * production theme or font configuration.
  */
 
+import { m } from "~/generated/i18n/messages";
 import { productionFontStylesheetUrl } from "~/lib/typography/production-font-stylesheet";
 import { proportionalFontContract } from "~/lib/typography/proportional-font-contract";
 import "~/styles/global.css";
+import ThemeSwitcher from "$components/ui/theme/ThemeSwitcher.astro";
 import BodyEvaluationSection from "./_components/BodyEvaluationSection.astro";
 import CombinedSystemSection from "./_components/CombinedSystemSection.astro";
 import HeadingEvaluationSection from "./_components/HeadingEvaluationSection.astro";
@@ -40,6 +46,13 @@ import LigatureComparisonSection from "./_components/LigatureComparisonSection.a
 import RoleConformanceSection from "./_components/RoleConformanceSection.astro";
 
 const { body, heading } = proportionalFontContract.roles;
+const themeLabels = {
+  current: m.theme_current(),
+  change: m.theme_change(),
+  light: m.theme_light(),
+  dark: m.theme_dark(),
+  auto: m.theme_auto(),
+};
 ---
 
 <!DOCTYPE html>
@@ -65,6 +78,33 @@ const { body, heading } = proportionalFontContract.roles;
       h5,
       h6 {
         font-family: system-ui, sans-serif;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        background: var(--base-background-color);
+        color: var(--base-text-color);
+      }
+
+      .fixture-theme-control {
+        align-self: flex-end;
+      }
+
+      .fixture-guide,
+      [data-fixture-section] article,
+      .ligature-comparison-row {
+        border-color: var(--base-border-color);
+      }
+
+      .fixture-guide {
+        border-width: 1px;
+        border-style: solid;
+        padding: 1rem;
+      }
+
+      [data-spanish-glyph] {
+        margin-inline-end: 0.25em;
       }
 
       @font-face {
@@ -399,6 +439,9 @@ const { body, heading } = proportionalFontContract.roles;
   </head>
   <body>
     <main>
+      <div class="fixture-theme-control">
+        <ThemeSwitcher labels={themeLabels} />
+      </div>
       <p class="fixture-guide">
         Esta página permite comparar familias y estados tipográficos con el contenido y la
         composición controlados. Al revisar la muestra final, observa la jerarquía de los títulos,

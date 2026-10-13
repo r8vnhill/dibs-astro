@@ -26,18 +26,23 @@ export const readLoadedFonts = (
 ): Promise<FontFaceRecord[]> =>
   page.evaluate((expectedFamilies) =>
     [...document.fonts]
-      .filter((face) => expectedFamilies.includes(face.family))
-      .map(({ family, style, status, weight }) => ({ family, style, status, weight })),
-  [...families]);
+      .map(({ family, style, status, weight }) => ({
+        family: family.replace(/^"|"$/g, ""),
+        style,
+        status,
+        weight,
+      }))
+      .filter((face) => expectedFamilies.includes(face.family)), [...families]);
 
 export const readFontResourcePaths = (page: Page): Promise<string[]> =>
-  page.evaluate(() => performance.getEntriesByType("resource")
-    .map((entry) => entry.name)
-    .filter((name) => name.endsWith(".woff2"))
-    .map((name) => new URL(name).pathname));
+  page.evaluate(() =>
+    performance.getEntriesByType("resource")
+      .map((entry) => entry.name)
+      .filter((name) => name.endsWith(".woff2"))
+      .map((name) => new URL(name).pathname)
+  );
 
 export const unexpectedExternalFontRequests = (
   requests: readonly string[],
   pageOrigin: string,
-): string[] =>
-  requests.filter((url) => new URL(url).origin !== pageOrigin);
+): string[] => requests.filter((url) => new URL(url).origin !== pageOrigin);

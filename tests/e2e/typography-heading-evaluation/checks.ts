@@ -89,42 +89,53 @@ function assertHeadingResources(paths: readonly string[]): void {
 }
 
 async function assertHeadingPair(page: Page, evaluationCase: HeadingCase): Promise<void> {
-  const computed = await Promise.all(headingEvaluationFamilies.map((family) =>
-    readComputedSpecimen(specimenLocator(page, evaluationCase, family))));
+  const computed = await Promise.all(
+    headingEvaluationFamilies.map((family) =>
+      readComputedSpecimen(specimenLocator(page, evaluationCase, family))
+    ),
+  );
   const [candidate, reference] = computed;
-  expect(candidate?.tagName, evaluationCase.id).toBe(evaluationCase.semanticLevel.toUpperCase());
-  expect(reference?.tagName, evaluationCase.id).toBe(candidate?.tagName);
-  expect(candidate?.source, `${evaluationCase.id}/source`).toBe(evaluationCase.text);
-  expect(reference?.source, `${evaluationCase.id}/source`).toBe(candidate?.source);
+  if (!candidate || !reference) {
+    throw new Error(`Missing paired heading data for ${evaluationCase.id}.`);
+  }
+  expect(candidate.tagName, evaluationCase.id).toBe(evaluationCase.semanticLevel.toUpperCase());
+  expect(reference.tagName, evaluationCase.id).toBe(candidate.tagName);
+  expect(candidate.source, `${evaluationCase.id}/source`).toBe(evaluationCase.text);
+  expect(reference.source, `${evaluationCase.id}/source`).toBe(candidate.source);
   assertHeadingFamilies(candidate, reference, evaluationCase.id);
   assertHeadingTypography(candidate, reference, evaluationCase);
 }
 
 function assertHeadingFamilies(
-  candidate: Awaited<ReturnType<typeof readComputedSpecimen>>,
-  reference: Awaited<ReturnType<typeof readComputedSpecimen>>,
+  candidate: NonNullable<Awaited<ReturnType<typeof readComputedSpecimen>>>,
+  reference: NonNullable<Awaited<ReturnType<typeof readComputedSpecimen>>>,
   caseId: string,
 ): void {
-  expect(candidate?.family, `${caseId}/candidate-family`).toContain("DIBS Slab");
-  expect(reference?.family, `${caseId}/reference-family`)
+  expect(candidate.family, `${caseId}/candidate-family`).toContain("DIBS Slab");
+  expect(reference.family, `${caseId}/reference-family`)
     .toContain("Space Grotesk Reference 2.0.0");
 }
 
 function assertHeadingTypography(
-  candidate: Awaited<ReturnType<typeof readComputedSpecimen>>,
-  reference: Awaited<ReturnType<typeof readComputedSpecimen>>,
+  candidate: NonNullable<Awaited<ReturnType<typeof readComputedSpecimen>>>,
+  reference: NonNullable<Awaited<ReturnType<typeof readComputedSpecimen>>>,
   evaluationCase: HeadingCase,
 ): void {
   const expected = {
-    weight: String(evaluationCase.representativeWeight), style: "normal",
-    lineHeight: expect.any(String), letterSpacing: expect.any(String), synthesis: "none",
+    weight: String(evaluationCase.representativeWeight),
+    style: "normal",
+    lineHeight: expect.any(String),
+    letterSpacing: expect.any(String),
+    synthesis: "none",
   };
   expect(candidate).toMatchObject(expected);
   expect(reference).toMatchObject({
-    ...expected, size: candidate?.size, lineHeight: candidate?.lineHeight,
-    letterSpacing: candidate?.letterSpacing,
+    ...expected,
+    size: candidate.size,
+    lineHeight: candidate.lineHeight,
+    letterSpacing: candidate.letterSpacing,
   });
-  expect(reference?.clientWidth).toBe(candidate?.clientWidth);
+  expect(reference.clientWidth).toBe(candidate.clientWidth);
 }
 
 async function collectHeadingMetrics(
@@ -134,17 +145,21 @@ async function collectHeadingMetrics(
   await page.setViewportSize({ width: viewport.width, height: viewport.height });
   await page.goto(fixturePath);
   await waitForEvaluationFonts(page);
-  const specimens = await Promise.all(headingEvaluationCases.flatMap((evaluationCase) =>
-    headingEvaluationFamilies.map((family) => readComputedSpecimen(
-      specimenLocator(page, evaluationCase, family),
-    ).then((specimen) => ({
-      viewport: viewport.name,
-      caseId: evaluationCase.id,
-      familyId: family.id,
-      state: `${evaluationCase.representativeWeight}-normal`,
-      ...specimen,
-    }))
-  )));
+  const specimens = await Promise.all(
+    headingEvaluationCases.flatMap((evaluationCase) =>
+      headingEvaluationFamilies.map((family) =>
+        readComputedSpecimen(
+          specimenLocator(page, evaluationCase, family),
+        ).then((specimen) => ({
+          viewport: viewport.name,
+          caseId: evaluationCase.id,
+          familyId: family.id,
+          state: `${evaluationCase.representativeWeight}-normal`,
+          ...specimen,
+        }))
+      )
+    ),
+  );
   return { viewport, layout: await readLayoutState(page), specimens };
 }
 
@@ -199,34 +214,47 @@ async function captureHeadingScreenshots(
   });
 }
 
-const readComputedSpecimen = async (locator: Locator) => locator.evaluate(
-  function(element) {
-    const style = getComputedStyle(element);
-    const rect = element.getBoundingClientRect();
-    const lineHeight = Number.parseFloat(style.lineHeight);
-    return {
-      tagName: element.tagName, source: element.textContent, family: style.fontFamily,
-      weight: style.fontWeight, style: style.fontStyle, size: style.fontSize,
-      lineHeight: style.lineHeight, letterSpacing: style.letterSpacing,
-      synthesis: style.fontSynthesis, width: rect.width, height: rect.height,
-      clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
-      lineCount: Number.isFinite(lineHeight) && lineHeight > 0
-        ? Math.max(1, Math.round(rect.height / lineHeight)) : null,
-    };
-  });
+const readComputedSpecimen = async (locator: Locator) =>
+  locator.evaluate(readComputedSpecimenInPage);
 
-const readLayoutState = async (page: Page) => page.evaluate(() => ({
-  documentWidth: document.documentElement.scrollWidth,
-  viewportWidth: document.documentElement.clientWidth,
-  tocEntries: [...document.querySelectorAll<HTMLElement>("[data-heading-toc-entry]")].map(
-    (entry) => ({
-      caseId: entry.closest<HTMLElement>("[data-heading-toc-case]")?.dataset.headingTocCase,
-      clientWidth: entry.clientWidth,
-      scrollWidth: entry.scrollWidth,
-      height: entry.getBoundingClientRect().height,
-    }),
-  ),
-}));
+function readComputedSpecimenInPage(element: Element) {
+  const style = getComputedStyle(element);
+  const rect = element.getBoundingClientRect();
+  const lineHeight = Number.parseFloat(style.lineHeight);
+  const box = element as HTMLElement;
+  return {
+    tagName: element.tagName,
+    source: element.textContent,
+    family: style.fontFamily,
+    weight: style.fontWeight,
+    style: style.fontStyle,
+    size: style.fontSize,
+    lineHeight: style.lineHeight,
+    letterSpacing: style.letterSpacing,
+    synthesis: style.fontSynthesis,
+    width: rect.width,
+    height: rect.height,
+    clientWidth: box.clientWidth,
+    scrollWidth: box.scrollWidth,
+    lineCount: Number.isFinite(lineHeight) && lineHeight > 0
+      ? Math.max(1, Math.round(rect.height / lineHeight))
+      : null,
+  };
+}
+
+const readLayoutState = async (page: Page) =>
+  page.evaluate(() => ({
+    documentWidth: document.documentElement.scrollWidth,
+    viewportWidth: document.documentElement.clientWidth,
+    tocEntries: [...document.querySelectorAll<HTMLElement>("[data-heading-toc-entry]")].map(
+      (entry) => ({
+        caseId: entry.closest<HTMLElement>("[data-heading-toc-case]")?.dataset.headingTocCase,
+        clientWidth: entry.clientWidth,
+        scrollWidth: entry.scrollWidth,
+        height: entry.getBoundingClientRect().height,
+      }),
+    ),
+  }));
 
 const familySelector = (family: HeadingFamily): string => `[data-heading-family="${family.id}"]`;
 

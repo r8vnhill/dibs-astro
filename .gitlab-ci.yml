@@ -1,311 +1,335 @@
 default:
-    tags:
-        - local
-        - docker
+  tags:
+    - local
+    - docker
 
 stages:
-    - prepare
-    - test
-    - build
-    - container
-    - deploy
+  - prepare
+  - test
+  - build
+  - container
+  - deploy
 
 variables:
-    NODE_VERSION: "24.11.0"
-    PNPM_VERSION: "11.8.0"
-    PNPM_STORE_DIR: .pnpm-store
-    GIT_DEPTH: "20"
-    GIT_STRATEGY: fetch
-    GIT_CLEAN_FLAGS: -ffdx
-    GIT_SUBMODULE_STRATEGY: normal
-    NODE_OPTIONS: --max-old-space-size=3072
-    ASTRO_TELEMETRY_DISABLED: "1"
-    SKIP_ICON_GENERATION: "true"
+  NODE_VERSION: "24.11.0"
+  PNPM_VERSION: "11.8.0"
+  PNPM_STORE_DIR: .pnpm-store
+  GIT_DEPTH: "20"
+  GIT_STRATEGY: fetch
+  GIT_CLEAN_FLAGS: -ffdx
+  GIT_SUBMODULE_STRATEGY: normal
+  NODE_OPTIONS: --max-old-space-size=3072
+  ASTRO_TELEMETRY_DISABLED: "1"
+  SKIP_ICON_GENERATION: "true"
 
 .node-job:
-    image: node:${NODE_VERSION}-alpine
-    rules:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-        - if: "$CI_COMMIT_BRANCH"
-        - if: "$CI_COMMIT_TAG"
-    before_script:
-        - npm config set fetch-retries 5
-        - npm config set fetch-retry-mintimeout 20000
-        - npm config set fetch-retry-maxtimeout 120000
-        - corepack enable
-        - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
-        - pnpm config set store-dir ${PNPM_STORE_DIR}
-        - node --version
-        - pnpm --version
-        - pnpm install --frozen-lockfile --reporter=append-only
+  image: node:${NODE_VERSION}-alpine
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: "$CI_COMMIT_BRANCH"
+    - if: "$CI_COMMIT_TAG"
+  before_script:
+    - npm config set fetch-retries 5
+    - npm config set fetch-retry-mintimeout 20000
+    - npm config set fetch-retry-maxtimeout 120000
+    - corepack enable
+    - corepack prepare pnpm@${PNPM_VERSION} --activate || npm install --global pnpm@${PNPM_VERSION}
+    - pnpm config set store-dir ${PNPM_STORE_DIR}
+    - node --version
+    - pnpm --version
+    - pnpm install --frozen-lockfile --reporter=append-only
 
 .container-job:
-    rules:
-        - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-        - if: "$CI_COMMIT_BRANCH"
-        - if: "$CI_COMMIT_TAG"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: "$CI_COMMIT_BRANCH"
+    - if: "$CI_COMMIT_TAG"
 
 deps:
-    stage: prepare
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    script:
-        - pnpm run check:toolchain
+  stage: prepare
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  script:
+    - pnpm run check:toolchain
 
 test:check:
-    stage: test
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    needs:
-        - job: deps
-    script:
-        - pnpm check
+  stage: test
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+  script:
+    - pnpm check
 
 test:unit:
-    stage: test
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    needs:
-        - job: deps
-    script:
-        - pnpm exec vitest run --config vitest.config.ts
+  stage: test
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+  script:
+    - pnpm exec vitest run --config vitest.config.ts
 
 test:astro-render:
-    stage: test
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    needs:
-        - job: deps
-    script:
-        - pnpm exec vitest run --config vitest.astro.config.ts
+  stage: test
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+  script:
+    - pnpm exec vitest run --config vitest.astro.config.ts
 
 test:e2e:
-    stage: test
-    extends: .node-job
-    image: node:${NODE_VERSION}-bookworm
-    tags:
-        - local
-        - docker
-    needs:
-        - job: deps
-    script:
-        - pnpm exec playwright install --with-deps chromium
-        - pnpm run i18n:compile
-        - pnpm run build:lesson-export-core
-        - pnpm run build:shiki-core
-        - pnpm run generate:bibliography-catalog
-        - pnpm run generate:lesson-metadata
-        - pnpm exec playwright test
-    artifacts:
-        when: always
-        paths:
-            - playwright-report/
-            - test-results/
-        expire_in: 7 days
+  stage: test
+  extends: .node-job
+  image: node:${NODE_VERSION}-bookworm
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+  script:
+    - pnpm exec playwright install --with-deps chromium
+    - pnpm run i18n:compile
+    - pnpm run build:lesson-export-core
+    - pnpm run build:shiki-core
+    - pnpm run generate:bibliography-catalog
+    - pnpm run generate:lesson-metadata
+    - pnpm exec playwright test
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
+    expire_in: 7 days
+
+test:e2e:typography:
+  stage: test
+  extends: .node-job
+  image: node:${NODE_VERSION}-bookworm
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+  script:
+    - pnpm exec playwright install --with-deps chromium firefox
+    - pnpm run i18n:compile
+    - pnpm run build:lesson-export-core
+    - pnpm run build:shiki-core
+    - pnpm run generate:bibliography-catalog
+    - pnpm run generate:lesson-metadata
+    - pnpm run test:e2e:typography
+  artifacts:
+    when: always
+    paths:
+      - playwright-report-typography/
+      - test-results-typography/
+    expire_in: 7 days
 
 container:build:
-    stage: container
-    extends: .container-job
-    image:
-        name: moby/buildkit:rootless@sha256:504731e577c20559c00f968f33219f30115e70be29ab96728d1d06e963fc494b
-        entrypoint: [""]
-    needs:
-        - job: build
-        - job: test:check
-        - job: test:unit
-        - job: test:astro-render
-        - job: test:e2e
-    variables:
-        BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
-    script:
-        - mkdir -p "${HOME}/.docker"
-        - printf '%s:%s' "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n' > /tmp/registry-auth
-        - printf '{"auths":{"%s":{"auth":"%s"}}}' "${CI_REGISTRY}" "$(cat /tmp/registry-auth)" > "${HOME}/.docker/config.json"
-        - trap 'rm -f /tmp/registry-auth "${HOME}/.docker/config.json"' EXIT
-        - |
-              CANDIDATE_IMAGE="${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}"
-              PACKAGE_VERSION="$(sed -n 's/^[[:space:]]*\"version\":[[:space:]]*\"\([^\"]*\)\",[[:space:]]*$/\1/p' package.json | head -n 1)"
-              test -n "${PACKAGE_VERSION}"
-              buildctl-daemonless.sh build \
-                  --frontend dockerfile.v0 \
-                  --local context=. \
-                  --local dockerfile=. \
-                  --opt filename=Dockerfile \
-                  --opt build-arg:SOURCE_REVISION="${CI_COMMIT_SHA}" \
-                  --opt build-arg:SOURCE_URL="${CI_PROJECT_URL}" \
-                  --opt build-arg:IMAGE_VERSION="${PACKAGE_VERSION}" \
-                  --export-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
-                  --import-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
-                  --output type=image,"name=${CANDIDATE_IMAGE}",push=true \
-                  --metadata-file /tmp/build-metadata.json \
-                  --attest type=provenance,mode=max \
-                  --attest type=sbom
-              test -s /tmp/build-metadata.json
-              mkdir -p tmp
-              DIGEST="$(sed -n 's/.*\"containerimage.digest\"[[:space:]]*:[[:space:]]*\"\(sha256:[0-9a-f]\{64\}\)\".*/\1/p' /tmp/build-metadata.json)"
-              test -n "${DIGEST}"
-              printf '{\n  "schemaVersion": 1,\n  "image": "%s",\n  "digest": "%s",\n  "revision": "%s",\n  "version": "%s",\n  "source": "%s",\n  "platform": "linux/amd64"\n}\n' \
-                  "${CANDIDATE_IMAGE}" "${DIGEST}" "${CI_COMMIT_SHA}" "${PACKAGE_VERSION}" "${CI_PROJECT_URL}" > tmp/oci-candidate.json
-    artifacts:
-        paths:
-            - tmp/oci-candidate.json
-        expire_in: 7 days
+  stage: container
+  extends: .container-job
+  image:
+    name: moby/buildkit:rootless@sha256:504731e577c20559c00f968f33219f30115e70be29ab96728d1d06e963fc494b
+    entrypoint: [""]
+  needs:
+    - job: build
+    - job: test:check
+    - job: test:unit
+    - job: test:astro-render
+    - job: test:e2e
+  variables:
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  script:
+    - mkdir -p "${HOME}/.docker"
+    - printf '%s:%s' "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n' > /tmp/registry-auth
+    - printf '{"auths":{"%s":{"auth":"%s"}}}' "${CI_REGISTRY}" "$(cat /tmp/registry-auth)" > "${HOME}/.docker/config.json"
+    - trap 'rm -f /tmp/registry-auth "${HOME}/.docker/config.json"' EXIT
+    - |
+        CANDIDATE_IMAGE="${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}"
+        PACKAGE_VERSION="$(sed -n 's/^[[:space:]]*\"version\":[[:space:]]*\"\([^\"]*\)\",[[:space:]]*$/\1/p' package.json | head -n 1)"
+        test -n "${PACKAGE_VERSION}"
+        buildctl-daemonless.sh build \
+            --frontend dockerfile.v0 \
+            --local context=. \
+            --local dockerfile=. \
+            --opt filename=Dockerfile \
+            --opt build-arg:SOURCE_REVISION="${CI_COMMIT_SHA}" \
+            --opt build-arg:SOURCE_URL="${CI_PROJECT_URL}" \
+            --opt build-arg:IMAGE_VERSION="${PACKAGE_VERSION}" \
+            --export-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
+            --import-cache type=registry,ref="${CI_REGISTRY_IMAGE}/cache:buildkit" \
+            --output type=image,"name=${CANDIDATE_IMAGE}",push=true \
+            --metadata-file /tmp/build-metadata.json \
+            --attest type=provenance,mode=max \
+            --attest type=sbom
+        test -s /tmp/build-metadata.json
+        mkdir -p tmp
+        DIGEST="$(sed -n 's/.*\"containerimage.digest\"[[:space:]]*:[[:space:]]*\"\(sha256:[0-9a-f]\{64\}\)\".*/\1/p' /tmp/build-metadata.json)"
+        test -n "${DIGEST}"
+        printf '{\n  "schemaVersion": 1,\n  "image": "%s",\n  "digest": "%s",\n  "revision": "%s",\n  "version": "%s",\n  "source": "%s",\n  "platform": "linux/amd64"\n}\n' \
+            "${CANDIDATE_IMAGE}" "${DIGEST}" "${CI_COMMIT_SHA}" "${PACKAGE_VERSION}" "${CI_PROJECT_URL}" > tmp/oci-candidate.json
+  artifacts:
+    paths:
+      - tmp/oci-candidate.json
+    expire_in: 7 days
 
 container:oci-policy:
-    stage: container
-    extends: .container-job
-    image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
-    needs:
-        - job: container:build
-          artifacts: true
-    script:
-        - node scripts/verify-oci-image-policy.mjs tmp/oci-candidate.json
+  stage: container
+  extends: .container-job
+  image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
+  needs:
+    - job: container:build
+      artifacts: true
+  script:
+    - node scripts/verify-oci-image-policy.mjs tmp/oci-candidate.json
 
 container:provenance:
-    stage: container
-    extends: .container-job
-    image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
-    needs:
-        - job: container:build
-          artifacts: true
-    script:
-        - node scripts/verify-oci-provenance.mjs tmp/oci-candidate.json
+  stage: container
+  extends: .container-job
+  image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
+  needs:
+    - job: container:build
+      artifacts: true
+  script:
+    - node scripts/verify-oci-provenance.mjs tmp/oci-candidate.json
 
 container:http-contract:
-    stage: container
-    extends: .container-job
-    image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
-    services:
-        - name: ${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}
-          alias: dibs
-    needs:
-        - job: container:build
-    variables:
-        CONTAINER_BASE_URL: http://dibs:8080
-    script:
-        - node scripts/test-container.mjs
+  stage: container
+  extends: .container-job
+  image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
+  services:
+    - name: ${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}
+      alias: dibs
+  needs:
+    - job: container:build
+  variables:
+    CONTAINER_BASE_URL: http://dibs:8080
+  script:
+    - node scripts/test-container.mjs
 
 container:browser-contract:
-    stage: container
-    extends: .node-job
-    image: node:24.11.0-bookworm@sha256:e5bbac0e9b8a6e3b96a86a82bbbcf4c533a879694fd613ed616bae5116f6f243
-    services:
-        - name: ${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}
-          alias: dibs
-    needs:
-        - job: container:build
-    variables:
-        CONTAINER_BASE_URL: http://dibs:8080
-    script:
-        - pnpm exec playwright install --with-deps chromium
-        - pnpm exec playwright test tests/e2e/lesson-toc-scroll.spec.ts
+  stage: container
+  extends: .node-job
+  image: node:24.11.0-bookworm@sha256:e5bbac0e9b8a6e3b96a86a82bbbcf4c533a879694fd613ed616bae5116f6f243
+  services:
+    - name: ${CI_REGISTRY_IMAGE}/ci:${CI_PIPELINE_ID}-${CI_COMMIT_SHORT_SHA}
+      alias: dibs
+  needs:
+    - job: container:build
+  variables:
+    CONTAINER_BASE_URL: http://dibs:8080
+  script:
+    - pnpm exec playwright install --with-deps chromium
+    - pnpm exec playwright test tests/e2e/lesson-toc-scroll.spec.ts
 
 container:publish:
-    stage: container
-    image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
-    needs:
-        - job: container:build
-          artifacts: true
-        - job: container:http-contract
-        - job: container:browser-contract
-        - job: container:oci-policy
-        - job: container:provenance
-        - job: build
-        - job: test:check
-        - job: test:unit
-        - job: test:astro-render
-        - job: test:e2e
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "main"'
-          when: on_success
-        - if: "$CI_COMMIT_TAG"
-          when: on_success
-        - when: never
-    script:
-        - node scripts/promote-oci-digest.mjs tmp/oci-candidate.json
+  stage: container
+  image: node:24.11.0-alpine@sha256:f36fed0b2129a8492535e2853c64fbdbd2d29dc1219ee3217023ca48aebd3787
+  needs:
+    - job: container:build
+      artifacts: true
+    - job: container:http-contract
+    - job: container:browser-contract
+    - job: container:oci-policy
+    - job: container:provenance
+    - job: build
+    - job: test:check
+    - job: test:unit
+    - job: test:astro-render
+    - job: test:e2e
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - if: "$CI_COMMIT_TAG"
+      when: on_success
+    - when: never
+  script:
+    - node scripts/promote-oci-digest.mjs tmp/oci-candidate.json
 
 pdf_export_smoke:
-    stage: test
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    needs:
-        - job: deps
-          optional: true
-    allow_failure: true
-    rules:
-        - if: '$EXPORT_PDF_SMOKE == "1"'
-          when: on_success
-        - when: manual
-          allow_failure: true
-    script:
-        - pnpm playwright:install
-        - EXPORT_PDF_SMOKE=1 pnpm test:pdf-smoke
-    artifacts:
-        when: always
-        paths:
-            - tmp/pdf-export-smoke/
-        expire_in: 7 days
+  stage: test
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  needs:
+    - job: deps
+      optional: true
+  allow_failure: true
+  rules:
+    - if: '$EXPORT_PDF_SMOKE == "1"'
+      when: on_success
+    - when: manual
+      allow_failure: true
+  script:
+    - pnpm playwright:install
+    - EXPORT_PDF_SMOKE=1 pnpm test:pdf-smoke
+  artifacts:
+    when: always
+    paths:
+      - tmp/pdf-export-smoke/
+    expire_in: 7 days
 
 build:
-    stage: build
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    variables:
-        GIT_DEPTH: "0"
-        NODE_OPTIONS: --max-old-space-size=3072
-        ASTRO_TELEMETRY_DISABLED: "1"
-        UV_THREADPOOL_SIZE: "2"
-    needs:
-        - job: deps
-        - job: test:check
-        - job: test:unit
-        - job: test:astro-render
-        - job: test:e2e
-    script:
-        - apk add --no-cache git
-        - pnpm build
-    artifacts:
-        paths:
-            - dist/
-        expire_in: 1 week
+  stage: build
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  variables:
+    GIT_DEPTH: "0"
+    NODE_OPTIONS: --max-old-space-size=3072
+    ASTRO_TELEMETRY_DISABLED: "1"
+    UV_THREADPOOL_SIZE: "2"
+  needs:
+    - job: deps
+    - job: test:check
+    - job: test:unit
+    - job: test:astro-render
+    - job: test:e2e
+  script:
+    - apk add --no-cache git
+    - pnpm build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
 
 deploy:
-    stage: deploy
-    extends: .node-job
-    tags:
-        - local
-        - docker
-    variables:
-        NODE_OPTIONS: --max-old-space-size=3072
-        ASTRO_TELEMETRY_DISABLED: "1"
-    needs:
-        - job: deps
-        - job: test:check
-        - job: test:unit
-        - job: test:astro-render
-        - job: test:e2e
-        - job: build
-          artifacts: true
-        - job: container:publish
-    rules:
-        - if: '$CI_COMMIT_BRANCH == "main"'
-          when: on_success
-        - if: "$CI_COMMIT_TAG"
-          when: manual
-        - when: never
-    script:
-        - pnpm exec wrangler deploy
-    environment:
-        name: production
+  stage: deploy
+  extends: .node-job
+  tags:
+    - local
+    - docker
+  variables:
+    NODE_OPTIONS: --max-old-space-size=3072
+    ASTRO_TELEMETRY_DISABLED: "1"
+  needs:
+    - job: deps
+    - job: test:check
+    - job: test:unit
+    - job: test:astro-render
+    - job: test:e2e
+    - job: build
+      artifacts: true
+    - job: container:publish
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - if: "$CI_COMMIT_TAG"
+      when: manual
+    - when: never
+  script:
+    - pnpm exec wrangler deploy
+  environment:
+    name: production
